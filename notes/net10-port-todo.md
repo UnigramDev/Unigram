@@ -703,8 +703,8 @@ puts its .NET Native output.
 
 ### Still to do
 
-- [ ] **ARM64 has never been built at all** — not the wapproj, not the app, not the native
-      projects. `AppxBundlePlatforms` is x64 only.
+- [x] **ARM64 builds.** Done 2026-08-25 from a fresh clone: the native projects, ILC, and a
+      bundle carrying both architectures. `Build.Modern.ps1 -Platform x64,ARM64` drives it.
 - [ ] `UpdateManifest.ps1` before any bundle meant to supersede a previous one; it stamps the
       version from `git rev-list --count HEAD`, and without it the new bundle overwrites the old
       one at the same path.

@@ -43,12 +43,19 @@ be a submodule is an ordinary clone at `C:\Source\vlc`.
 - `deps/webrtc/build.ps1 -SkipAcquire` and `pack.ps1`, run 2026-08-19: all four configurations
   built clean under Visual Studio 18 and were published as `webrtc-2026-08-19-1`. The acquire half
   — fetch, sync, patch — is still unexercised.
+- **A build that downloads from the releases**, 2026-08-25. Nothing was seeded: vcpkg fetched
+  `libvlc-3.0.23-x64-uwp.zip` and both webrtc x64 archives from the release URLs and verified them.
+  Only the webrtc headers came from the cache.
+- **A build from a fresh clone**, 2026-08-25: `tdjson\build.ps1 -arch x64,ARM64` followed by
+  `Build.Modern.ps1 -Identity Original -Mode StoreUpload -Platform x64,ARM64`. TDLib took 28.5
+  minutes for both architectures, x64 compiled and ARM64 out of the binary cache, and the bundle
+  carried x64 and ARM64 with all thirty language packs.
+- **The per-triplet install roots hold.** The ARM64 pass handled 26 `arm64-uwp` packages and no
+  `x64-uwp` one, and the log records no removal. Neither the app build nor a later TDLib rebuild
+  changed a byte of either tree — vcpkg's install returned in under a millisecond both times.
 
 ## Not verified
 
-- **A build that downloads from the releases.** Every build so far resolved from archives seeded
-  into `C:\Source\vcpkg\downloads`. Clearing those seven files and rebuilding is the test that a
-  contributor can do this at all, and it takes minutes.
 - **The packaging wizard.** The two experimental settings in `8aebeaa71` were only exercised from
   the command line.
 
@@ -60,18 +67,14 @@ be a submodule is an ordinary clone at `C:\Source\vlc`.
    submodule pin cannot move and a fresh clone will not compile Telegram.Native.Calls. **This is
    the only thing blocking someone else from building.**
 2. The download test above.
-3. `Build.ps1` is broken twice over: it calls `msbuild Telegram.sln`, which was renamed to
-   `.slnx`, and passes `PackageCertificateThumbprint=60FFAEE6...` for a certificate that expired
-   and was never renewed. Everything is signed with `Telegram.Msix_TemporaryKey.pfx` now, so the
-   thumbprint branch can go.
-4. Decide on the experimental settings. The control run for the double build is: revert
+3. Decide on the experimental settings. The control run for the double build is: revert
    `ShouldUnsetParentConfigurationAndPlatform` in the wapproj, rebuild, and look for two
    `Telegram -> ...Telegram.exe` lines and two `Generating native code` passes instead of one.
    `release.binlog` in the repository root is the "after" half.
-5. `Libraries/tdjson` still has no answer for the confidential prerelease drops. The design was
+4. `Libraries/tdjson` still has no answer for the confidential prerelease drops. The design was
    `$(TdjsonDir)` pointing outside the repository, with the drops never inside the working tree.
    `td_api.bak.tl` is currently untracked **and unignored**.
-6. The TDLib ABI patch to `td_json_client` exists only in the working tree of the submodule.
+5. The TDLib ABI patch to `td_json_client` exists only in the working tree of the submodule.
    Same class of problem as the wasapi change and the unpushed webrtc branch, both fixed today.
 
 ## Traps worth not rediscovering
