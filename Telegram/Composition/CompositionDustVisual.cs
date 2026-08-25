@@ -111,30 +111,16 @@ namespace Telegram.Composition
             surface.SourceOffset = Vector2.Zero;
             surface.SourceSize = size;
 
-#if NET9_0_OR_GREATER
-            var partner = surface.As<ICompositionVisualSurfacePartner>();
-            if (partner == null)
+            if (!surface.TryGetPartner(out var partner))
             {
                 return false;
             }
 
-            partner.set_Stretch(CompositionStretch.Fill);
+            partner.SetStretch(CompositionStretch.Fill);
             // A visual surface is a raster, and without this dwm picks the size: the burst would
             // sample an upscale on a scaled display.
-            partner.set_RealizationSize(size * (float)scale * SnapshotScale);
+            partner.SetRealizationSize(size * (float)scale * SnapshotScale);
             partner.Freeze();
-#else
-            if (surface is object obj && obj is ICompositionVisualSurfacePartner partner)
-            {
-                partner.Stretch = CompositionStretch.Fill;
-                partner.RealizationSize = size * (float)scale * SnapshotScale;
-                partner.Freeze();
-            }
-            else
-            {
-                return false;
-            }
-#endif
 
             Discard(id);
             _snapshots[id] = new Snapshot(surface, size);

@@ -8,6 +8,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Composition;
 using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -129,14 +130,11 @@ namespace Telegram.Common
             dropShadowVS.SourceVisual = dropShadowVisual;
             dropShadowVS.SourceSize = dropShadowVisual.Size;
 
-            if (dropShadowVS is object obj && obj is ICompositionVisualSurfacePartner visualSurfacePartner)
+            if (dropShadowVS.TryGetPartner(out var visualSurfacePartner))
             {
                 // TODO: Make sure to test in high DPI
-#if NET9_0_OR_GREATER
-                visualSurfacePartner.set_RealizationSize(dropShadowVisual.Size); // Required to avoid dwm.exe picking an arbitrary size that will cause bluriness.
-#else
-                visualSurfacePartner.RealizationSize = dropShadowVisual.Size; // Required to avoid dwm.exe picking an arbitrary size that will cause bluriness.
-#endif
+                // Required to avoid dwm.exe picking an arbitrary size that will cause bluriness.
+                visualSurfacePartner.SetRealizationSize(dropShadowVisual.Size);
             }
 
             var dropShadowBrush = compositor.CreateSurfaceBrush(dropShadowVS);

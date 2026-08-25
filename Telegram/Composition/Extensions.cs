@@ -10,6 +10,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -65,6 +66,62 @@ namespace Telegram.Composition
 {
     public static class CompositionExtensions
     {
+        /// <summary>
+        /// Resolves the private <see cref="ICompositionVisualSurfacePartner"/> on a visual surface,
+        /// or returns false where the interface does not exist.
+        /// </summary>
+        /// <remarks>
+        /// Older Windows builds do not have this interface, and on CsWinRT the obvious spellings
+        /// both go wrong: <c>As&lt;T&gt;</c> throws on a failed QI rather than returning null, so a
+        /// null check after it is dead code, and <c>is</c> never matches at all because the
+        /// interface is a GeneratedComInterface rather than a projected one. Catching the throw is
+        /// not enough either - WatchDog reports InvalidCastException at first chance, so a handled
+        /// miss still files a crash report. Probe with a raw QueryInterface instead; once that has
+        /// succeeded <c>As&lt;T&gt;</c> cannot throw.
+        /// </remarks>
+        public static bool TryGetPartner(this CompositionVisualSurface surface, out ICompositionVisualSurfacePartner partner)
+        {
+#if NET9_0_OR_GREATER
+            // NativeObject is the RCW's own reference and is not ours to dispose. The pointer TryAs
+            // hands back on success is, and it is only wanted as proof that the QI would work.
+            if (surface is IWinRTObject native
+                && native.NativeObject.TryAs(typeof(ICompositionVisualSurfacePartner).GUID, out var abi) >= 0)
+            {
+                Marshal.Release(abi);
+
+                partner = surface.As<ICompositionVisualSurfacePartner>();
+                return true;
+            }
+
+            partner = null;
+            return false;
+#else
+            partner = surface as ICompositionVisualSurfacePartner;
+            return partner != null;
+#endif
+        }
+
+        // The interface is declared as properties on .NET Native and as accessor methods under
+        // CsWinRT, where a GeneratedComInterface cannot carry properties. These keep that split out
+        // of the call sites.
+        public static void SetRealizationSize(this ICompositionVisualSurfacePartner partner, Vector2 value)
+        {
+#if NET9_0_OR_GREATER
+            partner.set_RealizationSize(value);
+#else
+            partner.RealizationSize = value;
+#endif
+        }
+
+        public static void SetStretch(this ICompositionVisualSurfacePartner partner, CompositionStretch value)
+        {
+#if NET9_0_OR_GREATER
+            partner.set_Stretch(value);
+#else
+            partner.Stretch = value;
+#endif
+        }
+
         public static CompositionBrush CreateRedirectBrush(this Compositor compositor, UIElement source, Vector2 sourceOffset, Vector2 sourceSize, bool freeze = false)
         {
             // Create a VisualSurface positioned at the same location as this control and feed that
@@ -79,25 +136,12 @@ namespace Telegram.Composition
             surfaceBrush.Surface = surface;
             surfaceBrush.Stretch = CompositionStretch.Fill;
 
-#if NET9_0_OR_GREATER
-            if (freeze)
+            if (freeze && surface.TryGetPartner(out var partner))
             {
-                var partner = surface.As<ICompositionVisualSurfacePartner>();
-                if (partner != null)
-                {
-                    partner.set_Stretch(CompositionStretch.Fill);
-                    partner.set_RealizationSize(sourceSize * (float)source.XamlRoot.RasterizationScale);
-                    partner.Freeze();
-                }
-            }
-#else
-            if (freeze && surface is object obj && obj is ICompositionVisualSurfacePartner partner)
-            {
-                partner.Stretch = CompositionStretch.Fill;
-                partner.RealizationSize = sourceSize * (float)source.XamlRoot.RasterizationScale;
+                partner.SetStretch(CompositionStretch.Fill);
+                partner.SetRealizationSize(sourceSize * (float)source.XamlRoot.RasterizationScale);
                 partner.Freeze();
             }
-#endif
 
             return surfaceBrush;
         }
