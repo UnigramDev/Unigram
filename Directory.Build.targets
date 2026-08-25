@@ -65,6 +65,31 @@
   </Target>
 
   <!--
+    The integration skips its install whenever its stamp file is newer than the manifest, so an
+    installed tree emptied behind its back - by hand, or by a vcpkg install pointed at the same
+    root for another triplet - is never noticed, and the build fails on a missing header instead.
+    Drop the stamp when the tree is gone, and the install runs again.
+  -->
+  <Target Name="TelegramInvalidateVcpkgStamp" BeforeTargets="VcpkgInstallManifestDependencies"
+          Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And !Exists('$(TelegramVcpkgInstalledDir)include')">
+    <ItemGroup>
+      <_TelegramVcpkgStamp Include="$(VcpkgInstalledDir).msbuildstamp-$(TelegramVcpkgTriplet)*" />
+    </ItemGroup>
+    <Delete Files="@(_TelegramVcpkgStamp)" />
+  </Target>
+
+  <!--
+    The safety net for the above, since the stamp file is vcpkg's private detail: if the tree is
+    still not there once the install has had its chance, say so here rather than in whichever
+    header happens to be included first.
+  -->
+  <Target Name="TelegramCheckVcpkgInstalled" AfterTargets="VcpkgInstallManifestDependencies"
+          Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj'">
+    <Error Condition="!Exists('$(TelegramVcpkgInstalledDir)include')"
+           Text="vcpkg installed nothing into $(TelegramVcpkgInstalledDir). Delete $(VcpkgInstalledDir) and build again." />
+  </Target>
+
+  <!--
     Put the vcpkg runtime DLLs both in the output folder (so F5 works) and in the package.
     Both destinations are fed from ReferenceCopyLocalPaths: the native projects copy them next to
     their own binary and hand them to the app through CopyLocalFilesOutputGroup, and the app adds
@@ -87,7 +112,10 @@
                               Exclude="$(TelegramVcpkgBinDir)zlib1.dll;$(TelegramVcpkgBinDir)libcrypto-3*.dll;$(TelegramVcpkgBinDir)libssl-3*.dll;$(TelegramVcpkgBinDir)legacy.dll" />
       <ReferenceCopyLocalPaths Include="@(TelegramVcpkgRuntimeDll)" />
     </ItemGroup>
-    <Warning Condition="'@(TelegramVcpkgRuntimeDll)' == ''"
+    <!-- Only the app projects warn. A native project reaches ResolveReferences before its own
+         vcpkg install has run, so on a tree that has yet to be restored it would always fire;
+         TelegramCheckVcpkgInstalled is what covers those. -->
+    <Warning Condition="'@(TelegramVcpkgRuntimeDll)' == '' And '$(MSBuildProjectExtension)' == '.csproj'"
              Text="No vcpkg runtime DLLs found in $(TelegramVcpkgBinDir). The package will be missing them at runtime." />
   </Target>
 

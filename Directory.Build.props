@@ -29,11 +29,13 @@
     <TelegramVcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-uwp</TelegramVcpkgTriplet>
     <TelegramVcpkgTriplet Condition="'$(Platform)' == 'ARM64'">arm64-uwp</TelegramVcpkgTriplet>
 
-    <!-- Left to itself the MSBuild integration appends the triplet twice (it passes
-         vcpkg_installed\<triplet> as the install root and vcpkg creates <triplet> inside it),
-         which would not match the layout CMake uses for the TDLib build. Pin it so both land in
-         the same tree and openssl is built once. -->
-    <VcpkgInstalledDir>$(TelegramRoot)vcpkg_installed\</VcpkgInstalledDir>
+    <!-- One install root per triplet - the layout the integration uses left to itself, where the
+         triplet appears twice because vcpkg creates <triplet> inside the root it is handed. It
+         cannot be flattened into a shared root: a manifest install root belongs to a single
+         triplet, and vcpkg purges whatever is outside the plan it just computed, so building
+         ARM64 would take the x64 packages with it. The TDLib build is pointed at the same roots,
+         so openssl is still built once per triplet and shared with tdjson.dll. -->
+    <VcpkgInstalledDir>$(TelegramRoot)vcpkg_installed\$(TelegramVcpkgTriplet)\</VcpkgInstalledDir>
     <TelegramVcpkgInstalledDir>$(VcpkgInstalledDir)$(TelegramVcpkgTriplet)\</TelegramVcpkgInstalledDir>
     <TelegramVcpkgBinDir Condition="'$(Configuration)' == 'Debug'">$(TelegramVcpkgInstalledDir)debug\bin\</TelegramVcpkgBinDir>
     <TelegramVcpkgBinDir Condition="'$(TelegramVcpkgBinDir)' == ''">$(TelegramVcpkgInstalledDir)bin\</TelegramVcpkgBinDir>
