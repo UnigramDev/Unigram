@@ -8,7 +8,6 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;

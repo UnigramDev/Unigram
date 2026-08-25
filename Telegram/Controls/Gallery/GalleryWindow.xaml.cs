@@ -1359,7 +1359,7 @@ namespace Telegram.Controls.Gallery
         // analysing the gallery alone would report the whole message tree as leaked,
         // and vice versa. MainPage.DebugAnalyzeOrphans makes the single call over
         // every area's roots at once.
-        public static IEnumerable<object> DebugRoots()
+        public static System.Collections.Generic.IEnumerable<object> DebugRoots()
         {
             if (s_current != null && s_current.TryGetTarget(out var window))
             {
@@ -1378,7 +1378,7 @@ namespace Telegram.Controls.Gallery
 
         // Returns nothing for types this area does not own, so it composes with the
         // other areas' descents.
-        internal static IEnumerable<object> DebugChildrenOf(object node)
+        internal static System.Collections.Generic.IEnumerable<object> DebugChildrenOf(object node)
         {
             return node switch
             {
@@ -1386,14 +1386,14 @@ namespace Telegram.Controls.Gallery
                 GalleryContent x => x.DebugChildren(),
                 GalleryCompactOverlay x => x.DebugChildren(),
                 GalleryTransportControls x => x.DebugChildren(),
-                MessageTextBlock x => x.DebugChildren(),
+                Messages.MessageTextBlock x => x.DebugChildren(),
                 // VideoPlayerBase is a leaf: it is the thing being looked for, and
                 // it owns nothing else that is registered.
                 _ => Array.Empty<object>()
             };
         }
 
-        internal IEnumerable<object> DebugChildren()
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
         {
             // The three carousel slots, not GetElement: that maps a direction onto
             // whichever slot currently holds it, and a leak analysis wants all of

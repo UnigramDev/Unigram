@@ -105,15 +105,6 @@ namespace Telegram.Views.Host
             Navigation.Content = _navigationService.Frame;
 
             VisualUtilities.DropShadow(ThemeShadow);
-
-            //if (ApiInfo.IsXbox)
-            //{
-            //    var application = ApplicationView.GetForCurrentView();
-            //    application.VisibleBoundsChanged += OnVisibleBoundsChanged;
-            //    application.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
-
-            //    OnVisibleBoundsChanged(application, null);
-            //}
         }
 
         public INavigationService NavigationService

@@ -1831,14 +1831,6 @@ namespace Telegram.Views.Calls
 
         private void Participant_Click(object sender, RoutedEventArgs e)
         {
-            //var view = ApplicationView.GetForCurrentView();
-            //var size = view.VisibleBounds;
-
-            //if (size.Width < 500)
-            //{
-            //    view.TryResizeView(new Size(780, size.Height + 1));
-            //}
-
             var cell = sender as GroupCallParticipantGridCell;
             if (cell == null)
             {

@@ -203,13 +203,6 @@ namespace Telegram.ViewModels.Settings
             var response = await _localeService.SetLanguageAsync(info, true);
             if (response is Ok)
             {
-                //ApplicationLanguages.PrimaryLanguageOverride = info.Id;
-                //ResourceContext.GetForCurrentView().Reset();
-                //ResourceContext.GetForViewIndependentUse().Reset();
-
-                //TLWindowContext.Current.NavigationServices.Remove(NavigationService);
-                //BootStrapper.Current.NavigationService.Reset();
-
                 WindowContext.ForEach(window =>
                 {
                     ResourceContext.GetForCurrentView().Reset();

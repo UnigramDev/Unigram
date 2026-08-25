@@ -8,7 +8,6 @@
 using System;
 using System.Linq;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;

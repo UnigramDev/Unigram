@@ -13,7 +13,6 @@ using Telegram.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {

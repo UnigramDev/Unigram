@@ -604,7 +604,7 @@ namespace Telegram.ViewModels
         public RestrictionInfo RestrictionInfo { get; protected set; }
         public double AutoDeleteIn { get; protected set; }
         public string SummaryLanguageCode { get; protected set; }
-        
+
         /// <summary>
         /// What an ephemeral content hides. TDLib requires its content to be shown in place of the
         /// message's own, so <see cref="Content"/> and the three properties beside it carry the

@@ -8,6 +8,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -19,9 +20,9 @@ using Telegram.Services.Keyboard;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views;
+using Telegram.Views.Authorization;
 using Telegram.Views.Calls;
 using Telegram.Views.Host;
-using Telegram.Views.Authorization;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -31,7 +32,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using System.ComponentModel;
 
 namespace Telegram.Navigation
 {
@@ -324,7 +324,7 @@ namespace Telegram.Navigation
             {
                 return;
             }
-            
+
             if (Content is IPopupHost content)
             {
                 content.PopupOpened();
@@ -756,7 +756,9 @@ namespace Telegram.Navigation
                 control.Unloaded -= OnUnloaded;
             }
 
+#if NET9_0_OR_GREATER
             FormattedTextBlock.ReleaseNative(_xamlRoot);
+#endif
         }
 
         /// <summary>

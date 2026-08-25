@@ -2010,6 +2010,35 @@ namespace System.Runtime.CompilerServices
             table.Remove(key);
             table.Add(key, value);
         }
+
+        public static TValue GetOrAdd<TKey, TValue>(this ConditionalWeakTable<TKey, TValue> table, TKey key, Func<TKey, TValue> valueFactory)
+            where TKey : class
+            where TValue : class
+        {
+            if (table.TryGetValue(key, out TValue value))
+            {
+                return value;
+            }
+
+            value = valueFactory(key);
+            table.Add(key, value);
+
+            return value;
+        }
+
+        public static TValue GetOrAdd<TKey, TValue>(this ConditionalWeakTable<TKey, TValue> table, TKey key, TValue value)
+            where TKey : class
+            where TValue : class
+        {
+            if (table.TryGetValue(key, out value))
+            {
+                return value;
+            }
+
+            table.Add(key, value);
+
+            return value;
+        }
     }
 }
 #endif

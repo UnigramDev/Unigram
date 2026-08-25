@@ -37,7 +37,7 @@ namespace Telegram.Controls.Gallery
         // so GalleryWindow's analysis can tell those two cases apart.
         internal static GalleryCompactOverlay DebugCurrent => _current;
 
-        internal IEnumerable<object> DebugChildren()
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
         {
             yield return Controls;
             yield return _player;

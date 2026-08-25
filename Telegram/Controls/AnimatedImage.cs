@@ -1825,7 +1825,7 @@ namespace Telegram.Controls
 
                 if (_closed)
                 {
-                    _loaders.Remove(_window.XamlRoot, out _);
+                    _loaders.Remove(_window.XamlRoot);
                 }
             }
         }

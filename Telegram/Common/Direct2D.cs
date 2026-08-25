@@ -14,7 +14,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 

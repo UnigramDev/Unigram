@@ -8,7 +8,6 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Services;
-using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Media.Capture;
 
