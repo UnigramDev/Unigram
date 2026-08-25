@@ -87,6 +87,20 @@
     <AppxFilterOutUnusedLanguagesResourceFileMaps>false</AppxFilterOutUnusedLanguagesResourceFileMaps>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <!--
+      Taken from a private property instead of -p:UapAppxPackageBuildMode, which on a solution build
+      is a global one and so reaches Telegram.Modern.csproj as well - where it cannot be overridden.
+
+      That project has the single-project MSIX tooling on, and its GenerateUploadMsixPackage target
+      keys off nothing but BuildAppxUploadPackageForUap: a store mode there makes the app package
+      and sign itself, a second time and beside this one, and fail with APPX0101 for want of a
+      signing key. Giving it a key would only turn the failure into a wasted ILC-sized packaging
+      pass. SideloadOnly leaves that flag false, which is why only the store modes ever broke.
+
+      Build.Modern.ps1 passes ModernPackageBuildMode. A Visual Studio packaging wizard build still
+      works: it sets the real property globally, and a global one wins over this line.
+    -->
+    <UapAppxPackageBuildMode Condition="'$(ModernPackageBuildMode)' != ''">$(ModernPackageBuildMode)</UapAppxPackageBuildMode>
     <!-- On, as in Telegram.Msix. A sideload build does produce an .appxsym - the shipping bundles
          have one each - and without it a tester's crash cannot be symbolicated at all, which is
          what happened to 12.10.0.13967. The ILC pdb is ~300 MB, against ~180 MB for the .NET
