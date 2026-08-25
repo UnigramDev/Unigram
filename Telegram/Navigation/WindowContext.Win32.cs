@@ -172,6 +172,9 @@ namespace Telegram.Navigation
 
             _island.Filter = null;
             _inputListener.Release();
+
+            _backdrop?.Release();
+            _backdrop = null;
             _island.Close();
 
             return Task.CompletedTask;
@@ -531,9 +534,16 @@ namespace Telegram.Navigation
 
         #endregion
 
+        private WindowBackdrop _backdrop;
+
+        /// <summary>
+        /// WinUI 2's BackdropMaterial targets a Window this host does not have, so the backdrop is
+        /// asked of DWM against the HWND instead - see gate 1.10. The fallback rules are its own,
+        /// though, and WindowBackdrop keeps them.
+        /// </summary>
         partial void SetBackdropMaterial(WindowPresenter content)
         {
-            Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(content, true);
+            _backdrop ??= new WindowBackdrop(_island.Handle, content);
         }
 
         /// <summary>

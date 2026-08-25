@@ -195,6 +195,46 @@ namespace Telegram.Host
         public const int DWMSBT_TRANSIENTWINDOW = 3; // Acrylic
         public const int DWMSBT_TABBEDWINDOW = 4;    // Mica Alt
 
+        /// <summary>
+        /// Mica needs Windows 11. DWMWA_SYSTEMBACKDROP_TYPE is documented from 22621; on 22000 it
+        /// is accepted and does nothing, and DWMWA_MICA_EFFECT is the only route - which Terminal
+        /// never bothered to implement.
+        /// </summary>
+        public static bool IsBackdropSupported => Environment.OSVersion.Version.Build >= 22000;
+
+        /// <summary>
+        /// Which tint DWM draws the backdrop in, and which colours it paints the frame with. It has
+        /// to be told: left alone it follows the system theme, so an app forced to dark against a
+        /// light system gets a light Mica behind a dark window.
+        /// </summary>
+        public static bool SetDarkMode(IntPtr hwnd, bool dark)
+        {
+            if (hwnd == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            var value = dark ? 1 : 0;
+            return DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref value, sizeof(int)) >= 0;
+        }
+
+        public static bool SetBackdrop(IntPtr hwnd, bool enabled)
+        {
+            if (hwnd == IntPtr.Zero || !IsBackdropSupported)
+            {
+                return false;
+            }
+
+            if (Environment.OSVersion.Version.Build >= 22621)
+            {
+                var backdrop = enabled ? DWMSBT_MAINWINDOW : DWMSBT_NONE;
+                return DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, ref backdrop, sizeof(int)) >= 0;
+            }
+
+            var legacy = enabled ? 1 : 0;
+            return DwmSetWindowAttribute(hwnd, DWMWA_MICA_EFFECT, ref legacy, sizeof(int)) >= 0;
+        }
+
         public const uint WS_OVERLAPPEDWINDOW = 0x00CF0000;
         public const uint WS_THICKFRAME = 0x00040000;
         public const uint WS_MAXIMIZEBOX = 0x00010000;

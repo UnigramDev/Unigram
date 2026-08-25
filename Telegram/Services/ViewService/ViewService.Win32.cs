@@ -123,7 +123,7 @@ namespace Telegram.Services
                 Win32.CW_USEDEFAULT, Win32.CW_USEDEFAULT,
                 (int)(width > 0 ? width : DefaultWidth),
                 (int)(height > 0 ? height : DefaultHeight),
-                null, nonClient: true, persistedId: persistedId);
+                null, transparent: true, nonClient: true, persistedId: persistedId);
 
             return new WindowContext(island);
         }

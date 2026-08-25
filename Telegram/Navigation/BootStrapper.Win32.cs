@@ -126,7 +126,7 @@ namespace Telegram.Navigation
 
             var island = IslandWindow.Create("Telegram",
                 Win32.CW_USEDEFAULT, Win32.CW_USEDEFAULT, DefaultWidth, DefaultHeight,
-                null, nonClient: true, persistedId: persistedId);
+                null, transparent: true, nonClient: true, persistedId: persistedId);
 
             return new WindowContext(island);
         }
