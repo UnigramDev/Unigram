@@ -67,6 +67,24 @@
     <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <DefaultLanguage>en</DefaultLanguage>
+    <!--
+      Without this the bundle carries no language packages at all, and Windows sees an
+      English-only app.
+
+      A wapproj does not expand Resource Language="x-generate" from the PRI it builds - it merges
+      the generated manifests of its UAP project references, and takes their expanded Resources
+      with it. Telegram.csproj is such a reference and contributes all thirty languages;
+      Telegram.Modern.csproj is an ordinary .NETCoreApp reference and contributes nothing, so the
+      manifest here keeps only the default language, however many the PRI holds. The packaging
+      targets then drop every resource file map whose language the manifest does not name.
+
+      The split itself was always right - obj\x64\Release\split.language-*.pri are all there, they
+      were just never packed. This packages what the split produced, which is the shape
+      Telegram.Msix bundles: near-empty per-language packages that exist to declare support,
+      since the strings themselves come from the API and not from the .resw. As there, the main
+      package still declares only EN; the languages are declared by the packs.
+    -->
+    <AppxFilterOutUnusedLanguagesResourceFileMaps>false</AppxFilterOutUnusedLanguagesResourceFileMaps>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <!-- On, as in Telegram.Msix. A sideload build does produce an .appxsym - the shipping bundles
