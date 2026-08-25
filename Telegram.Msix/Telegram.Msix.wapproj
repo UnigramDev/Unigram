@@ -77,13 +77,12 @@
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
   <PropertyGroup>
-    <PackageCertificateKeyFile>Telegram.Msix_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>..\Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
@@ -91,9 +90,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Telegram.Stub\Telegram.Stub.csproj" />
     <ProjectReference Include="..\Telegram\Telegram.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Telegram.Msix_TemporaryKey.pfx" />
   </ItemGroup>
   <!--<ItemGroup>
     <Content Include="clrcompression.dll" />

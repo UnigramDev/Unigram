@@ -61,7 +61,6 @@ if (-not (Test-Path $msbuild)) {
     throw "MSBuild.exe not found at $msbuild"
 }
 
-
 # The two native projects still restore through packages.config, which -restore does not cover on
 # its own: it drives NuGet's PackageReference restore, and a packages.config project is skipped
 # silently. The build then fails on the CppWinRT .props it imports by path, telling you to run a
@@ -103,7 +102,6 @@ Invoke-MSBuild -Description "Telegram.Win32 ($Configuration|$Platform, $Identity
       '-p:AppxBundle=Always',
       '-p:GenerateAppxPackageOnBuild=true',
       '-p:AppxPackageSigningEnabled=True',
-      '-p:PackageCertificateKeyFile=..\Telegram.Msix\Telegram.Msix_TemporaryKey.pfx',
       "-p:Win32Identity=$Identity") + $common)
 
 $packages = Join-Path $PSScriptRoot 'Telegram\AppPackages'
