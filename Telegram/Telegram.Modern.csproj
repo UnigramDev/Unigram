@@ -1,4 +1,4 @@
-<!--
+﻿<!--
   Sdk.props is imported by hand rather than through the Sdk attribute because three properties
   have to be set before it: the two output paths, so this project does not share obj\ and bin\
   with Telegram.csproj, and DefaultItemExcludes, because the default globs would otherwise
@@ -196,6 +196,7 @@
     <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <AppxManifest Remove="obj\modern\Package.Alternative.appxmanifest" />
     <None Include="Assets\i420.hlsl" />
   </ItemGroup>
 
