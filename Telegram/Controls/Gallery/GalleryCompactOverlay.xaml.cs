@@ -228,7 +228,7 @@ namespace Telegram.Controls.Gallery
                 }
             }
 
-            _ = GalleryWindow.ShowAsync(XamlRoot, _viewModel, null, 0, _player);
+            _ = GalleryWindow.ShowAsync(_viewModel.XamlRoot, _viewModel, null, 0, _player);
 
             // Close the window with proper error handling
             try
