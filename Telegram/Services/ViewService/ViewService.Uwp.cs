@@ -27,20 +27,29 @@ namespace Telegram.Services
         internal static void OnWindowCreated()
         {
             var view = CoreApplication.GetCurrentView();
-            if (!view.IsMain && !view.IsHosted)
+            if (view.IsMain)
             {
-                var control = ViewLifetimeControl.GetForCurrentView();
-                //This one time it should be made manually, as after Consolidate event fires the inner reference number should become zero
-                control.StartViewInUse();
+                // The generated Main already installed one on this thread.
+                return;
+            }
 
 #if NET9_0_OR_GREATER
-                var context = new global::Windows.System.DispatcherQueueSynchronizationContext(global::Windows.System.DispatcherQueue.GetForCurrentThread());
+            var context = new global::Windows.System.DispatcherQueueSynchronizationContext(global::Windows.System.DispatcherQueue.GetForCurrentThread());
 #else
-                var context = SynchronizationContext.Current;
+            var context = SynchronizationContext.Current;
 #endif
-                //This is necessary to not make control.StartViewInUse()/control.StopViewInUse() manually on each and every async call. Facade will do it for you
-                SynchronizationContext.SetSynchronizationContext(new SecondaryViewSynchronizationContextDecorator(control, context));
+
+            if (view.IsHosted)
+            {
+                // No ViewLifetimeControl here - ApplicationView.GetForCurrentView throws on a hosted
+                // view - but the thread still needs a context or its awaits resume off it.
+                SynchronizationContext.SetSynchronizationContext(context);
+                return;
             }
+
+            var control = ViewLifetimeControl.GetForCurrentView();
+            control.StartViewInUse();
+            SynchronizationContext.SetSynchronizationContext(new SecondaryViewSynchronizationContextDecorator(control, context));
         }
 
         public Task<WindowContext> OpenAsync(ViewServiceOptions options)
