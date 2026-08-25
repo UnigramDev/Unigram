@@ -52,6 +52,8 @@ namespace Telegram.ViewModels
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await ClientService.SendAsync(new GetChatJoinRequests(_chat.Id, _inviteLink, string.Empty, _offset, 10));

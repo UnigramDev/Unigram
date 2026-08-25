@@ -89,6 +89,8 @@ namespace Telegram.ViewModels.Settings
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await ClientService.SendAsync(new GetLoginPasskeys());

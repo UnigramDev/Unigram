@@ -147,6 +147,8 @@ namespace Telegram.ViewModels.Chats
 
             public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
+                Logger.Info();
+
                 var totalCount = 0u;
 
                 var response = await _clientService.SendAsync(new GetConnectedAffiliatePrograms(_affiliateType, _nextOffset, 20));
@@ -195,6 +197,8 @@ namespace Telegram.ViewModels.Chats
 
             public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
+                Logger.Info();
+
                 var totalCount = 0u;
 
                 var response = await _clientService.SendAsync(new SearchAffiliatePrograms(_affiliateType, _sortOrder, _nextOffset, 20));

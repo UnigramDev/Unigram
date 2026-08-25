@@ -76,6 +76,8 @@ namespace Telegram.ViewModels.Profile
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var total = 0u;
 
             var response = await ClientService.SendAsync(new GetChatSimilarChats(_chatId));

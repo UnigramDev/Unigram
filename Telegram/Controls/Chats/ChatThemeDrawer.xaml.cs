@@ -110,6 +110,8 @@ namespace Telegram.Controls.Chats
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await _viewModel.ClientService.SendAsync(new GetGiftChatThemes(_nextOffset, 10));

@@ -199,6 +199,8 @@ namespace Telegram.ViewModels
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var limits = Limits;
             if (limits == null)
             {

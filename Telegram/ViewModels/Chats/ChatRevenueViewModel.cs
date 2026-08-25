@@ -361,6 +361,8 @@ namespace Telegram.ViewModels.Chats
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await ClientService.SendAsync(new GetChatRevenueTransactions(Chat.Id, _nextOffset, 10));

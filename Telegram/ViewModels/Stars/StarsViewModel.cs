@@ -47,6 +47,8 @@ namespace Telegram.ViewModels.Stars
 
         public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             if (_subscriptions.HasMoreItems)
             {
                 return _subscriptions.LoadMoreItemsAsync(count);
@@ -98,6 +100,8 @@ namespace Telegram.ViewModels.Stars
 
             public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
+                Logger.Info();
+
                 var totalCount = 0u;
 
                 var response = await ClientService.SendAsync(new GetStarSubscriptions(false, _nextOffset));

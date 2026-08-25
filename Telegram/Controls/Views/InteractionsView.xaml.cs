@@ -185,6 +185,8 @@ namespace Telegram.Controls.Views
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             if (_nextOffset != null)

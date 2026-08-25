@@ -336,6 +336,8 @@ namespace Telegram.ViewModels.Settings
 
         public override async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await ClientService.SendAsync(new GetReceivedGifts(ClientService.MyId, 0, false, false, false, false, false, false, true, false, false, _nextOffset, 50));
@@ -454,6 +456,8 @@ namespace Telegram.ViewModels.Settings
 
         public override async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await ClientService.SendAsync(new GetUpgradedGiftEmojiStatuses());

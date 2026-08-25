@@ -135,6 +135,8 @@ namespace Telegram.Views.Chats.Popups
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var total = 0u;
 
             var response = await _viewModel.ClientService.SendAsync(new GetChatInviteLinkMembers(_chatId, _inviteLink.InviteLink, false, _offsetMember, 100));

@@ -117,6 +117,8 @@ namespace Telegram.ViewModels.Chats
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var total = 0u;
 
             var response = await ClientService.SendAsync(new GetChatBoosts(_chatId, false, _nextOffset, Items.Count > 5 ? 50 : Items.Count > 0 ? 45 : 5));

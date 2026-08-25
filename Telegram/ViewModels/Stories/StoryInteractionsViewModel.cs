@@ -183,6 +183,8 @@ namespace Telegram.ViewModels
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             _nextToken?.Cancel();
 
             if (count == 0 && Items.Count > 0)

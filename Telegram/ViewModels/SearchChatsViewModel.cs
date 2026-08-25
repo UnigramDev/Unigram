@@ -550,6 +550,8 @@ namespace Telegram.ViewModels
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             await LoadMessagesAsync(_query.Value, _messagesToken);
             return new LoadMoreItemsResult { Count = 50 };
         }

@@ -56,6 +56,8 @@ namespace Telegram.ViewModels.Profile
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             using var guard = await _loadMoreLock.WaitAsync();
 
             var totalCount = 0u;

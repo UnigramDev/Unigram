@@ -451,6 +451,8 @@ namespace Telegram.ViewModels.Chats
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
             var canBeEdited = false;
             var botPreview = false;
@@ -620,6 +622,8 @@ namespace Telegram.ViewModels.Chats
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await ClientService.SendAsync(new GetStoryAlbumStories(_viewModel.Chat.Id, Id, _fromStoryId, 50));

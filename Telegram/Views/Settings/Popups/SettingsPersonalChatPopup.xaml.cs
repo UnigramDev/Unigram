@@ -100,6 +100,8 @@ namespace Telegram.Views.Settings.Popups
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             var totalCount = 0u;
 
             var response = await _clientService.SendAsync(new GetSuitablePersonalChats());

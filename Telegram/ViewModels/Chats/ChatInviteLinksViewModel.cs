@@ -145,6 +145,8 @@ namespace Telegram.ViewModels.Chats
 
         public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            Logger.Info();
+
             if (_inviteLinks.HasMoreItems)
             {
                 return _inviteLinks.LoadMoreItemsAsync(count);
