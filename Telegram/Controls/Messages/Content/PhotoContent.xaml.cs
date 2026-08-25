@@ -315,10 +315,10 @@ namespace Telegram.Controls.Messages.Content
 
             if (photoSize != null)
             {
-                var width = photoSize.Width;
-                var height = photoSize.Height;
+                var width = 0;
+                var height = 0;
 
-                if (width > MaxWidth || height > MaxHeight)
+                if (photoSize.Width > MaxWidth || photoSize.Height > MaxHeight)
                 {
                     double ratioX = MaxWidth / photoSize.Width;
                     double ratioY = MaxHeight / photoSize.Height;
