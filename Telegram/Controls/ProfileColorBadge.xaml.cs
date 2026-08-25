@@ -6,6 +6,8 @@
 //
 
 using Microsoft.Graphics.Canvas.Geometry;
+using System.Diagnostics;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -53,11 +55,14 @@ namespace Telegram.Controls
             _accentColorId = nameId;
             _profileAccentColorId = profileId;
 
-            var theme = WindowContext.Current.ActualTheme;
+            if (ApiInfo.IsPackagedRelease)
+            {
+                Debug.Assert(WindowContext.Current.ActualTheme == ActualTheme);
+            }
 
             if (clientService.TryGetProfileColor(profileId, out ProfileColor profile))
             {
-                var colors = profile.ForTheme(theme);
+                var colors = profile.ForTheme(ActualTheme);
 
                 ProfilePrimary.Background = new SolidColorBrush(colors.PaletteColors[0]);
                 ProfileSecondary.Fill = colors.PaletteColors.Count > 1
@@ -81,7 +86,7 @@ namespace Telegram.Controls
             if (nameId >= 0)
             {
                 var name = clientService.GetAccentColor(nameId);
-                var color = name.ForTheme(theme);
+                var color = name.ForTheme(ActualTheme);
 
                 NamePrimary.Background = new SolidColorBrush(color[0]);
                 NameSecondary.Fill = color.Count > 1

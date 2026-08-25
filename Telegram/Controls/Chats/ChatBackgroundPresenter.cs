@@ -8,6 +8,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -163,6 +164,11 @@ namespace Telegram.Controls.Chats
                 _backgroundId = file.Id;
                 _thumbnail = thumbnail;
                 _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
+
+                if (ApiInfo.IsPackagedRelease)
+                {
+                    Debug.Assert(XamlRoot != null);
+                }
 
                 if (theme is ChatThemeGift gift)
                 {

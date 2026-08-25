@@ -8,6 +8,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
@@ -283,7 +284,12 @@ namespace Telegram.Views.Popups
 
         private void UpdateProfileAccentColor(Chat chat, int colorId, long customEmojiId, EmojiStatusTypeUpgradedGift upgradedGift)
         {
-            _actualTheme = WindowContext.Current.ActualTheme;
+            if (ApiInfo.IsPackagedRelease)
+            {
+                Debug.Assert(WindowContext.Current.ActualTheme == ActualTheme);
+            }
+
+            _actualTheme = ActualTheme;
 
             if (colorId != -1 || upgradedGift != null)
             {

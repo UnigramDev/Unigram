@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Controls;
@@ -73,7 +74,18 @@ namespace Telegram.Controls.Chats
             _aggregator?.Unsubscribe(this);
         }
 
-        private bool IsDarkTheme => WindowContext.Current.ActualTheme == ElementTheme.Dark;
+        private bool IsDarkTheme
+        {
+            get
+            {
+                if (ApiInfo.IsPackagedRelease)
+                {
+                    Debug.Assert(WindowContext.Current.ActualTheme == ActualTheme);
+                }
+
+                return ActualTheme == ElementTheme.Dark;
+            }
+        }
 
         public void Handle(UpdateDefaultBackground update)
         {
