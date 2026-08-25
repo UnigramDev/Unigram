@@ -76,15 +76,17 @@ namespace Telegram.Controls
 
         protected bool _clean = false;
 
-        // The frame the presenter last handed over, and its rotation. Deliberately cached
-        // rather than read back off the brush: ImageBrush.ImageSource resolves the bitmap's
-        // framework peer, and nothing managed roots that peer - PixelBuffer holds the
-        // WriteableBitmap as a plain COM reference from C++, which keeps it alive but not
-        // reachable, so the reference tracker collects it and the getter then fails with
-        // E_FAIL. The brush outlives the presenter whenever CleanOnSourceChanged is false,
-        // so there is no root that lives long enough to fix it the other way round.
-        private PixelBuffer _frame;
-        private double _frameRotation;
+        // The geometry of the frames the presenter is rendering, handed over rather than read
+        // back off the brush: ImageBrush.ImageSource resolves the bitmap's framework peer, and
+        // nothing managed roots that peer - PixelBuffer holds the WriteableBitmap as a plain COM
+        // reference from C++, which keeps it alive but not reachable, so the reference tracker
+        // collects it and the getter then fails with E_FAIL. The brush outlives the presenter
+        // whenever CleanOnSourceChanged is false, so there is no root that lives long enough to
+        // fix it the other way round. Numbers rather than the buffer: they are fixed for the
+        // presentation, and the buffers are recycled between threads.
+        private int _frameWidth;
+        private int _frameHeight;
+        private int _frameRotation;
 
         public AnimatedImage()
         {
@@ -596,15 +598,16 @@ namespace Telegram.Controls
             _state = PlayingState.Paused;
         }
 
-        public virtual void Invalidate(ImageBrush source, PixelBuffer frame)
+        public virtual void Invalidate(ImageBrush source, WriteableBitmap bitmap, int pixelWidth, int pixelHeight, int rotation)
         {
             if (IsDisconnected)
             {
                 return;
             }
 
-            _frame = frame;
-            _frameRotation = source?.Transform is CompositeTransform composite ? composite.Rotation : 0;
+            _frameWidth = pixelWidth;
+            _frameHeight = pixelHeight;
+            _frameRotation = rotation;
 
             if (source != null || CleanOnSourceChanged)
             {
@@ -617,7 +620,7 @@ namespace Telegram.Controls
 
                 if (DominantColor is SolidColorBrush dominantColor)
                 {
-                    dominantColor.Color = GetDominantColor(frame?.Source);
+                    dominantColor.Color = GetDominantColor(bitmap);
                 }
 
                 if (UpdateRotation(source))
@@ -684,7 +687,7 @@ namespace Telegram.Controls
 
         private bool UpdateRotation(ImageBrush source)
         {
-            if (_frame == null || source?.Transform is not CompositeTransform composite)
+            if (_frameWidth == 0 || _frameHeight == 0 || source?.Transform is not CompositeTransform composite)
             {
                 return false;
             }
@@ -694,13 +697,13 @@ namespace Telegram.Controls
 
             if (_frameRotation is 90 or 270)
             {
-                pixelWidth = _frame.PixelHeight;
-                pixelHeight = _frame.PixelWidth;
+                pixelWidth = _frameHeight;
+                pixelHeight = _frameWidth;
             }
             else
             {
-                pixelWidth = _frame.PixelWidth;
-                pixelHeight = _frame.PixelHeight;
+                pixelWidth = _frameWidth;
+                pixelHeight = _frameHeight;
             }
 
             var scaleX = ActualWidth / pixelWidth;
@@ -990,9 +993,14 @@ namespace Telegram.Controls
             _images.Add(canvas);
             LoadImpl();
 
-            if (_dirty)
+            // The buffer is read only to sample the dominant colour from it, never held: it is
+            // recycled between this thread and the worker queue, which is why Dispose swaps it.
+            var task = Volatile.Read(ref _task);
+            var frame = Volatile.Read(ref _foregroundPrev);
+
+            if (_dirty && task != null)
             {
-                canvas.Invalidate(_imageBrush, _foregroundPrev);
+                canvas.Invalidate(_imageBrush, frame?.Source, task.PixelWidth, task.PixelHeight, task.Rotation);
             }
         }
 
@@ -1001,7 +1009,7 @@ namespace Telegram.Controls
             _images.Remove(canvas);
             UnloadImpl(playing);
 
-            canvas.Invalidate(null, null);
+            canvas.Invalidate(null, null, 0, 0, 0);
         }
 
         private void LoadImpl()
@@ -1079,9 +1087,14 @@ namespace Telegram.Controls
         {
             PlayImpl();
 
-            if (_dirty)
+            // The buffer is read only to sample the dominant colour from it, never held: it is
+            // recycled between this thread and the worker queue, which is why Dispose swaps it.
+            var task = Volatile.Read(ref _task);
+            var frame = Volatile.Read(ref _foregroundPrev);
+
+            if (_dirty && task != null)
             {
-                canvas.Invalidate(_imageBrush, _foregroundPrev);
+                canvas.Invalidate(_imageBrush, frame?.Source, task.PixelWidth, task.PixelHeight, task.Rotation);
             }
         }
 
@@ -1517,6 +1530,10 @@ namespace Telegram.Controls
 
                 next.Source.Invalidate();
 
+                // Dispose clears _task from the worker queue after this frame was taken, so the
+                // read can come back null; a missing task only means no rotation to apply.
+                var task = Volatile.Read(ref _task);
+
                 if (_imageBrush == null)
                 {
                     _imageBrush = new ImageBrush
@@ -1526,8 +1543,7 @@ namespace Telegram.Controls
                         AlignmentY = AlignmentY.Center,
                     };
 
-                    var task = Volatile.Read(ref _task);
-                    if (task.Rotation != 0)
+                    if (task is { Rotation: not 0 })
                     {
                         _imageBrush.Transform = new CompositeTransform
                         {
@@ -1542,7 +1558,7 @@ namespace Telegram.Controls
                 {
                     foreach (var image in _images)
                     {
-                        image.Invalidate(_imageBrush, next);
+                        image.Invalidate(_imageBrush, next.Source, task?.PixelWidth ?? 0, task?.PixelHeight ?? 0, task?.Rotation ?? 0);
                     }
                 }
 
