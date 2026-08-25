@@ -297,17 +297,44 @@
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
+    <!-- Telegram.csproj gets these two through its vcxproj ProjectReferences, whose debug symbols
+         output group the packaging project asks for. Nothing here does, so the .appxsym carried no
+         symbols for either component. -->
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pdb" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pdb" />
   </ItemGroup>
 
   <ItemGroup>
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.pri" />
+    <!-- Same reason as tdjson.pdb below: Telegram.csproj finds this one through RAR, off its
+         RLottie winmd Reference, and there is no Reference here to find it from. -->
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.pdb" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
   </ItemGroup>
+
+  <!--
+    ILC's pdb, the only one that can read a stack in the app itself.
+
+    The NativeAOT targets take the IL pdb out of the publish list and put nothing back, so nothing
+    told the packaging project that the app had symbols at all. _CopyAotSymbols does drop the pdb
+    into the publish folder, but it runs after Publish, long after the publish item list the
+    packaging project reads has been computed - so the .appxsym never saw it.
+  -->
+  <Target Name="PublishNativeSymbols"
+          AfterTargets="ComputeResolvedFilesToPublishList"
+          Condition="'$(PublishAot)' == 'true'">
+    <ItemGroup>
+      <ResolvedFileToPublish Include="$(NativeOutputPath)$(TargetName)$(NativeSymbolExt)">
+        <RelativePath>$(TargetName)$(NativeSymbolExt)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
