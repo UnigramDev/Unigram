@@ -663,15 +663,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void SetScrollMode(ItemsUpdatingScrollMode mode, bool force)
+        public void SetFollowingEnd(bool value)
         {
-            var field = HistoryField;
-            if (field == null)
-            {
-                return;
-            }
-
-            field.SetScrollingMode(mode, force);
+            HistoryField?.SetFollowingEnd(value);
         }
 
         public override FormattedText GetFormattedText(bool clear = false, bool parseMarkdown = true)
@@ -913,12 +907,10 @@ namespace Telegram.ViewModels
 
                     if (direction == PanelScrollingDirection.Backward)
                     {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.PrependSlice(replied, true, out bool empty);
                     }
                     else
                     {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                         Items.AppendSlice(replied, true, out bool empty);
                     }
 
@@ -938,10 +930,6 @@ namespace Telegram.ViewModels
                             Items.RemoveAt(direction == PanelScrollingDirection.Backward ? Items.Count - 1 : 0);
                         }
                     }
-                }
-                else if (direction != PanelScrollingDirection.Backward)
-                {
-                    SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                 }
 
                 if (direction == PanelScrollingDirection.Backward)
@@ -1315,7 +1303,7 @@ namespace Telegram.ViewModels
                 pixel = slice.Pixel;
                 alignment = slice.Alignment;
 
-                SetScrollMode(slice.ScrollMode, true);
+                SetFollowingEnd(slice.IsFollowingEnd);
 
                 var messages = slice.Items;
                 var endReached = IsEndReached(messages);
@@ -1662,10 +1650,10 @@ namespace Telegram.ViewModels
                 }
 
                 IEnumerable<Message> values;
-                ItemsUpdatingScrollMode scrollMode;
+                bool following;
                 if (alignment == VerticalAlignment.Bottom)
                 {
-                    scrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                    following = true;
                     values = messages.MessagesValue;
                 }
                 else if (alignment == VerticalAlignment.Top)
@@ -1675,14 +1663,14 @@ namespace Telegram.ViewModels
                         firstVisibleIndex++;
                     }
 
-                    scrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+                    following = false;
                     values = firstVisibleIndex == -1 || messages.MessagesValue.Count == firstVisibleIndex + 1
                         ? messages.MessagesValue
                         : messages.MessagesValue.Take(firstVisibleIndex + 1);
                 }
                 else
                 {
-                    scrollMode = direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView;
+                    following = direction == ScrollIntoViewAlignment.Default;
                     values = messages.MessagesValue;
                 }
 
@@ -1699,7 +1687,7 @@ namespace Telegram.ViewModels
                 }
 
                 var replied = new MessageCollection(this, null, values, false, Type);
-                return new LoadSliceResult(replied, fromMessageId, scrollMode, alignment, pixel, unread, messages.TotalCount);
+                return new LoadSliceResult(replied, fromMessageId, following, alignment, pixel, unread, messages.TotalCount);
             }
 
             return null;
@@ -1707,11 +1695,11 @@ namespace Telegram.ViewModels
 
         private class LoadSliceResult
         {
-            public LoadSliceResult(MessageCollection items, long fromMessageId, ItemsUpdatingScrollMode scrollMode, VerticalAlignment alignment, double? pixel, bool unread, int totalCount)
+            public LoadSliceResult(MessageCollection items, long fromMessageId, bool following, VerticalAlignment alignment, double? pixel, bool unread, int totalCount)
             {
                 Items = items;
                 FromMessageId = fromMessageId;
-                ScrollMode = scrollMode;
+                IsFollowingEnd = following;
                 Alignment = alignment;
                 Pixel = pixel;
                 IsUnread = unread;
@@ -1722,7 +1710,7 @@ namespace Telegram.ViewModels
 
             public long FromMessageId { get; }
 
-            public ItemsUpdatingScrollMode ScrollMode { get; }
+            public bool IsFollowingEnd { get; }
 
             public VerticalAlignment Alignment { get; }
 
@@ -1795,8 +1783,7 @@ namespace Telegram.ViewModels
 
                 if (messages.MessagesValue.Count > 0)
                 {
-                    SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                    Logger.Debug("Setting scroll mode to KeepLastItemInView");
+                    SetFollowingEnd(true);
                 }
 
                 // The slice walks its source newest-first, inserting each one at the top,
@@ -1869,7 +1856,6 @@ namespace Telegram.ViewModels
                 }
 
                 field.ScrollToBottom();
-                field.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
 
@@ -1884,7 +1870,6 @@ namespace Telegram.ViewModels
                 }
 
                 field.ScrollToTop();
-                field.SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
             }
         }
 
@@ -2384,7 +2369,7 @@ namespace Telegram.ViewModels
                 Delegate?.DisableScreenCapture();
             }
 
-            SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            SetFollowingEnd(true);
             SetTranslating();
 
             if (state.TryRemove("access_token", out string accessToken))

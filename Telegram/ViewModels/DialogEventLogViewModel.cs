@@ -140,8 +140,7 @@ namespace Telegram.ViewModels
 
                 if (events.Events.Count > 0)
                 {
-                    SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                    Logger.Debug("Setting scroll mode to KeepLastItemInView");
+                    SetFollowingEnd(true);
                 }
 
                 var replied = ProcessEvents(events);
@@ -186,12 +185,6 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, _minEventId, 50, _filters, _userIds));
             if (response is ChatEvents events)
             {
-                if (events.Events.Count > 0)
-                {
-                    SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                    Logger.Debug("Setting scroll mode to KeepLastItemInView");
-                }
-
                 var replied = ProcessEvents(events);
                 ProcessMessages(chat, replied);
 

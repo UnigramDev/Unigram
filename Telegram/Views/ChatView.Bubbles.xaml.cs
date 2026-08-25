@@ -80,6 +80,10 @@ namespace Telegram.Views
 
             _messagesShift.Clear();
 
+            // The panel's visible range is current again, so the anchor can stop being tracked by
+            // hand until the next run of mutations.
+            Messages.InvalidateAnchor();
+
             if (_viewChanged)
             {
                 _viewChanged = false;
@@ -1556,13 +1560,7 @@ namespace Telegram.Views
 
             if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
             {
-                var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
-                var edge = (index == panel.LastVisibleIndex && direction == 1) || (index == panel.FirstVisibleIndex && direction == -1);
-
-                if (edge && !Messages.ScrollingHost.ViewportContains(selector))
-                {
-                    direction *= -1;
-                }
+                var direction = ChatHistoryView.GetShiftDirection(panel, index, selector, Messages.ScrollingHost);
 
                 var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
                 var last = direction == 1 ? index : panel.LastCacheIndex;

@@ -23,8 +23,10 @@ namespace Telegram.Collections
     public interface ISynchronizedListDelegate<T>
     {
         /// <summary>
-        /// Raised just before the removal reaches the list, while the rows are still realized.
-        /// Index is the one the source raised, so this is where index bookkeeping belongs.
+        /// Raised just before the removal reaches the list, while the rows are still realized, so
+        /// this is where index bookkeeping belongs. The index is the one in this collection, not
+        /// the one the source raised: the two differ when the mirror is reversed, and this is the
+        /// space the panel indexes in.
         /// </summary>
         void Removing(int index, IList items);
 
@@ -230,10 +232,10 @@ namespace Telegram.Collections
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    pending = new Pending(e.Action, _reverse ? _source.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex, e.NewStartingIndex, e.NewItems);
+                    pending = new Pending(e.Action, _reverse ? _source.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex, e.NewItems);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    pending = new Pending(e.Action, _reverse ? _source.Count - e.OldStartingIndex : e.OldStartingIndex, e.OldStartingIndex, e.OldItems);
+                    pending = new Pending(e.Action, _reverse ? _source.Count - e.OldStartingIndex : e.OldStartingIndex, e.OldItems);
                     break;
                 default:
                     return;
@@ -291,7 +293,7 @@ namespace Telegram.Collections
                     return;
                 }
 
-                _delegate?.Inserting(pending.SourceIndex, pending.Items);
+                _delegate?.Inserting(pending.Index, pending.Items);
                 InsertRangeT(pending.Index, pending.Items);
             }
             else
@@ -303,7 +305,7 @@ namespace Telegram.Collections
                     return;
                 }
 
-                _delegate?.Removing(pending.SourceIndex, pending.Items);
+                _delegate?.Removing(pending.Index, pending.Items);
                 RemoveRange(pending.Index, pending.Items.Count);
             }
         }
@@ -362,18 +364,12 @@ namespace Telegram.Collections
             /// </summary>
             public readonly int Index;
 
-            /// <summary>
-            /// Where it landed in the source, which is what index bookkeeping outside is keyed on.
-            /// </summary>
-            public readonly int SourceIndex;
-
             public readonly IList Items;
 
-            public Pending(NotifyCollectionChangedAction action, int index, int sourceIndex, IList items)
+            public Pending(NotifyCollectionChangedAction action, int index, IList items)
             {
                 Action = action;
                 Index = index;
-                SourceIndex = sourceIndex;
                 Items = items;
             }
         }

@@ -601,11 +601,14 @@ namespace Telegram.Views
         /// </summary>
         public void Inserting(int index, IList items)
         {
+            Messages.PrepareAnchor(index, items.Count);
             _messagesShift.RegisterInsert(index);
         }
 
         public void Removing(int index, IList items)
         {
+            Messages.PrepareAnchor(index, -items.Count);
+
             if (Messages.ItemsPanelRoot is not ItemsStackPanel panel)
             {
                 return;
@@ -618,6 +621,8 @@ namespace Telegram.Views
                 var translated = _messagesShift.Translate(index);
                 if (translated >= panel.FirstVisibleIndex && translated <= panel.LastVisibleIndex && _messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector))
                 {
+                    // Not the direction: the row is gone by the time the shift is animated, so what
+                    // is stored is whether it sat at the edge, and the direction is derived then.
                     var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
                     var edge = (translated == panel.LastVisibleIndex && direction == 1) || (translated == panel.FirstVisibleIndex && direction == -1);
 
@@ -731,7 +736,7 @@ namespace Telegram.Views
 
             ViewModel.SetText(null, false);
 
-            Messages.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            Messages.SetFollowingEnd(true);
             Messages.ItemsSource ??= _messages;
 
             CheckMessageBoxEmpty();
@@ -5235,7 +5240,7 @@ namespace Telegram.Views
         private void ItemsPanelRoot_Loading(FrameworkElement sender, object args)
         {
             sender.MaxWidth = AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
-            Messages.SetScrollingMode();
+            Messages.ApplyAnchor();
         }
 
         private void ServiceMessage_Click(object sender, RoutedEventArgs e)

@@ -2729,13 +2729,7 @@ namespace Telegram.Controls.Messages
 
             var index = selector.Owner.IndexFromContainer(selector);
 
-            var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
-            var edge = (index == panel.LastVisibleIndex && direction == 1) || (index == panel.FirstVisibleIndex && direction == -1);
-
-            if (edge && !selector.Owner.ScrollingHost.ViewportContains(selector))
-            {
-                direction *= -1;
-            }
+            var direction = ChatHistoryView.GetShiftDirection(panel, index, selector, selector.Owner.ScrollingHost);
 
             var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
             var last = direction == 1 ? index : panel.LastCacheIndex;
