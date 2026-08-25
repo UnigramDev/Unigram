@@ -100,6 +100,20 @@ The script finds vcpkg exactly as the rest of the build does — it asks MSBuild
 and zlib are the same builds the app links. Both architectures are built by default; pass
 `-arch x64` or `-arch ARM64` for one of them.
 
+### Instant View editor
+
+The Instant View editor runs in a WebView2 from a single `editor.html`, assembled by npm from the
+sources in `Libraries\unigram-iv-editor`. The assembled file is checked in, so there is nothing to
+do here to build the app.
+
+After changing anything under `src` or `host`, rebuild it and commit the result — the app loads the
+assembled file and nothing else:
+
+```shell
+> npm install
+> npm run build
+```
+
 ### LibVLC and WebRTC
 
 LibVLC plays video and audio, and WebRTC backs calls and video chats. Both arrive as prebuilt
