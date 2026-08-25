@@ -91,7 +91,8 @@ namespace Telegram.Controls.Chats
                 // own inline format is preferred when both are on the clipboard: it carries
                 // exactly what the field can hold, so it never has to escalate.
                 else if (package.AvailableFormats.Contains(StandardDataFormats.Html)
-                    && !package.AvailableFormats.Contains("application/x-tl-field-tags"))
+                    && !package.AvailableFormats.Contains("application/x-tl-field-tags")
+                    && WindowContext.KeyModifiers(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
                 {
                     e.Handled = true;
 
@@ -151,10 +152,9 @@ namespace Telegram.Controls.Chats
                 return true;
             }
 
-            // Beyond that only our own content is worth a trip to the editor: it opens a
-            // separate window and it's a paid feature, so a heading copied from a web page
-            // falls back to a plain paste instead.
-            if (!own)
+            // Beyond that only our own content is worth a trip to the editor: 
+            // since this is gated behind a different shortcut it's fine, but only for premium users
+            if (!own && !ViewModel.IsPremium)
             {
                 return false;
             }
