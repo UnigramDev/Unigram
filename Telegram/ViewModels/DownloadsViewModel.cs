@@ -193,7 +193,7 @@ namespace Telegram.ViewModels
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var response = await _viewModel.ClientService.SendAsync(new SearchFileDownloads(_query, _onlyActive, _onlyCompleted, _offset, 100));
                     if (response is FoundFileDownloads found)

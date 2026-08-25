@@ -731,7 +731,7 @@ namespace Telegram.ViewModels.Drawers
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
         {
-            return AsyncInfo.Run(async token =>
+            return IncrementalLoading.Run(async token =>
             {
                 if (phase == 0)
                 {

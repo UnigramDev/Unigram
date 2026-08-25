@@ -826,7 +826,7 @@ namespace Telegram.Controls.Chats
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     // There are two askers - the list once it is measured, and whoever primes the
                     // first page while it still is not - and _hasMore is cleared as this starts
@@ -937,7 +937,7 @@ namespace Telegram.Controls.Chats
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     count = 0;
 
@@ -1025,7 +1025,7 @@ namespace Telegram.Controls.Chats
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     count = 0;
                     _hasMore = false;
@@ -1514,7 +1514,7 @@ namespace Telegram.Controls.Chats
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(async _ =>
+            return IncrementalLoading.Run(async _ =>
             {
                 if (_loading || _incrementalSource == null || !_incrementalSource.HasMoreItems)
                 {

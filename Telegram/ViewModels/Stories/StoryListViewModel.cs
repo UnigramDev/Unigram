@@ -312,7 +312,7 @@ namespace Telegram.ViewModels.Stories
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(token => LoadMoreItemsAsync());
+                return IncrementalLoading.Run(token => LoadMoreItemsAsync());
             }
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()

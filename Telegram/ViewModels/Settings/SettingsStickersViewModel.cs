@@ -426,7 +426,7 @@ namespace Telegram.ViewModels.Settings
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     if (_type is StickerTypeRegular or StickerTypeMask)
                     {
@@ -473,7 +473,7 @@ namespace Telegram.ViewModels.Settings
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var offset = 0L;
 
@@ -519,7 +519,7 @@ namespace Telegram.ViewModels.Settings
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var response = await _clientService.SendAsync(new GetTrendingStickerSets(_type, Count, 20));
                     if (response is TrendingStickerSets stickerSets)

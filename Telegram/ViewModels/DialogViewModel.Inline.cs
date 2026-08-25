@@ -300,7 +300,7 @@ namespace Telegram.ViewModels
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(async token =>
+            return IncrementalLoading.Run(async token =>
             {
                 var totalCount = 0u;
 

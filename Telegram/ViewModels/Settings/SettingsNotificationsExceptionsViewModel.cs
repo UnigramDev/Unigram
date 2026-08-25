@@ -85,7 +85,7 @@ namespace Telegram.ViewModels.Settings
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var response = await _clientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false));
                     if (response is Telegram.Td.Api.Chats chats)

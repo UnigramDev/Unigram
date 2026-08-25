@@ -87,7 +87,7 @@ namespace Telegram.ViewModels.Settings
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(LoadMoreItemsAsync);
+                return IncrementalLoading.Run(LoadMoreItemsAsync);
             }
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync(CancellationToken token)

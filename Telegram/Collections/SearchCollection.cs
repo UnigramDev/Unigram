@@ -161,7 +161,7 @@ namespace Telegram.Collections
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(async _ =>
+            return IncrementalLoading.Run(async _ =>
             {
                 if (_loading || _source == null)
                 {

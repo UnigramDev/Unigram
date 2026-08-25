@@ -244,7 +244,7 @@ namespace Telegram.Views.Premium.Popups
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var totalCount = 0u;
                     var now = DateTime.Now.ToTimestamp();

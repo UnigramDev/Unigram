@@ -65,7 +65,7 @@ namespace Telegram.Views.Popups
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var totalCount = 0u;
 
@@ -112,7 +112,7 @@ namespace Telegram.Views.Popups
                     return _child.LoadMoreItemsAsync(count);
                 }
 
-                return AsyncInfo.Run(async token =>
+                return IncrementalLoading.Run(async token =>
                 {
                     var totalCount = 0u;
 

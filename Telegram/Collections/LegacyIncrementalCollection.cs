@@ -80,7 +80,7 @@ namespace Telegram.Collections
 
             //}).AsAsyncOperation();
 
-            return AsyncInfo.Run(async token =>
+            return IncrementalLoading.Run(async token =>
             {
                 var result = await LoadDataAsync();
                 var oldCount = Count;

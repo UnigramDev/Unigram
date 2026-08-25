@@ -62,7 +62,7 @@ namespace Telegram.Collections
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(async token =>
+            return IncrementalLoading.Run(async token =>
             {
                 Function function;
                 if (_secretChat)

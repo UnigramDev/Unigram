@@ -33,7 +33,7 @@ namespace Telegram.Collections
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(async token =>
+            return IncrementalLoading.Run(async token =>
             {
                 var total = 0u;
                 var inputLanguage = NativeUtils.GetKeyboardCulture();

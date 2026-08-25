@@ -59,6 +59,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Data;
 
 namespace Telegram.Common
 {
@@ -2086,6 +2087,18 @@ namespace Windows.Graphics.Capture
             WindowContext.InitializeWithWindow(picker, xamlRoot);
 
             return picker.PickSingleItemAsync();
+        }
+    }
+}
+
+namespace System.Runtime.InteropServices.WindowsRuntime
+{
+    public static class IncrementalLoading
+    {
+        public static IAsyncOperation<LoadMoreItemsResult> Run(Func<CancellationToken, Task<LoadMoreItemsResult>> taskProvider, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Telegram.Logger.Info(member: member, filePath: filePath, line: line);
+            return AsyncInfo.Run(taskProvider);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Telegram.Collections
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(token => _owner.LoadMoreItemsAsync(count));
+            return IncrementalLoading.Run(token => _owner.LoadMoreItemsAsync(count));
         }
 
         public bool HasMoreItems => _owner.HasMoreItems;

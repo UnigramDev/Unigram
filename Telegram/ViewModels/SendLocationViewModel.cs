@@ -76,7 +76,7 @@ namespace Telegram.ViewModels
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return AsyncInfo.Run(async token =>
+            return IncrementalLoading.Run(async token =>
             {
                 var response = await _locationService.GetVenuesAsync(0, _latitude, _longitude, _query, _nextOffset);
                 var count = 0u;
