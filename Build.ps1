@@ -4,4 +4,4 @@ param (
 )
 
 .\UpdateManifest.ps1 -path "Telegram.Msix\\" -config "RELEASE" -mode "$mode"
-msbuild Telegram.sln /target:Telegram_Msix /p:Configuration=Release /p:Platform="$arch" /p:UapAppxPackageBuildMode=$mode /p:AppxBundlePlatforms="$arch" /p:AppxBundle=Always /p:AppxPackageSigningEnabled=True
+msbuild Telegram.slnx /target:Telegram_Msix /p:Configuration=Release /p:Platform="$arch" /p:UapAppxPackageBuildMode=$mode /p:AppxBundlePlatforms="$arch" /p:AppxBundle=Always /p:AppxPackageSigningEnabled=True
