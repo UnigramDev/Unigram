@@ -256,6 +256,13 @@
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
+  <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
+       which keeps a WeakReference per registered object for the session, so it must not reach a
+       shipping build. Telegram.csproj has it on in Debug instead. -->
+  <PropertyGroup Condition="'$(Instrumented)' == 'true'">
+    <DefineConstants>$(DefineConstants);INSTRUMENTATION</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
                       OutputItemType="Analyzer"
