@@ -232,6 +232,8 @@
     <Win32PackageIdentity Condition="'$(Win32Identity)' == 'Bundle'">38833FF26BA1D.UnigramWin32Bundle</Win32PackageIdentity>
     <Win32PackageDisplayName Condition="'$(Win32Identity)' == 'Bundle'">Unigram Win32 (Bundle)</Win32PackageDisplayName>
     <Win32AppxManifest>$(BaseIntermediateOutputPath)Package.Win32.appxmanifest</Win32AppxManifest>
+    <!-- The one key in the repository, shared by every project that packages the app. -->
+    <PackageCertificateKeyFile>..\Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
     <Win32ManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;&lt;Namespace Prefix='uap5' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10/5' /&gt;&lt;Namespace Prefix='rescap' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities' /&gt;</Win32ManifestNamespaces>
   </PropertyGroup>
 

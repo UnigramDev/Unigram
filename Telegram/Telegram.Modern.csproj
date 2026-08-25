@@ -91,6 +91,16 @@
          NET9_0_OR_GREATER arrives on its own and is what the source already switches on. -->
     <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
     <NoWarn>$(NoWarn);2008</NoWarn>
+
+    <!-- The one key in the repository, shared by every project that packages the app. Only
+         reached when this project is built on its own with signing on: the bundle is signed by
+         Telegram.Msix.Modern, which names the same file.
+
+         It also arms a trap, so keep the UapAppxPackageBuildMode scoping in that wapproj. A store
+         mode reaching this project turns on its own single-project packaging, which used to fail
+         loudly with APPX0101 for want of a key; with one here it would instead succeed, quietly
+         costing a second ILC-sized packaging pass beside the bundle's. -->
+    <PackageCertificateKeyFile>..\Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
 
   <!--

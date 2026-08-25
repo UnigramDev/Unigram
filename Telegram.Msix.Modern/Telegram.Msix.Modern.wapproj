@@ -109,9 +109,7 @@
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <!-- The one Telegram.Msix signs with, and the only unexpired key in the repository: the three
-         beside it ran out in March 2025. -->
-    <PackageCertificateKeyFile>..\Telegram.Msix\Telegram.Msix_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>..\Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
     <EntryPointProjectUniqueName>..\Telegram\Telegram.Modern.csproj</EntryPointProjectUniqueName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64' or '$(Platform)'=='ARM64'">
