@@ -108,9 +108,15 @@ namespace Telegram.Host
         public const uint WM_CLOSE = 0x0010;
         public const int SIZE_MINIMIZED = 1;
         public const int SIZE_MAXIMIZED = 2;
+        public const int SIZE_RESTORED = 0;
         public const uint WM_SETFOCUS = 0x0007;
         public const uint WM_ERASEBKGND = 0x0014;
         public const uint WM_ACTIVATE = 0x0006;
+        public const uint WM_SHOWWINDOW = 0x0018;
+        public const uint WM_WINDOWPOSCHANGED = 0x0047;
+        public const uint WM_DPICHANGED = 0x02E0;
+
+        public const int WA_INACTIVE = 0;
         public const uint WM_NCCALCSIZE = 0x0083;
         public const uint WM_NCHITTEST = 0x0084;
         public const uint WM_NCLBUTTONDOWN = 0x00A1;
@@ -139,6 +145,20 @@ namespace Telegram.Host
         public const int SC_MAXIMIZE = 0xF030;
         public const int SC_CLOSE = 0xF060;
         public const int SC_RESTORE = 0xF120;
+        public const int SC_SIZE = 0xF000;
+        public const int SC_MOVE = 0xF010;
+
+        // Alt+Space arrives as SC_KEYMENU with a space, and is the keyboard way into the same menu.
+        public const int SC_KEYMENU = 0xF100;
+
+        public const uint MF_BYCOMMAND = 0x00000000;
+        public const uint MF_ENABLED = 0x00000000;
+        public const uint MF_GRAYED = 0x00000001;
+
+        // Return the command rather than posting it: the menu would send WM_SYSCOMMAND to a window
+        // whose caption does not exist, and the caller wants to post it deliberately.
+        public const uint TPM_RETURNCMD = 0x0100;
+        public const uint TPM_RIGHTBUTTON = 0x0002;
 
         // Hit-test results. Returning one of the button codes is what makes Windows draw the
         // snap layouts flyout and handle the click itself, on a window that has no real caption.
@@ -156,6 +176,7 @@ namespace Telegram.Host
         public const uint SWP_NOMOVE = 0x0002;
         public const uint SWP_NOZORDER = 0x0004;
         public const uint SWP_FRAMECHANGED = 0x0020;
+        public const uint SWP_NOACTIVATE = 0x0010;
 
         public const uint WS_CHILD = 0x40000000;
         public const uint WS_EX_LAYERED = 0x00080000;
@@ -178,14 +199,17 @@ namespace Telegram.Host
         public const uint WS_THICKFRAME = 0x00040000;
         public const uint WS_MAXIMIZEBOX = 0x00010000;
         public const uint WS_MINIMIZEBOX = 0x00020000;
+        public const uint WS_POPUP = 0x80000000;
 
         public const int GWL_STYLE = -16;
 
         public const int SW_HIDE = 0;
+        public const int SW_SHOWMAXIMIZED = 3;
 
         // Null rather than a nearest monitor: a window restored onto a monitor that is gone should
         // fall back to the default placement, not be dragged to whatever is closest.
         public const uint MONITOR_DEFAULTTONULL = 0;
+        public const uint MONITOR_DEFAULTTONEAREST = 2;
 
         public const uint WM_EXITSIZEMOVE = 0x0232;
 
@@ -232,6 +256,9 @@ namespace Telegram.Host
 
         [LibraryImport("user32.dll")]
         public static partial IntPtr MonitorFromRect(ref RECT lprc, uint dwFlags);
+
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr MonitorFromWindow(IntPtr hWnd, uint dwFlags);
 
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -301,6 +328,9 @@ namespace Telegram.Host
         public static partial uint GetDpiForWindow(IntPtr hWnd);
 
         [LibraryImport("user32.dll")]
+        public static partial uint GetDpiForSystem();
+
+        [LibraryImport("user32.dll")]
         public static partial int GetSystemMetricsForDpi(int nIndex, uint dpi);
 
         [LibraryImport("user32.dll", SetLastError = true)]
@@ -310,6 +340,14 @@ namespace Telegram.Host
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool IsZoomed(IntPtr hWnd);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool IsIconic(IntPtr hWnd);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool IsWindowVisible(IntPtr hWnd);
 
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -353,6 +391,10 @@ namespace Telegram.Host
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool GetCursorPos(out POINT lpPoint);
 
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool ClientToScreen(IntPtr hWnd, ref POINT lpPoint);
+
         // IntPtr rather than string: DisableRuntimeMarshalling is on, so the caller hands over a
         // pointer from Marshal.StringToHGlobalUni and frees it itself.
         [LibraryImport("user32.dll")]
@@ -372,6 +414,20 @@ namespace Telegram.Host
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool PostMessageW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [LibraryImport("user32.dll", EntryPoint = "GetSystemMenu")]
+        public static partial IntPtr GetSystemMenu(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool bRevert);
+
+        [LibraryImport("user32.dll")]
+        public static partial int EnableMenuItem(IntPtr hMenu, uint uIDEnableItem, uint uEnable);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool SetMenuDefaultItem(IntPtr hMenu, uint uItem, [MarshalAs(UnmanagedType.Bool)] bool fByPos);
+
+        [LibraryImport("user32.dll")]
+        public static partial int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int nReserved,
+            IntPtr hWnd, IntPtr prcRect);
 
         public const uint WDA_NONE = 0x00000000;
         public const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;

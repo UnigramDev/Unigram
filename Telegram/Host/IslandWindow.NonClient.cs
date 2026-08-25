@@ -40,6 +40,9 @@ namespace Telegram.Host
 
         private CaptionButtons _captionButtons = CaptionButtons.All;
 
+        private bool _fullScreen;
+        private WINDOWPLACEMENT _restore;
+
         // Logical pixels, relative to the client area. Three states, and they differ: null is a
         // window that has not named a title bar, where the whole strip drags as it always did;
         // an empty rect is one that took its title bar away, where only the buttons still answer.
@@ -71,6 +74,14 @@ namespace Telegram.Host
 
         private IntPtr OnNcCalcSize(IntPtr wParam, IntPtr lParam)
         {
+            // Full screen is a WS_POPUP window with no frame at all, so there is nothing to take
+            // away and nothing to put back - and the maximized branch below would add a border
+            // that does not exist.
+            if (_fullScreen)
+            {
+                return Win32.DefWindowProcW(_hwnd, Win32.WM_NCCALCSIZE, wParam, lParam);
+            }
+
             if (wParam == IntPtr.Zero)
             {
                 return Win32.DefWindowProcW(_hwnd, Win32.WM_NCCALCSIZE, wParam, lParam);
@@ -206,6 +217,12 @@ namespace Telegram.Host
                 SetHotButton(FromHitTest(hit), false);
             }
 
+            if (msg == Win32.WM_NCRBUTTONUP && (hit == Win32.HTCAPTION || hit == Win32.HTTOP))
+            {
+                OpenSystemMenu((short)((long)lParam & 0xFFFF), (short)(((long)lParam >> 16) & 0xFFFF));
+                return IntPtr.Zero;
+            }
+
             if (hit == Win32.HTCAPTION || hit == Win32.HTTOP)
             {
                 return Win32.SendMessageW(_hwnd, msg, wParam, lParam);
@@ -228,6 +245,60 @@ namespace Telegram.Host
             }
 
             return IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// The system menu, by hand. Right-clicking the caption forwards WM_NCRBUTTONUP to the
+        /// parent, whose DefWindowProc answers it by sending itself WM_CONTEXTMENU and hit-testing
+        /// that point against its own non-client area - which WM_NCCALCSIZE reduced to the borders,
+        /// so it comes back HTCLIENT and no menu is shown. Forwarding more messages does not help;
+        /// the menu has to be raised.
+        ///
+        /// Terminal's IslandWindow::OpenSystemMenu, with one addition: a window that asked for only
+        /// some caption buttons cannot do the rest either, so those items are greyed for it too and
+        /// not only while maximized.
+        /// </summary>
+        public void OpenSystemMenu(int x, int y)
+        {
+            var menu = Win32.GetSystemMenu(_hwnd, false);
+            if (menu == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var placement = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
+
+            var maximized = Win32.GetWindowPlacement(_hwnd, ref placement)
+                && placement.showCmd == Win32.SW_SHOWMAXIMIZED;
+
+            var canMinimize = _captionButtons.HasFlag(CaptionButtons.Minimize);
+            var canMaximize = _captionButtons.HasFlag(CaptionButtons.Maximize);
+
+            Enable(menu, Win32.SC_RESTORE, maximized);
+            Enable(menu, Win32.SC_MOVE, !maximized && !_fullScreen);
+            Enable(menu, Win32.SC_SIZE, !maximized && !_fullScreen && canMaximize);
+            Enable(menu, Win32.SC_MINIMIZE, canMinimize);
+            Enable(menu, Win32.SC_MAXIMIZE, !maximized && canMaximize);
+            Enable(menu, Win32.SC_CLOSE, _captionButtons.HasFlag(CaptionButtons.Close));
+
+            // Nothing bold: the caption has no default action here.
+            Win32.SetMenuDefaultItem(menu, uint.MaxValue, false);
+
+            var command = Win32.TrackPopupMenu(menu, Win32.TPM_RETURNCMD | Win32.TPM_RIGHTBUTTON,
+                x, y, 0, _hwnd, IntPtr.Zero);
+
+            if (command != 0)
+            {
+                // Posted rather than sent: TrackPopupMenu is still unwinding, and the commands it
+                // returns resize or destroy the window.
+                Win32.PostMessageW(_hwnd, Win32.WM_SYSCOMMAND, (IntPtr)command, IntPtr.Zero);
+            }
+        }
+
+        private static void Enable(IntPtr menu, int item, bool enabled)
+        {
+            Win32.EnableMenuItem(menu, (uint)item,
+                Win32.MF_BYCOMMAND | (enabled ? Win32.MF_ENABLED : Win32.MF_GRAYED));
         }
 
         private static CaptionButtons FromHitTest(int hit)
@@ -379,6 +450,67 @@ namespace Telegram.Host
             return Win32.HTCAPTION;
         }
 
+        public bool IsFullScreen => _fullScreen;
+
+        /// <summary>
+        /// Borderless full screen, the way Terminal does it: drop WS_OVERLAPPEDWINDOW for WS_POPUP
+        /// and take the monitor's whole rect - rcMonitor rather than rcWork, so the taskbar is
+        /// covered too. The placement is kept so that leaving restores the window where it was,
+        /// including its maximized state, which SetWindowPlacement carries and a saved rect cannot.
+        /// </summary>
+        public void SetFullScreen(bool value)
+        {
+            if (_fullScreen == value || _hwnd == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var style = (long)Win32.GetWindowLongPtrW(_hwnd, Win32.GWL_STYLE);
+
+            if (value)
+            {
+                _restore = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
+
+                if (!Win32.GetWindowPlacement(_hwnd, ref _restore))
+                {
+                    return;
+                }
+
+                _fullScreen = true;
+
+                Win32.SetWindowLongPtrW(_hwnd, Win32.GWL_STYLE,
+                    (IntPtr)((style & ~(long)Win32.WS_OVERLAPPEDWINDOW) | (long)Win32.WS_POPUP));
+
+                var info = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
+                var monitor = Win32.MonitorFromWindow(_hwnd, Win32.MONITOR_DEFAULTTONEAREST);
+
+                if (Win32.GetMonitorInfoW(monitor, ref info))
+                {
+                    var bounds = info.rcMonitor;
+
+                    Win32.SetWindowPos(_hwnd, IntPtr.Zero,
+                        bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top,
+                        Win32.SWP_NOZORDER | Win32.SWP_FRAMECHANGED | Win32.SWP_SHOWWINDOW);
+                }
+            }
+            else
+            {
+                _fullScreen = false;
+
+                Win32.SetWindowLongPtrW(_hwnd, Win32.GWL_STYLE,
+                    (IntPtr)((style & ~(long)Win32.WS_POPUP) | (long)Win32.WS_OVERLAPPEDWINDOW));
+
+                Win32.SetWindowPlacement(_hwnd, ref _restore);
+
+                // The frame has to be recomputed, and SetWindowPlacement does not do it: without
+                // this the client area keeps the size it had with no frame.
+                Win32.SetWindowPos(_hwnd, IntPtr.Zero, 0, 0, 0, 0,
+                    Win32.SWP_NOMOVE | Win32.SWP_NOSIZE | Win32.SWP_NOZORDER | Win32.SWP_FRAMECHANGED);
+            }
+
+            LayoutDragBar();
+        }
+
         /// <summary>
         /// The window's draggable region, in logical pixels relative to the client area. An empty
         /// rect means the root wants no draggable region; null means it has not said.
@@ -424,6 +556,13 @@ namespace Telegram.Host
         {
             if (_dragBar == IntPtr.Zero || !Win32.GetClientRect(_hwnd, out var client))
             {
+                return;
+            }
+
+            if (_fullScreen)
+            {
+                Win32.SetWindowPos(_dragBar, IntPtr.Zero, 0, 0, 0, 0,
+                    Win32.SWP_NOMOVE | Win32.SWP_NOSIZE | Win32.SWP_HIDEWINDOW);
                 return;
             }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Telegram.Navigation;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 
@@ -82,6 +83,27 @@ namespace Telegram.Host
             var window = new IslandWindow { _transparent = transparent };
             var windowName = Marshal.StringToHGlobalUni(title);
 
+            // The caller asks in logical pixels, the way it would of a UWP view, and asks for the
+            // room it gets to put content in. CreateWindowEx wants physical, and the whole window.
+            //
+            // The system DPI rather than the target monitor's: there is no window yet to ask. If it
+            // opens somewhere else, WM_DPICHANGED arrives immediately with a suggested rect that
+            // preserves the logical size, and the handler applies it.
+            if (width > 0 && height > 0)
+            {
+                var dpi = Win32.GetDpiForSystem();
+                var frame = new RECT
+                {
+                    right = (int)(width * dpi / 96.0),
+                    bottom = (int)(height * dpi / 96.0)
+                };
+
+                Win32.AdjustWindowRectExForDpi(ref frame, Win32.WS_OVERLAPPEDWINDOW, false, 0, dpi);
+
+                width = frame.right - frame.left;
+                height = frame.bottom - frame.top;
+            }
+
             // WS_EX_NOREDIRECTIONBITMAP is what Windows Terminal creates its host window with
             // (IslandWindow.cpp:151, "for vintage style opacity, GH#603"). Without the redirection
             // surface there is nothing opaque between the DWM backdrop and the island's own
@@ -141,12 +163,14 @@ namespace Telegram.Host
         public IMessageFilter Filter { get; set; }
 
         /// <summary>
-        /// Asked before the window is destroyed. The owner answers false to take the close over -
-        /// it may have a question for the user first - and destroys the window itself once it is
-        /// done. Without this the caption's close button destroys the HWND and nothing tells the
-        /// WindowContext, which then lingers in All with its navigation services still live.
+        /// What the window tells its owner. One seam rather than a delegate per message, because
+        /// every one of these has a UWP counterpart the WindowContext has to raise, and they are
+        /// only correct together - activation, visibility and size all change in the same handful
+        /// of messages.
         /// </summary>
-        public Func<bool> CloseRequested { get; set; }
+        public IIslandOwner Owner { get; set; }
+
+
 
         public bool PreTranslateMessage(ref MSG message)
         {
@@ -215,6 +239,49 @@ namespace Telegram.Host
                     }
 
                     break;
+                case Win32.WM_SYSCOMMAND:
+                    // Alt+Space. DefWindowProc would open the menu against a caption this window
+                    // does not have, so it is raised at the window's own corner instead.
+                    if (window != null && ((int)wParam & 0xFFF0) == Win32.SC_KEYMENU && (long)lParam == ' ')
+                    {
+                        if (Win32.GetWindowRect(hWnd, out var rect))
+                        {
+                            window.OpenSystemMenu(rect.left, rect.top);
+                            return IntPtr.Zero;
+                        }
+                    }
+
+                    break;
+
+                case Win32.WM_ACTIVATE:
+                    window?.SetActive(((int)wParam & 0xFFFF) != Win32.WA_INACTIVE);
+                    break;
+
+                case Win32.WM_SHOWWINDOW:
+                case Win32.WM_WINDOWPOSCHANGED:
+                    // Neither says "visible" on its own: WM_SHOWWINDOW is not sent for a minimize,
+                    // and a position change can be anything. Both are recomputed from the window.
+                    window?.UpdateVisibility();
+                    break;
+
+                case Win32.WM_DPICHANGED:
+                    // The suggested rect is the whole point of this message - it keeps the window
+                    // the same physical size across a monitor with a different scale.
+                    if (window != null)
+                    {
+                        var suggested = Marshal.PtrToStructure<RECT>(lParam);
+
+                        Win32.SetWindowPos(hWnd, IntPtr.Zero,
+                            suggested.left, suggested.top,
+                            suggested.right - suggested.left, suggested.bottom - suggested.top,
+                            Win32.SWP_NOZORDER | Win32.SWP_NOACTIVATE);
+
+                        window.LayoutDragBar();
+                        window.Owner?.SizeChanged();
+                    }
+
+                    return IntPtr.Zero;
+
                 case Win32.WM_SIZE:
                     // The CoreWindow stub never hears about the resize on its own, and a
                     // ContentDialog's smoke layer keeps whatever size it had when it opened -
@@ -227,10 +294,15 @@ namespace Telegram.Host
                     // A minimize reports a 0x0 client rect, and sizing the island to that throws
                     // the whole tree away and animates it back on restore. Nothing needs laying
                     // out while there is nothing to see.
+                    // Minimizing is a visibility change, not a size one - which is also how UWP
+                    // reports it, and why the size is not published for a 0x0 client rect.
+                    window?.UpdateVisibility();
+
                     if ((int)wParam != Win32.SIZE_MINIMIZED)
                     {
                         window?.Layout();
                         window?.LayoutDragBar();
+                        window?.Owner?.SizeChanged();
 
                         // The maximize button draws a restore glyph while zoomed, and this is the
                         // only place that knows which it is.
@@ -251,7 +323,7 @@ namespace Telegram.Host
                     // The caption button never reaches XAML on this host: the drag bar answers the
                     // hit test and turns the click into SC_CLOSE, which arrives here. So this is
                     // the one place a user-initiated close can be intercepted.
-                    if (window?.CloseRequested != null && !window.CloseRequested())
+                    if (window?.Owner != null && !window.Owner.CloseRequested())
                     {
                         return IntPtr.Zero;
                     }
@@ -346,6 +418,47 @@ namespace Telegram.Host
         /// DestroyWindow sends WM_DESTROY, which calls Dispose again and drops this from Windows;
         /// both are safe to run twice.
         /// </summary>
+        private bool _active;
+        private bool _visible;
+
+        /// <summary>
+        /// Edge-triggered: Windows sends WM_ACTIVATE for every focus change in the process, and the
+        /// UWP event this stands in for does not repeat itself.
+        /// </summary>
+        private void SetActive(bool value)
+        {
+            if (_active == value)
+            {
+                return;
+            }
+
+            _active = value;
+            Owner?.ActivationChanged(value);
+        }
+
+        /// <summary>
+        /// Recomputed rather than read off a message: no single message means "visible". A minimize
+        /// arrives as WM_SIZE, a hide as WM_SHOWWINDOW, and a restore as either - so this asks the
+        /// window and publishes only the changes.
+        /// </summary>
+        private void UpdateVisibility()
+        {
+            if (_hwnd == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var visible = Win32.IsWindowVisible(_hwnd) && !Win32.IsIconic(_hwnd);
+
+            if (_visible == visible)
+            {
+                return;
+            }
+
+            _visible = visible;
+            Owner?.VisibilityChanged(visible);
+        }
+
         public void Close()
         {
             Dispose();

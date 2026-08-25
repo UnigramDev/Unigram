@@ -2202,7 +2202,7 @@ changes nothing about activation, which is the single biggest de-risking in
   than merely unreachable. Bounded pumping is the fiddly part: after `WM_QUIT` a plain `GetMessage`
   blocks, so it needs `PeekMessage` with a deadline.
 
-- [ ] **2.1j The caption has no system menu.** Fela, 2026-08-24. Right-clicking the draggable area
+- [x] **2.1j The caption has no system menu. Done 2026-08-25.** Fela, 2026-08-24. Right-clicking the draggable area
   does nothing, where a real caption opens Restore / Move / Size / Minimize / Maximize / Close.
   Alt+Space is the same menu and is presumably just as dead.
 
@@ -2223,8 +2223,72 @@ changes nothing about activation, which is the single biggest de-risking in
     `PostMessage(hwnd, WM_SYSCOMMAND, ret, 0)` - return the command and post it rather than letting
     the menu dispatch it.
 
-  Worth tying to 1.7a while writing it: a window that asked for `CaptionButtons.Close` cannot
-  minimize or maximize, so those items should be disabled for it too, not only when maximized.
+  Written as `IslandWindow.OpenSystemMenu`, raised from the drag bar's `WM_NCRBUTTONUP` for
+  `HTCAPTION` and from `WM_SYSCOMMAND`/`SC_KEYMENU` for Alt+Space - which `DefWindowProc` cannot
+  serve either, for the same reason. Tied to 1.7a as planned: a window that asked for
+  `CaptionButtons.Close` cannot minimize or maximize, so those items are greyed for it and not only
+  while maximized, and full screen greys Move and Size as well.
+
+  The command is **posted, not sent**: `TrackPopupMenu` is still unwinding when it returns, and the
+  commands it hands back resize or destroy the window.
+
+- [x] **2.1k The window events the Win32 half never raised, 2026-08-25.** Fela, asking rather than
+  hitting it: *"Does WindowContext.Win32 raise any of the events that are being raised by the UWP
+  counterpart?"* It raised **one** - `VisibleBoundsChanged`, and only from the full-screen path
+  added the same afternoon. The UWP half raises four.
+
+  Nothing errored, which is what made it worth finding by audit rather than by use. What was
+  silently not happening:
+
+  - **`Activated`** - `App.OnWindowActivated` drives `NightModeService.UpdateTimer()` and publishes
+    `UpdateWindowActivated`, so automatic night mode never re-evaluated on focus; `PasscodeWindow`
+    hangs its lock on it; `WebAppWindow` posts `visibility_changed` to the bot, so a bot was told
+    the window was visible and never told otherwise; `ChatView`, `StoriesWindow`, `AnimatedImage`
+    and `SettingsPowerSavingViewModel` all subscribe.
+  - **`VisibilityChanged`**, **`SizeChanged`** - fewer consumers, same shape of failure.
+  - **`WindowContext.Active`**, the static the UWP half maintains from its own `Activated` handler,
+    was never set - so `NotificationsService` always fell back to `Main` when choosing which window
+    a toast belongs over.
+
+  **What it is now.** `IIslandOwner`, one interface the `WindowContext` implements, in place of the
+  single `CloseRequested` delegate: they are only correct together, because activation, visibility
+  and size all move in the same handful of messages.
+
+  - `WM_ACTIVATE` -> activation, **edge-triggered**: Windows sends it for every focus change in the
+    process and the UWP event does not repeat itself.
+  - Visibility is **recomputed, not read off a message**. No single message means "visible": a
+    minimize arrives as `WM_SIZE`, a hide as `WM_SHOWWINDOW`, a restore as either. All three ask
+    `IsWindowVisible && !IsIconic` and publish only changes.
+  - `WM_SIZE` -> size, minimize excepted, since a 0x0 client rect is a visibility change and UWP
+    reports it as one.
+  - `WM_DPICHANGED` -> the suggested rect is applied and size is raised: the scale it is measured
+    in changed even when the client area did not.
+  - Closing clears `Active` if it was this window, because a window destroyed while active never
+    sees a deactivation.
+
+  **Units, and the second half of this item.** The size event carries **logical** pixels, and this
+  host's `Bounds` was returning **physical** ones. My first answer was to compute the logical size
+  separately and leave `Bounds` alone - Fela's correction, and the right rule: *the properties
+  should mirror the UWP implementation*. A half that answers the same question in different units
+  is not an implementation of the same contract, and the mismatch is invisible at 100%.
+
+  So `Bounds`, `VisibleBounds` and `PointerPosition` are now logical, and `TryResizeView` takes
+  logical and converts. `Bounds` is also the **client** rect rather than the window rect, because a
+  CoreWindow has no non-client area to exclude and everything comparing against it is in XAML
+  coordinates. The one that proves it: `Extensions.TransformToPointerPosition` subtracts `Bounds`
+  from `PointerPosition` and then subtracts a XAML transform - three values that have to be in one
+  space, and were not.
+
+  Window creation had it too: `DefaultWidth`, and `ViewServiceOptions.Width`, are logical the way a
+  UWP view's size is, and were going to `CreateWindowEx` as physical - a 384x640 payments window
+  came out two thirds that size at 150%. `Create` now converts, and asks for that much *client*
+  area, using the system DPI because there is no window yet to ask; if it opens on another monitor
+  `WM_DPICHANGED` arrives at once with a rect that preserves the logical size.
+
+  The lesson is the item, not the fix: **two of these were found by Fela asking what the halves
+  share, not by anything failing.** The rest of the contract deserves the same pass - every member
+  the two `WindowContext` halves are supposed to answer alike, checked against what each actually
+  does.
 
 - [ ] **2.1e Re-activation is unhandled, and it is the first real design gap.** Found 2026-08-24
   by the call window crashing. Chats, IV, the text editor and web apps all open in their own

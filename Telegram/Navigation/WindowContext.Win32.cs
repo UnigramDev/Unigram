@@ -34,7 +34,7 @@ namespace Telegram.Navigation
     /// <c>IActivatedEventArgs</c> overloads - have no twin, so their callers are compile errors,
     /// which is the point of building this at all.
     /// </summary>
-    public partial class WindowContext
+    public partial class WindowContext : IIslandOwner
     {
         private readonly IslandWindow _island;
 
@@ -43,7 +43,7 @@ namespace Telegram.Navigation
         internal WindowContext(IslandWindow island)
         {
             _island = island;
-            _island.CloseRequested = OnCloseRequested;
+            _island.Owner = this;
             _current = this;
 
             Dispatcher = DispatcherContext.Current;
@@ -97,10 +97,48 @@ namespace Telegram.Navigation
         /// Always false: the root may have something to ask first and the answer is awaited, so
         /// the window is destroyed by ConsolidateAsync rather than by the default handler.
         /// </summary>
-        private bool OnCloseRequested()
+        bool IIslandOwner.CloseRequested()
         {
             CloseRequestedAsync();
             return false;
+        }
+
+        /// <summary>
+        /// The static Active goes with it, exactly as the UWP half does from its own Activated
+        /// handler: it is what NotificationsService asks which window to show a toast over.
+        /// </summary>
+        void IIslandOwner.ActivationChanged(bool active)
+        {
+            Activated?.Invoke(this, new WindowActivatedEventArgs(active));
+
+            lock (_activeLock)
+            {
+                if (active)
+                {
+                    Active = this;
+                }
+                else if (Active == this)
+                {
+                    Active = null;
+                }
+            }
+        }
+
+        void IIslandOwner.VisibilityChanged(bool visible)
+        {
+            VisibilityChanged?.Invoke(this, new WindowVisibilityEventArgs(visible));
+        }
+
+        /// <summary>
+        /// Logical pixels, because that is what the UWP event carries and what every consumer
+        /// measures in. VisibleBoundsChanged goes with it: on UWP the visible bounds move whenever
+        /// the window does, and the gallery's chrome is laid out from that event.
+        /// </summary>
+        void IIslandOwner.SizeChanged()
+        {
+            var bounds = Bounds;
+            SizeChanged?.Invoke(this, new WindowSizeChangedEventArgs(new Size(bounds.Width, bounds.Height)));
+            VisibleBoundsChanged?.Invoke(this, null);
         }
 
         private async void CloseRequestedAsync()
@@ -121,6 +159,14 @@ namespace Telegram.Navigation
             }
 
             _consolidated = true;
+
+            lock (_activeLock)
+            {
+                if (Active == this)
+                {
+                    Active = null;
+                }
+            }
 
             Detach();
 
@@ -177,12 +223,46 @@ namespace Telegram.Navigation
             }
         }
 
+        /// <summary>
+        /// Logical pixels, screen-relative, like the CoreWindow bounds this stands in for - and the
+        /// client area rather than the window rect, because a CoreWindow has no non-client area to
+        /// exclude and every consumer is comparing this against XAML coordinates.
+        ///
+        /// Getting the units wrong here is invisible at 100% and wrong everywhere else:
+        /// TransformToPointerPosition subtracts this from PointerPosition and then subtracts a
+        /// XAML transform, so the three have to be in the same space.
+        /// </summary>
         public Rect Bounds
         {
             get
             {
-                Win32.GetWindowRect(_island.Handle, out var rect);
-                return new Rect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+                if (!Win32.GetClientRect(_island.Handle, out var client))
+                {
+                    return default;
+                }
+
+                var origin = new POINT();
+                Win32.ClientToScreen(_island.Handle, ref origin);
+
+                var scale = Scale;
+
+                return new Rect(origin.x / scale, origin.y / scale,
+                    (client.right - client.left) / scale, (client.bottom - client.top) / scale);
+            }
+        }
+
+        /// <summary>
+        /// What a logical pixel is worth on this window's monitor. Per window rather than per
+        /// process: two windows can sit on displays with different scales.
+        /// </summary>
+        private double Scale
+        {
+            get
+            {
+                // Zero once the window is gone, and dividing by it would hand out infinities to
+                // layout code that has no way to notice.
+                var dpi = Win32.GetDpiForWindow(_island.Handle);
+                return dpi > 0 ? dpi / 96.0 : 1.0;
             }
         }
 
@@ -203,8 +283,13 @@ namespace Telegram.Navigation
         {
             get
             {
-                Win32.GetCursorPos(out var point);
-                return new Point(point.x, point.y);
+                if (!Win32.GetCursorPos(out var point))
+                {
+                    return default;
+                }
+
+                var scale = Scale;
+                return new Point(point.x / scale, point.y / scale);
             }
         }
 
@@ -216,8 +301,15 @@ namespace Telegram.Navigation
         {
             get
             {
-                Win32.GetClientRect(_island.Handle, out var rect);
-                return new Rect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+                if (!Win32.GetClientRect(_island.Handle, out var rect))
+                {
+                    return default;
+                }
+
+                var scale = Scale;
+
+                return new Rect(rect.left / scale, rect.top / scale,
+                    (rect.right - rect.left) / scale, (rect.bottom - rect.top) / scale);
             }
         }
 
@@ -227,9 +319,26 @@ namespace Telegram.Navigation
         /// </summary>
         public static Size PreferredLaunchViewSize { get; set; }
 
+        /// <summary>
+        /// Logical in, physical out - and the client size in, the window size out, since the caller
+        /// is asking for room to put content in. TryResizeView on UWP takes the view's size, and a
+        /// view is all client area.
+        /// </summary>
         public bool TryResizeView(Size size)
         {
-            return Win32.SetWindowPos(_island.Handle, IntPtr.Zero, 0, 0, (int)size.Width, (int)size.Height,
+            var scale = Scale;
+
+            var frame = new RECT
+            {
+                right = (int)(size.Width * scale),
+                bottom = (int)(size.Height * scale)
+            };
+
+            Win32.AdjustWindowRectExForDpi(ref frame, Win32.WS_OVERLAPPEDWINDOW, false, 0,
+                Win32.GetDpiForWindow(_island.Handle));
+
+            return Win32.SetWindowPos(_island.Handle, IntPtr.Zero, 0, 0,
+                frame.right - frame.left, frame.bottom - frame.top,
                 Win32.SWP_NOMOVE | Win32.SWP_NOZORDER);
         }
 
@@ -241,16 +350,34 @@ namespace Telegram.Navigation
             throw new NotImplementedException();
         }
 
-        public bool IsFullScreenMode => throw new NotImplementedException();
+        public bool IsFullScreenMode => _island.IsFullScreen;
 
         public void ExitFullScreenMode()
         {
-            throw new NotImplementedException();
+            SetFullScreenMode(false);
         }
 
         public bool TryEnterFullScreenMode()
         {
-            throw new NotImplementedException();
+            SetFullScreenMode(true);
+            return true;
+        }
+
+        /// <summary>
+        /// VisibleBoundsChanged afterwards, because that is what the callers watch: UWP raises it
+        /// when a view enters or leaves full screen, and the gallery re-lays its chrome from there
+        /// rather than from the call it just made.
+        /// </summary>
+        private void SetFullScreenMode(bool value)
+        {
+            if (_island.IsFullScreen == value)
+            {
+                return;
+            }
+
+            _island.SetFullScreen(value);
+
+            VisibleBoundsChanged?.Invoke(this, null);
         }
 
         /// <summary>
