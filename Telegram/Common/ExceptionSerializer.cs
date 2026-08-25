@@ -924,6 +924,10 @@ namespace Telegram.Common
                 case "La operación intentó tener acceso a datos fuera del rango válido":
                     return "The operation attempted to access data outside the valid range";
 
+                case "Böyle bir arabirim desteklenmiyor":
+                case "Интерфейс не поддерживается":
+                    return "No such interface supported";
+
                 case "Интерфейс не зарегистрирован":
                     return "Interface not registered";
 
