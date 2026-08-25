@@ -9,46 +9,245 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Windows.Foundation;
 
-namespace Telegram.Services
+namespace Telegram.Services.Calls
 {
+    /// <summary>
+    /// Every participant TDLib has told us about, in call order.
+    /// </summary>
+    /// <remarks>
+    /// The authoritative copy, created with the call and kept for its whole life: it is
+    /// never dropped on rejoin, and it holds everyone regardless of what any view has
+    /// paged in. Views keep their own observable window over it, the way
+    /// ChatListViewModel.ItemsCollection does over ClientService.
+    /// </remarks>
     public partial class VoipGroupCallParticipants
     {
-        private readonly IClientService _clientService;
-        private readonly int _groupCallId;
+        private readonly VoipGroupCall _call;
 
-        private readonly Dictionary<MessageSender, GroupCallParticipant> _participantsCache = new(new MessageSenderEqualityComparer());
+        // Guards every field below. Update arrives on TDLib's update thread,
+        // TryGetByAudioSource is called from tgcalls threads and GetParticipantsAsync
+        // from a window's UI thread, so none of this can be lock-free.
+        private readonly object _lock = new();
 
-        private readonly SortedSet<OrderedParticipant> _participants = new();
+        private readonly Dictionary<MessageSender, GroupCallParticipant> _participants = new(new MessageSenderEqualityComparer());
+        private readonly SortedSet<OrderedParticipant> _ordered = new();
+
+        // Both of a participant's audio sources map to it: tgcalls resolves a screen
+        // sharing ssrc through the same request as the microphone one. Source 0 means
+        // "not connected over WebRTC" and is shared by everyone in that state, so it is
+        // never a key.
+        private readonly Dictionary<int, GroupCallParticipant> _audioSources = new();
+
         private bool _haveFullParticipants;
 
-        public VoipGroupCallParticipants(IClientService clientService, int groupCallId)
+        public VoipGroupCallParticipants(VoipGroupCall call)
         {
-            _clientService = clientService;
-            _groupCallId = groupCallId;
+            _call = call;
         }
 
-        private void SetParticipantOrder(GroupCallParticipant participant, string order)
+        /// <summary>
+        /// Raised on TDLib's update thread, once per participant update. Handlers marshal.
+        /// </summary>
+        public event TypedEventHandler<VoipGroupCallParticipants, VoipGroupCallParticipantChangedEventArgs> Changed;
+
+        /// <summary>
+        /// Merges an update into the participant this already holds, so that every view
+        /// and every caller shares one instance per participant, and reports what
+        /// changed. The merge overwrites the previous state, so the diff is the only
+        /// record of it left.
+        /// </summary>
+        public VoipGroupCallParticipantChangedEventArgs Update(GroupCallParticipant participant)
         {
-            lock (_participants)
+            VoipGroupCallParticipantChangedEventArgs args;
+
+            lock (_lock)
             {
-                _participants.Remove(new OrderedParticipant(participant.ParticipantId, participant.Order));
+                args = UpdateImpl(participant);
+            }
 
-                participant.Order = order;
+            // Never under the lock: handlers marshal to their own thread and one of them
+            // can be paging through GetParticipantsAsync meanwhile.
+            Changed?.Invoke(this, args);
+            return args;
+        }
 
-                if (order.Length > 0)
+        private VoipGroupCallParticipantChangedEventArgs UpdateImpl(GroupCallParticipant participant)
+        {
+            if (!_participants.TryGetValue(participant.ParticipantId, out var already))
+            {
+                if (participant.Order.Length == 0)
                 {
-                    _participants.Add(new OrderedParticipant(participant.ParticipantId, order));
+                    // Never seen and already gone: nothing to add and nothing to forget.
+                    return new VoipGroupCallParticipantChangedEventArgs(participant, string.Empty, null, null);
                 }
+
+                _participants[participant.ParticipantId] = participant;
+                _ordered.Add(new OrderedParticipant(participant.ParticipantId, participant.Order));
+                AddAudioSources(participant);
+
+                return new VoipGroupCallParticipantChangedEventArgs(participant, participant.Order, null, VideoInfoOf(participant));
+            }
+
+            // Captured before the merge overwrites them: the endpoints that go away are
+            // the ones the view has cells for.
+            var previousScreenSharing = already.ScreenSharingVideoInfo?.EndpointId;
+            var previousVideo = already.VideoInfo?.EndpointId;
+
+            _ordered.Remove(new OrderedParticipant(already.ParticipantId, already.Order));
+            RemoveAudioSources(already);
+
+            Merge(already, participant);
+
+            if (already.Order.Length > 0)
+            {
+                _ordered.Add(new OrderedParticipant(already.ParticipantId, already.Order));
+                AddAudioSources(already);
+            }
+            else
+            {
+                // Leaving drops every endpoint, whether or not it changed.
+                _participants.Remove(already.ParticipantId);
+
+                return new VoipGroupCallParticipantChangedEventArgs(already, string.Empty,
+                    previousScreenSharing == null && previousVideo == null ? null : new[] { previousScreenSharing, previousVideo }, null);
+            }
+
+            string[] removed = null;
+            GroupCallParticipantVideoInfo[] added = null;
+
+            // Slot 0 is screen sharing and slot 1 the camera, so that a view can tell the
+            // two apart by position as well as by reference.
+            if (previousScreenSharing != already.ScreenSharingVideoInfo?.EndpointId)
+            {
+                if (previousScreenSharing != null)
+                {
+                    removed ??= new string[2];
+                    removed[0] = previousScreenSharing;
+                }
+
+                if (already.ScreenSharingVideoInfo != null)
+                {
+                    added ??= new GroupCallParticipantVideoInfo[2];
+                    added[0] = already.ScreenSharingVideoInfo;
+                }
+            }
+
+            if (previousVideo != already.VideoInfo?.EndpointId)
+            {
+                if (previousVideo != null)
+                {
+                    removed ??= new string[2];
+                    removed[1] = previousVideo;
+                }
+
+                if (already.VideoInfo != null)
+                {
+                    added ??= new GroupCallParticipantVideoInfo[2];
+                    added[1] = already.VideoInfo;
+                }
+            }
+
+            return new VoipGroupCallParticipantChangedEventArgs(already, already.Order, removed, added);
+        }
+
+        private static GroupCallParticipantVideoInfo[] VideoInfoOf(GroupCallParticipant participant)
+        {
+            return participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null
+                ? new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo }
+                : null;
+        }
+
+        private static void Merge(GroupCallParticipant already, GroupCallParticipant participant)
+        {
+            already.CanUnmuteSelf = participant.CanUnmuteSelf;
+            already.CanBeMutedForAllUsers = participant.CanBeMutedForAllUsers;
+            already.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
+            already.CanBeUnmutedForAllUsers = participant.CanBeUnmutedForAllUsers;
+            already.CanBeUnmutedForCurrentUser = participant.CanBeUnmutedForCurrentUser;
+            already.IsMutedForAllUsers = participant.IsMutedForAllUsers;
+            already.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
+            already.IsCurrentUser = participant.IsCurrentUser;
+            already.IsSpeaking = participant.IsSpeaking;
+            already.IsHandRaised = participant.IsHandRaised;
+            already.VolumeLevel = participant.VolumeLevel;
+            already.Bio = participant.Bio;
+            already.Order = participant.Order;
+            already.ScreenSharingVideoInfo = participant.ScreenSharingVideoInfo;
+            already.VideoInfo = participant.VideoInfo;
+            already.AudioSourceId = participant.AudioSourceId;
+            already.ScreenSharingAudioSourceId = participant.ScreenSharingAudioSourceId;
+            already.ParticipantId = participant.ParticipantId;
+        }
+
+        private void AddAudioSources(GroupCallParticipant participant)
+        {
+            if (participant.AudioSourceId != 0)
+            {
+                _audioSources[participant.AudioSourceId] = participant;
+            }
+
+            if (participant.ScreenSharingAudioSourceId != 0)
+            {
+                _audioSources[participant.ScreenSharingAudioSourceId] = participant;
             }
         }
 
-        public Task<IList<GroupCallParticipant>> GetParticipantsAsync(int offset, int limit)
+        private void RemoveAudioSources(GroupCallParticipant participant)
+        {
+            // Only when it still maps here: a source can be handed to someone else, and
+            // dropping it then would lose the mapping that has just replaced this one.
+            if (participant.AudioSourceId != 0 && _audioSources.TryGetValue(participant.AudioSourceId, out var already) && already == participant)
+            {
+                _audioSources.Remove(participant.AudioSourceId);
+            }
+
+            if (participant.ScreenSharingAudioSourceId != 0 && _audioSources.TryGetValue(participant.ScreenSharingAudioSourceId, out already) && already == participant)
+            {
+                _audioSources.Remove(participant.ScreenSharingAudioSourceId);
+            }
+        }
+
+        /// <summary>
+        /// Resolves a WebRTC synchronization source. Called from tgcalls threads.
+        /// </summary>
+        public bool TryGetByAudioSource(int audioSourceId, out GroupCallParticipant participant)
+        {
+            lock (_lock)
+            {
+                return _audioSources.TryGetValue(audioSourceId, out participant);
+            }
+        }
+
+        /// <summary>
+        /// Every participant currently sharing video, whether or not a view has paged
+        /// them in: the video grid covers the whole call, not the visible window.
+        /// </summary>
+        public IList<GroupCallParticipant> GetVideoParticipants()
+        {
+            lock (_lock)
+            {
+                var result = new List<GroupCallParticipant>();
+
+                foreach (var participant in _participants.Values)
+                {
+                    if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                    {
+                        result.Add(participant);
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public Task<VoipGroupCallParticipantsSlice> GetParticipantsAsync(int offset, int limit)
         {
             return GetParticipantsAsyncImpl(offset, limit, false);
         }
 
-        public async Task<IList<GroupCallParticipant>> GetParticipantsAsyncImpl(int offset, int limit, bool reentrancy)
+        private async Task<VoipGroupCallParticipantsSlice> GetParticipantsAsyncImpl(int offset, int limit, bool reentrancy)
         {
             var count = offset + limit;
 
@@ -57,23 +256,23 @@ namespace Telegram.Services
             // in there.
             int missing;
 
-            lock (_participants)
+            lock (_lock)
             {
-                var sorted = _participants;
+                _haveFullParticipants |= _call.LoadedAllParticipants;
 
-                missing = !_haveFullParticipants && count > sorted.Count && !reentrancy
-                    ? count - sorted.Count
+                missing = count > _ordered.Count && !_haveFullParticipants && !reentrancy
+                    ? count - _ordered.Count
                     : 0;
 
                 if (missing == 0)
                 {
-                    // Have enough chats in the chat list to answer request
-                    var result = new GroupCallParticipant[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
+                    // Have enough participants in the call to answer the request
+                    var result = new GroupCallParticipant[Math.Max(0, Math.Min(limit, _ordered.Count - offset))];
                     var pos = 0;
 
-                    using (var iter = sorted.GetEnumerator())
+                    using (var iter = _ordered.GetEnumerator())
                     {
-                        int max = Math.Min(count, sorted.Count);
+                        int max = Math.Min(count, _ordered.Count);
 
                         for (int i = 0; i < max; i++)
                         {
@@ -81,42 +280,68 @@ namespace Telegram.Services
 
                             if (i >= offset)
                             {
-                                if (_participantsCache.TryGetValue(iter.Current.ParticipantId, out var topic))
-                                {
-                                    result[pos++] = topic;
-                                }
-                                else
-                                {
-                                    pos++;
-                                }
+                                result[pos++] = _participants[iter.Current.ParticipantId];
                             }
                         }
                     }
 
-                    return result;
+                    return new VoipGroupCallParticipantsSlice(result, !_haveFullParticipants || count < _ordered.Count);
                 }
             }
 
-            var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_groupCallId, missing));
-            if (response is Ok or Error)
+            // loadGroupCallParticipants errors out before the call is joined, so there is
+            // nothing to ask for yet: the participants will arrive through updates.
+            if (_call.Id != 0 && _call.IsJoined)
             {
-                if (response is Error error)
+                var response = await _call.ClientService.SendAsync(new LoadGroupCallParticipants(_call.Id, missing));
+                if (response is Error)
                 {
-                    if (error.Code == 404)
+                    // Nothing to load for this call, and asking again would only repeat it.
+                    lock (_lock)
                     {
                         _haveFullParticipants = true;
                     }
-                    else
-                    {
-                        return null;
-                    }
                 }
-
-                // Chats have already been received through updates, let's retry request
-                return await GetParticipantsAsyncImpl(offset, limit, true);
             }
 
-            return null;
+            // The participants have already been received through updates, let's retry the
+            // request.
+            return await GetParticipantsAsyncImpl(offset, limit, true);
+        }
+
+        /// <summary>
+        /// Ranks one participant against another: positive when the first comes first.
+        /// </summary>
+        public static int Compare(string order, MessageSender participantId, string otherOrder, MessageSender otherParticipantId)
+        {
+            // Order is a fixed width, zero padded ASCII string built by TDLib, so an
+            // ordinal comparison is both exact and cheaper than the culture aware default.
+            var compare = string.CompareOrdinal(order, otherOrder);
+            if (compare != 0)
+            {
+                return compare;
+            }
+
+            return CompareIds(participantId, otherParticipantId);
+        }
+
+        private static int CompareIds(MessageSender x, MessageSender y)
+        {
+            var xUser = x as MessageSenderUser;
+            var yUser = y as MessageSenderUser;
+
+            if (xUser != null && yUser != null)
+            {
+                return xUser.UserId.CompareTo(yUser.UserId);
+            }
+            else if (xUser != null || yUser != null)
+            {
+                // MessageSender.ComparaTo has no answer across types and a SortedSet needs
+                // a total order all the same, so users are ranked ahead of chats.
+                return xUser != null ? 1 : -1;
+            }
+
+            return ((MessageSenderChat)x).ChatId.CompareTo(((MessageSenderChat)y).ChatId);
         }
 
         private readonly struct OrderedParticipant : IComparable<OrderedParticipant>
@@ -132,28 +357,9 @@ namespace Telegram.Services
 
             public int CompareTo(OrderedParticipant o)
             {
-                if (Order != o.Order)
-                {
-                    return o.Order.CompareTo(Order);
-                }
-
-                if (ParticipantId != o.ParticipantId)
-                {
-                    return o.ParticipantId.ComparaTo(ParticipantId) < 0 ? -1 : 1;
-                }
-
-                return 0;
-            }
-
-            public override bool Equals(object obj)
-            {
-                OrderedParticipant o = (OrderedParticipant)obj;
-                return ParticipantId.AreTheSame(o.ParticipantId) && Order == o.Order;
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(ParticipantId, Order);
+                // Arguments swapped rather than the result negated: the set iterates in
+                // call order, so the participant that ranks first must sort first.
+                return Compare(o.Order, o.ParticipantId, Order, ParticipantId);
             }
         }
     }

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
@@ -100,6 +99,8 @@ namespace Telegram.Services.Calls
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, Chat chat, GroupCall groupCall, MessageSender alias, string inviteHash, bool isLiveStory)
             : base(clientService, settingsService, aggregator)
         {
+            Participants = new VoipGroupCallParticipants(this);
+
             Duration = groupCall.Duration;
             IsVideoRecorded = groupCall.IsVideoRecorded;
             RecordDuration = groupCall.RecordDuration;
@@ -255,6 +256,8 @@ namespace Telegram.Services.Calls
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, InputGroupCall inputGroupCall)
             : base(clientService, settingsService, aggregator)
         {
+            Participants = new VoipGroupCallParticipants(this);
+
             //Duration = groupCall.Duration;
             //IsVideoRecorded = groupCall.IsVideoRecorded;
             //RecordDuration = groupCall.RecordDuration;
@@ -315,6 +318,8 @@ namespace Telegram.Services.Calls
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, IList<long> userIds)
             : base(clientService, settingsService, aggregator)
         {
+            Participants = new VoipGroupCallParticipants(this);
+
             //Duration = groupCall.Duration;
             //IsVideoRecorded = groupCall.IsVideoRecorded;
             //RecordDuration = groupCall.RecordDuration;
@@ -490,12 +495,11 @@ namespace Telegram.Services.Calls
 
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallStreamerChangedEventArgs> StreamerChanged;
 
-        private GroupCallParticipantsCollection _participants;
-        public GroupCallParticipantsCollection Participants
-        {
-            get => _participants;
-            private set => Set(ref _participants, value);
-        }
+        /// <summary>
+        /// Every participant TDLib has told us about. Created with the call and kept for
+        /// its whole life, rejoins included; views window over it, they don't own it.
+        /// </summary>
+        public VoipGroupCallParticipants Participants { get; }
 
         public async Task<bool> CanChooseAliasAsync()
         {
@@ -613,15 +617,6 @@ namespace Telegram.Services.Calls
                     if (_manager == null)
                     {
                         return;
-                    }
-
-                    if (IsRtmpStream)
-                    {
-                        Participants = null;
-                    }
-                    else
-                    {
-                        Participants ??= new GroupCallParticipantsCollection(this);
                     }
 
                     if (_inputGroupCallTask != null)
@@ -1014,18 +1009,11 @@ namespace Telegram.Services.Calls
             HashSet<int> unknownSources = null;
 
             var participants = Participants;
-            if (participants == null)
-            {
-                args.Deferral(null);
-                return;
-            }
-
-            var knownSources = participants.ToDictionary();
             var result = new List<VoipMediaChannelDescription>(args.AudioSourceIds.Count);
 
             foreach (var ssrc in args.AudioSourceIds)
             {
-                if (knownSources.TryGetValue((int)ssrc, out GroupCallParticipant participant))
+                if (participants.TryGetByAudioSource((int)ssrc, out GroupCallParticipant participant))
                 {
                     result.Add(new VoipMediaChannelDescription
                     {
@@ -1049,14 +1037,12 @@ namespace Telegram.Services.Calls
                     await ClientService.SendAsync(new SetGroupCallParticipantIsSpeaking(Id, ssrc, true));
                 }
 
-                knownSources = participants.ToDictionary();
-
                 // Only the ones that were missing: the first pass already added every
                 // source it could resolve, and walking the whole list again would add
                 // those a second time.
                 foreach (var ssrc in unknownSources)
                 {
-                    if (knownSources.TryGetValue(ssrc, out GroupCallParticipant participant))
+                    if (participants.TryGetByAudioSource(ssrc, out GroupCallParticipant participant))
                     {
                         result.Add(new VoipMediaChannelDescription
                         {
@@ -1209,9 +1195,6 @@ namespace Telegram.Services.Calls
             _alias = null;
             _availableAliases = null;
             _availableAliasesTask?.TrySetResult(null);
-
-            Participants?.Dispose();
-            Participants = null;
 
             _devices.Changed -= OnDeviceChanged;
             _devices.Stop();
@@ -1581,7 +1564,12 @@ namespace Telegram.Services.Calls
 
         public void UpdateParticipant(GroupCallParticipant participant)
         {
-            Participants?.Update(participant);
+            // From here on, the merged instance: the one every view is bound to, so that
+            // CurrentUser and the row in the list are the same object. The merge has
+            // already overwritten the previous state, so what went away is only readable
+            // off the diff.
+            var changed = Participants.Update(participant);
+            participant = changed.Participant;
 
             if (participant.IsCurrentUser)
             {
@@ -1597,7 +1585,7 @@ namespace Telegram.Services.Calls
                             _manager.IsMuted = true;
                         }
 
-                        if (_currentUser?.VideoInfo != null && participant.VideoInfo == null && _capturer != null)
+                        if (changed.RemovedVideoInfo?[1] != null && participant.VideoInfo == null && _capturer != null)
                         {
                             _capturer.SetOutput(null);
                             _manager?.SetVideoCapture(null);
@@ -1607,12 +1595,12 @@ namespace Telegram.Services.Calls
                         }
                     }
 
-                    if (_currentUser?.ScreenSharingVideoInfo != null && participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
+                    if (changed.RemovedVideoInfo?[0] != null && participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
                     {
                         EndScreenSharing();
                     }
                 }
-                else if (_currentUser?.ScreenSharingVideoInfo != null && participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
+                else if (changed.RemovedVideoInfo?[0] != null && participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
                 {
                     RejoinScreenSharing();
                 }

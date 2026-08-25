@@ -6,305 +6,225 @@
 //
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Services;
+using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
-        , ISupportIncrementalLoading
-        , IDelegable<IGroupCallDelegate>
+    /// <summary>
+    /// A window over <see cref="VoipGroupCallParticipants"/>, owned by one view and
+    /// touched only on its dispatcher.
+    /// </summary>
+    /// <remarks>
+    /// It holds the top of the call, in order, down to the last participant paged in;
+    /// anyone below that is left to paging. <see cref="ParticipantChanged"/> is raised
+    /// for every update all the same, in window or not, since the video grid covers the
+    /// whole call rather than the visible list.
+    /// </remarks>
+    public partial class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, ISupportIncrementalLoading
     {
-        private readonly IClientService _clientService;
+        private readonly VoipGroupCallParticipants _participants;
+        private readonly DispatcherQueue _dispatcherQueue;
 
-        private readonly Dictionary<int, GroupCallParticipant> _audioSources = new();
+        // Updates arrive on TDLib's update thread and are drained on the dispatcher.
+        // Queued rather than captured one closure at a time: a busy call updates
+        // constantly, and this also coalesces a burst into a single drain.
+        private readonly ConcurrentQueue<VoipGroupCallParticipantChangedEventArgs> _pending = new();
+        private readonly DispatcherQueueHandler _drain;
 
-        private readonly VoipGroupCall _call;
+        // The last participant in the window, or none while the window is still open at
+        // the bottom. Recomputed after every mutation rather than tracked, so that a
+        // participant leaving the boundary can't leave it pointing at a stale order.
+        private string _lastOrder = string.Empty;
+        private MessageSender _lastParticipantId;
 
-        private bool _isJoined;
-        private bool _loadedAllParticipants;
-        private int _participantCount;
+        private bool _hasMoreItems = true;
 
-        public IGroupCallDelegate Delegate { get; set; }
-
-        public GroupCallParticipantsCollection(VoipGroupCall call)
+        public GroupCallParticipantsCollection(VoipGroupCallParticipants participants, DispatcherQueue dispatcherQueue)
         {
-            _clientService = call.ClientService;
+            _participants = participants;
+            _dispatcherQueue = dispatcherQueue;
+            _drain = Drain;
 
-            _call = call;
-            _call.PropertyChanged += OnPropertyChanged;
+            _participants.Changed += OnChanged;
 
-            _isJoined = call.IsJoined;
-            _loadedAllParticipants = call.LoadedAllParticipants;
-            _participantCount = call.ParticipantCount;
-        }
-
-        public void Load()
-        {
-            if (_call.Id != 0 && _call.IsJoined)
-            {
-                _clientService.Send(new LoadGroupCallParticipants(_call.Id, 100));
-            }
+            _ = LoadMoreItemsAsync();
         }
 
         public void Dispose()
         {
-            _call.PropertyChanged -= OnPropertyChanged;
-            Delegate = null;
+            _participants.Changed -= OnChanged;
         }
 
-        public bool TryGetFromAudioSourceId(int audioSourceId, out GroupCallParticipant participant)
-        {
-            return _audioSources.TryGetValue(audioSourceId, out participant);
-        }
+        /// <summary>
+        /// Raised on the dispatcher for every participant update, whether or not it moved
+        /// a row.
+        /// </summary>
+        public event TypedEventHandler<GroupCallParticipantsCollection, VoipGroupCallParticipantChangedEventArgs> ParticipantChanged;
 
-        public IDictionary<int, GroupCallParticipant> ToDictionary()
+        /// <summary>
+        /// Asks for another page. Joining is the one moment worth calling this on: until
+        /// then TDLib has nothing to load and the list is fed by updates alone.
+        /// </summary>
+        public void Load()
         {
-            var dictionary = new Dictionary<int, GroupCallParticipant>();
-
-            foreach (var participant in this)
+            if (_hasMoreItems)
             {
-                dictionary.Add(participant.AudioSourceId, participant);
-
-                if (participant.ScreenSharingAudioSourceId != 0)
-                {
-                    dictionary.Add(participant.ScreenSharingAudioSourceId, participant);
-                }
+                _ = LoadMoreItemsAsync();
             }
-
-            return dictionary;
         }
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnChanged(VoipGroupCallParticipants sender, VoipGroupCallParticipantChangedEventArgs args)
         {
-            var needLoad = _call.LoadedAllParticipants && _call.LoadedAllParticipants != _loadedAllParticipants;
-            needLoad |= _call.ParticipantCount == Items.Count && _call.ParticipantCount < _participantCount;
-            needLoad |= _call.IsJoined && !_isJoined;
+            _pending.Enqueue(args);
+            _dispatcherQueue.TryEnqueue(_drain);
+        }
 
-            if (needLoad)
+        private void Drain()
+        {
+            while (_pending.TryDequeue(out var args))
             {
-                Load();
+                Apply(args);
             }
-
-            _isJoined = _call.IsJoined;
-            _loadedAllParticipants = _call.LoadedAllParticipants;
-            _participantCount = _call.ParticipantCount;
-
-            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
         }
 
-        public void Update(GroupCallParticipant participant)
+        private void Apply(VoipGroupCallParticipantChangedEventArgs args)
         {
-            TryEnqueue(() =>
+            var participant = args.Participant;
+
+            if (args.Order.Length > 0 && IsWithinWindow(args.Order, participant.ParticipantId))
             {
-                if (participant.Order.Length > 0)
+                var next = NextIndexOf(participant, args.Order, out int prev);
+                if (next != prev)
                 {
-                    var nextIndex = NextIndexOf(participant, out var updated, out int prevIndex);
-                    if (nextIndex >= 0)
+                    if (prev >= 0)
                     {
-                        if (prevIndex >= 0)
-                        {
-                            RemoveAt(prevIndex);
-
-                            // The index was measured against the list still holding the participant,
-                            // so everything past its old position has just shifted up by one.
-                            if (prevIndex < nextIndex)
-                            {
-                                nextIndex--;
-                            }
-                        }
-
-                        _audioSources[participant.IsCurrentUser ? 0 : participant.AudioSourceId] = participant;
-                        Insert(Math.Min(Count, nextIndex), participant);
+                        RemoveAt(prev);
                     }
-                    else if (updated != null)
-                    {
-                        Delegate?.UpdateGroupCallParticipant(updated);
-                    }
+
+                    Insert(Math.Min(Count, next), participant);
+                    UpdateWindow();
                 }
-                else
-                {
-                    var already = this.FirstOrDefault(x => x.ParticipantId.AreTheSame(participant.ParticipantId));
-                    if (already != null)
-                    {
-                        if (already.HasVideoInfo())
-                        {
-                            Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
-                        }
-
-                        _audioSources.Remove(participant.IsCurrentUser ? 0 : participant.AudioSourceId);
-                        Remove(already);
-                    }
-                }
-            });
-        }
-
-        private void TryEnqueue(DispatcherQueueHandler callback)
-        {
-            if (Delegate?.DispatcherQueue == null || Delegate.DispatcherQueue.HasThreadAccess)
-            {
-                callback();
             }
             else
             {
-                Delegate.DispatcherQueue.TryEnqueue(callback);
+                var prev = IndexOf(participant);
+                if (prev >= 0)
+                {
+                    RemoveAt(prev);
+                    UpdateWindow();
+                }
+            }
+
+            ParticipantChanged?.Invoke(this, args);
+        }
+
+        private bool IsWithinWindow(string order, MessageSender participantId)
+        {
+            // Nothing left to page in means the window is the whole call: a participant
+            // sinking to the bottom must stay in the list, since nothing would bring it
+            // back.
+            return !_hasMoreItems
+                || _lastParticipantId == null
+                || VoipGroupCallParticipants.Compare(order, participantId, _lastOrder, _lastParticipantId) >= 0;
+        }
+
+        private void UpdateWindow()
+        {
+            if (_hasMoreItems && Count > 0)
+            {
+                var last = this[Count - 1];
+
+                _lastOrder = last.Order;
+                _lastParticipantId = last.ParticipantId;
+            }
+            else
+            {
+                _lastOrder = string.Empty;
+                _lastParticipantId = null;
             }
         }
 
-        private int NextIndexOf(GroupCallParticipant participant, out GroupCallParticipant update, out int prev)
+        /// <summary>
+        /// Where the participant belongs, counted over the list without it, so that
+        /// <paramref name="prev"/> and the result can be compared directly: equal means
+        /// it is already in place and nothing has to move.
+        /// </summary>
+        private int NextIndexOf(GroupCallParticipant participant, string order, out int prev)
         {
-            update = null;
-
             prev = -1;
+
             var next = 0;
-            var index = int.MaxValue;
+            var index = -1;
 
             for (int i = 0; i < Count; i++)
             {
                 var item = this[i];
-                if (item.AreTheSame(participant))
+                if (item == participant)
                 {
                     prev = i;
-                    update = item;
-                    //continue;
+                    continue;
                 }
 
-                var order = participant.Order.CompareTo(item.Order);
-                var compare = participant.IsCurrentUser && item.IsCurrentUser ? 0 : participant.ParticipantId.ComparaTo(item.ParticipantId);
-
-                if (index == int.MaxValue && (order > 0 || participant.Order == item.Order && compare >= 0))
+                if (index < 0 && VoipGroupCallParticipants.Compare(order, participant.ParticipantId, item.Order, item.ParticipantId) >= 0)
                 {
-                    index = next == prev ? -1 : next;
+                    index = next;
                 }
 
                 next++;
             }
 
-            string[] removedVideoInfo = null;
-            GroupCallParticipantVideoInfo[] addedVideoInfo = null;
-
-            if (update != null)
-            {
-                if (update.ScreenSharingVideoInfo?.EndpointId != participant.ScreenSharingVideoInfo?.EndpointId)
-                {
-                    if (update.ScreenSharingVideoInfo?.EndpointId != null)
-                    {
-                        removedVideoInfo ??= new string[2];
-                        removedVideoInfo[0] = update.ScreenSharingVideoInfo.EndpointId;
-                    }
-
-                    if (participant.ScreenSharingVideoInfo?.EndpointId != null)
-                    {
-                        addedVideoInfo ??= new GroupCallParticipantVideoInfo[2];
-                        addedVideoInfo[0] = participant.ScreenSharingVideoInfo;
-                    }
-                }
-
-                if (update.VideoInfo?.EndpointId != participant.VideoInfo?.EndpointId)
-                {
-                    if (update.VideoInfo?.EndpointId != null)
-                    {
-                        removedVideoInfo ??= new string[2];
-                        removedVideoInfo[1] = update.VideoInfo.EndpointId;
-                    }
-
-                    if (participant.VideoInfo?.EndpointId != null)
-                    {
-                        addedVideoInfo ??= new GroupCallParticipantVideoInfo[2];
-                        addedVideoInfo[1] = participant.VideoInfo;
-                    }
-                }
-
-                update.CanUnmuteSelf = participant.CanUnmuteSelf;
-                update.CanBeMutedForAllUsers = participant.CanBeMutedForAllUsers;
-                update.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
-                update.CanBeUnmutedForAllUsers = participant.CanBeUnmutedForAllUsers;
-                update.CanBeUnmutedForCurrentUser = participant.CanBeUnmutedForCurrentUser;
-                update.IsMutedForAllUsers = participant.IsMutedForAllUsers;
-                update.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
-                update.IsCurrentUser = participant.IsCurrentUser;
-                update.IsSpeaking = participant.IsSpeaking;
-                update.IsHandRaised = participant.IsHandRaised;
-                update.VolumeLevel = participant.VolumeLevel;
-                update.Bio = participant.Bio;
-                update.Order = participant.Order;
-                update.ScreenSharingVideoInfo = participant.ScreenSharingVideoInfo;
-                update.VideoInfo = participant.VideoInfo;
-                update.AudioSourceId = participant.AudioSourceId;
-                update.ScreenSharingAudioSourceId = participant.ScreenSharingAudioSourceId;
-                update.ParticipantId = participant.ParticipantId;
-            }
-            else if (index >= 0 && (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null))
-            {
-                addedVideoInfo = new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo };
-            }
-
-            if (removedVideoInfo != null)
-            {
-                Delegate?.VideoInfoRemoved(participant, removedVideoInfo);
-            }
-
-            if (addedVideoInfo != null)
-            {
-                Delegate?.VideoInfoAdded(participant, addedVideoInfo);
-            }
-
-            return index < int.MaxValue ? index : Count;
-        }
-
-        public void LoadVideoInfo()
-        {
-            if (Delegate?.DispatcherQueue == null || Delegate.DispatcherQueue.HasThreadAccess)
-            {
-                foreach (var participant in this)
-                {
-                    if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
-                    {
-                        Delegate?.VideoInfoAdded(participant, new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo });
-                    }
-                }
-            }
-            else
-            {
-                Delegate.DispatcherQueue.TryEnqueue(LoadVideoInfo);
-            }
+            return index < 0 ? next : index;
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
-            {
-                count = (uint)Count;
+            return IncrementalLoading.Run(token => LoadMoreItemsAsync());
+        }
 
-                if (_call.Id != 0 && _call.IsJoined)
+        private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+        {
+            var totalCount = 0u;
+
+            var slice = await _participants.GetParticipantsAsync(Count, 20);
+
+            foreach (var participant in slice.Participants)
+            {
+                // An update can have inserted it already while the page was in flight,
+                // and can have moved it since: place it where it belongs either way.
+                var next = NextIndexOf(participant, participant.Order, out int prev);
+                if (next != prev)
                 {
-                    var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_call.Id, 100));
-                    if (response is Ok)
+                    if (prev >= 0)
                     {
-                        count = (uint)Count - count;
+                        RemoveAt(prev);
                     }
                     else
                     {
-                        count = 0;
+                        totalCount++;
                     }
-                }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = count
-                };
-            });
+                    Insert(Math.Min(Count, next), participant);
+                }
+            }
+
+            _hasMoreItems = slice.HasMore;
+            UpdateWindow();
+
+            return new LoadMoreItemsResult
+            {
+                Count = totalCount
+            };
         }
 
-        public bool HasMoreItems => !_call.LoadedAllParticipants;
+        public bool HasMoreItems => _hasMoreItems;
     }
 }
