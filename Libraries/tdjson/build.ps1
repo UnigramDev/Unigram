@@ -2,13 +2,35 @@ param (
   [string]$vcpkg_root,
   # x86 and ARM are not offered: libvlc and webrtc declare "supports": "uwp & (x64 | arm64)", so a
   # manifest install for either fails before TDLib is reached, and the app has no such platform.
-  [ValidateSet('x64', 'ARM64', IgnoreCase = $false)]
+  #
+  # A list and a separated string are both accepted, and there is no ValidateSet because of it:
+  # powershell.exe -File hands every argument over as one string, so -arch x64,ARM64 arrives here
+  # as the single value "x64,ARM64" and a set would reject it before the split below.
   [string[]]$arch = @( "x64", "ARM64" ),
   [string]$mode = "all"
 )
 $ErrorActionPreference = "Stop"
 
-$arch_list = $arch
+$known = 'x64', 'ARM64'
+$arch_list = [System.Collections.Generic.List[string]]::new()
+
+foreach ($name in ($arch -split '[,|]')) {
+  $trimmed = $name.Trim()
+  if (-not $trimmed) {
+    continue
+  }
+
+  # Matched rather than used as given, so -arch arm64 still reaches cmake and the triplet as the
+  # name they spell out.
+  $canonical = $known | Where-Object { $_ -eq $trimmed } | Select-Object -First 1
+  if (-not $canonical) {
+    throw "Unknown architecture '$trimmed'. Expected one or more of $($known -join ', ')."
+  }
+
+  if (-not $arch_list.Contains($canonical)) {
+    $arch_list.Add($canonical)
+  }
+}
 
 $td_root = Resolve-Path "../tdlib"
 
