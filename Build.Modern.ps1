@@ -77,10 +77,6 @@ foreach ($name in ($Platform -split '[,|]')) {
 
 $Platform = $resolved
 
-if ($Platform -contains 'ARM64') {
-    Write-Warning 'ARM64 has never been through ILC. The native components and the tdjson and rlottie binaries are all there for it; Telegram.Modern.csproj is not, so this is the first AOT compile for that architecture.'
-}
-
 if ($Mode -eq 'StoreUpload' -and $Identity -ne 'Original') {
     Write-Warning "Mode StoreUpload with the $Identity identity: the .msixupload will carry the patched package name and the Store will reject it. Pass -Identity Original for a real submission."
 }
