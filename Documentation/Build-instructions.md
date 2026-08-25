@@ -67,15 +67,16 @@ machine-wide integration so that it always builds against its own pinned commit.
 Everything else comes from `vcpkg.json` in the repository root, which is a
 [manifest](https://learn.microsoft.com/vcpkg/consume/manifest-mode): it pins the vcpkg commit
 (`builtin-baseline`) and lists the libraries, and the build restores them on demand into
-`vcpkg_installed\<triplet>`.
+`vcpkg_installed\<triplet>\<triplet>` — one install root per architecture, the triplet repeated
+because vcpkg creates its own `<triplet>` folder inside the root it is given.
 
 ffmpeg has to be built with a specific set of decoders, so it is vendored as an
 [overlay port](https://learn.microsoft.com/vcpkg/concepts/overlay-ports) in
 `Libraries\vcpkg-ports\ffmpeg`, taken from the vcpkg registry with the `--enable-*` list applied
 on top. It takes precedence over whichever ffmpeg version the pinned commit happens to carry.
 
-TDLib is built from the same manifest and the same installed tree, so the openssl and zlib it
-links are the ones the app ships.
+TDLib is built from the same manifest and into the same roots, so the openssl and zlib it links
+are the ones the app ships.
 
 ### TDLib
 In order to communicate with Telegram servers, Unigram uses TDLib. It comes as a submodule and is
@@ -91,12 +92,13 @@ Two extra tools are needed for the code generation step:
 Then, from `Libraries\tdjson`:
 
 ```shell
-> powershell -ExecutionPolicy ByPass ./build.ps1 -arch x64,ARM64
+> powershell -ExecutionPolicy ByPass ./build.ps1
 ```
 
-The script picks up `VCPKG_ROOT` and builds against the manifest in the repository root, so
-openssl and zlib are the same builds the app links. You can choose to build both `x64` and
-`arm64` or just the architecture you need.
+The script finds vcpkg exactly as the rest of the build does — it asks MSBuild to evaluate
+`Directory.Build.props` — and builds against the manifest in the repository root, so openssl
+and zlib are the same builds the app links. Both architectures are built by default; pass
+`-arch x64` or `-arch ARM64` for one of them.
 
 ### LibVLC and WebRTC
 
