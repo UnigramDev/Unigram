@@ -29,22 +29,22 @@ namespace Telegram.Common
 
         public static ConnectedAnimation PrepareToAnimate(string key, UIElement source)
         {
-            if (source.XamlRoot == null)
+            if (source.XamlRoot == null || !WindowContext.TryGetForXamlRoot(source.XamlRoot, out WindowContext window))
             {
                 return null;
             }
 
-            return ConnectedAnimationService.GetForCurrentView().PrepareToAnimate(key + "_" + WindowContext.ForXamlRoot(source.XamlRoot).Id, source);
+            return ConnectedAnimationService.GetForCurrentView().PrepareToAnimate(key + "_" + window.Id, source);
         }
 
         public static ConnectedAnimation GetAnimation(string key, XamlRoot xamlRoot)
         {
-            if (xamlRoot == null)
+            if (xamlRoot == null || !WindowContext.TryGetForXamlRoot(xamlRoot, out WindowContext window))
             {
                 return null;
             }
 
-            return ConnectedAnimationService.GetForCurrentView().GetAnimation(key + "_" + WindowContext.ForXamlRoot(xamlRoot).Id);
+            return ConnectedAnimationService.GetForCurrentView().GetAnimation(key + "_" + window.Id);
         }
 
         public static bool TryStart(string key, UIElement destination, ConnectedAnimationConfiguration configuration = null)
