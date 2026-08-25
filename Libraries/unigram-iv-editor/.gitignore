@@ -1,5 +1,4 @@
 node_modules/
 dist/
-editor.html
 *.log
 .DS_Store
