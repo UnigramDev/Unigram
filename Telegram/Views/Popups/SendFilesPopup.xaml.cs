@@ -584,7 +584,7 @@ namespace Telegram.Views.Popups
                 // The item itself, not a wrapper standing in for it: Remove_Click looks this up in
                 // Items, and in files mode the wrapper was never in there to be found.
                 animated.Tag = storage;
-                animated.Glyph = GlyphFor(file);
+                animated.Glyph = Icons.DocumentFilled24;
             }
             else if (glyph is TextBlock text)
             {
@@ -665,10 +665,7 @@ namespace Telegram.Views.Popups
             var content = sender as Grid;
 
             var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
-            if (content.DataContext is FileRow file)
-            {
-                glyph?.Glyph = GlyphFor(file);
-            }
+            glyph?.Glyph = Icons.DocumentFilled24;
         }
 
         private static string GlyphFor(FileRow row)
