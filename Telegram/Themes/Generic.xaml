@@ -228,7 +228,8 @@
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Background="{TemplateBinding Background}" />
 
                         <!-- Over the content, not beside it: every root in this app draws into its
                              own title bar, so the caption is an overlay and each root leaves room
