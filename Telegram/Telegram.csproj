@@ -1188,7 +1188,6 @@
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
     <Compile Include="ViewModels\CreateChatPhotoViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
-    <Compile Include="ViewModels\Delegates\IGroupCallDelegate.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
     <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
     <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls;
@@ -23,7 +24,6 @@ using Telegram.Services.Calls;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Calls.Popups;
 using Telegram.Views.Popups;
@@ -50,7 +50,7 @@ namespace Telegram.Views.Calls
         }
     }
 
-    public sealed partial class GroupCallWindow : WindowContent, IGroupCallDelegate
+    public sealed partial class GroupCallWindow : WindowContent
     {
         private bool _disposed;
 
@@ -70,6 +70,7 @@ namespace Telegram.Views.Calls
 
         private readonly DispatcherQueue _dispatcherQueue;
 
+        private readonly GroupCallParticipantsCollection _participants;
         private readonly ObservableCollection<GroupCallMessage> _messages;
 
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
@@ -106,15 +107,14 @@ namespace Telegram.Views.Calls
             _call.MessagesChanged += OnMessagesChanged;
             _call.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _call.MutedChanged += OnMutedChanged;
-            _call.PropertyChanged += OnParticipantsChanged;
+            _call.PropertyChanged += OnCallPropertyChanged;
 
-            if (_call.Participants != null)
-            {
-                _call.Participants.Delegate = this;
-                _call.Participants.LoadVideoInfo();
+            _participants = new GroupCallParticipantsCollection(_call.Participants, _dispatcherQueue);
+            _participants.ParticipantChanged += OnParticipantChanged;
 
-                ScrollingHost.ItemsSource = _call.Participants;
-            }
+            ScrollingHost.ItemsSource = _participants;
+
+            LoadVideoInfo();
 
             _messages = new ObservableCollection<GroupCallMessage>(_call.Messages);
             MessagesHost.ItemsSource = _messages;
@@ -150,9 +150,7 @@ namespace Telegram.Views.Calls
 
         protected override UIElement TitleBarElement => TitleArea;
 
-        public DispatcherQueue DispatcherQueue => _dispatcherQueue;
-
-        public void VideoInfoAdded(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
+        private void VideoInfoAdded(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
         {
             GroupCallParticipantGridCell screenSharing = null;
 
@@ -195,7 +193,35 @@ namespace Telegram.Views.Calls
             _debouncerTimer.Start();
         }
 
-        public void VideoInfoRemoved(GroupCallParticipant participant, string[] endpointIds)
+        /// <summary>
+        /// Replays the endpoints already up, so that a window opened mid-call shows the
+        /// video that started before it. Reads the model rather than the list: the grid
+        /// covers the whole call, not the participants paged in.
+        /// </summary>
+        private void LoadVideoInfo()
+        {
+            foreach (var participant in _call.Participants.GetVideoParticipants())
+            {
+                VideoInfoAdded(participant, new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo });
+            }
+        }
+
+        private void OnParticipantChanged(GroupCallParticipantsCollection sender, VoipGroupCallParticipantChangedEventArgs args)
+        {
+            if (args.RemovedVideoInfo != null)
+            {
+                VideoInfoRemoved(args.Participant, args.RemovedVideoInfo);
+            }
+
+            if (args.AddedVideoInfo != null)
+            {
+                VideoInfoAdded(args.Participant, args.AddedVideoInfo);
+            }
+
+            UpdateGroupCallParticipant(args.Participant);
+        }
+
+        private void VideoInfoRemoved(GroupCallParticipant participant, string[] endpointIds)
         {
             foreach (var item in endpointIds)
             {
@@ -257,23 +283,9 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => UpdateNetworkState(_call.CurrentUser, _call.IsConnected));
         }
 
-        private void OnParticipantsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnCallPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Participants")
-            {
-                if (_disposed || _call?.Participants == null)
-                {
-                    return;
-                }
-
-                _call.Participants.Delegate = this;
-                _call.Participants.LoadVideoInfo();
-                this.BeginOnUIThread(() => ScrollingHost.ItemsSource = _call.Participants);
-            }
-            else
-            {
-                this.BeginOnUIThread(() => Update(_call, _call?.CurrentUser));
-            }
+            this.BeginOnUIThread(() => Update(_call, _call?.CurrentUser));
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -296,7 +308,10 @@ namespace Telegram.Views.Calls
             _call.MessagesChanged -= OnMessagesChanged;
             _call.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             _call.MutedChanged -= OnMutedChanged;
-            _call.PropertyChanged -= OnParticipantsChanged;
+            _call.PropertyChanged -= OnCallPropertyChanged;
+
+            _participants.ParticipantChanged -= OnParticipantChanged;
+            _participants.Dispose();
 
             _sinks.Values.ForEach(x => x.Stop());
             _sinks.Clear();
@@ -790,6 +805,11 @@ namespace Telegram.Views.Calls
             {
                 this.BeginOnUIThread(Window.Close);
             }
+            else if (args.IsJoined)
+            {
+                // Nothing could be paged in before the call was joined.
+                this.BeginOnUIThread(_participants.Load);
+            }
         }
 
         private void OnVerificationStateChanged(VoipGroupCall sender, VoipGroupCallVerificationStateChangedEventArgs args)
@@ -816,11 +836,7 @@ namespace Telegram.Views.Calls
 
         private void OnAudioLevelsUpdated(object sender, IList<VoipGroupParticipant> levels)
         {
-            var participants = _call?.Participants;
-            if (participants == null)
-            {
-                return;
-            }
+            var participants = _call.Participants;
 
             var validLevels = new Dictionary<GroupCallParticipant, float>();
 
@@ -832,29 +848,41 @@ namespace Telegram.Views.Calls
                     value = 0;
                 }
 
+                GroupCallParticipant participant;
+
                 if (level.AudioSource == 0)
                 {
+                    // The local user. Source 0 also means "not connected over WebRTC", so
+                    // it is never a synchronization source anyone can be resolved by.
+                    participant = _call.CurrentUser;
+
                     if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
                     {
                         _visual.UpdateLevel(value);
                     }
                 }
-
-                if (participants.TryGetFromAudioSourceId(level.AudioSource, out var participant))
+                else if (!participants.TryGetByAudioSource(level.AudioSource, out participant))
                 {
-                    validLevels[participant] = value;
+                    continue;
+                }
 
-                    var endpoint = participant.ScreenSharingVideoInfo?.EndpointId ?? participant.VideoInfo?.EndpointId;
-                    if (endpoint != null && endpoint == _selectedEndpointId)
+                if (participant == null)
+                {
+                    continue;
+                }
+
+                validLevels[participant] = value;
+
+                var endpoint = participant.ScreenSharingVideoInfo?.EndpointId ?? participant.VideoInfo?.EndpointId;
+                if (endpoint != null && endpoint == _selectedEndpointId)
+                {
+                    const float speakingLevelThreshold = 0.1f;
+                    const int cutoffTimeout = 3000;
+                    const int silentTimeout = 2000;
+
+                    if (value > speakingLevelThreshold && level.IsSpeaking)
                     {
-                        const float speakingLevelThreshold = 0.1f;
-                        const int cutoffTimeout = 3000;
-                        const int silentTimeout = 2000;
-
-                        if (value > speakingLevelThreshold && level.IsSpeaking)
-                        {
-                            _selectedTimestamp = Logger.TickCount;
-                        }
+                        _selectedTimestamp = Logger.TickCount;
                     }
                 }
             }
@@ -1545,7 +1573,7 @@ namespace Telegram.Views.Calls
             args.Handled = true;
         }
 
-        public void UpdateGroupCallParticipant(GroupCallParticipant participant)
+        private void UpdateGroupCallParticipant(GroupCallParticipant participant)
         {
             foreach (var videoInfo in participant.GetVideoInfo())
             {

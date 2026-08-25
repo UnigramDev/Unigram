@@ -31,4 +31,12 @@ namespace Telegram.Services.Calls
     public record VoipGroupCallTotalStarCountChangedEventArgs(long TotalStarCount);
 
     public record VoipGroupCallStreamerChangedEventArgs(GroupCallParticipant Streamer);
+
+    /// <param name="Participant">The instance the model holds, already merged.</param>
+    /// <param name="Order">The order at the time of the update, empty once the participant has left. Not read off <paramref name="Participant"/>, which a later update can have moved again before a handler runs.</param>
+    /// <param name="RemovedVideoInfo">Endpoints that went away, screen sharing first, or null.</param>
+    /// <param name="AddedVideoInfo">Endpoints that appeared, screen sharing first, or null.</param>
+    public record VoipGroupCallParticipantChangedEventArgs(GroupCallParticipant Participant, string Order, string[] RemovedVideoInfo, GroupCallParticipantVideoInfo[] AddedVideoInfo);
+
+    public record VoipGroupCallParticipantsSlice(IList<GroupCallParticipant> Participants, bool HasMore);
 }
