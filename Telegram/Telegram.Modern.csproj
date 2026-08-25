@@ -45,7 +45,10 @@
     <!-- Set here rather than passed on the command line: as a global property it flows into the
          ProjectReference, and Telegram.Generators is netstandard2.0, which cannot AOT
          (NETSDK1207). Publish with SelfContained and no -p:PublishAot to get a CoreCLR layout. -->
-    <PublishAot>true</PublishAot>
+    <!-- Release only: ILC is the whole cost of a Debug deploy, which publishes through the
+         packaging project, and nothing about a debug session wants a native image. SelfContained
+         in the publish profile is what makes the CoreCLR layout it falls back to work. -->
+    <PublishAot Condition="'$(Configuration)' != 'Debug'">true</PublishAot>
     <!-- PublishAot turns the trim analyzer on for every build, and it is 98% of the
          analyzer time in the compile - 765 CPU-seconds, ~16s of wall clock. Nothing is
          trimmed in a Debug build, and publish and Release still run it, so it gates
@@ -53,6 +56,10 @@
     <EnableTrimAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableTrimAnalyzer>
     <EnableAotAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableAotAnalyzer>
     <EnableSingleFileAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableSingleFileAnalyzer>
+    <!-- 15s of a Debug build, measured with ReportAnalyzer: CA2252 alone is 7.5s and only says
+         anything about preview APIs. Release still runs them, so they gate releases rather than
+         the inner loop - the same trade as the three analyzers above. -->
+    <EnableNETAnalyzers Condition="'$(Configuration)' == 'Debug'">false</EnableNETAnalyzers>
     <!-- Turns off the runtime's marshalling subsystem for this assembly: only blittable types may
          cross a P/Invoke, and everything else is marshalled by the LibraryImport generator in C#
          instead. The SDK turns this property into the assembly attribute.
@@ -65,7 +72,14 @@
     <!-- The CsWinRT generators are the interesting output of this project: what they emit for
          [GeneratedBindableCustomProperty] is what classic {Binding} and ItemsPath resolve
          through once AOT has trimmed reflection away. -->
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <EmitCompilerGeneratedFiles Condition="'$(Configuration)' != 'Debug'">true</EmitCompilerGeneratedFiles>
+
+    <!-- Debug is not AOT, so none of this is needed to run - and both cost on every keystroke, not
+         just on build: the optimizer is a source generator and the warning level is what raises the
+         ~1800 CsWinRT1034 diagnostics the IDE recomputes live. CsWinRTAotExportsEnabled turns
+         itself off with PublishAot. -->
+    <CsWinRTAotOptimizerEnabled Condition="'$(Configuration)' == 'Debug'">false</CsWinRTAotOptimizerEnabled>
+    <CsWinRTAotWarningLevel Condition="'$(Configuration)' == 'Debug'">0</CsWinRTAotWarningLevel>
 
     <!-- Properties\AssemblyInfo.cs stays with the legacy project (see the Compile Remove below);
          these carry its values over to the attributes the SDK generates in its place. -->
@@ -246,7 +260,12 @@
     <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
+    <!-- DynamicCastRootGenerator runs a semantic query per cast in the app - 8.8s a build - and
+         exists only so trimming cannot drop the metadata a cast needs. Debug is not trimmed, so
+         what it emits there is inert. WinRTExposedTypeAnalyzer goes with it, and reports on a
+         Release build instead. -->
     <ProjectReference Include="..\Telegram.Generators.WinRT\Telegram.Generators.WinRT.csproj"
+                      Condition="'$(Configuration)' != 'Debug'"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
