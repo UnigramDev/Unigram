@@ -76,6 +76,16 @@ namespace Telegram.Controls
 
         protected bool _clean = false;
 
+        // The frame the presenter last handed over, and its rotation. Deliberately cached
+        // rather than read back off the brush: ImageBrush.ImageSource resolves the bitmap's
+        // framework peer, and nothing managed roots that peer - PixelBuffer holds the
+        // WriteableBitmap as a plain COM reference from C++, which keeps it alive but not
+        // reachable, so the reference tracker collects it and the getter then fails with
+        // E_FAIL. The brush outlives the presenter whenever CleanOnSourceChanged is false,
+        // so there is no root that lives long enough to fix it the other way round.
+        private PixelBuffer _frame;
+        private double _frameRotation;
+
         public AnimatedImage()
         {
             DefaultStyleKey = typeof(AnimatedImage);
@@ -88,7 +98,10 @@ namespace Telegram.Controls
                 Load();
             }
 
-            UpdateRotation(LayoutRoot.Background as ImageBrush);
+            if (_frameRotation != 0)
+            {
+                UpdateRotation(LayoutRoot.Background as ImageBrush);
+            }
         }
 
         public event EventHandler Ready;
@@ -583,12 +596,15 @@ namespace Telegram.Controls
             _state = PlayingState.Paused;
         }
 
-        public virtual void Invalidate(ImageBrush source)
+        public virtual void Invalidate(ImageBrush source, PixelBuffer frame)
         {
             if (IsDisconnected)
             {
                 return;
             }
+
+            _frame = frame;
+            _frameRotation = source?.Transform is CompositeTransform composite ? composite.Rotation : 0;
 
             if (source != null || CleanOnSourceChanged)
             {
@@ -601,7 +617,7 @@ namespace Telegram.Controls
 
                 if (DominantColor is SolidColorBrush dominantColor)
                 {
-                    dominantColor.Color = GetDominantColor(source.ImageSource as WriteableBitmap);
+                    dominantColor.Color = GetDominantColor(frame?.Source);
                 }
 
                 if (UpdateRotation(source))
@@ -668,36 +684,36 @@ namespace Telegram.Controls
 
         private bool UpdateRotation(ImageBrush source)
         {
-            if (source?.ImageSource is WriteableBitmap bitmap && source?.Transform is CompositeTransform composite)
+            if (_frame == null || source?.Transform is not CompositeTransform composite)
             {
-                double pixelWidth;
-                double pixelHeight;
-
-                if (composite.Rotation is 90 or 270)
-                {
-                    pixelWidth = bitmap.PixelHeight;
-                    pixelHeight = bitmap.PixelWidth;
-                }
-                else
-                {
-                    pixelWidth = bitmap.PixelWidth;
-                    pixelHeight = bitmap.PixelHeight;
-                }
-
-                var scaleX = ActualWidth / pixelWidth;
-                var scaleY = ActualHeight / pixelHeight;
-                var scale = Math.Max(scaleX, scaleY);
-
-                composite.ScaleX = scale;
-                composite.ScaleY = scale;
-
-                composite.CenterX = ActualWidth / 2;
-                composite.CenterY = ActualHeight / 2;
-
-                return true;
+                return false;
             }
 
-            return false;
+            double pixelWidth;
+            double pixelHeight;
+
+            if (_frameRotation is 90 or 270)
+            {
+                pixelWidth = _frame.PixelHeight;
+                pixelHeight = _frame.PixelWidth;
+            }
+            else
+            {
+                pixelWidth = _frame.PixelWidth;
+                pixelHeight = _frame.PixelHeight;
+            }
+
+            var scaleX = ActualWidth / pixelWidth;
+            var scaleY = ActualHeight / pixelHeight;
+            var scale = Math.Max(scaleX, scaleY);
+
+            composite.ScaleX = scale;
+            composite.ScaleY = scale;
+
+            composite.CenterX = ActualWidth / 2;
+            composite.CenterY = ActualHeight / 2;
+
+            return true;
         }
 
         public bool CleanOnSourceChanged { get; set; } = true;
@@ -976,7 +992,7 @@ namespace Telegram.Controls
 
             if (_dirty)
             {
-                canvas.Invalidate(_imageBrush);
+                canvas.Invalidate(_imageBrush, _foregroundPrev);
             }
         }
 
@@ -985,7 +1001,7 @@ namespace Telegram.Controls
             _images.Remove(canvas);
             UnloadImpl(playing);
 
-            canvas.Invalidate(null);
+            canvas.Invalidate(null, null);
         }
 
         private void LoadImpl()
@@ -1065,7 +1081,7 @@ namespace Telegram.Controls
 
             if (_dirty)
             {
-                canvas.Invalidate(_imageBrush);
+                canvas.Invalidate(_imageBrush, _foregroundPrev);
             }
         }
 
@@ -1526,7 +1542,7 @@ namespace Telegram.Controls
                 {
                     foreach (var image in _images)
                     {
-                        image.Invalidate(_imageBrush);
+                        image.Invalidate(_imageBrush, next);
                     }
                 }
 
