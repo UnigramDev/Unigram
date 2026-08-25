@@ -61,7 +61,13 @@ if (-not (Test-Path $msbuild)) {
     throw "MSBuild.exe not found at $msbuild"
 }
 
-$common = @("-p:Configuration=$Configuration", "-p:Platform=$Platform", '-nologo', '-verbosity:minimal', '-m')
+
+# The two native projects still restore through packages.config, which -restore does not cover on
+# its own: it drives NuGet's PackageReference restore, and a packages.config project is skipped
+# silently. The build then fails on the CppWinRT .props it imports by path, telling you to run a
+# restore you just ran. Restoring both kinds costs nothing once the packages are there.
+$common = @("-p:Configuration=$Configuration", "-p:Platform=$Platform",
+            '-p:RestorePackagesConfig=true', '-nologo', '-verbosity:minimal', '-m')
 
 function Invoke-MSBuild {
     param([string[]] $Arguments, [string] $Description)

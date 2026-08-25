@@ -114,7 +114,12 @@ if (-not (Test-Path $msbuild)) {
 # a stale projection rather than as a missing file.
 $solution = Join-Path $PSScriptRoot 'Telegram.Modern.slnx'
 
-$common = @("-p:Configuration=$Configuration", '-nologo', '-verbosity:minimal', '-m')
+# The two native projects still restore through packages.config, which -restore does not cover on
+# its own: it drives NuGet's PackageReference restore, and a packages.config project is skipped
+# silently. The build then fails on the CppWinRT .props it imports by path, telling you to run a
+# restore you just ran. Restoring both kinds costs nothing once the packages are there.
+$common = @("-p:Configuration=$Configuration", '-p:RestorePackagesConfig=true',
+            '-nologo', '-verbosity:minimal', '-m')
 
 # The last platform in AppxBundlePlatforms is the one the packaging targets treat as producing the
 # bundle: every other platform is built from it, through the solution and with bundling suppressed,
