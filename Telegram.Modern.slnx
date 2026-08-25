@@ -15,6 +15,8 @@
     <Platform Solution="*|x64" Project="x64" />
   </Project>
   <Project Path="Telegram/Telegram.Modern.csproj">
+    <BuildDependency Project="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" />
+    <BuildDependency Project="Telegram.Native/Telegram.Native.vcxproj" />
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
     <Deploy Solution="Debug|x64" />
