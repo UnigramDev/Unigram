@@ -124,7 +124,7 @@ namespace Telegram.Views.Popups
                 }
                 else if (chat.Type is ChatTypePrivate or ChatTypeBasicGroup)
                 {
-                    if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
+                    if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers && chat.LastMessage?.Content is not MessageContactRegistered)
                     {
                         User user = null;
                         TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && clientService.TryGetUser(chat, out user)
@@ -145,7 +145,7 @@ namespace Telegram.Views.Popups
                             ? Strings.AreYouSureDeleteSingleMessage
                             : Strings.AreYouSureDeleteFewMessages);
 
-                        if (canBeDeletedForAllUsers && user?.Type is not UserTypeBot)
+                        if (canBeDeletedForAllUsers && chat.LastMessage?.Content is not MessageContactRegistered && user?.Type is not UserTypeBot)
                         {
                             RevokeCheck.IsChecked = true;
                             RevokeCheck.Visibility = Visibility.Visible;
