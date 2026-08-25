@@ -48,6 +48,135 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        // Exact equality is not usable to decide whether the user is still at the end: a pixel of
+        // overscroll bounce or a fractional DPI offset would silently stop the list from following.
+        private const double FollowThreshold = 8;
+
+        /// <summary>
+        /// True while the user is resting at the end of the history, in which case every mutation
+        /// anchors there and new messages appear without having to be scrolled to.
+        /// </summary>
+        /// <remarks>
+        /// Only the user's own scrolling clears this. A message arriving, the composer growing or a
+        /// slice loading all move <see cref="ScrollViewer.ScrollableHeight"/> without meaning that
+        /// the user stopped following, so this is sampled once the view has come to rest and never
+        /// while it is moving.
+        /// </remarks>
+        public bool IsFollowingEnd { get; private set; } = true;
+
+        /// <summary>
+        /// In the saved messages tab the mirror the list is bound to is reversed, so the newest
+        /// message is at the top: following it means resting at offset zero rather than at the end.
+        /// </summary>
+        private bool IsReversed => ViewModel?.IsSavedMessagesTab is true;
+
+        /// <summary>
+        /// Records whether the list follows the end, and pushes the matching edge to the panel
+        /// straight away.
+        /// </summary>
+        /// <remarks>
+        /// For the paths that know their intent — navigation, an explicit scroll, a slice loaded
+        /// around a specific message. A reset never reaches <see cref="PrepareAnchor"/>, because
+        /// <see cref="SynchronizedList{T}"/> applies one wholesale, so the edge has to be on the
+        /// panel before it arrives.
+        /// </remarks>
+        public void SetFollowingEnd(bool value)
+        {
+            IsFollowingEnd = value;
+            ApplyAnchor();
+        }
+
+        internal void ApplyAnchor()
+        {
+            SetAnchor(IsFollowingEnd != IsReversed);
+        }
+
+        private void SetAnchor(bool end)
+        {
+            if (ItemsPanelRoot is ItemsStackPanel panel)
+            {
+                panel.ItemsUpdatingScrollMode = end
+                    ? ItemsUpdatingScrollMode.KeepLastItemInView
+                    : ItemsUpdatingScrollMode.KeepItemsInView;
+            }
+        }
+
+        private void UpdateFollowingEnd()
+        {
+            var scroll = ScrollingHost;
+            if (scroll == null)
+            {
+                return;
+            }
+
+            IsFollowingEnd = IsReversed
+                ? scroll.VerticalOffset < FollowThreshold
+                : scroll.ScrollableHeight - scroll.VerticalOffset < FollowThreshold;
+        }
+
+        // ItemsStackPanel.FirstVisibleIndex only catches up on the next layout pass, and a slice
+        // load raises one event per message (MessageCollection.PrependSlice/AppendSlice), so the
+        // panel is asked once and the index kept up to date by hand until layout runs again.
+        private int _anchorIndex = -1;
+
+        internal void InvalidateAnchor()
+        {
+            _anchorIndex = -1;
+        }
+
+        /// <summary>
+        /// Picks the edge the scroll offset anchors to for the mutation about to be applied at
+        /// <paramref name="index"/>, which displaces everything after it by <paramref name="delta"/>.
+        /// </summary>
+        /// <remarks>
+        /// While the list follows the end that edge is the answer for every mutation: a prepend is
+        /// compensated and leaves the user at the end, an append reveals the new message. Otherwise
+        /// the requirement is that content already on screen must not move, and only the part of
+        /// the list above the viewport can disturb it.
+        /// </remarks>
+        internal void PrepareAnchor(int index, int delta)
+        {
+            if (ItemsPanelRoot is not ItemsStackPanel panel)
+            {
+                return;
+            }
+
+            if (_anchorIndex < 0)
+            {
+                _anchorIndex = Math.Max(panel.FirstVisibleIndex, 0);
+            }
+
+            var above = index <= _anchorIndex;
+
+            panel.ItemsUpdatingScrollMode = (IsFollowingEnd ? !IsReversed : above)
+                ? ItemsUpdatingScrollMode.KeepLastItemInView
+                : ItemsUpdatingScrollMode.KeepItemsInView;
+
+            if (above)
+            {
+                // A range straddling the viewport edge is approximate here, and the layout that
+                // follows corrects it.
+                _anchorIndex = Math.Max(_anchorIndex + delta, 0);
+            }
+        }
+
+        /// <summary>
+        /// The side the rows moved on, for the size change and removal animations: the same
+        /// question <see cref="PrepareAnchor"/> just answered for the mutation in flight.
+        /// </summary>
+        internal static int GetShiftDirection(ItemsStackPanel panel, int index, SelectorItem selector, ScrollViewer scroll)
+        {
+            var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
+            var edge = (index == panel.LastVisibleIndex && direction == 1) || (index == panel.FirstVisibleIndex && direction == -1);
+
+            if (edge && !scroll.ViewportContains(selector))
+            {
+                direction *= -1;
+            }
+
+            return direction;
+        }
+
         private readonly DispatcherTimer _scrollTracker = new();
 
         private TaskCompletionSource<bool> _waitItemsPanelRoot = new();
@@ -72,7 +201,15 @@ namespace Telegram.Controls.Chats
         public void ScrollToBottom()
         {
             HasBeenScrolled = true;
+            SetFollowingEnd(!IsReversed);
             ScrollingHost?.TryChangeView(null, ScrollingHost.ScrollableHeight, null);
+        }
+
+        public void ScrollToTop()
+        {
+            HasBeenScrolled = true;
+            SetFollowingEnd(IsReversed);
+            ScrollingHost?.TryChangeView(null, 0, null);
         }
 
         public bool IsSuspended => !_raiseViewChanged;
@@ -97,7 +234,7 @@ namespace Telegram.Controls.Chats
                 ItemsPanelRoot.SizeChanged += OnSizeChanged;
 
                 _waitItemsPanelRoot.TrySetResult(true);
-                SetScrollingMode();
+                ApplyAnchor();
             }
 
             ViewChanging();
@@ -168,6 +305,7 @@ namespace Telegram.Controls.Chats
         private void OnDirectManipulationCompleted(object sender, object e)
         {
             _scrollTracker.Stop();
+            UpdateFollowingEnd();
         }
 
         private void OnTick(object sender, object e)
@@ -183,7 +321,10 @@ namespace Telegram.Controls.Chats
             if (offset < -1)
             {
                 _scrollTracker.Stop();
-                SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+
+                // The ad is revealed by the user pulling past the end, so the list must stop
+                // following: inserting it while anchored to the end would scroll it into view.
+                SetFollowingEnd(false);
 
                 ViewModel.PendingSponsoredMessage = null;
                 ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null, null)));
@@ -243,7 +384,7 @@ namespace Telegram.Controls.Chats
                 var point = e.GetCurrentPoint(ScrollingHost);
                 if (point.Properties.MouseWheelDelta < 0)
                 {
-                    SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                    SetFollowingEnd(false);
 
                     ViewModel.PendingSponsoredMessage = null;
                     ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null, null)));
@@ -271,6 +412,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
+            UpdateFollowingEnd();
+
             ScrollingDirection = PanelScrollingDirection.None;
         }
 
@@ -294,89 +437,6 @@ namespace Telegram.Controls.Chats
         public void ViewChanging(PanelScrollingDirection direction = PanelScrollingDirection.None)
         {
             ScrollingDirection = direction;
-
-            if (ScrollingHost == null || ItemsPanelRoot is not ItemsStackPanel panel || ViewModel == null || IsDisconnected)
-            {
-                return;
-            }
-
-            var lastSlice = ViewModel.IsSavedMessagesTab ? ViewModel.IsNewestSliceLoaded != true : ViewModel.IsOldestSliceLoaded != true;
-            var firstSlice = ViewModel.IsSavedMessagesTab ? ViewModel.IsOldestSliceLoaded != true : ViewModel.IsNewestSliceLoaded != true;
-
-            if (direction != PanelScrollingDirection.Backward && panel.LastCacheIndex == ViewModel.Items.Count - 1)
-            {
-                LoadPreviousSlice(direction, firstSlice);
-            }
-        }
-
-        private void LoadPreviousSlice(PanelScrollingDirection direction, bool firstSlice)
-        {
-            if (firstSlice)
-            {
-                return;
-            }
-
-            SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-        }
-
-        private ItemsUpdatingScrollMode _currentMode;
-        private ItemsUpdatingScrollMode? _pendingMode;
-        private bool? _pendingForce;
-
-        public void SetScrollingMode()
-        {
-            if (_pendingMode is ItemsUpdatingScrollMode mode && _pendingForce is bool force)
-            {
-                _pendingMode = null;
-                _pendingForce = null;
-
-                SetScrollingMode(mode, force);
-            }
-        }
-
-        public void SetScrollingMode(ItemsUpdatingScrollMode mode, bool force)
-        {
-            var panel = ItemsPanelRoot as ItemsStackPanel;
-            var scroll = ScrollingHost;
-
-            if (panel == null || scroll == null)
-            {
-                _pendingMode = mode;
-                _pendingForce = force;
-
-                return;
-            }
-
-            if (_currentMode == _pendingMode)
-            {
-                _pendingMode = null;
-                _pendingForce = null;
-                return;
-            }
-
-            if (ViewModel.IsSavedMessagesTab)
-            {
-                mode = mode == ItemsUpdatingScrollMode.KeepLastItemInView
-                    ? ItemsUpdatingScrollMode.KeepItemsInView
-                    : ItemsUpdatingScrollMode.KeepLastItemInView;
-            }
-
-            if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 200))
-            {
-                if (panel.ItemsUpdatingScrollMode != mode)
-                {
-                    Logger.Debug("Changed scrolling mode to KeepItemsInView");
-                    panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                }
-            }
-            else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
-            {
-                if (panel.ItemsUpdatingScrollMode != mode)
-                {
-                    Logger.Debug("Changed scrolling mode to KeepLastItemInView");
-                    panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepLastItemInView;
-                }
-            }
         }
 
         public async void ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null, TaskCompletionSource<bool> tsc = null)
@@ -905,14 +965,6 @@ namespace Telegram.Controls.Chats
                     CheckNonScrollableState();
                 }
             }
-            else if (e.Direction == PanelScrollingDirection.Backward)
-            {
-                //_listView.SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, force: false);
-            }
-            else if (e.Direction == PanelScrollingDirection.Forward)
-            {
-                //_listView.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, force: false);
-            }
         }
 
         private void OnListViewLoaded(object sender, RoutedEventArgs e)
@@ -1108,15 +1160,6 @@ namespace Telegram.Controls.Chats
                 return;
 
             Interlocked.Increment(ref _activeLoadOperations);
-
-            //if (direction == PanelScrollingDirection.Backward)
-            //{
-            //    _listView.SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, force: true);
-            //}
-            //else if (direction == PanelScrollingDirection.Forward)
-            //{
-            //    _listView.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, force: true);
-            //}
 
             _ = LoadItemsInternalAsync(direction);
         }
