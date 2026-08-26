@@ -348,6 +348,21 @@ namespace Telegram.Common
             }
         }
 
+        public static T GetChild<T>(this XamlRoot parentContainer)
+        {
+            if (parentContainer.TryGetContent(out UIElement child))
+            {
+                if (child is T cast)
+                {
+                    return cast;
+                }
+
+                return child.Descendants<T>().FirstOrDefault();
+            }
+
+            return default;
+        }
+
         public static T GetChild<T>(this DependencyObject parentContainer)
         {
             return parentContainer.Descendants<T>().FirstOrDefault();
