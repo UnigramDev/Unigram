@@ -72,40 +72,130 @@ namespace Telegram.Controls
 
     public class FormattedTextBlockRecyclePool
     {
-        public readonly Queue<IXamlDirectObject> Paragraphs = new();
-        public readonly Queue<ProjectedHyperlink> Hyperlinks = new();
-        public readonly Queue<IXamlDirectObject> Spans = new();
-        public readonly Queue<IXamlDirectObject> Runs = new();
-        //public readonly Queue<InlineUIContainer> Emoji = new();
+        // Bounded per kind, for the reason MessageContentRecyclePool is: an element is only of use
+        // to a block that is about to render, so what the realized blocks need at once is the
+        // ceiling worth keeping. Uncapped, one pathological message - a code block, or a text dense
+        // with entities - parks its whole element tree here until the window closes.
+        //
+        // Runs get the larger share because they are the only kind produced in bulk: one per style
+        // change, and one per syntax token inside a code block. A paragraph, a span or a hyperlink
+        // is a handful per message at most.
+        private const int RunCapacity = 256;
+        private const int Capacity = 64;
+
+        // Private so the caps cannot be walked around: everything goes back in through Put.
+        private readonly Queue<IXamlDirectObject> _paragraphs = new();
+        private readonly Queue<ProjectedHyperlink> _hyperlinks = new();
+        private readonly Queue<IXamlDirectObject> _spans = new();
+        private readonly Queue<IXamlDirectObject> _runs = new();
+        //private readonly Queue<InlineUIContainer> _emoji = new();
+
+        public bool TryTakeParagraph(out IXamlDirectObject paragraph)
+        {
+            return _paragraphs.TryDequeue(out paragraph);
+        }
+
+        public bool TryTakeHyperlink(out ProjectedHyperlink hyperlink)
+        {
+            return _hyperlinks.TryDequeue(out hyperlink);
+        }
+
+        public bool TryTakeSpan(out IXamlDirectObject span)
+        {
+            return _spans.TryDequeue(out span);
+        }
+
+        public bool TryTakeRun(out IXamlDirectObject run)
+        {
+            return _runs.TryDequeue(out run);
+        }
+
+        public void PutParagraph(IXamlDirectObject paragraph)
+        {
+            if (_paragraphs.Count < Capacity)
+            {
+                _paragraphs.Enqueue(paragraph);
+            }
+            else
+            {
+                Drop(paragraph);
+            }
+        }
+
+        public void PutHyperlink(ProjectedHyperlink hyperlink)
+        {
+            if (_hyperlinks.Count < Capacity)
+            {
+                _hyperlinks.Enqueue(hyperlink);
+            }
+            else
+            {
+                Drop(hyperlink.Native);
+                Drop(hyperlink.Inlines);
+            }
+        }
+
+        public void PutSpan(IXamlDirectObject span)
+        {
+            if (_spans.Count < Capacity)
+            {
+                _spans.Enqueue(span);
+            }
+            else
+            {
+                Drop(span);
+            }
+        }
+
+        public void PutRun(IXamlDirectObject run)
+        {
+            if (_runs.Count < RunCapacity)
+            {
+                _runs.Enqueue(run);
+            }
+            else
+            {
+                Drop(run);
+            }
+        }
+
+        // What does not fit has to be released, not just let go: on the AOT build the handle is a
+        // WinRT reference to a TextElement nothing else can reach any more.
+        private static void Drop(object handle)
+        {
+#if NET9_0_OR_GREATER
+            FormattedTextBlock.ReleaseHandle(handle);
+#endif
+        }
 
         public void Clear()
         {
-            Paragraphs.Clear();
-            Hyperlinks.Clear();
-            Spans.Clear();
-            Runs.Clear();
-            //Emoji.Clear();
+            _paragraphs.Clear();
+            _hyperlinks.Clear();
+            _spans.Clear();
+            _runs.Clear();
+            //_emoji.Clear();
         }
 
 #if NET9_0_OR_GREATER
         public void ReleaseNative()
         {
-            foreach (var paragraph in Paragraphs)
+            foreach (var paragraph in _paragraphs)
             {
                 FormattedTextBlock.ReleaseHandle(paragraph);
             }
 
-            foreach (var span in Spans)
+            foreach (var span in _spans)
             {
                 FormattedTextBlock.ReleaseHandle(span);
             }
 
-            foreach (var run in Runs)
+            foreach (var run in _runs)
             {
                 FormattedTextBlock.ReleaseHandle(run);
             }
 
-            foreach (var hyperlink in Hyperlinks)
+            foreach (var hyperlink in _hyperlinks)
             {
                 FormattedTextBlock.ReleaseHandle(hyperlink.Native);
                 FormattedTextBlock.ReleaseHandle(hyperlink.Inlines);
@@ -730,7 +820,7 @@ namespace Telegram.Controls
 
         private IXamlDirectObject GetOrCreateParagraph(XamlDirect direct)
         {
-            if (_pools != null && _pools.Paragraphs.TryDequeue(out var paragraph))
+            if (_pools != null && _pools.TryTakeParagraph(out var paragraph))
             {
                 direct.ClearProperty(paragraph, XamlPropertyIndex.Block_TextAlignment);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontSize);
@@ -763,7 +853,7 @@ namespace Telegram.Controls
 
         private ProjectedHyperlink GetOrCreateHyperlink(XamlDirect direct)
         {
-            if (_pools != null && _pools.Hyperlinks.TryDequeue(out var hyperlink))
+            if (_pools != null && _pools.TryTakeHyperlink(out var hyperlink))
             {
                 _activeHyperlinks.Add(hyperlink);
                 return hyperlink;
@@ -789,10 +879,19 @@ namespace Telegram.Controls
             direct.SetEnumProperty(hyperlink.Native, XamlPropertyIndex.Hyperlink_UnderlineStyle, (uint)underline);
         }
 
+        // A pooled Span is reset here rather than at the sites that build one, on the rule
+        // ApplyRunProperties spells out for Runs: the spoiler path and the code-block path set
+        // different subsets of the same four properties, so leaving each to clear only what it sets
+        // is how a bold code token came back as a bold spoiler.
         private IXamlDirectObject GetOrCreateSpan(XamlDirect direct)
         {
-            if (_pools != null && _pools.Spans.TryDequeue(out var span))
+            if (_pools != null && _pools.TryTakeSpan(out var span))
             {
+                direct.ClearProperty(span, XamlPropertyIndex.TextElement_Foreground);
+                direct.ClearProperty(span, XamlPropertyIndex.TextElement_FontFamily);
+                direct.ClearProperty(span, XamlPropertyIndex.TextElement_FontWeight);
+                direct.ClearProperty(span, XamlPropertyIndex.TextElement_FontStyle);
+
                 _activeSpans.Add(span);
                 return span;
             }
@@ -874,7 +973,7 @@ namespace Telegram.Controls
         // of the next plain run instead of in a Run of its own - see the emoji branch in SetText.
         private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, int offset, int length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, string prefix = null)
         {
-            if (_pools != null && _pools.Runs.TryDequeue(out var run))
+            if (_pools != null && _pools.TryTakeRun(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, prefix == null
                     ? text.Substring(offset, length)
@@ -896,7 +995,7 @@ namespace Telegram.Controls
 
         private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
         {
-            if (_pools != null && _pools.Runs.TryDequeue(out var run))
+            if (_pools != null && _pools.TryTakeRun(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
                 ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize);
@@ -939,22 +1038,22 @@ namespace Telegram.Controls
                 {
                     inlines = xd.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
                     xd.ClearCollection(inlines);
-                    _pools.Paragraphs.Enqueue(paragraph);
+                    _pools.PutParagraph(paragraph);
                 }
                 foreach (var hyperlink in _activeHyperlinks)
                 {
                     xd.ClearCollection(hyperlink.Inlines);
-                    _pools.Hyperlinks.Enqueue(hyperlink);
+                    _pools.PutHyperlink(hyperlink);
                 }
                 foreach (var span in _activeSpans)
                 {
                     inlines = xd.GetXamlDirectObjectProperty(span, XamlPropertyIndex.Span_Inlines);
                     xd.ClearCollection(inlines);
-                    _pools.Spans.Enqueue(span);
+                    _pools.PutSpan(span);
                 }
                 foreach (var run in _activeRuns)
                 {
-                    _pools.Runs.Enqueue(run);
+                    _pools.PutRun(run);
                 }
                 // Let's disable emoji recycle for now and just recycle bare TextElement types
                 //foreach (var emoji in _activeEmojis)
@@ -2245,7 +2344,7 @@ namespace Telegram.Controls
                     // We need to manually recycle the Run or we'll lose track of it
                     if (_pools != null && _activeRuns.Contains(placeholder))
                     {
-                        _pools.Runs.Enqueue(placeholder);
+                        _pools.PutRun(placeholder);
                         _activeRuns.Remove(placeholder);
                     }
 
@@ -2287,10 +2386,6 @@ namespace Telegram.Controls
                     {
                         direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_Foreground, color);
                     }
-                    else
-                    {
-                        direct.ClearProperty(span, XamlPropertyIndex.TextElement_Foreground);
-                    }
 
                     if (syntax.Type == "bold")
                     {
@@ -2299,11 +2394,6 @@ namespace Telegram.Controls
                     else if (syntax.Type == "italic")
                     {
                         direct.SetEnumProperty(span, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                    }
-                    else
-                    {
-                        direct.ClearProperty(span, XamlPropertyIndex.TextElement_FontWeight);
-                        direct.ClearProperty(span, XamlPropertyIndex.TextElement_FontStyle);
                     }
 
                     ProcessCodeBlock(direct, collection, syntax.Children);
