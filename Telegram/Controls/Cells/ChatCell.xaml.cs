@@ -478,8 +478,81 @@ namespace Telegram.Controls.Cells
                     return UpdateAutomation(_clientService, chat, _message);
                 }
             }
+            else if (_savedMessagesTopic != null)
+            {
+                return UpdateAutomation(_clientService, _savedMessagesTopic, _savedMessagesTopic.LastMessage);
+            }
 
             return null;
+        }
+
+        private string UpdateAutomation(IClientService clientService, SavedMessagesTopic savedMessagesTopic, Message message)
+        {
+            var builder = new StringBuilder();
+
+            Chat chat = null;
+
+            if (savedMessagesTopic.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat)
+            {
+                clientService.TryGetChat(savedFromChat.ChatId, out chat);
+            }
+
+            if (chat != null)
+            {
+                builder.Append(clientService.GetTitle(chat));
+                builder.Append(", ");
+
+                var identity = Identity?.CurrentType switch
+                {
+                    IdentityIconType.Fake => Strings.FakeMessage,
+                    IdentityIconType.Scam => Strings.ScamMessage,
+                    IdentityIconType.Premium => Strings.AccDescrPremium,
+                    IdentityIconType.Verified => Strings.AccDescrVerified,
+                    _ => null
+                };
+
+                if (identity != null)
+                {
+                    builder.Append(identity);
+                    builder.Append(", ");
+                }
+            }
+            else if (savedMessagesTopic.Type is SavedMessagesTopicTypeAuthorHidden)
+            {
+                builder.Append(Strings.AnonymousForward);
+                builder.Append(", ");
+            }
+            else if (savedMessagesTopic.Type is SavedMessagesTopicTypeMyNotes)
+            {
+                builder.Append(Strings.MyNotes);
+                builder.Append(", ");
+            }
+
+            if (message == null)
+            {
+                return builder.ToString();
+            }
+
+            // Every message here is outgoing, so the sender worth announcing is the forward
+            // origin: the same one the cell shows, and the same remapping UpdateFromLabel does.
+            if (!message.Content.IsService())
+            {
+                builder.Append(UpdateFromLabel(clientService, chat, message));
+            }
+
+            builder.Append(Automation.GetSummary(clientService, message));
+
+            var date = Locale.FormatDateAudio(message.Date);
+            if (message.IsOutgoing)
+            {
+                builder.Append(string.Format(Strings.AccDescrSentDate, date));
+            }
+            else
+            {
+                builder.Append(string.Format(Strings.AccDescrReceivedDate, date));
+            }
+
+            return builder.ToString();
         }
 
         private string UpdateAutomation(IClientService clientService, Chat chat, Message message)
