@@ -183,7 +183,6 @@
     <Compile Include="Charts\LookupTableInterpolator.cs" />
     <Compile Include="Collections\Diff\DiffCalculator.cs" />
     <Compile Include="Collections\Diff\DiffHandler.cs" />
-    <Compile Include="Collections\Diff\DiffObservableCollection.cs" />
     <Compile Include="Collections\Diff\DiffUtil.cs" />
     <Compile Include="Collections\Experimental\MediaDataSource.cs" />
     <Compile Include="Collections\Experimental\ItemCacheManager.cs" />
@@ -775,7 +774,7 @@
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\KeyedList.cs" />
-    <Compile Include="Collections\MvxObservableCollection.cs" />
+    <Compile Include="Collections\DiffObservableCollection.cs" />
     <Compile Include="Collections\SearchChatMessagesCollection.cs" />
     <Compile Include="Collections\SearchCollection.cs" />
     <Compile Include="Collections\SearchMembersAndUsersCollection.cs" />

@@ -107,9 +107,9 @@ namespace Telegram.ViewModels.Gallery
             set => Set(ref _poster, value);
         }
 
-        public MvxObservableCollection<GalleryMedia> Items { get; protected set; }
+        public DiffObservableCollection<GalleryMedia> Items { get; protected set; }
 
-        public virtual MvxObservableCollection<GalleryMedia> Group { get; }
+        public virtual DiffObservableCollection<GalleryMedia> Group { get; }
 
         public void LoadMore()
         {

@@ -43,7 +43,7 @@ namespace Telegram.ViewModels.Drawers
             : base(clientService, settingsService, aggregator)
         {
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
-            Items = new MvxObservableCollection<object>();
+            Items = new DiffObservableCollection<object>();
 
             _reactionTopSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
@@ -151,10 +151,10 @@ namespace Telegram.ViewModels.Drawers
             BeginOnUIThread(() => Update());
         }
 
-        public MvxObservableCollection<EmojiGroup> StandardSets { get; } = new MvxObservableCollection<EmojiGroup>();
-        public MvxObservableCollection<StickerSetViewModel> InstalledSets { get; } = new MvxObservableCollection<StickerSetViewModel>();
+        public DiffObservableCollection<EmojiGroup> StandardSets { get; } = new DiffObservableCollection<EmojiGroup>();
+        public DiffObservableCollection<StickerSetViewModel> InstalledSets { get; } = new DiffObservableCollection<StickerSetViewModel>();
 
-        public MvxObservableCollection<object> Items { get; private set; }
+        public DiffObservableCollection<object> Items { get; private set; }
 
         private SearchStickerSetsCollection _searchStickers;
         public SearchStickerSetsCollection SearchStickers
@@ -174,7 +174,7 @@ namespace Telegram.ViewModels.Drawers
             set => Set(ref _mode, value);
         }
 
-        //public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
+        //public DiffObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (DiffObservableCollection<StickerSetViewModel>)SavedStickers;
 
         public async void Search(string query, bool emojiOnly)
         {
@@ -730,12 +730,12 @@ namespace Telegram.ViewModels.Drawers
 
         public bool IsInstalled { get; } = true;
 
-        public MvxObservableCollection<object> Stickers { get; }
+        public DiffObservableCollection<object> Stickers { get; }
 
         public RecentEmoji(List<object> items)
         {
             Title = Strings.RecentStickers;
-            Stickers = new MvxObservableCollection<object>(items);
+            Stickers = new DiffObservableCollection<object>(items);
         }
 
         public override string ToString()

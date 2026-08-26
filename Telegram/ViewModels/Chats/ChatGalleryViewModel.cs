@@ -28,14 +28,14 @@ namespace Telegram.ViewModels.Chats
 
         private readonly bool _isMirrored;
 
-        private readonly MvxObservableCollection<GalleryMedia> _group;
+        private readonly DiffObservableCollection<GalleryMedia> _group;
 
         public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, MessageTopic topic, MessageWithOwner selected, MessageProperties properties, bool mirrored = false, SearchMessagesFilter filter = null)
             : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
 
-            _group = new MvxObservableCollection<GalleryMedia>();
+            _group = new DiffObservableCollection<GalleryMedia>();
 
             _chatId = chatId;
             _topic = topic;
@@ -61,7 +61,7 @@ namespace Telegram.ViewModels.Chats
                 _filter = new SearchMessagesFilterPhotoAndVideo();
             }
 
-            Items = new MvxObservableCollection<GalleryMedia> { new GalleryMessage(clientService, selected, properties) };
+            Items = new DiffObservableCollection<GalleryMedia> { new GalleryMessage(clientService, selected, properties) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -217,7 +217,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public override MvxObservableCollection<GalleryMedia> Group => _group;
+        public override DiffObservableCollection<GalleryMedia> Group => _group;
 
         public override void View()
         {

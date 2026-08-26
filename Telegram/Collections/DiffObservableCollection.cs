@@ -4,19 +4,30 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-// Based on Rg.DiffUtils, Copyright (c) 2021 Kirill Lyubimov. See DiffUtil.cs for the
-// MIT notice covering this folder.
+// Based on Rg.DiffUtils, Copyright (c) 2021 Kirill Lyubimov. See Diff/DiffUtil.cs for the
+// MIT notice covering it. What used to be MvxObservableCollection is in its own region.
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Telegram.Collections
 {
-    public partial class DiffObservableCollection<T> : ObservableCollection<T>
+    public interface IDiffObservableCollection : IList
+    {
+        void ReplaceWithT(IEnumerable collection);
+    }
+
+    public partial class DiffObservableCollection<T>
+        : ObservableCollection<T>
+        , IDiffObservableCollection
+        , IList<T>
     {
         public IDiffHandler<T> DefaultDiffHandler { get; }
 
@@ -256,6 +267,8 @@ namespace Telegram.Collections
             RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Remove, changedItems, startIndex);
         }
 
+        // Writes straight into Items rather than going through Insert: the base would raise
+        // Count and Item[] for every single one, and suppression does not cover those.
         private bool AddArrangeCore(List<T> collection, int startIndex = -1)
         {
             var itemsAdded = false;
@@ -293,5 +306,245 @@ namespace Telegram.Collections
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems: changedItems, startingIndex: startingIndex));
             }
         }
+
+        #region Mvx
+
+        // Everything below moved over from MvxObservableCollection, which used to sit
+        // between this class and its callers. Its AddRange and RemoveRange are gone rather
+        // than moved: they hid the ones above, so which of the two ran depended on the
+        // compile-time type of the reference.
+
+        protected readonly struct SuppressEventsDisposable : IDisposable
+        {
+            private readonly DiffObservableCollection<T> _collection;
+
+            public SuppressEventsDisposable(DiffObservableCollection<T> collection)
+            {
+                _collection = collection;
+                ++collection._suppressEvents;
+            }
+
+            public void Dispose()
+            {
+                --_collection._suppressEvents;
+            }
+        }
+
+        private int _suppressEvents;
+
+        protected SuppressEventsDisposable SuppressEvents()
+        {
+            return new SuppressEventsDisposable(this);
+        }
+
+        public bool EventsAreSuppressed
+        {
+            get { return _suppressEvents > 0; }
+        }
+
+        public void Dispose()
+        {
+            _suppressEvents = int.MaxValue;
+        }
+
+        /// <summary>
+        /// Raises the CollectionChanged event with the provided event data.
+        /// </summary>
+        /// <param name="e">The event data to report in the event.</param>
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (!EventsAreSuppressed)
+            {
+                base.OnCollectionChanged(e);
+            }
+        }
+
+        public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            OnCollectionChanged(args);
+        }
+
+        public void AddRangeT(IEnumerable items)
+        {
+            AddRange(items.Cast<T>());
+        }
+
+        // Suffixed rather than overloaded: a List<T> satisfies both IList and
+        // IEnumerable<T>, so sharing the name would make every such call ambiguous.
+        public void InsertRangeT(int startIndex, IList items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            InsertRange(startIndex, items.Cast<T>());
+        }
+
+        public void ReplaceWithT(IEnumerable items)
+        {
+            ReplaceWith(items.Cast<T>());
+        }
+
+        /// <summary>
+        /// Replaces the current <see cref="DiffObservableCollection{T}"/> instance items with the ones specified in the items collection, raising a single <see cref="NotifyCollectionChangedAction.Reset"/> event.
+        /// </summary>
+        /// <param name="items">The collection from which the items are copied.</param>
+        /// <exception cref="ArgumentNullException">The items list is null.</exception>
+        public void ReplaceWith(IEnumerable<T> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            using (SuppressEvents())
+            {
+                Clear();
+                AddRange(items);
+            }
+
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        /// <summary>
+        /// Removes the current <see cref="DiffObservableCollection{T}"/> instance items of the ones specified in the items collection, raising the minimum required change events.
+        /// </summary>
+        /// <param name="items">The collection which items will be removed.</param>
+        /// <exception cref="ArgumentNullException">The items list is null.</exception>
+        public void RemoveItems(IEnumerable<T> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            using (SuppressEvents())
+            {
+                foreach (var item in items)
+                {
+                    Remove(item);
+                }
+            }
+
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public void ReplaceRange(IEnumerable<T> items, int firstIndex, int oldSize)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            using (SuppressEvents())
+            {
+                var lastIndex = firstIndex + oldSize - 1;
+
+                // If there are more items in the previous list, remove them.
+                while (firstIndex + items.Count() <= lastIndex)
+                {
+                    RemoveAt(lastIndex--);
+                }
+
+                foreach (var item in items)
+                {
+                    if (firstIndex <= lastIndex)
+                    {
+                        SetItem(firstIndex++, item);
+                    }
+                    else
+                    {
+                        Insert(firstIndex++, item);
+                    }
+                }
+            }
+
+            // TODO: Emit up to two OnCollectionChangedEvents:
+            //   1. Replace for those items replaced.
+            //   2. Add for items added beyond the original size.
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        /// <summary>
+        /// Switches the current <see cref="DiffObservableCollection{T}"/> instance items with the ones specified in the items collection, raising the minimum required change events.
+        /// </summary>
+        /// <param name="items">The collection from which the items are copied.</param>
+        /// <exception cref="ArgumentNullException">The items list is null.</exception>
+        public void SwitchTo(IEnumerable<T> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            var itemIndex = 0;
+            var count = Count;
+
+            foreach (var item in items)
+            {
+                if (itemIndex >= count)
+                {
+                    Add(item);
+                }
+                else if (!Equals(this[itemIndex], item))
+                {
+                    this[itemIndex] = item;
+                }
+
+                itemIndex++;
+            }
+
+            while (count > itemIndex)
+            {
+                RemoveAt(--count);
+            }
+        }
+
+        public void Change(int index)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, this[index], index));
+        }
+
+        public void Clear(bool suppress)
+        {
+            using (SuppressEvents())
+            {
+                Clear();
+            }
+        }
+
+        public void Reset()
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public virtual bool Set<P>(ref P storage, P value, [CallerMemberName] string propertyName = null)
+        {
+            if (Equals(storage, value))
+            {
+                return false;
+            }
+
+            storage = value;
+            RaisePropertyChanged(propertyName);
+            return true;
+        }
+
+        public virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
+            try
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            }
+            catch { }
+        }
+
+        #endregion
     }
 }

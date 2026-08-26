@@ -50,9 +50,9 @@ namespace Telegram.ViewModels.Folders
             return Task.CompletedTask;
         }
 
-        public MvxObservableCollection<Chat> Items { get; private set; } = new();
+        public DiffObservableCollection<Chat> Items { get; private set; } = new();
 
-        public MvxObservableCollection<Chat> SelectedItems { get; private set; } = new();
+        public DiffObservableCollection<Chat> SelectedItems { get; private set; } = new();
 
         public string PrimaryButtonText => SelectedItems.Count > 0
             ? Strings.FolderLinkButtonRemoveChats

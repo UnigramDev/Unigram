@@ -38,9 +38,9 @@ namespace Telegram.ViewModels
         public DiagnosticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Options = new MvxObservableCollection<DiagnosticsOption>();
-            Tags = new MvxObservableCollection<DiagnosticsTag>();
-            PowerSaving = new MvxObservableCollection<DiagnosticsOption>();
+            Options = new DiffObservableCollection<DiagnosticsOption>();
+            Tags = new DiffObservableCollection<DiagnosticsTag>();
+            PowerSaving = new DiffObservableCollection<DiagnosticsOption>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -140,9 +140,9 @@ namespace Telegram.ViewModels
             PowerSavingPolicy.Changed -= OnPowerSavingChanged;
         }
 
-        public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
-        public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
-        public MvxObservableCollection<DiagnosticsOption> PowerSaving { get; private set; }
+        public DiffObservableCollection<DiagnosticsOption> Options { get; private set; }
+        public DiffObservableCollection<DiagnosticsTag> Tags { get; private set; }
+        public DiffObservableCollection<DiagnosticsOption> PowerSaving { get; private set; }
 
         private void OnPowerSavingChanged(object sender, EventArgs e)
         {

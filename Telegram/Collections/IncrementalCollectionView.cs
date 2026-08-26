@@ -25,7 +25,7 @@ namespace Telegram.Collections
 
     }
 
-    public partial class IncrementalCollectionView : MvxObservableCollection<object>, IIncrementalCollection
+    public partial class IncrementalCollectionView : DiffObservableCollection<object>, IIncrementalCollection
     {
         private IIncrementalCollection _source;
 
@@ -130,7 +130,7 @@ namespace Telegram.Collections
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    InsertRange(e.NewStartingIndex, e.NewItems);
+                    InsertRangeT(e.NewStartingIndex, e.NewItems);
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     RemoveRange(e.OldStartingIndex, e.OldItems.Count);
@@ -152,7 +152,7 @@ namespace Telegram.Collections
         public bool HasMoreItems => _source.HasMoreItems;
     }
 
-    public partial class IncrementalCollectionView<T, TSource> : MvxObservableCollection<T>, IIncrementalCollection<T> where TSource : IIncrementalCollection<T>
+    public partial class IncrementalCollectionView<T, TSource> : DiffObservableCollection<T>, IIncrementalCollection<T> where TSource : IIncrementalCollection<T>
     {
         private TSource _source;
 
@@ -252,7 +252,7 @@ namespace Telegram.Collections
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    InsertRange(e.NewStartingIndex, e.NewItems);
+                    InsertRangeT(e.NewStartingIndex, e.NewItems);
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     RemoveRange(e.OldStartingIndex, e.OldItems.Count);

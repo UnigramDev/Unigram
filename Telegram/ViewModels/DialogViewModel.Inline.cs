@@ -247,7 +247,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public partial class BotResultsCollection : MvxObservableCollection<InlineQueryResult>, ISupportIncrementalLoading
+    public partial class BotResultsCollection : DiffObservableCollection<InlineQueryResult>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
 

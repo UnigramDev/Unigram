@@ -63,7 +63,7 @@ namespace Telegram.ViewModels.Drawers
                 IsInstalled = true
             });
 
-            SavedStickers = new MvxObservableCollection<StickerSetViewModel>();
+            SavedStickers = new DiffObservableCollection<StickerSetViewModel>();
 
             Subscribe();
         }
@@ -194,10 +194,10 @@ namespace Telegram.ViewModels.Drawers
             BeginOnUIThread(() => Update(null));
         }
 
-        public MvxObservableCollection<StickerSetViewModel> SavedStickers { get; private set; }
+        public DiffObservableCollection<StickerSetViewModel> SavedStickers { get; private set; }
 
-        private MvxObservableCollection<StickerSetViewModel> _searchStickers;
-        public MvxObservableCollection<StickerSetViewModel> SearchStickers
+        private DiffObservableCollection<StickerSetViewModel> _searchStickers;
+        public DiffObservableCollection<StickerSetViewModel> SearchStickers
         {
             get => _searchStickers;
             set
@@ -207,7 +207,7 @@ namespace Telegram.ViewModels.Drawers
             }
         }
 
-        public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? SavedStickers;
+        public DiffObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? SavedStickers;
 
         public async void Search(string query, bool emojiOnly)
         {
@@ -231,7 +231,7 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                var items = new MvxObservableCollection<StickerSetViewModel>();
+                var items = new DiffObservableCollection<StickerSetViewModel>();
                 SearchStickers = items;
 
                 var response = await ClientService.SendAsync(new GetPremiumStickers(100));
@@ -426,7 +426,7 @@ namespace Telegram.ViewModels.Drawers
 
             if (reset)
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(set.Stickers.Select(x => new StickerViewModel(_clientService, x)));
+                Stickers = new DiffObservableCollection<StickerViewModel>(set.Stickers.Select(x => new StickerViewModel(_clientService, x)));
             }
             else
             {
@@ -484,7 +484,7 @@ namespace Telegram.ViewModels.Drawers
                 }
             }
 
-            Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
+            Stickers = new DiffObservableCollection<StickerViewModel>(placeholders);
             Covers = info.Covers;
         }
 
@@ -509,7 +509,7 @@ namespace Telegram.ViewModels.Drawers
             _info = info;
 
             IsLoaded = true;
-            Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(clientService, x)));
+            Stickers = new DiffObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(clientService, x)));
             Covers = info.Covers;
         }
 
@@ -552,7 +552,7 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_clientService, x)));
+                Stickers = new DiffObservableCollection<StickerViewModel>(stickers.Select(x => new StickerViewModel(_clientService, x)));
             }
         }
 
@@ -566,11 +566,11 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers);
+                Stickers = new DiffObservableCollection<StickerViewModel>(stickers);
             }
         }
 
-        public MvxObservableCollection<StickerViewModel> Stickers { get; protected set; }
+        public DiffObservableCollection<StickerViewModel> Stickers { get; protected set; }
 
         public bool IsLoaded { get; set; }
 
@@ -708,7 +708,7 @@ namespace Telegram.ViewModels.Drawers
         public int TotalCount { get; set; }
     }
 
-    public partial class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
+    public partial class SearchStickerSetsCollection : DiffObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly StickerType _type;

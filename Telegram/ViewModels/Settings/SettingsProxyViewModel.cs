@@ -35,7 +35,7 @@ namespace Telegram.ViewModels.Settings
             _proxyService = proxyService;
             _type = AppSettings.EnabledProxyId;
 
-            Items = new MvxObservableCollection<ProxyViewModel>();
+            Items = new DiffObservableCollection<ProxyViewModel>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -216,9 +216,9 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public MvxObservableCollection<ProxyViewModel> Items { get; private set; }
+        public DiffObservableCollection<ProxyViewModel> Items { get; private set; }
 
-        public MvxObservableCollection<ProxyViewModel> SelectedItems { get; private set; } = new();
+        public DiffObservableCollection<ProxyViewModel> SelectedItems { get; private set; } = new();
 
         public void Select(ProxyViewModel item)
         {

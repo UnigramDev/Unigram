@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Business
         public BusinessChatLinksViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<BusinessChatLink>();
+            Items = new DiffObservableCollection<BusinessChatLink>();
             Items.CollectionChanged += OnCollectionChanged;
         }
 
@@ -37,7 +37,7 @@ namespace Telegram.ViewModels.Business
             RaisePropertyChanged(nameof(CanCreateMore));
         }
 
-        public MvxObservableCollection<BusinessChatLink> Items { get; }
+        public DiffObservableCollection<BusinessChatLink> Items { get; }
 
         public bool CanCreateMore => Items.Count < ClientService.Options.BusinessChatLinkCountMax;
 

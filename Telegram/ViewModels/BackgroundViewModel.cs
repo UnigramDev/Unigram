@@ -89,7 +89,7 @@ namespace Telegram.ViewModels
         public BackgroundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Patterns = new MvxObservableCollection<PatternInfo>();
+            Patterns = new DiffObservableCollection<PatternInfo>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -220,7 +220,7 @@ namespace Telegram.ViewModels
 
         public long ChatId => _chatId ?? 0;
 
-        public MvxObservableCollection<PatternInfo> Patterns { get; private set; }
+        public DiffObservableCollection<PatternInfo> Patterns { get; private set; }
 
         private Background _item;
         public Background Item

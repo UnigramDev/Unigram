@@ -26,7 +26,7 @@ namespace Telegram.ViewModels
         public StickersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<Drawers.StickerSetViewModel>();
+            Items = new DiffObservableCollection<Drawers.StickerSetViewModel>();
             ItemsSource = new CollectionViewSource
             {
                 Source = Items,
@@ -196,7 +196,7 @@ namespace Telegram.ViewModels
             set => Set(ref _stickerType, value);
         }
 
-        public MvxObservableCollection<Drawers.StickerSetViewModel> Items { get; private set; }
+        public DiffObservableCollection<Drawers.StickerSetViewModel> Items { get; private set; }
         public CollectionViewSource ItemsSource { get; }
 
         public object ItemsView => Items.Count == 1 ? Items[0] : ItemsSource.View;

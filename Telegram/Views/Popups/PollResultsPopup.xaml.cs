@@ -121,7 +121,7 @@ namespace Telegram.Views.Popups
             _poll = poll;
             _option = option;
 
-            Items = new MvxObservableCollection<PollVoter>();
+            Items = new DiffObservableCollection<PollVoter>();
             LoadMoreCommand = new RelayCommand(LoadMoreExecute);
 
             LoadMoreExecute();
@@ -133,7 +133,7 @@ namespace Telegram.Views.Popups
 
         public PollType Type => _poll.Type;
 
-        public MvxObservableCollection<PollVoter> Items { get; private set; }
+        public DiffObservableCollection<PollVoter> Items { get; private set; }
 
         public RelayCommand LoadMoreCommand { get; }
         private async void LoadMoreExecute()

@@ -25,14 +25,14 @@ namespace Telegram.ViewModels.Stars
         public BuyViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Options = new MvxObservableCollection<StarPaymentOption>();
+            Options = new DiffObservableCollection<StarPaymentOption>();
         }
 
         public string OwnedStarCount => ClientService.OwnedStarCount.ToValue();
 
         public BuyStarsArgs Arguments { get; private set; }
 
-        public MvxObservableCollection<StarPaymentOption> Options { get; private set; }
+        public DiffObservableCollection<StarPaymentOption> Options { get; private set; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState _)
         {

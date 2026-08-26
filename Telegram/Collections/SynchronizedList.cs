@@ -72,7 +72,7 @@ namespace Telegram.Collections
     /// divergence forward.</item>
     /// </list>
     /// </remarks>
-    public partial class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
+    public partial class SynchronizedList<T> : DiffObservableCollection<T>, ISynchronizedList
     {
         // Past this the list stops holding anything back: a pathological run of updates degrades to
         // the undeferred behaviour rather than growing without bound.
@@ -292,7 +292,7 @@ namespace Telegram.Collections
                 }
 
                 _delegate?.Inserting(pending.SourceIndex, pending.Items);
-                InsertRange(pending.Index, pending.Items);
+                InsertRangeT(pending.Index, pending.Items);
             }
             else
             {

@@ -26,16 +26,16 @@ namespace Telegram.ViewModels.Premium
         public PromoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Limits = new MvxObservableCollection<PremiumLimit>();
-            Features = new MvxObservableCollection<PremiumFeature>();
-            BusinessFeatures = new MvxObservableCollection<BusinessFeature>();
+            Limits = new DiffObservableCollection<PremiumLimit>();
+            Features = new DiffObservableCollection<PremiumFeature>();
+            BusinessFeatures = new DiffObservableCollection<BusinessFeature>();
         }
 
-        public MvxObservableCollection<PremiumLimit> Limits { get; private set; }
+        public DiffObservableCollection<PremiumLimit> Limits { get; private set; }
 
-        public MvxObservableCollection<PremiumFeature> Features { get; private set; }
+        public DiffObservableCollection<PremiumFeature> Features { get; private set; }
 
-        public MvxObservableCollection<BusinessFeature> BusinessFeatures { get; private set; }
+        public DiffObservableCollection<BusinessFeature> BusinessFeatures { get; private set; }
 
         private Dictionary<Type, Animation> _animations;
 

@@ -106,9 +106,9 @@ namespace Telegram.ViewModels.Folders
 
         private bool _bindButtonToSelection;
 
-        public MvxObservableCollection<KeyedList<KeyedGroup, Chat>> Items { get; private set; } = new();
+        public DiffObservableCollection<KeyedList<KeyedGroup, Chat>> Items { get; private set; } = new();
 
-        public MvxObservableCollection<Chat> SelectedItems { get; private set; } = new();
+        public DiffObservableCollection<Chat> SelectedItems { get; private set; } = new();
 
         private string _title;
         public string Title

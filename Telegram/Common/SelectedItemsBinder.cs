@@ -204,7 +204,7 @@ namespace Telegram.Common
 
             if (_listView.SelectionMode == ListViewSelectionMode.Multiple && source != null && target != null)
             {
-                if (target is IMvxObservableCollection collection)
+                if (target is IDiffObservableCollection collection)
                 {
                     collection.ReplaceWithT(source);
                 }

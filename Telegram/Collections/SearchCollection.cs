@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchCollection<T, TSource> : MvxObservableCollection<T>, ISupportIncrementalLoading where TSource : IList<T>, ISupportIncrementalLoading, INotifyCollectionChanged
+    public partial class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IList<T>, ISupportIncrementalLoading, INotifyCollectionChanged
     {
         private readonly Func<object, string, TSource> _factory;
         private object _sender;
@@ -255,7 +255,7 @@ namespace Telegram.Collections
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    InsertRange(e.NewStartingIndex, e.NewItems);
+                    InsertRangeT(e.NewStartingIndex, e.NewItems);
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     RemoveRange(e.OldStartingIndex, e.OldItems.Count);

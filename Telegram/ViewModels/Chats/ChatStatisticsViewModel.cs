@@ -28,13 +28,13 @@ namespace Telegram.ViewModels.Chats
         public ChatStatisticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<ChartViewData>();
+            Items = new DiffObservableCollection<ChartViewData>();
 
-            Interactions = new MvxObservableCollection<ChatItemInteractionCounters>();
-            TopInviters = new MvxObservableCollection<ChatStatisticsInviterInfo>();
-            TopAdministrators = new MvxObservableCollection<ChatStatisticsAdministratorActionsInfo>();
-            TopSenders = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
-            TopSendersLeft = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
+            Interactions = new DiffObservableCollection<ChatItemInteractionCounters>();
+            TopInviters = new DiffObservableCollection<ChatStatisticsInviterInfo>();
+            TopAdministrators = new DiffObservableCollection<ChatStatisticsAdministratorActionsInfo>();
+            TopSenders = new DiffObservableCollection<ChatStatisticsMessageSenderInfo>();
+            TopSendersLeft = new DiffObservableCollection<ChatStatisticsMessageSenderInfo>();
 
             OpenProfileCommand = new RelayCommand<long>(OpenProfileExecute);
             OpenPostCommand = new RelayCommand<ChatItemInteractionCounters>(OpenPostExecute);
@@ -68,24 +68,24 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _period, value);
         }
 
-        public MvxObservableCollection<ChartViewData> Items { get; private set; }
+        public DiffObservableCollection<ChartViewData> Items { get; private set; }
 
 
-        public MvxObservableCollection<ChatItemInteractionCounters> Interactions { get; private set; }
+        public DiffObservableCollection<ChatItemInteractionCounters> Interactions { get; private set; }
 
         //
         // Summary:
         //     List of most active inviters of new members in the last week.
-        public MvxObservableCollection<ChatStatisticsInviterInfo> TopInviters { get; private set; }
+        public DiffObservableCollection<ChatStatisticsInviterInfo> TopInviters { get; private set; }
         //
         // Summary:
         //     List of most active administrators in the last week.
-        public MvxObservableCollection<ChatStatisticsAdministratorActionsInfo> TopAdministrators { get; private set; }
+        public DiffObservableCollection<ChatStatisticsAdministratorActionsInfo> TopAdministrators { get; private set; }
         //
         // Summary:
         //     List of users sent most messages in the last week.
-        public MvxObservableCollection<ChatStatisticsMessageSenderInfo> TopSenders { get; private set; }
-        public MvxObservableCollection<ChatStatisticsMessageSenderInfo> TopSendersLeft { get; private set; }
+        public DiffObservableCollection<ChatStatisticsMessageSenderInfo> TopSenders { get; private set; }
+        public DiffObservableCollection<ChatStatisticsMessageSenderInfo> TopSendersLeft { get; private set; }
 
         public void ExpandTopSenders()
         {

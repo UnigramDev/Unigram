@@ -199,7 +199,7 @@ namespace Telegram.ViewModels.Drawers
 
     }
 
-    public partial class AnimationsCollection : MvxObservableCollection<Animation>/*, IKeyIndexMapping*/
+    public partial class AnimationsCollection : DiffObservableCollection<Animation>/*, IKeyIndexMapping*/
     {
         public virtual string Name => "tg/recentlyUsed";
         public virtual string Title => Strings.RecentStickers;

@@ -26,7 +26,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsNetworkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<StorageChartItem>();
+            Items = new DiffObservableCollection<StorageChartItem>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -127,7 +127,7 @@ namespace Telegram.ViewModels.Settings
 
         public long TotalBytes => TotalSentBytes + TotalReceivedBytes;
 
-        public MvxObservableCollection<StorageChartItem> Items { get; private set; }
+        public DiffObservableCollection<StorageChartItem> Items { get; private set; }
 
         public IList<StorageChartItem> ItemsView => Items.Count > 0 ? Items : null;
 

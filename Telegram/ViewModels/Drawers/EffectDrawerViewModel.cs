@@ -21,8 +21,8 @@ namespace Telegram.ViewModels.Drawers
         public EffectDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SavedReactions = new MvxObservableCollection<MessageEffect>();
-            SavedStickers = new MvxObservableCollection<MessageEffect>();
+            SavedReactions = new DiffObservableCollection<MessageEffect>();
+            SavedStickers = new DiffObservableCollection<MessageEffect>();
         }
 
         public static EffectDrawerViewModel Create(ISession session)
@@ -32,11 +32,11 @@ namespace Telegram.ViewModels.Drawers
             return context;
         }
 
-        public MvxObservableCollection<MessageEffect> SavedReactions { get; private set; }
-        public MvxObservableCollection<MessageEffect> SavedStickers { get; private set; }
+        public DiffObservableCollection<MessageEffect> SavedReactions { get; private set; }
+        public DiffObservableCollection<MessageEffect> SavedStickers { get; private set; }
 
-        private MvxObservableCollection<MessageEffect> _searchReactions;
-        public MvxObservableCollection<MessageEffect> SearchReactions
+        private DiffObservableCollection<MessageEffect> _searchReactions;
+        public DiffObservableCollection<MessageEffect> SearchReactions
         {
             get => _searchReactions;
             set
@@ -46,8 +46,8 @@ namespace Telegram.ViewModels.Drawers
             }
         }
 
-        private MvxObservableCollection<MessageEffect> _searchStickers;
-        public MvxObservableCollection<MessageEffect> SearchStickers
+        private DiffObservableCollection<MessageEffect> _searchStickers;
+        public DiffObservableCollection<MessageEffect> SearchStickers
         {
             get => _searchStickers;
             set
@@ -57,8 +57,8 @@ namespace Telegram.ViewModels.Drawers
             }
         }
 
-        public MvxObservableCollection<MessageEffect> Reactions => SearchReactions ?? SavedReactions;
-        public MvxObservableCollection<MessageEffect> Stickers => SearchStickers ?? SavedStickers;
+        public DiffObservableCollection<MessageEffect> Reactions => SearchReactions ?? SavedReactions;
+        public DiffObservableCollection<MessageEffect> Stickers => SearchStickers ?? SavedStickers;
 
         public async void Search(string query, bool emojiOnly)
         {
@@ -69,8 +69,8 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                var reactions = new MvxObservableCollection<MessageEffect>();
-                var stickers = new MvxObservableCollection<MessageEffect>();
+                var reactions = new DiffObservableCollection<MessageEffect>();
+                var stickers = new DiffObservableCollection<MessageEffect>();
                 SearchReactions = reactions;
                 SearchStickers = stickers;
 
@@ -90,8 +90,8 @@ namespace Telegram.ViewModels.Drawers
         {
             if (source is EmojiCategorySourceSearch search)
             {
-                var reactions = new MvxObservableCollection<MessageEffect>();
-                var stickers = new MvxObservableCollection<MessageEffect>();
+                var reactions = new DiffObservableCollection<MessageEffect>();
+                var stickers = new DiffObservableCollection<MessageEffect>();
                 SearchReactions = reactions;
                 SearchStickers = stickers;
 

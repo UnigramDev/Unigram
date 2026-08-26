@@ -23,12 +23,12 @@ namespace Telegram.ViewModels.Settings
         {
             _shortcutsService = shortcutsService;
 
-            Items = new MvxObservableCollection<ShortcutList>(shortcutsService.GetShortcuts());
+            Items = new DiffObservableCollection<ShortcutList>(shortcutsService.GetShortcuts());
 
             EditCommand = new RelayCommand<ShortcutInfo>(EditExecute);
         }
 
-        public MvxObservableCollection<ShortcutList> Items { get; private set; }
+        public DiffObservableCollection<ShortcutList> Items { get; private set; }
 
         public RelayCommand<ShortcutInfo> EditCommand { get; }
         private async void EditExecute(ShortcutInfo info)

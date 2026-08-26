@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class TopChatsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
+    public partial class TopChatsCollection : DiffObservableCollection<Chat>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly TopChatCategory _category;

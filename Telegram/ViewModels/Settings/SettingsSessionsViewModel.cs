@@ -27,7 +27,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<KeyedList<KeyedGroup, Session>>();
+            Items = new DiffObservableCollection<KeyedList<KeyedGroup, Session>>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -129,7 +129,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public MvxObservableCollection<KeyedList<KeyedGroup, Session>> Items { get; private set; }
+        public DiffObservableCollection<KeyedList<KeyedGroup, Session>> Items { get; private set; }
 
         private Session _current;
         public Session Current

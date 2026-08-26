@@ -104,7 +104,7 @@ namespace Telegram.ViewModels.Chats
             IsLoading = false;
         }
 
-        public partial class ItemsCollection : MvxObservableCollection<Message>, ISupportIncrementalLoading
+        public partial class ItemsCollection : DiffObservableCollection<Message>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
 
