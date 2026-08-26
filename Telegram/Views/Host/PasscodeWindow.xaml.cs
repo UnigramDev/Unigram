@@ -185,7 +185,7 @@ namespace Telegram.Views.Host
         {
             try
             {
-                var result = await UserConsentVerifier.RequestVerificationAsync(Strings.AppName);
+                var result = await Window.RequestUserConsentAsync(Strings.PasscodeWindowsHello);
                 if (result == UserConsentVerificationResult.Verified)
                 {
                     Unlock();

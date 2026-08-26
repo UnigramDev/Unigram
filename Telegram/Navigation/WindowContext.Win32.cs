@@ -10,13 +10,12 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Controls;
+using Telegram.Host;
 using Telegram.Navigation.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Host;
 using Windows.Foundation;
-using Windows.System;
+using Windows.Security.Credentials.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 namespace Telegram.Navigation
@@ -74,6 +73,14 @@ namespace Telegram.Navigation
         private static int _nextId;
 
         public long Handle => _island.Handle.ToInt64();
+
+        // The plain UserConsentVerifier.RequestVerificationAsync does work here, because the island
+        // host still has a CoreWindow - but it parents the dialog on that hidden window, so it
+        // lands in the wrong place on screen. The HWND overload is what puts it over our window.
+        public IAsyncOperation<UserConsentVerificationResult> RequestUserConsentAsync(string message)
+        {
+            return UserConsentVerifierInterop.RequestVerificationForWindowAsync(_island.Handle, message);
+        }
 
         private string _persistedId;
         public string PersistedId

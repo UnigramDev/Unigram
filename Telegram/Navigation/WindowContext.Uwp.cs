@@ -18,6 +18,7 @@ using Telegram.Services.Keyboard;
 using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Security.Credentials.UI;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -138,6 +139,11 @@ namespace Telegram.Navigation
         public void Activate()
         {
             _window.Activate();
+        }
+
+        public IAsyncOperation<UserConsentVerificationResult> RequestUserConsentAsync(string message)
+        {
+            return UserConsentVerifier.RequestVerificationAsync(message);
         }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)

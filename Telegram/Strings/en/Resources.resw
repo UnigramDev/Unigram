@@ -11150,6 +11150,9 @@ messages from multiple devices.</value>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN</value>
   </data>
+  <data name="PasscodeWindowsHello" xml:space="preserve">
+    <value>Telegram wants to unlock with Windows Hello.</value>
+  </data>
   <data name="Passkey" xml:space="preserve">
     <value>Passkeys</value>
   </data>

@@ -13790,9 +13790,10 @@
   <string name="WelcomeMessagesLimit_two">Limit of **{0}** messages reached.</string>
   <string name="WelcomeMessagesLimit_few">Limit of **{0}** messages reached.</string>
   <string name="WelcomeMessagesLimit_many">Limit of **{0}** messages reached.</string>
-  
+
     <string name="FilterChatAddedToExisting">**{0}** added to **{1}**</string>
     <string name="FilterChatRemovedFrom">**{0}** removed from **{1}**</string>
     <string name="FilterUserAddedToExisting">**{0}** added to **{1}**</string>
     <string name="FilterUserRemovedFrom">**{0}** removed from **{1}**</string>
+    <string name="PasscodeWindowsHello">Telegram wants to unlock with Windows Hello.</string>
 </resources>
