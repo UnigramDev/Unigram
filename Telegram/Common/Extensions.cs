@@ -2040,6 +2040,19 @@ namespace System.Runtime.CompilerServices
 
             return value;
         }
+
+        public static bool Remove<TKey, TValue>(this ConditionalWeakTable<TKey, TValue> table, TKey key, out TValue value)
+            where TKey : class
+            where TValue : class
+        {
+            if (table.TryGetValue(key, out value))
+            {
+                table.Remove(key);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
 #endif

@@ -96,7 +96,8 @@ namespace Telegram.Composition
             partner = null;
             return false;
 #else
-            partner = surface as ICompositionVisualSurfacePartner;
+            var temp = surface as object;
+            partner = temp as ICompositionVisualSurfacePartner;
             return partner != null;
 #endif
         }
