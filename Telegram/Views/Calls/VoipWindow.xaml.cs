@@ -1118,10 +1118,8 @@ namespace Telegram.Views.Calls
 
                 popup.RequestedTheme = PopupTheme;
 
-                if (Resources.TryGet("TeachingTip", out TeachingTip cached))
-                {
-                    cached.IsOpen = false;
-                }
+                var presenter = this.GetParent<WindowPresenter>();
+                presenter?.HideAllToasts();
 
                 _ = popup.ShowQueuedAsync(XamlRoot);
             }

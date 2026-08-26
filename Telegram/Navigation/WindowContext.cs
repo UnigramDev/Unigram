@@ -346,20 +346,42 @@ namespace Telegram.Navigation
             }
         }
 
+        private ConditionalWeakTable<TeachingTip, string> _toasts = new();
+
         public void ToastOpened(TeachingTip toast)
         {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
+            var key = "Toast" + Guid.NewGuid().ToString("N");
+
+            _toasts.Add(toast, key);
+            Resources.Add(key, toast);
+            toast.Closed += Toast_Closed;
         }
 
         public void ToastClosed(TeachingTip toast)
         {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
+            if (_toasts.Remove(toast, out string key))
             {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
+                Resources.Remove(key);
+            }
+
+            toast.Closed -= Toast_Closed;
+        }
+
+        private void Toast_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+        {
+            if (_toasts.Remove(sender, out string key))
+            {
+                Resources.Remove(key);
+            }
+
+            sender.Closed -= Toast_Closed;
+        }
+
+        public void HideAllToasts()
+        {
+            foreach (var toast in _toasts)
+            {
+                toast.Key.IsOpen = false;
             }
         }
     }
