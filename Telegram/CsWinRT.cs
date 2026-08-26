@@ -75,6 +75,8 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<object>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.Td.Api.Chat>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.Td.Api.ChatInviteLinkMember>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.Td.Api.MessageSender>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.Td.Api.Passkey>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.ViewModels.Settings.ChatThemeViewModel>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.ViewModels.Stories.StoryViewModel>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollectionView<Telegram.Td.Api.ReceivedGift, Telegram.ViewModels.Profile.ProfileGiftsTabViewModel.ReceivedGiftsCollection>))]
@@ -85,11 +87,15 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.ViewModels.ChatFolderIcon2[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Views.Popups.SettingsOptionItem<int>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Views.Stories.Popups.StealthPopup.StealthModeFeature[]))]
-
-// GetReplyMarkupClip and GetRoundedPolygon take IVector<IVector<Rect>>. The outer list marshals on
-// its own, because the generator can see it at the call site; the inner one it never sees, since
-// that CCW is only needed when the native side calls GetAt. So the failure waits for a message with
-// an inline keyboard to be arranged and then throws out of ArrangeOverride.
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.SortedObservableCollection<Telegram.Td.Api.ConnectedWebsite>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.SortedObservableCollection<Telegram.Td.Api.ChatMember>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.KeyedList<Telegram.ViewModels.Settings.KeyedGroup, Telegram.Td.Api.Chat>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.ViewModels.KeyedCollection<Telegram.Td.Api.Message>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Td.Api.ReceivedGift>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.GroupCallMessage>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.QuickReplyShortcut>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.Dictionary<System.Type, Telegram.Td.Api.Animation>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ReadOnlyDictionary<System.Type, Telegram.Td.Api.Animation>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Windows.Foundation.Rect>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<System.Collections.Generic.IList<Windows.Foundation.Rect>>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<System.Collections.Generic.List<Windows.Foundation.Rect>>))]

@@ -731,6 +731,7 @@ namespace Telegram.Common
                 case "Eine Schnittstelle, die für einen anderen Thread marshalled war, wurde von der Anwendung aufgerufen.":
                 case "Aplikacja wywołała interfejs, który został skierowany na inny wątek.":
                 case "Приложение обратилось к интерфейсу, относящемуся к другому потоку.":
+                case "应用程序调用一个已为另一线程整理的接口。":
                     return "The application called an interface that was marshalled for a different thread.";
 
                 case "Les ressources mémoire disponibles sont insuffisantes pour exécuter cette opération.":
