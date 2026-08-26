@@ -525,6 +525,11 @@ namespace Telegram.ViewModels
             folder.IncludedChatIds.Add(data.Chat.Id);
 
             ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
+
+            // TODO: use FormattedTextBlock in Toasts
+            ShowToast(string.Format(data.Chat.Type is ChatTypePrivate or ChatTypeSecret
+                ? Strings.FilterUserAddedToExisting
+                : Strings.FilterChatAddedToExisting, data.Chat.Title, folder.Name.Text.Text), ToastPopupIcon.FolderIn);
         }
 
         #endregion
@@ -569,6 +574,11 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
+
+            // TODO: use FormattedTextBlock in Toasts
+            ShowToast(string.Format(data.Chat.Type is ChatTypePrivate or ChatTypeSecret
+                ? Strings.FilterUserRemovedFrom
+                : Strings.FilterChatRemovedFrom, data.Chat.Title, folder.Name.Text.Text), ToastPopupIcon.FolderOut);
         }
 
         #endregion

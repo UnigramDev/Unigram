@@ -6913,6 +6913,12 @@ Duration: {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Channels</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** added to **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** removed from **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Chats</value>
   </data>
@@ -7068,6 +7074,12 @@ Duration: {1}</value>
   </data>
   <data name="FilterShowMoreChats_other" xml:space="preserve">
     <value>Show {0} More Chats</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** added to **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** removed from **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Final Results</value>

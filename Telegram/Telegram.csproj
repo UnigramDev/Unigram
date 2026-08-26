@@ -2716,6 +2716,8 @@
     <Content Include="Assets\Toasts\Gift.tgs" />
     <Content Include="Assets\Toasts\SoundOff.tgs" />
     <Content Include="Assets\Toasts\SoundOn.tgs" />
+    <Content Include="Assets\Toasts\FolderIn.tgs" />
+    <Content Include="Assets\Toasts\FolderOut.tgs" />
     <PRIResource Include="Strings\zh-Hans\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>

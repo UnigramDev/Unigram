@@ -42,6 +42,8 @@ namespace Telegram.Controls
         Copied,
         Error,
         ExpiredStory,
+        FolderIn,
+        FolderOut,
         Forward,
         Gif,
         Gift,
