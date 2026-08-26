@@ -78,11 +78,6 @@ namespace Telegram.Common
             {
                 viewModel.XamlRoot = frame.XamlRoot;
 
-                void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-                {
-                    popup.Opened -= OnOpened;
-                }
-
                 void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                 {
                     viewModel.NavigatedFrom(null, false);

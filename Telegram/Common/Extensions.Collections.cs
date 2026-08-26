@@ -27,18 +27,6 @@ namespace Telegram.Common
             return -1;
         }
 
-        public static IEnumerable<IList<T>> ToChunks<T>(this List<T> enumerable, int chunkSize)
-        {
-            int itemsReturned = 0;
-            int count = enumerable.Count;
-            while (itemsReturned < count)
-            {
-                int currentChunkSize = Math.Min(chunkSize, count - itemsReturned);
-                yield return enumerable.GetRange(itemsReturned, currentChunkSize);
-                itemsReturned += currentChunkSize;
-            }
-        }
-
         public static T Random<T>(this IList<T> source)
         {
             if (source.Count > 0)
@@ -240,14 +228,12 @@ namespace Telegram.Common
             return list.BinarySearch(value, comparer.Compare);
         }
 
-        public static bool ClearIfNotEmpty<T>(this IList<T> list)
+        public static void ClearIfNotEmpty<T>(this IList<T> list)
         {
             if (list.Count > 0)
             {
                 list.Clear();
             }
-
-            return false;
         }
 
         public static bool Empty<T>(this ISet<T> list)

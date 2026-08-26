@@ -95,14 +95,6 @@ namespace Telegram.Common
             return new Vector3((float)rectangle.X, (float)rectangle.Y, 0);
         }
 
-        public static bool IntersectsWith(this Rect a, Rect b)
-        {
-            return (b.X <= a.X + a.Width) &&
-                (a.X <= b.X + b.Width) &&
-                (b.Y <= a.Y + a.Height) &&
-                (a.Y <= b.Y + b.Height);
-        }
-
         public static Vector2 TransformVector2(this GeneralTransform transform, Vector2 point)
         {
             return transform.TransformPoint(point.ToPoint()).ToVector2();
