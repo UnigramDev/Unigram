@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -76,12 +75,6 @@ namespace Telegram
             "t.me",
             "telegra.ph"
             /*"telesco.pe"*/
-        };
-
-        public static DiffOptions DiffOptions = new()
-        {
-            AllowBatching = false,
-            DetectMoves = true
         };
 
         public static MessageSendOptions PreviewOnly = new(null, false, false, 0, false, null, 0, 0, true);

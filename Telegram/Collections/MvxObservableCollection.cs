@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,22 +51,17 @@ namespace Telegram.Collections
         }
 
         public MvxObservableCollection(IDiffHandler<T> diffHandler)
-            : base(diffHandler, new DiffOptions())
+            : base(diffHandler, true)
         {
         }
 
-        public MvxObservableCollection(DiffOptions options)
-            : base((IDiffHandler<T>)DiffHandler<T>.Default, options)
+        public MvxObservableCollection(IDiffHandler<T> diffHandler, bool detectMoves)
+            : base(diffHandler, detectMoves)
         {
         }
 
-        public MvxObservableCollection(IDiffHandler<T> diffHandler, DiffOptions options)
-            : base(diffHandler, options)
-        {
-        }
-
-        public MvxObservableCollection(IEnumerable<T> items, IDiffHandler<T> diffHandler, DiffOptions options)
-            : base(items, diffHandler, options)
+        public MvxObservableCollection(IEnumerable<T> items, IDiffHandler<T> diffHandler, bool detectMoves)
+            : base(items, diffHandler, detectMoves)
         {
         }
 

@@ -5,8 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Business
         public BusinessRepliesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<QuickReplyShortcut>(new QuickReplyShortcutDiffHandler(this), Constants.DiffOptions);
+            Items = new DiffObservableCollection<QuickReplyShortcut>(new QuickReplyShortcutDiffHandler(this));
         }
 
         class QuickReplyShortcutDiffHandler : IDiffHandler<QuickReplyShortcut>

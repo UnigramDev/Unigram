@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Collections;
 using Windows.Globalization;
 
 namespace Telegram.Entities

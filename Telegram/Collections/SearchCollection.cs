@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -53,7 +52,7 @@ namespace Telegram.Collections
         }
 
         public SearchCollection(Func<object, string, TSource> factory, object sender, IDiffHandler<T> handler)
-            : base(handler, Constants.DiffOptions)
+            : base(handler)
         {
             _factory = factory;
             _sender = sender;
@@ -150,16 +149,15 @@ namespace Telegram.Collections
                     return;
                 }
 
-                // On the UI thread on purpose. CalculateDiff snapshots both sides with
-                // ToArray() and then works on the copies, so off-thread it raced the two
-                // enumerations; and the steps it hands back are indices into this
-                // collection, which anything mutating it in the meantime invalidates.
+                // On the UI thread on purpose. The walk snapshots both sides and then
+                // works on the copies, but the indices it reports are positions in this
+                // collection, so nothing else may touch it while they are applied.
                 // Measured at well under a millisecond up to a thousand items, and a list
                 // long enough to cost more than that costs far more than that applying it.
-                ReplaceDiff(DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                ReplaceDiff(source);
                 UpdateEmpty();
 
-                // Subscribed last on purpose: UpdateItems writes the old items back into
+                // Subscribed last on purpose: UpdateItem writes the old items back into
                 // the source while the diff is applied, and the handler would echo that
                 // straight back into this collection.
                 source.CollectionChanged += OnCollectionChanged;
@@ -185,13 +183,10 @@ namespace Telegram.Collections
             }
         }
 
-        protected override void UpdateItems(IReadOnlyList<DiffItem<T>> items, IDiffHandler<T> diffHandler)
+        protected override void UpdateItem(T oldValue, T newValue, int newSeqIndex, IDiffHandler<T> diffHandler)
         {
-            foreach (DiffItem<T> item in items)
-            {
-                // Swap new item with old one to have the same reference in both lists
-                _source[item.NewSeqIndex] = item.OldValue;
-            }
+            // Swap new item with old one to have the same reference in both lists
+            _source[newSeqIndex] = oldValue;
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)

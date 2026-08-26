@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -38,7 +38,7 @@ namespace Telegram.ViewModels.Settings
         {
             _localeService = localeService;
 
-            Items = new DiffObservableCollection<LanguagePackInfo>(this, Constants.DiffOptions);
+            Items = new DiffObservableCollection<LanguagePackInfo>(this);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)

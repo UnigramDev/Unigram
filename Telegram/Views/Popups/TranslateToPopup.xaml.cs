@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Td;
 using Windows.UI.Xaml;
@@ -149,7 +149,7 @@ namespace Telegram.Views.Popups
             });
 
             _languages = items;
-            _diff = new DiffObservableCollection<TranslateToLanguage>(items, handler, Constants.DiffOptions);
+            _diff = new DiffObservableCollection<TranslateToLanguage>(items, handler);
 
             ScrollingHost.ItemsSource = _diff;
         }

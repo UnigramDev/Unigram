@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -38,8 +38,8 @@ namespace Telegram.ViewModels.Folders
                 ? FoldersPlacement.Left
                 : FoldersPlacement.Top;
 
-            Items = new DiffObservableCollection<ChatFolderInfo>(new ChatFolderInfoDiffHandler(), Constants.DiffOptions);
-            Recommended = new DiffObservableCollection<RecommendedChatFolder>(new RecommendedChatFolderDiffHandler(), Constants.DiffOptions);
+            Items = new DiffObservableCollection<ChatFolderInfo>(new ChatFolderInfoDiffHandler());
+            Recommended = new DiffObservableCollection<RecommendedChatFolder>(new RecommendedChatFolderDiffHandler());
         }
 
         class ChatFolderInfoDiffHandler : IDiffHandler<ChatFolderInfo>

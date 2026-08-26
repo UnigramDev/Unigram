@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1403,7 +1402,7 @@ namespace Telegram.Controls.Chats
         private bool _loading;
 
         public AutocompleteCollection(IAutocompleteCollection collection)
-            : base(collection, new AutocompleteDiffHandler(), Constants.DiffOptions)
+            : base(collection, new AutocompleteDiffHandler())
         {
             _source = collection;
             _incrementalSource = collection as ISupportIncrementalLoading;
@@ -1438,7 +1437,6 @@ namespace Telegram.Controls.Chats
                     var token = Cancel();
 
                     await incremental.LoadMoreItemsAsync(0);
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
 
                     if (token.IsCancellationRequested)
                     {
@@ -1446,7 +1444,10 @@ namespace Telegram.Controls.Chats
                         return;
                     }
 
-                    ReplaceDiff(diff);
+                    // Same rule as SearchCollection: computing this off-thread raced the two
+                    // enumerations, and the positions it reports only hold while nothing else
+                    // touches this collection.
+                    ReplaceDiff(source);
                     UpdateEmpty();
 
                     _loading = false;
@@ -1467,16 +1468,10 @@ namespace Telegram.Controls.Chats
                 {
                     _loading = true;
 
-                    var token = Cancel();
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
-
-                    if (token.IsCancellationRequested)
-                    {
-                        _loading = false;
-                        return;
-                    }
-
-                    ReplaceDiff(diff);
+                    // Same rule as SearchCollection: computing this off-thread raced the two
+                    // enumerations, and the positions it reports only hold while nothing else
+                    // touches this collection.
+                    ReplaceDiff(source);
                     UpdateEmpty();
 
                     _loading = false;
@@ -1495,16 +1490,10 @@ namespace Telegram.Controls.Chats
                 {
                     _loading = true;
 
-                    var token = Cancel();
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
-
-                    if (token.IsCancellationRequested)
-                    {
-                        _loading = false;
-                        return;
-                    }
-
-                    ReplaceDiff(diff);
+                    // Same rule as SearchCollection: computing this off-thread raced the two
+                    // enumerations, and the positions it reports only hold while nothing else
+                    // touches this collection.
+                    ReplaceDiff(source);
                     UpdateEmpty();
 
                     _loading = false;
@@ -1531,15 +1520,7 @@ namespace Telegram.Controls.Chats
 
                 if (result.Count > 0 && !token.IsCancellationRequested)
                 {
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
-
-                    if (token.IsCancellationRequested)
-                    {
-                        _loading = false;
-                        return result;
-                    }
-
-                    ReplaceDiff(diff);
+                    ReplaceDiff(_source);
                     UpdateEmpty();
                 }
 

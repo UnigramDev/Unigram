@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -48,7 +48,7 @@ namespace Telegram.Views.Popups
             // TODO: consider creating a collection specifically for the playback session
             // rather than using the playlist provided by PlaybackService
 
-            _items = new DiffObservableCollection<PlaybackItem>(this, Constants.DiffOptions);
+            _items = new DiffObservableCollection<PlaybackItem>(this);
             _items.AddRange(LifetimeService.Current.Playback.Items);
 
             Slider.AddHandler(KeyDownEvent, new KeyEventHandler(Slider_KeyDown), true);

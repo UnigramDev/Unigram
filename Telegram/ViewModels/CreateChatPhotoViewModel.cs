@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;

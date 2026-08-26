@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +88,7 @@ namespace Telegram.ViewModels
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
             _query.Value = string.Empty;
 
-            TopChats = new DiffObservableCollection<Chat>(new ChatDiffHandler(), Constants.DiffOptions);
+            TopChats = new DiffObservableCollection<Chat>(new ChatDiffHandler());
             Items = new FlatteningCollection(this, _recent, _chatsAndContacts1, _chatsAndContacts2, _globalSearch, _messages);
 
             Tabs = new List<SearchChatsTabItem>
@@ -627,19 +626,19 @@ namespace Telegram.ViewModels
         public int TotalCount => Count + (Key != null && Count > 0 ? 1 : 0);
 
         public KeyedCollection(string key, IDiffHandler<T> handler)
-            : base(handler, Constants.DiffOptions)
+            : base(handler)
         {
             Key = key;
         }
 
         public KeyedCollection(string key, IEnumerable<T> source, IDiffHandler<T> handler)
-            : base(source, handler, Constants.DiffOptions)
+            : base(source, handler)
         {
             Key = key;
         }
 
         public KeyedCollection(IGrouping<string, T> source, IDiffHandler<T> handler)
-            : base(source, handler, Constants.DiffOptions)
+            : base(source, handler)
         {
             Key = source.Key;
         }

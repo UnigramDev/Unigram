@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
+using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Services;
@@ -23,7 +23,7 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            _items = new DiffObservableCollection<CaptureSessionItem>(new CaptureSessionItemDiffHandler(), new DiffOptions { AllowBatching = false, DetectMoves = false });
+            _items = new DiffObservableCollection<CaptureSessionItem>(new CaptureSessionItemDiffHandler(), detectMoves: false);
             _items.ReplaceDiff(CaptureSessionService.FindAll());
 
             ScrollingHost.ItemsSource = _items;

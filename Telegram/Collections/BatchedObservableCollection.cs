@@ -5,8 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Telegram.Common;
@@ -18,20 +18,20 @@ namespace Telegram.Collections
     {
         private readonly int _headSize;
 
-        public BatchedObservableCollection(int headSize, IDiffHandler<T> diffHandler, DiffOptions options)
-            : base(diffHandler, options)
+        public BatchedObservableCollection(int headSize, IDiffHandler<T> diffHandler, bool detectMoves = true)
+            : base(diffHandler, detectMoves)
         {
             _headSize = headSize;
-            Head = new DiffObservableCollection<T>(diffHandler, options);
+            Head = new DiffObservableCollection<T>(diffHandler, detectMoves);
         }
 
         public DiffObservableCollection<T> Head { get; }
 
         public int RemainingCount => Count - Head.Count;
 
-        public override void ReplaceDiff(DiffResult<T> diffResult, IDiffHandler<T> diffHandler)
+        public override void ReplaceDiff(IEnumerable<T> seq, IDiffHandler<T> diffHandler, bool detectMoves)
         {
-            base.ReplaceDiff(diffResult, diffHandler);
+            base.ReplaceDiff(seq, diffHandler, detectMoves);
             SynchronizeHead();
         }
 

@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
@@ -228,51 +228,56 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var prev = _prevValue ?? Array.Empty<PageBlock>();
-            var diff = DiffUtil.CalculateDiff(prev, blocks, PageBlockHelper.Compare, Constants.DiffOptions);
+            var diff = DiffCalculator.Create(prev, blocks, PageBlockHelper.Compare);
 
-            Logger.Info(string.Format("Steps: {0}, added: {1}, removed: {2}, moved: {3}", diff.Steps.Count, diff.AddedItems.Count, diff.RemovedItems.Count, diff.MovedItems.Count));
+            var added = 0;
+            var removed = 0;
+            var moved = 0;
 
-            foreach (var step in diff.Steps)
+            while (diff.Next())
             {
-                if (step.Status == DiffStatus.Add)
+                if (diff.State == DiffState.Add)
                 {
-                    var element = _renderer.ProcessBlock(clientService, step.Items[0].NewValue, null);
+                    added++;
+
+                    var element = _renderer.ProcessBlock(clientService, diff.NewValue, null);
                     if (element != null)
                     {
-                        LayoutRoot.Children.Insert(step.NewStartIndex, element);
+                        LayoutRoot.Children.Insert(diff.NewIndex, element);
                     }
                     else
                     {
-                        LayoutRoot.Children.Insert(step.NewStartIndex, new Border());
+                        LayoutRoot.Children.Insert(diff.NewIndex, new Border());
                     }
 
-                    //UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
+                    //UpdateItem(diff.NewValue, null, diff.NewIndex);
                 }
-                else if (step.Status == DiffStatus.Move && step.OldStartIndex < LayoutRoot.Children.Count && step.NewStartIndex < LayoutRoot.Children.Count)
+                else if (diff.State == DiffState.Move && diff.OldIndex < LayoutRoot.Children.Count && diff.NewIndex < LayoutRoot.Children.Count)
                 {
-                    //UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
-                    LayoutRoot.Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
+                    moved++;
+
+                    //UpdateItem(diff.OldValue, diff.NewValue);
+                    LayoutRoot.Children.Move((uint)diff.OldIndex, (uint)diff.NewIndex);
                 }
-                else if (step.Status == DiffStatus.Remove && step.OldStartIndex < LayoutRoot.Children.Count)
+                else if (diff.State == DiffState.Remove && diff.OldIndex < LayoutRoot.Children.Count)
                 {
-                    //if (step.Items[0].OldValue is MessageReaction oldReaction)
+                    //if (diff.OldValue is MessageReaction oldReaction)
                     //{
                     //    _cache.Remove(oldReaction.Type);
                     //}
 
-                    LayoutRoot.Children.RemoveAt(step.OldStartIndex);
+                    removed++;
 
-                    if (step.Items[0].OldValue is PageBlockAnchor anchor)
+                    LayoutRoot.Children.RemoveAt(diff.OldIndex);
+
+                    if (diff.OldValue is PageBlockAnchor anchor)
                     {
                         _renderer.RemoveAnchor(anchor.Name);
                     }
                 }
             }
 
-            //foreach (var item in diff.NotMovedItems)
-            //{
-            //    UpdateItem(item.OldValue, item.NewValue);
-            //}
+            Logger.Info(string.Format("Added: {0}, removed: {1}, moved: {2}", added, removed, moved));
 
             _renderer.UpdateSpacing(LayoutRoot, blocks, true);
 

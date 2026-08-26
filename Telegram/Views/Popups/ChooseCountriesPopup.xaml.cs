@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td;
@@ -69,7 +69,7 @@ namespace Telegram.Views.Popups
 
             _countries = items;
             _selection = selection;
-            _diff = new DiffObservableCollection<CountryInfo>(items, handler, Constants.DiffOptions);
+            _diff = new DiffObservableCollection<CountryInfo>(items, handler);
 
             ScrollingHost.ItemsSource = _diff;
 

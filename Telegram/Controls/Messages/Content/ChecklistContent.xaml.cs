@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -134,33 +134,32 @@ namespace Telegram.Controls.Messages.Content
             {
                 // PERF: run diff asynchronously?
                 var prev = _prevValue ?? Array.Empty<ChecklistTask>();
-                var diff = DiffUtil.CalculateDiff(prev, checklist.List.Tasks, this, Constants.DiffOptions);
+                var diff = DiffCalculator.Create(prev, checklist.List.Tasks, this);
 
-                foreach (var step in diff.Steps)
+                while (diff.Next())
                 {
-                    if (step.Status == DiffStatus.Add)
+                    if (diff.State == DiffState.Add)
                     {
-                        UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
+                        UpdateItem(diff.NewValue, null, diff.NewIndex);
                     }
-                    else if (step.Status == DiffStatus.Move && step.OldStartIndex < Tasks.Children.Count && step.NewStartIndex < Tasks.Children.Count)
+                    else if (diff.State == DiffState.Move && diff.OldIndex < Tasks.Children.Count && diff.NewIndex < Tasks.Children.Count)
                     {
-                        UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
-                        Tasks.Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
+                        UpdateItem(diff.OldValue, diff.NewValue);
+                        Tasks.Children.Move((uint)diff.OldIndex, (uint)diff.NewIndex);
                     }
-                    else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Tasks.Children.Count)
+                    else if (diff.State == DiffState.Remove && diff.OldIndex < Tasks.Children.Count)
                     {
-                        if (step.Items[0].OldValue is ChecklistTask oldTask)
+                        if (diff.OldValue is ChecklistTask oldTask)
                         {
                             _cache.Remove(oldTask.Id);
                         }
 
-                        Tasks.Children.RemoveAt(step.OldStartIndex);
+                        Tasks.Children.RemoveAt(diff.OldIndex);
                     }
-                }
-
-                foreach (var item in diff.NotMovedItems)
-                {
-                    UpdateItem(item.OldValue, item.NewValue);
+                    else if (diff.State == DiffState.Unchanged)
+                    {
+                        UpdateItem(diff.OldValue, diff.NewValue);
+                    }
                 }
             }
 

@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,8 +31,8 @@ namespace Telegram.ViewModels.Folders
         public FolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Include = new BatchedObservableCollection<ChatFolderElement>(8, this, Constants.DiffOptions);
-            Exclude = new BatchedObservableCollection<ChatFolderElement>(8, this, Constants.DiffOptions);
+            Include = new BatchedObservableCollection<ChatFolderElement>(8, this);
+            Exclude = new BatchedObservableCollection<ChatFolderElement>(8, this);
 
             AvailableColors = new ObservableCollection<NameColor>(ClientService.GetAvailableAccentColors()
                 .Where(x => x.Id == x.BuiltInAccentColorId)

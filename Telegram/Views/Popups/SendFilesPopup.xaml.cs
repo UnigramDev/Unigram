@@ -7,7 +7,6 @@
 
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Xaml.Controls;
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -308,7 +307,7 @@ namespace Telegram.Views.Popups
             DataContext = viewModel;
             ViewModel = viewModel;
 
-            ItemsView = new DiffObservableCollection<StorageRow>(this, Constants.DiffOptions);
+            ItemsView = new DiffObservableCollection<StorageRow>(this);
 
             // Seeded rather than loaded, so a caller handing over typed items can read Items back
             // the moment the popup closes. Only what the source still owes arrives later.

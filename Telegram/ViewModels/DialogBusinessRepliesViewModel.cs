@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -72,29 +72,31 @@ namespace Telegram.ViewModels
             {
                 ProcessMessages(chat, replied);
 
-                var diff = DiffUtil.CalculateDiff(Items, replied, this, Constants.DiffOptions);
+                var diff = DiffCalculator.Create(Items, replied, this);
 
-                foreach (var step in diff.Steps)
+                while (diff.Next())
                 {
-                    if (step.Status == DiffStatus.Add)
+                    if (diff.State == DiffState.Add)
                     {
-                        Items.Insert(step.NewStartIndex, step.Items[0].NewValue);
+                        Items.Insert(diff.NewIndex, diff.NewValue);
                     }
-                    else if (step.Status == DiffStatus.Move && step.OldStartIndex < Items.Count && step.NewStartIndex < Items.Count)
+                    else if (diff.State == DiffState.Move && diff.OldIndex < Items.Count && diff.NewIndex < Items.Count)
                     {
-                        Items.Move(step.OldStartIndex, step.NewStartIndex);
+                        Items.Move(diff.OldIndex, diff.NewIndex);
                     }
-                    else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Items.Count)
+                    else if (diff.State == DiffState.Remove && diff.OldIndex < Items.Count)
                     {
-                        Items.RemoveAt(step.OldStartIndex);
+                        Items.RemoveAt(diff.OldIndex);
                     }
-                }
+                    else if (diff.State == DiffState.Unchanged)
+                    {
+                        // Copied out first: the walk is a ref struct and cannot be captured.
+                        var oldValue = diff.OldValue;
 
-                foreach (var item in diff.NotMovedItems)
-                {
-                    UpdateItem(item.OldValue, item.NewValue);
+                        UpdateItem(oldValue, diff.NewValue);
 
-                    Delegate?.UpdateBubbleWithMessageId(item.OldValue.Id, bubble => bubble.UpdateMessage(item.OldValue));
+                        Delegate?.UpdateBubbleWithMessageId(oldValue.Id, bubble => bubble.UpdateMessage(oldValue));
+                    }
                 }
 
                 IsNewestSliceLoaded = true;

@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -62,7 +62,7 @@ namespace Telegram.Views.Premium.Popups
         private readonly MessageSender _receiverId;
         private readonly Chat _chat;
 
-        private readonly DiffObservableCollection<AvailableGift> _gifts = new(Constants.DiffOptions);
+        private readonly DiffObservableCollection<AvailableGift> _gifts = new();
 
         public GiftPopup(IClientService clientService, INavigationService navigationService, User user, UserFullInfo fullInfo)
         {

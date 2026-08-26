@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Linq;
+using Telegram.Collections;
 using Telegram.Entities;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,7 +23,7 @@ namespace Telegram.Controls
         {
             InitializeComponent();
 
-            _countries = new DiffObservableCollection<Country>(Country.All, new CountryDiffHandler(), Constants.DiffOptions);
+            _countries = new DiffObservableCollection<Country>(Country.All, new CountryDiffHandler());
             Input.ItemsSource = _countries;
         }
 

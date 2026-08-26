@@ -6,7 +6,6 @@
 //
 
 using Microsoft.Graphics.Canvas.Geometry;
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -204,13 +204,13 @@ namespace Telegram.Views.Stars.Popups
             }
 
             var prev = (update ? _prev : null) ?? Array.Empty<long>();
-            var diff = DiffUtil.CalculateDiff(prev, next, Constants.DiffOptions);
+            var diff = DiffCalculator.Create(prev, next);
 
-            foreach (var step in diff.Steps)
+            while (diff.Next())
             {
-                if (step.Status == DiffStatus.Add)
+                if (diff.State == DiffState.Add)
                 {
-                    if (step.Items[0].NewValue == -1)
+                    if (diff.NewValue == -1)
                     {
                         var toggle = new ToggleMenuFlyoutItem();
                         toggle.Text = Strings.SelectAll;
@@ -218,10 +218,10 @@ namespace Telegram.Views.Stars.Popups
                         toggle.Command = new RelayCommand(SelectAll);
 
                         hook ??= toggle;
-                        flyout.Items.Insert(step.NewStartIndex, toggle);
+                        flyout.Items.Insert(diff.NewIndex, toggle);
 
                     }
-                    else if (_map.TryGetValue(step.Items[0].NewValue, out ResoldGiftFilter filter))
+                    else if (_map.TryGetValue(diff.NewValue, out ResoldGiftFilter filter))
                     {
                         var toggle = new ToggleMenuFlyoutItem();
                         toggle.Text = string.Format("{0} **{1}**", filter.Name, filter.TotalCount);
@@ -250,18 +250,18 @@ namespace Telegram.Views.Stars.Popups
                         }
 
                         hook ??= toggle;
-                        flyout.Items.Insert(step.NewStartIndex, toggle);
+                        flyout.Items.Insert(diff.NewIndex, toggle);
                     }
                 }
-                else if (step.Status == DiffStatus.Move && step.OldStartIndex < flyout.Items.Count && step.NewStartIndex < flyout.Items.Count)
+                else if (diff.State == DiffState.Move && diff.OldIndex < flyout.Items.Count && diff.NewIndex < flyout.Items.Count)
                 {
-                    var item = flyout.Items[step.OldStartIndex];
-                    flyout.Items.RemoveAt(step.OldStartIndex);
-                    flyout.Items.Insert(step.NewStartIndex, item);
+                    var item = flyout.Items[diff.OldIndex];
+                    flyout.Items.RemoveAt(diff.OldIndex);
+                    flyout.Items.Insert(diff.NewIndex, item);
                 }
-                else if (step.Status == DiffStatus.Remove && step.OldStartIndex < flyout.Items.Count)
+                else if (diff.State == DiffState.Remove && diff.OldIndex < flyout.Items.Count)
                 {
-                    flyout.Items.RemoveAt(step.OldStartIndex);
+                    flyout.Items.RemoveAt(diff.OldIndex);
                 }
             }
 

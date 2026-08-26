@@ -45,13 +45,13 @@ using WinRT;
 // This list is the TG1001 output, not a hand sweep: grepping for ItemsSource found the wrong type
 // twice, because what the popups assign is a DiffObservableCollection and the List beside it is
 // only the backing store. Rerun the analyzer rather than adding entries by hand.
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Entities.Country>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Services.CaptureSessionItem>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Services.PlaybackItem>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Td.Api.AvailableGift>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Td.Api.CountryInfo>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Td.Api.TimeZone>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Views.Popups.TranslateToLanguage>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Entities.Country>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Services.CaptureSessionItem>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Services.PlaybackItem>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Td.Api.AvailableGift>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Td.Api.CountryInfo>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Td.Api.TimeZone>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Views.Popups.TranslateToLanguage>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Controls.StorageChartItem>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.BusinessFeature>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.Chat>))]

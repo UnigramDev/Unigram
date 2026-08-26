@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Settings
         {
             _themeService = themeService;
 
-            Items = new DiffObservableCollection<ThemeBrush>(new ThemeBrushDiffHandler(), Constants.DiffOptions);
+            Items = new DiffObservableCollection<ThemeBrush>(new ThemeBrushDiffHandler());
         }
 
         private string _title;
