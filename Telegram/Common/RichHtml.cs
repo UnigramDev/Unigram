@@ -240,6 +240,10 @@ namespace Telegram.Common
             }
 
             // A <div> wrapping blocks is a wrapper; one wrapping text is a paragraph.
+            // A white-space:pre wrapper — an editor writing code one line per div — could
+            // become preformatted instead, which is the shape a code paste wants; pre-wrap
+            // is ordinary prose all over the web, so telling the two apart needs a real
+            // source to calibrate against first.
             if (HasBlockChild(node))
             {
                 ParseBlocks(node.Children, output);
@@ -787,7 +791,7 @@ namespace Telegram.Common
                     {
                         return false;
                     }
-                    plain.Text = start ? plain.Text.TrimStart() : plain.Text.TrimEnd();
+                    plain.Text = start ? TrimStart(plain.Text) : TrimEnd(plain.Text);
                     // An all-whitespace leaf leaves the trimming to the next one along.
                     return plain.Text.Length > 0;
 
@@ -866,6 +870,30 @@ namespace Telegram.Common
         private static bool IsSpace(char c)
         {
             return c is ' ' or '\t' or '\n' or '\r' or '\f';
+        }
+
+        // TrimStart/TrimEnd would take U+00A0 with them, and a non-breaking space is
+        // content: it is what an editor writes to keep an indent alive through collapsing.
+        private static string TrimStart(string text)
+        {
+            var i = 0;
+            while (i < text.Length && IsSpace(text[i]))
+            {
+                i++;
+            }
+
+            return i == 0 ? text : text.Substring(i);
+        }
+
+        private static string TrimEnd(string text)
+        {
+            var i = text.Length;
+            while (i > 0 && IsSpace(text[i - 1]))
+            {
+                i--;
+            }
+
+            return i == text.Length ? text : text.Substring(0, i);
         }
 
         /// <summary>
@@ -982,7 +1010,8 @@ namespace Telegram.Common
                 case "amp": return "&";
                 case "quot": return "\"";
                 case "apos": return "'";
-                case "nbsp": return " ";
+                // The character, not a space: HTML only collapses the space it writes as one.
+                case "nbsp": return "\u00A0";
             }
 
             if (name.Length > 1 && name[0] == '#')
