@@ -24,13 +24,28 @@ namespace Telegram.Collections
         private readonly Func<object, string, TSource> _factory;
         private object _sender;
 
+        // Guards the query pipeline alone: a value waiting out the debounce, and the
+        // UpdateQuery it eventually fires. Loading must not touch it, or scrolling the
+        // list would drop a search the user has already typed.
         private CancellationTokenSource _cancellation;
 
         private TSource _source;
 
+        // Bumped whenever the source is replaced or the collection is cancelled. Work in
+        // flight compares it after every await: a call that lost the race must not touch
+        // the collection, nor clear state the newer call now owns.
+        private int _version;
+
+        // The load in flight, if any. A second caller gets this task, never an empty
+        // result: Count = 0 while HasMoreItems is true makes the list ask again at once,
+        // and that loop never yields the thread these awaits resume on.
+        private Task<LoadMoreItemsResult> _loading;
+
+        // The source swap in flight, if any. Loads queue behind it, so nothing mutates
+        // the source while DiffUtil reads it off-thread.
+        private Task _replace;
+
         private bool _initialized;
-        private bool _loading;
-        private bool _replacing;
 
         public SearchCollection(Func<object, string, TSource> factory, IDiffHandler<T> handler)
             : this(factory, null, handler)
@@ -80,73 +95,93 @@ namespace Telegram.Collections
             Update(_factory(_sender ?? this, _query.Value = value));
         }
 
-        public CancellationTokenSource Cancel()
+        public void Cancel()
         {
             _cancellation?.Cancel();
-            _cancellation = new();
-            return _cancellation;
+            _cancellation = null;
+
+            _query.Cancel();
+
+            // Abandons the load and the source swap in flight, if any.
+            _version++;
         }
 
         public void Update(TSource source)
         {
-            UpdateImpl(source, false);
+            var replace = UpdateImpl(source, false);
+
+            // A swap that ran to completion synchronously has already cleared the field,
+            // so storing it now would keep every later load waiting on a finished task.
+            _replace = replace.IsCompleted ? null : replace;
         }
 
-        private async void UpdateImpl(TSource source, bool reentrancy)
+        private async Task UpdateImpl(TSource source, bool reentrancy)
         {
-            if (_source != null)
-            {
-                _source.CollectionChanged -= OnCollectionChanged;
-            }
+            var version = reentrancy ? _version : ++_version;
 
-            if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
+            try
             {
+                if (_source != null)
+                {
+                    _source.CollectionChanged -= OnCollectionChanged;
+                }
+
+                if (source == null || !source.HasMoreItems)
+                {
+                    _source = default;
+
+                    Clear();
+                    UpdateEmpty();
+                    return;
+                }
+
                 _source = source;
 
-                if (_initialized)
+                if (!_initialized)
                 {
-                    _loading = true;
-                    _replacing = true;
-
-                    var token = Cancel();
-
-                    await incremental.LoadMoreItemsAsync(0);
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
-
-                    if (token.IsCancellationRequested)
-                    {
-                        _loading = false;
-                        _replacing = false;
-                        return;
-                    }
-
-                    ReplaceDiff(diff);
-                    UpdateEmpty();
-
-                    _loading = false;
-                    _replacing = false;
-
-                    _source.CollectionChanged += OnCollectionChanged;
-
-                    // I'm not sure in what conditions this can happen, but it happens
-                    if (Count < 1 && incremental.HasMoreItems && !reentrancy)
-                    {
-                        UpdateImpl(source, true);
-                    }
+                    source.CollectionChanged += OnCollectionChanged;
+                    return;
                 }
-                else
+
+                await source.LoadMoreItemsAsync(0);
+
+                if (version != _version)
                 {
-                    _source.CollectionChanged += OnCollectionChanged;
+                    return;
+                }
+
+                // On the UI thread on purpose. CalculateDiff snapshots both sides with
+                // ToArray() and then works on the copies, so off-thread it raced the two
+                // enumerations; and the steps it hands back are indices into this
+                // collection, which anything mutating it in the meantime invalidates.
+                // Measured at well under a millisecond up to a thousand items, and a list
+                // long enough to cost more than that costs far more than that applying it.
+                ReplaceDiff(DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                UpdateEmpty();
+
+                // Subscribed last on purpose: UpdateItems writes the old items back into
+                // the source while the diff is applied, and the handler would echo that
+                // straight back into this collection.
+                source.CollectionChanged += OnCollectionChanged;
+
+                // I'm not sure in what conditions this can happen, but it happens
+                if (Count < 1 && source.HasMoreItems && !reentrancy)
+                {
+                    await UpdateImpl(source, true);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                _source = default;
-
-                Cancel();
-
-                Clear();
-                UpdateEmpty();
+                // A swap that throws must not leave loading wedged: the list would then
+                // ask for more items forever and never get any.
+                Logger.Error(ex);
+            }
+            finally
+            {
+                if (version == _version)
+                {
+                    _replace = null;
+                }
             }
         }
 
@@ -161,52 +196,67 @@ namespace Telegram.Collections
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async _ =>
+            return IncrementalLoading.Run(_ => LoadMoreItems(count));
+        }
+
+        private Task<LoadMoreItemsResult> LoadMoreItems(uint count)
+        {
+            if (_loading != null)
             {
-                if (_loading || _source == null)
+                return _loading;
+            }
+
+            var loading = LoadMoreItemsImpl(count);
+
+            // As above: a task that completed synchronously has already run its finally.
+            if (!loading.IsCompleted)
+            {
+                _loading = loading;
+            }
+
+            return loading;
+        }
+
+        private async Task<LoadMoreItemsResult> LoadMoreItemsImpl(uint count)
+        {
+            try
+            {
+                var replace = _replace;
+                if (replace != null)
                 {
-                    return new LoadMoreItemsResult
-                    {
-                        Count = 0
-                    };
+                    await replace;
                 }
 
-                _loading = true;
-
-                var token = Cancel();
-                var result = await _source?.LoadMoreItemsAsync(count);
-
-                if (result.Count > 0 && !token.IsCancellationRequested)
+                var source = _source;
+                if (source == null)
                 {
-                    //var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
+                    return default;
+                }
 
-                    //if (token.IsCancellationRequested)
-                    //{
-                    //    _loading = false;
-                    //    return result;
-                    //}
+                var version = _version;
+                var result = await source.LoadMoreItemsAsync(count);
 
-                    //_replacingDiff = true;
-                    //ReplaceDiff(diff);
-
-                    //_replacingDiff = false;
+                if (result.Count > 0 && version == _version)
+                {
                     UpdateEmpty();
                 }
 
-                _initialized = true;
-                _loading = false;
-
                 return result;
-            });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return default;
+            }
+            finally
+            {
+                _initialized = true;
+                _loading = null;
+            }
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (_replacing)
-            {
-                return;
-            }
-
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -233,6 +283,8 @@ namespace Telegram.Collections
                     return _source.HasMoreItems;
                 }
 
+                // The list has asked for items, so whatever arrives next replaces
+                // something already on screen rather than being the initial fill.
                 _initialized = true;
                 return false;
             }
