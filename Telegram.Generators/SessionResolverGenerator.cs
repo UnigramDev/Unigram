@@ -259,40 +259,69 @@ namespace Telegram.Services
                 builder.AppendLine("        }");
                 builder.AppendLine();
 
-                builder.AppendLine("        public T Resolve<T>()");
-                builder.AppendLine("        {");
-                builder.AppendLine("            switch (typeof(T).FullName)");
-                builder.AppendLine("            {");
+                // One entry per registration, in the order the arms are emitted: the index is
+                // what Resolve switches on.
+                var registrations = new List<KeyValuePair<INamedTypeSymbol, string>>();
 
                 foreach (var instance in _instances)
                 {
-                    builder.AppendLine("                case \"" + Full(instance, false) + "\":");
-                    builder.AppendLine("                    return (T)(object)" + Construct(instance, 5) + ";");
+                    registrations.Add(new KeyValuePair<INamedTypeSymbol, string>(instance, "(T)(object)" + Construct(instance, 5)));
                 }
 
                 foreach (var singleton in _singletons)
                 {
-                    builder.AppendLine("                case \"" + Full(singleton.Key, false) + "\":");
-                    builder.AppendLine("                    return (T)" + Field(singleton.Key) + ";");
+                    registrations.Add(new KeyValuePair<INamedTypeSymbol, string>(singleton.Key, "(T)" + Field(singleton.Key)));
                 }
 
                 foreach (var single in _lazy)
                 {
-                    builder.AppendLine("                case \"" + Full(single.Key, false) + "\":");
-                    builder.AppendLine("                    return (T)(" + Field(single.Key) + " ??= " + Construct(single.Value, 5) + ");");
+                    registrations.Add(new KeyValuePair<INamedTypeSymbol, string>(single.Key, "(T)(" + Field(single.Key) + " ??= " + Construct(single.Value, 5) + ")"));
                 }
 
                 foreach (var exposed in _exposed)
                 {
-                    builder.AppendLine("                case \"" + Full(exposed, false) + "\":");
-                    builder.AppendLine("                    return (T)" + Field(exposed) + ";");
+                    registrations.Add(new KeyValuePair<INamedTypeSymbol, string>(exposed, "(T)" + Field(exposed)));
                 }
 
                 foreach (var self in _self)
                 {
-                    builder.AppendLine("                case \"" + Full(self, false) + "\":");
-                    builder.AppendLine("                    return (T)(object)this;");
+                    registrations.Add(new KeyValuePair<INamedTypeSymbol, string>(self, "(T)(object)this"));
                 }
+
+                // Resolve dispatches on an int rather than on typeof(T).FullName: a name obliges
+                // .NET Native to keep reflection metadata for every registration, and costs a hash
+                // and a string compare to arrive somewhere a jump table reaches directly. The walk
+                // below runs once per T for the life of the process, in a static initializer.
+                builder.AppendLine("        private static class Registration<T>");
+                builder.AppendLine("        {");
+                builder.AppendLine("            public static readonly int Id = GetRegistration(typeof(T));");
+                builder.AppendLine("        }");
+                builder.AppendLine();
+
+                builder.AppendLine("        private static int GetRegistration(global::System.Type type)");
+                builder.AppendLine("        {");
+
+                for (int i = 0; i < registrations.Count; i++)
+                {
+                    builder.AppendLine("            if (type == typeof(" + Full(registrations[i].Key) + ")) return " + i + ";");
+                }
+
+                builder.AppendLine();
+                builder.AppendLine("            return -1;");
+                builder.AppendLine("        }");
+                builder.AppendLine();
+
+                builder.AppendLine("        public T Resolve<T>()");
+                builder.AppendLine("        {");
+                builder.AppendLine("            switch (Registration<T>.Id)");
+                builder.AppendLine("            {");
+
+                for (int i = 0; i < registrations.Count; i++)
+                {
+                    builder.AppendLine("                case " + i + ":");
+                    builder.AppendLine("                    return " + registrations[i].Value + ";");
+                }
+
                 builder.AppendLine("                default:");
                 builder.AppendLine("                    return default;");
                 builder.AppendLine("            }");

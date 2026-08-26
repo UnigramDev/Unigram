@@ -8,6 +8,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -219,12 +220,31 @@ namespace Telegram.Generators
                 var operation = (IArgumentOperation)context.Operation;
                 var parameter = operation.Parameter;
 
-                if (parameter == null || !IsProjected(parameter.ContainingSymbol?.ContainingType))
+                if (parameter == null)
+                {
+                    return;
+                }
+
+                if (!IsProjected(parameter.ContainingSymbol?.ContainingType) && !IsBindingSetter(parameter.ContainingSymbol))
                 {
                     return;
                 }
 
                 Check(context, parameter.Type, operation.Value);
+            }
+
+            // x:Bind never assigns a projected property directly. Every value goes through a
+            // XamlBindingSetters.Set_* shim the XAML compiler generates into the page, and the shim
+            // takes the value as object - so by the time it reaches the real ItemsSource assignment
+            // the instantiation has been erased and AnalyzeAssignment has nothing to report. The
+            // call into the shim is the last place the concrete type is still named, which makes it
+            // the only place an ItemsSource bound with x:Bind can be checked at all.
+            private static bool IsBindingSetter(ISymbol symbol)
+            {
+                return symbol is IMethodSymbol method
+                    && method.IsStatic
+                    && method.Name.StartsWith("Set_", StringComparison.Ordinal)
+                    && method.ContainingType?.Name == "XamlBindingSetters";
             }
 
             public void AnalyzeAssignment(OperationAnalysisContext context)
