@@ -55,6 +55,17 @@
     <UseUwp>true</UseUwp>
     <Platforms>x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+
+    <!-- Defaulted from the platform rather than left to the caller. A RID-less build of this
+         project resolves no package assets at all - Telegram.Native, Rg.DiffUtils, everything
+         vanishes and the compiler reports thousands of errors that look like a broken projection
+         rather than a missing property.
+
+         Telegram.Modern.csproj gets its RID from the packaging project that references it. This
+         one has no packaging project, so without this Visual Studio cannot build it at all and
+         every command line has to carry two extra properties. -->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$(Platform.ToLowerInvariant())</RuntimeIdentifier>
+    <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
 

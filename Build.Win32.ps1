@@ -79,11 +79,11 @@ function Invoke-MSBuild {
     }
 }
 
-# The native components first, and through the Modern solution: Telegram.Win32.csproj is in no
-# solution of its own, and building the vcxprojs without one leaves $(SolutionDir) empty - they
-# then write their .winmd and .dll under their own directories rather than x64\$Configuration\,
-# which is where this project reads them from. The result is a stale projection, not an error.
-$solution = Join-Path $PSScriptRoot 'Telegram.Modern.slnx'
+# Through the solution, never the project file. Building the vcxprojs without one leaves
+# $(SolutionDir) empty - they then write their .winmd and .dll under their own directories rather
+# than x64\$Configuration\, which is where this project reads them from. The result is a stale
+# projection, not an error.
+$solution = Join-Path $PSScriptRoot 'Telegram.Win32.slnx'
 
 Invoke-MSBuild -Description 'Telegram.Native, Telegram.Native.Calls' -Arguments (
     @($solution, '-target:Telegram_Native;Telegram_Native_Calls', '-restore') + $common)

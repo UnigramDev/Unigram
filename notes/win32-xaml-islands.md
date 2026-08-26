@@ -371,7 +371,18 @@ collapse to plain HWNDs on the UI thread.
 custom types, resources, visual states, `XamlDirect`, Composition and NativeAOT all work
 together from C#. What remains open is app-model surface, not XAML.
 
-Four further findings worth carrying forward:
+Five further findings worth carrying forward:
+
+0. **The island host still has a `CoreWindow`.** `WindowsXamlManager.InitializeForCurrentThread()`
+   creates a hidden one on the thread, so `CoreWindow.GetForCurrentThread()` is non-null and
+   `CoreWindow`-bound WinRT APIs keep working without HWND interop. Item 0.1 below is the
+   corroboration already in this note: `FrameworkElement.Dispatcher` returns a live
+   `CoreDispatcher` inside an island, and a `CoreDispatcher` comes from a `CoreWindow`. This is
+   Phase 2 only — Phase 3 (WinUI 3) has no `CoreWindow`, which is where
+   `SystemMediaTransportControls.GetForCurrentView`, `UIViewSettings.GetForCurrentView` and the
+   rest of the `GetForCurrentView` family start needing interop. Sealing `CoreWindow` behind
+   `WindowContext` (item 0.2) is still right — it is what makes Phase 3 a change to one file — but
+   nothing on this path is *blocked* on it.
 
 1. **No `UseUwp`, and no VS MSBuild.** A plain `net10.0-windows10.0.26100.0` `Exe` with a direct
    `<Reference>` to `Microsoft.Windows.UI.Xaml.dll` out of the ref pack compiles and runs under
@@ -2028,14 +2039,32 @@ changes nothing about activation, which is the single biggest de-risking in
     UI Automation dump of the window would separate "no content" from "content that renders
     invisibly" in one step and is the cheapest thing to try first.
 
-- [ ] **2.1d Building and running it.** Debug to compile-check, Release to judge anything:
+- [x] **2.1d Building and running it - and from Visual Studio, 2026-08-25.** `Telegram.Win32.slnx`
+  now exists, so this flavour is a project Fela can open and work on rather than one that only
+  builds through a command line someone else knows:
+
+      MSBuild Telegram.Win32.slnx -t:Build -restore -p:Configuration=Debug -p:Platform=x64
+
+  Two things had to change for that to be true.
+
+  - **The RID is defaulted from the platform** in the csproj. A RID-less build of this project
+    resolves no package assets at all - `Telegram.Native`, `Rg.DiffUtils`, everything vanishes and
+    the compiler reports thousands of errors that look like a broken projection rather than a
+    missing property. `Telegram.Modern.csproj` never had to care because the packaging project that
+    references it supplies one; this project has none, so it supplies its own.
+  - **The native projects are `BuildDependency` entries in the solution**, not `ProjectReference`s
+    in the project. Ordering is the only thing wanted - their outputs are consumed as projections,
+    see net10-port-todo - and a reference would also make every worktree build vcpkg, tgcalls and
+    webrtc rather than copying `x64\` in. Solution-level ordering is free of both problems, and it
+    is also what gives the vcxprojs a `$(SolutionDir)` to write to: without one they write beside
+    themselves and the app reads a stale projection.
+
+  Publishing still wants the properties a package needs:
 
       MSBuild Telegram\Telegram.Win32.csproj -t:Publish -restore -p:Configuration=Release ^
-        -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:SelfContained=true [-p:PublishAot=false]
+        -p:Platform=x64 [-p:PublishAot=false]
 
-  - **Always pass the RID, and `-restore`.** A RID-less build of this project resolves no package
-    assets at all: `Telegram.Native`, `Rg.DiffUtils`, everything vanishes and the compiler reports
-    thousands of errors that look like a broken projection and are not.
+  or `Build.Win32.ps1`, which does the whole msixbundle.
   - **`vswhere.exe` must be on `PATH`** for `PublishAot`, or ILC compiles and the native link step
     dies with MSB3073 `'vswhere.exe' is not recognized`, looking for `link.exe`. Prepend
     `%ProgramFiles(x86)%\Microsoft Visual Studio\Installer`. Already recorded for the msixbundle

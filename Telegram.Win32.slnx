@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="Telegram.Generators/Telegram.Generators.csproj" />
+  <Project Path="Telegram.Generators.WinRT/Telegram.Generators.WinRT.csproj" />
+  <Project Path="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" Id="fdd3c45d-4cff-4a90-8fef-16ca70ab00be" />
+  <Project Path="Telegram.Native/Telegram.Native.vcxproj" Id="1b521e77-46bd-4d60-89f6-d68e9bb9abff" />
+  <Project Path="Telegram/Telegram.Win32.csproj">
+    <BuildDependency Project="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" />
+    <BuildDependency Project="Telegram.Native/Telegram.Native.vcxproj" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Deploy Solution="Debug|x64" />
+  </Project>
+</Solution>
