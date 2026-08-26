@@ -124,6 +124,37 @@ namespace Telegram.Common
             }
         }
 
+        // Every asynchronous fault that reaches UnhandledErrorDetected carries the same message
+        // pump frames, so for those reports this text is the only thing that names the origin.
+        // Only frames with a method signature: the description above them arrives in the user's
+        // language, a native backtrace renders as "at module.dll+0x..." and is already covered by
+        // the binary names, and the offsets are per-build noise.
+        private static void AppendStackTraceHash(StringBuilder hashBuilder, string stackTrace)
+        {
+            if (string.IsNullOrEmpty(stackTrace))
+            {
+                return;
+            }
+
+            foreach (var line in stackTrace.Split('\n'))
+            {
+                var frame = line.Trim();
+
+                if (!frame.StartsWith("at ", StringComparison.Ordinal) || !frame.Contains('('))
+                {
+                    continue;
+                }
+
+                var plus = frame.LastIndexOf('+');
+                if (plus > 0 && frame.IndexOf("0x", plus, StringComparison.Ordinal) > 0)
+                {
+                    frame = frame.Substring(0, plus).TrimEnd();
+                }
+
+                hashBuilder.Append(frame);
+            }
+        }
+
         private static ExceptionModel ProcessException(System.Exception exception, ExceptionModel outerException, Dictionary<long, ExceptionBinary> seenBinaries, StringBuilder hashBuilder)
         {
             var type = exception.GetType().Name;
@@ -220,6 +251,10 @@ namespace Telegram.Common
                 Message = TranslateMessage(exception.Message.Replace("\r\n", "\n"), exception.Type, 0),
                 StackTrace = exception.StackTrace?.Replace("\r\n", "\n")
             };
+
+            // The frames below are the pump for anything that arrived through the stowed path, so
+            // without this two unrelated faults sharing a generic HRESULT message group as one.
+            AppendStackTraceHash(hashBuilder, exception.StackTrace);
 
             if (exception.InnerException != null)
             {
