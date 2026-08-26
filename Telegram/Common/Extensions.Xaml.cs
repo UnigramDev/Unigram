@@ -113,22 +113,31 @@ namespace Telegram.Common
             });
         }
 
-        public static void ForEach<TContent, TValue>(this ListViewBase listView, Action<TContent, TValue> handler) where TContent : class where TValue : class
+        // Only ItemsStackPanel and ItemsWrapGrid track a realized range; any other panel has no
+        // cache indices to walk, and the caller has nothing to do.
+        private static bool TryGetCacheRange(this ListViewBase listView, out int firstCacheIndex, out int lastCacheIndex)
         {
-            int lastCacheIndex;
-            int firstCacheIndex;
-
             if (listView.ItemsPanelRoot is ItemsStackPanel stack)
             {
-                lastCacheIndex = stack.LastCacheIndex;
                 firstCacheIndex = stack.FirstCacheIndex;
+                lastCacheIndex = stack.LastCacheIndex;
+                return true;
             }
             else if (listView.ItemsPanelRoot is ItemsWrapGrid wrap)
             {
-                lastCacheIndex = wrap.LastCacheIndex;
                 firstCacheIndex = wrap.FirstCacheIndex;
+                lastCacheIndex = wrap.LastCacheIndex;
+                return true;
             }
-            else
+
+            firstCacheIndex = 0;
+            lastCacheIndex = -1;
+            return false;
+        }
+
+        public static void ForEach<TContent, TValue>(this ListViewBase listView, Action<TContent, TValue> handler) where TContent : class where TValue : class
+        {
+            if (!listView.TryGetCacheRange(out var firstCacheIndex, out var lastCacheIndex))
             {
                 return;
             }
@@ -155,20 +164,7 @@ namespace Telegram.Common
 
         public static void ForEach<T>(this ListViewBase listView, Action<SelectorItem, T> handler) where T : class
         {
-            int lastCacheIndex;
-            int firstCacheIndex;
-
-            if (listView.ItemsPanelRoot is ItemsStackPanel stack)
-            {
-                lastCacheIndex = stack.LastCacheIndex;
-                firstCacheIndex = stack.FirstCacheIndex;
-            }
-            else if (listView.ItemsPanelRoot is ItemsWrapGrid wrap)
-            {
-                lastCacheIndex = wrap.LastCacheIndex;
-                firstCacheIndex = wrap.FirstCacheIndex;
-            }
-            else
+            if (!listView.TryGetCacheRange(out var firstCacheIndex, out var lastCacheIndex))
             {
                 return;
             }
@@ -193,20 +189,7 @@ namespace Telegram.Common
 
         public static void ForEach(this ListViewBase listView, Action<SelectorItem> handler)
         {
-            int lastCacheIndex;
-            int firstCacheIndex;
-
-            if (listView.ItemsPanelRoot is ItemsStackPanel stack)
-            {
-                lastCacheIndex = stack.LastCacheIndex;
-                firstCacheIndex = stack.FirstCacheIndex;
-            }
-            else if (listView.ItemsPanelRoot is ItemsWrapGrid wrap)
-            {
-                lastCacheIndex = wrap.LastCacheIndex;
-                firstCacheIndex = wrap.FirstCacheIndex;
-            }
-            else
+            if (!listView.TryGetCacheRange(out var firstCacheIndex, out var lastCacheIndex))
             {
                 return;
             }

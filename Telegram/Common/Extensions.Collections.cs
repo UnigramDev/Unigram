@@ -37,32 +37,16 @@ namespace Telegram.Common
             return default;
         }
 
-        public static bool TryGet<T>(this IDictionary<object, object> dict, object key, out T value)
+        public static bool TryGet<TKey, TValue>(this IDictionary<TKey, object> dict, TKey key, out TValue value)
         {
-            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
+            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is TValue tryGet)
             {
                 value = tryGet;
                 return true;
             }
-            else
-            {
-                value = default;
-                return false;
-            }
-        }
 
-        public static bool TryGet<T>(this IDictionary<string, object> dict, string key, out T value)
-        {
-            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
-            {
-                value = tryGet;
-                return true;
-            }
-            else
-            {
-                value = default;
-                return false;
-            }
+            value = default;
+            return false;
         }
 
         public static void Put<T>(this IList<T> source, bool begin, T item)
@@ -77,64 +61,40 @@ namespace Telegram.Common
             }
         }
 
-        public static void Shiftino<T>(this T[] array, int offset)
+        // Rotates rather than shifts: a positive offset moves the front to the back, a negative
+        // one the back to the front. Reversal keeps it O(n) without a temporary array.
+        public static void ShiftInPlace<T>(this T[] array, int offset)
         {
-            if (offset < 0)
+            var count = Normalize(array.Length, offset);
+            if (count == 0)
             {
-                while (offset < 0)
-                {
-                    var element = array[array.Length - 1];
-                    Array.Copy(array, 0, array, 1, array.Length - 1);
-                    array[0] = element;
-                    offset += 1;
-                }
+                return;
             }
-            else if (offset > 0)
-            {
-                while (offset > 0)
-                {
-                    var element = array[0];
-                    Array.Copy(array, 1, array, 0, array.Length - 1);
-                    array[array.Length - 1] = element;
-                    offset -= 1;
-                }
-            }
+
+            Array.Reverse(array, 0, count);
+            Array.Reverse(array, count, array.Length - count);
+            Array.Reverse(array);
         }
 
         public static T[] Shift<T>(this T[] array, int offset)
         {
             var output = new T[array.Length];
+            var count = Normalize(array.Length, offset);
 
-            if (offset < 0)
-            {
-                while (offset < 0)
-                {
-                    var element = array[output.Length - 1];
-                    Array.Copy(array, 0, output, 1, array.Length - 1);
-                    output[0] = element;
-                    offset += 1;
-
-                    array = output;
-                }
-            }
-            else if (offset > 0)
-            {
-                while (offset > 0)
-                {
-                    var element = array[0];
-                    Array.Copy(array, 1, output, 0, array.Length - 1);
-                    output[output.Length - 1] = element;
-                    offset -= 1;
-
-                    array = output;
-                }
-            }
-            else
-            {
-                Array.Copy(array, 0, output, 0, array.Length);
-            }
+            Array.Copy(array, count, output, 0, array.Length - count);
+            Array.Copy(array, 0, output, array.Length - count, count);
 
             return output;
+        }
+
+        private static int Normalize(int length, int offset)
+        {
+            if (length == 0)
+            {
+                return 0;
+            }
+
+            return ((offset % length) + length) % length;
         }
 
 #if !NET9_0_OR_GREATER
@@ -236,12 +196,7 @@ namespace Telegram.Common
             }
         }
 
-        public static bool Empty<T>(this ISet<T> list)
-        {
-            return list.Count == 0;
-        }
-
-        public static bool Empty<T>(this IList<T> list)
+        public static bool Empty<T>(this ICollection<T> list)
         {
             return list.Count == 0;
         }

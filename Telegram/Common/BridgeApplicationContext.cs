@@ -112,7 +112,7 @@ namespace Telegram.Common
             var response = await SendMessageAsync("Debug", value);
             if (response?.Status == AppServiceResponseStatus.Success)
             {
-                if (response.Message.TryGet<string>("Debug", out var message))
+                if (response.Message.TryGet("Debug", out string message))
                 {
                     // TODO: XamlRoot here is not needed, WinUI 3 will not have this code
                     await MessagePopup.ShowAsync(null as XamlRoot, message);

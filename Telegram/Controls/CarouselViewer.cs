@@ -247,8 +247,8 @@ namespace Telegram.Controls
             var index = (int)direction;
             if (index != 0)
             {
-                _elements.Shiftino(index);
-                _visuals.Shiftino(index);
+                _elements.ShiftInPlace(index);
+                _visuals.ShiftInPlace(index);
             }
 
             previous = _elements[0] as T;
