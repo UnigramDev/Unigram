@@ -262,12 +262,12 @@ namespace Telegram.Navigation.Services
 
         private void OnResuming(object sender, object e)
         {
-            Resume();
+            Dispatcher.Dispatch(Resume);
         }
 
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            Suspend();
+            Dispatcher.Dispatch(Suspend);
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
