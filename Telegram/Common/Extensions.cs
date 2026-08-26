@@ -1153,8 +1153,10 @@ namespace Telegram.Common
             }
             catch
             {
-                // XamlRoot.Content seems to throw a NullReferenceException
-                // whenever corresponding window has been already closed.
+                // A XamlRoot with no content root fails the call with E_POINTER rather than
+                // returning null, and CsWinRT surfaces that as a NullReferenceException. The
+                // window may have been closed, or not have gone live yet: an activation that
+                // runs under WaitForViewReady reaches the tree before its root exists.
             }
 
             content = default;

@@ -397,10 +397,15 @@ namespace Telegram.Views
 
         private ChatBackgroundControl FindBackgroundControl()
         {
-            var masterDetailPanel = XamlRoot?.Content?.GetChild<MasterDetailPanel>();
-            if (masterDetailPanel != null)
+            if (XamlRoot.TryGetContent(out UIElement content))
             {
-                return masterDetailPanel.GetChild<ChatBackgroundControl>();
+                // Both callers cache through ??=, so a window that has no content root yet is
+                // retried on the next update rather than left without a background for good.
+                var masterDetailPanel = content.GetChild<MasterDetailPanel>();
+                if (masterDetailPanel != null)
+                {
+                    return masterDetailPanel.GetChild<ChatBackgroundControl>();
+                }
             }
 
             return null;
