@@ -654,6 +654,9 @@ namespace Telegram.Common
                 case "无法找到与此错误代码关联的文本。":
                 case "找不到與此錯誤碼關聯的文字。":
                 case "A hibakódhoz tartozó szöveg nem található.":
+                case "Tähän virhekoodiin liittyvää tekstiä ei löytynyt.":
+                case "Text přiřazený k tomuto kódu chyby nebyl nalezen.":
+                case "Det gick inte att hitta texten som associeras med den här felkoden.":
                     return "The text associated with this error code could not be found.";
 
                 case "L’objet invoqué s’est déconnecté de ses clients.":
@@ -664,6 +667,7 @@ namespace Telegram.Common
                 case "Wywołany obiekt odłączył się od swoich klientów.":
                 case "Вызванный объект был отключен от клиентов.":
                 case "起動されたオブジェクトはクライアントから切断されました。":
+                case "çağrılan nesne istemcilerinden ayrılmış.":
                     return "The object invoked has disconnected from its clients.";
 
                 case "Unbekannter Fehler":
@@ -693,6 +697,7 @@ namespace Telegram.Common
                 case "GPU aygıt örneği askıya alınmış. Uygun eylemi belirlemek için GetDeviceRemovedReason komutunu kullanın.":
                 case "Wystąpienie urządzenia GPU zostało zawieszone. Użyj obiektu GetDeviceRemovedReason, aby określić odpowiednią akcję.":
                 case "Экземпляр устройства GPU приостановлен. Для определения соответствующего действия используйте GetDeviceRemovedReason.":
+                case "A instância de dispositivo GPU foi suspensa. Use GetDeviceRemovedReason para determinar a ação apropriada.":
                     return "The GPU device instance has been suspended. Use GetDeviceRemovedReason to determine the appropriate action.";
 
                 case "Élément introuvable.":
@@ -838,6 +843,8 @@ namespace Telegram.Common
                 case "Асинхронная операция не запущена должным образом.":
                 case "Une opération asynchrone n’a pas démarré correctement.":
                 case "某个异步操作没有正常启动。":
+                case "Una operación asincrónica no se inició correctamente.":
+                case "Uma operação assíncrona não foi iniciada corretamente.":
                     return "An async operation was not properly started.";
 
                 case "Попытка произвести недопустимую операцию над параметром реестра, отмеченным для удаления.":
@@ -849,9 +856,11 @@ namespace Telegram.Common
                 case "Отказано в доступе.":
                 case "拒绝访问。":
                 case "Erişim engellendi.":
+                case "액세스가 거부되었습니다.":
                     return "Access is denied.";
 
                 case "Échec de l’exécution du serveur":
+                case "Ошибка при выполнении приложения-сервера":
                     return "Server execution failed";
 
                 case "Le filtre de messages indiquait que l’application était occupée.":
@@ -902,6 +911,7 @@ namespace Telegram.Common
                 case "Zasób został zrealizowany na nieprawidłowym obiekcie docelowym renderowania.":
                 case "De bron is gerealiseerd op het verkeerde renderdoel.":
                 case "リソースが誤ったレンダー ターゲットで認識されました。":
+                case "在错误的呈现器目标上实现资源。":
                     return "The resource was realized on the wrong render target.";
 
                 case "Un fichier de polices n’a pas pu être ouvert car le fichier, répertoire, remplacement réseau, lecteur ou autre emplacement de stockage n’existe pas ou n’est pas disponible.":
@@ -918,6 +928,8 @@ namespace Telegram.Common
                 case "フォント ファイルを開くことができませんでした。ファイル、ディレクトリ、ネットワークの場所、またはドライブなどの記憶域の場所が存在しないか、利用できません。":
                 case "파일, 디렉터리, 네트워크 위치, 드라이브 또는 기타 저장소 위치가 존재하지 않거나 사용할 수 없으므로 글꼴 파일을 열 수 없습니다.":
                 case "無法開啟字型檔案，因為檔案、目錄、網路位置、磁碟機或其他存放裝置不存在或無法使用。":
+                case "Soubor s písmem nelze otevřít, protože soubor, adresář, síťové umístění, jednotka nebo jiné úložné umístění neexistují nebo nejsou k dispozici.":
+                case "En skriftfil kunne ikke åpnes fordi filen, mappen, nettverksplasseringen, stasjonen eller en annen lagringsplassering ikke finnes eller ikke er tilgjengelig.":
                     return "A font file could not be opened because the file, directory, network location, drive, or other storage location does not exist or is unavailable.";
 
                 case "Un fichier de polices existe mais n’a pas pu être ouvert en raison d’un refus d’accès, d’une violation de partage ou d’une erreur similaire.":
@@ -925,9 +937,11 @@ namespace Telegram.Common
                 case "El archivo de fuentes existe, pero no se pudo abrir debido a que se denegó el acceso, a una infracción de uso compartido o a error similar.":
                 case "Um arquivo de fonte existe porém não foi possível abri-lo devido a acesso negado, violação de compartilhamento ou erro semelhante.":
                 case "글꼴 파일은 있지만 액세스 거부, 공유 위반 또는 유사한 오류로 인해 열 수 없습니다.":
+                case "字体文件存在，但是由于访问被拒绝、共享违规或类似错误而无法打开。":
                     return "A font file exists but could not be opened due to access denied, sharing violation, or similar error.";
 
                 case "El sistema no puede encontrar el archivo especificado.":
+                case "Не удается найти указанный файл.":
                     return "The system cannot find the file specified.";
 
                 case "Le processus ne peut pas accéder au fichier car ce fichier est utilisé par un autre processus.":
@@ -942,6 +956,7 @@ namespace Telegram.Common
                     return "There is not enough space on the disk.";
 
                 case "Файл подкачки слишком мал для завершения операции.":
+                case "Le fichier de pagination est insuffisant pour terminer cette opération.":
                     return "The paging file is too small for this operation to complete.";
 
                 case "Ressources système insuffisantes pour terminer le service demandé.":
@@ -950,9 +965,12 @@ namespace Telegram.Common
                     return "Insufficient system resources exist to complete the requested service.";
 
                 case "Указанная служба не может быть запущена, так как отключена либо она сама, либо все связанные с ней устройства.":
+                case "No se puede iniciar el servicio, porque está deshabilitado o porque no tiene dispositivos habilitados asociados a él.":
+                case "Der angegebene Dienst kann nicht gestartet werden. Er ist deaktiviert oder nicht mit aktivierten Geräten verbunden.":
                     return "The service cannot be started, either because it is disabled or because it has no enabled devices associated with it.";
 
                 case "La zone de données passée à un appel système est insuffisante.":
+                case "Область данных, переданная по системному вызову, слишком мала.":
                     return "The data area passed to a system call is too small.";
 
                 case "L’identificateur d’opération n’est pas valide.":
@@ -977,6 +995,18 @@ namespace Telegram.Common
 
                 case "Символ Юникода не имеет сопоставления в конечной многобайтовой кодовой странице.":
                     return "No mapping for the Unicode character exists in the target multi-byte code page.";
+
+                case "Недопустимый дескриптор окна.":
+                case "Handle de fenêtre non valide.":
+                    return "Invalid window handle.";
+
+                case "메모리 리소스가 부족하기 때문에 이 작업을 완료할 수 없습니다.":
+                case "内存资源不足，无法完成此操作。":
+                case "K dokončení této operace není dost paměťových prostředků.":
+                    return "Not enough memory resources are available to complete this operation.";
+
+                case "{A composição de Área de Trabalho está desabilitada} Não foi possível concluir a operação porque essa composição está desabilitada.":
+                    return "{Desktop composition is disabled} The operation could not be completed because desktop composition is disabled.";
 
                 default:
                     return text;
