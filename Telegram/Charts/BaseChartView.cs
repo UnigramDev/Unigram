@@ -1277,7 +1277,7 @@ namespace Telegram.Charts
         }
 
 
-        long lastTime = 0;
+        ulong lastTime = 0;
 
         private void SetMaxMinValue(int newMaxHeight, int newMinHeight, bool animated)
         {
@@ -1347,7 +1347,7 @@ namespace Telegram.Charts
             animateToMinHeight = newMinHeight;
             MeasureHeightThreshold();
 
-            long t = DateTime.Now.ToTimestamp() * 1000;
+            ulong t = Logger.TickCount;
             //  debounce
             if (t - lastTime < 320 && !force)
             {
@@ -1449,7 +1449,7 @@ namespace Telegram.Charts
         int lastY;
         int capturedX;
         int capturedY;
-        long capturedTime;
+        ulong capturedTime;
         protected bool canCaptureChartSelection;
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs args)
@@ -1467,7 +1467,7 @@ namespace Telegram.Charts
             int x = (int)point.Position.X;
             int y = (int)point.Position.Y;
 
-            capturedTime = DateTime.Now.ToTimestamp() * 1000;
+            capturedTime = Logger.TickCount;
             canvas.CapturePointer(args.Pointer);
             //getParent().requestDisallowInterceptTouchEvent(true);
             bool captured = pickerDelegate.Capture(x, y, 0);
@@ -1540,7 +1540,7 @@ namespace Telegram.Charts
             if (chartCaptured)
             {
                 bool disable;
-                if (canCaptureChartSelection && DateTime.Now.ToTimestamp() * 1000 - capturedTime > 200)
+                if (canCaptureChartSelection && Logger.TickCount - capturedTime > 200)
                 {
                     disable = true;
                 }
@@ -1567,7 +1567,7 @@ namespace Telegram.Charts
             {
                 int dxCaptured = capturedX - x;
                 int dyCaptured = capturedY - y;
-                if (Math.Sqrt(dxCaptured * dxCaptured + dyCaptured * dyCaptured) > touchSlop || DateTime.Now.ToTimestamp() * 1000 - capturedTime > 200)
+                if (Math.Sqrt(dxCaptured * dxCaptured + dyCaptured * dyCaptured) > touchSlop || Logger.TickCount - capturedTime > 200)
                 {
                     chartCaptured = true;
                     SelectXOnChart(x, y);

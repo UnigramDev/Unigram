@@ -29,7 +29,7 @@ namespace Telegram.Charts
         public bool tryMoveTo;
         public float moveToX;
         public float moveToY;
-        public long startTapTime;
+        public ulong startTapTime;
         ValueAnimator moveToAnimator;
 
         public Rect leftPickerArea = new();
@@ -192,7 +192,7 @@ namespace Telegram.Charts
                     tryMoveTo = true;
                     moveToX = x;
                     moveToY = y;
-                    startTapTime = DateTime.Now.ToTimestamp() * 1000;
+                    startTapTime = Logger.TickCount;
                     if (moveToAnimator != null)
                     {
                         if (moveToAnimator.IsRunning())
@@ -339,7 +339,7 @@ namespace Telegram.Charts
                     tryMoveTo = false;
                     float dx = moveToX - (int)point.Position.X;
                     float dy = moveToY - (int)point.Position.Y;
-                    if (/*@event.getAction() == MotionEvent.ACTION_UP &&*/ DateTime.Now.ToTimestamp() * 1000 - startTapTime < 300 && Math.Sqrt(dx * dx + dy * dy) < 10)
+                    if (/*@event.getAction() == MotionEvent.ACTION_UP &&*/ Logger.TickCount - startTapTime < 300 && Math.Sqrt(dx * dx + dy * dy) < 10)
                     {
 
                         float moveToX = (this.moveToX - BaseChartView.HORIZONTAL_PADDING) / pickerWidth;
