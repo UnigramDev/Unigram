@@ -28,13 +28,13 @@ namespace Telegram.ViewModels.Chats
         public ChatStatisticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<ChartViewData>();
+            Items = new RangeObservableCollection<ChartViewData>();
 
-            Interactions = new DiffObservableCollection<ChatItemInteractionCounters>();
-            TopInviters = new DiffObservableCollection<ChatStatisticsInviterInfo>();
-            TopAdministrators = new DiffObservableCollection<ChatStatisticsAdministratorActionsInfo>();
-            TopSenders = new DiffObservableCollection<ChatStatisticsMessageSenderInfo>();
-            TopSendersLeft = new DiffObservableCollection<ChatStatisticsMessageSenderInfo>();
+            Interactions = new RangeObservableCollection<ChatItemInteractionCounters>();
+            TopInviters = new RangeObservableCollection<ChatStatisticsInviterInfo>();
+            TopAdministrators = new RangeObservableCollection<ChatStatisticsAdministratorActionsInfo>();
+            TopSenders = new RangeObservableCollection<ChatStatisticsMessageSenderInfo>();
+            TopSendersLeft = new RangeObservableCollection<ChatStatisticsMessageSenderInfo>();
 
             OpenProfileCommand = new RelayCommand<long>(OpenProfileExecute);
             OpenPostCommand = new RelayCommand<ChatItemInteractionCounters>(OpenPostExecute);
@@ -68,24 +68,24 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _period, value);
         }
 
-        public DiffObservableCollection<ChartViewData> Items { get; private set; }
+        public RangeObservableCollection<ChartViewData> Items { get; private set; }
 
 
-        public DiffObservableCollection<ChatItemInteractionCounters> Interactions { get; private set; }
+        public RangeObservableCollection<ChatItemInteractionCounters> Interactions { get; private set; }
 
         //
         // Summary:
         //     List of most active inviters of new members in the last week.
-        public DiffObservableCollection<ChatStatisticsInviterInfo> TopInviters { get; private set; }
+        public RangeObservableCollection<ChatStatisticsInviterInfo> TopInviters { get; private set; }
         //
         // Summary:
         //     List of most active administrators in the last week.
-        public DiffObservableCollection<ChatStatisticsAdministratorActionsInfo> TopAdministrators { get; private set; }
+        public RangeObservableCollection<ChatStatisticsAdministratorActionsInfo> TopAdministrators { get; private set; }
         //
         // Summary:
         //     List of users sent most messages in the last week.
-        public DiffObservableCollection<ChatStatisticsMessageSenderInfo> TopSenders { get; private set; }
-        public DiffObservableCollection<ChatStatisticsMessageSenderInfo> TopSendersLeft { get; private set; }
+        public RangeObservableCollection<ChatStatisticsMessageSenderInfo> TopSenders { get; private set; }
+        public RangeObservableCollection<ChatStatisticsMessageSenderInfo> TopSendersLeft { get; private set; }
 
         public void ExpandTopSenders()
         {

@@ -43,7 +43,7 @@ namespace Telegram.ViewModels.Drawers
             : base(clientService, settingsService, aggregator)
         {
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
-            Items = new DiffObservableCollection<object>();
+            Items = new RangeObservableCollection<object>();
 
             _reactionTopSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
@@ -151,10 +151,10 @@ namespace Telegram.ViewModels.Drawers
             BeginOnUIThread(() => Update());
         }
 
-        public DiffObservableCollection<EmojiGroup> StandardSets { get; } = new DiffObservableCollection<EmojiGroup>();
-        public DiffObservableCollection<StickerSetViewModel> InstalledSets { get; } = new DiffObservableCollection<StickerSetViewModel>();
+        public RangeObservableCollection<EmojiGroup> StandardSets { get; } = new RangeObservableCollection<EmojiGroup>();
+        public RangeObservableCollection<StickerSetViewModel> InstalledSets { get; } = new RangeObservableCollection<StickerSetViewModel>();
 
-        public DiffObservableCollection<object> Items { get; private set; }
+        public RangeObservableCollection<object> Items { get; private set; }
 
         private SearchStickerSetsCollection _searchStickers;
         public SearchStickerSetsCollection SearchStickers
@@ -174,7 +174,7 @@ namespace Telegram.ViewModels.Drawers
             set => Set(ref _mode, value);
         }
 
-        //public DiffObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (DiffObservableCollection<StickerSetViewModel>)SavedStickers;
+        //public RangeObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (RangeObservableCollection<StickerSetViewModel>)SavedStickers;
 
         public async void Search(string query, bool emojiOnly)
         {
@@ -730,12 +730,12 @@ namespace Telegram.ViewModels.Drawers
 
         public bool IsInstalled { get; } = true;
 
-        public DiffObservableCollection<object> Stickers { get; }
+        public RangeObservableCollection<object> Stickers { get; }
 
         public RecentEmoji(List<object> items)
         {
             Title = Strings.RecentStickers;
-            Stickers = new DiffObservableCollection<object>(items);
+            Stickers = new RangeObservableCollection<object>(items);
         }
 
         public override string ToString()

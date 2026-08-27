@@ -32,7 +32,7 @@ namespace Telegram.Views.Gifts.Popups
         private readonly Random _random = new();
 
         private readonly GiftUpgradeVariants _variants;
-        private readonly DiffObservableCollection<object> _itemsSource;
+        private readonly RangeObservableCollection<object> _itemsSource;
 
         private UpgradedGiftModel _selectedModel;
         private UpgradedGiftBackdrop _selectedBackdrop;
@@ -46,7 +46,7 @@ namespace Telegram.Views.Gifts.Popups
             _navigationService = navigationService;
 
             _variants = variants;
-            _itemsSource = new DiffObservableCollection<object>(variants.Models.Cast<object>());
+            _itemsSource = new RangeObservableCollection<object>(variants.Models.Cast<object>());
 
             OnTick(null, null);
 

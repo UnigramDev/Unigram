@@ -17,7 +17,7 @@ namespace Telegram.ViewModels
         public StandaloneGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, GalleryMedia item)
             : base(clientService, storageService, aggregator)
         {
-            Items = new DiffObservableCollection<GalleryMedia> { item };
+            Items = new RangeObservableCollection<GalleryMedia> { item };
             SelectedItem = item;
             FirstItem = item;
         }
@@ -25,7 +25,7 @@ namespace Telegram.ViewModels
         public StandaloneGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, IList<GalleryMedia> items, GalleryMedia item)
             : base(clientService, storageService, aggregator)
         {
-            Items = new DiffObservableCollection<GalleryMedia>(items);
+            Items = new RangeObservableCollection<GalleryMedia>(items);
             SelectedItem = item;
             FirstItem = item;
         }

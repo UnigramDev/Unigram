@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchStickersCollection : DiffObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+    public partial class SearchStickersCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly StickerType _type;

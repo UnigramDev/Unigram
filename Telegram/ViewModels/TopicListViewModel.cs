@@ -61,7 +61,7 @@ namespace Telegram.ViewModels
             ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
             ChatsClearCommand = new RelayCommand(ChatsClearExecute);
 
-            SelectedItems = new DiffObservableCollection<object>();
+            SelectedItems = new RangeObservableCollection<object>();
         }
 
         #region Selection
@@ -83,8 +83,8 @@ namespace Telegram.ViewModels
             }
         }
 
-        private DiffObservableCollection<object> _selectedItems;
-        public DiffObservableCollection<object> SelectedItems
+        private RangeObservableCollection<object> _selectedItems;
+        public RangeObservableCollection<object> SelectedItems
         {
             get => _selectedItems;
             set => Set(ref _selectedItems, value);

@@ -796,7 +796,7 @@ namespace Telegram.Controls.Chats
             return null;
         }
 
-        public partial class UsernameCollection : DiffObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class UsernameCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly long _chatId;
@@ -913,7 +913,7 @@ namespace Telegram.Controls.Chats
             public bool InsertOnKeyDown => true;
         }
 
-        public partial class EmojiCollection : DiffObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class EmojiCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly RecentEmojiSettings _recent;
@@ -1009,7 +1009,7 @@ namespace Telegram.Controls.Chats
             public bool InsertOnKeyDown => true;
         }
 
-        public partial class SearchHashtagsCollection : DiffObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class SearchHashtagsCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly string _query;

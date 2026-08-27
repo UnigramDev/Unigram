@@ -80,7 +80,7 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.ViewModels.Settings.ChatThemeViewModel>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.ViewModels.Stories.StoryViewModel>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollectionView<Telegram.Td.Api.ReceivedGift, Telegram.ViewModels.Profile.ProfileGiftsTabViewModel.ReceivedGiftsCollection>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<object>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<object>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.SortedObservableCollection<Telegram.Td.Api.GroupCallMessage>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.SynchronizedList<Telegram.ViewModels.MessageViewModel>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Common.EmojiSkinData[]))]
@@ -102,9 +102,9 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<string>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.Td.Api.PremiumFeature>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.ViewModels.Drawers.StickerViewModel>))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.DiffObservableCollection<Telegram.ViewModels.Drawers.StickerSetViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<Telegram.Td.Api.PremiumFeature>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<Telegram.ViewModels.Drawers.StickerViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<Telegram.ViewModels.Drawers.StickerSetViewModel>))]
 #else
 namespace WinRT
 {

@@ -12,7 +12,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public partial class MessageCollection : DiffObservableCollection<MessageViewModel>
+    public partial class MessageCollection : RangeObservableCollection<MessageViewModel>
     {
         private readonly DialogViewModel _viewModel;
         private readonly Dictionary<long, MessageViewModel> _messages = new();

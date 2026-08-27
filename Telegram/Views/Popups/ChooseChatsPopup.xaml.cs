@@ -1902,7 +1902,7 @@ namespace Telegram.Views.Popups
                 .OfType<Chat>()
                 .Where(x => ViewModel.ClientService.IsForum(x) ? ViewModel.SelectedTopics.ContainsKey(x.Id) : true);
 
-            ViewModel.SelectedItems = new DiffObservableCollection<Chat>(selection);
+            ViewModel.SelectedItems = new RangeObservableCollection<Chat>(selection);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -2017,7 +2017,7 @@ namespace Telegram.Views.Popups
             {
                 if (ViewModel.SelectedItems.Empty())
                 {
-                    ViewModel.SelectedItems = new DiffObservableCollection<Chat>(new[] { chat });
+                    ViewModel.SelectedItems = new RangeObservableCollection<Chat>(new[] { chat });
 
                     ConfirmPaidMessages();
                     return true;
@@ -2039,7 +2039,7 @@ namespace Telegram.Views.Popups
             }
             else if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                ViewModel.SelectedItems = new DiffObservableCollection<Chat>(new[] { chat });
+                ViewModel.SelectedItems = new RangeObservableCollection<Chat>(new[] { chat });
 
                 ConfirmPaidMessages();
                 return true;

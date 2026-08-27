@@ -11,7 +11,7 @@ using Telegram.Common;
 
 namespace Telegram.Collections
 {
-    public partial class SortedObservableCollection<T> : DiffObservableCollection<T>
+    public partial class SortedObservableCollection<T> : RangeObservableCollection<T>
     {
         private readonly IComparer<T> _comparer;
 

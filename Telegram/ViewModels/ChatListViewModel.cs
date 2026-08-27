@@ -43,7 +43,7 @@ namespace Telegram.ViewModels
 
             Items = new ItemsCollection(clientService, aggregator, this, chatList);
 
-            SelectedItems = new DiffObservableCollection<Chat>();
+            SelectedItems = new RangeObservableCollection<Chat>();
         }
 
         #region Selection
@@ -65,7 +65,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public DiffObservableCollection<Chat> SelectedItems { get; }
+        public RangeObservableCollection<Chat> SelectedItems { get; }
 
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode

@@ -230,10 +230,10 @@ namespace Telegram.ViewModels.Profile
             Children.Add(_giftsTabViewModel);
             Children.Add(_membersTabVieModel);
 
-            Items = new DiffObservableCollection<ProfileTabItem>();
+            Items = new RangeObservableCollection<ProfileTabItem>();
         }
 
-        public DiffObservableCollection<ProfileTabItem> Items { get; }
+        public RangeObservableCollection<ProfileTabItem> Items { get; }
 
         protected ForumTopic _forumTopic;
         public ForumTopic ForumTopic

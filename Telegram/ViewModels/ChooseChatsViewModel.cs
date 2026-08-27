@@ -38,8 +38,8 @@ namespace Telegram.ViewModels
             SearchChats = new SearchChatsViewModel(clientService, settingsService, aggregator);
             SearchChats.Options = _tracker.Options;
 
-            Items = new DiffObservableCollection<Chat>();
-            SelectedItems = new DiffObservableCollection<Chat>();
+            Items = new RangeObservableCollection<Chat>();
+            SelectedItems = new RangeObservableCollection<Chat>();
 
             Folders = new ObservableCollection<ChatFolderViewModel>();
 
@@ -463,8 +463,8 @@ namespace Telegram.ViewModels
             }
         }
 
-        private DiffObservableCollection<Chat> _selectedItems = new();
-        public DiffObservableCollection<Chat> SelectedItems
+        private RangeObservableCollection<Chat> _selectedItems = new();
+        public RangeObservableCollection<Chat> SelectedItems
         {
             get => _selectedItems;
             set
@@ -550,7 +550,7 @@ namespace Telegram.ViewModels
         public bool IsChatSelection { get; set; }
         public IList<long> PreSelectedItems { get; set; }
 
-        public DiffObservableCollection<Chat> Items { get; private set; }
+        public RangeObservableCollection<Chat> Items { get; private set; }
 
         public ObservableCollection<ChatFolderViewModel> Folders { get; private set; }
 

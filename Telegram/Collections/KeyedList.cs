@@ -12,7 +12,7 @@ using WinRT;
 namespace Telegram.Collections
 {
     [GeneratedBindableCustomProperty]
-    public partial class KeyedList<TKey, T> : DiffObservableCollection<T>
+    public partial class KeyedList<TKey, T> : RangeObservableCollection<T>
     {
         private TKey _key;
         public TKey Key

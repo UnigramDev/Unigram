@@ -57,7 +57,7 @@ namespace Telegram.Views.Host
         private NavigationService _navigationService;
 
         private RootDestination _navigationViewSelected;
-        private readonly DiffObservableCollection<object> _navigationViewItems;
+        private readonly RangeObservableCollection<object> _navigationViewItems;
 
         private long _menuSessions;
         private long _menuBots;
@@ -70,7 +70,7 @@ namespace Telegram.Views.Host
             _lifetime = LifetimeService.Current;
 
             _navigationViewSelected = RootDestination.Chats;
-            _navigationViewItems = new DiffObservableCollection<object>
+            _navigationViewItems = new RangeObservableCollection<object>
             {
                 RootDestination.ShowAccounts,
                 RootDestination.ArchivedChats,

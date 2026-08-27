@@ -26,7 +26,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsNotificationsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Scopes = new DiffObservableCollection<SettingsNotificationsScope>
+            Scopes = new RangeObservableCollection<SettingsNotificationsScope>
             {
                 new(clientService, new NotificationSettingsScopePrivateChats(), Strings.NotificationsPrivateChats, Icons.Person),
                 new(clientService, new NotificationSettingsScopeGroupChats(), Strings.NotificationsGroups, Icons.People),
@@ -50,7 +50,7 @@ namespace Telegram.ViewModels.Settings
             Aggregator.Subscribe<UpdateScopeNotificationSettings>(this, Handle);
         }
 
-        public DiffObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
+        public RangeObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
 
         #region InApp
 

@@ -45,7 +45,7 @@ namespace Telegram.ViewModels.Chats
             : base(clientService, settingsService, aggregator)
         {
             Items = new IncrementalCollection<StoryViewModel>(this);
-            SelectedItems = new DiffObservableCollection<StoryViewModel>();
+            SelectedItems = new RangeObservableCollection<StoryViewModel>();
             SelectedItems.CollectionChanged += OnCollectionChanged;
 
             ItemsView = new IncrementalCollectionView<StoryViewModel, IncrementalCollection<StoryViewModel>>(Items);

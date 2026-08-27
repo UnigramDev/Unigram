@@ -42,7 +42,7 @@ namespace Telegram.ViewModels
 
             NavigateCommand = new RelayCommand<SettingsSearchEntry>(Navigate);
 
-            Results = new DiffObservableCollection<SettingsSearchEntry>();
+            Results = new RangeObservableCollection<SettingsSearchEntry>();
         }
 
         public IStorageService StorageService => _storageService;
@@ -51,7 +51,7 @@ namespace Telegram.ViewModels
             ? ClientService.OwnedStarCount.ToValue()
             : string.Empty;
 
-        public DiffObservableCollection<SettingsSearchEntry> Results { get; private set; }
+        public RangeObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -154,7 +154,7 @@ namespace Telegram.ViewModels
 
                 button.Click += (s, args) =>
                 {
-                    popup.ViewModel.SelectedItems = new DiffObservableCollection<Chat> { selfChat };
+                    popup.ViewModel.SelectedItems = new RangeObservableCollection<Chat> { selfChat };
                     popup.Hide(ContentDialogResult.Primary);
                 };
 

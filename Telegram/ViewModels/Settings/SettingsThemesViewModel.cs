@@ -36,14 +36,14 @@ namespace Telegram.ViewModels.Settings
             _themeService = themeService;
             _darkOnly = darkOnly;
 
-            Items = new DiffObservableCollection<ThemeInfoBase>();
-            Custom = new DiffObservableCollection<ThemeInfoBase>();
-            Accents = new DiffObservableCollection<ThemeAccentInfo>();
+            Items = new RangeObservableCollection<ThemeInfoBase>();
+            Custom = new RangeObservableCollection<ThemeInfoBase>();
+            Accents = new RangeObservableCollection<ThemeAccentInfo>();
         }
 
-        public DiffObservableCollection<ThemeInfoBase> Items { get; private set; }
-        public DiffObservableCollection<ThemeInfoBase> Custom { get; private set; }
-        public DiffObservableCollection<ThemeAccentInfo> Accents { get; private set; }
+        public RangeObservableCollection<ThemeInfoBase> Items { get; private set; }
+        public RangeObservableCollection<ThemeInfoBase> Custom { get; private set; }
+        public RangeObservableCollection<ThemeAccentInfo> Accents { get; private set; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {

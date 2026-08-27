@@ -98,9 +98,9 @@ namespace Telegram.ViewModels.Folders
 
         private HashSet<long> _shareableItems = new();
 
-        public DiffObservableCollection<Chat> Items { get; private set; } = new();
+        public RangeObservableCollection<Chat> Items { get; private set; } = new();
 
-        public DiffObservableCollection<Chat> SelectedItems { get; private set; } = new();
+        public RangeObservableCollection<Chat> SelectedItems { get; private set; } = new();
 
         private ChatFolderName _name;
         public ChatFolderName Name

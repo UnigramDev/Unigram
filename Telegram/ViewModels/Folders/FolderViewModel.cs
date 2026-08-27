@@ -38,7 +38,7 @@ namespace Telegram.ViewModels.Folders
                 .Where(x => x.Id == x.BuiltInAccentColorId)
                 .Append(new NameColor(-1)));
 
-            Links = new DiffObservableCollection<ChatFolderInviteLink>();
+            Links = new RangeObservableCollection<ChatFolderInviteLink>();
         }
 
         public bool CompareItems(ChatFolderElement oldItem, ChatFolderElement newItem)
@@ -293,7 +293,7 @@ namespace Telegram.ViewModels.Folders
         public BatchedObservableCollection<ChatFolderElement> Include { get; private set; }
         public BatchedObservableCollection<ChatFolderElement> Exclude { get; private set; }
 
-        public DiffObservableCollection<ChatFolderInviteLink> Links { get; private set; }
+        public RangeObservableCollection<ChatFolderInviteLink> Links { get; private set; }
 
         public async void AddIncluded()
         {

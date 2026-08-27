@@ -774,6 +774,7 @@
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\KeyedList.cs" />
+    <Compile Include="Collections\RangeObservableCollection.cs" />
     <Compile Include="Collections\DiffObservableCollection.cs" />
     <Compile Include="Collections\SearchChatMessagesCollection.cs" />
     <Compile Include="Collections\SearchCollection.cs" />

@@ -30,7 +30,7 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupReactionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<ReactionType>();
+            Items = new RangeObservableCollection<ReactionType>();
         }
 
         protected Chat _chat;
@@ -124,7 +124,7 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _enablePaidReactions, value);
         }
 
-        public DiffObservableCollection<ReactionType> Items { get; private set; }
+        public RangeObservableCollection<ReactionType> Items { get; private set; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {

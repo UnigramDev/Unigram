@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchChatMessagesCollection : DiffObservableCollection<Message>, ISupportIncrementalLoading
+    public partial class SearchChatMessagesCollection : RangeObservableCollection<Message>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
 

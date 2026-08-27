@@ -21,7 +21,7 @@ namespace Telegram.Collections
     }
 
     // TODO: Does it make sense to replace local implementations with this?
-    public partial class IncrementalCollection<T> : DiffObservableCollection<T>, IIncrementalCollection<T>, IIncrementalCollection, ICollectionWithTotalCount
+    public partial class IncrementalCollection<T> : RangeObservableCollection<T>, IIncrementalCollection<T>, IIncrementalCollection, ICollectionWithTotalCount
     {
         private readonly IIncrementalCollectionOwner _owner;
 

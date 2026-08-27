@@ -51,7 +51,7 @@ namespace Telegram.Views.Popups
     public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged, IDiffHandler<StorageRow>
     {
         public ComposeViewModel ViewModel { get; private set; }
-        public DiffObservableCollection<StorageMedia> Items { get; private set; }
+        public RangeObservableCollection<StorageMedia> Items { get; private set; }
 
         public DiffObservableCollection<StorageRow> ItemsView { get; private set; }
 
@@ -311,7 +311,7 @@ namespace Telegram.Views.Popups
 
             // Seeded rather than loaded, so a caller handing over typed items can read Items back
             // the moment the popup closes. Only what the source still owes arrives later.
-            Items = new DiffObservableCollection<StorageMedia>(source.Ready);
+            Items = new RangeObservableCollection<StorageMedia>(source.Ready);
             Items.CollectionChanged += OnCollectionChanged;
 
             // Slots the source already filled are published; the rest are the load's to hand out.

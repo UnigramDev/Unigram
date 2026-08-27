@@ -426,8 +426,8 @@ namespace Telegram.ViewModels.Business
             }
         }
 
-        public DiffObservableCollection<ChatFolderElement> ExcludedChats { get; } = new();
-        public DiffObservableCollection<ChatFolderElement> IncludedChats { get; } = new();
+        public RangeObservableCollection<ChatFolderElement> ExcludedChats { get; } = new();
+        public RangeObservableCollection<ChatFolderElement> IncludedChats { get; } = new();
 
         public async void AddExcluded()
         {

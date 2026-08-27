@@ -25,7 +25,7 @@ namespace Telegram.ViewModels.Users
         {
             _user = user;
 
-            Items = new DiffObservableCollection<GalleryMedia>();
+            Items = new RangeObservableCollection<GalleryMedia>();
 
             if (userFull.PersonalPhoto != null)
             {
@@ -126,7 +126,7 @@ namespace Telegram.ViewModels.Users
             }
         }
 
-        public override DiffObservableCollection<GalleryMedia> Group => Items;
+        public override RangeObservableCollection<GalleryMedia> Group => Items;
 
         public override bool CanDelete => _user != null && _user.Id == ClientService.Options.MyId;
 

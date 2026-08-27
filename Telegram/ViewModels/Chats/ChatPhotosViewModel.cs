@@ -24,7 +24,7 @@ namespace Telegram.ViewModels.Chats
             : base(clientService, storageService, aggregator)
         {
             _chat = chat;
-            Items = new DiffObservableCollection<GalleryMedia> { new GalleryChatPhoto(clientService, chat, photo, 0) };
+            Items = new RangeObservableCollection<GalleryMedia> { new GalleryChatPhoto(clientService, chat, photo, 0) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -210,7 +210,7 @@ namespace Telegram.ViewModels.Chats
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
-        public override DiffObservableCollection<GalleryMedia> Group => Items;
+        public override RangeObservableCollection<GalleryMedia> Group => Items;
 
         public void SetAsMain()
         {

@@ -22,7 +22,7 @@ namespace Telegram.ViewModels
         public InstantGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, storageService, aggregator)
         {
-            Items = new DiffObservableCollection<GalleryMedia>();
+            Items = new RangeObservableCollection<GalleryMedia>();
             Items.CollectionChanged += OnCollectionChanged;
         }
 
@@ -114,7 +114,7 @@ namespace Telegram.ViewModels
             return null;
         }
 
-        public override DiffObservableCollection<GalleryMedia> Group => _shouldGroup ? Items : null;
+        public override RangeObservableCollection<GalleryMedia> Group => _shouldGroup ? Items : null;
 
         //private GalleryItem GetBlock(TLMessage message, TLWebPage linkPreview, object pageBlock)
         //{

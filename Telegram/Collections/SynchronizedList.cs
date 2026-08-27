@@ -72,7 +72,7 @@ namespace Telegram.Collections
     /// divergence forward.</item>
     /// </list>
     /// </remarks>
-    public partial class SynchronizedList<T> : DiffObservableCollection<T>, ISynchronizedList
+    public partial class SynchronizedList<T> : RangeObservableCollection<T>, ISynchronizedList
     {
         // Past this the list stops holding anything back: a pathological run of updates degrades to
         // the undeferred behaviour rather than growing without bound.

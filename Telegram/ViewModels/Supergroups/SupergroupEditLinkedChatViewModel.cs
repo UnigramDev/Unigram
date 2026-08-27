@@ -26,7 +26,7 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditLinkedChatViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<Chat>();
+            Items = new RangeObservableCollection<Chat>();
         }
 
         protected Chat _chat;
@@ -50,7 +50,7 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _joinByRequest, value);
         }
 
-        public DiffObservableCollection<Chat> Items { get; private set; }
+        public RangeObservableCollection<Chat> Items { get; private set; }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {

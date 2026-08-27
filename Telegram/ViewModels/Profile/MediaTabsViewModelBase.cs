@@ -131,7 +131,7 @@ namespace Telegram.ViewModels.Profile
             Voice = new MediaSourceCollection(SetSearch, new SearchMessagesFilterVoiceAndVideoNote());
             Animations = new MediaSourceCollection(SetSearch, new SearchMessagesFilterAnimation());
 
-            SelectedItems = new DiffObservableCollection<MessageWithOwner>();
+            SelectedItems = new RangeObservableCollection<MessageWithOwner>();
             SelectedItems.CollectionChanged += OnCollectionChanged;
         }
 

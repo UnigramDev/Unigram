@@ -35,7 +35,7 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditStickerSetViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<StickerSetInfo>();
+            Items = new RangeObservableCollection<StickerSetInfo>();
         }
 
         public StickerType StickerType { get; set; }
@@ -168,7 +168,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public DiffObservableCollection<StickerSetInfo> Items { get; private set; }
+        public RangeObservableCollection<StickerSetInfo> Items { get; private set; }
 
         public async void Continue()
         {

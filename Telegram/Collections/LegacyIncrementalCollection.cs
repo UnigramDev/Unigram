@@ -18,7 +18,7 @@ namespace Telegram.Collections
 
     }
 
-    public abstract class LegacyIncrementalCollection<T> : DiffObservableCollection<T>, IGroupSupportIncrementalLoading
+    public abstract class LegacyIncrementalCollection<T> : RangeObservableCollection<T>, IGroupSupportIncrementalLoading
     {
         private bool _hasMoreItems = true;
         public bool HasMoreItems

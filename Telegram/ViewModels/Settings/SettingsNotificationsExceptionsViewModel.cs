@@ -70,7 +70,7 @@ namespace Telegram.ViewModels.Settings
 
         public ItemsCollection Items { get; private set; }
 
-        public partial class ItemsCollection : DiffObservableCollection<Chat>, ISupportIncrementalLoading
+        public partial class ItemsCollection : RangeObservableCollection<Chat>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly NotificationSettingsScope _scope;
