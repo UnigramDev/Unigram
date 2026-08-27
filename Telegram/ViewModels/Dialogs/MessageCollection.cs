@@ -7,12 +7,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Telegram.Collections;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public partial class MessageCollection : RangeObservableCollection<MessageViewModel>
+    public partial class MessageCollection : SuppressObservableCollection<MessageViewModel>
     {
         private readonly DialogViewModel _viewModel;
         private readonly Dictionary<long, MessageViewModel> _messages = new();
@@ -186,7 +187,18 @@ namespace Telegram.ViewModels
             _messages.Clear();
             _suppressOperations = true;
 
-            ReplaceWith(source);
+            //ReplaceWith(source);
+            using (SuppressEvents())
+            {
+                Clear();
+
+                foreach (var item in source)
+                {
+                    Add(item);
+                }
+            }
+
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
             _suppressOperations = false;
         }

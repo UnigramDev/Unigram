@@ -1790,7 +1790,9 @@ namespace Telegram.ViewModels
                     Logger.Debug("Setting scroll mode to KeepLastItemInView");
                 }
 
-                var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => CreateMessage(x)).ToList();
+                // The slice walks its source newest-first, inserting each one at the top,
+                // so it has to be handed the reverse of the order it produces.
+                var replied = new MessageCollection(this, null, messages.MessagesValue.OrderByDescending(x => x.Id), true, Type);
                 ProcessMessages(chat, replied);
 
                 var target = replied.FirstOrDefault();
@@ -1799,7 +1801,7 @@ namespace Telegram.ViewModels
                     replied.Insert(0, CreateMessage(new Message(0, target.SenderId, null, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, false, target.IsChannelPost, false, false, false, false, target.Date, 0, null, null, null, null, null, null, null, target.TopicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageHeaderDate(target.Date), null, null)));
                 }
 
-                Items.ReplaceWith(replied);
+                Items.RawReplaceWith(replied);
 
                 IsOldestSliceLoaded = true;
                 IsNewestSliceLoaded = true;
