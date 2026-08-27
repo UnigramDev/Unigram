@@ -1151,6 +1151,16 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   is what popups resolve from, and it is meant to be global anyway. Nothing caps 1.8a any more -
   several chat windows can share a thread.
 
+  **And on the Win32 host they all do.** Every window is created through
+  `ViewService.Win32.OnUIThread`, which dispatches to `WindowContext.Main.Dispatcher`: the whole
+  app is one thread and many islands. Stated plainly because the superseded rule above reads as if
+  it were still live, and it keeps being repeated as one.
+
+  Anything per thread on this host is therefore **process-wide in practice**:
+  `Application.Resources`, the `GetForCurrentView()` singletons (1.8c), the `Compositor` (1.8f),
+  and the XAML backstop switch Mica needs (1.10). A shared `Backdrop` acrylic brush falls into that
+  same set - see 2.1c.
+
 - [ ] **0.19 `Theme.Current` -> `WindowContext.Theme`, in three steps.** Fela's proposal, and the
   right destination — but a straight rename is churn, because the 50 `Theme.Current` sites do
   not all want a window, and because moving the handle does not move the state.
