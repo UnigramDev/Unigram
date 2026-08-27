@@ -69,6 +69,8 @@ namespace winrt::Telegram::Native::implementation
         static void LogMessageCallback(int verbosity_level, const char* message);
         static winrt::Telegram::Native::FatalError GetStowedException();
         static winrt::Telegram::Native::FatalError GetBackTrace(hstring type, hstring message);
+        static winrt::Telegram::Native::FatalError CreateError(hstring type, hstring message, hstring stackTrace);
+        static uint32_t GetCurrentThreadId();
 
         static void Log(int32_t level, hstring message, hstring member, hstring filePath, int32_t line);
 

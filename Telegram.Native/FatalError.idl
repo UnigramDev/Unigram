@@ -15,6 +15,11 @@ namespace Telegram.Native
         String StackTrace;
         Windows.Foundation.Collections.IVector<FatalErrorFrame> Frames{ get; };
 
+        // The thread the record was stowed on. Zero when it came back across an RPC boundary from
+        // another process, which is the tell for a record that has nothing to do with the failure
+        // being reported.
+        UInt32 ThreadId;
+
         FatalError InnerException;
     }
 }

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -173,12 +174,78 @@ namespace Telegram
                         ? ex.StackTrace
                         : stowed.StackTrace + "\n" + ex.StackTrace;
 
+                    // The two carry different stacks and either can be the useful one. The record
+                    // is combase's capture at the ABI boundary, so for anything that reached here
+                    // through an async rethrow it shows the rethrow and not the origin; ex still
+                    // holds the origin, because the runtime accumulates frames into the exception
+                    // across every rethrow. The other way round, ex is often nothing but Propagate
+                    // rethrowing a bare E_FAIL, and then the record is all there is.
+                    //
+                    // So attach both and let the dashboard see the pair, rather than picking.
+                    AttachManagedFrames(stowed, ex);
+
                     Supersede(ProcessException(stowed, defer: true), stowed.Type, stowed.Message);
                 }
                 else
                 {
                     Supersede(ProcessException(ex, defer: true), ex.GetType().Name, ex.Message);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Hangs the managed exception's own frames off <paramref name="stowed"/> as an inner
+        /// record, so a report carries both stacks instead of whichever one happened to be reached
+        /// first.
+        /// </summary>
+        /// <remarks>
+        /// Under NativeAOT the frames on an exception have no method behind them - there is no
+        /// reflection metadata - but they do have an image base and an address, which is exactly
+        /// what the symbolicator resolves. That is the same shape the stowed records carry, so the
+        /// two travel through the report as one chain.
+        ///
+        /// The innermost record is where the reader looks first, so put the managed frames there
+        /// only when the stowed ones cannot be the origin: a text-form record has no frames at all,
+        /// and a record raised on another thread - zero, for one marshalled back over RPC - belongs
+        /// to a different failure. Anything else keeps the record's own order.
+        /// </remarks>
+        private static void AttachManagedFrames(FatalError stowed, Exception ex)
+        {
+            var frames = new StackTrace(ex, true).GetFrames();
+            if (frames == null || frames.Length == 0 || !frames[0].HasNativeImage())
+            {
+                return;
+            }
+
+            var managed = NativeUtils.CreateError(ex.GetType().Name, ex.Message, ex.StackTrace);
+
+            foreach (var frame in frames)
+            {
+                managed.Frames.Add(new FatalErrorFrame
+                {
+                    NativeIP = frame.GetNativeIP().ToInt64(),
+                    NativeImageBase = frame.GetNativeImageBase().ToInt64()
+                });
+            }
+
+            var suspect = stowed.Frames.Count == 0 || stowed.ThreadId != NativeUtils.GetCurrentThreadId();
+            if (suspect)
+            {
+                // First of the record's inner exceptions, ahead of whatever it already nested.
+                // The outer stays the record either way - its type and message were replaced with
+                // the exception's a moment ago, so only the frames are in question here.
+                managed.InnerException = stowed.InnerException;
+                stowed.InnerException = managed;
+            }
+            else
+            {
+                var last = stowed;
+                while (last.InnerException != null)
+                {
+                    last = last.InnerException;
+                }
+
+                last.InnerException = managed;
             }
         }
 

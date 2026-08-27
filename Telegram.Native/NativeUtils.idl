@@ -95,6 +95,12 @@ namespace Telegram.Native
         static FatalError GetStowedException();
         static FatalError GetBackTrace(String type, String message);
 
+        // An empty record for frames the managed side collected. Made here so the vector behind
+        // Frames is a native one: handing a managed list across the ABI would need a CCW that only
+        // an entry in CsWinRT.cs provides.
+        static FatalError CreateError(String type, String message, String stackTrace);
+        static UInt32 GetCurrentThreadId();
+
         static String GetLogMessage(Int64 format, Int64 args);
 
         static void Crash();
