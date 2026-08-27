@@ -48,13 +48,13 @@ namespace Telegram.ViewModels
         #region IIncrementalCollectionOwner
 
         private ChatJoinRequest _offset;
-        private bool _hasMoreItems = true;
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.SendAsync(new GetChatJoinRequests(_chat.Id, _inviteLink, string.Empty, _offset, 10));
             if (response is ChatJoinRequests requests)
@@ -67,13 +67,11 @@ namespace Telegram.ViewModels
                     totalCount++;
                 }
 
-                _hasMoreItems = requests.Requests.Count > 0;
+                hasMoreItems = requests.Requests.Count > 0;
             }
 
-            return new LoadMoreItemsResult { Count = totalCount };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems => _hasMoreItems;
 
         #endregion
     }

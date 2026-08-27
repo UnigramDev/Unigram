@@ -98,7 +98,7 @@ namespace Telegram.Views.Settings.Popups
             }
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -115,15 +115,9 @@ namespace Telegram.Views.Settings.Popups
             }
 
             ScrollingHost.SelectedItem = _items.FirstOrDefault(x => x.Id == _selectedChatId);
-            HasMoreItems = false;
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, false);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         public long SelectedChatId { get; private set; }
     }

@@ -57,9 +57,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
+
+            var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.SendAsync(new GetBlockedMessageSenders(new BlockListMain(), Items.Count, 20));
             if (response is MessageSenders chats)
@@ -67,16 +70,13 @@ namespace Telegram.ViewModels.Settings
                 foreach (var sender in chats.Senders)
                 {
                     Items.Add(sender);
+                    totalCount++;
                 }
 
-                HasMoreItems = chats.Senders.Count > 0;
-                return new LoadMoreItemsResult { Count = (uint)chats.Senders.Count };
+                hasMoreItems = chats.Senders.Count > 0;
             }
 
-            HasMoreItems = false;
-            return new LoadMoreItemsResult();
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
     }
 }

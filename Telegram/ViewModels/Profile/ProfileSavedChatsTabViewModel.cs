@@ -54,13 +54,14 @@ namespace Telegram.ViewModels.Profile
 
         public IncrementalCollection<SavedMessagesTopic> Items { get; private set; }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
             using var guard = await _loadMoreLock.WaitAsync();
 
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.GetSavedMessagesTopicsAsync(Items.Count, 20);
             if (response is Topics topics)
@@ -99,14 +100,11 @@ namespace Telegram.ViewModels.Profile
                     }
                 }
 
-                HasMoreItems = topics.TotalCount >= 0;
+                hasMoreItems = topics.TotalCount >= 0;
                 Aggregator.Subscribe<UpdateSavedMessagesTopic>(this, Handle);
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
 
         private void UpdateChatOrder(SavedMessagesTopic topic, long order, bool lastMessage)
@@ -176,8 +174,6 @@ namespace Telegram.ViewModels.Profile
 
             return Items.Count;
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         public bool IsPinned(SavedMessagesTopic topic)
         {

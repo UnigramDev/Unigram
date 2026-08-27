@@ -133,7 +133,7 @@ namespace Telegram.Views.Chats.Popups
 
         public IncrementalCollection<ChatInviteLinkMember> Items { get; }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -146,18 +146,14 @@ namespace Telegram.Views.Chats.Popups
                 {
                     _offsetMember = member;
                     Items.Add(member);
+
+                    total++;
                 }
             }
 
-            HasMoreItems = total > 0;
 
-            return new LoadMoreItemsResult
-            {
-                Count = total
-            };
+            return new IncrementalLoadResult(total, total > 0);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {

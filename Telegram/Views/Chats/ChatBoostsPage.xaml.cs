@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
@@ -75,7 +76,7 @@ namespace Telegram.Views.Chats
 
         private async void LoadMore_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            await ViewModel.LoadMoreItemsAsync(50);
+            await ViewModel.Items.LoadMoreItemsAsync(50);
         }
     }
 }

@@ -201,9 +201,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public abstract Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count);
-
-        public bool HasMoreItems { get; protected set; } = true;
+        public abstract Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count);
 
         public void Browse()
         {
@@ -334,11 +332,12 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _selectedCustomEmojiId, value);
         }
 
-        public override async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public override async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.SendAsync(new GetReceivedGifts(ClientService.MyId, 0, false, false, false, false, false, false, true, false, false, _nextOffset, 50));
             if (response is ReceivedGifts gifts)
@@ -360,19 +359,12 @@ namespace Telegram.ViewModels.Settings
                 }
 
                 _nextOffset = gifts.NextOffset;
-                HasMoreItems = gifts.NextOffset.Length > 0;
-            }
-            else
-            {
-                HasMoreItems = false;
+                hasMoreItems = gifts.NextOffset.Length > 0;
             }
 
             IsEmpty = Items.Empty();
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
 
         protected override void ContinueImpl(object value, NavigatingEventArgs args)
@@ -454,7 +446,7 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _selectedCustomEmojiId, value);
         }
 
-        public override async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public override async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -481,13 +473,9 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            HasMoreItems = false;
             IsEmpty = Items.Empty();
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, false);
         }
 
         protected override void ContinueImpl(object value, NavigatingEventArgs args)

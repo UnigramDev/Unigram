@@ -143,20 +143,28 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        // Three lists behind one: active links, per-creator counts, then revoked links. HasMoreItems
+        // below aggregates all three, so no single phase running out ends the list.
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
+            uint totalCount;
+
             if (_inviteLinks.HasMoreItems)
             {
-                return _inviteLinks.LoadMoreItemsAsync(count);
+                totalCount = (await _inviteLinks.Items.LoadMoreItemsAsync(count)).Count;
             }
             else if (_linkCounts != null && _linkCounts.HasMoreItems)
             {
-                return _linkCounts.LoadMoreItemsAsync(count);
+                totalCount = (await _linkCounts.Items.LoadMoreItemsAsync(count)).Count;
+            }
+            else
+            {
+                totalCount = (await _revokedLinks.LoadMoreItemsAsyncImpl(count)).Count;
             }
 
-            return _revokedLinks.LoadMoreItemsAsyncImpl(count);
+            return new IncrementalLoadResult(totalCount, HasMoreItems);
         }
 
         public async void CreateLink()
@@ -292,7 +300,7 @@ namespace Telegram.ViewModels.Chats
 
             public IncrementalCollection<ChatInviteLink> Items { get; private set; }
 
-            public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            public Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
             {
                 if (_owner != null)
                 {
@@ -302,7 +310,7 @@ namespace Telegram.ViewModels.Chats
                 return LoadMoreItemsAsyncImpl(count);
             }
 
-            public async Task<LoadMoreItemsResult> LoadMoreItemsAsyncImpl(uint count)
+            public async Task<IncrementalLoadResult> LoadMoreItemsAsyncImpl(uint count)
             {
                 var totalCount = 0u;
 
@@ -327,10 +335,7 @@ namespace Telegram.ViewModels.Chats
 
                 HasMoreItemsImpl = totalCount > 0;
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                return new IncrementalLoadResult(totalCount, HasMoreItems);
             }
 
             public bool HasMoreItemsImpl { get; private set; } = true;
@@ -365,8 +370,13 @@ namespace Telegram.ViewModels.Chats
 
             public IncrementalCollection<ChatInviteLinkCount> Items { get; private set; }
 
-            public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
             {
+                if (!HasMoreItems)
+                {
+                    return default;
+                }
+
                 var totalCount = 0u;
 
                 var response = await _clientService.SendAsync(new GetChatInviteLinkCounts(_chatId));
@@ -386,10 +396,7 @@ namespace Telegram.ViewModels.Chats
 
                 HasMoreItems = false;
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                return new IncrementalLoadResult(totalCount, HasMoreItems);
             }
 
             public bool HasMoreItems { get; private set; } = true;

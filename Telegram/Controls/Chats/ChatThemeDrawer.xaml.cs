@@ -108,11 +108,12 @@ namespace Telegram.Controls.Chats
             Close.CornerRadius = new CornerRadius(4, min, 4, 4);
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await _viewModel.ClientService.SendAsync(new GetGiftChatThemes(_nextOffset, 10));
             if (response is GiftChatThemes themes)
@@ -132,16 +133,11 @@ namespace Telegram.Controls.Chats
                 }
 
                 _nextOffset = themes.NextOffset;
-                HasMoreItems = themes.NextOffset.Length > 0;
+                hasMoreItems = themes.NextOffset.Length > 0;
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {

@@ -29,6 +29,7 @@ namespace Telegram.Controls.Views
         private readonly IClientService _clientService;
 
         private readonly MessageViewers _viewers;
+        private bool _viewersLoaded;
 
         private readonly long _chatId;
         private readonly long _messageId;
@@ -184,7 +185,7 @@ namespace Telegram.Controls.Views
             ItemClick?.Invoke(this, e);
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -213,9 +214,9 @@ namespace Telegram.Controls.Views
                     _nextOffset = null;
                 }
             }
-            else if (_viewers != null)
+            else if (_viewers != null && !_viewersLoaded)
             {
-                HasMoreItems = false;
+                _viewersLoaded = true;
 
                 foreach (var item in _viewers.Viewers)
                 {
@@ -231,12 +232,11 @@ namespace Telegram.Controls.Views
 
             ShowHideSkeleton();
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            // Reactions first, then the viewers who did not react, and that second phase is one
+            // shot. With neither left the list is done: claiming more here loops forever, because
+            // the framework keeps asking for as long as the viewport is not full. It used to,
+            // whenever the message had no viewers to fall back to.
+            return new IncrementalLoadResult(totalCount, _nextOffset != null || (_viewers != null && !_viewersLoaded));
         }
-
-        public bool HasMoreItems { get; private set; } = true;
     }
 }

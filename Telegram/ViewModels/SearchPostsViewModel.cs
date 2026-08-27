@@ -36,6 +36,10 @@ namespace Telegram.ViewModels
             _query.Value = string.Empty;
 
             Items = new IncrementalCollection<Message>(this);
+
+            // The search itself fetches the first page; there is nothing to continue from until
+            // it has, and State has to have reached Results.
+            Items.HasMoreItems = false;
         }
 
         public void Activate()
@@ -117,6 +121,7 @@ namespace Telegram.ViewModels
         private async void UpdateQueryOffline(string value, CancellationToken token)
         {
             _nextOffset = null;
+            Items.HasMoreItems = false;
 
             Items.ClearIfNotEmpty();
 
@@ -178,6 +183,9 @@ namespace Telegram.ViewModels
                         ? SearchPostsState.NotFound
                         : SearchPostsState.Results;
 
+                    // After State, which is half of the condition.
+                    Items.HasMoreItems = State == SearchPostsState.Results && _limits != null && _nextOffset != null;
+
                     if (!limits.IsCurrentQueryFree && limits.RemainingFreeQueryCount == 0)
                     {
                         ShowToast(Locale.Declension(Strings.R.SearchPaidStars, limits.StarCount), ToastPopupIcon.Premium);
@@ -197,14 +205,14 @@ namespace Telegram.ViewModels
 
         #region ISupportIncrementalLoading
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
             var limits = Limits;
             if (limits == null)
             {
-                return new LoadMoreItemsResult();
+                return default;
             }
 
             var totalCount = 0u;
@@ -222,13 +230,8 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, State == SearchPostsState.Results && _limits != null && _nextOffset != null);
         }
-
-        public bool HasMoreItems => State == SearchPostsState.Results && _limits != null && _nextOffset != null;
 
         #endregion
     }

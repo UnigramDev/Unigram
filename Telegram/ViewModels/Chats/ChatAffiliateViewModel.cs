@@ -115,14 +115,15 @@ namespace Telegram.ViewModels.Chats
             //throw new NotImplementedException();
         }
 
-        public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        // Two lists behind one: connected programs, then the searchable ones. HasMoreItems below
+        // aggregates both, so the phase that just ran does not get to end the list on its own.
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
-            if (Programs.HasMoreItems)
-            {
-                return Programs.LoadMoreItemsAsync(count).AsTask();
-            }
+            var totalCount = Programs.HasMoreItems
+                ? (await Programs.LoadMoreItemsAsync(count)).Count
+                : (await _foundPrograms.LoadMoreItemsAsync(count)).Count;
 
-            return _foundPrograms.LoadMoreItemsAsync(count);
+            return new IncrementalLoadResult(totalCount, HasMoreItems);
         }
 
         public bool HasMoreItems => _foundPrograms.HasMoreItems || _programs.HasMoreItems;
@@ -144,7 +145,7 @@ namespace Telegram.ViewModels.Chats
 
             public IncrementalCollection<ConnectedAffiliateProgram> Items { get; }
 
-            public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
             {
                 Logger.Info();
 
@@ -164,10 +165,7 @@ namespace Telegram.ViewModels.Chats
                         : null;
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                return new IncrementalLoadResult(totalCount, HasMoreItems);
             }
 
             public bool HasMoreItems => _nextOffset != null;
@@ -194,7 +192,7 @@ namespace Telegram.ViewModels.Chats
 
             public AffiliateProgramSortOrder SortOrder => _sortOrder;
 
-            public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
             {
                 Logger.Info();
 
@@ -214,10 +212,7 @@ namespace Telegram.ViewModels.Chats
                         : null;
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                return new IncrementalLoadResult(totalCount, HasMoreItems);
             }
 
             public bool HasMoreItems => _nextOffset != null;

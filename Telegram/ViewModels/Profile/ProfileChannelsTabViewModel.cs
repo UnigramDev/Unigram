@@ -54,8 +54,7 @@ namespace Telegram.ViewModels.Profile
         {
             CanUnlockMore = false;
 
-            HasMoreItems = true;
-            Items.Clear();
+            Items.Restart();
         }
 
         public IncrementalCollection<Chat> Items { get; private set; }
@@ -74,7 +73,7 @@ namespace Telegram.ViewModels.Profile
             set => Set(ref _totalCount, value);
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -94,15 +93,9 @@ namespace Telegram.ViewModels.Profile
                 }
             }
 
-            HasMoreItems = false;
 
-            return new LoadMoreItemsResult
-            {
-                Count = total
-            };
+            return new IncrementalLoadResult(total, false);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         public void UnlockMore()
         {

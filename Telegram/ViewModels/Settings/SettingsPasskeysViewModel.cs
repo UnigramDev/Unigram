@@ -87,7 +87,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -103,13 +103,7 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            HasMoreItems = false;
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, false);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
     }
 }

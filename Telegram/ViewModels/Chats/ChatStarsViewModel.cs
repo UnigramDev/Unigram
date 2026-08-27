@@ -155,8 +155,8 @@ namespace Telegram.ViewModels.Chats
             {
                 BeginOnUIThread(() =>
                 {
-                    HasMoreItems = true;
-                    Items.Clear();
+                    _nextOffset = string.Empty;
+                    Items.Restart();
 
                     UpdateAmount(update.Status);
                 });
@@ -255,9 +255,10 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.GetStarTransactionsAsync(_ownerId, string.Empty, null, _nextOffset, 20);
             if (response is StarTransactions transactions)
@@ -269,21 +270,12 @@ namespace Telegram.ViewModels.Chats
                 }
 
                 _nextOffset = transactions.NextOffset;
-                HasMoreItems = transactions.NextOffset.Length > 0;
-            }
-            else
-            {
-                HasMoreItems = false;
+                hasMoreItems = transactions.NextOffset.Length > 0;
             }
 
             IsEmpty = Items.Count == 0;
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
     }
 }

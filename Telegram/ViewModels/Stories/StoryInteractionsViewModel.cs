@@ -94,7 +94,10 @@ namespace Telegram.ViewModels
         private void UpdateSortBy()
         {
             _nextOffset = string.Empty;
-            _ = LoadMoreItemsAsync(0);
+
+            // Restarted first: it drops the load in flight, so this one is not coalesced into it.
+            Items.Restart();
+            _ = Items.LoadMoreItemsAsync(0);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -181,7 +184,7 @@ namespace Telegram.ViewModels
 
         public IncrementalCollection<object> Items { get; }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -193,13 +196,14 @@ namespace Telegram.ViewModels
             }
 
             var totalCount = 0u;
+            var hasMoreItems = false;
             var token = _nextToken = new CancellationTokenSource();
 
             var response = await ClientService.SendAsync(new GetStoryInteractions(_story.Id, Query ?? string.Empty, OnlyContacts > 0, false, SortBy == StoryInteractionsSortBy.Reaction, _nextOffset, 50));
             if (response is StoryInteractions interactions && !token.IsCancellationRequested)
             {
                 _nextOffset = interactions.NextOffset;
-                HasMoreItems = interactions.NextOffset.Length > 0;
+                hasMoreItems = interactions.NextOffset.Length > 0;
 
                 foreach (var item in interactions.Interactions)
                 {
@@ -208,13 +212,8 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         public void OpenChat(object clickedItem)
         {

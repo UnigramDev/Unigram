@@ -45,19 +45,19 @@ namespace Telegram.ViewModels
         }
 
         private string _nextOffset = string.Empty;
-        private bool _hasMoreItems = true;
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.SendAsync(new SearchCallMessages(_nextOffset, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
             if (response is FoundMessages messages)
             {
                 _nextOffset = messages.NextOffset;
-                _hasMoreItems = messages.NextOffset.Length > 0;
+                hasMoreItems = messages.NextOffset.Length > 0;
 
                 List<Message> currentMessages = null;
                 Chat currentChat = null;
@@ -120,13 +120,8 @@ namespace Telegram.ViewModels
 
             IsEmpty = Items.Empty();
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems => _hasMoreItems;
 
         #region Context menu
 

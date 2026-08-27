@@ -364,7 +364,7 @@ namespace Telegram.ViewModels.Chats
                 Items.Remove(story);
 
                 var index = Items.BinarySearch(story.Date, (date, item) => _pinnedStoryIds.Contains(item.Id) ? 1 : item.Date.CompareTo(date));
-                if (index < 0 && (~index < Items.Count || !HasMoreItems))
+                if (index < 0 && (~index < Items.Count || !Items.HasMoreItems))
                 {
                     Items.Insert(~index, story);
                 }
@@ -449,7 +449,7 @@ namespace Telegram.ViewModels.Chats
             _ = window.ShowAsync();
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -514,15 +514,9 @@ namespace Telegram.ViewModels.Chats
             }
 
             IsEmpty = Items.Count == 0;
-            HasMoreItems = totalCount > 0 && function is not GetBotMediaPreviews;
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, totalCount > 0 && function is not GetBotMediaPreviews);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         private bool _isEmpty = false;
         public bool IsEmpty
@@ -620,7 +614,7 @@ namespace Telegram.ViewModels.Chats
 
         public IncrementalCollection<StoryViewModel> Items { get; }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -641,16 +635,10 @@ namespace Telegram.ViewModels.Chats
             }
 
             IsEmpty = Items.Count == 0;
-            HasMoreItems = totalCount > 0;
             HasLoadedItems = true;
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, totalCount > 0);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         public bool HasLoadedItems { get; private set; }
 

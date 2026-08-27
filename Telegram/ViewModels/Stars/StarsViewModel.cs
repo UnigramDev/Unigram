@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Navigation;
@@ -45,21 +46,29 @@ namespace Telegram.ViewModels.Stars
             BeginOnUIThread(() => RaisePropertyChanged(nameof(OwnedStarCount)));
         }
 
-        public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
-            if (_subscriptions.HasMoreItems)
+            // Subscriptions are pumped through this list too, and running out of them is not the
+            // end of it: the transactions follow. Routed through the collection rather than the
+            // owner, so that the collection is the one applying the result to its own flag.
+            if (Subscriptions.HasMoreItems)
             {
-                return _subscriptions.LoadMoreItemsAsync(count);
+                var subscriptions = await Subscriptions.LoadMoreItemsAsync(count);
+                if (subscriptions.Count > 0 || Subscriptions.HasMoreItems)
+                {
+                    return new IncrementalLoadResult(subscriptions.Count, true);
+                }
             }
 
-            return LoadMoreItemsAsync2(count);
+            return await LoadMoreItemsAsync2(count);
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync2(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync2(uint count)
         {
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, _direction, _nextOffset, 20);
             if (response is StarTransactions transactions)
@@ -71,20 +80,11 @@ namespace Telegram.ViewModels.Stars
                 }
 
                 _nextOffset = transactions.NextOffset;
-                HasMoreItems = transactions.NextOffset.Length > 0;
-            }
-            else
-            {
-                HasMoreItems = false;
+                hasMoreItems = transactions.NextOffset.Length > 0;
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         partial class SubscriptionCollection : ViewModelBase, IIncrementalCollectionOwner
         {
@@ -98,11 +98,12 @@ namespace Telegram.ViewModels.Stars
 
             public IncrementalCollection<StarSubscription> Items { get; private set; }
 
-            public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
             {
                 Logger.Info();
 
                 var totalCount = 0u;
+                var hasMoreItems = false;
 
                 var response = await ClientService.SendAsync(new GetStarSubscriptions(false, _nextOffset));
                 if (response is StarSubscriptions subscriptions)
@@ -114,20 +115,11 @@ namespace Telegram.ViewModels.Stars
                     }
 
                     _nextOffset = subscriptions.NextOffset;
-                    HasMoreItems = subscriptions.NextOffset.Length > 0;
-                }
-                else
-                {
-                    HasMoreItems = false;
+                    hasMoreItems = subscriptions.NextOffset.Length > 0;
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                return new IncrementalLoadResult(totalCount, hasMoreItems);
             }
-
-            public bool HasMoreItems { get; private set; } = true;
         }
 
         private int _selectedIndex;
@@ -149,8 +141,7 @@ namespace Telegram.ViewModels.Stars
                     _ => null
                 };
 
-                HasMoreItems = true;
-                Items.Clear();
+                Items.Restart();
             }
         }
     }

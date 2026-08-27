@@ -115,7 +115,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
@@ -131,7 +131,6 @@ namespace Telegram.ViewModels.Chats
                 }
 
                 _nextOffset = boosts.NextOffset;
-                HasMoreItems = false;
 
                 RemainingItems = boosts.NextOffset.Length > 0 ? boosts.TotalCount - Items.Count : 0;
                 RaisePropertyChanged(nameof(HasRemainingItems));
@@ -139,13 +138,8 @@ namespace Telegram.ViewModels.Chats
 
             IsEmpty = Items.Count == 0;
 
-            return new LoadMoreItemsResult
-            {
-                Count = total
-            };
+            return new IncrementalLoadResult(total, false);
         }
-
-        public bool HasMoreItems { get; private set; } = true;
 
         private int _remainingItems;
         public int RemainingItems

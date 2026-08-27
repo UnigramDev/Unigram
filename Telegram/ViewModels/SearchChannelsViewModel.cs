@@ -66,6 +66,10 @@ namespace Telegram.ViewModels
             _query.Value = string.Empty;
 
             Items = new FlatteningCollection(this, _recent, _similar, _chatsAndContacts1, _chatsAndContacts2, _globalSearch, _messages);
+
+            // The cascade fetches the first page of messages; there is nothing to continue
+            // from until it has.
+            Items.HasMoreItems = false;
         }
 
         public void Activate()
@@ -149,6 +153,7 @@ namespace Telegram.ViewModels
             }
 
             _nextOffset = null;
+            Items.HasMoreItems = false;
 
             // Left alone for a query that will run: LoadMessagesAsync replaces the group once the
             // response lands, instead of emptying it now and refilling it a debounce later.
@@ -296,7 +301,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async Task LoadMessagesAsync(string query, CancellationToken cancellationToken)
+        private async Task<uint> LoadMessagesAsync(string query, CancellationToken cancellationToken)
         {
             var firstPage = string.IsNullOrEmpty(_nextOffset);
 
@@ -304,6 +309,7 @@ namespace Telegram.ViewModels
             if (response is FoundMessages messages && !cancellationToken.IsCancellationRequested)
             {
                 _nextOffset = string.IsNullOrEmpty(messages.NextOffset) ? null : messages.NextOffset;
+                Items.HasMoreItems = _nextOffset != null && Options.ShowMessages;
 
                 // The first page replaces what the previous query left; later pages append.
                 if (firstPage)
@@ -314,20 +320,22 @@ namespace Telegram.ViewModels
                 {
                     _messages.AddRange(messages.Messages);
                 }
+
+                return (uint)messages.Messages.Count;
             }
+
+            return 0;
         }
 
         #region ISupportIncrementalLoading
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
             Logger.Info();
 
-            await LoadMessagesAsync(_query.Value, _cancellation.Token);
-            return new LoadMoreItemsResult { Count = 50 };
+            var totalCount = await LoadMessagesAsync(_query.Value, _cancellation.Token);
+            return new IncrementalLoadResult(totalCount, _nextOffset != null && Options.ShowMessages);
         }
-
-        public bool HasMoreItems => _nextOffset != null && Options.ShowMessages;
 
         #endregion
 

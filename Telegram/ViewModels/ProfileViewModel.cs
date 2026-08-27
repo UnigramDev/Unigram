@@ -297,7 +297,7 @@ namespace Telegram.ViewModels
 
                     if (user.Type is UserTypeBot)
                     {
-                        await _botsTabViewModel.LoadMoreItemsAsync(0);
+                        await _botsTabViewModel.Items.LoadMoreItemsAsync(0);
 
                         if (_botsTabViewModel.Items.Count > 0)
                         {
@@ -328,7 +328,7 @@ namespace Telegram.ViewModels
                 if (typeSupergroup.IsChannel)
                 {
                     await UpdateSharedCountAsync(chat, tabs);
-                    await _channelsTabViewModel.LoadMoreItemsAsync(0);
+                    await _channelsTabViewModel.Items.LoadMoreItemsAsync(0);
 
                     if (_channelsTabViewModel.Items.Count > 0)
                     {
