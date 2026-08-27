@@ -148,7 +148,7 @@ namespace Telegram.ViewModels
                 var replied = ProcessEvents(events);
                 ProcessMessages(chat, replied);
 
-                Items.RawReplaceWith(replied);
+                Items.ReplaceSlice(replied);
 
                 IsOldestSliceLoaded = false;
                 IsNewestSliceLoaded = true;
@@ -195,7 +195,7 @@ namespace Telegram.ViewModels
                 var replied = ProcessEvents(events);
                 ProcessMessages(chat, replied);
 
-                Items.RawInsertRange(0, replied, false, out bool empty);
+                Items.PrependSlice(replied, false, out bool empty);
                 IsOldestSliceLoaded = empty;
 
                 if (empty)
@@ -245,7 +245,7 @@ namespace Telegram.ViewModels
             return message;
         }
 
-        private IList<MessageViewModel> ProcessEvents(ChatEvents events)
+        private MessageCollection ProcessEvents(ChatEvents events)
         {
             var result = new MessageCollection(this);
             var channel = _chat.Type is ChatTypeSupergroup super && super.IsChannel;
@@ -364,7 +364,6 @@ namespace Telegram.ViewModels
             //    _hasMore = false;
             //}
 
-            result.Reverse();
             return result;
         }
 

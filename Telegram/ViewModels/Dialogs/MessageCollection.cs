@@ -18,9 +18,20 @@ namespace Telegram.ViewModels
         private readonly DialogViewModel _viewModel;
         private readonly Dictionary<long, MessageViewModel> _messages = new();
 
-        private bool _suppressOperations = false;
-        private bool _suppressPrev = false;
-        private bool _suppressNext = false;
+        /// <summary>
+        /// Which neighbours of an inserted item still need their attach state and separators
+        /// worked out. A slice only needs it at the seam, because it already settled
+        /// everything within itself as it was built.
+        /// </summary>
+        private enum AttachMode
+        {
+            Both,
+            Previous,
+            Next,
+            None
+        }
+
+        private AttachMode _attachMode = AttachMode.Both;
 
         public ICollection<long> Ids => _messages.Keys;
 
@@ -60,7 +71,7 @@ namespace Telegram.ViewModels
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
-        // Used in sub-collection
+        // Only ever set on a slice
         public bool IsEndReached { get; }
 
         public MessageCollection(DialogViewModel viewModel)
@@ -124,83 +135,102 @@ namespace Telegram.ViewModels
             _messages[newMessageId] = message;
         }
 
-        public void RawAddRange(IList<MessageViewModel> source, bool filter, out bool empty)
+        public void AppendSlice(MessageCollection source, bool filter, out bool empty)
         {
             empty = true;
 
             var lastId = LastId;
 
-            for (int i = 0; i < source.Count; i++)
+            try
             {
-                var message = source[i];
-
-                if (filter && message.Id != 0)
+                for (int i = 0; i < source.Count; i++)
                 {
-                    if (message.Id < lastId || _messages.ContainsKey(message.Id))
+                    var message = source[i];
+
+                    if (filter && message.Id != 0)
                     {
-                        continue;
+                        if (message.Id < lastId || _messages.ContainsKey(message.Id))
+                        {
+                            continue;
+                        }
                     }
+
+                    // Only the first item that actually lands has a neighbour above it whose
+                    // attach state can still change: the rest brought theirs from the slice.
+                    // Keyed off empty rather than the loop index, which counts candidates.
+                    _attachMode = empty ? AttachMode.Previous : AttachMode.None;
+
+                    Add(message);
+                    empty = false;
                 }
-
-                _suppressOperations = i > 0;
-                _suppressNext = !_suppressOperations;
-
-                Add(message);
-                empty = false;
             }
-
-            _suppressOperations = false;
-            _suppressNext = false;
+            finally
+            {
+                _attachMode = AttachMode.Both;
+            }
         }
 
-        public void RawInsertRange(int index, IList<MessageViewModel> source, bool filter, out bool empty)
+        public void PrependSlice(MessageCollection source, bool filter, out bool empty)
         {
             empty = true;
 
             var firstId = FirstId;
 
-            for (int i = source.Count - 1; i >= 0; i--)
+            try
             {
-                var message = source[i];
-
-                if (filter && message.Id != 0)
+                for (int i = source.Count - 1; i >= 0; i--)
                 {
-                    if (message.Id > firstId || _messages.ContainsKey(message.Id))
+                    var message = source[i];
+
+                    if (filter && message.Id != 0)
                     {
-                        continue;
+                        if (message.Id > firstId || _messages.ContainsKey(message.Id))
+                        {
+                            continue;
+                        }
                     }
+
+                    _attachMode = empty ? AttachMode.Next : AttachMode.None;
+
+                    Insert(0, message);
+                    empty = false;
                 }
-
-                _suppressOperations = i < source.Count - 1;
-                _suppressPrev = !_suppressOperations;
-
-                Insert(0, message);
-                empty = false;
             }
-
-            _suppressOperations = false;
-            _suppressPrev = false;
+            finally
+            {
+                _attachMode = AttachMode.Both;
+            }
         }
 
-        public void RawReplaceWith(IEnumerable<MessageViewModel> source)
+        /// <summary>
+        /// Replaces the whole list in one Reset. Nothing is recomputed here, so the source must
+        /// already carry its own attach state and separators — every slice does, having been
+        /// built through the same insert path.
+        /// </summary>
+        public void ReplaceSlice(MessageCollection source)
         {
             _messages.Clear();
-            _suppressOperations = true;
+            _attachMode = AttachMode.None;
 
-            //ReplaceWith(source);
-            using (SuppressEvents())
+            try
             {
-                Clear();
-
-                foreach (var item in source)
+                //ReplaceWith(source);
+                using (SuppressEvents())
                 {
-                    Add(item);
+                    Clear();
+
+                    foreach (var item in source)
+                    {
+                        Add(item);
+                    }
                 }
+            }
+            finally
+            {
+                _attachMode = AttachMode.Both;
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-
-            _suppressOperations = false;
         }
 
         protected override void InsertItem(int index, MessageViewModel item)
@@ -218,17 +248,32 @@ namespace Telegram.ViewModels
                 _messages[item.Id] = item;
             }
 
-            if (_suppressOperations || item.Content is MessageHeaderNewThread or MessageSponsored)
+            var mode = _attachMode;
+            if (mode == AttachMode.None || item.Content is MessageHeaderNewThread or MessageSponsored)
             {
                 base.InsertItem(index, item);
+                return;
             }
-            else if (_suppressNext)
-            {
-                var prev = index > 0 ? this[index - 1] : null;
-                var prevSeparator = UpdateSeparatorOnInsert(prev, item);
-                var prevForumTopic = UpdateForumTopicSeparatorOnInsert(prev, item);
-                var prevHash = AttachHash(prev);
 
+            var joinPrev = mode is AttachMode.Both or AttachMode.Previous;
+            var joinNext = mode is AttachMode.Both or AttachMode.Next;
+
+            var prev = joinPrev && index > 0 ? this[index - 1] : null;
+            var next = joinNext && index < Count ? this[index] : null;
+
+            var prevSeparator = joinPrev ? UpdateSeparatorOnInsert(prev, item) : null;
+            var nextSeparator = joinNext ? UpdateSeparatorOnInsert(item, next) : null;
+
+            var prevForumTopic = joinPrev ? UpdateForumTopicSeparatorOnInsert(prev, item) : null;
+            var nextForumTopic = joinNext ? UpdateForumTopicSeparatorOnInsert(item, next) : null;
+
+            // The separators are returned rather than inserted so that the attach state of both
+            // neighbours settles before anything moves, leaving at most two of them to report.
+            var prevHash = AttachHash(prev);
+            var nextHash = AttachHash(next);
+
+            if (joinPrev)
+            {
                 if (prevForumTopic != null)
                 {
                     UpdateAttach(null, prev);
@@ -243,32 +288,10 @@ namespace Telegram.ViewModels
                 {
                     UpdateAttach(item, prev);
                 }
-
-                if (prevSeparator != null)
-                {
-                    base.InsertItem(index++, prevSeparator);
-                }
-
-                if (prevForumTopic != null)
-                {
-                    base.InsertItem(index++, prevForumTopic);
-                }
-
-                base.InsertItem(index, item);
-
-                var prevUpdate = AttachHash(prev);
-                if (prevUpdate != prevHash)
-                {
-                    AttachChanged?.Invoke(new[] { prev });
-                }
             }
-            else if (_suppressPrev)
-            {
-                var next = index < Count ? this[index] : null;
-                var nextSeparator = UpdateSeparatorOnInsert(item, next);
-                var nextForumTopic = UpdateForumTopicSeparatorOnInsert(item, next);
-                var nextHash = AttachHash(next);
 
+            if (joinNext)
+            {
                 if (nextForumTopic != null)
                 {
                     UpdateAttach(next, null);
@@ -283,117 +306,43 @@ namespace Telegram.ViewModels
                 {
                     UpdateAttach(next, item);
                 }
-
-                base.InsertItem(index, item);
-
-                if (nextSeparator != null)
-                {
-                    base.InsertItem(++index, nextSeparator);
-                }
-
-                if (nextForumTopic != null)
-                {
-                    base.InsertItem(++index, nextForumTopic);
-                }
-
-                var nextUpdate = AttachHash(next);
-                if (nextUpdate != nextHash)
-                {
-                    AttachChanged?.Invoke(new[] { next });
-                }
             }
-            else
+
+            // Order must be: the separators between prev and item, item, then the separators
+            // between item and next.
+            if (prevSeparator != null)
             {
-                var prev = index > 0 ? this[index - 1] : null;
-                var next = index < Count ? this[index] : null;
-
-                // Order must be:
-                // Separator between previous and item
-                // Item
-                // Separator between item and next
-                // UpdateSeparatorOnInsert must return the new messages
-                // This way only two AttachChanged will be needed at most
-
-                var prevSeparator = UpdateSeparatorOnInsert(prev, item);
-                var nextSeparator = UpdateSeparatorOnInsert(item, next);
-
-                var prevForumTopic = UpdateForumTopicSeparatorOnInsert(prev, item);
-                var nextForumTopic = UpdateForumTopicSeparatorOnInsert(item, next);
-
-                var nextHash = AttachHash(next);
-                var prevHash = AttachHash(prev);
-
-                if (prevForumTopic != null)
-                {
-                    UpdateAttach(null, prev);
-                    UpdateAttach(prevForumTopic, item);
-                }
-                else if (prevSeparator != null)
-                {
-                    UpdateAttach(null, prev);
-                    UpdateAttach(prevSeparator, item);
-                }
-                else
-                {
-                    UpdateAttach(item, prev);
-                }
-
-                if (nextForumTopic != null)
-                {
-                    UpdateAttach(next, null);
-                    UpdateAttach(item, nextForumTopic);
-                }
-                else if (nextSeparator != null)
-                {
-                    UpdateAttach(next, null);
-                    UpdateAttach(item, nextSeparator);
-                }
-                else
-                {
-                    UpdateAttach(next, item);
-                }
-
-                if (prevSeparator != null)
-                {
-                    base.InsertItem(index++, prevSeparator);
-                }
-
-                if (prevForumTopic != null)
-                {
-                    base.InsertItem(index++, prevForumTopic);
-                }
-
-                base.InsertItem(index, item);
-
-                if (nextSeparator != null)
-                {
-                    base.InsertItem(++index, nextSeparator);
-                }
-
-                if (nextForumTopic != null)
-                {
-                    base.InsertItem(++index, nextForumTopic);
-                }
-
-                var nextUpdate = AttachHash(next);
-                var prevUpdate = AttachHash(prev);
-
-                if (prevHash != prevUpdate || nextHash != nextUpdate)
-                {
-                    AttachChanged?.Invoke(new[]
-                    {
-                        prevHash != prevUpdate ? prev : null,
-                        nextHash != nextUpdate ? next : null
-                    });
-                }
+                base.InsertItem(index++, prevSeparator);
             }
-        }
 
-        public void RawRemoveAt(int index)
-        {
-            _suppressOperations = true;
-            RemoveAt(index);
-            _suppressOperations = false;
+            if (prevForumTopic != null)
+            {
+                base.InsertItem(index++, prevForumTopic);
+            }
+
+            base.InsertItem(index, item);
+
+            if (nextSeparator != null)
+            {
+                base.InsertItem(++index, nextSeparator);
+            }
+
+            if (nextForumTopic != null)
+            {
+                base.InsertItem(++index, nextForumTopic);
+            }
+
+            var prevChanged = prevHash != AttachHash(prev);
+            var nextChanged = nextHash != AttachHash(next);
+
+            if (prevChanged || nextChanged)
+            {
+                AttachChanged?.Invoke(new[]
+                {
+                    prevChanged ? prev : null,
+                    nextChanged ? next : null
+                });
+            }
         }
 
         protected override void RemoveItem(int index)
@@ -409,7 +358,7 @@ namespace Telegram.ViewModels
 
             _messages.Remove(item.Id);
 
-            if (_suppressOperations || item.Content is MessageHeaderNewThread or MessageSponsored)
+            if (_attachMode == AttachMode.None || item.Content is MessageHeaderNewThread or MessageSponsored)
             {
                 base.RemoveItem(index);
                 return;

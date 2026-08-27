@@ -914,12 +914,12 @@ namespace Telegram.ViewModels
                     if (direction == PanelScrollingDirection.Backward)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Items.RawInsertRange(0, replied, true, out bool empty);
+                        Items.PrependSlice(replied, true, out bool empty);
                     }
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        Items.RawAddRange(replied, true, out bool empty);
+                        Items.AppendSlice(replied, true, out bool empty);
                     }
 
                     if (Items.Count > 200)
@@ -1345,7 +1345,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                Items.RawReplaceWith(messages);
+                Items.ReplaceSlice(messages);
 
                 MessagesCount = slice.TotalCount;
                 HasUnreadMessages = slice.IsUnread;
@@ -1801,7 +1801,7 @@ namespace Telegram.ViewModels
                     replied.Insert(0, CreateMessage(new Message(0, target.SenderId, null, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, false, target.IsChannelPost, false, false, false, false, target.Date, 0, null, null, null, null, null, null, null, target.TopicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageHeaderDate(target.Date), null, null)));
                 }
 
-                Items.RawReplaceWith(replied);
+                Items.ReplaceSlice(replied);
 
                 IsOldestSliceLoaded = true;
                 IsNewestSliceLoaded = true;
