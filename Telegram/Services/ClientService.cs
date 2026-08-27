@@ -50,6 +50,8 @@ namespace Telegram.Services
         void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30);
         void CancelDownloadFile(File file, bool onlyIfPending = false, bool onlyIfStreaming = false);
         bool IsDownloadFileCanceled(int fileId);
+        bool IsDownloadFileImplicit(int fileId);
+        void TrackStreamingFile(int fileId, bool streaming);
 
         void PrepareLogs(int fileId, int verbosityLevel);
 
