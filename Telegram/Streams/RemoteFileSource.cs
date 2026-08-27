@@ -37,6 +37,7 @@ namespace Telegram.Streams
         private long _count;
 
         private bool _closed;
+        private bool _tracked;
 
         private long _fileToken;
 
@@ -69,6 +70,8 @@ namespace Telegram.Streams
 
             Format = new StickerFormatWebm();
             UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
+
+            TrackStreaming(true);
         }
 
         public RemoteFileSource(IClientService clientService, File file/*, int priority = 32*/)
@@ -82,6 +85,8 @@ namespace Telegram.Streams
 
             Format = new StickerFormatWebm();
             UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
+
+            TrackStreaming(true);
         }
 
         public override void SeekCallback(long offset)
@@ -327,11 +332,30 @@ namespace Telegram.Streams
             }
         }
 
+        /// <summary>
+        /// Marks the file as one that is only being read, rather than downloaded in its
+        /// own right. The download buttons hide a download that exists for a reader alone,
+        /// which would otherwise flicker as the window this source asks for moves along.
+        /// </summary>
+        private void TrackStreaming(bool streaming)
+        {
+            if (_tracked == streaming)
+            {
+                return;
+            }
+
+            _tracked = streaming;
+            _clientService.TrackStreamingFile(_file.Id, streaming);
+        }
+
         public void Open()
         {
             lock (_stateLock)
             {
                 _closed = false;
+
+                // The player opens the media again to replay it, having closed it at the end.
+                TrackStreaming(true);
             }
 
             SeekCallback(0);
@@ -347,6 +371,8 @@ namespace Telegram.Streams
                 }
 
                 _closed = true;
+
+                TrackStreaming(false);
 
                 //Logger.Debug($"Disposing the stream");
                 UpdateManager.Unsubscribe(this, ref _fileToken);

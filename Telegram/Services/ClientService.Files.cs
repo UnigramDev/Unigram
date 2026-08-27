@@ -137,6 +137,7 @@ namespace Telegram.Services
         private readonly HashSet<int> _canceledDownloads = new();
         private readonly HashSet<string> _completedDownloads = new();
         private readonly HashSet<int> _explicitDownloads = new();
+        private readonly Dictionary<int, int> _streamingFiles = new();
         private readonly object _downloadsLock = new();
 
         /// <summary>
@@ -151,6 +152,7 @@ namespace Telegram.Services
                 _canceledDownloads.Clear();
                 _completedDownloads.Clear();
                 _explicitDownloads.Clear();
+                _streamingFiles.Clear();
             }
         }
 
@@ -405,6 +407,49 @@ namespace Telegram.Services
             lock (_downloadsLock)
             {
                 return _canceledDownloads.Contains(fileId);
+            }
+        }
+
+        /// <summary>
+        /// Whether the file is only downloading to feed a reader that is playing it.
+        ///
+        /// Such a reader asks for the window it is about to need and moves it forwards as
+        /// it plays, so TDLib reports the download as active again every time the window
+        /// moves, and inactive every time one is satisfied. Nothing asked for the file
+        /// itself, so the download buttons must not follow that: they would flicker
+        /// between download and cancel for as long as the media plays.
+        /// </summary>
+        public bool IsDownloadFileImplicit(int fileId)
+        {
+            lock (_downloadsLock)
+            {
+                return _streamingFiles.ContainsKey(fileId) && !_explicitDownloads.Contains(fileId);
+            }
+        }
+
+        /// <param name="streaming">
+        /// Whether a reader started or finished playing the file. Counted rather than set,
+        /// as the same file can be read by more than one at a time: a video playing in the
+        /// gallery over the one autoplaying in the bubble behind it.
+        /// </param>
+        public void TrackStreamingFile(int fileId, bool streaming)
+        {
+            lock (_downloadsLock)
+            {
+                _streamingFiles.TryGetValue(fileId, out int count);
+
+                if (streaming)
+                {
+                    _streamingFiles[fileId] = count + 1;
+                }
+                else if (count > 1)
+                {
+                    _streamingFiles[fileId] = count - 1;
+                }
+                else
+                {
+                    _streamingFiles.Remove(fileId);
+                }
             }
         }
 
