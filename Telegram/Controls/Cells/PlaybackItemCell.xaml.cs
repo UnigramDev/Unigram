@@ -220,7 +220,9 @@ namespace Telegram.Controls.Cells
             }
 
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(item.ClientService);
+
+            if (state == MessageContentState.Downloading)
             {
                 FileButton target;
                 if (AppSettings.IsStreamingEnabled)
@@ -239,7 +241,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (state == MessageContentState.Uploading)
             {
                 DownloadRoot.Visibility = Visibility.Collapsed;
 
@@ -248,7 +250,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 FileButton target;
                 if (AppSettings.IsStreamingEnabled)
@@ -316,7 +318,7 @@ namespace Telegram.Controls.Cells
                 Button.SetGlyph(file.Id, MessageContentState.Play);
                 Button.Progress = 1;
 
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted && !file.Local.IsDownloadingActive && !file.Remote.IsUploadingActive)
+                if (file.GetFileState(item.ClientService) == MessageContentState.Download)
                 {
                     Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(Math.Max(file.Size, file.ExpectedSize));
                 }
@@ -446,18 +448,20 @@ namespace Telegram.Controls.Cells
             }
 
             var file = audio.AudioValue;
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(_item.ClientService);
+
+            if (state == MessageContentState.Downloading)
             {
                 _item.ClientService.CancelDownloadFile(file);
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (state == MessageContentState.Uploading)
             {
                 if (_item is PlaybackItemMessage message)
                 {
                     _item.ClientService.Send(new DeleteMessages(message.ChatId, new[] { message.Id }, true));
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 if (_item is PlaybackItemMessage message && message.Message.CanBeAddedToDownloads)
                 {

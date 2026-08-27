@@ -224,7 +224,9 @@ namespace Telegram.Controls.Cells
             }
 
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(message);
+
+            if (state == MessageContentState.Downloading)
             {
                 FileButton target;
                 if (AppSettings.IsStreamingEnabled)
@@ -243,7 +245,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
+            else if (state == MessageContentState.Uploading)
             {
                 DownloadRoot.Visibility = Visibility.Collapsed;
 
@@ -252,7 +254,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 FileButton target;
                 if (AppSettings.IsStreamingEnabled)
@@ -320,7 +322,7 @@ namespace Telegram.Controls.Cells
                 Button.SetGlyph(file.Id, MessageContentState.Play);
                 Button.Progress = 1;
 
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted && !file.Local.IsDownloadingActive && !file.Remote.IsUploadingActive)
+                if (file.GetFileState(message) == MessageContentState.Download)
                 {
                     Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(Math.Max(file.Size, file.ExpectedSize));
                 }
@@ -446,15 +448,17 @@ namespace Telegram.Controls.Cells
             }
 
             var file = audio.AudioValue;
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(_message);
+
+            if (state == MessageContentState.Downloading)
             {
                 _message.ClientService.CancelDownloadFile(file);
             }
-            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+            else if (state == MessageContentState.Uploading)
             {
                 _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 if (_message.CanBeAddedToDownloads)
                 {

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Converters;
 using Telegram.Native;
@@ -1695,6 +1696,61 @@ namespace Telegram.Td.Api
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// What the button on a file has to show while the file is being transferred, or
+        /// <see cref="MessageContentState.None"/> when it isn't: the caller then shows
+        /// whatever its own content is, a play button, a document glyph, a photo.
+        /// </summary>
+        public static MessageContentState GetFileState(this File file, IClientService clientService)
+        {
+            return GetFileState(file, clientService, null, null);
+        }
+
+        /// <param name="content">
+        /// The content the file belongs to, passed by callers that want auto-download
+        /// applied to it: the file is then downloaded here if the settings allow it, and
+        /// reported as downloading right away rather than one update later.
+        /// </param>
+        public static MessageContentState GetFileState(this File file, MessageWithOwner message, object content = null)
+        {
+            return GetFileState(file, message.ClientService, message, content);
+        }
+
+        private static MessageContentState GetFileState(File file, IClientService clientService, MessageWithOwner message, object content)
+        {
+            // A download that exists only to feed a reader is not one of these buttons'
+            // business, and following it would make them flicker for as long as the media
+            // plays: see IClientService.IsDownloadFileImplicit.
+            if (file.Local.IsDownloadingActive && !clientService.IsDownloadFileImplicit(file.Id))
+            {
+                return MessageContentState.Downloading;
+            }
+            else if (file.Remote.IsUploadingActive
+                || message?.SendingState is MessageSendingStateFailed
+                || (message?.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
+            {
+                return MessageContentState.Uploading;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            {
+                // Asked of the file rather than of the state above: a file that is being
+                // read is downloading as far as TDLib is concerned, and asking for it
+                // again on every update it sends would be pointless.
+                if (content != null
+                    && !file.Local.IsDownloadingActive
+                    && message is MessageViewModel viewModel
+                    && viewModel.Delegate.CanBeDownloaded(content, file))
+                {
+                    clientService.DownloadFile(file.Id, 32);
+                    return MessageContentState.Downloading;
+                }
+
+                return MessageContentState.Download;
+            }
+
+            return MessageContentState.None;
         }
 
         public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageWithOwner message)
