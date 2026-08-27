@@ -188,24 +188,17 @@ namespace Telegram.Controls.Messages.Content
             {
                 Overlay.ProgressVisibility = Visibility.Collapsed;
 
-                var canBeDownloaded = file.Local.CanBeDownloaded
-                    && !file.Local.IsDownloadingCompleted
-                    && !file.Local.IsDownloadingActive;
-
                 var size = Math.Max(file.Size, file.ExpectedSize);
-                if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(video, file)))
-                {
-                    if (canBeDownloaded)
-                    {
-                        _message.ClientService.DownloadFile(file.Id, 32);
-                    }
+                var state = file.GetFileState(message, video);
 
+                if (state == MessageContentState.Downloading)
+                {
                     Button.SetGlyph(file.Id, MessageContentState.Downloading);
                     Button.Progress = (double)file.Local.DownloadedSize / size;
 
                     Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                 }
-                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
+                else if (state == MessageContentState.Uploading)
                 {
                     var generating = file.Local.DownloadedSize < size;
 
@@ -221,7 +214,7 @@ namespace Telegram.Controls.Messages.Content
                         Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (canBeDownloaded)
+                else if (state == MessageContentState.Download)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
@@ -278,7 +271,9 @@ namespace Telegram.Controls.Messages.Content
             else
             {
                 var size = Math.Max(file.Size, file.ExpectedSize);
-                if (file.Local.IsDownloadingActive)
+                var state = file.GetFileState(message);
+
+                if (state == MessageContentState.Downloading)
                 {
                     if (video.SupportsStreaming && !hasSpoiler && message.Delegate.CanBeDownloaded(video, file))
                     {
@@ -300,7 +295,7 @@ namespace Telegram.Controls.Messages.Content
                         Subtitle.Text = GetDuration(video) + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
+                else if (state == MessageContentState.Uploading)
                 {
                     var generating = file.Local.DownloadedSize < size;
 
@@ -319,7 +314,7 @@ namespace Telegram.Controls.Messages.Content
                         Subtitle.Text = GetDuration(video) + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+                else if (state == MessageContentState.Download)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 0;
@@ -620,11 +615,13 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var file = video.VideoValue;
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(_message);
+
+            if (state == MessageContentState.Downloading)
             {
                 _message.ClientService.CancelDownloadFile(file);
             }
-            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+            else if (state == MessageContentState.Uploading)
             {
                 if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
                 {
@@ -635,7 +632,7 @@ namespace Telegram.Controls.Messages.Content
                     _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 if (_message.CanBeAddedToDownloads)
                 {
@@ -681,11 +678,13 @@ namespace Telegram.Controls.Messages.Content
             if (isSecret || !video.SupportsStreaming)
             {
                 var file = video.VideoValue;
-                if (file.Local.IsDownloadingActive)
+                var state = file.GetFileState(_message);
+
+                if (state == MessageContentState.Downloading)
                 {
                     _message.ClientService.CancelDownloadFile(file);
                 }
-                else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+                else if (state == MessageContentState.Uploading)
                 {
                     if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
                     {
@@ -696,7 +695,7 @@ namespace Telegram.Controls.Messages.Content
                         _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+                else if (state == MessageContentState.Download)
                 {
                     if (_message.CanBeAddedToDownloads)
                     {

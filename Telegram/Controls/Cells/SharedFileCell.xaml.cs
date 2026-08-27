@@ -148,7 +148,9 @@ namespace Telegram.Controls.Cells
             }
 
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(message);
+
+            if (state == MessageContentState.Downloading)
             {
                 //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
@@ -156,7 +158,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (state == MessageContentState.Uploading)
             {
                 //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
@@ -164,7 +166,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
@@ -288,7 +290,9 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(_message);
+
+            if (state == MessageContentState.Downloading)
             {
                 if (_viewModel != null)
                 {
@@ -299,7 +303,7 @@ namespace Telegram.Controls.Cells
                     _message.ClientService.Send(new ToggleDownloadIsPaused(file.Id, true));
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 if (_viewModel != null)
                 {

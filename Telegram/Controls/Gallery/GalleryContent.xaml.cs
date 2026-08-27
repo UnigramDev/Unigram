@@ -243,19 +243,21 @@ namespace Telegram.Controls.Gallery
             }
 
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(item.ClientService);
+
+            if (state == MessageContentState.Downloading)
             {
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
                 Button.Opacity = 1;
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (state == MessageContentState.Uploading)
             {
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
                 Button.Opacity = 1;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
@@ -379,11 +381,13 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(item.ClientService);
+
+            if (state == MessageContentState.Downloading)
             {
                 item.ClientService.CancelDownloadFile(file, false);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+            else if (state == MessageContentState.Download)
             {
                 if (AppSettings.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
                 {

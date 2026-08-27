@@ -416,31 +416,24 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                var canBeDownloaded = file.Local.CanBeDownloaded
-                    && !file.Local.IsDownloadingCompleted
-                    && !file.Local.IsDownloadingActive;
-
                 var size = Math.Max(file.Size, file.ExpectedSize);
-                if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(voiceNote, file)))
-                {
-                    if (canBeDownloaded)
-                    {
-                        _message.ClientService.DownloadFile(file.Id, 32);
-                    }
+                var state = file.GetFileState(message, voiceNote);
 
+                if (state == MessageContentState.Downloading)
+                {
                     Button.SetGlyph(file.Id, MessageContentState.Downloading);
                     Button.Progress = (double)file.Local.DownloadedSize / size;
 
                     UpdateDuration();
                 }
-                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
+                else if (state == MessageContentState.Uploading)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Uploading);
                     Button.Progress = (double)file.Remote.UploadedSize / size;
 
                     UpdateDuration();
                 }
-                else if (canBeDownloaded)
+                else if (state == MessageContentState.Download)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
@@ -518,11 +511,13 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var file = voiceNote.Voice;
-            if (file.Local.IsDownloadingActive)
+            var state = file.GetFileState(_message);
+
+            if (state == MessageContentState.Downloading)
             {
                 _message.ClientService.CancelDownloadFile(file);
             }
-            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+            else if (state == MessageContentState.Uploading)
             {
                 if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
                 {
