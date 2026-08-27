@@ -518,7 +518,7 @@ namespace Telegram.ViewModels
                 try
                 {
                     var item = await ApplicationData.Current.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
-                    var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
+                    var generated = await GenerationService.PrepareAsync(item, ConversionType.Copy, forceCopy: true);
 
                     return new BackgroundInfo(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark);
                 }

@@ -37,7 +37,7 @@ namespace Telegram.Services.Factories
             }
 
             var serialized = generation != null ? JsonSerializer.Serialize(generation, GenerationJsonContext.Default.ImageGeneration) : null;
-            var generated = await file.ToGeneratedAsync(conversionType, serialized);
+            var generated = await GenerationService.PrepareAsync(file, conversionType, serialized);
             var thumbnail = default(InputThumbnail);
 
             if (starCount > 0)
@@ -76,8 +76,8 @@ namespace Telegram.Services.Factories
             }
 
             var serialized = JsonSerializer.Serialize(generation, GenerationJsonContext.Default.VideoGeneration);
-            var generated = await video.File.ToGeneratedAsync(ConversionType.Transcode, serialized);
-            var thumbnail = await video.ToVideoThumbnailAsync(generation, ConversionType.TranscodeThumbnail, serialized);
+            var generated = await GenerationService.PrepareAsync(video.File, ConversionType.Transcode, serialized);
+            var thumbnail = await GenerationService.PrepareVideoThumbnailAsync(video, generation, serialized);
 
             if (starCount > 0)
             {
@@ -98,8 +98,8 @@ namespace Telegram.Services.Factories
             var videoHeight = video.Height;
 
             var serialized = JsonSerializer.Serialize(generation, GenerationJsonContext.Default.VideoGeneration);
-            var generated = await video.File.ToGeneratedAsync(ConversionType.Transcode, serialized);
-            var thumbnail = await video.ToVideoThumbnailAsync(generation, ConversionType.TranscodeThumbnail, serialized);
+            var generated = await GenerationService.PrepareAsync(video.File, ConversionType.Transcode, serialized);
+            var thumbnail = await GenerationService.PrepareVideoThumbnailAsync(video, generation, serialized);
 
             // TODO: 172 selfDestructType
             return new InputMessageVideoNote(new InputVideoNote(generated, thumbnail, duration, (int)generation.Width), selfDestructType);
@@ -108,7 +108,7 @@ namespace Telegram.Services.Factories
         public static async Task<Object> CreateDocumentAsync(StorageMedia media, FormattedText caption, bool forceDocument)
         {
             var file = media.File;
-            var generated = await file.ToGeneratedAsync(media.IsScreenshot ? ConversionType.Screenshot : ConversionType.Copy);
+            var generated = await GenerationService.PrepareAsync(file, media.IsScreenshot ? ConversionType.Screenshot : ConversionType.Copy);
 
             if (!forceDocument && media is StorageAudio audio)
             {
@@ -117,12 +117,12 @@ namespace Telegram.Services.Factories
                 var title = audio.Title;
                 var performer = audio.Performer;
 
-                var albumCover = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.AlbumCover), 0, 0);
+                var albumCover = new InputThumbnail(await GenerationService.PrepareAsync(file, ConversionType.AlbumCover), 0, 0);
 
                 return new InputMessageAudio(new InputAudio(generated, albumCover, duration, title, performer), caption);
             }
 
-            var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
+            var thumbnail = new InputThumbnail(await GenerationService.PrepareAsync(file, ConversionType.DocumentThumbnail), 0, 0);
 
             if (!forceDocument && file.HasExtension(".webp"))
             {

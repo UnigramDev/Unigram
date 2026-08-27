@@ -734,7 +734,7 @@ namespace Telegram.ViewModels
 
             // TODO: 172 selfDestructType
             var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(new InputVoiceNote(await file.ToGeneratedAsync(conversion), (int)Math.Round(duration.TotalSeconds), waveform), caption, selfDestructType);
+            var input = new InputMessageVoiceNote(new InputVoiceNote(await GenerationService.PrepareAsync(file, conversion), (int)Math.Round(duration.TotalSeconds), waveform), caption, selfDestructType);
 
             await SendMessageAsync(reply, input, options);
         }

@@ -86,7 +86,7 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    ClientService.Send(new AddSavedNotificationSound(await file.ToGeneratedAsync()));
+                    ClientService.Send(new AddSavedNotificationSound(await GenerationService.PrepareAsync(file)));
                 }
             }
             catch { }

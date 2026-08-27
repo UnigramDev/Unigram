@@ -7,19 +7,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Path = System.IO.Path;
-using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
 
 namespace Telegram.Services
 {
@@ -80,10 +77,12 @@ namespace Telegram.Services
     public partial class StorageService : IStorageService
     {
         private readonly IClientService _clientService;
+        private readonly IDownloadFolderService _downloadFolder;
 
-        public StorageService(IClientService clientService)
+        public StorageService(IClientService clientService, IDownloadFolderService downloadFolder)
         {
             _clientService = clientService;
+            _downloadFolder = downloadFolder;
         }
 
         public async Task SaveFileAsAsync(XamlRoot xamlRoot, File file)
@@ -246,7 +245,7 @@ namespace Telegram.Services
             try
             {
                 var folder = await permanent.GetParentAsync();
-                folder ??= await GetDownloadFolderAsync2();
+                folder ??= await _downloadFolder.GetDefaultFolderAsync();
 
                 if (folder != null && Extensions.IsRelativePath(folder.Path, permanent.Path, out _))
                 {
@@ -259,33 +258,13 @@ namespace Telegram.Services
             catch { }
         }
 
-        private static IAsyncOperation<StorageFolder> GetDownloadFolderAsync2()
-        {
-            try
-            {
-                if (ApiInfo.HasKnownFolders)
-                {
-                    return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
-                }
-
-                return null;
-            }
-            catch
-            {
-                return AsyncInfo.Run<StorageFolder>(task => null);
-            }
-        }
-
         public bool CheckAccessToFolder(File file)
         {
             if (file != null && file.Local.IsDownloadingCompleted)
             {
-                if (ApiInfo.HasKnownFolders)
-                {
-                    return true;
-                }
-
-                return Future.Contains(Future.DownloadFolder);
+                // Either the platform can open the default download folder on its own, or the
+                // user picked one and we still hold a grant for it.
+                return ApiInfo.HasKnownFolders || _downloadFolder.HasCustomFolder;
             }
 
             return false;
@@ -293,305 +272,12 @@ namespace Telegram.Services
 
         public Task<DownloadFolder> GetDownloadFolderAsync()
         {
-            return Future.GetFolderAsync();
+            return _downloadFolder.GetFolderAsync();
         }
 
-        public async Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder)
+        public Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder)
         {
-            if (folder == null)
-            {
-                if (Future.Contains(Future.DownloadFolder))
-                {
-                    Future.Remove(Future.DownloadFolder);
-                }
-
-                return await Future.GetFolderAsync();
-            }
-
-            if (ApiInfo.HasKnownFolders)
-            {
-                var downloads = await Future.GetDefaultFolderAsync();
-                if (downloads == null || Extensions.IsRelativePath(downloads.Path, folder.Path, out _))
-                {
-                    Future.Remove(Future.DownloadFolder);
-                }
-                else if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, folder.Path, out _))
-                {
-                    Future.Remove(Future.DownloadFolder);
-                }
-                else
-                {
-                    Future.AddOrReplace(Future.DownloadFolder, folder);
-                }
-            }
-            else
-            {
-                Future.AddOrReplace(Future.DownloadFolder, folder);
-            }
-
-            return await Future.GetFolderAsync();
-        }
-
-
-
-        public static class Future
-        {
-            public const string DownloadFolder = "FilesDirectory";
-
-            public static bool Contains(string token, bool temp = false)
-            {
-                if (string.IsNullOrEmpty(token))
-                {
-                    return false;
-                }
-
-                try
-                {
-                    return SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            public static void Remove(string token, bool temp = false)
-            {
-                try
-                {
-                    token = temp ? token + "temp" : token;
-
-                    if (SAP.FutureAccessList.ContainsItem(token))
-                    {
-                        SAP.FutureAccessList.Remove(token);
-                    }
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-            }
-
-            public static void AddOrReplace(string token, IStorageItem item, bool temp = false)
-            {
-                AddOrReplace(temp ? token + "temp" : token, item);
-            }
-
-            public static bool CheckAccess(IStorageItem item)
-            {
-                if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, item.Path, out string _))
-                {
-                    return false;
-                }
-
-                try
-                {
-                    return SAP.FutureAccessList.CheckAccess(item);
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            public static async Task<bool> ContainsAsync(string token, bool temp = false)
-            {
-                var destination = await GetFileAsync(token, temp);
-                return destination != null;
-            }
-
-            public static async Task<StorageFile> GetFileAsync(string token, bool temp = false)
-            {
-                try
-                {
-                    if (Contains(token, temp))
-                    {
-                        return await SAP.FutureAccessList.GetFileAsync(temp ? token + "temp" : token);
-                    }
-
-                    return null;
-                }
-                catch
-                {
-                    Remove(temp ? token + "temp" : token);
-                    return null;
-                }
-            }
-
-            public static async Task<StorageFile> CreateFileAsync(string tempFileName)
-            {
-                if (ApiInfo.HasCacheOnly)
-                {
-                    return null;
-                }
-
-                await MigrateDownloadFolderAsync();
-
-                if (Contains(DownloadFolder))
-                {
-                    try
-                    {
-                        StorageFolder folder = await SAP.FutureAccessList.GetFolderAsync(DownloadFolder);
-                        return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
-                    }
-                    catch
-                    {
-                        Remove(DownloadFolder);
-                    }
-                }
-
-                return await DownloadsFolder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
-            }
-
-            public static async Task<DownloadFolder> GetFolderAsync()
-            {
-                if (ApiInfo.HasCacheOnly)
-                {
-                    return null;
-                }
-
-                await MigrateDownloadFolderAsync();
-
-                if (Contains(DownloadFolder))
-                {
-                    try
-                    {
-                        return new DownloadFolder(true, await SAP.FutureAccessList.GetFolderAsync(DownloadFolder));
-                    }
-                    catch
-                    {
-                        Remove(DownloadFolder);
-                    }
-                }
-
-                if (ApiInfo.HasKnownFolders)
-                {
-                    var folder = await GetDefaultFolderAsync();
-                    if (folder != null)
-                    {
-                        return new DownloadFolder(false, folder);
-                    }
-                }
-
-                return new DownloadFolder(false, Strings.DownloadFolderDefault);
-            }
-
-            public static async Task<StorageFolder> GetDefaultFolderAsync()
-            {
-                if (ApiInfo.HasKnownFolders)
-                {
-                    try
-                    {
-                        return await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
-                    }
-                    catch
-                    {
-                        // All the remote procedure calls must be wrapped in a try-catch block
-                    }
-                }
-
-                return null;
-            }
-
-            public static async Task MigrateDownloadFolderAsync()
-            {
-                try
-                {
-                    if (SAP.MostRecentlyUsedList.ContainsItem(DownloadFolder))
-                    {
-                        try
-                        {
-                            StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
-                            AddOrReplace(DownloadFolder, folder);
-                        }
-                        catch
-                        {
-                            // The app still remembers about the custom folder
-                            // but we have no longer access to it (deleted, or whatever) 
-                        }
-
-                        SAP.MostRecentlyUsedList.Remove(DownloadFolder);
-                    }
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-            }
-
-            public static void AddOrReplace(string token, IStorageItem item)
-            {
-                RemoveOverflow();
-
-                try
-                {
-                    SAP.FutureAccessList.AddOrReplace(token, item);
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-            }
-
-
-            public static string Add(IStorageItem item)
-            {
-                RemoveOverflow();
-
-                try
-                {
-                    return SAP.FutureAccessList.Add(item);
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                    return null;
-                }
-            }
-
-            private static void RemoveOverflow()
-            {
-                try
-                {
-                    // Access to entries should probably be locked around the app...
-                    if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
-                    {
-                        for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)
-                        {
-                            var entry = SAP.FutureAccessList.Entries[i];
-                            if (entry.Token != "FilesDirectory")
-                            {
-                                SAP.FutureAccessList.Remove(entry.Token);
-                                break;
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-
-                    // TODO: I'm not sure how often it happens, but in some conditions trying to access
-                    // the Entities list, throws a FileNotFoundException.
-                    // When this happens, and the MaximumItemsAllowed count is reached, the app
-                    // won't be able to upload nor download any new file.
-                    // The only solution that I can think of, is to just clear the list when this happens
-                    // Hoping that this situation is isolated enough not to be an actual problem.
-
-                    // Can throw:
-                    // - ArgumentException
-                    // - FileNotFoundException
-
-                    try
-                    {
-                        SAP.FutureAccessList.Clear();
-                    }
-                    catch
-                    {
-                        // All the remote procedure calls must be wrapped in a try-catch block
-                    }
-                }
-            }
+            return _downloadFolder.SetFolderAsync(folder);
         }
     }
 }

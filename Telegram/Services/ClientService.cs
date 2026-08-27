@@ -437,7 +437,7 @@ namespace Telegram.Services
             _runThread.Start();
         }
 
-        public ClientService(ISession session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
+        public ClientService(ISession session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator, IDownloadFolderService downloadFolder)
         {
             _session = session;
             _deviceInfoService = deviceInfoService;
@@ -445,6 +445,7 @@ namespace Telegram.Services
             _locale = locale;
             _options = new OptionsService(this);
             _aggregator = aggregator;
+            _downloadFolder = downloadFolder;
 
             Initialize(online);
         }

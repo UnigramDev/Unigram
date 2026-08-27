@@ -1138,6 +1138,7 @@
     <Compile Include="Services\ClientService.ChatList.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
     <Compile Include="Services\ProfilePhotoService.cs" />
+    <Compile Include="Services\DownloadFolderService.cs" />
     <Compile Include="Services\StorageService.cs" />
     <Compile Include="Services\Stripe\SmartGlocalClient.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
@@ -1770,6 +1771,7 @@
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\Factories\MessageFactory.cs" />
     <Compile Include="Services\GenerationService.cs" />
+    <Compile Include="Services\GenerationSources.cs" />
     <Compile Include="Services\CloudUpdateService.cs" />
     <Compile Include="Services\LifetimeService.cs" />
     <Compile Include="Services\LocaleService.cs" />

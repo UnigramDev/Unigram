@@ -2451,13 +2451,13 @@ namespace Telegram.ViewModels
                 conversion.CropRectangle = rectangle;
 
                 var serialized = JsonSerializer.Serialize(conversion, GenerationJsonContext.Default.VideoGeneration);
-                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, serialized);
+                var generated = await GenerationService.PrepareAsync(media.File, ConversionType.Transcode, serialized);
                 var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0), false));
             }
             else if (file is StoragePhoto photo)
             {
                 var serialized = JsonSerializer.Serialize(photo.EditState, GenerationJsonContext.Default.ImageGeneration);
-                var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, serialized);
+                var generated = await GenerationService.PrepareAsync(photo.File, ConversionType.Compress, serialized);
                 var response = await ClientService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated), false));
             }
         }

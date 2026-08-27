@@ -46,6 +46,7 @@ namespace Telegram.Services
         private readonly IPlaybackService _playback;
         private readonly IShortcutsService _shortcuts;
         private readonly IProxyService _proxy;
+        private readonly IDownloadFolderService _downloads;
         private readonly VoipCoordinator _voip;
 
         public IPasscodeService Passcode => _passcode;
@@ -53,6 +54,7 @@ namespace Telegram.Services
         public IPlaybackService Playback => _playback;
         public IShortcutsService Shortcuts => _shortcuts;
         public IProxyService Proxy => _proxy;
+        public IDownloadFolderService Downloads => _downloads;
         public VoipCoordinator Voip => _voip;
 
         public LifetimeService()
@@ -61,6 +63,7 @@ namespace Telegram.Services
             _playback = new PlaybackService();
             _shortcuts = new ShortcutsService();
             _proxy = new ProxyService(this);
+            _downloads = new DownloadFolderService();
             _voip = new VoipCoordinator();
             _locale = LocaleService.Current;
 
@@ -92,7 +95,7 @@ namespace Telegram.Services
 
         private ISession Build(int id, bool active)
         {
-            var session = new SessionImpl(this, _locale, _passcode, _shortcuts, _proxy, id, active);
+            var session = new SessionImpl(this, _locale, _passcode, _shortcuts, _proxy, _downloads, id, active);
             _sessions[id] = session;
             return session;
         }

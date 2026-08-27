@@ -31,6 +31,7 @@ namespace Telegram.Services
             typeof(Telegram.Services.IPasscodeService),
             typeof(Telegram.Services.IShortcutsService),
             typeof(Telegram.Services.IProxyService),
+            typeof(Telegram.Services.IDownloadFolderService),
         },
         Singletons = new Type[]
         {
