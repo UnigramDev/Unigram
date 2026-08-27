@@ -67,8 +67,10 @@ namespace Telegram.Views.Settings.Popups
 
         private void ConvertLimitBack(double progress)
         {
-            // The slider writes back on any value change, teardown included, and by then the
-            // DataContext can be gone - there is nothing to write to.
+            // The generated bindings null-check ViewModel for every other two-way binding here,
+            // because those write through a path they can see. A BindBack function is opaque to
+            // them, so this one is ours to make. It fires with no view model whenever the page
+            // failed to assign the DataContext - see the E_FAIL out of its Bindings.Loading.
             if (ViewModel == null)
             {
                 return;
