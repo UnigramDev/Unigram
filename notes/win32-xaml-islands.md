@@ -2120,8 +2120,24 @@ changes nothing about activation, which is the single biggest de-risking in
     That fits this app precisely: the flyout and menu styles come from WinUI 2's
     `XamlControlsResources`, so every acrylic in them is the broken one. It also suggests a
     workaround rather than a redesign - **override the WinUI 2 acrylic resource keys with system
-    `Windows.UI.Xaml.Media.AcrylicBrush` instances, in the Win32 flavour only.** Popups resolve
-    against `Application.Resources` (gate 1.11), which is where such a dictionary would go.
+    `Windows.UI.Xaml.Media.AcrylicBrush` instances, in the Win32 flavour only.**
+
+    **And then Fela measured the catch, 2026-08-27.** The system brush works, but with
+    `BackgroundSource="Backdrop"` it drops to its `FallbackColor` **as soon as two islands share
+    the same brush instance**. Not two islands - two islands *sharing one brush*. So the override
+    cannot be a single app-level dictionary, which is where the paragraph above was heading:
+    `Application.Resources` is exactly the scope that guarantees sharing.
+
+    It has to be **one instance per window**, and the app already has both halves of that:
+    `WindowContext.SetContent` merges a per-window dictionary into the presenter's resources, and
+    `Extensions.cs:1139` forwards the window's brushes to popups and flyouts - which is what gate
+    1.11 says is needed, since a popup resolves against `Application.Resources` rather than the
+    tree it was opened from.
+
+    Worth knowing before it is written: the two brushes this bites today are declared in
+    **App.xaml** - `PageSubHeaderBackgroundBrush2` and `AcrylicToastFillColorBaseBrush`, both
+    `BackgroundSource="Backdrop"` - so on this host they are already shared across every window by
+    construction, and already in fallback the moment a second window opens.
 
     Not the DWM-private route of selastingeorge/Win32-Acrylic-Effect, which Fela raised: that is
     window *backdrop* acrylic with no XAML involvement, so it cannot reach a flyout inside the
