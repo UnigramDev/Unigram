@@ -594,6 +594,10 @@ namespace winrt::Telegram::Native::implementation
         // keeping on their own, and used to be dropped along with them.
         auto error = winrt::Telegram::Native::FatalError(L"", L"", hstring(detail), frames);
 
+        // Also a property, not only text in the trace: the caller has to be able to tell a record
+        // stowed on this thread from one that came back over RPC, which reports zero.
+        error.ThreadId(stowed->ThreadId);
+
         if (stowed->NestedExceptionType == STOWED_EXCEPTION_NESTED_TYPE_STOWED)
         {
             error.InnerException(GetStowedException2((STOWED_EXCEPTION_INFORMATION_V2*)stowed->NestedException));
@@ -663,7 +667,25 @@ namespace winrt::Telegram::Native::implementation
         }
 
         auto error = winrt::make_self<FatalError>(type, message, hstring(trace), frames);
+
+        // A backtrace is always this thread's, by construction. Filling it in anyway keeps the
+        // property meaningful whichever of the two sources a record came from.
+        error->ThreadId(::GetCurrentThreadId());
+
         return error.as<winrt::Telegram::Native::FatalError>();
+    }
+
+    winrt::Telegram::Native::FatalError NativeUtils::CreateError(hstring type, hstring message, hstring stackTrace)
+    {
+        auto error = winrt::make_self<FatalError>(type, message, stackTrace, winrt::single_threaded_vector<FatalErrorFrame>());
+        error->ThreadId(::GetCurrentThreadId());
+
+        return error.as<winrt::Telegram::Native::FatalError>();
+    }
+
+    uint32_t NativeUtils::GetCurrentThreadId()
+    {
+        return ::GetCurrentThreadId();
     }
 
     bool NativeUtils::FileExists(hstring path)
