@@ -67,6 +67,13 @@ namespace Telegram.Views.Settings.Popups
 
         private void ConvertLimitBack(double progress)
         {
+            // The slider writes back on any value change, teardown included, and by then the
+            // DataContext can be gone - there is nothing to write to.
+            if (ViewModel == null)
+            {
+                return;
+            }
+
             int size = 500 * 1024;
             if (progress <= 0.25f)
             {
