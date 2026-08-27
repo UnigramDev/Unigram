@@ -2539,6 +2539,65 @@ changes nothing about activation, which is the single biggest de-risking in
   Open question worth settling first: how much does a clean close actually save at startup? If a
   binlog replay of a normal session costs single-digit milliseconds, the UWP half is not worth its
   risk and only Win32 should do it.
+- [ ] **2.5c The tray icon, on both hosts, without a second copy of it.** Design agreed with Fela
+  2026-08-27; not written yet.
+
+  **What the tray actually is today.** `Telegram.Stub` exists because a packaged UWP app cannot own
+  a tray icon in its own process: it is launched through `windows.fullTrustProcess` and talks over
+  `AppServiceConnection`. Measured, the tray half of that channel is four verbs out and two in:
+
+  | Direction | Message | Where |
+  |---|---|---|
+  | app -> tray | launch | `App.xaml.cs:268`, gated on `AppSettings.IsTrayVisible` |
+  | app -> tray | `UnreadCount` + `UnreadUnmutedCount` | `NotificationsService.cs:370`, from two update handlers |
+  | app -> tray | `OpenText`, `ExitText` | the Stub has no resources, so the app ships it the strings |
+  | app -> tray | `Exit` | `CloudUpdateService.cs:111`, before an update installs |
+  | tray -> app | open | Stub finds the window by `ProcessId` and activates it |
+  | tray -> app | `CloseRequested` | the Exit menu item |
+
+  Everything else on that connection - passkeys, the loopback exemption - is not the tray and is
+  item 2.5's business.
+
+  **The shape.** The repo's fork idiom, not an interface: `Services/TrayService.cs` shared, with
+  `TrayService.Uwp.cs` and `TrayService.Win32.cs` beside it, only one ever in a build.
+
+  - **Shared** owns everything that is a decision: whether there is a tray at all
+    (`AppSettings.IsTrayVisible`), the menu labels from `Strings`, which of the three icons an
+    unread count maps to, and what Open and Exit *mean* - activate `WindowContext.Active ??
+    WindowContext.Main`, and close the app. Call sites become `TrayService.Start()`,
+    `TrayService.SetUnreadCount(...)`, `TrayService.Stop()`; three files change.
+  - **`.Uwp.cs`** forwards those to the existing bridge. Behaviour is unchanged by construction,
+    because it is the same three calls it makes today.
+  - **`.Win32.cs`** owns `Shell_NotifyIcon` in process. It is not new code: `Telegram.Stub/NotifyIcon.cs`
+    is already exactly this, 456 lines of it, and moves across minus the IPC.
+
+  What that leaves genuinely shared is the part that would otherwise drift - the labels, the icon
+  choice, and the two commands. What stays forked is only the plumbing that has to differ.
+
+  **The icons are the one asset question.** The Stub loads `Default.ico`, `Muted.ico`,
+  `Unmuted.ico` from its own native resources by ordinal, through `LoadImage` on its module. A
+  .NET exe has no such resource table without a `.res`, so the Win32 half should load the same
+  three files from `AppContext.BaseDirectory` with `LR_LOADFROMFILE`. Same files in the repo, two
+  ways of embedding them - asset sharing rather than a second copy.
+
+  **The real design change is lifetime, and it is not code motion.** Today the tray survives the
+  app's windows because it is a different process. On this host it is not:
+  `IslandWindow`'s `WM_DESTROY` posts a quit when `Windows.Count` reaches zero, and `Program.Main`
+  then calls `TerminateProcess` (2.1i). With a tray icon that has to become conditional - a window
+  count of zero is not the end of the app when the tray is showing - and closing the last window
+  has to leave a live message loop with no windows in it.
+
+  Two consequences to settle before writing it:
+
+  - **Reopening from the tray means creating a window when `WindowContext.Main` is null.**
+    `BootStrapper.Win32.ResolveWindowContext` and `ViewService.Win32.OnUIThread` both read `Main`,
+    and both need an answer for "the app is running and has no windows". The XAML side is fine -
+    the thread and `WindowsXamlManager` outlive the windows - but `Main` has to become
+    re-creatable rather than first-one-wins.
+  - **What quits the app then?** Only the tray's Exit, `CloudUpdateService`, and the system. That
+    makes `TrayService.Stop()` the single exit path, and it should be the one that posts the quit
+    rather than `WM_DESTROY` guessing.
+
 - [ ] **2.6** Re-point the native dependency builds off the `WINAPI_FAMILY_APP` subset.
 
 ## Phase 3 — optionality, not a commitment
