@@ -590,7 +590,11 @@ namespace Telegram.Services.Calls
             var available = await CanChooseAliasAsyncInternal(_chat.Id);
             if (available != null)
             {
-                var popup = new VideoChatAliasesPopup(ClientService, _chat, false, _availableAliases.Senders.ToArray());
+                // The list goes on to be an ItemsSource, and a managed array does not survive
+                // that under CsWinRT: the wrapper it builds exposes no collection interface
+                // XAML recognises, so the setter fails with E_INVALIDARG. Pass the projected
+                // vector along, as the other two call sites do.
+                var popup = new VideoChatAliasesPopup(ClientService, _chat, false, available.Senders);
                 popup.RequestedTheme = ElementTheme.Dark;
 
                 var confirm = await popup.ShowQueuedAsync(xamlRoot);
