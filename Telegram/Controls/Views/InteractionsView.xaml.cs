@@ -213,19 +213,26 @@ namespace Telegram.Controls.Views
                     _nextOffset = null;
                 }
             }
-            else if (_viewers != null)
+            else
             {
+                // Nothing left to page. HasMoreItems has to say so even when there are no
+                // viewers to append: the list view keeps asking as long as it is true, and
+                // a request that adds nothing and completes without awaiting brings it
+                // straight back on the same stack, forever.
                 HasMoreItems = false;
 
-                foreach (var item in _viewers.Viewers)
+                if (_viewers != null)
                 {
-                    if (_users.Contains(item.UserId))
+                    foreach (var item in _viewers.Viewers)
                     {
-                        continue;
-                    }
+                        if (_users.Contains(item.UserId))
+                        {
+                            continue;
+                        }
 
-                    totalCount++;
-                    _items.Add(item);
+                        totalCount++;
+                        _items.Add(item);
+                    }
                 }
             }
 
