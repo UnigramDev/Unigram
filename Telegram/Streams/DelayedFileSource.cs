@@ -178,12 +178,18 @@ namespace Telegram.Streams
 
         public override string FilePath => _file?.Local.Path;
 
-        public override long Id => _file.Id;
+        public override long Id => _file?.Id ?? 0;
 
         public bool IsDownloadingCompleted => _file?.Local.IsDownloadingCompleted ?? false;
 
         public virtual void DownloadFile(object sender, DelayedFileDownload download, UpdateHandler<File> handler)
         {
+            // Subclasses resolve a null file on their own; the base class has nothing to download.
+            if (_file == null)
+            {
+                return;
+            }
+
             if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
             {
                 handler?.Invoke(sender, _file);
