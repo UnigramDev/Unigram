@@ -765,6 +765,8 @@ namespace Telegram.Common
                 case "L'applicazione ha chiamato un'interfaccia su cui era stato eseguito il marshalling per un thread differente.":
                 case "Eine Schnittstelle, die für einen anderen Thread marshalled war, wurde von der Anwendung aufgerufen.":
                 case "Aplikacja wywołała interfejs, który został skierowany na inny wątek.":
+                case "Uygulama, farklı bir iş parçacığı için sıraya konan bir arabirimi çağırdı.":
+                case "Programmet kaldte en grænseflade, der var arrangeret for en anden tråd.":
                 case "Приложение обратилось к интерфейсу, относящемуся к другому потоку.":
                 case "应用程序调用一个已为另一线程整理的接口。":
                     return "The application called an interface that was marshalled for a different thread.";
@@ -960,6 +962,9 @@ namespace Telegram.Common
                 case "La operación intentó tener acceso a datos fuera del rango válido":
                     return "The operation attempted to access data outside the valid range";
 
+                case "Cette interface n’est pas prise en charge":
+                case "Interfaz no compatible":
+                case "Não há suporte para esta interface":
                 case "Böyle bir arabirim desteklenmiyor":
                 case "Интерфейс не поддерживается":
                     return "No such interface supported";
