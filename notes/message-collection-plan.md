@@ -44,7 +44,7 @@ both. That is `bool doPrev = !_suppressPrev; bool doNext = !_suppressNext;` and 
 roughly 185 lines collapse to ~70, with one place to get the insertion order right instead of
 three. Every other finding below is easier to land once this is done.
 
-### B. Garbage on the load path
+### B. DONE - Garbage on the load path
 
 1. `ObservableCollection.InsertItem` builds a `NotifyCollectionChangedEventArgs` (plus its
    single-item list wrapper) *before* it calls the virtual `OnCollectionChanged` where
@@ -61,6 +61,11 @@ three. Every other finding below is easier to land once this is done.
 
 Neither is a bottleneck; both are free to remove and this is a UWP AOT app where GC pressure on
 the chat-open path is the thing we do care about.
+
+Fixed by an `InsertCore`/`RemoveCore` pair that writes straight into `Items` when
+`EventsAreSuppressed`, with the slice ctor now wrapping its fill in `SuppressEvents()` so it
+takes that path too. `ReplaceSlice` emits `Count` and `Item[]` once at the end, which the
+per-item `Add` used to emit N times.
 
 ### C. DONE — The batch seam keys off the loop index, not off "have we inserted anything yet"
 
@@ -168,6 +173,17 @@ Neither reaches the live `Items` today - `ProcessMessages` is only ever given a 
 `List` - so the stale map is thrown away before it matters. Latent, but it is the third thing the
 tightened signature points at.
 
+### N. DONE - `OnAttachChanged` gave up after the first neighbour
+
+`ChatView.OnAttachChanged` looped over the reported items, and the `if
+(ViewModel.IsSavedMessagesTab)` guard two thirds of the way down was a `return`, not a
+`continue`. So on the Saved Messages tab the second of the two neighbours never reached
+`bubble.UpdateAttach`, and its grouping stayed stale until something else redrew it.
+
+Splitting the body into a per-message overload - which the two-argument `AttachChanged` wanted
+anyway - makes the `return` mean what the `continue` meant. The diff looks large because the
+body dedents by one level; `git diff -w` shows the eight real lines.
+
 ## What landed in phases 1-2
 
 Uncommitted, in the working tree on top of the staged base-class change.
@@ -222,9 +238,9 @@ once A is in: seam flag, drop `index`, delete `RawRemoveAt`, scope the flags, co
 Do this before phase 4: it is the only correctness item left, and `SetItem` is the last
 mutation path that does not maintain the id map.
 
-**4. Stop allocating per message.** Finding B. `AttachChanged` becomes
-`Action<MessageViewModel, MessageViewModel>` (touches `ChatView.OnAttachChanged`), and the two
-no-subscriber paths write into `Items` directly.
+**4. DONE. Stop allocating per message.** Findings B and N. `AttachChanged` is
+`Action<MessageViewModel, MessageViewModel>`, and the suppressed paths write into `Items`
+directly.
 
 **5. Factor the synthetic-message construction.** Finding G, plus hoisting the verification-
 codes chat id (H). Touches `DialogViewModel` as well.

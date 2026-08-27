@@ -1080,70 +1080,73 @@ namespace Telegram.Views
             }
         }
 
-        private void OnAttachChanged(IEnumerable<MessageViewModel> items)
+        private void OnAttachChanged(MessageViewModel previous, MessageViewModel next)
         {
-            foreach (var message in items)
+            OnAttachChanged(previous);
+            OnAttachChanged(next);
+        }
+
+        private void OnAttachChanged(MessageViewModel message)
+        {
+            if (message == null || !_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem container))
             {
-                if (message == null || !_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem container))
-                {
-                    continue;
-                }
-
-                var content = container.ContentTemplateRoot as FrameworkElement;
-                if (content == null)
-                {
-                    continue;
-                }
-
-                if (content is MessageSelector { Content: MessageBubble bubble })
-                {
-                    bubble.UpdateAttach(message);
-                    bubble.UpdateMessageHeader(message);
-                }
-
-                if (_stickySummaryAboveTracked == container)
-                {
-                    _stickySummaryAboveTracked = null;
-                }
-
-                if (_stickyPhotoAboveTracked == container)
-                {
-                    _stickyPhotoAboveTracked = null;
-                }
-
-                if (_stickyPhotoBelowTracked == container)
-                {
-                    _stickyPhotoBelowTracked = null;
-                }
-
-                if (ViewModel.IsSavedMessagesTab)
-                {
-                    return;
-                }
-
-                void UpdateNewestOldest(bool main, bool? needed, bool? loaded, ref ChatHistoryViewItem item, ref ChatHistoryViewItem headerFooter, Index index)
-                {
-                    if (container == headerFooter && !main)
-                    {
-                        headerFooter.UpdatePadding(index.IsFromEnd ? -1 : 0, index.IsFromEnd ? 0 : -1);
-                        headerFooter = null;
-
-                        item = null;
-                    }
-                    else if (main && container != headerFooter && needed is true && loaded is true && ViewModel.Items[index] == message)
-                    {
-                        headerFooter?.UpdatePadding(index.IsFromEnd ? -1 : 0, index.IsFromEnd ? 0 : -1);
-
-                        headerFooter = container;
-                        headerFooter.UpdatePadding(index.IsFromEnd ? -1 : _messagesScrollBarPadding, index.IsFromEnd ? _messagesHeaderRootPadding : -1);
-
-                        item = container;
-                    }
-                }
-
-                UpdateNewestOldest(message.IsFirst, _oldestItemAsHeaderNeeded, ViewModel.IsOldestSliceLoaded, ref _oldestItem, ref _oldestItemAsHeader, 0);
-                UpdateNewestOldest(message.IsLast, _newestItemAsFooterNeeded, ViewModel.IsNewestSliceLoaded, ref _newestItem, ref _newestItemAsFooter, ^1);
+                return;
             }
+
+            var content = container.ContentTemplateRoot as FrameworkElement;
+            if (content == null)
+            {
+                return;
+            }
+
+            if (content is MessageSelector { Content: MessageBubble bubble })
+            {
+                bubble.UpdateAttach(message);
+                bubble.UpdateMessageHeader(message);
+            }
+
+            if (_stickySummaryAboveTracked == container)
+            {
+                _stickySummaryAboveTracked = null;
+            }
+
+            if (_stickyPhotoAboveTracked == container)
+            {
+                _stickyPhotoAboveTracked = null;
+            }
+
+            if (_stickyPhotoBelowTracked == container)
+            {
+                _stickyPhotoBelowTracked = null;
+            }
+
+            if (ViewModel.IsSavedMessagesTab)
+            {
+                return;
+            }
+
+            void UpdateNewestOldest(bool main, bool? needed, bool? loaded, ref ChatHistoryViewItem item, ref ChatHistoryViewItem headerFooter, Index index)
+            {
+                if (container == headerFooter && !main)
+                {
+                    headerFooter.UpdatePadding(index.IsFromEnd ? -1 : 0, index.IsFromEnd ? 0 : -1);
+                    headerFooter = null;
+
+                    item = null;
+                }
+                else if (main && container != headerFooter && needed is true && loaded is true && ViewModel.Items[index] == message)
+                {
+                    headerFooter?.UpdatePadding(index.IsFromEnd ? -1 : 0, index.IsFromEnd ? 0 : -1);
+
+                    headerFooter = container;
+                    headerFooter.UpdatePadding(index.IsFromEnd ? -1 : _messagesScrollBarPadding, index.IsFromEnd ? _messagesHeaderRootPadding : -1);
+
+                    item = container;
+                }
+            }
+
+            UpdateNewestOldest(message.IsFirst, _oldestItemAsHeaderNeeded, ViewModel.IsOldestSliceLoaded, ref _oldestItem, ref _oldestItemAsHeader, 0);
+            UpdateNewestOldest(message.IsLast, _newestItemAsFooterNeeded, ViewModel.IsNewestSliceLoaded, ref _newestItem, ref _newestItemAsFooter, ^1);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

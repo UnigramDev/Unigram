@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using Telegram.Collections;
 using Telegram.Td.Api;
 
@@ -69,7 +70,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public Action<IEnumerable<MessageViewModel>> AttachChanged;
+        public Action<MessageViewModel, MessageViewModel> AttachChanged;
 
         // Only ever set on a slice
         public bool IsEndReached { get; }
@@ -84,18 +85,21 @@ namespace Telegram.ViewModels
         {
             _viewModel = viewModel;
 
-            foreach (var item in source)
+            using (SuppressEvents())
             {
-                if (item.Id != 0 && exclude != null && exclude.Contains(item.Id))
+                foreach (var item in source)
                 {
-                    continue;
-                }
-                else if (item.Content is MessageForumTopicCreated or MessageChatUpgradeFrom && type == DialogType.Thread)
-                {
-                    continue;
-                }
+                    if (item.Id != 0 && exclude != null && exclude.Contains(item.Id))
+                    {
+                        continue;
+                    }
+                    else if (item.Content is MessageForumTopicCreated or MessageChatUpgradeFrom && type == DialogType.Thread)
+                    {
+                        continue;
+                    }
 
-                Insert(0, viewModel.CreateMessage(item, true));
+                    Insert(0, viewModel.CreateMessage(item, true));
+                }
             }
 
             IsEndReached = endReached || Count == 0;
@@ -214,7 +218,6 @@ namespace Telegram.ViewModels
 
             try
             {
-                //ReplaceWith(source);
                 using (SuppressEvents())
                 {
                     Clear();
@@ -230,7 +233,36 @@ namespace Telegram.ViewModels
                 _attachMode = AttachMode.Both;
             }
 
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
+            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        // ObservableCollection builds the NotifyCollectionChangedEventArgs before it reaches
+        // the virtual that drops it, so a suppressed mutation still allocates one per item.
+        // Filling a slice or replacing the whole list does that hundreds of times over.
+        private void InsertCore(int index, MessageViewModel item)
+        {
+            if (EventsAreSuppressed)
+            {
+                Items.Insert(index, item);
+            }
+            else
+            {
+                base.InsertItem(index, item);
+            }
+        }
+
+        private void RemoveCore(int index)
+        {
+            if (EventsAreSuppressed)
+            {
+                Items.RemoveAt(index);
+            }
+            else
+            {
+                base.RemoveItem(index);
+            }
         }
 
         protected override void InsertItem(int index, MessageViewModel item)
@@ -251,7 +283,7 @@ namespace Telegram.ViewModels
             var mode = _attachMode;
             if (mode == AttachMode.None || item.Content is MessageHeaderNewThread or MessageSponsored)
             {
-                base.InsertItem(index, item);
+                InsertCore(index, item);
                 return;
             }
 
@@ -312,24 +344,24 @@ namespace Telegram.ViewModels
             // between item and next.
             if (prevSeparator != null)
             {
-                base.InsertItem(index++, prevSeparator);
+                InsertCore(index++, prevSeparator);
             }
 
             if (prevForumTopic != null)
             {
-                base.InsertItem(index++, prevForumTopic);
+                InsertCore(index++, prevForumTopic);
             }
 
-            base.InsertItem(index, item);
+            InsertCore(index, item);
 
             if (nextSeparator != null)
             {
-                base.InsertItem(++index, nextSeparator);
+                InsertCore(++index, nextSeparator);
             }
 
             if (nextForumTopic != null)
             {
-                base.InsertItem(++index, nextForumTopic);
+                InsertCore(++index, nextForumTopic);
             }
 
             var prevChanged = prevHash != AttachHash(prev);
@@ -337,11 +369,7 @@ namespace Telegram.ViewModels
 
             if (prevChanged || nextChanged)
             {
-                AttachChanged?.Invoke(new[]
-                {
-                    prevChanged ? prev : null,
-                    nextChanged ? next : null
-                });
+                AttachChanged?.Invoke(prevChanged ? prev : null, nextChanged ? next : null);
             }
         }
 
@@ -360,7 +388,7 @@ namespace Telegram.ViewModels
 
             if (_attachMode == AttachMode.None || item.Content is MessageHeaderNewThread or MessageSponsored)
             {
-                base.RemoveItem(index);
+                RemoveCore(index);
                 return;
             }
 
@@ -377,18 +405,14 @@ namespace Telegram.ViewModels
             var update2 = AttachHash(previous);
             var update3 = AttachHash(next);
 
-            if (hash3 != update3 || hash2 != update2)
+            if (hash2 != update2 || hash3 != update3)
             {
-                AttachChanged?.Invoke(new[]
-                {
-                    hash3 != update3 ? next : null,
-                    hash2 != update2 ? previous : null
-                });
+                AttachChanged?.Invoke(hash2 != update2 ? previous : null, hash3 != update3 ? next : null);
             }
 
             UpdateSeparatorOnRemove(ref previous, ref next, ref index);
 
-            base.RemoveItem(index);
+            RemoveCore(index);
         }
 
         // TODO: Support MoveItem to optimize UpdateMessageSendSucceeded
@@ -440,7 +464,7 @@ namespace Telegram.ViewModels
             {
                 if (next == null || !next.AreOnTheSameDay(previous))
                 {
-                    base.RemoveItem(index - 1);
+                    RemoveCore(index - 1);
 
                     index--;
                     previous = index > 0 ? this[index - 1] : null;
@@ -451,7 +475,7 @@ namespace Telegram.ViewModels
             {
                 if (previous == null || previous.AreOnTheSameDay(next))
                 {
-                    base.RemoveItem(index + 1);
+                    RemoveCore(index + 1);
 
                     next = index < Count - 1 ? this[index + 1] : null;
                 }
@@ -464,7 +488,7 @@ namespace Telegram.ViewModels
             {
                 if (next == null || !next.TopicId.AreTheSame(previous.TopicId))
                 {
-                    base.RemoveItem(index - 1);
+                    RemoveCore(index - 1);
 
                     index--;
                     previous = index > 0 ? this[index - 1] : null;
@@ -475,7 +499,7 @@ namespace Telegram.ViewModels
             {
                 if (previous == null || previous.TopicId.AreTheSame(next.TopicId))
                 {
-                    base.RemoveItem(index + 1);
+                    RemoveCore(index + 1);
 
                     next = index < Count - 1 ? this[index + 1] : null;
                 }
