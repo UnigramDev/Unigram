@@ -49,7 +49,9 @@ namespace Telegram.Collections
         {
             return IncrementalLoading.Run(async token =>
             {
-                var count = 0u;
+                // Ignoring the requested count is deliberate: SearchCollection primes the list
+                // by calling LoadMoreItemsAsync(0).
+                var added = 0u;
 
                 Function func;
                 if (_chatId != 0)
@@ -62,6 +64,15 @@ namespace Telegram.Collections
                 }
 
                 var response = await _clientService.SendAsync(func);
+
+                if (token.IsCancellationRequested)
+                {
+                    return new LoadMoreItemsResult
+                    {
+                        Count = 0
+                    };
+                }
+
                 if (response is FoundChatMessages foundChatMessages)
                 {
                     if (foundChatMessages.NextFromMessageId != 0)
@@ -77,7 +88,7 @@ namespace Telegram.Collections
                     foreach (var message in foundChatMessages.Messages)
                     {
                         Add(new MessageWithOwner(_clientService, message));
-                        count++;
+                        added++;
                     }
                 }
                 else if (response is FoundMessages foundMessages)
@@ -95,13 +106,19 @@ namespace Telegram.Collections
                     foreach (var message in foundMessages.Messages)
                     {
                         Add(new MessageWithOwner(_clientService, message));
-                        count++;
+                        added++;
                     }
+                }
+                else if (response is Error error)
+                {
+                    // A failed request is not the end of the list: _hasMore and the offsets are
+                    // left untouched so that the next attempt resumes from the same position.
+                    Logger.Error(error.Message);
                 }
 
                 return new LoadMoreItemsResult
                 {
-                    Count = count
+                    Count = added
                 };
             });
         }
