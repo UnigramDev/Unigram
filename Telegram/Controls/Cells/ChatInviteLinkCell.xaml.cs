@@ -114,9 +114,9 @@ namespace Telegram.Controls.Cells
 
             if (inviteLink.ExpirationDate > 0)
             {
-                long currentTime = DateTime.Now.ToTimestampMilliseconds();
-                long expireTime = inviteLink.ExpirationDate * 1000L;
-                long date = (inviteLink.EditDate <= 0 ? inviteLink.Date : inviteLink.EditDate) * 1000L;
+                long currentTime = DateTime.Now.ToTimestamp();
+                long expireTime = inviteLink.ExpirationDate;
+                long date = (inviteLink.EditDate <= 0 ? inviteLink.Date : inviteLink.EditDate);
                 long from = currentTime - date;
                 long to = expireTime - date;
                 timeProgress = (1f - from / (float)to);

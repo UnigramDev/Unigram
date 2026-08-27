@@ -168,14 +168,6 @@ namespace Telegram.Common
             return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
-        public static long ToTimestampMilliseconds(this DateTime dateTime)
-        {
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
-
-            return (long)(dateTime.ToUniversalTime() - dtDateTime).TotalMilliseconds;
-        }
-
         public static uint GetHeight(this VideoProperties props)
         {
             return props.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? props.Height : props.Width;
