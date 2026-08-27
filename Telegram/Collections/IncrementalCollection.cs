@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -63,6 +64,17 @@ namespace Telegram.Collections
             _owner = owner;
         }
 
+        // For a collection that is its own loader, and so must override OnLoadMoreItemsAsync: the
+        // base implementation has no owner to forward to.
+        protected IncrementalCollection()
+        {
+        }
+
+        protected IncrementalCollection(IEnumerable<T> collection)
+            : base(collection)
+        {
+        }
+
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             return IncrementalLoading.Run(_ => LoadMoreItems(count));
@@ -114,7 +126,7 @@ namespace Telegram.Collections
                 else if (result.HasMoreItems && ++_emptyLoads >= EmptyLoadLimit)
                 {
                     _hasMoreItems = false;
-                    Logger.Error(_owner.GetType().Name + " reports more items but never adds any");
+                    Logger.Error((_owner as object ?? this).GetType().Name + " reports more items but never adds any");
                 }
 
                 return new LoadMoreItemsResult { Count = result.Count };

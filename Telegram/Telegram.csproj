@@ -771,7 +771,6 @@
     <Compile Include="ViewModels\SearchChannelsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
-    <Compile Include="Collections\LegacyIncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\KeyedList.cs" />
     <Compile Include="Collections\RangeObservableCollection.cs" />

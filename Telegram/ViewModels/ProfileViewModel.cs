@@ -1763,235 +1763,89 @@ namespace Telegram.ViewModels
 
     }
 
-    public partial class ChatMemberCollection : LegacyIncrementalCollection<ChatMember>
+    // Basic groups answer with their whole membership in one response; supergroups page. Which of
+    // the two a given instance is doing is fixed by the constructor that made it.
+    public partial class ChatMemberCollection : IncrementalCollection<ChatMember>
     {
+        private const int Limit = 200;
+
         private readonly IClientService _clientService;
+
         private readonly long _chatId;
-        private readonly ChatMembersFilter _filter2;
         private readonly string _query;
+        private readonly ChatMembersFilter _chatFilter;
 
         private readonly long _supergroupId;
-        private readonly SupergroupMembersFilter _filter;
-
-        private bool _hasMore;
+        private readonly SupergroupMembersFilter _supergroupFilter;
 
         public ChatMemberCollection(IClientService clientService, long chatId, string query, ChatMembersFilter filter)
         {
             _clientService = clientService;
             _chatId = chatId;
-            _filter2 = filter;
             _query = query;
-            _hasMore = true;
+            _chatFilter = filter;
         }
 
         public ChatMemberCollection(IClientService clientService, long supergroupId, SupergroupMembersFilter filter)
         {
             _clientService = clientService;
             _supergroupId = supergroupId;
-            _filter = filter;
-            _hasMore = true;
+            _supergroupFilter = filter;
         }
 
-        public override async Task<IList<ChatMember>> LoadDataAsync()
+        protected override Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            if (_chatId != 0)
+            return _chatId != 0
+                ? SearchChatMembersAsync()
+                : GetSupergroupMembersAsync();
+        }
+
+        // One response covers the group, so there is never a second page.
+        private async Task<IncrementalLoadResult> SearchChatMembersAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, Limit, _chatFilter));
+            if (response is not ChatMembers members)
             {
-                var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 200, _filter2));
-                if (response is ChatMembers members)
-                {
-                    _hasMore = false;
-
-                    if (_filter2 is null or ChatMembersFilterMembers)
-                    {
-                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_clientService, true)).ToArray();
-                    }
-
-                    return members.Members;
-                }
-            }
-            else
-            {
-                var response = await _clientService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
-                if (response is ChatMembers members)
-                {
-                    if (members.Members.Count < 200)
-                    {
-                        _hasMore = false;
-                    }
-
-                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && Count == 0 && members.TotalCount <= 200)
-                    {
-                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_clientService, true)).ToArray();
-                    }
-
-                    return members.Members;
-                }
+                return default;
             }
 
-            return Array.Empty<ChatMember>();
+            return Append(members.Members, _chatFilter is null or ChatMembersFilterMembers, false);
         }
 
-        protected override bool GetHasMoreItems()
+        private async Task<IncrementalLoadResult> GetSupergroupMembersAsync()
         {
-            return _hasMore;
-        }
-    }
+            // Read before the await: it is the offset this page continues from.
+            var offset = Count;
 
-    public partial class ChatMemberGroupedCollection : LegacyIncrementalCollection<object>
-    {
-        private readonly IClientService _clientService;
-        private readonly long _chatId;
-        private readonly string _query;
-
-        private readonly long _supergroupId;
-        private SupergroupMembersFilter _filter;
-        private int _offset;
-
-        private readonly bool _group;
-
-        private bool _hasMore;
-
-        public ChatMemberGroupedCollection(IClientService clientService, long chatId, string query, bool group)
-        {
-            _clientService = clientService;
-            _chatId = chatId;
-            _query = query;
-            _hasMore = true;
-            _group = group;
-        }
-
-        public ChatMemberGroupedCollection(IClientService clientService, long supergroupId, bool group)
-        {
-            _clientService = clientService;
-            _supergroupId = supergroupId;
-            _filter = group ? new SupergroupMembersFilterContacts() : null;
-            _hasMore = true;
-            _group = group;
-        }
-
-        public override async Task<IList<object>> LoadDataAsync()
-        {
-            if (_chatId != 0)
+            var response = await _clientService.SendAsync(new GetSupergroupMembers(_supergroupId, _supergroupFilter, offset, Limit));
+            if (response is not ChatMembers members)
             {
-                var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 200, null));
-                if (response is ChatMembers members)
-                {
-                    _hasMore = false;
-
-                    return members.Members.OrderBy(x => x, new ChatMemberComparer(_clientService, true)).ToArray();
-                }
-            }
-            else
-            {
-                if (_group)
-                {
-
-                    var response = await _clientService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, _offset, 200));
-                    if (response is ChatMembers members)
-                    {
-
-                        List<ChatMember> items;
-                        if ((_filter == null || _filter is SupergroupMembersFilterRecent) && _offset == 0 && members.TotalCount <= 200)
-                        {
-                            items = members.Members.OrderBy(x => x, new ChatMemberComparer(_clientService, true)).ToList();
-                        }
-                        else
-                        {
-                            items = members.Members.ToList();
-                        }
-
-                        for (int i = 0; i < items.Count; i++)
-                        {
-                            var already = this.OfType<ChatMember>().FirstOrDefault(x => x.MemberId.AreTheSame(items[i].MemberId));
-                            if (already != null)
-                            {
-                                items.RemoveAt(i);
-                                i--;
-                            }
-                        }
-
-                        string title = null;
-                        if (_offset == 0)
-                        {
-                            switch (_filter)
-                            {
-                                case SupergroupMembersFilterContacts contacts:
-                                    title = Strings.GroupContacts;
-                                    break;
-                                case SupergroupMembersFilterBots bots:
-                                    title = Strings.ChannelBots;
-                                    break;
-                                case SupergroupMembersFilterAdministrators administrators:
-                                    title = Strings.ChannelAdministrators;
-                                    break;
-                                case SupergroupMembersFilterRecent recent:
-                                    title = Strings.ChannelOtherMembers;
-                                    break;
-                            }
-                        }
-
-
-
-                        _offset += members.Members.Count;
-
-                        if (members.Members.Count < 200)
-                        {
-                            switch (_filter)
-                            {
-                                case SupergroupMembersFilterContacts contacts:
-                                    _filter = new SupergroupMembersFilterBots();
-                                    _offset = 0;
-                                    break;
-                                case SupergroupMembersFilterBots bots:
-                                    _filter = new SupergroupMembersFilterAdministrators();
-                                    _offset = 0;
-                                    break;
-                                case SupergroupMembersFilterAdministrators administrators:
-                                    _filter = new SupergroupMembersFilterRecent();
-                                    _offset = 0;
-                                    break;
-                                case SupergroupMembersFilterRecent recent:
-                                    _hasMore = false;
-                                    break;
-                            }
-                        }
-
-                        if (title != null && items.Count > 0)
-                        {
-                            return new object[] { title }.Union(items).ToArray();
-                        }
-                        else
-                        {
-                            return items.Cast<object>().ToArray();
-                        }
-                    }
-                }
-                else
-                {
-                    var response = await _clientService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
-                    if (response is ChatMembers members)
-                    {
-                        if (members.Members.Count < 200)
-                        {
-                            _hasMore = false;
-                        }
-
-                        if ((_filter == null || _filter is SupergroupMembersFilterRecent) && Count == 0 && members.TotalCount <= 200)
-                        {
-                            return members.Members.OrderBy(x => x, new ChatMemberComparer(_clientService, true)).ToArray();
-                        }
-
-                        return members.Members.Cast<object>().ToArray();
-                    }
-                }
+                return default;
             }
 
-            return Array.Empty<ChatMember>();
+            // Sorted only when this first response is already the whole membership. Past that the
+            // server's order is the only thing keeping consecutive pages consistent with each other.
+            var sorted = offset == 0
+                && members.TotalCount <= Limit
+                && _supergroupFilter is null or SupergroupMembersFilterRecent;
+
+            return Append(members.Members, sorted, members.Members.Count == Limit);
         }
 
-        protected override bool GetHasMoreItems()
+        private IncrementalLoadResult Append(IList<ChatMember> members, bool sorted, bool hasMoreItems)
         {
-            return _hasMore;
+            if (sorted)
+            {
+                members = members.OrderBy(x => x, new ChatMemberComparer(_clientService, true)).ToArray();
+            }
+
+            // One at a time, not AddRange: a ListView wants a notification per item.
+            foreach (var member in members)
+            {
+                Add(member);
+            }
+
+            return new IncrementalLoadResult((uint)members.Count, hasMoreItems);
         }
     }
 
