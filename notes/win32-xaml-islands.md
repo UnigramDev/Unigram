@@ -1672,6 +1672,51 @@ the most likely failure comes first.
      rather than the system one. Bigger, but this is the second thing pointing that way after
      acrylic.
 
+- [ ] **1.13a Reimplementing `ContentPopup` on `Popup` - the point, made 2026-08-27.** Gate 1.13
+  is the only remaining blocker, and the reason it looks frightening is that "rebuild `ContentDialog`"
+  sounds like rebuilding a control. It is not, and the difference is worth writing down before
+  anyone estimates it.
+
+  **Most of that control is already ours.** `ContentPopup` sets `DefaultStyleKey` and ships its own
+  `ControlTemplate` - Generic.xaml:4498, ~390 lines - with its own named parts (`LayoutRoot`,
+  `BackgroundElement`, `BorderElement`, `ContentElement`, `CommandSpace`, `PrimaryRoot`,
+  `PrimaryButton`, `DismissButton`, an explicit `LightDismiss` rectangle, `AnimationElement`) and
+  its own visual states for showing, sizing and every button arrangement. The layout, the chrome,
+  the smoke layer and the animations are app code today.
+
+  **What `ContentDialog` still supplies is four things**, and only these:
+
+  1. Hosting itself - it puts its template into a `Popup` on the `XamlRoot` and makes it modal.
+  2. `ShowAsync` / `Hide` and the `ContentDialogResult` that comes back.
+  3. Focus: trapping it inside the dialog and restoring it after.
+  4. `Opened` / `Closing` / `Closed`, which `ContentPopup` and its subclasses hang behaviour on.
+
+  A `Popup` gives (1) directly, and gate 1.13 measured that a `Popup` types correctly in an island
+  while a `ContentDialog` does not. (2) is a `TaskCompletionSource` - `ContentPopup` already owns
+  the queueing around it in `ShowQueuedAsync`. (4) is four events to raise at the right moments.
+  **(3) is the one that is real work**, and the one to judge the estimate by: a modal dialog has to
+  keep Tab inside itself, restore focus to what had it, and answer Escape and Enter - and XAML
+  gives none of that to a bare `Popup`.
+
+  **So the shape of the work is: keep the class, keep the template, replace the base.** If
+  `ContentPopup`'s public surface is preserved - `Title`, `PrimaryButtonText`, `ShowAsync`,
+  `ShowQueuedAsync`, `Hide`, `IsLightDismissEnabled`, the sizing properties, the events - none of
+  the 153 subclasses change. That is the whole reason this is tractable: the blast radius is one
+  class and one template, not 153 files.
+
+  **Which host gets it.** Fela, repeatedly and rightly: *"I'd prefer to keep UWP as it is as it
+  ships to millions."* So build it, ship it on Win32 first, and leave UWP on `ContentDialog` -
+  which the fork already supports without a second implementation of anything above the base class.
+  If it proves out, UWP can follow later and the app is rid of `ContentDialog`'s other bug at the
+  same time (microsoft-ui-xaml#3577, the backdrop that keeps its opening size). If it does not, the
+  UWP flavour never knew.
+
+  **The thing to settle first**, because it decides whether this is worth doing at all rather than
+  waiting for Phase 3: whether focus containment in a bare `Popup` can be made good enough for
+  keyboard and screen-reader users. It is testable in an afternoon in the spike - a `Popup` with
+  two `TextBox`es and a button - and it is the only part of this that could still turn out to be a
+  wall.
+
 - [x] **1.11 Resource scope across islands.** Measured, and it decides 0.18. Three probes, each a
   `Border` whose `Background` is `{ThemeResource ScopeBrush}` parsed at runtime, with red defined
   in `Application.Resources` and green scoped to the first island's content:
