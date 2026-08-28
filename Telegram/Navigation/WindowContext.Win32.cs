@@ -9,6 +9,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Host;
 using Telegram.Navigation.Services;
@@ -91,7 +92,9 @@ namespace Telegram.Navigation
 
         public void Activate()
         {
-            Win32.SetForegroundWindow(_island.Handle);
+            // Show as well as raise: the main window is hidden rather than closed while the
+            // notification area icon is up, and this is how it comes back.
+            _island.Show();
         }
 
         public void Close()
@@ -155,6 +158,16 @@ namespace Telegram.Navigation
 
         private async void CloseRequestedAsync()
         {
+            // Closing the main window with the icon showing hides it instead: the icon lives in
+            // this process, so quitting would take it with us, and there would be nothing left to
+            // open the app from. Every other window closes for real, and Exit on the icon's menu
+            // is what actually ends the app.
+            if (IsInMainView && SystemTray.IsShowing())
+            {
+                _island.Hide();
+                return;
+            }
+
             if (Content is WindowContent root && !await root.RequestCloseAsync())
             {
                 return;

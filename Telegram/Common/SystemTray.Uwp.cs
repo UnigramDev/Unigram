@@ -6,6 +6,7 @@
 //
 
 using System.Threading.Tasks;
+using Telegram.Services;
 
 namespace Telegram.Common
 {
@@ -13,6 +14,13 @@ namespace Telegram.Common
     {
         // Nothing of its own: the icon belongs to Telegram.Stub, and the bridge is how it is asked
         // for anything. Deliberately thin, so that the stub keeps behaving exactly as it did.
+        // The stub owns the icon and the bridge does not report on it, so the setting is the
+        // best answer available. Nothing on this host hides a window to it in any case.
+        public static partial bool IsShowing()
+        {
+            return AppSettings.IsTrayVisible;
+        }
+
         public static partial Task ShowAsync()
         {
             return BridgeApplicationContext.LaunchAsync();

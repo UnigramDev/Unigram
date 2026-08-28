@@ -25,6 +25,12 @@ namespace Telegram.Common
     public static partial class SystemTray
     {
         /// <summary>
+        /// Whether the icon is actually in the notification area. Asked before hiding a window to
+        /// it: the setting says what was wanted, this says whether there is a way back.
+        /// </summary>
+        public static partial bool IsShowing();
+
+        /// <summary>
         /// Put the icon in the notification area, if it is not there already.
         /// </summary>
         public static partial Task ShowAsync();

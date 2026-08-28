@@ -186,6 +186,21 @@ namespace Telegram.Host
 
 
 
+        /// <summary>
+        /// Out of sight but still alive, which is what closing to the notification area means: the
+        /// island, its XAML and the thread's CoreWindow all stay exactly as they were.
+        /// </summary>
+        public void Hide()
+        {
+            Win32.ShowWindow(_hwnd, Win32.SW_HIDE);
+        }
+
+        public void Show()
+        {
+            Win32.ShowWindow(_hwnd, Win32.SW_SHOW);
+            Win32.SetForegroundWindow(_hwnd);
+        }
+
         public bool PreTranslateMessage(ref MSG message)
         {
             if (Filter != null && Filter.PreTranslateMessage(ref message))

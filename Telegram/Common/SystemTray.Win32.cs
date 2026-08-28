@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Navigation;
+using static Telegram.Common.NotifyIcon;
 
 namespace Telegram.Common
 {
@@ -24,6 +25,11 @@ namespace Telegram.Common
     public static partial class SystemTray
     {
         private static NotifyIcon _icon;
+
+        public static partial bool IsShowing()
+        {
+            return _icon != null;
+        }
 
         public static partial Task ShowAsync()
         {
