@@ -7,6 +7,7 @@
 
 using System.Runtime.InteropServices;
 using Telegram.Common;
+using static Telegram.Common.NotifyIcon;
 using Telegram.Stub;
 
 namespace Telegram.Stub

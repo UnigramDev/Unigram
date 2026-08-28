@@ -319,161 +319,164 @@ namespace Telegram.Common
                 NativeMethods.Shell_NotifyIcon(0x00000001, ref data); // NIM_DELETE
             }
         }
-    }
 
-    // LibraryImport rather than DllImport, and nothing here needs the runtime to marshal anything:
-    // the app disables runtime marshalling, so a classic DllImport with SetLastError or a string
-    // parameter throws MarshalDirectiveException the moment it is called. Strings are handed over
-    // as pointers the caller owns, and the one struct with inline text uses fixed buffers.
-    internal static unsafe partial class NativeMethods
-    {
-        [LibraryImport("user32.dll", SetLastError = true)]
-        public static partial uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        [LibraryImport("kernel32.dll")]
-        public static partial uint GetCurrentThreadId();
-
-        [LibraryImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool SetProcessDpiAwarenessContext(IntPtr dpiContext);
-
-        public static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new IntPtr(-4);
-
-        [LibraryImport("user32.dll", EntryPoint = "RegisterClassW", SetLastError = true)]
-        public static partial ushort RegisterClass(ref WNDCLASS lpWndClass);
-
-        [LibraryImport("user32.dll", EntryPoint = "CreateWindowExW", SetLastError = true)]
-        public static partial IntPtr CreateWindowEx(
-            int dwExStyle,
-            IntPtr lpClassName,
-            IntPtr lpWindowName,
-            int dwStyle,
-            int x, int y, int nWidth, int nHeight,
-            IntPtr hWndParent,
-            IntPtr hMenu,
-            IntPtr hInstance,
-            IntPtr lpParam);
-
-        [LibraryImport("user32.dll", EntryPoint = "GetMessageW")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
-
-        [LibraryImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool TranslateMessage(ref MSG lpMsg);
-
-        [LibraryImport("user32.dll", EntryPoint = "DispatchMessageW")]
-        public static partial IntPtr DispatchMessage(ref MSG lpMsg);
-
-        [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW")]
-        public static partial IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
-
-        [LibraryImport("user32.dll")]
-        public static partial void PostQuitMessage(int nExitCode);
-
-        [LibraryImport("user32.dll", EntryPoint = "PostMessageW", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        [LibraryImport("shell32.dll", EntryPoint = "Shell_NotifyIconW", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool Shell_NotifyIcon(uint dwMessage, ref NOTIFYICONDATA pnid);
-
-        [LibraryImport("user32.dll", EntryPoint = "LoadImageW", SetLastError = true)]
-        public static partial IntPtr LoadImage(IntPtr hInst, IntPtr name, uint type, int cx, int cy, uint fuLoad);
-
-        [LibraryImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool DestroyIcon(IntPtr hIcon);
-
-        [LibraryImport("user32.dll", SetLastError = true)]
-        public static partial IntPtr CreatePopupMenu();
-
-        [LibraryImport("user32.dll", EntryPoint = "AppendMenuW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool AppendMenu(IntPtr hMenu, uint uFlags, int uIDNewItem, string lpNewItem);
-
-        [LibraryImport("user32.dll", EntryPoint = "ModifyMenuW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool ModifyMenu(IntPtr hMenu, uint uPosition, uint uFlags, uint uIDNewItem, string lpNewItem);
-
-        [LibraryImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool GetCursorPos(out POINT lpPoint);
-
-        [LibraryImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool SetForegroundWindow(IntPtr hWnd);
-
-        [LibraryImport("user32.dll", SetLastError = true)]
-        public static partial int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int reserved, IntPtr hWnd, IntPtr rect);
-
-        [LibraryImport("user32.dll", EntryPoint = "RegisterWindowMessageW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        public static partial uint RegisterWindowMessage(string lpString);
-
-        [LibraryImport("kernel32.dll", EntryPoint = "GetModuleHandleW", SetLastError = true)]
-        public static partial IntPtr GetModuleHandle(IntPtr lpModuleName);
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct POINT { public int X; public int Y; }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MSG
-    {
-        public IntPtr hWnd;
-        public uint message;
-        public IntPtr wParam;
-        public IntPtr lParam;
-        public uint time;
-        public int pt_x;
-        public int pt_y;
-    }
-
-    // Pointers rather than a delegate and strings: blittable, so nothing has to be marshalled.
-    [StructLayout(LayoutKind.Sequential)]
-    public struct WNDCLASS
-    {
-        public uint style;
-        public IntPtr lpfnWndProc;
-        public int cbClsExtra;
-        public int cbWndExtra;
-        public IntPtr hInstance;
-        public IntPtr hIcon;
-        public IntPtr hCursor;
-        public IntPtr hbrBackground;
-        public IntPtr lpszMenuName;
-        public IntPtr lpszClassName;
-    }
-
-    public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct NOTIFYICONDATA
-    {
-        public int cbSize;
-        public IntPtr hWnd;
-        public int uID;
-        public int uFlags;
-        public int uCallbackMessage;
-        public IntPtr hIcon;
-        public fixed char szTip[128];
-        public int dwState;
-        public int dwStateMask;
-        public fixed char szInfo[256];
-        public int uTimeoutOrVersion;
-        public fixed char szInfoTitle[64];
-        public int dwInfoFlags;
-        public Guid guidItem;
-        public IntPtr hBalloonIcon;
-
-        public void SetTip(string value)
+        // Nested rather than beside the class: POINT, MSG, WNDCLASS and WndProc are names
+        // Telegram.Host uses too, and in a shared namespace they made every file that
+        // imports both ambiguous. They are this icon's business.
+        // LibraryImport rather than DllImport, and nothing here needs the runtime to marshal anything:
+        // the app disables runtime marshalling, so a classic DllImport with SetLastError or a string
+        // parameter throws MarshalDirectiveException the moment it is called. Strings are handed over
+        // as pointers the caller owns, and the one struct with inline text uses fixed buffers.
+        internal static unsafe partial class NativeMethods
         {
-            fixed (char* buffer = szTip)
+            [LibraryImport("user32.dll", SetLastError = true)]
+            public static partial uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+            [LibraryImport("kernel32.dll")]
+            public static partial uint GetCurrentThreadId();
+
+            [LibraryImport("user32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool SetProcessDpiAwarenessContext(IntPtr dpiContext);
+
+            public static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new IntPtr(-4);
+
+            [LibraryImport("user32.dll", EntryPoint = "RegisterClassW", SetLastError = true)]
+            public static partial ushort RegisterClass(ref WNDCLASS lpWndClass);
+
+            [LibraryImport("user32.dll", EntryPoint = "CreateWindowExW", SetLastError = true)]
+            public static partial IntPtr CreateWindowEx(
+                int dwExStyle,
+                IntPtr lpClassName,
+                IntPtr lpWindowName,
+                int dwStyle,
+                int x, int y, int nWidth, int nHeight,
+                IntPtr hWndParent,
+                IntPtr hMenu,
+                IntPtr hInstance,
+                IntPtr lpParam);
+
+            [LibraryImport("user32.dll", EntryPoint = "GetMessageW")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+            [LibraryImport("user32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool TranslateMessage(ref MSG lpMsg);
+
+            [LibraryImport("user32.dll", EntryPoint = "DispatchMessageW")]
+            public static partial IntPtr DispatchMessage(ref MSG lpMsg);
+
+            [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW")]
+            public static partial IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+
+            [LibraryImport("user32.dll")]
+            public static partial void PostQuitMessage(int nExitCode);
+
+            [LibraryImport("user32.dll", EntryPoint = "PostMessageW", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+            [LibraryImport("shell32.dll", EntryPoint = "Shell_NotifyIconW", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool Shell_NotifyIcon(uint dwMessage, ref NOTIFYICONDATA pnid);
+
+            [LibraryImport("user32.dll", EntryPoint = "LoadImageW", SetLastError = true)]
+            public static partial IntPtr LoadImage(IntPtr hInst, IntPtr name, uint type, int cx, int cy, uint fuLoad);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool DestroyIcon(IntPtr hIcon);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            public static partial IntPtr CreatePopupMenu();
+
+            [LibraryImport("user32.dll", EntryPoint = "AppendMenuW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool AppendMenu(IntPtr hMenu, uint uFlags, int uIDNewItem, string lpNewItem);
+
+            [LibraryImport("user32.dll", EntryPoint = "ModifyMenuW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool ModifyMenu(IntPtr hMenu, uint uPosition, uint uFlags, uint uIDNewItem, string lpNewItem);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool GetCursorPos(out POINT lpPoint);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool SetForegroundWindow(IntPtr hWnd);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            public static partial int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int reserved, IntPtr hWnd, IntPtr rect);
+
+            [LibraryImport("user32.dll", EntryPoint = "RegisterWindowMessageW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            public static partial uint RegisterWindowMessage(string lpString);
+
+            [LibraryImport("kernel32.dll", EntryPoint = "GetModuleHandleW", SetLastError = true)]
+            public static partial IntPtr GetModuleHandle(IntPtr lpModuleName);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT { public int X; public int Y; }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MSG
+        {
+            public IntPtr hWnd;
+            public uint message;
+            public IntPtr wParam;
+            public IntPtr lParam;
+            public uint time;
+            public int pt_x;
+            public int pt_y;
+        }
+
+        // Pointers rather than a delegate and strings: blittable, so nothing has to be marshalled.
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WNDCLASS
+        {
+            public uint style;
+            public IntPtr lpfnWndProc;
+            public int cbClsExtra;
+            public int cbWndExtra;
+            public IntPtr hInstance;
+            public IntPtr hIcon;
+            public IntPtr hCursor;
+            public IntPtr hbrBackground;
+            public IntPtr lpszMenuName;
+            public IntPtr lpszClassName;
+        }
+
+        public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public unsafe struct NOTIFYICONDATA
+        {
+            public int cbSize;
+            public IntPtr hWnd;
+            public int uID;
+            public int uFlags;
+            public int uCallbackMessage;
+            public IntPtr hIcon;
+            public fixed char szTip[128];
+            public int dwState;
+            public int dwStateMask;
+            public fixed char szInfo[256];
+            public int uTimeoutOrVersion;
+            public fixed char szInfoTitle[64];
+            public int dwInfoFlags;
+            public Guid guidItem;
+            public IntPtr hBalloonIcon;
+
+            public void SetTip(string value)
             {
-                var length = Math.Min(value.Length, 127);
-                value.AsSpan(0, length).CopyTo(new Span<char>(buffer, 127));
-                buffer[length] = '\0';
+                fixed (char* buffer = szTip)
+                {
+                    var length = Math.Min(value.Length, 127);
+                    value.AsSpan(0, length).CopyTo(new Span<char>(buffer, 127));
+                    buffer[length] = '\0';
+                }
             }
         }
     }
