@@ -270,7 +270,7 @@ namespace Telegram.Stub
             {
                 Logger.Info("IsPasskeySupported");
 
-                response.Add("Result", Passkeys.IsSupported());
+                response.Add("Result", WebAuthn.IsSupported());
             }
 
             if (args.Request.Message.TryGet("MakeCredential", out string? makeCredential))
@@ -287,11 +287,11 @@ namespace Telegram.Stub
                     hWnd = GetForegroundWindow();
                 }
 
-                var data = Passkeys.DeserializeRegisterData(makeCredential);
+                var data = WebAuthn.DeserializeRegisterData(makeCredential);
                 if (data != null)
                 {
-                    var result = Passkeys.MakeCredential(hWnd, data);
-                    if (result is Passkeys.RegisterResult register)
+                    var result = WebAuthn.MakeCredential(hWnd, data);
+                    if (result is WebAuthn.RegisterResult register)
                     {
                         response.Add("Result", 0);
                         response.Add("ClientData", register.ClientDataJson);
@@ -329,11 +329,11 @@ namespace Telegram.Stub
                     hWnd = GetForegroundWindow();
                 }
 
-                var data = Passkeys.DeserializeLoginData(getAssertion);
+                var data = WebAuthn.DeserializeLoginData(getAssertion);
                 if (data != null)
                 {
-                    var result = Passkeys.GetAssertion(hWnd, data);
-                    if (result is Passkeys.LoginResult login)
+                    var result = WebAuthn.GetAssertion(hWnd, data);
+                    if (result is WebAuthn.LoginResult login)
                     {
                         response.Add("Result", 0);
                         response.Add("CredentialId", Base64Url.EncodeToString(login.CredentialId));

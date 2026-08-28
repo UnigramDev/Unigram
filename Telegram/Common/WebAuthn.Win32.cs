@@ -1,17 +1,27 @@
-﻿//
-// Copyright Fela Ameghino 2015-2023
+//
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+// Shared with Telegram.Stub, which links this file. UWP cannot call webauthn.dll from inside the
+// container, so the stub makes the call for it; the Win32 flavour has no stub and calls it here.
+// One implementation either way - see Passkeys.cs for the seam the app actually talks to.
+//
+// Nullable is off because the two projects disagree about it.
+#nullable disable
+
+using System;
+using System.Collections.Generic;
 using System.Buffers.Text;
 using System.Runtime.InteropServices;
 using System.Text;
 using Windows.Data.Json;
 
-namespace Telegram.Stub
+namespace Telegram.Common
 {
-    public class Passkeys
+    public partial class WebAuthn
     {
         public record RelyingParty(string Id, string Name);
 
@@ -97,7 +107,7 @@ namespace Telegram.Stub
                 }
             }
 
-            return new RegisterData(rpData, userData, challenge, parameters, publicKey.GetNamedInt32("timeout", 60000));
+            return new RegisterData(rpData, userData, challenge, parameters, (int)publicKey.GetNamedNumber("timeout", 60000));
         }
 
         public static LoginData? DeserializeLoginData(string jsonData)
@@ -131,7 +141,7 @@ namespace Telegram.Stub
                 }
             }
 
-            return new LoginData(challenge, rpId, allowCredentials, userVerification, publicKey.GetNamedInt32("timeout", 60000));
+            return new LoginData(challenge, rpId, allowCredentials, userVerification, (int)publicKey.GetNamedNumber("timeout", 60000));
         }
 
         private static string SerializeClientData(string challenge, string type)
@@ -156,16 +166,46 @@ namespace Telegram.Stub
             return SerializeClientData(challenge, "webauthn.get");
         }
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        /// <summary>
+        /// WebAuthn reads these strings for the duration of the call and keeps nothing, so they are
+        /// allocated together and freed together the moment it returns. With runtime marshalling
+        /// off the alternative is not a string parameter, it is a MarshalDirectiveException.
+        /// </summary>
+        private sealed class Utf16Strings : IDisposable
+        {
+            private readonly List<IntPtr> _allocated = new();
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetFocus(IntPtr hWnd);
+            public IntPtr this[string value]
+            {
+                get
+                {
+                    var pointer = Marshal.StringToHGlobalUni(value);
+                    _allocated.Add(pointer);
+                    return pointer;
+                }
+            }
 
-        [DllImport("webauthn.dll")]
-        private static extern uint WebAuthNGetApiVersionNumber();
+            public void Dispose()
+            {
+                foreach (var pointer in _allocated)
+                {
+                    Marshal.FreeHGlobal(pointer);
+                }
+
+                _allocated.Clear();
+            }
+        }
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool SetForegroundWindow(IntPtr hWnd);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool SetFocus(IntPtr hWnd);
+
+        [LibraryImport("webauthn.dll")]
+        private static partial uint WebAuthNGetApiVersionNumber();
 
         /// <summary>
         /// Checks if WebAuthn is supported and a user-verifying platform authenticator is available.
@@ -197,7 +237,7 @@ namespace Telegram.Stub
 
         private const uint WEBAUTHN_RP_ENTITY_INFORMATION_CURRENT_VERSION = 1;
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_RP_ENTITY_INFORMATION
         {
             // Version of this structure, to allow for modifications in the future.
@@ -205,19 +245,19 @@ namespace Telegram.Stub
             public uint dwVersion;
 
             // Identifier for the RP. This field is required.
-            public string pwszId;
+            public IntPtr pwszId;
 
             // Contains the friendly name of the Relying Party, such as "Acme Corporation", "Widgets Inc" or "Awesome Site".
             // This field is required.
-            public string pwszName;
+            public IntPtr pwszName;
 
             // Optional URL pointing to RP's logo. 
-            public string pwszIcon;
+            public IntPtr pwszIcon;
         }
 
         private const uint WEBAUTHN_USER_ENTITY_INFORMATION_CURRENT_VERSION = 1;
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_USER_ENTITY_INFORMATION
         {
             // Version of this structure, to allow for modifications in the future.
@@ -229,26 +269,25 @@ namespace Telegram.Stub
             public IntPtr pbId;
 
             // Contains a detailed name for this account, such as "john.p.smith@example.com".
-            public string pwszName;
+            public IntPtr pwszName;
 
             // Optional URL that can be used to retrieve an image containing the user's current avatar,
             // or a data URI that contains the image data.
-            public string pwszIcon;
+            public IntPtr pwszIcon;
 
             // For User: Contains the friendly name associated with the user account by the Relying Party, such as "John P. Smith".
-            public string pwszDisplayName;
+            public IntPtr pwszDisplayName;
         }
 
         private const uint WEBAUTHN_COSE_CREDENTIAL_PARAMETER_CURRENT_VERSION = 1;
 
         private const string WEBAUTHN_CREDENTIAL_TYPE_PUBLIC_KEY = "public-key";
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_COSE_CREDENTIAL_PARAMETER
         {
             public uint dwVersion;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pwszCredentialType;
+            public IntPtr pwszCredentialType;
             public int lAlg;
         }
 
@@ -269,7 +308,7 @@ namespace Telegram.Stub
             public uint dwVersion;
             public uint cbClientDataJSON;
             public IntPtr pbClientDataJSON;
-            public string pwszHashAlgId;
+            public IntPtr pwszHashAlgId;
         }
 
         private const uint WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_CURRENT_VERSION = 9;
@@ -278,14 +317,14 @@ namespace Telegram.Stub
         private const uint WEBAUTHN_USER_VERIFICATION_REQUIREMENT_PREFERRED = 2;
         private const uint WEBAUTHN_ATTESTATION_CONVEYANCE_PREFERENCE_NONE = 1;
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_CREDENTIALS
         {
             public uint cCredentials;
             public IntPtr pCredentials;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS
         {
             public uint dwVersion;
@@ -293,7 +332,7 @@ namespace Telegram.Stub
             public WEBAUTHN_CREDENTIALS CredentialList;
             public WEBAUTHN_EXTENSIONS Extensions;
             public uint dwAuthenticatorAttachment;
-            public bool bRequireResidentKey;
+            public int bRequireResidentKey;
             public uint dwUserVerificationRequirement;
             public uint dwAttestationConveyancePreference;
             public uint dwFlags;
@@ -301,17 +340,17 @@ namespace Telegram.Stub
             public IntPtr pExcludeCredentialList;
             public uint dwEnterpriseAttestation;
             public uint dwLargeBlobSupport;
-            public bool bPreferResidentKey;
-            public bool bBrowserInPrivateMode;
-            public bool bEnablePrf;
+            public int bPreferResidentKey;
+            public int bBrowserInPrivateMode;
+            public int bEnablePrf;
             public IntPtr pLinkedDevice;
             public uint cbJsonExt;
             public IntPtr pbJsonExt;
             public IntPtr pPRFGlobalEval;
             public uint cCredentialHints;
             public IntPtr ppwszCredentialHints;
-            public bool bThirdPartyPayment;
-            public string pwszRemoteWebOrigin;
+            public int bThirdPartyPayment;
+            public IntPtr pwszRemoteWebOrigin;
             public uint cbPublicKeyCredentialCreationOptionsJSON;
             public IntPtr pbPublicKeyCredentialCreationOptionsJSON;
             public uint cbAuthenticatorId;
@@ -325,11 +364,11 @@ namespace Telegram.Stub
             public IntPtr pExtensions;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_CREDENTIAL_ATTESTATION
         {
             public uint dwVersion;
-            public string pwszFormatType;
+            public IntPtr pwszFormatType;
             public uint cbAuthenticatorData;
             public IntPtr pbAuthenticatorData;
             public uint cbAttestation;
@@ -342,14 +381,14 @@ namespace Telegram.Stub
             public IntPtr pbCredentialId;
             public WEBAUTHN_EXTENSIONS Extensions;
             public uint dwUsedTransport;
-            public bool bEpAtt;
-            public bool bLargeBlobSupported;
-            public bool bResidentKey;
-            public bool bPrfEnabled;
+            public int bEpAtt;
+            public int bLargeBlobSupported;
+            public int bResidentKey;
+            public int bPrfEnabled;
             public uint cbUnsignedExtensionOutputs;
             public IntPtr pbUnsignedExtensionOutputs;
             public IntPtr pHmacSecret;
-            public bool bThirdPartyPayment;
+            public int bThirdPartyPayment;
             public uint dwTransports;
             public uint cbClientDataJSON;
             public IntPtr pbClientDataJSON;
@@ -357,8 +396,8 @@ namespace Telegram.Stub
             public IntPtr pbRegistrationResponseJSON;
         }
 
-        [DllImport("webauthn.dll", CharSet = CharSet.Unicode)]
-        private static extern int WebAuthNAuthenticatorMakeCredential(
+        [LibraryImport("webauthn.dll")]
+        private static partial int WebAuthNAuthenticatorMakeCredential(
             IntPtr hWnd,
             in WEBAUTHN_RP_ENTITY_INFORMATION pRpInformation,
             in WEBAUTHN_USER_ENTITY_INFORMATION pUserInformation,
@@ -367,10 +406,10 @@ namespace Telegram.Stub
             in WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS pWebAuthNMakeCredentialOptions,
             out IntPtr ppWebAuthNCredentialAttestation);
 
-        [DllImport("webauthn.dll", EntryPoint = "WebAuthNFreeCredentialAttestation")]
-        private static extern void WebAuthNFreeCredentialAttestation(IntPtr rawCredentialAttestation);
+        [LibraryImport("webauthn.dll", EntryPoint = "WebAuthNFreeCredentialAttestation")]
+        private static partial void WebAuthNFreeCredentialAttestation(IntPtr rawCredentialAttestation);
 
-        public static object? MakeCredential(IntPtr hWnd, RegisterData data)
+        public static object MakeCredential(IntPtr hWnd, RegisterData data)
         {
             if (!IsSupported())
             {
@@ -380,11 +419,13 @@ namespace Telegram.Stub
             GCHandle userIdHandle = GCHandle.Alloc(data.User.Id, GCHandleType.Pinned);
             IntPtr pUserId = userIdHandle.AddrOfPinnedObject();
 
+            using var strings = new Utf16Strings();
+
             var rpInfo = new WEBAUTHN_RP_ENTITY_INFORMATION
             {
                 dwVersion = WEBAUTHN_RP_ENTITY_INFORMATION_CURRENT_VERSION,
-                pwszId = data.RelyingParty.Id,
-                pwszName = data.RelyingParty.Name
+                pwszId = strings[data.RelyingParty.Id],
+                pwszName = strings[data.RelyingParty.Name]
             };
 
             var userInfo = new WEBAUTHN_USER_ENTITY_INFORMATION
@@ -392,8 +433,8 @@ namespace Telegram.Stub
                 dwVersion = WEBAUTHN_USER_ENTITY_INFORMATION_CURRENT_VERSION,
                 cbId = (uint)data.User.Id.Length,
                 pbId = pUserId,
-                pwszName = data.User.Name,
-                pwszDisplayName = data.User.DisplayName
+                pwszName = strings[data.User.Name],
+                pwszDisplayName = strings[data.User.DisplayName]
             };
 
             int credParamsSize = Marshal.SizeOf<WEBAUTHN_COSE_CREDENTIAL_PARAMETER>();
@@ -401,11 +442,11 @@ namespace Telegram.Stub
 
             for (int i = 0; i < data.PubKeyCredParams.Count; i++)
             {
-                CredentialParameter? param = data.PubKeyCredParams[i];
+                CredentialParameter param = data.PubKeyCredParams[i];
                 var cp = new WEBAUTHN_COSE_CREDENTIAL_PARAMETER
                 {
                     dwVersion = WEBAUTHN_COSE_CREDENTIAL_PARAMETER_CURRENT_VERSION,
-                    pwszCredentialType = param.Type == "public-key" ? WEBAUTHN_CREDENTIAL_TYPE_PUBLIC_KEY : "",
+                    pwszCredentialType = strings[param.Type == "public-key" ? WEBAUTHN_CREDENTIAL_TYPE_PUBLIC_KEY : ""],
                     lAlg = param.Algorithm
                 };
 
@@ -427,7 +468,7 @@ namespace Telegram.Stub
                 dwVersion = WEBAUTHN_CLIENT_DATA_CURRENT_VERSION,
                 cbClientDataJSON = (uint)clientDataJson.Length,
                 pbClientDataJSON = pbClientDataJSON,
-                pwszHashAlgId = WEBAUTHN_HASH_ALGORITHM_SHA_256
+                pwszHashAlgId = strings[WEBAUTHN_HASH_ALGORITHM_SHA_256]
             };
 
             //auto cancellationId = GUID();
@@ -438,7 +479,7 @@ namespace Telegram.Stub
                 dwVersion = WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_CURRENT_VERSION,
                 dwTimeoutMilliseconds = (uint)data.Timeout,
                 dwAuthenticatorAttachment = WEBAUTHN_AUTHENTICATOR_ATTACHMENT_ANY,
-                bRequireResidentKey = false,
+                bRequireResidentKey = 0,
                 dwUserVerificationRequirement = WEBAUTHN_USER_VERIFICATION_REQUIREMENT_PREFERRED,
                 dwAttestationConveyancePreference = WEBAUTHN_ATTESTATION_CONVEYANCE_PREFERENCE_NONE,
                 //options.pCancellationId = &cancellationId;
@@ -449,7 +490,7 @@ namespace Telegram.Stub
                 //	|| defined(WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_VERSION_7) \
                 //	|| defined(WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_VERSION_8) \
                 //	|| defined(WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_VERSION_9)
-                bPreferResidentKey = false
+                bPreferResidentKey = 0
                 //#endif
             };
 
@@ -492,13 +533,13 @@ namespace Telegram.Stub
 
         private const uint WEBAUTHN_CREDENTIAL_CURRENT_VERSION = 1;
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_CREDENTIAL
         {
             public uint dwVersion;
             public uint cbId;
             public IntPtr pbId;
-            public string pwszCredentialType;
+            public IntPtr pwszCredentialType;
         }
 
         private const uint WEBAUTHN_AUTHENTICATOR_GET_ASSERTION_OPTIONS_CURRENT_VERSION = 9;
@@ -506,7 +547,7 @@ namespace Telegram.Stub
         private const uint WEBAUTHN_USER_VERIFICATION_REQUIREMENT_REQUIRED = 1;
         private const uint WEBAUTHN_USER_VERIFICATION_REQUIREMENT_DISCOURAGED = 3;
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_AUTHENTICATOR_GET_ASSERTION_OPTIONS
         {
             public uint dwVersion;
@@ -516,7 +557,7 @@ namespace Telegram.Stub
             public uint dwAuthenticatorAttachment;
             public uint dwUserVerificationRequirement;
             public uint dwFlags;
-            public string pwszU2fAppId;
+            public IntPtr pwszU2fAppId;
             public IntPtr pbU2fAppId;
             public IntPtr pCancellationId;
             public IntPtr pAllowCredentialList;
@@ -524,21 +565,21 @@ namespace Telegram.Stub
             public uint cbCredLargeBlob;
             public IntPtr pbCredLargeBlob;
             public IntPtr PWEBAUTHN_HMAC_SECRET_SALT_VALUES;
-            public bool bBrowserInPrivateMode;
+            public int bBrowserInPrivateMode;
             public IntPtr pLinkedDevice;
-            public bool bAutoFill;
+            public int bAutoFill;
             public uint cbJsonExt;
             public IntPtr pbJsonExt;
             public uint cCredentialHints;
             public IntPtr ppwszCredentialHints;
-            public string pwszRemoteWebOrigin;
+            public IntPtr pwszRemoteWebOrigin;
             public uint cbPublicKeyCredentialRequestOptionsJSON;
             public IntPtr pbPublicKeyCredentialRequestOptionsJSON;
             public uint cbAuthenticatorId;
             public IntPtr pbAuthenticatorId;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct WEBAUTHN_ASSERTION
         {
             public uint dwVersion;
@@ -563,23 +604,25 @@ namespace Telegram.Stub
             public IntPtr pbAuthenticationResponseJSON;
         }
 
-        [DllImport("webauthn.dll", CharSet = CharSet.Unicode)]
-        private static extern int WebAuthNAuthenticatorGetAssertion(
+        [LibraryImport("webauthn.dll")]
+        private static partial int WebAuthNAuthenticatorGetAssertion(
           IntPtr hWnd,
-          string pwszRpId,
+          IntPtr pwszRpId,
           in WEBAUTHN_CLIENT_DATA pWebAuthNClientData,
           in WEBAUTHN_AUTHENTICATOR_GET_ASSERTION_OPTIONS pWebAuthNGetAssertionOptions,
           out IntPtr ppWebAuthNAssertion);
 
-        [DllImport("webauthn.dll")]
-        internal static extern void WebAuthNFreeAssertion(IntPtr pWebAuthNAssertion);
+        [LibraryImport("webauthn.dll")]
+        internal static partial void WebAuthNFreeAssertion(IntPtr pWebAuthNAssertion);
 
-        public static object? GetAssertion(IntPtr hWnd, LoginData data)
+        public static object GetAssertion(IntPtr hWnd, LoginData data)
         {
             if (!IsSupported())
             {
                 return Marshal.GetExceptionForHR(-2147467263);
             }
+
+            using var strings = new Utf16Strings();
 
             var clientDataJson = SerializeClientDataGet(data.Challenge);
             var clientDataJsonUtf8 = Encoding.UTF8.GetBytes(clientDataJson);
@@ -591,7 +634,7 @@ namespace Telegram.Stub
                 dwVersion = WEBAUTHN_CLIENT_DATA_CURRENT_VERSION,
                 cbClientDataJSON = (uint)clientDataJson.Length,
                 pbClientDataJSON = pbClientDataJSON,
-                pwszHashAlgId = WEBAUTHN_HASH_ALGORITHM_SHA_256
+                pwszHashAlgId = strings[WEBAUTHN_HASH_ALGORITHM_SHA_256]
             };
 
             var credentialIds = new List<GCHandle>();
@@ -600,7 +643,7 @@ namespace Telegram.Stub
 
             for (int i = 0; i < data.AllowCredentials.Count; i++)
             {
-                Credential? cred = data.AllowCredentials[i];
+                Credential cred = data.AllowCredentials[i];
                 GCHandle pbIdHandle = GCHandle.Alloc(cred.Id, GCHandleType.Pinned);
                 IntPtr pbId = pbIdHandle.AddrOfPinnedObject();
                 credentialIds.Add(pbIdHandle);
@@ -610,7 +653,7 @@ namespace Telegram.Stub
                     dwVersion = WEBAUTHN_CREDENTIAL_CURRENT_VERSION,
                     cbId = (uint)cred.Id.Length,
                     pbId = pbId,
-                    pwszCredentialType = WEBAUTHN_CREDENTIAL_TYPE_PUBLIC_KEY
+                    pwszCredentialType = strings[WEBAUTHN_CREDENTIAL_TYPE_PUBLIC_KEY]
                 };
 
                 IntPtr itemPtr = pCredentials + i * pCredentialsSize;
@@ -647,7 +690,7 @@ namespace Telegram.Stub
 
             var hr = WebAuthNAuthenticatorGetAssertion(
                 hWnd,
-                data.RelyingPartyId,
+                strings[data.RelyingPartyId],
                 clientData,
                 options,
                 out IntPtr ppAssertion);
@@ -684,23 +727,23 @@ namespace Telegram.Stub
         // TODO: Currently unused due to Windows full screen modal on the first WebAuthN API call
         //private const uint WEBAUTHN_GET_CREDENTIALS_OPTIONS_CURRENT_VERSION = 1;
 
-        //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        //[StructLayout(LayoutKind.Sequential)]
         //private struct WEBAUTHN_GET_CREDENTIALS_OPTIONS
         //{
         //    public uint dwVersion;
         //    [MarshalAs(UnmanagedType.LPWStr)]
-        //    public string pwszRpId;
+        //    public IntPtr pwszRpId;
         //    public bool bBrowserInPrivateMode;
         //}
 
-        //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        //[StructLayout(LayoutKind.Sequential)]
         //private struct WEBAUTHN_CREDENTIAL_DETAILS_LIST
         //{
         //    public uint cCredentialDetails;
         //    public IntPtr ppCredentialDetails;
         //}
 
-        //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        //[StructLayout(LayoutKind.Sequential)]
         //private struct WEBAUTHN_CREDENTIAL_DETAILS
         //{
         //    public uint dwVersion;
@@ -749,5 +792,68 @@ namespace Telegram.Stub
         //        WebAuthNFreePlatformCredentialList(ppCredentialDetailsList);
         //    }
         //}
+    }
+
+    internal static class WebAuthnJsonExtensions
+    {
+        public static bool TryGetString(this JsonObject obj, string key, out string value)
+        {
+            if (obj.TryGetValue(key, out IJsonValue valueBoxed))
+            {
+                if (valueBoxed.ValueType == JsonValueType.String)
+                {
+                    value = valueBoxed.GetString();
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
+
+        public static bool TryGetInt32(this JsonObject obj, string key, out int? value)
+        {
+            if (obj.TryGetValue(key, out IJsonValue valueBoxed))
+            {
+                if (valueBoxed.ValueType == JsonValueType.Number)
+                {
+                    value = (int)valueBoxed.GetNumber();
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
+
+        public static bool TryGetObject(this JsonObject obj, string key, out JsonObject value)
+        {
+            if (obj.TryGetValue(key, out IJsonValue valueBoxed))
+            {
+                if (valueBoxed.ValueType == JsonValueType.Object)
+                {
+                    value = valueBoxed.GetObject();
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
+
+        public static bool TryGetArray(this JsonObject obj, string key, out JsonArray value)
+        {
+            if (obj.TryGetValue(key, out IJsonValue valueBoxed))
+            {
+                if (valueBoxed.ValueType == JsonValueType.Array)
+                {
+                    value = valueBoxed.GetArray();
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
     }
 }

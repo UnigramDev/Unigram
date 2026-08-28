@@ -2547,6 +2547,40 @@ changes nothing about activation, which is the single biggest de-risking in
   Reachable today: item 2.4 kept the `windows.shareTarget` extension in the Win32 manifest, so a
   share into this flavour will find it.
 
+- [x] **2.5d The passkey consent prompt follows package identity, not the container - measured
+  2026-08-28.** Passkeys work on this host now, in process, and Fela noticed they still raise the
+  system permission modal that the UWP build raises and that other Win32 software does not.
+
+  Two candidates, and the token settles the first one. Queried with `TokenIsAppContainer` on three
+  live processes:
+
+  | process | AppContainer |
+  | --- | --- |
+  | the Store build | yes |
+  | the Modern debug build | yes |
+  | `bin\win32\...\AppX\Telegram.exe` | **no** |
+
+  So `runFullTrust` does what it says and the Win32 flavour is genuinely outside the container. The
+  prompt is not that.
+
+  The spike answers the rest, because it is the same code with no package at all: it links
+  `WebAuthn.Win32.cs` verbatim - the file the app and the stub already share - and calls
+  `MakeCredential` from an unpackaged process. **No prompt.**
+
+  **So it is package identity.** Windows lets a browser assert an origin and trusts it to have
+  validated the relying party; every other *identified* app gets the consent UI first. Nothing
+  about the host changes it, which means:
+
+  - packaged, however it is distributed: the prompt stays, on both flavours;
+  - unpackaged: it goes away.
+
+  That is now a real input to the distribution question rather than a detail - the one user-visible
+  behaviour found so far that packaging costs. Worth weighing against 0.18 and the sideloading
+  problems, not decisive on its own.
+
+  (The spike's csproj now compiles a file out of this repo. Deliberate - a copy would have answered
+  a different question - but it means moving `WebAuthn.Win32.cs` breaks the spike build.)
+
 - [x] **2.1l The CoreWindow has to be adopted, or closing the main window kills XAML - fixed
   2026-08-28.** Fela spotted the comment in Terminal's `WindowEmperor` and it is the most valuable
   thing in that file:

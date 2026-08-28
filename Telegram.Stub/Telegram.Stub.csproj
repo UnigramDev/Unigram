@@ -9,6 +9,10 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <EnableDefaultItems>false</EnableDefaultItems>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- The app has this on and shares NotifyIcon and Passkeys with this project. Without it here,
+         interop that only works under runtime marshalling compiles clean and throws when the Win32
+         flavour calls it. -->
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
     <Platforms>x64;arm64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <Win32Resource>Resources.res</Win32Resource>
@@ -23,7 +27,9 @@
          flavour. NotifyIcon.cs beside this is only the half that needs the stub's own
          message loop. -->
     <Compile Include="..\Telegram\Common\NotifyIcon.Win32.cs" Link="NotifyIcon.Shared.cs" />
-    <Compile Include="Passkeys.cs" />
+    <!-- webauthn.dll is called from here for the UWP flavour and from the app itself for the
+         Win32 one, so the wrapper lives with the app and this project links it. -->
+    <Compile Include="..\Telegram\Common\WebAuthn.Win32.cs" Link="WebAuthn.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 

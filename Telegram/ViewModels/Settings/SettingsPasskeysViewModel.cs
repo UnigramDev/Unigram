@@ -39,7 +39,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Info()
         {
-            if (!BridgeApplicationContext.IsPasskeySupported())
+            if (!PasskeyManager.IsSupported())
             {
                 ShowPopup(Strings.PasskeyNotSupportedText, Strings.AppName, Strings.OK);
                 return;
@@ -54,7 +54,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Create()
         {
-            if (!BridgeApplicationContext.IsPasskeySupported())
+            if (!PasskeyManager.IsSupported())
             {
                 ShowPopup(Strings.PasskeyNotSupportedText, Strings.AppName, Strings.OK);
                 return;
@@ -65,7 +65,7 @@ namespace Telegram.ViewModels.Settings
 
         private async void CreateImpl()
         {
-            var response = await BridgeApplicationContext.AddLoginPasskeyAsync(ClientService);
+            var response = await PasskeyManager.AddLoginAsync(Window, ClientService);
             if (response is Passkey passkey)
             {
                 Items.Insert(0, passkey);

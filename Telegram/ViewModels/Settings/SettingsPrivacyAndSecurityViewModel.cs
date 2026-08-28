@@ -368,7 +368,7 @@ namespace Telegram.ViewModels.Settings
             }
             else
             {
-                if (!BridgeApplicationContext.IsPasskeySupported())
+                if (!PasskeyManager.IsSupported())
                 {
                     ShowPopup(Strings.PasskeyNotSupportedText, Strings.AppName, Strings.OK);
                     return;
@@ -377,7 +377,7 @@ namespace Telegram.ViewModels.Settings
                 var confirm = await ShowPopupAsync(new SettingsPasskeysIntroPopup());
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var response = await BridgeApplicationContext.AddLoginPasskeyAsync(ClientService);
+                    var response = await PasskeyManager.AddLoginAsync(Window, ClientService);
                     if (response is Passkey passkey)
                     {
                         HasPasskeys = true;

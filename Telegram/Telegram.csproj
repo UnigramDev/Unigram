@@ -602,6 +602,8 @@
     <Compile Include="Collections\Handlers\MessageDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\BridgeApplicationContext.cs" />
+    <Compile Include="Common\PasskeyManager.cs" />
+    <Compile Include="Common\PasskeyManager.Uwp.cs" />
     <Compile Include="Common\SystemTray.cs" />
     <Compile Include="Common\SystemTray.Uwp.cs" />
     <Compile Include="Controls\ActiveStoriesSegments.cs" />

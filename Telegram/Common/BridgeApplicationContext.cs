@@ -149,7 +149,7 @@ namespace Telegram.Common
 #endif
         }
 
-        public static async Task<Object> AddLoginPasskeyAsync(IClientService clientService)
+        public static async Task<Object> AddLoginPasskeyAsync(WindowContext window, IClientService clientService)
         {
             Logger.Info();
             await ConnectAsync();
@@ -163,7 +163,7 @@ namespace Telegram.Common
             var message = new ValueSet
             {
                 { "MakeCredential", parameters.TextValue },
-                { "WindowId", WindowContext.Current.Handle }
+                { "WindowId", window.Handle }
             };
 
             var payload = await SendMessageAsync(message, timeout: 0);
@@ -188,7 +188,7 @@ namespace Telegram.Common
             return new Error(400, "Unknown error");
         }
 
-        public static async Task<Object> CheckAuthenticationPasskeyAsync(IClientService clientService)
+        public static async Task<Object> CheckAuthenticationPasskeyAsync(WindowContext window, IClientService clientService)
         {
             Logger.Info();
             await ConnectAsync();
@@ -202,7 +202,7 @@ namespace Telegram.Common
             var message = new ValueSet
             {
                 { "GetAssertion", parameters.TextValue },
-                { "WindowId", WindowContext.Current.Handle }
+                { "WindowId", window.Handle }
             };
 
             var payload = await SendMessageAsync(message, timeout: 0);
