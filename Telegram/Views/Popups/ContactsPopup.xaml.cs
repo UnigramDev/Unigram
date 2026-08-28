@@ -40,8 +40,8 @@ namespace Telegram.Views.Popups
                 var items = ViewModel.Search;
                 if (items != null && string.Equals(SearchField.Text, items.Query))
                 {
-                    await items.LoadMoreItemsAsync(1);
-                    await items.LoadMoreItemsAsync(2);
+                    await items.SearchChatsOnServerAsync();
+                    await items.SearchPublicChatsAsync();
                 }
             };
         }
@@ -199,7 +199,7 @@ namespace Telegram.Views.Popups
                 FindName(nameof(ContactsSearchListView));
 
                 var items = ViewModel.Search = new SearchUsersCollection(ViewModel.ClientService, SearchField.Text);
-                await items.LoadMoreItemsAsync(0);
+                await items.SearchContactsAsync();
             }
         }
 

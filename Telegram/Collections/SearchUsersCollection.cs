@@ -7,16 +7,17 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
+    // Not incremental: the three searches are separate requests the caller runs in order, and each
+    // one dedupes against the users the ones before it found.
+    // TODO: XAML implementation needs refactoring
+    public partial class SearchUsersCollection : ObservableCollection<KeyedList<string, object>>
     {
         private readonly IClientService _clientService;
         private readonly string _query;
@@ -40,72 +41,58 @@ namespace Telegram.Collections
 
         public string Query => _query;
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
+        public async Task SearchContactsAsync()
         {
-            return IncrementalLoading.Run(async token =>
+            var response = await _clientService.SendAsync(new SearchContacts(_query, 100));
+            if (response is Users users)
             {
-                if (phase == 0)
+                foreach (var user in _clientService.GetUsers(users.UserIds))
                 {
-                    var response = await _clientService.SendAsync(new SearchContacts(_query, 100));
-                    if (response is Users users)
-                    {
-                        foreach (var id in users.UserIds)
-                        {
-                            var user = _clientService.GetUser(id);
-                            if (user != null)
-                            {
-                                _users.Add(id);
-                                _local.Add(new SearchResult(_clientService, user, _query, SearchResultType.Contacts, false));
-                            }
-                        }
-                    }
+                    _users.Add(user.Id);
+                    _local.Add(new SearchResult(_clientService, user, _query, SearchResultType.Contacts, false));
                 }
-                else if (phase == 1)
-                {
-                    var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, null, 100));
-                    if (response is Chats chats && _local != null)
-                    {
-                        foreach (var id in chats.ChatIds)
-                        {
-                            var chat = _clientService.GetChat(id);
-                            if (chat != null && chat.Type is ChatTypePrivate privata)
-                            {
-                                if (_users.Contains(privata.UserId))
-                                {
-                                    continue;
-                                }
-
-                                _users.Add(privata.UserId);
-                                _local.Add(new SearchResult(_clientService, chat, _query, SearchResultType.ChatsOnServer, false));
-                            }
-                        }
-                    }
-                }
-                else if (phase == 2)
-                {
-                    var response = await _clientService.SendAsync(new SearchPublicChats(_query, null));
-                    if (response is Chats chats)
-                    {
-                        foreach (var id in chats.ChatIds)
-                        {
-                            var chat = _clientService.GetChat(id);
-                            if (chat != null && chat.Type is ChatTypePrivate privata)
-                            {
-                                if (_users.Contains(privata.UserId))
-                                {
-                                    continue;
-                                }
-
-                                _remote.Add(new SearchResult(_clientService, chat, _query, SearchResultType.PublicChats, false));
-                            }
-                        }
-                    }
-                }
-
-                return new LoadMoreItemsResult();
-            });
+            }
         }
 
-        public bool HasMoreItems => false;
+        public async Task SearchChatsOnServerAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, null, 100));
+            if (response is Chats chats)
+            {
+                foreach (var chat in _clientService.GetChats(chats.ChatIds))
+                {
+                    if (chat.Type is ChatTypePrivate privata)
+                    {
+                        if (_users.Contains(privata.UserId))
+                        {
+                            continue;
+                        }
+
+                        _users.Add(privata.UserId);
+                        _local.Add(new SearchResult(_clientService, chat, _query, SearchResultType.ChatsOnServer, false));
+                    }
+                }
+            }
+        }
+
+        public async Task SearchPublicChatsAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchPublicChats(_query, null));
+            if (response is Chats chats)
+            {
+                foreach (var chat in _clientService.GetChats(chats.ChatIds))
+                {
+                    if (chat.Type is ChatTypePrivate privata)
+                    {
+                        if (_users.Contains(privata.UserId))
+                        {
+                            continue;
+                        }
+
+                        _remote.Add(new SearchResult(_clientService, chat, _query, SearchResultType.PublicChats, false));
+                    }
+                }
+            }
+        }
     }
 }

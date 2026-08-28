@@ -1672,8 +1672,10 @@ the most likely failure comes first.
      rather than the system one. Bigger, but this is the second thing pointing that way after
      acrylic.
 
-- [ ] **1.13a Reimplementing `ContentPopup` on `Popup` - the point, made 2026-08-27.** Gate 1.13
-  is the only remaining blocker, and the reason it looks frightening is that "rebuild `ContentDialog`"
+- [x] **1.13a RETIRED. Reimplementing `ContentPopup` on `Popup` - the point, made 2026-08-27.**
+  Kept for the reasoning rather than as work: 1.13 turned out to be four lines, and none of
+  this is needed. Gate 1.13
+  looked like the only remaining blocker, and the reason it looked frightening is that "rebuild `ContentDialog`"
   sounds like rebuilding a control. It is not, and the difference is worth writing down before
   anyone estimates it.
 
@@ -2808,8 +2810,11 @@ changes nothing about activation, which is the single biggest de-risking in
   Open question worth settling first: how much does a clean close actually save at startup? If a
   binlog replay of a normal session costs single-digit milliseconds, the UWP half is not worth its
   risk and only Win32 should do it.
-- [ ] **2.5c The tray icon, on both hosts, without a second copy of it.** Design agreed with Fela
-  2026-08-27; not written yet.
+- [x] **2.5c The tray icon, on both hosts, without a second copy of it. Done 2026-08-28.**
+  Design agreed with Fela 2026-08-27 and built as described: `SystemTray` is the seam, the UWP
+  half forwards to the bridge, and `NotifyIcon` is one file both projects compile. Closing the
+  main window hides it to the icon rather than ending the process - the half that only matters
+  on this host, where the icon lives in the app and quitting would take it with us.
 
   **What the tray actually is today.** `Telegram.Stub` exists because a packaged UWP app cannot own
   a tray icon in its own process: it is launched through `windows.fullTrustProcess` and talks over

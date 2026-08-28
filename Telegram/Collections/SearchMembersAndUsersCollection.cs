@@ -7,16 +7,17 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchMembersAndUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
+    // Not incremental: the four searches are separate requests the caller runs in order, and each
+    // one dedupes against the users the ones before it found.
+    // TODO: XAML implementation needs refactoring
+    public partial class SearchMembersAndUsersCollection : ObservableCollection<KeyedList<string, object>>
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;
@@ -49,92 +50,85 @@ namespace Telegram.Collections
 
         public string Query => _query;
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
+        public async Task SearchChatMembersAsync()
         {
-            return IncrementalLoading.Run(async token =>
+            var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 100, _filter));
+            if (response is ChatMembers members)
             {
-                if (phase == 0)
+                foreach (var member in members.Members)
                 {
-                    var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 100, _filter));
-                    if (response is ChatMembers members)
+                    if (_clientService.TryGetUser(member.MemberId, out User user))
                     {
-                        foreach (var member in members.Members)
-                        {
-                            if (_clientService.TryGetUser(member.MemberId, out User user))
-                            {
-                                _users.Add(user.Id);
-                                _chat.Add(new SearchResult(_clientService, user, _query, SearchResultType.ChatMembers, false));
-                            }
-                        }
+                        _users.Add(user.Id);
+                        _chat.Add(new SearchResult(_clientService, user, _query, SearchResultType.ChatMembers, false));
                     }
                 }
-                else if (phase == 1)
-                {
-                    var response = await _clientService.SendAsync(new SearchContacts(_query, 100));
-                    if (response is Users users)
-                    {
-                        foreach (var id in users.UserIds)
-                        {
-                            if (_users.Contains(id))
-                            {
-                                continue;
-                            }
-
-                            var user = _clientService.GetUser(id);
-                            if (user != null)
-                            {
-                                _users.Add(id);
-                                _local.Add(new SearchResult(_clientService, user, _query, SearchResultType.Contacts, _canSendMessageToUser));
-                            }
-                        }
-                    }
-                }
-                else if (phase == 2)
-                {
-                    var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, null, 100));
-                    if (response is Chats chats)
-                    {
-                        foreach (var id in chats.ChatIds)
-                        {
-                            var chat = _clientService.GetChat(id);
-                            if (chat != null && chat.Type is ChatTypePrivate privata)
-                            {
-                                if (_users.Contains(privata.UserId))
-                                {
-                                    continue;
-                                }
-
-                                _users.Add(privata.UserId);
-                                _local.Add(new SearchResult(_clientService, chat, _query, SearchResultType.ChatsOnServer, _canSendMessageToUser));
-                            }
-                        }
-                    }
-                }
-                else if (phase == 3)
-                {
-                    var response = await _clientService.SendAsync(new SearchPublicChats(_query, null));
-                    if (response is Chats chats)
-                    {
-                        foreach (var id in chats.ChatIds)
-                        {
-                            var chat = _clientService.GetChat(id);
-                            if (chat != null && chat.Type is ChatTypePrivate privata)
-                            {
-                                if (_users.Contains(privata.UserId))
-                                {
-                                    continue;
-                                }
-
-                                _remote.Add(new SearchResult(_clientService, chat, _query, SearchResultType.PublicChats, _canSendMessageToUser));
-                            }
-                        }
-                    }
-                }
-
-                return new LoadMoreItemsResult();
-            });
+            }
         }
 
-        public bool HasMoreItems => false;
+        public async Task SearchContactsAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchContacts(_query, 100));
+            if (response is Users users)
+            {
+                foreach (var id in users.UserIds)
+                {
+                    if (_users.Contains(id))
+                    {
+                        continue;
+                    }
+
+                    var user = _clientService.GetUser(id);
+                    if (user != null)
+                    {
+                        _users.Add(id);
+                        _local.Add(new SearchResult(_clientService, user, _query, SearchResultType.Contacts, _canSendMessageToUser));
+                    }
+                }
+            }
+        }
+
+        public async Task SearchChatsOnServerAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, null, 100));
+            if (response is Chats chats)
+            {
+                foreach (var id in chats.ChatIds)
+                {
+                    var chat = _clientService.GetChat(id);
+                    if (chat != null && chat.Type is ChatTypePrivate privata)
+                    {
+                        if (_users.Contains(privata.UserId))
+                        {
+                            continue;
+                        }
+
+                        _users.Add(privata.UserId);
+                        _local.Add(new SearchResult(_clientService, chat, _query, SearchResultType.ChatsOnServer, _canSendMessageToUser));
+                    }
+                }
+            }
+        }
+
+        public async Task SearchPublicChatsAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchPublicChats(_query, null));
+            if (response is Chats chats)
+            {
+                foreach (var id in chats.ChatIds)
+                {
+                    var chat = _clientService.GetChat(id);
+                    if (chat != null && chat.Type is ChatTypePrivate privata)
+                    {
+                        if (_users.Contains(privata.UserId))
+                        {
+                            continue;
+                        }
+
+                        _remote.Add(new SearchResult(_clientService, chat, _query, SearchResultType.PublicChats, _canSendMessageToUser));
+                    }
+                }
+            }
+        }
     }
 }
