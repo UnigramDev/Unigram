@@ -114,7 +114,6 @@
     <Compile Remove="Controls\SettingsCheckBox.cs" />
     <Compile Remove="Entities\SourceGenerationContext.cs" />
     <Compile Remove="Streams\DiceFileSource.cs" />
-    <Compile Remove="Td\Api\ChatProjection.cs" />
     <!-- The SDK generates these attributes itself, and two sets of them is CS0579. -->
     <Compile Remove="Properties\AssemblyInfo.cs" />
     <!-- The other side of the fork Telegram.Win32.csproj makes: its host partials and its own

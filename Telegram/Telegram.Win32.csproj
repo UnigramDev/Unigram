@@ -134,7 +134,6 @@
     <Compile Remove="Controls\SettingsCheckBox.cs" />
     <Compile Remove="Entities\SourceGenerationContext.cs" />
     <Compile Remove="Streams\DiceFileSource.cs" />
-    <Compile Remove="Td\Api\ChatProjection.cs" />
     <!-- The SDK generates these attributes itself, and two sets of them is CS0579. -->
     <Compile Remove="Properties\AssemblyInfo.cs" />
     <!-- The fork. Every host-specific member lives in a *.Uwp.cs / *.Win32.cs partial beside its
