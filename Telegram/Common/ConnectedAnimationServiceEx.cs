@@ -13,8 +13,24 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Common
 {
-    public static class ConnectedAnimationServiceEx
+    public static partial class ConnectedAnimationServiceEx
     {
+        // Starting a connected animation kills the island host: the projected shadow manager ensures
+        // its scene, and ThemeShadowScene::SetupLights dereferences a visual that DCompTreeHost only
+        // has for a CoreWindow-hosted tree. Every caller here already handles a null animation, so
+        // the transition is simply skipped there.
+        private static bool IsSupported
+        {
+            get
+            {
+                var supported = true;
+                Unsupported(ref supported);
+                return supported;
+            }
+        }
+
+        static partial void Unsupported(ref bool supported);
+
         public static TimeSpan DefaultDuration
         {
             get => ConnectedAnimationService.GetForCurrentView().DefaultDuration;
@@ -29,7 +45,7 @@ namespace Telegram.Common
 
         public static ConnectedAnimation PrepareToAnimate(string key, UIElement source)
         {
-            if (source.XamlRoot == null || !WindowContext.TryGetForXamlRoot(source.XamlRoot, out WindowContext window))
+            if (!IsSupported || source.XamlRoot == null || !WindowContext.TryGetForXamlRoot(source.XamlRoot, out WindowContext window))
             {
                 return null;
             }
@@ -39,7 +55,7 @@ namespace Telegram.Common
 
         public static ConnectedAnimation GetAnimation(string key, XamlRoot xamlRoot)
         {
-            if (xamlRoot == null || !WindowContext.TryGetForXamlRoot(xamlRoot, out WindowContext window))
+            if (!IsSupported || xamlRoot == null || !WindowContext.TryGetForXamlRoot(xamlRoot, out WindowContext window))
             {
                 return null;
             }

@@ -2547,6 +2547,33 @@ changes nothing about activation, which is the single biggest de-risking in
   Reachable today: item 2.4 kept the `windows.shareTarget` extension in the Win32 manifest, so a
   share into this flavour will find it.
 
+- [x] **2.1m Connected animations are fatal on the island host - found and fixed 2026-08-28.**
+  Crash dump `Telegram.exe.79384`, opening the gallery. Not our code: nothing of ours is on the
+  stack, it dies inside the render tick.
+
+  ```
+  DCompTreeHost + 0x258 = NULL              <- only populated for a CoreWindow-hosted tree
+    ThemeShadowScene::SetupLights           <- reads [null + 0x18]
+    ThemeShadowScene::EnsureInitialized
+    ProjectedShadowManager::EnsureScene
+    ProjectedShadowManager::UpdateCasterStatus
+    CConnectedAnimation::StartSpriteAnimations
+    CConnectedAnimationService::PreCommit -> CCoreServices::NWDrawTree -> OnTick
+  ```
+
+  A connected animation over an element that casts a `ThemeShadow` makes the projected shadow
+  manager build its scene, and the scene wants a visual an island's `DCompTreeHost` does not have.
+  Two features that only work together under a `CoreWindow`.
+
+  **Fixed by turning connected animations off on this host**, not the shadows: every caller already
+  handles a null animation, so the gallery open/close and the profile header morph simply do not
+  play, while dropping `ThemeShadow` would flatten flyouts, autocomplete, the record bar and every
+  bubble. `ConnectedAnimationServiceEx.Win32.cs` sets the gate through the same `static partial
+  void` seam as the `ContentPopup` fix, so UWP compiles the call away.
+
+  If shadows later prove to crash in an island on their own - this only rules out the connected
+  animation path - the gate moves to `ApiInfo.CanCreateThemeShadow` instead.
+
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.
 - [ ] **2.2** Desktop `IViewService` / `WindowContext` implementations behind the Phase 0 seams.
