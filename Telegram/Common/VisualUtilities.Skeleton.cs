@@ -58,7 +58,7 @@ namespace Telegram.Common
             var shimmer = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
 
             var lookup = ThemeService.GetLookup(element.ActualTheme);
-            if (lookup.TryGet("MenuFlyoutItemBackgroundPointerOver", out Color color))
+            if (lookup.TryGetColor("MenuFlyoutItemBackgroundPointerOver", out Color color))
             {
                 shimmer = color;
             }

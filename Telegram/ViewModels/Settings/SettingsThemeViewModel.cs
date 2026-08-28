@@ -89,17 +89,12 @@ namespace Telegram.ViewModels.Settings
 
                 if (theme.Values.TryGetValue(value.Key, out Color custom))
                 {
-                    if (value.Value is Color reference)
-                    {
-                        _index[i] = new ThemeBrush(value.Key, custom, reference.A < 255);
-                    }
-                    else
-                    {
-                        _index[i] = new ThemeBrush(value.Key, custom, false);
-                    }
+                    _index[i] = new ThemeBrush(value.Key, custom,
+                        value.Value.Kind == ThemeValueKind.Color && value.Value.Color.A < 255);
                 }
-                else if (value.Value is Color color)
+                else if (value.Value.Kind == ThemeValueKind.Color)
                 {
+                    var color = value.Value.Color;
                     _index[i] = new ThemeBrush(value.Key, color, color.A < 255);
                 }
 

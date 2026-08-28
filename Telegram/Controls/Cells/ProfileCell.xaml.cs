@@ -1619,7 +1619,7 @@ namespace Telegram.Controls.Cells
             var backgroundColor = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
 
             var lookup = ThemeService.GetLookup(ActualTheme);
-            if (lookup.TryGet("MenuFlyoutItemBackgroundPointerOver", out Color color))
+            if (lookup.TryGetColor("MenuFlyoutItemBackgroundPointerOver", out Color color))
             {
                 foregroundColor = color;
                 backgroundColor = color;

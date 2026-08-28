@@ -50,14 +50,14 @@ namespace Telegram.Services
             _aggregator = aggregator;
         }
 
-        public static Dictionary<string, object> GetLookup(ElementTheme flags)
+        public static ThemeLookup GetLookup(ElementTheme flags)
         {
-            return flags == ElementTheme.Dark ? _defaultDark : _defaultLight;
+            return flags == ElementTheme.Dark ? ThemeDefaults.Dark : ThemeDefaults.Light;
         }
 
-        public static Dictionary<string, object> GetLookup(TelegramTheme flags)
+        public static ThemeLookup GetLookup(TelegramTheme flags)
         {
-            return flags == TelegramTheme.Dark ? _defaultDark : _defaultLight;
+            return flags == TelegramTheme.Dark ? ThemeDefaults.Dark : ThemeDefaults.Light;
         }
 
         public IList<ThemeInfoBase> GetThemes()
@@ -225,9 +225,9 @@ namespace Telegram.Services
 
             foreach (var value in lookup)
             {
-                if (value.Value is Color color)
+                if (value.Value.Kind == ThemeValueKind.Color)
                 {
-                    preparing.Values[value.Key] = color;
+                    preparing.Values[value.Key] = value.Value.Color;
                 }
             }
 

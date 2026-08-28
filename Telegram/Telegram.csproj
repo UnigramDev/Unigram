@@ -1147,6 +1147,9 @@
     <Compile Include="Services\StorageService.cs" />
     <Compile Include="Services\Stripe\SmartGlocalClient.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
+    <Compile Include="Services\Theme\ThemeDefaults.cs" />
+    <Compile Include="Services\Theme\ThemeDefaults.g.cs" />
+    <Compile Include="Services\Theme\ThemeLookup.cs" />
     <Compile Include="Services\Theme\ThemeBundledInfo.cs" />
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />

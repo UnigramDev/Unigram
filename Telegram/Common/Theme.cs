@@ -348,20 +348,23 @@ namespace Telegram.Common
 
                 foreach (var item in lookup)
                 {
-                    if (item.Value is AccentShade or Color)
+                    var kind = item.Value.Kind;
+
+                    if (kind is ThemeValueKind.Color or ThemeValueKind.Shade)
                     {
-                        Color value = default;
-                        if (item.Value is AccentShade shade)
+                        Color value;
+                        if (kind == ThemeValueKind.Shade)
                         {
-                            value = GetShade(shade);
+                            // A shade is the accent, so a theme's own value never overrides it.
+                            value = GetShade(item.Value.Shade);
                         }
                         else if (values != null && values.TryGetValue(item.Key, out Color themed))
                         {
                             value = themed;
                         }
-                        else if (item.Value is Color color)
+                        else
                         {
-                            value = color;
+                            value = item.Value.Color;
                         }
 
                         if (themeParameters.ContainsKey(item.Key))
@@ -378,15 +381,19 @@ namespace Telegram.Common
                         double tintOpacity;
                         double? tintLuminosityOpacity;
                         Color fallbackColor;
-                        if (item.Value is Acrylic<Color> acrylicColor)
+                        if (kind == ThemeValueKind.AcrylicColor)
                         {
+                            var acrylicColor = item.Value.AcrylicColor;
+
                             tintColor = acrylicColor.TintColor;
                             tintOpacity = acrylicColor.TintOpacity;
                             tintLuminosityOpacity = acrylicColor.TintLuminosityOpacity;
                             fallbackColor = acrylicColor.FallbackColor;
                         }
-                        else if (item.Value is Acrylic<AccentShade> acrylicShade)
+                        else if (kind == ThemeValueKind.AcrylicShade)
                         {
+                            var acrylicShade = item.Value.AcrylicShade;
+
                             tintColor = GetShade(acrylicShade.TintColor);
                             tintOpacity = acrylicShade.TintOpacity;
                             tintLuminosityOpacity = acrylicShade.TintLuminosityOpacity;
@@ -460,7 +467,7 @@ namespace Telegram.Common
             }
         }
 
-        private void PatchTextControlElevationBorderFocusedBrush(TelegramTheme requested, ResourceDictionary target, Dictionary<string, object> lookup, string key, bool create, Func<AccentShade, Color> getShade)
+        private void PatchTextControlElevationBorderFocusedBrush(TelegramTheme requested, ResourceDictionary target, ThemeLookup lookup, string key, bool create, Func<AccentShade, Color> getShade)
         {
             // TextControlElevationBorderFocusedBrush is the only gradient that requires theming,
             // Hence we hardcode the logic to update this brush as it's not worth it to support this scenario.
@@ -489,7 +496,7 @@ namespace Telegram.Common
                     };
                 }
 
-                if (lookup.TryGet("ControlStrokeColorDefaultBrush", out Color stroke))
+                if (lookup.TryGetColor("ControlStrokeColorDefaultBrush", out Color stroke))
                 {
                     brush.GradientStops[0].Color = getShade(requested == TelegramTheme.Light ? AccentShade.Dark1 : AccentShade.Light1);
                     brush.GradientStops[1].Color = stroke;

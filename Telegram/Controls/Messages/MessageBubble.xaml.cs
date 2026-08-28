@@ -3664,7 +3664,7 @@ namespace Telegram.Controls.Messages
             var backgroundColor = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
 
             var lookup = ThemeService.GetLookup(ActualTheme);
-            if (lookup.TryGet("MenuFlyoutItemBackgroundPointerOver", out backgroundColor))
+            if (lookup.TryGetColor("MenuFlyoutItemBackgroundPointerOver", out backgroundColor))
             {
             }
 

@@ -2891,8 +2891,8 @@ namespace Telegram.Controls
 
                 // TODO: Improve colors
                 var lookup = ThemeService.GetLookup(ActualTheme);
-                lookup.TryGet("SystemControlDisabledChromeDisabledLowBrush", out backgroundColor);
-                lookup.TryGet("ApplicationPageBackgroundThemeBrush", out foregroundColor);
+                lookup.TryGetColor("SystemControlDisabledChromeDisabledLowBrush", out backgroundColor);
+                lookup.TryGetColor("ApplicationPageBackgroundThemeBrush", out foregroundColor);
 
                 var gradient = BootStrapper.Current.Compositor.CreateLinearGradientBrush();
                 gradient.ColorStops.Add(BootStrapper.Current.Compositor.CreateColorGradientStop(0, Color.FromArgb(0x00, backgroundColor.R, backgroundColor.G, backgroundColor.B)));
