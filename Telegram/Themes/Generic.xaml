@@ -5995,7 +5995,7 @@
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
+                                                                       Storyboard.TargetName="Icon">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
