@@ -14,6 +14,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -115,9 +116,11 @@ namespace Telegram.Common
             return CanvasGeometry.CreatePath(builder);
         }
 
-        public static CompositionAnimation ParseThumbnail(float width, float height, Vector<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
+        public static CompositionAnimation ParseThumbnail(float width, float height, AnimatedImageOutline outline, out ShapeVisual visual, bool animated = true)
         {
-            CompositionPath path = contours?.Count > 0
+            CompositionPath path = outline.TryGetSvgPath(out var svgPath)
+                ? new CompositionPath(Parse(null, svgPath))
+                : outline.TryGetContours(out var contours)
                 ? new CompositionPath(Parse(null, contours))
                 : new CompositionPath(CanvasGeometry.CreateRoundedRectangle(null, 0, 0, width, height, 80, 80));
 
@@ -200,6 +203,8 @@ namespace Telegram.Common
                     renderer.RenderSegment(segments[i].Type, segments[i].GetData(data));
                 }
             }
+
+            renderer.Complete();
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -246,6 +251,7 @@ namespace Telegram.Common
             private Vector2? _currentPoint;
             private Vector2? _cubicPoint;
             private Vector2? _initialPoint;
+            private bool _open;
 
             public PathRenderer(CanvasPathBuilder builder, Span<float> dataBuffer)
             {
@@ -254,10 +260,18 @@ namespace Telegram.Common
                 _currentPoint = null;
                 _cubicPoint = null;
                 _initialPoint = null;
+                _open = false;
             }
 
             public void RenderSegment(PathSegment.SegmentType type, ReadOnlySpan<float> data)
             {
+                // A contour that z did not end is resumed by the next drawing command, from the point
+                // z returned to, so a figure has to be able to open here and not only at M.
+                if (!_open && type is not (PathSegment.SegmentType.M or PathSegment.SegmentType.m or PathSegment.SegmentType.z))
+                {
+                    BeginFigure(_currentPoint ?? Vector2.Zero);
+                }
+
                 switch (type)
                 {
                     case PathSegment.SegmentType.M:
@@ -355,9 +369,14 @@ namespace Telegram.Common
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void MoveTo(float x, float y)
             {
+                // TDLib's outline SVG separates contours with M alone and closes only the last, and
+                // D2D throws on a BeginFigure while a figure is open. Ended Open, as SVG has it: a
+                // fill closes an unterminated contour anyway, and a stroke must not.
+                EndFigure(CanvasFigureLoop.Open);
+
                 var point = new Vector2(x, y);
-                _builder.BeginFigure(point);
-                SetInitialPoint(point);
+                BeginFigure(point);
+                _initialPoint = point;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -365,9 +384,7 @@ namespace Telegram.Common
             {
                 if (_currentPoint is Vector2 current)
                 {
-                    var next = new Vector2(x + current.X, y + current.Y);
-                    _builder.BeginFigure(next);
-                    SetInitialPoint(next);
+                    MoveTo(x + current.X, y + current.Y);
                 }
                 else
                 {
@@ -493,10 +510,44 @@ namespace Telegram.Common
 
             #endregion
 
+            /// <summary>
+            /// Ends the figure that a path not closing its last contour leaves open. Win2D throws
+            /// from CreatePath otherwise.
+            /// </summary>
+            public void Complete()
+            {
+                EndFigure(CanvasFigureLoop.Open);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void BeginFigure(Vector2 point)
+            {
+                _builder.BeginFigure(point);
+                _open = true;
+
+                SetCurrentPoint(point);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void EndFigure(CanvasFigureLoop loop)
+            {
+                if (_open)
+                {
+                    _builder.EndFigure(loop);
+                    _open = false;
+                }
+            }
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void ClosePath()
             {
-                _builder.EndFigure(CanvasFigureLoop.Closed);
+                EndFigure(CanvasFigureLoop.Closed);
+
+                // z returns the current point to where the contour began.
+                if (_initialPoint is Vector2 initial)
+                {
+                    SetCurrentPoint(initial);
+                }
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -504,13 +555,6 @@ namespace Telegram.Common
             {
                 _currentPoint = point;
                 _cubicPoint = cubic;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private void SetInitialPoint(Vector2 point)
-            {
-                SetCurrentPoint(point);
-                _initialPoint = point;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

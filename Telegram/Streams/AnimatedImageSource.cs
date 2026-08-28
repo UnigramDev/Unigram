@@ -14,6 +14,51 @@ using Windows.Foundation.Metadata;
 
 namespace Telegram.Streams
 {
+    /// <summary>
+    /// The outline an <see cref="AnimatedImageSource"/> draws its placeholder from: the SVG path
+    /// that getStickerOutlineSvgPath returns, or the contours of an <see cref="Outline"/>, which is
+    /// all stickerSet.thumbnail_outline offers.
+    /// </summary>
+    /// <remarks>
+    /// A union rather than two properties because there are three states to tell apart - not asked
+    /// for yet, known to have none, and known - and two references cannot express them.
+    /// </remarks>
+    public readonly struct AnimatedImageOutline
+    {
+        // An SVG path or a Vector<ClosedVectorPath>. Both are reference types, so this holds a
+        // reference to either and boxes neither.
+        private readonly object _data;
+
+        private AnimatedImageOutline(object data)
+        {
+            _data = data;
+        }
+
+        /// <summary>
+        /// Known to have no outline, which getStickerOutlineSvgPath reports as an empty string.
+        /// Distinct from the default, the state that asks for one.
+        /// </summary>
+        public static AnimatedImageOutline None => new(string.Empty);
+
+        public bool IsReady => _data is not null;
+
+        public static implicit operator AnimatedImageOutline(string svgPath) => new(svgPath);
+
+        public static implicit operator AnimatedImageOutline(Vector<ClosedVectorPath> contours) => new(contours);
+
+        public bool TryGetSvgPath(out string svgPath)
+        {
+            svgPath = _data as string;
+            return svgPath?.Length > 0;
+        }
+
+        public bool TryGetContours(out Vector<ClosedVectorPath> contours)
+        {
+            contours = _data as Vector<ClosedVectorPath>;
+            return contours?.Count > 0;
+        }
+    }
+
     [CreateFromString(MethodName = "Telegram.Streams.AnimatedImageSourceFactory.Create")]
     public abstract class AnimatedImageSource : IVideoAnimationSource
     {
@@ -21,7 +66,7 @@ namespace Telegram.Streams
 
         public bool NeedsRepainting { get; set; }
 
-        public Vector<ClosedVectorPath> Outline { get; set; }
+        public AnimatedImageOutline Outline { get; set; }
 
         // Needed for Outline
         public int Width { get; set; }

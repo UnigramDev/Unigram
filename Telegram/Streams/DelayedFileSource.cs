@@ -27,6 +27,8 @@ namespace Telegram.Streams
         protected File _file;
         protected long _fileToken;
 
+        private bool _outlineRequested;
+
         public DelayedFileSource(IClientService clientService, File file)
             : base(file)
         {
@@ -73,7 +75,7 @@ namespace Telegram.Streams
                         Width = 512,
                         Height = 512,
                         NeedsRepainting = stickerSet.NeedsRepainting,
-                        Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                        Outline = stickerSet.ThumbnailOutline?.Paths ?? AnimatedImageOutline.None
                     };
                 }
 
@@ -83,7 +85,7 @@ namespace Telegram.Streams
                     Width = stickerSet.Thumbnail.Width,
                     Height = stickerSet.Thumbnail.Height,
                     NeedsRepainting = stickerSet.NeedsRepainting,
-                    Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                    Outline = stickerSet.ThumbnailOutline?.Paths ?? AnimatedImageOutline.None,
                 };
             }
 
@@ -119,7 +121,7 @@ namespace Telegram.Streams
                         Width = 512,
                         Height = 512,
                         NeedsRepainting = stickerSet.NeedsRepainting,
-                        Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                        Outline = stickerSet.ThumbnailOutline?.Paths ?? AnimatedImageOutline.None,
                     };
                 }
 
@@ -129,7 +131,7 @@ namespace Telegram.Streams
                     Width = stickerSet.Thumbnail.Width,
                     Height = stickerSet.Thumbnail.Height,
                     NeedsRepainting = stickerSet.NeedsRepainting,
-                    Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                    Outline = stickerSet.ThumbnailOutline?.Paths ?? AnimatedImageOutline.None,
                 };
             }
 
@@ -144,10 +146,7 @@ namespace Telegram.Streams
         public DelayedFileSource(IClientService clientService, Sticker sticker)
             : this(clientService, sticker.StickerValue)
         {
-            Format = sticker.Format;
-            Width = sticker.Width;
-            Height = sticker.Height;
-            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+            SetSticker(sticker);
         }
 
         public DelayedFileSource(IClientService clientService, StickerViewModel sticker)
@@ -159,11 +158,44 @@ namespace Telegram.Streams
             NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
         }
 
+        /// <summary>
+        /// Everything a sticker contributes to the source, and the one place a subclass that
+        /// resolves its file asynchronously hands it over.
+        /// </summary>
+        protected void SetSticker(Sticker sticker)
+        {
+            _file = sticker.StickerValue;
+            Format = sticker.Format;
+            Width = sticker.Width;
+            Height = sticker.Height;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+
+            // The width and height the placeholder is laid out with have to be in place before the
+            // outline it draws arrives.
+            if (_outlineRequested && !Outline.IsReady)
+            {
+                SendOutlineRequest();
+            }
+        }
+
         public override void RequestOutline()
+        {
+            // AnimatedImage asks once per connect and nothing tells it the ask was dropped, so the
+            // subclasses whose file is still unresolved rely on SetSticker to make it instead.
+            if (_outlineRequested)
+            {
+                return;
+            }
+
+            _outlineRequested = true;
+            SendOutlineRequest();
+        }
+
+        private void SendOutlineRequest()
         {
             if (_file != null && _file.Id != 0)
             {
-                _clientService.Send(new GetStickerOutline(_file.Id, false, false), OutlineRequested);
+                _clientService.Send(new GetStickerOutlineSvgPath(_file.Id, false, false), OutlineRequested);
             }
         }
 
@@ -172,6 +204,11 @@ namespace Telegram.Streams
             if (response is Outline outline)
             {
                 Outline = outline.Paths;
+                OnOutlineChanged();
+            }
+            else if (response is Text path)
+            {
+                Outline = path.TextValue;
                 OnOutlineChanged();
             }
         }

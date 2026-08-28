@@ -39,13 +39,7 @@ namespace Telegram.Streams
                     var response = await _clientService.SendAsync(new GetAnimatedEmoji(_emoji));
                     if (response is AnimatedEmoji emoji)
                     {
-                        var sticker = emoji.Sticker;
-
-                        _file = sticker.StickerValue;
-                        Format = sticker.Format;
-                        Width = sticker.Width;
-                        Height = sticker.Height;
-                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+                        SetSticker(emoji.Sticker);
                     }
                 }
 

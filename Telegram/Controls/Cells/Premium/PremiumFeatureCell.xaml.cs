@@ -162,7 +162,7 @@ namespace Telegram.Controls.Cells.Premium
                 {
                     Width = 196,
                     Height = 292,
-                    Outline = Array.Empty<ClosedVectorPath>()
+                    Outline = AnimatedImageOutline.None
                 };
             }
             else
@@ -255,7 +255,7 @@ namespace Telegram.Controls.Cells.Premium
                 {
                     Width = 196,
                     Height = 292,
-                    Outline = Array.Empty<ClosedVectorPath>()
+                    Outline = AnimatedImageOutline.None
                 };
             }
             else

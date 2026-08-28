@@ -94,11 +94,7 @@ namespace Telegram.Streams
 
                     if (sticker != null)
                     {
-                        _file = sticker.StickerValue;
-                        Format = sticker.Format;
-                        Width = sticker.Width;
-                        Height = sticker.Height;
-                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+                        SetSticker(sticker);
                     }
                 }
 

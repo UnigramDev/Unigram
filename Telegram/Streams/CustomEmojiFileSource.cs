@@ -59,13 +59,7 @@ namespace Telegram.Streams
                     var response = await _clientService.SendAsync(new GetCustomEmojiStickers([_customEmojiId]));
                     if (response is Stickers stickers && stickers.StickersValue.Count == 1)
                     {
-                        var sticker = stickers.StickersValue[0];
-
-                        _file = sticker.StickerValue;
-                        Format = sticker.Format;
-                        Width = sticker.Width;
-                        Height = sticker.Height;
-                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+                        SetSticker(stickers.StickersValue[0]);
                     }
                 }
 

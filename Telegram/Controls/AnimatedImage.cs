@@ -554,7 +554,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (source?.Outline != null)
+            if (source is { Outline.IsReady: true })
             {
                 _shimmer = CompositionPathParser.ParseThumbnail(source.Width, source.Height, source.Outline, out ShapeVisual visual, IsOutlineAnimated);
                 ElementCompositionPreview.SetElementChildVisual(LayoutRoot, visual);
