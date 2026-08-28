@@ -258,7 +258,9 @@ namespace Telegram.Host
         public const uint TME_LEAVE = 0x00000002;
         public const uint TME_NONCLIENT = 0x00000010;
         public const uint WS_VISIBLE = 0x10000000;
+        public const uint WS_OVERLAPPED = 0x00000000;
         public const uint WS_EX_NOREDIRECTIONBITMAP = 0x00200000;
+        public const uint WS_EX_TOOLWINDOW = 0x00000080;
 
         public const int SW_SHOW = 5;
         public const uint SWP_SHOWWINDOW = 0x0040;
@@ -311,6 +313,9 @@ namespace Telegram.Host
 
         [LibraryImport("user32.dll")]
         public static partial IntPtr DefWindowProcW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [LibraryImport("user32.dll", SetLastError = true)]
+        public static partial IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]

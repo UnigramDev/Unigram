@@ -132,6 +132,14 @@ namespace Telegram.Host
             window._islandHwnd = window._native.GetWindowHandle();
             window._source.Content = content;
 
+            // XAML creates the thread's CoreWindow with the first island and parents it there.
+            // Destroying that window would destroy it, and it cannot be recreated - so it is moved
+            // to a window of ours that never closes.
+            if (Windows.Count == 1)
+            {
+                CoreWindowBridge.Adopt(window._hwnd);
+            }
+
             if (nonClient)
             {
                 // The flag has to go on after creation - WM_NCCALCSIZE is sent from inside

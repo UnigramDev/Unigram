@@ -2547,6 +2547,33 @@ changes nothing about activation, which is the single biggest de-risking in
   Reachable today: item 2.4 kept the `windows.shareTarget` extension in the Win32 manifest, so a
   share into this flavour will find it.
 
+- [x] **2.1l The CoreWindow has to be adopted, or closing the main window kills XAML - fixed
+  2026-08-28.** Fela spotted the comment in Terminal's `WindowEmperor` and it is the most valuable
+  thing in that file:
+
+  > The first CoreWindow is created implicitly by XAML and parented to the first XAML island. We
+  > parent it to our initial window for 2 reasons: on Windows 10 the CoreWindow will show up as a
+  > visible window on the taskbar due to a WinUI bug, and this will hide it, because our initial
+  > window is hidden. When we DestroyWindow() the island it will destroy the CoreWindow, and it's
+  > not possible to recreate it. That's also a WinUI bug.
+
+  The second one is not a corner case for us. Our first island **is** the main window, and the app
+  is built around outliving it: a chat window open when the main one closes, and - once 2.5c lands -
+  closing to tray and opening a window again later. Either would have destroyed the thread's
+  CoreWindow with no way back, and the failure would have looked like anything but this.
+
+  `CoreWindowBridge` already found the stub by class name for the WM_SIZE forwarding (#3577), so
+  the fix reuses it: a hidden `WS_EX_TOOLWINDOW` window that is never shown and never destroyed,
+  and one `SetParent` after the first island is created. No COM needed - Terminal goes through
+  `ICoreWindowInterop` because it has no parent HWND to search under; we do.
+
+  Terminal also strips `SWP_SHOWWINDOW` in that window's WndProc. Deliberately not copied: the
+  window they use has other duties and something does try to show it, while ours exists for nothing
+  else. If a phantom window ever appears on Windows 10, that is the first thing to add.
+
+  Same file's doc comment corrected while there: it still carried the theory that gate 1.13's
+  input failure came from this CoreWindow. It did not - see 1.13 and `ContentPopup.Win32.cs`.
+
 - [x] **2.1m Connected animations are fatal on the island host - found and fixed 2026-08-28.**
   Crash dump `Telegram.exe.79384`, opening the gallery. Not our code: nothing of ours is on the
   stack, it dies inside the render tick.
