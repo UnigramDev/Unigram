@@ -194,7 +194,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         }
 
-        void done(int64_t time, int64_t response, IVector<uint8_t> filePart)
+        void done(int64_t time, int64_t response, array_view<uint8_t const> filePart)
         {
             webrtc::MutexLock lock(&_mutex);
 
@@ -212,12 +212,9 @@ namespace winrt::Telegram::Native::Calls::implementation
                 broadcastPart.responseTimestamp = response / 1000.0;
                 broadcastPart.timestampMilliseconds = time;
 
-                if (filePart && filePart.Size() > 0)
+                if (filePart.size() > 0)
                 {
-                    auto bytes = std::vector<uint8_t>(filePart.Size());
-                    filePart.GetMany(0, bytes);
-
-                    broadcastPart.data = std::move(bytes);
+                    broadcastPart.data = std::vector<uint8_t>(filePart.begin(), filePart.end());
                     broadcastPart.status = tgcalls::BroadcastPart::Status::Success;
                 }
                 else

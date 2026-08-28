@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Entities;
@@ -32,7 +31,7 @@ namespace Telegram.Common.Recording
 
     public partial class ChatRecordResult
     {
-        public ChatRecordResult(TimeSpan duration, IList<byte> waveform)
+        public ChatRecordResult(TimeSpan duration, byte[] waveform)
         {
             Duration = duration;
             Waveform = waveform;
@@ -40,7 +39,7 @@ namespace Telegram.Common.Recording
 
         public TimeSpan Duration { get; }
 
-        public IList<byte> Waveform { get; }
+        public byte[] Waveform { get; }
     }
 
     /// <summary>

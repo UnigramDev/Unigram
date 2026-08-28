@@ -80,7 +80,7 @@ namespace Telegram.Common
             catch { }
         }
 
-        public async void Blur(IList<byte> bytes, float amount, long hashCode = 0)
+        public async void Blur(byte[] bytes, float amount, long hashCode = 0)
         {
             var generation = ++_generation;
 
@@ -173,7 +173,7 @@ namespace Telegram.Common
             catch { }
         }
 
-        public async void Bitmap(IList<byte> bytes, int width = 0, int height = 0, long hashCode = 0)
+        public async void Bitmap(byte[] bytes, int width = 0, int height = 0, long hashCode = 0)
         {
             var generation = ++_generation;
 

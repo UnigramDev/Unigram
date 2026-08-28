@@ -359,7 +359,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         auto task = std::make_shared<BroadcastPartTaskImpl>(std::move(done));
         auto args = winrt::make_self<VideoBroadcastPartRequestedEventArgs>(scale, time, channel, qualityImpl,
-            [task](int64_t time, int64_t response, IVector<uint8_t> data) { task->done(time, response, data); });
+            [task](int64_t time, int64_t response, array_view<uint8_t const> data) { task->done(time, response, data); });
 
         m_videoBroadcastPartRequested(*this, *args);
         return task;
@@ -378,7 +378,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         auto task = std::make_shared<BroadcastPartTaskImpl>(std::move(done));
         auto args = winrt::make_self<AudioBroadcastPartRequestedEventArgs>(scale, time,
-            [task](int64_t time, int64_t response, IVector<uint8_t> data) { task->done(time, response, data); });
+            [task](int64_t time, int64_t response, array_view<uint8_t const> data) { task->done(time, response, data); });
 
         m_audioBroadcastPartRequested(*this, *args);
         return task;

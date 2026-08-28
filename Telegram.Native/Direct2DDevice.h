@@ -359,7 +359,7 @@ namespace winrt::Telegram::Native::implementation
         //    return s_foreground.as<winrt::Telegram::Native::Direct2DDevice>();
         //}
 
-        static HRESULT WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept;
+        static HRESULT WriteBytes(array_view<uint8_t const> hash, IRandomAccessStream randomAccessStream) noexcept;
         static IBuffer DrawWebP(hstring fileName, int32_t maxWidth, int32_t& pixelWidth, int32_t& pixelHeight) noexcept;
         static bool IsWebP(hstring fileName, int32_t& pixelWidth, int32_t& pixelHeight) noexcept;
 
@@ -372,7 +372,7 @@ namespace winrt::Telegram::Native::implementation
         //CompositionPath GetOutline(IVector<ClosedVectorPath> contours);
         CompositionPath GetEllipticalClip(float width, float height, float radius, float x, float y);
         CompositionPath GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius);
-        CompositionPath GetVoiceNoteClip(IVector<byte> waveform, double waveformWidth);
+        CompositionPath GetVoiceNoteClip(array_view<uint8_t const> waveform, double waveformWidth);
         CompositionPath GetRoundedPolygon(IVector<IVector<Windows::Foundation::Rect>> shapes);
 
         HRESULT Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation);
@@ -381,7 +381,7 @@ namespace winrt::Telegram::Native::implementation
         ChatBackgroundPattern DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale);
 
         SoftwareBitmap DrawBlurred(hstring fileName, float blurAmount);
-        SoftwareBitmap DrawBlurred(IVector<uint8_t> bytes, float blurAmount);
+        SoftwareBitmap DrawBlurred(array_view<uint8_t const> bytes, float blurAmount);
 
         winrt::Telegram::Native::SurfaceImage Create(int32_t pixelWidth, int32_t pixelHeight);
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);

@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Telegram.Navigation;
@@ -135,7 +134,7 @@ namespace Telegram.Common
             catch { }
         }
 
-        public static async void GetBlurred(SoftwareBitmapSource source, IList<byte> bytes, float amount = 3)
+        public static async void GetBlurred(SoftwareBitmapSource source, byte[] bytes, float amount = 3)
         {
             try
             {

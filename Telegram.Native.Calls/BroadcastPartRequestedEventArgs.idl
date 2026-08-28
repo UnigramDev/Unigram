@@ -2,7 +2,7 @@ import "Telegram.Native.Calls.idl";
 
 namespace Telegram.Native.Calls
 {
-    delegate void BroadcastPartRequestedDeferral(Int64 time, Int64 response, Windows.Foundation.Collections.IVector<byte> data);
+    delegate void BroadcastPartRequestedDeferral(Int64 time, Int64 response, byte[] data);
 
     [default_interface]
     runtimeclass AudioBroadcastPartRequestedEventArgs

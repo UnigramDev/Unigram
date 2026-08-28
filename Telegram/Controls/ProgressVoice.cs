@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Navigation;
 using Windows.Foundation;
@@ -44,7 +43,7 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        private IList<byte> _waveform;
+        private byte[] _waveform;
         private int _duration;
 
         protected override Size MeasureOverride(Size availableSize)
@@ -79,7 +78,7 @@ namespace Telegram.Controls
             return base.ArrangeOverride(finalSize);
         }
 
-        public void UpdateWaveform(IList<byte> waveform, int duration)
+        public void UpdateWaveform(byte[] waveform, int duration)
         {
             _waveform = waveform;
             _duration = duration;
@@ -87,9 +86,9 @@ namespace Telegram.Controls
             InvalidateArrange();
         }
 
-        private void UpdateWaveform(IList<byte> waveform, double duration, double waveformWidth)
+        private void UpdateWaveform(byte[] waveform, double duration, double waveformWidth)
         {
-            if (waveform.Count < 1)
+            if (waveform.Length < 1)
             {
                 waveform = new byte[1] { 0 };
             }

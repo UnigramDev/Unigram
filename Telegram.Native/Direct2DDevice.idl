@@ -31,7 +31,7 @@ namespace Telegram.Native
 
         Windows.UI.Composition.CompositionGraphicsDevice Device{ get; };
 
-        static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+        static void WriteBytes(byte[] hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
         static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
         static Boolean IsWebP(String fileName, out Int32 pixelWidth, out Int32 pixelHeight);
 
@@ -44,7 +44,7 @@ namespace Telegram.Native
         //Windows.UI.Composition.CompositionPath GetOutline(Windows.Foundation.Collections.IVector<Telegram.Td.Api.ClosedVectorPath> contours);
         Windows.UI.Composition.CompositionPath GetEllipticalClip(Single width, Single height, Single radius, Single x, Single y);
         Windows.UI.Composition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);
-        Windows.UI.Composition.CompositionPath GetVoiceNoteClip(Windows.Foundation.Collections.IVector<byte> waveform, Double waveformWidth);
+        Windows.UI.Composition.CompositionPath GetVoiceNoteClip(byte[] waveform, Double waveformWidth);
         Windows.UI.Composition.CompositionPath GetRoundedPolygon(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > shapes);
 
         void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height, Int32 rotation);
@@ -54,7 +54,7 @@ namespace Telegram.Native
 
         [default_overload]
         Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(String fileName, Single blurAmount);
-        Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount);
+        Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(byte[] bytes, Single blurAmount);
 
         SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
         void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);

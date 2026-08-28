@@ -827,7 +827,7 @@ namespace winrt::Telegram::Native::implementation
         return bitmap;
     }
 
-    SoftwareBitmap Direct2DDevice::DrawBlurred(IVector<uint8_t> bytes, float blurAmount)
+    SoftwareBitmap Direct2DDevice::DrawBlurred(array_view<uint8_t const> bytes, float blurAmount)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1605,15 +1605,13 @@ namespace winrt::Telegram::Native::implementation
         return { metrics.left, metrics.top, metrics.width, metrics.height, truncateHeight, truncatePosition };
     }
 
-    HRESULT Direct2DDevice::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
+    HRESULT Direct2DDevice::WriteBytes(array_view<uint8_t const> hash, IRandomAccessStream randomAccessStream) noexcept
     {
         HRESULT result;
         winrt::com_ptr<IStream> stream;
         ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
-        auto yolo = std::vector<byte>(hash.begin(), hash.end());
-
-        ReturnIfFailed(result, stream->Write(yolo.data(), hash.Size(), nullptr));
+        ReturnIfFailed(result, stream->Write(hash.data(), hash.size(), nullptr));
         ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
 
         return S_OK;
@@ -2017,7 +2015,7 @@ namespace winrt::Telegram::Native::implementation
         return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     }
 
-    CompositionPath Direct2DDevice::GetVoiceNoteClip(IVector<byte> waveform, double waveformWidth)
+    CompositionPath Direct2DDevice::GetVoiceNoteClip(array_view<uint8_t const> waveform, double waveformWidth)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -2028,13 +2026,13 @@ namespace winrt::Telegram::Native::implementation
         ReturnNullIfFailed(result, m_d2dFactory->CreatePathGeometry(d2dPathGeometry.put()));
         ReturnNullIfFailed(result, d2dPathGeometry->Open(d2dGeometrySink.put()));
 
-        auto lines = waveform.Size() * 8 / 5;
+        auto lines = waveform.size() * 8 / 5;
         auto bytes = new double[lines];
 
         for (int i = 0; i < lines; i++)
         {
             int j = (i * 5) / 8, shift = (i * 5) % 8;
-            bytes[i] = ((waveform.GetAt(j) | ((j + 1 < waveform.Size() ? waveform.GetAt(j + 1) : 0) << 8)) >> shift & 0x1F) / 31.0;
+            bytes[i] = ((waveform.at(j) | ((j + 1 < waveform.size() ? waveform.at(j + 1) : 0) << 8)) >> shift & 0x1F) / 31.0;
         }
 
         auto imageWidth = waveformWidth; // 142d; // double.IsNaN(ActualWidth) ? 142 : ActualWidth;

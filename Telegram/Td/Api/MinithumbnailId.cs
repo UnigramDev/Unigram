@@ -25,7 +25,7 @@ namespace Telegram.Td.Api
         /// <summary>
         /// The thumbnail in JPEG format.
         /// </summary>
-        public IList<byte> Data { get; set; }
+        public byte[] Data { get; set; }
 
         /// <summary>
         /// Thumbnail height, usually doesn't exceed 40.
