@@ -2601,6 +2601,76 @@ changes nothing about activation, which is the single biggest de-risking in
   If shadows later prove to crash in an island on their own - this only rules out the connected
   animation path - the gate moves to `ApiInfo.CanCreateThemeShadow` instead.
 
+- [ ] **2.1h Take what Terminal already paid for - caption buttons and the message loop.** Fela,
+  2026-08-27. Terminal has shipped this host shape for years and its code is full of workarounds
+  with issue numbers attached; read against ours, these are the differences worth copying. Sources:
+  `src/cascadia/TerminalApp/MinMaxCloseControl.xaml` and `.cpp`, `src/cascadia/WindowsTerminal/
+  WindowEmperor.cpp`.
+
+  **The caption buttons.** Keep our 40px height and skip the tooltips - the system ones are fine,
+  and Terminal only hand-rolls tooltips (a throttled func on `SPI_GETMOUSEHOVERTIME`) because their
+  buttons never see a real pointer either. What we are missing:
+
+  - **A `HighContrast` theme dictionary.** Terminal maps every brush to `SystemColorButtonFace/
+    ButtonText/Highlight/HighlightText` and swaps the glyphs for the contrast set (`EF2D` `EF2E`
+    `EF2F` `EF2C` instead of `E921` `E922` `E923` `E8BB`). We have no high-contrast path at all and
+    a hard-coded `#C42B1C`.
+  - **An `Unfocused` state.** System caption buttons dim when the window is inactive; ours do not
+    change. Terminal keeps a `Focused` flag and a `_normalState()` that returns `Unfocused` instead
+    of `Normal`, and every release path goes through it - so a button that was hot when the window
+    lost focus lands in the right state.
+  - **`VisualTransition` out of `PointerOver`.** Ours snap; the system fades. Terminal animates the
+    background over 0.15s and the glyph over 0.1s, with explicit transitions for both
+    `PointerOver -> Normal` and `PointerOver -> Unfocused`.
+  - **The close button's resting colour is `#00C42B1C`, not `Transparent`.** Transparent black and
+    transparent red interpolate differently, so a fade from `Transparent` washes through grey. This
+    is the kind of detail that makes it look wrong without anyone being able to say why.
+  - **`AutomationProperties.AccessibilityView="Raw"`** on the buttons, which we do not set.
+
+  Their glyphs are a `FontIcon` in a 10x10 `Viewbox`; ours are vector strokes, which is fine and
+  probably crisper - but the font route is what makes the high-contrast swap a one-line resource
+  change, so consider it when doing the point above.
+
+  **The message loop.** `WindowEmperor` filters messages before XAML sees them and handles several
+  the framework does not. Ours handles none of these:
+
+  - **`WM_SETTINGCHANGE` / `ImmersiveColorSet`** for OS theme changes, with two traps attached:
+    only act if the theme *actually* flipped, because it fires on lock and on UAC too (GH#15732);
+    and do the work on the next tick, because it arrives via `SendMessage` and calling into
+    anything `[input_sync]` from there fails with `RPC_E_CANTCALLOUT_ININPUTSYNCCALL` (GH#19505).
+  - **`WM_QUERYENDSESSION` / `WM_ENDSESSION`** - `RegisterApplicationRestart`, persist, then
+    `PostQuitMessage`. We do nothing today, so a reboot or sign-out loses whatever the app had.
+  - **`WM_TASKBARCREATED`** (a registered message, so it cannot be a `case` label) to re-add the
+    notification icon when explorer restarts. That belongs with 2.5c rather than after it.
+  - **Keys XAML mishandles, caught in the loop before `PreTranslateMessage`:** F7, or system XAML
+    shows the caret browsing dialog (GH#638); `VK_MENU` key-up, which system XAML never delivers
+    (GH#6421); and Alt+Space, where system XAML shows its own system menu that cannot be suppressed
+    (GH#7125) - which matters to us now that we draw our own.
+  - **`WM_WINDOWPOSCHANGING` clearing `SWP_SHOWWINDOW`** on their own hidden window, with the
+    comment that it "hides the buggy CoreWindow that XAML creates". Worth checking whether the
+    CoreWindow system XAML makes for our thread can surface in alt-tab.
+  - **`SetCurrentDirectory` to system32 at startup**, so the app does not hold a lock on the
+    directory it was launched from. Free, and it only matters unpackaged - which is us.
+
+  Already done, and it is reassuring to find it independently: `TerminateProcess` on the way out
+  rather than a clean return, for the same Windows 10 XAML crash we hit (GH#15410, 0.18).
+
+- [ ] **2.1n Two input gaps found while testing the `ContentPopup` fix.** Fela, 2026-08-27, both on
+  Win32 and both about input the UWP host gets from the framework for free.
+
+  - **The mouse back button does nothing in a `ContentPopup`.** On UWP that button arrives as a
+    system back request; the island host has no such plumbing, so it has to come from
+    `WM_APPCOMMAND` (`APPCOMMAND_BROWSER_BACKWARD`) or `WM_XBUTTONUP` in `IslandWindow`, and be
+    routed to whatever the app treats as back - which for an open dialog means dismissing it, not
+    navigating the frame behind it.
+  - **Tab does not wrap in the main window root.** Reaching the last focusable stops there instead
+    of returning to the first, and Shift+Tab likewise at the top. That is the island's focus scope
+    having no cycle: `DesktopWindowXamlSource` raises `TakeFocusRequested` when navigation runs off
+    the end, and the host is expected to hand focus back in - so today it falls out and nothing
+    catches it. Note that inside a dialog Tab *does* cycle, because `ContentDialog`'s
+    `DialogShowing` state sets `BackgroundElement.TabFocusNavigation="Cycle"` - which is the
+    behaviour the root is missing.
+
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.
 - [ ] **2.2** Desktop `IViewService` / `WindowContext` implementations behind the Phase 0 seams.

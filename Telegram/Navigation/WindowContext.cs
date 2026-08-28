@@ -160,10 +160,7 @@ namespace Telegram.Navigation
                 {
                     _isMaximized = value;
 
-                    if (MaximizeButton != null)
-                    {
-                        VisualStateManager.GoToState(MaximizeButton, value ? "Maximized" : "Restored", false);
-                    }
+                    ApplyMaximizeGlyph();
                 }
             }
         }
@@ -212,6 +209,11 @@ namespace Telegram.Navigation
             GoToCaptionButtonState(CloseButton, CaptionButtons.Close);
         }
 
+        /// <summary>
+        /// The window's own caption buttons dim while it is not the active one, the way the shell's
+        /// do. Pushed in by the host: neither the buttons nor the presenter can see activation, and
+        /// on Win32 the pointer is over the drag bar rather than over them.
+        /// </summary>
         private void GoToCaptionButtonState(Button button, CaptionButtons which)
         {
             if (button == null)
@@ -220,10 +222,41 @@ namespace Telegram.Navigation
             }
 
             var state = _hotButton != which
-                ? "Normal"
+                ? _isActive ? "Normal" : "Unfocused"
                 : _hotPressed ? "Pressed" : "PointerOver";
 
-            VisualStateManager.GoToState(button, state, false);
+            // Transitions, so leaving a button fades the way the system's do rather than snapping.
+            VisualStateManager.GoToState(button, state, true);
+        }
+
+        private bool _isActive = true;
+        /// <summary>
+        /// Whether the window is the active one. The system dims its caption glyphs when it is not,
+        /// and nothing about a button's own pointer state says so - the host has to tell us.
+        /// </summary>
+        public bool IsActive
+        {
+            get => _isActive;
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+
+                    GoToCaptionButtonState(MinimizeButton, CaptionButtons.Minimize);
+                    GoToCaptionButtonState(MaximizeButton, CaptionButtons.Maximize);
+                    GoToCaptionButtonState(CloseButton, CaptionButtons.Close);
+                }
+            }
+        }
+
+        private void ApplyMaximizeGlyph()
+        {
+            if (MaximizeButton != null)
+            {
+                VisualStateManager.GoToState(MaximizeButton,
+                    _isMaximized ? "WindowStateMaximized" : "WindowStateNormal", false);
+            }
         }
 
         protected override void OnApplyTemplate()
@@ -253,10 +286,7 @@ namespace Telegram.Navigation
             }
 
             // The window can already be maximized by the time the template arrives.
-            if (MaximizeButton != null && _isMaximized)
-            {
-                VisualStateManager.GoToState(MaximizeButton, "Maximized", false);
-            }
+            ApplyMaximizeGlyph();
 
             ApplyCaptionButtons();
 

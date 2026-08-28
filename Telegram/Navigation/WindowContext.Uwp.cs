@@ -237,6 +237,12 @@ namespace Telegram.Navigation
         private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
             var isActive = e.WindowActivationState != CoreWindowActivationState.Deactivated;
+
+            if (_content != null)
+            {
+                _content.IsActive = isActive;
+            }
+
             Activated?.Invoke(this, new WindowActivatedEventArgs(isActive));
 
             lock (_activeLock)

@@ -55,6 +55,20 @@
                                  Width="46"
                                  Height="40"
                                  Grid.Column="2">
+                <Button.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Default">
+                                <SolidColorBrush x:Key="TitleBarButtonBackgroundPointerOver">#19FFFFFF</SolidColorBrush>
+                                <SolidColorBrush x:Key="TitleBarButtonBackgroundPressed">#33FFFFFF</SolidColorBrush>
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Light">
+                                <SolidColorBrush x:Key="TitleBarButtonBackgroundPointerOver">#19000000</SolidColorBrush>
+                                <SolidColorBrush x:Key="TitleBarButtonBackgroundPressed">#33000000</SolidColorBrush>
+                            </ResourceDictionary>
+                        </ResourceDictionary.ThemeDictionaries>
+                    </ResourceDictionary>
+                </Button.Resources>
                 <Button.Template>
                     <ControlTemplate TargetType="controls:MoreButton">
                         <Grid Background="{TemplateBinding Background}">

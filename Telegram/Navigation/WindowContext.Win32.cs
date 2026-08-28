@@ -116,6 +116,11 @@ namespace Telegram.Navigation
         /// </summary>
         void IIslandOwner.ActivationChanged(bool active)
         {
+            if (_content != null)
+            {
+                _content.IsActive = active;
+            }
+
             Activated?.Invoke(this, new WindowActivatedEventArgs(active));
 
             lock (_activeLock)

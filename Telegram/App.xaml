@@ -13,9 +13,6 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
-                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPointerOver">#19FFFFFF</SolidColorBrush>
-                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPressed">#33FFFFFF</SolidColorBrush>
-
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBorderBrushPointerOver"
@@ -58,9 +55,6 @@
                     </LinearGradientBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPointerOver">#19000000</SolidColorBrush>
-                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPressed">#33000000</SolidColorBrush>
-
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBorderBrushPointerOver"

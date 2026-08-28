@@ -132,6 +132,12 @@ namespace Telegram.Host
             window._islandHwnd = window._native.GetWindowHandle();
             window._source.Content = content;
 
+            // A window can open behind another, and the first WM_ACTIVATE would then never come.
+            if (content is WindowPresenter presenter)
+            {
+                presenter.IsActive = Win32.GetActiveWindow() == window._hwnd;
+            }
+
             // XAML creates the thread's CoreWindow with the first island and parents it there.
             // Destroying that window would destroy it, and it cannot be recreated - so it is moved
             // to a window of ours that never closes.
