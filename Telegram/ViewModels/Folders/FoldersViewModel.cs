@@ -252,16 +252,12 @@ namespace Telegram.ViewModels.Folders
                 var responsee = await clientService.SendAsync(new GetChatFolder(info.Id));
                 if (responsee is ChatFolder folder)
                 {
-                    var tsc = new TaskCompletionSource<object>();
+                    var popup = new RemoveFolderPopup();
 
-                    var confirm = await navigationService.ShowPopupAsync(new RemoveFolderPopup(tsc), Tuple.Create(folder, leave));
+                    var confirm = await navigationService.ShowPopupAsync(popup, Tuple.Create(folder, leave));
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        var result = await tsc.Task;
-                        if (result is IList<long> chats)
-                        {
-                            clientService.Send(new DeleteChatFolder(info.Id, chats));
-                        }
+                        clientService.Send(new DeleteChatFolder(info.Id, popup.SelectedItems));
                     }
                 }
             }

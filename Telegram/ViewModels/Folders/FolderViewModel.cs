@@ -501,31 +501,28 @@ namespace Telegram.ViewModels.Folders
 
         public async void OpenLink(ChatFolderInviteLink link)
         {
-            var tsc = new TaskCompletionSource<object>();
+            var popup = new ShareFolderPopup();
 
-            var confirm = await ShowPopupAsync(new ShareFolderPopup(tsc), Tuple.Create(Id.Value, link));
+            var confirm = await ShowPopupAsync(popup, Tuple.Create(Id.Value, link));
             if (confirm == ContentDialogResult.Primary)
             {
-                var result = await tsc.Task;
-                if (result is IList<long> chats)
+                Object response;
+                if (link != null)
                 {
-                    if (link != null)
-                    {
-                        result = await ClientService.SendAsync(new EditChatFolderInviteLink(Id.Value, link.InviteLink, string.Empty, chats));
-                    }
-                    else
-                    {
-                        result = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, chats));
-                    }
+                    response = await ClientService.SendAsync(new EditChatFolderInviteLink(Id.Value, link.InviteLink, string.Empty, popup.SelectedItems));
+                }
+                else
+                {
+                    response = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, popup.SelectedItems));
+                }
 
-                    if (result is ChatFolderInviteLink inviteLink)
-                    {
-                        Links.Insert(0, inviteLink);
-                        Exclude.Clear();
-                        Exclude.SynchronizeHead();
+                if (response is ChatFolderInviteLink inviteLink)
+                {
+                    Links.Insert(0, inviteLink);
+                    Exclude.Clear();
+                    Exclude.SynchronizeHead();
 
-                        IsShareable = true;
-                    }
+                    IsShareable = true;
                 }
             }
         }

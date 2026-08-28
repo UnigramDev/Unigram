@@ -2088,41 +2088,37 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new CheckChatFolderInviteLink(link));
             if (response is ChatFolderInviteLinkInfo info)
             {
-                var tsc = new TaskCompletionSource<object>();
+                var popup = new AddFolderPopup();
 
-                var confirm = await navigation.ShowPopupAsync(new AddFolderPopup(tsc), info);
+                var confirm = await navigation.ShowPopupAsync(popup, info);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var result = await tsc.Task;
-                    if (result is IList<long> chats)
+                    if (info.ChatFolderInfo.Id == 0)
                     {
-                        if (info.ChatFolderInfo.Id == 0)
+                        var import = await clientService.SendAsync(new AddChatFolderByInviteLink(link, popup.SelectedItems));
+                        if (import is Error error)
                         {
-                            var import = await clientService.SendAsync(new AddChatFolderByInviteLink(link, chats));
-                            if (import is Error error)
+                            if (error.MessageEquals(ErrorType.CHATLISTS_TOO_MUCH))
                             {
-                                if (error.MessageEquals(ErrorType.CHATLISTS_TOO_MUCH))
-                                {
-                                    navigation.ShowLimitReached(new PremiumLimitTypeShareableChatFolderCount());
-                                }
-                                else if (error.MessageEquals(ErrorType.FILTER_INCLUDE_TOO_MUCH))
-                                {
-                                    navigation.ShowLimitReached(new PremiumLimitTypeChatFolderChosenChatCount());
-                                }
-                                else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
-                                {
-                                    navigation.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
-                                }
-                                else
-                                {
-                                    navigation.ShowPopup(Strings.FolderLinkExpiredAlert, Strings.AppName, Strings.OK);
-                                }
+                                navigation.ShowLimitReached(new PremiumLimitTypeShareableChatFolderCount());
+                            }
+                            else if (error.MessageEquals(ErrorType.FILTER_INCLUDE_TOO_MUCH))
+                            {
+                                navigation.ShowLimitReached(new PremiumLimitTypeChatFolderChosenChatCount());
+                            }
+                            else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                            {
+                                navigation.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                            }
+                            else
+                            {
+                                navigation.ShowPopup(Strings.FolderLinkExpiredAlert, Strings.AppName, Strings.OK);
                             }
                         }
-                        else if (chats.Count > 0)
-                        {
-                            clientService.Send(new ProcessChatFolderNewChats(info.ChatFolderInfo.Id, chats));
-                        }
+                    }
+                    else if (popup.SelectedItems.Count > 0)
+                    {
+                        clientService.Send(new ProcessChatFolderNewChats(info.ChatFolderInfo.Id, popup.SelectedItems));
                     }
                 }
             }

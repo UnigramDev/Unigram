@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -22,13 +22,9 @@ namespace Telegram.Views.Folders.Popups
     {
         public AddFolderViewModel ViewModel => DataContext as AddFolderViewModel;
 
-        private readonly TaskCompletionSource<object> _task;
-
-        public AddFolderPopup(TaskCompletionSource<object> task)
+        public AddFolderPopup()
         {
             InitializeComponent();
-
-            _task = task;
 
             SecondaryButtonText = Strings.Cancel;
         }
@@ -63,8 +59,10 @@ namespace Telegram.Views.Folders.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            _task.SetResult(ViewModel.SelectedItems.Select(x => x.Id).ToList());
+            SelectedItems = ViewModel.SelectedItems.Select(x => x.Id).ToList();
         }
+
+        public List<long> SelectedItems { get; private set; } = new();
 
         #region Recycle
 
