@@ -51,44 +51,44 @@ namespace Telegram.Common
             public required byte[] UserHandle { get; set; }
         }
 
-        public static RegisterData? DeserializeRegisterData(string jsonData)
+        public static RegisterData DeserializeRegisterData(string jsonData)
         {
             if (!JsonObject.TryParse(jsonData, out JsonObject root))
             {
                 return null;
             }
 
-            if (!root.TryGetObject("publicKey", out JsonObject? publicKey))
+            if (!root.TryGetObject("publicKey", out JsonObject publicKey))
             {
                 return null;
             }
 
-            if (!publicKey.TryGetObject("rp", out JsonObject? rp))
+            if (!publicKey.TryGetObject("rp", out JsonObject rp))
             {
                 return null;
             }
 
-            if (!rp.TryGetString("id", out string? rpId) || !rp.TryGetString("name", out string? rpName))
+            if (!rp.TryGetString("id", out string rpId) || !rp.TryGetString("name", out string rpName))
             {
                 return null;
             }
 
-            if (!publicKey.TryGetObject("user", out JsonObject? user))
+            if (!publicKey.TryGetObject("user", out JsonObject user))
             {
                 return null;
             }
 
-            if (!user.TryGetString("id", out string? userId) || !user.TryGetString("name", out string? userName) || !user.TryGetString("displayName", out string? userDisplayName))
+            if (!user.TryGetString("id", out string userId) || !user.TryGetString("name", out string userName) || !user.TryGetString("displayName", out string userDisplayName))
             {
                 return null;
             }
 
-            if (!publicKey.TryGetString("challenge", out string? challenge))
+            if (!publicKey.TryGetString("challenge", out string challenge))
             {
                 return null;
             }
 
-            if (!publicKey.TryGetArray("pubKeyCredParams", out JsonArray? pubKeyCredParams))
+            if (!publicKey.TryGetArray("pubKeyCredParams", out JsonArray pubKeyCredParams))
             {
                 return null;
             }
@@ -101,7 +101,7 @@ namespace Telegram.Common
             foreach (var paramBoxed in pubKeyCredParams)
             {
                 var param = paramBoxed.GetObject();
-                if (param.TryGetString("type", out string? paramType) && param.TryGetInt32("alg", out int? paramAlg))
+                if (param.TryGetString("type", out string paramType) && param.TryGetInt32("alg", out int? paramAlg))
                 {
                     parameters.Add(new CredentialParameter(paramType, paramAlg.Value));
                 }
@@ -110,31 +110,31 @@ namespace Telegram.Common
             return new RegisterData(rpData, userData, challenge, parameters, (int)publicKey.GetNamedNumber("timeout", 60000));
         }
 
-        public static LoginData? DeserializeLoginData(string jsonData)
+        public static LoginData DeserializeLoginData(string jsonData)
         {
             if (!JsonObject.TryParse(jsonData, out JsonObject root))
             {
                 return null;
             }
 
-            if (!root.TryGetObject("publicKey", out JsonObject? publicKey))
+            if (!root.TryGetObject("publicKey", out JsonObject publicKey))
             {
                 return null;
             }
 
-            if (!publicKey.TryGetString("challenge", out string? challenge) || !publicKey.TryGetString("rpId", out string? rpId) || !publicKey.TryGetString("userVerification", out string? userVerification))
+            if (!publicKey.TryGetString("challenge", out string challenge) || !publicKey.TryGetString("rpId", out string rpId) || !publicKey.TryGetString("userVerification", out string userVerification))
             {
                 return null;
             }
 
             var allowCredentials = new List<Credential>();
 
-            if (publicKey.TryGetArray("allowCredentials", out JsonArray? allowList))
+            if (publicKey.TryGetArray("allowCredentials", out JsonArray allowList))
             {
                 foreach (var credBoxed in allowList)
                 {
                     var cred = credBoxed.GetObject();
-                    if (cred.TryGetString("id", out string? paramId) && cred.TryGetString("type", out string? paramType))
+                    if (cred.TryGetString("id", out string paramId) && cred.TryGetString("type", out string paramType))
                     {
                         allowCredentials.Add(new Credential(Base64Url.DecodeFromChars(paramId), paramType));
                     }
