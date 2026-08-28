@@ -3,6 +3,7 @@
 #include <VideoAnimation.g.h>
 
 #include <atomic>
+#include <cmath>
 #include <cstdint>
 #include <limits>
 #include <string>
@@ -50,71 +51,54 @@ namespace winrt::Telegram::Native::implementation
         PARAM_NUM_COUNT = 11,
     };
 
+    // Frames are dropped on their own timestamps rather than on a declared frame rate.
+    // A WebM DefaultDuration can disagree with the block timestamps by several times and
+    // nothing in the container says which one is honest, so the rate is never read.
     class FrameDropper
     {
     private:
-        double source_fps;
-        double target_fps;
-        double effective_fps;
-        int preferred_divisor;
-        bool use_clean_division;
-        int64_t frame_count = 0;
-        int64_t frames_displayed = 0;
+        // Container timestamps are integer ticks, a millisecond for WebM, so a frame that
+        // belongs on a slot can land just short of it. Without the allowance a 30fps source
+        // stamped at 33ms misses every 33.333ms slot and plays at two thirds of its rate.
+        static constexpr double quantization = 0.001;
+
+        double min_interval;
+        int64_t next_slot = 0;
 
     public:
-        FrameDropper(double src_fps, double tgt_fps = 30.0, double tolerance = 0.9)
-            : source_fps(src_fps)
-            , target_fps(tgt_fps)
+        FrameDropper(double target_fps)
+            : min_interval(target_fps > 0 ? 1.0 / target_fps : 0)
         {
-            if (source_fps <= target_fps)
-            {
-                preferred_divisor = 1;
-                effective_fps = source_fps;
-                use_clean_division = true;
-                return;
-            }
-
-            preferred_divisor = (int)std::round(source_fps / target_fps);
-            effective_fps = source_fps / preferred_divisor;
-
-            if (effective_fps < target_fps * tolerance)
-            {
-                use_clean_division = false;
-            }
-            else
-            {
-                use_clean_division = true;
-            }
         }
 
-        double frame_rate()
+        // Must be called wherever the stream is seeked back to the start, or the slot stays
+        // ahead of the timestamps and the first loop is dropped whole.
+        void reset()
         {
-            return effective_fps;
+            next_slot = 0;
         }
 
-        bool should_display_frame()
+        // seconds is the frame's presentation timestamp. Frames are assigned to the slots of
+        // a grid anchored at the start of the stream and at most one frame fills a slot, so
+        // the rate never exceeds the target and the drops are spread evenly. Advancing by one
+        // interval from each displayed frame instead would let a source only slightly faster
+        // than the target push the deadline past the following frame every time, halving the
+        // rate rather than shaving the few frames that do not fit.
+        bool should_display_frame(double seconds)
         {
-            if (source_fps <= target_fps)
+            if (min_interval <= 0)
             {
                 return true;
             }
 
-            frame_count++;
-
-            if (use_clean_division)
+            auto slot = (int64_t)std::floor((seconds + quantization) / min_interval);
+            if (slot < next_slot)
             {
-                return (frame_count % preferred_divisor) == 0;
-            }
-            else
-            {
-                int64_t expected = (frame_count * target_fps) / source_fps;
-                if (frames_displayed < expected)
-                {
-                    frames_displayed++;
-                    return true;
-                }
                 return false;
             }
+
+            next_slot = slot + 1;
+            return true;
         }
     };
 

@@ -16,7 +16,7 @@
 using namespace winrt::Windows::Storage::Streams;
 using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
-#define CACHED_VERSION 7
+#define CACHED_VERSION 8
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -130,6 +130,9 @@ namespace winrt::Telegram::Native::implementation
         uint32_t m_maxFrameSize = 0;
         uint32_t m_imageSize = 0;
         std::vector<uint32_t> m_fileOffsets;
+        // Presentation time of each cached frame, in milliseconds. Parallel to
+        // m_fileOffsets: the frames are paced by these, not by m_fps.
+        std::vector<uint32_t> m_frameTimings;
         std::vector<std::pair<std::uint32_t, std::uint32_t>> m_colors;
     };
 

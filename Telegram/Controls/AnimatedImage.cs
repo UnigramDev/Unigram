@@ -1680,14 +1680,28 @@ namespace Telegram.Controls
             PixelHeight = animation.PixelHeight;
             Rotation = animation.Rotation;
 
+            // Only how often the task is polled: the frames carry their own timestamps and
+            // NextFrame skips until the one it holds is due. It must stay constant for the
+            // task's lifetime, because AnimationScheduler keys the batch a subscriber is
+            // removed from on this value and would otherwise never remove it.
             var frameRate = Math.Clamp(animation.FrameRate, 1, 60 /*presentation.LimitFps ? 30 : 60*/);
             var interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
 
             Interval = interval;
             FrameRate = frameRate;
+
+            _pollInterval = 1 / frameRate;
+            Rewind();
         }
 
         private int _index;
+
+        private readonly double _pollInterval;
+
+        private long _lastTick;
+        private double _clock;
+        private double _lastPosition;
+        private double _nextDue;
 
         public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
@@ -1702,23 +1716,68 @@ namespace Telegram.Controls
             {
                 return AnimatedImageTaskState.Skip;
             }
+            else if (!Due())
+            {
+                return AnimatedImageTaskState.Skip;
+            }
 
             _animation.RenderSync(frame, out double seconds, out bool completed);
             _index++;
 
+            // The next frame's timestamp is only known once it has been decoded, so the one
+            // just rendered is held for as long as its predecessor was. The deadline is
+            // re-anchored on a real timestamp every time, so the estimate cannot drift.
+            // A timestamp that did not move forward means the frame was not rendered at
+            // all, and pacing off it would put the deadline in the past and spin.
+            _nextDue = seconds > _lastPosition
+                ? seconds + (seconds - _lastPosition)
+                : seconds + _pollInterval;
+            _lastPosition = seconds;
+
             if (_animation.TotalFrame == 1 || _shouldStop || (completed && _index == 1))
             {
                 _index = 0;
+                Rewind();
                 return AnimatedImageTaskState.Stop;
             }
             else if (_animation.TotalFrame == _index || completed)
             {
                 _index = 0;
+                Rewind();
                 return AnimatedImageTaskState.Loop;
             }
 
             position = seconds;
             return AnimatedImageTaskState.None;
+        }
+
+        private bool Due()
+        {
+            var now = Stopwatch.GetTimestamp();
+
+            if (_lastTick != 0)
+            {
+                var elapsed = (now - _lastTick) / (double)Stopwatch.Frequency;
+
+                // A suspended or starved worker comes back owing more time than it can
+                // usefully spend: catching up would decode a run of frames nobody sees.
+                _clock = elapsed > _pollInterval * 4
+                    ? _nextDue
+                    : _clock + elapsed;
+            }
+
+            _lastTick = now;
+            return _clock >= _nextDue;
+        }
+
+        private void Rewind()
+        {
+            _clock = 0;
+            _nextDue = 0;
+
+            // One poll behind zero, so the first frame's hold is estimated at the poll
+            // interval rather than at nothing, which would show the second frame instantly.
+            _lastPosition = -_pollInterval;
         }
     }
 

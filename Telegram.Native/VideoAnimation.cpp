@@ -310,23 +310,12 @@ namespace winrt::Telegram::Native::implementation
             info->pixelHeight = info->video_dec_ctx->height;
             info->rotation = get_stream_rotation(info->video_stream);
 
-            auto framerate = 30.0;
+            // How often the animation is polled, not what the file claims to run at: the
+            // frames carry their own timestamps and the consumer skips until one is due.
+            auto framerate = limitFps ? 30.0 : 60.0;
 
-            AVStream* video_stream = info->video_stream;
-            if (video_stream->avg_frame_rate.den && video_stream->avg_frame_rate.num)
-            {
-                framerate = av_q2d(video_stream->avg_frame_rate);
-            }
-            else if (video_stream->r_frame_rate.den && video_stream->r_frame_rate.num)
-            {
-                framerate = av_q2d(video_stream->r_frame_rate);
-            }
-
-            //auto guess = av_guess_frame_rate(info->fmt_ctx, info->video_stream, NULL);
-            //auto framerate = av_q2d(guess);
-
-            info->dropper = FrameDropper(framerate, limitFps ? 30.0 : 60.0);
-            info->framerate = info->dropper.frame_rate();
+            info->dropper = FrameDropper(framerate);
+            info->framerate = framerate;
         }
         else
         {
@@ -426,6 +415,7 @@ namespace winrt::Telegram::Native::implementation
 
         // Flush decoder buffers after seek
         avcodec_flush_buffers(video_dec_ctx);
+        dropper.reset();
 
         seeking = false;
 
@@ -521,6 +511,7 @@ namespace winrt::Telegram::Native::implementation
         {
             avformat_seek_file(fmt_ctx, video_stream_idx, 0, 0, 0, 0);
             avcodec_flush_buffers(video_dec_ctx);
+            dropper.reset();
         }
     }
 
@@ -618,6 +609,7 @@ namespace winrt::Telegram::Native::implementation
                             goto Cleanup;
                         }
                         avcodec_flush_buffers(video_dec_ctx);
+                        dropper.reset();
                         waiting = Waiting::ReadFrame;
 
                         // Cleared on the way round, as the drained branch below does.
@@ -688,9 +680,10 @@ namespace winrt::Telegram::Native::implementation
 
                     if (pts != AV_NOPTS_VALUE)
                     {
-                        if (dropper.should_display_frame())
+                        double nextFrame = pts * av_q2d(video_stream->time_base);
+
+                        if (dropper.should_display_frame(nextFrame))
                         {
-                            double nextFrame = pts * av_q2d(video_stream->time_base);
                             seconds = clamp(nextFrame, 0.0, duration);
 
                             // Decode and render the frame
@@ -738,6 +731,7 @@ namespace winrt::Telegram::Native::implementation
                             goto Cleanup;
                         }
                         avcodec_flush_buffers(video_dec_ctx);
+                        dropper.reset();
                         waiting = Waiting::ReadFrame;
                         has_decoded_frames = false;
                         continue;

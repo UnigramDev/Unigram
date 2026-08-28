@@ -89,6 +89,10 @@ namespace winrt::Telegram::Native::implementation
         RETURNFALSE(ReadFileReturn(precacheFile, m_fileOffsets.data(),
             sizeof(uint32_t) * m_frameCount, &read));
 
+        m_frameTimings.resize(m_frameCount);
+        RETURNFALSE(ReadFileReturn(precacheFile, m_frameTimings.data(),
+            sizeof(uint32_t) * m_frameCount, &read));
+
         return true;
     }
 
@@ -301,6 +305,11 @@ namespace winrt::Telegram::Native::implementation
 
                         if (loadedFromCache)
                         {
+                            if (m_frameIndex < m_frameTimings.size())
+                            {
+                                seconds = m_frameTimings[m_frameIndex] / 1000.0;
+                            }
+
                             constexpr int framesPerUpdate = 1;
                             if (m_frameIndex + framesPerUpdate >= m_frameCount)
                             {
@@ -445,16 +454,23 @@ namespace winrt::Telegram::Native::implementation
                     double seconds = 0;
                     bool completed = false;
                     std::vector<uint32_t> offsets;
+                    std::vector<uint32_t> timings;
                     uint32_t maxFrameSize = 0;
 
                     do
                     {
                         offsets.push_back(totalSize);
 
+                        // Pushed before the frame is rendered so the two stay the same length
+                        // on the break paths below, which leave a trailing unwritten entry.
+                        timings.push_back(0);
+
                         if (!item->m_animation->RenderSync(pixels, item->m_pixelWidth, item->m_pixelHeight, false, seconds, completed))
                         {
                             break;
                         }
+
+                        timings.back() = static_cast<uint32_t>(seconds * 1000.0);
 
                         int compressedSize = LZ4_compress_default(
                             (const char*)pixels,
@@ -491,6 +507,7 @@ namespace winrt::Telegram::Native::implementation
                     {
                         uint8_t version = CACHED_VERSION;
                         item->m_fileOffsets = std::move(offsets);
+                        item->m_frameTimings = std::move(timings);
                         item->m_frameCount = item->m_fileOffsets.size();
                         item->m_imageSize = static_cast<uint32_t>(imageSize);
                         item->m_maxFrameSize = maxFrameSize;
@@ -508,6 +525,7 @@ namespace winrt::Telegram::Native::implementation
                         if (!item->m_fileOffsets.empty())
                         {
                             WriteFile(precacheFile, item->m_fileOffsets.data(), sizeof(uint32_t) * item->m_frameCount, &write, NULL);
+                            WriteFile(precacheFile, item->m_frameTimings.data(), sizeof(uint32_t) * item->m_frameCount, &write, NULL);
                         }
 
                         SetEndOfFile(precacheFile);
