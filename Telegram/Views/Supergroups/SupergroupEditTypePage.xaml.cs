@@ -240,7 +240,7 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
-        public void UpdateChatWelcomeMessages(Chat chat, IList<WelcomeMessage> messages) { }
+        public void UpdateChatWelcomeMessages(Chat chat, Vector<WelcomeMessage> messages) { }
 
         #endregion
 

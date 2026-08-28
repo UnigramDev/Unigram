@@ -33,7 +33,7 @@ namespace Telegram.Td
             return ParseMarkdown(new FormattedText(text, null));
         }
 
-        public static FormattedText ParseMarkdown(string text, IList<TextEntity> entities)
+        public static FormattedText ParseMarkdown(string text, Vector<TextEntity> entities)
         {
             return ParseMarkdown(new FormattedText(text, entities));
         }
@@ -54,7 +54,7 @@ namespace Telegram.Td
             return GetMarkdownText(new FormattedText(text, null));
         }
 
-        public static FormattedText GetMarkdownText(string text, IList<TextEntity> entities)
+        public static FormattedText GetMarkdownText(string text, Vector<TextEntity> entities)
         {
             return GetMarkdownText(new FormattedText(text, entities));
         }
@@ -70,7 +70,7 @@ namespace Telegram.Td
             return text;
         }
 
-        public static IList<TextEntity> GetTextEntities(string text)
+        public static Vector<TextEntity> GetTextEntities(string text)
         {
             var result = Client.Execute(new GetTextEntities(text));
             if (result is TextEntities entities)
@@ -81,7 +81,7 @@ namespace Telegram.Td
             return [];
         }
 
-        public static FormattedText MergeEntities(FormattedText text, IList<TextEntity> entities)
+        public static FormattedText MergeEntities(FormattedText text, Vector<TextEntity> entities)
         {
             if (entities.Count > 0 && text.Entities.Count > 0)
             {
@@ -133,7 +133,7 @@ namespace Telegram.Td
             // TODO: doesn't support more than 10 parameters but I'm lazy
 
             var builder = new StringBuilder(format);
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
 
             var argument = 0;
             var index = -1;

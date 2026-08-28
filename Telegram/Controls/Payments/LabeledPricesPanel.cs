@@ -33,8 +33,8 @@ namespace Telegram.Controls.Payments
             }
         }
 
-        private IList<LabeledPricePart> _prices;
-        public IList<LabeledPricePart> Prices
+        private Vector<LabeledPricePart> _prices;
+        public Vector<LabeledPricePart> Prices
         {
             get => _prices;
             set

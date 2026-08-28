@@ -31,7 +31,7 @@ namespace Telegram.Controls.Cells.Premium
             _viewChangedTimer.Tick += OnTick;
         }
 
-        public void UpdateFeature(IClientService clientService, IList<BusinessFeature> features)
+        public void UpdateFeature(IClientService clientService, IReadOnlyList<BusinessFeature> features)
         {
             ScrollingHost.ItemsSource = features
                 .Where(x => x is not BusinessFeatureChatFolderTags and not BusinessFeatureEmojiStatus and not BusinessFeatureUpgradedStories)

@@ -257,7 +257,7 @@ namespace Telegram.ViewModels.Folders
                     var confirm = await navigationService.ShowPopupAsync(popup, Tuple.Create(folder, leave));
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        clientService.Send(new DeleteChatFolder(info.Id, popup.SelectedItems));
+                        clientService.Send(new DeleteChatFolder(info.Id, popup.SelectedItems.ToVector()));
                     }
                 }
             }

@@ -226,7 +226,7 @@ namespace Telegram.ViewModels
             BeginOnUIThread(() => UpdateChatFolders(update.ChatFolders, update.MainChatListPosition));
         }
 
-        private void UpdateChatFolders(IList<ChatFolderInfo> chatFolders, int mainChatListPosition)
+        private void UpdateChatFolders(Vector<ChatFolderInfo> chatFolders, int mainChatListPosition)
         {
             if (chatFolders.Count > 0)
             {

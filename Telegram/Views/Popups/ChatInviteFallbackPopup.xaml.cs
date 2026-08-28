@@ -21,7 +21,7 @@ namespace Telegram.Views.Popups
         private readonly IClientService _clientService;
         private readonly ChatInviteLink _inviteLink;
 
-        public ChatInviteFallbackPopup(IClientService clientService, long chatId, IList<FailedToAddMember> members)
+        public ChatInviteFallbackPopup(IClientService clientService, long chatId, Vector<FailedToAddMember> members)
         {
             InitializeComponent();
 

@@ -624,8 +624,8 @@ namespace Telegram.Common
                 return null;
             }
 
-            var builder = new StringBuilder();
-            var entities = new List<TextEntity>();
+            StringBuilder builder = new();
+            MutableVector<TextEntity> entities = null;
 
             foreach (var range in _selectedRanges)
             {
@@ -647,12 +647,12 @@ namespace Telegram.Common
                 {
                     foreach (var entity in part.Entities)
                     {
-                        entities.Add(new TextEntity(baseOffset + entity.Offset, entity.Length, entity.Type));
+                        (entities ??= new MutableVector<TextEntity>()).Add(new TextEntity(baseOffset + entity.Offset, entity.Length, entity.Type));
                     }
                 }
             }
 
-            return builder.Length > 0 ? new FormattedText(builder.ToString(), entities) : null;
+            return builder.Length > 0 ? new FormattedText(builder.ToString(), entities ?? Array.Empty<TextEntity>()) : null;
         }
 
         /// <summary>

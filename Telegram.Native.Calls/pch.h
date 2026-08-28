@@ -43,3 +43,9 @@ inline std::vector<R> vector_to_unmanaged(winrt::Windows::Foundation::Collection
 {
     return std::vector<R>(begin(source), end(source));
 };
+
+template<typename R, typename T>
+inline std::vector<R> vector_to_unmanaged(winrt::Windows::Foundation::Collections::IVectorView<T> source)
+{
+    return std::vector<R>(begin(source), end(source));
+};

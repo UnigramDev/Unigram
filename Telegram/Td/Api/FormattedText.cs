@@ -45,7 +45,7 @@ namespace Telegram.Td.Api
             }
 
             var resultText = new StringBuilder();
-            var resultEntities = new List<TextEntity>();
+            var resultEntities = new MutableVector<TextEntity>();
             int currentOffset = 0;
 
             foreach (var value in values)
@@ -141,7 +141,7 @@ namespace Telegram.Td.Api
 
             if (args == null || args.Length == 0)
             {
-                return new FormattedText(format.Text, new List<TextEntity>(format.Entities));
+                return new FormattedText(format.Text, new MutableVector<TextEntity>(format.Entities));
             }
 
             // Parse the format text to find placeholders
@@ -278,7 +278,7 @@ namespace Telegram.Td.Api
 
             if (string.IsNullOrEmpty(Text))
             {
-                return new FormattedText(string.Empty, new List<TextEntity>(0));
+                return new FormattedText(string.Empty, new MutableVector<TextEntity>(0));
             }
 
             newValue ??= string.Empty;
@@ -287,7 +287,7 @@ namespace Telegram.Td.Api
             var occurrences = FindAllOccurrences(Text, oldValue);
             if (occurrences.Count == 0)
             {
-                return new FormattedText(Text, new List<TextEntity>(Entities));
+                return new FormattedText(Text, new MutableVector<TextEntity>(Entities));
             }
 
             return ReplaceInternal(occurrences, oldValue.Length, newValue);
@@ -314,7 +314,7 @@ namespace Telegram.Td.Api
             var occurrences = FindAllOccurrences(Text, oldValue);
             if (occurrences.Count == 0)
             {
-                return new FormattedText(Text, new List<TextEntity>(Entities));
+                return new FormattedText(Text, new MutableVector<TextEntity>(Entities));
             }
 
             return ReplaceInternal(occurrences, oldValue.Length, newValue);
@@ -353,7 +353,7 @@ namespace Telegram.Td.Api
         private static void AppendFormattedText(
             FormattedText formatted,
             StringBuilder resultText,
-            List<TextEntity> resultEntities,
+            MutableVector<TextEntity> resultEntities,
             ref int currentOffset)
         {
             if (string.IsNullOrEmpty(formatted.Text))
@@ -507,7 +507,7 @@ namespace Telegram.Td.Api
             }
 
             string substringText = source.Text.Substring(offset, length);
-            var substringEntities = new List<TextEntity>();
+            var substringEntities = new MutableVector<TextEntity>();
 
             int endOffset = offset + length;
 

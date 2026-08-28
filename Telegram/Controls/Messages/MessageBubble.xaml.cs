@@ -2347,7 +2347,7 @@ namespace Telegram.Controls.Messages
             return ReplaceEntities(message, text.Text, text.Entities, fontSize);
         }
 
-        private bool ReplaceEntities(MessageViewModel message, string text, IList<TextEntity> entities, double fontSize = 0)
+        private bool ReplaceEntities(MessageViewModel message, string text, Vector<TextEntity> entities, double fontSize = 0)
         {
             // TODO: this crashes due to an internal framework exception
             //Message.IsTextSelectionEnabled = !message.Chat.HasProtectedContent;

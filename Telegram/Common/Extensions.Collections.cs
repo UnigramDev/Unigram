@@ -8,26 +8,27 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Telegram.Common
 {
     public static partial class Extensions
     {
-        public static int FindIndex<T>(this IList<T> list, Func<T, bool> predicate)
+        public static int FindIndex<T>(this IReadOnlyList<T> list, Func<T, bool> predicate)
         {
             for (int i = 0; i < list.Count; i++)
                 if (predicate(list[i])) return i;
             return -1;
         }
 
-        public static int FindLastIndex<T>(this IList<T> list, Func<T, bool> predicate)
+        public static int FindLastIndex<T>(this IReadOnlyList<T> list, Func<T, bool> predicate)
         {
             for (int i = list.Count - 1; i >= 0; i--)
                 if (predicate(list[i])) return i;
             return -1;
         }
 
-        public static T Random<T>(this IList<T> source)
+        public static T Random<T>(this IReadOnlyList<T> source)
         {
             if (source.Count > 0)
             {
@@ -196,9 +197,24 @@ namespace Telegram.Common
             }
         }
 
-        public static bool Empty<T>(this ICollection<T> list)
+        //public static bool Empty<T>(this ICollection<T> list)
+        //{
+        //    return list.Count == 0;
+        //}
+
+        public static bool Empty<T>(this IEnumerable<T> source)
         {
-            return list.Count == 0;
+            if (source is ICollection<T> collection)
+            {
+                return collection.Count == 0;
+            }
+
+            if (source is IReadOnlyCollection<T> readOnly)
+            {
+                return readOnly.Count == 0;
+            }
+
+            return !source.Any();
         }
 
         public static bool EmptyT(this IList list)

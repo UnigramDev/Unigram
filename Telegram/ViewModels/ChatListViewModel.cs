@@ -521,8 +521,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            folder.ExcludedChatIds.Remove(data.Chat.Id);
-            folder.IncludedChatIds.Add(data.Chat.Id);
+            folder.ExcludedChatIds = folder.ExcludedChatIds.Without(data.Chat.Id);
+            folder.IncludedChatIds = folder.IncludedChatIds.With(data.Chat.Id);
 
             ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
 
@@ -546,7 +546,7 @@ namespace Telegram.ViewModels
 
             if (folder.IsShareable)
             {
-                folder.IncludedChatIds.Remove(data.Chat.Id);
+                folder.IncludedChatIds = folder.IncludedChatIds.Without(data.Chat.Id);
             }
             else
             {
@@ -563,8 +563,8 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                folder.IncludedChatIds.Remove(data.Chat.Id);
-                folder.ExcludedChatIds.Add(data.Chat.Id);
+                folder.IncludedChatIds = folder.IncludedChatIds.Without(data.Chat.Id);
+                folder.ExcludedChatIds = folder.ExcludedChatIds.With(data.Chat.Id);
             }
 
             if (folder.Empty())
@@ -749,7 +749,7 @@ namespace Telegram.ViewModels
                 Handle(update.ChatId, update.Positions, true);
             }
 
-            public void Handle(long chatId, IList<ChatPosition> positions, bool lastMessage = false)
+            public void Handle(long chatId, Vector<ChatPosition> positions, bool lastMessage = false)
             {
                 var chat = GetChat(chatId);
                 var order = 0L;

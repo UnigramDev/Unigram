@@ -102,7 +102,7 @@ namespace Telegram.Common
         /// first block whose kind is included in <paramref name="kind"/>, or null
         /// if none matches.
         /// </summary>
-        public static PageBlock FindFirstMedia(IList<PageBlock> blocks, PageBlockMediaKind kind)
+        public static PageBlock FindFirstMedia(Vector<PageBlock> blocks, PageBlockMediaKind kind)
         {
             if (blocks == null || kind == PageBlockMediaKind.None)
             {
@@ -172,7 +172,7 @@ namespace Telegram.Common
             }
         }
 
-        private static PageBlock FindFirstMediaInList(IList<PageBlock> blocks, PageBlockMediaKind kind)
+        private static PageBlock FindFirstMediaInList(Vector<PageBlock> blocks, PageBlockMediaKind kind)
         {
             if (blocks == null) return null;
             foreach (var b in blocks)
@@ -192,7 +192,7 @@ namespace Telegram.Common
         /// <see cref="FindFirstMedia"/>) and returns every block whose kind is
         /// included in <paramref name="kind"/>, in document order.
         /// </summary>
-        public static List<PageBlock> FindAllMedia(IList<PageBlock> blocks, PageBlockMediaKind kind)
+        public static List<PageBlock> FindAllMedia(Vector<PageBlock> blocks, PageBlockMediaKind kind)
         {
             var result = new List<PageBlock>();
             FindAllMedia(blocks, kind, result);
@@ -205,7 +205,7 @@ namespace Telegram.Common
         /// traversal is recursion over the call stack with no intermediate
         /// allocations (no LINQ/iterators/closures).
         /// </summary>
-        public static void FindAllMedia(IList<PageBlock> blocks, PageBlockMediaKind kind, List<PageBlock> result)
+        public static void FindAllMedia(Vector<PageBlock> blocks, PageBlockMediaKind kind, List<PageBlock> result)
         {
             if (blocks == null || kind == PageBlockMediaKind.None)
             {
@@ -260,7 +260,7 @@ namespace Telegram.Common
             }
         }
 
-        private static void CollectMediaInList(IList<PageBlock> blocks, PageBlockMediaKind kind, List<PageBlock> result)
+        private static void CollectMediaInList(Vector<PageBlock> blocks, PageBlockMediaKind kind, List<PageBlock> result)
         {
             if (blocks == null) return;
             foreach (var b in blocks)
@@ -295,7 +295,7 @@ namespace Telegram.Common
         /// Walks both the block tree and any nested rich-text content (paragraphs,
         /// captions, table cells, etc.). The returned list is owned by the caller.
         /// </summary>
-        public static IList<PageBlockLink> GetLinks(IList<PageBlock> blocks)
+        public static IList<PageBlockLink> GetLinks(Vector<PageBlock> blocks)
         {
             var result = new List<PageBlockLink>();
             if (blocks == null)
@@ -311,7 +311,7 @@ namespace Telegram.Common
             return result;
         }
 
-        private static void CollectLinksFromBlocks(IList<PageBlock> blocks, List<PageBlockLink> result)
+        private static void CollectLinksFromBlocks(Vector<PageBlock> blocks, List<PageBlockLink> result)
         {
             if (blocks == null) return;
             foreach (var b in blocks)
@@ -595,7 +595,7 @@ namespace Telegram.Common
         // GetRichText — flatten a block list into a single RichTexts (lines joined by '\n')
         // =====================================================================
 
-        public static string GetPlainText(IList<PageBlock> blocks)
+        public static string GetPlainText(Vector<PageBlock> blocks)
         {
             return GetRichText(blocks).ToPlainText();
         }
@@ -608,7 +608,7 @@ namespace Telegram.Common
         /// rendered as hardcoded placeholder strings; replace the
         /// <c>Placeholder*</c> constants at the top of this class to localize.
         /// </summary>
-        public static RichTexts GetRichText(IList<PageBlock> blocks)
+        public static RichTexts GetRichText(Vector<PageBlock> blocks)
         {
             var pieces = new List<RichText>();
             if (blocks != null)
@@ -638,7 +638,7 @@ namespace Telegram.Common
                 return new RichTexts(Array.Empty<RichText>());
             }
 
-            var joined = new List<RichText>(pieces.Count * 2 - 1);
+            var joined = new MutableVector<RichText>(pieces.Count * 2 - 1);
             for (int i = 0; i < pieces.Count; i++)
             {
                 if (i > 0) joined.Add(new RichTextPlain("\n"));
@@ -647,7 +647,7 @@ namespace Telegram.Common
             return new RichTexts(joined);
         }
 
-        private static void CollectRichTextFromBlocks(IList<PageBlock> blocks, List<RichText> pieces)
+        private static void CollectRichTextFromBlocks(Vector<PageBlock> blocks, List<RichText> pieces)
         {
             if (blocks == null) return;
             foreach (var b in blocks) CollectRichTextFromBlock(b, pieces);
@@ -803,7 +803,7 @@ namespace Telegram.Common
                         }
                         else
                         {
-                            var row = new List<RichText>(br.Buttons.Count * 2 - 1);
+                            var row = new MutableVector<RichText>(br.Buttons.Count * 2 - 1);
                             for (int i = 0; i < br.Buttons.Count; i++)
                             {
                                 if (i > 0) row.Add(new RichTextPlain(" "));
@@ -1138,7 +1138,7 @@ namespace Telegram.Common
         public static bool TryGetFormattedText(RichMessage message, out FormattedText result)
         {
             var text = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
             if (TryAppendBlocks(message?.Blocks, text, entities))
             {
                 result = new FormattedText(text.ToString(), entities);
@@ -1162,7 +1162,7 @@ namespace Telegram.Common
             if (message?.Source is RichMessageSourceBlocks source)
             {
                 var text = new StringBuilder();
-                var entities = new List<TextEntity>();
+                var entities = new MutableVector<TextEntity>();
                 if (TryAppendInputBlocks(source.Blocks, text, entities))
                 {
                     result = new FormattedText(text.ToString(), entities);
@@ -1186,7 +1186,7 @@ namespace Telegram.Common
         public static FormattedText GetFormattedText(RichMessage message)
         {
             var text = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
             Flatten(GetRichText(message?.Blocks), text, entities);
 
             // Drop entities with no message equivalent (keep their text as plain).
@@ -1223,7 +1223,7 @@ namespace Telegram.Common
 
         // Top-level blocks are joined by a single '\n' (the inverse of ToPageBlocks, which splits
         // paragraphs on '\n'). Returns false the moment a block isn't losslessly representable.
-        private static bool TryAppendBlocks(IList<PageBlock> blocks, StringBuilder text, List<TextEntity> entities)
+        private static bool TryAppendBlocks(Vector<PageBlock> blocks, StringBuilder text, MutableVector<TextEntity> entities)
         {
             if (blocks == null)
             {
@@ -1246,7 +1246,7 @@ namespace Telegram.Common
             return true;
         }
 
-        private static bool TryAppendBlock(PageBlock block, StringBuilder text, List<TextEntity> entities)
+        private static bool TryAppendBlock(PageBlock block, StringBuilder text, MutableVector<TextEntity> entities)
         {
             switch (block)
             {
@@ -1345,7 +1345,7 @@ namespace Telegram.Common
             }
         }
 
-        private static bool TryAppendInputBlocks(IList<InputPageBlock> blocks, StringBuilder text, List<TextEntity> entities)
+        private static bool TryAppendInputBlocks(Vector<InputPageBlock> blocks, StringBuilder text, MutableVector<TextEntity> entities)
         {
             if (blocks == null)
             {
@@ -1368,7 +1368,7 @@ namespace Telegram.Common
             return true;
         }
 
-        private static bool TryAppendInputBlock(InputPageBlock block, StringBuilder text, List<TextEntity> entities)
+        private static bool TryAppendInputBlock(InputPageBlock block, StringBuilder text, MutableVector<TextEntity> entities)
         {
             switch (block)
             {
@@ -1570,11 +1570,11 @@ namespace Telegram.Common
         /// mapped to their <c>richText*</c> equivalents, with nested/overlapping ranges
         /// resolved into a nested <see cref="RichText"/> tree.
         /// </summary>
-        public static IList<PageBlock> ToPageBlocks(FormattedText text)
+        public static Vector<PageBlock> ToPageBlocks(FormattedText text)
         {
-            var blocks = new List<PageBlock>();
+            var blocks = new MutableVector<PageBlock>();
             var s = text?.Text ?? string.Empty;
-            var entities = text?.Entities ?? new List<TextEntity>();
+            var entities = text?.Entities ?? new MutableVector<TextEntity>();
 
             // Split entities: block-level ones partition the text; the rest are inline.
             var blockEntities = new List<TextEntity>();
@@ -1615,7 +1615,7 @@ namespace Telegram.Common
                             BuildRichText(s, be.Offset, end, inline), new RichTextPlain(string.Empty)));
                         break;
                     default: // BlockQuote
-                        var inner = new List<PageBlock>();
+                        var inner = new MutableVector<PageBlock>();
                         AppendParagraphs(inner, s, be.Offset, end, inline);
                         if (inner.Count == 0)
                         {
@@ -1681,7 +1681,7 @@ namespace Telegram.Common
                 }
             }
 
-            var parts = new List<RichText>();
+            var parts = new MutableVector<RichText>();
             int pos = start;
             while (pos < end)
             {
@@ -1929,7 +1929,7 @@ namespace Telegram.Common
             return SameType(a.Style, b.Style) && SameButtonType(a.Type, b.Type) && Compare(a.Text, b.Text);
         }
 
-        private static bool Compare(IList<InlineButton> a, IList<InlineButton> b)
+        private static bool Compare(Vector<InlineButton> a, Vector<InlineButton> b)
         {
             if (a == null || b == null)
             {
@@ -1968,7 +1968,7 @@ namespace Telegram.Common
             }
         }
 
-        private static bool SameBytes(IList<byte> a, IList<byte> b)
+        private static bool SameBytes(Vector<byte> a, Vector<byte> b)
         {
             if (a == null || b == null)
             {
@@ -1998,7 +1998,7 @@ namespace Telegram.Common
             return Compare(a.Credit, b.Credit) && Compare(a.Text, b.Text);
         }
 
-        private static bool Compare(IList<PageBlock> a, IList<PageBlock> b)
+        private static bool Compare(Vector<PageBlock> a, Vector<PageBlock> b)
         {
             if (a == null || b == null)
             {
@@ -2028,7 +2028,7 @@ namespace Telegram.Common
                 && Compare(a.Blocks, b.Blocks);
         }
 
-        private static bool Compare(IList<PageBlockListItem> a, IList<PageBlockListItem> b)
+        private static bool Compare(Vector<PageBlockListItem> a, Vector<PageBlockListItem> b)
         {
             if (a.Count != b.Count)
             {
@@ -2054,7 +2054,7 @@ namespace Telegram.Common
                 && Compare(a.Text, b.Text);
         }
 
-        private static bool Compare(IList<PageBlockTableCell> a, IList<PageBlockTableCell> b)
+        private static bool Compare(Vector<PageBlockTableCell> a, Vector<PageBlockTableCell> b)
         {
             if (a.Count != b.Count)
             {
@@ -2070,7 +2070,7 @@ namespace Telegram.Common
             return true;
         }
 
-        private static bool Compare(IList<IList<PageBlockTableCell>> a, IList<IList<PageBlockTableCell>> b)
+        private static bool Compare(Vector<Vector<PageBlockTableCell>> a, Vector<Vector<PageBlockTableCell>> b)
         {
             if (a.Count != b.Count)
             {
@@ -2151,9 +2151,9 @@ namespace Telegram.Common
         }
 
         /// <summary>Converts a list of display <see cref="PageBlock"/> into their <c>inputPageBlock*</c> equivalents (unsupported blocks dropped). The returned list is owned by the caller.</summary>
-        public static IList<InputPageBlock> ToInputBlocks(IList<PageBlock> blocks)
+        public static Vector<InputPageBlock> ToInputBlocks(Vector<PageBlock> blocks)
         {
-            var result = new List<InputPageBlock>();
+            var result = new MutableVector<InputPageBlock>();
             if (blocks != null)
             {
                 foreach (var block in blocks)
@@ -2233,9 +2233,9 @@ namespace Telegram.Common
             }
         }
 
-        private static IList<InputPageBlockListItem> ToInputListItems(IList<PageBlockListItem> items)
+        private static Vector<InputPageBlockListItem> ToInputListItems(Vector<PageBlockListItem> items)
         {
-            var result = new List<InputPageBlockListItem>();
+            var result = new MutableVector<InputPageBlockListItem>();
             if (items != null)
             {
                 foreach (var item in items)

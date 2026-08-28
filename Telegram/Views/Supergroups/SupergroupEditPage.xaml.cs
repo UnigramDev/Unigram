@@ -92,7 +92,7 @@ namespace Telegram.Views.Supergroups
             }
         }
 
-        public void UpdateChatWelcomeMessages(Chat chat, IList<WelcomeMessage> messages)
+        public void UpdateChatWelcomeMessages(Chat chat, Vector<WelcomeMessage> messages)
         {
             if (messages.Count > 0)
             {

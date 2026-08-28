@@ -290,7 +290,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void VotePoll(MessageViewModel message, IList<int> options)
+        public async void VotePoll(MessageViewModel message, Vector<int> options)
         {
             var poll = message.Content as MessagePoll;
             if (poll == null || options == null)

@@ -71,7 +71,7 @@ namespace Telegram.ViewModels
         /// built from these on demand (see MessageDelegate.OpenPageBlockMedia) rather than
         /// collected while rendering, so nothing has to be kept in sync.
         /// </summary>
-        public IList<PageBlock> Blocks { get; set; }
+        public Vector<PageBlock> Blocks { get; set; }
 
         public MessageViewModel CreateMessage(Message message)
         {

@@ -42,7 +42,7 @@ namespace Telegram.ViewModels.Gallery
             return false;
         }
 
-        public virtual IList<AlternativeVideo> AlternativeVideos => Array.Empty<AlternativeVideo>();
+        public virtual Vector<AlternativeVideo> AlternativeVideos => Array.Empty<AlternativeVideo>();
 
         public virtual object Constraint { get; protected set; }
 

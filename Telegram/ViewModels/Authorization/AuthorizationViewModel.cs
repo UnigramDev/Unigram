@@ -77,7 +77,7 @@ namespace Telegram.ViewModels.Authorization
 
                             if (mode == QrCodeMode.Primary)
                             {
-                                var userIds = new List<long>();
+                                var userIds = new MutableVector<long>();
 
                                 foreach (var session in _lifetimeService.Items)
                                 {

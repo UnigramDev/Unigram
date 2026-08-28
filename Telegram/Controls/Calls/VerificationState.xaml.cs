@@ -27,7 +27,7 @@ namespace Telegram.Controls.Calls
             };
         }
 
-        public void UpdateState(int generation, IList<string> emojis)
+        public void UpdateState(int generation, Vector<string> emojis)
         {
             if (emojis.Count == 4)
             {

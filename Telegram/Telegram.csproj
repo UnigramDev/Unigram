@@ -719,6 +719,7 @@
     <Compile Include="Td\ClientJson.cs" />
     <Compile Include="Td\PtrClientJson.cs" />
     <Compile Include="Td\TdJsonReader.cs" />
+    <Compile Include="Td\Vector.cs" />
     <Compile Include="Td\Api\UpdateChatMember.cs" />
     <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
     <Compile Include="ViewModels\Business\BusinessLocationViewModel.cs" />

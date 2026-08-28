@@ -24,7 +24,7 @@ namespace Telegram.Controls.Messages.Content
 
         private readonly Dictionary<int, ChecklistTaskContent> _cache = new();
 
-        private IList<ChecklistTask> _prevValue;
+        private Vector<ChecklistTask> _prevValue;
 
         public ChecklistContent(MessageViewModel message)
         {
@@ -244,8 +244,8 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var markedAsDone = new List<int>();
-            var markedAsNotDone = new List<int>();
+            var markedAsDone = new MutableVector<int>();
+            var markedAsNotDone = new MutableVector<int>();
 
             if (task.CompletionDate != 0)
             {

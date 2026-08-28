@@ -138,7 +138,7 @@ namespace Telegram.Controls.Views
                         {
                             _clientService.Send(new SendMessage(chat.Id, topic, null, options, input), Track);
                         }
-                        else if (item is List<InputMessageContent> album)
+                        else if (item is Vector<InputMessageContent> album)
                         {
                             _clientService.Send(new SendMessageAlbum(chat.Id, topic, null, options, album), Track);
                         }
@@ -233,9 +233,9 @@ namespace Telegram.Controls.Views
             return null;
         }
 
-        private async Task<List<InputMessageContent>> SendGroupedAsync(IList<StorageMedia> items, FormattedText caption)
+        private async Task<Vector<InputMessageContent>> SendGroupedAsync(IList<StorageMedia> items, FormattedText caption)
         {
-            var operations = new List<InputMessageContent>();
+            var operations = new MutableVector<InputMessageContent>();
             var audio = items.All(x => x is StorageAudio);
 
             for (int i = 0; i < items.Count; i++)
@@ -376,7 +376,7 @@ namespace Telegram.Controls.Views
 
             foreach (var messages in _trackedMessages.GroupBy(x => x.ChatId).ToList())
             {
-                _clientService.Send(new DeleteMessages(messages.Key, messages.Select(x => x.Id).ToList(), true));
+                _clientService.Send(new DeleteMessages(messages.Key, messages.Select(x => x.Id).ToVector(), true));
             }
         }
     }

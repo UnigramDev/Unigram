@@ -18,7 +18,7 @@ using namespace winrt::Windows::Graphics::DirectX;
 
 namespace winrt::Telegram::Native::implementation
 {
-    FreeformGradientSurface::FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVector<int32_t> colors)
+    FreeformGradientSurface::FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVectorView<int32_t> colors)
         : m_compositionDevice(device)
         , m_d2dFactory(d2dFactory)
         , m_compositor(compositor)
@@ -98,7 +98,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    inline void GenerateGradient(uint8_t* imageBytes, IVector<int32_t> colors, QuadPoints positions)
+    inline void GenerateGradient(uint8_t* imageBytes, IVectorView<int32_t> colors, QuadPoints positions)
     {
         auto width = 50;
         auto height = 50;
@@ -198,12 +198,12 @@ namespace winrt::Telegram::Native::implementation
         return m_surface->EndDraw();
     }
 
-    IVector<int32_t> FreeformGradientSurface::Colors()
+    IVectorView<int32_t> FreeformGradientSurface::Colors()
     {
         return m_colors;
     }
 
-    void FreeformGradientSurface::Colors(IVector<int32_t> value)
+    void FreeformGradientSurface::Colors(IVectorView<int32_t> value)
     {
         m_colors = value;
         Invalidate();

@@ -342,21 +342,21 @@ namespace Telegram.Views.Gifts.Popups
             UpdateItems(_gifts.Order, GetAttributes());
         }
 
-        public void UpdateItems(GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
+        public void UpdateItems(GiftForResaleOrder order, Vector<UpgradedGiftAttributeId> attributes)
         {
             _gifts = new ResoldGiftsCollection(_clientService, this, _giftId, order, attributes);
             ScrollingHost.ItemsSource = _gifts;
             ShowHideSkeleton();
         }
 
-        private IList<UpgradedGiftAttributeId> GetAttributes()
+        private Vector<UpgradedGiftAttributeId> GetAttributes()
         {
             if (_models == null || _backdrops == null || _symbols == null)
             {
                 return Array.Empty<UpgradedGiftAttributeId>();
             }
 
-            var attributes = new List<UpgradedGiftAttributeId>(_models.GetAttributes());
+            var attributes = new MutableVector<UpgradedGiftAttributeId>(_models.GetAttributes());
             attributes.AddRange(_backdrops.GetAttributes());
             attributes.AddRange(_symbols.GetAttributes());
 

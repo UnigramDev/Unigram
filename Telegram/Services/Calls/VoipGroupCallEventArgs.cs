@@ -20,13 +20,13 @@ namespace Telegram.Services.Calls
 
     public record VoipGroupCallStreamStateChangedEventArgs(VoipGroupCallStreamState StreamState);
 
-    public record VoipGroupCallVerificationStateChangedEventArgs(int Generation, IList<string> Emojis);
+    public record VoipGroupCallVerificationStateChangedEventArgs(int Generation, Vector<string> Emojis);
 
     public record VoipGroupCallMessagesChangedEventArgs(GroupCallMessage Message, bool Deleted);
 
     public record VoipGroupCallReactionsChangedEventArgs(MessageSender SenderId, long StarCount);
 
-    public record VoipGroupCallTopDonorsChangedEventArgs(IList<PaidReactor> Donors);
+    public record VoipGroupCallTopDonorsChangedEventArgs(Vector<PaidReactor> Donors);
 
     public record VoipGroupCallTotalStarCountChangedEventArgs(long TotalStarCount);
 
@@ -38,5 +38,5 @@ namespace Telegram.Services.Calls
     /// <param name="AddedVideoInfo">Endpoints that appeared, screen sharing first, or null.</param>
     public record VoipGroupCallParticipantChangedEventArgs(GroupCallParticipant Participant, string Order, string[] RemovedVideoInfo, GroupCallParticipantVideoInfo[] AddedVideoInfo);
 
-    public record VoipGroupCallParticipantsSlice(IList<GroupCallParticipant> Participants, bool HasMore);
+    public record VoipGroupCallParticipantsSlice(Vector<GroupCallParticipant> Participants, bool HasMore);
 }

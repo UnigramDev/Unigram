@@ -121,7 +121,7 @@ namespace Telegram.Views
             _debouncer.Start();
         }
 
-        private readonly List<long> _viewVisibleMessages = new();
+        private readonly MutableVector<long> _viewVisibleMessages = new();
         private readonly Dictionary<long, IPlayerView> _viewVisibleMessagesNext = new();
         private readonly HashSet<long> _viewVisibleMessagesPrev = new();
 

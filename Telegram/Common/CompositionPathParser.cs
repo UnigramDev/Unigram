@@ -64,12 +64,12 @@ namespace Telegram.Common
             return null;
         }
 
-        public static CompositionPath Parse(IList<ClosedVectorPath> contours)
+        public static CompositionPath Parse(Vector<ClosedVectorPath> contours)
         {
             return new CompositionPath(Parse(null, contours));
         }
 
-        public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours)
+        public static CanvasGeometry Parse(ICanvasResourceCreator sender, Vector<ClosedVectorPath> contours)
         {
             using var builder = new CanvasPathBuilder(sender);
 
@@ -115,7 +115,7 @@ namespace Telegram.Common
             return CanvasGeometry.CreatePath(builder);
         }
 
-        public static CompositionAnimation ParseThumbnail(float width, float height, IList<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
+        public static CompositionAnimation ParseThumbnail(float width, float height, Vector<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
         {
             CompositionPath path = contours?.Count > 0
                 ? new CompositionPath(Parse(null, contours))

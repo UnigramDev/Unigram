@@ -19,12 +19,12 @@ namespace Telegram.Views.Premium.Popups
     public sealed partial class FeaturesPopup : ContentPopup
     {
         private readonly IClientService _clientService;
-        private readonly IList<BusinessFeature> _businessFeatures;
+        private readonly IReadOnlyList<BusinessFeature> _businessFeatures;
         private readonly IList<PremiumLimit> _limits;
         private readonly IDictionary<Type, Animation> _animations;
         private readonly Stickers _stickers;
 
-        public FeaturesPopup(IClientService clientService, PremiumPaymentOption option, IList<PremiumFeature> features, IList<BusinessFeature> businessFeatures, IList<PremiumLimit> limits, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
+        public FeaturesPopup(IClientService clientService, PremiumPaymentOption option, IList<PremiumFeature> features, IReadOnlyList<BusinessFeature> businessFeatures, IList<PremiumLimit> limits, IDictionary<Type, Animation> animations, Stickers stickers, PremiumFeature selectedFeature)
         {
             InitializeComponent();
 

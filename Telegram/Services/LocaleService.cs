@@ -42,9 +42,9 @@ namespace Telegram.Services
 
     public partial class LocaleChangedEventArgs : EventArgs
     {
-        public IList<LanguagePackString> Strings { get; }
+        public Vector<LanguagePackString> Strings { get; }
 
-        public LocaleChangedEventArgs(IList<LanguagePackString> strings)
+        public LocaleChangedEventArgs(Vector<LanguagePackString> strings)
         {
             Strings = strings;
         }

@@ -39,7 +39,7 @@ namespace Telegram.Services
         T Resolve<T, TDelegate>(TDelegate delegato) where T : IDelegable<TDelegate> where TDelegate : IViewModelDelegate;
 
         Task<Object> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function);
-        void RequestQrCodeAuthentication(IList<long> otherUserIds);
+        void RequestQrCodeAuthentication(Vector<long> otherUserIds);
     }
 
     // TODO: Name collides with Td.Api.Session.
@@ -202,7 +202,7 @@ namespace Telegram.Services
             return _continueResult.Task;
         }
 
-        public void RequestQrCodeAuthentication(IList<long> otherUserIds)
+        public void RequestQrCodeAuthentication(Vector<long> otherUserIds)
         {
             _loggingOut = false;
             _continueOnLogOut = true;

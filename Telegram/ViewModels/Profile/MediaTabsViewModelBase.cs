@@ -339,7 +339,7 @@ namespace Telegram.ViewModels.Profile
 
             UnselectMessages();
 
-            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), popup.Revoke));
+            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToVector(), popup.Revoke));
 
             foreach (var sender in popup.DeleteAll)
             {
@@ -358,7 +358,7 @@ namespace Telegram.ViewModels.Profile
                     var messageIds = messages
                         .Where(x => x.SenderId.AreTheSame(sender))
                         .Select(x => x.Id)
-                        .ToList();
+                        .ToVector();
 
                     ClientService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messageIds));
                 }

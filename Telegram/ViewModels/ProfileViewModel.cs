@@ -1832,7 +1832,7 @@ namespace Telegram.ViewModels
             return Append(members.Members, sorted, members.Members.Count == Limit);
         }
 
-        private IncrementalLoadResult Append(IList<ChatMember> members, bool sorted, bool hasMoreItems)
+        private IncrementalLoadResult Append(Vector<ChatMember> members, bool sorted, bool hasMoreItems)
         {
             if (sorted)
             {

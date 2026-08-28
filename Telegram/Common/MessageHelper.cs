@@ -330,7 +330,7 @@ namespace Telegram.Common
             if (package.AvailableFormats.Contains(StandardDataFormats.Text))
             {
                 string text = await package.GetTextAsync();
-                IList<TextEntity> entities = null;
+                MutableVector<TextEntity> entities = null;
 
                 if (package.AvailableFormats.Contains("application/x-tl-field-tags"))
                 {
@@ -340,7 +340,7 @@ namespace Telegram.Common
                     await reader.LoadAsync((uint)data.Size);
 
                     var count = reader.ReadInt32();
-                    entities = new List<TextEntity>(count);
+                    entities = new MutableVector<TextEntity>(count);
 
                     for (int i = 0; i < count; i++)
                     {
@@ -2095,7 +2095,7 @@ namespace Telegram.Common
                 {
                     if (info.ChatFolderInfo.Id == 0)
                     {
-                        var import = await clientService.SendAsync(new AddChatFolderByInviteLink(link, popup.SelectedItems));
+                        var import = await clientService.SendAsync(new AddChatFolderByInviteLink(link, popup.SelectedItems.ToVector()));
                         if (import is Error error)
                         {
                             if (error.MessageEquals(ErrorType.CHATLISTS_TOO_MUCH))
@@ -2118,7 +2118,7 @@ namespace Telegram.Common
                     }
                     else if (popup.SelectedItems.Count > 0)
                     {
-                        clientService.Send(new ProcessChatFolderNewChats(info.ChatFolderInfo.Id, popup.SelectedItems));
+                        clientService.Send(new ProcessChatFolderNewChats(info.ChatFolderInfo.Id, popup.SelectedItems.ToVector()));
                     }
                 }
             }

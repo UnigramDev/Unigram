@@ -688,7 +688,7 @@ namespace Telegram.Controls.Messages
                     var unread = new UnreadReaction(reaction.Type, null, false);
                     var previous = _message.UnreadReactions;
 
-                    _message.UnreadReactions = [.. previous, unread];
+                    _message.UnreadReactions = previous.With(unread);
                     _bubble.UpdateMessageReactions(_message, true);
                     _message.UnreadReactions = previous;
                 }

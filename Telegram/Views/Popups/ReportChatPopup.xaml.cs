@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {
-    public record ReportChatSelection(ReportOption Option, IList<long> MessageIds, string Text, object Result);
+    public record ReportChatSelection(ReportOption Option, Vector<long> MessageIds, string Text, object Result);
 
     public sealed partial class ReportChatPopup : ContentPopup
     {
@@ -34,7 +34,7 @@ namespace Telegram.Views.Popups
         private readonly Stack<ReportChatSelection> _history = new();
         private ReportChatSelection _selection;
 
-        public ReportChatPopup(IClientService clientService, INavigationService navigationService, long chatId, ReportOption option, IList<long> messageIds, string text)
+        public ReportChatPopup(IClientService clientService, INavigationService navigationService, long chatId, ReportOption option, Vector<long> messageIds, string text)
         {
             InitializeComponent();
             XamlRoot = navigationService.XamlRoot;
@@ -54,7 +54,7 @@ namespace Telegram.Views.Popups
             return _task.Task;
         }
 
-        private async void Continue(ReportOption option, IList<long> messageIds, string text)
+        private async void Continue(ReportOption option, Vector<long> messageIds, string text)
         {
             IsEnabled = false;
 

@@ -21,14 +21,14 @@ namespace Telegram.Collections
         //
         // Not named ReplaceDiff either: an extension method loses to an instance method of the same
         // name, so every call here would bind to the library's instead.
-        public static void Replace<T>(this DiffObservableCollection<T> destination, IList<T> source)
+        public static void Replace<T>(this DiffObservableCollection<T> destination, IReadOnlyList<T> source)
         {
             if (destination.Empty())
             {
                 destination.AddRange(source);
                 return;
             }
-            else if (source.Empty())
+            else if (source.Count == 0)
             {
                 destination.ClearIfNotEmpty();
                 return;

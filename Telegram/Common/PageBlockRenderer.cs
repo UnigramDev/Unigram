@@ -562,7 +562,7 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessAuthorDate(IClientService clientService, PageBlockAuthorDate block)
         {
-            var parts = new List<RichText>();
+            var parts = new MutableVector<RichText>();
 
             if (!block.Author.IsNullOrEmpty())
             {
@@ -1712,7 +1712,7 @@ namespace Telegram.Common
         //   - last block (unless full media): 6px bottom
         // LayoutRoot.Children is kept 1:1 with blocks by the diff (null elements are
         // inserted as Border placeholders), so indices line up.
-        public void UpdateSpacing(Panel panel, IList<PageBlock> blocks, bool root)
+        public void UpdateSpacing(Panel panel, Vector<PageBlock> blocks, bool root)
         {
             var count = Math.Min(blocks.Count, panel.Children.Count);
 

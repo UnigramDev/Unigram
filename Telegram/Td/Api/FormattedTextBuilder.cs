@@ -34,7 +34,7 @@ namespace Telegram.Td.Api
         private string _text;
 
         // Null until an edit needs it, which for a substitution that matched nothing is never.
-        private List<TextEntity> _entities;
+        private MutableVector<TextEntity> _entities;
 
         public FormattedTextBuilder(string text)
         {
@@ -50,7 +50,7 @@ namespace Telegram.Td.Api
             var entities = source?.Entities;
             if (entities != null && entities.Count > 0)
             {
-                _entities = new List<TextEntity>(entities.Count);
+                _entities = new MutableVector<TextEntity>(entities.Count);
 
                 for (int i = 0; i < entities.Count; i++)
                 {
@@ -151,7 +151,7 @@ namespace Telegram.Td.Api
                 return;
             }
 
-            _entities ??= new List<TextEntity>();
+            _entities ??= new MutableVector<TextEntity>();
             _entities.Add(new TextEntity(offset, length, type ?? new TextEntityTypeBold()));
         }
 
@@ -191,7 +191,7 @@ namespace Telegram.Td.Api
         /// </summary>
         public readonly FormattedText ToFormattedText()
         {
-            return new FormattedText(_text, _entities ?? (IList<TextEntity>)Array.Empty<TextEntity>());
+            return new FormattedText(_text, _entities ?? Array.Empty<TextEntity>());
         }
 
         public static implicit operator FormattedText(FormattedTextBuilder builder)

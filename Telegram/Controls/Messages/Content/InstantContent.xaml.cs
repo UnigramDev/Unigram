@@ -212,9 +212,9 @@ namespace Telegram.Controls.Messages.Content
         }
 
         private IClientService _clientService;
-        private IList<PageBlock> _prevValue;
+        private Vector<PageBlock> _prevValue;
 
-        public void UpdateView(IClientService clientService, IList<PageBlock> blocks, bool part)
+        public void UpdateView(IClientService clientService, Vector<PageBlock> blocks, bool part)
         {
             // Kept for the whole lifetime, not just while the template is pending: the
             // renderer asks for a message back (IPageBlockContext.CreateMessage) outside

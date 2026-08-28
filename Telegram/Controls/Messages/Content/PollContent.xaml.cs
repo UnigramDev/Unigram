@@ -495,7 +495,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            List<int> options = null;
+            MutableVector<int> options = null;
 
             for (int i = 0; i < Options.Children.Count; i++)
             {

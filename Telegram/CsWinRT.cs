@@ -32,6 +32,10 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(int[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(long[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(string[]))]
+
+// VoipVideoSourceGroup
+// FreeformGradientSurface
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Vector<int>))]
 // The Telegram.Td.Api arrays that used to be here are gone: both parsers materialise a vector as a
 // List<T>, never an array, so nothing could reach these. TdDotNetApi.WinRT.g.cs now exposes the
 // List instantiations from the schema, which is the only place that knows all of them - a binding

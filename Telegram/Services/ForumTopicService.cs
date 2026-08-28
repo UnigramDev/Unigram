@@ -105,7 +105,7 @@ namespace Telegram.Services
             }
         }
 
-        public void ViewMessages(int forumTopicId, IList<long> messageIds)
+        public void ViewMessages(int forumTopicId, Vector<long> messageIds)
         {
             if (TryGetTopic(forumTopicId, out ForumTopic topic))
             {
@@ -113,7 +113,7 @@ namespace Telegram.Services
             }
         }
 
-        public void SetPinnedForumTopics(IList<int> forumTopicIds)
+        public void SetPinnedForumTopics(Vector<int> forumTopicIds)
         {
             if (forumTopicIds.Count > _clientService.Options.PinnedForumTopicCountMax)
             {
@@ -621,7 +621,7 @@ namespace Telegram.Services
             }
         }
 
-        public void UpdateDeleteMessages(IList<long> messageIds, bool isPermanent, bool fromCache)
+        public void UpdateDeleteMessages(Vector<long> messageIds, bool isPermanent, bool fromCache)
         {
             if (fromCache)
             {
@@ -884,7 +884,7 @@ namespace Telegram.Services
             }
         }
 
-        public void UpdateMessageUnreadReactions(long messageId, IList<UnreadReaction> unreadReactions, int unreadReactionCount)
+        public void UpdateMessageUnreadReactions(long messageId, Vector<UnreadReaction> unreadReactions, int unreadReactionCount)
         {
             // Important
             // Update UnreadMentionReactions

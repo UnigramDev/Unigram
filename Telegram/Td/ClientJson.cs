@@ -490,7 +490,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray<T>(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<T>? obj) where T : Object
+        public static void WriteArray<T>(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<T>? obj) where T : Object
         {
             if (obj == null)
             {
@@ -500,56 +500,25 @@ namespace Telegram.Td.Api
             writer.WritePropertyName(utf8PropertyName);
             writer.WriteStartArray();
 
-            if (obj is List<T> list)
-                for (int i = 0; i < list.Count; i++)
+            foreach (var item in obj)
+            {
+                if (item != null)
                 {
-                    var item = list[i];
-                    if (item != null)
-                    {
-                        writer.WriteStartObject();
-                        item.ToJson(writer);
-                        writer.WriteEndObject();
-                    }
-                    else
-                    {
-                        writer.WriteNullValue();
-                    }
+                    writer.WriteStartObject();
+                    item.ToJson(writer);
+                    writer.WriteEndObject();
                 }
-            else if (obj is T[] arr)
-                for (int i = 0; i < arr.Length; i++)
+                else
                 {
-                    var item = arr[i];
-                    if (item != null)
-                    {
-                        writer.WriteStartObject();
-                        item.ToJson(writer);
-                        writer.WriteEndObject();
-                    }
-                    else
-                    {
-                        writer.WriteNullValue();
-                    }
+                    writer.WriteNullValue();
                 }
-            else
-                foreach (var item in obj)
-                {
-                    if (item != null)
-                    {
-                        writer.WriteStartObject();
-                        item.ToJson(writer);
-                        writer.WriteEndObject();
-                    }
-                    else
-                    {
-                        writer.WriteNullValue();
-                    }
-                }
+            }
 
             writer.WriteEndArray();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray<T>(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<IList<T>>? obj) where T : Object
+        public static void WriteArray<T>(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<Vector<T>>? obj) where T : Object
         {
             if (obj == null)
             {
@@ -577,7 +546,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<bool>? obj)
+        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<bool>? obj)
         {
             if (obj == null)
             {
@@ -596,7 +565,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<int>? obj)
+        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<int>? obj)
         {
             if (obj == null)
             {
@@ -615,7 +584,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<long>? obj)
+        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<long>? obj)
         {
             if (obj == null)
             {
@@ -634,7 +603,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<double>? obj)
+        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<double>? obj)
         {
             if (obj == null)
             {
@@ -653,7 +622,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<string>? obj)
+        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<string>? obj)
         {
             if (obj == null)
             {
@@ -672,7 +641,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<byte[]>? obj)
+        public static void WriteArray(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, Vector<byte[]>? obj)
         {
             if (obj == null)
             {
@@ -694,146 +663,363 @@ namespace Telegram.Td.Api
         public delegate T GetObjectArrayHandler<T>(ref Utf8JsonReader reader, ClientResultHandler handler);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<T> GetObjectArray<T>(this ref Utf8JsonReader reader, ClientResultHandler client, GetObjectArrayHandler<T> handler) where T : Object
+        public static Vector<T> GetObjectArray<T>(this ref Utf8JsonReader reader, ClientResultHandler client, GetObjectArrayHandler<T> handler) where T : Object
         {
-            var obj = new List<T>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.StartObject or JsonTokenType.Null)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not (JsonTokenType.StartObject or JsonTokenType.Null))
             {
-                if (reader.TokenType == JsonTokenType.Null)
+                return Vector<T>.Empty;
+            }
+
+            T[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
                 {
-                    obj.Add(null);
+                    items = new T[4];
                 }
-                else
+                else if (count == items.Length)
                 {
-                    obj.Add(handler(ref reader, client));
+                    Array.Resize(ref items, count * 2);
                 }
 
+                items[count++] = reader.TokenType == JsonTokenType.Null ? null : handler(ref reader, client);
                 reader.Read();
             }
+            while (reader.TokenType is JsonTokenType.StartObject or JsonTokenType.Null);
 
-            return obj;
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<IList<T>> GetObjectArrayArray<T>(this ref Utf8JsonReader reader, ClientResultHandler client, GetObjectArrayHandler<T> handler) where T : Object
+        public static Vector<Vector<T>> GetObjectArrayArray<T>(this ref Utf8JsonReader reader, ClientResultHandler client, GetObjectArrayHandler<T> handler) where T : Object
         {
-            var obj = new List<IList<T>>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.StartArray)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not JsonTokenType.StartArray)
             {
-                obj.Add(reader.GetObjectArray(client, handler));
-                reader.Read();
+                return Vector<Vector<T>>.Empty;
             }
 
-            return obj;
+            Vector<T>[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new Vector<T>[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetObjectArray(client, handler);
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.StartArray);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<bool> GetBooleanArray(this ref Utf8JsonReader reader)
+        public static Vector<bool> GetBooleanArray(this ref Utf8JsonReader reader)
         {
-            var obj = new List<bool>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.True or JsonTokenType.False)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not (JsonTokenType.True or JsonTokenType.False))
             {
-                obj.Add(reader.GetBoolean());
-                reader.Read();
+                return Vector<bool>.Empty;
             }
 
-            return obj;
+            bool[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new bool[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetBoolean();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.True or JsonTokenType.False);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<int> GetInt32Array(this ref Utf8JsonReader reader)
+        public static Vector<int> GetInt32Array(this ref Utf8JsonReader reader)
         {
-            var obj = new List<int>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.Number)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not JsonTokenType.Number)
             {
-                obj.Add(reader.GetInt32());
-                reader.Read();
+                return Vector<int>.Empty;
             }
 
-            return obj;
+            int[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new int[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetInt32();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.Number);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<long> GetInt64Array(this ref Utf8JsonReader reader)
+        public static Vector<long> GetInt64Array(this ref Utf8JsonReader reader)
         {
-            var obj = new List<long>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.Number)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not JsonTokenType.Number)
             {
-                obj.Add(reader.GetInt64());
-                reader.Read();
+                return Vector<long>.Empty;
             }
 
-            return obj;
+            long[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new long[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetInt64();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.Number);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<long> GetInt64StringArray(this ref Utf8JsonReader reader)
+        public static Vector<long> GetInt64StringArray(this ref Utf8JsonReader reader)
         {
-            var obj = new List<long>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.Number or JsonTokenType.String)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not (JsonTokenType.Number or JsonTokenType.String))
             {
-                obj.Add(reader.GetInt64String());
-                reader.Read();
+                return Vector<long>.Empty;
             }
 
-            return obj;
+            long[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new long[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetInt64String();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.Number or JsonTokenType.String);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<double> GetDoubleArray(this ref Utf8JsonReader reader)
+        public static Vector<double> GetDoubleArray(this ref Utf8JsonReader reader)
         {
-            var obj = new List<double>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.Number)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not JsonTokenType.Number)
             {
-                obj.Add(reader.GetDouble());
-                reader.Read();
+                return Vector<double>.Empty;
             }
 
-            return obj;
+            double[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new double[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetDouble();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.Number);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<string> GetStringArray(this ref Utf8JsonReader reader)
+        public static Vector<string> GetStringArray(this ref Utf8JsonReader reader)
         {
-            var obj = new List<string>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.String)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not JsonTokenType.String)
             {
-                obj.Add(reader.GetString());
-                reader.Read();
+                return Vector<string>.Empty;
             }
 
-            return obj;
+            string[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new string[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetString();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.String);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<byte[]> GetBase64StringArray(this ref Utf8JsonReader reader)
+        public static Vector<byte[]> GetBase64StringArray(this ref Utf8JsonReader reader)
         {
-            var obj = new List<byte[]>();
-
             reader.Read();
-            while (reader.TokenType is JsonTokenType.String)
+
+            // The empty vector shares the singleton rather than allocating a list to hold nothing.
+            if (reader.TokenType is not JsonTokenType.String)
             {
-                obj.Add(reader.GetBytesFromBase64());
-                reader.Read();
+                return Vector<byte[]>.Empty;
             }
 
-            return obj;
+            byte[][] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new byte[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetBytesFromBase64();
+                reader.Read();
+            }
+            while (reader.TokenType is JsonTokenType.String);
+
+            // Trimmed rather than handed over with slack: the parsed object is cached for the
+            // session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            return items;
         }
 #endif
     }

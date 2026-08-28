@@ -393,7 +393,7 @@ namespace Telegram.Controls.Messages
                 if (some.Reactions.Count > 0)
                 {
                     var content = new StringBuilder();
-                    var entities = new List<TextEntity>();
+                    var entities = new MutableVector<TextEntity>();
 
                     foreach (var item in some.Reactions)
                     {
@@ -811,7 +811,7 @@ namespace Telegram.Controls.Messages
             if (botWriteAccessAllowed.Reason is BotWriteAccessAllowReasonConnectedWebsite websiteConnected)
             {
                 var content = Strings.ActionBotAllowed;
-                var entities = new List<TextEntity>();
+                var entities = new MutableVector<TextEntity>();
 
                 var start = content.IndexOf("{0}");
                 content = string.Format(content, websiteConnected.DomainName);
@@ -2687,7 +2687,7 @@ namespace Telegram.Controls.Messages
             }
 
             var names = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
 
             foreach (var user in clientService.GetUsers(uids))
             {

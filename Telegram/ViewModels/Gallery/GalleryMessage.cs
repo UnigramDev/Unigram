@@ -98,7 +98,7 @@ namespace Telegram.ViewModels.Gallery
             return false;
         }
 
-        public override IList<AlternativeVideo> AlternativeVideos
+        public override Vector<AlternativeVideo> AlternativeVideos
         {
             get
             {

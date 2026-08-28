@@ -6,6 +6,7 @@
 //
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -97,7 +98,7 @@ namespace Telegram.ViewModels.Stories
             CanBeEdited = story.CanBeEdited;
             CanBeDeleted = story.CanBeDeleted;
             CanBeAddedToAlbum = story.CanBeAddedToAlbum;
-            AlbumIds = story.AlbumIds;
+            AlbumIds = story.AlbumIds.ToList();
             IsVisibleOnlyForSelf = story.IsVisibleOnlyForSelf;
             IsPostedToChatPage = story.IsPostedToChatPage;
             HasExpiredViewers = story.HasExpiredViewers;
@@ -155,7 +156,7 @@ namespace Telegram.ViewModels.Stories
 
         public bool CanBeAddedToAlbum { get; private set; }
 
-        public IList<int> AlbumIds { get; private set; }
+        public List<int> AlbumIds { get; private set; }
 
         /// <summary>
         /// True, if the story is visible only for the current user.
@@ -177,7 +178,7 @@ namespace Telegram.ViewModels.Stories
         /// <summary>
         /// Clickable areas to be shown on the story content.
         /// </summary>
-        public IList<StoryArea> Areas { get; private set; }
+        public Vector<StoryArea> Areas { get; private set; }
 
         /// <summary>
         /// Type of the chosen reaction; may be null if none.

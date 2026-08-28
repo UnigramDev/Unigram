@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -39,7 +39,7 @@ namespace Telegram.Controls.Stories.Popups
 
         private MessageSender _selection;
 
-        private List<PaidReactor> _reactors;
+        private MutableVector<PaidReactor> _reactors;
         private PaidReactor _self;
         private long _count;
 
@@ -69,7 +69,7 @@ namespace Telegram.Controls.Stories.Popups
                     LevelRoot.Visibility = Visibility.Visible;
                     TopReactorsRoot.Visibility = Visibility.Collapsed;
 
-                    _reactors = [.. Array.Empty<PaidReactor>()];
+                    _reactors = new MutableVector<PaidReactor>();
                     _selection = _story.GroupCall.MessageSenderId;
 
                     UpdateOrder();
@@ -106,7 +106,8 @@ namespace Telegram.Controls.Stories.Popups
             var response = await _clientService.SendAsync(new GetLiveStoryTopDonors(_story.GroupCall.Id));
             if (response is LiveStoryDonors donors)
             {
-                _reactors = [.. donors.TopDonors ?? Array.Empty<PaidReactor>()];
+                // Copied, not aliased: the ordering below edits it.
+                _reactors = donors.TopDonors.ToMutableVector();
 
                 if (_reactors.Count > 0)
                 {

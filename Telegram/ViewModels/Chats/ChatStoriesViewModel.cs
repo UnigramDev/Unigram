@@ -235,7 +235,7 @@ namespace Telegram.ViewModels.Chats
             var confirm = new InputPopupResult(result, popup.Text, popup.Value);
             if (confirm.Result == ContentDialogResult.Primary)
             {
-                var storyIds = new List<int>();
+                var storyIds = new MutableVector<int>();
                 if (story != null)
                 {
                     storyIds.Add(story.Id);
@@ -261,7 +261,7 @@ namespace Telegram.ViewModels.Chats
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                var storyIds = new List<int>();
+                var storyIds = new MutableVector<int>();
 
                 foreach (var story in popup.SelectedItems)
                 {
@@ -486,13 +486,13 @@ namespace Telegram.ViewModels.Chats
                         Content = x.Content,
                         CanBeDeleted = canBeEdited
                     })
-                    .ToList();
+                    .ToVector();
                 response = new Td.Api.Stories(0, items, Array.Empty<int>());
             }
 
             if (response is Td.Api.Stories stories)
             {
-                _pinnedStoryIds = stories.PinnedStoryIds.ToList();
+                _pinnedStoryIds = stories.PinnedStoryIds.ToMutableVector();
 
                 foreach (var story in stories.StoriesValue)
                 {
@@ -531,7 +531,7 @@ namespace Telegram.ViewModels.Chats
 
         public bool ShowHint => !IsEmpty && _type == ChatStoriesType.Archive;
 
-        private IList<int> _pinnedStoryIds = Array.Empty<int>();
+        private MutableVector<int> _pinnedStoryIds = Array.Empty<int>();
 
         public bool IsPinned(StoryViewModel story)
         {
@@ -540,7 +540,7 @@ namespace Telegram.ViewModels.Chats
 
         public void SetPinnedItems()
         {
-            var storyIds = new List<int>();
+            var storyIds = new MutableVector<int>();
 
             foreach (var item in Items)
             {
@@ -653,7 +653,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (Id != 0)
             {
-                ClientService.Send(new ReorderStoryAlbumStories(_viewModel.Chat.Id, Id, Items.Select(x => x.Id).ToList()));
+                ClientService.Send(new ReorderStoryAlbumStories(_viewModel.Chat.Id, Id, Items.Select(x => x.Id).ToVector()));
             }
         }
 

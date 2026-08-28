@@ -85,13 +85,13 @@ namespace Telegram.ViewModels.Folders
                 IsShareable = false;
                 Folder = null;
                 folder = new ChatFolder();
-                folder.PinnedChatIds = new List<long>();
-                folder.IncludedChatIds = new List<long>();
-                folder.ExcludedChatIds = new List<long>();
+                folder.PinnedChatIds = Array.Empty<long>();
+                folder.IncludedChatIds = Array.Empty<long>();
+                folder.ExcludedChatIds = Array.Empty<long>();
 
                 if (parameter is FolderPageCreateArgs createArgs)
                 {
-                    folder.IncludedChatIds.Add(createArgs.IncludeChatId);
+                    folder.IncludedChatIds = [createArgs.IncludeChatId];
                 }
             }
 
@@ -288,7 +288,7 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        private IList<long> _pinnedChatIds = Array.Empty<long>();
+        private Vector<long> _pinnedChatIds = Array.Empty<long>();
 
         public BatchedObservableCollection<ChatFolderElement> Include { get; private set; }
         public BatchedObservableCollection<ChatFolderElement> Exclude { get; private set; }
@@ -427,20 +427,24 @@ namespace Telegram.ViewModels.Folders
 
         private ChatFolder GetFolder()
         {
+            var pinnedChatIds = new MutableVector<long>();
+            var includedChatIds = new MutableVector<long>();
+            var excludedChatIds = new MutableVector<long>();
+
             var folder = new ChatFolder();
             folder.Name = new ChatFolderName(Title, AnimateCustomEmoji);
             folder.Icon = new ChatFolderIcon(_iconPicked ? Enum.GetName(typeof(ChatFolderIcon2), Icon) : string.Empty);
             folder.ColorId = IsPremium ? SelectedColor?.Id ?? -1 : _originalColorId;
             folder.IsShareable = IsShareable;
-            folder.PinnedChatIds = new List<long>();
-            folder.IncludedChatIds = new List<long>();
-            folder.ExcludedChatIds = new List<long>();
+            folder.PinnedChatIds = pinnedChatIds;
+            folder.IncludedChatIds = includedChatIds;
+            folder.ExcludedChatIds = excludedChatIds;
 
             foreach (var item in _pinnedChatIds)
             {
                 if (Include.Contains(new FolderChat(item)))
                 {
-                    folder.PinnedChatIds.Add(item);
+                    pinnedChatIds.Add(item);
                 }
             }
 
@@ -469,7 +473,7 @@ namespace Telegram.ViewModels.Folders
                 }
                 else if (item is FolderChat chat && !folder.PinnedChatIds.Contains(chat.ChatId))
                 {
-                    folder.IncludedChatIds.Add(chat.ChatId);
+                    includedChatIds.Add(chat.ChatId);
                 }
             }
 
@@ -492,7 +496,7 @@ namespace Telegram.ViewModels.Folders
                 }
                 else if (item is FolderChat chat)
                 {
-                    folder.ExcludedChatIds.Add(chat.ChatId);
+                    excludedChatIds.Add(chat.ChatId);
                 }
             }
 
@@ -509,11 +513,11 @@ namespace Telegram.ViewModels.Folders
                 Object response;
                 if (link != null)
                 {
-                    response = await ClientService.SendAsync(new EditChatFolderInviteLink(Id.Value, link.InviteLink, string.Empty, popup.SelectedItems));
+                    response = await ClientService.SendAsync(new EditChatFolderInviteLink(Id.Value, link.InviteLink, string.Empty, popup.SelectedItems.ToVector()));
                 }
                 else
                 {
-                    response = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, popup.SelectedItems));
+                    response = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, popup.SelectedItems.ToVector()));
                 }
 
                 if (response is ChatFolderInviteLink inviteLink)
@@ -556,7 +560,7 @@ namespace Telegram.ViewModels.Folders
 
             var shareableItems = Include.OfType<FolderChat>()
                 .Select(x => x.ChatId)
-                .ToList();
+                .ToMutableVector();
 
             for (int i = 0; i < shareableItems.Count; i++)
             {

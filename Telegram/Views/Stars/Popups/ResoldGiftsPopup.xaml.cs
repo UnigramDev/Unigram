@@ -100,19 +100,19 @@ namespace Telegram.Views.Stars.Popups
         private MenuFlyout _flyout;
         private IList<long> _prev;
 
-        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftModelCount> models)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IEnumerable<UpgradedGiftModelCount> models)
             : this(clientService, popup, sender, models.Select(x => new ResoldGiftFilter(x)))
         {
             _attributeType = new UpgradedGiftAttributeIdModel(-1);
         }
 
-        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftBackdropCount> backdrops)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IEnumerable<UpgradedGiftBackdropCount> backdrops)
             : this(clientService, popup, sender, backdrops.Select(x => new ResoldGiftFilter(x)))
         {
             _attributeType = new UpgradedGiftAttributeIdBackdrop(-1);
         }
 
-        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftSymbolCount> symbols)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IEnumerable<UpgradedGiftSymbolCount> symbols)
             : this(clientService, popup, sender, symbols.Select(x => new ResoldGiftFilter(x)))
         {
             _attributeType = new UpgradedGiftAttributeIdSymbol(-1);
@@ -363,11 +363,11 @@ namespace Telegram.Views.Stars.Popups
         private readonly GiftForResaleOrder _order = new GiftForResaleOrderPrice();
         private readonly bool _forCrafting;
         private readonly bool _forStars;
-        private readonly IList<UpgradedGiftAttributeId> _attributes = Array.Empty<UpgradedGiftAttributeId>();
+        private readonly Vector<UpgradedGiftAttributeId> _attributes = Array.Empty<UpgradedGiftAttributeId>();
 
         private string _nextOffset = string.Empty;
 
-        public ResoldGiftsCollection(IClientService clientService, IResoldGiftsPopup popup, long giftId, GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
+        public ResoldGiftsCollection(IClientService clientService, IResoldGiftsPopup popup, long giftId, GiftForResaleOrder order, Vector<UpgradedGiftAttributeId> attributes)
         {
             _clientService = clientService;
             _popup = popup;
@@ -648,21 +648,21 @@ namespace Telegram.Views.Stars.Popups
             UpdateItems(_gifts.Order, GetAttributes());
         }
 
-        public void UpdateItems(GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
+        public void UpdateItems(GiftForResaleOrder order, Vector<UpgradedGiftAttributeId> attributes)
         {
             _gifts = new ResoldGiftsCollection(_clientService, this, _giftId, order, attributes);
             ScrollingHost.ItemsSource = _gifts;
             ShowHideSkeleton();
         }
 
-        private IList<UpgradedGiftAttributeId> GetAttributes()
+        private Vector<UpgradedGiftAttributeId> GetAttributes()
         {
             if (_models == null || _backdrops == null || _symbols == null)
             {
                 return Array.Empty<UpgradedGiftAttributeId>();
             }
 
-            var attributes = new List<UpgradedGiftAttributeId>(_models.GetAttributes());
+            var attributes = new MutableVector<UpgradedGiftAttributeId>(_models.GetAttributes());
             attributes.AddRange(_backdrops.GetAttributes());
             attributes.AddRange(_symbols.GetAttributes());
 

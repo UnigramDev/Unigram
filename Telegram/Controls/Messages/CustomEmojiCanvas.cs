@@ -89,7 +89,7 @@ namespace Telegram.Controls.Messages
             _stickers[id] = sticker;
         }
 
-        public static async Task<IList<Sticker>> GetAsync(IClientService clientService, IList<long> customEmojiIds)
+        public static async Task<Vector<Sticker>> GetAsync(IClientService clientService, Vector<long> customEmojiIds)
         {
             var response = await clientService.SendAsync(new GetCustomEmojiStickers(customEmojiIds));
             if (response is Stickers stickers)

@@ -81,7 +81,7 @@ namespace Telegram.Common
         // free; nothing on either side of the ABI writes to it.
         public static readonly IList<TextStylePart> NoParts = new List<TextStylePart>();
 
-        public static IList<TextStylePart> GetParts(IList<TextEntity> entities)
+        public static IList<TextStylePart> GetParts(Vector<TextEntity> entities)
         {
             if (entities == null)
             {
@@ -126,7 +126,7 @@ namespace Telegram.Common
             return GetRuns(formatted.Text, formatted.Entities);
         }
 
-        public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities)
+        public static IList<TextStyleRun> GetRuns(string text, Vector<TextEntity> entities)
         {
             if (entities == null || entities.Count == 0)
             {
@@ -273,14 +273,14 @@ namespace Telegram.Common
             return (starts && ends) || text.IndexOfAny(_lineBreakChars, offset, length) >= 0;
         }
 
-        public static IList<TextEntity> GetEntities(string text, IList<TextStyleRun> runs)
+        public static Vector<TextEntity> GetEntities(string text, IList<TextStyleRun> runs)
         {
             if (runs == null)
             {
                 return Array.Empty<TextEntity>();
             }
 
-            var results = new List<TextEntity>();
+            var results = new MutableVector<TextEntity>();
 
             foreach (var run in runs)
             {
@@ -404,7 +404,7 @@ namespace Telegram.Common
             return new StyledText(text.Text, text.Entities, GetParagraphs(text.Text, text.Entities));
         }
 
-        public static StyledText GetText(string text, IList<TextEntity> entities)
+        public static StyledText GetText(string text, Vector<TextEntity> entities)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -434,7 +434,7 @@ namespace Telegram.Common
             }
 
             var builder = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
             PageBlockHelper.Flatten(richText, builder, entities);
 
             if (builder.Length == 0)
@@ -466,7 +466,7 @@ namespace Telegram.Common
             }
         }
 
-        private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
+        private static IList<StyledParagraph> GetParagraphs(string text, Vector<TextEntity> entities)
         {
             List<Break> indexes = null;
             var previous = 0;
@@ -552,7 +552,7 @@ namespace Telegram.Common
             };
         }
 
-        private static StyledParagraph Split(string text, IList<TextEntity> entities, int startIndex, int length, TextDirectionality? direction, int padding)
+        private static StyledParagraph Split(string text, Vector<TextEntity> entities, int startIndex, int length, TextDirectionality? direction, int padding)
         {
             if (length <= 0)
             {
@@ -560,13 +560,13 @@ namespace Telegram.Common
             }
 
             var message = text.Substring(startIndex, Math.Min(text.Length - startIndex, length));
-            IList<TextEntity> sub = null;
+            MutableVector<TextEntity> sub = null;
 
             foreach (var entity in entities)
             {
                 if (GetRelativeRange(entity.Offset, entity.Length, startIndex, length, out int newOffset, out int newLength))
                 {
-                    sub ??= new List<TextEntity>();
+                    sub ??= new MutableVector<TextEntity>();
                     sub.Add(new TextEntity
                     {
                         Offset = newOffset,
@@ -620,7 +620,7 @@ namespace Telegram.Common
 
     public partial class StyledText
     {
-        public StyledText(string text, IList<TextEntity> entities, IList<StyledParagraph> paragraphs)
+        public StyledText(string text, Vector<TextEntity> entities, IList<StyledParagraph> paragraphs)
         {
             Text = text;
             Parts = TextStyleRun.GetParts(entities);
@@ -669,13 +669,13 @@ namespace Telegram.Common
             var end = Math.Min(Text.Length, start + Math.Max(0, length));
             if (end <= start)
             {
-                return new FormattedText(string.Empty, new List<TextEntity>());
+                return new FormattedText(string.Empty, new MutableVector<TextEntity>());
             }
 
             // Paragraph entities are paragraph-relative; lift each back to an absolute
             // offset before clipping to the requested range. (StyledText no longer keeps a
             // flattened entity list — the paragraphs are the source of truth.)
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
             foreach (var paragraph in Paragraphs)
             {
                 if (paragraph.Entities == null)
@@ -706,13 +706,13 @@ namespace Telegram.Common
         private readonly bool _hasDates;
         private readonly bool _hasRelativeDates;
 
-        public StyledParagraph(string text, IList<TextEntity> entities)
+        public StyledParagraph(string text, Vector<TextEntity> entities)
             : this(text, 0, text.Length, entities)
         {
 
         }
 
-        public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null, int padding = 0)
+        public StyledParagraph(string text, int offset, int length, Vector<TextEntity> entities, TextDirectionality? direction = null, int padding = 0)
         {
             Text = text;
             Offset = offset;
@@ -749,7 +749,7 @@ namespace Telegram.Common
 
         public int Length { get; }
 
-        public IList<TextEntity> Entities { get; }
+        public Vector<TextEntity> Entities { get; }
 
         public IList<TextStylePart> Parts { get; }
 

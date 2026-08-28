@@ -361,12 +361,12 @@ namespace Telegram.Controls.Messages
             Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
         }
 
-        public static ReactionsMenuFlyout ShowAt(IClientService clientService, IList<long> effectIds, FrameworkElement reserved, MenuFlyout flyout)
+        public static ReactionsMenuFlyout ShowAt(IClientService clientService, Vector<long> effectIds, FrameworkElement reserved, MenuFlyout flyout)
         {
             return new ReactionsMenuFlyout(clientService, effectIds, reserved, flyout);
         }
 
-        private ReactionsMenuFlyout(IClientService clientService, IList<long> effectIds, FrameworkElement reserved, MenuFlyout flyout)
+        private ReactionsMenuFlyout(IClientService clientService, Vector<long> effectIds, FrameworkElement reserved, MenuFlyout flyout)
         {
             //_reactions = reactions;
             //_story = story;
@@ -380,7 +380,7 @@ namespace Telegram.Controls.Messages
             Initialize(effectIds, clientService, flyout);
         }
 
-        private async void Initialize(IList<long> effectIds, IClientService clientService, MenuFlyout flyout)
+        private async void Initialize(Vector<long> effectIds, IClientService clientService, MenuFlyout flyout)
         {
             var first = flyout.Items[0];
             var presenter = first.GetParent<MenuFlyoutPresenter>();
@@ -654,7 +654,7 @@ namespace Telegram.Controls.Messages
             var empty = Array.Empty<AvailableReaction>();
             var reactions = clientService.ActiveReactions
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
-                .ToList();
+                .ToVector();
 
             var viewModel = EmojiDrawerViewModel.Create(clientService.Session, EmojiDrawerMode.Reactions);
             _ = viewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, true, false, null));
@@ -1086,7 +1086,7 @@ namespace Telegram.Controls.Messages
                     var unread = new UnreadReaction(reaction.Type, null, false);
                     var previous = _message.UnreadReactions;
 
-                    _message.UnreadReactions = [.. previous, unread];
+                    _message.UnreadReactions = previous.With(unread);
                     _bubble.UpdateMessageReactions(_message, true);
                     _message.UnreadReactions = previous;
                 }

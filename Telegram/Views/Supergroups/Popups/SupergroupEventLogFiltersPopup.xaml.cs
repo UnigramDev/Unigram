@@ -22,7 +22,7 @@ namespace Telegram.Views.Supergroups.Popups
     {
         private readonly IClientService _clientService;
 
-        public SupergroupEventLogFiltersPopup(IClientService clientService, INavigationService navigation, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
+        public SupergroupEventLogFiltersPopup(IClientService clientService, INavigationService navigation, long supergroupId, ChatEventLogFilters filters, Vector<long> userIds)
         {
             InitializeComponent();
 
@@ -104,7 +104,7 @@ namespace Telegram.Views.Supergroups.Popups
             MessagesCount.Text = CountSelection(MessagesRoot, MessagesCheck, Messages_Checked);
         }
 
-        private async void Populate(IClientService clientService, long supergroupId, IList<long> selectedIds)
+        private async void Populate(IClientService clientService, long supergroupId, Vector<long> selectedIds)
         {
             var response = await clientService.SendAsync(new GetSupergroupMembers(supergroupId, new SupergroupMembersFilterAdministrators(), 0, 200));
             if (response is not ChatMembers members)
@@ -266,7 +266,7 @@ namespace Telegram.Views.Supergroups.Popups
 
         public ChatEventLogFilters Filters { get; private set; }
 
-        public IList<long> UserIds { get; private set; }
+        public Vector<long> UserIds { get; private set; }
 
         private void ContentPopup_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -297,7 +297,7 @@ namespace Telegram.Views.Supergroups.Popups
                 Filters.SubscriptionExtensions = true;
             }
 
-            var userIds = new List<long>();
+            var userIds = new MutableVector<long>();
             var total = 0;
 
             foreach (CheckBox child in AdminsRoot.Children)

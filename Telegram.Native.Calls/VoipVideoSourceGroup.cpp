@@ -6,7 +6,7 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    VoipVideoSourceGroup::VoipVideoSourceGroup(hstring semantics, IVector<int32_t> sourceIds)
+    VoipVideoSourceGroup::VoipVideoSourceGroup(hstring semantics, IVectorView<int32_t> sourceIds)
         : m_semantics(semantics)
         , m_sourceIds(sourceIds)
     {
@@ -23,12 +23,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_semantics = value;
     }
 
-    IVector<int32_t> VoipVideoSourceGroup::SourceIds()
+    IVectorView<int32_t> VoipVideoSourceGroup::SourceIds()
     {
         return m_sourceIds;
     }
 
-    void VoipVideoSourceGroup::SourceIds(IVector<int32_t> value)
+    void VoipVideoSourceGroup::SourceIds(IVectorView<int32_t> value)
     {
         m_sourceIds = value;
     }

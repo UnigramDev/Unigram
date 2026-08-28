@@ -21,7 +21,7 @@ namespace Telegram.Streams
 
         public bool NeedsRepainting { get; set; }
 
-        public IList<ClosedVectorPath> Outline { get; set; }
+        public Vector<ClosedVectorPath> Outline { get; set; }
 
         // Needed for Outline
         public int Width { get; set; }

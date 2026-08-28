@@ -365,8 +365,8 @@ namespace Telegram.ViewModels
 
                 if (popup.SelectedItems.Count > 1)
                 {
-                    var operations = new List<InputMessageContent>();
-                    var groups = new List<List<InputMessageContent>>();
+                    var operations = new MutableVector<InputMessageContent>();
+                    var groups = new List<Vector<InputMessageContent>>();
 
                     foreach (var selected in popup.SelectedItems)
                     {
@@ -1002,8 +1002,8 @@ namespace Telegram.ViewModels
             }
 
             //var reply = GetReply(true);
-            var operations = new List<InputMessageContent>();
-            var paidOperations = new List<InputPaidMedia>();
+            var operations = new MutableVector<InputMessageContent>();
+            var paidOperations = new MutableVector<InputPaidMedia>();
 
             var audio = items.All(x => x is StorageAudio);
 
@@ -1059,7 +1059,7 @@ namespace Telegram.ViewModels
             return await SendMessageAsync(function);
         }
 
-        protected virtual Function CreateSendMessageAlbum(long chatId, MessageTopic topicId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, IList<InputMessageContent> inputMessageContent)
+        protected virtual Function CreateSendMessageAlbum(long chatId, MessageTopic topicId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, Vector<InputMessageContent> inputMessageContent)
         {
             if (replyTo is InputMessageReplyToTopicMessage replyToTopicMessage)
             {
@@ -1087,7 +1087,7 @@ namespace Telegram.ViewModels
             return SendMessageAsync(formattedText?.Text, formattedText?.Entities, linkPreview, options, reply);
         }
 
-        public async Task<Object> SendMessageAsync(string text, IList<TextEntity> entities = null, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public async Task<Object> SendMessageAsync(string text, Vector<TextEntity> entities = null, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             text ??= string.Empty;
             text = text.Replace('\v', '\n').Replace('\r', '\n');
@@ -1214,7 +1214,7 @@ namespace Telegram.ViewModels
             await SendMessageAsync(reply, new InputMessageRichMessage(richMessage, true), options);
         }
 
-        private bool TextStillContainsEmojis(IList<TextEntity> entities)
+        private bool TextStillContainsEmojis(Vector<TextEntity> entities)
         {
             if (entities.Count == 0 || !AppSettings.Stickers.DynamicPackOrder)
             {

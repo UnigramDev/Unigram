@@ -37,7 +37,7 @@ namespace Telegram.Native
 
         Windows.Foundation.Collections.IVector<String> GetSystemFontFamilies(Windows.Foundation.Collections.IVector<String> localeNames);
 
-        FreeformGradientSurface CreateFreeformGradient(Windows.Foundation.Collections.IVector<Int32> colors);
+        FreeformGradientSurface CreateFreeformGradient(Windows.Foundation.Collections.IVectorView<Int32> colors);
 
         Windows.UI.Composition.CompositionEffectBrush GetTail(Windows.UI.Xaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
         Windows.UI.Composition.CompositionNineGridBrush GetTailMask(Windows.UI.Xaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);

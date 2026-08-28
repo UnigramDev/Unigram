@@ -251,7 +251,7 @@ namespace Telegram.Td.Api
 
         public static CallProtocol ToTd(this VoipCallProtocol protocol)
         {
-            return new CallProtocol(protocol.UdpP2p, protocol.UdpReflector, protocol.MinLayer, protocol.MaxLayer, protocol.LibraryVersions);
+            return new CallProtocol(protocol.UdpP2p, protocol.UdpReflector, protocol.MinLayer, protocol.MaxLayer, protocol.LibraryVersions.ToVector());
         }
 
         public static long ToId(this MessageSender sender)
@@ -264,7 +264,7 @@ namespace Telegram.Td.Api
             };
         }
 
-        public static IList<VoipVideoSourceGroup> ToCalls(this IList<GroupCallVideoSourceGroup> groups)
+        public static IList<VoipVideoSourceGroup> ToCalls(this Vector<GroupCallVideoSourceGroup> groups)
         {
             var items = new List<VoipVideoSourceGroup>();
 
@@ -276,7 +276,7 @@ namespace Telegram.Td.Api
             return items;
         }
 
-        public static IList<VoipCallServer> ToCalls(this IList<CallServer> servers)
+        public static IList<VoipCallServer> ToCalls(this Vector<CallServer> servers)
         {
             static string ToHex(byte[] bytes)
             {
@@ -494,14 +494,14 @@ namespace Telegram.Td.Api
         {
             if (suggestedPostInfo is SuggestedPostInfo { State: SuggestedPostStatePending } && !outgoing)
             {
-                return new ReplyMarkupInlineKeyboard(new List<IList<InlineKeyboardButton>>
+                return new ReplyMarkupInlineKeyboard(new MutableVector<Vector<InlineKeyboardButton>>
                 {
-                    new List<InlineKeyboardButton>
+                    new MutableVector<InlineKeyboardButton>
                     {
                         new(Strings.PostSuggestionsInlineDecline, 0, new ButtonStyleDefault(), new InlineKeyboardButtonTypeSuggestionDecline(suggestedPostInfo.CanBeDeclined)),
                         new(Strings.PostSuggestionsInlineAccept, 0, new ButtonStyleDefault(), new InlineKeyboardButtonTypeSuggestionApprove(suggestedPostInfo.CanBeDeclined))
                     },
-                    new List<InlineKeyboardButton>
+                    new MutableVector<InlineKeyboardButton>
                     {
                         new(Strings.PostSuggestionsInlineEdit, 0, new ButtonStyleDefault(), new InlineKeyboardButtonTypeSuggestionEdit())
                     }
@@ -1463,7 +1463,7 @@ namespace Telegram.Td.Api
         public static FormattedText Concat(params FormattedText[] text)
         {
             var builder = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
 
             foreach (var part in text)
             {
@@ -1491,13 +1491,13 @@ namespace Telegram.Td.Api
             }
 
             var message = text.Text.Substring(startIndex, Math.Min(text.Text.Length - startIndex, length));
-            IList<TextEntity> sub = null;
+            MutableVector<TextEntity> sub = null;
 
             foreach (var entity in text.Entities)
             {
                 if (TextStyleRun.GetRelativeRange(entity.Offset, entity.Length, startIndex, length, out int newOffset, out int newLength))
                 {
-                    sub ??= new List<TextEntity>();
+                    sub ??= new MutableVector<TextEntity>();
                     sub.Add(new TextEntity
                     {
                         Offset = newOffset,
@@ -1510,7 +1510,7 @@ namespace Telegram.Td.Api
             return new FormattedText(message, sub ?? Array.Empty<TextEntity>());
         }
 
-        public static (string Text, IList<TextEntity> Entities) Substring(this string text, IList<TextEntity> entities, int startIndex, int length)
+        public static (string Text, Vector<TextEntity> Entities) Substring(this string text, Vector<TextEntity> entities, int startIndex, int length)
         {
             if (text.Length < length)
             {
@@ -1518,13 +1518,13 @@ namespace Telegram.Td.Api
             }
 
             var message = text.Substring(startIndex, Math.Min(text.Length - startIndex, length));
-            IList<TextEntity> sub = null;
+            MutableVector<TextEntity> sub = null;
 
             foreach (var entity in entities)
             {
                 if (TextStyleRun.GetRelativeRange(entity.Offset, entity.Length, startIndex, length, out int newOffset, out int newLength))
                 {
-                    sub ??= new List<TextEntity>();
+                    sub ??= new MutableVector<TextEntity>();
                     sub.Add(new TextEntity
                     {
                         Offset = newOffset,
@@ -2500,7 +2500,7 @@ namespace Telegram.Td.Api
 
         public static FormattedText Clone(this FormattedText text)
         {
-            return new FormattedText(text.Text, text.Entities.ToList());
+            return new FormattedText(text.Text, text.Entities.ToVector());
         }
 
         public static FormattedText ReplaceSpoilers(this FormattedText text, bool singleLine = true)
@@ -2508,7 +2508,7 @@ namespace Telegram.Td.Api
             if (text.Entities?.Count > 0)
             {
                 StringBuilder rep = null;
-                List<TextEntity> ent = null;
+                MutableVector<TextEntity> ent = null;
 
                 var chars = "⠁⠂⠄⠈⠐⠠⡀⢀⠃⠅⠆⠉⠊⠌⠑⠒⠔⠘⠡⠢⠤⠨⠰⡁⡂⡄⡈⡐⡠⢁⢂⢄⢈⢐⢠⣀⠇⠋⠍⠎⠓⠕⠖⠙⠚⠜⠣⠥⠦⠩⠪⠬⠱⠲⠴⠸⡃⡅⡆⡉⡊⡌⡑⡒⡔⡘⡡⡢⡤⡨⡰⢃⢅⢆⢉⢊⢌⢑⢒⢔⢘⢡⢢⢤⢨⢰⣁⣂⣄⣈⣐⣠⠏⠗⠛⠝⠞⠧⠫⠭⠮⠳⠵⠶⠹⠺⠼⡇⡋⡍⡎⡓⡕⡖⡙⡚⡜⡣⡥⡦⡩⡪⡬⡱⡲⡴⡸⢇⢋⢍⢎⢓⢕⢖⢙⢚⢜⢣⢥⢦⢩⢪⢬⢱⢲⢴⢸⣃⣅⣆⣉⣊⣌⣑⣒⣔⣘⣡⣢⣤⣨⣰⠟⠯⠷⠻⠽⠾⡏⡗⡛⡝⡞⡧⡫⡭⡮⡳⡵⡶⡹⡺⡼⢏⢗⢛⢝⢞⢧⢫⢭⢮⢳⢵⢶⢹⢺⢼⣇⣋⣍⣎⣓⣕⣖⣙⣚⣜⣣⣥⣦⣩⣪⣬⣱⣲⣴⣸⠿⡟⡯⡷⡻⡽⡾⢟⢯⢷⢻⢽⢾⣏⣗⣛⣝⣞⣧⣫⣭⣮⣳⣵⣶⣹⣺⣼⡿⢿⣟⣯⣷⣻⣽⣾⣿";
 
@@ -2517,7 +2517,7 @@ namespace Telegram.Td.Api
                     if (entity.Type is TextEntityTypeSpoiler)
                     {
                         rep ??= new StringBuilder(text.Text);
-                        ent ??= text.Entities.ToList();
+                        ent ??= text.Entities.ToMutableVector();
 
                         for (int i = 0; i < entity.Length; i++)
                         {
@@ -2576,7 +2576,7 @@ namespace Telegram.Td.Api
         public static FormattedText ToFormattedText(this RichText richText)
         {
             var sb = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
             if (richText != null)
             {
                 Append(richText, sb, entities);
@@ -2584,7 +2584,7 @@ namespace Telegram.Td.Api
             return new FormattedText { Text = sb.ToString(), Entities = entities };
         }
 
-        private static void Append(RichText rt, StringBuilder sb, List<TextEntity> entities)
+        private static void Append(RichText rt, StringBuilder sb, MutableVector<TextEntity> entities)
         {
             switch (rt)
             {
@@ -2688,7 +2688,7 @@ namespace Telegram.Td.Api
             }
         }
 
-        private static void AppendWrapped(RichText inner, StringBuilder sb, List<TextEntity> entities, TextEntityType type)
+        private static void AppendWrapped(RichText inner, StringBuilder sb, MutableVector<TextEntity> entities, TextEntityType type)
         {
             int start = sb.Length;
             Append(inner, sb, entities);
@@ -3142,7 +3142,7 @@ namespace Telegram.Td.Api
                    (rules.Rules.Count == 1 && rules.Rules[0] is UserPrivacySettingRuleRestrictAll);
         }
 
-        private static bool CompareOrderedRules(IList<UserPrivacySettingRule> xRules, IList<UserPrivacySettingRule> yRules)
+        private static bool CompareOrderedRules(Vector<UserPrivacySettingRule> xRules, Vector<UserPrivacySettingRule> yRules)
         {
             var xSorted = GetOrderedRules(xRules);
             var ySorted = GetOrderedRules(yRules);
@@ -3155,7 +3155,7 @@ namespace Telegram.Td.Api
             return true;
         }
 
-        private static IList<UserPrivacySettingRule> GetOrderedRules(IList<UserPrivacySettingRule> rules)
+        private static IList<UserPrivacySettingRule> GetOrderedRules(Vector<UserPrivacySettingRule> rules)
         {
             return rules.OrderBy(x => x switch
             {
@@ -3751,22 +3751,22 @@ namespace Telegram.Td.Api
 
         public static bool Empty(this ChatFolder folder)
         {
-            return folder.IncludedChatIds.Empty() &&
-                !folder.IncludeBots &&
-                !folder.IncludeGroups &&
-                !folder.IncludeContacts &&
-                !folder.IncludeNonContacts &&
-                !folder.IncludeChannels;
+            return folder.IncludedChatIds.Empty()
+                && !folder.IncludeBots
+                && !folder.IncludeGroups
+                && !folder.IncludeContacts
+                && !folder.IncludeNonContacts
+                && !folder.IncludeChannels;
         }
 
-        public static bool Any(this ChatFolder folder)
+        public static bool Any(this ChatFolder folder, long exclude)
         {
-            return folder.IncludedChatIds.Any() ||
-                folder.IncludeBots ||
-                folder.IncludeGroups ||
-                folder.IncludeContacts ||
-                folder.IncludeNonContacts ||
-                folder.IncludeChannels;
+            return folder.IncludedChatIds.Any(x => x != exclude)
+                || folder.IncludeBots
+                || folder.IncludeGroups
+                || folder.IncludeContacts
+                || folder.IncludeNonContacts
+                || folder.IncludeChannels;
         }
 
         public static StickerSetInfo ToInfo(this StickerSet set)
@@ -3814,7 +3814,7 @@ namespace Telegram.Td.Api
         /// reactions, and the list is usually empty, so the enumerator would be the only
         /// allocation on the common path.
         /// </summary>
-        public static void Discern(this IList<UnreadReaction> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
+        public static void Discern(this Vector<UnreadReaction> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
         {
             paid = false;
             emoji = null;

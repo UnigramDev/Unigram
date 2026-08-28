@@ -17,7 +17,7 @@ namespace Telegram.Services
         private readonly NewDictionary<ChatList, SortedSet<OrderedItem>> _chatList = new(ChatListEqualityComparer.Instance);
         private readonly DefaultDictionary<ChatList, bool> _haveFullChatList = new(ChatListEqualityComparer.Instance);
 
-        private void SetChatPositions(Chat chat, IList<ChatPosition> positions)
+        private void SetChatPositions(Chat chat, Vector<ChatPosition> positions)
         {
             lock (_chatList)
             {

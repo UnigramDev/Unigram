@@ -22,7 +22,7 @@ namespace Telegram.Views.Calls.Popups
         private readonly bool _canSchedule;
         private readonly bool _channel;
 
-        public VideoChatAliasesPopup(IClientService clientService, Chat chat, bool canSchedule, IList<MessageSender> senders)
+        public VideoChatAliasesPopup(IClientService clientService, Chat chat, bool canSchedule, Vector<MessageSender> senders)
         {
             InitializeComponent();
 

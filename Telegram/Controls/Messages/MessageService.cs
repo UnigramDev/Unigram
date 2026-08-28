@@ -99,7 +99,7 @@ namespace Telegram.Controls.Messages
             var entities = MessageServiceText.GetEntities(message, true);
             if (entities.Text != null)
             {
-                content.SetText(message.ClientService, entities.Text, entities.Entities);
+                content.SetText(message.ClientService, entities);
                 AutomationProperties.SetName(this, entities.Text);
             }
 

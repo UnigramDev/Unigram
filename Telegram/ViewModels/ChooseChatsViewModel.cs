@@ -725,7 +725,7 @@ namespace Telegram.ViewModels
                     {
                         SendWithChat(chat, (options, topic) =>
                         {
-                            ClientService.Send(new ForwardMessages(chat.Id, topic, messages.Key, messages.Select(x => x.Id).ToList(), options, _sendAsCopy || _removeCaptions, _removeCaptions));
+                            ClientService.Send(new ForwardMessages(chat.Id, topic, messages.Key, messages.Select(x => x.Id).ToVector(), options, _sendAsCopy || _removeCaptions, _removeCaptions));
                         });
                     }
                 }
@@ -873,7 +873,7 @@ namespace Telegram.ViewModels
                 var userIds = chats
                     .Select(x => x.Type is ChatTypePrivate privata ? privata.UserId : 0)
                     .Where(x => x != 0)
-                    .ToList();
+                    .ToVector();
                 ClientService.Send(new ShareUsersWithBot(requestUsers.Source, requestUsers.Id, userIds, false));
             }
             else if (_configuration is ChooseChatsConfigurationVerifyChat verifyChat && ClientService.TryGetUserFull(verifyChat.BotUserId, out UserFullInfo verifyChatFullInfo))
@@ -965,14 +965,14 @@ namespace Telegram.ViewModels
                         return await ClientService.SendAsync(new AddChatMembers(chat.Id, users.ToArray()));
                     }
 
-                    IList<FailedToAddMember> members = null;
+                    MutableVector<FailedToAddMember> members = null;
 
                     foreach (var userId in users)
                     {
                         var response = await ClientService.SendAsync(new AddChatMember(chat.Id, userId, 100));
                         if (response is FailedToAddMembers failed)
                         {
-                            members ??= new List<FailedToAddMember>();
+                            members ??= new MutableVector<FailedToAddMember>();
                             members.AddRange(failed.FailedToAddMembersValue);
                         }
                         else if (response is Error)

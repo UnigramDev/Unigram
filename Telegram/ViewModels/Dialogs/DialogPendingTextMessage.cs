@@ -329,8 +329,8 @@ namespace Telegram.ViewModels
 
     public class DialogPendingRichMessage : DialogPendingMessage
     {
-        private IList<PageBlock> _text;
-        private IList<PageBlock> _pending;
+        private Vector<PageBlock> _text;
+        private Vector<PageBlock> _pending;
 
         public DialogPendingRichMessage(UpdatePendingMessage update, MessageViewModel message)
             : base(update, message)
@@ -363,7 +363,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Update(IList<PageBlock> blocks)
+        private void Update(Vector<PageBlock> blocks)
         {
             //if (text == null)
             //{
@@ -414,7 +414,7 @@ namespace Telegram.ViewModels
 
     public static class PageBlockStreaming
     {
-        public static int Length(IList<PageBlock> blocks)
+        public static int Length(Vector<PageBlock> blocks)
         {
             int total = 0;
             if (blocks != null)
@@ -539,7 +539,7 @@ namespace Telegram.ViewModels
             return 0;
         }
 
-        private static int LengthListItems(IList<PageBlockListItem> items)
+        private static int LengthListItems(Vector<PageBlockListItem> items)
         {
             int total = 0;
             if (items != null)
@@ -552,7 +552,7 @@ namespace Telegram.ViewModels
             return total;
         }
 
-        private static int LengthTableCells(IList<IList<PageBlockTableCell>> rows)
+        private static int LengthTableCells(Vector<Vector<PageBlockTableCell>> rows)
         {
             int total = 0;
             if (rows != null)
@@ -569,7 +569,7 @@ namespace Telegram.ViewModels
             return total;
         }
 
-        private static int LengthRelatedArticles(IList<PageBlockRelatedArticle> articles)
+        private static int LengthRelatedArticles(Vector<PageBlockRelatedArticle> articles)
         {
             int total = 0;
             if (articles != null)
@@ -589,15 +589,15 @@ namespace Telegram.ViewModels
         // Substring
         // ============================================================
 
-        public static IList<PageBlock> Substring(IList<PageBlock> blocks, int length)
+        public static Vector<PageBlock> Substring(Vector<PageBlock> blocks, int length)
         {
             int remaining = length;
             return SubstringList(blocks, ref remaining);
         }
 
-        private static IList<PageBlock> SubstringList(IList<PageBlock> blocks, ref int remaining)
+        private static Vector<PageBlock> SubstringList(Vector<PageBlock> blocks, ref int remaining)
         {
-            var result = new List<PageBlock>();
+            var result = new MutableVector<PageBlock>();
             if (blocks == null) return result;
             foreach (var block in blocks)
             {
@@ -715,7 +715,7 @@ namespace Telegram.ViewModels
                 // One whole button per unit — never a partial one.
                 case PageBlockButtonRow b:
                     {
-                        var buttons = new List<InlineButton>();
+                        var buttons = new MutableVector<InlineButton>();
                         if (b.Buttons != null)
                         {
                             foreach (var button in b.Buttons)
@@ -822,7 +822,7 @@ namespace Telegram.ViewModels
 
                 case RichTexts rs:
                     {
-                        var children = new List<RichText>();
+                        var children = new MutableVector<RichText>();
                         if (rs.Texts != null)
                         {
                             foreach (var t in rs.Texts)
@@ -914,9 +914,9 @@ namespace Telegram.ViewModels
             return new PageBlockCaption(text, credit);
         }
 
-        private static IList<PageBlockListItem> SubstringListItems(IList<PageBlockListItem> items, ref int remaining)
+        private static Vector<PageBlockListItem> SubstringListItems(Vector<PageBlockListItem> items, ref int remaining)
         {
-            var result = new List<PageBlockListItem>();
+            var result = new MutableVector<PageBlockListItem>();
             if (items == null) return result;
             foreach (var item in items)
             {
@@ -942,15 +942,15 @@ namespace Telegram.ViewModels
             return result;
         }
 
-        private static IList<IList<PageBlockTableCell>> SubstringTableCells(IList<IList<PageBlockTableCell>> rows, ref int remaining)
+        private static Vector<Vector<PageBlockTableCell>> SubstringTableCells(Vector<Vector<PageBlockTableCell>> rows, ref int remaining)
         {
-            var result = new List<IList<PageBlockTableCell>>();
+            var result = new MutableVector<Vector<PageBlockTableCell>>();
             if (rows == null) return result;
             foreach (var row in rows)
             {
                 if (remaining <= 0) break;
                 if (row == null) continue;
-                var newRow = new List<PageBlockTableCell>();
+                var newRow = new MutableVector<PageBlockTableCell>();
                 foreach (var cell in row)
                 {
                     if (remaining <= 0) break;
@@ -972,9 +972,9 @@ namespace Telegram.ViewModels
             return result;
         }
 
-        private static IList<PageBlockRelatedArticle> SubstringRelatedArticles(IList<PageBlockRelatedArticle> articles, ref int remaining)
+        private static Vector<PageBlockRelatedArticle> SubstringRelatedArticles(Vector<PageBlockRelatedArticle> articles, ref int remaining)
         {
-            var result = new List<PageBlockRelatedArticle>();
+            var result = new MutableVector<PageBlockRelatedArticle>();
             if (articles == null) return result;
             foreach (var a in articles)
             {

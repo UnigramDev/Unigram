@@ -41,7 +41,7 @@ namespace Telegram.ViewModels.Settings
         private StickersType _type;
 
         private bool _needReorder;
-        private IList<long> _newOrder;
+        private Vector<long> _newOrder;
 
         public SettingsStickersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -243,7 +243,7 @@ namespace Telegram.ViewModels.Settings
         public void Reorder(StickerSetInfo set)
         {
             _needReorder = true;
-            _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToList();
+            _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToVector();
 
             DynamicPackOrder = false;
         }

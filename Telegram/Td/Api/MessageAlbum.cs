@@ -180,7 +180,7 @@ namespace Telegram.Td.Api
 
         protected abstract IEnumerable<Size> GetSizes();
 
-        public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side, bool byMinSide)
+        public static Size GetClosestPhotoSizeWithSize(Vector<PhotoSize> sizes, int side, bool byMinSide)
         {
             if (sizes == null || sizes.Empty())
             {

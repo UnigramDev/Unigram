@@ -71,12 +71,12 @@ namespace Telegram.Generators.Schema
 
             if (property.IsVectorOfVectors)
             {
-                return "IList<IList<" + name + ">>";
+                return "Vector<Vector<" + name + ">>";
             }
 
             if (property.IsVector)
             {
-                return "IList<" + name + ">";
+                return "Vector<" + name + ">";
             }
 
             // The schema states nullability in prose rather than in the type, so this reads it back

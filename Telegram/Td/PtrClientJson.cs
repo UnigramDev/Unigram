@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -82,130 +83,333 @@ namespace Telegram.Td.Api
             }
         }
 
-        public static List<T> GetObjectArrayPtr<T>(ref TdJsonReader reader, ClientResultHandler handler, PtrParser<T> parser) where T : Object
+        public static Vector<T> GetObjectArrayPtr<T>(ref TdJsonReader reader, ClientResultHandler handler, PtrParser<T> parser) where T : Object
         {
-            var items = new List<T>();
-
             reader.Read();
 
-            while (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.Null)
+            // The whole point of the exercise: an empty vector - 71% of them, per TdVectorStats -
+            // allocates nothing at all instead of a List that will only ever be read as empty.
+            if (reader.TokenType != JsonTokenType.StartObject && reader.TokenType != JsonTokenType.Null)
             {
-                items.Add(reader.TokenType == JsonTokenType.Null ? null : parser(ref reader, handler));
+                return Vector<T>.Empty;
+            }
+
+            T[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new T[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.TokenType == JsonTokenType.Null ? null : parser(ref reader, handler);
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.Null);
+
+            // Trimmed rather than handed over with slack: the parsed object goes into the ClientService
+            // cache and keeps whatever it holds for the session, so up to 2x wasted is worth one copy here.
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
+            }
+
+            // The conversion wraps without copying, which is only safe because the parser built this array
+            // and nothing else holds it.
+            return items;
+        }
+
+        public static Vector<Vector<T>> GetObjectArrayArrayPtr<T>(ref TdJsonReader reader, ClientResultHandler handler, PtrParser<T> parser) where T : Object
+        {
+            reader.Read();
+
+            if (reader.TokenType != JsonTokenType.StartArray)
+            {
+                return Vector<Vector<T>>.Empty;
+            }
+
+            Vector<T>[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new Vector<T>[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                // Leaves the reader on the inner array's EndArray, which the Read below steps past.
+                items[count++] = GetObjectArrayPtr(ref reader, handler, parser);
+                reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.StartArray);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
-        public static List<IList<T>> GetObjectArrayArrayPtr<T>(ref TdJsonReader reader, ClientResultHandler handler, PtrParser<T> parser) where T : Object
+        public static Vector<bool> GetBooleanArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<IList<T>>();
-
             reader.Read();
 
-            while (reader.TokenType == JsonTokenType.StartArray)
+            if (reader.TokenType != JsonTokenType.True && reader.TokenType != JsonTokenType.False)
             {
-                items.Add(GetObjectArrayPtr(ref reader, handler, parser));
+                return Vector<bool>.Empty;
+            }
+
+            bool[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new bool[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetBoolean();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.True || reader.TokenType == JsonTokenType.False);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
-        public static List<bool> GetBooleanArrayPtr(ref TdJsonReader reader)
+        public static Vector<int> GetInt32ArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<bool>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.True || reader.TokenType == JsonTokenType.False)
+
+            if (reader.TokenType != JsonTokenType.Number)
             {
-                items.Add(reader.GetBoolean());
+                return Vector<int>.Empty;
+            }
+
+            int[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new int[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetInt32();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.Number);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
-        public static List<int> GetInt32ArrayPtr(ref TdJsonReader reader)
+        public static Vector<long> GetInt64ArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<int>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.Number)
+
+            if (reader.TokenType != JsonTokenType.Number)
             {
-                items.Add(reader.GetInt32());
-                reader.Read();
+                return Vector<long>.Empty;
             }
 
-            return items;
-        }
+            long[] items = null;
+            var count = 0;
 
-        public static List<long> GetInt64ArrayPtr(ref TdJsonReader reader)
-        {
-            var items = new List<long>();
-
-            reader.Read();
-            while (reader.TokenType == JsonTokenType.Number)
+            do
             {
-                items.Add(reader.GetInt64());
+                if (items == null)
+                {
+                    items = new long[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetInt64();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.Number);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
         /// <summary>int64 arrives quoted, so the elements are strings rather than numbers.</summary>
-        public static List<long> GetInt64StringArrayPtr(ref TdJsonReader reader)
+        public static Vector<long> GetInt64StringArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<long>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.Number || reader.TokenType == JsonTokenType.String)
+
+            if (reader.TokenType != JsonTokenType.Number && reader.TokenType != JsonTokenType.String)
             {
-                items.Add(reader.GetInt64String());
+                return Vector<long>.Empty;
+            }
+
+            long[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new long[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetInt64String();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.Number || reader.TokenType == JsonTokenType.String);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
-        public static List<double> GetDoubleArrayPtr(ref TdJsonReader reader)
+        public static Vector<double> GetDoubleArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<double>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.Number)
+
+            if (reader.TokenType != JsonTokenType.Number)
             {
-                items.Add(reader.GetDouble());
+                return Vector<double>.Empty;
+            }
+
+            double[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new double[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetDouble();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.Number);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
-        public static List<string> GetStringArrayPtr(ref TdJsonReader reader)
+        public static Vector<string> GetStringArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<string>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.String)
+
+            if (reader.TokenType != JsonTokenType.String)
             {
-                items.Add(reader.GetString());
+                return Vector<string>.Empty;
+            }
+
+            string[] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new string[4];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetString();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.String);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;
         }
 
-        public static List<byte[]> GetBase64StringArrayPtr(ref TdJsonReader reader)
+        public static Vector<byte[]> GetBase64StringArrayPtr(ref TdJsonReader reader)
         {
-            var items = new List<byte[]>();
-
             reader.Read();
-            while (reader.TokenType == JsonTokenType.String)
+
+            if (reader.TokenType != JsonTokenType.String)
             {
-                items.Add(reader.GetBytesFromBase64());
+                return Vector<byte[]>.Empty;
+            }
+
+            byte[][] items = null;
+            var count = 0;
+
+            do
+            {
+                if (items == null)
+                {
+                    items = new byte[4][];
+                }
+                else if (count == items.Length)
+                {
+                    Array.Resize(ref items, count * 2);
+                }
+
+                items[count++] = reader.GetBytesFromBase64();
                 reader.Read();
+            }
+            while (reader.TokenType == JsonTokenType.String);
+
+            if (count != items.Length)
+            {
+                Array.Resize(ref items, count);
             }
 
             return items;

@@ -1455,13 +1455,13 @@ namespace Telegram.Services.Calls
 
         public void Handle(UpdateLiveStoryTopDonors update)
         {
-            var topDonorsChanged = default(List<PaidReactor>);
+            var topDonorsChanged = default(Vector<PaidReactor>);
             var totalStarCountChanged = -1L;
 
             lock (_topDonorsLock)
             {
-                var prevSorted = _topDonors.Where(x => x.IsTop).OrderByDescending(x => x.StarCount).ToList();
-                var nextSorted = update.Donors.TopDonors.Where(x => x.IsTop).OrderByDescending(x => x.StarCount).ToList();
+                var prevSorted = _topDonors.Where(x => x.IsTop).OrderByDescending(x => x.StarCount).ToVector();
+                var nextSorted = update.Donors.TopDonors.Where(x => x.IsTop).OrderByDescending(x => x.StarCount).ToVector();
 
                 if (prevSorted.Count == nextSorted.Count)
                 {
@@ -1627,13 +1627,13 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public void UpdateVerificationState(int generation, IList<string> emojis)
+        public void UpdateVerificationState(int generation, Vector<string> emojis)
         {
             VerificationState = new VoipGroupCallVerificationStateChangedEventArgs(generation, emojis);
             VerificationStateChanged?.Invoke(this, new VoipGroupCallVerificationStateChangedEventArgs(generation, emojis));
         }
 
-        public void UpdateMessagesDeleted(IList<int> messageIds)
+        public void UpdateMessagesDeleted(Vector<int> messageIds)
         {
             var hash = messageIds.ToHashSet();
 
@@ -1915,7 +1915,7 @@ namespace Telegram.Services.Calls
         /// <summary>
         /// At most 3 recently speaking users in the group call.
         /// </summary>
-        public IList<GroupCallRecentSpeaker> RecentSpeakers { get; private set; }
+        public Vector<GroupCallRecentSpeaker> RecentSpeakers { get; private set; }
 
         /// <summary>
         /// True, if all group call participants are loaded.

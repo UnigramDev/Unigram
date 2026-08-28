@@ -104,26 +104,16 @@ namespace Telegram.ViewModels.Drawers
             {
                 if (result is Stickers recent)
                 {
-                    for (int i = 0; i < _favoriteSet.Stickers.Count; i++)
-                    {
-                        var favSticker = _favoriteSet.Stickers[i];
-                        for (int j = 0; j < recent.StickersValue.Count; j++)
-                        {
-                            var recSticker = recent.StickersValue[j];
-                            if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
-                            {
-                                recent.StickersValue.Remove(recSticker);
-                                break;
-                            }
-                        }
-                    }
+                    recent.StickersValue = recent.StickersValue
+                        .Where(rec => !_favoriteSet.Stickers.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
+                        .ToVector();
 
                     BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue));
                 }
             });
         }
 
-        private void Merge(IList<StickerViewModel> destination, IList<Sticker> origin)
+        private void Merge(IList<StickerViewModel> destination, Vector<Sticker> origin)
         {
             if (destination.Count > 0)
             {
@@ -313,19 +303,9 @@ namespace Telegram.ViewModels.Drawers
 
             if (result1 is Stickers favorite && result2 is Stickers recent)
             {
-                for (int i = 0; i < favorite.StickersValue.Count; i++)
-                {
-                    var favSticker = favorite.StickersValue[i];
-                    for (int j = 0; j < recent.StickersValue.Count; j++)
-                    {
-                        var recSticker = recent.StickersValue[j];
-                        if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
-                        {
-                            recent.StickersValue.Remove(recSticker);
-                            break;
-                        }
-                    }
-                }
+                recent.StickersValue = recent.StickersValue
+                    .Where(rec => !favorite.StickersValue.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
+                    .ToVector();
 
                 _favoriteSet.Update(favorite.StickersValue);
                 _recentSet.Update(recent.StickersValue);
@@ -502,7 +482,7 @@ namespace Telegram.ViewModels.Drawers
             Update(set);
         }
 
-        public StickerSetViewModel(IClientService clientService, StickerSetInfo info, IList<Sticker> stickers)
+        public StickerSetViewModel(IClientService clientService, StickerSetInfo info, Vector<Sticker> stickers)
         {
             _clientService = clientService;
 
@@ -589,7 +569,7 @@ namespace Telegram.ViewModels.Drawers
         public Thumbnail Thumbnail => _set?.Thumbnail ?? _info.Thumbnail;
         public Outline ThumbnailOutline => _set?.ThumbnailOutline ?? _info.ThumbnailOutline;
 
-        public IList<Sticker> Covers { get; private set; }
+        public Vector<Sticker> Covers { get; private set; }
 
         public int Size => Covers.Count;
 
@@ -776,7 +756,7 @@ namespace Telegram.ViewModels.Drawers
                             int i = 0;
 
                             var added = new HashSet<int>();
-                            var items = new List<Sticker>();
+                            var items = new MutableVector<Sticker>();
 
                             foreach (var suggestion in emojis.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
                             {

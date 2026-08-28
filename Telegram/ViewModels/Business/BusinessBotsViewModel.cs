@@ -552,11 +552,14 @@ namespace Telegram.ViewModels.Business
 
         protected BusinessRecipients GetRecipients()
         {
+            var chatIds = new MutableVector<long>();
+            var excludedChatIds = new MutableVector<long>();
+
             var recipients = new BusinessRecipients
             {
                 ExcludeSelected = RecipientsType == BusinessRecipientsType.Exclude,
-                ChatIds = new List<long>(),
-                ExcludedChatIds = new List<long>()
+                ChatIds = chatIds,
+                ExcludedChatIds = excludedChatIds
             };
 
             var target = recipients.ExcludeSelected
@@ -578,7 +581,7 @@ namespace Telegram.ViewModels.Business
             {
                 if (item is FolderChat chat)
                 {
-                    recipients.ChatIds.Add(chat.ChatId);
+                    chatIds.Add(chat.ChatId);
                 }
             }
 
@@ -586,7 +589,7 @@ namespace Telegram.ViewModels.Business
             {
                 if (item is FolderChat chat)
                 {
-                    recipients.ExcludedChatIds.Add(chat.ChatId);
+                    excludedChatIds.Add(chat.ChatId);
                 }
             }
 

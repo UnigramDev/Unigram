@@ -233,7 +233,7 @@ namespace Telegram.Views.Settings
             var empty = Array.Empty<AvailableReaction>();
             var reactions = ViewModel.ClientService.ActiveReactions
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
-                .ToList();
+                .ToVector();
 
             var viewModel = EmojiDrawerViewModel.Create(ViewModel.ClientService.Session, EmojiDrawerMode.Reactions);
             _ = viewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, true, false, null));

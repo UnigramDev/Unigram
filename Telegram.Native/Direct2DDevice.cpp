@@ -1702,7 +1702,7 @@ namespace winrt::Telegram::Native::implementation
         return families;
     }
 
-    winrt::Telegram::Native::FreeformGradientSurface Direct2DDevice::CreateFreeformGradient(IVector<int32_t> colors)
+    winrt::Telegram::Native::FreeformGradientSurface Direct2DDevice::CreateFreeformGradient(IVectorView<int32_t> colors)
     {
         auto surface = CreateDrawingSurface({ 50, 50 });
         if (surface)

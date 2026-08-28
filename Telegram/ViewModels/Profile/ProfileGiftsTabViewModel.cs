@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -196,7 +196,7 @@ namespace Telegram.ViewModels.Profile
             var confirm = new InputPopupResult(result, popup.Text, popup.Value);
             if (confirm.Result == ContentDialogResult.Primary)
             {
-                var receivedGiftIds = new List<string>();
+                var receivedGiftIds = new MutableVector<string>();
                 if (gift != null)
                 {
                     receivedGiftIds.Add(gift.ReceivedGiftId);
@@ -207,7 +207,7 @@ namespace Telegram.ViewModels.Profile
                 {
                     var viewModel = new GiftCollectionViewModel(this, collection);
 
-                    gift?.CollectionIds.Add(collection.Id);
+                    gift?.CollectionIds = gift.CollectionIds.With(collection.Id);
 
                     Collections.Add(viewModel);
                     SelectedCollection = viewModel;
@@ -222,7 +222,7 @@ namespace Telegram.ViewModels.Profile
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                var receivedGiftIds = new List<string>();
+                var receivedGiftIds = new MutableVector<string>();
 
                 foreach (var gift in popup.SelectedItems)
                 {
@@ -236,7 +236,7 @@ namespace Telegram.ViewModels.Profile
                         collection.Items.Insert(0, gift);
                     }
 
-                    gift.CollectionIds.Add(collection.Id);
+                    gift.CollectionIds = gift.CollectionIds.With(collection.Id);
                     receivedGiftIds.Add(gift.ReceivedGiftId);
                 }
 
@@ -251,7 +251,7 @@ namespace Telegram.ViewModels.Profile
             {
                 ClientService.Send(new RemoveGiftCollectionGifts(_senderId, param.collection.Id, new[] { param.gift.ReceivedGiftId }));
 
-                param.gift.CollectionIds.Remove(param.collection.Id);
+                param.gift.CollectionIds = param.gift.CollectionIds.Without(param.collection.Id);
 
                 if (param.collection.HasLoadedItems)
                 {
@@ -264,7 +264,7 @@ namespace Telegram.ViewModels.Profile
             {
                 ClientService.Send(new AddGiftCollectionGifts(_senderId, param.collection.Id, new[] { param.gift.ReceivedGiftId }));
 
-                param.gift.CollectionIds.Add(param.collection.Id);
+                param.gift.CollectionIds = param.gift.CollectionIds.With(param.collection.Id);
 
                 if (param.collection.HasLoadedItems)
                 {
@@ -552,7 +552,7 @@ namespace Telegram.ViewModels.Profile
             private readonly bool _excludeUpgraded;
             private readonly bool _sortByPrice;
 
-            private readonly List<string> _pinnedGifts = new();
+            private readonly MutableVector<string> _pinnedGifts = new();
 
             private string _nextOffsetId = string.Empty;
             private bool _loading;
@@ -624,7 +624,7 @@ namespace Telegram.ViewModels.Profile
             public bool HasMoreItems { get; private set; } = true;
 
             // This is only valid for owned gifts
-            public IList<string> Pinned => _pinnedGifts;
+            public MutableVector<string> Pinned => _pinnedGifts;
         }
 
         public void OpenGift(ReceivedGift receivedGift)
@@ -712,7 +712,7 @@ namespace Telegram.ViewModels.Profile
 
         public void SetPinnedItems()
         {
-            var receivedGiftIds = new List<string>();
+            var receivedGiftIds = new MutableVector<string>();
 
             foreach (var item in Items)
             {

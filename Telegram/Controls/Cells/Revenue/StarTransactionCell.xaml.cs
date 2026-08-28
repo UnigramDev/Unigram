@@ -330,7 +330,7 @@ namespace Telegram.Controls.Cells.Revenue
             StarCount.Foreground = BootStrapper.Current.Resources[transaction.StarAmount.IsNegative() ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
         }
 
-        private void UpdatePaidMedia(IClientService clientService, IList<PaidMedia> paidMedia, User fallbackUser, Chat fallbackChat)
+        private void UpdatePaidMedia(IClientService clientService, Vector<PaidMedia> paidMedia, User fallbackUser, Chat fallbackChat)
         {
             if (paidMedia.Count > 0)
             {

@@ -206,7 +206,7 @@ namespace Telegram.Services
             }
         }
 
-        public void DeleteMessages(IList<long> messageIds)
+        public void DeleteMessages(Vector<long> messageIds)
         {
             var found = false;
 

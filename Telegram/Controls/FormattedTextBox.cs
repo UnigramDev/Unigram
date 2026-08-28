@@ -1631,12 +1631,12 @@ namespace Telegram.Controls
             }
         }
 
-        public void SetText(string text, IList<TextEntity> entities)
+        public void SetText(string text, Vector<TextEntity> entities)
         {
             SetText(text, entities, false);
         }
 
-        public void SetText(string text, IList<TextEntity> entities, bool updateSelection = false)
+        public void SetText(string text, Vector<TextEntity> entities, bool updateSelection = false)
         {
             try
             {
@@ -1667,7 +1667,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void SetTextImpl(string text, IList<TextEntity> entities, bool updateSelection)
+        private void SetTextImpl(string text, Vector<TextEntity> entities, bool updateSelection)
         {
             if (updateSelection is false)
             {

@@ -162,7 +162,7 @@ namespace Telegram.Controls.Messages
             SetText(clientService, TextStyleRun.GetText(text), fontSize);
         }
 
-        public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
+        public void SetText(IClientService clientService, string text, Vector<TextEntity> entities, double fontSize = 0)
         {
             SetText(clientService, TextStyleRun.GetText(text, entities), fontSize);
         }

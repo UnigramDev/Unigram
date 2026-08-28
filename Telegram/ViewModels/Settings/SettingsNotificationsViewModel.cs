@@ -379,7 +379,7 @@ namespace Telegram.ViewModels.Settings
             var chats = await ClientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false)) as Telegram.Td.Api.Chats;
             if (chats?.ChatIds.Count > 0)
             {
-                static int Count(IClientService clientService, IList<long> chatIds)
+                static int Count(IClientService clientService, Vector<long> chatIds)
                 {
                     var count = 0;
 

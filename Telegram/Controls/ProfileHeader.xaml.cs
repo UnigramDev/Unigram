@@ -1692,7 +1692,7 @@ namespace Telegram.Controls
             ReplaceEntities(DescriptionSpan, text.Text, text.Entities);
         }
 
-        private void ReplaceEntities(Span span, string text, IList<TextEntity> entities)
+        private void ReplaceEntities(Span span, string text, Vector<TextEntity> entities)
         {
             var previous = 0;
 

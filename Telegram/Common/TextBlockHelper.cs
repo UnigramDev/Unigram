@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Linq;
 using System.Text.RegularExpressions;
 using Telegram.Controls;
 using Telegram.Native;
@@ -78,16 +79,9 @@ namespace Telegram.Common
             var entities = ClientEx.GetTextEntities(markdown);
             var handleLinks = GetIsLink(sender);
 
-            if (handleLinks is false)
+            if (handleLinks is false && entities.Count > 0)
             {
-                for (int i = 0; i < entities.Count; i++)
-                {
-                    if (entities[i].Type is TextEntityTypeUrl or TextEntityTypeMention or TextEntityTypeMediaTimestamp)
-                    {
-                        entities.RemoveAt(i);
-                        i--;
-                    }
-                }
+                entities = entities.Where(x => x.Type is not (TextEntityTypeUrl or TextEntityTypeMention or TextEntityTypeMediaTimestamp)).ToVector();
             }
 
             var formatted = ClientEx.ParseMarkdown(markdown, entities);

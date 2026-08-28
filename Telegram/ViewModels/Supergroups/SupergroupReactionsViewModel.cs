@@ -147,10 +147,10 @@ namespace Telegram.ViewModels.Supergroups
                 _ => 11
             };
 
-            IList<ReactionType> items = chat.AvailableReactions switch
+            Vector<ReactionType> items = chat.AvailableReactions switch
             {
                 ChatAvailableReactionsSome some => some.Reactions,
-                ChatAvailableReactionsAll all => ClientService.ActiveReactions.Select(x => new ReactionTypeEmoji(x)).ToList<ReactionType>(),
+                ChatAvailableReactionsAll all => ClientService.ActiveReactions.Select(x => new ReactionTypeEmoji(x)).ToVector<ReactionType>(),
                 _ => Array.Empty<ReactionType>()
             };
 
@@ -205,7 +205,7 @@ namespace Telegram.ViewModels.Supergroups
                 ? MaxReactionCount
                 : MaximumMaxReactionCount;
 
-            var items = Items.ToList();
+            var items = Items.ToMutableVector();
             if (CanEnablePaidReaction && EnablePaidReactions)
             {
                 items.Insert(0, new ReactionTypePaid());

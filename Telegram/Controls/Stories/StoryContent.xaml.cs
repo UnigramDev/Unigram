@@ -970,7 +970,7 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void UpdateTopDonors(IList<PaidReactor> donors)
+        private void UpdateTopDonors(Vector<PaidReactor> donors)
         {
             var diff = new Dictionary<MessageSender, int>(_topDonors.Count + donors.Count, new MessageSenderEqualityComparer());
 

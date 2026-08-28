@@ -55,14 +55,14 @@ namespace Telegram.Services
 
         void PrepareLogs(int fileId, int verbosityLevel);
 
-        Task<Object> GetCustomEmojiStickerSets(IList<long> customEmojiIds);
+        Task<Object> GetCustomEmojiStickerSets(Vector<long> customEmojiIds);
         Task<bool> HasPrivacySettingsRuleAsync<T>(UserPrivacySetting setting) where T : UserPrivacySettingRule;
 
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
 
         void LoadFullInfo(Chat chat);
 
-        void ViewMessages(long chatId, MessageTopic topicId, IList<long> messageIds, MessageSource source, bool forceRead);
+        void ViewMessages(long chatId, MessageTopic topicId, Vector<long> messageIds, MessageSource source, bool forceRead);
 
         Task<Object> GetStarTransactionsAsync(MessageSender ownerId, string subscriptionId, TransactionDirection direction, string offset, int limit);
 
@@ -102,30 +102,30 @@ namespace Telegram.Services
 
         ReactionType DefaultReaction { get; }
 
-        IList<ChatFolderInfo> ChatFolders { get; }
+        Vector<ChatFolderInfo> ChatFolders { get; }
         int MainChatListPosition { get; }
         bool AreTagsEnabled { get; }
 
-        IList<AttachmentMenuBot> AttachmentMenuBots { get; }
+        Vector<AttachmentMenuBot> AttachmentMenuBots { get; }
 
         IList<AttachmentMenuBot> GetBotsForChat(long chatId);
         IList<AttachmentMenuBot> GetBotsForMenu(out long hash);
 
         UpdateAvailableMessageEffects AvailableMessageEffects { get; }
 
-        IList<string> ActiveReactions { get; }
+        Vector<string> ActiveReactions { get; }
 
-        IList<TextCompositionStyle> TextCompositionStyles { get; }
+        Vector<TextCompositionStyle> TextCompositionStyles { get; }
         bool IsTextCompositionStyleInstalled(string name);
 
-        IList<string> AnimationSearchEmojis { get; }
+        Vector<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
 
         UpdateSpeechRecognitionTrial SpeechRecognitionTrial { get; }
 
         AgeVerificationParameters AgeVerificationParameters { get; }
 
-        IList<CloseBirthdayUser> CloseBirthdayUsers { get; }
+        Vector<CloseBirthdayUser> CloseBirthdayUsers { get; }
 
         Background GetDefaultBackground(bool darkTheme);
         Background DefaultBackground { get; }
@@ -158,12 +158,12 @@ namespace Telegram.Services
 
         QuickReplyShortcut GetQuickReplyShortcut(int id);
         QuickReplyShortcut GetQuickReplyShortcut(string name);
-        IList<QuickReplyMessage> GetQuickReplyMessages(int id);
-        IList<QuickReplyShortcut> GetQuickReplyShortcuts();
+        Vector<QuickReplyMessage> GetQuickReplyMessages(int id);
+        Vector<QuickReplyShortcut> GetQuickReplyShortcuts();
         void LoadQuickReplyShortcuts();
         bool CheckQuickReplyShortcutName(string name);
 
-        IList<WelcomeMessage> GetWelcomeMessages(long chatId);
+        Vector<WelcomeMessage> GetWelcomeMessages(long chatId);
 
         Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds);
         MessageEffect LoadMessageEffect(long effectId, bool preload);
@@ -282,7 +282,7 @@ namespace Telegram.Services
 
         bool TryGetEmojiChatTheme(ChatTheme theme, out EmojiChatTheme emoji);
         bool TryGetEmojiChatTheme(string themeName, out EmojiChatTheme emoji);
-        IList<EmojiChatTheme> ChatThemes { get; }
+        Vector<EmojiChatTheme> ChatThemes { get; }
 
         bool IsDiceEmoji(string text, out string dice);
 
@@ -344,7 +344,7 @@ namespace Telegram.Services
 
         private readonly ReaderWriterDictionary<int, GroupCall> _groupCalls = new();
 
-        private readonly ReaderWriterDictionary<long, IList<WelcomeMessage>> _welcomeMessages = new();
+        private readonly ReaderWriterDictionary<long, Vector<WelcomeMessage>> _welcomeMessages = new();
 
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
@@ -369,21 +369,21 @@ namespace Telegram.Services
 
         private UnconfirmedSession _unconfirmedSession;
 
-        private IList<string> _diceEmojis;
+        private Vector<string> _diceEmojis;
 
-        private IList<GroupCallMessageLevel> _groupCallMessageLevels;
+        private Vector<GroupCallMessageLevel> _groupCallMessageLevels;
 
-        private IList<int> _savedAnimations;
-        private IList<int> _recentStickers;
-        private IList<int> _favoriteStickers;
-        private IList<long> _installedStickerSets;
-        private IList<long> _installedMaskSets;
-        private IList<long> _installedEmojiSets;
-        private IList<TextCompositionStyle> _textCompositionStyles;
+        private Vector<int> _savedAnimations;
+        private Vector<int> _recentStickers;
+        private Vector<int> _favoriteStickers;
+        private Vector<long> _installedStickerSets;
+        private Vector<long> _installedMaskSets;
+        private Vector<long> _installedEmojiSets;
+        private Vector<TextCompositionStyle> _textCompositionStyles;
 
         private ReactionType _defaultReaction;
 
-        private IList<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
+        private Vector<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
         private Dictionary<int, ChatFolderInfo> _chatFolders2 = new();
         private readonly object _chatFoldersLock = new();
         private int _mainChatListPosition = 0;
@@ -391,10 +391,10 @@ namespace Telegram.Services
 
         private UpdateAvailableMessageEffects _availableMessageEffects;
 
-        private IList<string> _activeReactions = Array.Empty<string>();
+        private Vector<string> _activeReactions = Array.Empty<string>();
         private readonly ReaderWriterDictionary<string, EmojiReaction> _cachedReactions = new();
 
-        private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
+        private Vector<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
 
         private UpdateSpeechRecognitionTrial _speechRecognitionTrial;
 
@@ -452,7 +452,7 @@ namespace Telegram.Services
             Initialize(online);
         }
 
-        public void ViewMessages(long chatId, MessageTopic topicId, IList<long> messageIds, MessageSource source, bool forceRead)
+        public void ViewMessages(long chatId, MessageTopic topicId, Vector<long> messageIds, MessageSource source, bool forceRead)
         {
             Send(new ViewMessages(chatId, messageIds, source, forceRead));
 
@@ -717,7 +717,7 @@ namespace Telegram.Services
             return LoadNextGreetingSticker();
         }
 
-        private IList<Sticker> _greetingStickers;
+        private Vector<Sticker> _greetingStickers;
         private Sticker _nextGreetingSticker;
         private bool _waitGreetingSticker;
 
@@ -725,9 +725,9 @@ namespace Telegram.Services
 
         public UpdateAvailableMessageEffects AvailableMessageEffects => _availableMessageEffects;
 
-        public IList<string> ActiveReactions => _activeReactions;
+        public Vector<string> ActiveReactions => _activeReactions;
 
-        public IList<TextCompositionStyle> TextCompositionStyles => _textCompositionStyles ?? Array.Empty<TextCompositionStyle>();
+        public Vector<TextCompositionStyle> TextCompositionStyles => _textCompositionStyles ?? Array.Empty<TextCompositionStyle>();
 
         public bool IsTextCompositionStyleInstalled(string name)
         {
@@ -1156,7 +1156,7 @@ namespace Telegram.Services
             return response;
         }
 
-        public async Task<Object> GetCustomEmojiStickerSets(IList<long> customEmojiIds)
+        public async Task<Object> GetCustomEmojiStickerSets(Vector<long> customEmojiIds)
         {
             var stickers = await SendAsync(new GetCustomEmojiStickers(customEmojiIds)) as Stickers;
             if (stickers?.StickersValue.Count > 0)
@@ -1177,7 +1177,7 @@ namespace Telegram.Services
 
                 // Together rather than in turn: one round trip per distinct set otherwise.
                 var responses = await Task.WhenAll(tasks);
-                var result = new List<StickerSetInfo>(responses.Length);
+                var result = new MutableVector<StickerSetInfo>(responses.Length);
 
                 foreach (var response in responses)
                 {
@@ -1502,13 +1502,13 @@ namespace Telegram.Services
 
         public ReactionType DefaultReaction => _defaultReaction;
 
-        public IList<ChatFolderInfo> ChatFolders => _chatFolders;
+        public Vector<ChatFolderInfo> ChatFolders => _chatFolders;
 
         public int MainChatListPosition => _mainChatListPosition;
 
         public bool AreTagsEnabled => _areTagsEnabled;
 
-        public IList<AttachmentMenuBot> AttachmentMenuBots => _attachmentMenuBots;
+        public Vector<AttachmentMenuBot> AttachmentMenuBots => _attachmentMenuBots;
 
         public IList<AttachmentMenuBot> GetBotsForChat(long chatId)
         {
@@ -1590,9 +1590,9 @@ namespace Telegram.Services
 
         public AgeVerificationParameters AgeVerificationParameters { get; private set; }
 
-        public IList<CloseBirthdayUser> CloseBirthdayUsers => _contactCloseBirthdays?.CloseBirthdayUsers ?? Array.Empty<CloseBirthdayUser>();
+        public Vector<CloseBirthdayUser> CloseBirthdayUsers => _contactCloseBirthdays?.CloseBirthdayUsers ?? Array.Empty<CloseBirthdayUser>();
 
-        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? Array.Empty<string>();
+        public Vector<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? Array.Empty<string>();
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
@@ -1904,7 +1904,7 @@ namespace Telegram.Services
                 .FirstOrDefault(x => x.Name == name);
         }
 
-        public IList<QuickReplyMessage> GetQuickReplyMessages(int id)
+        public Vector<QuickReplyMessage> GetQuickReplyMessages(int id)
         {
             if (_quickReplyShortcuts.TryGetValue(id, out var value))
             {
@@ -1914,11 +1914,11 @@ namespace Telegram.Services
             return Array.Empty<QuickReplyMessage>();
         }
 
-        public IList<QuickReplyShortcut> GetQuickReplyShortcuts()
+        public Vector<QuickReplyShortcut> GetQuickReplyShortcuts()
         {
             if (_quickReplyShortcutIds != null)
             {
-                var result = new List<QuickReplyShortcut>();
+                var result = new MutableVector<QuickReplyShortcut>();
 
                 foreach (var id in _quickReplyShortcutIds)
                 {
@@ -1958,7 +1958,7 @@ namespace Telegram.Services
             return ClientEx.CheckQuickReplyShortcutName(name);
         }
 
-        public IList<WelcomeMessage> GetWelcomeMessages(long chatId)
+        public Vector<WelcomeMessage> GetWelcomeMessages(long chatId)
         {
             if (_welcomeMessages.TryGetValue(chatId, out var value))
             {
@@ -2871,7 +2871,7 @@ namespace Telegram.Services
             return value != null;
         }
 
-        public IList<EmojiChatTheme> ChatThemes => _chatThemes?.ChatThemes ?? Array.Empty<EmojiChatTheme>();
+        public Vector<EmojiChatTheme> ChatThemes => _chatThemes?.ChatThemes ?? Array.Empty<EmojiChatTheme>();
 
         public bool TryGetGroupCallMessageLevel(long paidMessageStarCount, out GroupCallMessageLevel value)
         {
@@ -3446,7 +3446,7 @@ namespace Telegram.Services
                                     }
                                 }
 
-                                var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
+                                var newPositions = new MutableVector<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
                                 if (updateChatPosition.Position.Order != 0)
                                 {
                                     newPositions.Add(updateChatPosition.Position);
@@ -3554,7 +3554,7 @@ namespace Telegram.Services
                                 // Rebuilt rather than appended to, like UpdateChatPosition above: a
                                 // reader outside the lock keeps the list it already has, and the
                                 // parser is free to hand out a shared empty for a chat in no list.
-                                var lists = new List<ChatList>(value.ChatLists.Count + 1);
+                                var lists = new MutableVector<ChatList>(value.ChatLists.Count + 1);
 
                                 for (int i = 0; i < value.ChatLists.Count; i++)
                                 {
@@ -3588,7 +3588,7 @@ namespace Telegram.Services
                                 // rather than needlessly copied.
                                 if (i < value.ChatLists.Count)
                                 {
-                                    var lists = new List<ChatList>(value.ChatLists.Count - 1);
+                                    var lists = new MutableVector<ChatList>(value.ChatLists.Count - 1);
 
                                     for (int j = 0; j < value.ChatLists.Count; j++)
                                     {
@@ -3763,7 +3763,7 @@ namespace Telegram.Services
                     {
                         lock (_chatFoldersLock)
                         {
-                            _chatFolders = updateChatFolders.ChatFolders.ToList();
+                            _chatFolders = updateChatFolders.ChatFolders.ToVector();
                             _chatFolders2 = updateChatFolders.ChatFolders.ToDictionary(x => x.Id);
                         }
 
@@ -4372,7 +4372,7 @@ namespace Telegram.Services
     {
         public QuickReplyShortcut Shortcut { get; set; }
 
-        public IList<QuickReplyMessage> Messages { get; set; }
+        public Vector<QuickReplyMessage> Messages { get; set; }
     }
 
     public partial class ChatListUnreadCount

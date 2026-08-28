@@ -12,6 +12,6 @@ namespace Telegram.ViewModels.Delegates
 {
     public interface ISupergroupEditDelegate : ISupergroupDelegate, IBasicGroupDelegate
     {
-        void UpdateChatWelcomeMessages(Chat chat, IList<WelcomeMessage> messages);
+        void UpdateChatWelcomeMessages(Chat chat, Vector<WelcomeMessage> messages);
     }
 }

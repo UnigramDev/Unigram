@@ -533,7 +533,7 @@ namespace Telegram.Services
         private AddedProxies GetProxiesImpl()
         {
             var rows = _database.Select("Proxy", null, new[] { "LastUsedDate" });
-            var items = rows.Select(RowToProxy).ToList();
+            var items = rows.Select(RowToProxy).ToVector();
             return new AddedProxies(items);
         }
 

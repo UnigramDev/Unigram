@@ -198,7 +198,7 @@ namespace Telegram.Services
             }
         }
 
-        private static IEnumerable<Message> Reversed(IList<Message> messages)
+        private static IEnumerable<Message> Reversed(Vector<Message> messages)
         {
             for (int i = messages.Count - 1; i >= 0; i--)
             {

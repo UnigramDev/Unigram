@@ -26,7 +26,7 @@ namespace Telegram.Td.Api
             MinChannelChatBoostLevel = accent.MinChannelChatBoostLevel;
         }
 
-        private IList<Color> Populate(IList<int> source)
+        private IList<Color> Populate(Vector<int> source)
         {
             if (source.Count > 0)
             {

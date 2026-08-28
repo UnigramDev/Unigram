@@ -490,7 +490,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void VotePoll(MessageViewModel message, IList<int> options) { }
+        public virtual void VotePoll(MessageViewModel message, Vector<int> options) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -540,7 +540,7 @@ namespace Telegram.ViewModels
         /// the tapped element finds its own block by walking up the Tag chain. That's what
         /// lets one renderer serve both hosts.
         /// </summary>
-        protected void OpenPageBlockMedia(IList<PageBlock> blocks, PageBlockMediaKind kind, FrameworkElement target)
+        protected void OpenPageBlockMedia(Vector<PageBlock> blocks, PageBlockMediaKind kind, FrameworkElement target)
         {
             var gallery = new InstantGalleryViewModel(ClientService,
                 ClientService.Session.Resolve<IStorageService>(),
@@ -750,7 +750,7 @@ namespace Telegram.ViewModels
 
         public override void Call(MessageViewModel message, bool video) => _viewModel.Call(message, video);
 
-        public override void VotePoll(MessageViewModel message, IList<int> options) => _viewModel.VotePoll(message, options);
+        public override void VotePoll(MessageViewModel message, Vector<int> options) => _viewModel.VotePoll(message, options);
 
         public override void OpenViaBot(long viaBotUserId) => _viewModel.OpenViaBot(viaBotUserId);
 

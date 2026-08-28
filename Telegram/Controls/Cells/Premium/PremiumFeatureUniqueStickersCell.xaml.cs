@@ -20,7 +20,7 @@ namespace Telegram.Controls.Cells.Premium
 
         private IClientService _clientService;
 
-        private IList<Sticker> _stickers;
+        private Vector<Sticker> _stickers;
         private int _index;
 
         private bool _premiumCompleted;
@@ -32,7 +32,7 @@ namespace Telegram.Controls.Cells.Premium
             _dispatcher = DispatcherQueue.GetForCurrentThread();
         }
 
-        public void UpdateFeature(IClientService clientService, IList<Sticker> stickers)
+        public void UpdateFeature(IClientService clientService, Vector<Sticker> stickers)
         {
             if (stickers == null)
             {

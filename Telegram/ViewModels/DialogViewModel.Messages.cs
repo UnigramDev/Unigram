@@ -494,7 +494,7 @@ namespace Telegram.ViewModels
 
             if (Type == DialogType.BusinessReplies)
             {
-                ClientService.Send(new DeleteQuickReplyShortcutMessages(QuickReplyShortcut.Id, messages.Select(x => x.Id).ToList()));
+                ClientService.Send(new DeleteQuickReplyShortcutMessages(QuickReplyShortcut.Id, messages.Select(x => x.Id).ToVector()));
                 return;
             }
             else if (Type == DialogType.WelcomeMessages)
@@ -507,7 +507,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), popup.Revoke));
+            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToVector(), popup.Revoke));
 
             foreach (var sender in popup.DeleteAll)
             {
@@ -526,7 +526,7 @@ namespace Telegram.ViewModels
                     var messageIds = messages
                         .Where(x => x.SenderId.AreTheSame(sender))
                         .Select(x => x.Id)
-                        .ToList();
+                        .ToVector();
 
                     ClientService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messageIds));
                 }
@@ -870,7 +870,7 @@ namespace Telegram.ViewModels
             var myId = ClientService.Options.MyId;
             var messages = SelectedItems.Values
                 .Where(x => x.SenderId is MessageSenderChat || (x.SenderId is MessageSenderUser senderUser && senderUser.UserId != myId))
-                .OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                .OrderBy(x => x.Id).Select(x => x.Id).ToVector();
             if (messages.Count < 1)
             {
                 return;
@@ -1358,7 +1358,7 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessagePoll poll)
             {
-                var builder = new FormattedText(poll.Poll.Question.Text, poll.Poll.Question.Entities.ToList());
+                var builder = new FormattedText(poll.Poll.Question.Text, poll.Poll.Question.Entities.ToVector());
 
                 foreach (var option in poll.Poll.Options)
                 {
@@ -1371,7 +1371,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageChecklist checklist)
             {
-                var builder = new FormattedText(checklist.List.Title.Text, checklist.List.Title.Entities.ToList());
+                var builder = new FormattedText(checklist.List.Title.Text, checklist.List.Title.Entities.ToVector());
 
                 foreach (var task in checklist.List.Tasks)
                 {
@@ -1481,7 +1481,7 @@ namespace Telegram.ViewModels
         {
             if (task.Message.Content is MessageChecklist checklist)
             {
-                var tasks = new List<InputChecklistTask>();
+                var tasks = new MutableVector<InputChecklistTask>();
 
                 foreach (var item in checklist.List.Tasks)
                 {
@@ -1499,8 +1499,8 @@ namespace Telegram.ViewModels
         {
             if (task.Message.Content is MessageChecklist checklist)
             {
-                var markedAsDone = new List<int>();
-                var markedAsNotDone = new List<int>();
+                var markedAsDone = new MutableVector<int>();
+                var markedAsNotDone = new MutableVector<int>();
 
                 if (task.Task.CompletionDate != 0)
                 {
@@ -2506,7 +2506,7 @@ namespace Telegram.ViewModels
         {
             if (option.Message.Content is MessagePoll poll)
             {
-                var votes = new List<int>();
+                var votes = new MutableVector<int>();
 
                 for (int i = 0; i < poll.Poll.Options.Count; i++)
                 {
@@ -2564,7 +2564,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji.ToList()));
+            var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji.ToVector()));
             if (response is Stickers stickers)
             {
                 var sets = new HashSet<long>();

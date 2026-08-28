@@ -53,9 +53,9 @@ namespace Telegram.Common
         /// Parses an HTML fragment into page blocks. Returns an empty list when there is
         /// nothing to paste — the caller decides what an empty paste means.
         /// </summary>
-        public static IList<PageBlock> Parse(string html)
+        public static Vector<PageBlock> Parse(string html)
         {
-            var blocks = new List<PageBlock>();
+            var blocks = new MutableVector<PageBlock>();
             if (string.IsNullOrEmpty(html))
             {
                 return blocks;
@@ -67,11 +67,11 @@ namespace Telegram.Common
 
         #region Blocks
 
-        private static void ParseBlocks(List<Node> nodes, List<PageBlock> output)
+        private static void ParseBlocks(List<Node> nodes, MutableVector<PageBlock> output)
         {
             // Inline content between block tags is collected here and flushed as a
             // paragraph the moment a block interrupts it.
-            List<RichText> pending = null;
+            MutableVector<RichText> pending = null;
 
             foreach (var node in nodes)
             {
@@ -83,7 +83,7 @@ namespace Telegram.Common
                         continue;
                     }
 
-                    (pending ??= new List<RichText>()).Add(new RichTextPlain { Text = text });
+                    (pending ??= new MutableVector<RichText>()).Add(new RichTextPlain { Text = text });
                     continue;
                 }
 
@@ -101,7 +101,7 @@ namespace Telegram.Common
                     var inline = InlineNode(node, false);
                     if (inline != null)
                     {
-                        (pending ??= new List<RichText>()).Add(inline);
+                        (pending ??= new MutableVector<RichText>()).Add(inline);
                     }
                     continue;
                 }
@@ -113,7 +113,7 @@ namespace Telegram.Common
             Flush(output, pending);
         }
 
-        private static void ParseBlock(Node node, List<PageBlock> output)
+        private static void ParseBlock(Node node, MutableVector<PageBlock> output)
         {
             switch (node.Tag)
             {
@@ -210,7 +210,7 @@ namespace Telegram.Common
             }
         }
 
-        private static void ParseDiv(Node node, List<PageBlock> output)
+        private static void ParseDiv(Node node, MutableVector<PageBlock> output)
         {
             if (node.HasClass("pm-math-block"))
             {
@@ -258,10 +258,14 @@ namespace Telegram.Common
             }
         }
 
-        private static void ParseList(Node node, List<PageBlock> output, bool ordered)
+        private static void ParseList(Node node, MutableVector<PageBlock> output, bool ordered)
         {
-            var items = new List<PageBlockListItem>();
+            var items = new MutableVector<PageBlockListItem>();
             var value = 1;
+
+            // The blocks of the item last added, kept here rather than read back off it: Blocks is
+            // declared as an immutable vector, and a nested list has to append to it.
+            MutableVector<PageBlock> lastBlocks = null;
 
             foreach (var child in node.Children)
             {
@@ -274,15 +278,11 @@ namespace Telegram.Common
                 // rather than inside it. Give it back to the item above.
                 if (child.Tag == "ul" || child.Tag == "ol")
                 {
-                    if (items.Count > 0)
+                    if (lastBlocks != null)
                     {
-                        var nested = new List<PageBlock>();
-                        ParseList(child, nested, child.Tag == "ol");
-                        foreach (var block in nested)
-                        {
-                            items[items.Count - 1].Blocks.Add(block);
-                        }
+                        ParseList(child, lastBlocks, child.Tag == "ol");
                     }
+
                     continue;
                 }
 
@@ -291,13 +291,15 @@ namespace Telegram.Common
                     continue;
                 }
 
-                var blocks = new List<PageBlock>();
+                var blocks = new MutableVector<PageBlock>();
                 ParseBlocks(child.Children, blocks);
 
                 if (blocks.Count == 0)
                 {
                     blocks.Add(new PageBlockParagraph { Text = EmptyText() });
                 }
+
+                lastBlocks = blocks;
 
                 items.Add(new PageBlockListItem
                 {
@@ -324,7 +326,7 @@ namespace Telegram.Common
             }
         }
 
-        private static void ParseBlockQuote(Node node, List<PageBlock> output)
+        private static void ParseBlockQuote(Node node, MutableVector<PageBlock> output)
         {
             Node cite = null;
             var hasBlocks = false;
@@ -359,7 +361,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var blocks = new List<PageBlock>();
+            var blocks = new MutableVector<PageBlock>();
             if (hasBlocks)
             {
                 var body = new List<Node>(node.Children.Count);
@@ -385,7 +387,7 @@ namespace Telegram.Common
             output.Add(new PageBlockBlockQuote { Blocks = blocks, Credit = credit });
         }
 
-        private static void ParseDetails(Node node, List<PageBlock> output)
+        private static void ParseDetails(Node node, MutableVector<PageBlock> output)
         {
             RichText header = null;
             var body = new List<Node>(node.Children.Count);
@@ -402,7 +404,7 @@ namespace Telegram.Common
                 }
             }
 
-            var blocks = new List<PageBlock>();
+            var blocks = new MutableVector<PageBlock>();
             ParseBlocks(body, blocks);
 
             if (blocks.Count == 0)
@@ -418,10 +420,10 @@ namespace Telegram.Common
             });
         }
 
-        private static void ParseTable(Node node, List<PageBlock> output)
+        private static void ParseTable(Node node, MutableVector<PageBlock> output)
         {
             var caption = EmptyText();
-            var rows = new List<IList<PageBlockTableCell>>();
+            var rows = new MutableVector<Vector<PageBlockTableCell>>();
             CollectRows(node, rows, ref caption);
 
             if (rows.Count == 0)
@@ -438,7 +440,7 @@ namespace Telegram.Common
             });
         }
 
-        private static void CollectRows(Node node, List<IList<PageBlockTableCell>> rows, ref RichText caption)
+        private static void CollectRows(Node node, MutableVector<Vector<PageBlockTableCell>> rows, ref RichText caption)
         {
             foreach (var child in node.Children)
             {
@@ -464,9 +466,9 @@ namespace Telegram.Common
             }
         }
 
-        private static IList<PageBlockTableCell> ParseRow(Node row)
+        private static Vector<PageBlockTableCell> ParseRow(Node row)
         {
-            var cells = new List<PageBlockTableCell>();
+            var cells = new MutableVector<PageBlockTableCell>();
 
             foreach (var child in row.Children)
             {
@@ -500,7 +502,7 @@ namespace Telegram.Common
             return cells;
         }
 
-        private static void AppendCaptionAsParagraph(Node node, List<PageBlock> output)
+        private static void AppendCaptionAsParagraph(Node node, MutableVector<PageBlock> output)
         {
             foreach (var child in node.Children)
             {
@@ -516,7 +518,7 @@ namespace Telegram.Common
             }
         }
 
-        private static List<RichText> Flush(List<PageBlock> output, List<RichText> pending)
+        private static MutableVector<RichText> Flush(MutableVector<PageBlock> output, MutableVector<RichText> pending)
         {
             if (pending != null && pending.Count > 0)
             {
@@ -579,14 +581,14 @@ namespace Telegram.Common
 
         private static RichText InlineExcept(Node node, string skip)
         {
-            List<RichText> parts = null;
+            MutableVector<RichText> parts = null;
 
             foreach (var child in node.Children)
             {
                 var text = child.IsText ? PlainOf(child.Text, false) : child.Tag == skip ? null : InlineNode(child, false);
                 if (text != null)
                 {
-                    (parts ??= new List<RichText>()).Add(text);
+                    (parts ??= new MutableVector<RichText>()).Add(text);
                 }
             }
 
@@ -595,7 +597,7 @@ namespace Telegram.Common
 
         private static RichText InlineChildren(Node node, bool preserveWhitespace)
         {
-            List<RichText> parts = null;
+            MutableVector<RichText> parts = null;
 
             foreach (var child in node.Children)
             {
@@ -605,7 +607,7 @@ namespace Telegram.Common
 
                 if (text != null)
                 {
-                    (parts ??= new List<RichText>()).Add(text);
+                    (parts ??= new MutableVector<RichText>()).Add(text);
                 }
             }
 
@@ -756,7 +758,7 @@ namespace Telegram.Common
             return text.Length == 0 ? null : new RichTextPlain { Text = text };
         }
 
-        private static RichText Combine(List<RichText> parts)
+        private static RichText Combine(Vector<RichText> parts)
         {
             if (parts == null || parts.Count == 0)
             {

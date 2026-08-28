@@ -101,7 +101,7 @@ namespace Telegram.Views.Settings
             UnitLabel.Text = readable[1];
         }
 
-        public IList<FileType> SelectedItems { get; private set; }
+        public Vector<FileType> SelectedItems { get; private set; }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -137,7 +137,7 @@ namespace Telegram.Views.Settings
             var items = ScrollingHost.ItemsSource as IList<StorageChartItem>;
             if (items != null)
             {
-                SelectedItems = items.Where(x => x.IsVisible).SelectMany(x => x.Types).ToList();
+                SelectedItems = items.Where(x => x.IsVisible).SelectMany(x => x.Types).ToVector();
             }
             else
             {

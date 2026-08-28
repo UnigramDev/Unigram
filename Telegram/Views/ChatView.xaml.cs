@@ -4009,7 +4009,7 @@ namespace Telegram.Views
 
         private async void LoadMessageViewers(MessageViewModel message, MessageProperties properties, MenuFlyout flyout)
         {
-            static async Task<IList<MessageViewer>> GetMessageViewersAsync(MessageViewModel message, MessageProperties properties)
+            static async Task<Vector<MessageViewer>> GetMessageViewersAsync(MessageViewModel message, MessageProperties properties)
             {
                 if (CanGetMessageViewers(message, properties, false))
                 {
@@ -4144,7 +4144,7 @@ namespace Telegram.Views
             }
         }
 
-        private bool CanGetMessageEmojis(MessageViewModel message, out IList<long> customEmojiIds)
+        private bool CanGetMessageEmojis(MessageViewModel message, out Vector<long> customEmojiIds)
         {
             var caption = message.GetCaption();
             if (caption?.Entities == null || caption.Entities.Empty())
@@ -4166,7 +4166,7 @@ namespace Telegram.Views
 
             if (temp != null)
             {
-                customEmojiIds = temp.ToList();
+                customEmojiIds = temp.ToVector();
                 return true;
             }
 
@@ -4174,7 +4174,7 @@ namespace Telegram.Views
             return false;
         }
 
-        private async void LoadMessageEmojis(MessageViewModel message, MenuFlyout flyout, IList<long> customEmojiIds)
+        private async void LoadMessageEmojis(MessageViewModel message, MenuFlyout flyout, Vector<long> customEmojiIds)
         {
             void ShowSkeleton(FrameworkElement element)
             {

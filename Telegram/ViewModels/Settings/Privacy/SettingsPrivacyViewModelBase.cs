@@ -332,8 +332,8 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var chats = new List<long>();
-            var users = new List<long>();
+            var chats = new MutableVector<long>();
+            var users = new MutableVector<long>();
 
             foreach (var id in _allowedUsers.UserIds)
             {
@@ -484,8 +484,8 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var chats = new List<long>();
-            var users = new List<long>();
+            var chats = new MutableVector<long>();
+            var users = new MutableVector<long>();
 
             foreach (var id in _restrictedUsers.UserIds)
             {
@@ -614,7 +614,7 @@ namespace Telegram.ViewModels.Settings
 
         private UserPrivacySettingRules GetSettings()
         {
-            var rules = new List<UserPrivacySettingRule>();
+            var rules = new MutableVector<UserPrivacySettingRule>();
 
             if (_allowedPremium && _inputKey is UserPrivacySettingAllowChatInvites && _selectedItem != PrivacyValue.AllowAll)
             {
@@ -666,7 +666,7 @@ namespace Telegram.ViewModels.Settings
             return new UserPrivacySettingRules(rules);
         }
 
-        private string GetBadge(IList<long> userIds, IList<long> chatIds, bool allowedPremium, bool allowedBots)
+        private string GetBadge(Vector<long> userIds, Vector<long> chatIds, bool allowedPremium, bool allowedBots)
         {
             var count = userIds.Count;
 

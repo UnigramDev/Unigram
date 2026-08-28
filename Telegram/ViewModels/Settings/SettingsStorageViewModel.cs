@@ -32,7 +32,7 @@ namespace Telegram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var chats = new List<StorageStatisticsByChat>(10);
+            var chats = new MutableVector<StorageStatisticsByChat>(10);
 
             for (int i = 0; i < 10; i++)
             {
@@ -149,7 +149,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var types = ItemsView.Where(x => x.IsVisible).SelectMany(x => x.Types).ToList();
+            var types = ItemsView.Where(x => x.IsVisible).SelectMany(x => x.Types).ToVector();
             if (types == null || types.Empty())
             {
                 return;
@@ -216,8 +216,12 @@ namespace Telegram.ViewModels.Settings
 
         private StorageStatistics ProcessTotal(StorageStatistics value)
         {
+            var resultByFileType = new MutableVector<StorageStatisticsByFileType>();
+            var valueByChat = value.ByChat.ToMutableVector();
+
             var result = new StorageStatisticsByChat();
-            result.ByFileType = new List<StorageStatisticsByFileType>();
+            result.ByFileType = resultByFileType;
+            value.ByChat = valueByChat;
 
             StorageChartItem photo = null;
             StorageChartItem video = null;
@@ -228,16 +232,17 @@ namespace Telegram.ViewModels.Settings
             StorageChartItem stories = null;
             StorageChartItem local = null;
 
-            for (int i = 0; i < value.ByChat.Count; i++)
+            for (int i = 0; i < valueByChat.Count; i++)
             {
-                var chat = value.ByChat[i];
+                var chat = valueByChat[i];
+                var chatByFileType = chat.ByFileType.ToMutableVector();
 
                 result.Count += chat.Count;
                 result.Size += chat.Size;
 
-                for (int j = 0; j < chat.ByFileType.Count; j++)
+                for (int j = 0; j < chatByFileType.Count; j++)
                 {
-                    var fileType = chat.ByFileType[j];
+                    var fileType = chatByFileType[j];
 
                     switch (fileType.FileType)
                     {
@@ -281,26 +286,28 @@ namespace Telegram.ViewModels.Settings
                         chat.Count -= fileType.Count;
                         chat.Size -= fileType.Size;
 
-                        chat.ByFileType.Remove(fileType);
+                        chatByFileType.Remove(fileType);
                         j--;
 
                         continue;
                     }
 
-                    var already = result.ByFileType.FirstOrDefault(x => x.FileType.TypeEquals(fileType.FileType));
+                    var already = resultByFileType.FirstOrDefault(x => x.FileType.TypeEquals(fileType.FileType));
                     if (already == null)
                     {
                         already = new StorageStatisticsByFileType(fileType.FileType, 0, 0);
-                        result.ByFileType.Add(already);
+                        resultByFileType.Add(already);
                     }
 
                     already.Count += fileType.Count;
                     already.Size += fileType.Size;
                 }
 
+                chat.ByFileType = chatByFileType;
+
                 if (chat.ChatId == 0 || chat.ByFileType.Empty())
                 {
-                    value.ByChat.Remove(chat);
+                    valueByChat.Remove(chat);
                     i--;
                 }
             }

@@ -116,7 +116,7 @@ namespace Telegram.Views.Supergroups.Popups
         private void UpdateText()
         {
             var text = new StringBuilder();
-            var entities = new List<TextEntity>();
+            var entities = new MutableVector<TextEntity>();
 
             foreach (var item in ViewModel.Items)
             {
@@ -195,7 +195,7 @@ namespace Telegram.Views.Supergroups.Popups
             var empty = Array.Empty<AvailableReaction>();
             var reactions = ViewModel.ClientService.ActiveReactions
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
-                .ToList();
+                .ToVector();
 
             // We don't want to unfocus the text are when the context menu gets opened
             _ = EmojiPanel.ViewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, ViewModel.AllowCustomEmoji, false, null));

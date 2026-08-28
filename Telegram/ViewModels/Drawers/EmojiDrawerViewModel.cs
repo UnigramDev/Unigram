@@ -216,7 +216,7 @@ namespace Telegram.ViewModels.Drawers
                 var emojiGroups = Emoji.Get(Settings.RecentEmoji);
 
                 var source = new List<object>();
-                var customEmoji = new List<long>();
+                var customEmoji = new MutableVector<long>();
 
                 foreach (var item in recents)
                 {
@@ -309,7 +309,8 @@ namespace Telegram.ViewModels.Drawers
                         if (_mode is EmojiDrawerMode.Topics or EmojiDrawerMode.EmojiStatus or EmojiDrawerMode.ChatEmojiStatus)
                         {
                             // This is a placeholder, actual icon is drawn using the list header with negative margins
-                            defaultStickers.StickersValue.Insert(0, new Sticker(0, 0, 0, 0, string.Empty, null, null, null, null));
+                            var placeholder = new Sticker(0, 0, 0, 0, string.Empty, null, null, null, null);
+                            defaultStickers.StickersValue = [placeholder, .. defaultStickers.StickersValue];
                         }
 
                         _reactionTopSet.Update(defaultStickers.StickersValue);
@@ -332,7 +333,7 @@ namespace Telegram.ViewModels.Drawers
                                     }
                                 }
 
-                                var response3 = await ClientService.SendAsync(new GetCustomEmojiStickers(ids.Keys.ToList()));
+                                var response3 = await ClientService.SendAsync(new GetCustomEmojiStickers(ids.Keys.ToVector()));
                                 if (response3 is Stickers stickers2)
                                 {
                                     var stickers3 = new List<StickerViewModel>();
@@ -403,7 +404,7 @@ namespace Telegram.ViewModels.Drawers
             var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
             var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
 
-            var emoji = new List<long>();
+            var emoji = new MutableVector<long>();
             var delay = new List<long>();
 
             foreach (var status in themed.Take(7).Union(recent.Union(defaul)))
@@ -440,7 +441,7 @@ namespace Telegram.ViewModels.Drawers
             var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
             var disall = disallowedResponse?.CustomEmojiIds ?? Array.Empty<long>();
 
-            var emoji = new List<long>();
+            var emoji = new MutableVector<long>();
             var delay = new List<long>();
 
             foreach (var status in themed.Union(recent.Union(defaul)))
@@ -545,8 +546,8 @@ namespace Telegram.ViewModels.Drawers
             var select = available.AllowCustomEmoji || sum > 7;
             var count = select ? 6 : 7;
 
-            IList<AvailableReaction> source = available.TopReactions.Take(count).ToList();
-            IList<AvailableReaction> additional = available.RecentReactions.Count > 0
+            List<AvailableReaction> source = available.TopReactions.Take(count).ToList();
+            Vector<AvailableReaction> additional = available.RecentReactions.Count > 0
                 ? available.RecentReactions
                 : available.PopularReactions;
 
@@ -631,7 +632,7 @@ namespace Telegram.ViewModels.Drawers
             return visible;
         }
 
-        private async void ContinueReactions(AvailableReactions available, IList<AvailableReaction> source, IList<AvailableReaction> sourceRecent)
+        private async void ContinueReactions(AvailableReactions available, Vector<AvailableReaction> source, Vector<AvailableReaction> sourceRecent)
         {
             if (available == null)
             {
@@ -663,7 +664,7 @@ namespace Telegram.ViewModels.Drawers
             var top = new List<StickerViewModel>();
             var recent = new List<StickerViewModel>();
 
-            void Populate(IList<AvailableReaction> source, List<StickerViewModel> target)
+            void Populate(Vector<AvailableReaction> source, List<StickerViewModel> target)
             {
                 foreach (var item in source)
                 {

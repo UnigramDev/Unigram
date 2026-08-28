@@ -76,7 +76,7 @@ namespace Telegram.Services
         /// Album cover variants to use if the downloaded audio file contains no album cover.
         /// Provided thumbnail dimensions are approximate.
         /// </summary>
-        public IList<Thumbnail> ExternalAlbumCovers { get; set; }
+        public Vector<Thumbnail> ExternalAlbumCovers { get; set; }
 
         /// <summary>
         /// The thumbnail of the album cover in JPEG format; as defined by the sender. The
@@ -1321,7 +1321,7 @@ namespace Telegram.Services
         /// The cover embedded in the audio file if the sender provided one, otherwise the
         /// external variant closest to what the transport controls actually display.
         /// </summary>
-        protected static Thumbnail SelectAlbumCover(Thumbnail embedded, IList<Thumbnail> external)
+        protected static Thumbnail SelectAlbumCover(Thumbnail embedded, Vector<Thumbnail> external)
         {
             if (embedded != null || external == null)
             {

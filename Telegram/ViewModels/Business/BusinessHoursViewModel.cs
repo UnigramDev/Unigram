@@ -389,7 +389,7 @@ namespace Telegram.ViewModels.Business
                 return null;
             }
 
-            var intervals = new List<BusinessOpeningHoursInterval>();
+            var intervals = new MutableVector<BusinessOpeningHoursInterval>();
 
             void FillDay(BusinessDay day)
             {

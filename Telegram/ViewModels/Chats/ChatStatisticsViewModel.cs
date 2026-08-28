@@ -152,8 +152,8 @@ namespace Telegram.ViewModels.Chats
                         ChartViewData.Create(channelStats.StoryReactionGraph, Strings.StoryReactionsByEmotionChartTitle, 2)
                     };
 
-                    List<long> messageIds = null;
-                    List<int> storyIds = null;
+                    MutableVector<long> messageIds = null;
+                    MutableVector<int> storyIds = null;
 
                     foreach (var interaction in channelStats.RecentInteractions)
                     {

@@ -40,8 +40,8 @@ namespace Telegram.ViewModels
             set => Set(ref _filters, value);
         }
 
-        private IList<long> _userIds = Array.Empty<long>();
-        public IList<long> UserIds
+        private Vector<long> _userIds = Array.Empty<long>();
+        public Vector<long> UserIds
         {
             get => _userIds;
             set => Set(ref _userIds, value);
@@ -388,7 +388,7 @@ namespace Telegram.ViewModels
             }
             else if (item.Action is ChatEventPermissionsChanged permissionChanged)
             {
-                var entities = new List<TextEntity>();
+                var entities = new MutableVector<TextEntity>();
 
                 ChatPermissions o = permissionChanged.OldPermissions;
                 ChatPermissions n = permissionChanged.NewPermissions;
@@ -493,7 +493,7 @@ namespace Telegram.ViewModels
                 string text;
 
                 var whoUser = ClientService.GetMessageSender(memberRestricted.MemberId);
-                var entities = new List<TextEntity>();
+                var entities = new MutableVector<TextEntity>();
 
                 if (memberRestricted.NewStatus is ChatMemberStatusBanned)
                 {
@@ -707,7 +707,7 @@ namespace Telegram.ViewModels
             }
             else if (item.Action is ChatEventMemberPromoted memberPromoted)
             {
-                var entities = new List<TextEntity>();
+                var entities = new MutableVector<TextEntity>();
 
                 var whoUser = ClientService.GetUser(memberPromoted.UserId);
                 var str = memberPromoted.NewStatus is ChatMemberStatusCreator
@@ -886,7 +886,7 @@ namespace Telegram.ViewModels
             return new MessageChatEvent(item);
         }
 
-        private string GetUserName(Object sender, List<TextEntity> entities, int offset)
+        private string GetUserName(Object sender, MutableVector<TextEntity> entities, int offset)
         {
             if (sender is User user)
             {

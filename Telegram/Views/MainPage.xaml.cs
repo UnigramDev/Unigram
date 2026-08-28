@@ -1208,7 +1208,6 @@ namespace Telegram.Views
 
 #if INSTRUMENTATION
             Logger.Info(DebugAnalyzeOrphans());
-            Logger.Info(Td.TdVectorStats.Report());
 #endif
 
             GarbageCollectionMonitor.DisconnectUnusedReferenceSources();
@@ -3285,9 +3284,7 @@ namespace Telegram.Views
                 var response = await ViewModel.ClientService.SendAsync(new GetChatFolder(chatListFolder.ChatFolderId)) as ChatFolder;
                 if (response != null)
                 {
-                    response.IncludedChatIds.Remove(chat.Id);
-
-                    if (response.Any())
+                    if (response.Any(chat.Id))
                     {
                         flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFolder.ChatFolderId, chat), Strings.FilterRemoveFrom, Icons.FolderMove);
                     }

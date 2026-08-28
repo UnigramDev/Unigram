@@ -42,12 +42,12 @@ namespace winrt::Telegram::Native::implementation
     // TODO: consider creating a base class, use it for ChatBackgroundPattern as well
     struct FreeformGradientSurface : FreeformGradientSurfaceT<FreeformGradientSurface>
     {
-        FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVector<int32_t> colors);
+        FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVectorView<int32_t> colors);
 
         ~FreeformGradientSurface();
 
-        IVector<int32_t> Colors();
-        void Colors(IVector<int32_t> value);
+        IVectorView<int32_t> Colors();
+        void Colors(IVectorView<int32_t> value);
 
         CompositionSurfaceBrush Brush();
         void Next();
@@ -68,7 +68,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<abi::ICompositionDrawingSurfaceInterop> m_surface;
         CompositionSurfaceBrush m_brush;
         DispatcherTimer m_timer;
-        IVector<int32_t> m_colors;
+        IVectorView<int32_t> m_colors;
         std::vector<uint8_t> m_pixels;
 
         winrt::event_token m_renderingDeviceReplaced;

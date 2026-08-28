@@ -533,7 +533,7 @@ namespace Telegram.Views.Stars.Popups
             MessageHelper.OpenUrl(null, null, Strings.StarsTOSLink);
         }
 
-        private void UpdatePaidMedia(IClientService clientService, IList<PaidMedia> paidMedia, User fallbackUser, Chat fallbackChat)
+        private void UpdatePaidMedia(IClientService clientService, Vector<PaidMedia> paidMedia, User fallbackUser, Chat fallbackChat)
         {
             if (paidMedia.Count > 0)
             {

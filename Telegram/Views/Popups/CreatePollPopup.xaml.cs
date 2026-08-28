@@ -114,14 +114,14 @@ namespace Telegram.Views.Popups
             get
             {
                 var question = QuestionText.GetFormattedText();
-                var options = Items.Where(x => !string.IsNullOrWhiteSpace(x.Text.Text)).Select(x => new InputPollOption(x.Text, null)).ToList();
+                var options = Items.Where(x => !string.IsNullOrWhiteSpace(x.Text.Text)).Select(x => new InputPollOption(x.Text, null)).ToVector();
                 var description = DescriptionText.GetFormattedText();
                 var media = default(InputPollMedia);
                 var isAnonymous = IsAnonymous.IsChecked == false;
                 var allowsMultipleAnswers = AllowsMultipleAnswers.IsChecked == true;
                 var allowsRevoting = AllowsRevoting.IsChecked == true;
                 var membersOnly = MembersOnly.IsChecked == true;
-                var countryCodes = _countryCodes.Select(x => x.CountryCode).ToList();
+                var countryCodes = _countryCodes.Select(x => x.CountryCode).ToVector();
                 var shuffleOptions = ShuffleOptions.IsChecked == true;
                 var hideResultsUntilCloses = LimitDuration.IsChecked == true && HideResults.IsChecked == true;
                 var openPeriod = 0;
@@ -130,7 +130,7 @@ namespace Telegram.Views.Popups
                 InputPollType type;
                 if (Quiz.IsChecked == true)
                 {
-                    List<int> correct = [];
+                    MutableVector<int> correct = [];
                     for (int i = 0; i < Items.Count; i++)
                         if (Items[i].IsChecked)
                             correct.Add(i);

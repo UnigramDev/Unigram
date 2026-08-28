@@ -15,7 +15,7 @@ namespace Telegram.Services
 {
     public partial interface ICacheService
     {
-        void SetPinnedForumTopics(long chatId, IList<int> forumTopicIds);
+        void SetPinnedForumTopics(long chatId, Vector<int> forumTopicIds);
 
         Task<ForumTopics2> GetForumTopicsAsync(long chatId, int offset, int limit);
 
@@ -32,7 +32,7 @@ namespace Telegram.Services
     {
         private readonly ReaderWriterDictionary<long, ForumTopicService> _forums = new(100);
 
-        public void SetPinnedForumTopics(long chatId, IList<int> forumTopicIds)
+        public void SetPinnedForumTopics(long chatId, Vector<int> forumTopicIds)
         {
             if (_forums.TryGetValue(chatId, out ForumTopicService manager))
             {

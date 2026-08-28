@@ -142,7 +142,7 @@ namespace Telegram.Views.Chats.Popups
             var selected = ScrollingHost.SelectedItems
                 .OfType<ChatBoostSlot>()
                 .Select(x => x.SlotId)
-                .ToList();
+                .ToVector();
 
             var response = await _clientService.SendAsync(new BoostChat(_chat.Id, selected));
             if (response is not Error)

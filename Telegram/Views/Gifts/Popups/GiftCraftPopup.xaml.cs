@@ -1318,7 +1318,7 @@ namespace Telegram.Views.Gifts.Popups
             _spinning = true;
             CompositionTarget.Rendering += OnRendering;
 
-            var receivedGiftIds = _items.Where(x => x != null).Select(x => x.ReceivedGiftId).ToList();
+            var receivedGiftIds = _items.Where(x => x != null).Select(x => x.ReceivedGiftId).ToVector();
             var craftGifts = new CraftGift(receivedGiftIds);
 
             _crafted = new TaskCompletionSource<Object>();

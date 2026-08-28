@@ -201,7 +201,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (editable != null)
             {
-                static IList<string> ReplaceEditable(IList<string> usernames, string original, string editable)
+                static Vector<string> ReplaceEditable(Vector<string> usernames, string original, string editable)
                 {
                     if (usernames == null)
                     {
@@ -257,7 +257,7 @@ namespace Telegram.ViewModels.Supergroups
                 }
                 else
                 {
-                    var order = new List<string>();
+                    var order = new MutableVector<string>();
 
                     foreach (var info in Items)
                     {

@@ -575,7 +575,7 @@ namespace Telegram.ViewModels
         public FactCheck FactCheck { get; set; }
         public MessageForwardInfo ForwardInfo { get; protected set; }
         public MessageImportInfo ImportInfo { get; protected set; }
-        public IList<UnreadReaction> UnreadReactions { get; set; }
+        public Vector<UnreadReaction> UnreadReactions { get; set; }
         public int EditDate { get; set; }
         public int Date { get; protected set; }
         public bool ContainsUnreadMention { get; set; }

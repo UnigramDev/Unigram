@@ -37,9 +37,9 @@ namespace Telegram.Common
         //.UseDiagrams()
         //.Build();
 
-        public static List<PageBlock> Parse(string markdown)
+        public static Vector<PageBlock> Parse(string markdown)
         {
-            var result = new List<PageBlock>();
+            var result = new MutableVector<PageBlock>();
             if (string.IsNullOrEmpty(markdown)) return result;
 
             var doc = Markdown.Parse(markdown, _pipeline);
@@ -124,7 +124,7 @@ namespace Telegram.Common
         {
             if (string.IsNullOrEmpty(text)) return new RichTextPlain { Text = text };
 
-            List<RichText> parts = null;
+            MutableVector<RichText> parts = null;
             int writeFrom = 0;
             int i = 0;
             while (i < text.Length)
@@ -164,7 +164,7 @@ namespace Telegram.Common
                     continue;
                 }
 
-                if (parts == null) parts = new List<RichText>();
+                if (parts == null) parts = new MutableVector<RichText>();
                 if (i > writeFrom)
                 {
                     parts.Add(new RichTextPlain { Text = text.Substring(writeFrom, i - writeFrom) });
@@ -250,7 +250,7 @@ namespace Telegram.Common
         // Block conversion
         // ----------------------------------------------------------------
 
-        private static void ConvertBlock(Block block, List<PageBlock> output)
+        private static void ConvertBlock(Block block, MutableVector<PageBlock> output)
         {
             switch (block)
             {
@@ -346,9 +346,9 @@ namespace Telegram.Common
 
         // --- Blockquote ---
 
-        private static void ConvertQuote(QuoteBlock quote, List<PageBlock> output)
+        private static void ConvertQuote(QuoteBlock quote, MutableVector<PageBlock> output)
         {
-            var trailing = new List<PageBlock>();
+            var trailing = new MutableVector<PageBlock>();
 
             foreach (var child in quote)
             {
@@ -360,14 +360,14 @@ namespace Telegram.Common
 
         // --- Lists ---
 
-        private static void ConvertList(ListBlock list, List<PageBlock> output)
+        private static void ConvertList(ListBlock list, MutableVector<PageBlock> output)
         {
             bool ordered = list.IsOrdered;
             bool loose = list.IsLoose;
 
             if (ordered)
             {
-                var items = new List<PageBlockListItem>();
+                var items = new MutableVector<PageBlockListItem>();
                 int autoNum = ParseStart(list.OrderedStart);
                 foreach (var item in list)
                 {
@@ -380,7 +380,7 @@ namespace Telegram.Common
             }
             else
             {
-                var items = new List<PageBlockListItem>();
+                var items = new MutableVector<PageBlockListItem>();
                 foreach (var item in list)
                 {
                     if (!(item is ListItemBlock li)) continue;
@@ -450,7 +450,7 @@ namespace Telegram.Common
             //    PageBlocks = blocks
             //};
 
-            var trailing = new List<PageBlock>();
+            var trailing = new MutableVector<PageBlock>();
 
             foreach (var child in item)
             {
@@ -471,15 +471,15 @@ namespace Telegram.Common
 
         // --- Tables ---
 
-        private static void ConvertTable(Table table, List<PageBlock> output)
+        private static void ConvertTable(Table table, MutableVector<PageBlock> output)
         {
-            var rows = new List<IList<PageBlockTableCell>>();
+            var rows = new MutableVector<Vector<PageBlockTableCell>>();
             var aligns = table.ColumnDefinitions;
 
             foreach (var child in table)
             {
                 if (!(child is TableRow row)) continue;
-                var cells = new List<PageBlockTableCell>();
+                var cells = new MutableVector<PageBlockTableCell>();
                 int colIdx = 0;
                 foreach (var cellChild in row)
                 {
@@ -512,7 +512,7 @@ namespace Telegram.Common
         {
             // A TableCell holds blocks; for IV cells we want a single RichText.
             // GFM tables put a single ParagraphBlock per cell; concatenate if there are several.
-            var parts = new List<RichText>();
+            var parts = new MutableVector<RichText>();
             foreach (var child in cell)
             {
                 if (child is ParagraphBlock p)
@@ -690,7 +690,7 @@ namespace Telegram.Common
         private static RichText Compact(List<RichText> parts)
         {
             // Merge consecutive plain runs.
-            var merged = new List<RichText>(parts.Count);
+            var merged = new MutableVector<RichText>(parts.Count);
             StringBuilder pending = null;
             foreach (var part in parts)
             {

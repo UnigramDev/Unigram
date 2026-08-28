@@ -80,7 +80,7 @@ namespace Telegram.ViewModels.Drawers
             });
         }
 
-        private void Merge(IList<Animation> destination, IList<Animation> origin)
+        private void Merge(IList<Animation> destination, Vector<Animation> origin)
         {
             if (destination.Count > 0)
             {
