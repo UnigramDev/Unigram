@@ -66,28 +66,31 @@ namespace Telegram.ViewModels.Premium
         {
             PremiumSource premiumSource = parameter is PremiumSource source ? source : new PremiumSourceSettings();
 
-            var features = await ClientService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
-            if (features == null)
+            var response = await ClientService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
+            if (response == null)
             {
                 return;
             }
 
-            var appIcons = features.Features.FirstOrDefault(x => x is PremiumFeatureAppIcons);
+            var features = response.Features.ToList();
+            var limits = response.Limits.ToList();
+
+            var appIcons = response.Features.FirstOrDefault(x => x is PremiumFeatureAppIcons);
             if (appIcons != null)
             {
-                features.Features.Remove(appIcons);
+                features.Remove(appIcons);
             }
 
-            var archivedChats = features.Limits.FirstOrDefault(x => x.Type is PremiumLimitTypePinnedArchivedChatCount);
+            var archivedChats = response.Limits.FirstOrDefault(x => x.Type is PremiumLimitTypePinnedArchivedChatCount);
             if (archivedChats != null)
             {
-                features.Limits.Remove(archivedChats);
+                limits.Remove(archivedChats);
             }
 
-            features.Limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
+            limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
 
-            Limits.ReplaceWith(features.Limits);
-            Features.ReplaceWith(features.Features);
+            Limits.ReplaceWith(limits);
+            Features.ReplaceWith(features);
 
             var state = await ClientService.SendAsync(new GetPremiumState()) as PremiumState;
             if (state == null)

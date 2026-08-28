@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -419,10 +419,11 @@ namespace Telegram.Controls.Messages
                 if (_bubble != null && _bubble.IsLoaded)
                 {
                     var unread = new UnreadReaction(reaction, null, false);
+                    var previous = _message.UnreadReactions;
 
-                    _message.UnreadReactions.Add(unread);
+                    _message.UnreadReactions = [.. previous, unread];
                     _bubble.UpdateMessageReactions(_message, true);
-                    _message.UnreadReactions.Remove(unread);
+                    _message.UnreadReactions = previous;
                 }
             }
         }

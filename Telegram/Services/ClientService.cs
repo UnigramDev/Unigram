@@ -3551,7 +3551,18 @@ namespace Telegram.Services
                         {
                             lock (value)
                             {
-                                value.ChatLists.Add(updateChatAddedToList.ChatList);
+                                // Rebuilt rather than appended to, like UpdateChatPosition above: a
+                                // reader outside the lock keeps the list it already has, and the
+                                // parser is free to hand out a shared empty for a chat in no list.
+                                var lists = new List<ChatList>(value.ChatLists.Count + 1);
+
+                                for (int i = 0; i < value.ChatLists.Count; i++)
+                                {
+                                    lists.Add(value.ChatLists[i]);
+                                }
+
+                                lists.Add(updateChatAddedToList.ChatList);
+                                value.ChatLists = lists;
                             }
                         }
 
@@ -3564,13 +3575,30 @@ namespace Telegram.Services
                         {
                             lock (value)
                             {
-                                foreach (var chatList in value.ChatLists)
+                                int i;
+                                for (i = 0; i < value.ChatLists.Count; i++)
                                 {
-                                    if (chatList.AreTheSame(updateChatRemovedFromList.ChatList))
+                                    if (value.ChatLists[i].AreTheSame(updateChatRemovedFromList.ChatList))
                                     {
-                                        value.ChatLists.Remove(chatList);
                                         break;
                                     }
+                                }
+
+                                // Only the first match, as before. Absent, and the list is left alone
+                                // rather than needlessly copied.
+                                if (i < value.ChatLists.Count)
+                                {
+                                    var lists = new List<ChatList>(value.ChatLists.Count - 1);
+
+                                    for (int j = 0; j < value.ChatLists.Count; j++)
+                                    {
+                                        if (j != i)
+                                        {
+                                            lists.Add(value.ChatLists[j]);
+                                        }
+                                    }
+
+                                    value.ChatLists = lists;
                                 }
                             }
                         }

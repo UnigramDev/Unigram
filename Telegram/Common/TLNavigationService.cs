@@ -247,25 +247,28 @@ namespace Telegram.Common
         {
             PremiumSource premiumSource = new PremiumSourceFeature(feature);
 
-            var features = await ClientService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
-            if (features == null)
+            var response = await ClientService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
+            if (response == null)
             {
                 return;
             }
 
-            var appIcons = features.Features.FirstOrDefault(x => x is PremiumFeatureAppIcons);
+            var features = response.Features.ToList();
+            var limits = response.Limits.ToList();
+
+            var appIcons = response.Features.FirstOrDefault(x => x is PremiumFeatureAppIcons);
             if (appIcons != null)
             {
-                features.Features.Remove(appIcons);
+                features.Remove(appIcons);
             }
 
-            var archivedChats = features.Limits.FirstOrDefault(x => x.Type is PremiumLimitTypePinnedArchivedChatCount);
+            var archivedChats = response.Limits.FirstOrDefault(x => x.Type is PremiumLimitTypePinnedArchivedChatCount);
             if (archivedChats != null)
             {
-                features.Limits.Remove(archivedChats);
+                limits.Remove(archivedChats);
             }
 
-            features.Limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
+            limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
 
             var state = await ClientService.SendAsync(new GetPremiumState()) as PremiumState;
             if (state == null)
@@ -287,9 +290,9 @@ namespace Telegram.Common
                 return;
             }
 
-            feature = features.Features.FirstOrDefault(x => x.GetType() == feature.GetType());
+            feature = response.Features.FirstOrDefault(x => x.GetType() == feature.GetType());
 
-            var popup = new FeaturesPopup(ClientService, option?.PaymentOption, features.Features, businessFeatures.Features, features.Limits, animations, stickers, feature);
+            var popup = new FeaturesPopup(ClientService, option?.PaymentOption, features, businessFeatures.Features, limits, animations, stickers, feature);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
