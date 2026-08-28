@@ -1694,9 +1694,18 @@ the most likely failure comes first.
   A `Popup` gives (1) directly, and gate 1.13 measured that a `Popup` types correctly in an island
   while a `ContentDialog` does not. (2) is a `TaskCompletionSource` - `ContentPopup` already owns
   the queueing around it in `ShowQueuedAsync`. (4) is four events to raise at the right moments.
-  **(3) is the one that is real work**, and the one to judge the estimate by: a modal dialog has to
-  keep Tab inside itself, restore focus to what had it, and answer Escape and Enter - and XAML
-  gives none of that to a bare `Popup`.
+
+  **(3) is free, measured 2026-08-27.** I claimed focus containment was the real work and the thing
+  to judge the estimate by; Fela's instinct was that a `Popup` already contains focus, and he is
+  right - a modal `Popup` (`IsLightDismissEnabled = false`) with two `TextBox`es and a button keeps
+  Tab inside itself, confirmed by hand in the spike. Three synthetic probes of mine said otherwise
+  and all three were wrong for the same reason: they ran as startup gates, before the window was
+  shown, and **nothing takes focus in an unactivated window** - so `Focus()` returned false and
+  `FindNextElement` had no starting point. The spike now carries a button that opens the popup once
+  the window is live, which is the only way to ask this.
+
+  What is left of (3) is small and worth naming so it is not forgotten: Escape and Enter, and
+  restoring focus to whatever had it when the dialog closes. Neither is a wall.
 
   **So the shape of the work is: keep the class, keep the template, replace the base.** If
   `ContentPopup`'s public surface is preserved - `Title`, `PrimaryButtonText`, `ShowAsync`,
@@ -1711,11 +1720,68 @@ the most likely failure comes first.
   same time (microsoft-ui-xaml#3577, the backdrop that keeps its opening size). If it does not, the
   UWP flavour never knew.
 
-  **The thing to settle first**, because it decides whether this is worth doing at all rather than
-  waiting for Phase 3: whether focus containment in a bare `Popup` can be made good enough for
-  keyboard and screen-reader users. It is testable in an afternoon in the spike - a `Popup` with
-  two `TextBox`es and a button - and it is the only part of this that could still turn out to be a
-  wall.
+  **The blast radius, counted rather than feared.** "Keep the surface and nothing changes" is true
+  of the 153 subclasses' *bodies*, but not of their *signatures*: 92 files name `ContentDialog` and
+  its event-arg types in handler signatures, 118 occurrences, all of the shape
+  `(ContentDialog sender, ContentDialogButtonClickEventArgs args)`. Those types are sealed with no
+  public constructor, so a new base cannot raise them and every one of those signatures has to
+  resolve to something else - a name alias per file or globally, which leaves the bodies alone but
+  is still 92 files touched. Worth knowing before starting; also worth knowing what is *not* there:
+  no `new ContentDialog()` anywhere in the app, and no subclass overrides `OnPrimaryButtonClick`
+  and friends. In XAML it is 7 files, using `<ContentDialog.Resources>` property-element syntax,
+  which only needs the base type's name.
+
+- [x] **1.13 SOLVED 2026-08-27: `ContentDialog` marks every key handled, and in an island that
+  kills text input.** The blocker that was going to cost a reimplementation is four lines.
+
+  `ContentDialog` attaches an accelerator handler to its `LayoutRoot` template part in
+  `OnApplyTemplate` - unconditionally, `ContentDialog_Partial.cpp:240` - and marks **every key but
+  Escape and Enter** handled, so the dialog behaves like a modal. It then sets an internal
+  `HandledShouldNotImpedeTextInput` flag so the InputManager skips `SetKeyDownHandled` and the
+  character still reaches the focused text box:
+
+  ```cpp
+  get_Handled(&bAlreadyHandled);
+  if (!bAlreadyHandled) { put_HandledShouldNotImpedeTextInput(TRUE); put_Handled(TRUE); }
+  ```
+
+  **In an island that exemption does not hold.** The key is handled, the character is dropped, and
+  everything that does not depend on characters keeps working - which is exactly the symptom that
+  made this so hard to place: Tab navigates inside the dialog, the context menu pastes, and
+  `KeyDown` arrives *unhandled* at the text box because the marking happens after it.
+
+  **The fix**: `ContentPopup` already subscribes to that same event on that same element
+  (`ContentPopup.cs:306`), and subscribing later means running later - so it can put `Handled` back.
+  Only for unmodified keystrokes, so a real accelerator stays handled and still cannot reach the
+  window behind. `ContentPopup.Win32.cs` implements a `partial void ReleaseTextInput`; the UWP
+  flavours have no implementation and the call is elided, so nothing about the shipping app changes.
+
+  **How it was found, because the route matters more than the answer.** Building variants up from a
+  minimal template and guessing which stock feature was poison failed nine times - part names,
+  `LayoutRoot`, the `ScrollViewer`, `TabFocusNavigation="Cycle"`, stretching, collapse-then-reveal,
+  the named parts, buttons, a real `DialogShowingStates` group, `ScaleTransform`,
+  `TranslateTransform`, `SetIsTranslationEnabled`. What worked was instrumenting the actual failing
+  dialog: subscribe `ProcessKeyboardAccelerators` on every element from the text box up to the
+  dialog and print `Handled` at each hop. The two logs then differ in one place.
+
+  | | route |
+  | --- | --- |
+  | minimal template | `TextBox -> StackPanel -> ContentPresenter -> LayoutRoot -> dialog`, all `handled=False` |
+  | stock template | bubble, then a `TryInvokeKeyboardAccelerator` walk down and back, then `LayoutRoot: handled=True`, and the event never reaches the dialog |
+
+  Two traps met on the way, both worth remembering. Touching the tree from inside a
+  `ProcessKeyboardAccelerators` handler takes the process down with no managed exception - collect
+  the lines and flush them from a timer. And the spike installs no `SynchronizationContext`, so
+  `await Task.Delay` resumes on the thread pool and the next XAML call throws `RPC_E_WRONG_THREAD`;
+  tick a `DispatcherTimer` instead. The same absence is already recorded for the share target.
+
+  **What this retires.** 1.13a is dead: no `Popup` of our own, no `ArrangeOverride`, no
+  `ShowAsync`/`Hide` replacement, no new event plumbing, and none of the 92 files carrying
+  `(ContentDialog sender, ContentDialogButtonClickEventArgs args)` signatures are touched. Also
+  recorded, since it cost real time to establish and might be wanted later: a `ContentDialog` *can*
+  be hosted in a `Popup` by hand, as long as the subclass overrides `ArrangeOverride` to arrange the
+  template child at `finalSize` - its own arrange returns nothing unless `ShowAsync` set up its
+  hosting.
 
 - [x] **1.11 Resource scope across islands.** Measured, and it decides 0.18. Three probes, each a
   `Border` whose `Background` is `{ThemeResource ScopeBrush}` parsed at runtime, with red defined

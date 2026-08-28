@@ -247,9 +247,15 @@ namespace Telegram.Controls
                 {
                     Hide(ContentDialogResult.Primary);
                     args.Handled = true;
+                    return;
                 }
             }
+
+            ReleaseTextInput(args);
         }
+
+        // Implemented on Win32 only, where ContentDialog's modality marking kills text input.
+        partial void ReleaseTextInput(ProcessKeyboardAcceleratorEventArgs args);
 
         public bool IsFullWindow { get; set; } = false;
 
