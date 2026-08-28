@@ -197,9 +197,7 @@ namespace Telegram.Controls.Chats
         {
             if (inline is false)
             {
-                _emojiQuery = null;
-                _emojiFlyout?.Hide();
-                CancelEmoji();
+                HideEmoji();
             }
 
             if (collection != null)
@@ -250,9 +248,7 @@ namespace Telegram.Controls.Chats
             {
                 if (_emojiFlyout != null)
                 {
-                    _emojiQuery = null;
-                    _emojiFlyout?.Hide();
-                    CancelEmoji();
+                    HideEmoji();
 
                     e.Handled = true;
                 }
@@ -683,6 +679,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
+            _emojiQuery = collection.Query;
+
             var token = BeginEmoji();
             var source = new AutocompleteCollection(collection);
 
@@ -698,8 +696,6 @@ namespace Telegram.Controls.Chats
 
                 return;
             }
-
-            _emojiQuery = collection.Query;
 
             if (_emojiFlyout?.Content is ChatTextFlyout presenter)
             {
