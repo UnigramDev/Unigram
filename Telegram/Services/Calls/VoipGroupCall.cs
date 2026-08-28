@@ -594,7 +594,7 @@ namespace Telegram.Services.Calls
             var available = await CanChooseAliasAsyncInternal(_chat.Id);
             if (available != null)
             {
-                var popup = new VideoChatAliasesPopup(ClientService, _chat, false, _availableAliases.Senders.ToArray());
+                var popup = new VideoChatAliasesPopup(ClientService, _chat, false, available.Senders);
                 popup.RequestedTheme = ElementTheme.Dark;
 
                 var confirm = await popup.ShowQueuedAsync(xamlRoot);

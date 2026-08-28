@@ -102,6 +102,7 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<string>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.PremiumFeature[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<Telegram.Td.Api.PremiumFeature>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<Telegram.ViewModels.Drawers.StickerViewModel>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.RangeObservableCollection<Telegram.ViewModels.Drawers.StickerSetViewModel>))]

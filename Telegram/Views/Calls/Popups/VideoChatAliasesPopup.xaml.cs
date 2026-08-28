@@ -55,7 +55,7 @@ namespace Telegram.Views.Calls.Popups
                 ? Strings.VoipChannelStartVoiceChat
                 : Strings.VoipGroupStartVoiceChat;
 
-            ScrollingHost.ItemsSource = senders;
+            ScrollingHost.ItemsSource = senders.ToList();
             ScrollingHost.SelectedItem = already ?? senders.FirstOrDefault();
 
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
