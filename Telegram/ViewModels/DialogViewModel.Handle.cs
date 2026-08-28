@@ -975,8 +975,7 @@ namespace Telegram.ViewModels
 
                         if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo or MessageExpiredVideoNote or MessageExpiredVoiceNote)
                         {
-                            // Probably not the best way but replacing content template is not supported
-                            InsertMessageInOrder(message, 0, true);
+                            Items.Reinsert(message);
                         }
                     }
                 }, (bubble, message, reply) =>
@@ -1540,90 +1539,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void InsertMessageInOrder(MessageViewModel message, long oldMessageId = 0, bool force = false)
+        public void InsertMessageInOrder(MessageViewModel message, long oldMessageId = 0)
         {
-            var newIndex = NextIndexOf(message, oldMessageId, out int oldIndex);
-            if (newIndex != -1)
-            {
-                if (oldIndex != -1)
-                {
-                    MoveMessageInOrder(message, oldIndex);
-                }
-                else
-                {
-                    Items.Insert(newIndex, message);
-                }
-            }
-            else if (force && oldIndex != -1)
-            {
-                MoveMessageInOrder(message, oldIndex);
-            }
-        }
-
-        // We can't use Move because ListView seems to mess up a lot with this operationg
-        private void MoveMessageInOrder(MessageViewModel message, int oldIndex)
-        {
-            Items.RemoveAt(oldIndex);
-
-            // MessageCollection.RemoveItem also drops the date or topic separator that the
-            // removal orphans, so any index computed before it can now be past the end:
-            // ask again, against the collection as it is now.
-            Items.Insert(NextIndexOf(message, 0, out _), message);
-        }
-
-        private int NextIndexOf(MessageViewModel message, long oldMessageId, out int oldIndex)
-        {
-            oldIndex = -1;
-            var newIndex = Items.Count;
-
-            var oldIndexNeeded = Items.ContainsKey(oldMessageId != 0 ? oldMessageId : message.Id);
-            var newIndexNeeded = true;
-
-            for (int i = Items.Count - 1; i >= 0; i--)
-            {
-                var item = Items[i];
-                if (item.Id == 0)
-                {
-                    if (item.Date <= message.Date)
-                    {
-                        newIndex = i + 1;
-                        newIndexNeeded = false;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-
-                if (item.Id < message.Id && newIndexNeeded)
-                {
-                    newIndex = i + 1;
-                    newIndexNeeded = false;
-                }
-
-                if (item.Id == message.Id && oldIndexNeeded)
-                {
-                    oldIndex = i;
-                    oldIndexNeeded = false;
-                }
-
-                if (!newIndexNeeded && !oldIndexNeeded)
-                {
-                    break;
-                }
-            }
-
-            if (oldIndex != -1 && oldIndex < newIndex)
-            {
-                newIndex--;
-            }
-
-            if (newIndex == oldIndex)
-            {
-                return -1;
-            }
-
-            return newIndex;
+            Items.InsertInOrder(message, oldMessageId);
         }
 
         public void UpdateQuery(string query)

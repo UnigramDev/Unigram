@@ -139,6 +139,138 @@ namespace Telegram.ViewModels
             _messages[newMessageId] = message;
         }
 
+        /// <summary>
+        /// Puts the message at its place in the list, or moves it there if it is already in.
+        /// </summary>
+        /// <param name="oldMessageId">
+        /// The identifier the message was listed under, when it has just been given a new one.
+        /// </param>
+        public void InsertInOrder(MessageViewModel message, long oldMessageId = 0)
+        {
+            var newIndex = NextIndexOf(message, oldMessageId, out int oldIndex);
+            if (oldIndex == -1)
+            {
+                Insert(newIndex, message);
+            }
+            else if (newIndex != oldIndex)
+            {
+                Reinsert(oldIndex, newIndex, message);
+            }
+        }
+
+        /// <summary>
+        /// Takes the message out and puts it back where it already was, so that the list builds a
+        /// fresh container for it: a content template cannot be swapped in place.
+        /// </summary>
+        public void Reinsert(MessageViewModel message)
+        {
+            var newIndex = NextIndexOf(message, 0, out int oldIndex);
+            if (oldIndex != -1)
+            {
+                Reinsert(oldIndex, newIndex, message);
+            }
+        }
+
+        // Not Move: the list mishandles a Move notification.
+        private void Reinsert(int oldIndex, int newIndex, MessageViewModel message)
+        {
+            RemoveAt(oldIndex);
+            Insert(NextIndexOf(message, newIndex), message);
+        }
+
+        // Both indices in one backward walk, because it is the same walk: the ordering position
+        // is normally settled on the first iteration and only the search for the message itself
+        // carries on, so a message that is not listed costs a single comparison.
+        private int NextIndexOf(MessageViewModel message, long oldMessageId, out int oldIndex)
+        {
+            oldIndex = -1;
+            var newIndex = Count;
+
+            // The two identifiers differ while a message is being renumbered: the item has
+            // already taken its new id and only the map still knows it under the old one, so the
+            // map answers whether it is listed and the walk answers where.
+            //
+            // An album is listed under its first child's id alone, so a later child of one
+            // answers the lookup and is then matched nowhere below. Deliberate: it leaves the
+            // album where it is rather than dragging it around by one of its children.
+            var oldIndexNeeded = _messages.ContainsKey(oldMessageId != 0 ? oldMessageId : message.Id);
+            var newIndexNeeded = true;
+
+            for (int i = Count - 1; i >= 0; i--)
+            {
+                var item = this[i];
+                if (item.Id == 0)
+                {
+                    // A separator has no identifier to compare, so it is placed by date, and
+                    // skipped outright when it belongs after the message.
+                    if (item.Date <= message.Date)
+                    {
+                        newIndex = i + 1;
+                        newIndexNeeded = false;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (item.Id < message.Id && newIndexNeeded)
+                {
+                    newIndex = i + 1;
+                    newIndexNeeded = false;
+                }
+
+                if (item.Id == message.Id && oldIndexNeeded)
+                {
+                    oldIndex = i;
+                    oldIndexNeeded = false;
+                }
+
+                if (!newIndexNeeded && !oldIndexNeeded)
+                {
+                    break;
+                }
+            }
+
+            if (oldIndex != -1 && oldIndex < newIndex)
+            {
+                newIndex--;
+            }
+
+            // Left as the count when nothing sorts below the message: that is what puts a
+            // sponsored message at the end, its identifier being smaller than every real one.
+            return newIndex;
+        }
+
+        // Re-derives an index across a removal. RemoveItem also drops the separator the removal
+        // orphans, so it can take up to four rows rather than the one the caller's index was
+        // adjusted for, leaving that index too high -- never too low, since a removal only ever
+        // shifts rows down. Walking back from it therefore settles within those few rows instead
+        // of costing another pass over the list.
+        private int NextIndexOf(MessageViewModel message, int from)
+        {
+            for (int i = Math.Min(from, Count) - 1; i >= 0; i--)
+            {
+                var item = this[i];
+                if (item.Id == 0)
+                {
+                    if (item.Date <= message.Date)
+                    {
+                        return i + 1;
+                    }
+
+                    continue;
+                }
+
+                if (item.Id < message.Id)
+                {
+                    return i + 1;
+                }
+            }
+
+            return 0;
+        }
+
         public void AppendSlice(MessageCollection source, bool filter, out bool empty)
         {
             empty = true;

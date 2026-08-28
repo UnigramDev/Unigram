@@ -198,6 +198,47 @@ Splitting the body into a per-message overload - which the two-argument `AttachC
 anyway - makes the `return` mean what the `continue` meant. The diff looks large because the
 body dedents by one level; `git diff -w` shows the eight real lines.
 
+### O. DONE - the ordering lived outside the collection
+
+`NextIndexOf` in `DialogViewModel.Handle.cs` read `Items.Count`, `Items[i]` and
+`Items.ContainsKey` and nothing else - a `MessageCollection` method in the wrong class. Because
+it was outside, `InsertMessageInOrder` had to hand an index back across the boundary, and 4425c24
+had to patch the case where the index went stale: `RemoveItem` can take the orphaned separator
+too, so the collection shrinks by two and the adjusted index lands past the end
+(`ArgumentOutOfRangeException`, reached from `PendingMessage_Completed`).
+
+Moved in behind one public `InsertInOrder` that owns the whole move, so no index crosses the
+API boundary any more and `MoveMessageInOrder` is gone.
+
+The cost matters here and 4425c24 got it wrong: the code before it did one backward pass and an
+O(1) insert; the fix replaced the insert with a *second full pass*. Neither reproducing that nor
+splitting the pass in two is acceptable, so:
+
+- The single pass survives verbatim - both indices out of one walk, the ordering position
+  normally settled on the first iteration, the rest of the walk spent looking for the message.
+- The reinsertion is back to O(1)-ish. A removal only ever shifts rows **down**, so the index
+  worked out before it is too high, never too low, and by at most the three extra rows
+  `RemoveItem` can take. Walking back from that index settles within those few rows instead of
+  rescanning the list. Clamping the start of the walk to `Count` is also what stops the
+  `ArgumentOutOfRangeException` - not a blind clamp of the insert, which is what the commit
+  message rightly rejected.
+
+`force` came out as `Reinsert`: it was never an ordering concern, it exists so the list builds a
+fresh container when a content template changes (expired media), and
+`InsertMessageInOrder(message, 0, true)` said none of that.
+
+Three behaviours preserved on purpose, each with a comment:
+
+- **The album asymmetry.** The map is album-aware, but an album is listed under its first
+  child's id alone, so a later child answers `ContainsKey` and is then found nowhere by the
+  scan. Rewriting the scan as a map lookup - which looks like a clean simplification - would
+  start dragging album roots around by their children.
+- **`NextIndexOf` returning `Count` when nothing sorts below the message.** That reads like an
+  off-by-one but it is what puts sponsored messages at the bottom: they carry a sponsor
+  identifier smaller than every real message id, so nothing ever matches.
+- **`InsertMessageInOrder` as the entry point.** `ChatHistoryView` calls it for sponsored
+  messages, so it stays as a one-line forward rather than making the view reach into `Items`.
+
 ## What landed in phases 1-2
 
 Uncommitted, in the working tree on top of the staged base-class change.
@@ -245,6 +286,9 @@ reversing it would reverse the album.
 **4. DONE. Stop allocating per message.** Findings B and N. `AttachChanged` is
 `Action<MessageViewModel, MessageViewModel>`, and the suppressed paths write into `Items`
 directly.
+
+**Extra, done 2026-08-27: move the ordering into the collection.** Finding O, Fela's call
+after spotting that 4425c24 patched the symptom.
 
 **5. Factor the synthetic-message construction.** Finding G, plus hoisting the verification-
 codes chat id (H). Touches `DialogViewModel` as well.
