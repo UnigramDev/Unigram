@@ -859,6 +859,11 @@ namespace Telegram.Views.Popups
 
             _loadStarted = true;
 
+            // The mode gates the album-boundary hold-back in Flush, so it decides whether the
+            // popup sits on screen empty while the files type. A crash from that window cannot
+            // be read without it.
+            Logger.Info(string.Format("Requested: {0}, media: {1}, count: {2}", _mediaRequested, IsMediaSelected, _source.Count));
+
             // The source owns the first stretch of the index space; anything appended later
             // continues past it, so appended files land behind what was already picked.
             LoadAsync(_source.LoadAsync, _source.Count, true);
@@ -987,6 +992,9 @@ namespace Telegram.Views.Popups
 
             if (count == 0)
             {
+                // run ahead of count is the difference between nothing having typed yet and a
+                // part-filled album being held back, and both leave the list empty.
+                Logger.Info(string.Format("Nothing to publish, resolved: {0}, published: {1}", run, _published));
                 return;
             }
 
@@ -1016,6 +1024,8 @@ namespace Telegram.Views.Popups
             }
 
             _published += count;
+
+            Logger.Info(string.Format("Published {0} of {1}, final: {2}", length, count, final));
 
             if (length > 0)
             {
