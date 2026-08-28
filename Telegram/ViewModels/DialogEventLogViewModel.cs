@@ -156,6 +156,7 @@ namespace Telegram.ViewModels
 
             _loadingSlice = false;
             IsLoading = false;
+            RaiseMessagesLoaded(PanelScrollingDirection.None);
 
             var already = Items.LastOrDefault();
             if (already != null)

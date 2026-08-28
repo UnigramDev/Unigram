@@ -1418,6 +1418,11 @@ namespace Telegram.ViewModels
             await AddSponsoredMessagesAsync();
         }
 
+        protected void RaiseMessagesLoaded(PanelScrollingDirection direction)
+        {
+            MessagesLoaded?.Invoke(this, new MessagesLoadedEventArgs(direction));
+        }
+
         private async Task<Messages> PreloadAlbumsAsync(long chatId, FoundChatMessages foundChatMessages)
         {
             for (int i = foundChatMessages.Messages.Count - 1; i >= 0; i--)
