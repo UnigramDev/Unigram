@@ -373,6 +373,38 @@ namespace Telegram.ViewModels
             }
         }
 
+        // The one mutation that used to leave _messages stale. It maintains the id map only:
+        // the sole caller swaps an album root in over the child that seeded it, so neither
+        // the day nor the neighbours change and there is no attach state to recompute.
+        protected override void SetItem(int index, MessageViewModel item)
+        {
+            var previous = this[index];
+            if (previous.Content is MessageAlbum previousAlbum)
+            {
+                foreach (var child in previousAlbum.Messages)
+                {
+                    _messages.Remove(child.Id);
+                }
+            }
+
+            _messages.Remove(previous.Id);
+
+            if (item.Content is MessageAlbum album)
+            {
+                foreach (var child in album.Messages)
+                {
+                    _messages[child.Id] = item;
+                }
+            }
+
+            if (item.Id != 0)
+            {
+                _messages[item.Id] = item;
+            }
+
+            base.SetItem(index, item);
+        }
+
         protected override void RemoveItem(int index)
         {
             var item = this[index];

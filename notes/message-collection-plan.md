@@ -156,7 +156,7 @@ ctor also switches `CreateMessage` to its `forLanguageStatistics` overload, whic
 here: `UpdateLanguageStatistics` returns early on outgoing messages and every scheduled message
 is outgoing.
 
-### M. `ProcessMessages` / `ProcessAlbums` mutate a slice by index
+### M. DONE - `ProcessMessages` / `ProcessAlbums` mutate a slice by index
 
 Both take `IList<MessageViewModel>` and are handed a `MessageCollection` at four call sites, then
 walk it with an index while mutating it:
@@ -172,6 +172,20 @@ walk it with an index while mutating it:
 Neither reaches the live `Items` today - `ProcessMessages` is only ever given a slice or a plain
 `List` - so the stale map is thrown away before it matters. Latent, but it is the third thing the
 tightened signature points at.
+
+Fixed by deferring instead of walking backwards. Both loops now collect the items to drop and
+remove them by identity once the walk is over, so no index survives a removal and nothing has to
+reason about how many items `RemoveItem` took. The `List` is only allocated when something is
+actually dropped, which is the rare case. Deferral also makes `ProcessAlbums`' `slice[i] = group`
+trivially valid, since the slice no longer shrinks underneath it.
+
+The removals were placed immediately after the loop and before the `groups` block, which reads
+`first.IsFirst` and `album.Messages[^1].IsLast`: removing there replays the same `UpdateAttach`
+sequence the interleaved removals produced, so that block still sees what it saw.
+
+`SetItem` is overridden and maintains the id map only. Its one caller swaps an album root in over
+the child that seeded it, so neither the day nor the neighbours change and there is no attach
+state to recompute - worth knowing before a second caller appears.
 
 ### N. DONE - `OnAttachChanged` gave up after the first neighbour
 
@@ -222,21 +236,11 @@ worth landing alone so the diff is reviewable against the three existing copies.
 once A is in: seam flag, drop `index`, delete `RawRemoveAt`, scope the flags, comment the
 `ReplaceSlice` invariant.
 
-**3. Stop index-walking a slice while mutating it.** Finding M, agreed 2026-08-27. Two parts:
-
-- `ProcessMessages` and `ProcessAlbums` must not assume `RemoveAt(i)` removes exactly one item.
-  Either walk backwards (`for (int i = slice.Count - 1; i >= 0; i--)`), which is immune to
-  anything the removal does below `i`, or re-read `slice.Count` and re-find the position after
-  each removal the way `MoveMessageInOrder` does. Walking backwards is the cheaper fix and
-  works for both loops, but check `ProcessAlbums` first: it accumulates album children into
-  `album.Messages` in encounter order, so reversing the walk reverses the album.
-- `MessageCollection` should override `SetItem` to keep `_messages` in step, so
-  `slice[i] = group` maps the album's id and its children rather than leaving the replaced
-  message's id pointing at the old item. Cheap and it closes the hole rather than relying on
-  every caller knowing about it.
-
-Do this before phase 4: it is the only correctness item left, and `SetItem` is the last
-mutation path that does not maintain the id map.
+**3. DONE. Stop index-walking a slice while mutating it.** Finding M. Both loops defer their
+removals and remove by identity; `SetItem` is overridden to maintain the id map. Walking
+backwards was the other candidate and was rejected: it revisits the item below a removal that
+also took a separator, and `ProcessAlbums` accumulates `album.Messages` in encounter order, so
+reversing it would reverse the album.
 
 **4. DONE. Stop allocating per message.** Findings B and N. `AttachChanged` is
 `Action<MessageViewModel, MessageViewModel>`, and the suppressed paths write into `Items`

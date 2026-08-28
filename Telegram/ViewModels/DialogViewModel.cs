@@ -1912,14 +1912,18 @@ namespace Telegram.ViewModels
         {
             ProcessAlbums(chat, messages, returnAlbumRoot);
 
+            // Removing from a MessageCollection also drops the date or topic separator that
+            // the removal orphans, and that one can sit above the item, so an index taken
+            // before a removal no longer points where it did. Collect and remove by identity
+            // once the walk is over; the list is only allocated if something is actually dropped.
+            List<MessageViewModel> discard = null;
+
             for (int i = 0; i < messages.Count; i++)
             {
                 var message = messages[i];
                 if (message.Content is MessageForumTopicCreated or MessageChatUpgradeFrom && Type == DialogType.Thread)
                 {
-                    messages.RemoveAt(i);
-                    i--;
-
+                    (discard ??= new()).Add(message);
                     continue;
                 }
                 else if (message.Content is MessageChatUpgradeFrom upgradeFrom)
@@ -1930,9 +1934,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        messages.RemoveAt(i);
-                        i--;
-
+                        (discard ??= new()).Add(message);
                         continue;
                     }
                 }
@@ -2026,6 +2028,14 @@ namespace Telegram.ViewModels
                 ProcessEmoji(message);
                 ProcessReplies(chat, message);
             }
+
+            if (discard != null)
+            {
+                foreach (var message in discard)
+                {
+                    messages.Remove(message);
+                }
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -2062,6 +2072,10 @@ namespace Telegram.ViewModels
             Dictionary<long, Tuple<MessageViewModel, long>> groups = null;
             Dictionary<long, long> newGroups = null;
 
+            // Deferred for the same reason as in ProcessMessages, which also keeps the
+            // slice[i] assignments below addressing what they were written against.
+            List<MessageViewModel> discard = null;
+
             for (int i = 0; i < slice.Count; i++)
             {
                 var message = slice[i];
@@ -2097,8 +2111,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    slice.RemoveAt(i);
-                    i--;
+                    (discard ??= new()).Add(message);
                 }
 
                 if (group.Content is MessageAlbum album)
@@ -2107,6 +2120,14 @@ namespace Telegram.ViewModels
                     groups[groupedId] = Tuple.Create(group, group.Id);
 
                     album.Messages.Add(message);
+                }
+            }
+
+            if (discard != null)
+            {
+                foreach (var message in discard)
+                {
+                    slice.Remove(message);
                 }
             }
 
