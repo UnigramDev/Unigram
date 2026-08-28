@@ -19,6 +19,10 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="NotifyIcon.cs" />
+    <!-- The icon itself is the app's, and this project draws the same one for the UWP
+         flavour. NotifyIcon.cs beside this is only the half that needs the stub's own
+         message loop. -->
+    <Compile Include="..\Telegram\Common\NotifyIcon.Win32.cs" Link="NotifyIcon.Shared.cs" />
     <Compile Include="Passkeys.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>

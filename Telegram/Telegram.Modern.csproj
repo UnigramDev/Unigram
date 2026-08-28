@@ -195,6 +195,8 @@
          mockup art that only theme_preview_image.jpg is used from, the icon font's glyph map, and
          the shader sources beside the compiled i420.bin. -->
     <Content Remove="Assets\Icons\**" />
+    <!-- The notification area icons: this flavour has no in process tray, Telegram.Stub owns it. -->
+    <Content Remove="Assets\Tray\**" />
     <Content Remove="Assets\Mockup\**" />
     <Content Include="Assets\Mockup\theme_preview_image.jpg" />
     <Content Remove="Assets\Fonts\Telegram.json" />

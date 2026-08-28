@@ -6,6 +6,7 @@
 //
 
 using System.Diagnostics;
+using Telegram.Common;
 using Windows.ApplicationModel;
 
 namespace Telegram.Stub
@@ -34,9 +35,24 @@ namespace Telegram.Stub
 
             if (_mutex.WaitOne(0, true))
             {
-                _context = new NotifyIcon();
+                NativeMethods.SetProcessDpiAwarenessContext(NativeMethods.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
+                // The three icons are resources of this executable, addressed by the id
+                // NotifyIconIcon carries. The app resolves the same names to files instead.
+                _context = new NotifyIcon(ResolveIcon, "Unigram");
                 _mutex.ReleaseMutex();
             }
+        }
+
+        private const uint IMAGE_ICON = 1;
+        private const uint LR_DEFAULTCOLOR = 0x0;
+        private const uint LR_DEFAULTSIZE = 0x40;
+
+        private static IntPtr ResolveIcon(NotifyIconIcon icon)
+        {
+            var hModule = NativeMethods.GetModuleHandle(IntPtr.Zero);
+            return NativeMethods.LoadImage(hModule, new IntPtr((int)icon), IMAGE_ICON, 0, 0,
+                LR_DEFAULTSIZE | LR_DEFAULTCOLOR);
         }
 
         private static void AddLoopbackExemption()

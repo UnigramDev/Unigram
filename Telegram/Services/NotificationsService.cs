@@ -367,7 +367,7 @@ namespace Telegram.Services
                 _notifyIconUnreadCount = unreadCount;
                 _notifyIconUnreadUnmutedCount = unreadUnmutedCount;
 
-                BridgeApplicationContext.SendUnreadCount(unreadCount, unreadUnmutedCount);
+                SystemTray.SetUnreadCount(unreadCount, unreadUnmutedCount);
             }
         }
 

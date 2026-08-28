@@ -265,7 +265,7 @@ namespace Telegram
 
             if (AppSettings.IsTrayVisible)
             {
-                await BridgeApplicationContext.LaunchAsync();
+                await SystemTray.ShowAsync();
             }
             else if (Constants.RELEASE && startKind == StartKind.Launch)
             {

@@ -14,6 +14,8 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 
+using Telegram.Common;
+
 namespace Telegram.Stub
 {
     class BridgeApplicationContext

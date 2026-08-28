@@ -108,7 +108,7 @@ namespace Telegram.Services
                     if (navigation != null)
                     {
                         // Terminate notify icon to make the update process smoother
-                        _ = BridgeApplicationContext.ExitAsync();
+                        _ = SystemTray.HideAsync();
 
                         await navigation.Dispatcher.DispatchAsync(async () =>
                         {

@@ -1208,6 +1208,7 @@ namespace Telegram.Views
 
 #if INSTRUMENTATION
             Logger.Info(DebugAnalyzeOrphans());
+            Logger.Info(Td.TdVectorStats.Report());
 #endif
 
             GarbageCollectionMonitor.DisconnectUnusedReferenceSources();
@@ -1321,7 +1322,7 @@ namespace Telegram.Views
             }
             else if (command is ShortcutCommand.Quit)
             {
-                await BridgeApplicationContext.ExitAsync();
+                await SystemTray.HideAsync();
                 await BootStrapper.ConsolidateAsync();
             }
             else if (command is ShortcutCommand.Close)
