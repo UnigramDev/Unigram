@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
@@ -23,7 +23,6 @@ using Telegram.Views.Stars.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Premium.Popups
@@ -229,7 +228,7 @@ namespace Telegram.Views.Premium.Popups
             }
         }
 
-        public partial class ReceivedGiftsCollection : ObservableCollection<ReceivedGift>, ISupportIncrementalLoading
+        public partial class ReceivedGiftsCollection : IncrementalCollection<ReceivedGift>
         {
             private readonly IClientService _clientService;
 
@@ -239,40 +238,37 @@ namespace Telegram.Views.Premium.Popups
                 : base(gifts)
             {
                 _clientService = clientService;
-                _nextOffset = string.IsNullOrEmpty(nextOffset) ? null : nextOffset;
+                _nextOffset = nextOffset;
+
+                HasMoreItems = nextOffset.Length > 0;
             }
 
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
             {
-                return IncrementalLoading.Run(async token =>
+                var totalCount = 0u;
+                var hasMoreItems = false;
+
+                var now = DateTime.Now.ToTimestamp();
+
+                var response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, _nextOffset, 50));
+                if (response is ReceivedGifts gifts)
                 {
-                    var totalCount = 0u;
-                    var now = DateTime.Now.ToTimestamp();
-
-                    var response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, _nextOffset, 50));
-                    if (response is ReceivedGifts gifts)
+                    foreach (var gift in gifts.Gifts)
                     {
-                        foreach (var gift in gifts.Gifts)
+                        if (gift.Gift is SentGiftUpgraded && gift.CanBeTransferred && gift.NextTransferDate < now)
                         {
-                            if (gift.Gift is SentGiftUpgraded && gift.CanBeTransferred && gift.NextTransferDate < now)
-                            {
-                                Add(gift);
-                            }
-
-                            totalCount++;
+                            Add(gift);
                         }
 
-                        _nextOffset = string.IsNullOrEmpty(gifts.NextOffset) ? null : gifts.NextOffset;
+                        totalCount++;
                     }
 
-                    return new LoadMoreItemsResult
-                    {
-                        Count = totalCount
-                    };
-                });
-            }
+                    _nextOffset = gifts.NextOffset;
+                    hasMoreItems = gifts.NextOffset.Length > 0;
+                }
 
-            public bool HasMoreItems => _nextOffset != null;
+                return new IncrementalLoadResult(totalCount, hasMoreItems);
+            }
         }
 
         private async void OnItemClick(object sender, ItemClickEventArgs e)

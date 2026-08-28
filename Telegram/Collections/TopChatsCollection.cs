@@ -5,21 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class TopChatsCollection : RangeObservableCollection<Chat>, ISupportIncrementalLoading
+    public partial class TopChatsCollection : IncrementalCollection<Chat>
     {
         private readonly IClientService _clientService;
         private readonly TopChatCategory _category;
         private readonly int _limit;
-
-        private bool _hasMore = true;
 
         public TopChatsCollection(IClientService clientService, TopChatCategory category, int limit)
         {
@@ -28,31 +24,22 @@ namespace Telegram.Collections
             _limit = limit;
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        // One response covers the category, so there is never a second page.
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
+            var totalCount = 0u;
+
+            var response = await _clientService.SendAsync(new GetTopChats(_category, _limit));
+            if (response is Chats chats)
             {
-                count = 0;
-
-                var response = await _clientService.SendAsync(new GetTopChats(_category, _limit));
-                if (response is Chats chats)
+                foreach (var chat in _clientService.GetChats(chats.ChatIds))
                 {
-                    foreach (var id in chats.ChatIds)
-                    {
-                        var chat = _clientService.GetChat(id);
-                        if (chat != null)
-                        {
-                            Add(chat);
-                            count++;
-                        }
-                    }
+                    Add(chat);
+                    totalCount++;
                 }
+            }
 
-                _hasMore = false;
-                return new LoadMoreItemsResult { Count = count };
-            });
+            return new IncrementalLoadResult(totalCount, false);
         }
-
-        public bool HasMoreItems => _hasMore;
     }
 }

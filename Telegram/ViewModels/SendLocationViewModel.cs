@@ -5,14 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
@@ -55,7 +52,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public partial class VenueCollection : ObservableCollection<Venue>, ISupportIncrementalLoading
+    public partial class VenueCollection : IncrementalCollection<Venue>
     {
         private readonly ILocationService _locationService;
         private readonly double _latitude;
@@ -63,8 +60,6 @@ namespace Telegram.ViewModels
         private readonly string _query;
 
         private string _nextOffset;
-        private bool _hasMoreItems = true;
-
         public VenueCollection(ILocationService locationService, double latitude, double longitude, string query)
         {
             _locationService = locationService;
@@ -73,27 +68,22 @@ namespace Telegram.ViewModels
             _query = query;
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
+            var totalCount = 0u;
+
+            var response = await _locationService.GetVenuesAsync(0, _latitude, _longitude, _query, _nextOffset);
+
+            foreach (var item in response.Venues)
             {
-                var response = await _locationService.GetVenuesAsync(0, _latitude, _longitude, _query, _nextOffset);
-                var count = 0u;
+                Add(item);
+                totalCount++;
+            }
 
-                foreach (var item in response.Venues)
-                {
-                    Add(item);
-                    count++;
-                }
+            _nextOffset = response.NextOffset;
 
-                _hasMoreItems = !string.IsNullOrEmpty(response.NextOffset);
-                _nextOffset = response.NextOffset;
-
-                return new LoadMoreItemsResult { Count = count };
-            });
+            return new IncrementalLoadResult(totalCount, !string.IsNullOrEmpty(response.NextOffset));
         }
-
-        public bool HasMoreItems => _hasMoreItems;
     }
 
     public partial class VenueDiffHandler : IDiffHandler<Venue>

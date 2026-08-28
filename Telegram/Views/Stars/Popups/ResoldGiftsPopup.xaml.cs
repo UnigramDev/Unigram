@@ -354,7 +354,7 @@ namespace Telegram.Views.Stars.Popups
         }
     }
 
-    public partial class ResoldGiftsCollection : ObservableCollection<GiftForResale>, ISupportIncrementalLoading
+    public partial class ResoldGiftsCollection : IncrementalCollection<GiftForResale>
     {
         private readonly IClientService _clientService;
         private readonly IResoldGiftsPopup _popup;
@@ -366,7 +366,6 @@ namespace Telegram.Views.Stars.Popups
         private readonly IList<UpgradedGiftAttributeId> _attributes = Array.Empty<UpgradedGiftAttributeId>();
 
         private string _nextOffset = string.Empty;
-        private bool _hasMoreItems = true;
 
         public ResoldGiftsCollection(IClientService clientService, IResoldGiftsPopup popup, long giftId, GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
         {
@@ -386,14 +385,10 @@ namespace Telegram.Views.Stars.Popups
             _attributes = Array.Empty<UpgradedGiftAttributeId>();
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-        {
-            return IncrementalLoading.Run(LoadMoreItemsAsync);
-        }
-
-        private async Task<LoadMoreItemsResult> LoadMoreItemsAsync(CancellationToken token)
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await _clientService.SendAsync(new SearchGiftsForResale(_giftId, _order, _forCrafting, _forStars, _attributes, _nextOffset, 24));
             if (response is GiftsForResale gifts)
@@ -407,21 +402,16 @@ namespace Telegram.Views.Stars.Popups
                 _popup.UpdateItems(gifts, _attributes.Empty());
 
                 _nextOffset = gifts.NextOffset;
-                _hasMoreItems = gifts.NextOffset.Length > 0;
+                hasMoreItems = gifts.NextOffset.Length > 0;
             }
             else
             {
                 _nextOffset = string.Empty;
-                _hasMoreItems = false;
+                hasMoreItems = false;
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems => _hasMoreItems;
 
         public GiftForResaleOrder Order => _order;
     }

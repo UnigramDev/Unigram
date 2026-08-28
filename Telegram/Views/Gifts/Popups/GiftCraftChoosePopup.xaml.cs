@@ -8,11 +8,9 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -22,16 +20,14 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Stars.Popups;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Gifts.Popups
 {
-    public partial class GiftsForCraftingCollection : ObservableCollection<ReceivedGift>, ISupportIncrementalLoading
+    public partial class GiftsForCraftingCollection : IncrementalCollection<ReceivedGift>
     {
         private readonly IClientService _clientService;
         private readonly long _giftId;
@@ -41,24 +37,20 @@ namespace Telegram.Views.Gifts.Popups
         private readonly IList<UpgradedGiftAttributeId> _attributes = Array.Empty<UpgradedGiftAttributeId>();
 
         private string _nextOffset = string.Empty;
-        private bool _hasMoreItems = true;
-
         public GiftsForCraftingCollection(IClientService clientService, long giftId, GiftsForCrafting crafting)
             : base(crafting.Gifts.Where(x => x.Gift is SentGiftUpgraded upgraded && upgraded.Gift.OwnerId.IsUser(clientService.Options.MyId)))
         {
             _clientService = clientService;
             _giftId = giftId;
             _nextOffset = crafting.NextOffset;
+
+            HasMoreItems = crafting.NextOffset.Length > 0;
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-        {
-            return IncrementalLoading.Run(LoadMoreItemsAsync);
-        }
-
-        private async Task<LoadMoreItemsResult> LoadMoreItemsAsync(CancellationToken token)
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
+            var hasMoreItems = false;
 
             var response = await _clientService.SendAsync(new GetGiftsForCrafting(_giftId, _nextOffset, 24));
             if (response is GiftsForCrafting gifts)
@@ -73,21 +65,15 @@ namespace Telegram.Views.Gifts.Popups
                 }
 
                 _nextOffset = gifts.NextOffset;
-                _hasMoreItems = gifts.NextOffset.Length > 0;
+                hasMoreItems = gifts.NextOffset.Length > 0;
             }
             else
             {
                 _nextOffset = string.Empty;
-                _hasMoreItems = false;
             }
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems => _hasMoreItems;
 
         public GiftForResaleOrder Order => _order;
     }

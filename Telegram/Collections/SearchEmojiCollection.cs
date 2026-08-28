@@ -5,20 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchEmojiCollection : ObservableCollection<object>, ISupportIncrementalLoading
+    public partial class SearchEmojiCollection : IncrementalCollection<object>
     {
         private readonly IClientService _clientService;
         private readonly string _query;
@@ -31,55 +28,46 @@ namespace Telegram.Collections
             _mode = mode;
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        // One response covers the query, so there is never a second page.
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
+            var totalCount = 0u;
+            var inputLanguage = NativeUtils.GetKeyboardCulture();
+
+            var response = await _clientService.SendAsync(new SearchEmojis(_query, new[] { inputLanguage }));
+            if (response is EmojiKeywords suggestions)
             {
-                var total = 0u;
-                var inputLanguage = NativeUtils.GetKeyboardCulture();
-
-                var response = await _clientService.SendAsync(new SearchEmojis(_query, new[] { inputLanguage }));
-                if (response is EmojiKeywords suggestions)
+                if (_clientService.IsPremium)
                 {
-                    if (_clientService.IsPremium)
+                    var stickers = await Emoji.SearchAsync(_clientService, suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji).Select(x => x.Emoji));
+
+                    foreach (var item in stickers)
                     {
-                        var stickers = await Emoji.SearchAsync(_clientService, suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji).Select(x => x.Emoji));
-
-                        foreach (var item in stickers)
-                        {
-                            Add(item);
-                            total++;
-                        }
-                    }
-
-                    if (_mode == EmojiDrawerMode.Chat)
-                    {
-                        foreach (var item in suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
-                        {
-                            var emoji = item.Emoji;
-                            if (Emoji.EmojiGroupInternal._skinEmojis.Contains(emoji) || Emoji.EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
-                            {
-                                Add(AppSettings.Emoji.GetEmojiSkinTone(emoji));
-                            }
-                            else
-                            {
-                                Add(new EmojiData(item.Emoji));
-                            }
-
-                            total++;
-                        }
+                        Add(item);
+                        totalCount++;
                     }
                 }
 
-                HasMoreItems = false;
-
-                return new LoadMoreItemsResult
+                if (_mode == EmojiDrawerMode.Chat)
                 {
-                    Count = total
-                };
-            });
-        }
+                    foreach (var item in suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
+                    {
+                        var emoji = item.Emoji;
+                        if (Emoji.EmojiGroupInternal._skinEmojis.Contains(emoji) || Emoji.EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
+                        {
+                            Add(AppSettings.Emoji.GetEmojiSkinTone(emoji));
+                        }
+                        else
+                        {
+                            Add(new EmojiData(item.Emoji));
+                        }
 
-        public bool HasMoreItems { get; private set; } = true;
+                        totalCount++;
+                    }
+                }
+            }
+
+            return new IncrementalLoadResult(totalCount, false);
+        }
     }
 }

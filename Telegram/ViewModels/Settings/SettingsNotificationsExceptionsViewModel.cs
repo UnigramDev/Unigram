@@ -6,7 +6,6 @@
 //
 
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -17,9 +16,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -70,12 +67,10 @@ namespace Telegram.ViewModels.Settings
 
         public ItemsCollection Items { get; private set; }
 
-        public partial class ItemsCollection : RangeObservableCollection<Chat>, ISupportIncrementalLoading
+        public partial class ItemsCollection : IncrementalCollection<Chat>
         {
             private readonly IClientService _clientService;
             private readonly NotificationSettingsScope _scope;
-
-            private bool _hasMoreItems = true;
 
             public ItemsCollection(IClientService clientService, NotificationSettingsScope scope)
             {
@@ -83,38 +78,34 @@ namespace Telegram.ViewModels.Settings
                 _scope = scope;
             }
 
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            // One response covers the scope, so there is never a second page.
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
             {
-                return IncrementalLoading.Run(async token =>
+                var totalCount = 0u;
+
+                var response = await _clientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false));
+                if (response is Telegram.Td.Api.Chats chats)
                 {
-                    var response = await _clientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false));
-                    if (response is Telegram.Td.Api.Chats chats)
+                    foreach (var chat in _clientService.GetChats(chats.ChatIds))
                     {
-                        foreach (var chat in _clientService.GetChats(chats.ChatIds))
+                        if (_clientService.TryGetUser(chat.Id, out User user))
                         {
-                            if (_clientService.TryGetUser(chat.Id, out User user))
-                            {
-                                if (user.Type is not UserTypeDeleted)
-                                {
-                                    Add(chat);
-                                }
-                            }
-                            else
+                            if (user.Type is not UserTypeDeleted)
                             {
                                 Add(chat);
+                                totalCount++;
                             }
                         }
-
-                        _hasMoreItems = false;
-                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
+                        else
+                        {
+                            Add(chat);
+                        }
                     }
+                }
 
-                    _hasMoreItems = false;
-                    return new LoadMoreItemsResult();
-                });
+
+                return new IncrementalLoadResult(totalCount, false);
             }
-
-            public bool HasMoreItems => _hasMoreItems;
         }
 
         public async void ChooseSound()

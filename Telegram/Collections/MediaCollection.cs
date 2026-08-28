@@ -5,17 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class MediaCollection : ObservableCollection<MessageWithOwner>, ISupportIncrementalLoading
+    public partial class MediaCollection : IncrementalCollection<MessageWithOwner>
     {
         private readonly IClientService _clientService;
         private readonly SearchMessagesFilter _filter;
@@ -25,7 +22,6 @@ namespace Telegram.Collections
 
         private string _nextOffset;
         private long _nextFromMessageId;
-        private bool _hasMore = true;
 
         public SearchMessagesFilter Filter => _filter;
 
@@ -45,67 +41,52 @@ namespace Telegram.Collections
             _query = query ?? string.Empty;
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
+            var totalCount = 0u;
+            var hasMoreItems = false;
+
+            Function func;
+            if (_chatId != 0)
             {
-                var count = 0u;
+                func = new SearchChatMessages(_chatId, _topic, _query, null, _nextFromMessageId, 0, 50, _filter);
+            }
+            else
+            {
+                func = new SearchMessages(new ChatListMain(), _query, _nextOffset ?? string.Empty, 50, _filter, null, 0, 0);
+            }
 
-                Function func;
-                if (_chatId != 0)
+            var response = await _clientService.SendAsync(func);
+            if (response is FoundChatMessages foundChatMessages)
+            {
+                if (foundChatMessages.NextFromMessageId != 0)
                 {
-                    func = new SearchChatMessages(_chatId, _topic, _query, null, _nextFromMessageId, 0, 50, _filter);
-                }
-                else
-                {
-                    func = new SearchMessages(new ChatListMain(), _query, _nextOffset ?? string.Empty, 50, _filter, null, 0, 0);
-                }
-
-                var response = await _clientService.SendAsync(func);
-                if (response is FoundChatMessages foundChatMessages)
-                {
-                    if (foundChatMessages.NextFromMessageId != 0)
-                    {
-                        _nextFromMessageId = foundChatMessages.NextFromMessageId;
-                        _hasMore = true;
-                    }
-                    else
-                    {
-                        _hasMore = false;
-                    }
-
-                    foreach (var message in foundChatMessages.Messages)
-                    {
-                        Add(new MessageWithOwner(_clientService, message));
-                        count++;
-                    }
-                }
-                else if (response is FoundMessages foundMessages)
-                {
-                    if (foundMessages.NextOffset.Length > 0)
-                    {
-                        _nextOffset = foundMessages.NextOffset;
-                        _hasMore = true;
-                    }
-                    else
-                    {
-                        _hasMore = false;
-                    }
-
-                    foreach (var message in foundMessages.Messages)
-                    {
-                        Add(new MessageWithOwner(_clientService, message));
-                        count++;
-                    }
+                    _nextFromMessageId = foundChatMessages.NextFromMessageId;
+                    hasMoreItems = foundChatMessages.NextFromMessageId != 0;
                 }
 
-                return new LoadMoreItemsResult
+                foreach (var message in foundChatMessages.Messages)
                 {
-                    Count = count
-                };
-            });
+                    Add(new MessageWithOwner(_clientService, message));
+                    totalCount++;
+                }
+            }
+            else if (response is FoundMessages foundMessages)
+            {
+                if (foundMessages.NextOffset.Length > 0)
+                {
+                    _nextOffset = foundMessages.NextOffset;
+                    hasMoreItems = foundMessages.NextOffset.Length > 0;
+                }
+
+                foreach (var message in foundMessages.Messages)
+                {
+                    Add(new MessageWithOwner(_clientService, message));
+                    totalCount++;
+                }
+            }
+
+            return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
-
-        public bool HasMoreItems => _hasMore;
     }
 }

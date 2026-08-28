@@ -6,15 +6,13 @@
 //
 
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchChatMessagesCollection : RangeObservableCollection<Message>, ISupportIncrementalLoading
+    public partial class SearchChatMessagesCollection : IncrementalCollection<Message>
     {
         private readonly IClientService _clientService;
 
@@ -28,8 +26,6 @@ namespace Telegram.Collections
 
         private long _fromMessageId;
         private string _fromOffset = string.Empty;
-
-        private bool _hasMoreItems = true;
 
         private readonly SearchMessagesFilter _filter;
 
@@ -58,74 +54,56 @@ namespace Telegram.Collections
 
         public IClientService ClientService => _clientService;
 
-        public int TotalCount { get; private set; }
-
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
+            Function function;
+            if (_secretChat)
             {
-                Function function;
-                if (_secretChat)
+                function = new SearchSecretMessages(_chatId, _query, _fromOffset, 50, _filter);
+            }
+            else
+            {
+                var fromMessageId = _fromMessageId;
+                var offset = -49;
+
+                var last = this.LastOrDefault();
+                if (last != null)
                 {
-                    function = new SearchSecretMessages(_chatId, _query, _fromOffset, 50, _filter);
+                    fromMessageId = last.Id;
+                    offset = 0;
+                }
+
+                if (_savedMessagesTag != null)
+                {
+                    function = new SearchSavedMessages(_savedMessagesTopicId, _savedMessagesTag, _query, fromMessageId, offset, (int)count);
                 }
                 else
                 {
-                    var fromMessageId = _fromMessageId;
-                    var offset = -49;
-
-                    var last = this.LastOrDefault();
-                    if (last != null)
-                    {
-                        fromMessageId = last.Id;
-                        offset = 0;
-                    }
-
-                    if (_savedMessagesTag != null)
-                    {
-                        function = new SearchSavedMessages(_savedMessagesTopicId, _savedMessagesTag, _query, fromMessageId, offset, (int)count);
-                    }
-                    else
-                    {
-                        function = new SearchChatMessages(_chatId, _topic, _query, _sender, fromMessageId, offset, (int)count, _filter);
-                    }
+                    function = new SearchChatMessages(_chatId, _topic, _query, _sender, fromMessageId, offset, (int)count, _filter);
                 }
+            }
 
-                var response = await _clientService.SendAsync(function);
-                if (response is FoundChatMessages chatMessages)
-                {
-                    TotalCount = chatMessages.TotalCount;
-                    AddRange(chatMessages.Messages);
+            var response = await _clientService.SendAsync(function);
+            if (response is FoundChatMessages chatMessages)
+            {
+                TotalCount = chatMessages.TotalCount;
+                AddRange(chatMessages.Messages);
 
-                    _fromMessageId = chatMessages.NextFromMessageId;
-                    _hasMoreItems = chatMessages.NextFromMessageId != 0;
+                _fromMessageId = chatMessages.NextFromMessageId;
 
-                    return new LoadMoreItemsResult
-                    {
-                        Count = (uint)chatMessages.Messages.Count
-                    };
-                }
-                else if (response is FoundMessages messages)
-                {
-                    TotalCount = messages.TotalCount;
-                    AddRange(messages.Messages);
+                return new IncrementalLoadResult((uint)chatMessages.Messages.Count, chatMessages.NextFromMessageId != 0);
+            }
+            else if (response is FoundMessages messages)
+            {
+                TotalCount = messages.TotalCount;
+                AddRange(messages.Messages);
 
-                    _fromOffset = messages.NextOffset;
-                    _hasMoreItems = messages.NextOffset.Length > 0;
+                _fromOffset = messages.NextOffset;
 
-                    return new LoadMoreItemsResult
-                    {
-                        Count = (uint)messages.Messages.Count
-                    };
-                }
+                return new IncrementalLoadResult((uint)messages.Messages.Count, messages.NextOffset.Length > 0);
+            }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = 0
-                };
-            });
+            return default;
         }
-
-        public bool HasMoreItems => _hasMoreItems;
     }
 }

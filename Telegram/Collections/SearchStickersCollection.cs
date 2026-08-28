@@ -7,26 +7,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Controls.Chats;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public partial class SearchStickersCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+    public partial class SearchStickersCollection : IncrementalCollection<object>, IAutocompleteCollection
     {
+        enum Phase
+        {
+            None,
+            GetStickers,
+            SearchStickers
+        }
+
         private readonly IClientService _clientService;
         private readonly StickerType _type;
         private readonly string _query;
         private readonly long _chatId;
 
-        private bool _first = true;
-        private bool _hasMore = true;
+        private Phase _phase = Phase.GetStickers;
 
         private readonly HashSet<int> _ids;
 
@@ -40,59 +44,57 @@ namespace Telegram.Collections
             _chatId = chatId;
 
             _ids = new HashSet<int>();
+            _phase = AppSettings.Stickers.SuggestionMode != StickersSuggestionMode.None
+                ? Phase.GetStickers
+                : AppSettings.Stickers.SuggestionMode == StickersSuggestionMode.All && _type is not StickerTypeCustomEmoji
+                ? Phase.SearchStickers
+                : Phase.None;
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
-            return IncrementalLoading.Run(async token =>
+            var totalCount = 0u;
+
+            if (_phase == Phase.GetStickers)
             {
-                count = 0;
+                _phase = AppSettings.Stickers.SuggestionMode == StickersSuggestionMode.All && _type is not StickerTypeCustomEmoji
+                    ? Phase.SearchStickers
+                    : Phase.None;
 
-                if (_first && AppSettings.Stickers.SuggestionMode != StickersSuggestionMode.None)
+                var response = await _clientService.SendAsync(new GetStickers(_type, _query, 1000, _chatId));
+                if (response is Stickers stickers)
                 {
-                    _first = false;
-
-                    var response = await _clientService.SendAsync(new GetStickers(_type, _query, 1000, _chatId));
-                    if (response is Stickers stickers)
+                    foreach (var sticker in stickers.StickersValue)
                     {
-                        foreach (var sticker in stickers.StickersValue)
-                        {
-                            _ids.Add(sticker.StickerValue.Id);
+                        _ids.Add(sticker.StickerValue.Id);
 
-                            Add(sticker);
-                            count++;
-                        }
+                        Add(sticker);
+                        totalCount++;
                     }
                 }
-                else if (!_first && AppSettings.Stickers.SuggestionMode == StickersSuggestionMode.All && _type is not StickerTypeCustomEmoji)
+            }
+            else if (_phase == Phase.SearchStickers)
+            {
+                _phase = Phase.None;
+
+                var response = await _clientService.SendAsync(new SearchStickers(_type, _query, string.Empty, Array.Empty<string>(), 0, 20));
+                if (response is Stickers stickers)
                 {
-                    _hasMore = false;
-
-                    var response = await _clientService.SendAsync(new SearchStickers(_type, _query, string.Empty, Array.Empty<string>(), 0, 20));
-                    if (response is Stickers stickers)
+                    foreach (var sticker in stickers.StickersValue)
                     {
-                        foreach (var sticker in stickers.StickersValue)
+                        if (_ids.Contains(sticker.StickerValue.Id))
                         {
-                            if (_ids.Contains(sticker.StickerValue.Id))
-                            {
-                                continue;
-                            }
-
-                            Add(sticker);
-                            count++;
+                            continue;
                         }
+
+                        Add(sticker);
+                        totalCount++;
                     }
                 }
-                else
-                {
-                    _hasMore = false;
-                }
+            }
 
-                return new LoadMoreItemsResult { Count = count };
-            });
+            return new IncrementalLoadResult(totalCount, _phase != Phase.None);
         }
-
-        public bool HasMoreItems => _hasMore;
 
         public string Query => _query;
 
