@@ -472,7 +472,7 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateAlbumCoverFile(object target, File file)
+        private void UpdateAlbumCoverFile(File file)
         {
             // Delivered on a TDLib thread: PlaybackService is neither a FrameworkElement nor a
             // ViewModelBase, so the aggregator has nothing to marshal through.

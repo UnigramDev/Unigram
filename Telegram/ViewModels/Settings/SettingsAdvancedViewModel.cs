@@ -97,7 +97,7 @@ namespace Telegram.ViewModels.Settings
             BeginOnUIThread(() => UpdateFile(_update = update.Update, update.Update.Document, true));
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_update, file, false);
         }

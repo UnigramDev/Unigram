@@ -47,7 +47,7 @@ namespace Telegram.Streams
         {
             if (_state.IsDownloadingCompleted() && download != DelayedFileDownload.Unloaded)
             {
-                handler?.Invoke(sender, _file);
+                handler?.Invoke(_file);
                 return;
             }
 
@@ -61,11 +61,11 @@ namespace Telegram.Streams
                 _clientService.DownloadFile(_file.Id, download == DelayedFileDownload.Playing ? 16 : 15);
             }
 
-            void UpdateFile(object target, File update)
+            void UpdateFile(File update)
             {
                 if (_state.IsDownloadingCompleted())
                 {
-                    handler(target, update);
+                    handler(update);
                 }
             }
 

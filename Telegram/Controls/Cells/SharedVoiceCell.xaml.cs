@@ -168,7 +168,7 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }
@@ -218,7 +218,7 @@ namespace Telegram.Controls.Cells
             Button.Progress = 1;
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             if (TryGetVideoNote(_message?.Content, out VideoNote videoNote))
             {

@@ -466,7 +466,7 @@ namespace Telegram.Controls
             return null;
         }
 
-        private void UpdateSource(object target, File file)
+        private void UpdateSource(File file)
         {
             Source = GetSource(_clientService, _file, null, _width, _height, _blurRadius, false, true);
         }

@@ -91,7 +91,7 @@ namespace Telegram.Controls.Messages.Content
             UpdateFile(message, animation.AnimationValue);
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }
@@ -178,7 +178,7 @@ namespace Telegram.Controls.Messages.Content
             Button.Opacity = Player.Source == null ? 1 : 0;
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             var animation = GetContent(_message, out bool isSecret, out _);
             if (animation == null || !_templateApplied)

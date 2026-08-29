@@ -194,7 +194,7 @@ namespace Telegram.Controls.Gallery
             ViewModel.AdvertisementDisplayed();
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateThumbnail(file);
         }

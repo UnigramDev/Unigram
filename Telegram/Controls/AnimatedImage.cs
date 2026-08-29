@@ -1031,7 +1031,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void UpdateFile(object target, Td.Api.File file)
+        private void UpdateFile(File file)
         {
             if (_loaded > 0)
             {

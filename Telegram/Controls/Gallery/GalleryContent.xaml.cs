@@ -229,7 +229,7 @@ namespace Telegram.Controls.Gallery
             IsTextNotRecognized = false;
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_item, file);
         }
@@ -320,7 +320,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             UpdateThumbnail(_item, file, null, false);
         }

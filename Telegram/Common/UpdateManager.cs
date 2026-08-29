@@ -72,17 +72,17 @@ namespace Telegram.Common
 
         #region Subscribe by ref
 
-        public static void Subscribe(object sender, MessageWithOwner message, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
+        public static void Subscribe(object subscriber, MessageWithOwner message, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, message.ClientService.SessionId, file, ref token, handler, completionOnly);
+            Subscribe(subscriber, message.ClientService.SessionId, file, ref token, handler, completionOnly);
         }
 
-        public static void Subscribe(object sender, IClientService clientService, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
+        public static void Subscribe(object subscriber, IClientService clientService, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, clientService.SessionId, file, ref token, handler, completionOnly);
+            Subscribe(subscriber, clientService.SessionId, file, ref token, handler, completionOnly);
         }
 
-        public static void Subscribe(object sender, int sessionId, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
+        public static void Subscribe(object subscriber, int sessionId, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
         {
             var value = CreateToken(sessionId, file.Id, completionOnly);
 
@@ -92,7 +92,7 @@ namespace Telegram.Common
             }
             else if (token != 0)
             {
-                Unsubscribe(sender, token);
+                Unsubscribe(subscriber, token);
             }
 
             token = value;
@@ -100,7 +100,7 @@ namespace Telegram.Common
             while (true)
             {
                 var subscription = _subscriptions.GetOrAdd(value, static _ => new Subscription());
-                subscription.Subscribe(sender, handler);
+                subscription.Subscribe(subscriber, handler);
 
                 // A publish or an unsubscribe can drop an empty subscription between the lookup and
                 // the line above, and a subscriber left on an instance the dictionary no longer
@@ -116,18 +116,18 @@ namespace Telegram.Common
 
         #endregion
 
-        public static void Unsubscribe(object sender, ref long token)
+        public static void Unsubscribe(object subscriber, ref long token)
         {
             if (token != 0)
             {
-                Unsubscribe(sender, token);
+                Unsubscribe(subscriber, token);
                 token = 0;
             }
         }
 
-        private static void Unsubscribe(object sender, long token)
+        private static void Unsubscribe(object subscriber, long token)
         {
-            if (_subscriptions.TryGetValue(token, out var subscription) && subscription.Unsubscribe(sender))
+            if (_subscriptions.TryGetValue(token, out var subscription) && subscription.Unsubscribe(subscriber))
             {
                 _subscriptions.TryRemove(token, out _);
             }
@@ -192,10 +192,15 @@ namespace Telegram.Common
 
         #region Drains
 
-        private static readonly Dictionary<object, Drain> _drainsByDispatcher = new();
+        private static readonly ConcurrentDictionary<object, Drain> _drainsByDispatcher = new();
         private static readonly object _drainsLock = new();
 
         private static Drain[] _drains = Array.Empty<Drain>();
+
+        // The drain of whichever UI thread this is - see GetDrain, which is the only thing allowed
+        // to trust it.
+        [ThreadStatic]
+        private static Drain _threadDrain;
 
         /// <summary>
         /// The thread a subscriber has to be called on, or null for one that is called where the
@@ -220,17 +225,50 @@ namespace Telegram.Common
             return null;
         }
 
+        /// <summary>
+        /// The drain a new subscriber belongs to, or null for one to be called inline.
+        ///
+        /// Only for subscribing. A control subscribes from its own thread and a thread has one
+        /// dispatcher, so the drain is the calling thread's - taken from a thread-static rather
+        /// than by reading <see cref="DependencyObject.Dispatcher"/>, which is a projected property
+        /// and this runs per cell, several times per cell, for as long as a list is scrolling.
+        ///
+        /// Should that ever not hold, nothing breaks: the first delivery finds the subscriber is
+        /// not on its thread and routes it to the one it is on (see InvokeDeferred). That is why
+        /// the guess is allowed to be a guess, and why the reroute may not use this.
+        ///
+        /// The cache is on the control branch alone, deliberately. A view model's dispatcher is an
+        /// ordinary property rather than a projected one, so there is nothing to save by caching it,
+        /// and it is an IDispatcherContext where a control's is a CoreDispatcher - one thread-static
+        /// cannot stand for both, and handing a view model the control's drain would only send it
+        /// round the reroute. Keying both on DispatcherQueue would make the two branches one; it
+        /// would also buy nothing. Subscribing runs in the thousands a second while a list scrolls,
+        /// delivering in the tens.
+        /// </summary>
         private static Drain GetDrain(object subscriber)
         {
-            var dispatcher = DispatcherOf(subscriber);
-            if (dispatcher == null)
+            if (subscriber is FrameworkElement element)
             {
-                return null;
+                return _threadDrain ??= GetOrCreateDrain(element.Dispatcher);
+            }
+            else if (subscriber is ViewModelBase viewModel && viewModel.Dispatcher != null)
+            {
+                return GetOrCreateDrain(viewModel.Dispatcher);
+            }
+
+            return null;
+        }
+
+        private static Drain GetOrCreateDrain(object dispatcher)
+        {
+            if (_drainsByDispatcher.TryGetValue(dispatcher, out var drain))
+            {
+                return drain;
             }
 
             lock (_drainsLock)
             {
-                if (_drainsByDispatcher.TryGetValue(dispatcher, out var drain))
+                if (_drainsByDispatcher.TryGetValue(dispatcher, out drain))
                 {
                     return drain;
                 }
@@ -245,8 +283,10 @@ namespace Telegram.Common
                 Array.Copy(_drains, updated, _drains.Length);
                 updated[_drains.Length] = drain;
 
-                _drainsByDispatcher[dispatcher] = drain;
+                // Into the array before the dictionary: whoever finds the drain may set its bit
+                // straight away, and a publish that then matches that bit has to find it here.
                 Volatile.Write(ref _drains, updated);
+                _drainsByDispatcher[dispatcher] = drain;
 
                 return drain;
             }
@@ -540,13 +580,13 @@ namespace Telegram.Common
                     else if (owner != null)
                     {
                         // Not on this thread. Hand the update over only if the file was not queued
-                        // on its thread at all - a subscriber that moved after it subscribed, which
-                        // a view model handed a dispatcher can do. Doing it unconditionally would
-                        // have two drains on one thread queue each other for ever, since neither
-                        // sees the other's subscribers as its own.
-                        var drain = GetDrain(entry.Key);
+                        // on its thread at all - a subscriber that moved after it subscribed, or
+                        // one whose thread the subscribe guessed wrong. Doing it unconditionally
+                        // would have two drains on one thread queue each other for ever, since
+                        // neither sees the other's subscribers as its own.
+                        var drain = GetOrCreateDrain(owner);
 
-                        if (drain != null && Route(drain))
+                        if (Route(drain))
                         {
                             drain.Enqueue(token, file);
                         }
@@ -561,7 +601,7 @@ namespace Telegram.Common
             {
                 try
                 {
-                    handler(subscriber, file);
+                    handler(file);
                     return true;
                 }
                 catch (InvalidComObjectException)

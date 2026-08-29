@@ -236,7 +236,7 @@ namespace Telegram.Controls.Messages.Content
 
         #endregion
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             if (_message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
             {
@@ -369,7 +369,7 @@ namespace Telegram.Controls.Messages.Content
             Button.Progress = 1;
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             var audio = GetContent(_message);
             if (audio == null || !_templateApplied)

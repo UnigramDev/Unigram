@@ -1058,17 +1058,17 @@ namespace Telegram.Controls.Stories
         private long _fileToken;
         private long _thumbnailToken;
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             UpdateThumbnail(_viewModel.SelectedItem, file, null, false);
         }
 
-        private void UpdatePhoto(object target, File file)
+        private void UpdatePhoto(File file)
         {
             UpdatePhoto(_viewModel.SelectedItem, file, false);
         }
 
-        private void UpdateVideo(object target, File file)
+        private void UpdateVideo(File file)
         {
             UpdateVideo(_viewModel.SelectedItem, file, false);
         }

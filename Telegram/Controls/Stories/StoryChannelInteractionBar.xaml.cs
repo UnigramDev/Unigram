@@ -338,7 +338,7 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private async void UpdateFile(object target, File file)
+        private async void UpdateFile(File file)
         {
             Presenter.Source = await GetLottieFrame(file.Local.Path, 0, FrameSize, FrameSize);
         }

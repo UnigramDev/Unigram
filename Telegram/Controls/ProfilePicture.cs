@@ -544,7 +544,7 @@ namespace Telegram.Controls
                 }
             }
 
-            private void UpdateFile(object target, File file)
+            private void UpdateFile(File file)
             {
                 _dispatcherQueue.TryEnqueue(() => Load(State.Update));
             }

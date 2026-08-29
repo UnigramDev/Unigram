@@ -32,11 +32,6 @@ namespace Telegram.Views.Popups
             this.BeginOnUIThread(() => Hide(ContentDialogResult.Primary));
         }
 
-        private void UpdateFile(object target, File file)
-        {
-            this.BeginOnUIThread(() => UpdateFile(file));
-        }
-
         private void UpdateFile(File file)
         {
             Status.IsIndeterminate = false;

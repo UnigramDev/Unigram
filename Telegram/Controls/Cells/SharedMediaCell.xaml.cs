@@ -160,7 +160,7 @@ namespace Telegram.Controls.Cells
             Overlay.Opacity = 0;
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             UpdateMessage(_message, false, _media);
         }

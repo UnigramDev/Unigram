@@ -41,6 +41,11 @@ namespace Telegram.Services
 
         private long _fileToken;
 
+        // The update the token above is watching. The handler is told which file changed, not what
+        // it was subscribed for, and this must stay the update the download was started for rather
+        // than _nextUpdate, which a later check can have moved on.
+        private CloudUpdate _fileCloud;
+
         private long? _chatId;
         private CloudUpdate _nextUpdate;
 
@@ -233,6 +238,8 @@ namespace Telegram.Services
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
                     {
                         _clientService.DownloadFile(cloud.Document.Id, 16);
+
+                        _fileCloud = cloud;
                         UpdateManager.Subscribe(cloud, _clientService, cloud.Document, ref _fileToken, UpdateFile, true);
                     }
                 }
@@ -241,9 +248,9 @@ namespace Telegram.Services
             _updateLock.Release();
         }
 
-        private async void UpdateFile(object target, File file)
+        private async void UpdateFile(File file)
         {
-            var cloud = target as CloudUpdate;
+            var cloud = _fileCloud;
             if (cloud == null)
             {
                 return;

@@ -246,7 +246,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }
@@ -338,7 +338,7 @@ namespace Telegram.Controls.Messages.Content
             UpdateSource();
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             var videoNote = GetContent(_message, out bool isSecret);
             if (videoNote == null || !_templateApplied)

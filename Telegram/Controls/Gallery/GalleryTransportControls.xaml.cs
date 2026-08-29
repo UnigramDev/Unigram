@@ -244,7 +244,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private void UpdateStoryboard(object sender, File file)
+        private void UpdateStoryboard(File file)
         {
             UpdateStoryboard(_item, false);
         }

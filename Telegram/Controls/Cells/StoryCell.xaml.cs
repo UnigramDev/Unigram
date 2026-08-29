@@ -82,12 +82,12 @@ namespace Telegram.Controls.Cells
         private long _fileToken;
         private long _thumbnailToken;
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             UpdateThumbnail(_viewModel, file, null, false);
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_viewModel, file, false);
         }

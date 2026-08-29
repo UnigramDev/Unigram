@@ -72,7 +72,7 @@ namespace Telegram.Services
             _aggregator = aggregator;
         }
 
-        private async void UpdateFile(object target, File file)
+        private async void UpdateFile(File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {

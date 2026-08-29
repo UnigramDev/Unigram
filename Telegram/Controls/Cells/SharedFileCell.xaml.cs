@@ -124,7 +124,7 @@ namespace Telegram.Controls.Cells
             UpdateFile(message, data.File);
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }

@@ -162,9 +162,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void UpdateFile(object sender, File file)
+        private void UpdateFile(File file)
         {
-            if (sender is NotificationSoundViewModel notificationSound && notificationSound.IsSelected)
+            if (IsSelected)
             {
                 SoundEffects.Play(file);
             }

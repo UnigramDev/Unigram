@@ -30,7 +30,7 @@ namespace Telegram.Streams
         {
             if (_file != null && _file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
             {
-                handler?.Invoke(sender, _file);
+                handler?.Invoke(_file);
             }
             else
             {
@@ -49,7 +49,7 @@ namespace Telegram.Streams
                 }
                 else if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
                 {
-                    handler?.Invoke(sender, _file);
+                    handler?.Invoke(_file);
                     return;
                 }
 

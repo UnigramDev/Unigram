@@ -217,5 +217,5 @@ namespace Telegram.Services
         }
     }
 
-    public delegate void UpdateHandler<T>(object target, T update);
+    public delegate void UpdateHandler<T>(T update);
 }

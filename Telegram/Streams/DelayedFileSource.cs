@@ -223,7 +223,7 @@ namespace Telegram.Streams
         {
             if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
             {
-                handler?.Invoke(sender, _file);
+                handler?.Invoke(_file);
             }
             else
             {

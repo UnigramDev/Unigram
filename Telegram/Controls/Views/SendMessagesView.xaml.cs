@@ -294,7 +294,7 @@ namespace Telegram.Controls.Views
             }
         }
 
-        private void Handle(object target, File update)
+        private void Handle(File update)
         {
             this.BeginOnUIThread(UpdateFiles);
         }

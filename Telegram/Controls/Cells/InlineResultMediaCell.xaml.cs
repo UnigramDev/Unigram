@@ -58,7 +58,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateThumbnail(object target, File update)
+        private void UpdateThumbnail(File update)
         {
             if (update.Local.IsDownloadingCompleted)
             {

@@ -69,7 +69,7 @@ namespace Telegram.Controls.Messages.Content
             UpdateFile(message, small.File);
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }

@@ -112,7 +112,7 @@ namespace Telegram.Controls.Messages.Content
             UpdateFile(message, document.DocumentValue);
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }
@@ -171,7 +171,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             var document = GetContent(_message);
             if (document == null || !_templateApplied)

@@ -290,7 +290,7 @@ namespace Telegram.Streams
 
         public override long Offset => _offset;
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             if (file.Id != _file.Id)
             {

@@ -74,7 +74,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateThumbnail(file);
         }

@@ -170,7 +170,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             UpdateFile(_message, file);
         }
@@ -333,7 +333,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             var photo = GetContent(_message, out _, out bool hasSpoiler, out bool isSecret, out _);
             if (photo == null || !_templateApplied)

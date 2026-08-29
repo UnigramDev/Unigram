@@ -163,7 +163,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
             var video = GetContent(_message, out Photo cover, out var lowQuality, out bool hasSpoiler, out bool isSecret);
             if (video != null && _templateApplied)
@@ -372,7 +372,7 @@ namespace Telegram.Controls.Messages.Content
             return string.Empty;
         }
 
-        private void UpdateThumbnail(object target, File file)
+        private void UpdateThumbnail(File file)
         {
             var video = GetContent(_message, out Photo cover, out _, out bool hasSpoiler, out bool isSecret);
             if (video == null || !_templateApplied)

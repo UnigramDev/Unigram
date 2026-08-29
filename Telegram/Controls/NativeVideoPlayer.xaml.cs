@@ -120,7 +120,7 @@ namespace Telegram.Controls
             UpdateManager.Subscribe(this, video.ClientService, video.File, ref _bufferedToken, UpdateBuffered);
         }
 
-        private void UpdateBuffered(object target, File update)
+        private void UpdateBuffered(File update)
         {
             var offset = update.Local.DownloadOffset + update.Local.DownloadedPrefixSize;
             OnBufferedChanged(_buffered = (double)offset / update.Size);

@@ -186,7 +186,7 @@ namespace Telegram.Controls.Chats
                         clientService.DownloadFile(file.Id, 16);
                     }
 
-                    UpdateManager.Subscribe(background, clientService, file, ref _fileToken, UpdateFile, true);
+                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
                 }
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
@@ -524,17 +524,11 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void UpdateFile(object target, File file)
+        private void UpdateFile(File file)
         {
-            if (file.Id == _backgroundId)
+            if (file.Id == _backgroundId && IsConnected)
             {
-                this.BeginOnUIThread(() =>
-                {
-                    if (IsConnected)
-                    {
-                        UpdateSource(null, _background, _thumbnail, _theme);
-                    }
-                });
+                UpdateSource(null, _background, _thumbnail, _theme);
             }
         }
     }

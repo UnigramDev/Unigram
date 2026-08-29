@@ -607,12 +607,12 @@ namespace Telegram.Views.Stars.Popups
             }
         }
 
-        private void UpdateMedia1(object target, File file)
+        private void UpdateMedia1(File file)
         {
             UpdateMedia(Media1, file);
         }
 
-        private void UpdateMedia2(object target, File file)
+        private void UpdateMedia2(File file)
         {
             UpdateMedia(Media2, file);
         }
