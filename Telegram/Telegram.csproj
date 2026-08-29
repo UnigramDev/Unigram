@@ -4739,15 +4739,6 @@
       <Name>Telegram.Native</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="RLottie">
-      <HintPath>$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
-      <Implementation>RLottie.dll</Implementation>
-    </Reference>
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
-  </ItemGroup>
   <PropertyGroup>
     <!-- OpenSSL is the one copied dependency whose file name carries the architecture. -->
     <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>

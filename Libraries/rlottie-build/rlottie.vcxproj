@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    rlottie is a submodule, so its build lives beside it rather than inside it: nothing here
+    shows up as a modification to the submodule, and updating it is still a plain checkout.
+    config.h sits here for the same reason - upstream generates it from cmake/config.h.in,
+    and there is no CMake step in this build.
+  -->
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8F4C6E21-7B3D-4A9E-9C55-2D1E4A7B6C30}</ProjectGuid>
+    <RootNamespace>rlottie</RootNamespace>
+    <ProjectName>rlottie</ProjectName>
+    <DefaultLanguage>en</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <!-- Plain C++: the Windows Store application type would otherwise force /ZW, which
+           C++/CX needs and rlottie does not, and which cannot coexist with /std:c++20. -->
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);..\rlottie\inc;..\rlottie\src\lottie;..\rlottie\src\vector;..\rlottie\src\vector\freetype;..\rlottie\src\vector\pixman;..\rlottie\src\vector\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LOT_BUILD;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <!-- Plain C++: the Windows Store application type would otherwise force /ZW, which
+           C++/CX needs and rlottie does not, and which cannot coexist with /std:c++20. -->
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);..\rlottie\inc;..\rlottie\src\lottie;..\rlottie\src\vector;..\rlottie\src\vector\freetype;..\rlottie\src\vector\pixman;..\rlottie\src\vector\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LOT_BUILD;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <!-- Plain C++: the Windows Store application type would otherwise force /ZW, which
+           C++/CX needs and rlottie does not, and which cannot coexist with /std:c++20. -->
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);..\rlottie\inc;..\rlottie\src\lottie;..\rlottie\src\vector;..\rlottie\src\vector\freetype;..\rlottie\src\vector\pixman;..\rlottie\src\vector\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LOT_BUILD;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <Optimization>MaxSpeed</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <!-- Plain C++: the Windows Store application type would otherwise force /ZW, which
+           C++/CX needs and rlottie does not, and which cannot coexist with /std:c++20. -->
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);..\rlottie\inc;..\rlottie\src\lottie;..\rlottie\src\vector;..\rlottie\src\vector\freetype;..\rlottie\src\vector\pixman;..\rlottie\src\vector\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LOT_BUILD;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <Optimization>MaxSpeed</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\rlottie\src\binding\c\lottieanimation_capi.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottieanimation.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottieitem.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottiekeypath.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottieloader.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottiemodel.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottieparser.cpp" />
+    <ClCompile Include="..\rlottie\src\lottie\lottieproxymodel.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\freetype\v_ft_math.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\freetype\v_ft_raster.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\freetype\v_ft_stroker.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\pixman\vregion.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\stb\stb_image.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vbezier.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vbitmap.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vbrush.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vcompositionfunctions.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vdasher.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vdebug.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vdrawable.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vdrawhelper.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vdrawhelper_neon.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vdrawhelper_sse2.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\velapsedtimer.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vimageloader.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vinterpolator.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vmatrix.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vpainter.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vpath.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vpathmesure.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vraster.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vrect.cpp" />
+    <ClCompile Include="..\rlottie\src\vector\vrle.cpp" />
+    <ClInclude Include="config.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

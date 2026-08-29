@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using RLottie;
 using System;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;

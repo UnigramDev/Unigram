@@ -286,3 +286,15 @@ _Pvt_Extensions
 
 # vcpkg manifest mode installs here
 /vcpkg_installed/
+
+# Prebuilt tlottie staticlibs. They live under lib/<arch>/, which the generic x64//ARM64/ build
+# output rules above would otherwise swallow.
+!/Libraries/tlottie/lib/x64/
+!/Libraries/tlottie/lib/ARM64/
+
+# rlottie is built in-tree from the submodule; the vcxproj beside it is the only source here.
+/Libraries/rlottie-build/rlottie/
+/Libraries/rlottie-build/x64/
+/Libraries/rlottie-build/ARM64/
+/Libraries/rlottie-build/Win32/
+/Libraries/rlottie-build/Generated Files/

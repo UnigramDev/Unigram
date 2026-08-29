@@ -91,6 +91,9 @@
     <Filter Include="AI">
       <UniqueIdentifier>{672d3627-1f9c-4ddb-94d7-15d35e5e91e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cache">
+      <UniqueIdentifier>{f8194a42-b7ad-4e28-89a0-c1c3a3f3a3bb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Media">
       <UniqueIdentifier>{fbafba8b-41cb-4c9e-8146-d54d4dac9573}</UniqueIdentifier>
     </Filter>
@@ -937,6 +940,16 @@
       <Filter>MicroTeX\utils</Filter>
     </ClCompile>
     <ClCompile Include="graphic_dwrite.cpp" />
+    <ClCompile Include="Cache\FrameCacheReader.cpp">
+      <Filter>Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="Cache\FrameCacheService.cpp">
+      <Filter>Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="Cache\FrameCacheWriter.cpp">
+      <Filter>Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="LottieAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1495,6 +1508,29 @@
       <Filter>MicroTeX\utils</Filter>
     </ClInclude>
     <ClInclude Include="graphic_dwrite.h" />
+    <ClInclude Include="Cache\FrameCacheFormat.h">
+      <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="Cache\FrameCacheReader.h">
+      <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="Cache\FrameCacheService.h">
+      <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="Cache\FrameCacheWriter.h">
+      <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="Cache\FrameCodec.h">
+      <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="Cache\FrameProducer.h">
+      <Filter>Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="LottieAnimation.h" />
+    <ClInclude Include="LottieFrameProducer.h" />
+    <ClInclude Include="LottieStringUtils.h" />
+    <ClInclude Include="TlottieFrameProducer.h" />
+    <ClInclude Include="VideoFrameProducer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Telegram.Native.def" />
@@ -1513,6 +1549,7 @@
     <Midl Include="LanguageIdentification.idl" />
     <Midl Include="QrBuffer.idl" />
     <Midl Include="CachedVideoAnimation.idl" />
+    <Midl Include="LottieAnimation.idl" />
     <Midl Include="BufferSurface.idl" />
     <Midl Include="Opus\OpusOutput.idl">
       <Filter>Opus</Filter>

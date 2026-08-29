@@ -8,23 +8,25 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using RLottie;
 using System;
 using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
+using Telegram.Native;
 using Telegram.Td.Api;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.UI.Composition;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -35,6 +37,10 @@ namespace Telegram.Controls
     {
         private CanvasControl Canvas;
         private CanvasBitmap[] _bitmaps;
+
+        // Reused across parts and frames: every part shares _frameSize.
+        private byte[] _pixels;
+        private IBuffer _pixelBuffer;
 
         private Grid LayoutRoot;
 
@@ -289,7 +295,18 @@ namespace Telegram.Controls
                     }
                 }
 
-                animations[i].RenderSync(_bitmaps[i], index[i]);
+                // LottieAnimation renders into an IBuffer and knows nothing about Win2D:
+                // keeping the CanvasBitmap on this side is what let Telegram.Native drop its
+                // Win2D dependency, which existed for this one caller.
+                var length = _frameSize.Width * _frameSize.Height * 4;
+                if (_pixels == null || _pixels.Length != length)
+                {
+                    _pixels = new byte[length];
+                    _pixelBuffer = _pixels.AsBuffer();
+                }
+
+                animations[i].RenderSync(_pixelBuffer, index[i]);
+                _bitmaps[i].SetPixelBytes(_pixels);
 
                 if (i == 1 && !_isLoopingEnabled[i])
                 {

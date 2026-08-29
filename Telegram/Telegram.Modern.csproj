@@ -225,18 +225,23 @@
   </ItemGroup>
 
   <!--
-    The three local WinRT components. A bare winmd Reference, which is what Telegram.csproj uses
-    for RLottie, is rejected here with NETSDK1130, so CsWinRT generates the projections instead.
+    The two local WinRT components. A bare winmd Reference, which is what Telegram.csproj used
+    for RLottie before lottie moved into Telegram.Native, is rejected here with NETSDK1130, so
+    CsWinRT generates the projections instead.
     Everything in CsWinRTInputs is read for metadata; only the namespaces in CsWinRTIncludes are
     emitted - which is why Win2D's winmd is an input (both components have Win2D types in their
     signatures) while Win2D itself still comes from its own package projection.
   -->
   <PropertyGroup>
-    <CsWinRTIncludes>RLottie;Telegram.Native</CsWinRTIncludes>
+    <CsWinRTIncludes>Telegram.Native</CsWinRTIncludes>
     <!-- 3 is the loudest level: it adds the casting, ternary, switch and constructor-argument
          cases on top of the defaults. Every AOT bug in this port so far was a marshalling
-         mistake that only showed up by running the feature, so noise here is worth paying for. -->
-    <CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
+         mistake that only showed up by running the feature, so noise here is worth paying for.
+
+         Conditioned, because this used to be unconditional and sits later in the file than the
+         Debug override above, so it silently won and Debug paid for ~1800 CsWinRT1034 diagnostics
+         on every compile - the exact cost that override was added to remove. -->
+    <CsWinRTAotWarningLevel Condition="'$(CsWinRTAotWarningLevel)' == ''">3</CsWinRTAotWarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -244,7 +249,6 @@
          IReferenceArray cases are diagnosed at build time rather than at the call site.
          3.0.0-preview is a different branch and cannot build UWP XAML. -->
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-    <CsWinRTInputs Include="..\Libraries\rlottie\$(Platform)\RLottie.winmd" />
     <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.winmd" />
     <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.winmd" />
     <CsWinRTInputs Include="$(NuGetPackageRoot)win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
@@ -323,11 +327,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <!-- Same reason as tdjson.pdb below: Telegram.csproj finds this one through RAR, off its
-         RLottie winmd Reference, and there is no Reference here to find it from. -->
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.pdb" />
+    <!-- Same reason as tdjson.pdb below: Telegram.csproj names these itself as copy-local
+         paths, and there is no Reference here to find them from. -->
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />

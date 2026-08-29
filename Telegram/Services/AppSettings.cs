@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using RLottie;
 using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Calls;
+using Telegram.Native;
 using Telegram.Services.Settings;
 
 namespace Telegram.Services

@@ -7,16 +7,17 @@ namespace Telegram.Native
     {
 		static CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, Int32 width, Int32 height, Boolean fit, Boolean precache, Boolean limitFps);
 
+        // No Cache/IsReadyToCache: the animation queues its own build after the first frame it
+        // decodes itself. IsCaching stays, because that build walks the decoder a direct render
+        // would use, so the caller does have to stand aside.
         void RenderSync(Windows.Storage.Streams.IBuffer bitmap, out Double seconds, out Boolean completed);
         void Stop();
-        void Cache();
 
         void Seek(Double seconds);
 
         Double FrameRate{ get; };
         Int32 TotalFrame{ get; };
         Boolean IsCaching{ get; };
-        Boolean IsReadyToCache{ get; };
 
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };

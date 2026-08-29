@@ -3,6 +3,7 @@
     <Platform Name="ARM64" />
     <Platform Name="x64" />
   </Configurations>
+  <Project Path="Libraries/rlottie-build/rlottie.vcxproj" Id="8f4c6e21-7b3d-4a9e-9c55-2d1e4a7b6c30" />
   <Project Path="Telegram.Generators/Telegram.Generators.csproj" />
   <Project Path="Telegram.Generators.WinRT/Telegram.Generators.WinRT.csproj" />
   <Project Path="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" Id="fdd3c45d-4cff-4a90-8fef-16ca70ab00be" />

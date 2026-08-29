@@ -2,26 +2,28 @@
 
 #include "CachedVideoAnimation.g.h"
 
-#include <stack>
-#include <mutex>
-#include <thread>
-#include <condition_variable>
+#include <atomic>
 #include <memory>
-#include <map>
+#include <string>
+#include <vector>
 
-#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
-
+#include "Cache/FrameCacheReader.h"
 #include "VideoAnimation.h"
+#include "VideoFrameProducer.h"
 
 using namespace winrt::Windows::Storage::Streams;
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
-
-#define CACHED_VERSION 8
 
 namespace winrt::Telegram::Native::implementation
 {
-    class WorkQueue;
-
+    // A video sticker, played from a cache file when there is one and decoded directly when there
+    // is not. Everything about building, compressing and storing that file now lives in
+    // Cache/FrameCacheService, shared with every other animation kind - this class holds a reader,
+    // a producer and a frame index, and nothing else.
+    //
+    // What used to be here and is gone: a private compress queue and worker thread, the LZ4 calls,
+    // the frame offset and timing tables, the per-instance decompression buffer, the per-key lock,
+    // and the partial-file handling. The lock is unnecessary because a cache file that exists is
+    // complete; the buffer is unnecessary because scratch belongs to the service.
     struct CachedVideoAnimation : CachedVideoAnimationT<CachedVideoAnimation>
     {
         CachedVideoAnimation() = default;
@@ -33,30 +35,20 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
-            if (m_decompressBuffer)
-            {
-                delete[] m_decompressBuffer;
-                m_decompressBuffer = nullptr;
-            }
+            m_reader.Close();
+            m_scratch.clear();
+            m_scratch.shrink_to_fit();
 
-            if (m_animation)
-            {
-                m_animation->Close();
-                m_animation = nullptr;
-            }
-
-            if (m_cacheHandle)
-            {
-                CloseHandle(m_cacheHandle);
-                m_cacheHandle = INVALID_HANDLE_VALUE;
-            }
+            // Only this animation's reference. A build in flight holds its own, and the producer
+            // goes when that ends - never underneath it.
+            m_producer = nullptr;
+            m_file = nullptr;
         }
 
         static winrt::Telegram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool fit, bool precache, bool limitFps);
 
         void RenderSync(IBuffer bitmap, double& seconds, bool& completed);
         void Stop();
-        void Cache();
 
         void Seek(double seconds);
 
@@ -65,8 +57,6 @@ namespace winrt::Telegram::Native::implementation
         int32_t TotalFrame();
 
         bool IsCaching();
-
-        bool IsReadyToCache();
 
         int PixelWidth()
         {
@@ -80,117 +70,57 @@ namespace winrt::Telegram::Native::implementation
 
         int Rotation()
         {
-            if (m_animation)
-            {
-                return m_animation->Rotation();
-            }
-
-            return 0;
+            return m_rotation;
         }
 
     private:
         bool Load(IVideoAnimationSource file, int32_t width, int32_t height, bool fit, bool limitFps);
+
+        /// <summary>
+        /// Opens the decoder, if it is not open already. Deferred because a cached animation never
+        /// needs one: the header carries everything opening the file would have told us, and
+        /// ffmpeg's open-probe-find_stream_info-open_codec was being paid by every cache hit.
+        /// </summary>
+        bool EnsureProducer();
         void RenderSync(uint8_t* pixels, double& seconds, bool& completed, bool* rendered);
 
-        HANDLE GetCacheHandle();
-        void CloseCacheHandle();
+        /// <summary>Queues this animation's own build, once, after it has decoded a frame itself.</summary>
+        void RequestCache();
 
-        bool ReadHeader(HANDLE precacheFile);
+        std::shared_ptr<VideoFrameProducer> m_producer;
+        Cache::FrameCacheReader m_reader;
 
-        static void CompressThreadProc();
-
-        // Performance-optimized lock management
-        static std::mutex& GetLockForKey(const std::string& key);
-
-        static std::mutex s_init_mutex;
-        static std::map<std::string, std::unique_ptr<std::mutex>> s_locks;
-
-        static std::mutex s_compressLock;
-        static bool s_compressStarted;
-        static std::thread s_compressWorker;
-        static WorkQueue s_compressQueue;
-
-        bool m_caching = false;
-        bool m_readyToCache = false;
-
+        // Held so a decoder can still be opened later - after a cache hit that turns out to be
+        // unreadable, or when caching is off. Opening it up front is what this class stopped doing.
         IVideoAnimationSource m_file{ nullptr };
-        winrt::com_ptr<VideoAnimation> m_animation;
-        size_t m_frameCount = 0;
-        int32_t m_frameIndex = 0;
-        int32_t m_fps = 30;
-        int32_t m_pixelWidth = 0;
-        int32_t m_pixelHeight = 0;
-        bool m_precache = false;
-        winrt::hstring m_path;
-        std::wstring m_cacheFile;
-        HANDLE m_cacheHandle = INVALID_HANDLE_VALUE;
-        std::string m_data;
-        std::string m_cacheKey;
-        uint8_t* m_decompressBuffer = nullptr;  // Raw pointer for performance
-        uint32_t m_maxFrameSize = 0;
-        uint32_t m_imageSize = 0;
-        std::vector<uint32_t> m_fileOffsets;
-        // Presentation time of each cached frame, in milliseconds. Parallel to
-        // m_fileOffsets: the frames are paced by these, not by m_fps.
-        std::vector<uint32_t> m_frameTimings;
-        std::vector<std::pair<std::uint32_t, std::uint32_t>> m_colors;
+        int32_t m_requestedWidth{ 0 };
+        int32_t m_requestedHeight{ 0 };
+        bool m_fit{ false };
+        bool m_limitFps{ false };
+
+        // Sized from the reader the first time a frame is read, so an animation that never reads
+        // from a cache never allocates it.
+        std::vector<uint8_t> m_scratch;
+
+        std::wstring m_cachePath;
+
+        uint32_t m_frameIndex{ 0 };
+        // Double, not int: 29.97 and 23.976 are ordinary video frame rates and truncating
+        // them costs a frame every few seconds.
+        double m_fps{ 30 };
+        int32_t m_pixelWidth{ 0 };
+        int32_t m_pixelHeight{ 0 };
+        int32_t m_rotation{ 0 };
+        bool m_precache{ false };
+
+        // Set while this animation's build is queued or running; cleared by the service. An atomic
+        // load rather than asking the service, which took a global mutex per animation per frame.
+        std::shared_ptr<std::atomic<bool>> m_building;
+
+        // The direct path has just wrapped, so a cache can be adopted without the picture
+        // jumping backwards.
+        bool m_atLoopBoundary{ false };
     };
-
-    class WorkItem
-    {
-    public:
-        winrt::weak_ref<CachedVideoAnimation> animation;
-        size_t w;
-        size_t h;
-
-        WorkItem(winrt::weak_ref<CachedVideoAnimation> animation, size_t w, size_t h)
-            : animation(animation)
-            , w(w)
-            , h(h)
-        {
-        }
-    };
-
-    class WorkQueue
-    {
-        std::condition_variable work_available;
-        std::mutex work_mutex;
-        std::stack<WorkItem> work;
-
-    public:
-        void push_work(WorkItem item)
-        {
-            std::unique_lock<std::mutex> lock(work_mutex);
-
-            bool was_empty = work.empty();
-            work.push(std::move(item));
-
-            lock.unlock();
-
-            if (was_empty)
-            {
-                work_available.notify_one();
-            }
-        }
-
-        std::optional<WorkItem> wait_and_pop()
-        {
-            std::unique_lock<std::mutex> lock(work_mutex);
-            while (work.empty())
-            {
-                const std::chrono::milliseconds timeout(3000);
-                if (work_available.wait_for(lock, timeout) == std::cv_status::timeout)
-                {
-                    return std::nullopt;
-                }
-            }
-
-            WorkItem tmp = std::move(work.top());
-            work.pop();
-            return std::make_optional<WorkItem>(std::move(tmp));
-        }
-    };
-
 }
 
 namespace winrt::Telegram::Native::factory_implementation

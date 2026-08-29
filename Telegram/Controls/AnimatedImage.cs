@@ -6,7 +6,6 @@
 //
 
 using Microsoft.Graphics.Canvas.Effects;
-using RLottie;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

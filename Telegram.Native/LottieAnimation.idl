@@ -1,0 +1,47 @@
+﻿namespace Telegram.Native
+{
+    enum FitzModifier
+    {
+        None,
+        Type12,
+        Type3,
+        Type4,
+        Type5,
+        Type6
+    };
+
+    [default_interface]
+    runtimeclass LottieAnimation : Windows.Foundation.IClosable
+    {
+        // Selects the renderer used by animations created from now on.
+        // Existing animations keep the renderer they were loaded with.
+        // Always false on platforms built without tlottie.
+        static Boolean UseTLottie;
+
+        static LottieAnimation LoadFromFile(String filePath, Int32 pixelWidth, Int32 pixelHeight, Boolean precache, Windows.Foundation.Collections.IMapView<Int32, Int32> colorReplacement);
+        static LottieAnimation LoadFromFile(String filePath, Int32 pixelWidth, Int32 pixelHeight, Boolean precache, Windows.Foundation.Collections.IMapView<Int32, Int32> colorReplacement, FitzModifier modifier);
+
+        static LottieAnimation LoadFromData(String jsonData, Int32 pixelWidth, Int32 pixelHeight, String cacheKey, Boolean precache, Windows.Foundation.Collections.IMapView<Int32, Int32> colorReplacement);
+        static LottieAnimation LoadFromData(String jsonData, Int32 pixelWidth, Int32 pixelHeight, String cacheKey, Boolean precache, Windows.Foundation.Collections.IMapView<Int32, Int32> colorReplacement, FitzModifier modifier);
+
+        void SetColor(Windows.UI.Color color);
+
+        // The CanvasBitmap and file-path overloads are gone. The first would have made
+        // Telegram.Native depend on Win2D for one caller; the second had none.
+        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 frame);
+
+        // No Cache/IsReadyToCache: the animation queues its own build after the first frame it
+        // renders itself, rather than raising a flag for the caller to queue it back.
+        //
+        // IsCaching stays, and the caller must honour it. Rendering live through a build is
+        // affordable for one animation and ruinous for a panel: a cold screenful is hundreds of
+        // lotties at once, which is the cost the cache exists to avoid. Holding the first frame
+        // until the build lands is the deliberate trade, not a shortcoming.
+        Boolean IsCaching { get; };
+
+        Double FrameRate { get; };
+        Int32 TotalFrame { get; };
+        Int32 PixelWidth { get; };
+        Int32 PixelHeight { get; };
+    }
+}

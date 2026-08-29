@@ -100,12 +100,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;LOT_BUILD;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\Libraries\rlottie\inc;..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -121,12 +121,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;LOT_BUILD;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\Libraries\rlottie\inc;..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -142,12 +142,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;LOT_BUILD;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\Libraries\rlottie\inc;..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -163,12 +163,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;LOT_BUILD;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\Libraries\rlottie\inc;..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -291,6 +291,19 @@
     <ClInclude Include="BufferSurface.h">
       <DependentUpon>BufferSurface.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Cache\FrameCacheFormat.h" />
+    <ClInclude Include="Cache\FrameCacheService.h" />
+    <ClInclude Include="Cache\FrameCacheReader.h" />
+    <ClInclude Include="Cache\FrameCacheWriter.h" />
+    <ClInclude Include="Cache\FrameCodec.h" />
+    <ClInclude Include="Cache\FrameProducer.h" />
+    <ClInclude Include="LottieAnimation.h">
+      <DependentUpon>LottieAnimation.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="LottieStringUtils.h" />
+    <ClInclude Include="LottieFrameProducer.h" />
+    <ClInclude Include="TlottieFrameProducer.h" />
+    <ClInclude Include="VideoFrameProducer.h" />
     <ClInclude Include="CachedVideoAnimation.h">
       <DependentUpon>CachedVideoAnimation.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1317,6 +1330,12 @@
       <DependentUpon>BufferSurface.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="LottieAnimation.cpp">
+      <DependentUpon>LottieAnimation.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Cache\FrameCacheReader.cpp" />
+    <ClCompile Include="Cache\FrameCacheService.cpp" />
+    <ClCompile Include="Cache\FrameCacheWriter.cpp" />
     <ClCompile Include="CachedVideoAnimation.cpp">
       <DependentUpon>CachedVideoAnimation.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1472,11 +1491,40 @@
     <Midl Include="TextFormat.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="LottieAnimation.idl" />
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="VideoAnimationStreamSource.idl">
       <SubType>Designer</SubType>
     </Midl>
   </ItemGroup>
+  <!--
+    rlottie is a plain static library, not a WinRT component. ReferenceOutputAssembly=false
+    stops MIDL trying to import a winmd it does not produce; LinkLibraryDependencies still
+    supplies the .lib, which is what keeps it correct whether the build comes from the
+    solution or straight from this project - the two put the output in different places.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\rlottie-build\rlottie.vcxproj">
+      <Project>{8f4c6e21-7b3d-4a9e-9c55-2d1e4a7b6c30}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemGroup>
+  <!--
+    tlottie is a prebuilt Rust static library and exists only for the two platforms that ship.
+    Item definitions are cumulative, so this appends to whichever configuration is active, and any
+    other platform simply never sees HAS_TLOTTIE and compiles the rlottie-only path.
+    Regenerate the .lib with the command in Libraries\tlottie\README.md; it needs a
+    nightly toolchain plus rust-src, because the UWP targets are tier 3 and have no prebuilt std.
+  -->
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64' Or '$(Platform)'=='ARM64'">
+    <ClCompile>
+      <PreprocessorDefinitions>HAS_TLOTTIE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>..\Libraries\tlottie\lib\$(Platform)\tlottie.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets')" />

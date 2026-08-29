@@ -22,3 +22,9 @@
 [submodule "Libraries/MicroTeX"]
 	path = Libraries/MicroTeX
 	url = https://github.com/desktop-app/MicroTeX.git
+[submodule "Libraries/gzip-hpp"]
+	path = Libraries/gzip-hpp
+	url = https://github.com/mapbox/gzip-hpp.git
+[submodule "Libraries/rlottie"]
+	path = Libraries/rlottie
+	url = https://github.com/TelegramMessenger/rlottie.git
