@@ -97,8 +97,31 @@ namespace Telegram.Common
             ThrottleVisibleItems();
         }
 
+        // 1 while the content is moving up the screen (scrolling down), -1 the other way, 0 before
+        // anything has moved - which is the case that matters, because it is a panel just opened.
+        private int _direction;
+        private double _verticalOffset;
+
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (sender is ScrollViewer scrollViewer)
+            {
+                var offset = scrollViewer.VerticalOffset;
+
+                // Half a pixel is noise, not a direction: an unchanged offset leaves the last one
+                // standing rather than resetting to neutral, so a pause mid-scroll keeps its order.
+                if (offset > _verticalOffset + 0.5)
+                {
+                    _direction = 1;
+                }
+                else if (offset < _verticalOffset - 0.5)
+                {
+                    _direction = -1;
+                }
+
+                _verticalOffset = offset;
+            }
+
             LoadVisibleItems();
 
             ThrottleVisibleItems();
@@ -192,8 +215,18 @@ namespace Telegram.Common
                 return;
             }
 
-            // We do three passes to try to optimize download order
-            for (int i = lastVisibleIndex; i >= firstVisibleIndex; i--)
+            // We do three passes to try to optimize download order.
+            //
+            // The visible pass follows the scroll: downwards it runs last to first, upwards - and
+            // when nothing has moved yet, so on the first open - first to last. Note the loader's
+            // work queue is LIFO, so whichever end is walked last is the end that loads first.
+            var descending = _direction > 0;
+
+            var start = descending ? lastVisibleIndex : firstVisibleIndex;
+            var stop = descending ? firstVisibleIndex : lastVisibleIndex;
+            var step = descending ? -1 : 1;
+
+            for (int i = start; descending ? i >= stop : i <= stop; i += step)
             {
                 var container = _listView.ContainerFromIndex(i) as SelectorItem;
                 if (container == null || container.ContentTemplateRoot is not FrameworkElement content)
