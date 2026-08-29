@@ -657,18 +657,22 @@ UI/tgcalls split as 1:1. Leaving a call once deadlocked TDLib's dispatch thread 
 threads; see the group-call teardown work in `notes/`.
 
 ## Libraries — submodules, vendored source and prebuilt binaries — Libraries/
-<!-- map: verified=95560d9f7 paths=Libraries -->
+<!-- map: verified=2eba64a16 paths=Libraries -->
 **Submodules** (per `.gitmodules`): `tdlib`, `tgcalls`, `libwebp`, `libprisma` (syntax highlighting behind
 Telegram.Native/Highlight), `MicroTeX` (`heads/tdesktop` branch, behind `RichMathSurface`), `flatbuffers`,
-`libutf`, `CoreWindowCustomDPI`. **Vendored source:** `libtextclassifier`. **Prebuilt binaries checked in
-or downloaded:** `rlottie` (`RLottie.dll`/`.winmd`/`.lib` per arch — consumed directly by
-`Telegram/Controls/AnimatedImage.cs`, not through Telegram.Native; built from the separate
-`C:\Source\RLottie.UWP` repo), `wallet-engine`, `tdjson` (local CMake tree providing `td_api.tl`),
+`libutf`, `CoreWindowCustomDPI`, `rlottie` and `gzip-hpp` (both pinned to the commits the retired
+RLottie.UWP repo used; built in-tree by `Libraries/rlottie-build/rlottie.vcxproj`, which lives outside the
+submodule so nothing modifies it). **Vendored source:** `libtextclassifier`, `tlottie` (a prebuilt Rust
+staticlib plus its C ABI header — see `Libraries/tlottie/README.md` to rebuild it). **Prebuilt binaries
+checked in or downloaded:** `wallet-engine`, `tdjson` (local CMake tree providing `td_api.tl`),
 `ton-walletkit`, `unigram-iv-editor` (the JS instant-view host). **vcpkg overlay ports:**
 `Libraries/vcpkg-ports/{ffmpeg,libvlc,webrtc}` — ffmpeg, libVLC and webrtc come in as vcpkg packages with
 local patches.
 **Traps:** the ffmpeg portfile is hand-patched to disable most codecs and enable only D3D11VA/DXVA2
 hwaccel plus a narrow allowlist; building against upstream vcpkg ffmpeg changes decoder availability.
+`rlottie.vcxproj` must be listed in every solution that builds it — a `ProjectReference` alone resolves to
+Win32 — and must never be linked by an explicit path, because the output directory differs between a
+solution build and a direct one.
 
 ---
 

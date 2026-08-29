@@ -176,7 +176,7 @@ upside. We would be running the trade the other way — paying to *leave* an app
   `NativeUtils::AddRunToCollection`. This is the single biggest difference from WinUI 3.
 - **Everything else in the XAML layer survives too**: 2381 `Windows.UI.Xaml` usings, 461
   `Windows.UI.Composition`, 337 `ElementCompositionPreview`, 332 `muxc:` control uses, all 475
-  `.xaml` files, both C++/WinRT components, and `RLottie.UWP` in its own repo. None of it is
+  `.xaml` files and both C++/WinRT components (lottie has since moved into `Telegram.Native`, so RLottie.UWP is no longer a third one). None of it is
   touched.
 - **Many windows on one thread** — verified, gate 1.8a. This kills the per-view-thread bug class
   (CsWinRT #2524, the secondary-view RCW access violation), which `net10-benefits-and-winui3.md`
@@ -1933,12 +1933,12 @@ generate them — and **what they generate differs by flavour**:
 
 | Flavour | `InProcessServer` paths | `Telegram.Native*` classes |
 |---|---|---|
-| `Telegram.csproj` (UWP, ARM64 Release) | `Telegram.Native.dll`, `Telegram.Native.Calls.dll`, `RLottie.dll`, Win2D, WebView2 | **60** |
+| `Telegram.csproj` (UWP, ARM64 Release) | `Telegram.Native.dll`, `Telegram.Native.Calls.dll`, Win2D, WebView2 | **60** |
 | `Telegram.Modern.csproj` | Win2D, WebView2 | **0** |
 | `Telegram.Win32.csproj` | Win2D, WebView2 | **0** |
 
 Win2D and WebView2 are declared because their own NuGet targets do it. The legacy project
-declares the native components; **neither SDK-style project does**, and `RLottie.dll` drops off
+declares the native components; **neither SDK-style project does**. (`RLottie.dll` was in this table until lottie moved into `Telegram.Native`.) The rest drops off
 with them, even though all three DLLs sit in the payload.
 
 So "the package manifest declares the activatable classes, exactly as it does today" is not what
@@ -2077,7 +2077,7 @@ changes nothing about activation, which is the single biggest de-risking in
     `StringToHGlobalUni`), and each `bool` needs an explicit
     `[return: MarshalAs(UnmanagedType.Bool)]` because a `bool` is not blittable.
   - **`REGDB_E_CLASSNOTREG` from CsWinRT is a lie**, and cost two wrong theories before the
-    right one. `RLottie.LottieAnimation` threw it out of `ActivationFactory.ManifestFreeGet`, which
+    right one. `RLottie.LottieAnimation` — now `Telegram.Native.LottieAnimation` — threw it out of `ActivationFactory.ManifestFreeGet`, which
     reads as a registration problem. It is not: **nothing registers these components in either
     flavour** - both manifests carry 107 `ActivatableClassId` entries and every one is Win2D or
     WebView2, out of their own NuGet snippets. CsWinRT resolves ours by LoadLibrary +

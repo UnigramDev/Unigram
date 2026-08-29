@@ -105,7 +105,8 @@ file. x64 and ARM64 are the only supported architectures.
 - [x] `Build.ps1`: `$arch` default
 - [x] `Telegram/Properties/PublishProfiles/win-x86.pubxml`
 - [x] `Libraries/rlottie/x86/RLottie.winmd` — the only x86 file left there, with no `.dll` or
-      `.pri` beside it
+      `.pri` beside it. Moot now: the prebuilt binaries are gone and `rlottie` is a submodule
+      built in-tree.
 
 Left alone deliberately: `Libraries/tdjson/build.ps1` still knows how to build x86 tdlib. That is
 a capability of a dependency build script, not a stale reference. Also noted while passing:
@@ -152,11 +153,10 @@ The AOT link step also needs `vswhere.exe` on PATH, the same trap the benchmark 
 
       ```xml
       <PropertyGroup>
-        <CsWinRTIncludes>RLottie;Telegram.Native</CsWinRTIncludes>
+        <CsWinRTIncludes>Telegram.Native</CsWinRTIncludes>
       </PropertyGroup>
       <ItemGroup>
         <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-        <CsWinRTInputs Include="...\rlottie\x64\RLottie.winmd" />
         <CsWinRTInputs Include="...\x64\Release\Telegram.Native\Telegram.Native.winmd" />
         <CsWinRTInputs Include="...\win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
       </ItemGroup>

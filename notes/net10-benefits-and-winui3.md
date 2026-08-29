@@ -250,9 +250,9 @@ Numbers from the tree, generated code excluded:
   affected surface is bounded — 37 + 21 of 250 files — and includes `SurfaceImage`,
   `Composition.CompositionDevice`, `FreeformGradientSurface`, `ChatBackgroundPattern`,
   `MessageBubbleNineGrid`, `PlaceholderImageHelper`.
-- **RLottie is in another repo.** `C:\Source\RLottie.UWP` builds the winmd this repo vendors,
-  and `RLottie.ILottieAnimation` takes a Win2D `CanvasBitmap` — so it needs the same treatment,
-  in a codebase this migration does not otherwise touch.
+- ~~**RLottie is in another repo.**~~ No longer true: lottie moved into `Telegram.Native` and
+  RLottie.UWP is retired, so there is no separate winmd and no second codebase to migrate. What
+  replaced it renders into a caller-supplied buffer rather than a Win2D `CanvasBitmap`.
 - **MRT → MRT Core.** `ResourceContext.GetForCurrentView` (6 sites) and the `Strings\**\*.resw`
   pipeline move to `Microsoft.Windows.ApplicationModel.Resources`.
 - **`SystemNavigationManagerPreview.CloseRequested`** (8 sites) and `rescap:confirmAppClose`
