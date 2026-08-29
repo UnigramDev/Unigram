@@ -100,7 +100,7 @@ Regenerate the list from the analyzer output; do not hand-sweep it. `DynamicCast
 nothing under .NET Native, where nothing is trimmed.
 
 ## Services (core) — Telegram/Services/ (45 files at root)
-<!-- map: verified=058d4aad4 paths=Telegram/Services/ClientService.cs,Telegram/Services/EventAggregator.cs,Telegram/Services/OptionsService.cs,Telegram/Services/DownloadsService.cs,Telegram/Services/NotificationsService.cs,Telegram/Services/PlaybackService.cs -->
+<!-- map: verified=01cb6feb8 paths=Telegram/Services/ClientService.cs,Telegram/Services/EventAggregator.cs,Telegram/Services/OptionsService.cs,Telegram/Services/DownloadsService.cs,Telegram/Services/NotificationsService.cs,Telegram/Services/PlaybackService.cs -->
 The account-scoped service layer. Each session owns one `ClientService` (TDLib client plus
 in-memory cache) and companion services for downloads, contacts, locale, notifications, options,
 playback, proxy, generation, forums and saved messages. `ClientService` is the largest type in the
@@ -520,7 +520,7 @@ normal Debug or Release build. `WatchDog` is disabled when `Constants.DEBUG`. Re
 `_reporting` thread-static re-entrancy guard, since serializing a report can itself throw.
 
 ## Common helpers, grouped — Telegram/Common/ (110 files)
-<!-- map: verified=058d4aad4 paths=Telegram/Common -->
+<!-- map: verified=01cb6feb8 paths=Telegram/Common -->
 The cross-cutting helper dump, by cluster. **Extensions and text:** `Extensions*.cs`,
 `NormalizingStringBuilder`, `UniqueList`, `MathEx`/`MathFEx`. **Emoji and text rendering:** `Emoji.cs`,
 `AutocompleteEntityFinder.cs`, `TextStyleRun.cs`, `TextSelectionCoordinator`/`TextSelectionManager`,
@@ -542,7 +542,13 @@ published but on the next dispatcher hop, by which time the `File` holds whateve
 written into it — that is what makes collapsing a burst free, and it means a handler must read the
 object it is handed rather than assume it describes the update that woke it. Subscribers that are
 neither a `FrameworkElement` nor a `ViewModelBase` with a dispatcher are still called inline on the
-TDLib thread, which `RemoteFileSource` depends on.
+TDLib thread, which `RemoteFileSource` depends on. The `subscriber` handed to `Subscribe` is the weak
+anchor that decides when the subscription dies, not necessarily the handler's own target — the
+`Telegram/Streams` sources pass the control while the handler belongs elsewhere — and `Unsubscribe`
+must be given that same anchor or it removes nothing, zeroes the token and orphans the subscription
+for good, which `DelayedFileSource.Complete` does today. `Subscribe` takes the drain of the calling
+thread rather than reading the subscriber's dispatcher, so it assumes a control subscribes from its
+own thread; a wrong guess costs one hop and corrects itself on the first delivery.
 
 ## Charts — Telegram/Charts/ (31 files)
 <!-- map: verified=95560d9f7 paths=Telegram/Charts -->
