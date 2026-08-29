@@ -158,4 +158,82 @@ namespace Telegram.Common
             }, this);
         }
     }
+
+    /// <summary>
+    /// A stack of actions drained by up to <see cref="MaxConcurrency"/> threads at once, for work
+    /// that is independent per item and too expensive to serialise - decoding a panel's worth of
+    /// stickers, where one at a time turns a few milliseconds each into seconds of them arriving
+    /// one by one.
+    /// </summary>
+    /// <remarks>
+    /// A stack rather than a queue: the most recently pushed item is the one nearest what the user
+    /// is looking at, so taking from the back follows a scroll instead of trailing it.
+    ///
+    /// A failing action is logged and the drain continues. Abandoning the rest of the queue
+    /// because one item threw would strand everything behind it.
+    /// </remarks>
+    public partial class ParallelActionWorker
+    {
+        private readonly ConcurrentStack<Action> taskQueue = new();
+        private int _concurrentCount = 0;
+
+        public int MaxConcurrency { get; }
+
+        public ParallelActionWorker(int maxConcurrency)
+        {
+            MaxConcurrency = Math.Max(1, maxConcurrency);
+        }
+
+        public void Run(Action task)
+        {
+            taskQueue.Push(task);
+            TryStartDrain();
+        }
+
+        private void TryStartDrain()
+        {
+            var count = Volatile.Read(ref _concurrentCount);
+
+            while (count < MaxConcurrency)
+            {
+                var previous = Interlocked.CompareExchange(ref _concurrentCount, count + 1, count);
+                if (previous == count)
+                {
+                    ThreadPool.UnsafeQueueUserWorkItem(static state => ((ParallelActionWorker)state!).Drain(), this);
+                    return;
+                }
+
+                count = previous;
+            }
+        }
+
+        private void Drain()
+        {
+            try
+            {
+                while (taskQueue.TryPop(out var next))
+                {
+                    try
+                    {
+                        next();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+                }
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _concurrentCount);
+
+                // A push that landed between the pop that failed and the decrement above would
+                // otherwise sit in the stack with nobody left to drain it.
+                if (!taskQueue.IsEmpty)
+                {
+                    TryStartDrain();
+                }
+            }
+        }
+    }
 }

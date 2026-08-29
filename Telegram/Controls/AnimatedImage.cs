@@ -22,6 +22,7 @@ using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -248,16 +249,25 @@ namespace Telegram.Controls
         {
             if (visible)
             {
+                _withinViewport = true;
                 Play();
+
+                if (_shimmerPending)
+                {
+                    UpdateShimmer(Source);
+                }
             }
             else
             {
+                _withinViewport = false;
                 Pause();
             }
         }
 
         private bool _withinViewport;
-        private bool _visible = true;
+
+        // A shimmer was wanted while the control was off screen. Built when it arrives.
+        private bool _shimmerPending;
 
         // TODO: a bit redunant now as it's already tracked internally
         private bool _effectiveViewportRegistered;
@@ -268,6 +278,11 @@ namespace Telegram.Controls
             {
                 _withinViewport = true;
                 Play();
+
+                if (_shimmerPending)
+                {
+                    UpdateShimmer(Source);
+                }
             }
             else if (_withinViewport && !within)
             {
@@ -552,6 +567,21 @@ namespace Telegram.Controls
             {
                 return;
             }
+
+            // A list realizes well past what it shows, and a placeholder for something nobody is
+            // looking at covers nothing. Building it here costs the geometry, a dozen Composition
+            // objects and - when the outline is not known yet - a TDLib round trip, per item off
+            // screen. Deferred to the moment the control enters the viewport instead.
+            //
+            // AutoPlay carries the controls no viewport source reports: they show themselves as
+            // soon as they load, so there is nothing to wait for.
+            if (!AutoPlay && !_withinViewport)
+            {
+                _shimmerPending = true;
+                return;
+            }
+
+            _shimmerPending = false;
 
             if (source is { Outline.IsReady: true })
             {
@@ -952,6 +982,10 @@ namespace Telegram.Controls
         private volatile bool _disposing;
         private volatile bool _disposed;
 
+        // Renders in flight, and whether the task has already been closed.
+        private int _borrows;
+        private int _taskDisposed;
+
         private AnimatedImageLoopCompletedEventArgs _prevCompleted;
         private AnimatedImagePositionChangedEventArgs _prevPosition;
         private double _nextPosition;
@@ -1254,6 +1288,9 @@ namespace Telegram.Controls
         private PixelBuffer _foregroundNext;
         private PixelBuffer _backgroundNext;
 
+        private WriteableBitmap _bitmap1;
+        private WriteableBitmap _bitmap2;
+
         private ImageBrush _imageBrush;
 
         private readonly SemaphoreSlim _pausedLock = new(0, 1);
@@ -1269,8 +1306,11 @@ namespace Telegram.Controls
             var width = task.PixelWidth;
             var height = task.PixelHeight;
 
-            _foregroundPrev = new PixelBuffer(new WriteableBitmap(width, height));
-            _backgroundNext = new PixelBuffer(new WriteableBitmap(width, height));
+            _bitmap1 = _loader.Bitmaps.Rent(width, height);
+            _bitmap2 = _loader.Bitmaps.Rent(width, height);
+
+            _foregroundPrev = new PixelBuffer(_bitmap1);
+            _backgroundNext = new PixelBuffer(_bitmap2);
 
             _activated = _loader.Window.IsActive;
 
@@ -1426,7 +1466,41 @@ namespace Telegram.Controls
             }
         }
 
+        /// <summary>
+        /// Closes the task once nobody is inside a frame. Called by <see cref="Dispose"/> and by the
+        /// last borrow to end, whichever happens second, so exactly one of them does the work.
+        /// </summary>
+        private void DisposeTask()
+        {
+            if (Volatile.Read(ref _borrows) != 0 || Interlocked.Exchange(ref _taskDisposed, 1) != 0)
+            {
+                return;
+            }
+
+            Interlocked.Exchange(ref _task, null)?.Dispose();
+        }
+
         private bool NextFrame(IBuffer frame)
+        {
+            // The borrow. Dispose can run on the UI thread while this is inside the native renderer,
+            // and closing the animation underneath it would be a use-after-free - so the close waits
+            // for the count to reach zero rather than the reference merely being dropped.
+            Interlocked.Increment(ref _borrows);
+
+            try
+            {
+                return NextFrameCore(frame);
+            }
+            finally
+            {
+                if (Interlocked.Decrement(ref _borrows) == 0 && _disposed)
+                {
+                    DisposeTask();
+                }
+            }
+        }
+
+        private bool NextFrameCore(IBuffer frame)
         {
             var task = Volatile.Read(ref _task);
             if (task == null)
@@ -1474,15 +1548,61 @@ namespace Telegram.Controls
             _disposing = false;
             _disposed = true;
 
-            Volatile.Write(ref _task, null);
+            DisposeTask();
 
             Interlocked.Exchange(ref _foregroundPrev, null);
             Interlocked.Exchange(ref _foregroundNext, null);
             Interlocked.Exchange(ref _backgroundNext, null);
 
+            ReleaseVisual();
+
             _loader.Activated -= OnActivated;
             _loader.PopupActivated -= OnActivated;
             _loader.Remove(_presentation);
+        }
+
+        /// <summary>
+        /// The half of teardown that belongs to the UI thread. Dispose runs on either thread - the
+        /// scheduler one whenever UnloadImpl deferred while ticking, which is most of the time - and
+        /// this used to be skipped outright in that case, dropping both bitmaps instead of pooling
+        /// them. Posting is the difference between a pool and a leak.
+        /// </summary>
+        private void ReleaseVisual()
+        {
+            var brush = Interlocked.Exchange(ref _imageBrush, null);
+            var first = Interlocked.Exchange(ref _bitmap1, null);
+            var second = Interlocked.Exchange(ref _bitmap2, null);
+
+            if (brush == null && first == null && second == null)
+            {
+                return;
+            }
+
+            var pool = _loader.Bitmaps;
+
+            if (_dispatcherQueue.HasThreadAccess)
+            {
+                ReleaseVisualCore(pool, brush, first, second);
+            }
+            else
+            {
+                // A failed enqueue means the dispatcher is going away, and the pool lives on it -
+                // there is nothing left to return them to.
+                _dispatcherQueue.TryEnqueue(() => ReleaseVisualCore(pool, brush, first, second));
+            }
+        }
+
+        private static void ReleaseVisualCore(AnimatedImageLoader.BitmapRecyclePool pool, ImageBrush brush, WriteableBitmap first, WriteableBitmap second)
+        {
+            // Before Return, and not after: the pool releases the native handle on eviction, which
+            // is only safe once XAML has let go of the bitmap.
+            if (brush != null)
+            {
+                brush.ImageSource = null;
+            }
+
+            pool.Return(first);
+            pool.Return(second);
         }
 
         //private double _targetIntervalTicks;
@@ -1621,12 +1741,10 @@ namespace Telegram.Controls
         {
             position = 0;
 
-            if (_animation.IsReadyToCache && !_shouldStop)
-            {
-                _animation.Cache();
-                return AnimatedImageTaskState.Skip;
-            }
-            else if (_animation.IsCaching)
+            // Held, not rendered, while this animation's own cache is building: a cold panel is
+            // hundreds of these at once, and rendering them live is the cost the cache exists to
+            // avoid. The first frame is already on screen, so it holds rather than blanks.
+            if (_animation.IsCaching)
             {
                 return AnimatedImageTaskState.Skip;
             }
@@ -1661,6 +1779,11 @@ namespace Telegram.Controls
             {
                 _index = index + 1;
             }
+        }
+
+        public override void Dispose()
+        {
+            _animation.Dispose();
         }
     }
 
@@ -1706,12 +1829,10 @@ namespace Telegram.Controls
         {
             position = 0;
 
-            if (_animation.IsReadyToCache && !_shouldStop)
-            {
-                _animation.Cache();
-                return AnimatedImageTaskState.Skip;
-            }
-            else if (_animation.IsCaching)
+            // Still asked, and only here: a video's cache build walks the same decoder this would
+            // decode from, so it has to stand aside until the build is done. Lottie has random
+            // access and does not.
+            if (_animation.IsCaching)
             {
                 return AnimatedImageTaskState.Skip;
             }
@@ -1733,13 +1854,19 @@ namespace Telegram.Controls
                 : seconds + _pollInterval;
             _lastPosition = seconds;
 
-            if (_animation.TotalFrame == 1 || _shouldStop || (completed && _index == 1))
+            // completed is authoritative, and TotalFrame deliberately is not: it is 0 until a
+            // cache exists, because a video producer cannot know its length in advance. Comparing
+            // it against _index used to be a second opinion on where the end is, and the two
+            // disagreed the moment a cache was adopted part-way through - TotalFrame jumped to the
+            // real count while _index was mid-loop. _index now only distinguishes a video whose
+            // first frame is also its last.
+            if (_shouldStop || (completed && _index == 1))
             {
                 _index = 0;
                 Rewind();
                 return AnimatedImageTaskState.Stop;
             }
-            else if (_animation.TotalFrame == _index || completed)
+            else if (completed)
             {
                 _index = 0;
                 Rewind();
@@ -1778,11 +1905,19 @@ namespace Telegram.Controls
             // interval rather than at nothing, which would show the second frame instantly.
             _lastPosition = -_pollInterval;
         }
+
+        public override void Dispose()
+        {
+            _animation.Dispose();
+        }
     }
 
     public partial class WebpAnimatedImageTask : AnimatedImageTask
     {
-        private readonly IBuffer _animation;
+        // Dropped as soon as it has been handed over. A still is decoded once on the loader queue
+        // and copied into the presenter's bitmap, which then owns those pixels - holding them here
+        // as well is a second copy of every static sticker on screen, and a panel has hundreds.
+        private IBuffer _animation;
 
         public WebpAnimatedImageTask(IBuffer animation, int pixelWidth, int pixelHeight, AnimatedImagePresentation presentation)
             : base(presentation)
@@ -1800,7 +1935,18 @@ namespace Telegram.Controls
         {
             position = 0;
 
-            BufferSurface.Copy(_animation, frame);
+            var animation = _animation;
+            _animation = null;
+
+            // Stop is returned below, so there is no second frame to serve and nothing to decode
+            // it from. Reaching here twice means something drove a stopped task.
+            Debug.Assert(animation != null, "WebpAnimatedImageTask rendered twice");
+
+            if (animation != null)
+            {
+                BufferSurface.Copy(animation, frame);
+            }
+
             return AnimatedImageTaskState.Stop;
         }
     }
@@ -1850,6 +1996,15 @@ namespace Telegram.Controls
 
         public abstract AnimatedImageTaskState NextFrame(IBuffer frame, out double position);
 
+        /// <summary>
+        /// Closes the native animation. Dropping the reference is not enough: it holds a decoder,
+        /// a cache file handle and its buffers, and nothing else releases them deterministically.
+        /// </summary>
+        public virtual void Dispose()
+        {
+
+        }
+
         public virtual void Seek(string marker)
         {
 
@@ -1873,6 +2028,174 @@ namespace Telegram.Controls
             _window = WindowContext.ForXamlRoot(xamlRoot);
 
             Debug.Assert(_dispatcherQueue != null);
+        }
+
+        /// <summary>The frame bitmaps this window's presenters render into.</summary>
+        public BitmapRecyclePool Bitmaps { get; } = new();
+
+        /// <summary>
+        /// Recycles the pair of bitmaps every presenter renders into, so a panel scroll reuses a
+        /// bounded set instead of allocating two per sticker and leaving them to the collector.
+        /// </summary>
+        /// <remarks>
+        /// One per <see cref="XamlRoot"/>, because it lives on the loader, and that is not an
+        /// arrangement of convenience: a WriteableBitmap belongs to the thread that created it, so
+        /// a pool shared between windows would hand one window's bitmap to another. It also makes
+        /// every member single-threaded - Rent comes from ReadyImpl and Return from
+        /// AnimatedImagePresenter.ReleaseVisual, both on this loader's dispatcher - which is why
+        /// nothing here locks. Anything that starts calling it from elsewhere has to revisit that.
+        /// </remarks>
+        public sealed class BitmapRecyclePool
+        {
+            // Long enough to survive a scroll that turns straight back, short enough that a panel
+            // the user has left does not sit on its bitmaps.
+            private const ulong Expiration = 5000;
+
+            private readonly Dictionary<SizeInt32, List<Entry>> _bitmaps = new();
+
+            // Reused by the sweep so a tick allocates nothing.
+            private readonly List<SizeInt32> _emptied = new();
+
+            private DispatcherTimer _timer;
+            private int _count;
+
+            private readonly record struct Entry(WriteableBitmap Bitmap, ulong Expires);
+
+            public WriteableBitmap Rent(int width, int height)
+            {
+                var size = new SizeInt32 { Width = width, Height = height };
+
+                if (_bitmaps.TryGetValue(size, out var value) && value.Count > 0)
+                {
+                    // From the end: the newest is the one most likely still in cache, and it saves
+                    // shuffling the rest down.
+                    var last = value.Count - 1;
+                    var bitmap = value[last].Bitmap;
+
+                    value.RemoveAt(last);
+                    _count--;
+
+                    if (value.Count == 0)
+                    {
+                        _bitmaps.Remove(size);
+                    }
+
+                    // Not cleared: the caller renders a whole frame into it before it is shown, so
+                    // clearing would be a memset per realization for nothing.
+                    return bitmap;
+                }
+
+                return new WriteableBitmap(width, height);
+            }
+
+            public void Return(WriteableBitmap bitmap)
+            {
+                if (bitmap == null)
+                {
+                    return;
+                }
+
+                var size = new SizeInt32 { Width = bitmap.PixelWidth, Height = bitmap.PixelHeight };
+                var entry = new Entry(bitmap, Logger.TickCount + Expiration);
+
+                if (_bitmaps.TryGetValue(size, out var value))
+                {
+                    value.Add(entry);
+                }
+                else
+                {
+                    _bitmaps[size] = [entry];
+                }
+
+                _count++;
+
+                _timer ??= CreateTimer();
+
+                if (!_timer.IsEnabled)
+                {
+                    _timer.Start();
+                }
+            }
+
+            /// <summary>Drops everything at once, for a window that is going away.</summary>
+            public void Clear()
+            {
+                foreach (var value in _bitmaps.Values)
+                {
+                    for (int i = 0; i < value.Count; i++)
+                    {
+                        Release(value[i].Bitmap);
+                    }
+                }
+
+                _bitmaps.Clear();
+                _count = 0;
+
+                _timer?.Stop();
+            }
+
+            private DispatcherTimer CreateTimer()
+            {
+                var timer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(1)
+                };
+
+                timer.Tick += OnTick;
+                return timer;
+            }
+
+            private void OnTick(object sender, object e)
+            {
+                var now = Logger.TickCount;
+
+                _emptied.Clear();
+
+                foreach (var pair in _bitmaps)
+                {
+                    var value = pair.Value;
+
+                    for (int i = value.Count - 1; i >= 0; i--)
+                    {
+                        if (now > value[i].Expires)
+                        {
+                            Release(value[i].Bitmap);
+
+                            value.RemoveAt(i);
+                            _count--;
+                        }
+                    }
+
+                    if (value.Count == 0)
+                    {
+                        _emptied.Add(pair.Key);
+                    }
+                }
+
+                // A size the panel has stopped using should not keep an empty list forever. The
+                // churn is a List per size per idle period, which is nothing next to the bitmaps.
+                for (int i = 0; i < _emptied.Count; i++)
+                {
+                    _bitmaps.Remove(_emptied[i]);
+                }
+
+                _emptied.Clear();
+
+                if (_count == 0)
+                {
+                    _timer.Stop();
+                }
+            }
+
+            private static void Release(WriteableBitmap bitmap)
+            {
+#if NET9_0_OR_GREATER
+                // Deterministic rather than whenever the collector notices. Only safe here because
+                // ImageBrush.ImageSource is cleared before a bitmap is ever returned, so XAML has
+                // already let go - anything that returns a bitmap still on screen breaks this.
+                Utils.ReleaseHandle(bitmap);
+#endif
+            }
         }
 
         private readonly List<AnimatedImagePresenter> _rendering = new();
@@ -1915,12 +2238,16 @@ namespace Telegram.Controls
 
                 if (_closed)
                 {
+                    // The window is going: hand the bitmaps back now rather than waiting for a
+                    // sweep on a dispatcher that is about to stop running.
+                    Bitmaps.Clear();
+
                     _loaders.Remove(_window.XamlRoot);
                 }
             }
         }
 
-        private readonly LifoActionWorker _workQueue = new();
+        private readonly ParallelActionWorker _workQueue = new(Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
 
         private readonly ConcurrentDictionary<int, WeakReference<AnimatedImagePresenter>> _delegates = new();
         private readonly Dictionary<AnimatedImagePresentation, AnimatedImagePresenter> _presenters = new();
@@ -1981,7 +2308,12 @@ namespace Telegram.Controls
             sender.CorrelationId = correlationId;
 
             _delegates[correlationId] = new WeakReference<AnimatedImagePresenter>(sender);
-            _workQueue.Run(() => Work(new WorkItem(correlationId, sender.Presentation)));
+
+            // Hoisted: capturing sender would root the presenter for as long as the item sits in
+            // the queue, which is exactly what the WeakReference above exists to avoid - and the
+            // queue is longest when a cache-building scroll is under way.
+            var presentation = sender.Presentation;
+            _workQueue.Run(() => Work(new WorkItem(correlationId, presentation)));
         }
 
         private void Work(WorkItem work)
