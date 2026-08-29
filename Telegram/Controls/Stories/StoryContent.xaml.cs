@@ -1517,7 +1517,19 @@ namespace Telegram.Controls.Stories
                 Debug = AppSettings.VerbosityLevel >= 4,
             };
 
-            _player = new AsyncMediaPlayer(options);
+            try
+            {
+                _player = new AsyncMediaPlayer(options);
+            }
+            catch (Exception ex)
+            {
+                // libvlc could not start: no plugin bank, or out of memory. Every member of this
+                // class already tolerates a null player, so the story stays on its cover image
+                // instead of faulting on the next call into it.
+                Logger.Error(ex);
+                return;
+            }
+
             _player.VideoOut += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;

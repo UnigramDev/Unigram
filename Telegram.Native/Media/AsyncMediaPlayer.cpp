@@ -98,6 +98,15 @@ namespace winrt::Telegram::Native::Media::implementation
 
         m_instance = libvlc_new(argv.size(), argv.data());
 
+        // libvlc_new returns null when the plugin bank cannot be loaded or the process is out of
+        // memory. Every line below dereferences the instance, and every method on the finished
+        // object dereferences the player it creates, so there is no half-working state worth
+        // handing back: fail activation and let the caller carry on without a player.
+        if (m_instance == nullptr)
+        {
+            throw winrt::hresult_error(E_FAIL, L"libvlc_new failed");
+        }
+
         // Always attach the log callback, not just in debug. libvlc reports the reason an audio
         // or demux failure happened -- "cannot get render client (error 0x...)" and similar --
         // and without this none of it reaches the crash log tail, which is all we get back from
@@ -105,10 +114,22 @@ namespace winrt::Telegram::Native::Media::implementation
         // outside debug is a comparison per message.
         libvlc_log_set(m_instance, &LogCallback, this);
 
+        m_player = libvlc_media_player_new(m_instance);
+
+        if (m_player == nullptr)
+        {
+            // A constructor that throws leaves the destructor unrun, so Close() never gets to
+            // undo any of this -- the instance has to go back here, callback first.
+            libvlc_log_unset(m_instance);
+            libvlc_release(m_instance);
+
+            throw winrt::hresult_error(E_FAIL, L"libvlc_media_player_new failed");
+        }
+
+        // Counted only once construction is certain to succeed, because Close() owns the
+        // matching decrement and does not run for an object that failed to construct.
         s_instances += 1;
         LOGGER_INFO(L"libvlc instance created ({} alive)", s_instances.load());
-
-        m_player = libvlc_media_player_new(m_instance);
 
         libvlc_audio_set_volume(m_player, static_cast<int>(options.Volume() * 100));
         libvlc_audio_set_mute(m_player, options.Mute());

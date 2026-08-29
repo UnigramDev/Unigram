@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Native.Media;
 using Telegram.Services;
@@ -46,7 +47,19 @@ namespace Telegram.Controls
                     Debug = AppSettings.VerbosityLevel >= 4,
                 };
 
-                _core = new AsyncMediaPlayer(options);
+                try
+                {
+                    _core = new AsyncMediaPlayer(options);
+                }
+                catch (Exception ex)
+                {
+                    // libvlc could not start: no plugin bank, or out of memory. Every member of
+                    // this class already tolerates a null core, so leaving it unset degrades to
+                    // a player that never plays instead of faulting on the next call into it.
+                    Logger.Error(ex);
+                    return;
+                }
+
                 _core.VideoOut += OnVout;
                 _core.Stopped += OnStopped;
                 _core.PositionChanged += OnTimeChanged;
