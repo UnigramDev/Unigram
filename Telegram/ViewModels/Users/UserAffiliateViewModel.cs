@@ -88,7 +88,7 @@ namespace Telegram.ViewModels.Users
                 }
                 else if (_cached.EndDate > 0)
                 {
-                    return _cached.EndDate < DateTime.Now.ToTimestamp();
+                    return _cached.EndDate < DateTime.Now.ToUnixTimeSeconds();
                 }
 
                 return _cached.Parameters.CommissionPerMille != Commission

@@ -34,7 +34,7 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditRestrictedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            var time = DateTime.Now.ToTimestamp();
+            var time = DateTime.Now.ToUnixTimeSeconds();
 
             Duration = new()
             {

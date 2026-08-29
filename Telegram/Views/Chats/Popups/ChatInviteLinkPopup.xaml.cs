@@ -56,7 +56,7 @@ namespace Telegram.Views.Chats.Popups
             _inviteLink = inviteLink?.InviteLink;
             _subscription = inviteLink?.SubscriptionPricing != null;
 
-            var time = DateTime.Now.ToTimestamp();
+            var time = DateTime.Now.ToUnixTimeSeconds();
 
             _limitByPeriod = new()
             {
@@ -278,7 +278,7 @@ namespace Telegram.Views.Chats.Popups
                     var confirm = await popup.ShowAsync(XamlRoot);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        InsertLimitByPeriod((int)popup.Value.ToTimestamp());
+                        InsertLimitByPeriod((int)popup.Value.ToUnixTimeSeconds());
                     }
                     else if (e.RemovedItems?.Count > 0)
                     {

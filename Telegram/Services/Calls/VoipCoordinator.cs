@@ -313,7 +313,7 @@ namespace Telegram.Services
                         return;
                     }
 
-                    startDate = schedule.Value.ToTimestamp();
+                    startDate = schedule.Value.ToUnixTimeSeconds();
                 }
                 else if (popup.IsStartWithSelected)
                 {
@@ -335,7 +335,7 @@ namespace Telegram.Services
                             return;
                         }
 
-                        startDate = schedule.Value.ToTimestamp();
+                        startDate = schedule.Value.ToUnixTimeSeconds();
                     }
                 }
 

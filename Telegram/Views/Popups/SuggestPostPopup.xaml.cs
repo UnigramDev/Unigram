@@ -271,7 +271,7 @@ namespace Telegram.Views.Popups
             var confirm = await popup.ShowAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                SuggestedPostInfo = new InputSuggestedPostInfo(SuggestedPostInfo?.Price, (int)popup.Value.ToTimestamp());
+                SuggestedPostInfo = new InputSuggestedPostInfo(SuggestedPostInfo?.Price, (int)popup.Value.ToUnixTimeSeconds());
                 SendDate.Content = Telegram.Converters.Formatter.DateAt(popup.Value);
             }
         }

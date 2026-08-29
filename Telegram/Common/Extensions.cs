@@ -160,12 +160,11 @@ namespace Telegram.Common
             return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
         }
 
-        public static int ToTimestamp(this DateTime dateTime)
-        {
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
+        private const long UnixEpochTicks = 621355968000000000;
 
-            return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
+        public static int ToUnixTimeSeconds(this DateTime dateTime)
+        {
+            return (int)((dateTime.ToUniversalTime().Ticks - UnixEpochTicks) / TimeSpan.TicksPerSecond);
         }
 
         public static uint GetHeight(this VideoProperties props)

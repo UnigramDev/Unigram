@@ -120,7 +120,7 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                SchedulingState = new MessageSchedulingStateSendAtDate(GetDateTime(true).ToTimestamp(), _repeat);
+                SchedulingState = new MessageSchedulingStateSendAtDate(GetDateTime(true).ToUnixTimeSeconds(), _repeat);
             }
         }
 

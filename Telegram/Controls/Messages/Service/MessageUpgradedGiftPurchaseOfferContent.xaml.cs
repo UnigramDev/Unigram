@@ -32,7 +32,7 @@ namespace Telegram.Controls.Messages.Service
             Pattern.Update(message.ClientService, upgradedGiftPurchaseOffer.Gift);
             Animation.Source = DelayedFileSource.FromSticker(message.ClientService, upgradedGiftPurchaseOffer.Gift.Model.Sticker);
 
-            var now = DateTime.Now.ToTimestamp();
+            var now = DateTime.Now.ToUnixTimeSeconds();
             if (now < upgradedGiftPurchaseOffer.ExpirationDate && upgradedGiftPurchaseOffer.State is GiftPurchaseOfferStatePending && !message.IsOutgoing)
             {
                 Accept.Visibility = Visibility.Visible;

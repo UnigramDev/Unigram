@@ -92,7 +92,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            SchedulingState = new MessageSchedulingStateSendAtDate(GetDateTime(true).ToTimestamp(), _repeat);
+            SchedulingState = new MessageSchedulingStateSendAtDate(GetDateTime(true).ToUnixTimeSeconds(), _repeat);
 
             _tsc.TrySetResult(ContentDialogResult.Primary);
             IsOpen = false;

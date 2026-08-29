@@ -428,7 +428,7 @@ namespace Telegram.Converters
 
         public static string InAgo(long value)
         {
-            var now = DateTime.Now.ToTimestamp();
+            var now = DateTime.Now.ToUnixTimeSeconds();
             if (now > value)
             {
                 return RelativeDateAgo(now - value);

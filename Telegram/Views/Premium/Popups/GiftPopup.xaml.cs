@@ -211,7 +211,7 @@ namespace Telegram.Views.Premium.Popups
             if (response is ReceivedGifts receivedGifts && receivedGifts.Gifts.Count > 0)
             {
                 var transferable = new List<ReceivedGift>();
-                var now = DateTime.Now.ToTimestamp();
+                var now = DateTime.Now.ToUnixTimeSeconds();
 
                 foreach (var gift in receivedGifts.Gifts)
                 {
@@ -248,7 +248,7 @@ namespace Telegram.Views.Premium.Popups
                 var totalCount = 0u;
                 var hasMoreItems = false;
 
-                var now = DateTime.Now.ToTimestamp();
+                var now = DateTime.Now.ToUnixTimeSeconds();
 
                 var response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, _nextOffset, 50));
                 if (response is ReceivedGifts gifts)

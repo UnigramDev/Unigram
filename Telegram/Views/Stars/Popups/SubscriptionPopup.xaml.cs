@@ -62,7 +62,7 @@ namespace Telegram.Views.Stars.Popups
                 PurchaseCommand.Visibility = Visibility.Visible;
                 CancelCommand.Visibility = Visibility.Collapsed;
             }
-            else if (subscription.ExpirationDate < DateTime.Now.ToTimestamp())
+            else if (subscription.ExpirationDate < DateTime.Now.ToUnixTimeSeconds())
             {
                 UntilHeader.Text = Strings.StarsSubscriptionUntilExpired;
                 UntilText.Text = Formatter.DateAt(subscription.ExpirationDate);

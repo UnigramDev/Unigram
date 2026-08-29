@@ -1015,7 +1015,7 @@ namespace Telegram.ViewModels
                             continue;
                         }
 
-                        Aggregator.Publish(new UpdateChatMember(chat.Id, 0, 0, null, false, false, null, new ChatMember(new MessageSenderUser(user.Id), string.Empty, ClientService.Options.MyId, DateTime.Now.ToTimestamp(), new ChatMemberStatusMember())));
+                        Aggregator.Publish(new UpdateChatMember(chat.Id, 0, 0, null, false, false, null, new ChatMember(new MessageSenderUser(user.Id), string.Empty, ClientService.Options.MyId, DateTime.Now.ToUnixTimeSeconds(), new ChatMemberStatusMember())));
                     }
                 }
                 else if (response is Error error)

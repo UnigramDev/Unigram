@@ -38,7 +38,7 @@ namespace Telegram.Controls
         {
             InitializeComponent();
 
-            _seed = (uint)DateTime.Now.ToTimestamp();
+            _seed = (uint)DateTime.Now.ToUnixTimeSeconds();
         }
 
         public UIElement TitleRoot { get; set; }

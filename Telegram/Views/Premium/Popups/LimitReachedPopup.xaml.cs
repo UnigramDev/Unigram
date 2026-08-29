@@ -376,7 +376,7 @@ namespace Telegram.Views.Premium.Popups
             // don't need to use result->dates_, because chat.last_message.date is more reliable
             if (chat.LastMessage != null)
             {
-                var currentDate = DateTime.Now.ToTimestamp();
+                var currentDate = DateTime.Now.ToUnixTimeSeconds();
                 int date = chat.LastMessage.Date;
                 int daysDif = (currentDate - date) / 86400;
 

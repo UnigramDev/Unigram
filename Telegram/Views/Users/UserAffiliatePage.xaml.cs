@@ -96,7 +96,7 @@ namespace Telegram.Views.Users
 
                 Stop.Visibility = Visibility.Collapsed;
             }
-            else if (info.EndDate > DateTime.Now.ToTimestamp())
+            else if (info.EndDate > DateTime.Now.ToUnixTimeSeconds())
             {
                 ActionButtonInfo.Text = Strings.AffiliateProgramStartInfo;
 
@@ -129,7 +129,7 @@ namespace Telegram.Views.Users
         {
             _countdownTimer?.Stop();
 
-            if (ViewModel.Info?.EndDate > DateTime.Now.ToTimestamp())
+            if (ViewModel.Info?.EndDate > DateTime.Now.ToUnixTimeSeconds())
             {
                 if (_countdownTimer == null)
                 {

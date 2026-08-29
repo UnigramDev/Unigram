@@ -1239,7 +1239,7 @@ namespace Telegram.Views
                 if (confirm == ContentDialogResult.Primary && popup.SelectedDates.Count > 0)
                 {
                     var first = popup.SelectedDates.FirstOrDefault();
-                    var offset = first.Date.ToTimestamp();
+                    var offset = first.Date.ToUnixTimeSeconds();
 
                     var closest = ViewModel.Media.DataSource.GetByDate(offset);
                     var panel = media.ScrollingHost.ItemsPanelRoot as ItemsWrapGrid;

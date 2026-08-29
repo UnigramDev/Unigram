@@ -163,7 +163,7 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    var now = DateTime.Now.ToTimestamp();
+                    var now = DateTime.Now.ToUnixTimeSeconds();
                     var paid = messages.FirstOrDefault(x => (x.IsPaidStarSuggestedPost || x.IsPaidGramSuggestedPost) && now < (int)clientService.Options.SuggestedPostLifetimeMin + x.GetDate());
 
                     if (paid != null && paid.IsPaidStarSuggestedPost)

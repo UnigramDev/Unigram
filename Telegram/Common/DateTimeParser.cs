@@ -89,8 +89,8 @@ namespace Telegram.Common
                     {
                         results.Add(new DateRange
                         {
-                            StartDate = start.AddYears(-(start.Year - i)).ToTimestamp(),
-                            EndDate = end.AddYears(-(start.Year - i)).ToTimestamp() - 1
+                            StartDate = start.AddYears(-(start.Year - i)).ToUnixTimeSeconds(),
+                            EndDate = end.AddYears(-(start.Year - i)).ToUnixTimeSeconds() - 1
                         });
                     }
 

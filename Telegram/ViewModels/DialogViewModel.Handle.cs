@@ -840,7 +840,7 @@ namespace Telegram.ViewModels
                 ? new MessageTopicForum(update.ForumTopicId)
                 : null;
 
-            var message = CreateMessage(new Message(NextPendingMessageId(), new MessageSenderUser(user.Id), null, update.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, update.Content, null, null));
+            var message = CreateMessage(new Message(NextPendingMessageId(), new MessageSenderUser(user.Id), null, update.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToUnixTimeSeconds(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, update.Content, null, null));
             message.GeneratedContentUnread = true;
             message.AnimationState = MessageAnimationState.Added;
             message.IsSynthetic = true;

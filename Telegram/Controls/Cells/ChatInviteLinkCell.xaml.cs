@@ -64,7 +64,7 @@ namespace Telegram.Controls.Cells
             Progress.Foreground = brush;
             Progress.Value = progress;
 
-            var diff = inviteLink.ExpirationDate - DateTime.Now.ToTimestamp();
+            var diff = inviteLink.ExpirationDate - DateTime.Now.ToUnixTimeSeconds();
             if (diff > 0)
             {
                 int days = diff / 60 / 60 / 24;
@@ -114,7 +114,7 @@ namespace Telegram.Controls.Cells
 
             if (inviteLink.ExpirationDate > 0)
             {
-                long currentTime = DateTime.Now.ToTimestamp();
+                long currentTime = DateTime.Now.ToUnixTimeSeconds();
                 long expireTime = inviteLink.ExpirationDate;
                 long date = (inviteLink.EditDate <= 0 ? inviteLink.Date : inviteLink.EditDate);
                 long from = currentTime - date;
@@ -171,7 +171,7 @@ namespace Telegram.Controls.Cells
                     StopProgress();
                 }
 
-                var diff = inviteLink.ExpirationDate - DateTime.Now.ToTimestamp();
+                var diff = inviteLink.ExpirationDate - DateTime.Now.ToUnixTimeSeconds();
                 if (diff < 0 || inviteLink.MemberCount == inviteLink.MemberLimit)
                 {
                     expired = true;

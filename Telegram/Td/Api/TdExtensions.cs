@@ -2952,12 +2952,12 @@ namespace Telegram.Td.Api
 
         public static bool IsForever(this ChatMemberStatusRestricted restricted)
         {
-            return restricted.RestrictedUntilDate == 0 || Math.Abs((restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp()) / 1000) > 5 * 365 * 24 * 60 * 60;
+            return restricted.RestrictedUntilDate == 0 || Math.Abs((restricted.RestrictedUntilDate - DateTime.Now.ToUnixTimeSeconds()) / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
         public static bool IsForever(this ChatMemberStatusBanned banned)
         {
-            return banned.BannedUntilDate == 0 || Math.Abs((banned.BannedUntilDate - DateTime.Now.ToTimestamp()) / 1000) > 5 * 365 * 24 * 60 * 60;
+            return banned.BannedUntilDate == 0 || Math.Abs((banned.BannedUntilDate - DateTime.Now.ToUnixTimeSeconds()) / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
 
@@ -3869,7 +3869,7 @@ namespace Telegram.Td.Api
                     return false;
                 }
 
-                return date + location.LivePeriod < DateTime.Now.ToTimestamp();
+                return date + location.LivePeriod < DateTime.Now.ToUnixTimeSeconds();
             }
 
             return false;

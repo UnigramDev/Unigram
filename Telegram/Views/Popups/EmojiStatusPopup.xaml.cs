@@ -44,7 +44,7 @@ namespace Telegram.Views.Popups
 
             if (clientService.TryGetUser(sourceUserId, out User user))
             {
-                var diff = expirationDate - DateTime.Now.ToTimestamp();
+                var diff = expirationDate - DateTime.Now.ToUnixTimeSeconds();
                 if (diff > 0)
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.BotEmojiStatusTextFor, user.FirstName, Locale.FormatTtl(diff)));

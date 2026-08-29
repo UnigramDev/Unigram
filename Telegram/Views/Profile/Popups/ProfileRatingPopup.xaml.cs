@@ -144,7 +144,7 @@ namespace Telegram.Views.Profile.Popups
 
                 if (pendingRating != null)
                 {
-                    var diff = pendingRatingDate - DateTime.Now.ToTimestamp();
+                    var diff = pendingRatingDate - DateTime.Now.ToUnixTimeSeconds();
                     var days = diff / (60 * 60 * 24);
 
                     var hyperlink = new Hyperlink();

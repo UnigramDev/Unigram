@@ -45,7 +45,7 @@ namespace Telegram.Controls.Cells.Revenue
                 SetRow(Date, 0);
                 SetRowSpan(Date, 2);
             }
-            else if (subscription.ExpirationDate < DateTime.Now.ToTimestamp())
+            else if (subscription.ExpirationDate < DateTime.Now.ToUnixTimeSeconds())
             {
                 Subtitle.Text = string.Format(Strings.StarsSubscriptionExpired, Formatter.Date(subscription.ExpirationDate));
                 Date.Text = Strings.StarsSubscriptionStatusExpired;

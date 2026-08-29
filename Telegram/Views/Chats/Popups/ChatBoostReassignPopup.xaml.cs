@@ -80,7 +80,7 @@ namespace Telegram.Views.Chats.Popups
                 var content = container.ContentTemplateRoot as ProfileCell;
                 var slot = ScrollingHost.Items[i] as ChatBoostSlot;
 
-                var diff = slot.CooldownUntilDate - DateTime.Now.ToTimestamp();
+                var diff = slot.CooldownUntilDate - DateTime.Now.ToUnixTimeSeconds();
                 if (diff > 0)
                 {
                     content.Subtitle = string.Format(Strings.BoostingAvailableIn, diff.ToDuration());

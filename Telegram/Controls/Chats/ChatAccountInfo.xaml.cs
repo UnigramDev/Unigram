@@ -111,7 +111,7 @@ namespace Telegram.Controls.Chats
             if (info.LastNameChangeDate != 0)
             {
                 FullNameInfo.Visibility = Visibility.Visible;
-                FullName.Text = string.Format(Strings.ContactInfoUserUpdatedName, Formatter.RelativeDate(DateTime.Now.ToTimestamp() - info.LastNameChangeDate));
+                FullName.Text = string.Format(Strings.ContactInfoUserUpdatedName, Formatter.RelativeDate(DateTime.Now.ToUnixTimeSeconds() - info.LastNameChangeDate));
             }
             else
             {
@@ -121,7 +121,7 @@ namespace Telegram.Controls.Chats
             if (info.LastPhotoChangeDate != 0)
             {
                 PhotoInfo.Visibility = Visibility.Visible;
-                Photo.Text = string.Format(Strings.ContactInfoUserUpdatedPhoto, Formatter.RelativeDate(DateTime.Now.ToTimestamp() - info.LastPhotoChangeDate));
+                Photo.Text = string.Format(Strings.ContactInfoUserUpdatedPhoto, Formatter.RelativeDate(DateTime.Now.ToUnixTimeSeconds() - info.LastPhotoChangeDate));
             }
             else
             {

@@ -989,7 +989,7 @@ namespace Telegram.Views.Host
                 return;
             }
 
-            if (expirationDate != 0 && expirationDate < DateTime.Now.ToTimestamp())
+            if (expirationDate != 0 && expirationDate < DateTime.Now.ToUnixTimeSeconds())
             {
                 PostEvent("emoji_status_failed", "error", "EXPIRATION_DATE_INVALID");
                 return;

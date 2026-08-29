@@ -1855,10 +1855,10 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                sendDate = popup.Value.ToTimestamp();
+                sendDate = popup.Value.ToUnixTimeSeconds();
             }
 
-            ClientService.Send(new ApproveSuggestedPost(message.ChatId, message.Id, sendDate < DateTime.Now.ToTimestamp() ? 0 : sendDate));
+            ClientService.Send(new ApproveSuggestedPost(message.ChatId, message.Id, sendDate < DateTime.Now.ToUnixTimeSeconds() ? 0 : sendDate));
         }
 
         public async void KeyboardButtonExecute(MessageViewModel message, KeyboardButton keyboardButton)
@@ -2214,7 +2214,7 @@ namespace Telegram.ViewModels
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
-                    var offset = first.Date.ToTimestamp();
+                    var offset = first.Date.ToUnixTimeSeconds();
 
                     await LoadDateSliceAsync(offset);
                 }

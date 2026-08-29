@@ -62,7 +62,7 @@ namespace Telegram.Views.Settings.Password
         {
             Footer.Inlines.Clear();
 
-            var diff = _passwordState.PendingResetDate - DateTime.Now.ToTimestamp();
+            var diff = _passwordState.PendingResetDate - DateTime.Now.ToUnixTimeSeconds();
             if (diff > 0)
             {
                 var hyperlink = new Hyperlink();
@@ -213,7 +213,7 @@ namespace Telegram.Views.Settings.Password
             }
             else if (response is ResetPasswordResultDeclined declined)
             {
-                var diff = _passwordState.PendingResetDate - DateTime.Now.ToTimestamp();
+                var diff = _passwordState.PendingResetDate - DateTime.Now.ToUnixTimeSeconds();
                 if (diff > 0)
                 {
                     await MessagePopup.ShowAsync(XamlRoot, target: null, string.Format(Strings.ResetPasswordWait, Locale.FormatTtl(diff)), Strings.AppName, Strings.OK);

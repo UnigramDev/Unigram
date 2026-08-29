@@ -613,7 +613,7 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                var diff = slot.CooldownUntilDate - DateTime.Now.ToTimestamp();
+                var diff = slot.CooldownUntilDate - DateTime.Now.ToUnixTimeSeconds();
                 if (diff > 0)
                 {
                     SubtitleLabel.Text = string.Format(Strings.BoostingAvailableIn, diff.ToDuration());

@@ -121,7 +121,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (poll.Poll.Type is PollTypeQuiz && poll.Poll.CloseDate != 0 && !results)
             {
-                var now = DateTime.Now.ToTimestamp();
+                var now = DateTime.Now.ToUnixTimeSeconds();
 
                 var diff = poll.Poll.CloseDate - now;
                 if (diff > 0)
@@ -349,7 +349,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var now = DateTime.Now.ToTimestamp();
+            var now = DateTime.Now.ToUnixTimeSeconds();
 
             var diff = poll.Poll.CloseDate - now;
             if (diff > 0)

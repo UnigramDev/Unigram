@@ -4349,7 +4349,7 @@ namespace Telegram.ViewModels
             if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
             {
                 var first = dialog.SelectedDates.FirstOrDefault();
-                var offset = first.Date.ToTimestamp();
+                var offset = first.Date.ToUnixTimeSeconds();
 
                 await LoadDateSliceAsync(offset);
             }

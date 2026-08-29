@@ -3654,7 +3654,7 @@ namespace Telegram.Views
 
                 if (properties.CanBeDeletedOnlyForSelf || properties.CanBeDeletedForAllUsers)
                 {
-                    if (message.IsPaidStarSuggestedPost || message.IsPaidGramSuggestedPost && DateTime.Now.ToTimestamp() < (int)message.ClientService.Options.SuggestedPostLifetimeMin + message.GetDate())
+                    if (message.IsPaidStarSuggestedPost || message.IsPaidGramSuggestedPost && DateTime.Now.ToUnixTimeSeconds() < (int)message.ClientService.Options.SuggestedPostLifetimeMin + message.GetDate())
                     {
                         var delete = new MenuFlyoutInfoItem
                         {
@@ -3998,7 +3998,7 @@ namespace Telegram.Views
             if (viewed)
             {
                 var expirePeriod = message.ClientService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
-                if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
+                if (expirePeriod + message.Date > DateTime.UtcNow.ToUnixTimeSeconds())
                 {
                     return true;
                 }
@@ -5166,7 +5166,7 @@ namespace Telegram.Views
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
-                    var offset = Common.Extensions.ToTimestamp(first.Date);
+                    var offset = first.Date.ToUnixTimeSeconds();
 
                     await ViewModel.LoadDateSliceAsync(offset);
                 }

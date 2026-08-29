@@ -173,7 +173,7 @@ namespace Telegram.ViewModels.Chats
 
             if (status.NextWithdrawalIn > 0)
             {
-                NextWithdrawalDate = DateTime.Now.AddSeconds(status.NextWithdrawalIn).ToTimestamp();
+                NextWithdrawalDate = DateTime.Now.AddSeconds(status.NextWithdrawalIn).ToUnixTimeSeconds();
             }
             else
             {
@@ -185,7 +185,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (NextWithdrawalDate != 0)
             {
-                ShowToast(string.Format(Strings.BotStarsWithdrawalToast, Formatter.Duration(NextWithdrawalDate - DateTime.Now.ToTimestamp())), ToastPopupIcon.Info);
+                ShowToast(string.Format(Strings.BotStarsWithdrawalToast, Formatter.Duration(NextWithdrawalDate - DateTime.Now.ToUnixTimeSeconds())), ToastPopupIcon.Info);
                 return;
             }
 

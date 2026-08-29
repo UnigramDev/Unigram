@@ -102,7 +102,7 @@ namespace Telegram.Converters
             }
             else if (user.Status is UserStatusOnline online)
             {
-                if (online.Expires > DateTime.Now.ToTimestamp() / 1000)
+                if (online.Expires > DateTime.Now.ToUnixTimeSeconds() / 1000)
                 {
                     return Strings.Online;
                 }
@@ -134,7 +134,7 @@ namespace Telegram.Converters
             try
             {
                 var rightNow = DateTime.Now;
-                var now = rightNow.ToTimestamp();
+                var now = rightNow.ToUnixTimeSeconds();
 
                 int day = rightNow.DayOfYear;
                 int year = rightNow.Year;
@@ -164,7 +164,7 @@ namespace Telegram.Converters
                 {
                     return string.Format(Strings.LastSeenFormatted, string.Format(Strings.YesterdayAtFormatted, Formatter.Time(online)));
                 }
-                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - till) < 31536000000L)
+                else if (Math.Abs(DateTime.Now.ToUnixTimeSeconds() / 1000 - till) < 31536000000L)
                 {
                     string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterMonth), Formatter.Time(online));
                     return string.Format(Strings.LastSeenDateFormatted, format);
@@ -185,7 +185,7 @@ namespace Telegram.Converters
 
         public static double OnlinePhraseChange(UserStatus status, DateTime now)
         {
-            return Math.Clamp(OnlinePhraseChangeInSeconds(status, now.ToTimestamp()), 0, 86400);
+            return Math.Clamp(OnlinePhraseChangeInSeconds(status, now.ToUnixTimeSeconds()), 0, 86400);
         }
 
         public static double OnlinePhraseChangeInSeconds(UserStatus status, int now)

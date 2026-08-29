@@ -126,7 +126,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 if (receivedGift.IsSaved)
                 {
-                    if (receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToTimestamp())
+                    if (receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToUnixTimeSeconds())
                     {
                         TextBlockHelper.SetMarkdown(Subtitle, Strings.Gift2InfoPinned);
                         Convert.Glyph = Locale.Declension(Strings.R.Gift2ButtonSell, receivedGift.SellStarCount);
@@ -143,7 +143,7 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else
                 {
-                    if (receivedGift.SellStarCount > 0 && receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToTimestamp())
+                    if (receivedGift.SellStarCount > 0 && receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToUnixTimeSeconds())
                     {
                         TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2Info, receivedGift.SellStarCount));
                         Convert.Glyph = Locale.Declension(Strings.R.Gift2ButtonSell, receivedGift.SellStarCount);
@@ -926,7 +926,7 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            var now = DateTime.Now.ToTimestamp();
+            var now = DateTime.Now.ToUnixTimeSeconds();
             if (now < _gift.NextResaleDate)
             {
                 var date = Formatter.ToLocalTime(_gift.NextResaleDate);
@@ -1057,7 +1057,7 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            var now = DateTime.Now.ToTimestamp();
+            var now = DateTime.Now.ToUnixTimeSeconds();
             if (now < _gift.NextTransferDate)
             {
                 var date = Formatter.ToLocalTime(_gift.NextTransferDate);

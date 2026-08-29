@@ -256,8 +256,8 @@ namespace Telegram.ViewModels.Business
                         BusinessAwayScheduleType.OutsideBusinessHours => new BusinessAwayMessageScheduleOutsideOfOpeningHours(),
                         BusinessAwayScheduleType.Custom => new BusinessAwayMessageScheduleCustom
                         {
-                            StartDate = (CustomStart ?? DateTime.Now).ToTimestamp(),
-                            EndDate = (CustomEnd ?? DateTime.Now.AddDays(1)).ToTimestamp(),
+                            StartDate = (CustomStart ?? DateTime.Now).ToUnixTimeSeconds(),
+                            EndDate = (CustomEnd ?? DateTime.Now.AddDays(1)).ToUnixTimeSeconds(),
                         },
                         _ => null
                     },

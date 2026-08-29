@@ -876,7 +876,7 @@ namespace Telegram.Controls
                 }
             }
 
-            var url = TdExtensions.ToDateUrl(popup.Value.ToTimestamp(), format);
+            var url = TdExtensions.ToDateUrl(popup.Value.ToUnixTimeSeconds(), format);
 
             range.SetText(TextSetOptions.Unlink, text);
             range.CharacterFormat = Document.GetDefaultCharacterFormat();
