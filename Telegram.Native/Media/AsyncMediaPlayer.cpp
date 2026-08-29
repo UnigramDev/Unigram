@@ -62,6 +62,11 @@ namespace winrt::Telegram::Native::Media::implementation
         argsStorage.push_back("--aout=winstore");
         argsStorage.push_back("--volume-save");
 
+        // plugins.dat is generated against the plugins that ship beside it, but packaging rewrites
+        // every plugin's mtime, so the cache never matches and libvlc reloads all 36 plugin DLLs --
+        // 2.3s on the first libvlc_new. Skip the directory walk and trust the cache instead.
+        argsStorage.push_back("--no-plugins-scan");
+
         if (options.Debug())
         {
             argsStorage.push_back("--verbose=3");
