@@ -529,7 +529,6 @@
       <DependentUpon>WebVideoPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="CsWinRT.cs" />
-    <Compile Include="CsWinRT.Vectors.cs" />
     <Compile Include="Entities\StorageAlbum.cs" />
     <Compile Include="Entities\VideoGeneration.cs" />
     <Compile Include="Services\Calls\VoipCallBase.cs" />
