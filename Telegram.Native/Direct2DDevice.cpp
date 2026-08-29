@@ -181,7 +181,9 @@ namespace winrt::Telegram::Native::implementation
         // TODO: share mode
         DWORD share_mode = FILE_SHARE_READ | FILE_SHARE_DELETE | FILE_SHARE_WRITE;
 
-        DWORD creation_disposition = OPEN_ALWAYS;
+        // OPEN_EXISTING, not OPEN_ALWAYS: this only ever reads, and OPEN_ALWAYS left an empty
+        // file behind whenever it was asked about one that was not there.
+        DWORD creation_disposition = OPEN_EXISTING;
 
         DWORD native_flags = FILE_FLAG_BACKUP_SEMANTICS;
         //if (flags & Direct) {
@@ -212,9 +214,16 @@ namespace winrt::Telegram::Native::implementation
         size_t length = static_cast<size_t>(pFileSize.QuadPart);
         char* buffer = (char*)malloc(length);
 
-        DWORD numberOfBytesRead;
-        if (!ReadFile(handle, buffer, length, &numberOfBytesRead, NULL))
+        if (buffer == nullptr)
         {
+            CloseHandle(handle);
+            return nullptr;
+        }
+
+        DWORD numberOfBytesRead;
+        if (!ReadFile(handle, buffer, length, &numberOfBytesRead, NULL) || numberOfBytesRead != length)
+        {
+            free(buffer);
             CloseHandle(handle);
             return nullptr;
         }
@@ -238,7 +247,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
         IBuffer surface;
-        WebPIterator iter;
+        WebPIterator iter{};
         if (WebPDemuxGetFrame(spDemuxer.get(), 1, &iter))
         {
             WebPDecoderConfig config;
@@ -246,6 +255,7 @@ namespace winrt::Telegram::Native::implementation
             if (!ret)
             {
                 //throw ref new FailureException(ref new String(L"WebPInitDecoderConfig failed"));
+                WebPDemuxReleaseIterator(&iter);
                 free(buffer);
                 return nullptr;
             }
@@ -254,6 +264,7 @@ namespace winrt::Telegram::Native::implementation
             if (!ret)
             {
                 //throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
+                WebPDemuxReleaseIterator(&iter);
                 free(buffer);
                 return nullptr;
             }
@@ -299,12 +310,14 @@ namespace winrt::Telegram::Native::implementation
                 //throw ref new FailureException(ref new String(L"Failed to decode frame"));
                 //delete[] pixels;
 
+                WebPDemuxReleaseIterator(&iter);
                 free(buffer);
                 return nullptr;
             }
 
             //delete[] pixels;
 
+            WebPDemuxReleaseIterator(&iter);
         }
 
         free(buffer);
@@ -321,7 +334,9 @@ namespace winrt::Telegram::Native::implementation
         // TODO: share mode
         DWORD share_mode = FILE_SHARE_READ | FILE_SHARE_DELETE | FILE_SHARE_WRITE;
 
-        DWORD creation_disposition = OPEN_ALWAYS;
+        // OPEN_EXISTING, not OPEN_ALWAYS: this only ever reads, and OPEN_ALWAYS left an empty
+        // file behind whenever it was asked about one that was not there.
+        DWORD creation_disposition = OPEN_EXISTING;
 
         DWORD native_flags = FILE_FLAG_BACKUP_SEMANTICS;
         //if (flags & Direct) {
@@ -352,9 +367,16 @@ namespace winrt::Telegram::Native::implementation
         size_t length = static_cast<size_t>(pFileSize.QuadPart);
         char* buffer = (char*)malloc(length);
 
-        DWORD numberOfBytesRead;
-        if (!ReadFile(handle, buffer, length, &numberOfBytesRead, NULL))
+        if (buffer == nullptr)
         {
+            CloseHandle(handle);
+            return false;
+        }
+
+        DWORD numberOfBytesRead;
+        if (!ReadFile(handle, buffer, length, &numberOfBytesRead, NULL) || numberOfBytesRead != length)
+        {
+            free(buffer);
             CloseHandle(handle);
             return false;
         }
@@ -377,12 +399,12 @@ namespace winrt::Telegram::Native::implementation
             return false;
         }
 
-        IBuffer surface;
-        WebPIterator iter;
+        WebPIterator iter{};
         if (WebPDemuxGetFrame(spDemuxer.get(), 1, &iter))
         {
             pixelWidth = iter.width;
             pixelHeight = iter.height;
+            WebPDemuxReleaseIterator(&iter);
         }
 
         free(buffer);
