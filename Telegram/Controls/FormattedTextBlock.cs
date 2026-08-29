@@ -116,10 +116,12 @@ namespace Telegram.Controls
             {
                 _paragraphs.Enqueue(paragraph);
             }
+#if NET9_0_OR_GREATER
             else
             {
-                Drop(paragraph);
+                Utils.ReleaseHandle(paragraph);
             }
+#endif
         }
 
         public void PutHyperlink(ProjectedHyperlink hyperlink)
@@ -128,11 +130,13 @@ namespace Telegram.Controls
             {
                 _hyperlinks.Enqueue(hyperlink);
             }
+#if NET9_0_OR_GREATER
             else
             {
-                Drop(hyperlink.Native);
-                Drop(hyperlink.Inlines);
+                Utils.ReleaseHandle(hyperlink.Native);
+                Utils.ReleaseHandle(hyperlink.Inlines);
             }
+#endif
         }
 
         public void PutSpan(IXamlDirectObject span)
@@ -141,10 +145,12 @@ namespace Telegram.Controls
             {
                 _spans.Enqueue(span);
             }
+#if NET9_0_OR_GREATER
             else
             {
-                Drop(span);
+                Utils.ReleaseHandle(span);
             }
+#endif
         }
 
         public void PutRun(IXamlDirectObject run)
@@ -153,18 +159,11 @@ namespace Telegram.Controls
             {
                 _runs.Enqueue(run);
             }
+#if NET9_0_OR_GREATER
             else
             {
-                Drop(run);
+                Utils.ReleaseHandle(run);
             }
-        }
-
-        // What does not fit has to be released, not just let go: on the AOT build the handle is a
-        // WinRT reference to a TextElement nothing else can reach any more.
-        private static void Drop(object handle)
-        {
-#if NET9_0_OR_GREATER
-            FormattedTextBlock.ReleaseHandle(handle);
 #endif
         }
 
@@ -182,23 +181,23 @@ namespace Telegram.Controls
         {
             foreach (var paragraph in _paragraphs)
             {
-                FormattedTextBlock.ReleaseHandle(paragraph);
+                Utils.ReleaseHandle(paragraph);
             }
 
             foreach (var span in _spans)
             {
-                FormattedTextBlock.ReleaseHandle(span);
+                Utils.ReleaseHandle(span);
             }
 
             foreach (var run in _runs)
             {
-                FormattedTextBlock.ReleaseHandle(run);
+                Utils.ReleaseHandle(run);
             }
 
             foreach (var hyperlink in _hyperlinks)
             {
-                FormattedTextBlock.ReleaseHandle(hyperlink.Native);
-                FormattedTextBlock.ReleaseHandle(hyperlink.Inlines);
+                Utils.ReleaseHandle(hyperlink.Native);
+                Utils.ReleaseHandle(hyperlink.Inlines);
             }
 
             Clear();
@@ -2797,7 +2796,7 @@ namespace Telegram.Controls
 
             _released = true;
 
-            ReleaseHandle(_fastRun);
+            Utils.ReleaseHandle(_fastRun);
             _fastRun = null;
 
             ReleaseHandles(_activeParagraphs);
@@ -2806,8 +2805,8 @@ namespace Telegram.Controls
 
             for (int i = 0; i < _activeHyperlinks.Count; i++)
             {
-                ReleaseHandle(_activeHyperlinks[i].Native);
-                ReleaseHandle(_activeHyperlinks[i].Inlines);
+                Utils.ReleaseHandle(_activeHyperlinks[i].Native);
+                Utils.ReleaseHandle(_activeHyperlinks[i].Inlines);
             }
 
             _activeHyperlinks.Clear();
@@ -2832,19 +2831,10 @@ namespace Telegram.Controls
 
             for (int i = 0; i < handles.Count; i++)
             {
-                ReleaseHandle(handles[i]);
+                Utils.ReleaseHandle(handles[i]);
             }
 
             handles.Clear();
-        }
-
-        internal static void ReleaseHandle(object handle)
-        {
-            // Dispose is idempotent, so a handle reachable from two of the lists is fine.
-            if (handle is WinRT.IWinRTObject projected)
-            {
-                projected.NativeObject.Dispose();
-            }
         }
 
         #endregion

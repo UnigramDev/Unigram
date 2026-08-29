@@ -14,6 +14,18 @@ namespace Telegram.Common
 {
     public static class Utils
     {
+#if NET9_0_OR_GREATER
+        // TODO: find better location for this method
+        internal static void ReleaseHandle(object handle)
+        {
+            // Dispose is idempotent, so a handle reachable from two of the lists is fine.
+            if (handle is WinRT.IWinRTObject projected)
+            {
+                projected.NativeObject.Dispose();
+            }
+        }
+#endif
+
         public static byte[] ComputeSHA1(byte[] data)
         {
             var algorithm = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
