@@ -797,7 +797,6 @@ namespace winrt::Telegram::Native::implementation
 
     SoftwareBitmap Direct2DDevice::DrawBlurred(hstring fileName, float blurAmount)
     {
-        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
@@ -829,7 +828,6 @@ namespace winrt::Telegram::Native::implementation
 
     SoftwareBitmap Direct2DDevice::DrawBlurred(array_view<uint8_t const> bytes, float blurAmount)
     {
-        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         winrt::com_ptr<IStream> stream;
@@ -861,69 +859,98 @@ namespace winrt::Telegram::Native::implementation
     HRESULT Direct2DDevice::DrawBlurredImpl(IWICBitmapSource* wicBitmapSource, float blurAmount, SoftwareBitmap& bitmap, bool minithumbnail)
     {
         HRESULT result;
-        winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
-        ReturnIfFailed(result, m_d2dContext->CreateImageSourceFromWic(wicBitmapSource, imageSource.put()));
 
         D2D1_SIZE_U size;
         ReturnIfFailed(result, wicBitmapSource->GetSize(&size.width, &size.height));
 
         uint32_t totalPixels = size.width * size.height;
-        // Disabled for now
-        if (false && ((totalPixels <= 400 * 400 && blurAmount == 3) || (totalPixels <= 150 * 150 && blurAmount == 15)))
+        // Small enough that reaching D2D costs more than the blur does. The device round trip is
+        // an image source, a render target, BeginDraw/EndDraw and a mapped readback behind the
+        // shared context, measured at a ~529us floor in situ; GaussianBlur runs at ~14ns a pixel,
+        // so it stays under that up to roughly 128x128. Minithumbnails are ~40px and ~91% of all
+        // blurs, so they clear it by a wide margin - 20us against 529us.
+        //
+        // One threshold for both amounts, because the running sum makes sigma 15 cost what sigma 3
+        // costs. Widening it is a measurable experiment, not a guess: the probes in
+        // ThumbnailController report blur.file.solo separately.
+        if (totalPixels <= 128 * 128)
         {
-            UINT bytesPerPixel = 4;
-            UINT stride = size.width * bytesPerPixel;
-            UINT bufferSize = stride * size.height;
+            UINT rowSizeBytes = size.width * 4;
 
             bitmap = SoftwareBitmap(BitmapPixelFormat::Bgra8, size.width, size.height, BitmapAlphaMode::Premultiplied);
             auto buffer = bitmap.LockBuffer(BitmapBufferAccessMode::Write);
             auto reference = buffer.CreateReference();
             auto pixels = reference.data();
+            auto stride = static_cast<UINT>(buffer.GetPlaneDescription(0).Stride);
+
+            // GaussianBlur indexes rows by width * 4, so a padded bitmap is blurred in a packed
+            // copy and written back a row at a time.
+            std::vector<uint8_t> packed;
+            uint8_t* target = pixels;
+
+            if (stride != rowSizeBytes)
+            {
+                packed.resize(static_cast<size_t>(rowSizeBytes) * size.height);
+                target = packed.data();
+            }
 
             WICRect rect = { 0, 0, static_cast<INT>(size.width), static_cast<INT>(size.height) };
-            ReturnIfFailed(result, wicBitmapSource->CopyPixels(&rect, stride, bufferSize, pixels));
+            ReturnIfFailed(result, wicBitmapSource->CopyPixels(&rect, rowSizeBytes, rowSizeBytes * size.height, target));
 
-            if (blurAmount == 3)
+            GaussianBlur::Apply(target, size.width, size.height, blurAmount);
+
+            if (target != pixels)
             {
-                if (totalPixels <= 100 * 100)
+                const uint8_t* srcRow = target;
+                uint8_t* dstRow = pixels;
+
+                for (uint32_t y = 0; y < size.height; ++y)
                 {
-                    FixedRadius3Blur::ApplyBlur(pixels, size.width, size.height);
+                    memcpy(dstRow, srcRow, rowSizeBytes);
+                    srcRow += rowSizeBytes;
+                    dstRow += stride;
                 }
-                else
-                {
-                    FixedRadius3BoxBlur::ApplyFastBlur(pixels, size.width, size.height);
-                }
-            }
-            else if (totalPixels <= 50 * 50)
-            {
-                FixedRadius15Blur::ApplyBlur(pixels, size.width, size.height);
-            }
-            else
-            {
-                FixedRadius15BoxBlur::ApplyFastBlur(pixels, size.width, size.height);
             }
 
             return S_OK;
         }
 
+        // Everything above needs no device, so it runs unlocked: the caller's WIC decode, the
+        // file it opened, and the CPU blur. From here the shared context and the shared blur
+        // effect are driven as one sequence - SetValue, SetInput, SetTarget, BeginDraw..EndDraw -
+        // and it is the sequence that needs protecting, not the individual calls, which D2D
+        // already serializes for a D2D1_FACTORY_TYPE_MULTI_THREADED factory.
+        std::lock_guard const guard(m_criticalSection);
+
+        winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
         winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-        ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
 
-        ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount));
-
-        m_gaussianBlurEffect->SetInput(0, imageSource.get());
-
-        m_d2dContext->SetTarget(targetBitmap.get());
-        m_d2dContext->BeginDraw();
-        //m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
-        m_d2dContext->Clear(D2D1::ColorF(ColorF::Black, 0.0f));
-        m_d2dContext->DrawImage(m_gaussianBlurEffect.get());
-
-        if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+        // A loop rather than the recursive call this replaces: m_criticalSection is a plain
+        // std::mutex, so re-entering after a device loss would deadlock. Both resources belong to
+        // the lost device and are rebuilt on the retry; com_ptr::put() releases what it overwrites.
+        for (;;)
         {
+            ReturnIfFailed(result, m_d2dContext->CreateImageSourceFromWic(wicBitmapSource, imageSource.put()));
+
+            D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+            ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
+
+            ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount));
+
+            m_gaussianBlurEffect->SetInput(0, imageSource.get());
+
+            m_d2dContext->SetTarget(targetBitmap.get());
+            m_d2dContext->BeginDraw();
+            //m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+            m_d2dContext->Clear(D2D1::ColorF(ColorF::Black, 0.0f));
+            m_d2dContext->DrawImage(m_gaussianBlurEffect.get());
+
+            if ((result = m_d2dContext->EndDraw()) != D2DERR_RECREATE_TARGET)
+            {
+                break;
+            }
+
             ReturnIfFailed(result, CreateDeviceResources());
-            return DrawBlurredImpl(wicBitmapSource, blurAmount, bitmap, minithumbnail);
         }
 
         //winrt::com_ptr<IDXGISurface> surface;
@@ -968,11 +995,15 @@ namespace winrt::Telegram::Native::implementation
             const uint8_t* srcRow = static_cast<const uint8_t*>(map.bits);
             uint8_t* dstRow = reference.data();
 
+            // The destination has a stride of its own, and it is no more guaranteed to be packed
+            // than the mapped source this branch exists to handle.
+            auto dstStride = static_cast<uint32_t>(buffer.GetPlaneDescription(0).Stride);
+
             for (uint32_t y = 0; y < size.height; ++y)
             {
                 memcpy(dstRow, srcRow, rowSizeBytes);
                 srcRow += map.pitch;
-                dstRow += rowSizeBytes;
+                dstRow += dstStride;
             }
         }
 
