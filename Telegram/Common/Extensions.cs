@@ -231,69 +231,6 @@ namespace Telegram.Common
             var access = (IMemoryBufferByteAccess)reference;
 #endif
             access.GetBuffer(out buffer, out capacity);
-
-        }
-
-        public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
-        {
-            var token = StorageService.Future.Add(file);
-            var path = file.Path;
-
-            if (NativeUtils.IsFileReadable(path, out long fileSize, out long fileTime))
-            {
-                if (conversion == ConversionType.Copy && arguments == null && !forceCopy)
-                {
-                    return new InputFileLocal(path);
-                }
-
-                if (conversion == ConversionType.Compress)
-                {
-                    path = Path.ChangeExtension(path, ".jpg");
-                }
-
-                return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3}", token, conversion, arguments, fileTime), fileSize);
-            }
-
-            if (string.IsNullOrEmpty(path))
-            {
-                path = file.FolderRelativeId;
-            }
-
-            if (conversion == ConversionType.Compress)
-            {
-                path = Path.ChangeExtension(path, ".jpg");
-            }
-
-            try
-            {
-                var props = await file.GetBasicPropertiesAsync();
-                return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3:s}", token, conversion, arguments, props.DateModified), (long)props.Size);
-            }
-            catch
-            {
-                return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3}", token, conversion, arguments, 0), 0);
-            }
-        }
-
-        public static async Task<InputThumbnail> ToVideoThumbnailAsync(this StorageVideo file, VideoGeneration video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
-        {
-            double originalWidth = file.Width;
-            double originalHeight = file.Height;
-
-            if (!video.CropRectangle.IsEmpty)
-            {
-                originalWidth = video.CropRectangle.Width;
-                originalHeight = video.CropRectangle.Height;
-            }
-
-            double ratioX = 90 / originalWidth;
-            double ratioY = 90 / originalHeight;
-            double ratio = Math.Min(ratioX, ratioY);
-
-            int width = (int)(originalWidth * ratio);
-            int height = (int)(originalHeight * ratio);
-
-            return new InputThumbnail(await file.File.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
         public static bool TypeEquals(this object o1, object o2)
