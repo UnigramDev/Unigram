@@ -5,16 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Clipper2Lib;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Telegram.Native.AI;
 
 namespace Telegram.AI
 {
-    public static class RecognizedTextBoundingBoxSimplifier
+    public static partial class RecognizedTextBoundingBoxSimplifier
     {
         public static List<List<Vector2>> Union<T>(IEnumerable<T> boxes, float tolerance, float padding) where T : IOcrObject
         {
@@ -43,27 +42,98 @@ namespace Telegram.AI
             return vectors;
         }
 
-        private static IEnumerable<List<Vector2>> GetUnionOfBoundingBoxes<T>(IEnumerable<T> boxes, float padding) where T : IOcrObject
+        private static List<List<Vector2>> GetUnionOfBoundingBoxes<T>(IEnumerable<T> boxes, float padding) where T : IOcrObject
         {
-            var clipper = new Clipper64();
-            var paths = boxes.Select(box => ConvertToClipperPath(box.BoundingBox.Inflate(padding))).ToList();
+            var empty = true;
 
-            clipper.AddSubject(new Paths64(paths));
-            var solution = new Paths64();
-            clipper.Execute(ClipType.Union, Clipper2Lib.FillRule.NonZero, solution);
+            using (var builder = new CanvasPathBuilder(null))
+            {
+                // The quads overlap and all wind the same way, so under the winding rule the
+                // filled region is their union, and Outline traces exactly that boundary.
+                builder.SetFilledRegionDetermination(CanvasFilledRegionDetermination.Winding);
 
-            return solution.Select(path => path.Select(p => new Vector2((float)(p.X / 1000), (float)(p.Y / 1000))).Distinct().ToList());
+                foreach (var box in boxes)
+                {
+                    var quad = box.BoundingBox.Inflate(padding);
+
+                    builder.BeginFigure(quad.TopLeft);
+                    builder.AddLine(quad.TopRight);
+                    builder.AddLine(quad.BottomRight);
+                    builder.AddLine(quad.BottomLeft);
+                    builder.EndFigure(CanvasFigureLoop.Closed);
+
+                    empty = false;
+                }
+
+                if (empty)
+                {
+                    return new List<List<Vector2>>();
+                }
+
+                var receiver = new PolygonReceiver();
+
+                using (var quads = CanvasGeometry.CreatePath(builder))
+                using (var outline = quads.Outline())
+                {
+                    outline.SendPathTo(receiver);
+                }
+
+                return receiver.Polygons;
+            }
         }
 
-        private static Path64 ConvertToClipperPath(RecognizedTextBoundingBox box)
+        private partial class PolygonReceiver : ICanvasPathReceiver
         {
-            return new Path64
+            public List<List<Vector2>> Polygons { get; } = new();
+
+            private List<Vector2> _figure;
+
+            public void BeginFigure(Vector2 startPoint, CanvasFigureFill figureFill)
             {
-                new Point64((long)(box.TopLeft.X * 1000), (long)(box.TopLeft.Y * 1000)),
-                new Point64((long)(box.TopRight.X * 1000), (long)(box.TopRight.Y * 1000)),
-                new Point64((long)(box.BottomRight.X * 1000), (long)(box.BottomRight.Y * 1000)),
-                new Point64((long)(box.BottomLeft.X * 1000), (long)(box.BottomLeft.Y * 1000))
-            };
+                _figure = new List<Vector2> { startPoint };
+            }
+
+            public void AddLine(Vector2 endPoint)
+            {
+                Add(endPoint);
+            }
+
+            // The outline of a polygonal path has no curves, but the interface requires these.
+            public void AddArc(Vector2 endPoint, float radiusX, float radiusY, float rotationAngle, CanvasSweepDirection sweepDirection, CanvasArcSize arcSize) => Add(endPoint);
+            public void AddCubicBezier(Vector2 controlPoint1, Vector2 controlPoint2, Vector2 endPoint) => Add(endPoint);
+            public void AddQuadraticBezier(Vector2 controlPoint, Vector2 endPoint) => Add(endPoint);
+
+            public void SetFilledRegionDetermination(CanvasFilledRegionDetermination filledRegionDetermination) { }
+            public void SetSegmentOptions(CanvasFigureSegmentOptions figureSegmentOptions) { }
+
+            public void EndFigure(CanvasFigureLoop figureLoop)
+            {
+                if (_figure.Count > 1 && IsCoincident(_figure[0], _figure[^1]))
+                {
+                    _figure.RemoveAt(_figure.Count - 1);
+                }
+
+                if (_figure.Count > 2)
+                {
+                    Polygons.Add(_figure);
+                }
+
+                _figure = null;
+            }
+
+            // The rounding pass normalizes (curr - prev), so a repeated vertex would give it NaN.
+            private void Add(Vector2 point)
+            {
+                if (!IsCoincident(_figure[^1], point))
+                {
+                    _figure.Add(point);
+                }
+            }
+
+            private static bool IsCoincident(Vector2 a, Vector2 b)
+            {
+                return Vector2.DistanceSquared(a, b) < 0.0001f;
+            }
         }
 
         private static void SimplifySection(List<Vector2> points, int start, int end, float tolerance, bool[] keep)
