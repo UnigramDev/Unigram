@@ -159,6 +159,16 @@
                                              Click="{x:Bind ViewModel.ResetDeserialization}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="File updates"
+                                          Footer="What updateFile costs the UI: how many arrive, how many handler calls come out of them once a burst for one file has been collapsed, and how many dispatcher work items carry those calls.">
+                    <controls:SettingsButton Content="Received"
+                                             Badge="{x:Bind ViewModel.FileUpdates, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Delivered"
+                                             Badge="{x:Bind ViewModel.FileUpdateDeliveries, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Reset"
+                                             Click="{x:Bind ViewModel.ResetFileUpdates}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="TDLib Logs"
                                           Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
                     <controls:SettingsButton Content="Verbosity Level">

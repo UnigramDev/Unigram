@@ -3417,13 +3417,7 @@ namespace Telegram.Services
             }
 
             // TODO: move the message after track when figured out why WeakAction throws a NRE
-            var token = UpdateManager.CreateToken(SessionId, file.Id);
-            if (file.Local.IsDownloadingCompleted)
-            {
-                EventAggregator.Current.Publish(file, token | UpdateManager.CompletionOnly);
-            }
-
-            EventAggregator.Current.Publish(file, token);
+            UpdateManager.Publish(SessionId, file);
             TrackDownloadedFile(file);
         }
 

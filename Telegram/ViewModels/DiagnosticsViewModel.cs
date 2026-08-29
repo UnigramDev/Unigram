@@ -46,6 +46,7 @@ namespace Telegram.ViewModels
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             UpdateDeserialization();
+            UpdateFileUpdates();
             UpdatePowerSaving();
 
             PowerSavingPolicy.Changed += OnPowerSavingChanged;
@@ -413,6 +414,49 @@ namespace Telegram.ViewModels
         {
             TdThroughput.Reset();
             UpdateDeserialization();
+        }
+
+        private string _fileUpdates;
+        public string FileUpdates
+        {
+            get => _fileUpdates;
+            private set => Set(ref _fileUpdates, value);
+        }
+
+        private string _fileUpdateDeliveries;
+        public string FileUpdateDeliveries
+        {
+            get => _fileUpdateDeliveries;
+            private set => Set(ref _fileUpdateDeliveries, value);
+        }
+
+        private void UpdateFileUpdates()
+        {
+            var publishes = UpdateManager.Publishes;
+            if (publishes == 0)
+            {
+                FileUpdates = "nothing yet";
+                FileUpdateDeliveries = "nothing yet";
+                return;
+            }
+
+            var deliveries = UpdateManager.Deliveries;
+            var seconds = UpdateManager.WallSeconds;
+
+            FileUpdates = string.Format("{0:N0} updates over {1:N0}s, {2:N1}/s", publishes, seconds, publishes / seconds);
+
+            // Under one call per update is the bus doing its job: either nothing on screen is
+            // showing the file, or a burst for it collapsed into a single call. What was absorbed
+            // is what the old path would have delivered on top, so the two together are the before
+            // and after of the same run.
+            FileUpdateDeliveries = string.Format("{0:N0} calls, {1:N2} per update, {2:N0} absorbed, {3:N0} hops",
+                deliveries, deliveries / (double)publishes, UpdateManager.Collapsed, UpdateManager.Hops);
+        }
+
+        public void ResetFileUpdates(object sender, RoutedEventArgs e)
+        {
+            UpdateManager.ResetCounters();
+            UpdateFileUpdates();
         }
 
         public void SendLogOld(object sender, RoutedEventArgs e)

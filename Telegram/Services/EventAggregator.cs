@@ -9,9 +9,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Telegram.Common;
-using Telegram.Navigation;
-using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {
@@ -26,14 +23,11 @@ namespace Telegram.Services
     public interface IEventAggregator
     {
         SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action, EventType type = EventType.None, long id = 0);
-        void Subscribe<T>(object subscriber, long token, UpdateHandler<T> action);
 
         void Unsubscribe(object subscriber);
         void Unsubscribe<T>(object subscriber, EventType type = EventType.None, long id = 0);
-        void Unsubscribe(object subscriber, long token);
 
         void Publish(object message, EventType type = EventType.None, long id = 0);
-        void Publish(object message, long token);
     }
 
     // TODO: Use in more places if possible
@@ -152,7 +146,7 @@ namespace Telegram.Services
 
                 foreach (var value in _delegates)
                 {
-                    DynamicInvoke(value.Value, message);
+                    DynamicInvoke(value.Value, message, value.Key);
                     count++;
                 }
 
@@ -160,24 +154,16 @@ namespace Telegram.Services
                 return count == 0;
             }
 
-            protected bool DynamicInvoke(Delegate delegato, object message, object subscriber = null)
+            protected bool DynamicInvoke(Delegate delegato, object message, object subscriber)
             {
                 try
                 {
-                    if (subscriber != null)
-                    {
-                        delegato.DynamicInvoke(subscriber, message);
-                    }
-                    else
-                    {
-                        delegato.DynamicInvoke(message);
-                    }
+                    delegato.DynamicInvoke(message);
                     return true;
                 }
                 catch (InvalidComObjectException)
                 {
                     // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
-                    // TODO: would be great to remove the subscriber from the delegates here.
                     Unsubscribe(subscriber);
                     return false;
                 }
@@ -201,69 +187,6 @@ namespace Telegram.Services
                 }
 
                 return _count <= 0;
-            }
-        }
-
-        #endregion
-
-        #region By token
-
-        private readonly ConcurrentDictionary<long, LongHandler> _longHandlers = new();
-
-        public void Subscribe<T>(object subscriber, long token, UpdateHandler<T> action)
-        {
-            var handler = _longHandlers.GetOrAdd(token, x => new LongHandler());
-            handler.Subscribe(subscriber, action);
-        }
-
-        public virtual void Unsubscribe(object subscriber, long token)
-        {
-            if (_longHandlers.TryGetValue(token, out var handler))
-            {
-                if (handler.Unsubscribe(subscriber))
-                {
-                    _longHandlers.TryRemove(token, out _);
-                }
-            }
-        }
-
-        public virtual void Publish(object message, long token)
-        {
-            if (_longHandlers.TryGetValue(token, out LongHandler handler))
-            {
-                if (handler.Handle(message))
-                {
-                    _longHandlers.TryRemove(token, out _);
-                }
-            }
-        }
-
-        public partial class LongHandler : TypeHandler
-        {
-            public override bool Handle(object message)
-            {
-                var count = 0;
-
-                foreach (var value in _delegates)
-                {
-                    if (value.Key is FrameworkElement element)
-                    {
-                        element.BeginOnUIThread(() => DynamicInvoke(value.Value, message, value.Key));
-                    }
-                    else if (value.Key is ViewModelBase navigable && navigable.Dispatcher != null)
-                    {
-                        navigable.BeginOnUIThread(() => DynamicInvoke(value.Value, message, value.Key));
-                    }
-                    else
-                    {
-                        DynamicInvoke(value.Value, message, value.Key);
-                    }
-
-                    count++;
-                }
-
-                _count = count;
-                return count == 0;
             }
         }
 
