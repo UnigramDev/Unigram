@@ -83,7 +83,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public ObservableCollection<ConnectedWebsite> Items { get; private set; }
+        public SortedObservableCollection<ConnectedWebsite> Items { get; private set; }
 
         public async void Terminate(ConnectedWebsite session)
         {

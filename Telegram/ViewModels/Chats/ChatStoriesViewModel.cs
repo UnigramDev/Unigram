@@ -85,7 +85,7 @@ namespace Telegram.ViewModels.Chats
         public bool IsPostedToChatPage => _type == ChatStoriesType.Pinned;
 
         public IncrementalCollection<StoryViewModel> Items { get; }
-        public ObservableCollection<StoryViewModel> SelectedItems { get; }
+        public RangeObservableCollection<StoryViewModel> SelectedItems { get; }
 
         public bool HasAlbums => _type == ChatStoriesType.Pinned && (Albums.Count > 1 || CanEditStories);
 

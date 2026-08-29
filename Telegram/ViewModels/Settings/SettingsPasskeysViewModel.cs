@@ -33,7 +33,7 @@ namespace Telegram.ViewModels.Settings
             RaisePropertyChanged(nameof(CanAdd));
         }
 
-        public ObservableCollection<Passkey> Items { get; private set; }
+        public IncrementalCollection<Passkey> Items { get; private set; }
 
         public bool CanAdd => Items.Count < ClientService.Options.LoginPasskeyCountMax;
 

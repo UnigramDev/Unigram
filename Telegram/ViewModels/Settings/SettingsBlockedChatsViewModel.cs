@@ -25,7 +25,7 @@ namespace Telegram.ViewModels.Settings
             Items = new IncrementalCollection<MessageSender>(this);
         }
 
-        public ObservableCollection<MessageSender> Items { get; private set; }
+        public IncrementalCollection<MessageSender> Items { get; private set; }
 
         public async void Block()
         {

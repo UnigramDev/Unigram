@@ -534,7 +534,7 @@ namespace Telegram.ViewModels.Profile
 
         }
 
-        public IncrementalCollectionView<ReceivedGift, IncrementalCollectionView<ReceivedGift, ProfileGiftsTabViewModel.ReceivedGiftsCollection>> ItemsView { get; }
+        public IncrementalCollectionView<ReceivedGift, IncrementalCollectionView<ReceivedGift, ReceivedGiftsCollection>> ItemsView { get; }
 
         //public SearchCollection<ReceivedGift, ReceivedGiftsCollection> ItemsView { get; private set; }
         public ReceivedGiftsCollection Items => ItemsView.Source.Source;

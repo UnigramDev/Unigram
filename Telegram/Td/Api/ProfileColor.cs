@@ -72,11 +72,11 @@ namespace Telegram.Td.Api
             PaletteColors = Populate(colors.PaletteColors);
         }
 
-        private IList<Color> Populate(Vector<int> source)
+        private Vector<Color> Populate(Vector<int> source)
         {
             if (source.Count > 0)
             {
-                var destination = new List<Color>();
+                var destination = new MutableVector<Color>();
 
                 foreach (var item in source)
                 {
@@ -93,18 +93,18 @@ namespace Telegram.Td.Api
         /// The list of 2 colors in RGB format, describing the colors of the gradient to
         ///  be used for the unread active story indicator around profile photo.
         /// </summary>
-        public IList<Color> StoryColors { get; }
+        public Vector<Color> StoryColors { get; }
 
         /// <summary>
         /// The list of 1-2 colors in RGB format, describing the colors, as expected to be
         /// used for the profile photo background.
         /// </summary>
-        public IList<Color> BackgroundColors { get; }
+        public Vector<Color> BackgroundColors { get; }
 
         /// <summary>
         /// The list of 1-2 colors in RGB format, describing the colors, as expected to be
         /// shown in the color palette settings.
         /// </summary>
-        public IList<Color> PaletteColors { get; }
+        public Vector<Color> PaletteColors { get; }
     }
 }

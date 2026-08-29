@@ -106,8 +106,8 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _totalStatistics, value);
         }
 
-        private IList<StorageChartItem> _itemsView;
-        public IList<StorageChartItem> ItemsView
+        private List<StorageChartItem> _itemsView;
+        public List<StorageChartItem> ItemsView
         {
             get => _itemsView;
             set => Set(ref _itemsView, value);

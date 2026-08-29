@@ -167,7 +167,7 @@ namespace Telegram.ViewModels.Profile
             return null;
         }
 
-        public ObservableCollection<MessageWithOwner> SelectedItems { get; }
+        public RangeObservableCollection<MessageWithOwner> SelectedItems { get; }
 
         public override void Subscribe()
         {

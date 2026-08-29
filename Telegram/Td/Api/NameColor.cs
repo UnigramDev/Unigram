@@ -26,11 +26,11 @@ namespace Telegram.Td.Api
             MinChannelChatBoostLevel = accent.MinChannelChatBoostLevel;
         }
 
-        private IList<Color> Populate(Vector<int> source)
+        private Vector<Color> Populate(Vector<int> source)
         {
             if (source.Count > 0)
             {
-                var destination = new List<Color>();
+                var destination = new MutableVector<Color>();
 
                 foreach (var item in source)
                 {
@@ -46,7 +46,7 @@ namespace Telegram.Td.Api
         public NameColor(int builtInAccentColorId)
         {
             DarkThemeColors = Array.Empty<Color>();
-            LightThemeColors = new List<Color>
+            LightThemeColors = new MutableVector<Color>
             {
                 ProfilePictureSourceText.GetColor(builtInAccentColorId)
             };
@@ -55,7 +55,7 @@ namespace Telegram.Td.Api
             Id = builtInAccentColorId;
         }
 
-        public IList<Color> ForTheme(ElementTheme theme)
+        public Vector<Color> ForTheme(ElementTheme theme)
         {
             if (theme == ElementTheme.Dark && DarkThemeColors.Count > 0)
             {
@@ -69,13 +69,13 @@ namespace Telegram.Td.Api
         /// The list of 1-3 colors in RGB format, describing the accent color, as expected
         /// to be shown in dark themes.
         /// </summary>
-        public IList<Color> DarkThemeColors { get; }
+        public Vector<Color> DarkThemeColors { get; }
 
         /// <summary>
         /// The list of 1-3 colors in RGB format, describing the accent color, as expected
         /// to be shown in light themes.
         /// </summary>
-        public IList<Color> LightThemeColors { get; }
+        public Vector<Color> LightThemeColors { get; }
 
         /// <summary>
         /// Identifier of a built-in color to use in places, where only one color is needed;
