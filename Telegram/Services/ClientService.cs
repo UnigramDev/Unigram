@@ -575,47 +575,72 @@ namespace Telegram.Services
 
         private void InitializeFlush()
         {
-            // Flush animated stickers cache files that have not been accessed in three days
-            Task.Factory.StartNew(() =>
+            // Not awaited and not on the startup path: walking a few thousand files and deleting
+            // some of them is not worth doing while the app is still opening.
+            _ = Task.Run(FlushStickerCache);
+        }
+
+        /// <summary>
+        /// Drops cache files the app will not read again: the two dead formats outright, and frame
+        /// caches that have not been touched for three days.
+        /// </summary>
+        /// <remarks>
+        /// Note this only covers the per-session sticker directory. Caches built by
+        /// LottieAnimation.LoadFromData - dice, and anything else identified by a key rather than a
+        /// file - sit in the root of LocalState and are not swept, as they were not before either.
+        /// There are a handful of them.
+        ///
+        /// Ageing is by last access, which NTFS stops updating by default on Windows 10 1803 and
+        /// later. So a cache in daily use can still look three days idle and be rebuilt. That is
+        /// wasteful rather than wrong, and the alternative - touching every file as it is opened -
+        /// costs a write per animation load.
+        /// </remarks>
+        private void FlushStickerCache()
+        {
+            var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session.Id}", "stickers");
+
+            try
             {
-                static IEnumerable<string> GetFiles(string path)
+                var directory = new System.IO.DirectoryInfo(path);
+                if (!directory.Exists)
                 {
-                    try
-                    {
-                        if (System.IO.Directory.Exists(path))
-                        {
-                            return System.IO.Directory.GetFiles(path, "*.cache");
-                        }
-                    }
-                    catch
-                    {
-
-                    }
-
-                    return Enumerable.Empty<string>();
+                    return;
                 }
 
-                var now = DateTime.Now;
-                var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session.Id}", "stickers");
+                var expiration = DateTime.Now.AddDays(-3);
 
-                foreach (var file in GetFiles(path))
+                // Enumerated as FileInfo rather than paths: the scan already carries the
+                // timestamps, where File.GetLastAccessTime on each name is a separate stat, and
+                // there are thousands of them.
+                foreach (var file in directory.EnumerateFiles())
                 {
-                    var date = System.IO.File.GetLastAccessTime(file);
+                    var expired = file.Extension switch
+                    {
+                        // The formats the frame cache replaced. Nothing will ever read one again,
+                        // so age does not come into it - and the old sweep never matched .tcache
+                        // at all, which is why so many are still on disk.
+                        ".cache" or ".tcache" => true,
+                        ".tgfc" => file.LastAccessTime < expiration,
+                        _ => false
+                    };
 
-                    var diff = now - date;
-                    if (diff.TotalDays >= 3)
+                    if (expired)
                     {
                         try
                         {
-                            System.IO.File.Delete(file);
+                            file.Delete();
                         }
                         catch
                         {
-                            // File might be in use
+                            // In use, or gone since the scan. Either way it is not ours to insist.
                         }
                     }
                 }
-            });
+            }
+            catch
+            {
+                // The directory can disappear underneath the walk when a session is removed.
+            }
         }
 
         private bool _translateMessages;
