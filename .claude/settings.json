@@ -25,6 +25,19 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "pwsh -NoProfile -File \"${CLAUDE_PROJECT_DIR}/.claude/hooks/map-staleness.ps1\"",
+            "timeout": 20,
+            "statusMessage": "Checking codebase map"
+          }
+        ]
+      }
     ]
   }
 }
