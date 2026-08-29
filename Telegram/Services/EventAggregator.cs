@@ -22,7 +22,7 @@ namespace Telegram.Services
     /// </summary>
     public interface IEventAggregator
     {
-        SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action, EventType type = EventType.None, long id = 0);
+        SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action, EventType type = EventType.None, long id = 0) where T : class;
 
         void Unsubscribe(object subscriber);
         void Unsubscribe<T>(object subscriber, EventType type = EventType.None, long id = 0);
@@ -80,17 +80,19 @@ namespace Telegram.Services
 
         private readonly ConcurrentDictionary<SubscriptionKey, TypeHandler> _typeHandlers = new();
 
-        public SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action, EventType type = EventType.None, long id = 0)
+        public SubscriptionBuilder Subscribe<T>(object subscriber, Action<T> action, EventType type = EventType.None, long id = 0) where T : class
         {
-            Add(subscriber, typeof(T), type, id, action);
+            Add(subscriber, type, id, action);
             return new SubscriptionBuilder(this, subscriber, type, id);
         }
 
-        public void Add(object subscriber, Type messageType, EventType type, long id, Delegate action)
+        public void Add<T>(object subscriber, EventType type, long id, Action<T> action) where T : class
         {
-            var key = new SubscriptionKey(messageType, type, id);
-            var handler = _typeHandlers.GetOrAdd(key, x => new TypeHandler());
-            handler.Subscribe(subscriber, action);
+            var key = new SubscriptionKey(typeof(T), type, id);
+            var handler = _typeHandlers.GetOrAdd(key, static _ => new TypeHandler<T>());
+
+            // The key carries typeof(T), so the only handler that can be under it is this one.
+            ((TypeHandler<T>)handler).Subscribe(subscriber, action);
         }
 
         public virtual void Unsubscribe(object subscriber)
@@ -132,21 +134,44 @@ namespace Telegram.Services
             }
         }
 
-        public partial class TypeHandler
+        /// <summary>
+        /// The subscribers of one message type, minus the type - so that one dictionary can hold
+        /// every message type while the invoke below stays typed.
+        ///
+        /// It used to be one non-generic class holding <see cref="Delegate"/>, invoked through
+        /// Delegate.DynamicInvoke: reflection and an object[] per subscriber per update, on the
+        /// TDLib thread, for every update the app publishes. Nothing about the subscription needed
+        /// it - Subscribe already has the Action&lt;T&gt;.
+        /// </summary>
+        public abstract partial class TypeHandler
         {
-            protected readonly ConditionalWeakTable<object, Delegate> _delegates = new();
-
             // Count is expected to go out of sync if delegates get garbage
             // collected, so we resynchronize the amount on every handle.
             protected int _count;
 
-            public virtual bool Handle(object message)
+            public abstract bool Handle(object message);
+
+            public abstract bool Unsubscribe(object subscriber);
+        }
+
+        // T is a reference type throughout - every message published here is a class, most of them
+        // TDLib's projected runtime classes - which is the case generic sharing is meant for, so
+        // the ~150 message types the app subscribes to do not each get their own copy of this.
+        public sealed partial class TypeHandler<T> : TypeHandler where T : class
+        {
+            private readonly ConditionalWeakTable<object, Action<T>> _delegates = new();
+
+            /// <param name="message">
+            /// Always a T: Publish looks the handler up by the runtime type of the message, and the
+            /// key it finds it under is typeof(T).
+            /// </param>
+            public override bool Handle(object message)
             {
                 var count = 0;
 
                 foreach (var value in _delegates)
                 {
-                    DynamicInvoke(value.Value, message, value.Key);
+                    Invoke(value.Value, (T)message, value.Key);
                     count++;
                 }
 
@@ -154,11 +179,11 @@ namespace Telegram.Services
                 return count == 0;
             }
 
-            protected bool DynamicInvoke(Delegate delegato, object message, object subscriber)
+            private bool Invoke(Action<T> action, T message, object subscriber)
             {
                 try
                 {
-                    delegato.DynamicInvoke(message);
+                    action(message);
                     return true;
                 }
                 catch (InvalidComObjectException)
@@ -173,13 +198,13 @@ namespace Telegram.Services
                 }
             }
 
-            public void Subscribe(object subscriber, Delegate handler)
+            public void Subscribe(object subscriber, Action<T> handler)
             {
                 _count++;
                 _delegates.AddOrUpdate(subscriber, handler);
             }
 
-            public bool Unsubscribe(object subscriber)
+            public override bool Unsubscribe(object subscriber)
             {
                 if (_delegates.Remove(subscriber))
                 {
@@ -210,9 +235,9 @@ namespace Telegram.Services
             _id = id;
         }
 
-        public SubscriptionBuilder Subscribe<T>(Action<T> action)
+        public SubscriptionBuilder Subscribe<T>(Action<T> action) where T : class
         {
-            _aggregator.Add(_subscriber, typeof(T), _type, _id, action);
+            _aggregator.Add(_subscriber, _type, _id, action);
             return this;
         }
     }
