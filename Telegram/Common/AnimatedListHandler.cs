@@ -236,7 +236,7 @@ namespace Telegram.Common
 
                 var player = content as IPlayerView;
                 player ??= content.FindName("Player") as IPlayerView;
-                player?.ViewportChanged(true);
+                player?.ViewportChanged(load);
             }
 
             for (int i = firstCacheIndex; i < firstVisibleIndex; i++)
