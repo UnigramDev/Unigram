@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 namespace Telegram.Common
 {
@@ -99,6 +100,71 @@ namespace Telegram.Common
             }
         }
 
+        /// <summary>Counts an event that has no duration, reported as a row with calls only.</summary>
+        [Conditional("INSTRUMENTATION")]
+        public static void Count(string label)
+        {
+            Accumulate(label, 0);
+        }
+
+        /// <summary>
+        /// Logs the table on demand. The automatic report needs another 1000 samples between
+        /// prints, which is a long recording for a probe that fires once or twice per item, so a
+        /// short one would otherwise end before saying anything. Cumulative like the rest:
+        /// printing does not reset, and does not disturb the automatic interval either.
+        /// </summary>
+        [Conditional("INSTRUMENTATION")]
+        public static void Report()
+        {
+            string report;
+
+            lock (s_lock)
+            {
+                report = Format();
+            }
+
+            Logger.Info(report);
+        }
+
+        // --- contention ---------------------------------------------------------
+
+        // For a scope that queues on something this class cannot see - a native lock, one device.
+        // The label is split into .solo and .queued by whether anything else was already inside it,
+        // and those two rows are what answer the question: what the scope costs uncontended, and
+        // what it costs having waited. Min against mean on a single label cannot answer it, because
+        // a sample delayed by a GC pause and one delayed by the lock look identical.
+        //
+        // Its own timestamp rather than the scope stack, because the pair brackets one synchronous
+        // call and must close the label it opened - Tally unwinds by name, and the name here is not
+        // known until entry. One counter for every label, so two contended scopes measured at once
+        // would report each other's overlap: measure one at a time.
+        private static int s_concurrent;
+
+        [ThreadStatic]
+        private static (string Label, long Timestamp) t_concurrent;
+
+        [Conditional("INSTRUMENTATION")]
+        public static void BeginConcurrent(string label)
+        {
+            var concurrent = Interlocked.Increment(ref s_concurrent);
+            t_concurrent = (label + (concurrent > 1 ? ".queued" : ".solo"), Stopwatch.GetTimestamp());
+        }
+
+        /// <summary>Closes <see cref="BeginConcurrent"/>. Call it from a finally: an escaping
+        /// exception would otherwise leave the counter high and report every later sample as
+        /// queued.</summary>
+        [Conditional("INSTRUMENTATION")]
+        public static void TallyConcurrent()
+        {
+            Interlocked.Decrement(ref s_concurrent);
+
+            if (t_concurrent.Label != null)
+            {
+                Accumulate(t_concurrent.Label, Stopwatch.GetTimestamp() - t_concurrent.Timestamp);
+                t_concurrent = default;
+            }
+        }
+
         private static void Accumulate(string label, long ticks)
         {
             string report = null;
@@ -157,7 +223,7 @@ namespace Telegram.Common
                 var counter = pair.Value;
 
                 builder.Append("\n  ");
-                builder.Append(pair.Key.PadRight(12));
+                builder.Append(pair.Key.PadRight(18));
                 builder.Append(counter.Calls.ToString().PadLeft(7));
                 builder.Append(" calls ");
                 builder.Append((counter.Ticks * 1000000d / Stopwatch.Frequency / counter.Calls).ToString("F1").PadLeft(9));
