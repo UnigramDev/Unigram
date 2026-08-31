@@ -226,6 +226,31 @@ namespace Telegram.Common
         }
 
         /// <summary>
+        /// The same, for a subscriber that may not be there any more - false when asking threw.
+        ///
+        /// A control outlives its window as a managed object, but the projection behind it is
+        /// disposed with the window and every call across it throws from then on, Dispatcher
+        /// included. The aggregator never met this because it only ever read the dispatcher inside
+        /// BeginOnUIThread, which swallows; reading it here to route an update put it in the open.
+        /// </summary>
+        private static bool TryGetDispatcher(object subscriber, out object dispatcher)
+        {
+            try
+            {
+                dispatcher = DispatcherOf(subscriber);
+                return true;
+            }
+            // ObjectDisposedException from CsWinRT, InvalidComObjectException from .NET Native.
+            // Narrow enough to be sure of what it means: the only call in there is one projected
+            // property read, so nothing else can be the thing that was disposed.
+            catch (Exception ex) when (ex is ObjectDisposedException or InvalidComObjectException)
+            {
+                dispatcher = null;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// The drain a new subscriber belongs to, or null for one to be called inline.
         ///
         /// Only for subscribing. A control subscribes from its own thread and a thread has one
@@ -249,7 +274,18 @@ namespace Telegram.Common
         {
             if (subscriber is FrameworkElement element)
             {
-                return _threadDrain ??= GetOrCreateDrain(element.Dispatcher);
+                if (_threadDrain != null)
+                {
+                    return _threadDrain;
+                }
+
+                // Guarded for the same reason as the delivery side, not because it is likely: only
+                // the first control to subscribe on a thread reads the property at all, and that
+                // one is being built rather than torn down. A subscriber this fails for is already
+                // gone, so where it lands afterwards does not matter.
+                return TryGetDispatcher(element, out var dispatcher)
+                    ? _threadDrain = GetOrCreateDrain(dispatcher)
+                    : null;
             }
             else if (subscriber is ViewModelBase viewModel && viewModel.Dispatcher != null)
             {
@@ -566,9 +602,15 @@ namespace Telegram.Common
 
                 foreach (var entry in _deferred)
                 {
-                    empty = false;
+                    if (!TryGetDispatcher(entry.Key, out var owner))
+                    {
+                        // Gone with its window. Nothing will ever reach it again, and leaving it
+                        // here would throw once per update for as long as the file keeps changing.
+                        _deferred.Remove(entry.Key);
+                        continue;
+                    }
 
-                    var owner = DispatcherOf(entry.Key);
+                    empty = false;
 
                     if (owner == dispatcher)
                     {
