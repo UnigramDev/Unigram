@@ -62,7 +62,7 @@ namespace Telegram.Controls.Drawers
         public object ClickedItem { get; }
     }
 
-    public partial class EmojiDrawer : UserControl, IDrawer
+    public partial class EmojiDrawer : UserControlEx, IDrawer
     {
         public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
 
@@ -80,7 +80,7 @@ namespace Telegram.Controls.Drawers
 
         private readonly EventDebouncer<TextChangedEventArgs> _typing;
 
-        private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
+        private readonly Dictionary<StickerViewModel, SelectorItem> _itemIdToSelector = new();
         private long _selectedSetId;
 
         public EmojiDrawer()
@@ -228,7 +228,7 @@ namespace Telegram.Controls.Drawers
 
         public void Deactivate()
         {
-            _itemIdToContent.Clear();
+            _itemIdToSelector.Clear();
 
             _isActive = false;
             _handler.UnloadItems();
@@ -400,7 +400,7 @@ namespace Telegram.Controls.Drawers
 
                             foreach (var item in group.Stickers)
                             {
-                                if (_itemIdToContent.TryGetValue(item, out Grid content))
+                                if (_itemIdToSelector.TryGetValue(item, out SelectorItem selector) && selector.Content is Grid content)
                                 {
                                     var animation = content.Children[0] as AnimatedImage;
                                     animation.Source = new DelayedFileSource(ViewModel.ClientService, item);
@@ -580,13 +580,13 @@ namespace Telegram.Controls.Drawers
                 //Debug.WriteLine("Loading sticker set " + group.Id);
 
                 var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(group.Id));
-                if (response is StickerSet full)
+                if (response is StickerSet full && IsConnected)
                 {
                     group.Update(full, false);
 
                     foreach (var sticker in group.Stickers)
                     {
-                        if (sticker.StickerValue != null && _itemIdToContent.TryGetValue(sticker, out Grid content))
+                        if (sticker.StickerValue != null && _itemIdToSelector.TryGetValue(sticker, out SelectorItem selector) && selector.Content is Grid content)
                         {
                             var animation = content.Children[0] as AnimatedImage;
                             animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
@@ -605,7 +605,7 @@ namespace Telegram.Controls.Drawers
             {
                 if (sticker != null)
                 {
-                    _itemIdToContent.Remove(sticker);
+                    _itemIdToSelector.Remove(sticker);
                 }
 
                 if (args.ItemContainer is EmojiGridViewItem container)
@@ -619,10 +619,9 @@ namespace Telegram.Controls.Drawers
             }
             else if (sticker != null)
             {
-                _itemIdToContent[sticker] = content;
-
                 if (content.Children[0] is TextBlock textBlock && sticker is MoreStickerViewModel more)
                 {
+                    _itemIdToSelector[sticker] = args.ItemContainer;
                     textBlock.Text = $"+{more.TotalCount}";
                 }
                 else
@@ -634,6 +633,8 @@ namespace Telegram.Controls.Drawers
                     }
                     else
                     {
+                        _itemIdToSelector[sticker] = args.ItemContainer;
+
                         var animation = content.Children[0] as AnimatedImage;
                         animation.Source = null;
                     }

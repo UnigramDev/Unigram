@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Streams;
@@ -28,7 +27,6 @@ namespace Telegram.Controls.Drawers
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
-        private readonly Dictionary<MessageEffect, Grid> _itemIdToContent = new();
         private long _selectedSetId;
 
         private bool _isActive;
@@ -89,8 +87,6 @@ namespace Telegram.Controls.Drawers
 
         public void Deactivate()
         {
-            _itemIdToContent.Clear();
-
             _isActive = false;
             _handler.UnloadItems();
 
@@ -182,15 +178,8 @@ namespace Telegram.Controls.Drawers
 
             if (args.InRecycleQueue || effect == null)
             {
-                if (effect != null)
-                {
-                    _itemIdToContent.Remove(effect);
-                }
-
                 return;
             }
-
-            _itemIdToContent[effect] = content;
 
             var animation = content.Children[0] as AnimatedImage;
             var locked = content.Children[1] as Border;
