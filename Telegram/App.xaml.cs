@@ -8,7 +8,6 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;

@@ -16,7 +16,6 @@ using Windows.UI.WindowManagement;
 #if NET9_0_OR_GREATER
 using System.Collections.Generic;
 using System.Runtime.InteropServices.Marshalling;
-using WinRT;
 #endif
 
 namespace Telegram.Common

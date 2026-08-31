@@ -9,7 +9,6 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using Telegram.Native;
 using Telegram.Services;

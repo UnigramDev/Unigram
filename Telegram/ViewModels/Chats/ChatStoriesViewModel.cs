@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,7 +25,6 @@ using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats

@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+#if !NET9_0_OR_GREATER
 using System;
 
-#if !NET9_0_OR_GREATER
 namespace System.Runtime.CompilerServices
 {
     /// <summary>

@@ -4,10 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-// The range and event-suppression half of what used to be MvxObservableCollection. Split out
-// so that a collection which never diffs does not instantiate DiffUtil: under .NET Native every
-// closed generic is code-generated, and most of these never call ReplaceDiff.
-//
 
 using System;
 using System.Collections;

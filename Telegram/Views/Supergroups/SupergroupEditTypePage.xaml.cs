@@ -6,7 +6,6 @@
 //
 
 using Microsoft.UI.Xaml.Controls;
-using System.Collections.Generic;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;

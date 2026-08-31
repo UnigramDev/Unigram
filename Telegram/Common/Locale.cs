@@ -18,7 +18,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.System.UserProfile;
 
 namespace Telegram.Common
-{ 
+{
     // partial because the source-generated P/Invoke below requires it.
     public static partial class Locale
     {

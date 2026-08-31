@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;

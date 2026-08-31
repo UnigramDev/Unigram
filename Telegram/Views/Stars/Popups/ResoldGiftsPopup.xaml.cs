@@ -8,10 +8,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -23,11 +20,9 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 

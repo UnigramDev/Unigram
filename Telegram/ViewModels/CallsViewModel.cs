@@ -23,7 +23,6 @@ using Telegram.Views.Calls.Popups;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {

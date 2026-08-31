@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.Foundation;

@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Telegram.Services;
 using Telegram.Td.Api;
 

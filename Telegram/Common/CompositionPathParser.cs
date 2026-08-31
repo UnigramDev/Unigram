@@ -8,7 +8,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -830,7 +829,7 @@ namespace Telegram.Common
                 ReadOnlySpan<char> numberSpan = _input.Slice(start, _position - start);
 
 #if NET6_0_OR_GREATER
-            return float.TryParse(numberSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+                return float.TryParse(numberSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
 #else
                 // Fallback for older frameworks
                 return float.TryParse(numberSpan.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out value);

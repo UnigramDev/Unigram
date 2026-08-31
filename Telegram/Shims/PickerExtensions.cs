@@ -8,7 +8,6 @@
 using System.Collections.Generic;
 using Telegram.Navigation;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.UI.Xaml;
 
 namespace Windows.Storage.Pickers

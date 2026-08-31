@@ -22,7 +22,6 @@ using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {

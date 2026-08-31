@@ -10,7 +10,6 @@ using System;
 using System.Runtime.CompilerServices;
 #endif
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Threading;
 using Telegram.Collections;
 using Telegram.Common;

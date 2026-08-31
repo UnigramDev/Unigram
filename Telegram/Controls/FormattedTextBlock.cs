@@ -191,7 +191,7 @@ namespace Telegram.Controls
 #if NET9_0_OR_GREATER
         public static void Release(XamlRoot xamlRoot)
         {
-            if (_instances.Remove(xamlRoot ,out var pool))
+            if (_instances.Remove(xamlRoot, out var pool))
             {
                 pool.ReleaseNative();
             }

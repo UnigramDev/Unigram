@@ -6,7 +6,6 @@
 //
 
 using Microsoft.Graphics.Canvas.Effects;
-using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;

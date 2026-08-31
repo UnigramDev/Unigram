@@ -25,8 +25,8 @@ using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
-using Windows.UI.Composition;
 using Windows.Storage.Streams;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

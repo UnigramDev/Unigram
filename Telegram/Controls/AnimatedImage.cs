@@ -2639,55 +2639,5 @@ namespace Telegram.Controls
         }
 
         record WorkItem(int CorrelationId, AnimatedImagePresentation Presentation);
-
-        class WorkQueue
-        {
-            private readonly object _workAvailable = new();
-            private readonly Queue<WorkItem> _work = new();
-            private bool _shutdown;
-
-            public void Push(WorkItem item)
-            {
-                lock (_workAvailable)
-                {
-                    _work.Enqueue(item);
-                    Monitor.Pulse(_workAvailable);
-                }
-            }
-
-            public WorkItem WaitAndPop(int timeoutMs = 3000)
-            {
-                lock (_workAvailable)
-                {
-                    while (true)
-                    {
-                        if (_shutdown)
-                        {
-                            return null;
-                        }
-
-                        if (_work.TryDequeue(out WorkItem item))
-                        {
-                            return item;
-                        }
-
-                        if (!Monitor.Wait(_workAvailable, timeoutMs))
-                        {
-                            return null;
-                        }
-                    }
-                }
-            }
-
-            public void Clear()
-            {
-                lock (_workAvailable)
-                {
-                    _shutdown = true;
-                    _work.Clear();
-                    Monitor.PulseAll(_workAvailable);
-                }
-            }
-        }
     }
 }

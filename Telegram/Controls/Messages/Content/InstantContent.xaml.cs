@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Telegram.Collections;
 using Telegram.Common;

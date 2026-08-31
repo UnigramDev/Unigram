@@ -9,14 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Navigation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
-#if NET9_0_OR_GREATER
-using WinRT;
-#endif
 
 namespace Telegram.Composition
 {

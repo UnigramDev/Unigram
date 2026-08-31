@@ -13,8 +13,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Entities;
-using Telegram.Native;
-using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;

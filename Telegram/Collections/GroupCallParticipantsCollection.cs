@@ -10,7 +10,6 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.Foundation;

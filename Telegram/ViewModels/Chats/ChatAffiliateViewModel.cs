@@ -16,7 +16,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Stars.Popups;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats

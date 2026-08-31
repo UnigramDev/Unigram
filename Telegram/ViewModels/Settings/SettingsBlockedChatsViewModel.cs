@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Navigation;
@@ -13,7 +12,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Settings
 {

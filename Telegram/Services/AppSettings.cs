@@ -9,8 +9,8 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Native.Calls;
 using Telegram.Native;
+using Telegram.Native.Calls;
 using Telegram.Services.Settings;
 
 namespace Telegram.Services
