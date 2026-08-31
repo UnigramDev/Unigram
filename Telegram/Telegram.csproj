@@ -698,6 +698,7 @@
     <Compile Include="Streams\ReactionFileSource.cs" />
     <Compile Include="Streams\CustomEmojiFileSource.cs" />
     <Compile Include="Streams\DelayedFileSource.cs" />
+    <Compile Include="Streams\DiceFileSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="Td\Api\MessageAsyncStory.cs" />
@@ -942,7 +943,6 @@
     <Compile Include="Controls\CountryBox.xaml.cs">
       <DependentUpon>CountryBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DiceView.cs" />
     <Compile Include="Controls\DownloadsIndicator.cs" />
     <Compile Include="Controls\DownloadsFooter.xaml.cs">
       <DependentUpon>DownloadsFooter.xaml</DependentUpon>

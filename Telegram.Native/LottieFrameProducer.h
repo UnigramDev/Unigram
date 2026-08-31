@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#include <cstring>
 #include <memory>
+#include <vector>
 
 #include <rlottie.h>
 
@@ -78,17 +80,60 @@ namespace winrt::Telegram::Native::implementation
             return true;
         }
 
-        bool RenderFrame(uint32_t index, uint8_t* pixels, size_t capacity) noexcept override
+        bool RenderFrame(uint32_t index, uint8_t* pixels, size_t capacity, bool clear = true) noexcept override
         {
-            return index < FrameCount() && Render(index, pixels, capacity);
+            return index < FrameCount() && Render(index, pixels, capacity, clear);
         }
 
     private:
-        bool Render(uint32_t index, uint8_t* pixels, size_t capacity) noexcept
+        // Source-over on premultiplied BGRA: dst = src + dst * (1 - src.a). Only the composite path
+        // needs it, and only on this backend - tlottie will blend into the destination itself.
+        static void BlendOver(const uint8_t* src, uint8_t* dst, size_t size) noexcept
         {
-            if (pixels == nullptr || capacity < static_cast<size_t>(m_width) * m_height * 4)
+            for (size_t i = 0; i < size; i += 4)
+            {
+                auto alpha = src[i + 3];
+
+                // Both ends of the range are worth taking: a layer stacked over another is mostly
+                // transparent, and what is left of it is mostly opaque.
+                if (alpha == 0xFF)
+                {
+                    std::memcpy(dst + i, src + i, 4);
+                }
+                else if (alpha != 0x00)
+                {
+                    auto inverse = 0xFF - alpha;
+
+                    for (size_t c = 0; c < 4; c++)
+                    {
+                        dst[i + c] = static_cast<uint8_t>(src[i + c] + (dst[i + c] * inverse + 127) / 255);
+                    }
+                }
+            }
+        }
+
+        bool Render(uint32_t index, uint8_t* pixels, size_t capacity, bool clear = true) noexcept
+        {
+            auto required = static_cast<size_t>(m_width) * m_height * 4;
+            if (pixels == nullptr || capacity < required)
             {
                 return false;
+            }
+
+            // rlottie clears whatever surface it is handed - VPainter::begin does it, and there is
+            // no way to ask it not to - so it cannot composite in place the way tlottie can. The
+            // layer is drawn to a scratch buffer and blended over the destination instead.
+            if (!clear)
+            {
+                m_scratch.resize(required);
+
+                if (!Render(index, m_scratch.data(), required, true))
+                {
+                    return false;
+                }
+
+                BlendOver(m_scratch.data(), pixels, required);
+                return true;
             }
 
             try
@@ -112,6 +157,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
         std::unique_ptr<rlottie::Animation> m_animation;
+        std::vector<uint8_t> m_scratch;
         uint32_t m_width;
         uint32_t m_height;
         uint32_t m_index{ 0 };

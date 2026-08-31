@@ -30,6 +30,13 @@
         // Telegram.Native depend on Win2D for one caller; the second had none.
         void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 frame);
 
+        // clear false composites over the buffer's existing premultiplied pixels rather than
+        // replacing them, which is how several animations stack into one frame - the slot machine
+        // dice draws its background, reels and lever this way. Only valid on an animation loaded
+        // with precache false: a cached frame is decompressed over the whole buffer and has nothing
+        // to composite with.
+        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 frame, Boolean clear);
+
         // No Cache/IsReadyToCache: the animation queues its own build after the first frame it
         // renders itself, rather than raising a flag for the caller to queue it back.
         //

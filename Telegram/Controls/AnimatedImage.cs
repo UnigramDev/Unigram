@@ -15,6 +15,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Native.Controls;
@@ -2076,6 +2077,231 @@ namespace Telegram.Controls
         }
     }
 
+    /// <summary>
+    /// A dice: up to three lottie layers stacked into one frame, and the switch from the state it
+    /// rolls on to the state it lands on.
+    /// </summary>
+    /// <remarks>
+    /// The switch lives here rather than in a change of the control's <see cref="AnimatedImage.Source"/>
+    /// because it has to happen on a loop boundary and not before the next animation is loaded -
+    /// two moments, on two threads. Replacing the source would tear the presenter down between
+    /// them and blank the message; swapping a field inside the running task cannot.
+    /// </remarks>
+    public partial class DiceAnimatedImageTask : AnimatedImageTask
+    {
+        private readonly DiceFileSource _source;
+
+        // Slot machine only. The chrome is a still, so it is rendered once and copied under every
+        // frame rather than re-rendered as one - the cheapest layer should not be the dearest.
+        private readonly IBuffer _backdrop;
+        private readonly LottieAnimation _lever;
+
+        private LottieAnimation _reels;
+
+        // The final state, loaded while the initial one is still looping. Published by the thread
+        // that built it and taken by the render thread at a loop boundary, the one point where
+        // exchanging it does not show.
+        private LottieAnimation _next;
+        private int _preparing;
+        private volatile bool _disposed;
+
+        private int _index;
+        private int _leverIndex;
+
+        // The initial state loops for as long as the message takes to send; the final one plays
+        // once and is done.
+        private bool _looping;
+        private bool _completed;
+
+        public DiceAnimatedImageTask(DiceFileSource source, LottieAnimation reels, IBuffer backdrop, LottieAnimation lever, bool looping, AnimatedImagePresentation presentation)
+            : base(presentation)
+        {
+            _source = source;
+            _reels = reels;
+            _backdrop = backdrop;
+            _lever = lever;
+            _looping = looping;
+
+            // A result that has already been seen opens on its last frame. Re-rolling it every time
+            // the message scrolls back into view would be a lie about when it happened.
+            _index = looping || source.IsContentUnread ? 0 : reels.TotalFrame - 1;
+
+            PixelWidth = presentation.PixelWidth;
+            PixelHeight = presentation.PixelHeight;
+
+            var frameRate = Math.Clamp(reels.FrameRate, 30, presentation.LimitFps ? 30 : 60);
+
+            Interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
+            FrameRate = frameRate;
+        }
+
+        public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
+        {
+            position = 0;
+
+            var reels = _reels;
+            if (reels == null)
+            {
+                return AnimatedImageTaskState.Skip;
+            }
+
+            // The result is taken at frame zero, which is the loop boundary and also the state a
+            // task that has not played yet is in. One rule covers both: a dice whose result arrives
+            // while it is still rolling waits for the roll to come round, and one whose result
+            // arrives before anything started moves to it now rather than rolling once for nothing.
+            if (_looping)
+            {
+                LottieAnimation next = null;
+
+                if (_index == 0)
+                {
+                    next = Interlocked.Exchange(ref _next, null);
+                }
+
+                if (next != null)
+                {
+                    reels.Dispose();
+
+                    reels = _reels = next;
+                    _looping = false;
+                }
+                else
+                {
+                    // Asked on every frame, and not only on the boundary the swap happens on. The
+                    // roll is a placeholder for a result that is still coming, so the load has to
+                    // start the moment it can: asking once a turn spent one whole turn noticing the
+                    // result and another loading it, and swapped on the third.
+                    Prepare();
+                }
+            }
+
+            // Bottom to top into the one buffer: the first layer replaces what the buffer held, and
+            // everything above it composites over what is already there.
+            if (_backdrop != null)
+            {
+                BufferSurface.Copy(_backdrop, frame);
+                reels.RenderSync(frame, _index, false);
+            }
+            else
+            {
+                reels.RenderSync(frame, _index, true);
+            }
+
+            if (_lever != null)
+            {
+                _lever.RenderSync(frame, _leverIndex, false);
+            }
+
+            var framesPerUpdate = _presentation.LimitFps ? reels.FrameRate < 60 ? 1 : 2 : 1;
+
+            // Pulled once, and left down for every roll after it.
+            if (_lever != null && _leverIndex + framesPerUpdate < _lever.TotalFrame)
+            {
+                _leverIndex += framesPerUpdate;
+            }
+
+            // Only the final state reports its frames. A caller watching for one particular frame
+            // of the result - the point a win throws confetti - would otherwise see the initial
+            // state come round on it again and again.
+            position = _looping ? 0 : _index;
+
+            if (_index + framesPerUpdate < reels.TotalFrame)
+            {
+                _index += framesPerUpdate;
+                return AnimatedImageTaskState.None;
+            }
+
+            if (!_looping)
+            {
+                // Loop once to say the result has played out, and Stop on the tick after it so that
+                // nothing drives this again. Two ticks rather than one because Stop hands its
+                // buffer forward like any other frame, and a buffer nothing wrote into holds the
+                // frame before last. The index is left at the end, so both draw the result.
+                if (_completed)
+                {
+                    return AnimatedImageTaskState.Stop;
+                }
+
+                _completed = true;
+                return AnimatedImageTaskState.Loop;
+            }
+
+            // Round again, and the top of the next frame is where the result is taken up if it has
+            // arrived. Not Loop: that is what tells the presenter the result has played out, and
+            // what stops it - a roll coming round has done neither.
+            _index = 0;
+
+            return AnimatedImageTaskState.None;
+        }
+
+        /// <summary>
+        /// Starts loading the final state, if the server has named it and its files have arrived.
+        /// Asked on every frame of the initial state, which is what that state is waiting for.
+        /// </summary>
+        /// <remarks>
+        /// Ordered so that the frames with nothing to do - every frame until the result lands - cost
+        /// a volatile read and a handful of field reads, and allocate nothing. The interlocked gate
+        /// is reached only by the one frame that starts the load, and is never given back: a result
+        /// is loaded once, and a file that would not parse will not parse on the next frame either.
+        /// </remarks>
+        private void Prepare()
+        {
+            if (Volatile.Read(ref _preparing) != 0)
+            {
+                return;
+            }
+
+            var state = _source.FinalState;
+            if (state == null || !state.IsDownloadingCompleted())
+            {
+                return;
+            }
+
+            if (Interlocked.Exchange(ref _preparing, 1) != 0)
+            {
+                return;
+            }
+
+            var width = _presentation.PixelWidth;
+            var height = _presentation.PixelHeight;
+
+            // Off this thread: merging three reels is a gzip and three JSON documents, and the
+            // scheduler that calls NextFrame is shared with every other animation on screen.
+            Task.Run(() =>
+            {
+                var animation = DiceFileSource.CreateReels(state, width, height);
+                if (animation is not { TotalFrame: > 0 })
+                {
+                    // Nothing to swap to. The initial state carries on looping, which is a better
+                    // answer than a frame of whatever the buffer happened to hold.
+                    animation?.Dispose();
+                    return;
+                }
+
+                Interlocked.Exchange(ref _next, animation)?.Dispose();
+
+                // Disposed while this was loading: nothing will ever come to take it, and it holds
+                // a parsed document and its buffers until something does.
+                if (_disposed)
+                {
+                    Interlocked.Exchange(ref _next, null)?.Dispose();
+                }
+            });
+        }
+
+        public override void Dispose()
+        {
+            _disposed = true;
+
+            // No lock against NextFrame: the presenter holds this off until no render is in flight,
+            // which is the same guarantee every other task relies on.
+            _reels?.Dispose();
+            _lever?.Dispose();
+
+            Interlocked.Exchange(ref _next, null)?.Dispose();
+        }
+    }
+
     public abstract class AnimatedImageTask
     {
         protected readonly AnimatedImagePresentation _presentation;
@@ -2460,7 +2686,11 @@ namespace Telegram.Controls
 
             try
             {
-                if (work.Presentation.Source is LocalFileSource local)
+                if (work.Presentation.Source is DiceFileSource dice)
+                {
+                    LoadDice(weakDelegate, work, dice);
+                }
+                else if (work.Presentation.Source is LocalFileSource local)
                 {
                     if (local.Format is StickerFormatTgs)
                     {
@@ -2503,6 +2733,68 @@ namespace Telegram.Controls
             {
                 // Shit happens...
                 NotifyDelegate(weakDelegate, null, null);
+            }
+        }
+
+        private void LoadDice(WeakReference<AnimatedImagePresenter> weakDelegate, WorkItem work, DiceFileSource dice)
+        {
+            var width = work.Presentation.PixelWidth;
+            var height = work.Presentation.PixelHeight;
+
+            var state = dice.StartState;
+
+            // TotalFrame and not null: LoadFromFile hands back an animation before it has parsed
+            // anything, so this is the first point at which the file is known to be renderable. The
+            // reels draw the whole frame, and a refused render would leave the recycled bitmap
+            // showing whatever the last animation to use it drew.
+            var reels = DiceFileSource.CreateReels(state, width, height);
+            if (reels is not { TotalFrame: > 0 })
+            {
+                reels?.Dispose();
+
+                NotifyDelegate(weakDelegate, null, null);
+                return;
+            }
+
+            IBuffer backdrop = null;
+
+            using (var background = DiceFileSource.CreateBackground(state, width, height))
+            {
+                // TotalFrame parses the file, so it is also the answer to whether there is one to
+                // draw: it comes back 0 for anything the renderer refused.
+                var total = background?.TotalFrame ?? 0;
+
+                if (total > 0)
+                {
+                    // The chrome is a still, drawn once and copied under every frame of the reels
+                    // rather than re-rendered as one. Frame 1 where there is one, because that is
+                    // what this has always drawn.
+                    //
+                    // Zeroed, and not BufferSurface.Create(size), which mallocs: RenderSync says
+                    // nothing about whether it wrote anything, and an out-of-range frame or a file
+                    // it cannot parse leaves the buffer exactly as it found it. Uninitialised, that
+                    // is a solid block of heap under the whole message.
+                    backdrop = BufferSurface.Create(new byte[width * height * 4]);
+                    background.RenderSync(backdrop, Math.Min(1, total - 1));
+                }
+            }
+
+            var lever = DiceFileSource.CreateLever(state, width, height);
+
+            if (lever is not { TotalFrame: > 0 })
+            {
+                lever?.Dispose();
+                lever = null;
+            }
+
+            // Disposed by hand rather than through NotifyDelegate's disposable, which takes one
+            // object: a dice holds up to three animations, and only the task knows about all of
+            // them.
+            var task = new DiceAnimatedImageTask(dice, reels, backdrop, lever, dice.IsLooping, work.Presentation);
+
+            if (!NotifyDelegate(weakDelegate, null, task))
+            {
+                task.Dispose();
             }
         }
 

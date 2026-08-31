@@ -56,7 +56,12 @@ namespace winrt::Telegram::Native::Cache
         /// Only meaningful when <see cref="SupportsRandomAccess"/>. Serves the uncached fallback -
         /// the frame shown while the cache is still building - and nothing else.
         /// </summary>
-        virtual bool RenderFrame(uint32_t /*index*/, uint8_t* /*pixels*/, size_t /*capacity*/) noexcept
+        /// <param name="clear">
+        /// False composites over the buffer's existing premultiplied pixels instead of replacing
+        /// them, which is what lets several animations stack into one frame. Neither backend does
+        /// this by default and they do not get there the same way, so both implement it explicitly.
+        /// </param>
+        virtual bool RenderFrame(uint32_t /*index*/, uint8_t* /*pixels*/, size_t /*capacity*/, bool /*clear*/ = true) noexcept
         {
             return false;
         }

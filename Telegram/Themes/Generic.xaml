@@ -2997,22 +2997,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:DiceView">
-        <Setter Property="IsTabStop"
-                Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:DiceView">
-                    <Grid x:Name="LayoutRoot">
-                        <xaml:CanvasControl x:Name="Canvas"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="local:QrCode">
         <Setter Property="Foreground"
                 Value="{ThemeResource TextFillColorPrimaryBrush}" />

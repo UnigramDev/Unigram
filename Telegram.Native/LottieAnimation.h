@@ -58,6 +58,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
         void RenderSync(IBuffer bitmap, int32_t frame) noexcept;
+        void RenderSync(IBuffer bitmap, int32_t frame, bool clear) noexcept;
 
         bool IsCaching() noexcept;
 

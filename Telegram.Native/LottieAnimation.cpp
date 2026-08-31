@@ -235,6 +235,11 @@ namespace winrt::Telegram::Native::implementation
 
     void LottieAnimation::RenderSync(IBuffer bitmap, int32_t frame) noexcept
     {
+        RenderSync(bitmap, frame, true);
+    }
+
+    void LottieAnimation::RenderSync(IBuffer bitmap, int32_t frame, bool clear) noexcept
+    {
         auto pixels = bitmap.data();
         if (pixels == nullptr || frame < 0)
         {
@@ -251,7 +256,11 @@ namespace winrt::Telegram::Native::implementation
             m_reader.Open(m_cachePath, m_pixelWidth, m_pixelHeight);
         }
 
-        if (m_reader.IsOpen())
+        // A cached frame arrives as one decompressed span over the whole buffer, so there is
+        // nothing underneath it to composite with. Nobody hits this - a stacked caller loads with
+        // precache false, which is the only way it can layer at all - and it stays a fall-through
+        // to the renderer rather than a silently wrong frame if one ever does.
+        if (m_reader.IsOpen() && clear)
         {
             if (m_scratch.size() < m_reader.MaxCompressedSize())
             {
@@ -274,7 +283,7 @@ namespace winrt::Telegram::Native::implementation
             return;
         }
 
-        if (m_producer->RenderFrame(static_cast<uint32_t>(frame), pixels, size))
+        if (m_producer->RenderFrame(static_cast<uint32_t>(frame), pixels, size, clear))
         {
             ApplyColor(pixels);
 

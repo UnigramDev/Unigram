@@ -81,13 +81,19 @@ namespace winrt::Telegram::Native::implementation
             return true;
         }
 
-        bool RenderFrame(uint32_t index, uint8_t* pixels, size_t capacity) noexcept override
+        bool RenderFrame(uint32_t index, uint8_t* pixels, size_t capacity, bool clear = true) noexcept override
         {
-            return index < FrameCount() && Render(index, pixels, capacity);
+            return index < FrameCount() && Render(index, pixels, capacity, clear);
         }
 
     private:
-        bool Render(uint32_t index, uint8_t* pixels, size_t capacity) noexcept
+        // RenderOptions::default().curve_tolerance, which is what tlottie_render passes and the
+        // header does not name. Needed because compositing has to go through
+        // tlottie_render_with_options, and that takes the tolerance explicitly - so the two paths
+        // would otherwise flatten curves differently.
+        static constexpr float CurveTolerance = 0.125f;
+
+        bool Render(uint32_t index, uint8_t* pixels, size_t capacity, bool clear = true) noexcept
         {
             auto required = static_cast<size_t>(m_width) * m_height * 4;
             if (pixels == nullptr || capacity < required)
@@ -95,14 +101,25 @@ namespace winrt::Telegram::Native::implementation
                 return false;
             }
 
-            auto status = tlottie_render(
-                m_instance,
-                static_cast<float>(index),
-                m_width,
-                m_height,
-                reinterpret_cast<uint32_t*>(pixels),
-                static_cast<size_t>(m_width) * m_height,
-                1);
+            auto status = clear
+                ? tlottie_render(
+                    m_instance,
+                    static_cast<float>(index),
+                    m_width,
+                    m_height,
+                    reinterpret_cast<uint32_t*>(pixels),
+                    static_cast<size_t>(m_width) * m_height,
+                    1)
+                : tlottie_render_with_options(
+                    m_instance,
+                    static_cast<float>(index),
+                    m_width,
+                    m_height,
+                    reinterpret_cast<uint32_t*>(pixels),
+                    static_cast<size_t>(m_width) * m_height,
+                    1,
+                    CurveTolerance,
+                    0);
 
             return status == TLOTTIE_OK;
         }

@@ -9,13 +9,13 @@ using System;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Popups;
-using Windows.UI.Composition;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
@@ -24,14 +24,6 @@ namespace Telegram.Controls.Messages.Content
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
-
-        private long _part1Token;
-        private long _part2Token;
-        private long _part3Token;
-        private long _part4Token;
-        private long _part5Token;
-
-        private CompositionAnimation _thumbnailShimmer;
 
         public StakeDiceContent(MessageViewModel message)
         {
@@ -43,15 +35,16 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
-        private DiceView Player;
+        private AnimatedImage Player;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
-            Player = GetTemplateChild(nameof(Player)) as DiceView;
+            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
 
-            Player.FirstFrameRendered += Player_FirstFrameRendered;
-            Player.Completed += Player_Completed;
+            Player.Ready += OnReady;
+
+            Player.LoopCompleted += OnLoopCompleted;
 
             _templateApplied = true;
 
@@ -65,6 +58,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            var previous = _message;
             _message = message;
 
             var dice = message.Content as MessageStakeDice;
@@ -73,100 +67,49 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-            Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            var zoom = message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
 
-            var state = dice.GetState();
-            if (state is DiceStickersRegular regular)
+            Width = Player.Width = 180 * zoom;
+            Height = Player.Height = 180 * zoom;
+
+            // Reference equality, and deliberately not the message id: a dice that has just been
+            // sent comes back with a new id on the same view model, and that is exactly the case
+            // whose roll has to carry on rather than start over. Handing the result to the source
+            // lets the animation take it at its next loop; a new source would restart it.
+            if (previous != message || Player.Source is not DiceFileSource source)
             {
-                if (!regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
+                source = new DiceFileSource(message.ClientService, dice.InitialState, dice.FinalState);
+
+                using (Player.BeginBatchUpdate())
                 {
-                    UpdateThumbnail(message, regular.Sticker);
+                    Player.FrameSize = new Size(180 * zoom, 180 * zoom);
+                    Player.Source = source;
                 }
             }
 
-            UpdateFile(message, null);
+            source.IsContentUnread = message.GeneratedContentUnread;
+            source.SetFinalState(dice.FinalState);
+
+            if (dice.GetState().IsDownloadingCompleted())
+            {
+                message.Delegate.ViewVisibleMessages();
+            }
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
 
-        private void UpdateFile(File file)
+        /// <summary>
+        /// The first frame is on screen, so the dice is ready to play - which it will not do until
+        /// the chat counts it among the visible messages and hands it a viewport. Asked for here
+        /// and not only in <see cref="UpdateMessage"/>, because a sticker that still had to be
+        /// downloaded becomes ready long after the message was laid out.
+        /// </summary>
+        private void OnReady(object sender, EventArgs e)
         {
-            UpdateFile(_message, file);
+            _message?.Delegate.ViewVisibleMessages();
         }
 
-        private void UpdateFile(MessageViewModel message, File file)
-        {
-            var dice = _message?.Content as MessageStakeDice;
-            if (dice == null || !_templateApplied)
-            {
-                return;
-            }
-
-            var state = dice.GetState();
-            if (state == null)
-            {
-                return;
-            }
-
-            if (state != dice.FinalState && dice.FinalState != null)
-            {
-                DownloadFile(message, dice.FinalState);
-            }
-
-            if (state is DiceStickersRegular regular)
-            {
-                //if (regular.Sticker.StickerValue.Id != file?.Id)
-                //{
-                //    return;
-                //}
-            }
-
-            if (state.IsDownloadingCompleted())
-            {
-                Player.IsContentUnread = message.GeneratedContentUnread;
-                Player.SetValue(state, state == dice.FinalState ? dice.Value : 0);
-
-                //Player.IndexChanged -= OnIndexChanged;
-
-                //if (message.IsOutgoing &&
-                //    message.GeneratedContentUnread &&
-                //    dice.IsFinalState() &&
-                //    dice.SuccessAnimationFrameNumber != 0)
-                //{
-                //    Player.IndexChanged += OnIndexChanged;
-                //}
-
-                message.Delegate.ViewVisibleMessages();
-            }
-            else
-            {
-                DownloadFile(message, state);
-            }
-        }
-
-        //private void OnIndexChanged(object sender, int e)
-        //{
-        //    if (_message?.Content is MessageStakeDice dice && dice.SuccessAnimationFrameNumber == e)
-        //    {
-        //        _message.Delegate.Aggregator.Publish(new UpdateConfetti());
-        //        Player.IndexChanged -= OnIndexChanged;
-        //    }
-        //}
-
-        private void UpdateThumbnail(MessageViewModel message, Sticker sticker)
-        {
-            //_thumbnailShimmer = CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual);
-            //ElementCompositionPreview.SetElementChildVisual(Player, visual);
-        }
-
-        private void Player_FirstFrameRendered(object sender, EventArgs e)
-        {
-            _thumbnailShimmer = null;
-            ElementCompositionPreview.SetElementChildVisual(Player, null);
-        }
-
-        private void Player_Completed(object sender, EventArgs e)
+        private void OnLoopCompleted(object sender, AnimatedImageLoopCompletedEventArgs e)
         {
             if (_message?.Content is MessageStakeDice)
             {
@@ -177,52 +120,6 @@ namespace Telegram.Controls.Messages.Content
                     var selector = this.GetParent<MessageSelector>();
                     selector?.UpdateMessageStakeDice(_message);
                 });
-            }
-        }
-
-        private void DownloadFile(MessageViewModel message, DiceStickers stickers)
-        {
-            if (stickers is DiceStickersRegular regular)
-            {
-                if (regular.Sticker.StickerValue.Local.CanBeDownloaded && !regular.Sticker.StickerValue.Local.IsDownloadingActive)
-                {
-                    // Unsubscribe all tokens
-                    UpdateManager.Unsubscribe(this, ref _part2Token);
-                    UpdateManager.Unsubscribe(this, ref _part3Token);
-                    UpdateManager.Unsubscribe(this, ref _part4Token);
-                    UpdateManager.Unsubscribe(this, ref _part5Token);
-
-                    UpdateManager.Subscribe(this, message, regular.Sticker.StickerValue, ref _part1Token, UpdateFile, true);
-                    message.ClientService.DownloadFile(regular.Sticker.StickerValue.Id, 1);
-                }
-            }
-            else if (stickers is DiceStickersSlotMachine slotMachine)
-            {
-                if (slotMachine.Background.StickerValue.Local.CanBeDownloaded && !slotMachine.Background.StickerValue.Local.IsDownloadingActive)
-                {
-                    UpdateManager.Subscribe(this, message, slotMachine.Background.StickerValue, ref _part1Token, UpdateFile, true);
-                    message.ClientService.DownloadFile(slotMachine.Background.StickerValue.Id, 1);
-                }
-                if (slotMachine.LeftReel.StickerValue.Local.CanBeDownloaded && !slotMachine.LeftReel.StickerValue.Local.IsDownloadingActive)
-                {
-                    UpdateManager.Subscribe(this, message, slotMachine.LeftReel.StickerValue, ref _part2Token, UpdateFile, true);
-                    message.ClientService.DownloadFile(slotMachine.LeftReel.StickerValue.Id, 1);
-                }
-                if (slotMachine.CenterReel.StickerValue.Local.CanBeDownloaded && !slotMachine.CenterReel.StickerValue.Local.IsDownloadingActive)
-                {
-                    UpdateManager.Subscribe(this, message, slotMachine.CenterReel.StickerValue, ref _part3Token, UpdateFile, true);
-                    message.ClientService.DownloadFile(slotMachine.CenterReel.StickerValue.Id, 1);
-                }
-                if (slotMachine.RightReel.StickerValue.Local.CanBeDownloaded && !slotMachine.RightReel.StickerValue.Local.IsDownloadingActive)
-                {
-                    UpdateManager.Subscribe(this, message, slotMachine.RightReel.StickerValue, ref _part4Token, UpdateFile, true);
-                    message.ClientService.DownloadFile(slotMachine.RightReel.StickerValue.Id, 1);
-                }
-                if (slotMachine.Lever.StickerValue.Local.CanBeDownloaded && !slotMachine.Lever.StickerValue.Local.IsDownloadingActive)
-                {
-                    UpdateManager.Subscribe(this, message, slotMachine.Lever.StickerValue, ref _part5Token, UpdateFile, true);
-                    message.ClientService.DownloadFile(slotMachine.Lever.StickerValue.Id, 1);
-                }
             }
         }
 
@@ -320,22 +217,17 @@ namespace Telegram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public int LoopCount => Player?.LoopCount ?? 1;
-
-        private bool _withinViewport;
+        // 0 while the dice is still rolling, which is what tells the chat it may pause this one
+        // when it scrolls out of view. A result that is playing out is a one-shot and is left to
+        // finish.
+        public int LoopCount => Player?.Source is DiceFileSource { IsLooping: true } ? 0 : 1;
 
         public void ViewportChanged(bool within)
         {
-            if (within && !_withinViewport)
-            {
-                _withinViewport = true;
-                Play();
-            }
-            else if (_withinViewport && !within)
-            {
-                _withinViewport = false;
-                Pause();
-            }
+            // Handed over whole rather than turned into Play/Pause here: the player tracks the
+            // viewport itself, and defers building the outline placeholder until it is told the
+            // control is actually on screen.
+            Player?.ViewportChanged(within);
         }
 
         public void Play()
