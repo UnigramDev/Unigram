@@ -55,6 +55,9 @@ namespace Telegram.Controls
         private double _enqueuedProgress;
         private bool _shouldEnqueueProgress;
 
+        private int _disconnectedFileId;
+        private MessageContentState _disconnectedState;
+
         public FileButton()
         {
             DefaultStyleKey = typeof(FileButton);
@@ -84,6 +87,17 @@ namespace Telegram.Controls
             _label = ContentPresenter1;
 
             ProgressBar?.Value = _progress;
+        }
+
+        protected override void OnLoaded()
+        {
+            if (_disconnectedFileId != 0 && _disconnectedState != MessageContentState.None)
+            {
+                SetGlyph(_disconnectedFileId, _disconnectedState);
+
+                _disconnectedFileId = 0;
+                _disconnectedState = MessageContentState.None;
+            }
         }
 
         #region ProgressVisibility
@@ -132,6 +146,8 @@ namespace Telegram.Controls
         {
             if (IsDisconnected)
             {
+                _disconnectedFileId = fileId;
+                _disconnectedState = state;
                 return;
             }
 
