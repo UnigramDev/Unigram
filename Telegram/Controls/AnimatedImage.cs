@@ -1118,9 +1118,12 @@ namespace Telegram.Controls
             {
                 _requested = true;
 
-                if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
+                if (_presentation.Source is DelayedFileSource delayed)
                 {
-                    delayed.DownloadFile(this, DelayedFileDownload.Loaded, UpdateFile);
+                    // Subscribed before the ask, because the ask answers straight away when the
+                    // file is already there.
+                    delayed.Downloaded += OnDownloaded;
+                    delayed.DownloadFile(DelayedFileDownload.Loaded);
                 }
                 else
                 {
@@ -1129,11 +1132,26 @@ namespace Telegram.Controls
             }
         }
 
-        private void UpdateFile(File file)
+        private void OnDownloaded(object sender, EventArgs e)
         {
+            UnsubscribeSource();
+
             if (_loaded > 0)
             {
                 _loader.Load(this);
+            }
+        }
+
+        /// <summary>
+        /// Drops the source subscription. Called from the two teardown points and not from Dispose,
+        /// which is only ever reached through one of them - and which two of UnloadImpl's three
+        /// teardown branches never reach at all.
+        /// </summary>
+        private void UnsubscribeSource()
+        {
+            if (_presentation.Source is DelayedFileSource delayed)
+            {
+                delayed.Downloaded -= OnDownloaded;
             }
         }
 
@@ -1151,6 +1169,8 @@ namespace Telegram.Controls
 
             if (_loaded <= 0 && _tracker == 0)
             {
+                UnsubscribeSource();
+
                 _loader.Activated -= OnActivated;
                 _loader.PopupActivated -= OnActivated;
                 _loader.Remove(_presentation);
@@ -1216,9 +1236,13 @@ namespace Telegram.Controls
                 var task = Volatile.Read(ref _task);
                 if (task == null)
                 {
-                    if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
+                    // Asked again rather than only when the file is still missing: the source
+                    // answers an ask it can already satisfy, so a completion that arrived while
+                    // nothing was listening is recovered here instead of leaving this with no
+                    // branch to take and nothing that would ever come back to it.
+                    if (_presentation.Source is DelayedFileSource delayed)
                     {
-                        delayed.DownloadFile(this, DelayedFileDownload.Playing, UpdateFile);
+                        delayed.DownloadFile(DelayedFileDownload.Playing);
                     }
                     else if (!_requested)
                     {
@@ -1268,7 +1292,7 @@ namespace Telegram.Controls
                 {
                     if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
                     {
-                        delayed.DownloadFile(this, DelayedFileDownload.Unloaded, UpdateFile);
+                        delayed.DownloadFile(DelayedFileDownload.Unloaded);
                     }
                 }
             }
@@ -1322,6 +1346,8 @@ namespace Telegram.Controls
             }
             else if (_tracker == 0)
             {
+                UnsubscribeSource();
+
                 _loader.Activated -= OnActivated;
                 _loader.PopupActivated -= OnActivated;
                 _loader.Remove(_presentation);

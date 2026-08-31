@@ -26,7 +26,7 @@ namespace Telegram.Streams
                 WatchDog.TrackError("clientService == null");
             }
 
-            DownloadFile(null, DelayedFileDownload.Loaded, null);
+            DownloadFile(DelayedFileDownload.Loaded);
         }
 
         public CustomEmojiFileSource(IClientService clientService, EmojiStatusType type)
@@ -41,20 +41,20 @@ namespace Telegram.Streams
                 _customEmojiId = upgradedGift.ModelCustomEmojiId;
             }
 
-            DownloadFile(null, DelayedFileDownload.Loaded, null);
+            DownloadFile(DelayedFileDownload.Loaded);
         }
 
         public override long Id => _customEmojiId;
 
-        public override async void DownloadFile(object sender, DelayedFileDownload download, UpdateHandler<File> handler)
+        public override async void DownloadFile(DelayedFileDownload download)
         {
-            if (_file != null && _file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
+            if (_file != null && _file.Local.IsDownloadingCompleted)
             {
-                handler?.Invoke(_file);
+                OnDownloaded();
             }
-            else
+            else if (download != DelayedFileDownload.Unloaded)
             {
-                if (_file == null && download != DelayedFileDownload.Unloaded)
+                if (_file == null)
                 {
                     var response = await _clientService.SendAsync(new GetCustomEmojiStickers([_customEmojiId]));
                     if (response is Stickers stickers && stickers.StickersValue.Count == 1)
@@ -67,16 +67,14 @@ namespace Telegram.Streams
                 {
                     return;
                 }
-                else if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
+
+                if (_file.Local.IsDownloadingCompleted)
                 {
-                    handler?.Invoke(_file);
+                    OnDownloaded();
                     return;
                 }
 
-                if (handler != null && download != DelayedFileDownload.Unloaded)
-                {
-                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
-                }
+                UpdateManager.Subscribe(this, _clientService, _file, ref _fileToken, OnFileUpdated, true);
 
                 if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {

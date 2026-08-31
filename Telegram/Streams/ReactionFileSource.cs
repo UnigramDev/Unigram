@@ -21,7 +21,7 @@ namespace Telegram.Streams
         {
             _reaction = reaction;
 
-            DownloadFile(null, DelayedFileDownload.Loaded, null);
+            DownloadFile(DelayedFileDownload.Loaded);
         }
 
         private ReactionFileSource(IClientService clientService, ReactionType reaction, File file)
@@ -31,7 +31,7 @@ namespace Telegram.Streams
 
             if (file == null)
             {
-                DownloadFile(null, DelayedFileDownload.Loaded, null);
+                DownloadFile(DelayedFileDownload.Loaded);
             }
         }
 
@@ -53,15 +53,15 @@ namespace Telegram.Streams
 
         public override long Id => GetHashCode();
 
-        public override async void DownloadFile(object sender, DelayedFileDownload download, UpdateHandler<File> handler)
+        public override async void DownloadFile(DelayedFileDownload download)
         {
-            if (_file != null && _file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
+            if (_file != null && _file.Local.IsDownloadingCompleted)
             {
-                handler?.Invoke(_file);
+                OnDownloaded();
             }
-            else
+            else if (download != DelayedFileDownload.Unloaded)
             {
-                if (_file == null && download != DelayedFileDownload.Unloaded)
+                if (_file == null)
                 {
                     Sticker sticker = null;
                     if (_reaction is ReactionTypeEmoji emoji)
@@ -102,16 +102,14 @@ namespace Telegram.Streams
                 {
                     return;
                 }
-                else if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
+
+                if (_file.Local.IsDownloadingCompleted)
                 {
-                    handler?.Invoke(_file);
+                    OnDownloaded();
                     return;
                 }
 
-                if (handler != null && download != DelayedFileDownload.Unloaded)
-                {
-                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
-                }
+                UpdateManager.Subscribe(this, _clientService, _file, ref _fileToken, OnFileUpdated, true);
 
                 if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {

@@ -37,7 +37,44 @@ namespace Telegram.Streams
 
             if (file != null)
             {
-                DownloadFile(null, DelayedFileDownload.Loaded, null);
+                DownloadFile(DelayedFileDownload.Loaded);
+            }
+        }
+
+        /// <summary>
+        /// Raised when the file this source draws from is on disk.
+        /// </summary>
+        /// <remarks>
+        /// Raised again for every <see cref="DownloadFile"/> that arrives after that, rather than
+        /// once and only once. A caller that asks late is answered on the spot instead of waiting
+        /// for an update that has already happened - which is what a handler subscribed at a single
+        /// moment could not do, and what left a player that missed its one notification with no way
+        /// back but being rebuilt.
+        /// </remarks>
+        public event EventHandler Downloaded;
+
+        // Raised on the way past complete exactly once, however many files had to arrive to get
+        // there. An explicit DownloadFile still answers every time - that is what lets a late
+        // caller be told - but a second raise off the update path would have a player that already
+        // has an animation build another one over the top of it.
+        private bool _downloaded;
+
+        protected void OnDownloaded()
+        {
+            _downloaded = true;
+            Downloaded?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// The file update, for the subscription this source keeps on its own behalf. Guarded
+        /// because a source may draw from more than one file and be complete only when all of them
+        /// are - see <see cref="DiceFileSource"/>.
+        /// </summary>
+        protected void OnFileUpdated(File file)
+        {
+            if (!_downloaded && IsDownloadingCompleted)
+            {
+                OnDownloaded();
             }
         }
 
@@ -217,31 +254,45 @@ namespace Telegram.Streams
 
         public override long Id => _file.Id;
 
-        public bool IsDownloadingCompleted => _file?.Local.IsDownloadingCompleted ?? false;
+        public virtual bool IsDownloadingCompleted => _file?.Local.IsDownloadingCompleted ?? false;
 
-        public virtual void DownloadFile(object sender, DelayedFileDownload download, UpdateHandler<File> handler)
+        public virtual void DownloadFile(DelayedFileDownload download)
         {
-            if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
+            if (download == DelayedFileDownload.Unloaded)
             {
-                handler?.Invoke(_file);
-            }
-            else
-            {
-                if (handler != null && download != DelayedFileDownload.Unloaded)
+                // A drop in priority and nothing else. The subscription stays: the file may still be
+                // on its way, and a source that stopped listening every time a player paused would
+                // never learn that it arrived.
+                if (_file is { Local.CanBeDownloaded: true })
                 {
-                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                    _clientService.DownloadFile(_file.Id, 15);
                 }
 
-                if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
-                {
-                    _clientService.DownloadFile(_file.Id, download == DelayedFileDownload.Playing ? 16 : 15);
-                }
+                return;
+            }
+
+            if (IsDownloadingCompleted)
+            {
+                OnDownloaded();
+                return;
+            }
+
+            if (_file == null)
+            {
+                return;
+            }
+
+            UpdateManager.Subscribe(this, _clientService, _file, ref _fileToken, OnFileUpdated, true);
+
+            if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
+            {
+                _clientService.DownloadFile(_file.Id, download == DelayedFileDownload.Playing ? 16 : 15);
             }
         }
 
-        public void Complete()
+        public virtual void Complete()
         {
-            DownloadFile(null, DelayedFileDownload.Unloaded, null);
+            DownloadFile(DelayedFileDownload.Unloaded);
             UpdateManager.Unsubscribe(this, ref _fileToken);
         }
 
