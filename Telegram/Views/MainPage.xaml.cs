@@ -62,6 +62,13 @@ namespace Telegram.Views
         private readonly DispatcherTimer _memoryUsageTimer;
         private double _memoryUsage;
 
+        // Leak watch. A step this big in the SETTLED heap is worth interrupting for; smaller ones
+        // are indistinguishable from a big chat being opened.
+        private const long MemoryStepThreshold = 30 * 1024 * 1024;
+        private long _memoryFloor;
+        private int _memoryGen2 = -1;
+        private bool _memorySettling;
+
         private bool _unloaded;
 
         public MainPage()
@@ -168,6 +175,66 @@ namespace Telegram.Views
             }
 
             _memoryUsage = memoryUsage;
+
+            DetectMemoryStep();
+        }
+
+        /// <summary>
+        /// Notices the managed heap stepping up and staying there, which is the shape of a leak
+        /// rather than of garbage. GetTotalMemory(false) once a second is mostly uncollected
+        /// garbage and a step in it means nothing, so this samples only after a gen2 collection -
+        /// a settled number, for free, without forcing anything.
+        /// </summary>
+        private void DetectMemoryStep()
+        {
+            var gen2 = GC.CollectionCount(2);
+            if (gen2 != _memoryGen2)
+            {
+                // Background GC bumps the count when the collection STARTS, so the heap is only
+                // settled a tick later.
+                _memoryGen2 = gen2;
+                _memorySettling = true;
+                return;
+            }
+
+            if (!_memorySettling)
+            {
+                return;
+            }
+
+            _memorySettling = false;
+
+            var settled = GC.GetTotalMemory(false);
+
+            if (_memoryFloor == 0 || settled < _memoryFloor)
+            {
+                _memoryFloor = settled;
+                return;
+            }
+
+            if (settled - _memoryFloor < MemoryStepThreshold)
+            {
+                return;
+            }
+
+            // The page is the only part of this worth reading: the timestamp says WHEN, and this
+            // says where the app was when it happened.
+            var message = string.Format("Managed heap {0:F0} MB -> {1:F0} MB over {2} gen2 collections, on {3}",
+                _memoryFloor / 1024d / 1024d,
+                settled / 1024d / 1024d,
+                gen2,
+                MasterDetail?.NavigationService?.Frame?.Content?.GetType().Name ?? "no page");
+
+            // Re-arm at the new level, so the NEXT step of the same size reports too instead of
+            // every tick from here on.
+            _memoryFloor = settled;
+
+            // Logger.Error and not TrackError: nothing crashed, and a crash report would say
+            // otherwise. This exists to put a timestamp in the log that the tail can be read
+            // around - a timer tick's stack would say nothing.
+            Logger.Error(message);
+
+            ToastPopup.Show(XamlRoot, message, ToastPopupIcon.Error);
         }
 
         public INavigationService NavigationService => MasterDetail.NavigationService;
