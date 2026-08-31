@@ -270,6 +270,20 @@
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
+  <!-- Roslyn | MSBuild - see TdSchemaMode. CsWinRT's generator never sees what SchemaGenerator
+       emitted, so it files the vtable for a schema type under an unqualified key
+       ("Telegram.Vector`1[Message]") that type.ToString() never produces, and the CCW is looked up
+       and missed at runtime. MSBuild writes the same text to obj/ before CoreCompile so it is
+       compiled as ordinary source and CsWinRT can resolve it.
+
+       Put this back to Roslyn once CsWinRT resolves them on its own - nothing else has to change,
+       and Telegram.Generators.Cli can then be deleted. -->
+  <PropertyGroup>
+    <TdSchemaMode Condition="'$(TdSchemaMode)' == ''">MSBuild</TdSchemaMode>
+    <TdSchemaSource>$(MSBuildThisFileDirectory)..\Libraries\tdjson\td_api.tl</TdSchemaSource>
+    <TdSchemaCli>$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\bin\$(Configuration)\net10.0\Telegram.Generators.Cli.dll</TdSchemaCli>
+  </PropertyGroup>
+
   <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
        which keeps a WeakReference per registered object for the session, so it must not reach a
        shipping build. Telegram.csproj has it on in Debug instead. -->
@@ -291,7 +305,55 @@
                       ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
     <CompilerVisibleProperty Include="TdParsers" />
+    <CompilerVisibleProperty Include="TdSchemaMode" />
+    <!-- Ordering only, hence ReferenceOutputAssembly=false: the app runs the built dll by path.
+         Platform is removed because this is an AnyCPU tool and the app builds x64 and ARM64. -->
+    <ProjectReference Include="..\Telegram.Generators.Cli\Telegram.Generators.Cli.csproj"
+                      Condition="'$(TdSchemaMode)' == 'MSBuild'"
+                      ReferenceOutputAssembly="false"
+                      GlobalPropertiesToRemove="Platform;RuntimeIdentifier;PublishAot;SelfContained" />
   </ItemGroup>
+
+  <!-- IntermediateOutputPath is still empty during evaluation, so the path cannot be a property
+       group at project scope - the same trap ModernAppxManifest documents above. Getting it wrong
+       is silent: the Exec writes to the right place, the Compile item points at the wrong one, and
+       the build fails with every Telegram.Td.Api type unresolved. -->
+  <Target Name="ResolveTdSchemaPath" Condition="'$(TdSchemaMode)' == 'MSBuild'">
+    <PropertyGroup>
+      <!-- No trailing separator: cmd reads the backslash before a closing quote as an escape, so
+           a directory passed as "...\" swallows the quote and takes the next argument with it. -->
+      <TdSchemaDir>$(IntermediateOutputPath)TdSchema</TdSchemaDir>
+      <TdSchemaFile>$(TdSchemaDir)\TdDotNetApi.g.cs</TdSchemaFile>
+      <TdSchemaStamp>$(TdSchemaDir)\schema.stamp</TdSchemaStamp>
+    </PropertyGroup>
+  </Target>
+
+  <!-- Before MarkupCompilePass1, not BeforeCompile: UseUwp injects
+       MarkupCompilePass1;XamlPreCompile;MarkupCompilePass2 into PrepareResourcesDependsOn, and
+       PrepareResources runs a whole phase ahead of Compile. XamlPreCompile is a real csc pass over
+       @(Compile) that resolves every x:Bind, so the schema has to be in @(Compile) by then - a
+       BeforeCompile hook fails there first, with every Telegram.Td.Api type unresolved. -->
+  <Target Name="GenerateTdSchema" BeforeTargets="MarkupCompilePass1;BeforeCompile" Condition="'$(TdSchemaMode)' == 'MSBuild'"
+          DependsOnTargets="ResolveTdSchemaPath"
+          Inputs="$(TdSchemaSource);@(TdSchemaCliSource)" Outputs="$(TdSchemaStamp)">
+    <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(TdSchemaCli)&quot; --schema &quot;$(TdSchemaSource)&quot; --out &quot;$(TdSchemaDir)&quot; --parsers $(TdParsers)" />
+    <!-- The stamp is the output, not the .cs: the emitter leaves the file alone when the text is
+         unchanged, so its timestamp never catches up to the inputs and the target would re-run on
+         every build forever. -->
+    <Touch Files="$(TdSchemaStamp)" AlwaysCreate="true" />
+  </Target>
+
+  <!-- Separate from the target above, and it has to be: an up-to-date Inputs/Outputs check skips
+       the whole target, which would take the Compile item with it and fail the build with every
+       Telegram.Td.Api type missing. The item also has to be added from inside a target - at
+       project scope it evaluates before anything runs, when the file does not exist yet. -->
+  <Target Name="IncludeTdSchema" BeforeTargets="MarkupCompilePass1;BeforeCompile" DependsOnTargets="GenerateTdSchema"
+          Condition="'$(TdSchemaMode)' == 'MSBuild'">
+    <Error Condition="!Exists('$(TdSchemaFile)')" Text="TdSchemaMode is MSBuild but $(TdSchemaFile) was not written." />
+    <ItemGroup>
+      <Compile Include="$(TdSchemaFile)" />
+    </ItemGroup>
+  </Target>
 
   <!-- Same copy-local set as Telegram.csproj, including tdjson.pdb by name: it arrives as a copy
        local path rather than a Reference, so RAR never runs its related-file discovery and without
@@ -343,9 +405,7 @@
     into the publish folder, but it runs after Publish, long after the publish item list the
     packaging project reads has been computed - so the .appxsym never saw it.
   -->
-  <Target Name="PublishNativeSymbols"
-          AfterTargets="ComputeResolvedFilesToPublishList"
-          Condition="'$(PublishAot)' == 'true'">
+  <Target Name="PublishNativeSymbols" AfterTargets="ComputeResolvedFilesToPublishList" Condition="'$(PublishAot)' == 'true'">
     <ItemGroup>
       <ResolvedFileToPublish Include="$(NativeOutputPath)$(TargetName)$(NativeSymbolExt)">
         <RelativePath>$(TargetName)$(NativeSymbolExt)</RelativePath>
