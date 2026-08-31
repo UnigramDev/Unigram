@@ -56,6 +56,7 @@ namespace Telegram.Views.Popups
 
             LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged += OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
             LifetimeService.Current.Playback.PlaylistChanged += OnPlaylistChanged;
 
@@ -70,6 +71,7 @@ namespace Telegram.Views.Popups
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
             LifetimeService.Current.Playback.PlaylistChanged -= OnPlaylistChanged;
         }
@@ -181,7 +183,7 @@ namespace Telegram.Views.Popups
                     NextButton.Visibility = Visibility.Collapsed;
 
                     RepeatButton.Visibility = Visibility.Collapsed;
-                    //ShuffleButton.Visibility = Visibility.Collapsed;
+                    ShuffleButton.Visibility = Visibility.Collapsed;
 
                     //UpdateSpeed(int.MaxValue);
                 }
@@ -206,10 +208,10 @@ namespace Telegram.Views.Popups
                     NextButton.Visibility = Visibility.Visible;
 
                     RepeatButton.Visibility = Visibility.Visible;
-                    //ShuffleButton.Visibility = Visibility.Visible;
+                    ShuffleButton.Visibility = Visibility.Visible;
 
                     //UpdateSpeed(audio.Duration);
-                    UpdateRepeat();
+                    UpdateModes();
                 }
             }
             else if (item is PlaybackItemProfileAudio audio)
@@ -242,14 +244,14 @@ namespace Telegram.Views.Popups
                 NextButton.Visibility = Visibility.Visible;
 
                 RepeatButton.Visibility = Visibility.Visible;
-                //ShuffleButton.Visibility = Visibility.Visible;
+                ShuffleButton.Visibility = Visibility.Visible;
 
                 //UpdateSpeed(audio.Audio.Duration);
-                UpdateRepeat();
+                UpdateModes();
             }
         }
 
-        private void UpdateRepeat()
+        private void UpdateModes()
         {
             RepeatButton.IsChecked = LifetimeService.Current.Playback.IsRepeatEnabled;
             Automation.SetToolTip(RepeatButton, LifetimeService.Current.Playback.IsRepeatEnabled == null
@@ -257,6 +259,11 @@ namespace Telegram.Views.Popups
                 : LifetimeService.Current.Playback.IsRepeatEnabled == true
                 ? Strings.AccDescrRepeatList
                 : Strings.AccDescrRepeatOff);
+
+            ShuffleButton.IsChecked = LifetimeService.Current.Playback.IsShuffleEnabled;
+            // Unlike tri-state repeat, the toggle state is announced on its own, so the name
+            // stays put rather than saying it twice.
+            Automation.SetToolTip(ShuffleButton, Strings.Shuffle);
         }
 
         private async void UpdateIsProfileAudio(PlaybackItem item)
@@ -634,13 +641,12 @@ namespace Telegram.Views.Popups
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
             LifetimeService.Current.Playback.IsRepeatEnabled = RepeatButton.IsChecked;
-            UpdateRepeat();
+            UpdateModes();
         }
 
         private void Shuffle_Click(object sender, RoutedEventArgs e)
         {
-            //LifetimeService.Current.Playback.IsShuffleEnabled = ShuffleButton.IsChecked == true;
-            LifetimeService.Current.Playback.IsReversed = ShuffleButton.IsChecked == true;
+            LifetimeService.Current.Playback.IsShuffleEnabled = ShuffleButton.IsChecked == true;
         }
 
         private void Slider_KeyDown(object sender, KeyRoutedEventArgs e)
