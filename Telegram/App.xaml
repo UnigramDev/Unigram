@@ -29,19 +29,19 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
-                    <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
-                                        TintColor="#2C2C2C"
-                                        TintOpacity="0.15"
-                                        TintLuminosityOpacity="1"
-                                        FallbackColor="#2C2C2C"
-                                        BackgroundSource="Backdrop" />
+                    <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
+                                  TintColor="#2C2C2C"
+                                  TintOpacity="0.15"
+                                  TintLuminosityOpacity="1"
+                                  FallbackColor="#2C2C2C"
+                                  BackgroundSource="Backdrop" />
 
-                    <media:AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
-                                        FallbackColor="#1C1C1C"
-                                        TintColor="#202020"
-                                        TintLuminosityOpacity="0.96"
-                                        TintOpacity="0.5"
-                                        BackgroundSource="Backdrop" />
+                    <AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
+                                  FallbackColor="#1C1C1C"
+                                  TintColor="#202020"
+                                  TintLuminosityOpacity="0.96"
+                                  TintOpacity="0.5"
+                                  BackgroundSource="Backdrop" />
 
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"
@@ -67,23 +67,23 @@
                                     ResourceKey="ControlFillColorSecondaryBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPressed"
                                     ResourceKey="ControlFillColorTertiaryBrush" />
-                    
+
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
-                    <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
-                                        TintColor="#FCFCFC"
-                                        TintOpacity="0.0"
-                                        TintLuminosityOpacity="1"
-                                        FallbackColor="#F9F9F9"
-                                        BackgroundSource="Backdrop" />
+                    <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
+                                  TintColor="#FCFCFC"
+                                  TintOpacity="0.0"
+                                  TintLuminosityOpacity="1"
+                                  FallbackColor="#F9F9F9"
+                                  BackgroundSource="Backdrop" />
 
-                    <media:AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
-                                        FallbackColor="#EEEEEE"
-                                        TintColor="#F3F3F3"
-                                        TintLuminosityOpacity="0.9"
-                                        TintOpacity="0"
-                                        BackgroundSource="Backdrop" />
+                    <AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
+                                  FallbackColor="#EEEEEE"
+                                  TintColor="#F3F3F3"
+                                  TintLuminosityOpacity="0.9"
+                                  TintOpacity="0"
+                                  BackgroundSource="Backdrop" />
 
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"

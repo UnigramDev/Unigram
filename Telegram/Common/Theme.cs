@@ -16,7 +16,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
+using AcrylicBrush = Windows.UI.Xaml.Media.AcrylicBrush;
 
 namespace Telegram.Common
 {
