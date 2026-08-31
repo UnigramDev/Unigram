@@ -20,9 +20,7 @@ namespace Telegram.Services.Settings
         private int? _messageDust;
         public MessageDustEffect MessageDust
         {
-            // On by default where an update can be pushed out quickly if it misbehaves, off in the
-            // Store build until it has been through a few releases.
-            get => (MessageDustEffect)(_messageDust ??= GetValueOrDefault("MessageDust", (int)(ApiInfo.IsPackagedRelease ? MessageDustEffect.Layers : MessageDustEffect.Disabled)));
+            get => (MessageDustEffect)(_messageDust ??= GetValueOrDefault("MessageDust", (int)MessageDustEffect.Layers));
             set => AddOrUpdateValue(ref _messageDust, "MessageDust", (int)value);
         }
 
