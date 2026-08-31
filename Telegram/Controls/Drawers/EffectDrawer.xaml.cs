@@ -43,8 +43,8 @@ namespace Telegram.Controls.Drawers
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = _handler.Suspend;
-            _zoomer.Closing = _handler.Resume;
+            _zoomer.Opening += Zoomer_Opening;
+            _zoomer.Closing += Zoomer_Closing;
 
             //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
             //debouncer.Invoked += async (s, args) =>
@@ -56,6 +56,16 @@ namespace Telegram.Controls.Drawers
             //        await items.LoadMoreItemsAsync(2);
             //    }
             //};
+        }
+
+        private void Zoomer_Opening(object sender, EventArgs e)
+        {
+            _handler.Suspend();
+        }
+
+        private void Zoomer_Closing(object sender, EventArgs e)
+        {
+            _handler.Resume();
         }
 
         public Services.Settings.StickersTab Tab => Services.Settings.StickersTab.Stickers;
@@ -86,7 +96,6 @@ namespace Telegram.Controls.Drawers
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
-            _zoomer.Release();
             Bindings.StopTracking();
         }
 

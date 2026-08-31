@@ -48,8 +48,18 @@ namespace Telegram.Views.Popups
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(ScrollingHost);
-            _zoomer.Opening = _handler.Suspend;
-            _zoomer.Closing = _handler.Resume;
+            _zoomer.Opening += Zoomer_Opening;
+            _zoomer.Closing += Zoomer_Closing;
+        }
+
+        private void Zoomer_Opening(object sender, EventArgs e)
+        {
+            _handler.Suspend();
+        }
+
+        private void Zoomer_Closing(object sender, EventArgs e)
+        {
+            _handler.Resume();
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
@@ -57,7 +67,6 @@ namespace Telegram.Views.Popups
             ViewModel.PropertyChanged -= OnPropertyChanged;
 
             _handler.UnloadItems();
-            _zoomer.Release();
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

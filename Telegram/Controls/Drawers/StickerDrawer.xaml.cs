@@ -64,8 +64,8 @@ namespace Telegram.Controls.Drawers
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = _handler.Suspend;
-            _zoomer.Closing = _handler.Resume;
+            _zoomer.Opening += Zoomer_Opening;
+            _zoomer.Closing += Zoomer_Closing;
 
             _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             _typing.Invoked += async (s, args) =>
@@ -77,6 +77,16 @@ namespace Telegram.Controls.Drawers
                     await items.LoadMoreItemsAsync(2);
                 }
             };
+        }
+
+        private void Zoomer_Opening(object sender, EventArgs e)
+        {
+            _handler.Suspend();
+        }
+
+        private void Zoomer_Closing(object sender, EventArgs e)
+        {
+            _handler.Resume();
         }
 
         public Services.Settings.StickersTab Tab => Services.Settings.StickersTab.Stickers;
@@ -111,7 +121,6 @@ namespace Telegram.Controls.Drawers
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
-            _zoomer.Release();
             Bindings.StopTracking();
 
             // Same as EmojiDrawer: the bindings' last value keeps a CollectionChanged handler

@@ -63,18 +63,10 @@ namespace Telegram.Common
                     if (_popupHost.IsOpen)
                     {
                         _popupHost.IsOpen = false;
-                        Closing?.Invoke();
+                        Closing?.Invoke(this, EventArgs.Empty);
                     }
                 }
             };
-        }
-
-        public void Release()
-        {
-            // These are strong references and prevent
-            // owner classes from being disposed
-            Opening = null;
-            Closing = null;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -93,8 +85,8 @@ namespace Telegram.Common
             _listView.PointerCaptureLost -= OnPointerReleased;
         }
 
-        public Action Opening { get; set; }
-        public Action Closing { get; set; }
+        public event EventHandler Opening;
+        public event EventHandler Closing;
 
         private PointerEventHandler _handlerPressed;
         private PointerEventHandler _handlerReleased;
@@ -145,7 +137,7 @@ namespace Telegram.Common
             {
                 _popupHost.IsOpen = false;
 
-                Closing?.Invoke();
+                Closing?.Invoke(this, EventArgs.Empty);
                 e.Handled = true;
             }
         }
@@ -269,7 +261,7 @@ namespace Telegram.Common
                 _popupPanel.SetPhoto(photo);
             }
 
-            Opening?.Invoke();
+            Opening?.Invoke(this, EventArgs.Empty);
 
             _popupPanel.Width = _listView.XamlRoot.Size.Width;
             _popupPanel.Height = _listView.XamlRoot.Size.Height;

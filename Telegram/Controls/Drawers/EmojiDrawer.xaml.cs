@@ -102,8 +102,8 @@ namespace Telegram.Controls.Drawers
             _toolbarHandler = new AnimatedListHandler(Toolbar2, AnimatedListType.Emoji);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = _handler.Suspend;
-            _zoomer.Closing = _handler.Resume;
+            _zoomer.Opening += Zoomer_Opening;
+            _zoomer.Closing += Zoomer_Closing;
 
             _typeToItemHashSetMapping.Add("EmojiSkinTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmojiTemplate", new HashSet<SelectorItem>());
@@ -157,6 +157,16 @@ namespace Telegram.Controls.Drawers
                     List.ItemsSource = new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _mode);
                 }
             };
+        }
+
+        private void Zoomer_Opening(object sender, EventArgs e)
+        {
+            _handler.Suspend();
+        }
+
+        private void Zoomer_Closing(object sender, EventArgs e)
+        {
+            _handler.Resume();
         }
 
         public void HideNavigation()
@@ -226,7 +236,6 @@ namespace Telegram.Controls.Drawers
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
-            _zoomer.Release();
             Bindings.StopTracking();
 
             // StopTracking doesn't clear what the bindings already pushed: the collection view

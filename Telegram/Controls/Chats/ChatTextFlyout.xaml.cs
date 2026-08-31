@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
@@ -34,8 +35,8 @@ namespace Telegram.Controls.Chats
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(ScrollingHost);
-            _zoomer.Opening = _handler.Suspend;
-            _zoomer.Closing = _handler.Resume;
+            _zoomer.Opening += Zoomer_Opening;
+            _zoomer.Closing += Zoomer_Closing;
 
             _textBox = textBox;
             ScrollingHost.ItemsSource = itemsSource;
@@ -43,6 +44,16 @@ namespace Telegram.Controls.Chats
             MinWidth = 40;
             MaxWidth = 184;
             MinHeight = 40;
+        }
+
+        private void Zoomer_Opening(object sender, EventArgs e)
+        {
+            _handler.Suspend();
+        }
+
+        private void Zoomer_Closing(object sender, EventArgs e)
+        {
+            _handler.Resume();
         }
 
         public ListViewBase ControlledList => ScrollingHost;
@@ -71,7 +82,6 @@ namespace Telegram.Controls.Chats
         protected override void OnUnloaded()
         {
             _handler.UnloadItems();
-            _zoomer.Release();
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
