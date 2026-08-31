@@ -29,7 +29,7 @@ namespace winrt::Telegram::Native::Controls::implementation
 
     void AnimatedImageBase::HandleSizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::SizeChangedEventArgs const& e)
     {
-        overridable().OnSizeChanged(e);
+        overridable().OnSizeChanged(e.PreviousSize(), e.NewSize());
     }
 
     void AnimatedImageBase::HandleEffectiveViewportChanged(FrameworkElement const& sender, EffectiveViewportChangedEventArgs const& e)

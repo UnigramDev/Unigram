@@ -11,7 +11,7 @@ namespace Telegram.Native.Controls
         overridable void OnLoaded();
         overridable void OnUnloaded();
 
-        overridable void OnSizeChanged(Windows.UI.Xaml.SizeChangedEventArgs e);
+        overridable void OnSizeChanged(Windows.Foundation.Size oldSize, Windows.Foundation.Size newSize);
 
         overridable void OnViewportChanged(Boolean visible);
 

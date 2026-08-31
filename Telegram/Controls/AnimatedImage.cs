@@ -93,7 +93,7 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(AnimatedImage);
         }
 
-        protected override void OnSizeChanged(SizeChangedEventArgs e)
+        protected override void OnSizeChanged(Size oldSize, Size newSize)
         {
             if (ResizeMode != AnimatedImageResizeMode.None)
             {

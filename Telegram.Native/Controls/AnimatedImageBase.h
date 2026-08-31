@@ -18,7 +18,7 @@ namespace winrt::Telegram::Native::Controls::implementation
     {
         AnimatedImageBase();
 
-        virtual void OnSizeChanged(winrt::Windows::UI::Xaml::SizeChangedEventArgs const&) {}
+        virtual void OnSizeChanged(winrt::Windows::Foundation::Size const&, winrt::Windows::Foundation::Size const&) {}
         virtual void OnViewportChanged(bool visible) {};
 
         void RegisterViewportChanged();
