@@ -602,7 +602,9 @@ namespace Telegram.Controls
             //
             // AutoPlay carries the controls no viewport source reports: they show themselves as
             // soon as they load, so there is nothing to wait for.
-            if (!AutoPlay && !_withinViewport)
+            //
+            // If outline is animated we display the shimmer in any case
+            if (!AutoPlay && !_withinViewport && !IsOutlineAnimated)
             {
                 _shimmerPending = true;
                 return;

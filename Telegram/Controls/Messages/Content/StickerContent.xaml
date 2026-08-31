@@ -25,6 +25,7 @@
                                                 AutoPlay="False"
                                                 FrameSize="224,224"
                                                 DecodeFrameType="Logical"
+                                                IsOutlineAnimated="True"
                                                 ReplacementColor="{ThemeResource MessageForegroundBrush}" />
 
                         <Popup x:Name="InteractionsPopup"

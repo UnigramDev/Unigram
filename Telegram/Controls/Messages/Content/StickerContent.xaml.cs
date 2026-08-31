@@ -25,8 +25,6 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private long _fileToken;
-
         private bool _isEmoji;
 
         public StickerContent(MessageViewModel message)
@@ -131,28 +129,6 @@ namespace Telegram.Controls.Messages.Content
 
             _isEmoji = message.Content is not MessageSticker;
 
-            UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
-            UpdateFile(message, sticker.StickerValue);
-        }
-
-        private void UpdateFile(File file)
-        {
-            UpdateFile(_message, file);
-        }
-
-        private void UpdateFile(MessageViewModel message, File file)
-        {
-            var sticker = GetContent(message, out _);
-            if (sticker == null || !_templateApplied)
-            {
-                return;
-            }
-
-            if (sticker.StickerValue.Id != file.Id)
-            {
-                return;
-            }
-
             var autoPlayStickers = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
             var autoPlayEmojis = message.Content is MessageAnimatedEmoji && sticker.FullType is StickerFullTypeCustomEmoji && PowerSavingPolicy.AutoPlayStickersInChats;
 
@@ -161,7 +137,7 @@ namespace Telegram.Controls.Messages.Content
                 Player.LoopCount = autoPlayStickers || autoPlayEmojis ? 0 : 1;
                 Player.Source = new DelayedFileSource(_message.ClientService, sticker)
                 {
-                    FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji ? animatedEmoji.AnimatedEmoji.FitzpatrickType switch
+                    FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji2 ? animatedEmoji2.AnimatedEmoji.FitzpatrickType switch
                     {
                         1 => FitzModifier.Type12,
                         2 => FitzModifier.Type12,
@@ -174,7 +150,7 @@ namespace Telegram.Controls.Messages.Content
                 };
             }
 
-            if (file.Local.IsDownloadingCompleted)
+            if (sticker.StickerValue.Local.IsDownloadingCompleted)
             {
                 message.Delegate.ViewVisibleMessages();
             }
@@ -182,6 +158,8 @@ namespace Telegram.Controls.Messages.Content
 
         private void Player_Ready(object sender, EventArgs e)
         {
+            _message?.Delegate.ViewVisibleMessages();
+
             var sticker = _message?.Content as MessageSticker;
             if (sticker?.Sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && sticker.IsPremium && _message.GeneratedContentUnread && IsLoaded)
             {
@@ -193,8 +171,6 @@ namespace Telegram.Controls.Messages.Content
         public void Recycle()
         {
             _message = null;
-
-            UpdateManager.Unsubscribe(this, ref _fileToken);
 
             if (_templateApplied)
             {
@@ -456,37 +432,9 @@ namespace Telegram.Controls.Messages.Content
 
         public int LoopCount => Player?.LoopCount ?? 1;
 
-        private bool _withinViewport;
-
         public void ViewportChanged(bool within)
         {
-            if (within && !_withinViewport)
-            {
-                _withinViewport = true;
-                Play();
-            }
-            else if (_withinViewport && !within)
-            {
-                _withinViewport = false;
-                Pause();
-            }
-        }
-
-        public void Play()
-        {
-            if (_isEmoji && PowerSavingPolicy.AutoPlayEmojiInChats)
-            {
-                Player?.Play();
-            }
-            else if (PowerSavingPolicy.AutoPlayStickersInChats)
-            {
-                Player?.Play();
-            }
-        }
-
-        public void Pause()
-        {
-            Player?.Pause();
+            Player?.ViewportChanged(within && ((_isEmoji && PowerSavingPolicy.AutoPlayEmojiInChats) || PowerSavingPolicy.AutoPlayStickersInChats));
         }
 
         #endregion

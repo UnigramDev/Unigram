@@ -2207,41 +2207,10 @@ namespace Telegram.Td.Api
                     }
                     return false;
                 case MessageDice dice:
-                    {
-                        var state = dice.InitialState;
-                        if (state is DiceStickersRegular regular)
-                        {
-                            return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
-                        }
-                        else if (state is DiceStickersSlotMachine slotMachine)
-                        {
-                            return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.Lever.StickerValue.Local.IsDownloadingCompleted;
-                        }
-
-                        return false;
-                    }
                 case MessageStakeDice stakeDice:
-                    {
-                        var state = stakeDice.InitialState;
-                        if (state is DiceStickersRegular regular)
-                        {
-                            return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
-                        }
-                        else if (state is DiceStickersSlotMachine slotMachine)
-                        {
-                            return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
-                                && slotMachine.Lever.StickerValue.Local.IsDownloadingCompleted;
-                        }
-
-                        return false;
-                    }
+                case MessageSticker sticker:
+                case MessageAnimatedEmoji animatedEmoji:
+                    // Stickers are downloaded by AnimatedImage
                 case MessageVideo:
                 case MessageSponsored:
                     // Videos are streamed
