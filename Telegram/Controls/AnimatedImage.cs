@@ -1573,6 +1573,15 @@ namespace Telegram.Controls
                 return false;
             }
 
+            // A task that has stopped has no second frame to give - it is a still, and the bitmap
+            // it drew is still on screen. PlayImpl checks the same thing before queueing, but it
+            // cannot catch this on its own: the stop is only recorded once the render below has
+            // run, so two renders queued before the first one executes both pass that check.
+            if (_loopCount < 0)
+            {
+                return false;
+            }
+
             var state = task.NextFrame(frame, out _nextPosition);
             if (state == AnimatedImageTaskState.Stop)
             {
