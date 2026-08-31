@@ -1211,7 +1211,9 @@ namespace Telegram.Views
             Profiler.Report();
 #endif
 
+#if !NET9_0_OR_GREATER
             GarbageCollectionMonitor.DisconnectUnusedReferenceSources();
+#endif
         }
 
         public void ProcessKeyboardAccelerators(ShortcutInvokedEventArgs args)
