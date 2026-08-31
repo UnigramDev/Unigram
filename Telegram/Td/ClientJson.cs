@@ -47,7 +47,7 @@ namespace Telegram.Td.Api
     {
         private static readonly JsonWriterOptions _options = new()
         {
-#if ARM64
+#if ARM64 && !NET9_0_OR_GREATER
             Encoder = new Arm64SafeEncoder(),
 #else
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
