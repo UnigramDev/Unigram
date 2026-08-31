@@ -454,6 +454,12 @@ namespace Telegram.Common
                     continue;
                 }
 
+                if (TryTranslateTdlibLog(part, out string tdlib))
+                {
+                    builder.Append(tdlib);
+                    continue;
+                }
+
                 // Only the sentence is localised, so the HRESULT .NET appends has to come off
                 // before it can be matched and go back on afterwards.
                 var suffix = _hresultSuffix.Match(part);
@@ -626,6 +632,62 @@ namespace Telegram.Common
 
             translated = null;
             return false;
+        }
+
+        // TDLib prefixes a log line with the level, the thread, the source location and any number of
+        // context tags: "[ 0][t 5][crypto.cpp:420][#1][!Session:4:main][&res != 1]". Matched by that
+        // shape rather than by file name, so a new assertion normalises without a change here.
+        private static readonly Regex _tdlibLog = new(@"^(\[\s*\d+\])\[t\s*\d+\](\[[^\]\\/]+\.[A-Za-z0-9]+:\d+\])((?:\[[^\]]*\])*)", RegexOptions.Compiled);
+
+        private static readonly Regex _tdlibLogContext = new(@"\[#\d+\]|\[![^\]]*\]", RegexOptions.Compiled);
+
+        private static readonly Regex _tdlibActorIndex = new(@"[:#]\d+(?=[:#\]]|$)", RegexOptions.Compiled);
+
+        // Alternation order is the rule: a stringified condition and a source location are identity and
+        // are kept whole, and only what is left over is read as a value the crash happened to print.
+        private static readonly Regex _tdlibLogValue = new(@"`[^`]*`|[A-Za-z_][\w.]*\.(?:cpp|cxx|cc|h|hpp)(?:\s+at\s+line)?[:\s]\s*\d+|""[^""]*""|-?\d[\d.]*", RegexOptions.Compiled);
+
+        // A LOG(FATAL) line reaches the report as the message, and the thread, the scheduler, the actor
+        // index and the values in the trailing text all differ per crash, so one assertion would
+        // otherwise be hashed into a group per report.
+        private static bool TryTranslateTdlibLog(string text, out string translated)
+        {
+            var match = _tdlibLog.Match(text);
+            if (!match.Success)
+            {
+                translated = null;
+                return false;
+            }
+
+            translated = match.Groups[1].Value
+                + match.Groups[2].Value
+                + _tdlibLogContext.Replace(match.Groups[3].Value, TranslateTdlibLogContext)
+                + _tdlibLogValue.Replace(text.Substring(match.Length), TranslateTdlibLogValue);
+            return true;
+        }
+
+        // "[#1]" is the scheduler the actor happened to run on, and "Session:4:download#0" names the
+        // datacenter and the connection slot - but "download" is a different code path from "main".
+        private static string TranslateTdlibLogContext(Match match)
+        {
+            return match.Value[1] == '#'
+                ? string.Empty
+                : _tdlibActorIndex.Replace(match.Value, string.Empty);
+        }
+
+        private static string TranslateTdlibLogValue(Match match)
+        {
+            var first = match.Value[0];
+            if (first == '"')
+            {
+                return "\"...\"";
+            }
+            else if (first == '-' || (first >= '0' && first <= '9'))
+            {
+                return "<...>";
+            }
+
+            return match.Value;
         }
 
         private static string TranslateText(string text)
