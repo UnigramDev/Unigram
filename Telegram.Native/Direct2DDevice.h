@@ -434,6 +434,11 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
         const wchar_t* m_monospaceFamily = L"Consolas";
         winrt::com_ptr<IDWriteInlineObject> m_customEmoji;
+        // Dead, and the reason the text methods need no lock: CreateTextFormat is its only
+        // writer and every call to that is commented out, so each text method builds its own
+        // format per call. Kept because those commented call sites are how the shared-format
+        // experiment gets switched back on - measured at 0.237us against 32.8us for a layout
+        // plus GetMetrics, so it buys 0.7% and would put shared state back under a lock.
         winrt::com_ptr<IDWriteTextFormat> m_appleFormat;
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
         std::mutex m_criticalSection;

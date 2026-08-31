@@ -640,7 +640,12 @@ namespace winrt::Telegram::Native::implementation
         auto patterns = winrt::single_threaded_vector<ChatBackgroundSymbol>();
 
         struct NSVGimage* image;
-        image = nsvgParse((char*)data.c_str(), "px", 96);
+        image = nsvgParse(data.data(), "px", 96);
+
+        if (image == nullptr)
+        {
+            return nullptr;
+        }
 
         auto unique = std::shared_ptr<NSVGimage>(image, [](NSVGimage* p)
             {
@@ -661,6 +666,11 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<ID2D1DeviceContext> d2dContext;
         POINT offset;
 
+        // Only one surface may be open for drawing on a device at a time, and every
+        // CleanupIfFailed below used to jump past EndDraw - one failed brush or geometry and
+        // no pattern would render again for the life of the process.
+        bool drawing = false;
+
         auto compositorInterop = compositor.as<abi::ICompositorInterop>();
         CleanupIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
 
@@ -672,6 +682,7 @@ namespace winrt::Telegram::Native::implementation
         // Because we always create a new composition graphics device (not great ndr, but we must use background instance not to block messages measure)
         // And we handle device loss right before this method is invoked.
         CleanupIfFailed(result, surfaceInterop->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), d2dContext.put_void(), &offset));
+        drawing = true;
 
         if (negative)
         {
@@ -723,6 +734,13 @@ namespace winrt::Telegram::Native::implementation
             winrt::com_ptr<ID2D1GeometrySink> sink;
             CleanupIfFailed(result, geometry->Open(sink.put()));
 
+            if (shape->fill.type != NSVG_PAINT_NONE)
+            {
+                sink->SetFillMode(shape->fillRule == NSVG_FILLRULE_EVENODD
+                    ? D2D1_FILL_MODE_ALTERNATE
+                    : D2D1_FILL_MODE_WINDING);
+            }
+
             for (NSVGpath* path = shape->paths; path != NULL; path = path->next)
             {
                 sink->BeginFigure({ path->pts[0], path->pts[1] }, D2D1_FIGURE_BEGIN_FILLED);
@@ -740,16 +758,6 @@ namespace winrt::Telegram::Native::implementation
 
             if (shape->fill.type != NSVG_PAINT_NONE)
             {
-                switch (shape->fillRule)
-                {
-                case NSVG_FILLRULE_EVENODD:
-                    sink->SetFillMode(D2D1_FILL_MODE_ALTERNATE);
-                    break;
-                default:
-                    sink->SetFillMode(D2D1_FILL_MODE_WINDING);
-                    break;
-                }
-
                 winrt::com_ptr<ID2D1PathGeometry1> widenGeometry;
                 CleanupIfFailed(result, m_d2dFactory->CreatePathGeometry(widenGeometry.put()));
 
@@ -809,11 +817,17 @@ namespace winrt::Telegram::Native::implementation
 
         d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 
+        drawing = false;
         CleanupIfFailed(result, surfaceInterop->EndDraw());
 
         return ChatBackgroundPattern(surface, imageWidth, imageHeight, rasterizationScale, patterns);
 
     Cleanup:
+        if (drawing)
+        {
+            surfaceInterop->EndDraw();
+        }
+
         return nullptr;
     }
 
@@ -1207,7 +1221,10 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT Direct2DDevice::CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat2)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
+        // collections are read-only after CreateDeviceIndependentResources, and the text format
+        // and layout below are local to this call. m_appleFormat is not touched - see the note
+        // on its declaration.
         HRESULT result;
 
         //ReturnIfFailed(result, CreateTextFormat(fontSize));
@@ -1274,7 +1291,10 @@ namespace winrt::Telegram::Native::implementation
 
     float2 Direct2DDevice::ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
+        // collections are read-only after CreateDeviceIndependentResources, and the text format
+        // and layout below are local to this call. m_appleFormat is not touched - see the note
+        // on its declaration.
         HRESULT result;
 
         //ReturnIfFailed(result, CreateTextFormat(fontSize));
@@ -1354,7 +1374,10 @@ namespace winrt::Telegram::Native::implementation
 
     IVector<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
+        // collections are read-only after CreateDeviceIndependentResources, and the text format
+        // and layout below are local to this call. m_appleFormat is not touched - see the note
+        // on its declaration.
         HRESULT result;
 
         //ReturnIfFailed(result, CreateTextFormat(fontSize));
@@ -1474,7 +1497,10 @@ namespace winrt::Telegram::Native::implementation
 
     Windows::Foundation::Rect Direct2DDevice::LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
+        // collections are read-only after CreateDeviceIndependentResources, and the text format
+        // and layout below are local to this call. m_appleFormat is not touched - see the note
+        // on its declaration.
         HRESULT result;
 
         //ReturnIfFailed(result, CreateTextFormat(fontSize));
@@ -1546,7 +1572,10 @@ namespace winrt::Telegram::Native::implementation
 
     MaxLinesMetrics Direct2DDevice::MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
+        // collections are read-only after CreateDeviceIndependentResources, and the text format
+        // and layout below are local to this call. m_appleFormat is not touched - see the note
+        // on its declaration.
         HRESULT result;
 
         //ReturnIfFailed(result, CreateTextFormat(fontSize));
@@ -1938,7 +1967,9 @@ namespace winrt::Telegram::Native::implementation
 
     CompositionPath Direct2DDevice::GetEllipticalClip(float width, float height, float radius, float x, float y)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: m_d2dFactory is D2D1_FACTORY_TYPE_MULTI_THREADED, so it serializes itself,
+        // and every geometry below is local to this call. Holding the device lock here only
+        // parked the UI thread behind whatever background blur happened to own it.
         HRESULT result;
 
         winrt::com_ptr<ID2D1GeometrySink> d2dGeometrySink;
@@ -2017,7 +2048,9 @@ namespace winrt::Telegram::Native::implementation
 
     CompositionPath Direct2DDevice::GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: m_d2dFactory is D2D1_FACTORY_TYPE_MULTI_THREADED, so it serializes itself,
+        // and every geometry below is local to this call. Holding the device lock here only
+        // parked the UI thread behind whatever background blur happened to own it.
         HRESULT result;
 
         winrt::com_ptr<ID2D1GeometrySink> d2dGeometrySink;
@@ -2070,7 +2103,9 @@ namespace winrt::Telegram::Native::implementation
 
     CompositionPath Direct2DDevice::GetVoiceNoteClip(array_view<uint8_t const> waveform, double waveformWidth)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: m_d2dFactory is D2D1_FACTORY_TYPE_MULTI_THREADED, so it serializes itself,
+        // and every geometry below is local to this call. Holding the device lock here only
+        // parked the UI thread behind whatever background blur happened to own it.
         HRESULT result;
 
         winrt::com_ptr<ID2D1GeometrySink> d2dGeometrySink;
@@ -2163,7 +2198,9 @@ namespace winrt::Telegram::Native::implementation
 
     CompositionPath Direct2DDevice::GetRoundedPolygon(IVector<IVector<Windows::Foundation::Rect>> shapes)
     {
-        std::lock_guard const guard(m_criticalSection);
+        // No lock: m_d2dFactory is D2D1_FACTORY_TYPE_MULTI_THREADED, so it serializes itself,
+        // and every geometry below is local to this call. Holding the device lock here only
+        // parked the UI thread behind whatever background blur happened to own it.
         HRESULT result;
 
         winrt::com_ptr<ID2D1GeometrySink> d2dGeometrySink;
