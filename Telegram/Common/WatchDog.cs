@@ -498,12 +498,6 @@ namespace Telegram
         [HandleProcessCorruptedStateExceptions, SecurityCritical]
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
         {
-            // Everything below marks the exception handled and moves on, so without this the only
-            // trace it leaves is the popup at the end, which needs ShowMemoryUsage to be on.
-            // TrackError is deliberately not used: the app survived, and a crash report would say
-            // otherwise.
-            Logger.Error(args.Exception.ToString());
-
             args.Handled = args.Exception is not LayoutCycleException
                 && args.Exception.HResult != unchecked((int)0x8001010A);
 
