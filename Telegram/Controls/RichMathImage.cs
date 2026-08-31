@@ -7,6 +7,7 @@
 
 using Telegram.Native;
 using Telegram.Native.Controls;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
-    public partial class RichMathImage : AnimatedImageBase
+    public partial class RichMathImage : ControlEx, IRasterizationScaleAware
     {
         private Image LayoutRoot;
 
@@ -33,10 +34,16 @@ namespace Telegram.Controls
 
         protected override void OnLoaded()
         {
-            OnRasterizationScaleChanged(XamlRoot.RasterizationScale);
+            WindowContext.RegisterRasterizationScale(XamlRoot, this);
+            RasterizationScaleChanged(XamlRoot.RasterizationScale);
         }
 
-        protected override void OnRasterizationScaleChanged(double rasterizationScale)
+        public void RasterizationScaleChanged(double rasterizationScale)
+        {
+            InvalidateTexture(rasterizationScale, ActualTheme);
+        }
+
+        private void InvalidateTexture(double rasterizationScale, ElementTheme actualTheme)
         {
             if (_surface == null || LayoutRoot == null)
             {
@@ -48,7 +55,7 @@ namespace Telegram.Controls
 
             var bitmap = new WriteableBitmap(width, height);
 
-            _surface.RenderSync(bitmap.PixelBuffer, XamlRoot.RasterizationScale, ActualTheme == ElementTheme.Light ? Colors.Black : Colors.White);
+            _surface.RenderSync(bitmap.PixelBuffer, rasterizationScale, actualTheme == ElementTheme.Light ? Colors.Black : Colors.White);
 
             bitmap.Invalidate();
             LayoutRoot.Source = bitmap;

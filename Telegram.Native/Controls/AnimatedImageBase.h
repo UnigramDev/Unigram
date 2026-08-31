@@ -18,11 +18,7 @@ namespace winrt::Telegram::Native::Controls::implementation
     {
         AnimatedImageBase();
 
-        virtual void OnLoaded() override;
-        virtual void OnUnloaded() override;
-
         virtual void OnSizeChanged(winrt::Windows::UI::Xaml::SizeChangedEventArgs const&) {}
-        virtual void OnRasterizationScaleChanged(double rasterizationScale) {}
         virtual void OnViewportChanged(bool visible) {};
 
         void RegisterViewportChanged();
@@ -30,14 +26,11 @@ namespace winrt::Telegram::Native::Controls::implementation
 
     private:
         FrameworkElement::SizeChanged_revoker m_sizeChangedRevoker{};
-        XamlRoot::Changed_revoker m_xamlRootChangedRevoker{};
         FrameworkElement::EffectiveViewportChanged_revoker m_effectiveViewportChangedRevoker{};
 
-        double m_rasterizationScale{ 0 };
         bool m_visible{ false };
 
         void HandleSizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::SizeChangedEventArgs const& e);
-        void HandleXamlRootChanged(winrt::Windows::UI::Xaml::XamlRoot const& sender, winrt::Windows::UI::Xaml::XamlRootChangedEventArgs const& e);
         void HandleEffectiveViewportChanged(FrameworkElement const& sender, EffectiveViewportChangedEventArgs const& e);
     };
 }

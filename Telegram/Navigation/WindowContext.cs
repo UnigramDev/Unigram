@@ -416,6 +416,15 @@ namespace Telegram.Navigation
         }
     }
 
+    /// <summary>
+    /// A control that re-renders when the window's rasterization scale changes. Raised by
+    /// <see cref="WindowContext"/> rather than subscribed per control - see the registration there.
+    /// </summary>
+    public interface IRasterizationScaleAware
+    {
+        void RasterizationScaleChanged(double rasterizationScale);
+    }
+
     public partial class WindowContext
     {
         private readonly InputListener _inputListener;
@@ -782,6 +791,9 @@ namespace Telegram.Navigation
                     _xamlRoot = _content.XamlRoot;
                     _mapping.AddOrUpdate(_content.XamlRoot, this);
                 }
+
+                _rasterizationScale = _xamlRoot.RasterizationScale;
+                _xamlRoot.Changed += OnXamlRootChanged;
             }
 
             if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow or WebAppWindow)
@@ -823,6 +835,7 @@ namespace Telegram.Navigation
             {
                 if (_xamlRoot != null)
                 {
+                    _xamlRoot.Changed -= OnXamlRootChanged;
                     _mapping.Remove(_xamlRoot);
                 }
 
@@ -844,6 +857,46 @@ namespace Telegram.Navigation
         }
 
         public double RasterizationScale => _content?.XamlRoot?.RasterizationScale ?? 1;
+
+        #region Rasterization scale
+
+        // One subscription per window rather than one per control, and the controls are held
+        // weakly, so nothing that outlives a control ever holds a handle to it.
+        //
+        // A control over a Telegram.Native base must NOT subscribe XamlRoot.Changed itself. The
+        // XamlRoot outlives it, and a handle to a composed control handed to a source that outlives
+        // it either dangles - a raw `this` is revoked when the CCW is finalized, which is off the
+        // UI thread - or, with get_weak(), pins the managed object for the life of the window under
+        // NativeAOT, where revoking does not release it either.
+        //
+        // A ConditionalWeakTable rather than a list of WeakReference: registering twice is a no-op,
+        // dead entries need no pruning, and unload has nothing to undo.
+        private readonly ConditionalWeakTable<IRasterizationScaleAware, object> _rasterizationScaleAware = new();
+
+        private double _rasterizationScale;
+
+        public static void RegisterRasterizationScale(XamlRoot xamlRoot, IRasterizationScaleAware element)
+        {
+            var context = ForXamlRoot(xamlRoot);
+            context?._rasterizationScaleAware.AddOrUpdate(element, null);
+        }
+
+        private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
+        {
+            if (_rasterizationScale == sender.RasterizationScale)
+            {
+                return;
+            }
+
+            _rasterizationScale = sender.RasterizationScale;
+
+            foreach (var pair in _rasterizationScaleAware)
+            {
+                pair.Key.RasterizationScaleChanged(_rasterizationScale);
+            }
+        }
+
+        #endregion
 
         public bool IsPopupOpened { get; private set; }
 

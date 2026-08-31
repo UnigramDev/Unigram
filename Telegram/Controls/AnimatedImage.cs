@@ -53,7 +53,7 @@ namespace Telegram.Controls
         Fill
     }
 
-    public partial class AnimatedImage : AnimatedImageBase, IPlayerView
+    public partial class AnimatedImage : AnimatedImageBase, IPlayerView, IRasterizationScaleAware
     {
         enum PlayingState
         {
@@ -136,7 +136,7 @@ namespace Telegram.Controls
         {
             Load();
 
-            base.OnLoaded();
+            WindowContext.RegisterRasterizationScale(XamlRoot, this);
             ReplacementColor?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
 
             if (Source != null)
@@ -158,7 +158,6 @@ namespace Telegram.Controls
         {
             Unload();
 
-            base.OnUnloaded();
             ReplacementColor?.UnregisterColorChangedCallback(ref _replacementColorToken);
 
             if (Source != null)
@@ -765,7 +764,7 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        protected override void OnRasterizationScaleChanged(double rasterizationScale)
+        public void RasterizationScaleChanged(double rasterizationScale)
         {
             if (_rasterizationScale != rasterizationScale && DecodeFrameType == DecodePixelType.Logical)
             {

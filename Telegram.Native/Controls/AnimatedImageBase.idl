@@ -13,8 +13,6 @@ namespace Telegram.Native.Controls
 
         overridable void OnSizeChanged(Windows.UI.Xaml.SizeChangedEventArgs e);
 
-        overridable void OnRasterizationScaleChanged(Double rasterizationScale);
-
         overridable void OnViewportChanged(Boolean visible);
 
         void RegisterViewportChanged();
