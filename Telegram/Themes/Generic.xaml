@@ -111,7 +111,8 @@
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Background="{TemplateBinding Background}" />
+                                          Background="{TemplateBinding Background}"
+                                          TabFocusNavigation="Cycle" />
 
                         <!-- Over the content, not beside it: every root in this app draws into its
                              own title bar, so the caption is an overlay and each root leaves room
