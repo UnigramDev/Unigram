@@ -604,6 +604,7 @@ namespace Telegram.Navigation
         private void OnShutdownDrain()
         {
             FormattedTextBlock.ReleaseNative(_xamlRoot);
+            FormattedTextBlockRecyclePool.Release(_xamlRoot);
 
             _drain = Task.Run(Drain);
 
@@ -822,6 +823,7 @@ namespace Telegram.Navigation
 
 #if NET9_0_OR_GREATER
             FormattedTextBlock.ReleaseNative(_xamlRoot);
+            FormattedTextBlockRecyclePool.Release(_xamlRoot);
 #endif
         }
 

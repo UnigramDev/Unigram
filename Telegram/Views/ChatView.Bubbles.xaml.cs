@@ -1153,7 +1153,6 @@ namespace Telegram.Views
 
 
 
-        private readonly FormattedTextBlockRecyclePool _textBlockRecyclePool = new();
         private readonly MessageContentRecyclePool _contentRecyclePool = new();
 
         private readonly Dictionary<long, ChatHistoryViewItem> _albumIdToSelector = new();
@@ -1429,7 +1428,6 @@ namespace Telegram.Views
                             bubble.UpdateShadow(_shadow);
                         }
 
-                        bubble.UpdateRecyclePool(AppSettings.Diagnostics.BubbleRecyclingDebug ? _textBlockRecyclePool : null);
                         bubble.UpdateContentRecyclePool(AppSettings.Diagnostics.BubbleContentRecyclingDebug ? _contentRecyclePool : null);
 
                         bubble.UpdateQuery(ViewModel.Search?.Query, false);

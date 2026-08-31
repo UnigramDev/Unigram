@@ -72,6 +72,18 @@ namespace Telegram.Controls
 
     public class FormattedTextBlockRecyclePool
     {
+        private static readonly ConditionalWeakTable<XamlRoot, FormattedTextBlockRecyclePool> _instances = new();
+
+        public static FormattedTextBlockRecyclePool ForXamlRoot(XamlRoot xamlRoot)
+        {
+            if (xamlRoot == null)
+            {
+                return null;
+            }
+
+            return _instances.GetOrAdd(xamlRoot, x => new FormattedTextBlockRecyclePool());
+        }
+
         // Bounded per kind, for the reason MessageContentRecyclePool is: an element is only of use
         // to a block that is about to render, so what the realized blocks need at once is the
         // ceiling worth keeping. Uncapped, one pathological message - a code block, or a text dense
@@ -177,7 +189,15 @@ namespace Telegram.Controls
         }
 
 #if NET9_0_OR_GREATER
-        public void ReleaseNative()
+        public static void Release(XamlRoot xamlRoot)
+        {
+            if (_instances.Remove(xamlRoot ,out var pool))
+            {
+                pool.ReleaseNative();
+            }
+        }
+
+        private void ReleaseNative()
         {
             foreach (var paragraph in _paragraphs)
             {
@@ -1176,6 +1196,11 @@ namespace Telegram.Controls
             }
 
             _textApplied = true;
+
+            if (AppSettings.Diagnostics.BubbleRecyclingDebug)
+            {
+                _pools ??= FormattedTextBlockRecyclePool.ForXamlRoot(XamlRoot);
+            }
 
             var generation = ++_generation;
 
@@ -2818,7 +2843,6 @@ namespace Telegram.Controls
 
             // Shared by the blocks of one chat, so this runs once per block - the queues are
             // emptied by the first pass and the rest see nothing to do.
-            _pools?.ReleaseNative();
             _pools = null;
         }
 
@@ -2843,11 +2867,6 @@ namespace Telegram.Controls
         #region RecyclePool
 
         private FormattedTextBlockRecyclePool _pools;
-        public FormattedTextBlockRecyclePool RecyclePool
-        {
-            get => _pools;
-            set => _pools = value;
-        }
 
         #endregion
 

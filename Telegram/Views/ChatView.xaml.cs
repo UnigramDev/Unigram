@@ -483,7 +483,6 @@ namespace Telegram.Views
                 Messages.Disconnect();
 
                 _contentRecyclePool.Clear();
-                _textBlockRecyclePool.Clear();
             }
         }
 

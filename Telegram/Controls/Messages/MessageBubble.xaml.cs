@@ -200,20 +200,6 @@ namespace Telegram.Controls.Messages
             _contentRecyclePool = recyclePool;
         }
 
-        private FormattedTextBlockRecyclePool _recyclePool;
-
-        public void UpdateRecyclePool(FormattedTextBlockRecyclePool recyclePool)
-        {
-            if (Message != null)
-            {
-                Message.RecyclePool = recyclePool;
-            }
-            else
-            {
-                _recyclePool = recyclePool;
-            }
-        }
-
         #region InitializeComponent
 
         private ColumnDefinition PhotoColumn;
@@ -293,12 +279,6 @@ namespace Telegram.Controls.Messages
             {
                 ShadowCaster.Shadow = _shadow;
                 _shadow = null;
-            }
-
-            if (_recyclePool != null)
-            {
-                Message.RecyclePool = _recyclePool;
-                _recyclePool = null;
             }
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);

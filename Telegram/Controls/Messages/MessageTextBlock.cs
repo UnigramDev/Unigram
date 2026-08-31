@@ -88,21 +88,6 @@ namespace Telegram.Controls.Messages
 
         #region Forwarded configuration
 
-        private FormattedTextBlockRecyclePool _recyclePool;
-        public FormattedTextBlockRecyclePool RecyclePool
-        {
-            get => _recyclePool;
-            set
-            {
-                _recyclePool = value;
-
-                foreach (var block in _blocks)
-                {
-                    block.RecyclePool = value;
-                }
-            }
-        }
-
         private bool _autoFontSize = true;
         public bool AutoFontSize
         {
@@ -374,11 +359,6 @@ namespace Telegram.Controls.Messages
             };
 
             Instrumentation.Register(block);
-
-            if (_recyclePool != null)
-            {
-                block.RecyclePool = _recyclePool;
-            }
 
             // !!!
             if (_textEntityClick != null)
