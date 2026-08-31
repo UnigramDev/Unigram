@@ -90,6 +90,13 @@ matching the same upstream name is not evidence, because the comparison
 normalises into the em and two sizes of a simple icon land a fraction of a
 percent apart.
 
+Changing the glyph an alias points at changes every codepoint that shares it, and
+that can arrive from the direction you are not looking. `ic_fluent_compose_20_regular`
+at U+E994 is referenced nowhere, so adopting it looks free - but `Icons.Compose` is
+U+E932, which aliases it, and the compose button moved by 9.6%. Before adopting or
+re-pointing anything, check whether another codepoint aliases it: `changes` will
+show both, and the second one carries the call site.
+
 ## Adding an icon
 
 1. Put the SVG in `icons/`, or find its name in the live source.
