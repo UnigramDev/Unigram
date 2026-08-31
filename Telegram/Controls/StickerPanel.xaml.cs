@@ -62,6 +62,8 @@ namespace Telegram.Controls
         {
             InitializeComponent();
 
+            Instrumentation.Register(this);
+
             var header = VisualUtilities.DropShadow(HeaderSeparator);
             var shadow = VisualUtilities.DropShadow(ShadowElement);
 
@@ -392,6 +394,33 @@ namespace Telegram.Controls
         {
             SettingsClick?.Invoke(this, EventArgs.Empty);
         }
+
+#if INSTRUMENTATION
+        // The three drawers are x:Load deferred: UnloadObject nulls the field the XAML generator
+        // owns, so a drawer that is still alive after UnloadAtIndex is by construction unreachable
+        // from here and gets reported. With every tab unloaded the correct number of live drawers
+        // is ZERO.
+        //
+        // The panel is reached through ChatView.DebugRoots rather than a static of its own, so a
+        // panel hosted anywhere else (StoriesWindow, and the bare StickerDrawer on
+        // BusinessIntroPage) is not rooted and will be reported as an orphan while it is open.
+        internal IEnumerable<object> DebugChildren()
+        {
+            yield return EmojisRoot;
+            yield return AnimationsRoot;
+            yield return StickersRoot;
+        }
+
+        // Returns nothing for types this area does not own, so it composes with the other areas'.
+        internal static IEnumerable<object> DebugChildrenOf(object node)
+        {
+            return node switch
+            {
+                StickerPanel x => x.DebugChildren(),
+                _ => Array.Empty<object>()
+            };
+        }
+#endif
     }
 
     public interface IDrawer

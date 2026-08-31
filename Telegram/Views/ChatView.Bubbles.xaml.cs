@@ -1206,6 +1206,13 @@ namespace Telegram.Views
                     yield return container;
                 }
             }
+
+            // Nulled when the view unloads, so a dead view stops rooting the panel and the whole
+            // sticker subtree is reported under it.
+            if (StickersPanel != null)
+            {
+                yield return StickersPanel;
+            }
         }
 
         // Hardcoded per-type descent (each instrumented type exposes its instrumented children).

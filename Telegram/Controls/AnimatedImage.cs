@@ -91,7 +91,34 @@ namespace Telegram.Controls
         public AnimatedImage()
         {
             DefaultStyleKey = typeof(AnimatedImage);
+
+#if INSTRUMENTATION
+            Interlocked.Increment(ref _created);
+#endif
         }
+
+#if INSTRUMENTATION
+        private static int _created;
+        private static int _finalized;
+
+        // See AnimatedImagePresenter's pair: a control that is never finalized is one something is
+        // still holding, whether or not this analysis can name what.
+        ~AnimatedImage()
+        {
+            Interlocked.Increment(ref _finalized);
+        }
+
+        internal static int DebugFinalized => Volatile.Read(ref _finalized);
+
+        internal static string DebugCounters()
+        {
+            var created = Volatile.Read(ref _created);
+            var finalized = Volatile.Read(ref _finalized);
+
+            return string.Format("  AnimatedImage: created={0}, finalized={1}, alive={2}\n",
+                created, finalized, created - finalized);
+        }
+#endif
 
         protected override void OnSizeChanged(Size oldSize, Size newSize)
         {
@@ -998,7 +1025,33 @@ namespace Telegram.Controls
 
             _dispatcherQueue = dispatcherQueue;
             _tracker++;
+
+#if INSTRUMENTATION
+            Interlocked.Increment(ref _created);
+#endif
         }
+
+#if INSTRUMENTATION
+        private static int _created;
+        private static int _finalized;
+
+        // Counted rather than snapshotted, so the answer survives whatever the collector happens to
+        // have got to: created minus finalized is what is still alive. The finalizer touches one
+        // static int and nothing else, so it cannot resurrect anything or reach a torn-down object.
+        ~AnimatedImagePresenter()
+        {
+            Interlocked.Increment(ref _finalized);
+        }
+
+        internal static string DebugCounters()
+        {
+            var created = Volatile.Read(ref _created);
+            var finalized = Volatile.Read(ref _finalized);
+
+            return string.Format("  AnimatedImagePresenter: created={0}, finalized={1}, alive={2}\n",
+                created, finalized, created - finalized);
+        }
+#endif
 
         public bool Increment()
         {
@@ -1015,6 +1068,19 @@ namespace Telegram.Controls
         public event EventHandler<AnimatedImageLoopCompletedEventArgs> LoopCompleted;
 
         public event EventHandler Paused;
+
+#if INSTRUMENTATION
+        // A presenter is shared and refcounted, so a flat presenter count says nothing about what
+        // has accumulated inside one. Every AnimatedImage bound to it subscribes these three and
+        // drops them in Unload(), which only runs when IsConnected has gone false - so a handler
+        // count that climbs with every panel open names both the leak and the control it holds.
+        internal int DebugHandlerCount()
+        {
+            return (PositionChanged?.GetInvocationList().Length ?? 0)
+                + (LoopCompleted?.GetInvocationList().Length ?? 0)
+                + (Paused?.GetInvocationList().Length ?? 0);
+        }
+#endif
 
         public AnimatedImagePresentation Presentation => _presentation;
 
@@ -2293,6 +2359,41 @@ namespace Telegram.Controls
         {
             _delegates.TryRemove(correlationId, out _);
         }
+
+#if INSTRUMENTATION
+        // Counts, not roots. _presenters is a strong table that lives as long as the window, keyed
+        // by a record whose equality runs through AnimatedImageSource.Equals - so a count that
+        // climbs with every panel open and never comes back down is the leak itself, whatever it
+        // turns out to be holding at the other end.
+        public static string DebugReport()
+        {
+            var report = AnimatedImage.DebugCounters() + AnimatedImagePresenter.DebugCounters();
+
+            foreach (var pair in _loaders)
+            {
+                var loader = pair.Value;
+
+                lock (loader._presentersLock)
+                {
+                    var handlers = 0;
+                    var worst = 0;
+
+                    foreach (var presenter in loader._presenters.Values)
+                    {
+                        var count = presenter.DebugHandlerCount();
+
+                        handlers += count;
+                        worst = Math.Max(worst, count);
+                    }
+
+                    report += string.Format("  AnimatedImageLoader: presenters={0}, queued={1}, rendering={2}, handlers={3} (worst {4})\n",
+                        loader._presenters.Count, loader._delegates.Count, loader._rendering.Count, handlers, worst);
+                }
+            }
+
+            return report;
+        }
+#endif
 
         public void Load(AnimatedImagePresenter sender)
         {

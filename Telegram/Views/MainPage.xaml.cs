@@ -1208,6 +1208,7 @@ namespace Telegram.Views
 
 #if INSTRUMENTATION
             Logger.Info(DebugAnalyzeOrphans());
+            Profiler.Report();
 #endif
 
             GarbageCollectionMonitor.DisconnectUnusedReferenceSources();
@@ -1269,7 +1270,8 @@ namespace Telegram.Views
             roots.AddRange(Telegram.Controls.Gallery.GalleryWindow.DebugRoots());
             roots.AddRange(WebAppWindow.DebugRoots());
 
-            return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf);
+            return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf)
+                + AnimatedImageLoader.DebugReport();
         }
 
         private static IEnumerable<object> DebugChildrenOf(object node)
@@ -1285,6 +1287,11 @@ namespace Telegram.Views
             }
 
             foreach (var child in WebAppWindow.DebugChildrenOf(node))
+            {
+                yield return child;
+            }
+
+            foreach (var child in Telegram.Controls.StickerPanel.DebugChildrenOf(node))
             {
                 yield return child;
             }
