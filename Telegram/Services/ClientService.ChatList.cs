@@ -28,6 +28,13 @@ namespace Telegram.Services
 
                 chat.Positions = positions;
 
+                // A pending delete has already taken it out of every list, and only the undo
+                // puts it back: an update in the meantime must not.
+                if (_pendingDeleteChats.ContainsKey(chat.Id))
+                {
+                    return;
+                }
+
                 foreach (var position in chat.Positions)
                 {
                     if (position.Order != 0)

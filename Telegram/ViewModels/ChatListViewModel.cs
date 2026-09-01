@@ -32,8 +32,6 @@ namespace Telegram.ViewModels
     {
         private readonly INotificationsService _notificationsService;
 
-        private readonly Dictionary<long, bool> _deletedChats = new();
-
         public IChatListDelegate Delegate { get; set; }
 
         public ChatListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList)
@@ -321,9 +319,6 @@ namespace Telegram.ViewModels
             {
                 var check = popup.IsChecked == true;
 
-                _deletedChats[chat.Id] = true;
-                Items.Handle(chat.Id, 0);
-
                 string title;
                 if (chat.Type is ChatTypeSupergroup super)
                 {
@@ -334,41 +329,7 @@ namespace Telegram.ViewModels
                     title = chat.Type is ChatTypeBasicGroup ? Strings.GroupDeletedUndo : Strings.ChatDeletedUndo;
                 }
 
-                var undo = await ToastPopup.ShowCountdownAsync(XamlRoot, title, Strings.Undo, TimeSpan.FromSeconds(5));
-                if (undo == ContentDialogResult.Primary)
-                {
-                    _deletedChats.Remove(chat.Id);
-                    Items.Handle(chat.Id, chat.Positions);
-                }
-                else
-                {
-                    if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
-                    {
-                        await ClientService.SendAsync(new LeaveChat(chat.Id));
-                        await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
-                    }
-                    else if (chat.Type is ChatTypeSecret)
-                    {
-                        await ClientService.SendAsync(new DeleteChat(chat.Id));
-                    }
-                    else
-                    {
-                        var user = ClientService.GetUser(chat);
-                        if (user?.Type is UserTypeRegular)
-                        {
-                            await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, check));
-                        }
-                        else
-                        {
-                            if (user?.Type is UserTypeBot && check)
-                            {
-                                await ClientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), new BlockListMain()));
-                            }
-
-                            await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
-                        }
-                    }
-                }
+                DeleteChatService.AddPending(XamlRoot, ClientService, new[] { chat.Id }, title, true, check, check);
             }
         }
 
@@ -383,41 +344,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(Strings.AreYouSureDeleteFewChats, Locale.Declension(Strings.R.ChatsSelected, chats.Count), Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                foreach (var chat in chats)
-                {
-                    _deletedChats[chat.Id] = true;
-                    Items.Handle(chat.Id, 0);
-                }
-
-                var undo = await ToastPopup.ShowCountdownAsync(XamlRoot, Strings.ChatDeletedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
-                if (undo == ContentDialogResult.Primary)
-                {
-                    foreach (var chat in chats)
-                    {
-                        _deletedChats.Remove(chat.Id);
-                        Items.Handle(chat.Id, chat.Positions);
-                    }
-                }
-                else
-                {
-                    foreach (var chat in chats)
-                    {
-                        if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
-                        {
-                            await ClientService.SendAsync(new LeaveChat(chat.Id));
-                            await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
-                        }
-                        else if (chat.Type is ChatTypeSecret secret)
-                        {
-                            await ClientService.SendAsync(new DeleteChat(chat.Id));
-                            await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                        }
-                        else
-                        {
-                            await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
-                        }
-                    }
-                }
+                DeleteChatService.AddPending(XamlRoot, ClientService, chats.Select(x => x.Id).ToArray(), Strings.ChatDeletedUndo, true, false, false);
             }
 
             Delegate?.SetSelectionMode(false);
@@ -438,16 +365,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
-                var undo = await ToastPopup.ShowCountdownAsync(XamlRoot, Strings.HistoryClearedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
-                if (undo == ContentDialogResult.Primary)
-                {
-                    _deletedChats.Remove(chat.Id);
-                    Items.Handle(chat.Id, chat.Positions);
-                }
-                else
-                {
-                    ClientService.Send(new DeleteChatHistory(chat.Id, false, dialog.IsChecked));
-                }
+                DeleteChatService.AddPending(XamlRoot, ClientService, new[] { chat.Id }, Strings.HistoryClearedUndo, false, dialog.IsChecked, false);
             }
         }
 
@@ -462,22 +380,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(Strings.AreYouSureClearHistoryFewChats, Locale.Declension(Strings.R.ChatsSelected, chats.Count), Strings.ClearHistory, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var undo = await ToastPopup.ShowCountdownAsync(XamlRoot, Strings.HistoryClearedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
-                if (undo == ContentDialogResult.Primary)
-                {
-                    foreach (var chat in chats)
-                    {
-                        _deletedChats.Remove(chat.Id);
-                        Items.Handle(chat.Id, chat.Positions);
-                    }
-                }
-                else
-                {
-                    foreach (var chat in chats)
-                    {
-                        ClientService.Send(new DeleteChatHistory(chat.Id, false, false));
-                    }
-                }
+                DeleteChatService.AddPending(XamlRoot, ClientService, chats.Select(x => x.Id).ToArray(), Strings.HistoryClearedUndo, false, false, false);
             }
 
             Delegate?.SetSelectionMode(false);
@@ -783,18 +686,6 @@ namespace Telegram.ViewModels
 
             private void Handle(Chat chat, long order, bool lastMessage)
             {
-                if (_viewModel._deletedChats.ContainsKey(chat.Id))
-                {
-                    if (order == 0)
-                    {
-                        _viewModel._deletedChats.Remove(chat.Id);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
                 //var chat = GetChat(chatId);
                 if (chat != null /*&& _chatList.ListEquals(chat.ChatList)*/)
                 {

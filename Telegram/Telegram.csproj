@@ -547,6 +547,7 @@
     <Compile Include="Td\Api\InputMessageReplyToEphemeralMessage.cs" />
     <Compile Include="Td\Api\MessageAlbumLastMessage.cs" />
     <Compile Include="Services\PaidReactionService.cs" />
+    <Compile Include="Services\DeleteChatService.cs" />
     <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Controls\PremiumSlider.cs" />
@@ -637,6 +638,7 @@
       <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ToastPopup.cs" />
+    <Compile Include="Controls\UndoToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
     <Compile Include="Streams\AnimatedEmojiFileSource.cs" />
     <Compile Include="Streams\ParticlesImageSource.cs" />
@@ -1140,6 +1142,7 @@
     <Compile Include="Selectors\InviteLinkTemplateSelector.cs" />
     <Compile Include="Selectors\PremiumFeatureTemplateSelector.cs" />
     <Compile Include="Services\ClientService.ChatList.cs" />
+    <Compile Include="Services\ClientService.PendingDelete.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
     <Compile Include="Services\ProfilePhotoService.cs" />
     <Compile Include="Services\DownloadFolderService.cs" />
