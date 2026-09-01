@@ -280,6 +280,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Play(IAsyncMediaPlayerSource stream, double position)
     {
+        m_position = position;
+        m_duration = 0;
+
         Write([this, stream, position]() {
             if (m_stream)
             {
@@ -306,6 +309,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Play(winrt::Windows::Foundation::Uri uri, double position)
     {
+        m_position = position;
+        m_duration = 0;
+
         Write([this, uri, position]() {
             if (m_stream)
             {
@@ -355,24 +361,49 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Stop()
     {
-        Set(libvlc_media_player_stop);
-    }
+        Write([this] {
+            // libvlc_media_player_stop joins the input thread, and that thread may be parked
+            // in the read callback waiting for bytes the source has no reason to deliver any
+            // more. Ending the read is what lets the join finish: the source reports the
+            // error and libvlc unwinds. Close() already does this, in the same order.
+            //
+            // The source is kept rather than dropped, because a Play() after this reopens
+            // the same media and libvlc calls the open callback on it again.
+            if (m_stream)
+            {
+                m_stream.Close();
+            }
 
-    static inline void libvlc_media_player_set_pause_aware(libvlc_media_player_t* p_mi, int do_pause)
-    {
-        auto state = libvlc_media_player_get_state(p_mi);
-        if (state == libvlc_Ended)
-        {
-            libvlc_media_player_stop(p_mi);
-            libvlc_media_player_play(p_mi);
-        }
-
-        libvlc_media_player_set_pause(p_mi, do_pause);
+            libvlc_media_player_stop(m_player);
+            m_position = 0;
+            });
     }
 
     void AsyncMediaPlayer::Pause(bool pause)
     {
-        Set(libvlc_media_player_set_pause_aware, pause);
+        Write([this, pause] {
+            auto state = libvlc_media_player_get_state(m_player);
+            if (state == libvlc_Ended)
+            {
+                libvlc_media_player_stop(m_player);
+                libvlc_media_player_play(m_player);
+            }
+
+            // Asked here rather than by the caller: can_pause takes the lock stop holds
+            // across the join of the input thread, and the caller is the UI thread.
+            // CanPause() answers from what this leaves behind.
+            //
+            // Only while playing, because can_pause describes the input and there is no
+            // input before that -- a refresh from anywhere else would answer false for a
+            // track that pauses perfectly well, and CanPause() would keep saying so. The
+            // pause itself is issued either way, as it always was.
+            if (state == libvlc_Playing)
+            {
+                m_canPause = libvlc_media_player_can_pause(m_player) != 0;
+            }
+
+            libvlc_media_player_set_pause(m_player, pause);
+            });
     }
 
     static inline void libvlc_media_player_toggle_aware(libvlc_media_player_t* p_mi)
@@ -450,29 +481,17 @@ namespace winrt::Telegram::Native::Media::implementation
 
     bool AsyncMediaPlayer::CanPause()
     {
-        return Get(libvlc_media_player_can_pause);
+        return m_canPause.load();
     }
 
     double AsyncMediaPlayer::Duration()
     {
-        return std::clamp(Get(libvlc_media_player_get_length) / 1000.0, 0.0, 922337203685.0);
+        return m_duration.load();
     }
 
     double AsyncMediaPlayer::Position()
     {
-        auto time = Read<double>([this]() {
-            auto state = libvlc_media_player_get_state(m_player);
-            if (state == libvlc_Ended)
-            {
-                return libvlc_media_player_get_length(m_player);
-            }
-            else
-            {
-                return libvlc_media_player_get_time(m_player);
-            }
-            });
-
-        return std::clamp(time / 1000.0, 0.0, 922337203685.0);
+        return m_position.load();
     }
 
     static inline void libvlc_media_player_set_time_aware(libvlc_media_player_t* p_mi, libvlc_time_t i_time)
@@ -489,6 +508,11 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Position(double value)
     {
+        // Recorded here rather than on the worker: the caller reads Position back to decide
+        // what to do next -- PlaybackService compares against it to spot a backward seek --
+        // and the queued call may not have run by then.
+        m_position = std::clamp(value, 0.0, 922337203685.0);
+
         auto time = static_cast<libvlc_time_t>(value * 1000);
         Set(libvlc_media_player_set_time_aware, time);
     }
@@ -499,10 +523,19 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (relative)
         {
-            Write([this, time] { libvlc_media_player_set_time_aware(m_player, libvlc_media_player_get_time(m_player) + time); });
+            // Moved by the same amount here so a reader sees it at once, and corrected to
+            // what libvlc actually seeked to once the worker knows.
+            m_position = std::clamp(m_position.load() + value, 0.0, 922337203685.0);
+
+            Write([this, time] {
+                auto seeked = libvlc_media_player_get_time(m_player) + time;
+                libvlc_media_player_set_time_aware(m_player, seeked);
+                m_position = std::clamp(seeked / 1000.0, 0.0, 922337203685.0);
+                });
         }
         else
         {
+            m_position = std::clamp(value, 0.0, 922337203685.0);
             Set(libvlc_media_player_set_time_aware, time);
         }
     }
@@ -645,6 +678,10 @@ namespace winrt::Telegram::Native::Media::implementation
         }
         break;
         case libvlc_MediaPlayerEndReached:
+            // Position used to answer with the length once the state was Ended, which is
+            // what the transport controls draw at the end of a track. Nothing else updates
+            // it from here on.
+            m_position = m_duration.load();
             TryEnqueue([weakThis{ get_weak() }]() {
                 if (auto strongThis = weakThis.get())
                 {
@@ -659,6 +696,7 @@ namespace winrt::Telegram::Native::Media::implementation
         case libvlc_MediaPlayerTimeChanged:
         {
             auto position = std::clamp(event->u.media_player_time_changed.new_time / 1000.0, 0.0, 922337203685.0);
+            m_position = position;
             TryEnqueue([weakThis{ get_weak() }, position]() {
                 if (auto strongThis = weakThis.get())
                 {
@@ -671,6 +709,7 @@ namespace winrt::Telegram::Native::Media::implementation
         case libvlc_MediaPlayerLengthChanged:
         {
             auto duration = std::clamp(event->u.media_player_length_changed.new_length / 1000.0, 0.0, 922337203685.0);
+            m_duration = duration;
             TryEnqueue([weakThis{ get_weak() }, duration]() {
                 if (auto strongThis = weakThis.get())
                 {
@@ -703,6 +742,7 @@ namespace winrt::Telegram::Native::Media::implementation
                 });
             break;
         case libvlc_MediaPlayerStopped:
+            m_position = 0;
             TryEnqueue([weakThis{ get_weak() }]() {
                 if (auto strongThis = weakThis.get())
                 {

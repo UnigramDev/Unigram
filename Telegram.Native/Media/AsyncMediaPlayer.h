@@ -324,6 +324,18 @@ namespace winrt::Telegram::Native::Media::implementation
         EventContext* m_events;
         IAsyncMediaPlayerSource m_stream{ nullptr };
 
+        // Position, duration and can-pause are answered from here instead of from libvlc.
+        // libvlc_media_player_stop holds the same lock that get_time, get_length and
+        // can_pause take, and it holds it across the join of the input thread -- which can
+        // be parked in a read for as long as the network takes. A UI thread asking for the
+        // position would wait on that lock for just as long.
+        //
+        // Nothing is lost by not asking: libvlc reports each of these through an event, or
+        // we are the one setting it. Written from the event thread and the worker.
+        std::atomic<double> m_position{ 0 };
+        std::atomic<double> m_duration{ 0 };
+        std::atomic<bool> m_canPause{ true };
+
         void OnDefaultAudioRenderDeviceChanged(winrt::Windows::Foundation::IInspectable const& sender, DefaultAudioRenderDeviceChangedEventArgs const& args);
 
         static void LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args);
