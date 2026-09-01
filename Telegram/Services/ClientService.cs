@@ -862,6 +862,7 @@ namespace Telegram.Services
             {
                 _chatList.Clear();
                 _haveFullChatList.Clear();
+                _pendingDeleteChats.Clear();
             }
 
             _chatActions.Clear();
