@@ -187,6 +187,24 @@ namespace Telegram.Navigation
             sender.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             sender.Consolidated -= OnConsolidated;
 
+#if NET9_0_OR_GREATER
+            // An open ContentDialog hangs off the popup root, not off Window.Content, so dropping
+            // the content below leaves it rooted by the native tree: the drain in
+            // OnShutdownStarting collects nothing and the finalizer destroys it after this view's
+            // XAML core is gone, where the still-open teardown path faults. Close it while the
+            // core is up - and before OnClosed, which detaches the content and with it XamlRoot.
+            if (XamlRoot != null)
+            {
+                foreach (var popup in Windows.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+                {
+                    if (popup.Child is ContentDialog dialog)
+                    {
+                        dialog.Hide();
+                    }
+                }
+            }
+#endif
+
             // TODO: since we can't call Close directly,
             // Closed event will be never fired.
             OnClosed(null, null);
