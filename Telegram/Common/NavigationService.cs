@@ -12,7 +12,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -404,36 +403,5 @@ namespace Telegram.Common
                 }
             }
         }
-
-        public static Task<T> NavigateWithResult<T>(this INavigationService service, Type type, object parameter = null)
-        {
-            var tsc = new TaskCompletionSource<T>();
-            void handler(object s, NavigationEventArgs args)
-            {
-                service.Frame.Navigated -= handler;
-
-                if (args.Content is Page page)
-                {
-                    if (page.DataContext is INavigable navigable)
-                    {
-                        navigable.Dispatcher = service.Dispatcher;
-                    }
-
-                    if (page.DataContext is INavigableWithResult<T> withResult)
-                    {
-                        withResult.SetAwaiter(tsc, parameter);
-                    }
-                }
-            }
-
-            service.Frame.Navigated += handler;
-            service.Navigate(type);
-            return tsc.Task;
-        }
-    }
-
-    public interface INavigableWithResult<T>
-    {
-        void SetAwaiter(TaskCompletionSource<T> tsc, object parameter);
     }
 }
