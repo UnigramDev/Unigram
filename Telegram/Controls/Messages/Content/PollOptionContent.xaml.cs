@@ -371,18 +371,18 @@ namespace Telegram.Controls.Messages.Content
                 GalleryMedia media = null;
                 if (_option.Media is PollMediaAnimation animation)
                 {
-                    media = new GalleryAnimation(_message.ClientService, animation.Animation, _option.Text);
+                    media = new GalleryMedia(_message.ClientService, animation.Animation, _option.Text);
                 }
                 // Location
                 else if (_option.Media is PollMediaPhoto photo)
                 {
-                    media = new GalleryPhoto(_message.ClientService, photo.Photo, _option.Text);
+                    media = new GalleryMedia(_message.ClientService, photo.Photo, _option.Text);
                 }
                 // Sticker
                 // Venue
                 else if (_option.Media is PollMediaVideo video)
                 {
-                    media = new GalleryVideo(_message.ClientService, video.Video, _option.Text);
+                    media = new GalleryMedia(_message.ClientService, video.Video, _option.Text);
                 }
 
                 if (media != null)

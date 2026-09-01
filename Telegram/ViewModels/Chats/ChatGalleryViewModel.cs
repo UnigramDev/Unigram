@@ -6,7 +6,9 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
@@ -19,7 +21,9 @@ namespace Telegram.ViewModels.Chats
 {
     public partial class ChatGalleryViewModel : GalleryViewModelBase
     {
-        private readonly DisposableMutex _loadMoreLock = new();
+        // One more than a page, so that the anchor the window is centred on is included and can
+        // be told apart from the messages that follow it.
+        private const int LoadLimit = 21;
 
         private readonly long _chatId;
         private readonly MessageTopic _topic;
@@ -68,154 +72,136 @@ namespace Telegram.ViewModels.Chats
             Initialize(selected.Id);
         }
 
+        #region Paging
+
         private async void Initialize(long fromMessageId)
         {
-            using (await _loadMoreLock.WaitAsync())
+            IsLoading = true;
+
+            try
             {
-                var limit = 20;
-                var offset = -limit / 2;
+                const int limit = 20;
 
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, _topic, string.Empty, null, fromMessageId, offset, limit, _filter));
-                if (response is FoundChatMessages messages)
+                var messages = await SearchAsync(fromMessageId, -limit / 2, limit);
+                if (messages == null)
                 {
-                    var properties = await ClientService.GetMessagePropertiesAsync(messages.Messages.Select(x => new MessageId(x)));
-
-                    TotalItems = messages.TotalCount;
-
-                    foreach (var message in messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
-                    {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument && properties.TryGetValue(new MessageId(message), out MessageProperties props))
-                        {
-                            Items.Put(!_isMirrored, new GalleryMessage(ClientService, message, props));
-                        }
-                        else
-                        {
-                            TotalItems--;
-                        }
-                    }
-
-                    foreach (var message in messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
-                    {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument && properties.TryGetValue(new MessageId(message), out MessageProperties props))
-                        {
-                            Items.Put(_isMirrored, new GalleryMessage(ClientService, message, props));
-                        }
-                        else
-                        {
-                            TotalItems--;
-                        }
-                    }
-
-                    OnSelectedItemChanged(_selectedItem);
+                    return;
                 }
+
+                var properties = await GetPropertiesAsync(messages);
+
+                TotalItems = messages.TotalCount;
+
+                Merge(messages, properties, fromMessageId, true);
+                Merge(messages, properties, fromMessageId, false);
+
+                if (_firstItem is GalleryMessage first)
+                {
+                    // getChatMessagePosition counts from the newest match, which is the order
+                    // Items are in when mirrored and the reverse of it otherwise.
+                    var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, _topic, _filter, first.Id));
+                    var position = response is Count count ? count.CountValue - 1 : 0;
+                    var index = Items.IndexOf(first);
+
+                    _offset = _isMirrored
+                        ? position - index
+                        : TotalItems - position - index - 1;
+                }
+
+                OnSelectedItemChanged(_selectedItem);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        protected override Task<IncrementalLoadResult> LoadPreviousAsync()
+        {
+            return LoadAsync(true);
+        }
+
+        protected override Task<IncrementalLoadResult> LoadNextAsync()
+        {
+            return LoadAsync(false);
+        }
+
+        private async Task<IncrementalLoadResult> LoadAsync(bool prepend)
+        {
+            if ((prepend ? Items.FirstOrDefault() : Items.LastOrDefault()) is not GalleryMessage anchor)
+            {
+                return new IncrementalLoadResult(0, false);
             }
 
-            if (_firstItem is GalleryMessage first)
+            // Newer messages precede the first item when mirrored and follow the last one
+            // otherwise, so one flag picks both the side to ask for and the order to read it in.
+            // A negative offset starts the window that many messages after the anchor, which is
+            // only what the newer side needs.
+            var ascending = prepend == _isMirrored;
+
+            var messages = await SearchAsync(anchor.Id, ascending ? -LoadLimit + 1 : 0, LoadLimit);
+            if (messages == null)
             {
-                var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, _topic, _filter, first.Id));
-                if (response is Count count)
+                return new IncrementalLoadResult(0, false);
+            }
+
+            var properties = await GetPropertiesAsync(messages);
+
+            TotalItems = messages.TotalCount;
+
+            var count = Merge(messages, properties, anchor.Id, prepend);
+
+            OnSelectedItemChanged(_selectedItem);
+
+            // The anchor comes back with every response, so anything past it means more to come.
+            // NextFromMessageId would only answer for the older side, and either side is asked here.
+            return new IncrementalLoadResult((uint)count, messages.Messages.Count > 1);
+        }
+
+        private async Task<FoundChatMessages> SearchAsync(long fromMessageId, int offset, int limit)
+        {
+            var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, _topic, string.Empty, null, fromMessageId, offset, limit, _filter));
+            return response as FoundChatMessages;
+        }
+
+        private Task<IDictionary<MessageId, MessageProperties>> GetPropertiesAsync(FoundChatMessages messages)
+        {
+            return ClientService.GetMessagePropertiesAsync(messages.Messages.Select(x => new MessageId(x)));
+        }
+
+        /// <summary>
+        /// Adds the messages that lie on one side of <paramref name="fromMessageId"/>, nearest
+        /// first, and returns how many were added. The response is a window centred on the
+        /// anchor, so each call keeps only the half it asked for.
+        /// </summary>
+        private int Merge(FoundChatMessages messages, IDictionary<MessageId, MessageProperties> properties, long fromMessageId, bool prepend)
+        {
+            var ascending = prepend == _isMirrored;
+
+            var side = ascending
+                ? messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id)
+                : messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id);
+
+            var count = 0;
+
+            foreach (var message in side)
+            {
+                if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument
+                    && properties.TryGetValue(new MessageId(message), out MessageProperties props))
                 {
-                    _firstPosition = count.CountValue - 1;
+                    Items.Put(prepend, new GalleryMessage(ClientService, message, props));
+                    count++;
                 }
                 else
                 {
-                    _firstPosition = 0;
-                }
-
-                RaisePropertyChanged(nameof(Position));
-            }
-        }
-
-        protected override async void LoadPrevious()
-        {
-            using (await _loadMoreLock.WaitAsync())
-            {
-                var item = Items.FirstOrDefault() as GalleryMessage;
-                if (item == null)
-                {
-                    return;
-                }
-
-                var fromMessageId = item.Id;
-
-                var limit = 21;
-                var offset = _isMirrored ? -limit + 1 : 0;
-
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, _topic, string.Empty, null, fromMessageId, offset, limit, _filter));
-                if (response is FoundChatMessages messages)
-                {
-                    var properties = await ClientService.GetMessagePropertiesAsync(messages.Messages.Select(x => new MessageId(x)));
-
-                    TotalItems = messages.TotalCount;
-
-                    foreach (var message in _isMirrored ? messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id) : messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
-                    {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument && properties.TryGetValue(new MessageId(message), out MessageProperties props))
-                        {
-                            Items.Insert(0, new GalleryMessage(ClientService, message, props));
-                        }
-                        else
-                        {
-                            TotalItems--;
-                        }
-                    }
-
-                    OnSelectedItemChanged(_selectedItem);
+                    TotalItems--;
                 }
             }
+
+            return count;
         }
 
-        protected override async void LoadNext()
-        {
-            using (await _loadMoreLock.WaitAsync())
-            {
-                var item = Items.LastOrDefault() as GalleryMessage;
-                if (item == null)
-                {
-                    return;
-                }
-
-                var fromMessageId = item.Id;
-
-                var limit = 21;
-                var offset = _isMirrored ? 0 : -limit + 1;
-
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, _topic, string.Empty, null, fromMessageId, offset, limit, _filter));
-                if (response is FoundChatMessages messages)
-                {
-                    var properties = await ClientService.GetMessagePropertiesAsync(messages.Messages.Select(x => new MessageId(x)));
-
-                    TotalItems = messages.TotalCount;
-
-                    foreach (var message in _isMirrored ? messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id) : messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
-                    {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument && properties.TryGetValue(new MessageId(message), out MessageProperties props))
-                        {
-                            Items.Add(new GalleryMessage(ClientService, message, props));
-                        }
-                        else
-                        {
-                            TotalItems--;
-                        }
-                    }
-
-                    OnSelectedItemChanged(_selectedItem);
-                }
-            }
-        }
-
-        private int _firstPosition;
-        public override int Position
-        {
-            get
-            {
-                var firstIndex = Items.IndexOf(_firstItem);
-                var currentIndex = Items.IndexOf(_selectedItem);
-
-                var position = _firstPosition + (firstIndex - currentIndex);
-                return _isMirrored ? position + 1 : TotalItems - position;
-            }
-        }
+        #endregion
 
         public override RangeObservableCollection<GalleryMedia> Group => _group;
 
@@ -231,6 +217,8 @@ namespace Telegram.ViewModels.Chats
 
             NavigationService.NavigateToChat(message.ChatId, message.Id, _topic);
         }
+
+        #region Advertisements
 
         private DispatcherTimer _advertisementsTimer;
         private GalleryMessage _advertisementsSource;
@@ -345,5 +333,7 @@ namespace Telegram.ViewModels.Chats
                 NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureDisabledAds()));
             }
         }
+
+        #endregion
     }
 }

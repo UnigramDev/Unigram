@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -21,10 +22,22 @@ namespace Telegram.ViewModels.Gallery
 {
     public abstract class GalleryViewModelBase : ViewModelBase, IDelegable<IGalleryDelegate>
     {
+        // How close to either end of Items the selection has to get before the next page is
+        // requested. The window can't move past the last item, so loading only once it is
+        // reached leaves the user waiting at every page boundary.
+        private const int LoadMoreThreshold = 2;
+
         private readonly IStorageService _storageService;
 
-        protected int _additionalPhotos;
         protected bool _hasProtectedContent;
+
+        // How many items exist before Items[0] on the server: what turns the index of an item
+        // into its absolute position. A source sets it once it knows where its first item sits;
+        // LoadMore keeps it in step with whatever gets prepended.
+        protected int _offset;
+
+        private bool _hasPrevious = true;
+        private bool _hasNext = true;
 
         public IGalleryDelegate Delegate { get; set; }
 
@@ -32,30 +45,11 @@ namespace Telegram.ViewModels.Gallery
             : base(clientService, clientService.Session.Resolve<ISettingsService>(), aggregator)
         {
             _storageService = storageService;
-            //Aggregator.Subscribe(this);
         }
-
-        //public void Handle(UpdateFile update)
-        //{
-        //    BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
-        //}
-
-        //protected override void BeginOnUIThread(Action action)
-        //{
-        //    // This is somehow needed because this viewmodel requires a Dispatcher
-        //    // in some situations where base one might be null.
-        //    Execute.BeginOnUIThread(action);
-        //}
 
         public bool HasProtectedContent => _hasProtectedContent;
 
-        public virtual int Position
-        {
-            get
-            {
-                return SelectedIndex + 1;
-            }
-        }
+        public int Position => _offset + SelectedIndex + 1;
 
         public int SelectedIndex
         {
@@ -89,7 +83,6 @@ namespace Telegram.ViewModels.Gallery
             {
                 Set(ref _selectedItem, value);
                 OnSelectedItemChanged(value);
-                //RaisePropertyChanged(() => SelectedIndex);
             }
         }
 
@@ -111,24 +104,82 @@ namespace Telegram.ViewModels.Gallery
 
         public virtual RangeObservableCollection<GalleryMedia> Group { get; }
 
-        public void LoadMore()
+        #region Paging
+
+        /// <summary>
+        /// True while the initial fill or a page load is running. Only one runs at a time: a
+        /// request that arrives meanwhile is dropped rather than queued, because the next
+        /// navigation asks again and a queued one would repeat a range already being loaded.
+        /// </summary>
+        protected bool IsLoading { get; set; }
+
+        public async void LoadMore()
         {
-            if (Items.Count > 1)
+            if (IsLoading || Items == null || _selectedItem == null)
             {
-                var index = SelectedIndex;
-                if (index == Items.Count - 1)
+                return;
+            }
+
+            var index = Items.IndexOf(_selectedItem);
+            if (index < 0)
+            {
+                return;
+            }
+
+            var previous = _hasPrevious && index <= LoadMoreThreshold;
+            var next = _hasNext && index >= Items.Count - 1 - LoadMoreThreshold;
+
+            if (!previous && !next)
+            {
+                return;
+            }
+
+            IsLoading = true;
+
+            try
+            {
+                if (previous)
                 {
-                    LoadNext();
+                    var result = await LoadPreviousAsync();
+
+                    // Whatever was prepended used to be part of the offset.
+                    _offset -= (int)result.Count;
+                    _hasPrevious = result.HasMoreItems;
                 }
-                if (index == 0)
+
+                if (next)
                 {
-                    LoadPrevious();
+                    _hasNext = (await LoadNextAsync()).HasMoreItems;
                 }
             }
+            finally
+            {
+                IsLoading = false;
+            }
+
+            RaisePropertyChanged(nameof(Position));
         }
 
-        protected virtual void LoadPrevious() { }
-        protected virtual void LoadNext() { }
+        /// <summary>
+        /// Prepends the page before <see cref="Items"/>[0] and reports how many were added, so
+        /// that <see cref="_offset"/> can follow. <c>HasMoreItems</c> false stops this direction
+        /// from being asked again.
+        /// </summary>
+        protected virtual Task<IncrementalLoadResult> LoadPreviousAsync()
+        {
+            return Task.FromResult(new IncrementalLoadResult(0, false));
+        }
+
+        /// <summary>
+        /// Appends the page after the last item. Only <c>HasMoreItems</c> is read: appending
+        /// leaves the offset alone.
+        /// </summary>
+        protected virtual Task<IncrementalLoadResult> LoadNextAsync()
+        {
+            return Task.FromResult(new IncrementalLoadResult(0, false));
+        }
+
+        #endregion
 
         protected virtual void OnSelectedItemChanged(GalleryMedia item)
         {

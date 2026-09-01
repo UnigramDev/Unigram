@@ -513,11 +513,11 @@ namespace Telegram.ViewModels
                     GalleryMedia result = null;
                     if (x is PaidMediaPhoto photo)
                     {
-                        result = new GalleryPhoto(ClientService, photo.Photo, null, true);
+                        result = new GalleryMedia(ClientService, photo.Photo, null, true);
                     }
                     else if (x is PaidMediaVideo video)
                     {
-                        result = new GalleryVideo(ClientService, video.Video, null, true);
+                        result = new GalleryMedia(ClientService, video.Video, null, true);
                     }
 
                     if (x == media)

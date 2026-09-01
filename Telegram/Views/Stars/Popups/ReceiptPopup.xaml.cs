@@ -644,11 +644,11 @@ namespace Telegram.Views.Stars.Popups
                 GalleryMedia result = null;
                 if (x is PaidMediaPhoto photo)
                 {
-                    result = new GalleryPhoto(_clientService, photo.Photo, null, true);
+                    result = new GalleryMedia(_clientService, photo.Photo, null, true);
                 }
                 else if (x is PaidMediaVideo video)
                 {
-                    result = new GalleryVideo(_clientService, video.Video, null, true);
+                    result = new GalleryMedia(_clientService, video.Video, null, true);
                 }
 
                 item ??= result;

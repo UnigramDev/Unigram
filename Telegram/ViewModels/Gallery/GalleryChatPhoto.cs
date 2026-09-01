@@ -13,56 +13,50 @@ namespace Telegram.ViewModels.Gallery
 {
     public partial class GalleryChatPhoto : GalleryMedia
     {
-        private readonly object _from;
         private readonly ChatPhoto _photo;
-
-        private readonly long _messageId;
 
         public GalleryChatPhoto(IClientService clientService, object from, ChatPhoto photo, long messageId = 0, bool isPersonal = false, bool isPublic = false)
             : base(clientService)
         {
-            _from = from;
             _photo = photo;
-            _messageId = messageId;
+
+            MessageId = messageId;
 
             IsPersonal = isPersonal;
             IsPublic = isPublic;
 
-            if (_photo?.Animation != null)
+            if (photo?.Animation != null)
             {
-                File = _photo.Animation.File;
+                File = photo.Animation.File;
             }
             else
             {
-                File = _photo?.GetBig()?.Photo;
+                File = photo?.GetBig()?.Photo;
             }
 
-            Thumbnail = _photo?.GetSmall()?.Photo;
-            Minithumbnail = _photo.Minithumbnail;
+            Thumbnail = photo?.GetSmall()?.Photo;
+            Minithumbnail = photo.Minithumbnail;
+
+            From = from;
+            Constraint = photo;
+            Date = photo.AddedDate;
+
+            IsVideo = photo.Animation != null;
+            IsLoopingEnabled = photo.Animation != null;
+            Duration = 1;
+
+            HasStickers = photo.Sticker != null;
+
+            CanBeCopied = true;
+            CanBeSaved = true;
+            CanBeShared = photo.Animation == null;
         }
 
         public long Id => _photo.Id;
 
-        public long MessageId => _messageId;
+        public long MessageId { get; }
 
         public ChatPhotoSticker Sticker => _photo.Sticker;
-
-        public override bool IsVideo => _photo.Animation != null;
-        public override bool IsLoopingEnabled => _photo.Animation != null;
-
-        public override bool HasStickers => _photo.Sticker != null;
-
-        public override int Duration => 1;
-
-        public override object From => _from;
-
-        public override object Constraint => _photo;
-
-        public override int Date => _photo.AddedDate;
-
-        public override bool CanBeCopied => true;
-        public override bool CanBeSaved => true;
-        public override bool CanBeShared => _photo.Animation == null;
 
         public override InputMessageContent ToInput()
         {

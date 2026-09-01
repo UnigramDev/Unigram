@@ -6,8 +6,8 @@
 //
 
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
@@ -17,134 +17,108 @@ namespace Telegram.ViewModels.Chats
 {
     public partial class ChatPhotosViewModel : GalleryViewModelBase
     {
-        private readonly DisposableMutex _loadMoreLock = new();
+        private const int LoadLimit = 20;
+
         private readonly Chat _chat;
+
+        // Id of the big size of the photo the gallery opened on. It is handed to us rather than
+        // found in the history, so the message that set it has to be recognised and skipped.
+        private readonly long _photoId;
+
+        // searchChatMessages cursor, and the only direction this gallery pages in: Items[0] is
+        // the chat's current photo, so there is never anything before it.
+        private long _nextFromMessageId;
+
+        // Messages the server counts among the results that the gallery does not show, plus the
+        // current photo when the history holds no message for it. TotalCount comes back fresh
+        // with every page, so the running correction has to be kept beside it rather than
+        // folded into TotalItems.
+        private int _totalCountDelta;
+
+        private bool _initialized;
 
         public ChatPhotosViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
             : base(clientService, storageService, aggregator)
         {
             _chat = chat;
+            _photoId = photo.GetBig().Photo.Id;
+
             Items = new RangeObservableCollection<GalleryMedia> { new GalleryChatPhoto(clientService, chat, photo, 0) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            Initialize(photo.GetBig().Photo.Id, photo.GetSmall().Photo.Id);
+            Initialize();
         }
 
-        private async void Initialize(long bigId, long smallId)
+        private async void Initialize()
         {
-            using (await _loadMoreLock.WaitAsync())
+            IsLoading = true;
+
+            try
             {
-                var limit = 20;
-                var offset = -limit / 2;
-
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, null, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto()));
-                if (response is FoundChatMessages messages)
-                {
-                    TotalItems = messages.TotalCount;
-
-                    var missing = true;
-
-                    foreach (var message in messages.Messages.OrderByDescending(x => x.Id))
-                    {
-                        if (message.Content is MessageChatChangePhoto chatChangePhoto)
-                        {
-                            if (chatChangePhoto.Photo.Sizes.Any(x => x.Photo.Id == bigId))
-                            {
-                                missing = false;
-                                continue;
-                            }
-
-                            Items.Add(new GalleryChatPhoto(ClientService, _chat, chatChangePhoto.Photo, message.Id));
-                        }
-                        else
-                        {
-                            TotalItems--;
-                        }
-                    }
-
-                    if (missing)
-                    {
-                        TotalItems++;
-                    }
-
-                    OnSelectedItemChanged(_selectedItem);
-                }
+                await LoadAsync();
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
-        protected override void LoadPrevious()
+        protected override Task<IncrementalLoadResult> LoadNextAsync()
         {
-            //using (await _loadMoreLock.WaitAsync())
-            //{
-            //    var item = Items.FirstOrDefault() as GalleryMessageItem;
-            //    if (item == null)
-            //    {
-            //        return;
-            //    }
-
-            //    var fromMessageId = item.Id;
-
-            //    var limit = 20;
-            //    var offset = -limit / 2;
-
-            //    var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
-            //    if (response is Telegram.Td.Api.Messages messages)
-            //    {
-            //        TotalItems = messages.TotalCount;
-
-            //        foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId))
-            //        {
-            //            if (message.Content is MessageChatChangePhoto)
-            //            {
-            //                Items.Insert(0, new GalleryMessageItem(ClientService, message));
-            //            }
-            //            else
-            //            {
-            //                TotalItems--;
-            //            }
-            //        }
-
-            //        OnSelectedItemChanged(_selectedItem);
-            //    }
-            //}
+            return LoadAsync();
         }
 
-        protected override void LoadNext()
+        private async Task<IncrementalLoadResult> LoadAsync()
         {
-            //using (await _loadMoreLock.WaitAsync())
-            //{
-            //    var item = Items.LastOrDefault() as GalleryMessageItem;
-            //    if (item == null)
-            //    {
-            //        return;
-            //    }
+            // A zero cursor asks from the newest match, so the first page and every one after it
+            // are the same request.
+            var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, null, string.Empty, null, _nextFromMessageId, 0, LoadLimit, new SearchMessagesFilterChatPhoto()));
+            if (response is not FoundChatMessages messages)
+            {
+                return new IncrementalLoadResult(0, false);
+            }
 
-            //    var fromMessageId = item.Id;
+            var count = 0;
+            var found = false;
 
-            //    var limit = 20;
-            //    var offset = -limit / 2;
+            foreach (var message in messages.Messages.OrderByDescending(x => x.Id))
+            {
+                if (message.Content is not MessageChatChangePhoto chatChangePhoto)
+                {
+                    _totalCountDelta--;
+                    continue;
+                }
 
-            //    var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
-            //    if (response is Telegram.Td.Api.Messages messages)
-            //    {
-            //        TotalItems = messages.TotalCount;
+                if (chatChangePhoto.Photo.Sizes.Any(x => x.Photo.Id == _photoId))
+                {
+                    found = true;
+                    continue;
+                }
 
-            //        foreach (var message in messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
-            //        {
-            //            if (message.Content is MessageChatChangePhoto)
-            //            {
-            //                Items.Add(new GalleryMessageItem(ClientService, message));
-            //            }
-            //            else
-            //            {
-            //                TotalItems--;
-            //            }
-            //        }
+                Items.Add(new GalleryChatPhoto(ClientService, _chat, chatChangePhoto.Photo, message.Id));
+                count++;
+            }
 
-            //        OnSelectedItemChanged(_selectedItem);
-            //    }
-            //}
+            _nextFromMessageId = messages.NextFromMessageId;
+
+            // The current photo is the newest match, so the first page settles whether the
+            // history has a message for it. Without one it is an item the server never counted.
+            if (!_initialized)
+            {
+                _initialized = true;
+
+                if (!found)
+                {
+                    _totalCountDelta++;
+                }
+            }
+
+            TotalItems = messages.TotalCount + _totalCountDelta;
+
+            OnSelectedItemChanged(_selectedItem);
+
+            return new IncrementalLoadResult((uint)count, _nextFromMessageId != 0);
         }
 
         public override bool CanDelete
@@ -208,8 +182,6 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public override int Position => TotalItems - (Items.Count - base.Position);
-
         public override RangeObservableCollection<GalleryMedia> Group => Items;
 
         public void SetAsMain()
@@ -225,35 +197,5 @@ namespace Telegram.ViewModels.Chats
                 ? item.IsVideo ? Strings.MainChannelProfileVideoSetHint : Strings.MainChannelProfilePhotoSetHint
                 : item.IsVideo ? Strings.MainGroupProfileVideoSetHint : Strings.MainGroupProfilePhotoSetHint);
         }
-
     }
-
-    //public partial class GalleryChatPhotoItem : GalleryItem
-    //{
-    //    private readonly TLChatPhoto _photo;
-    //    private readonly ITLDialogWith _from;
-    //    private readonly string _caption;
-
-    //    public GalleryChatPhotoItem(TLChatPhoto photo, ITLDialogWith from)
-    //    {
-    //        _photo = photo;
-    //        _from = from;
-    //    }
-
-    //    public override object Source => _photo;
-
-    //    public override string Caption => _caption;
-
-    //    public override ITLDialogWith From => _from;
-
-    //    public override int Date => _photo.Date;
-
-    //    public override bool HasStickers => _photo.IsHasStickers;
-
-    //    public override TLInputStickeredMediaBase ToInputStickeredMedia()
-    //    {
-    //        return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
-    //    }
-    //}
-
 }

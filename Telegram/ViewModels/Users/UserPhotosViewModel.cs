@@ -6,8 +6,8 @@
 //
 
 using System;
+using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
@@ -17,8 +17,11 @@ namespace Telegram.ViewModels.Users
 {
     public partial class UserPhotosViewModel : GalleryViewModelBase
     {
-        private readonly DisposableMutex _loadMoreLock = new();
         private readonly User _user;
+
+        // Photos shown by the gallery that getUserProfilePhotos does not return, and so are not
+        // part of the offset it is paged by.
+        private int _additionalPhotos;
 
         public UserPhotosViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, User user, UserFullInfo userFull)
             : base(clientService, storageService, aggregator)
@@ -68,6 +71,10 @@ namespace Telegram.ViewModels.Users
                 Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, user.Id == clientService.Options.MyId));
             }
 
+            // The personal photo is ours, not one of the user's own, so it sits outside the
+            // numbering the server reports.
+            _offset = Items.Count > 0 && Items[0].IsPersonal ? -1 : 0;
+
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -76,54 +83,50 @@ namespace Telegram.ViewModels.Users
 
         private async void Initialize(User user)
         {
-            using (await _loadMoreLock.WaitAsync())
+            IsLoading = true;
+
+            try
             {
                 var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, _additionalPhotos, 20));
-                if (response is ChatPhotos photos)
+                if (response is not ChatPhotos photos)
                 {
-                    TotalItems = photos.TotalCount + _additionalPhotos;
-
-                    foreach (var item in photos.Photos)
-                    {
-                        if (item.Id == user.ProfilePhoto.Id)
-                        {
-                            continue;
-                        }
-
-                        Items.Add(new GalleryChatPhoto(ClientService, _user, item));
-                    }
+                    return;
                 }
+
+                TotalItems = photos.TotalCount + _additionalPhotos;
+
+                foreach (var item in photos.Photos)
+                {
+                    if (item.Id == user.ProfilePhoto.Id)
+                    {
+                        continue;
+                    }
+
+                    Items.Add(new GalleryChatPhoto(ClientService, _user, item));
+                }
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
-        public override int Position
+        protected override async Task<IncrementalLoadResult> LoadNextAsync()
         {
-            get
+            var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count - _additionalPhotos, 20));
+            if (response is not ChatPhotos photos)
             {
-                if (Items.Count > 0 && Items[0].IsPersonal)
-                {
-                    return base.Position - 1;
-                }
-
-                return base.Position;
+                return new IncrementalLoadResult(0, false);
             }
-        }
 
-        protected override async void LoadNext()
-        {
-            using (await _loadMoreLock.WaitAsync())
+            TotalItems = photos.TotalCount + _additionalPhotos;
+
+            foreach (var item in photos.Photos)
             {
-                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count - _additionalPhotos, 20));
-                if (response is ChatPhotos photos)
-                {
-                    TotalItems = photos.TotalCount + _additionalPhotos;
-
-                    foreach (var item in photos.Photos)
-                    {
-                        Items.Add(new GalleryChatPhoto(ClientService, _user, item));
-                    }
-                }
+                Items.Add(new GalleryChatPhoto(ClientService, _user, item));
             }
+
+            return new IncrementalLoadResult((uint)photos.Photos.Count, Items.Count - _additionalPhotos < photos.TotalCount);
         }
 
         public override RangeObservableCollection<GalleryMedia> Group => Items;

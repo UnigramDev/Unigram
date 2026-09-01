@@ -6,80 +6,157 @@
 //
 
 using System;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Gallery
 {
-    // TODO: reactor the whole GalleryMedia to just have two classes with different constructors
-    // GalleryMedia
-    //      |------- GalleryPhoto
-    //      |
-    // GalleryVideo
-    public abstract class GalleryMedia
+    public partial class GalleryMedia
     {
         protected readonly IClientService _clientService;
 
-        public GalleryMedia(IClientService clientService)
+        // Photo, Video or Animation for the three media constructors, null for the
+        // subclasses, which build their own input.
+        private readonly object _source;
+
+        protected GalleryMedia(IClientService clientService)
         {
             _clientService = clientService;
+        }
+
+        public GalleryMedia(IClientService clientService, Photo photo, FormattedText caption = null, bool protect = false)
+        {
+            _clientService = clientService;
+            _source = photo;
+
+            File = photo.GetBig()?.Photo;
+            Thumbnail = photo.GetSmall()?.Photo;
+            Minithumbnail = photo.Minithumbnail;
+
+            Constraint = photo;
+            Caption = caption ?? string.Empty.AsFormattedText();
+            HasStickers = photo.HasStickers;
+
+            CanBeCopied = !protect;
+            CanBeSaved = !protect;
+            CanBeShared = !protect;
+        }
+
+        public GalleryMedia(IClientService clientService, Video video, FormattedText caption = null, bool protect = false)
+        {
+            _clientService = clientService;
+            _source = video;
+
+            File = video.VideoValue;
+
+            if (video.Thumbnail is { Format: ThumbnailFormatJpeg })
+            {
+                Thumbnail = video.Thumbnail.File;
+            }
+
+            Minithumbnail = video.Minithumbnail;
+
+            Constraint = video;
+            Caption = caption ?? string.Empty.AsFormattedText();
+            HasStickers = video.HasStickers;
+
+            IsVideo = true;
+            Duration = video.Duration;
+
+            CanBeSaved = !protect;
+            CanBeShared = !protect;
+        }
+
+        public GalleryMedia(IClientService clientService, Animation animation, FormattedText caption = null)
+        {
+            _clientService = clientService;
+            _source = animation;
+
+            File = animation.AnimationValue;
+
+            if (animation.Thumbnail is { Format: ThumbnailFormatJpeg })
+            {
+                Thumbnail = animation.Thumbnail.File;
+            }
+
+            Minithumbnail = animation.Minithumbnail;
+
+            Constraint = animation;
+            Caption = caption ?? string.Empty.AsFormattedText();
+
+            IsVideo = true;
+            IsLoopingEnabled = true;
+            Duration = animation.Duration;
+
+            CanBeSaved = true;
+            CanBeShared = true;
         }
 
         public IClientService ClientService => _clientService;
 
         public RotationAngle RotationAngle { get; set; }
 
-        public File File { get; protected set; }
+        public File File { get; protected init; }
 
-        public File Thumbnail { get; protected set; }
+        public File Thumbnail { get; protected init; }
 
-        public Minithumbnail Minithumbnail { get; protected set; }
+        public Minithumbnail Minithumbnail { get; protected init; }
 
-        public virtual bool IsHls()
-        {
-            return false;
-        }
+        public bool IsHls { get; protected init; }
 
-        public virtual Vector<AlternativeVideo> AlternativeVideos => Array.Empty<AlternativeVideo>();
+        public Vector<AlternativeVideo> AlternativeVideos { get; protected init; } = Array.Empty<AlternativeVideo>();
 
-        public virtual object Constraint { get; protected set; }
+        public object Constraint { get; protected init; }
 
-        public virtual object From { get; private set; }
+        public object From { get; protected init; }
 
-        public virtual FormattedText Caption { get; private set; }
+        public FormattedText Caption { get; protected init; }
 
-        public virtual int Date { get; private set; }
+        public int Date { get; protected init; }
 
-        public virtual int Duration { get; private set; }
+        public int Duration { get; protected init; }
 
         public bool IsPhoto => !IsVideo;
 
-        public bool IsMedia { get; protected set; } = true;
+        public bool IsMedia { get; protected init; } = true;
 
-        public virtual bool IsVideo { get; private set; }
-        public virtual bool IsStreamable { get; private set; } = true;
-        public virtual bool IsLoopingEnabled { get; private set; }
-        public virtual bool IsVideoNote { get; private set; }
+        public bool IsVideo { get; protected init; }
+        public bool IsLoopingEnabled { get; protected init; }
+        public bool IsVideoNote { get; protected init; }
 
-        public virtual bool HasStickers { get; private set; }
+        public bool HasStickers { get; protected init; }
 
-        public virtual bool CanBeShared { get; private set; }
-        public virtual bool CanBeViewed { get; private set; }
+        public bool CanBeShared { get; protected init; }
+        public bool CanBeViewed { get; protected init; }
 
-        public virtual bool CanBeSaved { get; private set; }
-        public virtual bool CanBeCopied { get; private set; }
+        public bool CanBeSaved { get; protected init; }
+        public bool CanBeCopied { get; protected init; }
 
-        public virtual bool HasProtectedContent { get; private set; } = false;
+        public bool HasProtectedContent { get; protected init; }
 
-        public virtual bool IsPublic { get; protected set; }
-        public virtual bool IsPersonal { get; protected set; }
+        public bool IsPublic { get; protected init; }
+        public bool IsPersonal { get; protected init; }
 
         public bool CanRecognizeText => IsPhoto && !HasProtectedContent;
 
         public virtual InputMessageContent ToInput()
         {
-            return null;
+            switch (_source)
+            {
+                case Photo photo:
+                    var big = photo.GetBig();
+                    var small = photo.GetSmall();
+
+                    return new InputMessagePhoto(new InputPhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), null, Array.Empty<int>(), big.Width, big.Height), null, false, null, false);
+                case Video video:
+                    return new InputMessageVideo(new InputVideo(new InputFileId(video.VideoValue.Id), video.Thumbnail?.ToInput(), null, 0, Array.Empty<int>(), video.Duration, video.Width, video.Height, video.SupportsStreaming), null, false, null, false);
+                case Animation animation:
+                    return new InputMessageAnimation(new InputAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height), null, false, false);
+                default:
+                    return null;
+            }
         }
     }
 }

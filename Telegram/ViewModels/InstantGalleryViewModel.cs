@@ -74,11 +74,11 @@ namespace Telegram.ViewModels
             {
                 if (media is LinkPreviewAlbumMediaPhoto photo)
                 {
-                    items.Add(new GalleryPhoto(clientService, photo.Photo));
+                    items.Add(new GalleryMedia(clientService, photo.Photo));
                 }
                 else if (media is LinkPreviewAlbumMediaVideo video)
                 {
-                    items.Add(new GalleryVideo(clientService, video.Video));
+                    items.Add(new GalleryMedia(clientService, video.Video));
                 }
             }
 
@@ -100,73 +100,21 @@ namespace Telegram.ViewModels
         {
             if (pageBlock is PageBlockPhoto photoBlock)
             {
-                return new GalleryPhoto(clientService, photoBlock.Photo, photoBlock.Caption?.ToFormattedText());
+                return new GalleryMedia(clientService, photoBlock.Photo, photoBlock.Caption?.ToFormattedText());
             }
             else if (pageBlock is PageBlockVideo videoBlock)
             {
-                return new GalleryVideo(clientService, videoBlock.Video, videoBlock.Caption?.ToFormattedText());
+                return new GalleryMedia(clientService, videoBlock.Video, videoBlock.Caption?.ToFormattedText());
             }
             else if (pageBlock is PageBlockAnimation animationBlock)
             {
-                return new GalleryAnimation(clientService, animationBlock.Animation, animationBlock.Caption?.ToFormattedText());
+                return new GalleryMedia(clientService, animationBlock.Animation, animationBlock.Caption?.ToFormattedText());
             }
 
             return null;
         }
 
         public override RangeObservableCollection<GalleryMedia> Group => _shouldGroup ? Items : null;
-
-        //private GalleryItem GetBlock(TLMessage message, TLWebPage linkPreview, object pageBlock)
-        //{
-        //    if (pageBlock is TLPageBlockPhoto photoBlock)
-        //    {
-        //        var photo = TLWebPage.GetPhotoWithId(linkPreview, photoBlock.PhotoId) as TLPhoto;
-        //        if (photo == null)
-        //        {
-        //            return null;
-        //        }
-
-        //        return new GalleryPhotoItem(photo, message.From);
-        //    }
-        //    else if (pageBlock is TLPageBlockVideo videoBlock)
-        //    {
-        //        var document = TLWebPage.GetDocumentWithId(linkPreview, videoBlock.VideoId) as TLDocument;
-        //        if (document == null)
-        //        {
-        //            return null;
-        //        }
-
-        //        return new GalleryDocumentItem(document, message.From);
-        //    }
-
-        //    return null;
-        //}
-
-        //private List<GalleryItem> GetWebPagePhotos(TLMessage message, TLWebPage linkPreview)
-        //{
-        //    var result = new List<GalleryItem>();
-        //    var blocks = linkPreview.CachedPage?.Blocks ?? new TLVector<TLPageBlockBase>();
-
-        //    foreach (var block in blocks)
-        //    {
-        //        if (block is TLPageBlockSlideshow slideshow)
-        //        {
-        //            foreach (var item in slideshow.Items)
-        //            {
-        //                result.Add(GetBlock(message, linkPreview, item));
-        //            }
-        //        }
-        //        else if (block is TLPageBlockCollage collage)
-        //        {
-        //            foreach (var item in collage.Items)
-        //            {
-        //                result.Add(GetBlock(message, linkPreview, item));
-        //            }
-        //        }
-        //    }
-
-        //    return result;
-        //}
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

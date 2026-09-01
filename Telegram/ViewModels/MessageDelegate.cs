@@ -554,15 +554,15 @@ namespace Telegram.ViewModels
                 GalleryMedia item;
                 if (block is PageBlockPhoto photo)
                 {
-                    item = new GalleryPhoto(ClientService, photo.Photo, photo.Caption?.ToFormattedText());
+                    item = new GalleryMedia(ClientService, photo.Photo, photo.Caption?.ToFormattedText());
                 }
                 else if (block is PageBlockVideo video)
                 {
-                    item = new GalleryVideo(ClientService, video.Video, video.Caption?.ToFormattedText());
+                    item = new GalleryMedia(ClientService, video.Video, video.Caption?.ToFormattedText());
                 }
                 else if (block is PageBlockAnimation animation)
                 {
-                    item = new GalleryAnimation(ClientService, animation.Animation, animation.Caption?.ToFormattedText());
+                    item = new GalleryMedia(ClientService, animation.Animation, animation.Caption?.ToFormattedText());
                 }
                 else
                 {

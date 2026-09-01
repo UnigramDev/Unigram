@@ -388,7 +388,7 @@ namespace Telegram.Controls.Gallery
             }
             else if (state == MessageContentState.Download)
             {
-                if (AppSettings.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
+                if (AppSettings.IsStreamingEnabled && item.IsVideo)
                 {
                     _window?.OpenFile(item, file);
                 }
@@ -456,7 +456,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 // Always recreate HLS player for now, try to reuse native one
-                if (!force && (AppSettings.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
+                if (!force && (AppSettings.Diagnostics.ForceWebView2 || item.IsHls) && ChromiumWebPresenter.IsSupported())
                 {
                     Video = new WebVideoPlayer();
                 }
