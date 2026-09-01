@@ -11,11 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
@@ -191,7 +189,7 @@ namespace Telegram.Common
 
         #region Drains
 
-        private static readonly ConcurrentDictionary<object, Drain> _drainsByDispatcher = new();
+        private static readonly ConcurrentDictionary<CoreDispatcher, Drain> _drainsByDispatcher = new();
         private static readonly object _drainsLock = new();
 
         private static Drain[] _drains = Array.Empty<Drain>();
@@ -210,15 +208,11 @@ namespace Telegram.Common
         /// both ends up with two drains and one extra work item a frame. Two call sites in the app
         /// subscribe a view model, so that is theory rather than a cost.
         /// </summary>
-        private static object DispatcherOf(object subscriber)
+        private static CoreDispatcher DispatcherOf(object subscriber)
         {
             if (subscriber is FrameworkElement element)
             {
                 return element.Dispatcher;
-            }
-            else if (subscriber is ViewModelBase viewModel)
-            {
-                return viewModel.Dispatcher;
             }
 
             return null;
@@ -232,7 +226,7 @@ namespace Telegram.Common
         /// included. The aggregator never met this because it only ever read the dispatcher inside
         /// BeginOnUIThread, which swallows; reading it here to route an update put it in the open.
         /// </summary>
-        private static bool TryGetDispatcher(object subscriber, out object dispatcher)
+        private static bool TryGetDispatcher(object subscriber, out CoreDispatcher dispatcher)
         {
             try
             {
@@ -285,15 +279,11 @@ namespace Telegram.Common
                     ? _threadDrain = GetOrCreateDrain(dispatcher)
                     : null;
             }
-            else if (subscriber is ViewModelBase viewModel && viewModel.Dispatcher != null)
-            {
-                return GetOrCreateDrain(viewModel.Dispatcher);
-            }
 
             return null;
         }
 
-        private static Drain GetOrCreateDrain(object dispatcher)
+        private static Drain GetOrCreateDrain(CoreDispatcher dispatcher)
         {
             if (_drainsByDispatcher.TryGetValue(dispatcher, out var drain))
             {
@@ -334,13 +324,8 @@ namespace Telegram.Common
         /// </summary>
         private sealed class Drain
         {
-            private readonly object _dispatcher;
-
-            private readonly CoreDispatcher _core;
+            private readonly CoreDispatcher _dispatcher;
             private readonly DispatchedHandler _coreHandler;
-
-            private readonly IDispatcherContext _context;
-            private readonly DispatcherQueueHandler _contextHandler;
 
             public readonly int Mask;
 
@@ -354,20 +339,10 @@ namespace Telegram.Common
 
             private bool _posted;
 
-            public Drain(object dispatcher, int mask)
+            public Drain(CoreDispatcher dispatcher, int mask)
             {
                 _dispatcher = dispatcher;
-
-                if (dispatcher is CoreDispatcher core)
-                {
-                    _core = core;
-                    _coreHandler = new DispatchedHandler(OnDrain);
-                }
-                else
-                {
-                    _context = (IDispatcherContext)dispatcher;
-                    _contextHandler = new DispatcherQueueHandler(OnDrain);
-                }
+                _coreHandler = new DispatchedHandler(OnDrain);
 
                 Mask = mask;
             }
@@ -402,15 +377,7 @@ namespace Telegram.Common
             {
                 try
                 {
-                    if (_core != null)
-                    {
-                        _ = _core.RunAsync(CoreDispatcherPriority.Normal, _coreHandler);
-                    }
-                    else
-                    {
-                        _context.Dispatch(_contextHandler);
-                    }
-
+                    _ = _dispatcher.RunAsync(CoreDispatcherPriority.Normal, _coreHandler);
                     Interlocked.Increment(ref _hops);
                 }
                 catch
@@ -593,7 +560,7 @@ namespace Telegram.Common
             /// asked here rather than remembered, because a view model can be handed a dispatcher
             /// after it has subscribed, and is then owed its updates on that one.
             /// </param>
-            public int InvokeDeferred(long token, File file, object dispatcher)
+            public int InvokeDeferred(long token, File file, CoreDispatcher dispatcher)
             {
                 var empty = true;
                 var delivered = 0;

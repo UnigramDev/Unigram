@@ -99,7 +99,7 @@ namespace Telegram.ViewModels.Settings
 
         private void UpdateFile(File file)
         {
-            UpdateFile(_update, file, false);
+            BeginOnUIThread(() => UpdateFile(_update, file, false));
         }
 
         private void UpdateFile(CloudUpdate update, File file, bool download)
