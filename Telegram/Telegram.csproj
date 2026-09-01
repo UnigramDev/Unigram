@@ -1143,6 +1143,7 @@
     <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
     <Compile Include="Selectors\InviteLinkTemplateSelector.cs" />
     <Compile Include="Selectors\PremiumFeatureTemplateSelector.cs" />
+    <Compile Include="Services\OrderedSourceService.cs" />
     <Compile Include="Services\ClientService.ChatList.cs" />
     <Compile Include="Services\ClientService.PendingDelete.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
