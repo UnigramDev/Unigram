@@ -2912,7 +2912,14 @@ namespace Telegram.Controls.Messages
             _highlight.Children.InsertAtTop(solid);
             _highlight.Size = target.ActualSize;
 
-            if (options.Quote != null && options.Quote.IsManual && !string.IsNullOrEmpty(message.Text?.Text))
+            // The loop below walks the message's paragraphs and asks Message for the block that
+            // renders each one, so it only holds while Message is showing this exact text. It
+            // isn't always: a translation or a summary is a different StyledText, and content
+            // like MessageAnimatedEmoji never reaches SetText at all, leaving Message empty
+            // while the quote still matches the text the reply carries. Highlight the whole
+            // bubble instead - the quote can't be located in something that was never drawn.
+            if (options.Quote != null && options.Quote.IsManual && !string.IsNullOrEmpty(message.Text?.Text)
+                && Message.Text == message.Text)
             {
                 var caption = content.GetCaption();
                 var index = ClientEx.SearchQuote(caption, options.Quote);

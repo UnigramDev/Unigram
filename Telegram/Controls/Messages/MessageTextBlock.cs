@@ -54,6 +54,12 @@ namespace Telegram.Controls.Messages
             Instrumentation.Register(this);
         }
 
+        // The text the blocks were actually built from. Callers that pair a paragraph index of
+        // their own against GetBlock have to check this first: it is not always the message's
+        // own text - a translation, a summary, or a content type that never reaches SetText all
+        // leave the two out of step.
+        public StyledText Text => _styled;
+
         public bool HasCodeBlocks { get; private set; }
 
         // TODO: make sure all this event thing is actually needed
