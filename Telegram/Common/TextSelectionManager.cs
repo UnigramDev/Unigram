@@ -20,6 +20,16 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
+// CsWinRT cannot subscribe FocusManager's static events from more than one view: this view's
+// handler ends up on the first one's thread, where clearing the selection touches RichTextBlocks
+// it doesn't own and XAML answers RPC_E_WRONG_THREAD. FocusManagerImpl registers through the ABI
+// instead, and the alias keeps the call sites written the way they were.
+#if NET9_0_OR_GREATER
+using FocusManager = Telegram.Common.FocusManagerImpl;
+#else
+using FocusManager = Windows.UI.Xaml.Input.FocusManager;
+#endif
+
 namespace Telegram.Common
 {
     /// <summary>
