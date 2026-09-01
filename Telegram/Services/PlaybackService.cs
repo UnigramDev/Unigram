@@ -685,22 +685,6 @@ namespace Telegram.Services
 
         private void SeekImpl(AsyncMediaPlayer player, TimeSpan span)
         {
-            // Workaround for OGG files. It's unclear why this is needed,
-            // but it's likely caused by our LibVLC build configuration,
-            // as it doesn't happen with standalone VLC.
-            if (span.TotalSeconds < player.Position)
-            {
-                var playing = player.IsPlaying;
-
-                player.Stop();
-                player.Play();
-
-                if (playing is false)
-                {
-                    player.Pause(true);
-                }
-            }
-
             player.Position = span.TotalSeconds;
 
             _positionChanged.Position = span;
