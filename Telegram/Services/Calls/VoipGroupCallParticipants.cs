@@ -251,6 +251,10 @@ namespace Telegram.Services.Calls
         {
             var count = offset + limit;
 
+            // Read outside the lock, and once: it belongs to the call rather than to this,
+            // and both the answer below and the request further down turn on it.
+            var joinable = _call.Id != 0 && _call.IsJoined;
+
             // How many participants are still to be loaded, 0 when the cache can answer on
             // its own. Decided under the lock, acted on outside it: awaiting is not allowed
             // in there.
@@ -285,13 +289,18 @@ namespace Telegram.Services.Calls
                         }
                     }
 
-                    return new VoipGroupCallParticipantsSlice(result, !_haveFullParticipants || count < _ordered.Count);
+                    // Nothing can be asked for until the call is joined, so the answer is
+                    // "no more" however many participants it really has: a caller told
+                    // otherwise would keep asking for a page that cannot arrive, and the
+                    // ones it is owed reach it through updates meanwhile.
+                    var hasMore = joinable && (!_haveFullParticipants || count < _ordered.Count);
+                    return new VoipGroupCallParticipantsSlice(result, hasMore);
                 }
             }
 
             // loadGroupCallParticipants errors out before the call is joined, so there is
             // nothing to ask for yet: the participants will arrive through updates.
-            if (_call.Id != 0 && _call.IsJoined)
+            if (joinable)
             {
                 var response = await _call.ClientService.SendAsync(new LoadGroupCallParticipants(_call.Id, missing));
                 if (response is Error)

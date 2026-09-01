@@ -6,15 +6,12 @@
 //
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
@@ -28,38 +25,27 @@ namespace Telegram.Collections
     /// for every update all the same, in window or not, since the video grid covers the
     /// whole call rather than the visible list.
     /// </remarks>
-    public partial class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, ISupportIncrementalLoading
+    public partial class GroupCallParticipantsCollection
+        : WindowedCollection<GroupCallParticipant, MessageSender, string, VoipGroupCallParticipantChangedEventArgs>
     {
         private readonly VoipGroupCallParticipants _participants;
-        private readonly DispatcherQueue _dispatcherQueue;
 
-        // Updates arrive on TDLib's update thread and are drained on the dispatcher.
-        // Queued rather than captured one closure at a time: a busy call updates
-        // constantly, and this also coalesces a burst into a single drain.
-        private readonly ConcurrentQueue<VoipGroupCallParticipantChangedEventArgs> _pending = new();
-        private readonly DispatcherQueueHandler _drain;
-
-        // The last participant in the window, or none while the window is still open at
-        // the bottom. Recomputed after every mutation rather than tracked, so that a
-        // participant leaving the boundary can't leave it pointing at a stale order.
-        private string _lastOrder = string.Empty;
-        private MessageSender _lastParticipantId;
-
-        private bool _hasMoreItems = true;
+        private bool _disposed;
 
         public GroupCallParticipantsCollection(VoipGroupCallParticipants participants, DispatcherQueue dispatcherQueue)
+            : base(handler => dispatcherQueue.TryEnqueue(handler), new MessageSenderEqualityComparer())
         {
             _participants = participants;
-            _dispatcherQueue = dispatcherQueue;
-            _drain = Drain;
-
             _participants.Changed += OnChanged;
 
-            _ = LoadMoreItemsAsync();
+            _ = LoadMoreItemsAsync(0);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            _disposed = true;
+
+            base.Dispose();
             _participants.Changed -= OnChanged;
         }
 
@@ -75,155 +61,88 @@ namespace Telegram.Collections
         /// </summary>
         public void Load()
         {
-            if (_hasMoreItems)
-            {
-                _ = LoadMoreItemsAsync();
-            }
+            // Armed rather than tested: every load before this one answered "no more",
+            // because nothing could be paged in until the call was joined. Joining is what
+            // makes that untrue.
+            HasMoreItems = true;
+
+            _ = LoadMoreItemsAsync(0);
         }
 
         private void OnChanged(VoipGroupCallParticipants sender, VoipGroupCallParticipantChangedEventArgs args)
         {
-            _pending.Enqueue(args);
-            _dispatcherQueue.TryEnqueue(_drain);
+            Enqueue(args);
         }
 
-        private void Drain()
+        protected override MessageSender GetKey(GroupCallParticipant item)
         {
-            while (_pending.TryDequeue(out var args))
-            {
-                Apply(args);
-            }
+            return item.ParticipantId;
         }
 
-        private void Apply(VoipGroupCallParticipantChangedEventArgs args)
+        protected override GroupCallParticipant GetItem(VoipGroupCallParticipantChangedEventArgs args)
         {
-            var participant = args.Participant;
+            return args.Participant;
+        }
 
-            if (args.Order.Length > 0 && IsWithinWindow(args.Order, participant.ParticipantId))
-            {
-                var next = NextIndexOf(participant, args.Order, out int prev);
-                if (next != prev)
-                {
-                    if (prev >= 0)
-                    {
-                        RemoveAt(prev);
-                    }
+        protected override string GetOrder(VoipGroupCallParticipantChangedEventArgs args)
+        {
+            return args.Order;
+        }
 
-                    Insert(Math.Min(Count, next), participant);
-                    UpdateWindow();
-                }
-            }
-            else
-            {
-                var prev = IndexOf(participant);
-                if (prev >= 0)
-                {
-                    RemoveAt(prev);
-                    UpdateWindow();
-                }
-            }
+        protected override bool IsPlaced(string order)
+        {
+            return order.Length > 0;
+        }
 
+        protected override int Compare(string order, MessageSender participantId, string otherOrder, MessageSender otherParticipantId)
+        {
+            return VoipGroupCallParticipants.Compare(order, participantId, otherOrder, otherParticipantId);
+        }
+
+        protected override void OnApplied(VoipGroupCallParticipantChangedEventArgs args)
+        {
             ParticipantChanged?.Invoke(this, args);
         }
 
-        private bool IsWithinWindow(string order, MessageSender participantId)
-        {
-            // Nothing left to page in means the window is the whole call: a participant
-            // sinking to the bottom must stay in the list, since nothing would bring it
-            // back.
-            return !_hasMoreItems
-                || _lastParticipantId == null
-                || VoipGroupCallParticipants.Compare(order, participantId, _lastOrder, _lastParticipantId) >= 0;
-        }
-
-        private void UpdateWindow()
-        {
-            if (_hasMoreItems && Count > 0)
-            {
-                var last = this[Count - 1];
-
-                _lastOrder = last.Order;
-                _lastParticipantId = last.ParticipantId;
-            }
-            else
-            {
-                _lastOrder = string.Empty;
-                _lastParticipantId = null;
-            }
-        }
-
-        /// <summary>
-        /// Where the participant belongs, counted over the list without it, so that
-        /// <paramref name="prev"/> and the result can be compared directly: equal means
-        /// it is already in place and nothing has to move.
-        /// </summary>
-        private int NextIndexOf(GroupCallParticipant participant, string order, out int prev)
-        {
-            prev = -1;
-
-            var next = 0;
-            var index = -1;
-
-            for (int i = 0; i < Count; i++)
-            {
-                var item = this[i];
-                if (item == participant)
-                {
-                    prev = i;
-                    continue;
-                }
-
-                if (index < 0 && VoipGroupCallParticipants.Compare(order, participant.ParticipantId, item.Order, item.ParticipantId) >= 0)
-                {
-                    index = next;
-                }
-
-                next++;
-            }
-
-            return index < 0 ? next : index;
-        }
-
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-        {
-            return IncrementalLoading.Run(token => LoadMoreItemsAsync());
-        }
-
-        private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
 
             var slice = await _participants.GetParticipantsAsync(Count, 20);
 
+            // The window can have closed while the page was in flight.
+            if (_disposed)
+            {
+                return default;
+            }
+
             foreach (var participant in slice.Participants)
             {
                 // An update can have inserted it already while the page was in flight,
                 // and can have moved it since: place it where it belongs either way.
-                var next = NextIndexOf(participant, participant.Order, out int prev);
-                if (next != prev)
+                var next = NextIndexOf(participant, participant.ParticipantId, participant.Order, out int prev);
+                if (next == prev)
                 {
-                    if (prev >= 0)
-                    {
-                        RemoveAt(prev);
-                    }
-                    else
-                    {
-                        totalCount++;
-                    }
-
-                    Insert(Math.Min(Count, next), participant);
+                    continue;
                 }
+
+                if (prev >= 0)
+                {
+                    RemoveAt(prev);
+                }
+                else
+                {
+                    totalCount++;
+                }
+
+                SetOrder(participant.ParticipantId, participant.Order);
+                Insert(Math.Min(Count, next), participant);
             }
 
-            _hasMoreItems = slice.HasMore;
-            UpdateWindow();
+            // Passed rather than read back: the collection is told only once this returns.
+            UpdateWindow(slice.HasMore);
 
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
+            return new IncrementalLoadResult(totalCount, slice.HasMore);
         }
-
-        public bool HasMoreItems => _hasMoreItems;
     }
 }
