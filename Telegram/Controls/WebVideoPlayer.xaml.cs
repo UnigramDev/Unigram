@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
@@ -34,6 +35,11 @@ namespace Telegram.Controls
 
         private readonly Dictionary<int, AlternativeVideo> _playlist = new();
 
+        // Cancelled when the player goes away for good. A request in flight can be
+        // waiting on a range that will never finish downloading, and it holds the
+        // WebView2 deferral, the source and its download open until it returns.
+        private readonly CancellationTokenSource _cancellation = new();
+
         private double _initialPosition;
 
         public WebVideoPlayer()
@@ -52,6 +58,8 @@ namespace Telegram.Controls
             {
                 return;
             }
+
+            _cancellation.Cancel();
 
             if (_core != null)
             {
@@ -245,7 +253,7 @@ namespace Telegram.Controls
 
             try
             {
-                await ProcessWebResourceRequestAsync(sender, args);
+                await ProcessWebResourceRequestAsync(sender, args, _cancellation.Token);
             }
             catch
             {
@@ -259,7 +267,7 @@ namespace Telegram.Controls
             }
         }
 
-        private async Task ProcessWebResourceRequestAsync(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
+        private async Task ProcessWebResourceRequestAsync(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args, CancellationToken cancellationToken)
         {
             var segments = args.Request.Uri.Split('/');
             var resource = segments[^1];
@@ -346,7 +354,7 @@ namespace Telegram.Controls
             else if (int.TryParse(fileName, out int fileId))
             {
                 var file = await _video.ClientService.GetFileAsync(fileId);
-                if (file == null)
+                if (file == null || cancellationToken.IsCancellationRequested)
                 {
                     return;
                 }
@@ -374,8 +382,22 @@ namespace Telegram.Controls
                 // so the window is the request's to choose rather than measured here.
                 var remote = new RemoteFileSource(_video.ClientService, file, _video.Duration, streaming: false);
                 remote.SeekCallback(media.Offset);
-                var bytesRead = await remote.ReadCallbackAsync(media.Count, media.Window);
+
+                long bytesRead;
+
+                // Closing is what ends the wait: the read blocks until the range is
+                // downloaded, and once the player is gone nothing else ever completes it.
+                using (cancellationToken.Register(remote.Close))
+                {
+                    bytesRead = await remote.ReadCallbackAsync(media.Count, media.Window);
+                }
+
                 remote.Close();
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
 
                 if (bytesRead >= 0)
                 {
