@@ -393,10 +393,10 @@ namespace Telegram.Collections
             get { return _suppressEvents > 0; }
         }
 
-        public void Dispose()
-        {
-            _suppressEvents = int.MaxValue;
-        }
+        //public void Dispose()
+        //{
+        //    _suppressEvents = int.MaxValue;
+        //}
 
         /// <summary>
         /// Raises the CollectionChanged event with the provided event data.

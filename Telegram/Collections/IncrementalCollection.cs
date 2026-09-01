@@ -184,7 +184,7 @@ namespace Telegram.Collections
         // Emptying the list is not the same event as starting it over: ClearItems is also reached
         // through ReplaceWith and Clear(bool) on the base, which are content refreshes. Restart is
         // the one that means "begin again", so all of the reset state lives there.
-        public void Restart()
+        public virtual void Restart()
         {
             Invalidate(true);
             Clear();
