@@ -18,13 +18,10 @@ namespace Telegram.ViewModels.Delegates
         void SetSelectedItem(Chat chat);
         void SetSelectedItems(IList<Chat> chats);
 
-
-
         void UpdateChatLastMessage(Chat chat);
 
         void UpdateChatFoldersLayout();
 
-        void UpdateChatListArchive();
 
         Task UpdateLayoutAsync();
     }

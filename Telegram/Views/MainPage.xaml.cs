@@ -11,7 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls;
@@ -266,6 +268,8 @@ namespace Telegram.Views
                     viewModel.Aggregator.Unsubscribe(this);
                     viewModel.Dispose();
                 }
+
+                _archive?.Changed -= OnArchiveChanged;
 
                 LifetimeService.Current.Playback.SourceChanged -= OnPlaybackSourceChanged;
 
@@ -1660,6 +1664,11 @@ namespace Telegram.Views
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
 
+            _archive?.Changed -= OnArchiveChanged;
+
+            _archive = ViewModel.ClientService.GetChatList(new ChatListArchive());
+            _archive.Changed += OnArchiveChanged;
+
             ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive());
             ArchivedChats.UpdateStoryList(ViewModel.ClientService, new StoryListArchive());
         }
@@ -2518,9 +2527,27 @@ namespace Telegram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsProxyPage));
         }
 
-        public void UpdateChatListArchive()
+        // The archived chats cell shows a summary of the list, so which chat moved does not
+        // matter here, only that one did: a change arriving while a refresh is already posted
+        // has nothing to add to it.
+        private ChatListService _archive;
+        private int _archivePosted;
+
+        private void OnArchiveChanged(OrderedSourceService<Chat> sender, OrderChangedEventArgs<Chat> args)
         {
-            this.BeginOnUIThread(() => ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive()));
+            if (Interlocked.CompareExchange(ref _archivePosted, 1, 0) == 0)
+            {
+                this.BeginOnUIThread(UpdateChatListArchive);
+            }
+        }
+
+        private void UpdateChatListArchive()
+        {
+            // Cleared first, so a change landing while the cell is being rebuilt posts the
+            // refresh that covers it rather than being folded into this one.
+            Volatile.Write(ref _archivePosted, 0);
+
+            ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive());
         }
 
         public void UpdateChatFoldersLayout()
