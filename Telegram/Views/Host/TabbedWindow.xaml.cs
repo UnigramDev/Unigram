@@ -10,6 +10,7 @@ using System;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -196,11 +197,10 @@ namespace Telegram.Views.Host
         private void OnTabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
             // On touch this arrives from inside the gesture engine's delayed pointer-up, on a nested
-            // dispatch, and mutating TabItems there fails the removal with E_INVALIDARG. Post it to the
-            // next turn instead - Low rather than Normal, because Dispatch runs the handler inline when
-            // it is already on the thread, which is the case to get out of.
+            // dispatch, and mutating TabItems there fails the removal with E_INVALIDARG. Close on
+            // the next turn instead.
             var tab = args.Tab;
-            Window.Dispatcher.Dispatch(() => CloseTab(tab), Windows.System.DispatcherQueuePriority.Low);
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => CloseTab(tab));
         }
 
         private void CloseTab(TabViewItem tab)
