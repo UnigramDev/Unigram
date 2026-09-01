@@ -78,6 +78,9 @@ namespace Telegram.Views
             InitializeComponent();
             DataContext = LifetimeService.Current.ActiveItem.Resolve<MainViewModel>();
 
+            var queue = DispatcherQueue.GetForCurrentThread();
+
+            _drain = new DispatcherDrain<UpdateChatCell>(handler => queue.TryEnqueue(handler), Handle);
             _clientService = ViewModel.ClientService;
 
             ViewModel.Chats.Delegate = this;
@@ -231,12 +234,14 @@ namespace Telegram.Views
             // every tick from here on.
             _memoryFloor = settled;
 
-            // Logger.Error and not TrackError: nothing crashed, and a crash report would say
-            // otherwise. This exists to put a timestamp in the log that the tail can be read
-            // around - a timer tick's stack would say nothing.
-            Logger.Error(message);
-
-            ToastPopup.Show(XamlRoot, message, ToastPopupIcon.Error);
+            if (_memoryFloor / 1024d / 1024d > 60)
+            {
+                // Logger.Error and not TrackError: nothing crashed, and a crash report would say
+                // otherwise. This exists to put a timestamp in the log that the tail can be read
+                // around - a timer tick's stack would say nothing.
+                Logger.Error(message);
+                ToastPopup.Show(XamlRoot, message, ToastPopupIcon.Error);
+            }
         }
 
         public INavigationService NavigationService => MasterDetail.NavigationService;
@@ -268,6 +273,8 @@ namespace Telegram.Views
                     viewModel.Aggregator.Unsubscribe(this);
                     viewModel.Dispose();
                 }
+
+                _drain.Dispose();
 
                 _archive?.Changed -= OnArchiveChanged;
 
@@ -337,11 +344,7 @@ namespace Telegram.Views
 
         public void UpdateChatLastMessage(Chat chat)
         {
-            Handle(chat, (chatView, chat) =>
-            {
-                chatView.UpdateChatReadInbox(chat);
-                chatView.UpdateChatLastMessage(chat);
-            });
+            Handle(chat.Id, ChatCellUpdate.LastMessage);
         }
 
         public void Handle(UpdateChatActiveStories update)
@@ -352,7 +355,7 @@ namespace Telegram.Views
             }
             else
             {
-                Handle(update.ActiveStories.ChatId, (chatView, chat) => chatView.UpdateChatActiveStories(update.ActiveStories));
+                Handle(update.ActiveStories.ChatId, ChatCellUpdate.ActiveStories);
             }
         }
 
@@ -373,52 +376,52 @@ namespace Telegram.Views
 
         public void Handle(UpdateChatIsMarkedAsUnread update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
+            Handle(update.ChatId, ChatCellUpdate.ReadInbox);
         }
 
         public void Handle(UpdateChatReadInbox update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
+            Handle(update.ChatId, ChatCellUpdate.ReadInbox);
         }
 
         public void Handle(UpdateChatUnreadTopicCount update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
+            Handle(update.ChatId, ChatCellUpdate.ReadInbox);
         }
 
         public void Handle(UpdateChatReadOutbox update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadOutbox(chat));
+            Handle(update.ChatId, ChatCellUpdate.ReadOutbox);
         }
 
         public void Handle(UpdateChatUnreadMentionCount update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+            Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
         }
 
         public void Handle(UpdateChatUnreadReactionCount update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+            Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
         }
 
         public void Handle(UpdateChatUnreadPollVoteCount update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+            Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
         }
 
         public void Handle(UpdateChatAddedToList update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatChatLists(chat));
+            Handle(update.ChatId, ChatCellUpdate.ChatLists);
         }
 
         public void Handle(UpdateChatRemovedFromList update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatChatLists(chat));
+            Handle(update.ChatId, ChatCellUpdate.ChatLists);
         }
 
         public void Handle(UpdateChatTitle update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatTitle(chat));
+            Handle(update.ChatId, ChatCellUpdate.Title);
 
             // TODO: threading is not great here
             if (update.ChatId == _viewModel.Topics.Chat?.Id)
@@ -429,12 +432,12 @@ namespace Telegram.Views
 
         public void Handle(UpdateChatPhoto update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatPhoto(chat));
+            Handle(update.ChatId, ChatCellUpdate.Photo);
         }
 
         public void Handle(UpdateChatEmojiStatus update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatEmojiStatus(chat));
+            Handle(update.ChatId, ChatCellUpdate.EmojiStatus);
 
             // TODO: threading is not great here
             if (update.ChatId == _viewModel.Topics.Chat?.Id)
@@ -445,7 +448,7 @@ namespace Telegram.Views
 
         public void Handle(UpdateChatVideoChat update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatVideoChat(chat));
+            Handle(update.ChatId, ChatCellUpdate.VideoChat);
         }
 
         public void Handle(UpdateChatViewAsTopics update)
@@ -474,28 +477,28 @@ namespace Telegram.Views
         {
             if (update.UserId != _clientService.Options.MyId && update.UserId != 777000 && _clientService.TryGetChatFromUser(update.UserId, out long chatId))
             {
-                Handle(chatId, (chatView, chat) => chatView.UpdateUserStatus(chat, update.Status));
+                Handle(chatId, ChatCellUpdate.UserStatus);
             }
         }
 
         public void Handle(UpdateChatMessageAutoDeleteTime update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatMessageAutoDeleteTime(chat, true));
+            Handle(update.ChatId, ChatCellUpdate.MessageAutoDeleteTime);
         }
 
         public void Handle(UpdateChatAction update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ClientService.GetChatActions(chat.Id)));
+            Handle(update.ChatId, ChatCellUpdate.Actions);
         }
 
         public void Handle(UpdateMessageMentionRead update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+            Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
         }
 
         public void Handle(UpdateMessageUnreadReactions update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
+            Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
         }
 
         public async void Handle(UpdateSecretChat update)
@@ -503,13 +506,13 @@ namespace Telegram.Views
             var response = await _clientService.SendAsync(new CreateSecretChat(update.SecretChat.Id));
             if (response is Chat result)
             {
-                Handle(result.Id, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
+                Handle(result.Id, ChatCellUpdate.LastMessage);
             }
         }
 
         public void Handle(UpdateChatNotificationSettings update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatNotificationSettings(chat));
+            Handle(update.ChatId, ChatCellUpdate.NotificationSettings);
         }
 
         public void Handle(UpdateUnreadChatCount update)
@@ -520,45 +523,110 @@ namespace Telegram.Views
             }
         }
 
-        private void Handle(long chatId, long messageId, Action<Chat> update, Action<ChatCell, Chat> action)
+        private readonly DispatcherDrain<UpdateChatCell> _drain;
+        private readonly Dictionary<long, ChatCellUpdate> _coalesced = new();
+
+        private readonly record struct UpdateChatCell(long ChatId, ChatCellUpdate Update);
+
+        private void Handle(long chatId, ChatCellUpdate update)
         {
-            var chat = _clientService.GetChat(chatId);
-            if (chat.LastMessage == null || chat.LastMessage.Id != messageId)
+            _drain.Enqueue(new UpdateChatCell(chatId, update));
+        }
+
+        private void Handle(List<UpdateChatCell> batch)
+        {
+            _coalesced.Clear();
+
+            for (int i = 0; i < batch.Count; i++)
             {
-                return;
+                var key = batch[i].ChatId;
+
+                _coalesced[key] = _coalesced.TryGetValue(key, out var previous)
+                    ? previous | batch[i].Update
+                    : batch[i].Update;
             }
 
-            update(chat);
-
-            this.BeginOnUIThread(() =>
+            foreach (var item in _coalesced)
             {
-                if (ChatsList.TryGetCell(chat, out ChatCell chatView))
+                if (ChatsList.TryGetChatAndCell(item.Key, out Chat chat, out ChatCell chatView))
                 {
-                    action(chatView, chat);
+                    if ((item.Value & ChatCellUpdate.ReadInbox) != 0 || (item.Value & ChatCellUpdate.LastMessage) != 0)
+                    {
+                        chatView.UpdateChatReadInbox(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.ReadOutbox) != 0)
+                    {
+                        chatView.UpdateChatReadOutbox(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.UnreadMentionCount) != 0)
+                    {
+                        chatView.UpdateChatUnreadMentionCount(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.ChatLists) != 0)
+                    {
+                        chatView.UpdateChatChatLists(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.Title) != 0)
+                    {
+                        chatView.UpdateChatTitle(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.Photo) != 0)
+                    {
+                        chatView.UpdateChatPhoto(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.EmojiStatus) != 0)
+                    {
+                        chatView.UpdateChatEmojiStatus(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.VideoChat) != 0)
+                    {
+                        chatView.UpdateChatVideoChat(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.UserStatus) != 0)
+                    {
+                        chatView.UpdateUserStatus(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.MessageAutoDeleteTime) != 0)
+                    {
+                        chatView.UpdateChatMessageAutoDeleteTime(chat, true);
+                    }
+                    if ((item.Value & ChatCellUpdate.Actions) != 0)
+                    {
+                        chatView.UpdateChatActions(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.LastMessage) != 0)
+                    {
+                        chatView.UpdateChatLastMessage(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.NotificationSettings) != 0)
+                    {
+                        chatView.UpdateChatNotificationSettings(chat);
+                    }
+                    if ((item.Value & ChatCellUpdate.ActiveStories) != 0)
+                    {
+                        chatView.UpdateChatActiveStories(chat);
+                    }
                 }
-            });
+            }
         }
 
-        private void Handle(long chatId, Action<ChatCell, Chat> action)
+        [Flags]
+        enum ChatCellUpdate
         {
-            this.BeginOnUIThread(() =>
-            {
-                if (ChatsList.TryGetChatAndCell(chatId, out Chat chat, out ChatCell chatView))
-                {
-                    action(chatView, chat);
-                }
-            });
-        }
-
-        private void Handle(Chat chat, Action<ChatCell, Chat> action)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                if (ChatsList.TryGetCell(chat, out ChatCell chatView))
-                {
-                    action(chatView, chat);
-                }
-            });
+            ReadInbox = 1 << 1,
+            ReadOutbox = 1 << 2,
+            UnreadMentionCount = 1 << 3,
+            ChatLists = 1 << 4,
+            Title = 1 << 5,
+            Photo = 1 << 6,
+            EmojiStatus = 1 << 7,
+            VideoChat = 1 << 8,
+            UserStatus = 1 << 9,
+            MessageAutoDeleteTime = 1 << 10,
+            Actions = 1 << 11,
+            LastMessage = 1 << 12,
+            NotificationSettings = 1 << 13,
+            ActiveStories = 1 << 14
         }
 
         public void Handle(UpdatePasscodeLock update)
@@ -2116,7 +2184,10 @@ namespace Telegram.Views
                         var modifiers = WindowContext.KeyModifiers();
                         if (modifiers == VirtualKeyModifiers.Menu && selectionChanged)
                         {
-                            Handle(chat, (cell, chat) => cell.ShowPreview(null));
+                            if (ChatsList.TryGetCell(chat, out ChatCell chatView))
+                            {
+                                chatView.ShowPreview(null);
+                            }
                         }
                         else
                         {

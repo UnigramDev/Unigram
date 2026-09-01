@@ -964,14 +964,15 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        public void UpdateChatActiveStories(ChatActiveStories activeStories)
+        public void UpdateChatActiveStories(Chat chat)
         {
-            if (_clientService == null || !_templateApplied)
+            if (_clientService == null || !_templateApplied || chat.Id == _clientService.Options.MyId)
             {
                 return;
             }
 
-            if (activeStories.ChatId != _clientService.Options.MyId)
+            var activeStories = _clientService.GetActiveStories(chat.Id);
+            if (activeStories != null)
             {
                 Segments.UpdateActiveStories(activeStories, 48, true);
 
@@ -986,13 +987,14 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
+        public void UpdateChatActions(Chat chat)
         {
             if (_clientService == null || !_templateApplied)
             {
                 return;
             }
 
+            var actions = _clientService.GetChatActions(chat.Id);
             if (actions != null && actions.Count > 0)
             {
                 TypingLabel.Text = InputChatActionManager.GetTypingString(chat.Type, actions, _clientService, out ChatAction commonAction);
@@ -1020,14 +1022,14 @@ namespace Telegram.Controls.Cells
             ShowHideOnlineStatus(chat.VideoChat?.HasParticipants ?? false, true, chat.MessageAutoDeleteTime, true);
         }
 
-        public void UpdateUserStatus(Chat chat, UserStatus status)
+        public void UpdateUserStatus(Chat chat)
         {
-            if (_clientService == null || !_templateApplied)
+            if (_clientService == null || !_templateApplied || !_clientService.TryGetUser(chat, out User user))
             {
                 return;
             }
 
-            ShowHideOnlineStatus(status is UserStatusOnline, false, chat.MessageAutoDeleteTime, true);
+            ShowHideOnlineStatus(user.Status is UserStatusOnline, false, chat.MessageAutoDeleteTime, true);
         }
 
         public void UpdateChatMessageAutoDeleteTime(Chat chat, bool animate)
@@ -1363,7 +1365,7 @@ namespace Telegram.Controls.Cells
             //UpdateChatReadInbox(chat);
             UpdateChatUnreadMentionCount(chat, position, false);
             UpdateChatNotificationSettings(chat);
-            UpdateChatActions(chat, _clientService.GetChatActions(chat.Id));
+            UpdateChatActions(chat);
             UpdateChatMessageAutoDeleteTime(chat, false);
 
             UpdateBotOpen(chat);
