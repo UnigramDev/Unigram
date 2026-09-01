@@ -363,6 +363,13 @@ namespace Telegram.Controls
             //    Height = double.NaN;
             //}
 
+            // The shortcuts below edit the document, and RichEdit fails those calls with E_ACCESSDENIED while it's write-protected.
+            if (IsReadOnly)
+            {
+                base.OnKeyDown(e);
+                return;
+            }
+
             var modifiers = WindowContext.KeyModifiers();
 
             switch (e.Key)
