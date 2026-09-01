@@ -52,6 +52,7 @@ namespace Telegram.Services
             ClientService = clientService;
             UserId = userId;
 
+            Value = audio;
             AudioValue = audio.AudioValue;
             ExternalAlbumCovers = audio.ExternalAlbumCovers;
             AlbumCoverThumbnail = audio.AlbumCoverThumbnail;
@@ -66,6 +67,12 @@ namespace Telegram.Services
         public IClientService ClientService { get; set; }
 
         public long UserId { get; set; }
+
+        /// <summary>
+        /// The audio the fields below were copied from, kept so it can be handed back to
+        /// anything that wants the whole thing rather than one field.
+        /// </summary>
+        public Audio Value { get; }
 
         /// <summary>
         /// File containing the audio.
@@ -137,6 +144,17 @@ namespace Telegram.Services
         void Clear();
 
         void MoveTo(PlaybackItem item, int index);
+
+        /// <summary>
+        /// Tells the service an audio was added to the current user's profile. There is no
+        /// update for it, so a profile audio playlist can only learn from whoever asked.
+        /// </summary>
+        void ProfileAudioAdded(PlaybackItem item);
+
+        /// <summary>
+        /// Tells the service an audio was removed from the current user's profile.
+        /// </summary>
+        void ProfileAudioRemoved(int fileId);
 
         void Play(XamlRoot xamlRoot, MessageWithOwner message, MessageTopic topic = null);
         void Play(XamlRoot xamlRoot, AudioWithOwner audio);
@@ -212,6 +230,10 @@ namespace Telegram.Services
         // handed over to say where it sits. The first page replaces it rather than being
         // appended to it, so the list ends up in the order the source reports.
         private bool _provisional;
+
+        // The aggregator of the session being played. Per session, so not the static one the
+        // file subscriptions go through.
+        private IEventAggregator _aggregator;
 
         public event TypedEventHandler<IPlaybackService, object> MediaFailed;
         public event TypedEventHandler<IPlaybackService, object> StateChanged;
@@ -877,6 +899,252 @@ namespace Telegram.Services
             return false;
         }
 
+        #region Reconciliation
+
+        private void SubscribeUpdates(IClientService clientService)
+        {
+            UnsubscribeUpdates();
+
+            var aggregator = clientService.Session?.Resolve<IEventAggregator>();
+            if (aggregator == null)
+            {
+                return;
+            }
+
+            _aggregator = aggregator;
+
+            aggregator.Subscribe<UpdateNewMessage>(this, Handle)
+                .Subscribe<UpdateDeleteMessages>(Handle)
+                .Subscribe<UpdateMessageContent>(Handle);
+        }
+
+        private void UnsubscribeUpdates()
+        {
+            // Unsubscribe(subscriber) drops every type this service subscribed on that
+            // aggregator, which is all three and nothing else: the album cover file token
+            // lives on EventAggregator.Current instead.
+            var aggregator = _aggregator;
+            _aggregator = null;
+
+            aggregator?.Unsubscribe(this);
+        }
+
+        private void Handle(UpdateNewMessage update)
+        {
+            if (_source is not ChatPlaybackSource source || !source.Accepts(update.Message))
+            {
+                return;
+            }
+
+            // A message newer than the whole playlist can only be added once the newest end
+            // has been reached; before that there are messages in between, and moving the
+            // cursor over them would lose them.
+            if (!source.CanAddNewest)
+            {
+                return;
+            }
+
+            bool added;
+
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+
+                added = items != null;
+                if (added)
+                {
+                    items.Insert(source.NewestFirst ? 0 : items.Count, source.Create(update.Message));
+                }
+            }
+
+            if (added)
+            {
+                source.Extend(update.Message.Id);
+                PlaylistChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void Handle(UpdateDeleteMessages update)
+        {
+            // FromCache is TDLib forgetting a message, not the message going away, and a
+            // non-permanent delete is one it expects to see again.
+            if (update.FromCache || !update.IsPermanent)
+            {
+                return;
+            }
+
+            if (_source is not ChatPlaybackSource source || source.ChatId != update.ChatId)
+            {
+                return;
+            }
+
+            var current = _currentItem;
+            var removedCurrent = false;
+            var removed = false;
+
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+                if (items == null)
+                {
+                    return;
+                }
+
+                for (int i = items.Count - 1; i >= 0; i--)
+                {
+                    if (items[i] is not PlaybackItemMessage message || !update.MessageIds.Contains(message.Id))
+                    {
+                        continue;
+                    }
+
+                    removedCurrent |= items[i] == current;
+                    items.RemoveAt(i);
+                    removed = true;
+                }
+            }
+
+            if (!removed)
+            {
+                return;
+            }
+
+            PlaylistChanged?.Invoke(this, EventArgs.Empty);
+
+            // A deleted message must not keep playing: whoever sent it took it back.
+            if (removedCurrent)
+            {
+                MoveNext();
+            }
+        }
+
+        private void Handle(UpdateMessageContent update)
+        {
+            if (_source is not ChatPlaybackSource source || source.ChatId != update.ChatId)
+            {
+                return;
+            }
+
+            var current = _currentItem;
+
+            PlaybackItem replacement = null;
+            var replacedCurrent = false;
+            var removedCurrent = false;
+
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+                if (items == null)
+                {
+                    return;
+                }
+
+                var index = items.FindIndex(x => x is PlaybackItemMessage message && message.Id == update.MessageId);
+                if (index < 0)
+                {
+                    return;
+                }
+
+                var item = (PlaybackItemMessage)items[index];
+
+                if (source.Accepts(update.NewContent))
+                {
+                    // Everything an item exposes is read off the content when it is built, so
+                    // a new content makes a new item rather than a patched one.
+                    item.Message.Content = update.NewContent;
+
+                    replacement = new PlaybackItemMessage(item.XamlRoot, item.Message, item.TopicId);
+                    replacedCurrent = item == current;
+
+                    items[index] = replacement;
+                }
+                else
+                {
+                    // A voice note that expired, or media edited into something that is not
+                    // played at all.
+                    removedCurrent = item == current;
+
+                    items.RemoveAt(index);
+                }
+            }
+
+            if (replacedCurrent)
+            {
+                // An edit can replace the file as well, but the player is already streaming
+                // the old one: take the new item for what is shown and leave playback alone.
+                _currentItem = replacement;
+                UpdateTransport(replacement);
+            }
+
+            PlaylistChanged?.Invoke(this, EventArgs.Empty);
+
+            // Same as a delete: what is gone must not keep playing.
+            if (removedCurrent)
+            {
+                MoveNext();
+            }
+        }
+
+        public void ProfileAudioAdded(PlaybackItem item)
+        {
+            var audio = item?.Track;
+
+            // addProfileAudio puts the audio first, and only the current user's own profile
+            // can be added to.
+            if (audio == null || _source is not UserProfileAudioPlaybackSource source || source.UserId != source.ClientService.Options.MyId)
+            {
+                return;
+            }
+
+            var added = new PlaybackItemProfileAudio(item.XamlRoot, new AudioWithOwner(source.ClientService, _userId, audio));
+
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+                if (items == null)
+                {
+                    return;
+                }
+
+                items.Insert(0, added);
+            }
+
+            // Paging is by position, so everything after it moved down one.
+            source.Skip(1);
+            PlaylistChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ProfileAudioRemoved(int fileId)
+        {
+            if (_source is not UserProfileAudioPlaybackSource source || source.UserId != source.ClientService.Options.MyId)
+            {
+                return;
+            }
+
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+                if (items == null)
+                {
+                    return;
+                }
+
+                var index = items.FindIndex(x => x.Document.Id == fileId);
+                if (index < 0)
+                {
+                    return;
+                }
+
+                items.RemoveAt(index);
+            }
+
+            // Removing from your own profile is not somebody taking a message back, so an
+            // audio playing when it leaves the list plays on.
+            source.Skip(-1);
+            PlaylistChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        #endregion
+
         // The list is read from the player's dispatcher and from whichever window drives
         // playback, so it is only ever mutated under the lock those reads already take.
         private void AddItems(IList<PlaybackItem> page, bool forward)
@@ -938,7 +1206,14 @@ namespace Telegram.Services
             if (_previous != null)
             {
                 _items = _previous.Items;
+                _source = _previous.Source;
                 _playbackSpeed = _previous.CurrentItem.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
+
+                if (_previous.Source != null)
+                {
+                    SubscribeUpdates(_previous.Source.ClientService);
+                }
+
                 CurrentItem = _previous.CurrentItem;
 
                 player.Rate = _playbackSpeed;
@@ -1043,6 +1318,7 @@ namespace Telegram.Services
             source.Seed(message.Id);
 
             _source = source;
+            SubscribeUpdates(message.ClientService);
 
             SetSource(null, item);
 
@@ -1183,6 +1459,8 @@ namespace Telegram.Services
             _source = null;
             _provisional = false;
             _type = type;
+
+            UnsubscribeUpdates();
         }
 
         private void OnStateChanged(AsyncMediaPlayer sender, AsyncMediaPlayerStateChangedEventArgs args)
@@ -1217,12 +1495,18 @@ namespace Telegram.Services
 
             public PlaybackState State { get; }
 
+            /// <summary>
+            /// Carried too, so the interrupted playlist can still grow once it comes back.
+            /// </summary>
+            public PlaybackSource Source { get; }
+
             public PlaybackPreviousState(PlaybackService service, AsyncMediaPlayer player)
             {
                 Items = service._items.ToList();
                 CurrentItem = service.CurrentItem;
                 Position = player.Position;
                 State = service.PlaybackState;
+                Source = service._source;
             }
         }
 
@@ -1292,6 +1576,16 @@ namespace Telegram.Services
         /// that isn't music.
         /// </summary>
         public Thumbnail AlbumCover { get; protected set; }
+
+        /// <summary>
+        /// The audio this item plays, or null for a voice or video note. Needed to move an
+        /// item into a profile audio playlist, which holds audio rather than messages.
+        /// </summary>
+        /// <remarks>
+        /// Not called Audio: PlaybackItemProfileAudio already has one of those, and it is an
+        /// AudioWithOwner rather than the audio itself.
+        /// </remarks>
+        public Audio Track { get; protected set; }
 
         public int Duration { get; protected set; }
 
@@ -1368,6 +1662,7 @@ namespace Telegram.Services
                 Duration = audio.Audio.Duration;
                 CanChangePlaybackRate = audio.Audio.Duration >= 10 * 60;
                 AlbumCover = SelectAlbumCover(audio.Audio.AlbumCoverThumbnail, audio.Audio.ExternalAlbumCovers);
+                Track = audio.Audio;
 
                 if (string.IsNullOrEmpty(audio.Audio.Title))
                 {
@@ -1430,6 +1725,7 @@ namespace Telegram.Services
                     Duration = previewAudio.Audio.Duration;
                     CanChangePlaybackRate = previewAudio.Audio.Duration >= 10 * 60;
                     AlbumCover = SelectAlbumCover(previewAudio.Audio.AlbumCoverThumbnail, previewAudio.Audio.ExternalAlbumCovers);
+                    Track = previewAudio.Audio;
 
                     if (string.IsNullOrEmpty(previewAudio.Audio.Title))
                     {
@@ -1494,6 +1790,7 @@ namespace Telegram.Services
                     Duration = blockAudio.Audio.Duration;
                     CanChangePlaybackRate = blockAudio.Audio.Duration >= 10 * 60;
                     AlbumCover = SelectAlbumCover(blockAudio.Audio.AlbumCoverThumbnail, blockAudio.Audio.ExternalAlbumCovers);
+                    Track = blockAudio.Audio;
 
                     if (string.IsNullOrEmpty(blockAudio.Audio.Title))
                     {
@@ -1560,6 +1857,7 @@ namespace Telegram.Services
             Duration = audio.Duration;
             CanChangePlaybackRate = audio.Duration >= 10 * 60;
             AlbumCover = SelectAlbumCover(audio.AlbumCoverThumbnail, audio.ExternalAlbumCovers);
+            Track = audio.Value;
 
             if (string.IsNullOrEmpty(audio.Title))
             {
