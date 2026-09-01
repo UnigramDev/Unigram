@@ -195,9 +195,19 @@ namespace Telegram.Views.Host
 
         private void OnTabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            if (sender.TabItems.Count > 1)
+            // On touch this arrives from inside the gesture engine's delayed pointer-up, on a nested
+            // dispatch, and mutating TabItems there fails the removal with E_INVALIDARG. Post it to the
+            // next turn instead - Low rather than Normal, because Dispatch runs the handler inline when
+            // it is already on the thread, which is the case to get out of.
+            var tab = args.Tab;
+            Window.Dispatcher.Dispatch(() => CloseTab(tab), Windows.System.DispatcherQueuePriority.Low);
+        }
+
+        private void CloseTab(TabViewItem tab)
+        {
+            if (Navigation.TabItems.Count > 1)
             {
-                sender.TabItems.Remove(args.Tab);
+                Navigation.TabItems.Remove(tab);
             }
             else
             {
