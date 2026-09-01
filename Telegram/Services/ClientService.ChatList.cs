@@ -14,101 +14,91 @@ namespace Telegram.Services
 {
     public partial class ClientService
     {
-        private readonly NewDictionary<ChatList, SortedSet<OrderedItem>> _chatList = new(ChatListEqualityComparer.Instance);
-        private readonly DefaultDictionary<ChatList, bool> _haveFullChatList = new(ChatListEqualityComparer.Instance);
+        // One per chat list, created on demand and kept for the session. Each owns the order of
+        // its own list; the chats themselves live in _chats and are shared between them.
+        private readonly Dictionary<ChatList, ChatListService> _chatLists = new(ChatListEqualityComparer.Instance);
 
-        private void SetChatPositions(Chat chat, Vector<ChatPosition> positions)
+        public ChatListService GetChatList(ChatList chatList)
         {
-            lock (_chatList)
+            lock (_chatLists)
             {
-                foreach (var position in chat.Positions)
+                if (!_chatLists.TryGetValue(chatList, out var service))
                 {
-                    _chatList[position.List].Remove(new OrderedItem(chat.Id, position.Order));
+                    _chatLists[chatList] = service = new ChatListService(this, chatList);
                 }
 
-                chat.Positions = positions;
+                return service;
+            }
+        }
 
-                // A pending delete has already taken it out of every list, and only the undo
-                // puts it back: an update in the meantime must not.
+        private void ClearChatLists()
+        {
+            lock (_chatLists)
+            {
+                foreach (var service in _chatLists.Values)
+                {
+                    service.Clear();
+                }
+
+                _pendingDeleteChats.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Routes a chat's new positions to the list each one belongs to, and tells the lists it
+        /// is leaving that it is gone.
+        /// </summary>
+        /// <remarks>
+        /// Called with the chat's own lock held, so the orders it hands out cannot be overtaken
+        /// by another update to the same chat.
+        /// </remarks>
+        private void SetChatPositions(Chat chat, Vector<ChatPosition> positions, bool lastMessage = false)
+        {
+            var previous = chat.Positions;
+            chat.Positions = positions;
+
+            // A pending delete has already taken it out of every list, and only the undo puts it
+            // back: an update in the meantime must not.
+            lock (_chatLists)
+            {
                 if (_pendingDeleteChats.ContainsKey(chat.Id))
                 {
                     return;
                 }
+            }
 
-                foreach (var position in chat.Positions)
+            // Walked rather than gathered into a set: a chat is in a handful of lists at most, and
+            // this runs on every position, last message and draft update in the account.
+            foreach (var position in previous)
+            {
+                if (!Contains(positions, position.List))
                 {
-                    if (position.Order != 0)
-                    {
-                        _chatList[position.List].Add(new OrderedItem(chat.Id, position.Order));
-                    }
+                    GetChatList(position.List).SetOrder(chat, 0, lastMessage);
                 }
             }
+
+            foreach (var position in positions)
+            {
+                GetChatList(position.List).SetOrder(chat, position.Order, lastMessage);
+            }
+        }
+
+        private static bool Contains(Vector<ChatPosition> positions, ChatList chatList)
+        {
+            for (int i = 0; i < positions.Count; i++)
+            {
+                if (ChatListEqualityComparer.Instance.Equals(positions[i].List, chatList))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit)
         {
-            return GetChatListAsyncImpl(chatList, offset, limit, false);
-        }
-
-        public async Task<Chats> GetChatListAsyncImpl(ChatList chatList, int offset, int limit, bool reentrancy)
-        {
-            var count = offset + limit;
-
-            // How many chats are still to be loaded, 0 when the cache can answer on its own.
-            // Decided under the lock, acted on outside it: awaiting is not allowed in there.
-            int missing;
-
-            lock (_chatList)
-            {
-                var sorted = _chatList[chatList];
-
-                var haveFullList = _haveFullChatList[chatList];
-
-                missing = count > sorted.Count && !haveFullList && !reentrancy
-                    ? count - sorted.Count
-                    : 0;
-
-                if (missing == 0)
-                {
-                    // Have enough chats in the chat list to answer request
-                    var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
-                    var pos = 0;
-
-                    using (var iter = sorted.GetEnumerator())
-                    {
-                        int max = Math.Min(count, sorted.Count);
-
-                        for (int i = 0; i < max; i++)
-                        {
-                            iter.MoveNext();
-
-                            if (i >= offset)
-                            {
-                                result[pos++] = iter.Current.Id;
-                            }
-                        }
-                    }
-
-                    haveFullList &= count >= sorted.Count;
-                    return new Chats(haveFullList ? -1 : 0, result);
-                }
-            }
-
-            var response = await SendAsync(new LoadChats(chatList, missing));
-            if (response is Error error)
-            {
-                if (error.Code == 404)
-                {
-                    _haveFullChatList[chatList] = true;
-                }
-                else
-                {
-                    return new Chats(0, Array.Empty<long>());
-                }
-            }
-
-            // Chats have already been received through updates, let's retry request
-            return await GetChatListAsyncImpl(chatList, offset, limit, true);
+            return GetChatList(chatList).GetChatsAsync(offset, limit);
         }
     }
 

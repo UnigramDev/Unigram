@@ -7,10 +7,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -22,9 +20,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
@@ -497,126 +493,185 @@ namespace Telegram.ViewModels
 
         public void SetChatList(ChatList chatList)
         {
-            _ = Items.ReloadAsync(chatList);
+            Items.Restart(chatList);
         }
 
-        public partial class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading
+        public partial class ItemsCollection : WindowedCollection<Chat, long, long, OrderChangedEventArgs<Chat>>
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
             private CancellationTokenSource _token = new();
-            private readonly HashSet<long> _chats = new();
 
             private readonly ChatListViewModel _viewModel;
 
             private ChatList _chatList;
 
-            private bool _hasMoreItems = true;
-
-            private long _lastChatId;
-            private long _lastOrder;
+            // The list this is a window over. Ordering comes from it rather than from the raw
+            // updates, so the order a chat is placed with is the one the model decided under
+            // its lock, not one read back from the chat afterwards.
+            private ChatListService _service;
 
             public ChatList ChatList => _chatList;
 
             public ItemsCollection(IClientService clientService, IEventAggregator aggregator, ChatListViewModel viewModel, ChatList chatList)
+                : base(viewModel.BeginOnUIThread)
             {
                 _clientService = clientService;
                 _aggregator = aggregator;
 
                 _viewModel = viewModel;
-                _chatList = chatList;
+
+                Attach(chatList);
 
                 _ = LoadMoreItemsAsync(0);
             }
 
-            public Task ReloadAsync(ChatList chatList)
+            public void Restart(ChatList chatList)
             {
                 _token?.Cancel();
                 _token = new CancellationTokenSource();
 
-                _aggregator.Unsubscribe(this);
-                _hasMoreItems = false;
+                Detach();
+                Attach(chatList);
 
-                _lastChatId = 0;
-                _lastOrder = 0;
 
-                _chatList = chatList;
+                // Re-arms, and abandons the load in flight so the one below is not coalesced
+                // into a load that was paging the list being replaced.
+                Restart();
 
-                _chats.Clear();
-                Clear();
-
-                return LoadMoreItemsAsync();
+                _ = LoadMoreItemsAsync(0);
             }
 
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return IncrementalLoading.Run(token => LoadMoreItemsAsync());
-            }
-
-            private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
             {
                 var token = _token;
                 var totalCount = 0u;
 
+                // The constructor starts the first load, so that the chat list is on its way
+                // before anything else at startup; yielding keeps its body out of there.
                 await Task.Yield();
 
-                var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
+                var response = await _service.GetChatsAsync(Count, 20);
                 if (response is Telegram.Td.Api.Chats chats && !token.IsCancellationRequested)
                 {
                     foreach (var chat in _clientService.GetChats(chats.ChatIds))
                     {
-                        var order = chat.GetOrder(_chatList);
-                        if (order != 0)
+                        // The order the list holds, not the one on the chat: an update can
+                        // have moved it since the page was decided.
+                        var order = _service.GetOrder(chat.Id);
+                        if (order == 0)
                         {
-                            // TODO: is this redundant?
-                            var next = NextIndexOf(chat, order);
-                            if (next >= 0)
-                            {
-                                if (_chats.Contains(chat.Id))
-                                {
-                                    Remove(chat);
-                                }
+                            continue;
+                        }
 
-                                _chats.Add(chat.Id);
-                                Insert(Math.Min(Count, next), chat);
+                        // An update can have inserted it already while the page was in
+                        // flight, and can have moved it since: place it where it belongs.
+                        var next = NextIndexOf(chat, chat.Id, order, out int prev);
+                        if (next == prev)
+                        {
+                            continue;
+                        }
 
-                                if (chat.Id == _viewModel.SelectedItem)
-                                {
-                                    _viewModel.Delegate?.SetSelectedItem(chat);
-                                }
+                        if (prev >= 0)
+                        {
+                            RemoveAt(prev);
+                        }
+                        else
+                        {
+                            totalCount++;
+                        }
 
-                                totalCount++;
-                            }
+                        SetOrder(chat.Id, order);
+                        Insert(Math.Min(Count, next), chat);
 
-                            _lastChatId = chat.Id;
-                            _lastOrder = order;
+                        if (chat.Id == _viewModel.SelectedItem)
+                        {
+                            _viewModel.Delegate?.SetSelectedItem(chat);
                         }
                     }
 
                     IsEmpty = Count == 0;
 
-                    _hasMoreItems = chats.TotalCount >= 0;
+                    // Before Subscribe, so the first update drains against a settled window.
+                    UpdateWindow(chats.TotalCount >= 0);
+
                     Subscribe();
 
                     _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+
+                    // The cache wrapper reuses Chats and answers -1 in TotalCount once it holds
+                    // the whole list, so this is the has-more test rather than a count.
+                    return new IncrementalLoadResult(totalCount, chats.TotalCount >= 0);
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                // Cancelled, or an error: a reload is already on its way, and the version it
+                // bumped discards whatever this returns.
+                return default;
+            }
+
+            private void Attach(ChatList chatList)
+            {
+                _chatList = chatList;
+                _service = _clientService.GetChatList(chatList);
             }
 
             private void Subscribe()
             {
-                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle)
-                    .Subscribe<UpdateChatDraftMessage>(Handle)
-                    .Subscribe<UpdateChatLastMessage>(Handle)
-                    .Subscribe<UpdateChatPosition>(Handle);
+                // Idempotent: every load calls it, and the first one is the one that takes.
+                _service.Changed -= OnChanged;
+                _service.Changed += OnChanged;
+
+                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle);
             }
 
-            public bool HasMoreItems => _hasMoreItems;
+            private void Detach()
+            {
+                _service.Changed -= OnChanged;
+
+                _aggregator.Unsubscribe(this);
+            }
+
+            private void OnChanged(OrderedSourceService<Chat> sender, OrderChangedEventArgs<Chat> args)
+            {
+                Enqueue(args);
+            }
+
+            protected override long GetKey(Chat item)
+            {
+                return item.Id;
+            }
+
+            protected override Chat GetItem(OrderChangedEventArgs<Chat> args)
+            {
+                return args.Item;
+            }
+
+            protected override long GetOrder(OrderChangedEventArgs<Chat> args)
+            {
+                return args.Order;
+            }
+
+            protected override bool IsPlaced(long order)
+            {
+                return order != 0;
+            }
+
+            protected override int Compare(long order, long chatId, long otherOrder, long otherChatId)
+            {
+                if (order != otherOrder)
+                {
+                    return order > otherOrder ? 1 : -1;
+                }
+
+                return chatId.CompareTo(otherChatId);
+            }
+
+            public override void Dispose()
+            {
+                base.Dispose();
+                Detach();
+            }
 
             #region Handle
 
@@ -624,148 +679,71 @@ namespace Telegram.ViewModels
             {
                 if (update.AuthorizationState is AuthorizationStateReady)
                 {
-                    _viewModel.BeginOnUIThread(() => _ = ReloadAsync(_chatList));
+                    _viewModel.BeginOnUIThread(() => Restart(_chatList));
                 }
             }
 
-            public void Handle(UpdateChatPosition update)
+            /// <summary>
+            /// Places a chat the caller already knows the order of, from the dispatcher.
+            /// </summary>
+            public void ApplyOrder(long chatId, long order)
             {
-                if (update.Position.List.AreTheSame(_chatList))
-                {
-                    Handle(update.ChatId, update.Position.Order);
-                }
-
-                // Can't be else otherwise cell won't update while archive is open
-                if (update.Position.List is ChatListArchive)
-                {
-                    _viewModel.Delegate?.UpdateChatListArchive();
-                }
-            }
-
-            public void Handle(UpdateChatLastMessage update)
-            {
-                Handle(update.ChatId, update.Positions, true);
-            }
-
-            public void Handle(UpdateChatDraftMessage update)
-            {
-                Handle(update.ChatId, update.Positions, true);
-            }
-
-            public void Handle(long chatId, Vector<ChatPosition> positions, bool lastMessage = false)
-            {
-                var chat = GetChat(chatId);
-                var order = 0L;
-
-                for (int i = 0; i < positions.Count; i++)
-                {
-                    var position = positions[i];
-                    if (position.List.AreTheSame(_chatList))
-                    {
-                        order = position.Order;
-                    }
-
-                    // Can't be else otherwise cell won't update while archive is open
-                    if (position.List is ChatListArchive)
-                    {
-                        _viewModel.Delegate?.UpdateChatListArchive();
-                    }
-                }
-
-                Handle(chat, order, lastMessage);
-            }
-
-            public void Handle(long chatId, long order)
-            {
-                var chat = GetChat(chatId);
+                var chat = _clientService.GetChat(chatId);
                 if (chat != null)
                 {
-                    Handle(chat, order, false);
+                    Place(new OrderChangedEventArgs<Chat>(chat, order, false), chat, order, HasMoreItems);
                 }
             }
 
-            private void Handle(Chat chat, long order, bool lastMessage)
+            protected override void OnPlaced(OrderChangedEventArgs<Chat> args, int previousIndex, int index)
             {
-                //var chat = GetChat(chatId);
-                if (chat != null /*&& _chatList.ListEquals(chat.ChatList)*/)
+                RaiseMoved(previousIndex, index);
+
+                if (args.Item.Id == _viewModel.SelectedItem)
                 {
-                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(chat, order, lastMessage));
+                    _viewModel.Delegate?.SetSelectedItem(args.Item);
                 }
+
+                if (_viewModel.SelectedItems.Contains(args.Item))
+                {
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                }
+
+                IsEmpty = Count == 0;
             }
 
-            private void UpdateChatOrder(Chat chat, long order, bool lastMessage)
+            protected override void OnRemoved(OrderChangedEventArgs<Chat> args, int index)
             {
-                if (order > 0 && (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId)))
+                RaiseMoved(index, -1);
+
+                if (_viewModel.SelectedItems.Contains(args.Item))
                 {
-                    var next = NextIndexOf(chat, order);
-                    if (next >= 0)
-                    {
-                        var oldIndex = -1;
-
-                        if (_chats.Contains(chat.Id))
-                        {
-                            oldIndex = IndexOf(chat);
-
-                            if (oldIndex != -1)
-                            {
-                                RemoveAt(oldIndex);
-                            }
-                        }
-                        else
-                        {
-                            _chats.Add(chat.Id);
-                        }
-
-                        var newIndex = Math.Min(Count, next);
-                        Insert(newIndex, chat);
-
-                        RaiseMoved(oldIndex, newIndex);
-
-                        if (next == Count - 1)
-                        {
-                            _lastChatId = chat.Id;
-                            _lastOrder = order;
-                        }
-
-                        if (chat.Id == _viewModel.SelectedItem)
-                        {
-                            _viewModel.Delegate?.SetSelectedItem(chat);
-                        }
-                        if (_viewModel.SelectedItems.Contains(chat))
-                        {
-                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                        }
-
-                        IsEmpty = Count == 0;
-                    }
-                    else if (lastMessage)
-                    {
-                        _viewModel.Delegate?.UpdateChatLastMessage(chat);
-                    }
+                    _viewModel.SelectedItems.Remove(args.Item);
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                 }
-                else if (_chats.Contains(chat.Id))
+
+                IsEmpty = Count == 0;
+            }
+
+            // The newer order wins, but a last message anywhere in the batch still has to
+            // redraw the row: the update that placed it last may have carried none.
+            protected override OrderChangedEventArgs<Chat> Merge(OrderChangedEventArgs<Chat> previous, OrderChangedEventArgs<Chat> next)
+            {
+                return next.LastMessage || !previous.LastMessage
+                    ? next
+                    : new OrderChangedEventArgs<Chat>(next.Item, next.Order, true);
+            }
+
+            protected override void OnUnchanged(OrderChangedEventArgs<Chat> args, int index)
+            {
+                if (args.LastMessage)
                 {
-                    var oldIndex = IndexOf(chat);
-                    RaiseMoved(oldIndex, -1);
-
-                    _chats.Remove(chat.Id);
-                    RemoveAt(oldIndex);
-
-                    if (_viewModel.SelectedItems.Contains(chat))
-                    {
-                        _viewModel.SelectedItems.Remove(chat);
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                    }
-
-                    IsEmpty = Count == 0;
-
-                    //if (!_hasMoreItems)
-                    //{
-                    //    await LoadMoreItemsAsync(0);
-                    //}
+                    _viewModel.Delegate?.UpdateChatLastMessage(args.Item);
                 }
             }
 
+            // Reused rather than allocated per move: this fires on every reorder, so a handler
+            // must read it and not retain it.
             private ChatListMovedEventArgs _moved;
             public event EventHandler<ChatListMovedEventArgs> Moved;
 
@@ -778,49 +756,6 @@ namespace Telegram.ViewModels
                 Moved?.Invoke(this, _moved);
             }
 
-            private int NextIndexOf(Chat chat, long order)
-            {
-                var prev = -1;
-                var next = 0;
-
-                for (int i = 0; i < Count; i++)
-                {
-                    var item = this[i];
-                    if (item.Id == chat.Id)
-                    {
-                        prev = i;
-                        continue;
-                    }
-
-                    var itemOrder = item.GetOrder(_chatList);
-
-                    if (order > itemOrder || order == itemOrder && chat.Id >= item.Id)
-                    {
-                        return next == prev ? -1 : next;
-                    }
-
-                    next++;
-                }
-
-                return Count;
-            }
-
-            private Chat GetChat(long chatId)
-            {
-                //if (_viewModels.ContainsKey(chatId))
-                //{
-                //    return _viewModels[chatId];
-                //}
-                //else
-                //{
-                //    var chat = ClientService.GetChat(chatId);
-                //    var item = _viewModels[chatId] = new ChatViewModel(ClientService, chat);
-
-                //    return item;
-                //}
-
-                return _clientService.GetChat(chatId);
-            }
 
             #endregion
 

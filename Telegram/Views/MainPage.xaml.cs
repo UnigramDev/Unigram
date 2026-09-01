@@ -3884,7 +3884,7 @@ namespace Telegram.Views
                     var real = chat.GetPosition(items.ChatList);
                     if (real != null)
                     {
-                        items.Handle(chat.Id, real.Order);
+                        items.ApplyOrder(chat.Id, real.Order);
                     }
                 }
             }

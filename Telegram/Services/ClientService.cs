@@ -57,6 +57,11 @@ namespace Telegram.Services
         Task<Object> GetCustomEmojiStickerSets(Vector<long> customEmojiIds);
         Task<bool> HasPrivacySettingsRuleAsync<T>(UserPrivacySetting setting) where T : UserPrivacySettingRule;
 
+        /// <summary>
+        /// The ordered model for one chat list, created on first use and kept for the session.
+        /// </summary>
+        ChatListService GetChatList(ChatList chatList);
+
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
 
         void LoadFullInfo(Chat chat);
@@ -855,15 +860,10 @@ namespace Telegram.Services
 
             _chats.Clear();
 
-            // Clear() runs on the TDLib thread while the UI may have a list load in flight,
-            // so everything below takes the same lock its readers do. One after another and
-            // never nested, so no ordering is introduced.
-            lock (_chatList)
-            {
-                _chatList.Clear();
-                _haveFullChatList.Clear();
-                _pendingDeleteChats.Clear();
-            }
+            // Clear() runs on the TDLib thread while the UI may have a list load in flight, so
+            // this takes the same locks its readers do. The services are kept and emptied, not
+            // dropped: a view may already be holding one.
+            ClearChatLists();
 
             _chatActions.Clear();
             _topicActions.Clear();
@@ -3493,7 +3493,7 @@ namespace Telegram.Services
                             lock (value)
                             {
                                 UpdateChatLastMessage(value, updateChatLastMessage.LastMessage);
-                                SetChatPositions(value, updateChatLastMessage.Positions);
+                                SetChatPositions(value, updateChatLastMessage.Positions, true);
                             }
                         }
 
@@ -3772,7 +3772,7 @@ namespace Telegram.Services
                             lock (value)
                             {
                                 value.DraftMessage = updateChatDraftMessage.DraftMessage;
-                                SetChatPositions(value, updateChatDraftMessage.Positions);
+                                SetChatPositions(value, updateChatDraftMessage.Positions, true);
                             }
                         }
                         break;

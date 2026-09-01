@@ -40,7 +40,7 @@ namespace Telegram.Services
 
     public partial class ClientService
     {
-        // Guarded by the same lock as _chatList, because adding one takes the chat out of it.
+        // Guarded by _chatLists, the lock the per-list services are reached through.
         private readonly Dictionary<long, PendingDeleteChat> _pendingDeleteChats = new();
 
         private readonly record struct PendingDeleteChat(bool RemoveFromChatList, bool Revoke, bool BlockUser);
@@ -54,21 +54,21 @@ namespace Telegram.Services
 
             Vector<ChatPosition> positions;
 
-            // chat then _chatList, the order the update handler takes them in.
+            // chat then _chatLists, the order the update handler takes them in.
             lock (chat)
             {
                 positions = chat.Positions;
 
-                lock (_chatList)
+                lock (_chatLists)
                 {
                     _pendingDeleteChats[chatId] = new PendingDeleteChat(removeFromChatList, revoke, blockUser);
+                }
 
-                    if (removeFromChatList)
+                if (removeFromChatList)
+                {
+                    foreach (var position in positions)
                     {
-                        foreach (var position in positions)
-                        {
-                            _chatList[position.List].Remove(new OrderedItem(chatId, position.Order));
-                        }
+                        GetChatList(position.List).SetOrder(chat, 0, false);
                     }
                 }
             }
@@ -95,7 +95,7 @@ namespace Telegram.Services
                 // including any move that landed while the delete was pending.
                 positions = chat.Positions;
 
-                lock (_chatList)
+                lock (_chatLists)
                 {
                     if (!_pendingDeleteChats.TryGetValue(chatId, out pending))
                     {
@@ -103,16 +103,13 @@ namespace Telegram.Services
                     }
 
                     _pendingDeleteChats.Remove(chatId);
+                }
 
-                    if (pending.RemoveFromChatList)
+                if (pending.RemoveFromChatList)
+                {
+                    foreach (var position in positions)
                     {
-                        foreach (var position in positions)
-                        {
-                            if (position.Order != 0)
-                            {
-                                _chatList[position.List].Add(new OrderedItem(chatId, position.Order));
-                            }
-                        }
+                        GetChatList(position.List).SetOrder(chat, position.Order, false);
                     }
                 }
             }
@@ -132,15 +129,37 @@ namespace Telegram.Services
 
             PendingDeleteChat pending;
 
-            lock (_chatList)
+            lock (_chatLists)
             {
                 if (!_pendingDeleteChats.TryGetValue(chatId, out pending))
                 {
                     return;
                 }
-
-                _pendingDeleteChats.Remove(chatId);
             }
+
+            // Held until the requests are through, and dropped in the finally below. While
+            // there is no entry there is no suppression in SetChatPositions either, so a
+            // position update landing in between would put the chat back in the list for the
+            // moment it takes the server to confirm what it is being told to do.
+            //
+            // The caller commits a chat once: a second commit for the same one while this is
+            // in flight would send its requests twice.
+            try
+            {
+                await CommitAsync(chat, pending);
+            }
+            finally
+            {
+                lock (_chatLists)
+                {
+                    _pendingDeleteChats.Remove(chatId);
+                }
+            }
+        }
+
+        private async Task CommitAsync(Chat chat, PendingDeleteChat pending)
+        {
+            var chatId = chat.Id;
 
             if (!pending.RemoveFromChatList)
             {
