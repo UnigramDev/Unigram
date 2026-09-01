@@ -96,6 +96,8 @@ namespace Telegram.Controls
 
         private void LoadAtIndex(Chat chat, int index, bool unload)
         {
+            Logger.Info(string.Format("index: {0}, unload: {1}", index, unload));
+
             if (index == 0)
             {
                 if (unload)
@@ -339,6 +341,8 @@ namespace Telegram.Controls
 
         public void Deactivate()
         {
+            Logger.Info();
+
             for (int i = 0; i < 3; i++)
             {
                 UnloadAtIndex(i);
