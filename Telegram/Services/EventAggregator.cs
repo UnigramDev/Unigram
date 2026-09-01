@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using Telegram.Common;
 
 namespace Telegram.Services
 {
@@ -186,9 +186,9 @@ namespace Telegram.Services
                     action(message);
                     return true;
                 }
-                catch (InvalidComObjectException)
+                catch (Exception ex) when (ex.IsInvalidComObject())
                 {
-                    // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                    // The subscriber is gone, so drop it rather than throwing on every publish.
                     Unsubscribe(subscriber);
                     return false;
                 }

@@ -10,7 +10,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -240,10 +239,9 @@ namespace Telegram.Common
                 dispatcher = DispatcherOf(subscriber);
                 return true;
             }
-            // ObjectDisposedException from CsWinRT, InvalidComObjectException from .NET Native.
             // Narrow enough to be sure of what it means: the only call in there is one projected
             // property read, so nothing else can be the thing that was disposed.
-            catch (Exception ex) when (ex is ObjectDisposedException or InvalidComObjectException)
+            catch (Exception ex) when (ex.IsInvalidComObject())
             {
                 dispatcher = null;
                 return false;
@@ -646,7 +644,7 @@ namespace Telegram.Common
                     handler(file);
                     return true;
                 }
-                catch (InvalidComObjectException)
+                catch (Exception ex) when (ex.IsInvalidComObject())
                 {
                     // The subscriber went with the window it belonged to. Nothing will ever reach
                     // it again, so drop it rather than throwing on every update for the file.

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
@@ -238,6 +239,30 @@ namespace Telegram.Common
 
             content = default;
             return false;
+        }
+
+        /// <summary>
+        /// The subscriber, control or other projected object this came out of is gone, and calling
+        /// it again will only throw again.
+        ///
+        /// One signal on .NET Native - the RCW was separated from its object - and three on
+        /// CsWinRT, which is why this is asked here rather than in a catch filter that only ever
+        /// covers whichever runtime the author had in mind.
+        ///
+        /// Two neighbours are deliberately not here. RPC_E_WRONG_THREAD says the object is alive
+        /// and was called from the wrong thread, and E_NOINTERFACE out of a QueryInterface is as
+        /// likely to be a missing CsWinRT manifest entry as a dead peer - both are bugs to fix,
+        /// and treating either as "gone" would drop the subscriber that would have reported it.
+        /// </summary>
+        public static bool IsInvalidComObject(this Exception ex)
+        {
+            const int RPC_E_DISCONNECTED = unchecked((int)0x80010108);
+            const int CO_E_OBJNOTCONNECTED = unchecked((int)0x800401FD);
+            const int RO_E_CLOSED = unchecked((int)0x80000013);
+
+            return ex is InvalidComObjectException
+                || ex is ObjectDisposedException
+                || (ex is COMException com && com.HResult is RPC_E_DISCONNECTED or CO_E_OBJNOTCONNECTED or RO_E_CLOSED);
         }
     }
 }
