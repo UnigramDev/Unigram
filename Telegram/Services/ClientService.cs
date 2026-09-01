@@ -453,6 +453,8 @@ namespace Telegram.Services
             _aggregator = aggregator;
             _downloadFolder = downloadFolder;
 
+            _savedMessages = new SavedMessagesTopicService(this);
+
             Initialize(online);
         }
 
@@ -901,13 +903,7 @@ namespace Telegram.Services
                 _haveFullStoryList.Clear();
             }
 
-            lock (_savedMessages)
-            {
-                _haveFullSavedMessages = false;
-                _savedMessages.Clear();
-            }
-
-            _savedMessagesTopics.Clear();
+            _savedMessages.Clear();
 
             lock (_savedMessagesTags)
             {
@@ -3536,33 +3532,9 @@ namespace Telegram.Services
                     }
 
                 case UpdateSavedMessagesTopic updateSavedMessagesTopic:
-                    {
-                        if (_savedMessagesTopics.TryGetValue(updateSavedMessagesTopic.Topic.Id, out SavedMessagesTopic topic))
-                        {
-                            lock (topic)
-                            {
-                                SetSavedMessagesTopicOrder(topic, updateSavedMessagesTopic.Topic.Order);
-                            }
-
-                            topic.DraftMessage = updateSavedMessagesTopic.Topic.DraftMessage;
-                            topic.LastMessage = updateSavedMessagesTopic.Topic.LastMessage;
-                            topic.IsPinned = updateSavedMessagesTopic.Topic.IsPinned;
-                            topic.Order = updateSavedMessagesTopic.Topic.Order;
-
-                            updateSavedMessagesTopic.Topic = topic;
-                        }
-                        else
-                        {
-                            lock (updateSavedMessagesTopic.Topic)
-                            {
-                                SetSavedMessagesTopicOrder(updateSavedMessagesTopic.Topic, updateSavedMessagesTopic.Topic.Order);
-                            }
-
-                            _savedMessagesTopics[updateSavedMessagesTopic.Topic.Id] = updateSavedMessagesTopic.Topic;
-                        }
-
-                        break;
-                    }
+                    // Answers the topic already held, which is the one every view is showing.
+                    updateSavedMessagesTopic.Topic = _savedMessages.UpdateSavedMessagesTopic(updateSavedMessagesTopic.Topic);
+                    break;
 
                 case UpdateChatAddedToList updateChatAddedToList:
                     {

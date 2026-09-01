@@ -18,21 +18,16 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Profile
 {
-    public partial class ProfileSavedChatsTabViewModel : ViewModelBase, IHandle, IIncrementalCollectionOwner, IDelegable<ISavedMessagesChatsDelegate>
+    public partial class ProfileSavedChatsTabViewModel : ViewModelBase, IHandle, IDelegable<ISavedMessagesChatsDelegate>
     {
         private readonly HashSet<long> _pinnedTopics = new();
-        private readonly HashSet<long> _topics = new();
-
-        private readonly DisposableMutex _loadMoreLock = new();
-        private long _lastTopicId;
-        private long _lastOrder;
 
         public ISavedMessagesChatsDelegate Delegate { get; set; }
 
         public ProfileSavedChatsTabViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new IncrementalCollection<SavedMessagesTopic>(this);
+            Items = new SavedMessagesTopicsCollection(this);
             Items.TotalCount = clientService.SavedMessagesTopicCount;
         }
 
@@ -46,139 +41,24 @@ namespace Telegram.ViewModels.Profile
             BeginOnUIThread(() => Items.TotalCount = update.TopicCount);
         }
 
-        private void Handle(UpdateSavedMessagesTopic update)
-        {
-            BeginOnUIThread(() => UpdateChatOrder(update.Topic, update.Topic.Order, true));
-        }
-
-        public IncrementalCollection<SavedMessagesTopic> Items { get; private set; }
-
-        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
-        {
-            Logger.Info();
-
-            using var guard = await _loadMoreLock.WaitAsync();
-
-            var totalCount = 0u;
-            var hasMoreItems = false;
-
-            var response = await ClientService.GetSavedMessagesTopicsAsync(Items.Count, 20);
-            if (response is Topics topics)
-            {
-                foreach (var topic in ClientService.GetSavedMessagesTopics(topics.TopicIds))
-                {
-                    if (topic.IsPinned)
-                    {
-                        _pinnedTopics.Add(topic.Id);
-                    }
-                    else
-                    {
-                        _pinnedTopics.Remove(topic.Id);
-                    }
-
-                    var order = topic.Order;
-                    if (order != 0)
-                    {
-                        // TODO: is this redundant?
-                        var next = NextIndexOf(topic, order);
-                        if (next >= 0)
-                        {
-                            if (_topics.Contains(topic.Id))
-                            {
-                                Items.Remove(topic);
-                            }
-
-                            _topics.Add(topic.Id);
-                            Items.Insert(Math.Min(Items.Count, next), topic);
-
-                            totalCount++;
-                        }
-
-                        _lastTopicId = topic.Id;
-                        _lastOrder = order;
-                    }
-                }
-
-                hasMoreItems = topics.TotalCount >= 0;
-                Aggregator.Subscribe<UpdateSavedMessagesTopic>(this, Handle);
-            }
-
-            return new IncrementalLoadResult(totalCount, hasMoreItems);
-        }
-
-        private void UpdateChatOrder(SavedMessagesTopic topic, long order, bool lastMessage)
-        {
-            if (order > 0 && (order > _lastOrder || (order == _lastOrder && topic.Id >= _lastTopicId)))
-            {
-                if (topic.IsPinned)
-                {
-                    _pinnedTopics.Add(topic.Id);
-                }
-                else
-                {
-                    _pinnedTopics.Remove(topic.Id);
-                }
-
-                var next = NextIndexOf(topic, order);
-                if (next >= 0)
-                {
-                    if (_topics.Contains(topic.Id))
-                    {
-                        Items.Remove(topic);
-                    }
-
-                    _topics.Add(topic.Id);
-                    Items.Insert(Math.Min(Items.Count, next), topic);
-
-                    if (next == Items.Count - 1)
-                    {
-                        _lastTopicId = topic.Id;
-                        _lastOrder = order;
-                    }
-                }
-                else if (lastMessage)
-                {
-                    //_viewModel.Delegate?.UpdateChatLastMessage(topic);
-                    Delegate?.UpdateSavedMessagesTopicLastMessage(topic);
-                }
-            }
-            else if (_topics.Contains(topic.Id))
-            {
-                _topics.Remove(topic.Id);
-                Items.Remove(topic);
-            }
-        }
-
-        private int NextIndexOf(SavedMessagesTopic topic, long order)
-        {
-            var prev = -1;
-            var next = 0;
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                var item = Items[i];
-                if (item.Id == topic.Id)
-                {
-                    prev = i;
-                    continue;
-                }
-
-                if (order > item.Order || order == item.Order && topic.Id >= item.Id)
-                {
-                    return next == prev ? -1 : next;
-                }
-
-                next++;
-            }
-
-            return Items.Count;
-        }
+        public SavedMessagesTopicsCollection Items { get; private set; }
 
         public bool IsPinned(SavedMessagesTopic topic)
         {
             return _pinnedTopics.Contains(topic.Id);
         }
 
+        private void SetPinned(SavedMessagesTopic topic)
+        {
+            if (topic.IsPinned)
+            {
+                _pinnedTopics.Add(topic.Id);
+            }
+            else
+            {
+                _pinnedTopics.Remove(topic.Id);
+            }
+        }
 
         public void PinTopic(SavedMessagesTopic topic)
         {
@@ -223,6 +103,140 @@ namespace Telegram.ViewModels.Profile
             {
                 Items.Remove(topic);
                 ClientService.Send(new DeleteSavedMessagesTopicHistory(topic.Id));
+            }
+        }
+
+        public partial class SavedMessagesTopicsCollection : WindowedCollection<SavedMessagesTopic, long, long, OrderChangedEventArgs<SavedMessagesTopic>>
+        {
+            private readonly ProfileSavedChatsTabViewModel _viewModel;
+
+            // The list this is a window over. Ordering comes from it rather than from the raw
+            // updates, so the order a topic is placed with is the one the model decided under
+            // its lock, not one read back from the topic afterwards.
+            private readonly SavedMessagesTopicService _service;
+
+            public SavedMessagesTopicsCollection(ProfileSavedChatsTabViewModel viewModel)
+                : base(viewModel.BeginOnUIThread)
+            {
+                _viewModel = viewModel;
+
+                _service = viewModel.ClientService.SavedMessagesTopics;
+            }
+
+            // Called by every page, and the first one is the one that takes. Nothing is
+            // watched until then: with no page in, an update for a topic sorting far down the
+            // list would become the whole window - which is the offset the next page asks for.
+            private void Subscribe()
+            {
+                _service.Changed -= OnChanged;
+                _service.Changed += OnChanged;
+            }
+
+            public override void Dispose()
+            {
+                base.Dispose();
+
+                _service.Changed -= OnChanged;
+            }
+
+            private void OnChanged(OrderedSourceService<SavedMessagesTopic> sender, OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                Enqueue(args);
+            }
+
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
+            {
+                Logger.Info();
+
+                var totalCount = 0u;
+
+                var response = await _service.GetSavedMessagesTopicsAsync(Count, 20);
+                if (response is Topics topics)
+                {
+                    foreach (var topic in _service.GetTopics(topics.TopicIds))
+                    {
+                        _viewModel.SetPinned(topic);
+
+                        var order = topic.Order;
+                        if (order == 0)
+                        {
+                            continue;
+                        }
+
+                        // An update can have inserted it already while the page was in
+                        // flight, and can have moved it since: place it where it belongs.
+                        var next = NextIndexOf(topic, topic.Id, order, out int prev);
+                        if (next == prev)
+                        {
+                            continue;
+                        }
+
+                        if (prev >= 0)
+                        {
+                            RemoveAt(prev);
+                        }
+                        else
+                        {
+                            totalCount++;
+                        }
+
+                        SetOrder(topic.Id, order);
+                        Insert(Math.Min(Count, next), topic);
+                    }
+
+                    // Before Subscribe, so the first update drains against a settled window.
+                    UpdateWindow(topics.TotalCount >= 0);
+
+                    Subscribe();
+
+                    // The cache wrapper reuses Topics and answers -1 in TotalCount once it
+                    // holds the whole list, so this is the has-more test, not a count.
+                    return new IncrementalLoadResult(totalCount, topics.TotalCount >= 0);
+                }
+
+                return default;
+            }
+
+            protected override long GetKey(SavedMessagesTopic item)
+            {
+                return item.Id;
+            }
+
+            protected override SavedMessagesTopic GetItem(OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                return args.Item;
+            }
+
+            protected override long GetOrder(OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                return args.Order;
+            }
+
+            protected override bool IsPlaced(long order)
+            {
+                return order != 0;
+            }
+
+            protected override int Compare(long order, long topicId, long otherOrder, long otherTopicId)
+            {
+                if (order != otherOrder)
+                {
+                    return order > otherOrder ? 1 : -1;
+                }
+
+                return topicId.CompareTo(otherTopicId);
+            }
+
+            protected override void OnApplied(OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                // Whether or not it moved a row, and whether or not it is in the window: the
+                // pin limit counts every topic this list knows about.
+                _viewModel.SetPinned(args.Item);
+            }
+
+            protected override void OnUnchanged(OrderChangedEventArgs<SavedMessagesTopic> args, int index)
+            {
+                _viewModel.Delegate?.UpdateSavedMessagesTopicLastMessage(args.Item);
             }
         }
     }
