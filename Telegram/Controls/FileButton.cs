@@ -119,13 +119,14 @@ namespace Telegram.Controls
             get => _progress;
             set
             {
+                if (_state is MessageContentState.Downloading or MessageContentState.Uploading)
+                {
+                    value = Math.Clamp(value, 0.05, 1);
+                }
+
                 if (_shouldEnqueueProgress || ProgressBar == null || !IsConnected)
                 {
                     _enqueuedProgress = value;
-                }
-                else if (_state is MessageContentState.Downloading or MessageContentState.Uploading)
-                {
-                    ProgressBar.Value = Math.Max(0.05, value);
                 }
                 else
                 {
