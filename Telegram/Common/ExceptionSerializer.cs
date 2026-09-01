@@ -628,6 +628,16 @@ namespace Telegram.Common
             return false;
         }
 
+        /// <summary>
+        /// Maps a localised system sentence onto the English one the same fault produces.
+        /// </summary>
+        /// <remarks>
+        /// The English target is never invented: it comes from an English report for the same
+        /// fault, or from the canonical set already here. A plausible translation merges the group
+        /// under text Windows never emits, and nothing afterwards distinguishes it from a real one.
+        /// Sentences still waiting for an English counterpart are parked in
+        /// notes/untranslated-error-messages.md rather than guessed at.
+        /// </remarks>
         private static string TranslateText(string text)
         {
             switch (text)
