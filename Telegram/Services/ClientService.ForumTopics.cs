@@ -17,7 +17,7 @@ namespace Telegram.Services
     {
         void SetPinnedForumTopics(long chatId, Vector<int> forumTopicIds);
 
-        Task<ForumTopics2> GetForumTopicsAsync(long chatId, int offset, int limit);
+        ForumTopicService GetForumTopicList(long chatId);
 
         bool TryGetForumTopic(long chatId, int id, out ForumTopic topic);
         bool TryGetForumTopic(long chatId, MessageTopic messageTopic, out ForumTopic topic);
@@ -40,7 +40,10 @@ namespace Telegram.Services
             }
         }
 
-        public Task<ForumTopics2> GetForumTopicsAsync(long chatId, int offset, int limit)
+        /// <summary>
+        /// The topic list of one forum, created the first time it is asked for.
+        /// </summary>
+        public ForumTopicService GetForumTopicList(long chatId)
         {
             _forums.TryGetValue(chatId, out ForumTopicService manager);
 
@@ -50,7 +53,7 @@ namespace Telegram.Services
                 _forums[chatId] = manager;
             }
 
-            return manager.GetForumTopicsAsync(offset, limit);
+            return manager;
         }
 
         public ForumTopic GetForumTopic(long chatId, int id)

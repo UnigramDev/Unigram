@@ -13,7 +13,10 @@ using Telegram.Td.Api;
 
 namespace Telegram.Services
 {
-    public partial class DirectMessagesChatTopicService
+    /// <summary>
+    /// Every topic of one direct messages chat, in order.
+    /// </summary>
+    public partial class DirectMessagesChatTopicService : OrderedSourceService<DirectMessagesChatTopic>
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
@@ -21,9 +24,6 @@ namespace Telegram.Services
         private readonly long _chatId;
 
         private readonly ReaderWriterDictionary<long, DirectMessagesChatTopic> _topics = new(100);
-
-        private readonly SortedSet<OrderedItem> _order = new();
-        private bool _haveFullList;
 
         public DirectMessagesChatTopicService(IClientService clientService, IEventAggregator aggregator, long chatId)
         {
@@ -37,6 +37,10 @@ namespace Telegram.Services
         {
             if (_topics.TryGetValue(newTopic.Id, out DirectMessagesChatTopic topic))
             {
+                // Read before the assignment below: the row shows the last message, so a new
+                // one has to redraw it even when the topic did not move.
+                var lastMessage = topic.LastMessage?.Id != newTopic.LastMessage?.Id;
+
                 topic.LastMessage = newTopic.LastMessage;
                 topic.IsMarkedAsUnread = newTopic.IsMarkedAsUnread;
 
@@ -53,9 +57,11 @@ namespace Telegram.Services
                     _aggregator.Publish(new UpdateDirectMessagesChatDraftMessage(_chatId, topic.Id, topic.DraftMessage = newTopic.DraftMessage));
                 }
 
-                if (topic.Order != newTopic.Order)
+                // An update carrying neither is one of the counts, which the row draws from
+                // its own update: reporting it would rebuild the cell for nothing.
+                if (lastMessage || topic.Order != newTopic.Order)
                 {
-                    UpdateTopicOrder(topic, newTopic.Order, true);
+                    UpdateTopicOrder(topic, newTopic.Order, lastMessage);
                 }
             }
             else
@@ -84,24 +90,15 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateTopicOrder(DirectMessagesChatTopic topic, long order, bool publish)
+        private void UpdateTopicOrder(DirectMessagesChatTopic topic, long order, bool lastMessage)
         {
-            lock (_order)
+            lock (SyncRoot)
             {
-                _order.Remove(new OrderedItem(topic.Id, topic.Order));
-
                 topic.Order = order;
-
-                if (order != 0)
-                {
-                    _order.Add(new OrderedItem(topic.Id, order));
-                }
+                SetOrder(topic.Id, order);
             }
 
-            if (publish)
-            {
-                _aggregator.Publish(new UpdateDirectMessagesChatTopicLastMessage(_chatId, topic));
-            }
+            RaiseChanged(topic, order, lastMessage);
         }
 
         public IEnumerable<DirectMessagesChatTopic> GetTopics(IEnumerable<long> ids)
@@ -135,119 +132,27 @@ namespace Telegram.Services
             return null;
         }
 
-        public Task<Topics> GetDirectMessagesChatTopicsAsync(int offset, int limit)
+        public async Task<Topics> GetDirectMessagesChatTopicsAsync(int offset, int limit)
         {
-            return GetDirectMessagesChatTopicsAsyncImpl(offset, limit, false);
+            var page = await GetItemsAsync(offset, limit);
+            return new Topics(page.HaveFullList ? -1 : 0, page.Ids);
         }
 
-        private async Task<Topics> GetDirectMessagesChatTopicsAsyncImpl(int offset, int limit, bool reentrancy)
+        protected override Task<Object> LoadMoreItemsAsync(int count)
         {
-            var count = offset + limit;
+            return _clientService.SendAsync(new LoadDirectMessagesChatTopics(_chatId, count));
+        }
 
-            // How many topics are still to be loaded, 0 when the cache can answer on its own.
-            // Decided under the lock, acted on outside it: awaiting is not allowed in there.
-            int missing;
-
-            lock (_order)
-            {
-                var sorted = _order;
-
-                var haveFullList = _haveFullList;
-
-                missing = count > sorted.Count && !haveFullList && !reentrancy
-                    ? count - sorted.Count
-                    : 0;
-
-                if (missing == 0)
-                {
-                    // Have enough chats in the chat list to answer request
-                    var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
-                    var pos = 0;
-
-                    using (var iter = sorted.GetEnumerator())
-                    {
-                        int max = Math.Min(count, sorted.Count);
-
-                        for (int i = 0; i < max; i++)
-                        {
-                            iter.MoveNext();
-
-                            if (i >= offset)
-                            {
-                                result[pos++] = iter.Current.Id;
-                            }
-                        }
-                    }
-
-                    haveFullList &= count >= sorted.Count;
-                    return new Topics(haveFullList ? -1 : 0, result);
-                }
-            }
-
-            var response = await _clientService.SendAsync(new LoadDirectMessagesChatTopics(_chatId, missing));
-            if (response is Error error)
-            {
-                if (error.Code is 404 or 400)
-                {
-                    _haveFullList = true;
-                }
-                else
-                {
-                    return new Topics(0, Array.Empty<long>());
-                }
-            }
-
-            // Chats have already been received through updates, let's retry request
-            return await GetDirectMessagesChatTopicsAsyncImpl(offset, limit, true);
+        // 400 as well: the request is refused outright for a chat with no topics to page.
+        protected override bool IsExhausted(Error error)
+        {
+            return error.Code is 404 or 400;
         }
     }
 }
 
 namespace Telegram.Td.Api
 {
-    public sealed partial class UpdateDirectMessagesChatTopicLastMessage
-    {
-        public UpdateDirectMessagesChatTopicLastMessage(long chatId, long topicId, long order, Message lastMessage)
-        {
-            ChatId = chatId;
-            TopicId = topicId;
-            Order = order;
-            LastMessage = lastMessage;
-        }
-
-        public UpdateDirectMessagesChatTopicLastMessage(long chatId, DirectMessagesChatTopic topic)
-        {
-            ChatId = chatId;
-            TopicId = topic.Id;
-            Order = topic.Order;
-            LastMessage = topic.LastMessage;
-        }
-
-        public long ChatId { get; set; }
-
-        public long TopicId { get; set; }
-
-        public long Order { get; set; }
-
-        public Message LastMessage { get; set; }
-    }
-
-    public sealed partial class UpdateDirectMessagesChatTopicPosition
-    {
-        public UpdateDirectMessagesChatTopicPosition(long chatId, long topicId, long order)
-        {
-            ChatId = chatId;
-            TopicId = topicId;
-            Order = order;
-        }
-
-        public long ChatId { get; set; }
-
-        public long TopicId { get; set; }
-
-        public long Order { get; set; }
-    }
-
     public sealed partial class UpdateDirectMessagesChatTopicReadInbox
     {
         public UpdateDirectMessagesChatTopicReadInbox(long chatId, long topicId, long lastReadInboxMessageId, long unreadCount)

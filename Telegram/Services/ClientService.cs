@@ -4491,42 +4491,4 @@ namespace Telegram.Td.Api
         }
     }
 
-    public readonly struct OrderedTopic : IComparable<OrderedTopic>
-    {
-        public readonly int Id;
-        public readonly long Order;
-
-        public OrderedTopic(int id, long order)
-        {
-            Id = id;
-            Order = order;
-        }
-
-        public int CompareTo(OrderedTopic o)
-        {
-            if (Order != o.Order)
-            {
-                return o.Order < Order ? -1 : 1;
-            }
-
-            if (Id != o.Id)
-            {
-                return o.Id < Id ? -1 : 1;
-            }
-
-            return 0;
-        }
-
-        public override bool Equals(object obj)
-        {
-            OrderedTopic o = (OrderedTopic)obj;
-            return Id == o.Id && Order == o.Order;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id, Order);
-        }
-    }
-
 }

@@ -13,7 +13,10 @@ using Telegram.Td.Api;
 
 namespace Telegram.Services
 {
-    internal class ForumTopicService
+    /// <summary>
+    /// Every topic of one forum, in order.
+    /// </summary>
+    public partial class ForumTopicService : OrderedSourceService<ForumTopic>
     {
         public static readonly long GeneralId = 1 << 20;
         public static readonly long PinnedMaxOrder = long.MaxValue - 1;
@@ -25,18 +28,16 @@ namespace Telegram.Services
 
         // Every collection below is written from the TDLib thread, through the Update*
         // methods, and read from the UI thread through GetTopic/GetTopics/UnreadCount —
-        // which also write, since GetTopic records a pending request. One lock for all of
-        // them, so there is no ordering to get wrong between them.
+        // which also write, since GetTopic records a pending request. They share SyncRoot
+        // with the order the base keeps, so there is no ordering to get wrong between them:
+        // an order is decided from state the same lock guards.
         //
         // It guards the containers, not the ForumTopic objects inside: those are handed out
         // to the UI and mutated by the update methods, exactly as ClientService does with
         // Chat and User. Publishing happens outside the lock.
-        private readonly object _lock = new();
-
         private readonly Dictionary<int, ForumTopic> _topics = new();
         private readonly Dictionary<long, ForumTopic> _messages = new();
 
-        private readonly SortedSet<OrderedTopic> _order = new();
         private readonly List<int> _pinnedTopicIds = new();
         private readonly HashSet<int> _unreadTopicIds = new();
 
@@ -45,11 +46,9 @@ namespace Telegram.Services
         private readonly HashSet<int> _pendingNewTopics = new();
         private readonly HashSet<long> _pendingLastReadInboxMessageId = new();
 
-        private bool _haveFullList;
-
         private bool TryGetTopic(int forumTopicId, out ForumTopic topic)
         {
-            lock (_lock)
+            lock (SyncRoot)
             {
                 return _topics.TryGetValue(forumTopicId, out topic);
             }
@@ -57,7 +56,7 @@ namespace Telegram.Services
 
         private bool TryGetTopicByMessage(long messageId, out ForumTopic topic)
         {
-            lock (_lock)
+            lock (SyncRoot)
             {
                 return _messages.TryGetValue(messageId, out topic);
             }
@@ -75,7 +74,7 @@ namespace Telegram.Services
         {
             get
             {
-                lock (_lock)
+                lock (SyncRoot)
                 {
                     return _unreadTopicIds.Count;
                 }
@@ -84,24 +83,23 @@ namespace Telegram.Services
 
         private void UpdateTopicOrder(ForumTopic topic, bool publish)
         {
-            lock (_lock)
+            long order;
+
+            lock (SyncRoot)
             {
                 // Inside the lock: Order reads _deletedTopicIds and _pinnedTopicIds.
-                var order = Order(topic);
-
-                _order.Remove(new OrderedTopic(topic.Info.ForumTopicId, topic.Order));
+                order = Order(topic);
 
                 topic.Order = order;
-
-                if (order != 0)
-                {
-                    _order.Add(new OrderedTopic(topic.Info.ForumTopicId, order));
-                }
+                SetOrder(topic.Info.ForumTopicId, order);
             }
 
+            // A page reorders every topic it brought in, and the list paging it in is about
+            // to place them itself: reporting those would be work for an arrangement nobody
+            // has seen yet.
             if (publish)
             {
-                _aggregator.Publish(new UpdateForumTopicLastMessage(_chatId, topic));
+                RaiseChanged(topic, order, true);
             }
         }
 
@@ -122,7 +120,7 @@ namespace Telegram.Services
 
             _clientService.Send(new SetPinnedForumTopics(_chatId, forumTopicIds));
 
-            lock (_lock)
+            lock (SyncRoot)
             {
                 _pinnedTopicIds.Clear();
                 _pinnedTopicIds.AddRange(forumTopicIds);
@@ -133,7 +131,7 @@ namespace Telegram.Services
 
         private void UpdateLastReadInboxMessageId(ForumTopic topic, long lastReadInboxMessageId)
         {
-            lock (_lock)
+            lock (SyncRoot)
             {
                 _pendingLastReadInboxMessageId.Remove(lastReadInboxMessageId);
             }
@@ -172,7 +170,7 @@ namespace Telegram.Services
         {
             bool update;
             int count;
-            lock (_lock)
+            lock (SyncRoot)
             {
                 update = unread
                     ? _unreadTopicIds.Add(topic.Info.ForumTopicId)
@@ -200,7 +198,7 @@ namespace Telegram.Services
             // what keeps a miss from sending one getForumTopic per enumeration.
             bool request;
 
-            lock (_lock)
+            lock (SyncRoot)
             {
                 if (_topics.TryGetValue(id, out ForumTopic value))
                 {
@@ -247,77 +245,26 @@ namespace Telegram.Services
             }
         }
 
-        public Task<ForumTopics2> GetForumTopicsAsync(int offset, int limit)
+        public async Task<ForumTopics2> GetForumTopicsAsync(int offset, int limit)
         {
-            return GetForumTopicsAsyncImpl(offset, limit, false);
-        }
+            var page = await GetItemsAsync(offset, limit);
 
-        public async Task<ForumTopics2> GetForumTopicsAsyncImpl(int offset, int limit, bool reentrancy)
-        {
-            var count = offset + limit;
+            // Topic ids are ints, and the base pages in the ids every other list uses.
+            var result = new int[page.Ids.Length];
 
-            // How many topics are still to be loaded, 0 when the cache can answer on its own.
-            // Decided under the lock, acted on outside it: awaiting is not allowed in there.
-            int missing;
-
-            lock (_lock)
+            for (int i = 0; i < result.Length; i++)
             {
-                var sorted = _order;
-
-                var haveFullList = _haveFullList;
-
-                missing = count > sorted.Count && !haveFullList && !reentrancy
-                    ? count - sorted.Count
-                    : 0;
-
-                if (missing == 0)
-                {
-                    // Have enough chats in the chat list to answer request
-                    var result = new int[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
-                    var pos = 0;
-
-                    using (var iter = sorted.GetEnumerator())
-                    {
-                        int max = Math.Min(count, sorted.Count);
-
-                        for (int i = 0; i < max; i++)
-                        {
-                            iter.MoveNext();
-
-                            if (i >= offset)
-                            {
-                                result[pos++] = iter.Current.Id;
-                            }
-                        }
-                    }
-
-                    haveFullList &= count >= sorted.Count;
-                    return new ForumTopics2(haveFullList ? -1 : 0, result);
-                }
+                result[i] = (int)page.Ids[i];
             }
 
-            var response = await LoadForumTopicsAsync(missing);
-            if (response is Error error)
-            {
-                if (error.Code == 404)
-                {
-                    _haveFullList = true;
-                }
-                else
-                {
-                    return new ForumTopics2(0, Array.Empty<int>());
-                }
-            }
-
-            // Chats have already been received through updates, let's retry request
-            return await GetForumTopicsAsyncImpl(offset, limit, true);
+            return new ForumTopics2(page.HaveFullList ? -1 : 0, result);
         }
 
         private int _nextOffsetDate;
         private long _nextOffsetMessageId;
         private int _nextOffsetForumTopicId;
 
-        private Task<Object> LoadForumTopicsAsync(int count)
+        protected override Task<Object> LoadMoreItemsAsync(int count)
         {
             var tsc = new TaskCompletionSource<Object>();
             var request = new GetForumTopics(_chatId, string.Empty, _nextOffsetDate, _nextOffsetMessageId, _nextOffsetForumTopicId, count);
@@ -326,7 +273,7 @@ namespace Telegram.Services
             {
                 Object result;
 
-                lock (_lock)
+                lock (SyncRoot)
                 {
                     if (response is ForumTopics forumTopics)
                     {
@@ -365,7 +312,7 @@ namespace Telegram.Services
 
                         _aggregator.Publish(new UpdateChatUnreadTopicCount(_chatId, UnreadCount));
 
-                        result = forumTopics.Topics.Count > 0 && _order.Count < forumTopics.TotalCount + 1
+                        result = forumTopics.Topics.Count > 0 && ItemCount < forumTopics.TotalCount + 1
                             ? new Ok()
                             : new Error(404, string.Empty);
                     }
@@ -376,16 +323,16 @@ namespace Telegram.Services
                 }
 
                 // Completed outside the lock on purpose: the continuation waiting on this is
-                // GetForumTopicsAsyncImpl, which takes _order itself, and SetResult runs it
-                // inline. Recursion made that safe rather than deadlocked, but a throw in
-                // there would have skipped the Exit and wedged the topic list for good.
+                // the base's pager, which takes SyncRoot itself, and SetResult runs it inline.
+                // Recursion made that safe rather than deadlocked, but a throw in there would
+                // have skipped the Exit and wedged the topic list for good.
                 tsc.SetResult(result);
             });
 
             return tsc.Task;
         }
 
-        // Caller must hold _lock: reads _deletedTopicIds and _pinnedTopicIds.
+        // Caller must hold SyncRoot: reads _deletedTopicIds and _pinnedTopicIds.
         private long Order(ForumTopic topic)
         {
             if (_deletedTopicIds.Contains(topic.Info.ForumTopicId))
@@ -441,14 +388,14 @@ namespace Telegram.Services
 
                     if (topic.IsPinned)
                     {
-                        lock (_lock)
+                        lock (SyncRoot)
                         {
                             _pinnedTopicIds.Insert(0, update.ForumTopicId);
                         }
                     }
                     else
                     {
-                        lock (_lock)
+                        lock (SyncRoot)
                         {
                             _pinnedTopicIds.Remove(update.ForumTopicId);
                         }
@@ -485,7 +432,7 @@ namespace Telegram.Services
                     Info = info
                 };
 
-                lock (_lock)
+                lock (SyncRoot)
                 {
                     _topics[info.ForumTopicId] = preloaded;
                 }
@@ -512,7 +459,7 @@ namespace Telegram.Services
                 // as 404, so keying on 404 alone would leave that storm open.
                 if (response is Error { Code: >= 500 or < 0 })
                 {
-                    lock (_lock)
+                    lock (SyncRoot)
                     {
                         _pendingNewTopics.Remove(forumTopicId);
                     }
@@ -521,7 +468,7 @@ namespace Telegram.Services
                 return;
             }
 
-            lock (_lock)
+            lock (SyncRoot)
             {
                 _pendingNewTopics.Remove(newTopic.Info.ForumTopicId);
             }
@@ -550,7 +497,7 @@ namespace Telegram.Services
                 topic = newTopic;
             }
 
-            lock (_lock)
+            lock (SyncRoot)
             {
                 _topics[topic.Info.ForumTopicId] = topic;
 
@@ -588,7 +535,7 @@ namespace Telegram.Services
 
             if (message.SendingState is MessageSendingStatePending)
             {
-                lock (_lock)
+                lock (SyncRoot)
                 {
                     _pendingLastReadInboxMessageId.Add(message.Id);
                 }
@@ -601,7 +548,7 @@ namespace Telegram.Services
             {
                 // Update last message
                 // Deliver update UpdateForumTopicLastMessage;
-                lock (_lock)
+                lock (SyncRoot)
                 {
                     if (topic.LastMessage != null)
                     {
@@ -646,7 +593,7 @@ namespace Telegram.Services
                     {
                         if (topic.LastMessage != null)
                         {
-                            lock (_lock)
+                            lock (SyncRoot)
                             {
                                 _messages.Remove(topic.LastMessage.Id);
                             }
@@ -665,7 +612,7 @@ namespace Telegram.Services
                             }
                             else if (response is Error { Code: 404 })
                             {
-                                lock (_lock)
+                                lock (SyncRoot)
                                 {
                                     _deletedTopicIds.Add(topic.Info.ForumTopicId);
 
@@ -678,7 +625,7 @@ namespace Telegram.Services
 
                             if (topic.LastMessage != null)
                             {
-                                lock (_lock)
+                                lock (SyncRoot)
                                 {
                                     _messages[topic.LastMessage.Id] = topic;
                                 }
@@ -706,7 +653,7 @@ namespace Telegram.Services
             // Collected under the lock, reordered outside it: UpdateTopicOrder publishes.
             List<ForumTopic> pinned = null;
 
-            lock (_lock)
+            lock (SyncRoot)
             {
                 foreach (var topicId in _pinnedTopicIds)
                 {
@@ -744,7 +691,7 @@ namespace Telegram.Services
                     // Update last message
                     // Deliver update UpdateForumTopicLastMessage;
 
-                    lock (_lock)
+                    lock (SyncRoot)
                     {
                         _messages.Remove(oldMessageId);
                         _messages[message.Id] = topic;
@@ -763,7 +710,7 @@ namespace Telegram.Services
 
             bool pending;
 
-            lock (_lock)
+            lock (SyncRoot)
             {
                 pending = _pendingLastReadInboxMessageId.Remove(oldMessageId);
             }
@@ -811,7 +758,8 @@ namespace Telegram.Services
 
                     topic.LastMessage.Content = newContent;
 
-                    _aggregator.Publish(new UpdateForumTopicLastMessage(_chatId, topic));
+                    // The row has something new to show without having moved.
+                    RaiseChanged(topic, topic.Order, true);
                 }
             }
         }
@@ -930,49 +878,6 @@ namespace Telegram.Services
 
 namespace Telegram.Td.Api
 {
-    public sealed partial class UpdateForumTopicLastMessage
-    {
-        public UpdateForumTopicLastMessage(long chatId, int forumTopicId, long order, Message lastMessage)
-        {
-            ChatId = chatId;
-            ForumTopicId = forumTopicId;
-            Order = order;
-            LastMessage = lastMessage;
-        }
-
-        public UpdateForumTopicLastMessage(long chatId, ForumTopic topic)
-        {
-            ChatId = chatId;
-            ForumTopicId = topic.Info.ForumTopicId;
-            Order = topic.Order;
-            LastMessage = topic.LastMessage;
-        }
-
-        public long ChatId { get; set; }
-
-        public int ForumTopicId { get; set; }
-
-        public long Order { get; set; }
-
-        public Message LastMessage { get; set; }
-    }
-
-    public sealed partial class UpdateForumTopicPosition
-    {
-        public UpdateForumTopicPosition(long chatId, int forumTopicId, long order)
-        {
-            ChatId = chatId;
-            ForumTopicId = forumTopicId;
-            Order = order;
-        }
-
-        public long ChatId { get; set; }
-
-        public int ForumTopicId { get; set; }
-
-        public long Order { get; set; }
-    }
-
     public sealed partial class UpdateForumTopicReadInbox
     {
         public UpdateForumTopicReadInbox(long chatId, int forumTopicId, long lastReadInboxMessageId, int unreadCount)

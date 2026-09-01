@@ -8,9 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -20,9 +18,8 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Supergroups.Popups;
-using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
@@ -415,7 +412,7 @@ namespace Telegram.ViewModels
         {
             if (chat?.Id != Items.Chat?.Id)
             {
-                _ = Items.ReloadAsync(chat);
+                Items.Restart(chat);
 
                 LastSelectedItem = null;
 
@@ -578,35 +575,53 @@ namespace Telegram.ViewModels
             }
         }
 
+        private static Action<DispatcherQueueHandler> Post(TopicListViewModel viewModel)
+        {
+            if (viewModel != null)
+            {
+                return viewModel.BeginOnUIThread;
+            }
+
+            // The chat picker builds a collection with no view model behind it: post to the
+            // thread that created it, which is the view the collection is bound to.
+            var dispatcher = DispatcherContext.Current;
+            if (dispatcher != null)
+            {
+                return handler => dispatcher.Dispatch(handler);
+            }
+
+            return handler => handler();
+        }
+
         public interface ITopicListCollection : IList, ICollectionWithTotalCount
         {
             Chat Chat { get; }
 
-            Task ReloadAsync(Chat chat);
+            void Restart(Chat chat);
 
             object GetItem(MessageTopic topic);
         }
 
-        public partial class ForumTopicsCollection : ObservableCollection<ForumTopic>, ISupportIncrementalLoading, ITopicListCollection
+        public partial class ForumTopicsCollection : WindowedCollection<ForumTopic, int, long, OrderChangedEventArgs<ForumTopic>>, ITopicListCollection
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
             private CancellationTokenSource _token = new();
-            private readonly HashSet<int> _topics = new();
 
             private readonly TopicListViewModel _viewModel;
 
             private Chat _chat;
 
-            private bool _hasMoreItems = true;
-
-            private int _lastTopicId;
-            private long _lastOrder;
+            // The list this is a window over. Ordering comes from it rather than from the raw
+            // updates, so the order a topic is placed with is the one the model decided under
+            // its lock, not one read back from the topic afterwards.
+            private ForumTopicService _service;
 
             public Chat Chat => _chat;
 
             public ForumTopicsCollection(IClientService clientService, IEventAggregator aggregator, TopicListViewModel viewModel, Chat chat)
+                : base(Post(viewModel))
             {
                 _clientService = clientService;
                 _aggregator = aggregator;
@@ -614,10 +629,35 @@ namespace Telegram.ViewModels
                 _viewModel = viewModel;
                 _chat = chat;
 
-                //_ = LoadMoreItemsAsync(0);
+                Attach();
             }
 
-            public Task ReloadAsync(Chat chat)
+            private void Attach()
+            {
+                if (_chat != null)
+                {
+                    _service = _clientService.GetForumTopicList(_chat.Id);
+                }
+            }
+
+            private void Detach()
+            {
+                if (_service != null)
+                {
+                    _service.Changed -= OnChanged;
+                    _service = null;
+                }
+            }
+
+            public override void Dispose()
+            {
+                base.Dispose();
+
+                Detach();
+                _aggregator.Unsubscribe(this);
+            }
+
+            public void Restart(Chat chat)
             {
                 if (_chat != null)
                 {
@@ -628,31 +668,23 @@ namespace Telegram.ViewModels
                 _token = new CancellationTokenSource();
 
                 _aggregator.Unsubscribe(this);
-                _hasMoreItems = false;
-
-                _lastTopicId = 0;
-                _lastOrder = 0;
+                Detach();
 
                 _chat = chat;
+                Attach();
 
-                _topics.Clear();
-                Clear();
+                // Re-arms, and abandons the load in flight - and whatever the drain collected
+                // for the chat being replaced - so the one below starts from nothing.
+                Restart();
 
                 if (_chat != null)
                 {
                     _clientService.Send(new OpenChat(chat.Id));
-                    return LoadMoreItemsAsync();
+                    _ = LoadMoreItemsAsync(0);
                 }
-
-                return Task.CompletedTask;
             }
 
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return IncrementalLoading.Run(token => LoadMoreItemsAsync());
-            }
-
-            private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
             {
                 Logger.Info(Count);
 
@@ -661,17 +693,12 @@ namespace Telegram.ViewModels
 
                 await Task.Yield();
 
-                if (_chat == null)
+                if (_service == null)
                 {
-                    _hasMoreItems = false;
-
-                    return new LoadMoreItemsResult
-                    {
-                        Count = totalCount
-                    };
+                    return default;
                 }
 
-                var response = await _clientService.GetForumTopicsAsync(_chat.Id, Count, 20);
+                var response = await _service.GetForumTopicsAsync(Count, 20);
                 if (response is ForumTopics2 topics && !token.IsCancellationRequested)
                 {
                     if (_viewModel != null && !_viewModel._chatList && Count == 0)
@@ -683,30 +710,34 @@ namespace Telegram.ViewModels
                     foreach (var topic in _clientService.GetForumTopics(_chat.Id, topics.TopicIds))
                     {
                         var order = topic.Order;
-                        if (order != 0)
+                        if (order == 0)
                         {
-                            // TODO: is this redundant?
-                            var next = NextIndexOf(topic, order);
-                            if (next >= 0)
-                            {
-                                if (_topics.Contains(topic.Info.ForumTopicId))
-                                {
-                                    Remove(topic);
-                                }
+                            continue;
+                        }
 
-                                _topics.Add(topic.Info.ForumTopicId);
-                                Insert(Math.Min(Count, next), topic);
+                        // An update can have inserted it already while the page was in
+                        // flight, and can have moved it since: place it where it belongs.
+                        var next = NextIndexOf(topic, topic.Info.ForumTopicId, order, out int prev);
+                        if (next == prev)
+                        {
+                            continue;
+                        }
 
-                                if ((_viewModel?.SelectedItem == null && topic.Info.ForumTopicId == 0) || _viewModel?.SelectedItem?.IsForum(topic.Info.ForumTopicId) is true)
-                                {
-                                    _viewModel?.Delegate?.SetSelectedItem(topic);
-                                }
+                        if (prev >= 0)
+                        {
+                            RemoveAt(prev);
+                        }
+                        else
+                        {
+                            totalCount++;
+                        }
 
-                                totalCount++;
-                            }
+                        SetOrder(topic.Info.ForumTopicId, order);
+                        Insert(Math.Min(Count, next), topic);
 
-                            _lastTopicId = topic.Info.ForumTopicId;
-                            _lastOrder = order;
+                        if ((_viewModel?.SelectedItem == null && topic.Info.ForumTopicId == 0) || _viewModel?.SelectedItem?.IsForum(topic.Info.ForumTopicId) is true)
+                        {
+                            _viewModel?.Delegate?.SetSelectedItem(topic);
                         }
                     }
 
@@ -714,27 +745,33 @@ namespace Telegram.ViewModels
 
                     IsEmpty = Count == 0;
 
-                    _hasMoreItems = topics.TotalCount >= 0;
+                    // Before Subscribe, so the first update drains against a settled window.
+                    UpdateWindow(topics.TotalCount >= 0);
+
                     Subscribe();
 
                     _viewModel?.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+
+                    // The cache wrapper reuses ForumTopics2 and answers -1 in TotalCount once
+                    // it holds the whole list, so this is the has-more test, not a count.
+                    return new IncrementalLoadResult(totalCount, topics.TotalCount >= 0);
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                // Cancelled, or an error: a reload is already on its way, and the version it
+                // bumped discards whatever this returns.
+                return default;
             }
 
+            // Called by every page, and the first one is the one that takes. Nothing is
+            // watched until then: with no page in, an update for a topic sorting far down the
+            // list would become the whole window - which is the offset the next page asks for.
             private void Subscribe()
             {
-                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle)
-                    //.Subscribe<UpdateChatDraftMessage>(Handle)
-                    .Subscribe<UpdateForumTopicLastMessage>(Handle)
-                    .Subscribe<UpdateForumTopicPosition>(Handle);
-            }
+                _service.Changed -= OnChanged;
+                _service.Changed += OnChanged;
 
-            public bool HasMoreItems => _hasMoreItems;
+                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle);
+            }
 
             #region Handle
 
@@ -742,139 +779,99 @@ namespace Telegram.ViewModels
             {
                 if (update.AuthorizationState is AuthorizationStateReady)
                 {
-                    _viewModel.BeginOnUIThread(() => _ = ReloadAsync(_chat));
+                    _viewModel?.BeginOnUIThread(() => Restart(_chat));
                 }
             }
 
-            public void Handle(UpdateForumTopicPosition update)
+            private void OnChanged(OrderedSourceService<ForumTopic> sender, OrderChangedEventArgs<ForumTopic> args)
             {
-                if (update.ChatId == _chat.Id)
-                {
-                    Handle(update.ForumTopicId, update.Order);
-                }
+                Enqueue(args);
             }
 
-            public void Handle(UpdateForumTopicLastMessage update)
-            {
-                if (update.ChatId == _chat.Id)
-                {
-                    Handle(update.ForumTopicId, update.Order, true);
-                }
-            }
-
-            //public void Handle(UpdateChatDraftMessage update)
-            //{
-            //    Handle(update.ChatId, update.Positions, true);
-            //}
-
-            public void Handle(int forumTopicId, long order, bool lastMessage = false)
+            /// <summary>
+            /// Places a topic at an order the list already knows, for a caller that has just
+            /// changed it locally rather than through an update.
+            /// </summary>
+            public void ApplyOrder(int forumTopicId, long order, bool lastMessage = false)
             {
                 var topic = GetTopic(forumTopicId);
-
-                Handle(topic, order, lastMessage);
-            }
-
-            public void Handle(int forumTopicId, long order)
-            {
-                var chat = GetTopic(forumTopicId);
-                if (chat != null)
+                if (topic != null)
                 {
-                    Handle(chat, order, false);
+                    Enqueue(new OrderChangedEventArgs<ForumTopic>(topic, order, lastMessage));
                 }
             }
 
-            private void Handle(ForumTopic topic, long order, bool lastMessage)
+            protected override int GetKey(ForumTopic item)
             {
-                //var chat = GetChat(chatId);
-                if (topic != null /*&& _chatList.ListEquals(chat.ChatList)*/)
-                {
-                    _viewModel?.BeginOnUIThread(() => UpdateForumTopicOrder(topic, order, lastMessage));
-                }
+                return item.Info.ForumTopicId;
             }
 
-            private void UpdateForumTopicOrder(ForumTopic topic, long order, bool lastMessage)
+            protected override ForumTopic GetItem(OrderChangedEventArgs<ForumTopic> args)
             {
-                if (order > 0 && (order > _lastOrder || (order == _lastOrder && topic.Info.ForumTopicId >= _lastTopicId)))
-                {
-                    var next = NextIndexOf(topic, order);
-                    if (next >= 0)
-                    {
-                        if (_topics.Contains(topic.Info.ForumTopicId))
-                        {
-                            Remove(topic);
-                        }
-                        else
-                        {
-                            _topics.Add(topic.Info.ForumTopicId);
-                        }
-
-                        Insert(Math.Min(Count, next), topic);
-
-                        if (next == Count - 1)
-                        {
-                            _lastTopicId = topic.Info.ForumTopicId;
-                            _lastOrder = order;
-                        }
-
-                        if (_viewModel.SelectedItem.IsForum(topic.Info.ForumTopicId))
-                        {
-                            _viewModel.Delegate?.SetSelectedItem(topic);
-                        }
-                        if (_viewModel.SelectedItems.Contains(topic))
-                        {
-                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                        }
-
-                        IsEmpty = Count == 0;
-                    }
-                    else if (lastMessage)
-                    {
-                        _viewModel.Delegate?.UpdateForumTopicLastMessage(topic);
-                    }
-                }
-                else if (_topics.Contains(topic.Info.ForumTopicId))
-                {
-                    _topics.Remove(topic.Info.ForumTopicId);
-                    Remove(topic);
-
-                    if (_viewModel.SelectedItems.Contains(topic))
-                    {
-                        _viewModel.SelectedItems.Remove(topic);
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                    }
-
-                    IsEmpty = Count == 0;
-
-                    //if (!_hasMoreItems)
-                    //{
-                    //    await LoadMoreItemsAsync(0);
-                    //}
-                }
+                return args.Item;
             }
 
-            private int NextIndexOf(ForumTopic topic, long order)
+            protected override long GetOrder(OrderChangedEventArgs<ForumTopic> args)
             {
-                var prev = -1;
-                var next = 0;
+                return args.Order;
+            }
 
-                for (int i = 0; i < Count; i++)
+            protected override bool IsPlaced(long order)
+            {
+                return order != 0;
+            }
+
+            protected override int Compare(long order, int forumTopicId, long otherOrder, int otherForumTopicId)
+            {
+                if (order != otherOrder)
                 {
-                    var item = this[i];
-                    if (item.Info.ForumTopicId == topic.Info.ForumTopicId)
-                    {
-                        prev = i;
-                        continue;
-                    }
-
-                    if (order > item.Order || order == item.Order && topic.Info.ForumTopicId >= item.Info.ForumTopicId)
-                    {
-                        return next == prev ? -1 : next;
-                    }
-
-                    next++;
+                    return order > otherOrder ? 1 : -1;
                 }
 
-                return Count;
+                return forumTopicId.CompareTo(otherForumTopicId);
+            }
+
+            // The newer order wins, but a last message anywhere in the batch still has to
+            // redraw the row: the update that placed it last may have carried none.
+            protected override OrderChangedEventArgs<ForumTopic> Merge(OrderChangedEventArgs<ForumTopic> previous, OrderChangedEventArgs<ForumTopic> next)
+            {
+                return next.LastMessage || !previous.LastMessage
+                    ? next
+                    : new OrderChangedEventArgs<ForumTopic>(next.Item, next.Order, true);
+            }
+
+            protected override void OnPlaced(OrderChangedEventArgs<ForumTopic> args, int previousIndex, int index)
+            {
+                if (_viewModel?.SelectedItem?.IsForum(args.Item.Info.ForumTopicId) is true)
+                {
+                    _viewModel.Delegate?.SetSelectedItem(args.Item);
+                }
+
+                if (_viewModel?.SelectedItems.Contains(args.Item) is true)
+                {
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                }
+
+                IsEmpty = Count == 0;
+            }
+
+            protected override void OnRemoved(OrderChangedEventArgs<ForumTopic> args, int index)
+            {
+                if (_viewModel?.SelectedItems.Contains(args.Item) is true)
+                {
+                    _viewModel.SelectedItems.Remove(args.Item);
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                }
+
+                IsEmpty = Count == 0;
+            }
+
+            protected override void OnUnchanged(OrderChangedEventArgs<ForumTopic> args, int index)
+            {
+                if (args.LastMessage)
+                {
+                    _viewModel?.Delegate?.UpdateForumTopicLastMessage(args.Item);
+                }
             }
 
             public ForumTopic GetTopic(int forumTopicId)
@@ -906,7 +903,7 @@ namespace Telegram.ViewModels
                     return Items[0];
                 }
 
-                if (topic is MessageTopicForum forum && _topics.Contains(forum.ForumTopicId))
+                if (topic is MessageTopicForum forum && ContainsKey(forum.ForumTopicId))
                 {
                     return _clientService.GetForumTopic(_chat.Id, forum.ForumTopicId);
                 }
@@ -928,21 +925,7 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        _viewModel.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
-                    }
-                }
-            }
-
-            private int _totalCount;
-            public int TotalCount
-            {
-                get => _totalCount;
-                set
-                {
-                    if (_totalCount != value)
-                    {
-                        _totalCount = value;
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(TotalCount)));
+                        _viewModel?.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
                     }
                 }
             }
@@ -953,26 +936,26 @@ namespace Telegram.ViewModels
             }
         }
 
-        public partial class DirectMessagesChatTopicsCollection : ObservableCollection<DirectMessagesChatTopic>, ISupportIncrementalLoading, ITopicListCollection
+        public partial class DirectMessagesChatTopicsCollection : WindowedCollection<DirectMessagesChatTopic, long, long, OrderChangedEventArgs<DirectMessagesChatTopic>>, ITopicListCollection
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
             private CancellationTokenSource _token = new();
-            private readonly HashSet<long> _topics = new();
 
             private readonly TopicListViewModel _viewModel;
 
             private Chat _chat;
 
-            private bool _hasMoreItems = true;
-
-            private long _lastTopicId;
-            private long _lastOrder;
+            // The list this is a window over. Ordering comes from it rather than from the raw
+            // updates, so the order a topic is placed with is the one the model decided under
+            // its lock, not one read back from the topic afterwards.
+            private DirectMessagesChatTopicService _service;
 
             public Chat Chat => _chat;
 
             public DirectMessagesChatTopicsCollection(IClientService clientService, IEventAggregator aggregator, TopicListViewModel viewModel, Chat chat)
+                : base(Post(viewModel))
             {
                 _clientService = clientService;
                 _aggregator = aggregator;
@@ -980,10 +963,37 @@ namespace Telegram.ViewModels
                 _viewModel = viewModel;
                 _chat = chat;
 
+                Attach();
+
                 _ = LoadMoreItemsAsync(0);
             }
 
-            public Task ReloadAsync(Chat chat)
+            private void Attach()
+            {
+                if (_chat != null)
+                {
+                    _service = _clientService.GetDirectMessagesChatTopicList(_chat.Id);
+                }
+            }
+
+            private void Detach()
+            {
+                if (_service != null)
+                {
+                    _service.Changed -= OnChanged;
+                    _service = null;
+                }
+            }
+
+            public override void Dispose()
+            {
+                base.Dispose();
+
+                Detach();
+                _aggregator.Unsubscribe(this);
+            }
+
+            public void Restart(Chat chat)
             {
                 if (_chat != null)
                 {
@@ -994,31 +1004,23 @@ namespace Telegram.ViewModels
                 _token = new CancellationTokenSource();
 
                 _aggregator.Unsubscribe(this);
-                _hasMoreItems = false;
-
-                _lastTopicId = 0;
-                _lastOrder = 0;
+                Detach();
 
                 _chat = chat;
+                Attach();
 
-                _topics.Clear();
-                Clear();
+                // Re-arms, and abandons the load in flight - and whatever the drain collected
+                // for the chat being replaced - so the one below starts from nothing.
+                Restart();
 
                 if (_chat != null)
                 {
                     _clientService.Send(new OpenChat(chat.Id));
-                    return LoadMoreItemsAsync();
+                    _ = LoadMoreItemsAsync(0);
                 }
-
-                return Task.CompletedTask;
             }
 
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return IncrementalLoading.Run(token => LoadMoreItemsAsync());
-            }
-
-            private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
             {
                 Logger.Info(Count);
 
@@ -1027,17 +1029,12 @@ namespace Telegram.ViewModels
 
                 await Task.Yield();
 
-                if (_chat == null)
+                if (_service == null)
                 {
-                    _hasMoreItems = false;
-
-                    return new LoadMoreItemsResult
-                    {
-                        Count = totalCount
-                    };
+                    return default;
                 }
 
-                var response = await _clientService.GetDirectMessagesChatTopicsAsync(_chat.Id, Count, 20);
+                var response = await _service.GetDirectMessagesChatTopicsAsync(Count, 20);
                 if (response is Topics topics && !token.IsCancellationRequested)
                 {
                     if (_viewModel != null && !_viewModel._chatList && Count == 0)
@@ -1049,30 +1046,34 @@ namespace Telegram.ViewModels
                     foreach (var topic in _clientService.GetDirectMessagesChatTopics(_chat.Id, topics.TopicIds))
                     {
                         var order = topic.Order;
-                        if (order != 0)
+                        if (order == 0)
                         {
-                            // TODO: is this redundant?
-                            var next = NextIndexOf(topic, order);
-                            if (next >= 0)
-                            {
-                                if (_topics.Contains(topic.Id))
-                                {
-                                    Remove(topic);
-                                }
+                            continue;
+                        }
 
-                                _topics.Add(topic.Id);
-                                Insert(Math.Min(Count, next), topic);
+                        // An update can have inserted it already while the page was in
+                        // flight, and can have moved it since: place it where it belongs.
+                        var next = NextIndexOf(topic, topic.Id, order, out int prev);
+                        if (next == prev)
+                        {
+                            continue;
+                        }
 
-                                if ((_viewModel?.SelectedItem == null && topic.Id == 0) || _viewModel?.SelectedItem?.IsDirectMessagesChat(topic.Id) is true)
-                                {
-                                    _viewModel?.Delegate?.SetSelectedItem(topic);
-                                }
+                        if (prev >= 0)
+                        {
+                            RemoveAt(prev);
+                        }
+                        else
+                        {
+                            totalCount++;
+                        }
 
-                                totalCount++;
-                            }
+                        SetOrder(topic.Id, order);
+                        Insert(Math.Min(Count, next), topic);
 
-                            _lastTopicId = topic.Id;
-                            _lastOrder = order;
+                        if ((_viewModel?.SelectedItem == null && topic.Id == 0) || _viewModel?.SelectedItem?.IsDirectMessagesChat(topic.Id) is true)
+                        {
+                            _viewModel?.Delegate?.SetSelectedItem(topic);
                         }
                     }
 
@@ -1080,27 +1081,33 @@ namespace Telegram.ViewModels
 
                     IsEmpty = Count == 0;
 
-                    _hasMoreItems = topics.TotalCount >= 0;
+                    // Before Subscribe, so the first update drains against a settled window.
+                    UpdateWindow(topics.TotalCount >= 0);
+
                     Subscribe();
 
                     _viewModel?.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+
+                    // The cache wrapper reuses Topics and answers -1 in TotalCount once it
+                    // holds the whole list, so this is the has-more test, not a count.
+                    return new IncrementalLoadResult(totalCount, topics.TotalCount >= 0);
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                // Cancelled, or an error: a reload is already on its way, and the version it
+                // bumped discards whatever this returns.
+                return default;
             }
 
+            // Called by every page, and the first one is the one that takes. Nothing is
+            // watched until then: with no page in, an update for a topic sorting far down the
+            // list would become the whole window - which is the offset the next page asks for.
             private void Subscribe()
             {
-                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle)
-                    //.Subscribe<UpdateChatDraftMessage>(Handle)
-                    .Subscribe<UpdateDirectMessagesChatTopicLastMessage>(Handle)
-                    .Subscribe<UpdateDirectMessagesChatTopicPosition>(Handle);
-            }
+                _service.Changed -= OnChanged;
+                _service.Changed += OnChanged;
 
-            public bool HasMoreItems => _hasMoreItems;
+                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle);
+            }
 
             #region Handle
 
@@ -1108,139 +1115,86 @@ namespace Telegram.ViewModels
             {
                 if (update.AuthorizationState is AuthorizationStateReady)
                 {
-                    _viewModel.BeginOnUIThread(() => _ = ReloadAsync(_chat));
+                    _viewModel?.BeginOnUIThread(() => Restart(_chat));
                 }
             }
 
-            public void Handle(UpdateDirectMessagesChatTopicPosition update)
+            private void OnChanged(OrderedSourceService<DirectMessagesChatTopic> sender, OrderChangedEventArgs<DirectMessagesChatTopic> args)
             {
-                if (update.ChatId == _chat.Id)
-                {
-                    Handle(update.TopicId, update.Order);
-                }
+                Enqueue(args);
             }
 
-            public void Handle(UpdateDirectMessagesChatTopicLastMessage update)
+            protected override long GetKey(DirectMessagesChatTopic item)
             {
-                if (update.ChatId == _chat.Id)
-                {
-                    Handle(update.TopicId, update.Order, true);
-                }
+                return item.Id;
             }
 
-            //public void Handle(UpdateChatDraftMessage update)
-            //{
-            //    Handle(update.ChatId, update.Positions, true);
-            //}
-
-            public void Handle(long chatId, long order, bool lastMessage = false)
+            protected override DirectMessagesChatTopic GetItem(OrderChangedEventArgs<DirectMessagesChatTopic> args)
             {
-                var topic = GetTopic(chatId);
-
-                Handle(topic, order, lastMessage);
+                return args.Item;
             }
 
-            public void Handle(long chatId, long order)
+            protected override long GetOrder(OrderChangedEventArgs<DirectMessagesChatTopic> args)
             {
-                var chat = GetTopic(chatId);
-                if (chat != null)
-                {
-                    Handle(chat, order, false);
-                }
+                return args.Order;
             }
 
-            private void Handle(DirectMessagesChatTopic topic, long order, bool lastMessage)
+            protected override bool IsPlaced(long order)
             {
-                //var chat = GetChat(chatId);
-                if (topic != null /*&& _chatList.ListEquals(chat.ChatList)*/)
-                {
-                    _viewModel?.BeginOnUIThread(() => UpdateForumTopicOrder(topic, order, lastMessage));
-                }
+                return order != 0;
             }
 
-            private void UpdateForumTopicOrder(DirectMessagesChatTopic topic, long order, bool lastMessage)
+            protected override int Compare(long order, long topicId, long otherOrder, long otherTopicId)
             {
-                if (order > 0 && (order > _lastOrder || (order == _lastOrder && topic.Id >= _lastTopicId)))
+                if (order != otherOrder)
                 {
-                    var next = NextIndexOf(topic, order);
-                    if (next >= 0)
-                    {
-                        if (_topics.Contains(topic.Id))
-                        {
-                            Remove(topic);
-                        }
-                        else
-                        {
-                            _topics.Add(topic.Id);
-                        }
-
-                        Insert(Math.Min(Count, next), topic);
-
-                        if (next == Count - 1)
-                        {
-                            _lastTopicId = topic.Id;
-                            _lastOrder = order;
-                        }
-
-                        if (_viewModel.SelectedItem.IsDirectMessagesChat(topic.Id))
-                        {
-                            _viewModel.Delegate?.SetSelectedItem(topic);
-                        }
-                        if (_viewModel.SelectedItems.Contains(topic))
-                        {
-                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                        }
-
-                        IsEmpty = Count == 0;
-                    }
-                    else if (lastMessage)
-                    {
-                        _viewModel.Delegate?.UpdateDirectMessagesChatTopicLastMessage(topic);
-                    }
+                    return order > otherOrder ? 1 : -1;
                 }
-                else if (_topics.Contains(topic.Id))
-                {
-                    _topics.Remove(topic.Id);
-                    Remove(topic);
 
-                    if (_viewModel.SelectedItems.Contains(topic))
-                    {
-                        _viewModel.SelectedItems.Remove(topic);
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                    }
-
-                    IsEmpty = Count == 0;
-
-                    //if (!_hasMoreItems)
-                    //{
-                    //    await LoadMoreItemsAsync(0);
-                    //}
-                }
+                return topicId.CompareTo(otherTopicId);
             }
 
-            private int NextIndexOf(DirectMessagesChatTopic topic, long order)
+            // The newer order wins, but a last message anywhere in the batch still has to
+            // redraw the row: the update that placed it last may have carried none.
+            protected override OrderChangedEventArgs<DirectMessagesChatTopic> Merge(OrderChangedEventArgs<DirectMessagesChatTopic> previous, OrderChangedEventArgs<DirectMessagesChatTopic> next)
             {
-                var prev = -1;
-                var next = 0;
+                return next.LastMessage || !previous.LastMessage
+                    ? next
+                    : new OrderChangedEventArgs<DirectMessagesChatTopic>(next.Item, next.Order, true);
+            }
 
-                for (int i = 0; i < Count; i++)
+            protected override void OnPlaced(OrderChangedEventArgs<DirectMessagesChatTopic> args, int previousIndex, int index)
+            {
+                if (_viewModel?.SelectedItem?.IsDirectMessagesChat(args.Item.Id) is true)
                 {
-                    var item = this[i];
-                    if (item.Id == topic.Id)
-                    {
-                        prev = i;
-                        continue;
-                    }
-
-                    if (order > item.Order || order == item.Order && topic.Id >= item.Id)
-                    {
-                        return next == prev ? -1 : next;
-                    }
-
-                    next++;
+                    _viewModel.Delegate?.SetSelectedItem(args.Item);
                 }
 
-                return Count;
+                if (_viewModel?.SelectedItems.Contains(args.Item) is true)
+                {
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                }
+
+                IsEmpty = Count == 0;
+            }
+
+            protected override void OnRemoved(OrderChangedEventArgs<DirectMessagesChatTopic> args, int index)
+            {
+                if (_viewModel?.SelectedItems.Contains(args.Item) is true)
+                {
+                    _viewModel.SelectedItems.Remove(args.Item);
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                }
+
+                IsEmpty = Count == 0;
+            }
+
+            protected override void OnUnchanged(OrderChangedEventArgs<DirectMessagesChatTopic> args, int index)
+            {
+                if (args.LastMessage)
+                {
+                    _viewModel?.Delegate?.UpdateDirectMessagesChatTopicLastMessage(args.Item);
+                }
             }
 
             public DirectMessagesChatTopic GetTopic(long messageThreadId)
@@ -1260,7 +1214,7 @@ namespace Telegram.ViewModels
                     return Items[0];
                 }
 
-                if (topic is MessageTopicDirectMessages directMessagesChat && _topics.Contains(directMessagesChat.DirectMessagesChatTopicId))
+                if (topic is MessageTopicDirectMessages directMessagesChat && ContainsKey(directMessagesChat.DirectMessagesChatTopicId))
                 {
                     return _clientService.GetDirectMessagesChatTopic(_chat.Id, directMessagesChat.DirectMessagesChatTopicId);
                 }
@@ -1282,21 +1236,7 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        _viewModel.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
-                    }
-                }
-            }
-
-            private int _totalCount;
-            public int TotalCount
-            {
-                get => _totalCount;
-                set
-                {
-                    if (_totalCount != value)
-                    {
-                        _totalCount = value;
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(TotalCount)));
+                        _viewModel?.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
                     }
                 }
             }

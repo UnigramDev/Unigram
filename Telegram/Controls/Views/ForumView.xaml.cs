@@ -510,7 +510,7 @@ namespace Telegram.Controls.Views
                 }
                 else
                 {
-                    items.Handle(topic.Info.ForumTopicId, topic.Order);
+                    items.ApplyOrder(topic.Info.ForumTopicId, topic.Order);
                 }
             }
         }

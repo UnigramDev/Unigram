@@ -15,7 +15,7 @@ namespace Telegram.Services
 {
     public partial interface ICacheService
     {
-        Task<Topics> GetDirectMessagesChatTopicsAsync(long chatId, int offset, int limit);
+        DirectMessagesChatTopicService GetDirectMessagesChatTopicList(long chatId);
 
         bool TryGetDirectMessagesChatTopic(long chatId, long id, out DirectMessagesChatTopic topic);
         bool TryGetDirectMessagesChatTopic(long chatId, MessageTopic messageTopic, out DirectMessagesChatTopic topic);
@@ -28,7 +28,10 @@ namespace Telegram.Services
     {
         private readonly ReaderWriterDictionary<long, DirectMessagesChatTopicService> _directMessagesChats = new(100);
 
-        public Task<Topics> GetDirectMessagesChatTopicsAsync(long chatId, int offset, int limit)
+        /// <summary>
+        /// The topic list of one direct messages chat, created the first time it is asked for.
+        /// </summary>
+        public DirectMessagesChatTopicService GetDirectMessagesChatTopicList(long chatId)
         {
             _directMessagesChats.TryGetValue(chatId, out DirectMessagesChatTopicService manager);
 
@@ -38,7 +41,7 @@ namespace Telegram.Services
                 _directMessagesChats[chatId] = manager;
             }
 
-            return manager.GetDirectMessagesChatTopicsAsync(offset, limit);
+            return manager;
         }
 
         public DirectMessagesChatTopic GetDirectMessagesChatTopic(long chatId, long id)
