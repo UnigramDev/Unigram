@@ -64,7 +64,7 @@ public:
         /* [out] */ __RPC__deref_out_opt STOWED_EXCEPTION_INFORMATION_V2** exception) = 0;
 };
 
-inline const wchar_t* GetExceptionMessage(DWORD code)
+inline const wchar_t* GetExceptionName(DWORD code)
 {
     switch (code) {
     case EXCEPTION_ACCESS_VIOLATION: return L"ACCESS_VIOLATION";
@@ -89,6 +89,41 @@ inline const wchar_t* GetExceptionMessage(DWORD code)
     case EXCEPTION_STACK_OVERFLOW: return L"STACK_OVERFLOW";
     default: return L"UNKNOWN";
     };
+}
+
+// The crash backend groups on the first line of the message, so the code name stays alone on it:
+// the faulting address differs on every crash and would otherwise split each fault into a group
+// of its own.
+inline std::wstring GetExceptionMessage(const EXCEPTION_RECORD* record)
+{
+    std::wstring message = GetExceptionName(record->ExceptionCode);
+
+    // Only these two describe the access, and only once the kernel has filled the parameters in.
+    if ((record->ExceptionCode != EXCEPTION_ACCESS_VIOLATION && record->ExceptionCode != EXCEPTION_IN_PAGE_ERROR)
+        || record->NumberParameters < 2)
+    {
+        return message;
+    }
+
+    const wchar_t* operation;
+    switch (record->ExceptionInformation[0])
+    {
+    case 0: operation = L"Reading"; break;
+    case 1: operation = L"Writing"; break;
+    case 8: operation = L"Executing"; break;
+    default: operation = L"Accessing"; break;
+    }
+
+    message += wstrprintf(L"\n%s address 0x%016llx", operation,
+        (unsigned long long)record->ExceptionInformation[1]);
+
+    // For an in-page error the third parameter is the NTSTATUS the pager gave up with.
+    if (record->ExceptionCode == EXCEPTION_IN_PAGE_ERROR && record->NumberParameters >= 3)
+    {
+        message += wstrprintf(L", NTSTATUS 0x%08x", (unsigned int)record->ExceptionInformation[2]);
+    }
+
+    return message;
 }
 
 #endif
