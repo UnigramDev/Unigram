@@ -59,12 +59,18 @@ namespace Telegram.Composition
 
         private const int MaskSize = 256;
 
+        // A brush belongs to the compositor that created it and every window has its own, so these
+        // are per view. What is shared is the encoded noise behind them, which is the whole cost.
+        [ThreadStatic]
         private static CompositionSurfaceBrush[] _masks;
+        [ThreadStatic]
         private static int _preparedFor;
+        [ThreadStatic]
         private static bool _preparing;
 
         // The streams have to outlive the call: LoadedImageSurface reads them asynchronously.
-        private static readonly List<InMemoryRandomAccessStream> _streams = new();
+        [ThreadStatic]
+        private static List<IRandomAccessStream> _streams;
 
         public CompositionDustLayers(UIElement host)
             : base(host)
@@ -78,8 +84,8 @@ namespace Telegram.Composition
         public override bool IsReady => _masks != null;
 
         /// <summary>
-        /// The masks are shared by every chat and depend only on the layer count, so this runs once
-        /// per session unless the count is changed from the diagnostics page.
+        /// The masks depend only on the layer count, so this runs once per view unless the count is
+        /// changed from the diagnostics page.
         /// </summary>
         public static void Prepare()
         {
@@ -157,13 +163,68 @@ namespace Telegram.Composition
             }
         }
 
-        // One pass over MaskSize^2, once. Each pixel belongs to exactly one layer, biased towards
-        // that layer's column, so layers leaving in order read as a wave.
         private static async Task PrepareAsync()
         {
             _preparing = true;
 
+            var compositor = BootStrapper.Current.Compositor;
+
             var count = Layers;
+            var streams = await EncodeAsync(count);
+
+            var brushes = new CompositionSurfaceBrush[count];
+            var clones = _streams ??= new List<IRandomAccessStream>();
+
+            for (int i = 0; i < count; i++)
+            {
+                // A clone reads the same bytes through a cursor of its own, so two views loading the
+                // set at the same time do not move each other along.
+                var stream = streams[i].CloneStream();
+                stream.Seek(0);
+
+                clones.Add(stream);
+
+                var brush = compositor.CreateSurfaceBrush(LoadedImageSurface.StartLoadFromStream(stream));
+                brush.Stretch = CompositionStretch.Fill;
+
+                brushes[i] = brush;
+            }
+
+            _masks = brushes;
+            _preparedFor = count;
+            _preparing = false;
+
+            // The count moved again while this was encoding.
+            Prepare();
+        }
+
+        private static readonly object _encodingLock = new();
+        private static Task<IRandomAccessStream[]> _encoding;
+        private static int _encodedFor;
+
+        /// <summary>
+        /// The encoded masks, which are the same for every view and so are produced once per
+        /// session unless the layer count is changed from the diagnostics page.
+        /// </summary>
+        private static Task<IRandomAccessStream[]> EncodeAsync(int count)
+        {
+            // Views run on threads of their own, so two of them can ask for this at once.
+            lock (_encodingLock)
+            {
+                if (_encoding == null || _encodedFor != count)
+                {
+                    _encodedFor = count;
+                    _encoding = EncodeMasksAsync(count);
+                }
+
+                return _encoding;
+            }
+        }
+
+        // One pass over MaskSize^2, once. Each pixel belongs to exactly one layer, biased towards
+        // that layer's column, so layers leaving in order read as a wave.
+        private static async Task<IRandomAccessStream[]> EncodeMasksAsync(int count)
+        {
             var masks = new byte[count][];
 
             for (int i = 0; i < count; i++)
@@ -189,26 +250,17 @@ namespace Telegram.Composition
                 }
             }
 
-            var compositor = BootStrapper.Current.Compositor;
-            var brushes = new CompositionSurfaceBrush[count];
+            var streams = new IRandomAccessStream[count];
 
             for (int i = 0; i < count; i++)
             {
-                var brush = compositor.CreateSurfaceBrush(await CreateSurfaceAsync(masks[i]));
-                brush.Stretch = CompositionStretch.Fill;
-
-                brushes[i] = brush;
+                streams[i] = await EncodeAsync(masks[i]);
             }
 
-            _masks = brushes;
-            _preparedFor = count;
-            _preparing = false;
-
-            // The count moved again while this was encoding.
-            Prepare();
+            return streams;
         }
 
-        private static async Task<LoadedImageSurface> CreateSurfaceAsync(byte[] pixels)
+        private static async Task<IRandomAccessStream> EncodeAsync(byte[] pixels)
         {
             var stream = new InMemoryRandomAccessStream();
 
@@ -216,10 +268,7 @@ namespace Telegram.Composition
             encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, MaskSize, MaskSize, 96, 96, pixels);
             await encoder.FlushAsync();
 
-            stream.Seek(0);
-            _streams.Add(stream);
-
-            return LoadedImageSurface.StartLoadFromStream(stream);
+            return stream;
         }
     }
 }
