@@ -774,6 +774,9 @@ namespace Telegram.Common
                 case "Programmet kaldte en grænseflade, der var arrangeret for en anden tråd.":
                 case "Приложение обратилось к интерфейсу, относящемуся к другому потоку.":
                 case "应用程序调用一个已为另一线程整理的接口。":
+                case "應用程式所呼叫了整理給不同執行緒的介面。":
+                case "응용 프로그램이 다른 스레드를 위해 배열된 인터페이스를 호출했습니다.":
+                case "Η εφαρμογή κάλεσε μια διασύνδεση που είχε παραταχθεί για διαφορετικό νήμα.":
                     return "The application called an interface that was marshalled for a different thread.";
 
                 case "Les ressources mémoire disponibles sont insuffisantes pour exécuter cette opération.":
@@ -791,6 +794,7 @@ namespace Telegram.Common
                 case "記憶體資源不足，無法完成此作業。":
                 case "系统资源不足，无法完成请求的服务。":
                 case "Zur Verarbeitung dieses Befehls sind nicht genügend Speicherressourcen verfügbar.":
+                case "Les ressources mémoire disponibles sont insuffisantes pour traiter cette commande.":
                     return "Not enough memory resources are available to process this command.";
 
                 case "Le serveur RPC n’est pas disponible.":
@@ -912,6 +916,9 @@ namespace Telegram.Common
                 case "De bron is gerealiseerd op het verkeerde renderdoel.":
                 case "リソースが誤ったレンダー ターゲットで認識されました。":
                 case "在错误的呈现器目标上实现资源。":
+                case "리소스가 잘못된 렌더링 대상에서 실현되었습니다.":
+                case "Az erőforrás nem a megfelelő képalkotási célhoz lett hozzárendelve.":
+                case "Resursen realiserades på fel renderingsmål.":
                     return "The resource was realized on the wrong render target.";
 
                 case "Un fichier de polices n’a pas pu être ouvert car le fichier, répertoire, remplacement réseau, lecteur ou autre emplacement de stockage n’existe pas ou n’est pas disponible.":
@@ -975,9 +982,11 @@ namespace Telegram.Common
 
                 case "L’identificateur d’opération n’est pas valide.":
                 case "Неверный идентификатор операции.":
+                case "El identificador de operación no es válido.":
                     return "The operation identifier is not valid.";
 
                 case "La operación intentó tener acceso a datos fuera del rango válido":
+                case "Tentativo di accesso a dati esterni all'intervallo di validità":
                     return "The operation attempted to access data outside the valid range";
 
                 case "Cette interface n’est pas prise en charge":
@@ -985,6 +994,11 @@ namespace Telegram.Common
                 case "Não há suporte para esta interface":
                 case "Böyle bir arabirim desteklenmiyor":
                 case "Интерфейс не поддерживается":
+                case "Schnittstelle nicht unterstützt":
+                case "Gränssnittet stöds inte":
+                case "Neznámé rozhraní":
+                case "Taki interfejs nie jest obsługiwany.":
+                case "不支援此種介面":
                     return "No such interface supported";
 
                 case "Интерфейс не зарегистрирован":
@@ -998,6 +1012,7 @@ namespace Telegram.Common
 
                 case "Недопустимый дескриптор окна.":
                 case "Handle de fenêtre non valide.":
+                case "El identificador de la ventana no es válido.":
                     return "Invalid window handle.";
 
                 case "메모리 리소스가 부족하기 때문에 이 작업을 완료할 수 없습니다.":
