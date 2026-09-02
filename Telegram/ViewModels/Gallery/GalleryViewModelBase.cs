@@ -8,6 +8,7 @@
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -322,6 +323,8 @@ namespace Telegram.ViewModels.Gallery
                 var dataPackage = new DataPackage();
                 dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(cached));
                 ClipboardEx.TrySetContent(dataPackage);
+
+                ToastPopup.Show(XamlRoot, Strings.ImageCopied, ToastPopupIcon.Copied);
             }
         }
 
