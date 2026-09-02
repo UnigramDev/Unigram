@@ -136,6 +136,39 @@ namespace Telegram.Views
             GC.CollectionCount(2)
         };
 
+#if NET9_0_OR_GREATER
+        private TimeSpan _lastPauseDuration = GC.GetTotalPauseDuration();
+#endif
+
+        /// <summary>
+        /// How long the process spent suspended for collection since the last tick, and how long
+        /// in total. A collection suspends every managed thread, so this is the UI thread's share
+        /// of it as much as anyone's - what a frame that never rendered was doing.
+        /// </summary>
+        /// <remarks>
+        /// Four nanoseconds to ask, against the twenty-seven GetTotalMemory above it costs, so at
+        /// one hertz it is free. Not on .NET Native, where neither this nor GCMemoryInfo exists -
+        /// the collection counts in PollGC are what that build has.
+        /// </remarks>
+        private string PollPause()
+        {
+#if NET9_0_OR_GREATER
+            var total = GC.GetTotalPauseDuration();
+            var elapsed = total - _lastPauseDuration;
+
+            _lastPauseDuration = total;
+
+            if (elapsed > TimeSpan.Zero)
+            {
+                return string.Format(", {0:N0}/{1:N0} ms GC", elapsed.TotalMilliseconds, total.TotalMilliseconds);
+            }
+
+            return string.Format(", {0:N0} ms GC", total.TotalMilliseconds);
+#else
+            return string.Empty;
+#endif
+        }
+
         private string PollGC()
         {
             var occurred = GarbageCollectionMonitor.Debug();
@@ -166,17 +199,18 @@ namespace Telegram.Views
         {
             var memoryUsage = Math.Round(Windows.System.MemoryManager.AppMemoryUsage / 1024.0 / 1024.0);
             var occurred = PollGC();
+            var paused = PollPause();
 
             //double unmanaged = currentProcess.NativeHeap / 1024.0 / 1024.0;
             double managed = GC.GetTotalMemory(false) / 1024.0 / 1024.0; // currentProcess.ManagedHeap / 1024.0 / 1024.0;
 
             if (MasterDetail?.NavigationService?.Frame?.Content is ChatPage page)
             {
-                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + occurred + page.View.GetVirtualizationInfo();
+                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + paused + occurred + page.View.GetVirtualizationInfo();
             }
             else if (memoryUsage != _memoryUsage)
             {
-                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + occurred;
+                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + paused + occurred;
             }
 
             _memoryUsage = memoryUsage;

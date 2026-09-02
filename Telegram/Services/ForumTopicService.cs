@@ -81,6 +81,20 @@ namespace Telegram.Services
             }
         }
 
+        /// <summary>
+        /// Topics held, whatever any view has paged in.
+        /// </summary>
+        public int TopicCount
+        {
+            get
+            {
+                lock (SyncRoot)
+                {
+                    return _topics.Count;
+                }
+            }
+        }
+
         private void UpdateTopicOrder(ForumTopic topic, bool publish)
         {
             long order;

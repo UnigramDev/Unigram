@@ -28,6 +28,10 @@ namespace Telegram.Td
     {
         void OnResult(Object result);
 
+        // Called before each payload is parsed, so that what the parse records about one cannot
+        // be read as belonging to the next.
+        void BeginPayload();
+
         // Files are the one place object identity pays - they arrive constantly during a download,
         // always for an id the app already holds - so whichever reader was generated hands them
         // back here to be deduped rather than parsing them into a new instance.
@@ -261,6 +265,9 @@ namespace Telegram.Td
             }
 
             _updateHandlers.TryGetValue(clientId, out ClientResultHandler handler);
+
+            // One payload begins here. What the parse below discovers about it is only about it.
+            handler?.BeginPayload();
 
 #if TD_POINTER_PARSER
             var started = TdThroughput.Begin();

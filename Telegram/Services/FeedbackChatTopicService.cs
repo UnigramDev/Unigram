@@ -33,6 +33,11 @@ namespace Telegram.Services
             _chatId = chatId;
         }
 
+        /// <summary>
+        /// Topics held, whatever any view has paged in.
+        /// </summary>
+        public int TopicCount => _topics.Count;
+
         public void UpdateDirectMessagesChatTopic(DirectMessagesChatTopic newTopic)
         {
             if (_topics.TryGetValue(newTopic.Id, out DirectMessagesChatTopic topic))

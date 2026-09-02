@@ -14,8 +14,11 @@ namespace Telegram.Collections
 {
     public class ReaderWriterDictionary<TKey, TValue> : IEnumerable<TValue>
     {
-        private readonly ReaderWriterLockSlim _lock = new();
-        private readonly Dictionary<TKey, TValue> _dictionary;
+        protected readonly ReaderWriterLockSlim _lock = new();
+
+        // Protected for the caches that keep a second index beside it and have to update both
+        // under one lock. Touch it only with _lock held.
+        protected readonly Dictionary<TKey, TValue> _dictionary;
 
         public ReaderWriterDictionary()
         {
@@ -27,7 +30,7 @@ namespace Telegram.Collections
             _dictionary = new(capacity);
         }
 
-        public TValue this[TKey key]
+        public virtual TValue this[TKey key]
         {
             set
             {
@@ -43,7 +46,7 @@ namespace Telegram.Collections
             }
         }
 
-        public void Remove(TKey key)
+        public virtual void Remove(TKey key)
         {
             _lock.EnterWriteLock();
             try
@@ -56,7 +59,7 @@ namespace Telegram.Collections
             }
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             _lock.EnterWriteLock();
             try
@@ -85,7 +88,7 @@ namespace Telegram.Collections
             }
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public virtual bool TryGetValue(TKey key, out TValue value)
         {
             _lock.EnterReadLock();
             try
@@ -98,7 +101,7 @@ namespace Telegram.Collections
             }
         }
 
-        public bool TryRemove(TKey key, out TValue value)
+        public virtual bool TryRemove(TKey key, out TValue value)
         {
             _lock.EnterWriteLock();
             try

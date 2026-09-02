@@ -47,6 +47,7 @@ namespace Telegram.ViewModels
         {
             UpdateDeserialization();
             UpdateFileUpdates();
+            UpdateCache();
             UpdatePowerSaving();
 
             PowerSavingPolicy.Changed += OnPowerSavingChanged;
@@ -145,6 +146,18 @@ namespace Telegram.ViewModels
         public RangeObservableCollection<DiagnosticsTag> Tags { get; private set; }
         public RangeObservableCollection<DiagnosticsOption> PowerSaving { get; private set; }
 
+        public string Cache
+        {
+            get => field;
+            set => Set(ref field, value);
+        }
+
+        public string Inflations
+        {
+            get => field;
+            set => Set(ref field, value);
+        }
+
         private void OnPowerSavingChanged(object sender, EventArgs e)
         {
             BeginOnUIThread(UpdatePowerSaving);
@@ -190,6 +203,162 @@ namespace Telegram.ViewModels
         private static DiagnosticsOption Flag(string name, object value)
         {
             return new DiagnosticsOption { Name = name, Value = value is bool boolean ? boolean ? "true" : "false" : value };
+        }
+
+        /// <summary>
+        /// What the session holds on to, cache by cache, and the heap it is a part of. Object
+        /// counts and not bytes: an entry's cost is whatever is inside it, but no cache grows
+        /// except by holding more entries, so this is what says where the heap went.
+        /// </summary>
+        private void UpdateCache()
+        {
+            var counts = ClientService.GetCacheCounts();
+            var builder = new StringBuilder();
+
+            builder.AppendFormat("Held objects: {0:N0}\n", counts.Total);
+            builder.AppendFormat("Memory: {0:N0} MB managed, {1:N0} MB total\n",
+                GC.GetTotalMemory(false) / 1048576d, Windows.System.MemoryManager.AppMemoryUsage / 1048576d);
+            builder.AppendFormat("Chats weigh: {0}\n", ChatSizeText());
+            builder.AppendFormat("Files weigh: {0}\n", FileSizeText());
+            builder.AppendLine();
+            builder.AppendFormat("Chats: {0:N0}, {1:N0} with a last message\n", counts.Chats, counts.ChatLastMessages);
+            builder.AppendFormat("Chats read: {0}\n", counts.ChatsRead > 0 ? counts.ChatsRead.ToString("N0") : "not measured");
+            builder.AppendFormat("Chat lists: {0:N0} lists, {1:N0} positions, {2:N0} pending delete\n", counts.ChatLists, counts.ChatPositions, counts.PendingDeletes);
+            builder.AppendFormat("Chat indexes: {0:N0} user to chat, {1:N0} accessible until\n", counts.UsersToChats, counts.ChatsAccessibleUntil);
+            builder.AppendLine();
+            builder.AppendFormat("Users: {0:N0} of {1:N0} known, {2:N0} of {3:N0} full\n", counts.Users, counts.UsersKnown, counts.UsersFull, counts.UsersFullKnown);
+            builder.AppendFormat("Basic groups: {0:N0} of {1:N0} known, {2:N0} of {3:N0} full\n", counts.BasicGroups, counts.BasicGroupsKnown, counts.BasicGroupsFull, counts.BasicGroupsFullKnown);
+            builder.AppendFormat("Supergroups: {0:N0} of {1:N0} known, {2:N0} of {3:N0} full\n", counts.Supergroups, counts.SupergroupsKnown, counts.SupergroupsFull, counts.SupergroupsFullKnown);
+            builder.AppendFormat("Communities: {0:N0}, {1:N0} full\n", counts.Communities, counts.CommunitiesFull);
+            builder.AppendFormat("Secret chats: {0:N0}", counts.SecretChats);
+            builder.AppendLine();
+            builder.AppendFormat("Forum topics: {0:N0} in {1:N0} forums\n", counts.ForumTopics, counts.Forums);
+            builder.AppendFormat("Direct message topics: {0:N0} in {1:N0} chats\n", counts.DirectMessagesTopics, counts.DirectMessagesChats);
+            builder.AppendFormat("Saved messages topics: {0:N0}\n", counts.SavedMessagesTopics);
+            builder.AppendFormat("Stories: {0:N0} active, {1:N0} positions in {2:N0} lists\n", counts.ActiveStories, counts.StoryPositions, counts.StoryLists);
+            builder.AppendLine();
+            builder.AppendFormat("Files: {0:N0}, {1:N0} unverified\n", counts.Files, counts.UnverifiedFiles);
+            builder.AppendFormat("Files let go: {0:N0}\n", counts.FilesDropped);
+            builder.AppendFormat("Downloads: {0:N0} completed, {1:N0} canceled, {2:N0} explicit, {3:N0} streaming\n",
+                    counts.CompletedDownloads, counts.CanceledDownloads, counts.ExplicitDownloads, counts.StreamingFiles);
+            builder.AppendLine();
+            builder.AppendFormat("Chat actions: {0:N0}, {1:N0} in topics\n", counts.ChatActions, counts.TopicActions);
+            builder.AppendFormat("Group calls: {0:N0}\n", counts.GroupCalls);
+            builder.AppendFormat("Album last messages: {0:N0}\n", counts.MessageAlbums);
+            builder.AppendFormat("Unread counts: {0:N0}\n", counts.UnreadCounts);
+            builder.AppendLine();
+            builder.AppendFormat("Chat folders: {0:N0}\n", counts.ChatFolders);
+            builder.AppendFormat("Reactions: {0:N0}, {1:N0} saved tags\n", counts.Reactions, counts.SavedMessagesTags);
+            builder.AppendFormat("Message effects: {0:N0}\n", counts.MessageEffects);
+            builder.AppendFormat("Welcome messages: {0:N0}\n", counts.WelcomeMessages);
+            builder.AppendFormat("Attachment menu bots: {0:N0}\n", counts.AttachmentMenuBots);
+            builder.AppendFormat("Time zones: {0:N0}\n", counts.TimeZones);
+            builder.AppendFormat("Recent chats: {0:N0}\n", counts.RecentChats);
+            builder.AppendLine();
+            builder.AppendFormat("Sticker sets: {0:N0} sticker, {1:N0} mask, {2:N0} emoji\n", counts.StickerSets, counts.MaskSets, counts.EmojiSets);
+            builder.AppendFormat("Stickers: {0:N0} recent, {1:N0} favorite, {2:N0} animations", counts.RecentStickers, counts.FavoriteStickers, counts.SavedAnimations);
+
+            Cache = builder.ToString();
+
+            UpdateInflation(counts.Inflations);
+        }
+
+        // Held between refreshes: the walk is too slow to repeat every time the page is opened,
+        // and a measurement taken a minute ago is still the answer.
+        private CacheSize _size;
+
+        private string ChatSizeText()
+        {
+            if (_size == null)
+            {
+                return "not measured";
+            }
+
+            return string.Format("{0:N1} MB, {1:N1} MB of it last messages, walked in {2:N0} ms",
+                _size.ChatBytes / 1048576d, _size.LastMessageBytes / 1048576d, _size.Seconds * 1000);
+        }
+
+        private string FileSizeText()
+        {
+            if (_size == null)
+            {
+                return "not measured";
+            }
+
+            var text = string.Format("{0:N1} MB, {1:N1} MB of it remote ids, {2:N0} of {3:N0} reached from chats",
+                _size.FileBytes / 1048576d, _size.RemoteIdBytes / 1048576d, _size.FilesFromChats, _size.Files);
+
+            // What the walk could not descend into, which is the measure of what it is missing.
+            return _size.Opaque > 0
+                ? string.Format("{0}, {1:N0} counted flat", text, _size.Opaque)
+                : text;
+        }
+
+        public void MeasureCache(object sender, RoutedEventArgs e)
+        {
+            _size = ClientService.GetCacheSize();
+            UpdateCache();
+        }
+
+        /// <summary>
+        /// What the caches that fetch what they do not hold have cost so far. The time is what
+        /// readers spent blocked and not what the round trips took, since a read that waits on a
+        /// request someone else sent is paying for it just the same; the worst single wait is the
+        /// one that decides whether this reads as a frame or as a hang.
+        /// </summary>
+        private void UpdateInflation(IList<CacheInflation> inflations)
+        {
+            var builder = new StringBuilder();
+
+            var count = 0;
+            var failures = 0;
+            var seconds = 0d;
+            var slowest = 0d;
+
+            foreach (var item in inflations)
+            {
+                builder.AppendFormat("{0}: {1}\n", item.Name, InflationText(item.Count, item.Failures, item.Seconds, item.Slowest));
+
+                count += item.Count;
+                failures += item.Failures;
+                seconds += item.Seconds;
+                slowest = Math.Max(slowest, item.Slowest);
+            }
+
+            builder.AppendFormat("{0}: {1}", "Total", InflationText(count, failures, seconds, slowest));
+
+            Inflations = builder.ToString();
+        }
+
+        private static string InflationText(int count, int failures, double seconds, double slowest)
+        {
+            if (count == 0 && failures == 0)
+            {
+                return "nothing yet";
+            }
+
+            var text = string.Format("{0:N0} fetched, {1:N2}s blocked, {2:N1} ms each, {3:N0} ms worst",
+                count, seconds, count > 0 ? seconds * 1000 / count : 0, slowest * 1000);
+
+            return failures > 0
+                ? string.Format("{0}, {1:N0} unanswered", text, failures)
+                : text;
+        }
+
+        public void ResetInflation(object sender, RoutedEventArgs e)
+        {
+            ClientService.ResetInflationCounters();
+            UpdateCache();
+        }
+
+        public void RefreshCache(object sender, RoutedEventArgs e)
+        {
+            UpdateCache();
+        }
+
+        public void CopyCache(object sender, RoutedEventArgs e)
+        {
+            MessageHelper.CopyText(XamlRoot, Cache + "\nInflation\n" + Inflations);
         }
 
         public bool LegacyScrollBars

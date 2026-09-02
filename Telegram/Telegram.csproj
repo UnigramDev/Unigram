@@ -1149,6 +1149,7 @@
     <Compile Include="Services\ClientService.ChatList.cs" />
     <Compile Include="Services\ClientService.PendingDelete.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
+    <Compile Include="Services\ClientService.Diagnostics.cs" />
     <Compile Include="Services\ProfilePhotoService.cs" />
     <Compile Include="Services\DownloadFolderService.cs" />
     <Compile Include="Services\StorageService.cs" />
@@ -1177,6 +1178,7 @@
     <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="Td\Api\MessageId.cs" />
+    <Compile Include="Td\Api\ObjectSize.cs" />
     <Compile Include="Collections\Handlers\SearchResultDiffHandler.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowProfileAudioViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBirthdateViewModel.cs" />

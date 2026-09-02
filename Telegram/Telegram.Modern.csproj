@@ -283,6 +283,17 @@
     <TdSchemaCli>$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\bin\$(Configuration)\net10.0\Telegram.Generators.Cli.dll</TdSchemaCli>
   </PropertyGroup>
 
+  <!-- What writes the schema is an input to it. Without this the stamp tracks td_api.tl alone,
+       so a change to the emitter is skipped as up to date and the schema stays whatever the last
+       schema change produced - deleting the .g.cs does not help, since the stamp is the output
+       being compared, not the file. Sources rather than the built tool: these exist when the
+       project is evaluated, where on a clean build the dll does not. -->
+  <ItemGroup Condition="'$(TdSchemaMode)' == 'MSBuild'">
+    <TdSchemaCliSource Include="$(MSBuildThisFileDirectory)..\Telegram.Generators\**\*.cs"
+                       Exclude="$(MSBuildThisFileDirectory)..\Telegram.Generators\bin\**;$(MSBuildThisFileDirectory)..\Telegram.Generators\obj\**" />
+    <TdSchemaCliSource Include="$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\Program.cs" />
+  </ItemGroup>
+
   <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
        which keeps a WeakReference per registered object for the session, so it must not reach a
        shipping build. Telegram.csproj has it on in Debug instead. -->
@@ -335,6 +346,14 @@
   <Target Name="GenerateTdSchema" BeforeTargets="MarkupCompilePass1;BeforeCompile" Condition="'$(TdSchemaMode)' == 'MSBuild'"
           DependsOnTargets="ResolveTdSchemaPath"
           Inputs="$(TdSchemaSource);@(TdSchemaCliSource)" Outputs="$(TdSchemaStamp)">
+    <!-- The tool is a ProjectReference for ordering, but project references are resolved during
+         ResolveReferences - which is a phase after PrepareResources, where this target runs. So
+         without building it here the Exec below runs the PREVIOUS build of the emitter, and every
+         change to it lands one build late: the schema is regenerated, byte for byte identical, and
+         the stamp is touched as if it were current. Same global properties as the reference, so
+         this is the same project instance and not a second build of it. -->
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\Telegram.Generators.Cli.csproj"
+             RemoveProperties="Platform;RuntimeIdentifier;PublishAot;SelfContained" />
     <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(TdSchemaCli)&quot; --schema &quot;$(TdSchemaSource)&quot; --out &quot;$(TdSchemaDir)&quot; --parsers $(TdParsers)" />
     <!-- The stamp is the output, not the .cs: the emitter leaves the file alone when the text is
          unchanged, so its timestamp never catches up to the inputs and the target would re-run on

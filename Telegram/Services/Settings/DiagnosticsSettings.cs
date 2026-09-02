@@ -185,6 +185,15 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _bubbleElevationDebug, "BubbleElevationDebug", value);
         }
 
+        // Off by default, unlike its neighbours: it costs a set insertion on every chat read in
+        // the app, and it answers a question asked once rather than a setting anyone lives with.
+        private bool? _chatReadsDebug;
+        public bool ChatReadsDebug
+        {
+            get => _chatReadsDebug ??= GetValueOrDefault("ChatReadsDebug", false);
+            set => AddOrUpdateValue(ref _chatReadsDebug, "ChatReadsDebug", value);
+        }
+
         private bool? _bubbleRecyclingDebug;
         public bool BubbleRecyclingDebug
         {

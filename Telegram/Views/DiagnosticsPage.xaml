@@ -89,6 +89,10 @@
                               Content="Bubble Elevation Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ChatReadsDebug, Mode=TwoWay}"
+                              Content="Chat Reads Debug"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.BubbleRecyclingDebug, Mode=TwoWay}"
                               Content="Bubble Recycling Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -167,6 +171,29 @@
                                              Badge="{x:Bind ViewModel.FileUpdateDeliveries, Mode=OneWay}" />
                     <controls:SettingsButton Content="Reset"
                                              Click="{x:Bind ViewModel.ResetFileUpdates}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="ClientService"
+                                          Footer="How many objects this account&apos;s caches are holding, and the managed heap they are a part of. Counts and not bytes: an entry costs whatever is inside it, but no cache grows except by holding more entries.">
+                    <controls:SettingsButton Description="Cache">
+                        <TextBlock Text="{x:Bind ViewModel.Cache, Mode=OneWay}"
+                                   IsTextSelectionEnabled="True"/>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton Description="Inflation">
+                        <TextBlock Text="{x:Bind ViewModel.Inflations, Mode=OneWay}"
+                                   IsTextSelectionEnabled="True" />
+                    </controls:SettingsButton>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:SettingsButton Content="Refresh ClientService"
+                                             Click="{x:Bind ViewModel.RefreshCache}" />
+                    <controls:SettingsButton Content="Copy ClientService"
+                                             Click="{x:Bind ViewModel.CopyCache}" />
+                    <controls:SettingsButton Content="Reset inflation counters"
+                                             Click="{x:Bind ViewModel.ResetInflation}" />
+                    <controls:SettingsButton Content="Measure chats and files"
+                                             Click="{x:Bind ViewModel.MeasureCache}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="TDLib Logs"

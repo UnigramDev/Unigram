@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -334,14 +335,14 @@ namespace Telegram.Services
 
         private readonly ReaderWriterDictionary<long, long> _usersToChats = new(500);
 
-        private readonly ReaderWriterDictionary<long, User> _users = new(500);
-        private readonly ReaderWriterDictionary<long, UserFullInfo> _usersFull = new(500);
+        private readonly CacheDictionary<long, User> _users;
+        private readonly CacheDictionary<long, UserFullInfo> _usersFull;
 
-        private readonly ReaderWriterDictionary<long, BasicGroup> _basicGroups = new(500);
-        private readonly ReaderWriterDictionary<long, BasicGroupFullInfo> _basicGroupsFull = new(500);
+        private readonly CacheDictionary<long, BasicGroup> _basicGroups;
+        private readonly CacheDictionary<long, BasicGroupFullInfo> _basicGroupsFull;
 
-        private readonly ReaderWriterDictionary<long, Supergroup> _supergroups = new(500);
-        private readonly ReaderWriterDictionary<long, SupergroupFullInfo> _supergroupsFull = new(500);
+        private readonly CacheDictionary<long, Supergroup> _supergroups;
+        private readonly CacheDictionary<long, SupergroupFullInfo> _supergroupsFull;
 
         private readonly ReaderWriterDictionary<long, Community> _communities = new();
         private readonly ReaderWriterDictionary<long, CommunityFullInfo> _communitiesFull = new();
@@ -356,6 +357,9 @@ namespace Telegram.Services
 
         // Files are currently accessed only from TDLib thread
         private readonly Dictionary<int, File> _files = new();
+
+        // Files parsed inside an object that was then let go - see DropParsedFiles.
+        private int _filesDropped;
 
         private readonly List<long> _recentChats = new();
         private readonly object _recentChatsLock = new();
@@ -431,16 +435,33 @@ namespace Telegram.Services
 
         private static readonly Thread _runThread;
 
+        private readonly Thread _receiveThread;
+        private readonly ConcurrentQueue<Object> _receivePending = new();
+        private readonly ManualResetEventSlim _receiveSignal = new(false);
+        private int _receiveDraining;
+
         static ClientService()
         {
             InitializeDiagnostics();
 
-            _runThread = new Thread(Client.Run)
+            _runThread = new Thread(Receive)
             {
                 Name = "TdReceive",
                 IsBackground = true
             };
             _runThread.Start();
+        }
+
+        /// <summary>
+        /// The thread every response and update arrives on, for every client and session.
+        /// </summary>
+        private static void Receive()
+        {
+            // It is this thread that answers a request, so a read that blocked here waiting for
+            // one would be waiting for itself.
+            CacheDictionary.DenyInflation();
+
+            Client.Run();
         }
 
         public ClientService(ISession session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator, IDownloadFolderService downloadFolder)
@@ -454,6 +475,28 @@ namespace Telegram.Services
             _downloadFolder = downloadFolder;
 
             _savedMessages = new SavedMessagesTopicService(this);
+
+            // The third argument raises the update TDLib sent the first time round, for an object
+            // that is being fetched back after being let go - see PublishInflated.
+            _users = new CacheDictionary<long, User>(this, id => new GetUser(id),
+                (id, value) => PublishInflated(new UpdateUser(value)));
+            _usersFull = new CacheDictionary<long, UserFullInfo>(this, id => new GetUserFullInfo(id),
+                (id, value) => PublishInflated(new UpdateUserFullInfo(id, value)));
+            _basicGroups = new CacheDictionary<long, BasicGroup>(this, id => new GetBasicGroup(id),
+                (id, value) => PublishInflated(new UpdateBasicGroup(value)));
+            _basicGroupsFull = new CacheDictionary<long, BasicGroupFullInfo>(this, id => new GetBasicGroupFullInfo(id),
+                (id, value) => PublishInflated(new UpdateBasicGroupFullInfo(id, value)));
+            _supergroups = new CacheDictionary<long, Supergroup>(this, id => new GetSupergroup(id),
+                (id, value) => PublishInflated(new UpdateSupergroup(value)));
+            _supergroupsFull = new CacheDictionary<long, SupergroupFullInfo>(this, id => new GetSupergroupFullInfo(id),
+                (id, value) => PublishInflated(new UpdateSupergroupFullInfo(id, value)));
+
+            _receiveThread = new Thread(Drain)
+            {
+                Name = "ClientService",
+                IsBackground = true
+            };
+            _receiveThread.Start();
 
             Initialize(online);
         }
@@ -1060,7 +1103,12 @@ namespace Telegram.Services
 
         public Task<Object> SendAsync(Function function)
         {
-            var tsc = new TaskCompletionSource<Object>();
+            // Asynchronous continuations: the answer is completed on the receive thread, and a
+            // plain source would run everything awaiting it there - app code on TDLib's own
+            // thread, where a file read answers null rather than fetching, and where anything it
+            // does holds up every update behind it. With a synchronisation context the await
+            // posts back to it either way; this is for the paths that have none.
+            var tsc = new TaskCompletionSource<Object>(TaskCreationOptions.RunContinuationsAsynchronously);
             _client.Send(function, tsc.SetResult);
 
             return tsc.Task;
@@ -1889,6 +1937,7 @@ namespace Telegram.Services
         {
             if (_chats.TryGetValue(id, out Chat value))
             {
+                TrackChatRead(id);
                 return value;
             }
 
@@ -2247,7 +2296,36 @@ namespace Telegram.Services
 
         public bool TryGetChat(long chatId, out Chat chat)
         {
+            TrackChatRead(chatId);
             return _chats.TryGetValue(chatId, out chat);
+        }
+
+        // Chats the app has asked for by identifier, which is not the same as the chats it has
+        // been told about: the question this answers is how many of them a session ever looks at,
+        // and therefore what making them lazy could be worth. Off unless asked for, since it is a
+        // set insertion on a read the whole app makes.
+        private readonly HashSet<long> _chatsRead = new();
+
+        private void TrackChatRead(long chatId)
+        {
+            if (AppSettings.Diagnostics.ChatReadsDebug)
+            {
+                lock (_chatsRead)
+                {
+                    _chatsRead.Add(chatId);
+                }
+            }
+        }
+
+        public int ChatsRead
+        {
+            get
+            {
+                lock (_chatsRead)
+                {
+                    return _chatsRead.Count;
+                }
+            }
         }
 
         public bool TryGetChat(MessageSender sender, out Chat value)
@@ -3081,14 +3159,16 @@ namespace Telegram.Services
             };
         }
 
+        private int _wastedFiles;
+
         private File CommitFile(File obj, bool created, bool updateFile)
         {
             // Everything below runs inside the parse, on the TDLib thread, and none of it is
             // reading JSON - which is why it is timed separately.
             var started = TdThroughput.BeginHandler();
 
-            // Only the first time this id is seen. Every parsed object carries files — a chat
-            // history page is hundreds of them, nearly all already cached — so checking on
+            // Only the first time this id is seen. Every parsed object carries files - a chat
+            // history page is hundreds of them, nearly all already cached - so checking on
             // every update spent a syscall each time to re-answer a question already answered.
             //
             // Nothing is really lost: TDLib sends no update when a file disappears behind its
@@ -3096,7 +3176,7 @@ namespace Telegram.Services
             // unrelated update happened to arrive for that same file. The reliable detection
             // is GetFileAsync catching FileNotFoundException at the point of use.
             //
-            // Queued rather than answered here — see VerifyFileExists. The syscall is seven
+            // Queued rather than answered here - see VerifyFileExists. The syscall is seven
             // times what this whole update costs to parse, and this is the TDLib thread.
             if (created && obj.Local.IsDownloadingCompleted)
             {
@@ -3104,6 +3184,13 @@ namespace Telegram.Services
             }
 
             _files[obj.Id] = obj;
+
+            // Remembered until the handler for this payload has run: an update whose object is
+            // let go takes its files with it, and this is the only record of which those were.
+            if (created)
+            {
+                _parsedFiles.Add(obj.Id);
+            }
 
             if (updateFile)
             {
@@ -3113,6 +3200,54 @@ namespace Telegram.Services
             TdThroughput.RecordHandler(started);
             return obj;
         }
+
+        // Files first seen in the payload being parsed. Written and read on the TDLib thread
+        // only, and cleared by whoever asked for the parse.
+        private readonly List<int> _parsedFiles = new();
+
+        /// <summary>
+        /// Lets go of the files that arrived inside an object nothing is holding.
+        /// </summary>
+        /// <remarks>
+        /// TDLib describes every chat, user and full info it has, whether or not the app is
+        /// showing any of them, and the photos inside those descriptions are most of what the
+        /// file cache ends up holding. The object itself is already dropped by the caches above;
+        /// this is the same decision applied to what came with it.
+        /// <para/>
+        /// Files the payload only mentioned again - ones already held - are not in the list, so
+        /// this cannot take a file another object is still pointing at.
+        /// </remarks>
+        /// <summary>
+        /// Lets go of what arrived with an object that was not kept, and answers whether there is
+        /// anything left to tell anyone about.
+        /// </summary>
+        /// <remarks>
+        /// An update nothing kept is not published either: the object it describes is gone, so a
+        /// subscriber reading it back would find nothing, and a subscriber that does not read it
+        /// has nothing to redraw. TDLib describes every chat and user it has at startup, so this
+        /// is most of the update traffic an idle session sees.
+        /// </remarks>
+        private bool Kept(bool kept)
+        {
+            if (!kept)
+            {
+                DropParsedFiles();
+            }
+
+            return kept;
+        }
+
+        private void DropParsedFiles()
+        {
+            for (int i = 0; i < _parsedFiles.Count; i++)
+            {
+                _files.Remove(_parsedFiles[i]);
+            }
+
+            _filesDropped += _parsedFiles.Count;
+            _parsedFiles.Clear();
+        }
+
 
 #if TD_READER_PARSER
         public UpdateFile ParseUpdateFile(ref System.Text.Json.Utf8JsonReader reader)
@@ -3442,6 +3577,29 @@ namespace Telegram.Services
             TrackDownloadedFile(file);
         }
 
+        /// <summary>
+        /// The update for an object fetched back after being let go.
+        /// </summary>
+        /// <remarks>
+        /// Through the same queue the updates from TDLib go through, so that a subscriber sees
+        /// this one where it would have seen that one: on the same thread, in order with whatever
+        /// else is waiting to be published.
+        /// </remarks>
+        private void PublishInflated(Object update)
+        {
+            _receivePending.Enqueue(update);
+
+            if (Interlocked.CompareExchange(ref _receiveDraining, 1, 0) == 0)
+            {
+                _receiveSignal.Set();
+            }
+        }
+
+        public void BeginPayload()
+        {
+            _parsedFiles.Clear();
+        }
+
         public void OnResult(Object update)
         {
             switch (update)
@@ -3499,10 +3657,16 @@ namespace Telegram.Services
 
                 case UpdateUser updateUser:
                     {
-                        _users.TryGetValue(updateUser.User.Id, out User value);
-                        _users[updateUser.User.Id] = updateUser.User;
+                        // Answers the instance this one replaces, and only when something was
+                        // holding it - which is also the only case anything can be showing it.
+                        var previous = _users.Add(updateUser.User.Id, updateUser.User, out bool kept);
 
-                        if (value != null && value.IsContact != updateUser.User.IsContact)
+                        if (!Kept(kept))
+                        {
+                            return;
+                        }
+
+                        if (previous != null && previous.IsContact != updateUser.User.IsContact)
                         {
                             _aggregator.Publish(new UpdateUserIsContact(updateUser.User.Id));
                         }
@@ -3634,10 +3798,20 @@ namespace Telegram.Services
                     _animationSearchParameters = updateAnimationSearchParameters;
                     break;
                 case UpdateBasicGroup updateBasicGroup:
-                    _basicGroups[updateBasicGroup.BasicGroup.Id] = updateBasicGroup.BasicGroup;
+                    _basicGroups.Add(updateBasicGroup.BasicGroup.Id, updateBasicGroup.BasicGroup, out bool keptBasicGroup);
+                    if (!Kept(keptBasicGroup))
+                    {
+                        return;
+                    }
+
                     break;
                 case UpdateBasicGroupFullInfo updateBasicGroupFullInfo:
-                    _basicGroupsFull[updateBasicGroupFullInfo.BasicGroupId] = updateBasicGroupFullInfo.BasicGroupFullInfo;
+                    _basicGroupsFull.Add(updateBasicGroupFullInfo.BasicGroupId, updateBasicGroupFullInfo.BasicGroupFullInfo, out bool keptBasicGroupFull);
+                    if (!Kept(keptBasicGroupFull))
+                    {
+                        return;
+                    }
+
                     break;
                 case UpdateChatAction updateUserChatAction:
                     {
@@ -4140,16 +4314,31 @@ namespace Telegram.Services
                     _storyStealthMode = updateStoryStealthMode;
                     break;
                 case UpdateSupergroup updateSupergroup:
-                    _supergroups[updateSupergroup.Supergroup.Id] = updateSupergroup.Supergroup;
+                    _supergroups.Add(updateSupergroup.Supergroup.Id, updateSupergroup.Supergroup, out bool keptSupergroup);
+                    if (!Kept(keptSupergroup))
+                    {
+                        return;
+                    }
+
                     break;
                 case UpdateSupergroupFullInfo updateSupergroupFullInfo:
-                    _supergroupsFull[updateSupergroupFullInfo.SupergroupId] = updateSupergroupFullInfo.SupergroupFullInfo;
+                    _supergroupsFull.Add(updateSupergroupFullInfo.SupergroupId, updateSupergroupFullInfo.SupergroupFullInfo, out bool keptSupergroupFull);
+                    if (!Kept(keptSupergroupFull))
+                    {
+                        return;
+                    }
+
                     break;
                 case UpdateUnreadChatCount updateUnreadChatCount:
                     SetUnreadCount(updateUnreadChatCount.ChatList, chatCount: updateUnreadChatCount);
                     break;
                 case UpdateUserFullInfo updateUserFullInfo:
-                    _usersFull[updateUserFullInfo.UserId] = updateUserFullInfo.UserFullInfo;
+                    _usersFull.Add(updateUserFullInfo.UserId, updateUserFullInfo.UserFullInfo, out bool keptUserFull);
+                    if (!Kept(keptUserFull))
+                    {
+                        return;
+                    }
+
                     break;
                 case UpdateUserStatus updateUserStatus:
                     {
@@ -4351,7 +4540,48 @@ namespace Telegram.Services
                     break;
             }
 
-            _aggregator.Publish(update);
+            _receivePending.Enqueue(update);
+
+            // Only the item that finds no drain running wakes one; the drain already on its way
+            // picks up everything queued behind it. Updates arrive in bursts of thousands, and
+            // this is what keeps the cost of one to an enqueue and a failed exchange.
+            if (Interlocked.CompareExchange(ref _receiveDraining, 1, 0) == 0)
+            {
+                _receiveSignal.Set();
+            }
+        }
+
+        /// <summary>
+        /// Takes updates off the receive thread and runs the handlers for them, one at a time and
+        /// in the order they arrived.
+        /// </summary>
+        private void Drain()
+        {
+            while (true)
+            {
+                while (_receivePending.TryDequeue(out Object update))
+                {
+                    _aggregator.Publish(update);
+                }
+
+                // Nothing left to take. Giving up the claim BEFORE the last look at the queue is
+                // what makes the handoff safe: an item enqueued after this store finds no drain
+                // running and wakes one, and an item enqueued before it is still there to be
+                // found by the look. The cost of getting it backwards is a lost wake-up, which
+                // is the update stream stopping until the next one happens to arrive.
+                Volatile.Write(ref _receiveDraining, 0);
+
+                if (_receivePending.IsEmpty)
+                {
+                    _receiveSignal.Wait();
+                    _receiveSignal.Reset();
+                }
+
+                // Woken, or something turned up on the second look: either way this drain is
+                // running again and whoever enqueues from here does not have to wake it. A
+                // wake-up that raced with the reset above only costs one more turn of the loop.
+                Volatile.Write(ref _receiveDraining, 1);
+            }
         }
 
         private readonly Dictionary<int, QuickReplyShortcutInfo> _quickReplyShortcuts = new();
@@ -4463,4 +4693,451 @@ namespace Telegram.Td.Api
         }
     }
 
+    /// <summary>
+    /// Which threads <see cref="CacheDictionary{TKey, TValue}"/> may fetch from TDLib on.
+    /// </summary>
+    /// <remarks>
+    /// Thread-static, and on the non-generic type: a static field of a generic class is one per
+    /// closed type, so there would be one to deny per cache rather than one per thread.
+    /// </remarks>
+    public static class CacheDictionary
+    {
+        [ThreadStatic]
+        private static bool _denied;
+
+        /// <summary>
+        /// Whether a miss on this thread may fetch the object, blocking until TDLib answers.
+        /// True unless the thread denied itself, so a thread nobody considered behaves like the
+        /// UI one and reads what it asked for, rather than silently missing.
+        /// </summary>
+        public static bool CanInflate => !_denied;
+
+        /// <summary>
+        /// Bars this thread from fetching, for the rest of its life. Called by the two threads
+        /// that carry TDLib's own traffic: the receive thread would be waiting for itself, since
+        /// it is the thread that delivers the answer, and the update thread would hold every
+        /// update behind the round trip.
+        /// </summary>
+        /// <remarks>
+        /// One way on purpose. A thread is one kind or the other for as long as it lives, and
+        /// the cost of handing back the permission on the wrong one is a deadlock.
+        /// </remarks>
+        public static void DenyInflation()
+        {
+            _denied = true;
+        }
+    }
+
+    /// <summary>
+    /// A cache that remembers every id TDLib has mentioned, but holds only the objects something
+    /// has actually read.
+    /// </summary>
+    /// <remarks>
+    /// TDLib keeps its own copy of everything it sends, and it tells a session about every chat
+    /// and user in its database at startup, so mirroring all of it costs a second copy of the
+    /// whole account for the sake of the handful on screen. An id is registered as it goes past;
+    /// the object behind it is fetched the first time it is read, and from then on it is held like
+    /// any other entry.
+    /// <para/>
+    /// Fetching blocks the caller on a round trip, so it is not allowed on the threads that carry
+    /// TDLib's traffic - see <see cref="CacheDictionary.CanInflate"/>. There a miss answers false,
+    /// which is what the caller would have got for an id nothing had loaded yet, and an update for
+    /// an object nothing holds has nowhere to land anyway.
+    /// </remarks>
+    public partial class CacheDictionary<TKey, TValue> : ReaderWriterDictionary<TKey, TValue> where TValue : class
+    {
+        private readonly IClientService _clientService;
+        private readonly Func<TKey, Function> _request;
+        private readonly Action<TKey, TValue> _inflated;
+
+        // Both guarded by _lock, the one the values are under: an id is registered and its value
+        // published in the same breath, so no reader sees one without the other.
+        private readonly HashSet<TKey> _known = new();
+        private readonly Dictionary<TKey, TaskCompletionSource<TValue>> _inflating = new();
+
+        // A request that never comes back must not take the caller with it: the client can be
+        // closing, or restarting behind an authorization change.
+        private static readonly TimeSpan _timeout = TimeSpan.FromSeconds(2);
+
+        private int _inflations;
+        private int _failures;
+        private long _inflationTicks;
+        private long _slowestTicks;
+
+        /// <param name="inflated">
+        /// The update TDLib would have sent for this object, raised when one is fetched back.
+        /// An object that arrives through here arrives without the update that announced it the
+        /// first time, and every subscriber that learns about these from the update stream would
+        /// otherwise never hear of it.
+        /// </param>
+        public CacheDictionary(IClientService clientService, Func<TKey, Function> request, Action<TKey, TValue> inflated = null)
+        {
+            _clientService = clientService;
+            _request = request;
+            _inflated = inflated;
+        }
+
+        /// <summary>
+        /// Ids TDLib has mentioned, held or not. <see cref="ReaderWriterDictionary{TKey, TValue}.Count"/>
+        /// is how many of them are materialized.
+        /// </summary>
+        public int KnownCount
+        {
+            get
+            {
+                _lock.EnterReadLock();
+                try
+                {
+                    return _known.Count;
+                }
+                finally
+                {
+                    _lock.ExitReadLock();
+                }
+            }
+        }
+
+        public int InflationCount => _inflations;
+
+        public int InflationFailureCount => _failures;
+
+        /// <summary>
+        /// How long callers spent blocked on a fetch, summed - so several readers waiting on one
+        /// request each count their own wait, since it is the waiting that is being paid for and
+        /// not the round trip.
+        /// </summary>
+        public double InflationSeconds => _inflationTicks / (double)Stopwatch.Frequency;
+
+        /// <summary>
+        /// The longest any single read was blocked, which is the one that decides whether this
+        /// shows up as a frame or as a hang.
+        /// </summary>
+        public double SlowestInflationSeconds => Interlocked.Read(ref _slowestTicks) / (double)Stopwatch.Frequency;
+
+        public void ResetInflationCounters()
+        {
+            Interlocked.Exchange(ref _inflations, 0);
+            Interlocked.Exchange(ref _failures, 0);
+            Interlocked.Exchange(ref _inflationTicks, 0);
+            Interlocked.Exchange(ref _slowestTicks, 0);
+        }
+
+        /// <summary>
+        /// Registers an id, and takes the object with it only when one is already held: an update
+        /// for something nothing has materialized has nowhere to land, and keeping it is the copy
+        /// this class exists not to make.
+        /// </summary>
+        /// <returns>The instance this one replaces, or null when nothing was held.</returns>
+        public TValue Add(TKey key, TValue value)
+        {
+            return Add(key, value, out _);
+        }
+
+        /// <param name="kept">
+        /// Whether the value was taken. What arrived with one that was not - the files inside it -
+        /// has nothing holding it either.
+        /// </param>
+        public TValue Add(TKey key, TValue value, out bool kept)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                _known.Add(key);
+
+                if (_dictionary.TryGetValue(key, out TValue previous))
+                {
+                    _dictionary[key] = value;
+                    kept = true;
+                    return previous;
+                }
+
+                // A read is waiting on this id. This object is newer than the one the request in
+                // flight will answer with, so it is published here and the answer defers to it.
+                kept = _inflating.ContainsKey(key);
+
+                if (kept)
+                {
+                    _dictionary[key] = value;
+                }
+
+                return null;
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
+        /// <summary>
+        /// Publishes a value and registers its id, for the updates that carry a whole new object
+        /// rather than a change to one.
+        /// </summary>
+        public override TValue this[TKey key]
+        {
+            set
+            {
+                _lock.EnterWriteLock();
+                try
+                {
+                    _known.Add(key);
+                    _dictionary[key] = value;
+                }
+                finally
+                {
+                    _lock.ExitWriteLock();
+                }
+            }
+        }
+
+        public override bool TryGetValue(TKey key, out TValue value)
+        {
+            if (base.TryGetValue(key, out value))
+            {
+                return true;
+            }
+
+            if (!CacheDictionary.CanInflate)
+            {
+                return false;
+            }
+
+            TaskCompletionSource<TValue> inflating;
+            var owned = false;
+
+            _lock.EnterWriteLock();
+            try
+            {
+                // Read again under the write lock: another thread may have published it between
+                // the two, and it is that instance the caller has to get, not a second one.
+                if (_dictionary.TryGetValue(key, out value))
+                {
+                    return true;
+                }
+
+                if (!_known.Contains(key))
+                {
+                    return false;
+                }
+
+                if (!_inflating.TryGetValue(key, out inflating))
+                {
+                    // Asynchronous continuations, so that nothing of the caller's ever runs on
+                    // the receive thread, which is what completes this.
+                    _inflating[key] = inflating = new TaskCompletionSource<TValue>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    owned = true;
+                }
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+
+            // One request per id: everyone else who missed waits on this same answer, so two
+            // views cannot end up holding two instances of the same object.
+            if (owned)
+            {
+                _clientService.Send(_request(key), result => Inflated(key, result));
+            }
+
+            var timestamp = Stopwatch.GetTimestamp();
+            var completed = inflating.Task.Wait(_timeout);
+
+            RecordWait(Stopwatch.GetTimestamp() - timestamp);
+
+            if (completed)
+            {
+                value = inflating.Task.Result;
+                return value != null;
+            }
+
+            Interlocked.Increment(ref _failures);
+            Forget(key, inflating);
+
+            value = null;
+            return false;
+        }
+
+        private void RecordWait(long elapsed)
+        {
+            Interlocked.Add(ref _inflationTicks, elapsed);
+
+            // Interlocked has no Max. The value only ever goes up, so the loop turns twice only
+            // when two reads are setting a new worst at the same moment.
+            var slowest = Interlocked.Read(ref _slowestTicks);
+
+            while (elapsed > slowest)
+            {
+                var previous = Interlocked.CompareExchange(ref _slowestTicks, elapsed, slowest);
+                if (previous == slowest)
+                {
+                    break;
+                }
+
+                slowest = previous;
+            }
+        }
+
+        private void Inflated(TKey key, Object result)
+        {
+            var value = result as TValue;
+            var inflating = default(TaskCompletionSource<TValue>);
+
+            _lock.EnterWriteLock();
+            try
+            {
+                if (_inflating.TryGetValue(key, out TaskCompletionSource<TValue> pending))
+                {
+                    _inflating.Remove(key);
+                    inflating = pending;
+                }
+
+                if (value != null)
+                {
+                    // Whoever published first wins: an update may have stored an instance while
+                    // the request was in flight, and that is the one views are already holding.
+                    if (_dictionary.TryGetValue(key, out TValue existing))
+                    {
+                        value = existing;
+                    }
+                    else
+                    {
+                        _dictionary[key] = value;
+                    }
+                }
+                else
+                {
+                    // TDLib does not know the id, or cannot answer for it. Forgetting it stops
+                    // every later read paying for the same round trip; the next update that
+                    // mentions it registers it again.
+                    _known.Remove(key);
+                }
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+
+            if (value != null)
+            {
+                Interlocked.Increment(ref _inflations);
+
+                // Before the waiter is released, so that the update announcing this object has
+                // gone out by the time the read that fetched it returns - which is the order
+                // TDLib itself keeps, and what the app was written against.
+                _inflated?.Invoke(key, value);
+            }
+            else
+            {
+                Interlocked.Increment(ref _failures);
+            }
+
+            // Outside the lock: the waiter wakes on the spot and goes straight back in for it.
+            inflating?.TrySetResult(value);
+        }
+
+        /// <summary>
+        /// Drops a request the caller gave up on, so the next read starts a new one rather than
+        /// queueing behind an answer that is not coming. A late answer still publishes; it just
+        /// has nobody waiting for it.
+        /// </summary>
+        private void Forget(TKey key, TaskCompletionSource<TValue> inflating)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                if (_inflating.TryGetValue(key, out TaskCompletionSource<TValue> current) && current == inflating)
+                {
+                    _inflating.Remove(key);
+                }
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
+        /// <summary>
+        /// Drops the object but keeps the id, so the next read fetches it again - what a trim
+        /// under memory pressure would use. <see cref="Remove"/> forgets the id as well.
+        /// </summary>
+        public void Evict(TKey key)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                _dictionary.Remove(key);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
+        public override void Remove(TKey key)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                _known.Remove(key);
+                _dictionary.Remove(key);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
+        public override bool TryRemove(TKey key, out TValue value)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                _known.Remove(key);
+
+                if (_dictionary.TryGetValue(key, out value))
+                {
+                    _dictionary.Remove(key);
+                    return true;
+                }
+
+                return false;
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
+        public override void Clear()
+        {
+            TaskCompletionSource<TValue>[] pending = null;
+
+            _lock.EnterWriteLock();
+            try
+            {
+                _known.Clear();
+                _dictionary.Clear();
+
+                if (_inflating.Count > 0)
+                {
+                    pending = _inflating.Values.ToArray();
+                    _inflating.Clear();
+                }
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+
+            // A logout leaves nothing to answer with, and a caller blocked on an id from the
+            // account that just went away must not sit out the timeout for it.
+            if (pending != null)
+            {
+                foreach (var item in pending)
+                {
+                    item.TrySetResult(null);
+                }
+            }
+        }
+    }
 }

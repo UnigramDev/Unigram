@@ -31,6 +31,11 @@ namespace Telegram.Services
         }
 
         /// <summary>
+        /// Topics held, whatever any view has paged in.
+        /// </summary>
+        public int TopicCount => _topics.Count;
+
+        /// <summary>
         /// Merges the update into the topic already held, and answers the one to go on using -
         /// which is that topic, not the one the update arrived with.
         /// </summary>
