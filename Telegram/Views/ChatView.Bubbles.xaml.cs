@@ -1680,6 +1680,17 @@ namespace Telegram.Views
             return ChatHistoryViewItemType.Incoming;
         }
 
+        public bool IsItemVisible(long id)
+        {
+            if (Messages.ItemsPanelRoot is ItemsStackPanel panel && _messageIdToSelector.TryGetValue(id, out var container))
+            {
+                var index = Messages.IndexFromContainer(container);
+                return index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex;
+            }
+
+            return false;
+        }
+
         public bool HasContainerForItem(long id)
         {
             return _messageIdToSelector.ContainsKey(id);

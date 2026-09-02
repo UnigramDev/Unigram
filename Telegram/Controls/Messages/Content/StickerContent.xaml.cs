@@ -248,6 +248,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     PlayInteraction(_message, interaction);
                 }
+                // TODO: only for custom emojis--to be added to TDLib
                 else if (response is Error && this.IsConnected())
                 {
                     _message.Delegate?.OpenSticker(sticker);
@@ -299,7 +300,7 @@ namespace Telegram.Controls.Messages.Content
             MessageHelper.DragStarting(_message, args);
         }
 
-        public void PlayInteraction(MessageViewModel message, Sticker interaction)
+        public bool PlayInteraction(MessageViewModel message, Sticker interaction)
         {
             if (Interactions == null)
             {
@@ -346,18 +347,28 @@ namespace Telegram.Controls.Messages.Content
                 var top = height + y;
                 var bottom = height - y;
 
-                if (message.IsOutgoing)
+                if (message.IsVisuallyOutgoing)
                 {
                     player.Margin = new Thickness(-left, -top, -right, -bottom);
                 }
                 else
                 {
                     player.Margin = new Thickness(-right, -top, -left, -bottom);
+
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransform = new ScaleTransform
+                    {
+                        ScaleX = -1
+                    };
                 }
 
                 Interactions.Children.Add(player);
                 InteractionsPopup.IsOpen = true;
+
+                return true;
             }
+
+            return false;
         }
 
         public void PlayPremium(MessageViewModel message, Sticker sticker)
@@ -401,7 +412,7 @@ namespace Telegram.Controls.Messages.Content
                     });
                 };
 
-                if (message.IsChannelPost || !message.IsOutgoing)
+                if (!message.IsVisuallyOutgoing)
                 {
                     player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
                     player.RenderTransform = new ScaleTransform

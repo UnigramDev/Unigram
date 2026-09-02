@@ -1370,10 +1370,23 @@ namespace Telegram.ViewModels
             {
                 Handle(update.MessageId, null, (bubble, message) =>
                 {
-                    if (bubble.MediaTemplateRoot is StickerContent content && message.Content is MessageText text)
+                    // The update reaches every realized row, but the sticker is only to be played
+                    // if the message is on screen, and the action only sent if it was played.
+                    if (bubble.MediaTemplateRoot is not StickerContent content || Delegate?.IsItemVisible(message.Id) != true)
                     {
-                        ChatActionManager.SetTyping(new ChatActionWatchingAnimations(text.Text.Text));
-                        content.PlayInteraction(message, update.Sticker);
+                        return;
+                    }
+
+                    if (content.PlayInteraction(message, update.Sticker))
+                    {
+                        if (message.Content is MessageText text)
+                        {
+                            ChatActionManager.SetTyping(new ChatActionWatchingAnimations(text.Text.Text));
+                        }
+                        else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+                        {
+                            ChatActionManager.SetTyping(new ChatActionWatchingAnimations(animatedEmoji.Emoji));
+                        }
                     }
                 });
             }
