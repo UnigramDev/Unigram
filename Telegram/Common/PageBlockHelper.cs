@@ -2256,11 +2256,6 @@ namespace Telegram.Common
                 return null;
             }
 
-            if (file.Remote != null && !string.IsNullOrEmpty(file.Remote.Id))
-            {
-                return new InputFileRemote(file.Remote.Id);
-            }
-
             return new InputFileId(file.Id);
         }
 
