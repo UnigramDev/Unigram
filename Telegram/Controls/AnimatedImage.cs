@@ -574,6 +574,10 @@ namespace Telegram.Controls
                     if (presentation != null)
                     {
                         _presenter = AnimatedImageLoader.GetOrCreate(XamlRoot, presentation);
+                    }
+
+                    if (_presenter != null)
+                    {
                         _presenter.LoopCompleted += OnLoopCompleted;
                         _presenter.PositionChanged += OnPositionChanged;
                         _presenter.Paused += OnPaused;
@@ -2352,10 +2356,10 @@ namespace Telegram.Controls
 
         public WindowContext Window => _window;
 
-        private AnimatedImageLoader(XamlRoot xamlRoot)
+        private AnimatedImageLoader(WindowContext window)
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _window = WindowContext.ForXamlRoot(xamlRoot);
+            _window = window;
 
             Debug.Assert(_dispatcherQueue != null);
         }
@@ -2592,8 +2596,14 @@ namespace Telegram.Controls
         {
             Debug.Assert(xamlRoot != null);
 
-            var loader = _loaders.GetOrAdd(xamlRoot, x => new AnimatedImageLoader(xamlRoot));
-            return loader.GetOrCreate(configuration);
+            var window = WindowContext.ForXamlRoot(xamlRoot);
+            if (window != null)
+            {
+                var loader = _loaders.GetOrAdd(xamlRoot, x => new AnimatedImageLoader(window));
+                return loader.GetOrCreate(configuration);
+            }
+
+            return null;
         }
 
         public AnimatedImagePresenter GetOrCreate(AnimatedImagePresentation configuration)
