@@ -44,7 +44,7 @@ namespace Telegram.Controls
 
     public partial class AnimatedImageLoopCompletedEventArgs : CancelEventArgs
     {
-
+        public int LoopCount { get; set; }
     }
 
     public enum AnimatedImageResizeMode
@@ -137,6 +137,7 @@ namespace Telegram.Controls
         public event EventHandler Ready;
         public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged;
         public event EventHandler<AnimatedImageLoopCompletedEventArgs> LoopCompleted;
+        public event EventHandler Paused;
 
         protected readonly struct SuppressEventsDisposable : IDisposable
         {
@@ -654,6 +655,8 @@ namespace Telegram.Controls
         {
             _delayedPlay = false;
             _state = PlayingState.Paused;
+
+            Paused?.Invoke(this, e);
         }
 
         public virtual void Invalidate(ImageBrush source, WriteableBitmap bitmap, int pixelWidth, int pixelHeight, int rotation)
@@ -1619,10 +1622,9 @@ namespace Telegram.Controls
             }
             else if (state == AnimatedImageTaskState.Loop)
             {
-                Interlocked.Increment(ref _loopCount);
-
                 _prevCompleted ??= new AnimatedImageLoopCompletedEventArgs();
                 _prevCompleted.Cancel = false;
+                _prevCompleted.LoopCount = Interlocked.Increment(ref _loopCount);
 
                 LoopCompleted?.Invoke(this, _prevCompleted);
 
