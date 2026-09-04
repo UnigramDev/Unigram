@@ -51,6 +51,28 @@ namespace Telegram.Controls
         Checklist = Bold | Italic | Underline | Strikethrough | Spoiler | CustomEmoji
     }
 
+    /// <summary>
+    /// Text taken out of a <see cref="FormattedTextBox"/> for sending, carrying the one thing about
+    /// it that only the box can know: whether the user picked any of its custom emoji out of an
+    /// installed pack, rather than typing, pasting or restoring them from a draft.
+    /// </summary>
+    public partial class PreparedText : FormattedText
+    {
+        public PreparedText(FormattedText formattedText, bool updateOrderOfInstalledStickerSets)
+        {
+            Text = formattedText?.Text ?? string.Empty;
+            Entities = formattedText?.Entities;
+
+            UpdateOrderOfInstalledStickerSets = updateOrderOfInstalledStickerSets;
+        }
+
+        /// <summary>
+        /// Maps to messageSendOptions.update_order_of_installed_sticker_sets. Whether the user's
+        /// setting allows acting on it is not the box's business.
+        /// </summary>
+        public bool UpdateOrderOfInstalledStickerSets { get; }
+    }
+
     public partial class FormattedTextBox : RichEditBox
     {
         private readonly FormattedTextFlyout _selectionFlyout;
@@ -67,6 +89,11 @@ namespace Telegram.Controls
         private ITextRange _reusableProbe;
 
         private List<EmojiPosition> _emojiPositions;
+
+        // Custom emoji the user explicitly picked out of a pack, as opposed to every other way one
+        // can end up in the document. Only meaningful against what the text still holds, so it is
+        // intersected with the entities on the way out rather than pruned as the user edits.
+        private HashSet<long> _insertedCustomEmojiIds;
 
         public CustomEmojiCanvas CustomEmoji { get; set; }
         private Grid Blocks;
@@ -1281,6 +1308,34 @@ namespace Telegram.Controls
             }
         }
 
+        /// <summary>
+        /// Reads the text for sending. Same as <see cref="GetFormattedText"/>, plus the sticker set
+        /// reordering hint, which nothing outside this control is in a position to work out.
+        /// </summary>
+        public PreparedText GetPreparedText(bool clear = false, bool parseMarkdown = true)
+        {
+            var formattedText = GetFormattedText(clear, parseMarkdown);
+            return new PreparedText(formattedText, ContainsInsertedCustomEmoji(formattedText.Entities));
+        }
+
+        private bool ContainsInsertedCustomEmoji(Vector<TextEntity> entities)
+        {
+            if (_insertedCustomEmojiIds == null || entities == null)
+            {
+                return false;
+            }
+
+            foreach (var entity in entities)
+            {
+                if (entity.Type is TextEntityTypeCustomEmoji customEmoji && _insertedCustomEmojiIds.Contains(customEmoji.CustomEmojiId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private FormattedText GetFormattedTextImpl(bool clear, bool parseMarkdown, ITextRange selection)
         {
             // TODO: reimplement using the same logic as UpdateFormat
@@ -1485,6 +1540,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
+                    _insertedCustomEmojiIds = null;
                     Document.Clear();
                 }
 
@@ -1612,6 +1668,8 @@ namespace Telegram.Controls
 
         public void ClearText()
         {
+            _insertedCustomEmojiIds = null;
+
             Document.Clear();
             SelectionFlyout.Hide();
         }
@@ -1625,9 +1683,7 @@ namespace Telegram.Controls
             else if (!IsEmpty)
             {
                 OnSettingText();
-
-                Document.Clear();
-                SelectionFlyout.Hide();
+                ClearText();
             }
         }
 
@@ -1672,7 +1728,7 @@ namespace Telegram.Controls
             if (updateSelection is false)
             {
                 OnSettingText();
-                Document.Clear();
+                ClearText();
             }
 
             var allowedEntities = AllowedEntities;
@@ -1856,10 +1912,20 @@ namespace Telegram.Controls
             }
         }
 
-        public void InsertEmoji(Sticker sticker)
+        /// <param name="track">
+        /// Whether picking this one counts towards reordering the user's installed sticker sets.
+        /// Off by default: most composers that take custom emoji don't send a message.
+        /// </param>
+        public void InsertEmoji(Sticker sticker, bool track = false)
         {
             if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
+                if (track)
+                {
+                    _insertedCustomEmojiIds ??= new HashSet<long>();
+                    _insertedCustomEmojiIds.Add(customEmoji.CustomEmojiId);
+                }
+
                 var range = Document.GetRange(Document.Selection.StartPosition, Document.Selection.EndPosition);
                 InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
                 Document.Selection.StartPosition = range.EndPosition + 1;
