@@ -29,6 +29,7 @@ namespace Telegram.Controls.Messages.Content
         private long _thumbnailToken;
 
         private ThumbnailController _thumbnailController;
+        private ImageBrush _thumbnailTexture;
 
         // The scrim under the button, needed only once the cover is behind it.
         private SolidColorBrush _scrim;
@@ -51,7 +52,6 @@ namespace Telegram.Controls.Messages.Content
         private AutomaticDragHelper ButtonDrag;
 
         private Border Texture;
-        private ImageBrush ThumbnailTexture;
         private FileButton Button;
         private Grid DownloadPanel;
         private FileButton Download;
@@ -63,7 +63,6 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Texture = GetTemplateChild(nameof(Texture)) as Border;
-            ThumbnailTexture = Texture.Background as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             DownloadPanel = GetTemplateChild(nameof(DownloadPanel)) as Grid;
             Download = GetTemplateChild(nameof(Download)) as FileButton;
@@ -396,7 +395,13 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
+            _thumbnailTexture ??= new ImageBrush
+            {
+                Stretch = Stretch.UniformToFill,
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center
+            };
+            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
 
             if (file.Local.IsDownloadingCompleted)
             {
@@ -408,6 +413,7 @@ namespace Telegram.Controls.Messages.Content
                 var height = (int)(thumbnail.Height * ratio);
 
                 _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                Texture.Background = _thumbnailTexture;
                 Button.Background = _scrim ??= new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -415,6 +421,7 @@ namespace Telegram.Controls.Messages.Content
                 message.ClientService.DownloadFile(file.Id, 1);
 
                 _thumbnailController.Recycle();
+                Texture.ClearValue(Border.BackgroundProperty);
                 Button.Background = null;
             }
         }

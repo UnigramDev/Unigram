@@ -8,6 +8,12 @@
                     d:DesignHeight="300"
                     d:DesignWidth="400">
 
+    <Style x:Key="AudioContentTextureStyle"
+           TargetType="Border">
+        <Setter Property="Background"
+                Value="{ThemeResource MessageMediaBackgroundBrush}" />
+    </Style>
+
     <Style TargetType="local:AudioContent">
         <Setter Property="MinWidth"
                 Value="220" />
@@ -21,22 +27,15 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Grid Width="48"
-                              Height="48"
-                              CornerRadius="24"
-                              Background="{ThemeResource MessageMediaBackgroundBrush}"
-                              VerticalAlignment="Top">
-                            <Border x:Name="Texture"
-                                    CornerRadius="24">
-                                <Border.Background>
-                                    <ImageBrush Stretch="UniformToFill"
-                                                AlignmentX="Center"
-                                                AlignmentY="Center" />
-                                </Border.Background>
-                            </Border>
+                        <Border x:Name="Texture"
+                                Width="48"
+                                Height="48"
+                                CornerRadius="24"
+                                Style="{ThemeResource AudioContentTextureStyle}"
+                                VerticalAlignment="Top">
                             <controls:FileButton x:Name="Button"
                                                  Style="{StaticResource ImmersiveFileButtonStyle}" />
-                        </Grid>
+                        </Border>
                         <Grid x:Name="DownloadPanel"
                               Width="24"
                               Height="24"
