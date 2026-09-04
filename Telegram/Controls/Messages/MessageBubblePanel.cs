@@ -6,9 +6,7 @@
 //
 
 using System;
-using Telegram.Common;
 using Telegram.Controls.Messages.Content;
-using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -261,7 +259,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var width = desiredWidth;
-                var bounds = ContentEnd(text, fontSize * BootStrapper.Current.TextScaleFactor);
+                var bounds = text.ContentEnd();
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
@@ -278,41 +276,6 @@ namespace Telegram.Controls.Messages
             }
 
             return new Size(marginLeft, marginBottom);
-        }
-
-        private float ContentEnd(FormattedTextBlock textBlock, double fontSize)
-        {
-            if (textBlock.Text?.Paragraphs.Count == 0 || string.IsNullOrEmpty(textBlock.Text?.Text))
-            {
-                return 0;
-            }
-
-            var paragraph = textBlock.Text.Paragraphs[^1];
-
-            var text = textBlock.Text.Text.Substring(paragraph.Offset, paragraph.Length);
-            var entities = paragraph.GetParts(out text);
-
-            //var block = Children[0] is FormattedTextBlock formatted ? formatted : Children[1] as FormattedTextBlock;
-
-            var width = textBlock.LastAvailableWidth;
-            if (width <= 0)
-            {
-                return 0;
-            }
-
-            try
-            {
-                // TODO: this condition will be true whenever the message has more than a paragraph.
-
-                var bounds = Direct2D.Current.ContentEnd(text, entities, fontSize, width);
-                if (bounds.Y < textBlock.DesiredSize.Height)
-                {
-                    return bounds.X;
-                }
-            }
-            catch { }
-
-            return int.MaxValue;
         }
     }
 }

@@ -451,7 +451,8 @@ namespace Telegram.Controls
                     _trimmableWidth = availableSize.Width;
                     _trimmableSize = quoteSize;
 
-                    var metrics = Direct2D.Current.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
+                    var format = GetTextFormat(0, partial, entities, quoteSize, availableSize.Width);
+                    var metrics = format.MaxLines(0, partial.Length, quoteSize, availableSize.Width, false, 3);
                     var trimmable = metrics.TruncatedHeight < metrics.Height;
 
                     if (IsTextTrimmable != trimmable)
@@ -464,6 +465,121 @@ namespace Telegram.Controls
 
             LastAvailableWidth = availableSize.Width;
             return base.MeasureOverride(availableSize);
+        }
+
+        // One retained DirectWrite layout per rendered paragraph, and one more for the whole
+        // flattened text the inline-button branch below lays out. Built on demand and kept
+        // until InvalidateTextFormats drops them: reconfiguring a layout (size, width,
+        // direction, wrapping) reflows it lazily, where every call used to build a text format
+        // and a layout of its own. The callers disagree on all four, and a mismatch costs no
+        // more than that did.
+        private TextFormat[] _formats;
+
+        private TextFormat GetTextFormat(int index, string text, IList<TextStylePart> entities, double fontSize, double width)
+        {
+            var count = _last - _first + 2;
+
+            if (index < 0 || index >= count)
+            {
+                return Direct2D.Current.CreateTextFormat2(text, entities, fontSize, width);
+            }
+
+            if (_formats == null || _formats.Length != count)
+            {
+                _formats = new TextFormat[count];
+            }
+
+            return _formats[index] ??= Direct2D.Current.CreateTextFormat2(text, entities, fontSize, width);
+        }
+
+        // The inline-button branch renders every paragraph as one, so it lays out the whole
+        // text with the newlines flattened, and the copy is kept alongside the layout of it.
+        private string _flattened;
+
+        private string Flatten(string text)
+        {
+            return _flattened ??= text.Replace('\n', ' ');
+        }
+
+        // The layouts and the flattened copy hold the text as it was, so they go whenever it
+        // changes under them: all of them on SetText, and one paragraph when a relative date
+        // rewrites it.
+        private void InvalidateTextFormats()
+        {
+            _formats = null;
+            _flattened = null;
+        }
+
+        private void InvalidateTextFormat(StyledParagraph paragraph)
+        {
+            if (_formats == null || _text == null)
+            {
+                return;
+            }
+
+            var index = _text.Paragraphs.IndexOf(paragraph) - _first;
+            if (index >= 0 && index < _formats.Length)
+            {
+                _formats[index] = null;
+            }
+
+            // The flattened copy spans every paragraph, so it goes with any of them.
+            _formats[^1] = null;
+            _flattened = null;
+        }
+
+        /// <summary>
+        /// The X at which the last line of text ends, for a caller placing something beside it
+        /// - the message footer. <see cref="float.MaxValue"/> when the text wrapped further
+        /// than the rendered block did, as then nothing fits beside it.
+        /// </summary>
+        public float ContentEnd()
+        {
+            if (_text == null || TextBlock == null || _last < 0 || _last >= _text.Paragraphs.Count || string.IsNullOrEmpty(_text.Text))
+            {
+                return 0;
+            }
+
+            var width = LastAvailableWidth;
+            if (width <= 0)
+            {
+                return 0;
+            }
+
+            var fontSize = (AutoFontSize ? AppSettings.Appearance.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+            var padding = Padding;
+
+            // Text that fits on one line ends where the line ends, so the layout below is only
+            // needed once it has wrapped. Two lines cannot be this short whatever the runs do,
+            // so the test can only ever fall through to the layout.
+            if (_first == _last && DesiredSize.Height - padding.Top - padding.Bottom < fontSize * 2)
+            {
+                return (float)Math.Max(0, DesiredSize.Width - padding.Left - padding.Right);
+            }
+
+            var paragraph = _text.Paragraphs[_last];
+            var entities = paragraph.GetParts(out var text);
+
+            try
+            {
+                var format = GetTextFormat(_last - _first, text, entities, fontSize, width);
+                var bounds = format.ContentEnd(fontSize, width);
+
+                // Wrapping past the rendered height means the two engines disagree on the line
+                // count, and the X belongs to a line that isn't the one on screen.
+                // TODO: only the last paragraph is laid out, so for a block holding more than
+                // one this compares against a height that covers all of them, and never fires.
+                if (bounds.Y < DesiredSize.Height)
+                {
+                    return bounds.X;
+                }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+
+            return float.MaxValue;
         }
 
         private PointerCursorType _textSelectionCursor = PointerCursorType.Arrow;
@@ -640,6 +756,10 @@ namespace Telegram.Controls
         {
             //_clientService = null;
             //_text = null;
+
+            // The layouts go too, or a pooled block holds one per paragraph of the message it
+            // last rendered.
+            InvalidateTextFormats();
 
             _query = null;
             _spoiler = null;
@@ -1179,6 +1299,7 @@ namespace Telegram.Controls
 
             _clientService = clientService;
             _text = styled;
+            InvalidateTextFormats();
             _plain = styled != null && rangeStart == rangeEnd && styled.Paragraphs[rangeStart].IsPlain;
             _direction = styled != null && rangeStart == rangeEnd ? styled.Paragraphs[rangeStart].Direction : TextDirectionality.Neutral;
             _fontSize = fontSize;
@@ -2174,7 +2295,10 @@ namespace Telegram.Controls
                         ? quoteSize
                         : fontSize;
 
-                    var rectangles = Direct2D.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
+                    var layoutWidth = width - paragraph.Margin.Left - paragraph.Margin.Right;
+
+                    var format = GetTextFormat(spoiler.ParagraphIndex, partial, entities, size, layoutWidth);
+                    var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, true);
                     var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                     var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y);
@@ -2227,12 +2351,14 @@ namespace Telegram.Controls
                     int xoffset = styled.Offset + spoiler.Offset;
                     int xlength = spoiler.Length;
 
-                    var partial = _text.Text.Replace('\n', ' ');
+                    var partial = Flatten(_text.Text);
                     var entities = _text.Parts;
 
                     var size = fontSize;
+                    var layoutWidth = width - relative.X;
 
-                    var rectangles = Direct2D.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - relative.X, styled.Direction == TextDirectionality.RightToLeft, false);
+                    var format = GetTextFormat(_last - _first + 1, partial, entities, size, layoutWidth);
+                    var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, false);
                     var point = new Windows.Foundation.Point(relative.X + position.X, relative.Y + position.Y);
 
                     for (int i = 0; i < rectangles?.Count; i++)
@@ -2980,14 +3106,17 @@ namespace Telegram.Controls
                     continue;
                 }
 
-                var partial = _text.Text.Substring(styled.Offset, styled.Length);
-                var entities = styled.Parts ?? TextStyleRun.NoParts;
+                // GetParts, not Parts: the skeleton covers the text as rendered, dates expanded.
+                var entities = styled.GetParts(out var partial) ?? TextStyleRun.NoParts;
 
                 var size = styled.Type is TextParagraphTypeQuote
                     ? quoteSize
                     : fontSize;
 
-                var rectangles = Direct2D.Current.LineMetrics(partial, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft);
+                var layoutWidth = width - paragraph.Margin.Left - paragraph.Margin.Right;
+
+                var format = GetTextFormat(block, partial, entities, size, layoutWidth);
+                var rectangles = format.LineMetrics(size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft);
                 var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                 var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
@@ -3069,6 +3198,10 @@ namespace Telegram.Controls
                     var before = string.IsNullOrEmpty(Entity.FormattedText) ? Entity.Length : Entity.FormattedText.Length;
                     var text = Entity.Update(Paragraph);
                     var delta = (string.IsNullOrEmpty(text) ? Entity.Length : text.Length) - before;
+
+                    // Update has just marked the paragraph dirty, so the next GetParts hands
+                    // back a rewritten string and the retained layout is of the old one.
+                    TextBlock.InvalidateTextFormat(Paragraph);
 
                     // Spoiler geometry needs nothing here: UpdateSpoilers derives it from the
                     // paragraph's runs, which Update has just rewritten.

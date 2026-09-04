@@ -6,16 +6,6 @@ import "NativeUtils.idl";
 
 namespace Telegram.Native
 {
-    struct MaxLinesMetrics
-    {
-        Double X;
-        Double Y;
-        Double Width;
-        Double Height;
-        Double TruncatedHeight;
-        Int32 TruncatedOffset;
-    };
-
     struct TextStylePart
     {
         Int32 Offset;

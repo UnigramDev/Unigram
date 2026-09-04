@@ -1242,6 +1242,9 @@ namespace winrt::Telegram::Native::implementation
         ));
         ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
         ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        // TextWrapping.Wrap breaks inside a word that doesn't fit, so the layout has to as
+        // well, or a single long word puts the two engines on different line counts.
+        ReturnIfFailed(result, textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
         ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
@@ -1291,80 +1294,12 @@ namespace winrt::Telegram::Native::implementation
 
     float2 Direct2DDevice::ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width)
     {
-        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
-        // collections are read-only after CreateDeviceIndependentResources, and the text format
-        // and layout below are local to this call. m_appleFormat is not touched - see the note
-        // on its declaration.
         HRESULT result;
 
-        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+        winrt::com_ptr<TextFormat> textFormat;
+        ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
 
-        winrt::com_ptr<IDWriteTextFormat> textFormat;
-        ReturnDefaultIfFailed(result, m_dwriteFactory->CreateTextFormat(
-            L"Segoe UI Emoji",						// font family name
-            m_fontCollection.get(),			        // system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            fontSize,								// font size
-            L"",									// locale name
-            textFormat.put()
-        ));
-        ReturnDefaultIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        ReturnDefaultIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-        ReturnDefaultIfFailed(result, textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK));
-
-        winrt::com_ptr<IDWriteTextLayout> textLayout;
-        ReturnDefaultIfFailed(result, m_dwriteFactory->CreateTextLayout(
-            text.data(),					// The string to be laid out and formatted.
-            text.size(),        			// The length of the string.
-            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
-            width,							// The width of the layout box.
-            INFINITY,						// The height of the layout box.
-            textLayout.put()				// The IDWriteTextLayout interface pointer.
-        ));
-
-        for (const TextStylePart& entity : entities)
-        {
-            UINT32 startPosition = entity.Offset;
-            UINT32 length = entity.Length;
-
-            if (entity.Type == TextStyle::Bold)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Italic)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Strikethrough)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Underline)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
-            }
-            //else if (name == winrt::name_of<TextStylePartTypeCustomEmoji>())
-            //{
-            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
-            //}
-            else if (entity.Type == TextStyle::Monospace)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(m_monospaceFamily, { startPosition, length }));
-            }
-        }
-
-        DWRITE_TEXT_METRICS metrics;
-        ReturnDefaultIfFailed(result, textLayout->GetMetrics(&metrics));
-
-        BOOL isTrailingHit;
-        BOOL isInside;
-        DWRITE_HIT_TEST_METRICS hitTestMetrics;
-        ReturnDefaultIfFailed(result, textLayout->HitTestPoint(metrics.width, metrics.height, &isTrailingHit, &isInside, &hitTestMetrics));
-
-        return float2(hitTestMetrics.left + hitTestMetrics.width, hitTestMetrics.top + hitTestMetrics.height);
+        return textFormat->ContentEnd(fontSize, width);
     }
 
     IVector<Windows::Foundation::Rect> Direct2DDevice::LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
@@ -1374,125 +1309,12 @@ namespace winrt::Telegram::Native::implementation
 
     IVector<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
     {
-        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
-        // collections are read-only after CreateDeviceIndependentResources, and the text format
-        // and layout below are local to this call. m_appleFormat is not touched - see the note
-        // on its declaration.
         HRESULT result;
 
-        //ReturnIfFailed(result, CreateTextFormat(fontSize));
-        //ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+        winrt::com_ptr<TextFormat> textFormat;
+        ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
 
-        winrt::com_ptr<IDWriteTextFormat> textFormat;
-        ReturnDefaultIfFailed(result, m_dwriteFactory->CreateTextFormat(
-            L"Segoe UI Emoji",						// font family name
-            m_fontCollection.get(),			        // system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            fontSize,								// font size
-            L"",									// locale name
-            textFormat.put()
-        ));
-        ReturnDefaultIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        ReturnDefaultIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-        ReturnDefaultIfFailed(result, textFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
-        ReturnDefaultIfFailed(result, textFormat->SetWordWrapping(wrap ? DWRITE_WORD_WRAPPING_EMERGENCY_BREAK : DWRITE_WORD_WRAPPING_NO_WRAP));
-
-        if (wrap)
-        {
-            ReturnDefaultIfFailed(result, textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK));
-        }
-        else
-        {
-            DWRITE_TRIMMING trimming = { DWRITE_TRIMMING_GRANULARITY_CHARACTER, '.', 3 };
-            ReturnDefaultIfFailed(result, textFormat->SetTrimming(&trimming, nullptr));
-            ReturnDefaultIfFailed(result, textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP));
-        }
-
-        winrt::com_ptr<IDWriteTextLayout> textLayout;
-        ReturnDefaultIfFailed(result, m_dwriteFactory->CreateTextLayout(
-            text.data(),					// The string to be laid out and formatted.
-            text.size(),        			// The length of the string.
-            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
-            width,							// The width of the layout box.
-            INFINITY,						// The height of the layout box.
-            textLayout.put()				// The IDWriteTextLayout interface pointer.
-        ));
-
-        for (const TextStylePart& entity : entities)
-        {
-            UINT32 startPosition = entity.Offset;
-            UINT32 length = entity.Length;
-
-            if (entity.Type == TextStyle::Bold)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Italic)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Strikethrough)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Underline)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
-            }
-            //else if (name == winrt::name_of<TextStylePartTypeCustomEmoji>())
-            //{
-            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
-            //}
-            else if (entity.Type == TextStyle::Monospace)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(m_monospaceFamily, { startPosition, length }));
-            }
-        }
-
-        DWRITE_TEXT_METRICS metrics;
-        ReturnDefaultIfFailed(result, textLayout->GetMetrics(&metrics));
-
-        UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
-        UINT32 actualTestsCount;
-        DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
-        result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount);
-
-        if (result == E_NOT_SUFFICIENT_BUFFER)
-        {
-            delete[] ranges;
-
-            ranges = new DWRITE_HIT_TEST_METRICS[actualTestsCount];
-            result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
-        }
-
-        if (FAILED(result))
-        {
-            delete[] ranges;
-            return winrt::single_threaded_vector<Windows::Foundation::Rect>();
-        }
-
-        std::vector<Windows::Foundation::Rect> vector;
-
-        for (int i = 0; i < actualTestsCount; i++)
-        {
-            if (ranges[i].isTrimmed)
-            {
-                break;
-            }
-
-            float left = ranges[i].left;
-            float top = ranges[i].top;
-            float right = ranges[i].left + ranges[i].width;
-            float bottom = ranges[i].top + ranges[i].height;
-
-            vector.push_back({ left, top, right - left, bottom - top });
-        }
-
-        delete[] ranges;
-        return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(vector));
+        return textFormat->RangeMetrics(offset, length, fontSize, width, rtl, wrap);
     }
 
     Windows::Foundation::Rect Direct2DDevice::LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
@@ -1572,119 +1394,12 @@ namespace winrt::Telegram::Native::implementation
 
     MaxLinesMetrics Direct2DDevice::MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines)
     {
-        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
-        // collections are read-only after CreateDeviceIndependentResources, and the text format
-        // and layout below are local to this call. m_appleFormat is not touched - see the note
-        // on its declaration.
         HRESULT result;
 
-        //ReturnIfFailed(result, CreateTextFormat(fontSize));
-        //ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+        winrt::com_ptr<TextFormat> textFormat;
+        ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
 
-        winrt::com_ptr<IDWriteTextFormat> textFormat;
-        ReturnDefaultIfFailed(result, m_dwriteFactory->CreateTextFormat(
-            L"Segoe UI Emoji",						// font family name
-            m_fontCollection.get(),			        // system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            fontSize,								// font size
-            L"",									// locale name
-            textFormat.put()
-        ));
-        ReturnDefaultIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        ReturnDefaultIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-        ReturnDefaultIfFailed(result, textFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
-        ReturnDefaultIfFailed(result, textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK));
-
-        winrt::com_ptr<IDWriteTextLayout> textLayout;
-        ReturnDefaultIfFailed(result, m_dwriteFactory->CreateTextLayout(
-            text.data(),					// The string to be laid out and formatted.
-            text.size(),        			// The length of the string.
-            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
-            width,							// The width of the layout box.
-            INFINITY,						// The height of the layout box.
-            textLayout.put()				// The IDWriteTextLayout interface pointer.
-        ));
-
-        for (const TextStylePart& entity : entities)
-        {
-            UINT32 startPosition = entity.Offset;
-            UINT32 length = entity.Length;
-
-            if (entity.Type == TextStyle::Bold)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Italic)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Strikethrough)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
-            }
-            else if (entity.Type == TextStyle::Underline)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
-            }
-            //else if (name == winrt::name_of<TextStylePartTypeCustomEmoji>())
-            //{
-            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
-            //}
-            else if (entity.Type == TextStyle::Monospace)
-            {
-                ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(m_monospaceFamily, { startPosition, length }));
-            }
-        }
-
-        DWRITE_TEXT_METRICS metrics;
-        ReturnDefaultIfFailed(result, textLayout->GetMetrics(&metrics));
-
-        if (maxLines == 0)
-        {
-            return { metrics.left, metrics.top, metrics.width, metrics.height, metrics.height, length };
-        }
-
-        UINT32 actualLineCount;
-        DWRITE_LINE_METRICS* ranges = new DWRITE_LINE_METRICS[metrics.lineCount];
-        result = textLayout->GetLineMetrics(ranges, metrics.lineCount, &actualLineCount);
-
-        if (result == E_NOT_SUFFICIENT_BUFFER)
-        {
-            delete[] ranges;
-
-            ranges = new DWRITE_LINE_METRICS[actualLineCount];
-            result = textLayout->GetLineMetrics(ranges, actualLineCount, &actualLineCount);
-        }
-
-        if (FAILED(result))
-        {
-            delete[] ranges;
-            return {};
-        }
-
-        float truncateHeight = 0;
-        int32_t truncatePosition = 0;
-
-        // Calculate position where to truncate
-        for (UINT32 i = 0; i < maxLines && i < actualLineCount; ++i)
-        {
-            truncateHeight += ranges[i].height;
-            truncatePosition += ranges[i].length;
-        }
-
-        // Remove trailing whitespace from last included line
-        if (maxLines <= actualLineCount)
-        {
-            //truncateHeight += ranges[maxLines - 1].height;
-            truncatePosition -= ranges[maxLines - 1].trailingWhitespaceLength;
-            truncatePosition -= ranges[maxLines - 1].newlineLength;
-        }
-
-        delete[] ranges;
-        return { metrics.left, metrics.top, metrics.width, metrics.height, truncateHeight, truncatePosition };
+        return textFormat->MaxLines(offset, length, fontSize, width, rtl, maxLines);
     }
 
     HRESULT Direct2DDevice::WriteBytes(array_view<uint8_t const> hash, IRandomAccessStream randomAccessStream) noexcept
