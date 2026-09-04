@@ -1080,37 +1080,25 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var options = await ViewModel.PickMessageSendOptionsAsync(1, SchedulingState.Auto, disableNotification, false);
-            if (options == null)
+            // Read, not consumed: how many messages the text splits into is part of what the user
+            // is asked to confirm, and nothing may disappear from the field while they decide.
+            var text = GetPreparedText();
+
+            if (await ViewModel.SendComposerTextAsync(text, SchedulingState.Auto, disableNotification, Effect?.Id ?? 0))
             {
-                return;
+                Effect = null;
+                Sending?.Invoke(this, EventArgs.Empty);
             }
-
-            options.EffectId = Effect?.Id ?? 0;
-
-            Sending?.Invoke(this, EventArgs.Empty);
-            Effect = null;
-
-            var linkPreview = ViewModel.GetLinkPreviewOptions();
-            var text = GetFormattedText(true);
-
-            await ViewModel.SendMessageAsync(text, linkPreview, options);
         }
 
         public async void Schedule(bool whenOnline)
         {
-            var options = await ViewModel.PickMessageSendOptionsAsync(1, whenOnline ? SchedulingState.WhenOnline : SchedulingState.Schedule);
-            if (options != null)
+            var text = GetPreparedText();
+
+            if (await ViewModel.SendComposerTextAsync(text, whenOnline ? SchedulingState.WhenOnline : SchedulingState.Schedule, null, Effect?.Id ?? 0))
             {
-                options.EffectId = Effect?.Id ?? 0;
-
-                Sending?.Invoke(this, EventArgs.Empty);
                 Effect = null;
-
-                var linkPreview = ViewModel.GetLinkPreviewOptions();
-                var text = GetFormattedText(true);
-
-                await ViewModel.SendMessageAsync(text, linkPreview, options);
+                Sending?.Invoke(this, EventArgs.Empty);
             }
         }
 

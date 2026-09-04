@@ -754,7 +754,7 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            await viewModel.SendMessageAsync(text);
+            await viewModel.SendTextAsync(text);
         }
 
         private void Send_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

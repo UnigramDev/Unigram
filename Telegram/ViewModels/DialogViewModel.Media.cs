@@ -90,21 +90,59 @@ namespace Telegram.ViewModels
             return ContentDialogResult.Primary;
         }
 
-        public override async Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedule = SchedulingState.Auto, bool? disableNotification = null, bool reorder = false)
+        /// <summary>
+        /// Asks the user to pick a scheduling state, if the send calls for one. Returns false when
+        /// they dismissed the picker without choosing.
+        /// </summary>
+        private async Task<(bool Confirmed, MessageSchedulingState State)> PickSchedulingStateAsync(SchedulingState schedule)
         {
             var chat = _chat;
-            if (chat == null || ComposerHeader?.Editing != null)
+            if (chat == null)
             {
-                return new MessageSendOptions(ComposerHeader?.SuggestedPostInfo, false, false, 0, false, null, 0, 0, false);
+                return (false, null);
+            }
+
+            if (schedule == SchedulingState.Schedule || (Type == DialogType.ScheduledMessages && schedule == SchedulingState.Auto))
+            {
+                var user = ClientService.GetUser(chat);
+                var popup = new ScheduleMessagePopup(ClientService, NavigationService, user, ClientService.IsSavedMessages(chat));
+
+                await ShowPopupAsync(popup);
+
+                return (popup.SchedulingState != null, popup.SchedulingState);
+            }
+            else if (schedule == SchedulingState.WhenOnline)
+            {
+                return (true, new MessageSchedulingStateSendWhenOnline());
+            }
+
+            return (true, null);
+        }
+
+        protected override async Task<SendPlan> PrepareSendAsync(ComposerSnapshot composer, int messageCount, SchedulingState schedule, bool? silent, bool reorder, long effectId)
+        {
+            var chat = _chat;
+            var header = (composer as DialogComposerSnapshot)?.Header;
+
+            // An edit is neither charged nor scheduled, and it consumes the composer through its own
+            // path — so there is nothing to ask about here, and nothing to clear.
+            if (chat == null || header?.Editing != null)
+            {
+                return new SendPlan
+                {
+                    ReplyTo = composer?.ReplyTo,
+                    LinkPreview = composer?.LinkPreview,
+                    SuggestedPostInfo = header?.SuggestedPostInfo
+                };
             }
 
             var paidMessageStarCount = 0L;
 
-            if (ClientService.TryGetUserFull(Chat, out UserFullInfo userFullInfo))
+            if (ClientService.TryGetUserFull(chat, out UserFullInfo userFullInfo))
             {
                 paidMessageStarCount = userFullInfo.OutgoingPaidMessageStarCount;
             }
-            else if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 if (supergroup.IsAdministeredDirectMessagesGroup)
                 {
@@ -122,29 +160,26 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            MessageSchedulingState schedulingState = null;
-            if (schedule == SchedulingState.Schedule || (Type == DialogType.ScheduledMessages && schedule == SchedulingState.Auto))
+            var (confirmed, schedulingState) = await PickSchedulingStateAsync(schedule);
+            if (!confirmed)
             {
-                var user = ClientService.GetUser(chat);
-                var popup = new ScheduleMessagePopup(ClientService, NavigationService, user, ClientService.IsSavedMessages(chat));
-
-                var confirm = await ShowPopupAsync(popup);
-
-                if (popup.SchedulingState != null)
-                {
-                    schedulingState = popup.SchedulingState;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else if (schedule == SchedulingState.WhenOnline)
-            {
-                schedulingState = new MessageSchedulingStateSendWhenOnline();
+                return null;
             }
 
-            return new MessageSendOptions(ComposerHeader?.SuggestedPostInfo, disableNotification ?? false, false, messageCount * paidMessageStarCount, AppSettings.Stickers.DynamicPackOrder && reorder, schedulingState, 0, 0, false);
+            ClearComposer(header, schedulingState != null);
+
+            return new SendPlan
+            {
+                ReplyTo = composer?.ReplyTo,
+                LinkPreview = composer?.LinkPreview,
+                SuggestedPostInfo = header?.SuggestedPostInfo,
+                SchedulingState = schedulingState,
+                DisableNotification = silent ?? false,
+                UpdateOrderOfInstalledStickerSets = AppSettings.Stickers.DynamicPackOrder && reorder,
+                // Per message: ToOptions multiplies it back up by whatever a given request carries.
+                PaidMessageStarCount = paidMessageStarCount,
+                EffectId = effectId
+            };
         }
 
         protected override void ContinueSendMessage(MessageSendOptions options)
@@ -370,13 +405,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var header = _composerHeader;
+            var composer = PeekComposer();
+            var header = (composer as DialogComposerSnapshot)?.Header;
+
             if (header?.Editing == null)
             {
                 return;
             }
 
-            var linkPreview = GetLinkPreviewOptions();
             var formattedText = GetFormattedText(true, false);
 
             var permissions = ClientService.GetPermissions(chat, out _);
@@ -432,7 +468,7 @@ namespace Telegram.ViewModels
                     header.Editing = new MessageComposerEditing(header.Editing.Message, input);
                 }
 
-                await BeforeSendMessageAsync(popup.Caption, linkPreview);
+                await TryEditMessageAsync(popup.Caption, composer);
             }
         }
     }

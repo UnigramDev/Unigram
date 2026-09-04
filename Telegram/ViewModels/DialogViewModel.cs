@@ -3091,44 +3091,161 @@ namespace Telegram.ViewModels
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        protected override InputMessageReplyTo GetReply(bool clean, bool notify = true)
+        /// <summary>
+        /// A composer snapshot that remembers the header it was read from, so that the clear can
+        /// tell whether the user has moved on since.
+        /// </summary>
+        private sealed class DialogComposerSnapshot : ComposerSnapshot
         {
-            var embedded = _composerHeader;
-            if (embedded == null)
+            public MessageComposerHeader Header { get; init; }
+        }
+
+        protected override ComposerSnapshot PeekComposer()
+        {
+            var header = _composerHeader;
+            if (header == null)
+            {
+                return ComposerSnapshot.None;
+            }
+
+            return new DialogComposerSnapshot
+            {
+                Header = header,
+                ReplyTo = header.ReplyTo?.ToInput(this),
+                LinkPreview = CopyLinkPreviewOptions(header.LinkPreviewOptions)
+            };
+        }
+
+        /// <summary>
+        /// The header is replaced wholesale on every change, but its link preview options are not:
+        /// the composer flyout writes through the live instance, and the same one is carried into
+        /// each replacement. Copying is what makes the snapshot a snapshot.
+        /// </summary>
+        private static LinkPreviewOptions CopyLinkPreviewOptions(LinkPreviewOptions options)
+        {
+            if (options == null)
             {
                 return null;
             }
 
-            if (clean)
-            {
-                if (notify)
-                {
-                    ComposerHeader = null;
-                }
-                else
-                {
-                    _composerHeader = null;
-                }
+            return new LinkPreviewOptions(options.IsDisabled, options.Url, options.ForceSmallMedia, options.ForceLargeMedia, options.ShowAboveText);
+        }
 
-                if (embedded.ReplyTo?.Message.ReplyMarkup is ReplyMarkupForceReply)
-                {
-                    ClientService.Send(new DeleteChatReplyMarkup(embedded.ReplyTo.Message.ChatId, embedded.ReplyTo.Message.Id));
-                }
+        /// <summary>
+        /// Consumes the header a send was built from. Does nothing if the user has replaced it in
+        /// the meantime — what they set after asking to send is theirs to keep.
+        /// </summary>
+        /// <param name="notify">
+        /// Whether the view is told. It normally isn't: ChatView dismisses the header along with the
+        /// outgoing bubble's send-out animation. A scheduled message never lands in the list, so
+        /// nothing would dismiss it.
+        /// </param>
+        private void ClearComposer(MessageComposerHeader header, bool notify)
+        {
+            if (header == null || _composerHeader != header)
+            {
+                return;
             }
 
-            return embedded.ReplyTo?.ToInput(this);
+            if (notify)
+            {
+                ComposerHeader = null;
+            }
+            else
+            {
+                _composerHeader = null;
+            }
+
+            if (header.ReplyTo?.Message.ReplyMarkup is ReplyMarkupForceReply)
+            {
+                ClientService.Send(new DeleteChatReplyMarkup(header.ReplyTo.Message.ChatId, header.ReplyTo.Message.Id));
+            }
+        }
+
+        private void ClearComposer()
+        {
+            ClearComposer(_composerHeader, true);
         }
 
         #endregion
 
         public async void SendMessage(string args)
         {
-            await SendMessageAsync(args);
+            await SendTextAsync(args);
         }
 
-        public override LinkPreviewOptions GetLinkPreviewOptions()
+        /// <summary>
+        /// Sends what the composer is holding: applies it to the message being edited if there is
+        /// one, sends the rich draft if that is what it holds, and otherwise asks the user to
+        /// confirm and sends it.
+        /// </summary>
+        /// <param name="formattedText">
+        /// Read from the text field but deliberately not consumed there: a user staring at a modal
+        /// asking them to pay must still be able to see what they wrote. Emptying the field is this
+        /// method's job, once the send is past the point of no return.
+        /// </param>
+        /// <returns>False if the user backed out, leaving the composer exactly as it was.</returns>
+        public async Task<bool> SendComposerTextAsync(PreparedText formattedText, SchedulingState schedule = SchedulingState.Auto, bool? silent = null, long effectId = 0)
         {
-            return _composerHeader?.LinkPreviewOptions;
+            if (Chat is not Chat chat || formattedText == null)
+            {
+                return false;
+            }
+
+            // The one read of the composer this send gets. Everything below decides from it, so
+            // that what goes out is what the user was looking at when they pressed send.
+            var composer = PeekComposer();
+
+            var applied = await TryEditMessageAsync(formattedText, composer);
+            if (applied || string.IsNullOrEmpty(formattedText.Text))
+            {
+                if (chat.DraftMessage?.Content is DraftMessageContentRichMessage richMessage)
+                {
+                    SendRichMessage(richMessage, composer, schedule, silent, effectId);
+                }
+
+                return true;
+            }
+
+            var plan = await PrepareSendAsync(composer, CountMessages(formattedText), schedule, silent, formattedText.UpdateOrderOfInstalledStickerSets, effectId);
+            if (plan == null)
+            {
+                return false;
+            }
+
+            // Committed: the header went with the plan, and the text goes now.
+            SetFormattedText(null);
+
+            await SendTextAsync(formattedText, plan);
+            return true;
+        }
+
+        private async void SendRichMessage(DraftMessageContentRichMessage richMessage, ComposerSnapshot composer, SchedulingState schedule, bool? silent, long effectId)
+        {
+            // A free user sends the plain text the blocks flatten to, and is shown the promo when
+            // they don't flatten to anything — before the composer is consumed either way.
+            FormattedText flattened = null;
+
+            if (IsPremiumAvailable && !IsPremium && !PageBlockHelper.TryGetFormattedText(richMessage.Message, out flattened))
+            {
+                ToastPopup.ShowFeaturePromo(NavigationService, new PremiumFeatureRichMessages());
+                return;
+            }
+
+            var plan = await PrepareSendAsync(composer, flattened != null ? CountMessages(flattened) : 1, schedule, silent, false, effectId);
+            if (plan == null)
+            {
+                return;
+            }
+
+            if (flattened != null)
+            {
+                await SendTextAsync(flattened, plan);
+            }
+            else
+            {
+                await SendMessageAsync(plan, new InputMessageRichMessage(PageBlockHelper.ToInputRichMessage(richMessage.Message), true));
+            }
         }
 
         protected override Function CreateSendMessage(long chatId, MessageTopic topicId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, InputMessageContent inputMessageContent)
@@ -3234,14 +3351,19 @@ namespace Telegram.ViewModels
             return base.CreateSendMessageAlbum(chatId, topicId, replyTo, messageSendOptions, inputMessageContent);
         }
 
-        protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText, LinkPreviewOptions linkPreview)
+        /// <summary>
+        /// Applies the send to the message the composer is editing, if there is one.
+        /// Returns true when it did, meaning the send has been consumed and no new message is to be sent.
+        /// </summary>
+        private async Task<bool> TryEditMessageAsync(FormattedText formattedText, ComposerSnapshot composer)
         {
             if (Chat is not Chat chat)
             {
                 return false;
             }
 
-            var header = _composerHeader;
+            var linkPreview = composer?.LinkPreview;
+            var header = (composer as DialogComposerSnapshot)?.Header;
             if (header?.Editing == null)
             {
                 return false;
@@ -3325,7 +3447,10 @@ namespace Telegram.ViewModels
                     else if (response is Ok)
                     {
                         // TODO: quick reply
+                        // No draft to fall back on here, so the field has to be emptied by hand —
+                        // every other branch that commits goes through ShowDraftMessage.
                         ComposerHeader = null;
+                        SetFormattedText(null);
                     }
                     else if (response is Error error)
                     {
@@ -3631,7 +3756,7 @@ namespace Telegram.ViewModels
             }
 
             // Carry the current reply into the editor; send options are picked with their defaults on send.
-            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, messageId, message, GetReply(false));
+            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, messageId, message, PeekComposer().ReplyTo);
         }
 
         /// <summary>
@@ -3662,7 +3787,7 @@ namespace Telegram.ViewModels
 
             // The field keeps its text: the editor is a separate window, and nothing is
             // sent until it says so — same as SendRichMessage above.
-            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, 0, message, GetReply(false));
+            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, 0, message, PeekComposer().ReplyTo);
         }
 
         public void Boost()
@@ -3939,13 +4064,14 @@ namespace Telegram.ViewModels
                         var response = await ClientService.SendAsync(new CreateGroupCall(null));
                         if (response is GroupCallInfo info && ClientService.TryGetGroupCall(info.GroupCallId, out GroupCall groupCall))
                         {
-                            var options = await PickMessageSendOptionsAsync();
-                            if (options == null)
+                            // Not a composer send: it borrows nothing from it and must not clear it.
+                            var plan = await PrepareSendAsync(ComposerSnapshot.None, 1, SchedulingState.Auto, null, false, 0);
+                            if (plan == null)
                             {
                                 return;
                             }
 
-                            await SendMessageAsync(null, new InputMessageText(groupCall.InviteLink.AsFormattedText(), null, false), options);
+                            await SendMessageAsync(plan, new InputMessageText(groupCall.InviteLink.AsFormattedText(), null, false));
                         }
                     }
                 }

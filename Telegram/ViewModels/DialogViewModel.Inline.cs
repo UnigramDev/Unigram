@@ -186,8 +186,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync();
-            if (options == null)
+            var plan = await PrepareSendAsync();
+            if (plan == null)
             {
                 return;
             }
@@ -210,7 +210,7 @@ namespace Telegram.ViewModels
             SetText(null, false);
             ClearInlineBot();
 
-            var replyTo = GetReply(true);
+            var replyTo = plan.ReplyTo;
             Function function;
 
             if (QuickReplyShortcut != null)
@@ -233,7 +233,7 @@ namespace Telegram.ViewModels
                     replyTo = new InputMessageReplyToMessage(replyToTopicMessage.MessageId, replyToTopicMessage.Quote, replyToTopicMessage.ChecklistTaskId, replyToTopicMessage.PollOptionId);
                 }
 
-                function = new SendInlineQueryResultMessage(chat.Id, topicId, replyTo, options, queryId, queryResult.GetId(), false);
+                function = new SendInlineQueryResultMessage(chat.Id, topicId, replyTo, plan.ToOptions(), queryId, queryResult.GetId(), false);
             }
 
             var response = await ClientService.SendAsync(function);

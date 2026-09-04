@@ -186,7 +186,7 @@ namespace Telegram.ViewModels
                 var header = ComposerHeader;
                 var text = GetFormattedText(true, false);
 
-                GetReply(true);
+                ClearComposer();
 
                 var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message));
                 if (confirm != ContentDialogResult.Primary)
@@ -237,7 +237,7 @@ namespace Telegram.ViewModels
                 var header = ComposerHeader;
                 var text = GetFormattedText(true, false);
 
-                GetReply(true);
+                ClearComposer();
 
                 var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
                 if (confirm != ContentDialogResult.Primary)
@@ -288,7 +288,7 @@ namespace Telegram.ViewModels
                 var header = ComposerHeader;
                 var text = GetFormattedText(true, false);
 
-                GetReply(true);
+                ClearComposer();
 
                 var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message, checklistTaskId: checklistTask.Task.Id));
                 if (confirm != ContentDialogResult.Primary)
@@ -339,7 +339,7 @@ namespace Telegram.ViewModels
                 var header = ComposerHeader;
                 var text = GetFormattedText(true, false);
 
-                GetReply(true);
+                ClearComposer();
 
                 var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message, pollOptionId: pollOption.Option.Id));
                 if (confirm != ContentDialogResult.Primary)
@@ -1330,13 +1330,13 @@ namespace Telegram.ViewModels
 
         public async void RescheduleMessage(MessageViewModel message)
         {
-            var options = await PickMessageSendOptionsAsync(1, SchedulingState.Schedule);
-            if (options?.SchedulingState == null)
+            var (confirmed, schedulingState) = await PickSchedulingStateAsync(SchedulingState.Schedule);
+            if (!confirmed || schedulingState == null)
             {
                 return;
             }
 
-            ClientService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState));
+            ClientService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, schedulingState));
         }
 
         #endregion

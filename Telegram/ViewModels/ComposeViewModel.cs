@@ -35,6 +35,60 @@ namespace Telegram.ViewModels
         WhenOnline
     }
 
+    /// <summary>
+    /// What the composer contributes to a send, read in one act before any await, so that what
+    /// goes out is what the user was looking at when they asked for it.
+    /// </summary>
+    public class ComposerSnapshot
+    {
+        /// <summary>
+        /// A send that doesn't come from the composer, and so must neither borrow from nor clear it.
+        /// </summary>
+        public static readonly ComposerSnapshot None = new();
+
+        public InputMessageReplyTo ReplyTo { get; init; }
+
+        public LinkPreviewOptions LinkPreview { get; init; }
+    }
+
+    /// <summary>
+    /// What the user agreed to when they confirmed a send, and the only thing that drives it
+    /// forward from there.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately not a <see cref="MessageSendOptions"/>. TDLib reads its paid_message_star_count
+    /// as the total for one request and divides it by the number of messages that request carries,
+    /// rejecting a remainder — so a single instance can't be shared across the several requests one
+    /// send may issue. <see cref="ToOptions"/> builds a fresh one for each, from a price that is
+    /// per message.
+    /// </remarks>
+    public sealed record SendPlan
+    {
+        public InputMessageReplyTo ReplyTo { get; init; }
+
+        public LinkPreviewOptions LinkPreview { get; init; }
+
+        public InputSuggestedPostInfo SuggestedPostInfo { get; init; }
+
+        public MessageSchedulingState SchedulingState { get; init; }
+
+        public bool DisableNotification { get; init; }
+
+        public bool UpdateOrderOfInstalledStickerSets { get; init; }
+
+        /// <summary>
+        /// Stars the user agreed to pay for each single message.
+        /// </summary>
+        public long PaidMessageStarCount { get; init; }
+
+        public long EffectId { get; init; }
+
+        public MessageSendOptions ToOptions(int messageCount = 1)
+        {
+            return new MessageSendOptions(SuggestedPostInfo, DisableNotification, false, PaidMessageStarCount * messageCount, UpdateOrderOfInstalledStickerSets, SchedulingState, EffectId, 0, false);
+        }
+    }
+
     public abstract class ComposeViewModel : ViewModelBase
     {
         protected ComposeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -46,7 +100,26 @@ namespace Telegram.ViewModels
 
         protected abstract void HideStickers();
 
-        protected abstract InputMessageReplyTo GetReply(bool clear, bool notify = true);
+        /// <summary>
+        /// Reads the composer without consuming it. Synchronous by contract: call it before a
+        /// send's first await, or it observes a composer the user has since moved on from.
+        /// </summary>
+        protected abstract ComposerSnapshot PeekComposer();
+
+        /// <summary>
+        /// Asks the user for everything the send needs their consent on and, once they have given
+        /// it, consumes <paramref name="composer"/>. Returns null if they backed out, leaving the
+        /// composer as it was.
+        /// </summary>
+        protected abstract Task<SendPlan> PrepareSendAsync(ComposerSnapshot composer, int messageCount, SchedulingState schedule, bool? silent, bool reorder, long effectId);
+
+        /// <summary>
+        /// Peeks and prepares in one go — for the send paths that have not awaited anything yet.
+        /// </summary>
+        public Task<SendPlan> PrepareSendAsync(int messageCount = 1, SchedulingState schedule = SchedulingState.Auto, bool? silent = null, bool reorder = false, long effectId = 0)
+        {
+            return PrepareSendAsync(PeekComposer(), messageCount, schedule, silent, reorder, effectId);
+        }
 
         public abstract FormattedText GetFormattedText(bool clear, bool parseMarkdown);
 
@@ -64,6 +137,7 @@ namespace Telegram.ViewModels
 
         public async void SendSticker(Sticker sticker, SchedulingState schedule, bool? silent, string emoji = null, bool reorder = false)
         {
+            var composer = PeekComposer();
             HideStickers();
 
             if (sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && ClientService.IsPremiumAvailable && !ClientService.IsPremium)
@@ -78,16 +152,15 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(1, schedule, silent, reorder);
-            if (options == null)
+            var plan = await PrepareSendAsync(composer, 1, schedule, silent, reorder, 0);
+            if (plan == null)
             {
                 return;
             }
 
-            var reply = GetReply(true);
             var input = new InputMessageSticker(new InputSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height), emoji ?? string.Empty);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(plan, input);
         }
 
         public void AddFavoriteSticker(Sticker sticker)
@@ -116,6 +189,7 @@ namespace Telegram.ViewModels
 
         public async void SendAnimation(Animation animation, SchedulingState schedule, bool? silent)
         {
+            var composer = PeekComposer();
             HideStickers();
 
             var restricted = await VerifyRightsAsync(x => x.CanSendOtherMessages, Strings.GlobalAttachGifRestricted, Strings.AttachGifRestrictedForever, Strings.AttachGifRestricted);
@@ -124,16 +198,15 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(1, schedule, silent);
-            if (options == null)
+            var plan = await PrepareSendAsync(composer, 1, schedule, silent, false, 0);
+            if (plan == null)
             {
                 return;
             }
 
-            var reply = GetReply(true);
             var input = new InputMessageAnimation(new InputAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height), null, false, false);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(plan, input);
         }
 
         public void DeleteAnimation(Animation animation)
@@ -335,6 +408,7 @@ namespace Telegram.ViewModels
 
         public async void SendAudio()
         {
+            var composer = PeekComposer();
             var restricted = await VerifyRightsAsync(x => x.CanSendAudios,
                 Strings.ErrorSendRestrictedMusicAll,
                 Strings.ErrorSendRestrictedMusic,
@@ -354,36 +428,38 @@ namespace Telegram.ViewModels
 
             if (popup.SelectedItems?.Count > 0)
             {
-                var options = await PickMessageSendOptionsAsync();
-                if (options == null)
+                var chat = Chat;
+
+                var operations = new MutableVector<InputMessageContent>();
+                var groups = new List<Vector<InputMessageContent>>();
+
+                foreach (var selected in popup.SelectedItems)
+                {
+                    operations.Add(selected.ToInputMessage());
+
+                    if (operations.Count > 9)
+                    {
+                        groups.Add(operations);
+                        operations = new();
+                    }
+                }
+
+                if (operations.Count > 0)
+                {
+                    groups.Add(operations);
+                }
+
+                var plan = await PrepareSendAsync(composer, popup.SelectedItems.Count, SchedulingState.Auto, null, false, 0);
+                if (plan == null)
                 {
                     return;
                 }
 
-                var reply = GetReply(true);
-                var chat = Chat;
-
                 if (popup.SelectedItems.Count > 1)
                 {
-                    var operations = new MutableVector<InputMessageContent>();
-                    var groups = new List<Vector<InputMessageContent>>();
-
-                    foreach (var selected in popup.SelectedItems)
-                    {
-                        operations.Add(selected.ToInputMessage());
-
-                        if (operations.Count > 9)
-                        {
-                            groups.Add(operations);
-                            operations = new();
-                        }
-                    }
-
-                    groups.Add(operations);
-
                     foreach (var content in groups)
                     {
-                        var function = CreateSendMessageAlbum(chat.Id, OutgoingTopicId, reply, options, content);
+                        var function = CreateSendMessageAlbum(chat.Id, OutgoingTopicId, plan.ReplyTo, plan.ToOptions(content.Count), content);
                         if (function == null)
                         {
                             return;
@@ -394,7 +470,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    var function = CreateSendMessage(chat.Id, OutgoingTopicId, reply, options, popup.SelectedItems[0].ToInputMessage());
+                    var function = CreateSendMessage(chat.Id, OutgoingTopicId, plan.ReplyTo, plan.ToOptions(), popup.SelectedItems[0].ToInputMessage());
                     if (function == null)
                     {
                         return;
@@ -444,6 +520,8 @@ namespace Telegram.ViewModels
             {
                 return;
             }
+
+            var composer = PeekComposer();
 
             var permissions = ClientService.GetPermissions(chat, out bool restricted);
 
@@ -539,13 +617,6 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(popup.Items.Count, popup.Schedule, popup.Silent);
-            if (options == null)
-            {
-                return;
-            }
-
-            var reply = GetReply(true);
             var captionz = popup.Caption;
 
             var captionAboveMedia = popup.ShowCaptionAboveMedia;
@@ -555,11 +626,29 @@ namespace Telegram.ViewModels
             var itemsView = GetItemsView(popup.Items, popup.IsAlbum, popup.IsFilesSelected, permissions.CanSendPhotos, permissions.CanSendVideos, permissions.CanSendAudios, permissions.CanSendDocuments);
 
             // If we're sending more than one message, send the caption by itself.
-            if (itemsView.Count > 1 && captionz != null)
+            var captionAlone = itemsView.Count > 1 && captionz != null;
+
+            // What the user is asked to pay for is messages, not the files they picked: every item
+            // of an album is one, and a caption that can't ride along with a single item is one more.
+            var messageCount = captionAlone ? 1 : 0;
+
+            foreach (var item in itemsView)
             {
-                await SendMessageAsync(captionz, null, options, reply);
+                messageCount += item is StorageAlbum album ? album.Media.Count : 1;
+            }
+
+            var plan = await PrepareSendAsync(composer, messageCount, popup.Schedule, popup.Silent, false, 0);
+            if (plan == null)
+            {
+                return;
+            }
+
+            if (captionAlone)
+            {
+                await SendTextAsync(captionz, plan);
+
                 captionz = null;
-                reply = null;
+                plan = plan with { ReplyTo = null };
             }
 
             for (int i = 0; i < itemsView.Count; i++)
@@ -571,16 +660,16 @@ namespace Telegram.ViewModels
                 {
                     if (album.Media.Count > 1)
                     {
-                        await SendGroupedAsync(album.Media, reply, itemCaption, options, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, highQuality, popup.StarCount);
+                        await SendGroupedAsync(album.Media, plan, itemCaption, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, highQuality, popup.StarCount);
                     }
                     else if (album.Media.Count > 0)
                     {
-                        await SendStorageMediaAsync(album.Media[0], reply, itemCaption, options, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, highQuality, popup.StarCount);
+                        await SendStorageMediaAsync(album.Media[0], plan, itemCaption, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, highQuality, popup.StarCount);
                     }
                 }
                 else
                 {
-                    await SendStorageMediaAsync(item, reply, itemCaption, options, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, highQuality, popup.StarCount);
+                    await SendStorageMediaAsync(item, plan, itemCaption, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, highQuality, popup.StarCount);
                 }
             }
         }
@@ -656,61 +745,61 @@ namespace Telegram.ViewModels
 
         protected abstract bool CanSchedule { get; }
 
-        private async Task SendStorageMediaAsync(StorageMedia storage, InputMessageReplyTo reply, FormattedText caption, MessageSendOptions options, bool asFile, bool captionAboveMedia, bool spoiler, bool highQuality, long starCount = 0)
+        private async Task SendStorageMediaAsync(StorageMedia storage, SendPlan plan, FormattedText caption, bool asFile, bool captionAboveMedia, bool spoiler, bool highQuality, long starCount = 0)
         {
             if (storage is StorageDocument or StorageAudio || asFile)
             {
-                await SendDocumentAsync(storage, reply, caption, options);
+                await SendDocumentAsync(storage, plan, caption);
             }
             else if (storage is StoragePhoto photo)
             {
-                await SendPhotoAsync(photo, reply, caption, captionAboveMedia, spoiler, storage.Ttl, highQuality, options, starCount);
+                await SendPhotoAsync(photo, plan, caption, captionAboveMedia, spoiler, storage.Ttl, highQuality, starCount);
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(video, reply, caption, video.IsMuted, captionAboveMedia, spoiler, storage.Ttl, options, starCount);
+                await SendVideoAsync(video, plan, caption, video.IsMuted, captionAboveMedia, spoiler, storage.Ttl, starCount);
             }
         }
 
-        private async Task SendDocumentAsync(StorageMedia file, InputMessageReplyTo reply, FormattedText caption, MessageSendOptions options)
+        private async Task SendDocumentAsync(StorageMedia file, SendPlan plan, FormattedText caption)
         {
             var factory = await MessageFactory.CreateDocumentAsync(file, caption, false);
             if (factory is InputMessageContent input)
             {
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(plan, input);
             }
         }
 
-        private async Task SendPhotoAsync(StoragePhoto file, InputMessageReplyTo reply, FormattedText caption, bool captionAboveMedia, bool hasSpoiler, MessageSelfDestructType ttl, bool highQuality, MessageSendOptions options, long starCount = 0)
+        private async Task SendPhotoAsync(StoragePhoto file, SendPlan plan, FormattedText caption, bool captionAboveMedia, bool hasSpoiler, MessageSelfDestructType ttl, bool highQuality, long starCount = 0)
         {
             var factory = await MessageFactory.CreatePhotoAsync(file, caption, highQuality, captionAboveMedia, hasSpoiler, ttl, starCount);
             if (factory is InputPaidMedia inputPaidMedia)
             {
-                await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { inputPaidMedia }, caption, captionAboveMedia, string.Empty), options);
+                await SendMessageAsync(plan, new InputMessagePaidMedia(starCount, new[] { inputPaidMedia }, caption, captionAboveMedia, string.Empty));
             }
             else if (factory is InputMessageContent input)
             {
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(plan, input);
             }
         }
 
-        public async Task SendVideoAsync(StorageVideo video, InputMessageReplyTo reply, FormattedText caption, bool animated, bool captionAboveMedia, bool hasSpoiler, MessageSelfDestructType ttl, MessageSendOptions options, long starCount = 0)
+        public async Task SendVideoAsync(StorageVideo video, SendPlan plan, FormattedText caption, bool animated, bool captionAboveMedia, bool hasSpoiler, MessageSelfDestructType ttl, long starCount = 0)
         {
             var factory = await MessageFactory.CreateVideoAsync(video, caption, animated, captionAboveMedia, hasSpoiler, ttl, starCount);
             if (factory is InputPaidMedia inputPaidMedia)
             {
-                await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { inputPaidMedia }, caption, captionAboveMedia, string.Empty), options);
+                await SendMessageAsync(plan, new InputMessagePaidMedia(starCount, new[] { inputPaidMedia }, caption, captionAboveMedia, string.Empty));
             }
             else if (factory is InputMessageContent input)
             {
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(plan, input);
             }
         }
 
         public async Task SendVideoNoteAsync(StorageVideo video, VideoGeneration generation, MessageSelfDestructType selfDestructType)
         {
-            var options = await PickMessageSendOptionsAsync();
-            if (options == null)
+            var plan = await PrepareSendAsync();
+            if (plan == null)
             {
                 return;
             }
@@ -718,25 +807,22 @@ namespace Telegram.ViewModels
             var factory = await MessageFactory.CreateVideoNoteAsync(video, generation, selfDestructType);
             if (factory is InputMessageContent input)
             {
-                var reply = GetReply(true);
-
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(plan, input);
             }
         }
 
         public async Task SendVoiceNoteAsync(StorageFile file, ConversionType conversion, TimeSpan duration, byte[] waveform, FormattedText caption, MessageSelfDestructType selfDestructType)
         {
-            var options = await PickMessageSendOptionsAsync();
-            if (options == null)
+            var plan = await PrepareSendAsync();
+            if (plan == null)
             {
                 return;
             }
 
             // TODO: 172 selfDestructType
-            var reply = GetReply(true);
             var input = new InputMessageVoiceNote(new InputVoiceNote(await GenerationService.PrepareAsync(file, conversion), (int)Math.Round(duration.TotalSeconds), waveform), caption, selfDestructType);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(plan, input);
         }
 
         public async void SendCamera()
@@ -775,6 +861,7 @@ namespace Telegram.ViewModels
 
         public async void SendContact()
         {
+            var composer = PeekComposer();
             var user = await ChooseChatsPopup.PickUserAsync(ClientService, NavigationService, Strings.ShareContactTitle, true);
             if (user == null)
             {
@@ -784,23 +871,20 @@ namespace Telegram.ViewModels
             var vcard = string.Empty;
             var contact = new Contact(user.PhoneNumber, user.FirstName, user.LastName, vcard, user.Id);
 
-            var options = await PickMessageSendOptionsAsync();
-            if (options == null)
+            var plan = await PrepareSendAsync(composer, 1, SchedulingState.Auto, null, false, 0);
+            if (plan == null)
             {
                 return;
             }
 
-            await SendContactAsync(contact, options);
+            await SendContactAsync(contact, plan);
 
             WatchDog.TrackEvent("SendContact");
         }
 
-        public Task<Object> SendContactAsync(Contact contact, MessageSendOptions options)
+        public Task<Object> SendContactAsync(Contact contact, SendPlan plan)
         {
-            var reply = GetReply(true);
-            var input = new InputMessageContact(contact);
-
-            return SendMessageAsync(reply, input, options);
+            return SendMessageAsync(plan, new InputMessageContact(contact));
         }
 
         public void SendContent(InputMessageContent content)
@@ -810,15 +894,13 @@ namespace Telegram.ViewModels
 
         public async Task<Object> SendContentAsync(InputMessageContent input)
         {
-            var reply = GetReply(true);
-
-            var options = await PickMessageSendOptionsAsync();
-            if (options == null)
+            var plan = await PrepareSendAsync();
+            if (plan == null)
             {
                 return null;
             }
 
-            return await SendMessageAsync(reply, input, options);
+            return await SendMessageAsync(plan, input);
         }
 
         //private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent)
@@ -839,16 +921,21 @@ namespace Telegram.ViewModels
         //    return await SendMessageAsync(replyToMessageId, inputMessageContent, options);
         //}
 
-        public abstract Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedulingState = SchedulingState.None, bool? disableNotification = null, bool reorder = false);
+        protected Task<Object> SendMessageAsync(SendPlan plan, InputMessageContent inputMessageContent, int messageCount = 1)
+        {
+            return SendMessageAsync(plan?.ReplyTo, inputMessageContent, plan?.ToOptions(messageCount));
+        }
 
+        /// <summary>
+        /// The raw send, for the handful of messages that don't come from the composer and so have
+        /// nothing to ask the user about — a bot keyboard's reply, mostly.
+        /// </summary>
         protected async Task<Object> SendMessageAsync(InputMessageReplyTo replyTo, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
             if (Chat is not Chat chat)
             {
                 return null;
             }
-
-            InsertedCustomEmojiIds.Clear();
 
             options ??= new MessageSendOptions();
             options.SendingId = Math.Max(options.SendingId, 1);
@@ -910,21 +997,19 @@ namespace Telegram.ViewModels
 
         public async void SendLocation()
         {
+            var composer = PeekComposer();
             var popup = new SendLocationPopup(Session);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                var options = await PickMessageSendOptionsAsync();
-                if (options == null)
+                var plan = await PrepareSendAsync(composer, 1, SchedulingState.Auto, null, false, 0);
+                if (plan == null)
                 {
                     return;
                 }
 
-                var reply = GetReply(true);
-                var input = popup.Media;
-
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(plan, popup.Media);
 
                 WatchDog.TrackEvent("SendLocation");
             }
@@ -937,6 +1022,7 @@ namespace Telegram.ViewModels
 
         protected async Task SendPollAsync(bool useTextAsQuestion, bool forceQuiz, bool forceRegular, bool channel)
         {
+            var composer = PeekComposer();
             var title = GetFormattedText(true, false);
             title = title.Substring(0, ClientService.Options.ChecklistTitleLengthMax);
 
@@ -949,22 +1035,20 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync();
-            if (options == null)
+            var plan = await PrepareSendAsync(composer, 1, SchedulingState.Auto, null, false, 0);
+            if (plan == null)
             {
                 return;
             }
 
-            var reply = GetReply(true);
-            var input = popup.Input;
-
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(plan, popup.Input);
         }
 
         public async void SendChecklist()
         {
             if (IsPremium)
             {
+                var composer = PeekComposer();
                 var title = GetFormattedText(true, false);
                 title = title.Substring(0, ClientService.Options.ChecklistTitleLengthMax);
 
@@ -977,16 +1061,15 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var options = await PickMessageSendOptionsAsync();
-                if (options == null)
+                var plan = await PrepareSendAsync(composer, 1, SchedulingState.Auto, null, false, 0);
+                if (plan == null)
                 {
                     return;
                 }
 
-                var reply = GetReply(true);
                 var input = new InputMessageChecklist(new InputChecklist(popup.Title, popup.Tasks, popup.OthersCanAddTasks, popup.OthersCanMarkTasksAsDone));
 
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(plan, input);
             }
             else
             {
@@ -994,14 +1077,13 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async Task<Object> SendGroupedAsync(IList<StorageMedia> items, InputMessageReplyTo reply, FormattedText caption, MessageSendOptions options, bool forceDocuments, bool captionAboveMedia, bool hasSpoiler, bool highQuality, long starCount = 0)
+        private async Task<Object> SendGroupedAsync(IList<StorageMedia> items, SendPlan plan, FormattedText caption, bool forceDocuments, bool captionAboveMedia, bool hasSpoiler, bool highQuality, long starCount = 0)
         {
             if (Chat is not Chat chat)
             {
                 return null;
             }
 
-            //var reply = GetReply(true);
             var operations = new MutableVector<InputMessageContent>();
             var paidOperations = new MutableVector<InputPaidMedia>();
 
@@ -1047,10 +1129,11 @@ namespace Telegram.ViewModels
 
             if (starCount > 0)
             {
-                return await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, paidOperations, caption, captionAboveMedia, string.Empty), options);
+                // Paid media is one message however many items it carries.
+                return await SendMessageAsync(plan, new InputMessagePaidMedia(starCount, paidOperations, caption, captionAboveMedia, string.Empty));
             }
 
-            var function = CreateSendMessageAlbum(chat.Id, OutgoingTopicId, reply, options, operations);
+            var function = CreateSendMessageAlbum(chat.Id, OutgoingTopicId, plan?.ReplyTo, plan?.ToOptions(operations.Count), operations);
             if (function == null)
             {
                 return null;
@@ -1080,166 +1163,96 @@ namespace Telegram.ViewModels
             return ClientEx.ParseMarkdown(text.Format());
         }
 
-        public HashSet<long> InsertedCustomEmojiIds = new();
-
-        public Task<Object> SendMessageAsync(FormattedText formattedText, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public Task<Object> SendTextAsync(string text, SendPlan plan = null)
         {
-            return SendMessageAsync(formattedText?.Text, formattedText?.Entities, linkPreview, options, reply);
+            return SendTextAsync(GetFormattedText(text ?? string.Empty), plan);
         }
 
-        public async Task<Object> SendMessageAsync(string text, Vector<TextEntity> entities = null, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public async Task<Object> SendTextAsync(FormattedText formattedText, SendPlan plan = null)
         {
-            text ??= string.Empty;
-            text = text.Replace('\v', '\n').Replace('\r', '\n');
-
-            if (Chat is not Chat chat)
+            if (Chat == null || formattedText == null)
             {
                 return null;
             }
 
-            FormattedText formattedText;
-            if (entities == null)
-            {
-                formattedText = GetFormattedText(text);
-            }
-            else
-            {
-                formattedText = new FormattedText(text, entities);
-            }
+            var composer = plan == null ? PeekComposer() : null;
+            var text = formattedText.Text ?? string.Empty;
 
-            var reorder = TextStillContainsEmojis(formattedText.Entities);
-            InsertedCustomEmojiIds.Clear();
+            // Only text that came out of a composer carries the hint, and only the composer was in a
+            // position to work it out. A bot's argument or a sticker's emoji hasn't got one.
+            var reorder = formattedText is PreparedText prepared && prepared.UpdateOrderOfInstalledStickerSets;
 
-            var applied = await BeforeSendMessageAsync(formattedText, linkPreview);
-            if (applied || string.IsNullOrEmpty(formattedText.Text))
+            // The split is decided before the user is asked, because how many messages it comes to
+            // is part of what they're agreeing to; the link preview only exists once they have.
+            string dice = null;
+            var isDice = (formattedText.Entities?.Count ?? 0) == 0 && ClientService.IsDiceEmoji(text, out dice);
+
+            List<FormattedText> texts = null;
+            if (!isDice && text.Length > ClientService.Options.MessageTextLengthMax)
             {
-                if (chat.DraftMessage?.Content is DraftMessageContentRichMessage richMessage)
+                texts = new List<FormattedText>();
+
+                foreach (var split in formattedText.Split(ClientService.Options.MessageTextLengthMax))
                 {
-                    SendRichMessage(richMessage, options, reply);
+                    texts.Add(split);
                 }
-
-                return null;
             }
-
-            options ??= await PickMessageSendOptionsAsync(reorder: reorder);
-
-            if (options == null)
+            else if (!isDice && text.Length > 0)
             {
+                texts = new List<FormattedText> { formattedText };
+            }
+
+            var messageCount = isDice ? 1 : texts?.Count ?? 0;
+            if (messageCount == 0)
+            {
+                await AfterSendMessageAsync();
                 return null;
             }
 
-            options.UpdateOrderOfInstalledStickerSets = reorder;
-            reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
+            if (plan == null)
+            {
+                plan = await PrepareSendAsync(composer, messageCount, SchedulingState.Auto, null, reorder, 0);
+
+                if (plan == null)
+                {
+                    return null;
+                }
+            }
+            else if (reorder && AppSettings.Stickers.DynamicPackOrder)
+            {
+                // The box reports the raw fact; whether to act on it is the user's setting, and a
+                // plan built elsewhere has not seen this text.
+                plan = plan with { UpdateOrderOfInstalledStickerSets = true };
+            }
+
+            if (isDice)
+            {
+                return await SendMessageAsync(plan, new InputMessageDice(dice, true));
+            }
 
             Object response = null;
-
-            if (formattedText.Entities.Count == 0 && ClientService.IsDiceEmoji(text, out string dice))
+            foreach (var content in texts)
             {
-                var input = new InputMessageDice(dice, true);
-                await SendMessageAsync(reply, input, options);
-            }
-            else
-            {
-                if (text.Length > ClientService.Options.MessageTextLengthMax)
-                {
-                    foreach (var split in formattedText.Split(ClientService.Options.MessageTextLengthMax))
-                    {
-                        var input = new InputMessageText(split, linkPreview, true);
-                        response = await SendMessageAsync(reply, input, options);
-                    }
-                }
-                else if (text.Length > 0)
-                {
-                    var input = new InputMessageText(formattedText, linkPreview, true);
-                    response = await SendMessageAsync(reply, input, options);
-                }
-                else
-                {
-                    await AfterSendMessageAsync();
-                }
+                response = await SendMessageAsync(plan, new InputMessageText(content, plan.LinkPreview, true));
             }
 
             return response;
         }
 
-        private async void SendRichMessage(DraftMessageContentRichMessage richMessage, MessageSendOptions options, InputMessageReplyTo reply)
+        /// <summary>
+        /// How many messages a text is going to be sent as — the user is asked to pay for each
+        /// piece of a text too long to fit in one. Matches what <see cref="TdExtensions.Split"/> does.
+        /// </summary>
+        protected int CountMessages(FormattedText formattedText)
         {
-            if (IsPremiumAvailable && !IsPremium)
+            var length = formattedText?.Text?.Length ?? 0;
+            if (length == 0)
             {
-                if (PageBlockHelper.TryGetFormattedText(richMessage.Message, out FormattedText formatted))
-                {
-                    await SendMessageAsync(formatted, null, options, reply);
-                    return;
-                }
-
-                ToastPopup.ShowFeaturePromo(NavigationService, new PremiumFeatureRichMessages());
-                return;
+                return 0;
             }
 
-            options ??= await PickMessageSendOptionsAsync(reorder: false);
-
-            if (options == null)
-            {
-                return;
-            }
-
-            reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
-
-            await SendMessageAsync(reply, new InputMessageRichMessage(PageBlockHelper.ToInputRichMessage(richMessage.Message), true), options);
-        }
-
-        private async void SendRichMessage(InputRichMessage richMessage, MessageSendOptions options, InputMessageReplyTo reply)
-        {
-            if (IsPremiumAvailable && !IsPremium)
-            {
-                if (PageBlockHelper.TryGetFormattedText(richMessage, out FormattedText formatted))
-                {
-                    await SendMessageAsync(formatted, null, options, reply);
-                    return;
-                }
-
-                ToastPopup.ShowFeaturePromo(NavigationService, new PremiumFeatureRichMessages());
-                return;
-            }
-
-            options ??= await PickMessageSendOptionsAsync(reorder: false);
-
-            if (options == null)
-            {
-                return;
-            }
-
-            reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
-
-            await SendMessageAsync(reply, new InputMessageRichMessage(richMessage, true), options);
-        }
-
-        private bool TextStillContainsEmojis(Vector<TextEntity> entities)
-        {
-            if (entities.Count == 0 || !AppSettings.Stickers.DynamicPackOrder)
-            {
-                return false;
-            }
-
-            foreach (var entity in entities)
-            {
-                if (entity.Type is TextEntityTypeCustomEmoji customEmoji && InsertedCustomEmojiIds.Contains(customEmoji.CustomEmojiId))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public virtual LinkPreviewOptions GetLinkPreviewOptions()
-        {
-            return null;
-        }
-
-        protected virtual Task<bool> BeforeSendMessageAsync(FormattedText formattedText, LinkPreviewOptions options)
-        {
-            return Task.FromResult(false);
+            var maxLength = ClientService.Options.MessageTextLengthMax;
+            return length > maxLength ? (int)Math.Ceiling(length / (double)maxLength) : 1;
         }
 
         protected virtual Task AfterSendMessageAsync()

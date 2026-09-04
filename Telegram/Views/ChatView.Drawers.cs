@@ -117,7 +117,7 @@ namespace Telegram.Views
 
             void Send(Sticker sticker)
             {
-                ViewModel.SendMessageAsync(sticker.ToFormattedText());
+                _ = ViewModel.SendTextAsync(sticker.ToFormattedText());
             }
 
             void Copy(Sticker sticker)

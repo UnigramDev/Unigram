@@ -185,9 +185,19 @@ namespace Telegram.ViewModels.Stories
             //throw new NotImplementedException();
         }
 
-        protected override InputMessageReplyTo GetReply(bool clear, bool notify = true)
+        protected override ComposerSnapshot PeekComposer()
         {
-            return new InputMessageReplyToStory(ChatId, SelectedItem.Id);
+            // A story reply always answers whatever the carousel is showing; there is no composer
+            // header behind it, and so nothing to consume when the send goes through.
+            if (SelectedItem is StoryViewModel story)
+            {
+                return new ComposerSnapshot
+                {
+                    ReplyTo = new InputMessageReplyToStory(ChatId, story.Id)
+                };
+            }
+
+            return ComposerSnapshot.None;
         }
 
         public override FormattedText GetFormattedText(bool clear, bool parseMarkdown)
@@ -200,9 +210,16 @@ namespace Telegram.ViewModels.Stories
             //throw new NotImplementedException();
         }
 
-        public override Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedule = SchedulingState.Auto, bool? silent = null, bool reorder = false)
+        protected override Task<SendPlan> PrepareSendAsync(ComposerSnapshot composer, int messageCount, SchedulingState schedule, bool? silent, bool reorder, long effectId)
         {
-            return Task.FromResult(new MessageSendOptions(null, silent ?? false, false, 0, AppSettings.Stickers.DynamicPackOrder && reorder, null, 0, 0, false));
+            // Nothing to ask the user: story replies are neither paid nor scheduled.
+            return Task.FromResult(new SendPlan
+            {
+                ReplyTo = composer?.ReplyTo,
+                DisableNotification = silent ?? false,
+                UpdateOrderOfInstalledStickerSets = AppSettings.Stickers.DynamicPackOrder && reorder,
+                EffectId = effectId
+            });
         }
 
         public void Handle(UpdateStory update)
