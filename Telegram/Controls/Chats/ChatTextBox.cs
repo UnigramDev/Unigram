@@ -792,7 +792,7 @@ namespace Telegram.Controls.Chats
             return null;
         }
 
-        public partial class UsernameCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class UsernameCollection : IncrementalCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly long _chatId;
@@ -803,8 +803,6 @@ namespace Telegram.Controls.Chats
             private readonly bool _guestBots;
             private readonly bool _members;
             private readonly bool _self;
-
-            private bool _hasMore = true;
 
             public UsernameCollection(IClientService clientService, long chatId, MessageTopic topicId, string query, bool bots, bool guestBots, bool members, bool self)
             {
@@ -819,88 +817,78 @@ namespace Telegram.Controls.Chats
                 _self = self;
             }
 
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
             {
-                return IncrementalLoading.Run(async token =>
+                var totalCount = 0u;
+                var userIds = new HashSet<long>();
+
+                if (_bots)
                 {
-                    // There are two askers - the list once it is measured, and whoever primes the
-                    // first page while it still is not - and _hasMore is cleared as this starts
-                    // rather than when it ends, so it doubles as the in-flight flag. Without this
-                    // the second one through would add every member a second time.
-                    if (!_hasMore)
+                    var response = await _clientService.SendAsync(new GetTopChats(new TopChatCategoryInlineBots(), 10));
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
-                        return new LoadMoreItemsResult();
-                    }
-
-                    count = 0;
-                    _hasMore = false;
-
-                    if (_bots)
-                    {
-                        var response = await _clientService.SendAsync(new GetTopChats(new TopChatCategoryInlineBots(), 10));
-                        if (response is Telegram.Td.Api.Chats chats)
+                        foreach (var chat in _clientService.GetChats(chats.ChatIds))
                         {
-                            foreach (var id in chats.ChatIds)
+                            var user = _clientService.GetUser(chat);
+                            if (user != null && !userIds.Contains(user.Id) && (user.HasActiveUsername(_query, out _) || ClientEx.SearchByPrefix(user.FullName(), _query)))
                             {
-                                var user = _clientService.GetUser(_clientService.GetChat(id));
-                                if (user != null && (user.HasActiveUsername(_query, out _) || ClientEx.SearchByPrefix(user.FullName(), _query)))
-                                {
-                                    Add(user);
-                                    count++;
-                                }
+                                userIds.Add(user.Id);
+
+                                Add(user);
+                                totalCount++;
                             }
                         }
                     }
+                }
 
-                    if (_guestBots)
+                if (_guestBots)
+                {
+                    var response = await _clientService.SendAsync(new GetTopChats(new TopChatCategoryGuestBots(), 10));
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
-                        var response = await _clientService.SendAsync(new GetTopChats(new TopChatCategoryGuestBots(), 10));
-                        if (response is Telegram.Td.Api.Chats chats)
+                        foreach (var chat in _clientService.GetChats(chats.ChatIds))
                         {
-                            foreach (var id in chats.ChatIds)
+                            var user = _clientService.GetUser(chat);
+                            if (user != null && !userIds.Contains(user.Id) && (user.HasActiveUsername(_query, out _) || ClientEx.SearchByPrefix(user.FullName(), _query)))
                             {
-                                var user = _clientService.GetUser(_clientService.GetChat(id));
-                                if (user != null && (user.HasActiveUsername(_query, out _) || ClientEx.SearchByPrefix(user.FullName(), _query)))
-                                {
-                                    Add(user);
-                                    count++;
-                                }
+                                userIds.Add(user.Id);
+
+                                Add(user);
+                                totalCount++;
                             }
                         }
                     }
+                }
 
-                    if (_members)
+                if (_members)
+                {
+                    if (_self && string.IsNullOrEmpty(_query) && _clientService.TryGetUser(_clientService.Options.MyId, out Td.Api.User self))
                     {
-                        if (_self && string.IsNullOrEmpty(_query) && _clientService.TryGetUser(_clientService.Options.MyId, out Td.Api.User self))
-                        {
-                            Add(self);
-                            count++;
-                        }
+                        Add(self);
+                        totalCount++;
+                    }
 
-                        var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 20, new ChatMembersFilterMention(_topicId)));
-                        if (response is ChatMembers members)
+                    var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 20, new ChatMembersFilterMention(_topicId)));
+                    if (response is ChatMembers members)
+                    {
+                        foreach (var member in members.Members)
                         {
-                            foreach (var member in members.Members)
+                            if (_clientService.TryGetUser(member.MemberId, out Td.Api.User user))
                             {
-                                if (_clientService.TryGetUser(member.MemberId, out Td.Api.User user))
+                                if (user.Id == _clientService.Options.MyId || userIds.Contains(user.Id))
                                 {
-                                    if (user.Id == _clientService.Options.MyId)
-                                    {
-                                        continue;
-                                    }
-
-                                    Add(user);
-                                    count++;
+                                    continue;
                                 }
+
+                                Add(user);
+                                totalCount++;
                             }
                         }
                     }
+                }
 
-                    return new LoadMoreItemsResult { Count = count };
-                });
+                return new IncrementalLoadResult(totalCount, false);
             }
-
-            public bool HasMoreItems => _hasMore;
 
             public string Query => _query;
 
@@ -1318,6 +1306,13 @@ namespace Telegram.Controls.Chats
             if (newValue != null)
             {
                 await Task.Delay(200);
+
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
                 Focus(FocusState.Keyboard);
             }
         }
