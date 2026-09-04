@@ -93,6 +93,7 @@ namespace Telegram.Controls.Media
         public const string Loading = "\uE1CD";
 
         public const string ArrowReply24 = "\uEA4A";
+        public const string ArrowForward24 = "\uEB26";
         public const string Link24 = "\uEA49";
         public const string Edit24 = "\uEA4B";
 
@@ -175,6 +176,8 @@ namespace Telegram.Controls.Media
         public const string WarningFilled = "\uEAD9";
 
         public const string TextT = "\uEB22";
+        public const string TextDescription = "\uEB28";
+        public const string TextDescriptionOff = "\uEB29";
         public const string TextHeader1 = "\uEB21";
         public const string TextHeader2 = "\uEB20";
         public const string TextHeader3 = "\uEB1F";
@@ -341,6 +344,7 @@ namespace Telegram.Controls.Media
         public const string ShareScreenStop = "\uE92E";
 
         public const string Person = "\uE77B";
+        public const string PersonOff = "\uEB27";
         public const string PersonTag = "\uEAFE";
         public const string PersonTagFilled24 = "\uEAFD";
         public const string PersonAdd = "\uE8FA";
