@@ -16,18 +16,21 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
     </Grid.ColumnDefinitions>
-    <Grid x:Name="ButtonRoot"
-          Width="48"
-          Height="48"
-          CornerRadius="24"
-          Background="{ThemeResource MessageMediaBackgroundBrush}"
-          VerticalAlignment="Top">
-        <Border x:Name="Texture"
-                CornerRadius="24" />
+    <Border x:Name="ButtonRoot"
+            Width="48"
+            Height="48"
+            CornerRadius="24"
+            VerticalAlignment="Top">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background"
+                        Value="{ThemeResource MessageMediaBackgroundBrush}" />
+            </Style>
+        </Border.Style>
         <controls:FileButton x:Name="Button"
                              Click="Button_Click"
                              Style="{StaticResource InlineFileButtonStyle}" />
-    </Grid>
+    </Border>
     <Grid x:Name="DownloadRoot"
           Width="24"
           Height="24"

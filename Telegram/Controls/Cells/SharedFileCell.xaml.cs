@@ -28,6 +28,12 @@ namespace Telegram.Controls.Cells
         private long _fileToken;
         private long _thumbnailToken;
 
+        private ThumbnailController _thumbnailController;
+        private ImageBrush _thumbnailTexture;
+
+        // Shown whenever the thumbnail isn't: the colored circle picked from the extension.
+        private Brush _placeholder;
+
         public SharedFileCell()
         {
             InitializeComponent();
@@ -75,7 +81,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            ButtonRoot.Background = UpdateEllipseBrush(data.FileName);
+            _placeholder = UpdateEllipseBrush(data.FileName);
 
             if (string.IsNullOrEmpty(data.FileName))
             {
@@ -112,12 +118,12 @@ namespace Telegram.Controls.Cells
 
             if (data.Thumbnail != null)
             {
-                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File, true);
+                UpdateManager.Subscribe(this, message, data.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
+                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File);
             }
             else
             {
-                Texture.Background = null;
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                UpdateThumbnail(message, null, null);
             }
 
             UpdateManager.Subscribe(this, message, data.File, ref _fileToken, UpdateFile);
@@ -137,12 +143,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            if (data.Thumbnail != null && data.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, data.Thumbnail, file, false);
-                return;
-            }
-            else if (data.File.Id != file.Id)
+            if (data.File.Id != file.Id)
             {
                 return;
             }
@@ -184,8 +185,42 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file, bool download)
+        private void UpdateThumbnail(File file)
         {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            UpdateThumbnail(message, message.GetFileAndThumbnailAndName().Thumbnail, file);
+        }
+
+        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
+        {
+            // No thumbnail at all, rather than one that has yet to arrive: whatever the cell
+            // drew for the message before this one has to go.
+            if (thumbnail == null)
+            {
+                _thumbnailController?.Recycle();
+                ButtonRoot.Background = _placeholder;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                return;
+            }
+
+            if (thumbnail.File.Id != file.Id)
+            {
+                return;
+            }
+
+            _thumbnailTexture ??= new ImageBrush
+            {
+                Stretch = Stretch.UniformToFill,
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center
+            };
+            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
+
             if (file.Local.IsDownloadingCompleted)
             {
                 double ratioX = (double)48 / thumbnail.Width;
@@ -195,30 +230,19 @@ namespace Telegram.Controls.Cells
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                try
-                {
-                    Texture.Background = new ImageBrush { ImageSource = UriEx.ToBitmap(file.Local.Path, width, height), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
-                }
-                catch
-                {
-                    Texture.Background = null;
-                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
-                }
+                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                ButtonRoot.Background = _thumbnailTexture;
+                Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
             else
             {
-                Texture.Background = null;
+                _thumbnailController.Recycle();
+                ButtonRoot.Background = _placeholder;
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
 
-                if (download)
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        message.ClientService.DownloadFile(file.Id, 1);
-                    }
-
-                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateFile, true);
+                    message.ClientService.DownloadFile(file.Id, 1);
                 }
             }
         }
@@ -340,7 +364,7 @@ namespace Telegram.Controls.Cells
 
                 var storageService = _message.ClientService.Session.Resolve<IStorageService>();
                 var viewModel = new ChatGalleryViewModel(_message.ClientService, storageService, _viewModel.Aggregator, _message.ChatId, _viewModel.Topic, _message, properties);
-                _viewModel.NavigationService.ShowGallery(viewModel, Texture);
+                _viewModel.NavigationService.ShowGallery(viewModel, ButtonRoot);
             }
             else
             {

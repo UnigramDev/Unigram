@@ -14,6 +14,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
@@ -25,6 +26,9 @@ namespace Telegram.Controls.Cells
 
         private long _fileToken;
         private long _thumbnailToken;
+
+        private ThumbnailController _thumbnailController;
+        private ImageBrush _thumbnailTexture;
 
         public SharedAudioCell()
         {
@@ -127,8 +131,7 @@ namespace Telegram.Controls.Cells
             }
             else
             {
-                Texture.Background = null;
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                UpdateThumbnail(message, null, null);
             }
 
             UpdateManager.Subscribe(this, message, audio.AudioValue, ref _fileToken, UpdateFile);
@@ -213,12 +216,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, audio.AlbumCoverThumbnail, file);
-                return;
-            }
-            else if (audio.AudioValue.Id != file.Id)
+            if (audio.AudioValue.Id != file.Id)
             {
                 return;
             }
@@ -348,10 +346,28 @@ namespace Telegram.Controls.Cells
 
         private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
         {
+            // No cover at all, rather than one that has yet to arrive: whatever the cell drew
+            // for the message before this one has to go.
+            if (thumbnail == null)
+            {
+                _thumbnailController?.Recycle();
+                ButtonRoot.ClearValue(Border.BackgroundProperty);
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                return;
+            }
+
             if (thumbnail.File.Id != file.Id)
             {
                 return;
             }
+
+            _thumbnailTexture ??= new ImageBrush
+            {
+                Stretch = Stretch.UniformToFill,
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center
+            };
+            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
 
             if (file.Local.IsDownloadingCompleted)
             {
@@ -362,23 +378,20 @@ namespace Telegram.Controls.Cells
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                try
-                {
-                    Texture.Background = new ImageBrush { ImageSource = UriEx.ToBitmap(file.Local.Path, width, height), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
-                }
-                catch
-                {
-                    Texture.Background = null;
-                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
-                }
+                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                ButtonRoot.Background = _thumbnailTexture;
+                Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
-                message.ClientService.DownloadFile(file.Id, 1);
-
-                Texture.Background = null;
+                _thumbnailController.Recycle();
+                ButtonRoot.ClearValue(Border.BackgroundProperty);
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    message.ClientService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
