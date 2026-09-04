@@ -5,6 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
+using System.Linq;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -43,6 +45,44 @@ namespace Telegram.ViewModels
 
     public record MessageComposerEditing(MessageViewModel Message, InputMessageContent Media);
 
+    /// <summary>
+    /// One message staged for forwarding: the message itself, which the composer header previews,
+    /// and the two properties the copy options are offered from. <see cref="MessageProperties"/> is
+    /// a request of its own, so whoever stages the forward is the one that has already asked.
+    /// </summary>
+    public record MessageComposerForwarded(MessageViewModel Message, bool CanBeCopied, bool HasCaption);
+
+    /// <summary>
+    /// What the composer is holding to forward. Only the composer's own send carries it — after
+    /// whatever the user typed, and counting as one message per entry when they are asked to pay.
+    /// Every other send leaves it staged, and so does committing an edit.
+    /// </summary>
+    /// <remarks>
+    /// A draft has no room for any of this — TDLib has no field for it — so a staged forward lives
+    /// only as long as the composer does.
+    /// </remarks>
+    public partial class MessageComposerForwarding
+    {
+        public MessageComposerForwarding(IList<MessageComposerForwarded> messages)
+        {
+            Messages = messages;
+        }
+
+        public IList<MessageComposerForwarded> Messages { get; }
+
+        /// <summary>
+        /// Drops the sender names, turning the forward into a copy. Written through the live
+        /// instance by the header's flyout, the way the link preview options are.
+        /// </summary>
+        public bool SendCopy { get; set; }
+
+        public bool RemoveCaption { get; set; }
+
+        public bool CanBeCopied => Messages.Any(x => x.CanBeCopied);
+
+        public bool CanRemoveCaption => Messages.Any(x => x.CanBeCopied && x.HasCaption);
+    }
+
     public partial class MessageComposerHeader
     {
         public IClientService ClientService { get; }
@@ -55,6 +95,8 @@ namespace Telegram.ViewModels
         public MessageComposerReplyTo ReplyTo { get; set; }
 
         public MessageComposerEditing Editing { get; set; }
+
+        public MessageComposerForwarding Forwarding { get; set; }
 
         public InputSuggestedPostInfo SuggestedPostInfo { get; set; }
 
@@ -93,7 +135,7 @@ namespace Telegram.ViewModels
         {
             get
             {
-                return ReplyTo == null && Editing == null && SuggestedPostInfo == null;
+                return ReplyTo == null && Editing == null && Forwarding == null && SuggestedPostInfo == null;
             }
         }
 

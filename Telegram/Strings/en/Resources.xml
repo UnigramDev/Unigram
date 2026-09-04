@@ -2543,7 +2543,7 @@
 
 
     <string name="HideSenderNames">Hide Sender Names</string>
-
+    <string name="ShowSenderNames">Show Sender Names</string>
 
 
 
@@ -4814,7 +4814,7 @@
 
 
     <string name="HideCaption">Hide Caption</string>
-
+    <string name="ShowCaption">Show Caption</string>
 
     <string name="SetWallpapers">Change Wallpaper</string>
     <string name="SelectTheme">Select theme</string>
@@ -6889,7 +6889,7 @@
     <string name="QuoteSelectedPart">Quote Selected Part</string>
     <string name="QuoteToAnotherChat">Reply in Another Chat</string>
     <string name="ReplyToAnotherChat">Reply in Another Chat</string>
-
+    <string name="ChangeRecipient">Change Recipient</string>
 
     <string name="ReplyPrivate">This reply is from a private chat.</string>
     <string name="ReplyPrivateGroup">This reply is from a private group.</string>
@@ -6914,7 +6914,7 @@
 
 
     <string name="DoNotReply">Do Not Reply</string>
-
+    <string name="DoNotForward">Do Not Forward</string>
     <string name="DoNotLinkPreview">Do Not Preview</string>
     <string name="UserColorHint">This color will be used for your name, the links you send, and replies to your messages.</string>
     <string name="UserColorPreview">Your name and replies to your messages will be shown in the selected color.</string>
@@ -12496,6 +12496,7 @@
     <string name="UnlockPremiumEmojiReaction">Subscribe to **Telegram Premium** to unlock this reaction.</string>
     <string name="Gift2ActionSelfTitle">Saved Gift</string>
     <string name="HideSendersName">Hide Sender Name</string>
+    <string name="ShowSendersName">Show Sender Name</string>
     <string name="VirtualKeyModifiersControl">Ctrl</string>
     <string name="VirtualKeyModifiersShift">Shift</string>
     <string name="VirtualKeyModifiersMenu">Alt</string>

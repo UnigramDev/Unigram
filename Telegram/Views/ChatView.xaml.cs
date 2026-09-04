@@ -1782,7 +1782,9 @@ namespace Telegram.Views
 
         private void CheckButtonsVisibility()
         {
-            var empty = TextField.IsEmpty && DraftField.Visibility == Visibility.Collapsed;
+            // A staged forward is something to send in its own right, so the button is the send one
+            // even with nothing typed.
+            var empty = TextField.IsEmpty && DraftField.Visibility == Visibility.Collapsed && ViewModel.ComposerHeader?.Forwarding == null;
             var stopping = ViewModel.CanStopPendingMessage;
 
             // A bot that's still generating owns the button: stopping it outranks both
@@ -2061,6 +2063,7 @@ namespace Telegram.Views
                         {
                             Editing = embedded?.Editing,
                             ReplyTo = embedded?.ReplyTo,
+                            Forwarding = embedded?.Forwarding,
                             SuggestedPostInfo = embedded?.SuggestedPostInfo,
                             LinkPreviewOptions = embedded?.LinkPreviewOptions,
                             LinkPreview = linkPreview,
@@ -2093,6 +2096,7 @@ namespace Telegram.Views
                 {
                     Editing = embedded.Editing,
                     ReplyTo = embedded.ReplyTo,
+                    Forwarding = embedded.Forwarding,
                     SuggestedPostInfo = embedded.SuggestedPostInfo,
                 };
             }
@@ -3063,6 +3067,43 @@ namespace Telegram.Views
 
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotLinkPreview, Icons.DismissCircle, destructive: true);
+            }
+            else if (header?.Forwarding != null && header.Editing == null)
+            {
+                var forwarding = header.Forwarding;
+
+                static void ChangeSendCopy(MessageComposerForwarding forwarding)
+                {
+                    forwarding.SendCopy = !forwarding.SendCopy;
+                }
+
+                static void ChangeRemoveCaption(MessageComposerForwarding forwarding)
+                {
+                    forwarding.RemoveCaption = !forwarding.RemoveCaption;
+                }
+
+                if (forwarding.CanBeCopied)
+                {
+                    var many = forwarding.Messages.Count > 1;
+
+                    flyout.CreateFlyoutItem(ChangeSendCopy, forwarding,
+                        forwarding.SendCopy
+                            ? many ? Strings.ShowSenderNames : Strings.ShowSendersName
+                            : many ? Strings.HideSenderNames : Strings.HideSendersName,
+                        forwarding.SendCopy ? Icons.Person : Icons.PersonOff);
+                }
+
+                if (forwarding.CanRemoveCaption)
+                {
+                    flyout.CreateFlyoutItem(ChangeRemoveCaption, forwarding,
+                        forwarding.RemoveCaption ? Strings.ShowCaption : Strings.HideCaption,
+                        forwarding.RemoveCaption ? Icons.TextDescription : Icons.TextDescriptionOff);
+                }
+
+                flyout.CreateFlyoutItem(ViewModel.ChangeForwardRecipient, Strings.ChangeRecipient, Icons.Replace);
+
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotForward, Icons.DismissCircle, destructive: true);
             }
             else if (header?.ReplyTo != null && header.ReplyTo.CanBeRepliedInAnotherChat && !ViewModel.IsDirectMessagesGroup)
             {
@@ -6358,6 +6399,10 @@ namespace Telegram.Views
                     if (header.LinkPreview != null)
                     {
                         ComposerHeaderGlyph.Glyph = Icons.Link24;
+                    }
+                    else if (header.Forwarding != null)
+                    {
+                        ComposerHeaderGlyph.Glyph = Icons.ArrowForward24;
                     }
                     else if (header.ReplyTo != null)
                     {

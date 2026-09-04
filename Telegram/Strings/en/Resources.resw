@@ -4073,6 +4073,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>The number {0} is already connected to a Telegram account. Please delete that account before using this number.</value>
   </data>
+  <data name="ChangeRecipient" xml:space="preserve">
+    <value>Change Recipient</value>
+  </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>Change Recovery Email</value>
   </data>
@@ -5869,6 +5872,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Done</value>
+  </data>
+  <data name="DoNotForward" xml:space="preserve">
+    <value>Do Not Forward</value>
   </data>
   <data name="DoNotLinkPreview" xml:space="preserve">
     <value>Do Not Preview</value>
@@ -14074,6 +14080,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ShowAllThemes" xml:space="preserve">
     <value>Show all Themes</value>
   </data>
+  <data name="ShowCaption" xml:space="preserve">
+    <value>Show Caption</value>
+  </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Show in chat</value>
   </data>
@@ -14097,6 +14106,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="ShowOriginalButton" xml:space="preserve">
     <value>Show Original</value>
+  </data>
+  <data name="ShowSenderNames" xml:space="preserve">
+    <value>Show Sender Names</value>
+  </data>
+  <data name="ShowSendersName" xml:space="preserve">
+    <value>Show Sender Name</value>
   </data>
   <data name="ShowSensitiveContent" xml:space="preserve">
     <value>Show 18+ Content</value>

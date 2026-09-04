@@ -19,6 +19,7 @@ using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -199,7 +200,8 @@ namespace Telegram.ViewModels
             {
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
-                    ReplyTo = new MessageComposerReplyTo(message, null, 0, string.Empty, should != ShouldReplyInAnotherChatResult.NotAvailable)
+                    ReplyTo = new MessageComposerReplyTo(message, null, 0, string.Empty, should != ShouldReplyInAnotherChatResult.NotAvailable),
+                    Forwarding = _composerHeader?.Forwarding
                 };
 
                 TextField?.Focus(FocusState.Keyboard);
@@ -250,7 +252,8 @@ namespace Telegram.ViewModels
             {
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
-                    ReplyTo = new MessageComposerReplyTo(message, quote.ToInput(), 0, string.Empty, should != ShouldReplyInAnotherChatResult.NotAvailable)
+                    ReplyTo = new MessageComposerReplyTo(message, quote.ToInput(), 0, string.Empty, should != ShouldReplyInAnotherChatResult.NotAvailable),
+                    Forwarding = _composerHeader?.Forwarding
                 };
 
                 TextField?.Focus(FocusState.Keyboard);
@@ -301,7 +304,8 @@ namespace Telegram.ViewModels
             {
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
-                    ReplyTo = new MessageComposerReplyTo(message, null, checklistTask.Task.Id, string.Empty, should != ShouldReplyInAnotherChatResult.NotAvailable)
+                    ReplyTo = new MessageComposerReplyTo(message, null, checklistTask.Task.Id, string.Empty, should != ShouldReplyInAnotherChatResult.NotAvailable),
+                    Forwarding = _composerHeader?.Forwarding
                 };
 
                 TextField?.Focus(FocusState.Keyboard);
@@ -352,7 +356,8 @@ namespace Telegram.ViewModels
             {
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
-                    ReplyTo = new MessageComposerReplyTo(message, null, 0, pollOption.Option.Id, should != ShouldReplyInAnotherChatResult.NotAvailable)
+                    ReplyTo = new MessageComposerReplyTo(message, null, 0, pollOption.Option.Id, should != ShouldReplyInAnotherChatResult.NotAvailable),
+                    Forwarding = _composerHeader?.Forwarding
                 };
 
                 TextField?.Focus(FocusState.Keyboard);
@@ -549,6 +554,95 @@ namespace Telegram.ViewModels
             {
                 ForwardMessages(new[] { message }.ToDictionary(x => new MessageId(x)));
             }
+        }
+
+        /// <summary>
+        /// Stages a message in another chat's composer and goes there, so that the forward can be
+        /// written up — replied to, captioned, scheduled — where it is going to land.
+        /// </summary>
+        public async void ForwardMessageTo(MessageViewModel message, Chat chat)
+        {
+            IsSelectionEnabled = false;
+
+            var messages = new List<MessageViewModel>();
+
+            if (message.Content is MessageAlbum album)
+            {
+                messages.AddRange(album.Messages);
+            }
+            else
+            {
+                messages.Add(message);
+            }
+
+            var forwarding = await CreateForwardingAsync(messages);
+            if (forwarding == null)
+            {
+                return;
+            }
+
+            // Forwarding into the chat we are already in has nowhere to navigate to.
+            if (chat.Id == _chat?.Id && Type is DialogType.History or DialogType.Thread)
+            {
+                ShowForward(forwarding);
+                return;
+            }
+
+            NavigationService.NavigateToChat(chat, state: new NavigationState
+            {
+                { "forward", forwarding }
+            });
+        }
+
+        /// <summary>
+        /// Moves the staged forward to another chat: the messages don't change, only where they
+        /// are going.
+        /// </summary>
+        public async void ChangeForwardRecipient()
+        {
+            var header = _composerHeader;
+            var forwarding = header?.Forwarding;
+            if (forwarding == null)
+            {
+                return;
+            }
+
+            var chat = await ChooseChatsPopup.PickChatAsync(NavigationService, Strings.ChangeRecipient, ChooseChatsOptions.PostMessages);
+            if (chat == null || chat.Id == _chat?.Id)
+            {
+                return;
+            }
+
+            // The forward travels; everything else the composer holds was written for this chat.
+            ClearForwarding(header);
+
+            NavigationService.NavigateToChat(chat, state: new NavigationState
+            {
+                { "forward", forwarding }
+            });
+        }
+
+        /// <summary>
+        /// Asks for the properties a staged forward needs — whether each message can be forwarded
+        /// at all, and what the copy options can be offered for — and drops the ones that can't.
+        /// </summary>
+        private async Task<MessageComposerForwarding> CreateForwardingAsync(IList<MessageViewModel> messages)
+        {
+            var properties = await ClientService.GetMessagePropertiesAsync(messages.Select(x => new MessageId(x)));
+
+            var forwarded = new List<MessageComposerForwarded>(messages.Count);
+
+            foreach (var message in messages)
+            {
+                if (properties.TryGetValue(new MessageId(message), out var property) && property.CanBeForwarded)
+                {
+                    forwarded.Add(new MessageComposerForwarded(message, property.CanBeCopied, message.Content is not MessageText && message.HasCaption()));
+                }
+            }
+
+            return forwarded.Count > 0
+                ? new MessageComposerForwarding(forwarded)
+                : null;
         }
 
         #endregion
@@ -1140,7 +1234,8 @@ namespace Telegram.ViewModels
             var input = message.GetCaption();
             var container = new MessageComposerHeader(ClientService)
             {
-                Editing = new MessageComposerEditing(message, null)
+                Editing = new MessageComposerEditing(message, null),
+                Forwarding = _composerHeader?.Forwarding
             };
 
             if (message.Content is MessageText text)

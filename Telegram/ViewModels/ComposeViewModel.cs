@@ -49,6 +49,8 @@ namespace Telegram.ViewModels
         public InputMessageReplyTo ReplyTo { get; init; }
 
         public LinkPreviewOptions LinkPreview { get; init; }
+
+        public MessageComposerForwarding Forwarding { get; init; }
     }
 
     /// <summary>
@@ -82,6 +84,11 @@ namespace Telegram.ViewModels
         public long PaidMessageStarCount { get; init; }
 
         public long EffectId { get; init; }
+
+        /// <summary>
+        /// What the composer staged to forward. Only the composer's own send carries one.
+        /// </summary>
+        public MessageComposerForwarding Forwarding { get; init; }
 
         public MessageSendOptions ToOptions(int messageCount = 1)
         {
@@ -975,6 +982,10 @@ namespace Telegram.ViewModels
             {
                 ContinueSendMessage(sendMessageAlbum.Options);
             }
+            else if (function is ForwardMessages forwardMessages)
+            {
+                ContinueSendMessage(forwardMessages.Options);
+            }
 
             return response;
         }
@@ -993,6 +1004,53 @@ namespace Telegram.ViewModels
         protected virtual void ContinueSendMessage(MessageSendOptions options)
         {
 
+        }
+
+        /// <summary>
+        /// Sends what the composer staged to forward, after everything else the send carries has
+        /// gone out. Only the composer's own send builds a plan that holds one.
+        /// </summary>
+        protected async Task<Object> SendForwardedMessagesAsync(SendPlan plan)
+        {
+            var forwarding = plan?.Forwarding;
+            if (forwarding == null || Chat is not Chat chat)
+            {
+                return null;
+            }
+
+            Object response = null;
+
+            // A forward carries messages from one chat, so a selection spanning several becomes one
+            // request each — every one of them paying for the messages it actually carries.
+            foreach (var group in forwarding.Messages.GroupBy(x => x.Message.ChatId))
+            {
+                var messageIds = group.Select(x => x.Message.Id).OrderBy(x => x).ToVector();
+
+                // A suggested post is the one message it was written for, and TDLib takes an effect
+                // on a forward of a single message only. Neither belongs to the rest of one.
+                var options = plan.ToOptions(messageIds.Count);
+                options.SuggestedPostInfo = null;
+
+                if (messageIds.Count > 1)
+                {
+                    options.EffectId = 0;
+                }
+
+                var function = CreateForwardMessages(chat.Id, OutgoingTopicId, group.Key, messageIds, options, forwarding.SendCopy || forwarding.RemoveCaption, forwarding.RemoveCaption);
+                if (function == null)
+                {
+                    return response;
+                }
+
+                response = await SendMessageAsync(function);
+            }
+
+            return response;
+        }
+
+        protected virtual Function CreateForwardMessages(long chatId, MessageTopic topicId, long fromChatId, Vector<long> messageIds, MessageSendOptions messageSendOptions, bool sendCopy, bool removeCaption)
+        {
+            return new ForwardMessages(chatId, topicId, fromChatId, messageIds, messageSendOptions, sendCopy, removeCaption);
         }
 
         public async void SendLocation()

@@ -154,6 +154,10 @@ namespace Telegram.ViewModels
                 }
             }
 
+            // Every message the send is carrying to forward is one more the user pays for. Only the
+            // composer's own send carries any: for every other one this is zero.
+            messageCount += composer?.Forwarding?.Messages.Count ?? 0;
+
             var paid = await ShowPaidMessageConfirmationAsync(messageCount, paidMessageStarCount);
             if (paid != ContentDialogResult.Primary)
             {
@@ -166,13 +170,15 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            ClearComposer(header, schedulingState != null);
+            // The forward outlives every send but the one that carries it.
+            ClearComposer(header, schedulingState != null, keepForwarding: composer?.Forwarding == null);
 
             return new SendPlan
             {
                 ReplyTo = composer?.ReplyTo,
                 LinkPreview = composer?.LinkPreview,
                 SuggestedPostInfo = header?.SuggestedPostInfo,
+                Forwarding = composer?.Forwarding,
                 SchedulingState = schedulingState,
                 DisableNotification = silent ?? false,
                 UpdateOrderOfInstalledStickerSets = AppSettings.Stickers.DynamicPackOrder && reorder,

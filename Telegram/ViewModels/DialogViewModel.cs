@@ -2559,6 +2559,7 @@ namespace Telegram.ViewModels
             ShowDraftMessage(chat);
             ShowSwitchInline(state);
             ShowReplyTo(state);
+            ShowForward(state);
 
             if (Type is DialogType.History or DialogType.Thread && state.TryRemove("package", out DataPackageView package))
             {
@@ -2755,11 +2756,44 @@ namespace Telegram.ViewModels
                 // We arrive here from "Reply in another chat", so we assume the message can be replied in another chat
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
-                    ReplyTo = new MessageComposerReplyTo(message, quote, taskId, optionId ?? string.Empty, true)
+                    ReplyTo = new MessageComposerReplyTo(message, quote, taskId, optionId ?? string.Empty, true),
+                    Forwarding = _composerHeader?.Forwarding
                 };
 
                 TextField?.Focus(FocusState.Keyboard);
             }
+        }
+
+        private void ShowForward(IDictionary<string, object> state)
+        {
+            if (Type is DialogType.History or DialogType.Thread && state.TryGet("forward", out MessageComposerForwarding forwarding))
+            {
+                state.Remove("forward");
+                ShowForward(forwarding);
+            }
+        }
+
+        /// <summary>
+        /// Stages a forward in this composer, keeping everything else the header holds: only where
+        /// the messages come from is new, and the draft has already had its say.
+        /// </summary>
+        private void ShowForward(MessageComposerForwarding forwarding)
+        {
+            var header = _composerHeader;
+
+            ComposerHeader = new MessageComposerHeader(ClientService)
+            {
+                Editing = header?.Editing,
+                ReplyTo = header?.ReplyTo,
+                SuggestedPostInfo = header?.SuggestedPostInfo,
+                LinkPreview = header?.LinkPreview,
+                LinkPreviewUrl = header?.LinkPreviewUrl,
+                LinkPreviewOptions = header?.LinkPreviewOptions,
+                LinkPreviewDisabled = header?.LinkPreviewDisabled ?? false,
+                Forwarding = forwarding
+            };
+
+            TextField?.Focus(FocusState.Keyboard);
         }
 
         private async void ShowReplyMarkup(Chat chat)
@@ -2836,12 +2870,29 @@ namespace Telegram.ViewModels
                 }
             }
 
+            // A draft has no room for a staged forward, so it has nothing to say about one either:
+            // whatever the composer is holding survives the header the draft rebuilds.
+            MessageComposerHeader FromDraft(MessageComposerReplyTo replyTo)
+            {
+                var forwarding = _composerHeader?.Forwarding;
+                if (replyTo == null && forwarding == null)
+                {
+                    return null;
+                }
+
+                return new MessageComposerHeader(ClientService)
+                {
+                    ReplyTo = replyTo,
+                    Forwarding = forwarding
+                };
+            }
+
             if (draft?.Content == null || Type is not DialogType.History and not DialogType.Thread)
             {
                 _draft = null;
 
                 Delegate?.UpdateChatDraft(chat, null);
-                ComposerHeader = null;
+                ComposerHeader = FromDraft(null);
             }
             else
             {
@@ -2854,10 +2905,7 @@ namespace Telegram.ViewModels
                     {
                         var properties = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
 
-                        ComposerHeader = new MessageComposerHeader(ClientService)
-                        {
-                            ReplyTo = new MessageComposerReplyTo(CreateMessage(message), replyToMessage.Quote, replyToMessage.ChecklistTaskId, replyToMessage.PollOptionId, properties?.CanBeRepliedInAnotherChat ?? false)
-                        };
+                        ComposerHeader = FromDraft(new MessageComposerReplyTo(CreateMessage(message), replyToMessage.Quote, replyToMessage.ChecklistTaskId, replyToMessage.PollOptionId, properties?.CanBeRepliedInAnotherChat ?? false));
 
                         goto UpdateText;
                     }
@@ -2869,16 +2917,13 @@ namespace Telegram.ViewModels
                     {
                         var properties = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
 
-                        ComposerHeader = new MessageComposerHeader(ClientService)
-                        {
-                            ReplyTo = new MessageComposerReplyTo(CreateMessage(message), replyToExternalMessage.Quote, replyToExternalMessage.ChecklistTaskId, replyToExternalMessage.PollOptionId, properties?.CanBeRepliedInAnotherChat ?? false)
-                        };
+                        ComposerHeader = FromDraft(new MessageComposerReplyTo(CreateMessage(message), replyToExternalMessage.Quote, replyToExternalMessage.ChecklistTaskId, replyToExternalMessage.PollOptionId, properties?.CanBeRepliedInAnotherChat ?? false));
 
                         goto UpdateText;
                     }
                 }
 
-                ComposerHeader = null;
+                ComposerHeader = FromDraft(null);
 
             UpdateText:
                 Delegate?.UpdateChatDraft(chat, draft);
@@ -3045,6 +3090,7 @@ namespace Telegram.ViewModels
                 {
                     Editing = header.Editing,
                     ReplyTo = header.ReplyTo,
+                    Forwarding = header.Forwarding,
                     LinkPreviewUrl = header.LinkPreviewUrl,
                     LinkPreview = header.LinkPreview,
                     LinkPreviewDisabled = header.LinkPreviewDisabled
@@ -3056,11 +3102,18 @@ namespace Telegram.ViewModels
                 {
                     Editing = header.Editing,
                     ReplyTo = header.ReplyTo,
+                    Forwarding = header.Forwarding,
                     SuggestedPostInfo = header.SuggestedPostInfo,
                     LinkPreviewUrl = header.LinkPreviewUrl,
                     LinkPreview = null,
                     LinkPreviewDisabled = true
                 };
+            }
+            else if (header.Forwarding != null && header.Editing == null)
+            {
+                // Peeled off in the order the header shows them, so the X always dismisses what the
+                // user is looking at.
+                ClearForwarding(header);
             }
             else
             {
@@ -3102,6 +3155,15 @@ namespace Telegram.ViewModels
 
         protected override ComposerSnapshot PeekComposer()
         {
+            return PeekComposer(forwarding: false);
+        }
+
+        /// <param name="forwarding">
+        /// Whether the send is the one that carries a staged forward. Only the composer's own send
+        /// is: everything else — a sticker, a file, an inline result — leaves it where it is.
+        /// </param>
+        private ComposerSnapshot PeekComposer(bool forwarding)
+        {
             var header = _composerHeader;
             if (header == null)
             {
@@ -3112,7 +3174,8 @@ namespace Telegram.ViewModels
             {
                 Header = header,
                 ReplyTo = header.ReplyTo?.ToInput(this),
-                LinkPreview = CopyLinkPreviewOptions(header.LinkPreviewOptions)
+                LinkPreview = CopyLinkPreviewOptions(header.LinkPreviewOptions),
+                Forwarding = forwarding ? header.Forwarding : null
             };
         }
 
@@ -3140,14 +3203,29 @@ namespace Telegram.ViewModels
         /// outgoing bubble's send-out animation. A scheduled message never lands in the list, so
         /// nothing would dismiss it.
         /// </param>
-        private void ClearComposer(MessageComposerHeader header, bool notify)
+        /// <param name="keepForwarding">
+        /// Whether a staged forward survives the send. It does for every send but the one carrying
+        /// it, and the view is always told when it does: what the header was showing has gone, and
+        /// the forward left behind is what it shows now.
+        /// </param>
+        private void ClearComposer(MessageComposerHeader header, bool notify, bool keepForwarding)
         {
             if (header == null || _composerHeader != header)
             {
                 return;
             }
 
-            if (notify)
+            if (keepForwarding && header.Forwarding != null)
+            {
+                ComposerHeader = new MessageComposerHeader(ClientService)
+                {
+                    Forwarding = header.Forwarding
+                };
+            }
+            // A forward that has been consumed is always dismissed here. The send-out animation
+            // that would otherwise do it runs off a SendingId of 1, which only a message the
+            // composer wrote carries — a forward would leave the header up for good.
+            else if (notify || header.Forwarding != null)
             {
                 ComposerHeader = null;
             }
@@ -3164,7 +3242,32 @@ namespace Telegram.ViewModels
 
         private void ClearComposer()
         {
-            ClearComposer(_composerHeader, true);
+            ClearComposer(_composerHeader, true, keepForwarding: true);
+        }
+
+        /// <summary>
+        /// Takes the staged forward off the composer and leaves everything else the header holds —
+        /// for the two ways a forward goes away without being sent: dismissed, or moved elsewhere.
+        /// </summary>
+        private void ClearForwarding(MessageComposerHeader header)
+        {
+            if (header == null || _composerHeader != header)
+            {
+                return;
+            }
+
+            var replacement = new MessageComposerHeader(ClientService)
+            {
+                Editing = header.Editing,
+                ReplyTo = header.ReplyTo,
+                SuggestedPostInfo = header.SuggestedPostInfo,
+                LinkPreview = header.LinkPreview,
+                LinkPreviewUrl = header.LinkPreviewUrl,
+                LinkPreviewOptions = header.LinkPreviewOptions,
+                LinkPreviewDisabled = header.LinkPreviewDisabled
+            };
+
+            ComposerHeader = replacement.IsEmpty && replacement.LinkPreview == null ? null : replacement;
         }
 
         #endregion
@@ -3193,18 +3296,29 @@ namespace Telegram.ViewModels
             }
 
             // The one read of the composer this send gets. Everything below decides from it, so
-            // that what goes out is what the user was looking at when they pressed send.
-            var composer = PeekComposer();
+            // that what goes out is what the user was looking at when they pressed send. It is also
+            // the only read that takes the staged forward: no other send carries one.
+            var composer = PeekComposer(forwarding: true);
 
             var applied = await TryEditMessageAsync(formattedText, composer);
             if (applied || string.IsNullOrEmpty(formattedText.Text))
             {
+                // Committing an edit is all this press does: it changes a message that already
+                // exists, and the forward is left staged for a send of its own.
+                var carrier = applied ? PeekComposer() : composer;
+
                 if (chat.DraftMessage?.Content is DraftMessageContentRichMessage richMessage)
                 {
-                    SendRichMessage(richMessage, composer, schedule, silent, effectId);
+                    SendRichMessage(richMessage, carrier, schedule, silent, effectId);
+                    return true;
                 }
 
-                return true;
+                if (carrier.Forwarding == null)
+                {
+                    return true;
+                }
+
+                return await SendForwardOnlyAsync(carrier, schedule, silent, effectId);
             }
 
             var plan = await PrepareSendAsync(composer, CountMessages(formattedText), schedule, silent, formattedText.UpdateOrderOfInstalledStickerSets, effectId);
@@ -3217,6 +3331,26 @@ namespace Telegram.ViewModels
             SetFormattedText(null);
 
             await SendTextAsync(formattedText, plan);
+
+            // What the user typed goes out before what they staged to forward.
+            await SendForwardedMessagesAsync(plan);
+            return true;
+        }
+
+        /// <summary>
+        /// Sends a forward the composer is holding with nothing of the user's own in front of it —
+        /// the send button is theirs to press with an empty text field whenever one is staged.
+        /// </summary>
+        /// <returns>False if the user backed out, leaving the composer exactly as it was.</returns>
+        private async Task<bool> SendForwardOnlyAsync(ComposerSnapshot composer, SchedulingState schedule, bool? silent, long effectId)
+        {
+            var plan = await PrepareSendAsync(composer, 0, schedule, silent, false, effectId);
+            if (plan == null)
+            {
+                return false;
+            }
+
+            await SendForwardedMessagesAsync(plan);
             return true;
         }
 
@@ -3246,6 +3380,8 @@ namespace Telegram.ViewModels
             {
                 await SendMessageAsync(plan, new InputMessageRichMessage(PageBlockHelper.ToInputRichMessage(richMessage.Message), true));
             }
+
+            await SendForwardedMessagesAsync(plan);
         }
 
         protected override Function CreateSendMessage(long chatId, MessageTopic topicId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, InputMessageContent inputMessageContent)
@@ -3349,6 +3485,18 @@ namespace Telegram.ViewModels
             }
 
             return base.CreateSendMessageAlbum(chatId, topicId, replyTo, messageSendOptions, inputMessageContent);
+        }
+
+        protected override Function CreateForwardMessages(long chatId, MessageTopic topicId, long fromChatId, Vector<long> messageIds, MessageSendOptions messageSendOptions, bool sendCopy, bool removeCaption)
+        {
+            // A quick reply shortcut and a welcome message are both written through their own
+            // functions, and neither of those can carry a forward.
+            if (QuickReplyShortcut != null || Type == DialogType.WelcomeMessages)
+            {
+                return null;
+            }
+
+            return base.CreateForwardMessages(chatId, topicId, fromChatId, messageIds, messageSendOptions, sendCopy, removeCaption);
         }
 
         /// <summary>
@@ -3531,6 +3679,7 @@ namespace Telegram.ViewModels
                 {
                     SuggestedPostInfo = popup.SuggestedPostInfo,
                     ReplyTo = ComposerHeader?.ReplyTo,
+                    Forwarding = ComposerHeader?.Forwarding,
                 };
             }
         }

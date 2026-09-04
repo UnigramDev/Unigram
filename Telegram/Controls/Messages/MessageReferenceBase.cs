@@ -91,6 +91,30 @@ namespace Telegram.Controls.Messages
                 Message = embedded.Editing.Message;
                 GetMessageTemplate(embedded.Editing.Message, null, false, 0, string.Empty, Strings.Edit, true, false, false);
             }
+            else if (embedded.Forwarding != null)
+            {
+                var messages = embedded.Forwarding.Messages;
+                if (messages.Count == 1)
+                {
+                    Message = messages[0].Message;
+                    GetMessageTemplate(messages[0].Message, null, false, 0, string.Empty, Strings.ForwardedMessage, true, false, true);
+                }
+                else
+                {
+                    Message = null;
+                    Visibility = Visibility.Visible;
+
+                    HideThumbnail();
+
+                    SetText(embedded.ClientService,
+                        null,
+                        true,
+                        null,
+                        Strings.ForwardedMessage,
+                        string.Empty,
+                        Locale.Declension(Strings.R.messages, messages.Count).AsFormattedText());
+                }
+            }
             else if (embedded.ReplyTo != null)
             {
                 Message = embedded.ReplyTo.Message;
