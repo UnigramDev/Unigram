@@ -2166,10 +2166,6 @@ namespace Telegram.Td.Api
             {
                 case MessageAnimation animation:
                     return animation.Animation.AnimationValue.Local.IsDownloadingCompleted;
-                case MessageSticker sticker:
-                    return sticker.Sticker.Format is StickerFormatTgs or StickerFormatWebm && sticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
-                case MessageAnimatedEmoji animatedEmoji:
-                    return animatedEmoji.AnimatedEmoji.Sticker?.Format is StickerFormatTgs or StickerFormatWebm && animatedEmoji.AnimatedEmoji.Sticker.StickerValue.Local.IsDownloadingCompleted;
                 case MessageVideoNote videoNote:
                     return videoNote.VideoNote.Video.Local.IsDownloadingCompleted;
                 case MessageGame game:
