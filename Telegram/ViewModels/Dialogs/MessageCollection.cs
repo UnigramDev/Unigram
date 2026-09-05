@@ -147,6 +147,13 @@ namespace Telegram.ViewModels
         /// </param>
         public void InsertInOrder(MessageViewModel message, long oldMessageId = 0)
         {
+            // The message has just been sent: nothing that was queued behind it may be left with
+            // an earlier date, or it would be placed above them.
+            if (oldMessageId != 0 && !IsUnsent(message))
+            {
+                OffsetPendingDates(oldMessageId, message.Date);
+            }
+
             var newIndex = NextIndexOf(message, oldMessageId, out int oldIndex);
             if (oldIndex == -1)
             {
@@ -178,6 +185,90 @@ namespace Telegram.ViewModels
             Insert(NextIndexOf(message, newIndex), message);
         }
 
+        // Pending, failed, or a row with no message behind it yet: a streamed bot reply is drawn
+        // from a draft and is given an identifier only when it lands, so it belongs here as much
+        // as a message that is still uploading. (The other synthetic row, the new-thread header,
+        // is dated int.MaxValue and stays last either way.)
+        //
+        // A scheduled message is left out: that list is unsent from end to end, and it is ordered
+        // by the date each message will go out, which is what its identifier carries.
+        private static bool IsUnsent(MessageViewModel message)
+        {
+            return (message.SendingState != null || message.IsSynthetic) && message.SchedulingState == null;
+        }
+
+        // A message that has not been sent yet is given an identifier just above the newest one
+        // the chat knows, but the identifier the server hands back on success is unrelated to
+        // it, and in a private chat far above it. Ordering by identifier alone therefore throws
+        // a message that has just been sent past the ones still on their way, and a batch of
+        // them reshuffles as each one lands.
+        //
+        // So where one of the two is unsent the date decides, the sent one wins a tie, and the
+        // identifier only breaks a tie between two unsent messages. This is Postbox's
+        // MessageIndex - timestamp, then namespace, then id - restricted to the pairs that need
+        // it: confirmed history keeps ordering by identifier, which is the order it is loaded
+        // back in. OffsetPendingDates is the other half of the rule.
+        private static bool SortsBefore(MessageViewModel item, MessageViewModel message)
+        {
+            var unsent = IsUnsent(item);
+            var otherUnsent = IsUnsent(message);
+
+            if (unsent || otherUnsent)
+            {
+                if (item.OrderDate != message.OrderDate)
+                {
+                    return item.OrderDate < message.OrderDate;
+                }
+
+                if (unsent != otherUnsent)
+                {
+                    return !unsent;
+                }
+            }
+
+            return item.Id < message.Id;
+        }
+
+        /// <summary>
+        /// Pushes every message still waiting to be sent that was queued behind the one that has
+        /// just landed to the date the server gave it, so that it cannot be placed above them.
+        /// This is Postbox's offsetPendingMessagesTimestamps, and it is what keeps a batch sent
+        /// over a slow connection in the order it was sent in.
+        /// </summary>
+        /// <param name="oldMessageId">The identifier the landed message was queued under.</param>
+        private void OffsetPendingDates(long oldMessageId, int date)
+        {
+            List<MessageViewModel> offset = null;
+
+            // Unsent messages are not one block: a message still uploading stays above the ones
+            // sent after it that have already landed, which is the point of ordering by date.
+            // So the walk cannot stop at the first sent message it meets.
+            for (int i = Count - 1; i >= 0; i--)
+            {
+                var item = this[i];
+
+                // Queued behind the landed message, so listed under a larger identifier: the
+                // band they are drawn from only ever grows.
+                if (item.Id > oldMessageId && item.OrderDate < date && IsUnsent(item))
+                {
+                    item.OrderDate = date;
+                    (offset ??= new List<MessageViewModel>()).Add(item);
+                }
+            }
+
+            // Not in the walk above: reinserting drops the separator a removal orphans, which
+            // moves the rows the walk has left to visit. Their own order cannot have changed -
+            // they all took the same date and fall back on the identifier - but a message that
+            // arrived in between them now sorts above.
+            if (offset != null)
+            {
+                foreach (var item in offset)
+                {
+                    InsertInOrder(item);
+                }
+            }
+        }
+
         // Both indices in one backward walk, because it is the same walk: the ordering position
         // is normally settled on the first iteration and only the search for the message itself
         // carries on, so a message that is not listed costs a single comparison.
@@ -202,7 +293,9 @@ namespace Telegram.ViewModels
                 if (item.Id == 0)
                 {
                     // A separator has no identifier to compare, so it is placed by date, and
-                    // skipped outright when it belongs after the message.
+                    // skipped outright when it belongs after the message. By the date shown,
+                    // not the one it is ordered by: a message OffsetPendingDates pushes over
+                    // midnight keeps the day it was written on until the server dates it.
                     if (item.Date <= message.Date)
                     {
                         newIndex = i + 1;
@@ -214,7 +307,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                if (item.Id < message.Id && newIndexNeeded)
+                if (newIndexNeeded && SortsBefore(item, message))
                 {
                     newIndex = i + 1;
                     newIndexNeeded = false;
@@ -262,7 +355,7 @@ namespace Telegram.ViewModels
                     continue;
                 }
 
-                if (item.Id < message.Id)
+                if (SortsBefore(item, message))
                 {
                     return i + 1;
                 }

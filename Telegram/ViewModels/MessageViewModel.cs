@@ -238,6 +238,9 @@ namespace Telegram.ViewModels
             UnreadReactions = message.UnreadReactions;
             EditDate = message.EditDate;
             Date = message.Date;
+            // After Date, whose setter resets it: a streamed bot message is replaced on every
+            // chunk, and must not walk back up the list each time OffsetPendingDates moves it.
+            OrderDate = message.OrderDate;
             ContainsUnreadMention = message.ContainsUnreadMention;
             ContainsUnreadPollVotes = message.ContainsUnreadPollVotes;
             IsFromOffline = message.IsFromOffline;
@@ -576,7 +579,18 @@ namespace Telegram.ViewModels
         public MessageImportInfo ImportInfo { get; protected set; }
         public Vector<UnreadReaction> UnreadReactions { get; set; }
         public int EditDate { get; set; }
-        public int Date { get; protected set; }
+        public int Date
+        {
+            get => field;
+            protected set => OrderDate = field = value;
+        }
+
+        /// <summary>
+        /// The date the message list orders by, which follows <see cref="Date"/> everywhere but
+        /// on a message still waiting to be sent: see MessageCollection.OffsetPendingDates. It
+        /// is never displayed, so a message keeps showing the time it was sent at.
+        /// </summary>
+        public int OrderDate { get; set; }
         public bool ContainsUnreadMention { get; set; }
         public bool ContainsUnreadPollVotes { get; set; }
         public bool IsFromOffline { get; protected set; }
