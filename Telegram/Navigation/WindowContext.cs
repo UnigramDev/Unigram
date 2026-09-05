@@ -844,6 +844,21 @@ namespace Telegram.Navigation
                 All.Remove(this);
             }
 
+            // A window closed while it was up never sees a deactivation, so the count is taken
+            // back here rather than raised: the events themselves have no business firing at a
+            // window that is being torn down.
+            if (_countedActive)
+            {
+                _countedActive = false;
+                ActiveTime.Focused.Set(false);
+            }
+
+            if (_countedVisible)
+            {
+                _countedVisible = false;
+                ActiveTime.Visible.Set(false);
+            }
+
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
 
@@ -912,7 +927,60 @@ namespace Telegram.Navigation
 
         public event EventHandler<WindowActivatedEventArgs> Activated;
 
+        /// <summary>
+        /// Both hosts funnel through here, so the time the app spends in front of someone is
+        /// counted in one place. Idempotent on purpose: a host that raises the state it is already
+        /// in must not unbalance the count.
+        ///
+        /// The static Active goes with it: it is what NotificationsService asks which window to
+        /// show a toast over.
+        /// </summary>
+        private void RaiseActivated(bool active)
+        {
+            if (_content != null)
+            {
+                _content.IsActive = active;
+            }
+
+            if (_countedActive != active)
+            {
+                _countedActive = active;
+                ActiveTime.Focused.Set(active);
+            }
+
+            Activated?.Invoke(this, new WindowActivatedEventArgs(active));
+
+            lock (_activeLock)
+            {
+                if (active)
+                {
+                    Active = this;
+                }
+                else if (Active == this)
+                {
+                    Active = null;
+                }
+            }
+        }
+
         public event EventHandler<WindowVisibilityEventArgs> VisibilityChanged;
+
+        private void RaiseVisibilityChanged(bool visible)
+        {
+            if (_countedVisible != visible)
+            {
+                _countedVisible = visible;
+                ActiveTime.Visible.Set(visible);
+            }
+
+            VisibilityChanged?.Invoke(this, new WindowVisibilityEventArgs(visible));
+        }
+
+        // Only ever read by RaiseActivated and RaiseVisibilityChanged, which is why they are not
+        // IsActive and IsVisible: those answer what the window is doing now, these two remember
+        // what was counted, so that Detach can take it back off.
+        private bool _countedActive;
+        private bool _countedVisible;
 
         public event EventHandler<WindowSizeChangedEventArgs> SizeChanged;
 

@@ -47,6 +47,7 @@ namespace Telegram.ViewModels
         {
             UpdateDeserialization();
             UpdateFileUpdates();
+            UpdateGarbageCollection();
             UpdatePowerSaving();
 
             PowerSavingPolicy.Changed += OnPowerSavingChanged;
@@ -337,6 +338,142 @@ namespace Telegram.ViewModels
 
         // Read when the page is opened rather than bound live: the counters are written on the
         // TDLib thread, and a ticking readout would be a second observer of the thing it measures.
+        private string _garbageCollection;
+        public string GarbageCollection
+        {
+            get => _garbageCollection;
+            private set => Set(ref _garbageCollection, value);
+        }
+
+        /// <summary>
+        /// What the collector has been doing. Every pause suspends every managed thread, so the
+        /// time here is time the UI did not exist; and what survived the last collection is what
+        /// the next pause has to walk, which is where a live set shows up.
+        /// </summary>
+        /// <remarks>
+        /// Read when the page is opened rather than ticking: the numbers are cumulative, and one
+        /// that moves while being read tells you less than one that does not.
+        /// </remarks>
+        private void UpdateGarbageCollection()
+        {
+            var builder = new StringBuilder();
+
+            builder.AppendFormat("Collections: {0:N0} gen0, {1:N0} gen1, {2:N0} gen2\n",
+                GC.CollectionCount(0), GC.CollectionCount(1), GC.CollectionCount(2));
+
+#if NET9_0_OR_GREATER
+            var info = GC.GetGCMemoryInfo();
+            var paused = GC.GetTotalPauseDuration();
+            var pauses = 0d;
+
+            for (int i = 0; i < info.PauseDurations.Length; i++)
+            {
+                pauses += info.PauseDurations[i].TotalMilliseconds;
+            }
+
+            // Three denominators, because only the last two answer "did anyone see it". Wall clock
+            // counts the hours the app sat in the background with nothing rendering and nobody
+            // watching, which dilutes every freeze to a rounding error.
+            AppendPause(builder, "Paused", paused, TimeSpan.FromSeconds(MonotonicUnixTime.Now - WatchDog.LaunchTime), "since launch");
+            AppendPause(builder, null, ActiveTime.Visible.Paused, ActiveTime.Visible.Elapsed, "on screen");
+            AppendPause(builder, null, ActiveTime.Focused.Paused, ActiveTime.Focused.Elapsed, "in focus");
+
+            // A forced collection is blocking and covers every generation, which is what XAML asks
+            // for through the reference tracker - so gen2 count times this is the whole answer if
+            // it comes out near the total above.
+            builder.AppendFormat("Last: gen{0}, {1}, {2}, {3:N1} ms\n",
+                info.Generation,
+                info.Concurrent ? "background" : "blocking",
+                info.Compacted ? "compacted" : "swept",
+                pauses);
+
+            var gen2 = GC.CollectionCount(2);
+            if (gen2 > 0)
+            {
+                builder.AppendFormat("Per gen2: {0:N0} ms if every one of them stopped the world\n",
+                    paused.TotalMilliseconds / gen2);
+            }
+
+            builder.AppendLine();
+            builder.AppendFormat("Heap: {0:N1} MB, {1:N1} MB fragmented, {2:N1} MB committed\n",
+                info.HeapSizeBytes / 1048576d, info.FragmentedBytes / 1048576d, info.TotalCommittedBytes / 1048576d);
+            builder.AppendFormat("Allocated: {0:N0} MB since launch\n", GC.GetTotalAllocatedBytes() / 1048576d);
+            builder.AppendFormat("Pinned: {0:N0}, awaiting finalization: {1:N0}\n",
+                info.PinnedObjectsCount, info.FinalizationPendingCount);
+
+            builder.AppendLine();
+
+            for (int i = 0; i < info.GenerationInfo.Length; i++)
+            {
+                var generation = info.GenerationInfo[i];
+
+                builder.AppendFormat("{0}: {1:N1} MB -> {2:N1} MB, {3:N1} MB fragmented\n",
+                    GenerationName(i),
+                    generation.SizeBeforeBytes / 1048576d,
+                    generation.SizeAfterBytes / 1048576d,
+                    generation.FragmentationAfterBytes / 1048576d);
+            }
+
+            builder.AppendFormat("Machine: {0:N0} MB in use of {1:N0} MB",
+                info.MemoryLoadBytes / 1048576d, info.TotalAvailableMemoryBytes / 1048576d);
+#else
+            builder.Append("The rest of it needs a runtime this build does not have.");
+#endif
+
+            GarbageCollection = builder.ToString();
+        }
+
+        public void RefreshGarbageCollection(object sender, RoutedEventArgs e)
+        {
+            UpdateGarbageCollection();
+        }
+
+        public void CopyGarbageCollection(object sender, RoutedEventArgs e)
+        {
+            MessageHelper.CopyText(XamlRoot, GarbageCollection);
+        }
+
+        /// <summary>
+        /// One line of "n ms of <paramref name="window"/> <paramref name="of"/> (n%)", padded so
+        /// the three of them line up under the one label they share.
+        /// </summary>
+        private static void AppendPause(StringBuilder builder, string label, TimeSpan paused, TimeSpan window, string of)
+        {
+            builder.AppendFormat("{0,-7} {1:N0} ms of {2} {3} ({4:N2}%)\n",
+                label != null ? label + ":" : string.Empty,
+                paused.TotalMilliseconds,
+                Duration(window),
+                of,
+                window > TimeSpan.Zero ? paused.TotalMilliseconds / window.TotalMilliseconds * 100 : 0);
+        }
+
+        private static string Duration(TimeSpan value)
+        {
+            if (value.TotalHours >= 1)
+            {
+                return string.Format("{0}h {1:D2}m", (int)value.TotalHours, value.Minutes);
+            }
+            else if (value.TotalMinutes >= 1)
+            {
+                return string.Format("{0}m {1:D2}s", value.Minutes, value.Seconds);
+            }
+
+            return string.Format("{0:N0}s", value.TotalSeconds);
+        }
+
+        private static string GenerationName(int generation)
+        {
+            return generation switch
+            {
+                0 => "Gen0",
+                1 => "Gen1",
+                2 => "Gen2",
+                3 => "Large",
+                4 => "Pinned",
+                _ => "Gen" + generation
+            };
+        }
+
         private string _deserialized;
         public string Deserialized
         {

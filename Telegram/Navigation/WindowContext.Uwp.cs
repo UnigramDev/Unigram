@@ -236,31 +236,12 @@ namespace Telegram.Navigation
         // The UWP args stop here: everything downstream sees Telegram.Navigation's own.
         private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
-            var isActive = e.WindowActivationState != CoreWindowActivationState.Deactivated;
-
-            if (_content != null)
-            {
-                _content.IsActive = isActive;
-            }
-
-            Activated?.Invoke(this, new WindowActivatedEventArgs(isActive));
-
-            lock (_activeLock)
-            {
-                if (isActive)
-                {
-                    Active = this;
-                }
-                else if (Active == this)
-                {
-                    Active = null;
-                }
-            }
+            RaiseActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
         }
 
         private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
-            VisibilityChanged?.Invoke(this, new WindowVisibilityEventArgs(e.Visible));
+            RaiseVisibilityChanged(e.Visible);
         }
 
         private void OnSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)

@@ -169,6 +169,18 @@
                                              Click="{x:Bind ViewModel.ResetFileUpdates}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="Garbage collection"
+                                          Footer="Every pause suspends every managed thread, so the time here is time the interface did not exist. A blocking collection covering every generation is one the app was asked for rather than one the collector chose - XAML requests those through the reference tracker when its own memory grows.">
+                    <controls:SettingsButton Description="Collections">
+                        <TextBlock Text="{x:Bind ViewModel.GarbageCollection, Mode=OneWay}"
+                                   IsTextSelectionEnabled="True" />
+                    </controls:SettingsButton>
+                    <controls:SettingsButton Content="Refresh"
+                                             Click="{x:Bind ViewModel.RefreshGarbageCollection}" />
+                    <controls:SettingsButton Content="Copy"
+                                             Click="{x:Bind ViewModel.CopyGarbageCollection}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="TDLib Logs"
                                           Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
                     <controls:SettingsButton Content="Verbosity Level">

@@ -195,6 +195,7 @@
     <Compile Include="Collections\ReaderWriterDictionary.cs" />
     <Compile Include="Collections\SearchEmojiCollection.cs" />
     <Compile Include="Collections\SynchronizedList.cs" />
+    <Compile Include="Common\ActiveTime.cs" />
     <Compile Include="Common\AnimationScheduler.cs" />
     <Compile Include="Common\ArrayPoolBufferWriter.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />

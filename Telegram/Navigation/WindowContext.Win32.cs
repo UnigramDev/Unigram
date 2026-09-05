@@ -113,35 +113,14 @@ namespace Telegram.Navigation
             return false;
         }
 
-        /// <summary>
-        /// The static Active goes with it, exactly as the UWP half does from its own Activated
-        /// handler: it is what NotificationsService asks which window to show a toast over.
-        /// </summary>
         void IIslandOwner.ActivationChanged(bool active)
         {
-            if (_content != null)
-            {
-                _content.IsActive = active;
-            }
-
-            Activated?.Invoke(this, new WindowActivatedEventArgs(active));
-
-            lock (_activeLock)
-            {
-                if (active)
-                {
-                    Active = this;
-                }
-                else if (Active == this)
-                {
-                    Active = null;
-                }
-            }
+            RaiseActivated(active);
         }
 
         void IIslandOwner.VisibilityChanged(bool visible)
         {
-            VisibilityChanged?.Invoke(this, new WindowVisibilityEventArgs(visible));
+            RaiseVisibilityChanged(visible);
         }
 
         /// <summary>
