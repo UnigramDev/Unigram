@@ -82,7 +82,6 @@ namespace Telegram.Controls.Messages
 
         protected override void OnApplyTemplate()
         {
-            Effect = GetTemplateChild(nameof(Effect)) as AnimatedImage;
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
             ToolTip = GetTemplateChild(nameof(ToolTip)) as ToolTip;
 
@@ -152,6 +151,7 @@ namespace Telegram.Controls.Messages
                 if (message.Effect.StaticIcon != null)
                 {
                     _effectGlyph = string.Empty;
+                    Effect ??= GetTemplateChild(nameof(Effect)) as AnimatedImage;
                     Effect.Visibility = Visibility.Visible;
 
                     Effect.Source = new DelayedFileSource(message.ClientService, message.Effect.StaticIcon);
@@ -159,17 +159,17 @@ namespace Telegram.Controls.Messages
                 else
                 {
                     _effectGlyph = message.Effect.Emoji + " ";
-                    Effect.Visibility = Visibility.Collapsed;
+                    Effect?.Visibility = Visibility.Collapsed;
 
-                    Effect.Source = null;
+                    Effect?.Source = null;
                 }
             }
             else
             {
                 _effectGlyph = string.Empty;
-                Effect.Visibility = Visibility.Collapsed;
+                Effect?.Visibility = Visibility.Collapsed;
 
-                Effect.Source = null;
+                Effect?.Source = null;
             }
 
             if (!fromApplyTemplate)

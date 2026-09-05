@@ -32,6 +32,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <controls:AnimatedImage x:Name="Effect"
+                                                x:Load="False"
                                                 Visibility="Collapsed"
                                                 AutoPlay="True"
                                                 Width="12"
