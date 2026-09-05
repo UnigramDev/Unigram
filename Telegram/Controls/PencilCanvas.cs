@@ -186,10 +186,14 @@ namespace Telegram.Controls
             var point = e.GetCurrentPoint(Canvas);
             var erasing = _mode == PencilCanvasMode.Eraser || point.Properties.IsEraser;
 
+            // Stored relative to the canvas, like the points are: the same stroke is replayed
+            // over the preview and the exported file, both at resolutions unrelated to this one.
+            var thickness = erasing ? ERASING_STROKE_THICKNESS : StrokeThickness;
+
             _builders[point.PointerId] = new SmoothPathBuilder(point.Position.ToVector2() / Canvas.Size.ToVector2())
             {
                 Stroke = erasing ? ERASING_STROKE : Stroke,
-                StrokeThickness = erasing ? ERASING_STROKE_THICKNESS : StrokeThickness
+                StrokeThickness = thickness / (float)Canvas.Size.Width
             };
         }
 
@@ -257,7 +261,7 @@ namespace Telegram.Controls
             style.LineJoin = CanvasLineJoin.Round;
 
             canvas.Blend = builder.Stroke == null ? CanvasBlend.Copy : CanvasBlend.SourceOver;
-            canvas.DrawGeometry(geometry, builder.Stroke ?? Colors.Transparent, builder.StrokeThickness, style);
+            canvas.DrawGeometry(geometry, builder.Stroke ?? Colors.Transparent, builder.StrokeThickness * canvasSize.X, style);
         }
 
         #endregion
@@ -285,6 +289,11 @@ namespace Telegram.Controls
         }
 
         public Color? Stroke { get; set; }
+
+        /// <summary>
+        /// A fraction of the canvas width, not a length: the geometry is normalized the
+        /// same way, so both scale together to whatever surface the stroke is drawn on.
+        /// </summary>
         public float StrokeThickness { get; set; }
 
         public Vector2 BeginPoint
