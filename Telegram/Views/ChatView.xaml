@@ -1262,8 +1262,7 @@
                                                    MinHeight="{StaticResource TelegramToolBarHeight}"
                                                    MaxHeight="192"
                                                    TextChanging="TextField_TextChanging"
-                                                   Capture="TextField_Tapped"
-                                                   Sending="TextField_Sending" />
+                                                   Capture="TextField_Tapped" />
                                 <contents:InstantContent x:Name="DraftField"
                                                          Margin="38,13,0,10" />
                             </Grid>

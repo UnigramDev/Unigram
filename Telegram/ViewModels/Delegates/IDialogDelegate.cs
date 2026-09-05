@@ -44,6 +44,13 @@ namespace Telegram.ViewModels.Delegates
         void UpdatePinnedMessage(Chat chat, bool known);
 
         void UpdateComposerHeader(Chat chat, MessageComposerHeader header);
+
+        /// <summary>
+        /// The composer has been consumed and the send is on its way, so that the chrome around it
+        /// resets as the user presses send rather than when the last request comes back.
+        /// </summary>
+        void ComposerSending();
+
         void UpdateSearchMask(Chat chat, ChatSearchViewModel search);
 
         void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection);

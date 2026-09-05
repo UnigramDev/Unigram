@@ -7470,7 +7470,7 @@ namespace Telegram.Views
 
         #endregion
 
-        private void TextField_Sending(object sender, EventArgs e)
+        public void ComposerSending()
         {
             ButtonStickers.Collapse();
             RemoveMessageEffect();

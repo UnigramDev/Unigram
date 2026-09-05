@@ -64,7 +64,6 @@ namespace Telegram.Controls.Chats
             base.OnApplyTemplate();
         }
 
-        public event EventHandler Sending;
         public event EventHandler<TappedRoutedEventArgs> Capture;
 
         protected override void OnTapped(TappedRoutedEventArgs e)
@@ -1072,22 +1071,14 @@ namespace Telegram.Controls.Chats
             // is asked to confirm, and nothing may disappear from the field while they decide.
             var text = GetPreparedText();
 
-            if (await ViewModel.SendComposerTextAsync(text, SchedulingState.Auto, disableNotification, Effect?.Id ?? 0))
-            {
-                Effect = null;
-                Sending?.Invoke(this, EventArgs.Empty);
-            }
+            await ViewModel.SendComposerTextAsync(text, SchedulingState.Auto, disableNotification, Effect?.Id ?? 0);
         }
 
         public async void Schedule(bool whenOnline)
         {
             var text = GetPreparedText();
 
-            if (await ViewModel.SendComposerTextAsync(text, whenOnline ? SchedulingState.WhenOnline : SchedulingState.Schedule, null, Effect?.Id ?? 0))
-            {
-                Effect = null;
-                Sending?.Invoke(this, EventArgs.Empty);
-            }
+            await ViewModel.SendComposerTextAsync(text, whenOnline ? SchedulingState.WhenOnline : SchedulingState.Schedule, null, Effect?.Id ?? 0);
         }
 
         protected override void OnGettingFormattedText()

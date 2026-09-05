@@ -3306,7 +3306,9 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            // Committed: the header went with the plan, and the text goes now.
+            // Committed: the header went with the plan, and the text goes now. The view is told
+            // before the field is emptied, so that it still sees what the user pressed send on.
+            Delegate?.ComposerSending();
             SetFormattedText(null);
 
             await SendTextAsync(formattedText, plan);
@@ -3329,6 +3331,8 @@ namespace Telegram.ViewModels
                 return false;
             }
 
+            Delegate?.ComposerSending();
+
             await SendForwardedMessagesAsync(plan);
             return true;
         }
@@ -3350,6 +3354,8 @@ namespace Telegram.ViewModels
             {
                 return;
             }
+
+            Delegate?.ComposerSending();
 
             if (flattened != null)
             {
@@ -3495,6 +3501,9 @@ namespace Telegram.ViewModels
             {
                 return false;
             }
+
+            // Nothing asks the user to confirm an edit, so pressing send commits it right here.
+            Delegate?.ComposerSending();
 
             var editing = header.Editing.Message;
 
