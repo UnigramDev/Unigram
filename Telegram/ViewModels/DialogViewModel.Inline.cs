@@ -155,20 +155,8 @@ namespace Telegram.ViewModels
                 if (collection.Results != null && !token.IsCancellationRequested)
                 {
                     InlineBotResults = collection;
+                    IsInlineBotResultsLoading = false;
                 }
-
-                IsInlineBotResultsLoading = false;
-                //var response = await ClientService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
-                //if (response.IsSucceeded)
-                //{
-                //    foreach (var item in response.Result.Results)
-                //    {
-                //        item.QueryId = response.Result.QueryId;
-                //    }
-
-                //    InlineBotResults = response.Result;
-                //    Debug.WriteLine(response.Result.Results.Count.ToString());
-                //}
             }
         }
 
