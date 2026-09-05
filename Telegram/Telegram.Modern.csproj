@@ -280,7 +280,9 @@
   <PropertyGroup>
     <TdSchemaMode Condition="'$(TdSchemaMode)' == ''">MSBuild</TdSchemaMode>
     <TdSchemaSource>$(MSBuildThisFileDirectory)..\Libraries\tdjson\td_api.tl</TdSchemaSource>
-    <TdSchemaCli>$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\bin\$(Configuration)\net10.0\Telegram.Generators.Cli.dll</TdSchemaCli>
+    <TdSchemaCliDir>$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\bin\$(Configuration)\net10.0</TdSchemaCliDir>
+    <TdSchemaCli>$(TdSchemaCliDir)\Telegram.Generators.Cli.dll</TdSchemaCli>
+    <TdSchemaEmitter>$(TdSchemaCliDir)\Telegram.Generators.dll</TdSchemaEmitter>
   </PropertyGroup>
 
   <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
@@ -331,10 +333,13 @@
        MarkupCompilePass1;XamlPreCompile;MarkupCompilePass2 into PrepareResourcesDependsOn, and
        PrepareResources runs a whole phase ahead of Compile. XamlPreCompile is a real csc pass over
        @(Compile) that resolves every x:Bind, so the schema has to be in @(Compile) by then - a
-       BeforeCompile hook fails there first, with every Telegram.Td.Api type unresolved. -->
+       BeforeCompile hook fails there first, with every Telegram.Td.Api type unresolved.
+
+       The emitter dlls are inputs alongside the schema: the text this writes changes when
+       ApiEmitter changes, and keying off td_api.tl alone left F5 compiling the previous one. -->
   <Target Name="GenerateTdSchema" BeforeTargets="MarkupCompilePass1;BeforeCompile" Condition="'$(TdSchemaMode)' == 'MSBuild'"
           DependsOnTargets="ResolveTdSchemaPath"
-          Inputs="$(TdSchemaSource);@(TdSchemaCliSource)" Outputs="$(TdSchemaStamp)">
+          Inputs="$(TdSchemaSource);$(TdSchemaCli);$(TdSchemaEmitter)" Outputs="$(TdSchemaStamp)">
     <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(TdSchemaCli)&quot; --schema &quot;$(TdSchemaSource)&quot; --out &quot;$(TdSchemaDir)&quot; --parsers $(TdParsers)" />
     <!-- The stamp is the output, not the .cs: the emitter leaves the file alone when the text is
          unchanged, so its timestamp never catches up to the inputs and the target would re-run on
