@@ -7,13 +7,14 @@
 
 using System;
 using Telegram.Common;
+using Telegram.Native.Media;
 using Telegram.Td.Api;
 using Windows.ApplicationModel;
 using Path = System.IO.Path;
 
 namespace Telegram.Streams
 {
-    public partial class LocalFileSource : AnimatedImageSource
+    public partial class LocalFileSource : AnimatedImageSource, IAsyncMediaPlayerSource
     {
         private long _offset;
 
@@ -36,6 +37,16 @@ namespace Telegram.Streams
         {
             FilePath = UriToPath(path);
             Format = PathToFormat(path);
+        }
+
+        /// <param name="size">
+        /// Required to play the file through <see cref="AsyncMediaPlayer"/>: it is what the
+        /// open callback reports as the length of the media, and zero reads as an empty one.
+        /// </param>
+        public LocalFileSource(string path, long size)
+            : this(path)
+        {
+            FileSize = size;
         }
 
         private static string UriToPath(string uri)
@@ -82,6 +93,17 @@ namespace Telegram.Streams
         {
             bytesRead = count;
         }
+
+        // Replaying opens the media again, and the offset left behind is the end of the file:
+        // the read callback would seek there, read nothing, and libvlc would take that for the
+        // end of the stream before it could fill its buffer.
+        public void Open()
+        {
+            SeekCallback(0);
+        }
+
+        // Nothing to release: the read callback owns the file handle it opens from FilePath.
+        public void Close() { }
 
         public override bool Equals(object obj)
         {

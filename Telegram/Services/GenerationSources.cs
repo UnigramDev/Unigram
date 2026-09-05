@@ -49,6 +49,37 @@ namespace Telegram.Services
         }
 
         /// <summary>
+        /// Takes a handle on a file the app itself is about to read by path, under a name the
+        /// caller owns.
+        /// <para>
+        /// A path-based read goes through the <c>*FromApp</c> entry points, and those match the
+        /// path against the app's persisted grants - the grant the picker gave lives on the
+        /// <see cref="StorageFile"/> and never reaches them - so the file has to be in this list
+        /// before it can be opened at all.
+        /// </para>
+        /// <para>
+        /// One fixed token per feature, reused: unlike <see cref="Add"/>, whose entries TDLib may
+        /// still need on a retry and which are therefore never released, these have no life beyond
+        /// the read, and a token of their own keeps a feature to one entry instead of leaving one
+        /// behind per use. Nothing protects it from <see cref="DownloadFolderService.RemoveOverflow"/>,
+        /// which is harmless: the next call puts it back.
+        /// </para>
+        /// </summary>
+        public static void AddOrReplace(string token, IStorageItem item)
+        {
+            DownloadFolderService.RemoveOverflow();
+
+            try
+            {
+                SAP.FutureAccessList.AddOrReplace(token, item);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        /// <summary>
         /// Throws when the file is gone, as the access list does: every caller is a conversion that
         /// reports the failure back to TDLib.
         /// </summary>

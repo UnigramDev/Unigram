@@ -24,7 +24,8 @@
         <controls:ImageCropper x:Name="Cropper"
                                Padding="24">
             <Grid>
-                <MediaPlayerElement x:Name="Media" />
+                <SwapChainPanel x:Name="Video"
+                                x:Load="False" />
                 <controls:PencilCanvas x:Name="Canvas"
                                        StrokesChanged="Canvas_StrokesChanged"
                                        IsEnabled="False" />

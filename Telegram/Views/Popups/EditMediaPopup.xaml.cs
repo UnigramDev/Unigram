@@ -16,10 +16,11 @@ using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
+using Telegram.Native.Media;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Windows.Foundation;
-using Windows.Media.Core;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -41,6 +42,8 @@ namespace Telegram.Views.Popups
 
         private ImageRotation _rotation;
         private ImageFlip _flip;
+
+        private AsyncMediaPlayer _player;
 
         private TimeSpan _duration;
         private bool _resume;
@@ -101,7 +104,14 @@ namespace Telegram.Views.Popups
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Media.Source = null;
+            if (_player != null)
+            {
+                _player.PositionChanged -= Player_PositionChanged;
+                _player.EndReached -= Player_EndReached;
+
+                _player.Close();
+                _player = null;
+            }
         }
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)
@@ -110,15 +120,7 @@ namespace Telegram.Views.Popups
             {
                 if (args.Key == VirtualKey.Space /*&& args.Modifiers == VirtualKeyModifiers.None*/)
                 {
-                    if (Media.MediaPlayer.PlaybackSession.PlaybackState == Windows.Media.Playback.MediaPlaybackState.Playing)
-                    {
-                        Media.MediaPlayer.Pause();
-                    }
-                    else
-                    {
-                        Media.MediaPlayer.Play();
-                    }
-
+                    _player?.Toggle();
                     args.Handled = true;
                 }
             }
@@ -135,7 +137,11 @@ namespace Telegram.Views.Popups
             {
                 if (args.Key == VirtualKey.M && args.Modifiers == VirtualKeyModifiers.None)
                 {
-                    Media.MediaPlayer.IsMuted = !Media.MediaPlayer.IsMuted;
+                    if (_player != null)
+                    {
+                        _player.Mute = !_player.Mute;
+                    }
+
                     args.Handled = true;
                 }
             }
@@ -194,15 +200,51 @@ namespace Telegram.Views.Popups
             get { return Cropper.CropRectangle; }
         }
 
+        private void InitializePlayer(StorageMedia media, ImageCropperMask mask)
+        {
+            // The read callback opens the path itself, so a file that does not have one -- a
+            // virtual or shared item -- cannot be played. The cropper still shows its frame.
+            if (string.IsNullOrEmpty(media.File.Path))
+            {
+                return;
+            }
+
+            FindName(nameof(Video));
+
+            var options = new AsyncMediaPlayerOptions
+            {
+                CreateSwapChain = true,
+                Mute = mask == ImageCropperMask.Ellipse,
+                Debug = AppSettings.VerbosityLevel >= 4,
+            };
+
+            try
+            {
+                _player = new AsyncMediaPlayer(options);
+            }
+            catch (Exception ex)
+            {
+                // libvlc could not start: no plugin bank, or out of memory. Everything that
+                // touches the player tolerates a null, so the editor degrades to the still
+                // frame the cropper already shows.
+                Logger.Error(ex);
+                return;
+            }
+
+            GenerationSources.AddOrReplace("EditMediaPopup", media.File);
+
+            _player.PositionChanged += Player_PositionChanged;
+            _player.EndReached += Player_EndReached;
+
+            _player.Context.Attach(Video, true);
+            _player.Play(new LocalFileSource(media.File.Path, (long)media.Size));
+        }
+
         private async void InitializeVideo(StorageMedia media, ImageCropperMask mask)
         {
             try
             {
-                Media.Source = MediaSource.CreateFromStorageFile(media.File);
-                Media.MediaPlayer.AutoPlay = true;
-                Media.MediaPlayer.IsMuted = mask == ImageCropperMask.Ellipse;
-                Media.MediaPlayer.IsLoopingEnabled = true;
-                Media.MediaPlayer.PlaybackSession.PositionChanged += MediaPlayer_PositionChanged;
+                InitializePlayer(media, mask);
 
                 using var stream = await media.File.OpenReadAsync();
                 using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false, false));
@@ -603,46 +645,65 @@ namespace Telegram.Views.Popups
             Redo?.IsEnabled = Canvas.CanRedo;
         }
 
-        private async void MediaPlayer_PositionChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
+        // AsyncMediaPlayer raises its events on the thread that created it, so this and
+        // Player_EndReached are already on the UI thread.
+        private void Player_PositionChanged(AsyncMediaPlayer sender, AsyncMediaPlayerPositionChangedEventArgs args)
         {
-            await TrimRange.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            // The duration is only known once the probe in InitializeVideo has run, and until
+            // then every position is past the end of a zero length range.
+            if (TrimRange.IsChanging || _duration == TimeSpan.Zero)
             {
-                if (TrimRange.IsChanging)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (sender.Position.TotalMilliseconds >= TrimRange.Maximum * _duration.TotalMilliseconds)
-                {
-                    sender.Position = TimeSpan.FromMilliseconds(_duration.TotalMilliseconds * TrimRange.Minimum);
-                    return;
-                }
+            if (args.Position >= TrimRange.Maximum * _duration.TotalSeconds)
+            {
+                sender.Position = _duration.TotalSeconds * TrimRange.Minimum;
+                return;
+            }
 
-                TrimRange.Value = sender.Position.TotalMilliseconds / _duration.TotalMilliseconds;
-            });
+            TrimRange.Value = args.Position / _duration.TotalSeconds;
+        }
+
+        private void Player_EndReached(AsyncMediaPlayer sender, object args)
+        {
+            sender.Play();
+
+            if (TrimRange.Minimum != 0)
+            {
+                sender.Position = _duration.TotalSeconds * TrimRange.Minimum;
+            }
         }
 
         private void TrimRange_MinimumChanged(object sender, double e)
         {
-            if (Media.MediaPlayer.PlaybackSession.PlaybackState == Windows.Media.Playback.MediaPlaybackState.Playing)
+            if (_player == null)
             {
-                _resume = true;
-                Media.MediaPlayer.Pause();
+                return;
             }
 
-            Media.MediaPlayer.PlaybackSession.Position =
-                TimeSpan.FromMilliseconds(_duration.TotalMilliseconds * e);
+            if (_player.IsPlaying)
+            {
+                _resume = true;
+                _player.Pause();
+            }
+
+            _player.Position = _duration.TotalSeconds * e;
         }
 
         private void TrimRange_MaximumChanged(object sender, double e)
         {
-            Media.MediaPlayer.PlaybackSession.Position =
-                TimeSpan.FromMilliseconds(_duration.TotalMilliseconds * e);
+            if (_player == null)
+            {
+                return;
+            }
+
+            _player.Position = _duration.TotalSeconds * e;
 
             if (_resume)
             {
                 _resume = false;
-                Media.MediaPlayer.Play();
+                _player.Play();
             }
         }
     }
