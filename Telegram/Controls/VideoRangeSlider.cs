@@ -189,28 +189,38 @@ namespace Telegram.Controls
 
         private void Calculate(double x, bool set)
         {
-            var width = ActualWidth - THICKNESS;
-            var delta = _delta + x;
-            delta = Math.Max(_tempMin * width, Math.Min(_tempMax * width, delta));
+            // _delta + x recovers the margin Arrange gave the thumb, so this has to invert
+            // Arrange exactly: the same track, and the same origin within it for this thumb.
+            // Anything else and a press that never moves resolves to a different value than
+            // the one the thumb was drawn at, which shifts the range under the pointer.
+            var track = ActualWidth - THICKNESS * 2;
+            var origin = _target == MiddleThumb2
+                ? THICKNESS / 2
+                : _target == MaximumThumb
+                ? THICKNESS
+                : 0;
+
+            var value = (_delta + x - origin) / track;
+            value = Math.Max(_tempMin, Math.Min(_tempMax, value));
 
             if (_target == MinimumThumb)
             {
-                _minimum = delta / width;
+                _minimum = value;
                 _value = _minimum;
             }
             else if (_target == MiddleThumb1)
             {
-                _minimum = delta / width;
-                _maximum = (delta / width) + _distance;
+                _minimum = value;
+                _maximum = value + _distance;
                 _value = _minimum;
             }
             else if (_target == MiddleThumb2)
             {
-                _value = delta / width;
+                _value = value;
             }
             else if (_target == MaximumThumb)
             {
-                _maximum = delta / width;
+                _maximum = value;
                 _value = _maximum;
             }
 
@@ -243,13 +253,15 @@ namespace Telegram.Controls
                 return;
             }
 
-            var width = ActualWidth - THICKNESS;
-            BackgroundMinimum.Margin = new Thickness(0, 0, ((1 - _minimum) * (width - THICKNESS)) + THICKNESS, 0);
-            BackgroundMaximum.Margin = new Thickness((_maximum * (width - THICKNESS)) + THICKNESS, 0, 0, 0);
-            MiddleThumb1.Margin = new Thickness(_minimum * (width - THICKNESS), 0, (1 - _maximum) * (width - THICKNESS), 0);
-            MinimumThumb.Margin = new Thickness(_minimum * (width - THICKNESS), 0, 0, 0);
-            MiddleThumb2.Margin = new Thickness(THICKNESS / 2 + _value * (width - THICKNESS), 0, 0, 0);
-            MaximumThumb.Margin = new Thickness(THICKNESS + _maximum * (width - THICKNESS), 0, 0, 0);
+            // Both handles stay inside the control, so the distance either travels is the
+            // width less one of each. Calculate inverts this.
+            var track = ActualWidth - THICKNESS * 2;
+            BackgroundMinimum.Margin = new Thickness(0, 0, ((1 - _minimum) * track) + THICKNESS, 0);
+            BackgroundMaximum.Margin = new Thickness((_maximum * track) + THICKNESS, 0, 0, 0);
+            MiddleThumb1.Margin = new Thickness(_minimum * track, 0, (1 - _maximum) * track, 0);
+            MinimumThumb.Margin = new Thickness(_minimum * track, 0, 0, 0);
+            MiddleThumb2.Margin = new Thickness(THICKNESS / 2 + _value * track, 0, 0, 0);
+            MaximumThumb.Margin = new Thickness(THICKNESS + _maximum * track, 0, 0, 0);
 
             _toolTip.Content = (_originalDuration * _value).ToDuration();
             _toolTip.HorizontalOffset = MiddleThumb2.Margin.Left;
