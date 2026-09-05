@@ -172,7 +172,7 @@ namespace Telegram.Services
                     ? count - _order.Count
                     : 0;
 
-                if (missing == 0)
+                if (missing == 0 || (offset == 0 && _order.Count > 0))
                 {
                     var result = new long[Math.Max(0, Math.Min(limit, _order.Count - offset))];
                     var pos = 0;
