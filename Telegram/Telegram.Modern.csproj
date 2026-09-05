@@ -247,9 +247,6 @@
          IReferenceArray cases are diagnosed at build time rather than at the call site.
          3.0.0-preview is a different branch and cannot build UWP XAML. -->
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-    <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.winmd" />
-    <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.winmd" />
-    <CsWinRTInputs Include="$(NuGetPackageRoot)win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
   </ItemGroup>
 
   <!-- Kept in step with Telegram.csproj by hand: the generator reads TdParsers and emits parsers,
@@ -279,6 +276,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj" />
+    <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj" />
     <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
@@ -300,31 +299,6 @@
   <PropertyGroup>
     <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
   </PropertyGroup>
-
-  <!-- The two C++/WinRT components are consumed as projections rather than ProjectReferences, so
-       nothing copies their binaries the way a project reference would. They come from the same
-       build output the winmds are read from, which is also why this project does not build them:
-       Telegram.Native has to have been built by the solution first. Calls only adds its own two
-       files; the rest of its folder is the same ffmpeg set.
-
-       $(TelegramRoot) rather than a relative path: these paths reach the .appxrecipe
-       verbatim, and Visual Studio resolves the recipe against its own working directory,
-       so a relative one fails deployment with DEP1000 even though the build copied it. -->
-  <ItemGroup>
-    <!-- Only the components themselves. Their folders also hold the whole ffmpeg/libvlc set, but
-         those come from vcpkg through Directory.Build.targets, as they do for Telegram.csproj -
-         copying both is NETSDK1152, sixteen files deep. Same for Win2D, which comes from its
-         package, and Telegram.Td.dll, which the shipping package does not carry at all. -->
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
-    <!-- Telegram.csproj gets these two through its vcxproj ProjectReferences, whose debug symbols
-         output group the packaging project asks for. Nothing here does, so the .appxsym carried no
-         symbols for either component. -->
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pdb" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pdb" />
-  </ItemGroup>
 
   <ItemGroup>
     <!-- Same reason as tdjson.pdb below: Telegram.csproj names these itself as copy-local

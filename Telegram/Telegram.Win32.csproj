@@ -121,6 +121,16 @@
          message loop. -->
     <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>$(NoWarn);2008</NoWarn>
+
+    <!-- The one key in the repository, shared by every project that packages the app. Only
+         reached when this project is built on its own with signing on: the bundle is signed by
+         Telegram.Msix.Modern, which names the same file.
+
+         It also arms a trap, so keep the UapAppxPackageBuildMode scoping in that wapproj. A store
+         mode reaching this project turns on its own single-project packaging, which used to fail
+         loudly with APPX0101 for want of a key; with one here it would instead succeed, quietly
+         costing a second ILC-sized packaging pass beside the bundle's. -->
+    <PackageCertificateKeyFile>..\Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
 
   <!--
@@ -133,7 +143,6 @@
     <Compile Remove="Common\MediaHttpServer.cs" />
     <Compile Remove="Controls\SettingsCheckBox.cs" />
     <Compile Remove="Entities\SourceGenerationContext.cs" />
-    <Compile Remove="Streams\DiceFileSource.cs" />
     <!-- The SDK generates these attributes itself, and two sets of them is CS0579. -->
     <Compile Remove="Properties\AssemblyInfo.cs" />
     <!-- The fork. Every host-specific member lives in a *.Uwp.cs / *.Win32.cs partial beside its
@@ -203,8 +212,12 @@
     <CsWinRTIncludes>Telegram.Native</CsWinRTIncludes>
     <!-- 3 is the loudest level: it adds the casting, ternary, switch and constructor-argument
          cases on top of the defaults. Every AOT bug in this port so far was a marshalling
-         mistake that only showed up by running the feature, so noise here is worth paying for. -->
-    <CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
+         mistake that only showed up by running the feature, so noise here is worth paying for.
+
+         Conditioned, because this used to be unconditional and sits later in the file than the
+         Debug override above, so it silently won and Debug paid for ~1800 CsWinRT1034 diagnostics
+         on every compile - the exact cost that override was added to remove. -->
+    <CsWinRTAotWarningLevel Condition="'$(CsWinRTAotWarningLevel)' == ''">3</CsWinRTAotWarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -212,9 +225,6 @@
          IReferenceArray cases are diagnosed at build time rather than at the call site.
          3.0.0-preview is a different branch and cannot build UWP XAML. -->
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-    <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.winmd" />
-    <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.winmd" />
-    <CsWinRTInputs Include="$(NuGetPackageRoot)win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
   </ItemGroup>
 
 
@@ -329,6 +339,8 @@
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
+  <Import Project="TdSchema.targets" />
+
   <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
        which keeps a WeakReference per registered object for the session, so it must not reach a
        shipping build. Telegram.csproj has it on in Debug instead. -->
@@ -337,6 +349,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj" />
+    <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj" />
     <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
@@ -352,8 +366,6 @@
     <CompilerVisibleProperty Include="TdParsers" />
   </ItemGroup>
 
-  <Import Project="TdSchema.targets" />
-
   <!-- Same copy-local set as Telegram.csproj, including tdjson.pdb by name: it arrives as a copy
        local path rather than a Reference, so RAR never runs its related-file discovery and without
        this the symbols are missing from every TDLib crash. -->
@@ -361,33 +373,32 @@
     <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
   </PropertyGroup>
 
-  <!-- The two C++/WinRT components are consumed as projections rather than ProjectReferences, so
-       nothing copies their binaries the way a project reference would. They come from the same
-       build output the winmds are read from, which is also why this project does not build them:
-       Telegram.Native has to have been built by the solution first. Calls only adds its own two
-       files; the rest of its folder is the same ffmpeg set.
-
-       $(TelegramRoot) rather than a relative path: these paths reach the .appxrecipe
-       verbatim, and Visual Studio resolves the recipe against its own working directory,
-       so a relative one fails deployment with DEP1000 even though the build copied it. -->
   <ItemGroup>
-    <!-- Only the components themselves. Their folders also hold the whole ffmpeg/libvlc set, but
-         those come from vcpkg through Directory.Build.targets, as they do for Telegram.csproj -
-         copying both is NETSDK1152, sixteen files deep. Same for Win2D, which comes from its
-         package, and Telegram.Td.dll, which the shipping package does not carry at all. -->
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <!-- Same reason as tdjson.pdb below: Telegram.csproj names these itself as copy-local
+         paths, and there is no Reference here to find them from. -->
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
   </ItemGroup>
+
+  <!--
+    ILC's pdb, the only one that can read a stack in the app itself.
+
+    The NativeAOT targets take the IL pdb out of the publish list and put nothing back, so nothing
+    told the packaging project that the app had symbols at all. _CopyAotSymbols does drop the pdb
+    into the publish folder, but it runs after Publish, long after the publish item list the
+    packaging project reads has been computed - so the .appxsym never saw it.
+  -->
+  <Target Name="PublishNativeSymbols" AfterTargets="ComputeResolvedFilesToPublishList" Condition="'$(PublishAot)' == 'true'">
+    <ItemGroup>
+      <ResolvedFileToPublish Include="$(NativeOutputPath)$(TargetName)$(NativeSymbolExt)">
+        <RelativePath>$(TargetName)$(NativeSymbolExt)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
