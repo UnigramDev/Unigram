@@ -218,7 +218,6 @@ namespace Telegram.Controls.Messages.Content
 
                 var textBlock = new FormattedTextBlock
                 {
-                    AdjustLineEnding = true,
                     TextSelection = TextSelectionMode.Extended,
                     Margin = new Thickness(0, 0, 0, 12)
                 };

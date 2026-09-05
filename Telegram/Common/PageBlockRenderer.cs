@@ -1109,7 +1109,6 @@ namespace Telegram.Common
                 IgnoreSpoilers = false,
                 HorizontalTextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
-                AdjustLineEnding = false,
             };
 
             block.ShowHideSkeleton(_context.IsSkeletonVisible);
@@ -1472,7 +1471,6 @@ namespace Telegram.Common
                     HorizontalTextAlignment = TextAlignment.DetectFromContent,
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
                     TextSelection = TextSelectionMode.Disabled,
-                    AdjustLineEnding = false,
                 };
 
                 Instrumentation.Register(block);

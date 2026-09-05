@@ -355,7 +355,6 @@ namespace Telegram.Controls.Messages
                 IgnoreSpoilers = _ignoreSpoilers,
                 HorizontalTextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
-                AdjustLineEnding = true,
             };
 
             Instrumentation.Register(block);

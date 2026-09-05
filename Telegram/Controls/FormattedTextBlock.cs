@@ -331,8 +331,6 @@ namespace Telegram.Controls
 
         public StyledText Text => _text;
 
-        public bool AdjustLineEnding { get; set; }
-
         private bool _hasLineEnding;
         public bool HasLineEnding
         {
@@ -1415,7 +1413,7 @@ namespace Telegram.Controls
                 // Plain text has no spoiler/cached/marked; only the query may apply.
                 ApplyHighlighters();
 
-                HasLineEnding = AdjustLineEnding && direction != locale;
+                HasLineEnding = direction != locale;
 
                 if (!_skeletonCollapsed)
                 {
@@ -2041,7 +2039,7 @@ namespace Telegram.Controls
 
             if (_spanForInlines == null)
             {
-                if (AdjustLineEnding && _last >= _first)
+                if (_last >= _first)
                 {
                     var direction = styled.Paragraphs[_last].Direction switch
                     {
@@ -2092,8 +2090,7 @@ namespace Telegram.Controls
                     IgnoreSpoilers = false,
                     HorizontalTextAlignment = TextAlignment.DetectFromContent,
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
-                    TextSelection = TextSelectionMode.Disabled,
-                    AdjustLineEnding = false,
+                    TextSelection = TextSelectionMode.Disabled
                 };
 
                 block.IconForeground = element.Foreground;
