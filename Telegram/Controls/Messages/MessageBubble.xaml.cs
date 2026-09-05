@@ -3816,6 +3816,10 @@ namespace Telegram.Controls.Messages
                     constraint = invoiceMessage.ProductInfo.Photo;
                 }
             }
+            else if (constraint is MessageLiveLocation liveLocationMessage)
+            {
+                constraint = liveLocationMessage.Location;
+            }
             else if (constraint is MessageLocation locationMessage)
             {
                 constraint = locationMessage.Location;

@@ -889,6 +889,11 @@ namespace Telegram.ViewModels
                             builder.AppendLine(audio.Caption.Text);
                         }
                     }
+                    else if (message.Content is MessageLiveLocation liveLocation)
+                    {
+                        builder.AppendLine($"[{Strings.AttachLocation}]");
+                        builder.AppendLine(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", liveLocation.Location.Location.Latitude, liveLocation.Location.Location.Longitude));
+                    }
                     else if (message.Content is MessageLocation location)
                     {
                         builder.AppendLine($"[{Strings.AttachLocation}]");

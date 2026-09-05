@@ -186,6 +186,9 @@ namespace Telegram.Controls
                         constraint = gameMessage.Game.Photo;
                     }
                     break;
+                case MessageLiveLocation liveLocationMessage:
+                    constraint = liveLocationMessage.Location;
+                    break;
                 case MessageLocation locationMessage:
                     constraint = locationMessage.Location;
                     break;
