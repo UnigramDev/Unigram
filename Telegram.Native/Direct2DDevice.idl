@@ -53,6 +53,7 @@ namespace Telegram.Native
 
         Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
         Windows.Foundation.Rect[] LineMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
+        Windows.Foundation.Rect[] RangeLineMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
         Windows.Foundation.Rect[] RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
         Windows.Foundation.Rect LayoutMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
         MaxLinesMetrics MaxLines(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Int32 maxLines);

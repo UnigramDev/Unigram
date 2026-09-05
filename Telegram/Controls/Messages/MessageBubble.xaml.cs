@@ -2949,7 +2949,10 @@ namespace Telegram.Controls.Messages
                             ? quoteSize
                             : fontSize;
 
-                        var rectangles = Direct2D.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
+                        // Lines, not runs: the highlight is drawn as one rounded polygon down
+                        // the lines it covers, and a line of mixed direction hit tests into a
+                        // rectangle per run - which that shape cannot represent.
+                        var rectangles = Direct2D.Current.RangeLineMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                         var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X + adjustment.X, relative.Y + position.Y + adjustment.Y);

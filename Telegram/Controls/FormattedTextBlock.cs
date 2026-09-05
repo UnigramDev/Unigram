@@ -3133,7 +3133,7 @@ namespace Telegram.Controls
                 var layoutWidth = width - paragraph.Margin.Left - paragraph.Margin.Right;
 
                 var format = GetTextFormat(block, partial, entities, size, layoutWidth);
-                var rectangles = format.LineMetrics(size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft);
+                var rectangles = format.LineMetrics(0, partial.Length, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, true);
                 var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                 var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);

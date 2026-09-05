@@ -171,11 +171,12 @@ namespace winrt::Telegram::Native::implementation
         return { metrics.left, metrics.top, metrics.width, metrics.height, truncateHeight, truncatePosition };
     }
 
-    // One rectangle per line, where the range below gives one per bidirectional run: a line of
-    // mixed direction is hit tested into a rectangle per run, and a caller after the shape of
-    // the text - a skeleton, a clip - wants the line those tile. Merged here, as the run count
-    // is the whole cost: every one of them crosses the ABI and lands in a list on the far side.
-    com_array<Windows::Foundation::Rect> TextFormat::LineMetrics(double fontSize, double width, bool rtl)
+    // The lines a range occupies, one rectangle each, where RangeMetrics below gives one per
+    // bidirectional run: a line of mixed direction is hit tested into a rectangle per run, and
+    // a caller after the shape of the text - a skeleton, a clip, a highlight drawn as a single
+    // polygon down the lines - wants the line those tile. Merged here rather than on the far
+    // side, as the run count is the cost: every one of them crosses the ABI.
+    com_array<Windows::Foundation::Rect> TextFormat::LineMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap)
     {
         HRESULT result;
 
@@ -184,10 +185,10 @@ namespace winrt::Telegram::Native::implementation
             return {};
         }
 
-        ReturnDefaultIfFailed(result, Configure(fontSize, width, rtl, true));
+        ReturnDefaultIfFailed(result, Configure(fontSize, width, rtl, wrap));
 
         std::vector<Windows::Foundation::Rect> rects;
-        ReturnDefaultIfFailed(result, HitTestRange(0, m_textLength, rects));
+        ReturnDefaultIfFailed(result, HitTestRange(offset, length, rects));
 
         std::vector<Windows::Foundation::Rect> lines;
         lines.reserve(rects.size());

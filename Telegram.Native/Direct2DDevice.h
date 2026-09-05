@@ -390,6 +390,7 @@ namespace winrt::Telegram::Native::implementation
 
         float2 ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
         com_array<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
+        com_array<Windows::Foundation::Rect> RangeLineMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap);
         com_array<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap);
         Windows::Foundation::Rect LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
         MaxLinesMetrics MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines);

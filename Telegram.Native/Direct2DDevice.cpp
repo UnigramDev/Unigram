@@ -1309,7 +1309,17 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<TextFormat> textFormat;
         ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
 
-        return textFormat->LineMetrics(fontSize, width, rtl);
+        return textFormat->LineMetrics(0, text.size(), fontSize, width, rtl, true);
+    }
+
+    com_array<Windows::Foundation::Rect> Direct2DDevice::RangeLineMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
+    {
+        HRESULT result;
+
+        winrt::com_ptr<TextFormat> textFormat;
+        ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
+
+        return textFormat->LineMetrics(offset, length, fontSize, width, rtl, wrap);
     }
 
     com_array<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)

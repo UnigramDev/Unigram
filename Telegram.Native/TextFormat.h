@@ -31,7 +31,7 @@ namespace winrt::Telegram::Native::implementation
         float2 ContentWidths(double fontSize, double width, bool rtl);
         winrt::Telegram::Native::MaxLinesMetrics MaxLines(int32_t offset, int32_t length, double fontSize, double width, bool rtl, int32_t maxLines);
         com_array<Windows::Foundation::Rect> RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap);
-        com_array<Windows::Foundation::Rect> LineMetrics(double fontSize, double width, bool rtl);
+        com_array<Windows::Foundation::Rect> LineMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap);
 
     private:
         winrt::com_ptr<IDWriteTextLayout> m_textLayout;
