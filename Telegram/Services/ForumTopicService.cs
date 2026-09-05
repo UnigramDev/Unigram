@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 
@@ -18,7 +17,6 @@ namespace Telegram.Services
     /// </summary>
     public partial class ForumTopicService : OrderedSourceService<ForumTopic>
     {
-        public static readonly long GeneralId = 1 << 20;
         public static readonly long PinnedMaxOrder = long.MaxValue - 1;
 
         private readonly IClientService _clientService;
@@ -105,10 +103,31 @@ namespace Telegram.Services
 
         public void ViewMessages(int forumTopicId, Vector<long> messageIds)
         {
-            if (TryGetTopic(forumTopicId, out ForumTopic topic))
+            if (!TryGetTopic(forumTopicId, out ForumTopic topic))
             {
-                UpdateLastReadInboxMessageId(topic, messageIds.Max());
+                return;
             }
+
+            // One pass over the batch: the read position is the newest of them, and the count
+            // drops by the ones that had not been read. The caller leaves outgoing messages out,
+            // so every one of them counts.
+            long lastReadInboxMessageId = 0;
+            var read = 0;
+
+            foreach (var messageId in messageIds)
+            {
+                if (messageId > lastReadInboxMessageId)
+                {
+                    lastReadInboxMessageId = messageId;
+                }
+
+                if (messageId > topic.LastReadInboxMessageId)
+                {
+                    read++;
+                }
+            }
+
+            UpdateLastReadInboxMessageId(topic, lastReadInboxMessageId, read);
         }
 
         public void SetPinnedForumTopics(Vector<int> forumTopicIds)
@@ -120,16 +139,42 @@ namespace Telegram.Services
 
             _clientService.Send(new SetPinnedForumTopics(_chatId, forumTopicIds));
 
+            // UpdatePinnedTopics reaches the topics in the list, so a topic dropped from it would
+            // keep its pinned order until something else moved it.
+            List<ForumTopic> unpinned = null;
+
             lock (SyncRoot)
             {
+                foreach (var topicId in _pinnedTopicIds)
+                {
+                    if (!forumTopicIds.Contains(topicId) && _topics.TryGetValue(topicId, out ForumTopic topic))
+                    {
+                        unpinned ??= new List<ForumTopic>();
+                        unpinned.Add(topic);
+                    }
+                }
+
                 _pinnedTopicIds.Clear();
                 _pinnedTopicIds.AddRange(forumTopicIds);
+            }
+
+            if (unpinned != null)
+            {
+                foreach (var topic in unpinned)
+                {
+                    topic.IsPinned = false;
+                    UpdateTopicOrder(topic, true);
+                }
             }
 
             UpdatePinnedTopics();
         }
 
-        private void UpdateLastReadInboxMessageId(ForumTopic topic, long lastReadInboxMessageId)
+        /// <param name="read">
+        /// How many messages the read position was moved over that had not been read, for a caller
+        /// that knows which ones they were.
+        /// </param>
+        private void UpdateLastReadInboxMessageId(ForumTopic topic, long lastReadInboxMessageId, int read = 0)
         {
             lock (SyncRoot)
             {
@@ -139,7 +184,7 @@ namespace Telegram.Services
             if (lastReadInboxMessageId > topic.LastReadInboxMessageId)
             {
                 topic.LastReadInboxMessageId = lastReadInboxMessageId;
-                UpdateUnreadCount(topic);
+                UpdateUnreadCount(topic, -read);
             }
         }
 
@@ -152,21 +197,49 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateUnreadCount(ForumTopic topic)
+        /// <param name="delta">
+        /// How far the count moved on its own: one up for a message that arrived, one down for
+        /// each message read. Zero when only the read position moved.
+        /// </param>
+        /// <remarks>
+        /// TDLib never counts the unread messages of a topic itself: the number arrives with the
+        /// topic and moves only when the server sends another one, so counting between two of
+        /// those is ours to do. Reaching the last message is the one exact answer either way.
+        /// </remarks>
+        private void UpdateUnreadCount(ForumTopic topic, int delta)
         {
-            if (topic.LastMessage?.Id <= topic.LastReadInboxMessageId && topic.UnreadCount > 0)
+            var unreadCount = topic.UnreadCount;
+
+            if (topic.LastMessage?.Id <= topic.LastReadInboxMessageId)
             {
                 topic.UnreadCount = 0;
-                UpdateUnreadTopicCount(topic, false);
             }
-            else if (topic.LastMessage?.Id > topic.LastReadInboxMessageId && topic.UnreadCount == 0 && !topic.LastMessage.IsOutgoing)
+            else if (delta != 0)
             {
-                topic.UnreadCount = 1;
-                UpdateUnreadTopicCount(topic, true);
+                topic.UnreadCount = Math.Max(0, topic.UnreadCount + delta);
+            }
+
+            PublishUnreadCount(topic, topic.UnreadCount != unreadCount);
+        }
+
+        /// <summary>
+        /// Reports the unread state of a topic, whether or not that took it into or out of the
+        /// unread set.
+        /// </summary>
+        /// <param name="changed">
+        /// The count itself moved. Leaving and joining the set carries the count with it, so this
+        /// is the change nothing else reports.
+        /// </param>
+        private void PublishUnreadCount(ForumTopic topic, bool changed)
+        {
+            if (!UpdateUnreadTopicCount(topic, topic.UnreadCount > 0) && changed)
+            {
+                _aggregator.Publish(new UpdateForumTopicReadInbox(_chatId, topic.Info.ForumTopicId, topic.LastReadInboxMessageId, topic.UnreadCount));
             }
         }
 
-        private void UpdateUnreadTopicCount(ForumTopic topic, bool unread)
+        /// <returns>Whether the topic joined or left the unread set, which is what it reports.</returns>
+        private bool UpdateUnreadTopicCount(ForumTopic topic, bool unread)
         {
             bool update;
             int count;
@@ -190,6 +263,8 @@ namespace Telegram.Services
                 _aggregator.Publish(new UpdateChatUnreadTopicCount(_chatId, UnreadCount));
                 _aggregator.Publish(new UpdateForumTopicReadInbox(_chatId, topic.Info.ForumTopicId, topic.LastReadInboxMessageId, topic.UnreadCount));
             }
+
+            return update;
         }
 
         public ForumTopic GetTopic(int id)
@@ -273,6 +348,10 @@ namespace Telegram.Services
             {
                 Object result;
 
+                // A row the page does not move is redrawn only if it is reported, so what the
+                // merge changed is collected here and published once the lock is released.
+                List<(ForumTopic Topic, TopicChange Change)> changed = null;
+
                 lock (SyncRoot)
                 {
                     if (response is ForumTopics forumTopics)
@@ -283,9 +362,29 @@ namespace Telegram.Services
 
                         var topics = new List<ForumTopic>(forumTopics.Topics.Count);
 
-                        foreach (var topic in forumTopics.Topics)
+                        foreach (var newTopic in forumTopics.Topics)
                         {
-                            _topics[topic.Info.ForumTopicId] = topic;
+                            var forumTopicId = newTopic.Info.ForumTopicId;
+
+                            // A topic can come back on a later page, and the copy TDLib sends is
+                            // the one the server sent it: its last message never advances. Taking
+                            // it whole would undo the updates applied since, moving the topic back
+                            // down, and would hand the list a second object for a row it already
+                            // shows.
+                            if (_topics.TryGetValue(forumTopicId, out ForumTopic topic))
+                            {
+                                var change = MergeTopic(topic, newTopic);
+                                if (change != TopicChange.None)
+                                {
+                                    changed ??= new List<(ForumTopic, TopicChange)>();
+                                    changed.Add((topic, change));
+                                }
+                            }
+                            else
+                            {
+                                topic = newTopic;
+                                _topics[forumTopicId] = topic;
+                            }
 
                             if (topic.LastMessage != null)
                             {
@@ -294,12 +393,23 @@ namespace Telegram.Services
 
                             if (topic.IsPinned)
                             {
-                                _pinnedTopicIds.Add(topic.Info.ForumTopicId);
+                                if (!_pinnedTopicIds.Contains(forumTopicId))
+                                {
+                                    _pinnedTopicIds.Add(forumTopicId);
+                                }
+                            }
+                            else
+                            {
+                                _pinnedTopicIds.Remove(forumTopicId);
                             }
 
                             if (topic.UnreadCount > 0)
                             {
-                                _unreadTopicIds.Add(topic.Info.ForumTopicId);
+                                _unreadTopicIds.Add(forumTopicId);
+                            }
+                            else
+                            {
+                                _unreadTopicIds.Remove(forumTopicId);
                             }
 
                             topics.Add(topic);
@@ -322,6 +432,14 @@ namespace Telegram.Services
                     }
                 }
 
+                if (changed != null)
+                {
+                    foreach (var (topic, change) in changed)
+                    {
+                        PublishTopicChange(topic, change);
+                    }
+                }
+
                 // Completed outside the lock on purpose: the continuation waiting on this is
                 // the base's pager, which takes SyncRoot itself, and SetResult runs it inline.
                 // Recursion made that safe rather than deadlocked, but a throw in there would
@@ -330,6 +448,161 @@ namespace Telegram.Services
             });
 
             return tsc.Task;
+        }
+
+        /// <summary>
+        /// What a merge took over, so that a row already on screen is redrawn for it. The info is
+        /// not among them: TDLib reports a change to it as updateForumTopicInfo of its own.
+        /// </summary>
+        [Flags]
+        private enum TopicChange
+        {
+            None = 0,
+            NotificationSettings = 1,
+            DraftMessage = 2,
+            UnreadMentionCount = 4,
+            UnreadReactionCount = 8,
+            ReadInbox = 16,
+            ReadOutbox = 32,
+            LastMessage = 64
+        }
+
+        /// <summary>
+        /// Takes over what a page of the list says about a topic already held, keeping the object
+        /// the list is showing and the newer of the two last messages.
+        /// </summary>
+        /// <remarks>
+        /// Caller must hold SyncRoot. Nothing is published from here: what changed is returned, so
+        /// that the caller can report it once it lets the lock go.
+        /// </remarks>
+        private TopicChange MergeTopic(ForumTopic topic, ForumTopic newTopic)
+        {
+            var change = TopicChange.None;
+
+            topic.Info = newTopic.Info;
+            topic.IsPinned = newTopic.IsPinned;
+
+            if (!topic.NotificationSettings.AreTheSame(newTopic.NotificationSettings))
+            {
+                topic.NotificationSettings = newTopic.NotificationSettings;
+                change |= TopicChange.NotificationSettings;
+            }
+
+            if (topic.DraftMessage?.Date != newTopic.DraftMessage?.Date)
+            {
+                topic.DraftMessage = newTopic.DraftMessage;
+                change |= TopicChange.DraftMessage;
+            }
+
+            if (topic.UnreadMentionCount != newTopic.UnreadMentionCount)
+            {
+                topic.UnreadMentionCount = newTopic.UnreadMentionCount;
+                change |= TopicChange.UnreadMentionCount;
+            }
+
+            if (topic.UnreadReactionCount != newTopic.UnreadReactionCount)
+            {
+                topic.UnreadReactionCount = newTopic.UnreadReactionCount;
+                change |= TopicChange.UnreadReactionCount;
+            }
+
+            // Ordered: the merge compares against the read position the line below replaces.
+            if (MergeUnreadCount(topic, newTopic) || newTopic.LastReadInboxMessageId > topic.LastReadInboxMessageId)
+            {
+                topic.LastReadInboxMessageId = Math.Max(topic.LastReadInboxMessageId, newTopic.LastReadInboxMessageId);
+                change |= TopicChange.ReadInbox;
+            }
+
+            if (newTopic.LastReadOutboxMessageId > topic.LastReadOutboxMessageId)
+            {
+                topic.LastReadOutboxMessageId = newTopic.LastReadOutboxMessageId;
+                change |= TopicChange.ReadOutbox;
+            }
+
+            if (newTopic.LastMessage != null && newTopic.LastMessage.Id > (topic.LastMessage?.Id ?? 0))
+            {
+                if (topic.LastMessage != null)
+                {
+                    _messages.Remove(topic.LastMessage.Id);
+                }
+
+                topic.LastMessage = newTopic.LastMessage;
+                change |= TopicChange.LastMessage;
+            }
+
+            return change;
+        }
+
+        /// <summary>
+        /// Reports a merge to the list and to whatever else is showing the topic.
+        /// </summary>
+        /// <remarks>
+        /// Called with SyncRoot released. The order is read off the topic rather than decided
+        /// again: the page settled it before publishing, and the row only has to be redrawn where
+        /// it already is.
+        /// </remarks>
+        private void PublishTopicChange(ForumTopic topic, TopicChange change)
+        {
+            var forumTopicId = topic.Info.ForumTopicId;
+
+            if ((change & TopicChange.NotificationSettings) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicNotificationSettings(_chatId, forumTopicId, topic.NotificationSettings));
+            }
+
+            if ((change & TopicChange.DraftMessage) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicDraftMessage(_chatId, forumTopicId, topic.DraftMessage));
+            }
+
+            if ((change & TopicChange.UnreadMentionCount) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicUnreadMentionCount(_chatId, forumTopicId, topic.UnreadMentionCount));
+            }
+
+            if ((change & TopicChange.UnreadReactionCount) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicUnreadReactionCount(_chatId, forumTopicId, topic.UnreadReactionCount));
+            }
+
+            if ((change & TopicChange.ReadInbox) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicReadInbox(_chatId, forumTopicId, topic.LastReadInboxMessageId, topic.UnreadCount));
+            }
+
+            if ((change & TopicChange.ReadOutbox) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicReadOutbox(_chatId, forumTopicId, topic.LastReadOutboxMessageId));
+            }
+
+            if ((change & TopicChange.LastMessage) != 0)
+            {
+                RaiseChanged(topic, topic.Order, true);
+            }
+        }
+
+        /// <summary>
+        /// Takes the unread count the server sent, which is the only one either side counts from,
+        /// and says whether that moved it: a count can change without the topic joining or leaving
+        /// the unread set, and that is the one change UpdateUnreadTopicCount does not report.
+        /// </summary>
+        /// <remarks>
+        /// The server counts on every request, so its number replaces ours - which is the same
+        /// number plus what we have counted since, and drifts where a read skipped over messages.
+        /// The one response to distrust is one whose read position is behind ours: it was built
+        /// before a read we have already applied, and counts messages that are read by now.
+        /// </remarks>
+        private static bool MergeUnreadCount(ForumTopic topic, ForumTopic newTopic)
+        {
+            if (newTopic.LastReadInboxMessageId >= topic.LastReadInboxMessageId)
+            {
+                var unreadCount = topic.UnreadCount;
+
+                topic.UnreadCount = newTopic.UnreadCount;
+                return topic.UnreadCount != unreadCount;
+            }
+
+            return false;
         }
 
         // Caller must hold SyncRoot: reads _deletedTopicIds and _pinnedTopicIds.
@@ -352,7 +625,7 @@ namespace Telegram.Services
                 return topic.LastMessage.Id;
             }
 
-            return topic.Info.ForumTopicId;
+            return GetCreationMessageId(topic.Info.ForumTopicId);
         }
 
         public void UpdateForumTopic(UpdateForumTopic update)
@@ -390,7 +663,10 @@ namespace Telegram.Services
                     {
                         lock (SyncRoot)
                         {
-                            _pinnedTopicIds.Insert(0, update.ForumTopicId);
+                            if (!_pinnedTopicIds.Contains(update.ForumTopicId))
+                            {
+                                _pinnedTopicIds.Insert(0, update.ForumTopicId);
+                            }
                         }
                     }
                     else
@@ -448,6 +724,8 @@ namespace Telegram.Services
             ForumTopic topic;
             ForumTopic newTopic = response as ForumTopic;
 
+            var unreadCountChanged = false;
+
             if (newTopic == null)
             {
                 // Only a server or transport failure is retried. Leaving the pending entry
@@ -479,9 +757,10 @@ namespace Telegram.Services
                 topic.NotificationSettings = newTopic.NotificationSettings;
                 topic.UnreadReactionCount = newTopic.UnreadReactionCount;
                 topic.UnreadMentionCount = newTopic.UnreadMentionCount;
-                topic.UnreadCount = newTopic.UnreadCount;
                 topic.IsPinned = newTopic.IsPinned;
                 topic.Info = newTopic.Info;
+
+                unreadCountChanged = MergeUnreadCount(topic, newTopic);
 
                 UpdateLastReadInboxMessageId(topic, newTopic.LastReadInboxMessageId);
                 UpdateLastReadOutboxMessageId(topic, newTopic.LastReadOutboxMessageId);
@@ -489,7 +768,7 @@ namespace Telegram.Services
                 // TODO: Not sure this is right
                 if (newTopic.LastMessage != null)
                 {
-                    UpdateLastMessage(topic, newTopic.LastMessage);
+                    UpdateLastMessage(topic, newTopic.LastMessage, false);
                 }
             }
             else
@@ -505,8 +784,25 @@ namespace Telegram.Services
                 {
                     _messages[topic.LastMessage.Id] = topic;
                 }
+
+                // Order reads the pinned list rather than the flag, so a topic that arrives pinned
+                // on its own would have sorted by its last message. Where it belongs among the
+                // pinned ones is only known from a page of the list, so it goes last until one
+                // arrives.
+                if (topic.IsPinned)
+                {
+                    if (!_pinnedTopicIds.Contains(topic.Info.ForumTopicId))
+                    {
+                        _pinnedTopicIds.Add(topic.Info.ForumTopicId);
+                    }
+                }
+                else
+                {
+                    _pinnedTopicIds.Remove(topic.Info.ForumTopicId);
+                }
             }
 
+            PublishUnreadCount(topic, unreadCountChanged);
             UpdateTopicOrder(topic, true);
         }
 
@@ -526,7 +822,7 @@ namespace Telegram.Services
 
             if (TryGetTopic(topicForum.ForumTopicId, out ForumTopic topic))
             {
-                UpdateLastMessage(topic, message);
+                UpdateLastMessage(topic, message, true);
             }
             else
             {
@@ -542,7 +838,7 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateLastMessage(ForumTopic topic, Message message)
+        private void UpdateLastMessage(ForumTopic topic, Message message, bool newMessage)
         {
             if (topic.LastMessage == null || topic.LastMessage?.Id < message.Id)
             {
@@ -564,7 +860,7 @@ namespace Telegram.Services
                 topic.LastMessage = message;
 
                 UpdateTopicOrder(topic, true);
-                UpdateUnreadCount(topic);
+                UpdateUnreadCount(topic, newMessage && !message.IsOutgoing ? 1 : 0);
             }
         }
 
@@ -674,9 +970,18 @@ namespace Telegram.Services
             }
         }
 
+        /// <summary>
+        /// The identifier of the message that created the topic: a forum topic identifier is the
+        /// server identifier of that message, and needs the same shift as any other.
+        /// </summary>
+        public static long GetCreationMessageId(int forumTopicId)
+        {
+            return (long)forumTopicId << 20;
+        }
+
         private Message MessageForumTopicCreated(ForumTopic topic)
         {
-            return new Message(topic.Info.ForumTopicId, topic.Info.CreatorId, null, _chatId, null, null, topic.Info.IsOutgoing, false, false, false, false, false, false, false, false, false, topic.Info.CreationDate, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, new MessageTopicForum(topic.Info.ForumTopicId), null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageForumTopicCreated(topic.Info.Name, false, topic.Info.Icon), null, null);
+            return new Message(GetCreationMessageId(topic.Info.ForumTopicId), topic.Info.CreatorId, null, _chatId, null, null, topic.Info.IsOutgoing, false, false, false, false, false, false, false, false, false, topic.Info.CreationDate, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, new MessageTopicForum(topic.Info.ForumTopicId), null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageForumTopicCreated(topic.Info.Name, false, topic.Info.Icon), null, null);
         }
 
         public void UpdateMessageSendSucceeded(Message message, long oldMessageId)
@@ -885,6 +1190,7 @@ namespace Telegram.Td.Api
             ChatId = chatId;
             ForumTopicId = forumTopicId;
             LastReadInboxMessageId = lastReadInboxMessageId;
+            UnreadCount = unreadCount;
         }
 
         public long ChatId { get; set; }

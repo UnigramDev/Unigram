@@ -889,16 +889,6 @@ namespace Telegram.Td.Api
             return messageTopic is MessageTopicThread thread && thread.MessageThreadId == messageThreadId;
         }
 
-        public static MessageTopic TopicIdNotGeneral(this Message message)
-        {
-            if (message.TopicId is MessageTopicForum forum && forum.ForumTopicId == ForumTopicService.GeneralId)
-            {
-                return null;
-            }
-
-            return message.TopicId;
-        }
-
         public static MessageTopic ToId(this ForumTopic topic)
         {
             return new MessageTopicForum(topic.Info.ForumTopicId);

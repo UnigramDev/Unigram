@@ -252,7 +252,7 @@ namespace Telegram.Services
             return topicId switch
             {
                 MessageTopicDirectMessages directMesages => $"{chatId}{directMesages.DirectMessagesChatTopicId}{setting}",
-                MessageTopicForum forum => $"{chatId}{forum.ForumTopicId << 20}{setting}",
+                MessageTopicForum forum => $"{chatId}{ForumTopicService.GetCreationMessageId(forum.ForumTopicId)}{setting}",
                 MessageTopicSavedMessages savedMessages => $"{chatId}{savedMessages.SavedMessagesTopicId}{setting}",
                 MessageTopicThread thread => $"{chatId}{thread.MessageThreadId}{setting}",
                 _ => $"{chatId}{setting}"

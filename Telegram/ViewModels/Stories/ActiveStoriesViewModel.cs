@@ -171,7 +171,7 @@ namespace Telegram.ViewModels.Stories
 
         public override MessageTopic TopicId { get; set; }
 
-        public override long ThreadId => 0;
+        public override MessageTopic OutgoingTopicId { get; }
 
         protected override bool CanSchedule => false;
 

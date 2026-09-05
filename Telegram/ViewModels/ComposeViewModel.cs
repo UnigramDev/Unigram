@@ -136,9 +136,7 @@ namespace Telegram.ViewModels
 
         public abstract MessageTopic TopicId { get; set; }
 
-        public virtual MessageTopic OutgoingTopicId { get; }
-
-        public abstract long ThreadId { get; }
+        public abstract MessageTopic OutgoingTopicId { get; }
 
         #region Stickers
 

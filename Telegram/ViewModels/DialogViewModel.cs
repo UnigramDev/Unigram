@@ -224,27 +224,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        public override long ThreadId
-        {
-            get
-            {
-                if (_directMessagesChatTopic != null)
-                {
-                    return _directMessagesChatTopic.Id;
-                }
-                else if (_forumTopic != null)
-                {
-                    return _forumTopic.Info.ForumTopicId << 20;
-                }
-                else if (_thread != null)
-                {
-                    return _thread.MessageThreadId;
-                }
-
-                return 0;
-            }
-        }
-
         protected MessageThreadInfo _thread;
         public MessageThreadInfo Thread
         {
