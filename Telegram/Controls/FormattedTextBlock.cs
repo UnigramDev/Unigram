@@ -427,6 +427,23 @@ namespace Telegram.Controls
 
         public double LastAvailableWidth { get; private set; }
 
+        // The width the text ended up arranged in, which is the box DirectWrite has to lay it
+        // out in to answer about it: a right to left paragraph sits against the right edge of
+        // its box, so a box wider than the rendered text - the width offered rather than the
+        // width taken - puts every rectangle out to the right of where the text is. Left to
+        // right text starts at the left edge of either box, which is why only RTL showed it.
+        //
+        // The line breaks are the same in both: the arranged width is never below the width
+        // the text asked for, and no line could take another word at the wider one either.
+        public double ArrangedWidth
+        {
+            get
+            {
+                var actual = TextBlock?.ActualSize.X ?? 0;
+                return actual > 0 ? actual : LastAvailableWidth;
+            }
+        }
+
         public bool IsTextTrimmable { get; private set; }
         public event EventHandler IsTextTrimmableChanged;
 
@@ -2258,7 +2275,7 @@ namespace Telegram.Controls
             var fontSize = (AutoFontSize ? AppSettings.Appearance.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
             var quoteSize = (AutoFontSize ? AppSettings.Appearance.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
-            var width = LastAvailableWidth;
+            var width = ArrangedWidth;
 
             var position = new Windows.Foundation.Point(0, 0);
 
@@ -3086,7 +3103,7 @@ namespace Telegram.Controls
 
         private void InvalidateSkeleton()
         {
-            var width = LastAvailableWidth;
+            var width = ArrangedWidth;
 
             var fontSize = (AutoFontSize ? AppSettings.Appearance.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
             var quoteSize = (AutoFontSize ? AppSettings.Appearance.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;

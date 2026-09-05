@@ -244,7 +244,7 @@ namespace Telegram.Controls.Messages
 
                 if (_ranges[i].First <= index && _ranges[i].Last >= index)
                 {
-                    width = _blocks[i].LastAvailableWidth;
+                    width = _blocks[i].ArrangedWidth;
                     adjustment = _blocks[i].TransformToPoint(this);
                     return _blocks[i].Blocks[index - _ranges[i].First];
                 }
