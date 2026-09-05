@@ -352,6 +352,8 @@
     <CompilerVisibleProperty Include="TdParsers" />
   </ItemGroup>
 
+  <Import Project="TdSchema.targets" />
+
   <!-- Same copy-local set as Telegram.csproj, including tdjson.pdb by name: it arrives as a copy
        local path rather than a Reference, so RAR never runs its related-file discovery and without
        this the symbols are missing from every TDLib crash. -->
