@@ -91,14 +91,16 @@ namespace Telegram.Services
         {
             _searchIndex = new List<SettingsSearchEntry>
             {
+                BuildProfile(),
                 BuildAppearance(),
                 BuildPrivacyAndSecurity(),
                 BuildNotificationsAndSounds(),
                 BuildDataAndStorage(),
-                BuildStickersAndMasks(),
-                new SettingsSearchPage(null, Strings.Language, new Assets.Icons.Language()),
-                new SettingsSearchPage(null, Strings.AskAQuestion, new Assets.Icons.AskQ()),
-                new SettingsSearchPage(typeof(FoldersPage), Strings.Filters, new Assets.Icons.Folders())
+                BuildPowerSaving(),
+                BuildFolders(),
+                BuildSessions(),
+                BuildLanguage(),
+                BuildAdvanced()
             };
 
             // FAQ indexing is done asyncronously
@@ -141,56 +143,61 @@ namespace Telegram.Services
             }
         }
 
+        private SettingsSearchEntry BuildProfile()
+        {
+            return new SettingsSearchPage(typeof(SettingsProfilePage), Strings.AccountSettings, new Assets.Icons.Profile(), new SettingsSearchEntry[]
+            {
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.FirstNameSmall),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.LastNameSmall),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.ChatSetNewPhoto),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileBio),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditAccountInfoHeader, new Assets.Icons.Profile(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsProfilePage), Strings.PhoneNumberChange2),
+                    new SettingsSearchPage(typeof(SettingsProfilePage), Strings.Username),
+                    new SettingsSearchPage(typeof(SettingsProfileColorPage), Strings.YourNameColor),
+                    new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileBirthdayText),
+                    new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileBirthdayRemove)
+                }),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileChannelTitle),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileHours),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileLocation),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.EditProfileChatAutomation),
+                new SettingsSearchPage(typeof(SettingsProfilePage), Strings.LogOutTitle)
+            });
+        }
+
         private SettingsSearchEntry BuildNotificationsAndSounds()
         {
             return new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.NotificationsAndSounds, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
             {
-                // Notifications for private chats
-                new SettingsSearchPage(null, Strings.NotificationsForPrivateChats, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.ShowNotificationsFor, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.MessagePreview),
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Sound)
+                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.AllAccounts)
                 }),
-
-                // Notifications for groups
-                new SettingsSearchPage(null, Strings.NotificationsForGroups, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
-                {
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.MessagePreview),
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Sound)
-                }),
-
-                // Notifications for channels
-                new SettingsSearchPage(null, Strings.NotificationsForChannels, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
-                {
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.MessagePreview),
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Sound)
-                }),
-
-                // In-app notifications
-                new SettingsSearchPage(null, Strings.InAppNotifications, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.NotificationPreviewName),
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.NotificationPreviewText),
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.NotificationPreviewReply),
+                new SettingsSearchPage(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.PrivateChats, Strings.NotificationsPrivateChats),
+                new SettingsSearchPage(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.GroupChats, Strings.NotificationsGroups),
+                new SettingsSearchPage(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.ChannelChats, Strings.NotificationsChannels),
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.InAppNotifications, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.InAppSounds),
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.InAppVibrate),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.InAppPreview)
                 }),
-
-                // Events
-                new SettingsSearchPage(null, Strings.Events, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Events, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.ContactJoined),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.PinnedMessages)
                 }),
-
-                // Badge Counter
-                new SettingsSearchPage(null, Strings.BadgeNumber, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.BadgeNumber, new Assets.Icons.Notifications(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.BadgeNumberShow),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.BadgeNumberMutedChats),
+                    new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.BadgeNumberMutedChatsFolders),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.BadgeNumberUnread)
                 }),
-
-                // Reset All Notifications
-                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.BadgeNumberUnread)
+                new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.ResetAllNotifications)
             });
         }
 
@@ -199,19 +206,48 @@ namespace Telegram.Services
             return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.PrivacySettings, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsBlockedChatsPage), Strings.BlockedUsers),
-                new SettingsSearchPage(typeof(SettingsPrivacyShowStatusPage), Strings.PrivacyLastSeen),
-                //yield return new SettingsSearchEntry(typeof(SettingsPrivacyAndSecurityPage), Strings.ProfilePhoto, group);
-                //yield return new SettingsSearchEntry(typeof(SettingsPrivacyAndSecurityPage), Strings.Forwards, group);
-                new SettingsSearchPage(typeof(SettingsPrivacyAllowCallsPage), Strings.Calls),
-                new SettingsSearchPage(typeof(SettingsPrivacyAllowP2PCallsPage), Strings.PrivacyP2P),
-                new SettingsSearchPage(typeof(SettingsPrivacyAllowChatInvitesPage), Strings.GroupsAndChannels),
-
                 new SettingsSearchPage(typeof(SettingsPasscodePage), Strings.Passcode),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Passkey),
                 new SettingsSearchPage(typeof(SettingsPasswordPage), Strings.TwoStepVerification),
-                new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.SessionsTitle),
-
-                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.PrivacyDeleteCloudDrafts),
-                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.DeleteAccountIfAwayFor2)
+                new SettingsSearchPage(typeof(SettingsAutoDeletePage), Strings.AutoDeleteMessages),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.EmailLogin),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.PrivacyTitle, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsPrivacyPhonePage), Strings.PrivacyPhone),
+                    new SettingsSearchPage(typeof(SettingsPrivacyShowStatusPage), Strings.PrivacyLastSeen),
+                    new SettingsSearchPage(typeof(SettingsPrivacyShowPhotoPage), Strings.PrivacyProfilePhoto),
+                    new SettingsSearchPage(typeof(SettingsPrivacyShowBioPage), Strings.PrivacyBio),
+                    new SettingsSearchPage(typeof(SettingsPrivacyAutosaveGiftsPage), Strings.PrivacyGifts),
+                    new SettingsSearchPage(typeof(SettingsPrivacyShowBirthdatePage), Strings.PrivacyBirthday),
+                    new SettingsSearchPage(typeof(SettingsPrivacyShowProfileAudioPage), Strings.PrivacyMusic),
+                    new SettingsSearchPage(typeof(SettingsPrivacyShowForwardedPage), Strings.PrivacyForwards),
+                    new SettingsSearchPage(typeof(SettingsPrivacyAllowCallsPage), Strings.Calls, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
+                    {
+                        new SettingsSearchPage(typeof(SettingsPrivacyAllowP2PCallsPage), Strings.PrivacyP2P)
+                    }),
+                    new SettingsSearchPage(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage), Strings.PrivacyVoiceMessages),
+                    new SettingsSearchPage(typeof(SettingsPrivacyNewChatPage), Strings.PrivacyMessages),
+                    new SettingsSearchPage(typeof(SettingsPrivacyAllowChatInvitesPage), Strings.PrivacyInvites)
+                }),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.ArchiveSettings),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.DeleteMyAccount, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.DeleteAccountIfAwayFor3)
+                }),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.PrivacyBots, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.PrivacyPaymentsClear),
+                    new SettingsSearchPage(typeof(SettingsWebSessionsPage), Strings.WebSessionsTitle)
+                }),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Contacts, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.SuggestContacts)
+                }),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.ShowSensitiveContent),
+                new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.SecretChat, new Assets.Icons.Privacy(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.SecretWebPage)
+                })
             });
         }
 
@@ -219,56 +255,56 @@ namespace Telegram.Services
         {
             return new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.DataSettings, new Assets.Icons.Data(), new SettingsSearchEntry[]
             {
-                // Storage Usage
-                new SettingsSearchPage(typeof(SettingsStoragePage), Strings.StorageUsage, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.DataUsage, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsStoragePage), Strings.KeepMedia)
+                    new SettingsSearchPage(typeof(SettingsStoragePage), Strings.StorageUsage, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                    {
+                        new SettingsSearchPage(typeof(SettingsStoragePage), Strings.KeepMedia)
+                    }),
+                    new SettingsSearchPage(typeof(SettingsNetworkPage), Strings.NetworkUsage)
                 }),
-
-                // Data Usage
-                new SettingsSearchPage(typeof(SettingsNetworkPage), Strings.NetworkUsage, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutomaticMediaDownload, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
-
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoDownloadMedia),
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoDownloadPhotos),
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoDownloadVideos),
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoDownloadFiles),
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.ResetAutomaticMediaDownload)
                 }),
-
-                // TODO: new autodownload settings
-
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.ResetAutomaticMediaDownload),
-
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoplayMedia, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.DownloadPath, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoplayGifs),
-                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.AutoplayVideo)
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.TemporaryFolder),
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.DownloadFolder)
                 }),
-
-                // Calls
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Calls, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Streaming, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.VoipUseLessData)
+                    new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.EnableStreaming)
                 }),
-
-                // Proxy
-                new SettingsSearchPage(typeof(SettingsProxyPage), Strings.Proxy, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsProxyPage), Strings.ProxySettings, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsProxyPage), Strings.AddProxy)
-                })
+                }),
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.PrivacyDeleteCloudDrafts)
             });
         }
 
-        private SettingsSearchEntry BuildStickersAndMasks()
+        private SettingsSearchEntry BuildPowerSaving()
         {
-            return new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.StickersAndMasks, new Assets.Icons.Stickers(), new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.PowerUsage, new Assets.Icons.PowerSaving(), new SettingsSearchEntry[]
             {
-                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.SuggestStickers),
-                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Trending, Strings.FeaturedStickers),
-
-                // Masks
-                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Masks, Strings.Masks, new Assets.Icons.Stickers(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LitePowerSaver),
+                new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsTitle, new Assets.Icons.PowerSaving(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.MasksArchived, Strings.ArchivedMasks)
-                }),
-
-                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Archived, Strings.ArchivedStickers)
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsStickers),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsAutoplayKeyboard),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsAutoplayChat),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsEmoji),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsAutoplayVideo),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsAutoplayGifs),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsCalls),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsTransparencyEffects),
+                    new SettingsSearchPage(typeof(SettingsPowerSavingPage), Strings.LiteOptionsAnimationEffects)
+                })
             });
         }
 
@@ -276,15 +312,101 @@ namespace Telegram.Services
         {
             return new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Appearance, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
             {
+                new SettingsSearchPage(typeof(SettingsThemesPage), Strings.ChatThemes),
+                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.ChatWallpaper),
+                new SettingsSearchPage(typeof(SettingsProfileColorPage), Strings.YourNameColor),
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.SettingsSwitchToNightMode),
+                new SettingsSearchPage(typeof(SettingsNightModePage), Strings.AutoNightTheme),
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.InterfaceScale),
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.BubbleRadius),
                 new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.TextSizeHeader),
-
-                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.ChatBackground, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.FontFamily),
+                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.StickersName, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.SelectFromGallery),
-                    new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.SetColor)
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Trending, Strings.FeaturedStickers),
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Archived, Strings.ArchivedStickers),
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Emoji, Strings.Emoji),
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.EmojiArchived, Strings.ArchivedEmojiPacks),
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.SuggestStickers),
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.LargeEmoji),
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.DynamicPackOrder)
                 }),
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.ChatQuickActions, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.SwipeShare),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.SwipeReply),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.SwipeGoBack)
+                }),
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.ChatDoubleClickAction, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.DoubleClickReply),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.DoubleClickReact)
+                }),
+                new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.OtherSettings, new Assets.Icons.Appearance(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.EnableFullScreenGallery),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.UseSystemSpellChecker),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.ReplaceEmoji),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.AdaptiveLayout),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.SendByEnter2),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.DistanceUnits)
+                })
+            });
+        }
 
-                new SettingsSearchPage(typeof(SettingsNightModePage), Strings.AutoNightTheme)
+        private SettingsSearchEntry BuildFolders()
+        {
+            return new SettingsSearchPage(typeof(FoldersPage), Strings.Filters, new Assets.Icons.Folders(), new SettingsSearchEntry[]
+            {
+                new SettingsSearchPage(typeof(FoldersPage), Strings.CreateNewFilter),
+                new SettingsSearchPage(typeof(FoldersPage), Strings.FolderShowTags),
+                new SettingsSearchPage(typeof(FoldersPage), Strings.TabsView, new Assets.Icons.Folders(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(FoldersPage), Strings.TabsViewOnTop),
+                    new SettingsSearchPage(typeof(FoldersPage), Strings.TabsViewOnLeft)
+                })
+            });
+        }
+
+        private SettingsSearchEntry BuildSessions()
+        {
+            return new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.Devices, new Assets.Icons.Devices(), new SettingsSearchEntry[]
+            {
+                new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.CurrentSession),
+                new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.Rename),
+                new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.TerminateAllSessions),
+                new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.TerminateOldSessionHeader),
+                new SettingsSearchPage(typeof(SettingsSessionsPage), Strings.IfInactiveFor)
+            });
+        }
+
+        private SettingsSearchEntry BuildLanguage()
+        {
+            return new SettingsSearchPage(typeof(SettingsLanguagePage), Strings.Language, new Assets.Icons.Language(), new SettingsSearchEntry[]
+            {
+                new SettingsSearchPage(typeof(SettingsLanguagePage), Strings.TranslateMessages, new Assets.Icons.Language(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsLanguagePage), Strings.ShowTranslateButton),
+                    new SettingsSearchPage(typeof(SettingsLanguagePage), Strings.ShowTranslateChatButton),
+                    new SettingsSearchPage(typeof(SettingsLanguagePage), Strings.DoNotTranslate)
+                })
+            });
+        }
+
+        private SettingsSearchEntry BuildAdvanced()
+        {
+            return new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.PrivacyAdvanced, new Assets.Icons.Advanced(), new SettingsSearchEntry[]
+            {
+                new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.SystemIntegration, new Assets.Icons.Advanced(), new SettingsSearchEntry[]
+                {
+                    new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.ShowTrayIcon),
+                    new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.AutoStart),
+                    new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.AutoStartMinized)
+                }),
+                new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.VersionAndUpdates),
+                new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.InstallBetaUpdates),
+                new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.ExperimentalSettings),
+                new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.DiagnosticsShowPeerIds)
             });
         }
     }
