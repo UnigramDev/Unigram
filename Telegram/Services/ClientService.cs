@@ -3499,12 +3499,24 @@ namespace Telegram.Services
 
                 case UpdateUser updateUser:
                     {
-                        _users.TryGetValue(updateUser.User.Id, out User value);
-                        _users[updateUser.User.Id] = updateUser.User;
-
-                        if (value != null && value.IsContact != updateUser.User.IsContact)
+                        // Updated in place, and the update retargeted at the cached instance, so
+                        // that every reference handed out earlier keeps seeing the current user.
+                        // The same goes for the five other cached objects below.
+                        if (_users.TryGetValue(updateUser.User.Id, out User value))
                         {
-                            _aggregator.Publish(new UpdateUserIsContact(updateUser.User.Id));
+                            var isContact = value.IsContact;
+
+                            value.Update(updateUser.User);
+                            updateUser.User = value;
+
+                            if (isContact != value.IsContact)
+                            {
+                                _aggregator.Publish(new UpdateUserIsContact(value.Id));
+                            }
+                        }
+                        else
+                        {
+                            _users[updateUser.User.Id] = updateUser.User;
                         }
 
                         break;
@@ -3634,11 +3646,35 @@ namespace Telegram.Services
                     _animationSearchParameters = updateAnimationSearchParameters;
                     break;
                 case UpdateBasicGroup updateBasicGroup:
-                    _basicGroups[updateBasicGroup.BasicGroup.Id] = updateBasicGroup.BasicGroup;
-                    break;
+                    {
+                        if (_basicGroups.TryGetValue(updateBasicGroup.BasicGroup.Id, out BasicGroup value))
+                        {
+                            value.Update(updateBasicGroup.BasicGroup);
+                            updateBasicGroup.BasicGroup = value;
+                        }
+                        else
+                        {
+                            _basicGroups[updateBasicGroup.BasicGroup.Id] = updateBasicGroup.BasicGroup;
+                        }
+
+                        break;
+                    }
+
                 case UpdateBasicGroupFullInfo updateBasicGroupFullInfo:
-                    _basicGroupsFull[updateBasicGroupFullInfo.BasicGroupId] = updateBasicGroupFullInfo.BasicGroupFullInfo;
-                    break;
+                    {
+                        if (_basicGroupsFull.TryGetValue(updateBasicGroupFullInfo.BasicGroupId, out BasicGroupFullInfo value))
+                        {
+                            value.Update(updateBasicGroupFullInfo.BasicGroupFullInfo);
+                            updateBasicGroupFullInfo.BasicGroupFullInfo = value;
+                        }
+                        else
+                        {
+                            _basicGroupsFull[updateBasicGroupFullInfo.BasicGroupId] = updateBasicGroupFullInfo.BasicGroupFullInfo;
+                        }
+
+                        break;
+                    }
+
                 case UpdateChatAction updateUserChatAction:
                     {
                         if (updateUserChatAction.TopicId != null)
@@ -4140,17 +4176,53 @@ namespace Telegram.Services
                     _storyStealthMode = updateStoryStealthMode;
                     break;
                 case UpdateSupergroup updateSupergroup:
-                    _supergroups[updateSupergroup.Supergroup.Id] = updateSupergroup.Supergroup;
-                    break;
+                    {
+                        if (_supergroups.TryGetValue(updateSupergroup.Supergroup.Id, out Supergroup value))
+                        {
+                            value.Update(updateSupergroup.Supergroup);
+                            updateSupergroup.Supergroup = value;
+                        }
+                        else
+                        {
+                            _supergroups[updateSupergroup.Supergroup.Id] = updateSupergroup.Supergroup;
+                        }
+
+                        break;
+                    }
+
                 case UpdateSupergroupFullInfo updateSupergroupFullInfo:
-                    _supergroupsFull[updateSupergroupFullInfo.SupergroupId] = updateSupergroupFullInfo.SupergroupFullInfo;
-                    break;
+                    {
+                        if (_supergroupsFull.TryGetValue(updateSupergroupFullInfo.SupergroupId, out SupergroupFullInfo value))
+                        {
+                            value.Update(updateSupergroupFullInfo.SupergroupFullInfo);
+                            updateSupergroupFullInfo.SupergroupFullInfo = value;
+                        }
+                        else
+                        {
+                            _supergroupsFull[updateSupergroupFullInfo.SupergroupId] = updateSupergroupFullInfo.SupergroupFullInfo;
+                        }
+
+                        break;
+                    }
+
                 case UpdateUnreadChatCount updateUnreadChatCount:
                     SetUnreadCount(updateUnreadChatCount.ChatList, chatCount: updateUnreadChatCount);
                     break;
                 case UpdateUserFullInfo updateUserFullInfo:
-                    _usersFull[updateUserFullInfo.UserId] = updateUserFullInfo.UserFullInfo;
-                    break;
+                    {
+                        if (_usersFull.TryGetValue(updateUserFullInfo.UserId, out UserFullInfo value))
+                        {
+                            value.Update(updateUserFullInfo.UserFullInfo);
+                            updateUserFullInfo.UserFullInfo = value;
+                        }
+                        else
+                        {
+                            _usersFull[updateUserFullInfo.UserId] = updateUserFullInfo.UserFullInfo;
+                        }
+
+                        break;
+                    }
+
                 case UpdateUserStatus updateUserStatus:
                     {
                         if (_users.TryGetValue(updateUserStatus.UserId, out User value))

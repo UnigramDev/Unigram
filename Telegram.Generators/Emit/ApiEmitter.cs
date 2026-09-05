@@ -22,6 +22,27 @@ namespace Telegram.Generators.Emit
             return className == "UpdateFile" || className == "File";
         }
 
+        /// <summary>
+        /// The objects ClientService keeps cached and updates in place rather than replacing, so
+        /// that the references the app already handed out keep seeing current data. They get an
+        /// Update that copies every field over.
+        /// </summary>
+        private static bool IsUpdatedInPlace(string className)
+        {
+            switch (className)
+            {
+                case "User":
+                case "UserFullInfo":
+                case "BasicGroup":
+                case "BasicGroupFullInfo":
+                case "Supergroup":
+                case "SupergroupFullInfo":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static void WriteClass(StringBuilder builder, SchemaClass type, bool serializable)
         {
             var className = Naming.ToPascalCase(type.Name);
@@ -90,6 +111,11 @@ namespace Telegram.Generators.Emit
                 WriteConstructor(builder, type, className);
             }
 
+            if (IsUpdatedInPlace(className))
+            {
+                WriteUpdate(builder, type, className);
+            }
+
             if (serializable)
             {
                 WriteToJson(builder, type, className);
@@ -136,6 +162,25 @@ namespace Telegram.Generators.Emit
             foreach (var property in type.Properties)
             {
                 builder.AppendLine("        " + Naming.PropertyName(property, className) + " = " + Naming.ParameterName(property) + ";");
+            }
+
+            builder.AppendLine("    }");
+        }
+
+        /// <summary>Copies every field of another instance of the same type into this one.</summary>
+        private static void WriteUpdate(StringBuilder builder, SchemaClass type, string className)
+        {
+            builder.AppendLine();
+            builder.AppendLine("    /// <summary>");
+            builder.AppendLine("    /// Copies every field of <paramref name=\"value\"/> into this instance.");
+            builder.AppendLine("    /// </summary>");
+            builder.AppendLine("    public void Update(" + className + " value)");
+            builder.AppendLine("    {");
+
+            foreach (var prop in type.Properties)
+            {
+                var fieldName = Naming.PropertyName(prop, className);
+                builder.AppendLine("        " + fieldName + " = value." + fieldName + ";");
             }
 
             builder.AppendLine("    }");
