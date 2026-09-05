@@ -180,7 +180,7 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageSticker)
+            if (content is MessageSticker or MessageAnimatedEmoji)
             {
                 return true;
             }
