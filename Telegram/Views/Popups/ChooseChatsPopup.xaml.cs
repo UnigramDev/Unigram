@@ -1196,7 +1196,7 @@ namespace Telegram.Views.Popups
                         Hide(ContentDialogResult.Primary);
                     }
 
-                    flyout.CreateFlyoutItem(SendAsCopy, senders.Count > 1 ? Strings.HideSenderNames : Strings.HideSendersName, Icons.Copy);
+                    flyout.CreateFlyoutItem(SendAsCopy, senders.Count > 1 ? Strings.HideSenderNames : Strings.HideSendersName, Icons.PersonOff);
                 }
 
                 if (shareMessages.Messages.Any(x => x.HasCaption && x.CanBeCopied))
@@ -1207,7 +1207,7 @@ namespace Telegram.Views.Popups
                         Hide(ContentDialogResult.Primary);
                     }
 
-                    flyout.CreateFlyoutItem(RemoveCaptions, Strings.HideCaption, Icons.Block);
+                    flyout.CreateFlyoutItem(RemoveCaptions, Strings.HideCaption, Icons.TextDescriptionOff);
                 }
 
                 flyout.CreateFlyoutSeparator();
