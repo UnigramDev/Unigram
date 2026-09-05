@@ -19,6 +19,7 @@ using Telegram.ViewModels.Premium;
 using Telegram.Views.Popups;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
@@ -510,6 +511,8 @@ namespace Telegram.Views.Premium.Popups
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
             iconPanel.Background = new SolidColorBrush(ColorsHelper.CalculateColor(Gradient, (float)args.ItemIndex / (sender.Items.Count - 1)));
+
+            AutomationProperties.SetName(args.ItemContainer, titleValue + ": " + subtitleValue);
 
             if (badge)
             {
