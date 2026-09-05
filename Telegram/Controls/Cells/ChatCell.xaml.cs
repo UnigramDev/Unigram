@@ -776,7 +776,7 @@ namespace Telegram.Controls.Cells
                 && !chat.IsMarkedAsUnread
                 && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
 
-            var unread = (unreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.LastMessage?.ContainsUnreadMention is true ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            var unread = (unreadCount > 0 || chat.IsMarkedAsUnread) ? unreadCount == 1 && chat.UnreadMentionCount == 1 && chat.LastMessage?.ContainsUnreadMention is true ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             if (unread == Visibility.Visible)
             {
                 UnreadBadge.Visibility = Visibility.Visible;

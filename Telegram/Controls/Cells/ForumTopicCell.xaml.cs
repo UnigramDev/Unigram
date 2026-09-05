@@ -261,7 +261,7 @@ namespace Telegram.Controls.Cells
 
             PinnedIcon.Visibility = topic.UnreadCount == 0 /*&& !topic.IsMarkedAsUnread*/ && topic.IsPinned ? Visibility.Visible : Visibility.Collapsed;
 
-            var unread = (topic.UnreadCount > 0 /*|| topic.IsMarkedAsUnread*/) ? topic.UnreadMentionCount == 1 && topic.LastMessage?.ContainsUnreadMention is true ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            var unread = (topic.UnreadCount > 0 /*|| topic.IsMarkedAsUnread*/) ? topic.UnreadCount == 1 && topic.UnreadMentionCount == 1 && topic.LastMessage?.ContainsUnreadMention is true ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             if (unread == Visibility.Visible)
             {
                 UnreadBadge.Visibility = Visibility.Visible;
