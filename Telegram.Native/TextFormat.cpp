@@ -171,24 +171,71 @@ namespace winrt::Telegram::Native::implementation
         return { metrics.left, metrics.top, metrics.width, metrics.height, truncateHeight, truncatePosition };
     }
 
-    IVector<Windows::Foundation::Rect> TextFormat::LineMetrics(double fontSize, double width, bool rtl)
-    {
-        return RangeMetrics(0, m_textLength, fontSize, width, rtl, true);
-    }
-
-    IVector<Windows::Foundation::Rect> TextFormat::RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap)
+    // One rectangle per line, where the range below gives one per bidirectional run: a line of
+    // mixed direction is hit tested into a rectangle per run, and a caller after the shape of
+    // the text - a skeleton, a clip - wants the line those tile. Merged here, as the run count
+    // is the whole cost: every one of them crosses the ABI and lands in a list on the far side.
+    com_array<Windows::Foundation::Rect> TextFormat::LineMetrics(double fontSize, double width, bool rtl)
     {
         HRESULT result;
 
         if (m_textLayout == nullptr)
         {
-            return winrt::single_threaded_vector<Windows::Foundation::Rect>();
+            return {};
+        }
+
+        ReturnDefaultIfFailed(result, Configure(fontSize, width, rtl, true));
+
+        std::vector<Windows::Foundation::Rect> rects;
+        ReturnDefaultIfFailed(result, HitTestRange(0, m_textLength, rects));
+
+        std::vector<Windows::Foundation::Rect> lines;
+        lines.reserve(rects.size());
+
+        for (const Windows::Foundation::Rect& rect : rects)
+        {
+            if (!lines.empty() && lines.back().Y == rect.Y && lines.back().Height == rect.Height)
+            {
+                Windows::Foundation::Rect& line = lines.back();
+
+                const auto left = std::min(line.X, rect.X);
+                const auto right = std::max(line.X + line.Width, rect.X + rect.Width);
+
+                line.X = left;
+                line.Width = right - left;
+            }
+            else
+            {
+                lines.push_back(rect);
+            }
+        }
+
+        return com_array<Windows::Foundation::Rect>(lines.begin(), lines.end());
+    }
+
+    com_array<Windows::Foundation::Rect> TextFormat::RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap)
+    {
+        HRESULT result;
+
+        if (m_textLayout == nullptr)
+        {
+            return {};
         }
 
         ReturnDefaultIfFailed(result, Configure(fontSize, width, rtl, wrap));
 
+        std::vector<Windows::Foundation::Rect> rects;
+        ReturnDefaultIfFailed(result, HitTestRange(offset, length, rects));
+
+        return com_array<Windows::Foundation::Rect>(rects.begin(), rects.end());
+    }
+
+    HRESULT TextFormat::HitTestRange(int32_t offset, int32_t length, std::vector<Windows::Foundation::Rect>& rects)
+    {
+        HRESULT result;
+
         DWRITE_TEXT_METRICS metrics;
-        ReturnDefaultIfFailed(result, m_textLayout->GetMetrics(&metrics));
+        ReturnIfFailed(result, m_textLayout->GetMetrics(&metrics));
 
         UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
         UINT32 actualTestsCount;
@@ -206,10 +253,10 @@ namespace winrt::Telegram::Native::implementation
         if (FAILED(result))
         {
             delete[] ranges;
-            return winrt::single_threaded_vector<Windows::Foundation::Rect>();
+            return result;
         }
 
-        std::vector<Windows::Foundation::Rect> vector;
+        rects.reserve(actualTestsCount);
 
         for (UINT32 i = 0; i < actualTestsCount; i++)
         {
@@ -223,10 +270,10 @@ namespace winrt::Telegram::Native::implementation
             float right = ranges[i].left + ranges[i].width;
             float bottom = ranges[i].top + ranges[i].height;
 
-            vector.push_back({ left, top, right - left, bottom - top });
+            rects.push_back({ left, top, right - left, bottom - top });
         }
 
         delete[] ranges;
-        return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(vector));
+        return S_OK;
     }
 }

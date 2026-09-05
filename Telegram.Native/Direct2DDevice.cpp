@@ -1302,12 +1302,17 @@ namespace winrt::Telegram::Native::implementation
         return textFormat->ContentEnd(fontSize, width);
     }
 
-    IVector<Windows::Foundation::Rect> Direct2DDevice::LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
+    com_array<Windows::Foundation::Rect> Direct2DDevice::LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
     {
-        return RangeMetrics(text, 0, text.size(), entities, fontSize, width, rtl, true);
+        HRESULT result;
+
+        winrt::com_ptr<TextFormat> textFormat;
+        ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
+
+        return textFormat->LineMetrics(fontSize, width, rtl);
     }
 
-    IVector<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
+    com_array<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
     {
         HRESULT result;
 
@@ -1911,7 +1916,10 @@ namespace winrt::Telegram::Native::implementation
         return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     }
 
-    CompositionPath Direct2DDevice::GetRoundedPolygon(IVector<IVector<Windows::Foundation::Rect>> shapes)
+    // The rectangles of every shape end to end, and the count of each: a collection per shape
+    // meant a wrapper per shape across the ABI, on a path that runs for every arrange of a
+    // message still streaming.
+    CompositionPath Direct2DDevice::GetRoundedPolygon(array_view<Windows::Foundation::Rect const> rects, array_view<int32_t const> shapes)
     {
         // No lock: m_d2dFactory is D2D1_FACTORY_TYPE_MULTI_THREADED, so it serializes itself,
         // and every geometry below is local to this call. Holding the device lock here only
@@ -1930,13 +1938,25 @@ namespace winrt::Telegram::Native::implementation
                 return rect.X + rect.Width;
             };
 
-        for (int j = 0; j < shapes.Size(); j++)
-        {
-            const auto& rectangles = shapes.GetAt(j);
+        uint32_t offset = 0;
 
-            for (int i = 0; i < rectangles.Size(); i++)
+        for (uint32_t j = 0; j < shapes.size(); j++)
+        {
+            const int count = shapes[j];
+
+            if (count <= 0 || offset + count > rects.size())
             {
-                const auto& rect = rectangles.GetAt(i);
+                break;
+            }
+
+            auto rectangles = [&](int index) -> const winrt::Windows::Foundation::Rect&
+                {
+                    return rects[offset + index];
+                };
+
+            for (int i = 0; i < count; i++)
+            {
+                const auto& rect = rectangles(i);
                 const auto right = rect.X + rect.Width;
                 const auto bottom = rect.Y + rect.Height;
 
@@ -1947,7 +1967,7 @@ namespace winrt::Telegram::Native::implementation
                 }
                 else
                 {
-                    auto y1diff = i > 0 ? right - rightAt(rectangles.GetAt(i - 1)) : 4;
+                    auto y1diff = i > 0 ? right - rightAt(rectangles(i - 1)) : 4;
                     auto y1radius = fminf(4, fabsf(y1diff));
 
                     if (y1diff < 0)
@@ -1962,14 +1982,14 @@ namespace winrt::Telegram::Native::implementation
                     }
                 }
 
-                auto y2diff = i < rectangles.Size() - 1 ? right - rightAt(rectangles.GetAt(i + 1)) : 4;
+                auto y2diff = i < count - 1 ? right - rightAt(rectangles(i + 1)) : 4;
                 auto y2radius = fminf(4, fabsf(y2diff));
 
                 d2dGeometrySink->AddLine({ right, bottom - y2radius });
 
                 if (y2diff < 0)
                 {
-                    d2dGeometrySink->AddArc(D2D1::ArcSegment({ right + y2radius, rectangles.GetAt(i + 1).Y }, { y2radius, y2radius }, 0, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL));
+                    d2dGeometrySink->AddArc(D2D1::ArcSegment({ right + y2radius, rectangles(i + 1).Y }, { y2radius, y2radius }, 0, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL));
                 }
                 else if (y2diff > 0)
                 {
@@ -1977,13 +1997,13 @@ namespace winrt::Telegram::Native::implementation
                 }
             }
 
-            for (int i = rectangles.Size() - 1; i >= 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
-                const auto& rect = rectangles.GetAt(i);
+                const auto& rect = rectangles(i);
                 const auto right = rect.X + rect.Width;
                 const auto bottom = rect.Y + rect.Height;
 
-                auto y1diff = i < rectangles.Size() - 1 ? rect.X - rectangles.GetAt(i + 1).X : -4;
+                auto y1diff = i < count - 1 ? rect.X - rectangles(i + 1).X : -4;
                 auto y1radius = fminf(4, fabsf(y1diff));
 
                 if (y1diff > 0)
@@ -1997,7 +2017,7 @@ namespace winrt::Telegram::Native::implementation
                     d2dGeometrySink->AddArc(D2D1::ArcSegment({ rect.X, bottom - y1radius }, { y1radius, y1radius }, 0, D2D1_SWEEP_DIRECTION_CLOCKWISE, D2D1_ARC_SIZE_SMALL));
                 }
 
-                auto y2diff = i > 0 ? rect.X - rectangles.GetAt(i - 1).X : -4;
+                auto y2diff = i > 0 ? rect.X - rectangles(i - 1).X : -4;
                 auto y2radius = fminf(4, fabsf(y2diff));
 
                 d2dGeometrySink->AddLine({ rect.X, rect.Y + y2radius });
@@ -2013,6 +2033,7 @@ namespace winrt::Telegram::Native::implementation
             }
 
             d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
+            offset += count;
         }
 
         ReturnNullIfFailed(result, d2dGeometrySink->Close());

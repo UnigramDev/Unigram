@@ -2303,7 +2303,7 @@ namespace Telegram.Controls
 
                     var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y);
 
-                    for (int i = 0; i < rectangles?.Count; i++)
+                    for (int i = 0; i < rectangles?.Length; i++)
                     {
                         var rect = rectangles[i];
                         rect = new Rect(rect.X, rect.Y, rect.Width, rect.Height);
@@ -2361,7 +2361,7 @@ namespace Telegram.Controls
                     var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, false);
                     var point = new Windows.Foundation.Point(relative.X + position.X, relative.Y + position.Y);
 
-                    for (int i = 0; i < rectangles?.Count; i++)
+                    for (int i = 0; i < rectangles?.Length; i++)
                     {
                         var rect = rectangles[i];
                         rect = new Rect(rect.X, rect.Y, rect.Width, rect.Height);
@@ -3091,8 +3091,11 @@ namespace Telegram.Controls
             var fontSize = (AutoFontSize ? AppSettings.Appearance.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
             var quoteSize = (AutoFontSize ? AppSettings.Appearance.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
-            var shapes = new List<IList<Rect>>();
-            var current = new List<Rect>();
+            // Every shape end to end, with the count of each beside it: one list rather than a
+            // list per shape, each of which had to be wrapped to cross the ABI below.
+            var rects = new List<Rect>();
+            var shapes = new List<int>();
+            var count = 0;
             var last = default(Rect);
 
             for (int block = 0; block <= _last - _first; block++)
@@ -3121,7 +3124,7 @@ namespace Telegram.Controls
 
                 var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
 
-                for (int i = 0; i < rectangles.Count; i++)
+                for (int i = 0; i < rectangles.Length; i++)
                 {
                     var rect = rectangles[i];
                     if (rect.Width < 1 || rect.Height < 1)
@@ -3133,23 +3136,24 @@ namespace Telegram.Controls
                     rect.X += point.X;
                     rect.Y += point.Y;
 
-                    if (current.Count > 0 && !rect.IntersectsOrTouches(last))
+                    if (count > 0 && !rect.IntersectsOrTouches(last))
                     {
-                        shapes.Add(current);
-                        current = new List<Rect>();
+                        shapes.Add(count);
+                        count = 0;
                     }
 
-                    current.Add(rect);
+                    rects.Add(rect);
                     last = rect;
+                    count++;
                 }
             }
 
-            if (current.Count > 0)
+            if (count > 0)
             {
-                shapes.Add(current);
+                shapes.Add(count);
             }
 
-            _skeleton.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(shapes)));
+            _skeleton.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(rects.ToArray(), shapes.ToArray())));
             //_skeleton.Size = Placeholder.DesiredSize.ToVector2();
             _skeleton.Size = new Vector2(TextBlock.ActualSize.X + 8, TextBlock.ActualSize.Y + 4);
             _skeleton.Offset = new Vector3(-0, -0, 0);

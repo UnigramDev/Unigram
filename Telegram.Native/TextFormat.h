@@ -6,6 +6,7 @@
 #include <wincodec.h>
 #include <Dwrite_1.h>
 #include <D2d1_3.h>
+#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -29,8 +30,8 @@ namespace winrt::Telegram::Native::implementation
         float2 ContentEnd(double fontSize, double width);
         float2 ContentWidths(double fontSize, double width, bool rtl);
         winrt::Telegram::Native::MaxLinesMetrics MaxLines(int32_t offset, int32_t length, double fontSize, double width, bool rtl, int32_t maxLines);
-        IVector<Windows::Foundation::Rect> RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap);
-        IVector<Windows::Foundation::Rect> LineMetrics(double fontSize, double width, bool rtl);
+        com_array<Windows::Foundation::Rect> RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap);
+        com_array<Windows::Foundation::Rect> LineMetrics(double fontSize, double width, bool rtl);
 
     private:
         winrt::com_ptr<IDWriteTextLayout> m_textLayout;
@@ -43,6 +44,7 @@ namespace winrt::Telegram::Native::implementation
         bool m_wrap{ true };
 
         HRESULT Configure(double fontSize, double width, bool rtl, bool wrap);
+        HRESULT HitTestRange(int32_t offset, int32_t length, std::vector<Windows::Foundation::Rect>& rects);
         HRESULT ContentEndImpl(double fontSize, double width, float2& offset);
     };
 }

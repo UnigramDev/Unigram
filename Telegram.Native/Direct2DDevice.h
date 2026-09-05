@@ -373,7 +373,7 @@ namespace winrt::Telegram::Native::implementation
         CompositionPath GetEllipticalClip(float width, float height, float radius, float x, float y);
         CompositionPath GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius);
         CompositionPath GetVoiceNoteClip(array_view<uint8_t const> waveform, double waveformWidth);
-        CompositionPath GetRoundedPolygon(IVector<IVector<Windows::Foundation::Rect>> shapes);
+        CompositionPath GetRoundedPolygon(array_view<Windows::Foundation::Rect const> rects, array_view<int32_t const> shapes);
 
         HRESULT Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation);
 
@@ -389,8 +389,8 @@ namespace winrt::Telegram::Native::implementation
         winrt::Telegram::Native::TextFormat CreateTextFormat2(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
 
         float2 ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
-        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
-        IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap);
+        com_array<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
+        com_array<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap);
         Windows::Foundation::Rect LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
         MaxLinesMetrics MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines);
         //IVector<Windows::Foundation::Rect> EntityMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);

@@ -35,7 +35,7 @@ namespace Telegram.Native
         Windows.UI.Composition.CompositionPath GetEllipticalClip(Single width, Single height, Single radius, Single x, Single y);
         Windows.UI.Composition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);
         Windows.UI.Composition.CompositionPath GetVoiceNoteClip(byte[] waveform, Double waveformWidth);
-        Windows.UI.Composition.CompositionPath GetRoundedPolygon(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > shapes);
+        Windows.UI.Composition.CompositionPath GetRoundedPolygon(Windows.Foundation.Rect[] rects, Int32[] shapes);
 
         void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height, Int32 rotation);
 
@@ -52,8 +52,8 @@ namespace Telegram.Native
         TextFormat CreateTextFormat2(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
 
         Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
-        Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
-        Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
+        Windows.Foundation.Rect[] LineMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
+        Windows.Foundation.Rect[] RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
         Windows.Foundation.Rect LayoutMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
         MaxLinesMetrics MaxLines(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Int32 maxLines);
         //Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);

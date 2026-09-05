@@ -6,7 +6,6 @@
 //
 
 using System.Collections.Generic;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Native;
@@ -65,8 +64,9 @@ namespace Telegram.Controls.Messages
             {
                 _width = ActualWidth;
 
-                var shapes = new List<IList<Rect>>();
-                var current = new List<Rect>();
+                var rects = new List<Rect>();
+                var shapes = new List<int>();
+                var count = 0;
                 var last = default(Rect);
 
                 // A List rather than an array: TextStylePart is a WinRT struct, so an array of them
@@ -96,27 +96,27 @@ namespace Telegram.Controls.Messages
                 //    new Rect(0, contentEnd.Y, contentEnd.Right, contentEnd.Height)
                 //};
 
-                foreach (var line in rectangles2.GroupBy(x => x.Y))
+                // A line arrives whole: LineMetrics merges the runs a mixed direction line is
+                // hit tested into, so there is nothing left here to group.
+                for (int i = 0; i < rectangles2.Length; i++)
                 {
-                    var left = line.Min(x => x.Left);
-                    var right = line.Max(x => x.Right);
-                    var bottom = line.Max(x => x.Bottom);
+                    var line = rectangles2[i];
+                    var rect = new Rect(line.X - 4, line.Y, line.Width + 8, line.Height);
 
-                    var rect = new Rect(left - 4, line.Key, right - left + 8, bottom - line.Key);
-
-                    if (current.Count > 0 && !rect.IntersectsOrTouches(last))
+                    if (count > 0 && !rect.IntersectsOrTouches(last))
                     {
-                        shapes.Add(current);
-                        current = new List<Rect>();
+                        shapes.Add(count);
+                        count = 0;
                     }
 
-                    current.Add(rect);
+                    rects.Add(rect);
                     last = rect;
+                    count++;
                 }
 
-                if (current.Count > 0)
+                if (count > 0)
                 {
-                    shapes.Add(current);
+                    shapes.Add(count);
                 }
 
                 if (_visual?.Clip == null)
@@ -125,7 +125,7 @@ namespace Telegram.Controls.Messages
                     _visual.Clip = _clip = _visual.Compositor.CreateGeometricClip();
                 }
 
-                _clip.Geometry = BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(shapes));
+                _clip.Geometry = BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(rects.ToArray(), shapes.ToArray()));
             }
 
             try

@@ -2920,8 +2920,9 @@ namespace Telegram.Controls.Messages
                     var maxX = double.MinValue;
                     var maxY = double.MinValue;
 
-                    var shapes = new List<IList<Rect>>();
-                    var current = new List<Rect>();
+                    var rects = new List<Rect>();
+                    var shapes = new List<int>();
+                    var count = 0;
                     var last = default(Rect);
 
                     var visual = BootStrapper.Current.Compositor.CreateShapeVisual();
@@ -2953,21 +2954,22 @@ namespace Telegram.Controls.Messages
 
                         var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X + adjustment.X, relative.Y + position.Y + adjustment.Y);
 
-                        for (int i = 0; i < rectangles.Count; i++)
+                        for (int i = 0; i < rectangles.Length; i++)
                         {
                             var rect = rectangles[i];
                             rect = new Rect(rect.X - 2, rect.Y, rect.Width + 4, rect.Height);
                             rect.X += point.X;
                             rect.Y += point.Y;
 
-                            if (current.Count > 0 && !rect.IntersectsOrTouches(last))
+                            if (count > 0 && !rect.IntersectsOrTouches(last))
                             {
-                                shapes.Add(current);
-                                current = new List<Rect>();
+                                shapes.Add(count);
+                                count = 0;
                             }
 
-                            current.Add(rect);
+                            rects.Add(rect);
                             last = rect;
+                            count++;
 
                             minX = Math.Min(minX, rect.Left);
                             minY = Math.Min(minY, rect.Top);
@@ -2976,12 +2978,12 @@ namespace Telegram.Controls.Messages
                         }
                     }
 
-                    if (current.Count > 0)
+                    if (count > 0)
                     {
-                        shapes.Add(current);
+                        shapes.Add(count);
                     }
 
-                    var shape = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(shapes)));
+                    var shape = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(rects.ToArray(), shapes.ToArray())));
                     shape.FillBrush = brush;
                     shape.StrokeThickness = 0;
                     visual.Shapes.Add(shape);
