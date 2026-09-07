@@ -987,11 +987,19 @@
     </Style>
 
     <Style TargetType="local:RichMathImage">
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageForegroundBrush}" />
+        <!--  TODO: a brush of its own for the text selection. This one stands in for it.  -->
+        <Setter Property="SelectionHighlightColor"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RichMathImage">
-                    <Image x:Name="LayoutRoot"
-                           Stretch="Uniform" />
+                    <Border x:Name="LayoutRoot"
+                            Background="{TemplateBinding Background}">
+                        <Image x:Name="Presenter"
+                               Stretch="Uniform" />
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

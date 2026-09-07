@@ -5,9 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Native.Controls;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -17,9 +19,10 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
-    public partial class RichMathImage : ControlEx
+    public partial class RichMathImage : ControlEx, ISelectableControl
     {
-        private Image LayoutRoot;
+        private Border LayoutRoot;
+        private Image Presenter;
 
         private RichMathSurface _surface;
 
@@ -43,7 +46,8 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Image;
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
+            Presenter = GetTemplateChild(nameof(Presenter)) as Image;
         }
 
         protected override void OnLoaded()
@@ -81,7 +85,7 @@ namespace Telegram.Controls
 
         private void Render()
         {
-            if (_surface == null || LayoutRoot == null)
+            if (_surface == null || Presenter == null)
             {
                 return;
             }
@@ -113,7 +117,7 @@ namespace Telegram.Controls
             Direct2D.Current.RenderMath(_surface, bitmap.PixelBuffer, scale, color);
 
             bitmap.Invalidate();
-            LayoutRoot.Source = bitmap;
+            Presenter.Source = bitmap;
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -154,6 +158,104 @@ namespace Telegram.Controls
 
         public float Baseline => _surface?.Baseline ?? 0;
 
+        #region SelectionHighlightColor
+
+        /// <summary>
+        /// The colour a selection is drawn in, behind the formula.
+        /// </summary>
+        public Brush SelectionHighlightColor
+        {
+            get { return (Brush)GetValue(SelectionHighlightColorProperty); }
+            set { SetValue(SelectionHighlightColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectionHighlightColorProperty =
+            DependencyProperty.Register(nameof(SelectionHighlightColor), typeof(Brush), typeof(RichMathImage), new PropertyMetadata(null));
+
+        #endregion
+
+        #region ISelectableControl
+
+        /// <summary>
+        /// A formula is one thing to a selection: it has no positions inside it, so it is
+        /// either in the range or out of it. Everything below follows from that.
+        /// </summary>
+        public bool IsSelectionEnabled { get; set; } = true;
+
+        public int ContentLength => 1;
+
+        private bool _selected;
+
+        public int GetPositionFromPoint(Point point, out int hit)
+        {
+            hit = SelectionHit.None;
+
+            // Which side of it the pointer is on, so that a drag that reaches the middle of a
+            // formula takes it, as it would with a character.
+            return point.X > ActualWidth / 2 ? 1 : 0;
+        }
+
+        public void GetSelectionBoundary(int position, int hit, TextSelectionGranularity granularity, out int start, out int end)
+        {
+            // A double or triple tap has nothing smaller than the whole formula to snap to.
+            if (granularity == TextSelectionGranularity.Character)
+            {
+                start = end = Math.Clamp(position, 0, ContentLength);
+                return;
+            }
+
+            start = 0;
+            end = ContentLength;
+        }
+
+        public void Select(int start, int end)
+        {
+            UpdateSelection(end > start);
+        }
+
+        public void ClearSelection()
+        {
+            UpdateSelection(false);
+        }
+
+        // Behind the formula rather than over it, and through the template rather than a
+        // visual of its own: this control is one element and a bitmap, and a highlight that
+        // only a selection ever shows should not make it two more.
+        private void UpdateSelection(bool selected)
+        {
+            if (_selected == selected)
+            {
+                return;
+            }
+
+            _selected = selected;
+
+            if (selected)
+            {
+                Background = SelectionHighlightColor;
+            }
+            else
+            {
+                ClearValue(BackgroundProperty);
+            }
+        }
+
+        // The expression as it was written, which is the only text there is: a formula is
+        // rendered from it and has nothing else to copy.
+        public FormattedText GetSelectedText(int start, int end)
+        {
+            return end > start && !string.IsNullOrEmpty(Source)
+                ? Source.AsFormattedText()
+                : null;
+        }
+
+        // Source and rendered positions are the same here: there is one of each.
+        public int GetSourceOffset(int position) => position;
+
+        public FormattedText GetSourceText(int from, int to) => GetSelectedText(from, to);
+
+        #endregion
+
         #region Source
 
         public string Source
@@ -179,7 +281,11 @@ namespace Telegram.Controls
             _surface = null;
 
             _rendered = false;
-            LayoutRoot?.ClearValue(Image.SourceProperty);
+            Presenter?.ClearValue(Image.SourceProperty);
+
+            // A selection belongs to the formula that was selected, not to the element that
+            // showed it: this is where one is recycled into another.
+            UpdateSelection(false);
 
             if (string.IsNullOrEmpty(newValue))
             {
