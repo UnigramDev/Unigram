@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -2214,6 +2214,10 @@ namespace Telegram.Common
                 {
                     Hyperlink_ContextRequested(flyout, service, text, point, message);
                 }
+                else if (sender is DirectTextBlock direct)
+                {
+                    Hyperlink_ContextRequested(flyout, service, direct, point, message);
+                }
 
                 if (flyout.Items.Count > 0)
                 {
@@ -2330,33 +2334,42 @@ namespace Telegram.Common
                 return;
             }
 
+            Hyperlink_ContextRequested(flyout, service, hyperlink.XamlRoot, info, GetEntityAction(hyperlink), message);
+        }
+
+        /// <summary>
+        /// The menu for one entity, taken from what the entity is rather than from the element
+        /// that drew it: a link is a Hyperlink on the inline path and a range of a layout on the
+        /// direct one, and neither is anything this needs to know about.
+        /// </summary>
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, XamlRoot xamlRoot, TextEntityClickEventArgs info, Action action, MessageViewModel message)
+        {
             if (info.Type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
             {
-                var action = GetEntityAction(hyperlink);
                 if (action != null)
                 {
                     flyout.CreateFlyoutItem(action, Strings.Open, Icons.OpenIn);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(() => LinkOpen_Click(hyperlink.XamlRoot, info.Text), Strings.Open, Icons.OpenIn);
+                    flyout.CreateFlyoutItem(() => LinkOpen_Click(xamlRoot, info.Text), Strings.Open, Icons.OpenIn);
                 }
 
-                flyout.CreateFlyoutItem(() => LinkCopy_Click(hyperlink.XamlRoot, info.Text), Strings.CopyLink, Icons.Copy);
+                flyout.CreateFlyoutItem(() => LinkCopy_Click(xamlRoot, info.Text), Strings.CopyLink, Icons.Copy);
             }
             else if (info.Type is TextEntityTypePhoneNumber)
             {
-                flyout.CreateFlyoutItem(() => TextCopy_Click(hyperlink.XamlRoot, info.Text), Strings.CopyNumber, Icons.Copy);
+                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), Strings.CopyNumber, Icons.Copy);
                 flyout.CreateFlyoutSeparator();
 
-                CreateProfileFlyoutItem(flyout, service.ClientService, hyperlink, new SearchUserByPhoneNumber(info.Text, false));
+                CreateProfileFlyoutItem(flyout, service.ClientService, xamlRoot, new SearchUserByPhoneNumber(info.Text, false));
             }
             else if (info.Type is TextEntityTypeMention)
             {
-                flyout.CreateFlyoutItem(() => TextCopy_Click(hyperlink.XamlRoot, info.Text), Strings.CopyUsername, Icons.Copy);
+                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), Strings.CopyUsername, Icons.Copy);
                 flyout.CreateFlyoutSeparator();
 
-                CreateProfileFlyoutItem(flyout, service.ClientService, hyperlink, new SearchPublicChat(info.Text));
+                CreateProfileFlyoutItem(flyout, service.ClientService, xamlRoot, new SearchPublicChat(info.Text));
             }
             else if (info.Type is TextEntityTypeDateTime dateTime)
             {
@@ -2368,9 +2381,9 @@ namespace Telegram.Common
                 });
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(() => TextCopy_Click(hyperlink.XamlRoot, info.Text), Strings.RelativeDateMenuCopy, Icons.Copy);
-                //flyout.CreateFlyoutItem(() => AddToCalendar_Click(hyperlink.XamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuAddToACalendar, Icons.Calendar);
-                flyout.CreateFlyoutItem(() => SetAReminder_Click(hyperlink.XamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuSetAReminder, Icons.Alert);
+                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), Strings.RelativeDateMenuCopy, Icons.Copy);
+                //flyout.CreateFlyoutItem(() => AddToCalendar_Click(xamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuAddToACalendar, Icons.Calendar);
+                flyout.CreateFlyoutItem(() => SetAReminder_Click(xamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuSetAReminder, Icons.Alert);
             }
             else
             {
@@ -2381,7 +2394,18 @@ namespace Telegram.Common
                     _ => Strings.Copy
                 };
 
-                flyout.CreateFlyoutItem(() => TextCopy_Click(hyperlink.XamlRoot, info.Text), text, Icons.Copy);
+                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), text, Icons.Copy);
+            }
+        }
+
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, DirectTextBlock text, Point point, MessageViewModel message)
+        {
+            // Only the link under the pointer: a selection has a menu of its own, which
+            // TextSelectionManager puts on the root it is attached to.
+            var info = text.GetEntityFromPoint(point);
+            if (info != null)
+            {
+                Hyperlink_ContextRequested(flyout, service, text.XamlRoot, info, null, message);
             }
         }
 
@@ -2420,7 +2444,7 @@ namespace Telegram.Common
             }
         }
 
-        private static async void CreateProfileFlyoutItem(MenuFlyout flyout, IClientService clientService, Hyperlink hyperlink, Function function)
+        private static async void CreateProfileFlyoutItem(MenuFlyout flyout, IClientService clientService, XamlRoot xamlRoot, Function function)
         {
             var profile = new ProfileCell();
             var button = new Button
@@ -2456,7 +2480,7 @@ namespace Telegram.Common
                 button.Click += (s, args) =>
                 {
                     flyout.Hide();
-                    WindowContext.GetNavigationService(hyperlink.XamlRoot).NavigateToUser(user.Id);
+                    WindowContext.GetNavigationService(xamlRoot).NavigateToUser(user.Id);
                 };
 
                 profile.Loaded -= handler;
@@ -2470,7 +2494,7 @@ namespace Telegram.Common
                 button.Click += (s, args) =>
                 {
                     flyout.Hide();
-                    WindowContext.GetNavigationService(hyperlink.XamlRoot).Navigate(typeof(ProfilePage), chat.Id);
+                    WindowContext.GetNavigationService(xamlRoot).Navigate(typeof(ProfilePage), chat.Id);
                 };
 
                 profile.Loaded -= handler;

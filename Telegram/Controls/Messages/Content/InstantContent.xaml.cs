@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -301,9 +301,9 @@ namespace Telegram.Controls.Messages.Content
             return new MessageViewModel(_clientService ?? _message?.ClientService, _delegate, _message?.Chat, null, null, new Message { Id = id, Content = content, SchedulingState = new MessageSchedulingStateSendWhenOnline() });
         }
 
-        void IPageBlockContext.TextEntityClick(FormattedTextBlock sender, TextEntityClickEventArgs args)
+        void IPageBlockContext.TextEntityClick(TextEntityClickEventArgs args)
         {
-            MessageBubble.TextEntityClick(_message, sender, args);
+            MessageBubble.TextEntityClick(_message, args);
         }
 
         void IPageBlockContext.OpenUrl(string url)

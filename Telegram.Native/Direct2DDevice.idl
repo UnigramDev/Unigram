@@ -1,5 +1,6 @@
 import "SurfaceImage.idl";
 import "TextFormat.idl";
+import "DirectTextLayout.idl";
 import "RichMathSurface.idl";
 import "ChatBackgroundPattern.idl";
 import "FreeformGradientSurface.idl";
@@ -7,13 +8,6 @@ import "NativeUtils.idl";
 
 namespace Telegram.Native
 {
-    struct TextStylePart
-    {
-        Int32 Offset;
-        Int32 Length;
-        TextStyle Type;
-    };
-
     [default_interface]
     runtimeclass Direct2DDevice : Windows.Foundation.IClosable
     {
@@ -51,11 +45,11 @@ namespace Telegram.Native
         void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
 
         TextFormat CreateTextFormat2(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
+        DirectTextLayout CreateLayout();
         void RenderMath(RichMathSurface math, Windows.Storage.Streams.IBuffer buffer, Double rasterizationScale, Windows.UI.Color foreground);
 
         Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
         Windows.Foundation.Rect[] LineMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
-        Windows.Foundation.Rect[] RangeLineMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
         Windows.Foundation.Rect[] RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
         Windows.Foundation.Rect LayoutMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
         MaxLinesMetrics MaxLines(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Int32 maxLines);

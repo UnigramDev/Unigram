@@ -1220,6 +1220,12 @@ namespace winrt::Telegram::Native::implementation
         return textFormat.as<winrt::Telegram::Native::TextFormat>();
     }
 
+    winrt::Telegram::Native::DirectTextLayout Direct2DDevice::CreateLayout()
+    {
+        auto layout = winrt::make_self<DirectTextLayout>(m_compositionDevice, m_dwriteFactory, m_fontCollection, m_systemCollection, hstring(m_monospaceFamily));
+        return layout.as<winrt::Telegram::Native::DirectTextLayout>();
+    }
+
     // A formula rasterized into the caller's buffer, which must hold PixelWidth by PixelHeight
     // scaled premultiplied BGRA pixels. For the caller that hosts a formula as an image rather
     // than drawing it into a surface of its own - a text layout with one in a line draws it
@@ -1285,6 +1291,9 @@ namespace winrt::Telegram::Native::implementation
         bitmap->CopyPixels(nullptr, stride, (UINT)size, buffer.data());
     }
 
+    // The layout drawn once into a surface of its own size, for a caller that hosts it as a
+    // visual instead of building an element per run. The layout is the caller's: it measured
+    // with it, and it draws from the same one rather than laying the text out a second time.
     HRESULT Direct2DDevice::CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat2)
     {
         // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
@@ -1376,16 +1385,6 @@ namespace winrt::Telegram::Native::implementation
         ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
 
         return textFormat->LineMetrics(0, text.size(), fontSize, width, rtl, true);
-    }
-
-    com_array<Windows::Foundation::Rect> Direct2DDevice::RangeLineMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
-    {
-        HRESULT result;
-
-        winrt::com_ptr<TextFormat> textFormat;
-        ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
-
-        return textFormat->LineMetrics(offset, length, fontSize, width, rtl, wrap);
     }
 
     com_array<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)

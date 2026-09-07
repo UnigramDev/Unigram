@@ -199,6 +199,15 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _bubbleContentRecyclingDebug, "BubbleContentRecyclingDebug", value);
         }
 
+        // Text drawn from a DirectWrite layout the control owns, rather than from a tree of
+        // XAML inlines. Off outside debug builds until the engine has proven itself.
+        private bool? _directTextDebug;
+        public bool DirectTextDebug
+        {
+            get => _directTextDebug ??= GetValueOrDefault("DirectTextDebug", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _directTextDebug, "DirectTextDebug", value);
+        }
+
         private bool? _windowResizeDebug;
         public bool WindowResizeDebug
         {

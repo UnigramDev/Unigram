@@ -3209,6 +3209,20 @@ namespace Telegram.Views
                     }
                 }
 
+                // The other text engine, which is hit as its own element rather than as the
+                // inner RichTextBlock: what it selects is TextSelectionManager's business, so
+                // only the link under the pointer is asked for here.
+                var directBlock = children.FirstOrDefault(x => x is DirectTextBlock) as DirectTextBlock;
+                if (directBlock != null)
+                {
+                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, directBlock, args, message);
+
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+
                 var button = children.FirstOrDefault(x => x is Button inline && inline.Tag is InlineKeyboardButton) as Button;
                 if (button != null && button.Tag is InlineKeyboardButton inlineButton && inlineButton.Type is InlineKeyboardButtonTypeUrl url)
                 {

@@ -1,0 +1,19 @@
+namespace Telegram.Native.Controls
+{
+    [default_interface]
+    unsealed runtimeclass DirectTextBlockBase : Windows.UI.Xaml.Controls.Panel
+    {
+        DirectTextBlockBase();
+
+        Boolean IsConnected{ get; };
+        Boolean IsDisconnected{ get; };
+
+        overridable void OnLoaded();
+        overridable void OnUnloaded();
+
+        overridable void OnViewportChanged(Double left, Double top, Double right, Double bottom);
+
+        void RegisterViewportChanged();
+        void UnregisterViewportChanged();
+    }
+}

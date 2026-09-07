@@ -9,17 +9,22 @@ using System;
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
     /// <summary>
-    /// Hosts one or more <see cref="FormattedTextBlock"/>s to render a <see cref="StyledText"/>.
+    /// Hosts one or more text blocks to render a <see cref="StyledText"/> - either
+    /// <see cref="FormattedTextBlock"/>s or, behind the direct text flag,
+    /// <see cref="DirectTextBlock"/>s.
     ///
     /// A plain message (only normal paragraphs) is rendered by a SINGLE inner block — the
     /// hot path, since this is the most instantiated text surface in the app. When the text
@@ -103,21 +108,6 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private bool _ignoreSpoilers;
-        public bool IgnoreSpoilers
-        {
-            get => _ignoreSpoilers;
-            set
-            {
-                _ignoreSpoilers = value;
-
-                foreach (var block in _blocks)
-                {
-                    block.IgnoreSpoilers = value;
-                }
-            }
-        }
-
         public void SetFontSize(double fontSize)
         {
             _fontSize = fontSize;
@@ -126,6 +116,13 @@ namespace Telegram.Controls.Messages
             {
                 block.SetFontSize(fontSize);
             }
+
+            // A size settled per block, and a quote does not take the same one: applied by the
+            // same pass that laid the blocks out rather than written over them here.
+            if (_directBlocks.Count > 0 && _styled != null)
+            {
+                ApplyDirect();
+            }
         }
 
         public void ShowHideSkeleton(bool show)
@@ -133,6 +130,11 @@ namespace Telegram.Controls.Messages
             _showSkeleton = show;
 
             foreach (var block in _blocks)
+            {
+                block.ShowHideSkeleton(show);
+            }
+
+            foreach (var block in _directBlocks)
             {
                 block.ShowHideSkeleton(show);
             }
@@ -176,6 +178,12 @@ namespace Telegram.Controls.Messages
             // Hot path: no code/quote paragraphs -> the whole message is one block (the vast
             // majority of messages). Reuse the existing single plain block (recycled bubble
             // showing a new simple message) instead of re-creating the templated control.
+            if (_directText)
+            {
+                ApplyDirect();
+                return;
+            }
+
             if (!styled.IsComplex)
             {
                 var last = styled.Paragraphs.Count - 1;
@@ -232,27 +240,57 @@ namespace Telegram.Controls.Messages
             HasCodeBlocks = hasCode;
         }
 
-        public Block GetBlock(int index, out double width, out Point adjustment)
+        /// <summary>
+        /// The rectangles covering a range of the message text, in this panel's coordinates -
+        /// the blocks answer in their own, and this offsets each by where it sits.
+        /// </summary>
+        public IList<Rect> GetHighlightRectangles(int from, int to)
         {
-            width = 0;
-            adjustment = default;
+            List<Rect> result = null;
 
-            for (int i = 0; i < _ranges.Count; i++)
+            for (int i = 0; i < _directBlocks.Count; i++)
             {
-                //var child = Children[i] as FrameworkElement;
-                //var height = child.ActualHeight;
+                var rects = _directBlocks[i].GetHighlightRectangles(from, to);
 
-                if (_ranges[i].First <= index && _ranges[i].Last >= index)
+                if (rects == null)
                 {
-                    width = _blocks[i].ArrangedWidth;
-                    adjustment = _blocks[i].TransformToPoint(this);
-                    return _blocks[i].Blocks[index - _ranges[i].First];
+                    continue;
                 }
 
-                //y += _blocks[i].ActualHeight;
+                var offset = _directBlocks[i].TransformToPoint(this);
+
+                for (int j = 0; j < rects.Count; j++)
+                {
+                    (result ??= new List<Rect>()).Add(new Rect(
+                        rects[j].X + offset.X,
+                        rects[j].Y + offset.Y,
+                        rects[j].Width,
+                        rects[j].Height));
+                }
             }
 
-            return null;
+            for (int i = 0; i < _blocks.Count; i++)
+            {
+                var rects = _blocks[i].GetHighlightRectangles(from, to);
+
+                if (rects == null)
+                {
+                    continue;
+                }
+
+                var offset = _blocks[i].TransformToPoint(this);
+
+                for (int j = 0; j < rects.Count; j++)
+                {
+                    (result ??= new List<Rect>()).Add(new Rect(
+                        rects[j].X + offset.X,
+                        rects[j].Y + offset.Y,
+                        rects[j].Width,
+                        rects[j].Height));
+                }
+            }
+
+            return result;
         }
 
         public void SetQuery(string query, bool force = false)
@@ -260,6 +298,11 @@ namespace Telegram.Controls.Messages
             _query = query;
 
             foreach (var block in _blocks)
+            {
+                block.SetQuery(query, force);
+            }
+
+            foreach (var block in _directBlocks)
             {
                 block.SetQuery(query, force);
             }
@@ -298,6 +341,167 @@ namespace Telegram.Controls.Messages
             _blocks.Clear();
             _ranges.Clear();
             Children.Clear();
+
+            foreach (var block in _directBlocks)
+            {
+                block.Clear();
+            }
+
+            _directBlocks.Clear();
+        }
+
+        #endregion
+        #region Direct
+
+        // Read once per process, like the chat cell: a message list never mixes the two.
+        private static readonly bool _directText = AppSettings.Diagnostics.DirectTextDebug;
+
+        // The blocks the direct engine renders into, when it is the one in use. They replace
+        // the whole of _blocks: one for a message with nothing but ordinary paragraphs - which
+        // is most of them - and otherwise one per quote or code block plus one per run of
+        // ordinary paragraphs between them, exactly as the inline path splits it.
+        private readonly List<DirectTextBlock> _directBlocks = new();
+
+        private void ApplyDirect()
+        {
+            var paragraphs = _styled.Paragraphs;
+
+            // One block for the whole message, and it keeps its slot when it already has one:
+            // the layout it holds, and the surface that layout draws into, are what tearing it
+            // down would throw away. Only a quote or a code block splits a message now - the
+            // layout stacks a paragraph each, so ones that read different ways still share it.
+            if (!_styled.IsComplex)
+            {
+                if (_directBlocks.Count != 1 || Children.Count != 1 || Children[0] != _directBlocks[0])
+                {
+                    ClearBlocks();
+                }
+
+                ApplyDirectBlock(0, 0, paragraphs.Count - 1, null);
+
+                HasCodeBlocks = false;
+                return;
+            }
+
+            // Built again rather than reused: a slot can go from a bare block to one inside a
+            // quote and back, and moving a block between the two costs more care than it saves
+            // for a shape of message this rare.
+            ClearBlocks();
+
+            var index = 0;
+            var normalStart = -1;
+            var hasCode = false;
+
+            for (int i = 0; i < paragraphs.Count; i++)
+            {
+                if (paragraphs[i].Type != null)
+                {
+                    if (normalStart >= 0)
+                    {
+                        ApplyDirectBlock(index++, normalStart, i - 1, null);
+                        normalStart = -1;
+                    }
+
+                    hasCode |= paragraphs[i].Type is TextParagraphTypeMonospace;
+                    ApplyDirectBlock(index++, i, i, paragraphs[i].Type);
+                }
+                else if (normalStart < 0)
+                {
+                    normalStart = i;
+                }
+            }
+
+            if (normalStart >= 0)
+            {
+                ApplyDirectBlock(index, normalStart, paragraphs.Count - 1, null);
+            }
+
+            HasCodeBlocks = hasCode;
+        }
+
+        // The slot is either already this block - the one message shape that reuses it - or it
+        // does not exist yet, because everything else got here through ClearBlocks.
+        private void ApplyDirectBlock(int index, int first, int last, TextParagraphType type)
+        {
+            var block = GetOrCreateDirect(index);
+            var quote = type as TextParagraphTypeQuote;
+            var monospace = type as TextParagraphTypeMonospace;
+
+            // A quote reads at the caption size, as the inline path renders it; an explicit
+            // size - the one a big-emoji message asks for - is the size of everything.
+            block.FontSize = (_fontSize > 0
+                ? _fontSize
+                : quote != null
+                ? AppSettings.Appearance.CaptionFontSize
+                : AppSettings.Appearance.MessageFontSize) * BootStrapper.Current.TextScaleFactor;
+
+            // An expandable quote shows three lines and offers the rest; everything else is
+            // as long as it is.
+            block.MaxLines = quote is { IsExpandable: true } ? 3 : 0;
+
+            // The styled text and everything it says - spoilers, emoji, buttons, links - is
+            // the block's to read: it renders them, so it maps them.
+            block.SetText(_clientService, _styled, first, last);
+
+            // Colours over the ranges the tokenizer finds, once it answers. Told even with no
+            // language: this block may have rendered code for the message before this one.
+            block.SetCode(monospace?.Language);
+
+            // What the bubble last asked of the message as a whole, applied to the block that
+            // renders this part of it.
+            block.SetQuery(_query);
+            block.ShowHideSkeleton(_showSkeleton);
+
+            if (index < Children.Count)
+            {
+                return;
+            }
+
+            // A quote and a code block are hosted in a BlockQuote, anything else stands on its
+            // own. ComputedIsExpandable asks its content whether the text was trimmed and a
+            // direct block cannot answer yet, so an expandable quote renders as a plain one.
+            if (type != null)
+            {
+                Children.Add(new BlockQuote
+                {
+                    Glyph = quote != null ? Icons.QuoteBlockFilled16 : null,
+                    LanguageName = monospace?.Language,
+                    IsExpandable = quote is { IsExpandable: true },
+                    Content = block,
+                    Padding = new Thickness(8, 4, 24, 6)
+                });
+            }
+            else
+            {
+                Children.Add(block);
+            }
+        }
+
+        private DirectTextBlock GetOrCreateDirect(int index)
+        {
+            if (index < _directBlocks.Count)
+            {
+                return _directBlocks[index];
+            }
+
+            var block = new DirectTextBlock
+            {
+                // Not a drag of its own: the bubble drives one selection across every
+                // block through TextSelectionManager, and this takes part in that.
+                IsTextSelectionEnabled = false,
+                IsSelectionEnabled = true
+            };
+
+            block.TextEntityClick += OnDirectTextEntityClick;
+            Instrumentation.Register(block);
+
+            _directBlocks.Add(block);
+            return block;
+        }
+
+        private void OnDirectTextEntityClick(object sender, TextEntityClickEventArgs e)
+        {
+            _textEntityClick?.Invoke(this, e);
         }
 
         #endregion
@@ -352,7 +556,6 @@ namespace Telegram.Controls.Messages
             var block = new FormattedTextBlock
             {
                 AutoFontSize = _autoFontSize,
-                IgnoreSpoilers = _ignoreSpoilers,
                 HorizontalTextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
             };
@@ -399,8 +602,11 @@ namespace Telegram.Controls.Messages
                 {
                     height += BlockSpacing;
                 }
-                else if (child is not FormattedTextBlock)
+                else if (child is BlockQuote)
                 {
+                    // A quote or a code block opening the message needs the gap a text block
+                    // does not. Asked of the type that needs it, rather than of everything
+                    // that is not the one text block there used to be.
                     height += 4;
                 }
 
@@ -422,24 +628,28 @@ namespace Telegram.Controls.Messages
                 {
                     y += BlockSpacing;
                 }
-                else if (child is not FormattedTextBlock)
+                else if (child is BlockQuote)
                 {
                     y += 4;
                 }
 
-                var width = child.DesiredSize.Width;
+                var width = finalSize.Width;
                 var height = child.DesiredSize.Height;
+                var x = 0d;
 
                 if (child is BlockQuote { ComputedIsExpandable: false })
                 {
                     width = Math.Min(child.DesiredSize.Width, finalSize.Width);
                 }
-                else
+                else if (child is FrameworkElement { HorizontalAlignment: HorizontalAlignment.Right })
                 {
-                    width = finalSize.Width;
+                    // A block that reads right to left asks for the width of its text and sits
+                    // against the far edge, the way a right-aligned element does in any panel.
+                    width = Math.Min(child.DesiredSize.Width, finalSize.Width);
+                    x = finalSize.Width - width;
                 }
 
-                child.Arrange(new Rect(0, y, width, height));
+                child.Arrange(new Rect(x, y, width, height));
 
                 y += height;
                 first = false;

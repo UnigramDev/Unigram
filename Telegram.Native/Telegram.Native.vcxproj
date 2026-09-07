@@ -336,6 +336,10 @@
       <DependentUpon>Controls\FormattedTextBlockBase.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Controls\DirectTextBlockBase.h">
+      <DependentUpon>Controls\DirectTextBlockBase.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FreeformGradientSurface.h">
       <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -440,6 +444,10 @@
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
+    <ClInclude Include="DirectTextLayout.h">
+      <DependentUpon>DirectTextLayout.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="TextFormat.h">
       <DependentUpon>TextFormat.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1254,6 +1262,10 @@
       <DependentUpon>Controls\FormattedTextBlockBase.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Controls\DirectTextBlockBase.cpp">
+      <DependentUpon>Controls\DirectTextBlockBase.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FreeformGradientSurface.cpp">
       <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1310,6 +1322,10 @@
     </ClCompile>
     <ClCompile Include="SurfaceImage.cpp">
       <DependentUpon>SurfaceImage.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="DirectTextLayout.cpp">
+      <DependentUpon>DirectTextLayout.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="TextFormat.cpp">
@@ -1432,6 +1448,9 @@
     <Midl Include="Controls\FormattedTextBlockBase.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="Controls\DirectTextBlockBase.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="FreeformGradientSurface.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -1488,6 +1507,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="TelegramWebviewProxy.idl" />
+    <Midl Include="DirectTextLayout.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="TextFormat.idl">
       <SubType>Designer</SubType>
     </Midl>

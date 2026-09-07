@@ -584,7 +584,9 @@ math formulas, nine-grid bubble masks, syntax highlighting — plus the DirectCo
 no API for. Native because XAML composition visuals cannot do arbitrary D2D drawing or thread-safe
 rasterization. **A C#-only search misses this entire layer.**
 **Key types:** `Direct2DDevice` (Telegram.Native/Direct2DDevice.idl) — owns the app-wide
-`CompositionGraphicsDevice`, plus text metrics, WebP and blur; `ChatBackgroundPattern` — SVG pattern onto
+`CompositionGraphicsDevice`, plus text metrics, WebP and blur; `DirectTextLayout` — a retained DirectWrite
+layout that owns the surface its text is drawn into, `IClosable` because that surface is an atlas region;
+`ChatBackgroundPattern` — SVG pattern onto
 an `ICompositionSurface`; `FreeformGradientSurface` — animated mesh-gradient brush, listens for
 `RenderingDeviceReplaced`; `MessageBubbleNineGrid` — bubble tail brush and mask; `RichMathSurface` —
 MicroTeX formula rasterizer; `CompositionDevice`/`DirectRectangleClip2`/`WindowVisual`

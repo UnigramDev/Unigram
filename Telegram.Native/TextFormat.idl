@@ -1,3 +1,5 @@
+import "NativeUtils.idl";
+
 namespace Telegram.Native
 {
     struct MaxLinesMetrics
@@ -8,6 +10,13 @@ namespace Telegram.Native
         Double Height;
         Double TruncatedHeight;
         Int32 TruncatedOffset;
+    };
+
+    struct TextStylePart
+    {
+        Int32 Offset;
+        Int32 Length;
+        TextStyle Type;
     };
 
     [default_interface]

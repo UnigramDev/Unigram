@@ -1,4 +1,4 @@
-<navigation:BootStrapper x:Class="Telegram.App"
+﻿<navigation:BootStrapper x:Class="Telegram.App"
                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -220,6 +220,39 @@
             </Style>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
+            <!--  What the instant view page renderer puts on the text that is not the body: a
+                  caption, a credit, a footer. Here rather than beside the implicit
+                  DirectTextBlock style in CommonStyles, because the renderer looks these up by
+                  name and a merged dictionary is not searched by TryGetValue - the ones they
+                  mirror are the two above and PullquoteCreditStyle in the page's own
+                  resources. Neither carries CodeForeground: the direct engine draws code in
+                  the colour of the text around it.  -->
+            <Style x:Key="InfoCaptionDirectTextBlockStyle"
+                   TargetType="controls:DirectTextBlock">
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="IconForeground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="HyperlinkForeground"
+                        Value="{ThemeResource MessageForegroundLinkBrush}" />
+                <Setter Property="SelectionHighlightColor"
+                        Value="{ThemeResource MessageHeaderBorderBrush}" />
+            </Style>
+
+            <Style x:Key="PullquoteCreditDirectTextBlockStyle"
+                   TargetType="controls:DirectTextBlock">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                <Setter Property="IconForeground"
+                        Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                <Setter Property="HyperlinkForeground"
+                        Value="{ThemeResource MessageForegroundLinkBrush}" />
+                <Setter Property="SelectionHighlightColor"
+                        Value="{ThemeResource MessageHeaderBorderBrush}" />
+            </Style>
+
             <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <FontFamily x:Key="SpoilerFontFamily">ms-appx:///Assets/Emoji/spoiler.ttf#Segoe UI Emoji</FontFamily>
 

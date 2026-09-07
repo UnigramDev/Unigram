@@ -323,10 +323,10 @@ namespace Telegram.Controls
 
             // Sized up front and filled by index: CreateGroup takes an array, and the
             // count is known before the loop starts.
-            var geometries = new CanvasGeometry[rects.Length];
+            var geometries = new CanvasGeometry[rects?.Length ?? 0];
             var count = 0;
 
-            for (int i = 0; i < rects.Length; i++)
+            for (int i = 0; i < rects?.Length; i++)
             {
                 var rect = rects[i];
 

@@ -330,11 +330,6 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMessage(MessageViewModel message)
         {
-            if (Message != null && (_message?.Id != message?.Id || _message?.ChatId != message?.ChatId))
-            {
-                Message.IgnoreSpoilers = false;
-            }
-
             _message = message;
 
             if (!_templateApplied)
@@ -2380,10 +2375,10 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            TextEntityClick(message, sender as FormattedTextBlock, e);
+            TextEntityClick(message, e);
         }
 
-        public static void TextEntityClick(MessageViewModel message, FormattedTextBlock textBlock, TextEntityClickEventArgs e)
+        public static void TextEntityClick(MessageViewModel message, TextEntityClickEventArgs e)
         {
             void OpenUrl(string url, bool trust)
             {
@@ -2912,9 +2907,6 @@ namespace Telegram.Controls.Messages
                 var index = ClientEx.SearchQuote(caption, options.Quote);
                 if (index >= 0)
                 {
-                    var fontSize = AppSettings.Appearance.MessageFontSize * BootStrapper.Current.TextScaleFactor;
-                    var quoteSize = AppSettings.Appearance.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
-
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
                     var maxX = double.MinValue;
@@ -2932,53 +2924,33 @@ namespace Telegram.Controls.Messages
                     var transform = Message.TransformToVisual(ContentPanel);
                     var position = transform.TransformPoint(new Windows.Foundation.Point());
 
-                    for (int j = 0; j < message.Text.Paragraphs.Count; j++)
+                    // The text says where it is: it owns the layouts, so it answers with the
+                    // lines the range covers in its own coordinates, and this only moves them
+                    // into the bubble and groups the ones that touch into a shape.
+                    var lines = Message.GetHighlightRectangles(index, index + options.Quote.Text.Text.Length);
+
+                    for (int i = 0; i < lines?.Count; i++)
                     {
-                        StyledParagraph styled = message.Text.Paragraphs[j];
-                        Paragraph paragraph = Message.GetBlock(j, out double width, out Point adjustment) as Paragraph;
+                        var rect = new Rect(
+                            lines[i].X - 2 + position.X,
+                            lines[i].Y + position.Y,
+                            lines[i].Width + 4,
+                            lines[i].Height);
 
-                        if (!TextStyleRun.GetRelativeRange(index, options.Quote.Text.Text.Length, styled.Offset, styled.Length, out int xoffset, out int xlength))
+                        if (count > 0 && !rect.IntersectsOrTouches(last))
                         {
-                            continue;
+                            shapes.Add(count);
+                            count = 0;
                         }
 
-                        var partial = message.Text.Text.Substring(styled.Offset, styled.Length);
-                        var entities = styled.Parts ?? TextStyleRun.NoParts;
+                        rects.Add(rect);
+                        last = rect;
+                        count++;
 
-                        var size = styled.Type is TextParagraphTypeQuote
-                            ? quoteSize
-                            : fontSize;
-
-                        // Lines, not runs: the highlight is drawn as one rounded polygon down
-                        // the lines it covers, and a line of mixed direction hit tests into a
-                        // rectangle per run - which that shape cannot represent.
-                        var rectangles = Direct2D.Current.RangeLineMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
-                        var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
-
-                        var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X + adjustment.X, relative.Y + position.Y + adjustment.Y);
-
-                        for (int i = 0; i < rectangles.Length; i++)
-                        {
-                            var rect = rectangles[i];
-                            rect = new Rect(rect.X - 2, rect.Y, rect.Width + 4, rect.Height);
-                            rect.X += point.X;
-                            rect.Y += point.Y;
-
-                            if (count > 0 && !rect.IntersectsOrTouches(last))
-                            {
-                                shapes.Add(count);
-                                count = 0;
-                            }
-
-                            rects.Add(rect);
-                            last = rect;
-                            count++;
-
-                            minX = Math.Min(minX, rect.Left);
-                            minY = Math.Min(minY, rect.Top);
-                            maxX = Math.Max(maxX, rect.Right);
-                            maxY = Math.Max(maxY, rect.Bottom);
-                        }
+                        minX = Math.Min(minX, rect.Left);
+                        minY = Math.Min(minY, rect.Top);
+                        maxX = Math.Max(maxX, rect.Right);
+                        maxY = Math.Max(maxY, rect.Bottom);
                     }
 
                     if (count > 0)

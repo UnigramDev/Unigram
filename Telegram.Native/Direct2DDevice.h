@@ -14,6 +14,7 @@
 
 #include <SurfaceImage.h>
 #include <TextFormat.h>
+#include <DirectTextLayout.h>
 #include "FreeformGradientSurface.h"
 #include "MessageBubbleNineGrid.h";
 
@@ -387,11 +388,11 @@ namespace winrt::Telegram::Native::implementation
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
 
         winrt::Telegram::Native::TextFormat CreateTextFormat2(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
+        winrt::Telegram::Native::DirectTextLayout CreateLayout();
         void RenderMath(winrt::Telegram::Native::RichMathSurface math, IBuffer buffer, double rasterizationScale, Windows::UI::Color foreground);
 
         float2 ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
         com_array<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
-        com_array<Windows::Foundation::Rect> RangeLineMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap);
         com_array<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap);
         Windows::Foundation::Rect LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);
         MaxLinesMetrics MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines);

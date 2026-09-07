@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -83,12 +83,15 @@ namespace Telegram.Common
 
         public static IList<TextStylePart> GetParts(Vector<TextEntity> entities)
         {
-            if (entities == null)
+            if (entities == null || entities.Count == 0)
             {
                 return NoParts;
             }
 
-            var items = new List<TextStylePart>(entities.Count);
+            // Built on the first style, not up front: most messages carry no styling at all,
+            // and the ones that do are usually a link or a custom emoji, which are not styles
+            // either. This runs once per StyledText and once per paragraph in it.
+            List<TextStylePart> items = null;
 
             foreach (var entity in entities)
             {
@@ -110,6 +113,7 @@ namespace Telegram.Common
                     continue;
                 }
 
+                items ??= new List<TextStylePart>(entities.Count);
                 items.Add(new TextStylePart
                 {
                     Offset = entity.Offset,
@@ -118,7 +122,7 @@ namespace Telegram.Common
                 });
             }
 
-            return items;
+            return items ?? NoParts;
         }
 
         public static IList<TextStyleRun> GetRuns(FormattedText formatted)

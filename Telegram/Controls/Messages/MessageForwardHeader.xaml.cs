@@ -98,7 +98,7 @@ namespace Telegram.Controls.Messages
 
                 // A line arrives whole: LineMetrics merges the runs a mixed direction line is
                 // hit tested into, so there is nothing left here to group.
-                for (int i = 0; i < rectangles2.Length; i++)
+                for (int i = 0; i < rectangles2?.Length; i++)
                 {
                     var line = rectangles2[i];
                     var rect = new Rect(line.X - 4, line.Y, line.Width + 8, line.Height);

@@ -22,127 +22,125 @@ namespace Telegram.Controls.Messages
         // Needed for Measure
         public MessageReply Reply { get; set; }
 
-        private bool _placeholder = true;
-        public bool Placeholder
-        {
-            get => _placeholder;
-            set
-            {
-                if (_placeholder != value)
-                {
-                    _placeholder = value;
-
-                    // TODO: removed as an experiment
-                    //InvalidateMeasure();
-                }
-            }
-        }
+        public bool Placeholder { get; set; } = true;
 
         private Size _margin;
 
+        // The children, found by one method rather than by the same index arithmetic written
+        // out in both passes. The template declares text, media and footer in that order; a
+        // fact check or a summary is inserted in front of them from code behind and the
+        // reactions panel is realized between media and footer when there are reactions, so
+        // where each one sits has to be found rather than assumed.
+        //
+        // Resolved again in arrange, not carried over from measure: both of those come and go,
+        // and a field that outlives the pass names an element that may already be gone from
+        // Children - and holds it alive until the next one.
+        private UIElement _factCheck;
+        private MessageTextBlock _text;
+        private FrameworkElement _media;
+        private ReactionsPanel _reactions;
+        private MessageFooter _footer;
+
+        // The row each was given. The bubble moves the text above or below the media and puts
+        // the footer in one of their rows, which is how it says whether the footer shares the
+        // last line of the text.
+        private int _textRow;
+        private int _mediaRow;
+        private int _footerRow;
+
+        private void Resolve()
+        {
+            var index = 0;
+
+            if (Children[index] is MessageFactCheck or MessageSummary)
+            {
+                _factCheck = Children[index++];
+            }
+            else
+            {
+                _factCheck = null;
+            }
+
+            _text = Children[index++] as MessageTextBlock;
+            _media = Children[index++] as FrameworkElement;
+            _reactions = Children[index] as ReactionsPanel;
+
+            if (_reactions != null)
+            {
+                index++;
+            }
+
+            _footer = Children[index] as MessageFooter;
+
+            _textRow = Grid.GetRow(_text);
+            _mediaRow = Grid.GetRow(_media);
+            _footerRow = Grid.GetRow(_footer);
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            FrameworkElement text;
-            FrameworkElement media;
-            UIElement factCheck;
-            UIElement third;
+            Resolve();
 
-            var first = Children[0];
-            if (first is MessageFactCheck or MessageSummary)
-            {
-                text = Children[1] as FrameworkElement;
-                media = Children[2] as FrameworkElement;
-                third = Children[3];
-                factCheck = first;
-            }
-            else
-            {
-                text = Children[0] as FrameworkElement;
-                media = Children[1] as FrameworkElement;
-                third = Children[2];
-                factCheck = null;
-            }
+            _text.Measure(availableSize);
+            _media.Measure(availableSize);
+            _factCheck?.Measure(availableSize);
+            _footer.Measure(availableSize);
 
-            MessageFooter footer;
-            ReactionsPanel reactions;
-            if (third is ReactionsPanel)
+            if (_reactions != null)
             {
-                footer = Children[^1] as MessageFooter;
-                reactions = third as ReactionsPanel;
-            }
-            else
-            {
-                footer = third as MessageFooter;
-                reactions = null;
-            }
-
-            var textRow = Grid.GetRow(text);
-            var mediaRow = Grid.GetRow(media);
-            var footerRow = Grid.GetRow(footer);
-
-            text.Measure(availableSize);
-            media.Measure(availableSize);
-            factCheck?.Measure(availableSize);
-            footer.Measure(availableSize);
-
-            if (reactions != null)
-            {
-                if (reactions.Footer != footer.DesiredSize && reactions.Children.Count > 0)
+                if (_reactions.Footer != _footer.DesiredSize && _reactions.Children.Count > 0)
                 {
-                    reactions.InvalidateMeasure();
+                    _reactions.InvalidateMeasure();
                 }
 
-                reactions.Footer = footer.DesiredSize;
-                reactions.Measure(availableSize);
+                _reactions.Footer = _footer.DesiredSize;
+                _reactions.Measure(availableSize);
             }
 
-            if (reactions != null && reactions.HasReactions)
+            if (_reactions != null && _reactions.HasReactions)
             {
                 _margin = new Size(0, 0);
             }
-            else if (textRow == footerRow && text is MessageTextBlock blocks && blocks.Children.Count > 0)
+            else if (_textRow == _footerRow && _text.Children.Count > 0)
             {
-                _margin = Margins(availableSize.Width, blocks.DesiredSize.Width, blocks.Children[^1] as FormattedTextBlock, footer);
+                _margin = Margins(availableSize.Width, _text.DesiredSize.Width, _text.Children[^1], _footer);
             }
-            else if (mediaRow == footerRow)
+            else if (_mediaRow == _footerRow)
             {
                 _margin = new Size(0, 0);
             }
-            else if (media is Border { Child: InstantContent rich })
+            else if (_media is Border { Child: InstantContent rich })
             {
                 if (rich.LastBlock is FormattedTextBlock lastBlock)
                 {
-                    //_placeholder = true;
-                    _margin = Margins(availableSize.Width, lastBlock.DesiredSize.Width, lastBlock, footer);
-                    //media = text;
-                    //(media, text) = (text, media);
+                    _margin = Margins(availableSize.Width, lastBlock.DesiredSize.Width, lastBlock, _footer);
                 }
                 else
                 {
-                    _margin = new Size(0, footer.DesiredSize.Height);
+                    _margin = new Size(0, _footer.DesiredSize.Height);
                 }
             }
             else
             {
-                _margin = new Size(0, footer.DesiredSize.Height);
+                _margin = new Size(0, _footer.DesiredSize.Height);
             }
 
             var margin = _margin;
-            var width = media.DesiredSize.Width == availableSize.Width
-                ? media.DesiredSize.Width
-                : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
+            var width = _media.DesiredSize.Width == availableSize.Width
+                ? _media.DesiredSize.Width
+                : Math.Max(_media.DesiredSize.Width, _text.DesiredSize.Width + margin.Width);
 
-            var reactionsWidth = reactions?.DesiredSize.Width ?? 0;
-            var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
+            var reactionsWidth = _reactions?.DesiredSize.Width ?? 0;
+            var reactionsHeight = _reactions?.DesiredSize.Height ?? 0;
 
-            if (factCheck != null)
+            if (_factCheck != null)
             {
-                reactionsWidth = Math.Max(reactionsWidth, factCheck.DesiredSize.Width);
-                reactionsHeight += factCheck.DesiredSize.Height;
+                reactionsWidth = Math.Max(reactionsWidth, _factCheck.DesiredSize.Width);
+                reactionsHeight += _factCheck.DesiredSize.Height;
             }
 
-            var finalWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
-            var finalHeight = text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height;
+            var finalWidth = Math.Max(Math.Max(reactionsWidth, _footer.DesiredSize.Width), width);
+            var finalHeight = _text.DesiredSize.Height + _media.DesiredSize.Height + reactionsHeight + margin.Height;
 
             Reply?.ContentWidth = finalWidth;
 
@@ -151,105 +149,74 @@ namespace Telegram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            MessageTextBlock text;
-            FrameworkElement media;
-            UIElement factCheck;
-            UIElement third;
+            Resolve();
 
-            var first = Children[0];
-            if (first is MessageFactCheck or MessageSummary)
+            if (_textRow < _mediaRow)
             {
-                text = Children[1] as MessageTextBlock;
-                media = Children[2] as FrameworkElement;
-                third = Children[3];
-                factCheck = first;
-            }
-            else
-            {
-                text = first as MessageTextBlock;
-                media = Children[1] as FrameworkElement;
-                third = Children[2];
-                factCheck = null;
-            }
+                _text.Arrange(new Rect(0, 0, finalSize.Width, _text.DesiredSize.Height));
 
-            MessageFooter footer;
-            ReactionsPanel reactions;
-            if (third is ReactionsPanel)
-            {
-                footer = Children[^1] as MessageFooter;
-                reactions = third as ReactionsPanel;
-            }
-            else
-            {
-                footer = third as MessageFooter;
-                reactions = null;
-            }
-
-            var textRow = Grid.GetRow(text);
-            var mediaRow = Grid.GetRow(media);
-
-            if (textRow < mediaRow)
-            {
-                text.Arrange(new Rect(0, 0, finalSize.Width, text.DesiredSize.Height));
-
-                if (factCheck != null)
+                if (_factCheck != null)
                 {
-                    factCheck.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, factCheck.DesiredSize.Height));
-                    media.Arrange(new Rect(0, text.DesiredSize.Height + factCheck.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
+                    _factCheck.Arrange(new Rect(0, _text.DesiredSize.Height, finalSize.Width, _factCheck.DesiredSize.Height));
+                    _media.Arrange(new Rect(0, _text.DesiredSize.Height + _factCheck.DesiredSize.Height, finalSize.Width, _media.DesiredSize.Height));
                 }
                 else
                 {
-                    media.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
+                    _media.Arrange(new Rect(0, _text.DesiredSize.Height, finalSize.Width, _media.DesiredSize.Height));
                 }
             }
             else
             {
-                media.Arrange(new Rect(0, 0, finalSize.Width, media.DesiredSize.Height));
-                text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
+                _media.Arrange(new Rect(0, 0, finalSize.Width, _media.DesiredSize.Height));
+                _text.Arrange(new Rect(0, _media.DesiredSize.Height, finalSize.Width, _text.DesiredSize.Height));
 
-                factCheck?.Arrange(new Rect(0, media.DesiredSize.Height + text.DesiredSize.Height, finalSize.Width, factCheck.DesiredSize.Height));
+                _factCheck?.Arrange(new Rect(0, _media.DesiredSize.Height + _text.DesiredSize.Height, finalSize.Width, _factCheck.DesiredSize.Height));
             }
 
-            var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
+            var reactionsHeight = _reactions?.DesiredSize.Height ?? 0;
 
-            if (factCheck != null)
+            if (_factCheck != null)
             {
-                reactions?.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height + factCheck.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
-                reactionsHeight += factCheck.DesiredSize.Height;
+                _reactions?.Arrange(new Rect(0, _text.DesiredSize.Height + _media.DesiredSize.Height + _factCheck.DesiredSize.Height, finalSize.Width, _reactions.DesiredSize.Height));
+                reactionsHeight += _factCheck.DesiredSize.Height;
             }
             else
             {
-                reactions?.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+                _reactions?.Arrange(new Rect(0, _text.DesiredSize.Height + _media.DesiredSize.Height, finalSize.Width, _reactions.DesiredSize.Height));
             }
 
             var margin = _margin;
-            var footerWidth = footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
-            var footerHeight = footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
-            footer.Arrange(new Rect(finalSize.Width - footerWidth,
-                text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight - footerHeight + margin.Height,
-                footer.DesiredSize.Width,
-                footer.DesiredSize.Height));
+            var footerWidth = _footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
+            var footerHeight = _footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
+            _footer.Arrange(new Rect(finalSize.Width - footerWidth,
+                _text.DesiredSize.Height + _media.DesiredSize.Height + reactionsHeight - footerHeight + margin.Height,
+                _footer.DesiredSize.Width,
+                _footer.DesiredSize.Height));
 
             return finalSize;
         }
 
-        private Size Margins(double availableWidth, double desiredWidth, FormattedTextBlock text, MessageFooter footer)
+        // The last block of the text, whichever engine rendered it: both can say where their
+        // last line ends, and that is all this needs to know.
+        private Size Margins(double availableWidth, double desiredWidth, UIElement text, MessageFooter footer)
         {
             var marginLeft = 0d;
             var marginBottom = 0d;
 
-            if (text == null)
+            var hasLineEnding = text is FormattedTextBlock formatted && formatted.HasLineEnding;
+
+            if (text is not FormattedTextBlock and not DirectTextBlock)
             {
                 return new Size(0, AppSettings.Appearance.MessageFontSize * 1.33);
             }
-            else if (_placeholder)
+            else if (Placeholder)
             {
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
                 var fontSize = AppSettings.Appearance.MessageFontSize;
 
-                if (text.HasLineEnding)
+                if (hasLineEnding)
                 {
                     return new Size(0, fontSize * 1.33);
                 }
@@ -259,7 +226,9 @@ namespace Telegram.Controls.Messages
                 }
 
                 var width = desiredWidth;
-                var bounds = text.ContentEnd();
+                var bounds = text is DirectTextBlock direct
+                    ? direct.ContentEnd()
+                    : ((FormattedTextBlock)text).ContentEnd();
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)

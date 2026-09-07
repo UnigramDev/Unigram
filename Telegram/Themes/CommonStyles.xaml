@@ -1,7 +1,30 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:messages="using:Telegram.Controls.Messages">
+
+    <!--  DirectTextBlock is a Panel, so it has no DefaultStyleKey and Generic.xaml is never
+          consulted for it: the implicit style below is what every block gets. Everything here
+          is a ThemeResource because the block draws the text itself - nothing about it is
+          inherited, and a colour it was handed once would survive a theme change.
+
+          Keyed as well as implicit, because a Style REPLACES the implicit one rather than
+          adding to it: a caller that needs its own builds on this instead of losing it.  -->
+    <Style x:Key="DefaultDirectTextBlockStyle"
+           TargetType="controls:DirectTextBlock">
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageForegroundBrush}" />
+        <Setter Property="HyperlinkForeground"
+                Value="{ThemeResource MessageForegroundLinkBrush}" />
+        <Setter Property="IconForeground"
+                Value="{ThemeResource MessageForegroundBrush}" />
+        <!--  TODO: a brush of its own for the text selection. This one stands in for it.  -->
+        <Setter Property="SelectionHighlightColor"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
+    </Style>
+
+    <Style TargetType="controls:DirectTextBlock"
+           BasedOn="{StaticResource DefaultDirectTextBlockStyle}" />
 
     <Style x:Key="MessageCustomEmojiStyle"
            TargetType="controls:CustomEmojiIcon">

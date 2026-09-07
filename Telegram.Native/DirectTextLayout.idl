@@ -1,0 +1,102 @@
+import "TextFormat.idl";
+
+namespace Telegram.Native
+{
+    enum TextAlignmentMode
+    {
+        Leading,
+        Left,
+        Center,
+        Right
+    };
+
+    // How the lines sit in the layout box. Leading is the default and the one direction
+    // decides: the far edge right to left, the near one otherwise - which is what
+    // TextAlignment.DetectFromContent means on the other engine.
+    // One paragraph of the text, as a range of it: DirectWrite gives a layout one reading
+    // direction and one alignment, so a text whose paragraphs disagree - ordinary in a chat
+    // that mixes scripts - is laid out as one layout each, stacked.
+    struct TextParagraph
+    {
+        Int32 Offset;
+        Int32 Length;
+        Boolean RightToLeft;
+        TextAlignmentMode Alignment;
+    };
+
+    // A DirectWrite layout the caller owns: text, size, width, direction, colours and inline
+    // objects are its state, not arguments to every call. TextFormat is the other shape - a
+    // layout built to answer questions about text XAML laid out - and the two do not merge.
+    [default_interface]
+    runtimeclass DirectTextLayout : Windows.Foundation.IClosable
+    {
+        DirectTextLayout();
+
+        Double FontSize;
+
+        // The family the text is drawn in, empty for the one the app uses everywhere. A single
+        // name, not a chain: DirectWrite falls back on its own, where XAML wants the list.
+        String FontFamily;
+        Int32 FontWeight;
+        Boolean Italic;
+
+        Boolean RightToLeft;
+        TextAlignmentMode Alignment;
+
+        // The lines the text may take, 0 for as many as it needs. One is a single line with an
+        // ellipsis where it runs out; more than one keeps wrapping and cuts the box to the
+        // lines that fit.
+        Int32 MaxLines;
+
+        // Whether the text did not fit in MaxLines, and how many lines it takes: a caller
+        // offering to expand asks the second, which is an answer about the text rather than
+        // about the limit it is under at the moment.
+        Boolean IsTrimmed{ get; };
+        Int32 LineCount{ get; };
+
+        void SetText(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities);
+
+        // How the text is divided. Set after SetText, which leaves it as one paragraph reading
+        // the way RightToLeft and Alignment say. Everything else here - a colour, an inline
+        // object, a hit test, a range - is in offsets into the whole text, whichever paragraph
+        // they land in.
+        void SetParagraphs(Windows.Foundation.Collections.IVector<TextParagraph> paragraphs);
+        void SetColor(Int32 offset, Int32 length, Windows.UI.Color color);
+
+        // Takes the colour off a range again - a spoiler that has been revealed draws in
+        // whatever the caller draws the rest of the text with.
+        void ClearColor(Int32 offset, Int32 length);
+
+        // An element the text flows around: the caller draws it, the layout only reserves the
+        // box. A fixed one - an emoji - declares its size; a variable one - a button - is
+        // measured by the caller first.
+        void SetInlineObject(Int32 offset, Int32 length, Windows.Foundation.Size size, Double baseline);
+
+        // False when the expression is not one: the caller leaves the text as it was written.
+        Boolean SetMathObject(Int32 offset, Int32 length, String expression);
+
+        Windows.Foundation.Size Measure(Double availableWidth);
+
+        // Everything derived comes off the same layout the text was drawn from.
+        Windows.Foundation.Rect[] Ranges(Int32 offset, Int32 length);
+        Windows.Foundation.Rect[] Lines(Int32 offset, Int32 length);
+
+        // How many characters each line holds, for a caller walking the text by line - what a
+        // screen reader asks for, and what the rectangles alone cannot say.
+        Int32[] LineLengths();
+
+        // The position nearest the point, and whether the point was on the text at all: a
+        // selection wants the first, a link the second.
+        Int32 HitTest(Windows.Foundation.Point point, out Boolean inside);
+        Int32 HitTestContent(Windows.Foundation.Point point, out Boolean inside);
+
+        // Where the last line ends, for a caller placing something beside it.
+        Windows.Foundation.Point ContentEnd();
+
+
+        // The text drawn into a surface of its own. The same surface comes back every time -
+        // resized when the text no longer fits it, and redrawn by itself when the rendering
+        // device is replaced - so a brush set on it once never has to be set again.
+        Windows.UI.Composition.CompositionDrawingSurface Render(Windows.UI.Color color, Double rasterizationScale);
+    }
+}

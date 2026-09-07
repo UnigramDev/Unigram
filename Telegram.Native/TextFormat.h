@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.UI.h>
 #include <winrt/Windows.Foundation.Collections.h>
 
 using namespace concurrency;

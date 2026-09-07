@@ -12,7 +12,6 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    // TODO: register FormattedTextBlock.IsTextTrimmableChanged
     public partial class BlockQuote : ContentControl
     {
         private HyperlinkButton Header;
@@ -44,14 +43,15 @@ namespace Telegram.Controls
 
         protected override void OnContentChanged(object oldContent, object newContent)
         {
-            if (oldContent is FormattedTextBlock oldBlock)
+            if (oldContent is ITrimmableText oldBlock)
             {
                 oldBlock.IsTextTrimmableChanged -= OnIsTextTrimmableChanged;
             }
 
-            if (newContent is FormattedTextBlock newBlock)
+            if (newContent is ITrimmableText newBlock)
             {
-                // TODO: make sure this releases correctly
+                // Paired with the removal above: the content is replaced rather than the quote
+                // being thrown away, so a subscription left here would outlive what it names.
                 newBlock.IsTextTrimmableChanged += OnIsTextTrimmableChanged;
             }
 
@@ -66,7 +66,7 @@ namespace Telegram.Controls
 
         private void Header_Click(object sender, RoutedEventArgs e)
         {
-            if (Content is FormattedTextBlock block)
+            if (Content is ISelectableControl block)
             {
                 MessageHelper.CopyText(XamlRoot, block.GetSelectedText(0, block.ContentLength));
             }
@@ -74,7 +74,7 @@ namespace Telegram.Controls
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {
-            if (Content is FormattedTextBlock block)
+            if (Content is ITrimmableText block)
             {
                 var expanded = block.MaxLines == 0;
                 if (expanded)
@@ -139,7 +139,7 @@ namespace Telegram.Controls
 
         #region IsExpandable
 
-        public bool ComputedIsExpandable => IsExpandable && Content is FormattedTextBlock { IsTextTrimmable: true };
+        public bool ComputedIsExpandable => IsExpandable && Content is ITrimmableText { IsTextTrimmable: true };
 
         public bool IsExpandable
         {

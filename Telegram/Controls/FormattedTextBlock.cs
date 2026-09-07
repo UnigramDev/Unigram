@@ -226,7 +226,7 @@ namespace Telegram.Controls
     }
 
     [ContentProperty(Name = "Blocks")]
-    public partial class FormattedTextBlock : FormattedTextBlockBase
+    public partial class FormattedTextBlock : FormattedTextBlockBase, IRelativeDateHost, ITrimmableText, ITextPresenter
     {
         private IClientService _clientService;
         private StyledText _text;
@@ -597,6 +597,72 @@ namespace Telegram.Controls
             return float.MaxValue;
         }
 
+        /// <summary>
+        /// The rectangles covering [<paramref name="from"/>, <paramref name="to"/>) of the
+        /// source text, in this block's own coordinates - one per line, so a caller can draw a
+        /// shape down them. Empty when none of the range is in this block.
+        ///
+        /// The geometry lives here because the layouts do: a caller working it out for itself
+        /// has to lay the text out a second time and then find where each paragraph sits.
+        /// </summary>
+        public IList<Rect> GetHighlightRectangles(int from, int to)
+        {
+            if (_text == null || TextBlock == null || to <= from)
+            {
+                return null;
+            }
+
+            var fontSize = (AutoFontSize ? AppSettings.Appearance.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+            var quoteSize = (AutoFontSize ? AppSettings.Appearance.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+
+            var width = ArrangedWidth;
+
+            List<Rect> result = null;
+
+            for (int block = 0; block <= _last - _first; block++)
+            {
+                StyledParagraph styled = _text.Paragraphs[_first + block];
+                Paragraph paragraph = TextBlock.Blocks[block] as Paragraph;
+
+                if (paragraph == null)
+                {
+                    continue;
+                }
+
+                if (!TextStyleRun.GetRelativeRange(from, to - from, styled.Offset, styled.Length, out int xoffset, out int xlength))
+                {
+                    continue;
+                }
+
+                var entities = styled.GetParts(out var partial) ?? TextStyleRun.NoParts;
+
+                var size = styled.Type is TextParagraphTypeQuote
+                    ? quoteSize
+                    : fontSize;
+
+                var layoutWidth = width - paragraph.Margin.Left - paragraph.Margin.Right;
+
+                // Lines, not runs: the highlight is drawn as one shape down the lines it
+                // covers, and a line of mixed direction hit tests into a rectangle per run.
+                var format = GetTextFormat(block, partial, entities, size, layoutWidth);
+                var rectangles = format.LineMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, true);
+                var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
+
+                for (int i = 0; i < rectangles?.Length; i++)
+                {
+                    var rect = rectangles[i];
+
+                    (result ??= new List<Rect>()).Add(new Rect(
+                        rect.X + paragraph.Margin.Left,
+                        rect.Y + relative.Y,
+                        rect.Width,
+                        rect.Height));
+                }
+            }
+
+            return result;
+        }
+
         private PointerCursorType _textSelectionCursor = PointerCursorType.Arrow;
 
         // Whether the Hand above is a spoiler's, which also takes the text out of hit-testing.
@@ -745,7 +811,7 @@ namespace Telegram.Controls
 
                 if (IsPointerWithinSpoiler(position))
                 {
-                    IgnoreSpoilers = true;
+                    RevealSpoilers();
                     e.Handled = true;
                 }
             }
@@ -818,35 +884,33 @@ namespace Telegram.Controls
             }
         }
 
-        public bool IgnoreSpoilers
+        /// <summary>
+        /// Uncovers the spoilers in this block, which is what clicking one does. Nobody puts
+        /// them back: the block covers them again by itself as soon as it renders a different
+        /// text, which is the only thing that ever asked for the reset.
+        /// </summary>
+        private void RevealSpoilers()
         {
-            get => _ignoreSpoilers;
-            set
+            if (_ignoreSpoilers)
             {
-                if (value == _ignoreSpoilers)
-                {
-                    return;
-                }
-
-                _ignoreSpoilers = value;
-
-                if (value)
-                {
-                    // SetText reapplies the highlighters; SetQuery(string.Empty) used to follow
-                    // it for that, and only had the side effect of dropping the search term.
-                    SetText(_clientService, _text, _first, _last, _fontSize);
-
-                    if (Below == null || _spoilerPresenter == null)
-                    {
-                        return;
-                    }
-
-                    Below.Children.Remove(_spoilerPresenter);
-                    _spoilerPresenter = null;
-                    _spoilerGeometry = null;
-                    _spoilerAdded = false;
-                }
+                return;
             }
+
+            _ignoreSpoilers = true;
+
+            // SetText reapplies the highlighters; SetQuery(string.Empty) used to follow
+            // it for that, and only had the side effect of dropping the search term.
+            SetText(_clientService, _text, _first, _last, _fontSize);
+
+            if (Below == null || _spoilerPresenter == null)
+            {
+                return;
+            }
+
+            Below.Children.Remove(_spoilerPresenter);
+            _spoilerPresenter = null;
+            _spoilerGeometry = null;
+            _spoilerAdded = false;
         }
 
         public void SetFontSize(double fontSize)
@@ -1311,6 +1375,14 @@ namespace Telegram.Controls
             var prevFontSize = _fontSize;
 
             var autoFontSize = fontSize;
+
+            // A different text is covered again. Revealing belongs to what is on screen, not
+            // to the control: a recycled bubble showing another message starts covered, and
+            // re-rendering the same one - which is what revealing does - stays uncovered.
+            if (!ReferenceEquals(styled, _text))
+            {
+                _ignoreSpoilers = false;
+            }
 
             _clientService = clientService;
             _text = styled;
@@ -2087,7 +2159,6 @@ namespace Telegram.Controls
                 var block = new FormattedTextBlock
                 {
                     AutoFontSize = true,
-                    IgnoreSpoilers = false,
                     HorizontalTextAlignment = TextAlignment.DetectFromContent,
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
                     TextSelection = TextSelectionMode.Disabled
@@ -2157,6 +2228,24 @@ namespace Telegram.Controls
             {
                 InvalidateSkeleton();
             }
+        }
+
+        void IRelativeDateHost.UpdateDate(object element, StyledParagraph paragraph, TextStyleRun run, int segment, string text, int delta)
+        {
+            // Update has just marked the paragraph dirty, so the next GetParts hands back a
+            // rewritten string and the retained layout is of the old one.
+            InvalidateTextFormat(paragraph);
+
+            // Spoiler geometry needs nothing here: UpdateSpoilers derives it from the
+            // paragraph's runs, which Update has just rewritten.
+            if (delta != 0)
+            {
+                ShiftRenderedSpace(segment, delta);
+            }
+
+            RegisterLayoutChanged();
+
+            XamlDirect.GetDefault().SetStringProperty((IXamlDirectObject)element, XamlPropertyIndex.Run_Text, text);
         }
 
         // A relative date rewrote itself, so the rendered space grew or shrank by `delta` at the
@@ -2484,11 +2573,12 @@ namespace Telegram.Controls
                 return;
             }
 
-            var resources = sender.ActualTheme == ElementTheme.Light ? _light : _dark;
-
             foreach (var item in _brushes)
             {
-                item.Value.Color = resources[item.Key];
+                if (SyntaxPalette.TryGetColor(item.Key, sender.ActualTheme, out var color))
+                {
+                    item.Value.Color = color;
+                }
             }
         }
 
@@ -2579,8 +2669,7 @@ namespace Telegram.Controls
                 return brush;
             }
 
-            var target = ActualTheme == ElementTheme.Light ? _light : _dark;
-            if (target.TryGetValue(type, out var color))
+            if (SyntaxPalette.TryGetColor(type, ActualTheme, out var color))
             {
                 brush = new SolidColorBrush(color);
                 _brushes[type] = brush;
@@ -2589,74 +2678,6 @@ namespace Telegram.Controls
 
             return null;
         }
-
-        // Static: the tables are constant and Color is a value type, so they cost nothing per
-        // block — as instance fields they were two ~28-entry dictionaries on every text block
-        // in the app, code or not. The brushes built from them can't be shared the same way
-        // (a DependencyObject belongs to the thread that created it, and the app runs several).
-        private static readonly Dictionary<string, Color> _light = new()
-        {
-            { "comment", Colors.SlateGray },
-            { "block-comment", Colors.SlateGray },
-            { "prolog", Colors.SlateGray },
-            { "doctype", Colors.SlateGray },
-            { "cdata", Colors.SlateGray },
-            { "punctuation", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "property", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "tag", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "boolean", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "number", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "constant", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "symbol", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "deleted", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "selector", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "attr-name", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "string", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "char", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "builtin", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "inserted", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "operator", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
-            { "entity", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
-            { "url", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
-            { "atrule", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "attr-value", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "keyword", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "function", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "class-name", Color.FromArgb(0xFF, 0xDD, 0x4A, 0x68) },
-        };
-
-        private static readonly Dictionary<string, Color> _dark = new()
-        {
-            { "comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "block-comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "prolog", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "doctype", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "cdata", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "punctuation", Color.FromArgb(0xFF, 0xCC, 0xCC, 0xCC) },
-            { "property", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            { "tag", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
-            { "boolean", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
-            { "number", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
-            { "constant", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            { "symbol", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            { "deleted", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
-            { "selector", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "attr-name", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
-            { "string", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
-            { "char", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
-            { "builtin", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "inserted", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "operator", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
-            { "entity", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
-            { "url", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
-            { "atrule", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "attr-value", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
-            { "keyword", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "function", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
-            { "class-name", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            // namespace 0xe2, 0x77, 0x7a
-            // function-name 6196cc
-        };
 
         // Only code blocks ever reach GetColor, so this stays null for everything else.
         private Dictionary<string, SolidColorBrush> _brushes;
@@ -2679,7 +2700,7 @@ namespace Telegram.Controls
             }
             else if (args.Type is TextEntityTypeSpoiler)
             {
-                IgnoreSpoilers = true;
+                RevealSpoilers();
             }
 
             // TODO: handle more cases internally
@@ -3138,7 +3159,7 @@ namespace Telegram.Controls
 
                 var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
 
-                for (int i = 0; i < rectangles.Length; i++)
+                for (int i = 0; i < rectangles?.Length; i++)
                 {
                     var rect = rectangles[i];
                     if (rect.Width < 1 || rect.Height < 1)
@@ -3173,259 +3194,6 @@ namespace Telegram.Controls
             _skeleton.Offset = new Vector3(-0, -0, 0);
             //_skeleton.Size = new Vector2(TextBlock.ActualSize.X + 8, TextBlock.ActualSize.Y + 4);
             //_skeleton.Offset = new Vector3(-4, -2, 0);
-        }
-
-        public class RelativeDateService
-        {
-            // A dictionary value keyed by Element, so it never needs value equality - and .NET
-            // Native doesn't do records anyway.
-            class TextDate
-            {
-                public TextDate(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun entity, TextEntityTypeDateTime entityType, int segment)
-                {
-                    Element = element;
-                    TextBlock = textBlock;
-                    Paragraph = paragraph;
-                    Entity = entity;
-                    Date = Formatter.ToLocalTime(entityType.UnixTime);
-                    Segment = segment;
-                }
-
-                public IXamlDirectObject Element { get; }
-
-                public FormattedTextBlock TextBlock { get; }
-
-                public StyledParagraph Paragraph { get; }
-
-                public TextStyleRun Entity { get; }
-
-                public DateTime Date { get; }
-
-                // Where this date sits in the block's index map, captured when the block built
-                // it. Only valid until the next SetText, which resubscribes.
-                public int Segment { get; }
-
-                public ulong NextUpdateAt { get; set; }
-
-                public string Update()
-                {
-                    // How much the displayed date grew or shrank THIS tick. Measuring against
-                    // Entity.Length - the source length - is what made the old patching wrong:
-                    // it is the total growth since the first render, so applying it again on
-                    // every tick, and once per date, compounded.
-                    var before = string.IsNullOrEmpty(Entity.FormattedText) ? Entity.Length : Entity.FormattedText.Length;
-                    var text = Entity.Update(Paragraph);
-                    var delta = (string.IsNullOrEmpty(text) ? Entity.Length : text.Length) - before;
-
-                    // Update has just marked the paragraph dirty, so the next GetParts hands
-                    // back a rewritten string and the retained layout is of the old one.
-                    TextBlock.InvalidateTextFormat(Paragraph);
-
-                    // Spoiler geometry needs nothing here: UpdateSpoilers derives it from the
-                    // paragraph's runs, which Update has just rewritten.
-                    if (delta != 0)
-                    {
-                        TextBlock.ShiftRenderedSpace(Segment, delta);
-                    }
-
-                    TextBlock.RegisterLayoutChanged();
-
-                    return text;
-                }
-            }
-
-            private readonly DispatcherTimer _timer = new();
-            private readonly Dictionary<IXamlDirectObject, TextDate> _dates = new();
-
-            private static readonly ConditionalWeakTable<XamlRoot, RelativeDateService> _instances = new();
-
-#if NET9_0_OR_GREATER
-            // The keys are XamlDirect handles owned by the blocks, and they are disposed by the
-            // time this runs - so the dictionary only has to stop naming them.
-            public static void Release(XamlRoot xamlRoot)
-            {
-                if (_instances.TryGetValue(xamlRoot, out RelativeDateService instance))
-                {
-                    _instances.Remove(xamlRoot);
-
-                    instance._timer.Stop();
-                    instance._timer.Tick -= instance.OnTick;
-                    instance._dates.Clear();
-                }
-            }
-#endif
-
-            private RelativeDateService()
-            {
-                _timer.Tick += OnTick;
-            }
-
-            private void OnTick(object sender, object e)
-            {
-                _timer.Stop();
-
-                _timer.Interval = GetNextUpdateInterval(_dates.Values, true);
-                _timer.Start();
-            }
-
-            public static void Subscribe(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
-            {
-                Debug.Assert(textBlock.XamlRoot != null);
-
-                _instances.TryGetValue(textBlock.XamlRoot, out RelativeDateService instance);
-
-                if (instance == null)
-                {
-                    _instances.Add(textBlock.XamlRoot, instance = new());
-                }
-
-                instance.SubscribeImpl(element, textBlock, paragraph, run, entity, segment);
-            }
-
-            private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
-            {
-                // Replaces rather than skips. The key is a Run from the shared pool, so the same
-                // object comes back around attached to a different block, and a registration
-                // that outlived its block would otherwise make that Run unsubscribable - its new
-                // date silently never updating - for the rest of the session.
-                _dates[element] = new TextDate(element, textBlock, paragraph, run, entity, segment);
-                _timer.Stop();
-
-                _timer.Interval = GetNextUpdateInterval(_dates.Values, false);
-                _timer.Start();
-            }
-
-            public static void Unsubscribe(IXamlDirectObject element, XamlRoot xamlRoot)
-            {
-                if (_instances.TryGetValue(xamlRoot, out var instance))
-                {
-                    instance.UnsubscribeImpl(element);
-                }
-            }
-
-            private void UnsubscribeImpl(IXamlDirectObject element)
-            {
-                if (_dates.ContainsKey(element))
-                {
-                    _dates.Remove(element);
-                    _timer.Stop();
-
-                    if (_dates.Count > 0)
-                    {
-                        _timer.Interval = GetNextUpdateInterval(_dates.Values, false);
-                        _timer.Start();
-                    }
-                }
-            }
-
-            private static TimeSpan GetNextUpdateInterval(IEnumerable<TextDate> dates, bool invalidate)
-            {
-                var minSeconds = int.MaxValue;
-
-                var tickCount = Logger.TickCount;
-                var currentTime = DateTime.Now;
-
-                XamlDirect direct = null;
-
-                foreach (var item in dates)
-                {
-                    var shouldReschedule = !invalidate;
-
-                    if (invalidate || item.NextUpdateAt == 0)
-                    {
-                        if (item.NextUpdateAt <= tickCount)
-                        {
-                            shouldReschedule = true;
-
-                            direct ??= XamlDirect.GetDefault();
-                            direct.SetStringProperty(item.Element, XamlPropertyIndex.Run_Text, item.Update());
-                        }
-                    }
-
-                    if (shouldReschedule)
-                    {
-                        var nextForThisItem = GetNextUpdateIntervalSeconds(currentTime, item.Date);
-
-                        // Each item gets its own update time
-                        item.NextUpdateAt = tickCount + (ulong)(nextForThisItem * 1000);
-
-                        // Track the global minimum for timer interval
-                        if (nextForThisItem < minSeconds)
-                        {
-                            minSeconds = nextForThisItem;
-                        }
-                    }
-                    else
-                    {
-                        // Item doesn't need rescheduling, but still consider its existing schedule.
-                        // Round up, never down to zero: an item due in under a second used to be
-                        // dropped from the minimum entirely, and if every item was in that state
-                        // - which is the norm for the one-second bucket, where the timer can fire
-                        // a hair early - nothing set the minimum and the next tick was scheduled
-                        // int.MaxValue seconds out.
-                        var remainingSeconds = ((long)(item.NextUpdateAt - tickCount) + 999) / 1000;
-                        if (remainingSeconds > 0 && remainingSeconds < minSeconds)
-                        {
-                            minSeconds = (int)remainingSeconds;
-                        }
-                    }
-                }
-
-                // An empty set leaves the minimum untouched; a second is the shortest the
-                // buckets below ever ask for anyway.
-                return TimeSpan.FromSeconds(minSeconds == int.MaxValue ? 1 : minSeconds);
-            }
-
-            private static int GetNextUpdateIntervalSeconds(DateTime currentTime, DateTime relativeTime)
-            {
-                TimeSpan difference = currentTime - relativeTime;
-                bool isPast = difference.TotalSeconds > 0;
-                double absDifference = Math.Abs(difference.TotalSeconds);
-
-                if (absDifference < 60)
-                {
-                    return 1;
-                }
-                else if (absDifference < 3600)
-                {
-                    double secondsPastMinute = absDifference % 60;
-
-                    if (isPast)
-                    {
-                        return (int)Math.Ceiling(60 - secondsPastMinute);
-                    }
-                    else
-                    {
-                        return (int)Math.Ceiling(secondsPastMinute);
-                    }
-                }
-                else if (absDifference < 86400)
-                {
-                    double secondsPastHour = absDifference % 3600;
-
-                    if (isPast)
-                    {
-                        return (int)Math.Ceiling(3600 - secondsPastHour);
-                    }
-                    else
-                    {
-                        return (int)Math.Ceiling(secondsPastHour);
-                    }
-                }
-                else
-                {
-                    double secondsPastDay = absDifference % 86400;
-
-                    if (isPast)
-                    {
-                        return (int)Math.Ceiling(86400 - secondsPastDay);
-                    }
-                    else
-                    {
-                        return (int)Math.Ceiling(secondsPastDay);
-                    }
-                }
-            }
         }
     }
 }

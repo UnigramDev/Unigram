@@ -404,6 +404,8 @@
       <DependentUpon>InstantContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ISelectableControl.cs" />
+    <Compile Include="Controls\ITextPresenter.cs" />
+    <Compile Include="Controls\ITrimmableText.cs" />
     <Compile Include="Common\TextSelectionManager.cs" />
     <Compile Include="Controls\Messages\MessageSummary.xaml.cs">
       <DependentUpon>MessageSummary.xaml</DependentUpon>
@@ -966,6 +968,10 @@
     <Compile Include="Controls\FauxRadioButton.cs" />
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
+    <Compile Include="Controls\DirectTextBlock.cs" />
+    <Compile Include="Controls\RelativeDateService.cs" />
+    <Compile Include="Controls\SyntaxPalette.cs" />
+    <Compile Include="Controls\DirectTextBlock.Automation.cs" />
     <Compile Include="Controls\FormattedTextBlock.cs" />
     <Compile Include="Controls\FormattedTextBlock.Selectable.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />

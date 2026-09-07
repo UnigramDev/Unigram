@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -51,7 +51,7 @@ namespace Telegram.Common
         MessageViewModel CreateMessage(long id, MessageContent content);
 
         /// <summary>A link or entity was tapped. In-page anchors are handled before this is called.</summary>
-        void TextEntityClick(FormattedTextBlock sender, TextEntityClickEventArgs args);
+        void TextEntityClick(TextEntityClickEventArgs args);
 
         /// <summary>
         /// A plain url was activated by something that isn't a text entity — a related
@@ -331,7 +331,7 @@ namespace Telegram.Common
                 ? new Thickness(4, 2, 4, 2)
                 : new Thickness(8, 4, 8, 4);
 
-            var columns = table.Cells.Max(row => row.Sum(cell => cell.Colspan));
+            var columns = table.Cells.Max(row => row.Sum(int (cell) => cell.Colspan));
             var rows = table.Cells.Count;
 
             for (int i = 0; i < columns; i++)
@@ -382,15 +382,18 @@ namespace Telegram.Common
 
                     placed.Add(new TableRoot.Cell(cell.Text, column, colspan));
 
+                    // Wrapping is what both engines do unasked, so only the alignment is set
+                    // here - the cell says which, and a table is the one place a page does.
                     var textBlock = CreateTextBlock();
-                    textBlock.TextWrapping = TextWrapping.Wrap;
                     textBlock.TextAlignment = cell.Align switch
                     {
                         PageBlockHorizontalAlignmentCenter => TextAlignment.Center,
                         PageBlockHorizontalAlignmentRight => TextAlignment.Right,
                         _ => TextAlignment.Left
                     };
-                    textBlock.VerticalAlignment = cell.Valign switch
+
+                    var cellElement = textBlock as FrameworkElement;
+                    cellElement.VerticalAlignment = cell.Valign switch
                     {
                         PageBlockVerticalAlignmentMiddle => VerticalAlignment.Center,
                         PageBlockVerticalAlignmentBottom => VerticalAlignment.Bottom,
@@ -420,7 +423,7 @@ namespace Telegram.Common
                             lastColumn == columns - 1 && lastRow == rows - 1 ? 4 : 0,
                             column == 0 && lastRow == rows - 1 ? 4 : 0),
                         Padding = padding,
-                        Child = textBlock
+                        Child = cellElement
                     };
 
                     Grid.SetRow(border, row);
@@ -975,11 +978,14 @@ namespace Telegram.Common
             }
 
             var textBlock = CreateTextBlock();
-            textBlock.AutoFontSize = false;
-            textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
+            var element = textBlock as FrameworkElement;
+
+            SetAutoFontSize(textBlock, false);
+            ApplyStyle(element, InfoCaptionStyle, InfoCaptionDirectStyle);
+
             textBlock.SetText(clientService, new RichTexts(parts));
 
-            return textBlock;
+            return element;
         }
 
         private FrameworkElement ProcessText(IClientService clientService, PageBlock block, bool caption)
@@ -991,11 +997,12 @@ namespace Telegram.Common
             }
 
             var textBlock = CreateTextBlock();
-            textBlock.AutoFontSize = false;
+
+            SetAutoFontSize(textBlock, false);
             textBlock.SetText(clientService, text);
 
             ApplyTextStyle(textBlock, block, caption);
-            return textBlock;
+            return textBlock as FrameworkElement;
         }
 
         // The RichText a block renders as a styled text block. Returns null for blocks
@@ -1026,8 +1033,10 @@ namespace Telegram.Common
         }
 
         // Applies the per-block-type appearance to the text block produced from GetText.
-        private void ApplyTextStyle(FormattedTextBlock textBlock, PageBlock block, bool caption)
+        private void ApplyTextStyle(ITextPresenter textBlock, PageBlock block, bool caption)
         {
+            var element = textBlock as FrameworkElement;
+
             switch (block)
             {
                 case PageBlockTitle:
@@ -1046,31 +1055,31 @@ namespace Telegram.Common
                     textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.XamlAutoFontFamily);
                     break;
                 case PageBlockFooter:
-                    textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
+                    ApplyStyle(element, InfoCaptionStyle, InfoCaptionDirectStyle);
                     break;
                 case PageBlockPhoto:
                 case PageBlockVideo:
-                    textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
+                    ApplyStyle(element, InfoCaptionStyle, InfoCaptionDirectStyle);
                     textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockSlideshow:
                 case PageBlockEmbedded:
                 case PageBlockEmbeddedPost:
-                    textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
+                    ApplyStyle(element, InfoCaptionStyle, InfoCaptionDirectStyle);
                     break;
                 case PageBlockBlockQuote:
-                    textBlock.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                    ApplyStyle(element, PullquoteCreditStyle, PullquoteCreditDirectStyle);
                     textBlock.FontWeight = FontWeights.SemiBold;
-                    textBlock.Margin = new Thickness(0, 0, 0, 0);
+                    element.Margin = new Thickness(0, 0, 0, 0);
                     break;
                 case PageBlockExpandableBlockQuote:
                     // Only the credit is styled: the body is the quote's own text and
                     // reads like body copy, exactly as in a plain block quote.
                     if (caption)
                     {
-                        textBlock.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                        ApplyStyle(element, PullquoteCreditStyle, PullquoteCreditDirectStyle);
                         textBlock.FontWeight = FontWeights.SemiBold;
-                        textBlock.Margin = new Thickness(0, 0, 0, 0);
+                        element.Margin = new Thickness(0, 0, 0, 0);
                     }
                     break;
                 case PageBlockPullQuote:
@@ -1101,12 +1110,33 @@ namespace Telegram.Common
         // Text selection across blocks is handled by _selectionManager (see
         // TextSelectionManager): each FormattedTextBlock implements ISelectableControl,
         // and the manager attaches to LayoutRoot. No per-block wiring is needed here.
-        private FormattedTextBlock CreateTextBlock()
+        // Read once per process, like everywhere else this engine is picked: a page never
+        // mixes the two.
+        private static readonly bool _directText = AppSettings.Diagnostics.DirectTextDebug;
+
+        // Every text in a page, on whichever engine is in use. What the two disagree about is
+        // how they are dressed - a Style targets a type - so ApplyStyle picks between the two
+        // sets, and everything else here is ITextPresenter.
+        private ITextPresenter CreateTextBlock()
         {
+            if (_directText)
+            {
+                var direct = new DirectTextBlock
+                {
+                    IsSelectionEnabled = true
+                };
+
+                direct.ShowHideSkeleton(_context.IsSkeletonVisible);
+                direct.TextEntityClick += Block_TextEntityClick;
+
+                Instrumentation.Register(direct);
+
+                return direct;
+            }
+
             var block = new FormattedTextBlock
             {
                 AutoFontSize = true,
-                IgnoreSpoilers = false,
                 HorizontalTextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
             };
@@ -1128,6 +1158,54 @@ namespace Telegram.Common
             return block;
         }
 
+        // The same style in the flavour of the engine that wears it: one Style targets one
+        // type, so however alike the setters are, the two cannot share a resource. The inline
+        // ones live with the page and the direct ones with the app, so both are asked.
+        private void ApplyStyle(FrameworkElement text, string inline, string direct)
+        {
+            var name = text is DirectTextBlock ? direct : inline;
+
+            if (_context.Resources.TryGetValue(name, out var local) && local is Style resource)
+            {
+                text.Style = resource;
+            }
+            else if (BootStrapper.Current.Resources.TryGetValue(name, out var global) && global is Style style)
+            {
+                text.Style = style;
+            }
+        }
+
+        private const string InfoCaptionStyle = "InfoCaptionFormattedTextBlockStyle";
+        private const string InfoCaptionDirectStyle = "InfoCaptionDirectTextBlockStyle";
+
+        private const string PullquoteCreditStyle = "PullquoteCreditStyle";
+        private const string PullquoteCreditDirectStyle = "PullquoteCreditDirectTextBlockStyle";
+
+        // Only the inline engine has this, and every text in a page turns it off: a page reads
+        // at the sizes it sets, not at the one the chat is set to. The direct engine has no
+        // such switch - a block draws at the size it was given, which is the same thing.
+        private static void SetAutoFontSize(ITextPresenter text, bool value)
+        {
+            if (text is FormattedTextBlock block)
+            {
+                block.AutoFontSize = value;
+            }
+        }
+
+        // A FormattedText rather than a RichText: the one text in a page not written as rich
+        // text is a preformatted block, which is one code entity over the whole of it.
+        private static void SetText(ITextPresenter text, IClientService clientService, FormattedText formatted)
+        {
+            if (text is DirectTextBlock direct)
+            {
+                direct.SetText(clientService, TextStyleRun.GetText(formatted));
+            }
+            else if (text is FormattedTextBlock block)
+            {
+                block.SetText(clientService, formatted);
+            }
+        }
+
         private void Block_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
             if (e.Type is TextEntityTypeTextUrl textUrl && textUrl.Url.StartsWith("#"))
@@ -1141,7 +1219,7 @@ namespace Telegram.Common
             }
             else
             {
-                _context.TextEntityClick(sender as FormattedTextBlock, e);
+                _context.TextEntityClick(e);
             }
         }
 
@@ -1165,7 +1243,7 @@ namespace Telegram.Common
                 return null;
             }
 
-            FormattedTextBlock textBlock = null;
+            ITextPresenter textBlock = null;
             if (!textEmpty && !citeEmpty)
             {
                 textBlock = CreateTextBlock();
@@ -1182,7 +1260,7 @@ namespace Telegram.Common
                 textBlock.SetText(clientService, caption.Credit);
             }
 
-            return textBlock;
+            return textBlock as FrameworkElement;
         }
 
         private FrameworkElement ProcessUnsupported(IClientService clientService)
@@ -1214,7 +1292,8 @@ namespace Telegram.Common
             {
                 var formatted = new FormattedText(plain.Text, new[] { new TextEntity(0, plain.Text.Length, new TextEntityTypePreCode(block.Language)) });
                 var textBlock = CreateTextBlock();
-                textBlock.SetText(clientService, formatted);
+
+                SetText(textBlock, clientService, formatted);
 
                 return new BlockQuote
                 {
@@ -1322,7 +1401,7 @@ namespace Telegram.Common
             var caption = ProcessText(clientService, block, true);
             if (caption != null)
             {
-                caption.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                ApplyStyle(caption, PullquoteCreditStyle, PullquoteCreditDirectStyle);
                 content.Children.Add(caption);
             }
 
@@ -1354,10 +1433,10 @@ namespace Telegram.Common
             FrameworkElement content;
             var expandable = false;
 
-            if (caption == null && text is FormattedTextBlock formatted)
+            if (caption == null && text is ITrimmableText trimmable)
             {
-                formatted.MaxLines = 3;
-                content = formatted;
+                trimmable.MaxLines = 3;
+                content = text;
                 expandable = true;
             }
             else
@@ -1371,7 +1450,7 @@ namespace Telegram.Common
 
                 if (caption != null)
                 {
-                    caption.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                    ApplyStyle(caption, PullquoteCreditStyle, PullquoteCreditDirectStyle);
                     panel.Children.Add(caption);
                 }
 
@@ -1462,12 +1541,26 @@ namespace Telegram.Common
             {
                 element.Content = plain.Text;
             }
+            else if (_directText)
+            {
+                // A Panel inherits nothing, so what the button would have passed down is
+                // handed over instead.
+                var block = new DirectTextBlock
+                {
+                    Foreground = element.Foreground,
+                    IconForeground = element.Foreground
+                };
+
+                Instrumentation.Register(block);
+
+                block.SetText(clientService, button.Text);
+                element.Content = block;
+            }
             else
             {
                 var block = new FormattedTextBlock
                 {
                     AutoFontSize = true,
-                    IgnoreSpoilers = false,
                     HorizontalTextAlignment = TextAlignment.DetectFromContent,
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
                     TextSelection = TextSelectionMode.Disabled,
@@ -1561,7 +1654,7 @@ namespace Telegram.Common
                 Grid.SetColumnSpan(caption, 3);
                 Grid.SetRow(caption, 1);
 
-                caption.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                ApplyStyle(caption, PullquoteCreditStyle, PullquoteCreditDirectStyle);
                 caption.Margin = new Thickness(8, -4, 8, 8);
                 content.Children.Add(caption);
             }
