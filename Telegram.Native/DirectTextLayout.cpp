@@ -8,8 +8,10 @@
 #include "RichMathSurface.h"
 
 #include <cmath>
+#include <mutex>
 
 #include <winrt/Windows.Graphics.DirectX.h>
+#include <winrt/Windows.System.UserProfile.h>
 
 using namespace winrt::Windows::Graphics::DirectX;
 
@@ -36,6 +38,90 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return S_OK;
+    }
+
+    // Which language a Han character belongs to cannot be read off the character: simplified
+    // Chinese, traditional Chinese, Japanese and Korean share code points and not glyphs, so
+    // the font DirectWrite falls back to is chosen from the locale the text is laid out for.
+    // Given none, it falls back in a fixed order - which is what showed a Chinese reader his
+    // messages in a Japanese font.
+    //
+    // XAML does not answer this with the system language. It expands the element's language
+    // into a fallback language LIST (Mui_GetFontFallbackLanguageList) and hands DirectWrite
+    // that list, so the languages the user has added decide. There is no public API for the
+    // list and a text layout takes a single locale name, so the choice is made here instead:
+    // the first of the user's languages that reads the script in front of us, and the one
+    // everything else is laid out for when none of them does. For the reader this came from -
+    // Windows in English, Chinese among his languages - that is en-US for Latin and his own
+    // Chinese for Han.
+    struct UserLocales
+    {
+        std::wstring Primary;
+        std::wstring EastAsian;
+    };
+
+    static bool IsEastAsian(std::wstring_view language)
+    {
+        return language.starts_with(L"zh") || language.starts_with(L"ja") || language.starts_with(L"ko");
+    }
+
+    // Kana, Han and Hangul, and the ideographs above the BMP through the high surrogates that
+    // lead them. Punctuation shared with Latin is deliberately not in here: a locale is worth
+    // choosing for the script the text is in, not for the comma in it.
+    static bool IsEastAsianText(const wchar_t* text, int32_t length)
+    {
+        for (int32_t i = 0; i < length; i++)
+        {
+            const wchar_t c = text[i];
+
+            if ((c >= 0x3040 && c <= 0x9FFF) || (c >= 0xAC00 && c <= 0xD7AF)
+                || (c >= 0xF900 && c <= 0xFAFF) || (c >= 0xD840 && c <= 0xD87F))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    static const UserLocales& Locales()
+    {
+        static UserLocales locales;
+        static std::once_flag once;
+
+        std::call_once(once, []
+            {
+                try
+                {
+                    // The languages the user has added, in the order they prefer them - the
+                    // same list the font fallback list above is built from.
+                    for (const hstring& language : Windows::System::UserProfile::GlobalizationPreferences::Languages())
+                    {
+                        if (locales.Primary.empty())
+                        {
+                            locales.Primary = language;
+                        }
+
+                        if (locales.EastAsian.empty() && IsEastAsian(language))
+                        {
+                            locales.EastAsian = language;
+                        }
+                    }
+                }
+                catch (...)
+                {
+                    // A user with no language preferences at all is not a case worth having a
+                    // path for, but this runs before anything is drawn.
+                }
+
+                if (locales.Primary.empty())
+                {
+                    wchar_t locale[LOCALE_NAME_MAX_LENGTH]{};
+                    locales.Primary = GetUserDefaultLocaleName(locale, LOCALE_NAME_MAX_LENGTH) > 0 ? locale : L"en-us";
+                }
+            });
+
+        return locales;
     }
 
     DirectTextLayout::DirectTextLayout(CompositionGraphicsDevice device, winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> fontCollection, winrt::com_ptr<IDWriteFontCollection> systemCollection, hstring monospaceFamily)
@@ -421,6 +507,13 @@ namespace winrt::Telegram::Native::implementation
         // one. Whatever is missing from the family chosen, DirectWrite falls back for.
         const auto family = m_fontFamily.empty();
 
+        // Per paragraph rather than per layout: a message in one script and a quote in another
+        // is ordinary, and this is where each of them is built.
+        const auto& locales = Locales();
+        const auto& locale = locales.EastAsian.empty() || !IsEastAsianText(m_text.data() + paragraph.Offset, paragraph.Length)
+            ? locales.Primary
+            : locales.EastAsian;
+
         winrt::com_ptr<IDWriteTextFormat> format;
         ReturnIfFailed(result, m_factory->CreateTextFormat(
             family ? L"Segoe UI Emoji" : m_fontFamily.c_str(),
@@ -429,7 +522,7 @@ namespace winrt::Telegram::Native::implementation
             m_italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
             DWRITE_FONT_STRETCH_NORMAL,
             (float)m_fontSize,
-            L"",
+            locale.c_str(),
             format.put()
         ));
 

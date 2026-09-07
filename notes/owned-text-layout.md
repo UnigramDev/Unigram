@@ -209,6 +209,19 @@ What the design rests on, and what running it settled:
   trimming for a line that overflows the box's WIDTH, and it was an open question whether the
   sign also lands on the last line a HEIGHT cut leaves - it does, verified in the app on
   2026-09-07. So there is no truncate-and-lay-out-again path to write, and no offsets to shift;
+- **the locale is not optional, and it is not the system language.** A text format made with an
+  empty locale name lays Han out in a fixed fallback order, so a Chinese reader is shown
+  Japanese glyphs - reported by a tester on 2026-09-07 as "the wrong font family", on a Windows
+  in English with Chinese among his languages. XAML does not read the system language either:
+  `TextFormatting::ResolveLanguageListString` expands the element's language into a fallback
+  language LIST through `Mui_GetFontFallbackLanguageList`, and `TextBlock` hands DirectWrite
+  that list (`TextAnalysis_SetLocaleNameList`, verified in the XAML source), so the languages
+  the user has added are what decide. Neither call is public and a text layout takes one locale
+  name, so `BuildParagraph` chooses per paragraph instead: the first of
+  `GlobalizationPreferences.Languages` that reads the script the paragraph is in, and the first
+  of them for everything else. The same `L""` is still in
+  `Direct2DDevice::CreateTextFormatImpl`, which is what MEASURES text for the inline engine -
+  so CJK there is measured against a font XAML may not be drawing with;
 - **an inline object draws at the origin it is given, whichever way the line reads.**
   `IDWriteInlineObject::Draw` is handed an `isRightToLeft` flag as well, and the layout ignores
   it: a formula in a right-to-left line lands where it should regardless (verified 2026-09-07);
