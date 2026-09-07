@@ -54,7 +54,7 @@ namespace Telegram.Controls
         Fill
     }
 
-    public partial class AnimatedImage : AnimatedImageBase, IPlayerView, IRasterizationScaleAware
+    public partial class AnimatedImage : AnimatedImageBase, IPlayerView
     {
         enum PlayingState
         {
@@ -163,9 +163,16 @@ namespace Telegram.Controls
 
         protected override void OnLoaded()
         {
+            // The scale a change made while this was unloaded, taken before the presentation is
+            // built from it. The arrange pass carries a change from here on, but this element
+            // may not be arranged again before it is drawn.
+            if (XamlRoot != null)
+            {
+                _rasterizationScale = XamlRoot.RasterizationScale;
+            }
+
             Load();
 
-            WindowContext.RegisterRasterizationScale(XamlRoot, this);
             ReplacementColor?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
 
             if (Source != null)
@@ -801,13 +808,24 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        public void RasterizationScaleChanged(double rasterizationScale)
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            if (_rasterizationScale != rasterizationScale && DecodeFrameType == DecodePixelType.Logical)
+            // Where a scale change arrives: it makes the core call RecursiveInvalidateMeasure on
+            // the visual root, so every element is measured and arranged again. The frames were
+            // decoded for the scale, and the ones decoded for the other monitor are the wrong
+            // size - so they are decoded again.
+            //
+            // Not from in here, though. Load reaches Ready through the presenter, and a handler
+            // of that is app code that may change the tree - which a layout pass does not
+            // survive. Posted instead, which is no later than the callback this replaced.
+            if (_templateApplied && DecodeFrameType == DecodePixelType.Logical
+                && XamlRoot != null && _rasterizationScale != XamlRoot.RasterizationScale)
             {
-                _rasterizationScale = rasterizationScale;
-                Load();
+                _rasterizationScale = XamlRoot.RasterizationScale;
+                this.BeginOnUIThread(Load);
             }
+
+            return base.ArrangeOverride(finalSize);
         }
 
         #region ReplacementColor
