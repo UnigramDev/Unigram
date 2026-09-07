@@ -47,6 +47,7 @@ namespace Telegram.ViewModels
         {
             UpdateDeserialization();
             UpdateFileUpdates();
+            UpdateTextLayout();
             UpdateGarbageCollection();
             UpdatePowerSaving();
 
@@ -594,6 +595,84 @@ namespace Telegram.ViewModels
         {
             UpdateManager.ResetCounters();
             UpdateFileUpdates();
+        }
+
+        private string _textDirectSetText;
+        public string TextDirectSetText
+        {
+            get => _textDirectSetText;
+            private set => Set(ref _textDirectSetText, value);
+        }
+
+        private string _textDirectMeasure;
+        public string TextDirectMeasure
+        {
+            get => _textDirectMeasure;
+            private set => Set(ref _textDirectMeasure, value);
+        }
+
+        private string _textDirectArrange;
+        public string TextDirectArrange
+        {
+            get => _textDirectArrange;
+            private set => Set(ref _textDirectArrange, value);
+        }
+
+        private string _textInlineSetText;
+        public string TextInlineSetText
+        {
+            get => _textInlineSetText;
+            private set => Set(ref _textInlineSetText, value);
+        }
+
+        private string _textInlineMeasure;
+        public string TextInlineMeasure
+        {
+            get => _textInlineMeasure;
+            private set => Set(ref _textInlineMeasure, value);
+        }
+
+        private string _textInlineArrange;
+        public string TextInlineArrange
+        {
+            get => _textInlineArrange;
+            private set => Set(ref _textInlineArrange, value);
+        }
+
+        // Only one engine is alive in a process - the flag is read once, so a list never mixes
+        // them - which is why the two sets are not on screen to be read against each other but
+        // against the same chat scrolled again on the other engine.
+        private void UpdateTextLayout()
+        {
+            TextDirectSetText = FormatTextLayout(TextThroughput.DirectSetText);
+            TextDirectMeasure = FormatTextLayout(TextThroughput.DirectMeasure);
+            TextDirectArrange = FormatTextLayout(TextThroughput.DirectArrange);
+
+            TextInlineSetText = FormatTextLayout(TextThroughput.InlineSetText);
+            TextInlineMeasure = FormatTextLayout(TextThroughput.InlineMeasure);
+            TextInlineArrange = FormatTextLayout(TextThroughput.InlineArrange);
+        }
+
+        private static string FormatTextLayout(in TextThroughput.Counter counter)
+        {
+            if (counter.Calls == 0)
+            {
+                return TextThroughput.Enabled ? "nothing yet" : "off";
+            }
+
+            // The peak is the one that decides whether a frame was dropped; the average is what
+            // the engine costs.
+            return string.Format("{0:N0} calls, {1:N1} µs each, {2:N1} µs peak, {3:N2}s total",
+                counter.Calls,
+                counter.Seconds * 1000000d / counter.Calls,
+                counter.PeakSeconds * 1000000d,
+                counter.Seconds);
+        }
+
+        public void ResetTextLayout(object sender, RoutedEventArgs e)
+        {
+            TextThroughput.Reset();
+            UpdateTextLayout();
         }
 
         public void SendLogOld(object sender, RoutedEventArgs e)

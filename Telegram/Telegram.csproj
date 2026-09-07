@@ -222,6 +222,7 @@
     <Compile Include="Common\RichHtml.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Common\TdThroughput.cs" />
+    <Compile Include="Common\TextThroughput.cs" />
     <Compile Include="Common\TextSelectionCoordinator.cs" />
     <Compile Include="Common\ThemeShadowEx.cs" />
     <Compile Include="Common\NormalizingStringBuilder.cs" />

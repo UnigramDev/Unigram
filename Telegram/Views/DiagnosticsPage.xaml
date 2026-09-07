@@ -169,6 +169,30 @@
                                              Click="{x:Bind ViewModel.ResetFileUpdates}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="Text"
+                                          Footer="What a text block costs: the call that gives it its text, and the two layout passes. One engine is alive at a time, so the two halves are the same chat scrolled twice rather than a comparison on screen.">
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.MeasureTextLayout, Mode=TwoWay}"
+                              Content="Measure Text Layout"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:SettingsButton Content="Direct · set text"
+                                             Badge="{x:Bind ViewModel.TextDirectSetText, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Direct · measure"
+                                             Badge="{x:Bind ViewModel.TextDirectMeasure, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Direct · arrange"
+                                             Badge="{x:Bind ViewModel.TextDirectArrange, Mode=OneWay}" />
+
+                    <controls:SettingsButton Content="Inline · set text"
+                                             Badge="{x:Bind ViewModel.TextInlineSetText, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Inline · measure"
+                                             Badge="{x:Bind ViewModel.TextInlineMeasure, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Inline · arrange"
+                                             Badge="{x:Bind ViewModel.TextInlineArrange, Mode=OneWay}" />
+
+                    <controls:SettingsButton Content="Reset"
+                                             Click="{x:Bind ViewModel.ResetTextLayout}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="Garbage collection"
                                           Footer="Every pause suspends every managed thread, so the time here is time the interface did not exist. A blocking collection covering every generation is one the app was asked for rather than one the collector chose - XAML requests those through the reference tracker when its own memory grows.">
                     <controls:SettingsButton Description="Collections">

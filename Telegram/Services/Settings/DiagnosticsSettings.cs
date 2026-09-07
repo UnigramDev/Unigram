@@ -122,6 +122,20 @@ namespace Telegram.Services.Settings
             }
         }
 
+        private bool? _measureTextLayout;
+        public bool MeasureTextLayout
+        {
+            get => _measureTextLayout ??= GetValueOrDefault("MeasureTextLayout", false);
+            set
+            {
+                AddOrUpdateValue(ref _measureTextLayout, "MeasureTextLayout", value);
+
+                // Assigned here as well as at type init so the checkbox takes effect on the
+                // next block rather than the next session.
+                TextThroughput.Enabled = value;
+            }
+        }
+
         private bool? _showIds;
         public bool ShowIds
         {

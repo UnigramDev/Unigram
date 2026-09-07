@@ -1753,6 +1753,13 @@ namespace Telegram.Controls
         /// </summary>
         public void SetText(IClientService clientService, StyledText styled, int first, int last)
         {
+            var started = TextThroughput.Begin();
+            SetTextCore(clientService, styled, first, last);
+            TextThroughput.Record(ref TextThroughput.DirectSetText, started);
+        }
+
+        private void SetTextCore(IClientService clientService, StyledText styled, int first, int last)
+        {
             _clientService = clientService;
 
             UnsubscribeDates();
@@ -2421,6 +2428,15 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            var started = TextThroughput.Begin();
+            var size = MeasureCore(availableSize);
+            TextThroughput.Record(ref TextThroughput.DirectMeasure, started);
+
+            return size;
+        }
+
+        private Size MeasureCore(Size availableSize)
+        {
             // The buttons first, and before the text: the layout has to flow it around a box
             // whose size is whatever the button measures to. Unbounded, because a button is as
             // wide as its label and the line it lands on does not decide that.
@@ -2489,6 +2505,15 @@ namespace Telegram.Controls
         }
 
         protected override Size ArrangeOverride(Size finalSize)
+        {
+            var started = TextThroughput.Begin();
+            var size = ArrangeCore(finalSize);
+            TextThroughput.Record(ref TextThroughput.DirectArrange, started);
+
+            return size;
+        }
+
+        private Size ArrangeCore(Size finalSize)
         {
             _arranged = finalSize;
 

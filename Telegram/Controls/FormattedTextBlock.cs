@@ -454,6 +454,15 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            var started = TextThroughput.Begin();
+            var size = MeasureCore(availableSize);
+            TextThroughput.Record(ref TextThroughput.InlineMeasure, started);
+
+            return size;
+        }
+
+        private Size MeasureCore(Size availableSize)
+        {
             if (_text != null && TextBlock != null && _first == _last && _text.Paragraphs[_first].Type is TextParagraphTypeQuote { IsExpandable: true })
             {
                 var styled = _text.Paragraphs[_first];
@@ -1360,6 +1369,13 @@ namespace Telegram.Controls
         // each child a block's range). Offsets stay absolute (Map/copy index the shared text);
         // the rendered/highlighter space is per-block. Full range == the single-arg overload.
         public void SetText(IClientService clientService, StyledText styled, int rangeStart, int rangeEnd, double fontSize = 0)
+        {
+            var started = TextThroughput.Begin();
+            SetTextCore(clientService, styled, rangeStart, rangeEnd, fontSize);
+            TextThroughput.Record(ref TextThroughput.InlineSetText, started);
+        }
+
+        private void SetTextCore(IClientService clientService, StyledText styled, int rangeStart, int rangeEnd, double fontSize)
         {
 #if NET9_0_OR_GREATER
             // Building now would create handles after the window's release pass has run, and
@@ -3106,6 +3122,15 @@ namespace Telegram.Controls
         }
 
         protected override Size ArrangeOverride(Size finalSize)
+        {
+            var started = TextThroughput.Begin();
+            var size = ArrangeCore(finalSize);
+            TextThroughput.Record(ref TextThroughput.InlineArrange, started);
+
+            return size;
+        }
+
+        private Size ArrangeCore(Size finalSize)
         {
             if (_skeleton == null || _text == null)
             {
