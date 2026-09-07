@@ -1,13 +1,14 @@
 namespace Telegram.Native
 {
+    // A parsed formula, and the size and baseline it laid out to. It draws itself into a
+    // Direct2D target and owns no device state of its own: a caller that wants it as a bitmap
+    // asks Direct2DDevice, which is where the factories are.
     [default_interface]
-    runtimeclass RichMathSurface 
+    runtimeclass RichMathSurface : Windows.Foundation.IClosable
     {
         RichMathSurface(String formula);
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };
         Single Baseline{ get; };
-
-        void RenderSync(Windows.Storage.Streams.IBuffer buffer, Double rasterizationScale, Windows.UI.Color foreground);
     }
 }

@@ -6,29 +6,34 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    winrt::com_ptr<IWICImagingFactory2> RichMathSurface::m_wicFactory = nullptr;
-    std::once_flag RichMathSurface::m_init;
+    std::mutex RichMathSurface::s_parseMutex;
 
     RichMathSurface::RichMathSurface(hstring formula)
     {
+        std::lock_guard guard(s_parseMutex);
+
+        // Idempotent, but it builds the same globals the parse then uses, so it happens under
+        // the same lock.
         tex::LaTeX::initBundled();
-        m_render = tex::LaTeX::parse(
-            formula.c_str(),
-            600 - 0 * 2,
-            18,
-            18 * 0.25f,
-            0xff424242);
+
+        // Throws on an expression it cannot make sense of, which is how the caller learns this
+        // was not a formula: the projection turns it into the exception it catches.
+        //
+        // The colour is the one every draw overrides, and it is laid out at LayoutWidth
+        // whatever the caller has room for - a formula wider than that scrolls, it does not
+        // reflow.
+        m_render.reset(tex::LaTeX::parse(formula.c_str(), LayoutWidth, TextSize, LineSpace, 0xff000000));
+
+        winrt::check_pointer(m_render.get());
 
         m_pixelWidth = m_render->getWidth();
         m_pixelHeight = m_render->getHeight();
         m_baseline = m_render->getBaseline();
     }
 
-    void RichMathSurface::Init()
+    void RichMathSurface::Close()
     {
-        std::call_once(m_init, [] {
-            CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_wicFactory));
-            });
+        m_render.reset();
     }
 
     int32_t RichMathSurface::PixelWidth()
@@ -46,41 +51,21 @@ namespace winrt::Telegram::Native::implementation
         return m_baseline;
     }
 
-    void RichMathSurface::RenderSync(winrt::Windows::Storage::Streams::IBuffer buffer, double rasterizationScale, winrt::Windows::UI::Color foreground)
+    void RichMathSurface::Draw(ID2D1RenderTarget* target, float x, float y, winrt::Windows::UI::Color foreground)
     {
-        Init();
+        if (m_render == nullptr || target == nullptr)
+        {
+            return;
+        }
 
-        int width = m_pixelWidth * rasterizationScale;
-        int height = m_pixelHeight * rasterizationScale;
+        // Composes onto the transform the target is in, and puts it back when it goes out of
+        // scope. Where the formula goes is a translation rather than the x/y the renderer
+        // takes, which are whole pixels: in a line of text the position rarely is one.
+        tex::Graphics2D_dwrite g2(target);
+        g2.translate(x, y);
 
-        winrt::com_ptr<IWICBitmap> wicBitmap;
-        m_wicFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnLoad, wicBitmap.put());
-
-        wicBitmap->SetResolution(96.f /** rasterizationScale*/, 96.f /** rasterizationScale*/);
-
-        UINT test;
-        UINT test2;
-        wicBitmap->GetSize(&test, &test2);
-
-        D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
-            D2D1_RENDER_TARGET_TYPE_DEFAULT,
-            D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-            96.f * rasterizationScale, 96.f * rasterizationScale);
-
-        winrt::com_ptr<ID2D1RenderTarget> renderTarget;
-        tex::DWriteEnv::d2d()->CreateWicBitmapRenderTarget(wicBitmap.get(), props, renderTarget.put());
-
-        renderTarget->BeginDraw();
-        renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White, 0));
-
-        tex::Graphics2D_dwrite g2(renderTarget.get());
-        m_render->setForeground((foreground.A << 24) | (foreground.R << 16) | (foreground.G << 8) | foreground.B);
+        m_render->setForeground(
+            ((uint32_t)foreground.A << 24) | ((uint32_t)foreground.R << 16) | ((uint32_t)foreground.G << 8) | foreground.B);
         m_render->draw(g2, 0, 0);
-
-        renderTarget->EndDraw();
-
-        const UINT stride = width * 4;
-        const UINT size = stride * height;
-        wicBitmap->CopyPixels(nullptr, stride, size, buffer.data());
     }
 }

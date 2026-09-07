@@ -5,12 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Telegram.Common;
 using Telegram.Native;
 using Telegram.Native.Controls;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
@@ -29,8 +31,10 @@ namespace Telegram.Controls
         // the core call RecursiveInvalidateMeasure on the visual root - every element is
         // measured and arranged again - so the layout pass is where it arrives anyway.
         private double _renderedScale;
-        private ElementTheme _renderedTheme;
+        private Color _renderedColor;
         private bool _rendered;
+
+        private long _foregroundChanged;
 
         public RichMathImage()
         {
@@ -42,6 +46,39 @@ namespace Telegram.Controls
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Image;
         }
 
+        protected override void OnLoaded()
+        {
+            // The colour the formula is drawn in is the colour of the text around it, and this
+            // is every way it moves: the property is set to another brush - which is what the
+            // block hosting this does - or a theme switch re-evaluates the theme resource it
+            // holds, which is a property change as well. A colour swapped in place on the
+            // brush itself is not watched, the same call DirectTextBlock makes for its text.
+            this.RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged, ref _foregroundChanged);
+        }
+
+        protected override void OnUnloaded()
+        {
+            this.UnregisterPropertyChangedCallback(ForegroundProperty, ref _foregroundChanged);
+        }
+
+        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            InvalidateTexture();
+        }
+
+        // The bitmap is out of date. Drawn again where it is drawn - the arrange pass - rather
+        // than here, so a colour change and a source change on the way to the same frame
+        // rasterize once.
+        private void InvalidateTexture()
+        {
+            _rendered = false;
+            InvalidateArrange();
+        }
+
+        // The colour of the text around it: a formula is text, and it belongs in whatever the
+        // rest of the line is drawn in.
+        private Color TextColor => Foreground is SolidColorBrush brush ? brush.Color : Colors.Black;
+
         private void Render()
         {
             if (_surface == null || LayoutRoot == null)
@@ -50,9 +87,9 @@ namespace Telegram.Controls
             }
 
             var scale = XamlRoot?.RasterizationScale ?? 1;
-            var theme = ActualTheme;
+            var color = TextColor;
 
-            if (_rendered && _renderedScale == scale && _renderedTheme == theme)
+            if (_rendered && _renderedScale == scale && _renderedColor == color)
             {
                 return;
             }
@@ -67,11 +104,13 @@ namespace Telegram.Controls
 
             _rendered = true;
             _renderedScale = scale;
-            _renderedTheme = theme;
+            _renderedColor = color;
 
             var bitmap = new WriteableBitmap(width, height);
 
-            _surface.RenderSync(bitmap.PixelBuffer, scale, theme == ElementTheme.Light ? Colors.Black : Colors.White);
+            // Drawn by the device rather than by the formula: the factories are there, and one
+            // of them makes the bitmap this ends up in.
+            Direct2D.Current.RenderMath(_surface, bitmap.PixelBuffer, scale, color);
 
             bitmap.Invalidate();
             LayoutRoot.Source = bitmap;
@@ -98,8 +137,9 @@ namespace Telegram.Controls
             }
 
             // Here rather than when the source is set or the element loads: this is the point
-            // at which the formula is about to be seen, and a recycled element that comes back
-            // unchanged draws nothing again.
+            // at which the formula is about to be seen, it runs once for however many of the
+            // three inputs moved, and a recycled element that comes back unchanged draws
+            // nothing again.
             Render();
 
             LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
@@ -132,6 +172,21 @@ namespace Telegram.Controls
 
         private void OnSourceChanged(string newValue)
         {
+            // The parsed formula is a box tree the size of the expression, and this element is
+            // recycled by setting the source to nothing - so the previous one goes now rather
+            // than whenever the projection is collected.
+            _surface?.Dispose();
+            _surface = null;
+
+            _rendered = false;
+            LayoutRoot?.ClearValue(Image.SourceProperty);
+
+            if (string.IsNullOrEmpty(newValue))
+            {
+                InvalidateMeasure();
+                return;
+            }
+
             try
             {
                 _surface = new RichMathSurface(newValue);
@@ -140,10 +195,8 @@ namespace Telegram.Controls
             {
                 // An expression this cannot parse: IsValid says so, and the caller renders what
                 // was written as text instead.
-                _surface = null;
             }
 
-            _rendered = false;
             InvalidateMeasure();
         }
 

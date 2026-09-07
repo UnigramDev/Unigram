@@ -1,5 +1,6 @@
 import "SurfaceImage.idl";
 import "TextFormat.idl";
+import "RichMathSurface.idl";
 import "ChatBackgroundPattern.idl";
 import "FreeformGradientSurface.idl";
 import "NativeUtils.idl";
@@ -50,6 +51,7 @@ namespace Telegram.Native
         void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
 
         TextFormat CreateTextFormat2(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
+        void RenderMath(RichMathSurface math, Windows.Storage.Streams.IBuffer buffer, Double rasterizationScale, Windows.UI.Color foreground);
 
         Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
         Windows.Foundation.Rect[] LineMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);

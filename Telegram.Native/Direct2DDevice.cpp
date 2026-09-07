@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Direct2DDevice.h"
 #if __has_include("Direct2DDevice.g.cpp")
 #include "Direct2DDevice.g.cpp"
@@ -7,6 +7,7 @@
 #include "SVG/nanosvg.h"
 #include "StringUtils.h"
 #include "Helpers\COMHelper.h"
+#include "RichMathSurface.h"
 #include "Helpers\BlurHelper.h"
 
 #include <zlib.h>
@@ -1217,6 +1218,71 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<TextFormat> textFormat;
         CreateTextFormatImpl(text, entities, fontSize, width, textFormat);
         return textFormat.as<winrt::Telegram::Native::TextFormat>();
+    }
+
+    // A formula rasterized into the caller's buffer, which must hold PixelWidth by PixelHeight
+    // scaled premultiplied BGRA pixels. For the caller that hosts a formula as an image rather
+    // than drawing it into a surface of its own - a text layout with one in a line draws it
+    // straight into the context it already has open, and none of this happens.
+    //
+    // Here rather than on the formula because this is where the factories are, and a formula
+    // outlives any one of them: it is parsed once and drawn for as long as it is on screen.
+    void Direct2DDevice::RenderMath(winrt::Telegram::Native::RichMathSurface math, IBuffer buffer, double rasterizationScale, Windows::UI::Color foreground)
+    {
+        if (math == nullptr || buffer == nullptr || rasterizationScale <= 0)
+        {
+            return;
+        }
+
+        auto self = winrt::get_self<RichMathSurface>(math);
+
+        const uint32_t width = (uint32_t)(self->PixelWidth() * rasterizationScale);
+        const uint32_t height = (uint32_t)(self->PixelHeight() * rasterizationScale);
+        const uint32_t stride = width * 4;
+        const uint64_t size = (uint64_t)stride * height;
+
+        // The caller sized its buffer from the same two numbers, but this is what writes into
+        // it: a disagreement is a corrupt heap, not a wrong picture.
+        if (width == 0 || height == 0 || buffer.Capacity() < size)
+        {
+            return;
+        }
+
+        winrt::com_ptr<IWICBitmap> bitmap;
+
+        if (FAILED(m_wicFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnLoad, bitmap.put())))
+        {
+            return;
+        }
+
+        // Rasterized at the scale through the target's DPI rather than by scaling the formula:
+        // the glyphs are laid out for the pixel grid they land on, which is the whole reason
+        // this is drawn again on a scale change instead of the bitmap being stretched.
+        const auto props = D2D1::RenderTargetProperties(
+            D2D1_RENDER_TARGET_TYPE_DEFAULT,
+            D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+            96.f * (float)rasterizationScale, 96.f * (float)rasterizationScale);
+
+        winrt::com_ptr<ID2D1RenderTarget> target;
+
+        if (FAILED(m_d2dFactory->CreateWicBitmapRenderTarget(bitmap.get(), props, target.put())))
+        {
+            return;
+        }
+
+        target->BeginDraw();
+        target->Clear(D2D1::ColorF(0, 0, 0, 0));
+
+        self->Draw(target.get(), 0, 0, foreground);
+
+        // Half a formula, or none of it: the buffer is left as the caller made it rather than
+        // filled with what the target happens to hold.
+        if (FAILED(target->EndDraw()))
+        {
+            return;
+        }
+
+        bitmap->CopyPixels(nullptr, stride, (UINT)size, buffer.data());
     }
 
     HRESULT Direct2DDevice::CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat2)

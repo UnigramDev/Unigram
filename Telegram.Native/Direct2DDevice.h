@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Direct2DDevice.g.h"
 
@@ -387,6 +387,7 @@ namespace winrt::Telegram::Native::implementation
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
 
         winrt::Telegram::Native::TextFormat CreateTextFormat2(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
+        void RenderMath(winrt::Telegram::Native::RichMathSurface math, IBuffer buffer, double rasterizationScale, Windows::UI::Color foreground);
 
         float2 ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width);
         com_array<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl);

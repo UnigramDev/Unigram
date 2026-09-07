@@ -11,38 +11,27 @@
 
 #include <mutex>
 
-using namespace std;
-using namespace tex;
-
 namespace tex
 {
 
     /**
-     * Process-wide DirectWrite/Direct2D singletons.
+     * The DirectWrite factory the fonts are made from. Safe to call from any thread,
+     * and there is nothing to inject: DWRITE_FACTORY_TYPE_SHARED hands out the same
+     * object to everyone in the process, so this is the host's factory as well.
      *
-     * Thread safety: all methods are safe to call from any thread. The returned
-     * IDWriteFactory and ID2D1Factory are themselves free-threaded (DWrite's
-     * shared factory and a D2D multi-threaded factory respectively).
-     *
-     * If the host application already owns factories, call setFactories() once at
-     * startup before any Font_dwrite / Graphics2D_dwrite is constructed.
+     * There is deliberately no Direct2D factory here. A stroke style belongs to the
+     * factory that made it and cannot be used by a target from another, and there is
+     * more than one in this app - one per Direct2DDevice, which is one per view. What
+     * to draw with therefore comes from the target being drawn into, not from here.
      */
     class DWriteEnv
     {
     public:
         static IDWriteFactory* dwrite();
-        static ID2D1Factory* d2d();
-
-        // Inject existing factories. Must be called before first use of dwrite()/d2d().
-        // The D2D factory should be multi-threaded if you want concurrent rendering.
-        static void setFactories(IDWriteFactory* dw, ID2D1Factory* d2);
 
     private:
-        static void ensureInitialized();
-
         static std::once_flag _initFlag;
         static winrt::com_ptr<IDWriteFactory> _dwrite;
-        static winrt::com_ptr<ID2D1Factory> _d2d;
     };
 
     /**************************************************************************************************/
@@ -54,7 +43,7 @@ namespace tex
     {
     private:
         float _size;
-        wstring _familyName;
+        std::wstring _familyName;
         DWRITE_FONT_WEIGHT _weight;
         DWRITE_FONT_STYLE _slant;
 
@@ -68,8 +57,8 @@ namespace tex
         winrt::com_ptr<IDWriteTextFormat> _textFormat;
         winrt::com_ptr<IDWriteFontFace> _fontFace;  // for metrics
 
-        Font_dwrite(const string& name, int style, float size);
-        Font_dwrite(const string& file, float size);
+        Font_dwrite(const std::string& name, int style, float size);
+        Font_dwrite(const std::string& file, float size);
 
         virtual float getSize() const override;
         virtual sptr<Font> deriveFont(int style) const override;
@@ -98,11 +87,11 @@ namespace tex
     {
     private:
         sptr<Font_dwrite> _font;
-        wstring _txt;
+        std::wstring _txt;
         winrt::com_ptr<IDWriteTextLayout> _layout;
 
     public:
-        TextLayout_dwrite(const wstring& src, const sptr<Font_dwrite>& font);
+        TextLayout_dwrite(const std::wstring& src, const sptr<Font_dwrite>& font);
 
         virtual void getBounds(Rect& bounds) override;
         virtual void draw(Graphics2D& g2, float x, float y) override;
@@ -115,8 +104,14 @@ namespace tex
     /**
      * NOT thread-safe by itself. Each Graphics2D_dwrite instance must be used from
      * a single thread at a time (the same contract as ID2D1RenderTarget). Multiple
-     * instances on different threads are fine as long as the D2D factory is
-     * multi-threaded (which DWriteEnv ensures by default).
+     * instances on different threads are fine as long as the factory behind the
+     * targets is multi-threaded.
+     *
+     * The render target is borrowed rather than owned, and everything this needs comes
+     * from it: the factory its resources are made by, the transform its own compose
+     * onto, and the antialiasing and transform it is put back into when this goes out
+     * of scope. A target that draws more than this -- the context of a composition
+     * surface, drawing a formula in a line of text -- is left as it was found.
      */
     class Graphics2D_dwrite : public Graphics2D
     {
@@ -130,11 +125,20 @@ namespace tex
         // Borrowed; not released by us.
         ID2D1RenderTarget* _rt;
 
+        // The target's own, so that a stroke style is made by the factory that will draw it.
+        winrt::com_ptr<ID2D1Factory> _factory;
+
         winrt::com_ptr<ID2D1SolidColorBrush> _brush;
         winrt::com_ptr<ID2D1StrokeStyle> _strokeStyle;
 
         D2D1::Matrix3x2F _xform;
         float _sx, _sy;
+
+        // What the target was drawing with when this took it over: the formula's own
+        // transform composes onto it, and it is what the target is put back into.
+        D2D1::Matrix3x2F _base;
+        D2D1_ANTIALIAS_MODE _savedAntialias;
+        D2D1_TEXT_ANTIALIAS_MODE _savedTextAntialias;
 
         void rebuildStrokeStyle();
         void applyTransform();
@@ -163,7 +167,7 @@ namespace tex
         virtual float sy() const override;
 
         virtual void drawChar(wchar_t c, float x, float y) override;
-        virtual void drawText(const wstring& c, float x, float y) override;
+        virtual void drawText(const std::wstring& c, float x, float y) override;
         virtual void drawLine(float x1, float y1, float x2, float y2) override;
         virtual void drawRect(float x, float y, float w, float h) override;
         virtual void fillRect(float x, float y, float w, float h) override;

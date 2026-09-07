@@ -122,49 +122,17 @@ namespace
 
 std::once_flag DWriteEnv::_initFlag;
 com_ptr<IDWriteFactory> DWriteEnv::_dwrite;
-com_ptr<ID2D1Factory> DWriteEnv::_d2d;
-
-void DWriteEnv::ensureInitialized()
-{
-    std::call_once(_initFlag, [] {
-        if (!_dwrite)
-        {
-            check_hresult(DWriteCreateFactory(
-                DWRITE_FACTORY_TYPE_SHARED,
-                __uuidof(IDWriteFactory),
-                reinterpret_cast<IUnknown**>(_dwrite.put())));
-        }
-        if (!_d2d)
-        {
-            // Multi-threaded so D2D itself serializes access to resources made from it.
-            // This lets multiple Graphics2D_dwrite instances render on different threads
-            // safely, at the cost of a per-call lock inside D2D.
-            check_hresult(D2D1CreateFactory(
-                D2D1_FACTORY_TYPE_MULTI_THREADED,
-                _d2d.put()));
-        }
-        });
-}
 
 IDWriteFactory* DWriteEnv::dwrite()
 {
-    ensureInitialized();
+    std::call_once(_initFlag, [] {
+        check_hresult(DWriteCreateFactory(
+            DWRITE_FACTORY_TYPE_SHARED,
+            __uuidof(IDWriteFactory),
+            reinterpret_cast<IUnknown**>(_dwrite.put())));
+        });
+
     return _dwrite.get();
-}
-
-ID2D1Factory* DWriteEnv::d2d()
-{
-    ensureInitialized();
-    return _d2d.get();
-}
-
-void DWriteEnv::setFactories(IDWriteFactory* dw, ID2D1Factory* d2)
-{
-    // Must be called before first use. We seed the com_ptrs and trip the once_flag
-    // by calling ensureInitialized, which then finds the slots already populated.
-    if (dw) _dwrite.copy_from(dw);
-    if (d2) _d2d.copy_from(d2);
-    ensureInitialized();
 }
 
 /**************************************************************************************************/
@@ -521,6 +489,15 @@ const Font* Graphics2D_dwrite::defaultFont()
 Graphics2D_dwrite::Graphics2D_dwrite(ID2D1RenderTarget* rt)
     : _color(black), _font(defaultFont()), _rt(rt), _sx(1.f), _sy(1.f)
 {
+    _rt->GetFactory(_factory.put());
+
+    // What the target was already drawing with is the base everything here composes onto: a
+    // caller that is drawing scaled and offset - a text layout into a composition surface -
+    // has put the formula's place in the line into that transform.
+    _rt->GetTransform(&_base);
+    _savedAntialias = _rt->GetAntialiasMode();
+    _savedTextAntialias = _rt->GetTextAntialiasMode();
+
     _xform = D2D1::Matrix3x2F::Identity();
     applyTransform();
 
@@ -531,11 +508,16 @@ Graphics2D_dwrite::Graphics2D_dwrite(ID2D1RenderTarget* rt)
     rebuildStrokeStyle();
 }
 
-Graphics2D_dwrite::~Graphics2D_dwrite() = default;
+Graphics2D_dwrite::~Graphics2D_dwrite()
+{
+    _rt->SetTransform(_base);
+    _rt->SetAntialiasMode(_savedAntialias);
+    _rt->SetTextAntialiasMode(_savedTextAntialias);
+}
 
 void Graphics2D_dwrite::applyTransform()
 {
-    _rt->SetTransform(_xform);
+    _rt->SetTransform(_xform * _base);
 }
 
 void Graphics2D_dwrite::rebuildStrokeStyle()
@@ -562,7 +544,7 @@ void Graphics2D_dwrite::rebuildStrokeStyle()
         D2D1_DASH_STYLE_SOLID, 0.f);
 
     _strokeStyle = nullptr;
-    check_hresult(DWriteEnv::d2d()->CreateStrokeStyle(props, nullptr, 0, _strokeStyle.put()));
+    check_hresult(_factory->CreateStrokeStyle(props, nullptr, 0, _strokeStyle.put()));
 }
 
 void Graphics2D_dwrite::setColor(color color)
