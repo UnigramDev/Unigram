@@ -9,30 +9,24 @@ ships. `Win32` builds without `HAS_TLOTTIE` and uses rlottie unconditionally.
 
 ## Regenerating
 
-Needs a nightly toolchain and the `rust-src` component: the `*-uwp-windows-msvc`
-targets are tier 3, so there is no prebuilt `std` and it has to be compiled from
-source with `-Z build-std`.
+Built from the `main` branch, currently `758c7cb`.
 
-The plain `x86_64-pc-windows-msvc` target does **not** work here — its `std`
-pulls `NtWriteFile` and `RtlNtStatusToDosError` in through
-`std::sys::stdio::windows::write`, which do not resolve against `WindowsApp.lib`
-and fail the app-container link.
+The build is `no_std`, and that is what lets it use the tier-1
+`*-pc-windows-msvc` targets on the stable toolchain: `std` reaches
+`NtWriteFile` and `RtlNtStatusToDosError` through
+`std::sys::stdio::windows::write`, neither of which resolves against
+`WindowsApp.lib`, so a `std` build fails the app-container link. Without `std`
+there is nothing to resolve, and no nightly toolchain or `-Z build-std` is
+needed.
 
 ```bash
-rustup toolchain install nightly --profile minimal -c rust-src
+rustup target add aarch64-pc-windows-msvc
 
-# x64
-cargo +nightly rustc -Z build-std=std,panic_abort \
-  --target x86_64-uwp-windows-msvc --release --features c-api \
-  --lib --crate-type staticlib
-
-# ARM64
-cargo +nightly rustc -Z build-std=std,panic_abort \
-  --target aarch64-uwp-windows-msvc --release --features c-api \
-  --lib --crate-type staticlib
+cargo rustc --profile release-nostd --no-default-features --features cpu,c-api,no-std --target x86_64-pc-windows-msvc --lib --crate-type staticlib
+cargo rustc --profile release-nostd --no-default-features --features cpu,c-api,no-std --target aarch64-pc-windows-msvc --lib --crate-type staticlib
 ```
 
-Copy `target/<triple>/release/tlottie.lib` to `lib/<x64|ARM64>/` and
+Copy `target/<triple>/release-nostd/tlottie.lib` to `lib/<x64|ARM64>/` and
 `include/tlottie.h` from the tlottie checkout.
 
 ## Notes

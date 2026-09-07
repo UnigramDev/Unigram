@@ -1514,8 +1514,7 @@
     tlottie is a prebuilt Rust static library and exists only for the two platforms that ship.
     Item definitions are cumulative, so this appends to whichever configuration is active, and any
     other platform simply never sees HAS_TLOTTIE and compiles the rlottie-only path.
-    Regenerate the .lib with the command in Libraries\tlottie\README.md; it needs a
-    nightly toolchain plus rust-src, because the UWP targets are tier 3 and have no prebuilt std.
+    Regenerate the .lib with the command in Libraries\tlottie\README.md.
   -->
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64' Or '$(Platform)'=='ARM64'">
     <ClCompile>
