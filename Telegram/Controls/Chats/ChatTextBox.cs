@@ -1274,41 +1274,6 @@ namespace Telegram.Controls.Chats
         }
 
         #endregion
-
-        #region Reply
-
-        public object Reply
-        {
-            get => GetValue(ReplyProperty);
-            set => SetValue(ReplyProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for Reply.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ReplyProperty =
-            DependencyProperty.Register("Reply", typeof(object), typeof(ChatTextBox), new PropertyMetadata(null, OnReplyChanged));
-
-        private static void OnReplyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ChatTextBox)d).OnReplyChanged(e.NewValue, e.OldValue);
-        }
-
-        private async void OnReplyChanged(object newValue, object oldValue)
-        {
-            if (newValue != null)
-            {
-                await Task.Delay(200);
-
-                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
-
-                Focus(FocusState.Keyboard);
-            }
-        }
-
-        #endregion
     }
 
     public interface IAutocompleteCollection : ICollection, IEnumerable<object>

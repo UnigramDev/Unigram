@@ -295,8 +295,14 @@ namespace Telegram.Views
 
         private void FocusText(FocusState state)
         {
-            if (state == FocusState.Keyboard || state == FocusState.Programmatic)
+            if (XamlRoot != null && state == FocusState.Keyboard || state == FocusState.Programmatic)
             {
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
                 TextField.Focus(state);
             }
         }
@@ -6424,7 +6430,7 @@ namespace Telegram.Views
                 ShowHideComposerHeader(true);
                 ComposerHeaderReference.UpdateComposerHeader(header);
 
-                TextField.Reply = header;
+                _focusState.Set(FocusState.Keyboard);
 
                 var editing = header.Editing?.Message;
                 if (editing != null)
