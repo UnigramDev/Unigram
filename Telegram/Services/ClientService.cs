@@ -14,7 +14,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;

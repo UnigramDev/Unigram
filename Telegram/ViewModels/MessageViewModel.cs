@@ -317,7 +317,7 @@ namespace Telegram.ViewModels
                     if (Chat?.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
                         var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                        return supergroup != null && supergroup.IsPublic() && Content is not MessageContact and not MessageLocation;
+                        return supergroup != null && supergroup.IsPublic() && Content is not MessageContact and not MessageLocation and not MessageLiveLocation;
                     }
                 }
             }

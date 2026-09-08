@@ -2196,7 +2196,7 @@ namespace Telegram.Td.Api
                 case MessageStakeDice stakeDice:
                 case MessageSticker sticker:
                 case MessageAnimatedEmoji animatedEmoji:
-                    // Stickers are downloaded by AnimatedImage
+                // Stickers are downloaded by AnimatedImage
                 case MessageVideo:
                 case MessageSponsored:
                     // Videos are streamed

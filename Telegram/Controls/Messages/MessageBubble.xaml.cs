@@ -18,7 +18,6 @@ using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
-using Telegram.Native;
 using Telegram.Native.Composition;
 using Telegram.Native.Controls;
 using Telegram.Navigation;

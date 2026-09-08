@@ -11,7 +11,6 @@ using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.System;
 
 namespace Telegram.Collections
 {

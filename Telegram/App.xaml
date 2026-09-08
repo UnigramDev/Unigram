@@ -220,12 +220,6 @@
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
-            <Style TargetType="PivotItem">
-                <Setter Property="Margin"
-                        Value="0" />
-            </Style>
-
-            <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <!--  What the instant view page renderer puts on the text that is not the body: a
                   caption, a credit, a footer. Here rather than beside the implicit
                   DirectTextBlock style in CommonStyles, because the renderer looks these up by
@@ -259,6 +253,12 @@
                         Value="{ThemeResource MessageHeaderBorderBrush}" />
             </Style>
 
+            <Style TargetType="PivotItem">
+                <Setter Property="Margin"
+                        Value="0" />
+            </Style>
+
+            <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <FontFamily x:Key="SpoilerFontFamily">ms-appx:///Assets/Emoji/spoiler.ttf#Segoe UI Emoji</FontFamily>
 

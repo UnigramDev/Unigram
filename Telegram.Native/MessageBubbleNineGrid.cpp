@@ -38,6 +38,10 @@ namespace winrt::Telegram::Native::implementation
 
         Invalidate(m_rasterizationScale);
 
+        // If we will ever want to use this in XAML:
+        //m_mask.SetInsets(s_insets * scale);
+        //m_mask.SetInsetScales(1.f / scale);
+
         // Non-owning raw 'this' delegates would dangle if a callback (especially
         // RenderingDeviceReplaced, raised on the app-shared CompositionGraphicsDevice during
         // device-lost recovery) fires around/after teardown. get_weak() makes them no-op once
