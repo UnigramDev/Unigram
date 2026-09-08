@@ -7,7 +7,6 @@
 #include <winrt/Windows.Storage.h>
 
 #include "Cache/FrameCacheService.h"
-#include "LottieFrameProducer.h"
 #include "LottieStringUtils.h"
 #include "TlottieFrameProducer.h"
 
@@ -19,7 +18,6 @@ namespace winrt::Telegram::Native::implementation
         constexpr int32_t MaxFrameRate = 120;
         constexpr uint32_t MaxFrameCount = 4096;
 
-        std::atomic<bool> s_useTLottie{ false };
 
         long ColorHash(const Windows::Foundation::Collections::IMapView<int32_t, int32_t>& replacement,
             std::vector<std::pair<uint32_t, uint32_t>>& colors)
@@ -40,9 +38,7 @@ namespace winrt::Telegram::Native::implementation
             return hash;
         }
 
-        // Everything that changes the pixels, and nothing that does not. The renderer is absent on
-        // purpose: rlottie and tlottie produce identical premultiplied BGRA, so they share a file
-        // and toggling never forces a re-render.
+        // Everything that changes the pixels, and nothing that does not.
         std::wstring BuildCachePath(const std::wstring& base, long hash, Telegram::Native::FitzModifier modifier, int32_t width, int32_t height)
         {
             auto result = base;
@@ -64,20 +60,6 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    bool LottieAnimation::UseTLottie() noexcept
-    {
-#ifdef HAS_TLOTTIE
-        return s_useTLottie.load(std::memory_order_relaxed);
-#else
-        return false;
-#endif
-    }
-
-    void LottieAnimation::UseTLottie(bool value) noexcept
-    {
-        s_useTLottie.store(value, std::memory_order_relaxed);
-    }
-
     Telegram::Native::LottieAnimation LottieAnimation::LoadFromFile(hstring filePath, int32_t pixelWidth, int32_t pixelHeight, bool precache,
         Windows::Foundation::Collections::IMapView<int32_t, int32_t> colorReplacement, Telegram::Native::FitzModifier modifier)
     {
@@ -91,7 +73,6 @@ namespace winrt::Telegram::Native::implementation
         info->m_pixelWidth = pixelWidth;
         info->m_pixelHeight = pixelHeight;
         info->m_modifier = modifier;
-        info->m_useTLottie = UseTLottie();
         info->m_precache = precache;
 
         auto hash = ColorHash(colorReplacement, info->m_colors);
@@ -118,7 +99,6 @@ namespace winrt::Telegram::Native::implementation
         info->m_pixelWidth = pixelWidth;
         info->m_pixelHeight = pixelHeight;
         info->m_modifier = modifier;
-        info->m_useTLottie = UseTLottie();
         info->m_precache = precache && !cacheKey.empty();
 
         auto hash = ColorHash(colorReplacement, info->m_colors);
@@ -168,49 +148,29 @@ namespace winrt::Telegram::Native::implementation
                 return false;
             }
 
-            std::shared_ptr<Cache::IFrameProducer> producer;
+            std::vector<TLottieColorReplacement> replacements;
+            replacements.reserve(m_colors.size());
 
-#ifdef HAS_TLOTTIE
-            if (m_useTLottie)
+            for (auto const& pair : m_colors)
             {
-                std::vector<TLottieColorReplacement> replacements;
-                replacements.reserve(m_colors.size());
-
-                for (auto const& pair : m_colors)
-                {
-                    replacements.push_back({ pair.first, pair.second });
-                }
-
-                // TLOTTIE_CHANNEL_BGRA, always. The default is RGBA, and the two renderers share a
-                // cache file - see TlottieFrameProducer.
-                auto instance = tlottie_new_with_options(
-                    reinterpret_cast<const uint8_t*>(m_data.data()), m_data.size(),
-                    static_cast<uint32_t>(m_modifier),
-                    nullptr, 0,
-                    replacements.empty() ? nullptr : replacements.data(), replacements.size(),
-                    TLOTTIE_CHANNEL_BGRA);
-
-                if (instance == nullptr)
-                {
-                    return false;
-                }
-
-                producer = std::make_shared<TlottieFrameProducer>(instance, m_pixelWidth, m_pixelHeight);
+                replacements.push_back({ pair.first, pair.second });
             }
-            else
-#endif
+
+            // TLOTTIE_CHANNEL_BGRA, always. The default is RGBA, and the cache file holds
+            // whatever was rendered into it - see TlottieFrameProducer.
+            auto instance = tlottie_new_with_options(
+                reinterpret_cast<const uint8_t*>(m_data.data()), m_data.size(),
+                static_cast<uint32_t>(m_modifier),
+                nullptr, 0,
+                replacements.empty() ? nullptr : replacements.data(), replacements.size(),
+                TLOTTIE_CHANNEL_BGRA);
+
+            if (instance == nullptr)
             {
-                auto animation = rlottie::Animation::loadFromData(
-                    m_data, std::string(), std::string(), false, m_colors,
-                    static_cast<rlottie::FitzModifier>(m_modifier));
-
-                if (animation == nullptr)
-                {
-                    return false;
-                }
-
-                producer = std::make_shared<LottieFrameProducer>(std::move(animation), m_pixelWidth, m_pixelHeight);
+                return false;
             }
+
+            auto producer = std::make_shared<TlottieFrameProducer>(instance, m_pixelWidth, m_pixelHeight);
 
             auto frames = producer->FrameCount();
             if (frames == 0 || frames > MaxFrameCount || producer->FrameRate() > MaxFrameRate)

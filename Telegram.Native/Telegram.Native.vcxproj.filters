@@ -1527,7 +1527,6 @@
       <Filter>Cache</Filter>
     </ClInclude>
     <ClInclude Include="LottieAnimation.h" />
-    <ClInclude Include="LottieFrameProducer.h" />
     <ClInclude Include="LottieStringUtils.h" />
     <ClInclude Include="TlottieFrameProducer.h" />
     <ClInclude Include="VideoFrameProducer.h" />

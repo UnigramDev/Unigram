@@ -659,22 +659,21 @@ UI/tgcalls split as 1:1. Leaving a call once deadlocked TDLib's dispatch thread 
 threads; see the group-call teardown work in `notes/`.
 
 ## Libraries — submodules, vendored source and prebuilt binaries — Libraries/
-<!-- map: verified=2eba64a16 paths=Libraries -->
+<!-- map: verified=ea8423673 paths=Libraries -->
 **Submodules** (per `.gitmodules`): `tdlib`, `tgcalls`, `libwebp`, `libprisma` (syntax highlighting behind
 Telegram.Native/Highlight), `MicroTeX` (`heads/tdesktop` branch, behind `RichMathSurface`), `flatbuffers`,
-`libutf`, `CoreWindowCustomDPI`, `rlottie` and `gzip-hpp` (both pinned to the commits the retired
-RLottie.UWP repo used; built in-tree by `Libraries/rlottie-build/rlottie.vcxproj`, which lives outside the
-submodule so nothing modifies it). **Vendored source:** `libtextclassifier`, `tlottie` (a prebuilt Rust
-staticlib plus its C ABI header — see `Libraries/tlottie/README.md` to rebuild it). **Prebuilt binaries
+`libutf`, `CoreWindowCustomDPI` and `gzip-hpp` (pinned to the commit the retired RLottie.UWP repo used;
+it decompresses `.tgs`). **Vendored source:** `libtextclassifier`, `tlottie` (a prebuilt Rust
+staticlib plus its C ABI header — see `Libraries/tlottie/README.md` to rebuild it; it is the only
+Lottie renderer, rlottie was removed with its submodule and in-tree vcxproj). **Prebuilt binaries
 checked in or downloaded:** `wallet-engine`, `tdjson` (local CMake tree providing `td_api.tl`),
 `ton-walletkit`, `unigram-iv-editor` (the JS instant-view host). **vcpkg overlay ports:**
 `Libraries/vcpkg-ports/{ffmpeg,libvlc,webrtc}` — ffmpeg, libVLC and webrtc come in as vcpkg packages with
 local patches.
 **Traps:** the ffmpeg portfile is hand-patched to disable most codecs and enable only D3D11VA/DXVA2
 hwaccel plus a narrow allowlist; building against upstream vcpkg ffmpeg changes decoder availability.
-`rlottie.vcxproj` must be listed in every solution that builds it — a `ProjectReference` alone resolves to
-Win32 — and must never be linked by an explicit path, because the output directory differs between a
-solution build and a direct one.
+`tlottie.lib` is linked by an explicit per-platform path, which only works because the projects
+configure x64 and ARM64 alone; a new platform needs a staticlib built for it before it will link.
 
 ---
 

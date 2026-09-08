@@ -423,7 +423,6 @@ namespace Telegram.Common
             "Microsoft.Web.WebView2.Core",
             "ogg",
             "opus",
-            "RLottie",
             "swresample-5",
             "swscale-8",
             "tdjson",

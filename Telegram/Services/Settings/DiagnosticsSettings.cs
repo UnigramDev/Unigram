@@ -257,13 +257,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _connectedAnimationsDebug, "ConnectedAnimationsDebug", value);
         }
 
-        private bool? _useTlottieRenderer;
-        public bool UseTLottieRenderer
-        {
-            get => _useTlottieRenderer ??= GetValueOrDefault("UseTLottieRenderer", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _useTlottieRenderer, "UseTLottieRenderer", value);
-        }
-
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

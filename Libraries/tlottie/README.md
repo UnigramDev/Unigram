@@ -1,11 +1,11 @@
 # tlottie (prebuilt)
 
 Prebuilt static libraries for [tlottie](https://github.com/dkaraush/tlottie),
-Telegram's Rust replacement for rlottie. `LottieAnimation` can render with
-either renderer; see `LottieAnimation.UseTLottie`.
+Telegram's Rust replacement for rlottie. It is the only Lottie renderer the app
+has; `LottieAnimation` drives it.
 
 Only `x64` and `ARM64` are provided, because those are the platforms Unigram
-ships. `Win32` builds without `HAS_TLOTTIE` and uses rlottie unconditionally.
+ships and the only ones the projects configure.
 
 ## Regenerating
 
@@ -32,10 +32,8 @@ Copy `target/<triple>/release-nostd/tlottie.lib` to `lib/<x64|ARM64>/` and
 ## Notes
 
 - The renderer is asked for **BGRA** at parse time (`TLOTTIE_CHANNEL_BGRA`), so
-  its output byte order matches what rlottie produces and what the
-  `B8G8R8A8_UNORM` surfaces expect. No per-frame conversion.
-- Both renderers write and read **the same** `.tgfc` cache file, shared with
-  video through `Telegram.Native/Cache`. That is only safe because of the point
-  above: swap the channel order and channel-swapped frames are persisted to disk
-  and then served to the other renderer. Toggling `UseTLottie` therefore does
-  not invalidate anything, and there is no per-renderer cache to clear.
+  its output byte order is what the `B8G8R8A8_UNORM` surfaces expect. No
+  per-frame conversion.
+- Frames land in the `.tgfc` cache file shared with video through
+  `Telegram.Native/Cache`, so the channel order above outlives the run that wrote
+  them: swap it and channel-swapped frames are served from disk afterwards.

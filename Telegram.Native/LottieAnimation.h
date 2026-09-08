@@ -20,10 +20,8 @@ namespace winrt::Telegram::Native::implementation
     // what is left here is a reader, a producer and a colour overlay.
     //
     // Gone with the move out of RLottie.UWP: a second copy of the compress queue and worker thread,
-    // the LZ4 calls, the frame offset table, the per-instance decompression buffer, the per-key
-    // lock, and the .tcache/.cache split. The two renderers now share one cache file, because they
-    // produce the same premultiplied BGRA - see TlottieFrameProducer for the flag that makes that
-    // true and must stay true.
+    // the LZ4 calls, the frame offset table, the per-instance decompression buffer, and the per-key
+    // lock.
     struct LottieAnimation : LottieAnimationT<LottieAnimation>
     {
         LottieAnimation() = default;
@@ -48,9 +46,6 @@ namespace winrt::Telegram::Native::implementation
 
         static Telegram::Native::LottieAnimation LoadFromFile(hstring filePath, int32_t pixelWidth, int32_t pixelHeight, bool precache, Windows::Foundation::Collections::IMapView<int32_t, int32_t> colorReplacement, Telegram::Native::FitzModifier modifier = Telegram::Native::FitzModifier::None);
         static Telegram::Native::LottieAnimation LoadFromData(hstring jsonData, int32_t pixelWidth, int32_t pixelHeight, hstring cacheKey, bool precache, Windows::Foundation::Collections::IMapView<int32_t, int32_t> colorReplacement, Telegram::Native::FitzModifier modifier = Telegram::Native::FitzModifier::None);
-
-        static bool UseTLottie() noexcept;
-        static void UseTLottie(bool value) noexcept;
 
         void SetColor(Color color)
         {
@@ -96,9 +91,6 @@ namespace winrt::Telegram::Native::implementation
         int32_t m_pixelHeight{ 0 };
         Telegram::Native::FitzModifier m_modifier{ Telegram::Native::FitzModifier::None };
 
-        // Latched at load, not read per frame: an animation keeps the renderer it was created with
-        // even if the switch is flipped mid-playback.
-        bool m_useTLottie{ false };
         bool m_precache{ false };
 
         // Set while this animation's build is queued or running, and cleared by the service when it

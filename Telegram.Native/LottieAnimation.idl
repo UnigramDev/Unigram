@@ -13,11 +13,6 @@
     [default_interface]
     runtimeclass LottieAnimation : Windows.Foundation.IClosable
     {
-        // Selects the renderer used by animations created from now on.
-        // Existing animations keep the renderer they were loaded with.
-        // Always false on platforms built without tlottie.
-        static Boolean UseTLottie;
-
         static LottieAnimation LoadFromFile(String filePath, Int32 pixelWidth, Int32 pixelHeight, Boolean precache, Windows.Foundation.Collections.IMapView<Int32, Int32> colorReplacement);
         static LottieAnimation LoadFromFile(String filePath, Int32 pixelWidth, Int32 pixelHeight, Boolean precache, Windows.Foundation.Collections.IMapView<Int32, Int32> colorReplacement, FitzModifier modifier);
 

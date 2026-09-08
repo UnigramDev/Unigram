@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#ifdef HAS_TLOTTIE
-
 #include <cstdint>
 
 #include <tlottie.h>
@@ -10,19 +8,19 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    // The tlottie counterpart of LottieFrameProducer. Same contract, same pixels, and that second
-    // part is load-bearing:
+    // Drives a tlottie animation for the cache layer, the counterpart of VideoFrameProducer, and
+    // the reason IFrameProducer declares random access rather than assuming it either way: a frame
+    // renders on demand, which is what keeps a sticker visible while its cache is still building.
+    // ffmpeg cannot, and says so.
     //
     // **tlottie must be constructed with TLOTTIE_CHANNEL_BGRA.** Its default is
     // TLOTTIE_CHANNEL_RGBA - 0xAABBGGRR words, [R, G, B, A] bytes - which would put red where blue
-    // belongs. rlottie always produces BGRA, and both renderers now write to the *same* cache file,
-    // so getting this wrong no longer means one wrong-looking frame: it means channel-swapped
-    // frames persisted to disk and then served to the other renderer. The order is chosen once at
-    // parse time by pre-swapping the model's colours, so it costs nothing per frame and there is no
-    // reason to leave it to the default.
+    // belongs, and the frames are persisted to a cache file, so a wrong order outlives the run that
+    // wrote it. The order is chosen once at parse time by pre-swapping the model's colours, so it
+    // costs nothing per frame and there is no reason to leave it to the default.
     //
-    // The instance arrives already parsed, as rlottie's does, because the first frame has to be on
-    // screen before a cache build is ever queued.
+    // The instance arrives already parsed, because the first frame has to be on screen before a
+    // cache build is ever queued.
     class TlottieFrameProducer : public Cache::IFrameProducer
     {
     public:
@@ -130,5 +128,3 @@ namespace winrt::Telegram::Native::implementation
         uint32_t m_index{ 0 };
     };
 }
-
-#endif

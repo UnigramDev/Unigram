@@ -9,7 +9,6 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
 
@@ -477,8 +476,6 @@ namespace Telegram.Services
             }
 
             MigrateContainers();
-
-            LottieAnimation.UseTLottie = Diagnostics.UseTLottieRenderer;
         }
 
         // Session 0 predates multi-account: its settings were addressed as the root container and

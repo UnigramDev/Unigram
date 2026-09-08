@@ -23,8 +23,8 @@
   </xsl:template>
 
   <!--
-    The store CRT the C++/WinRT components link against. Without it RLottie.dll and
-    Telegram.Native.dll fail to load inside the package, and CsWinRT reports that as
+    The store CRT the C++/WinRT components link against. Without it Telegram.Native.dll and
+    Telegram.Native.Calls.dll fail to load inside the package, and CsWinRT reports that as
     REGDB_E_CLASSNOTREG out of ActivationFactory.ManifestFreeGet - which reads like a registration
     problem and is not one. Telegram.Modern.csproj has this entry generated for it; this project
     does not, and that difference is the whole reason the app could not start.
