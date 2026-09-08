@@ -358,6 +358,12 @@ namespace Telegram.Streams
                 TrackStreaming(true);
             }
 
+            // Close unsubscribed. Without this the reopened source hears no updateFile, so
+            // _event is never set again and the first read that has to wait blocks until it
+            // times out, every time. Outside _stateLock, which UpdateFile takes on the
+            // thread updates are published from.
+            UpdateManager.Subscribe(this, _clientService, _file, ref _fileToken, UpdateFile);
+
             SeekCallback(0);
         }
 
