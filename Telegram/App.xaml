@@ -43,6 +43,9 @@
                                   TintOpacity="0.5"
                                   BackgroundSource="Backdrop" />
 
+                    <StaticResource x:Key="SplitMenuFlyoutItemButtonDividerBrush"
+                                    ResourceKey="DividerStrokeColorDefaultBrush" />
+
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"
                                          EndPoint="1,0">
@@ -84,6 +87,9 @@
                                   TintLuminosityOpacity="0.9"
                                   TintOpacity="0"
                                   BackgroundSource="Backdrop" />
+
+                    <StaticResource x:Key="SplitMenuFlyoutItemButtonDividerBrush"
+                                    ResourceKey="DividerStrokeColorDefaultBrush" />
 
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"

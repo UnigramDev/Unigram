@@ -3575,7 +3575,25 @@ namespace Telegram.Views
 
                 if (MessageForward_Loaded(message, properties))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
+                    var forward = flyout.CreateFlyoutItem(ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
+                    var split = new MenuFlyoutSubItem()
+                    {
+                        Style = BootStrapper.Current.Resources["DefaultSplitMenuFlyoutItemStyle"] as Style,
+                        MinWidth = 0,
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    };
+
+                    forward.CornerRadius = new CornerRadius(4, 0, 0, 4);
+
+                    split.SizeChanged += (s, args) =>
+                    {
+                        forward.Margin = new Thickness(0, 0, args.NewSize.Width - 9, 0);
+                        split.Margin = new Thickness(0, -args.NewSize.Height, 0, 0);
+                    };
+
+                    flyout.Items.Add(split);
+
+                    LoadMessageForwardTo(message, split);
                 }
 
                 flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ErrorCircle);
@@ -4393,6 +4411,44 @@ namespace Telegram.Views
                 }
 
                 TextBlockHelper.SetFormattedText(textBlock, markdown);
+            }
+        }
+
+        private async void LoadMessageForwardTo(MessageViewModel message, MenuFlyoutSubItem flyout)
+        {
+            var response = await message.ClientService.SendAsync(new GetTopChats(new TopChatCategoryForwardChats(), 10));
+            if (response is Td.Api.Chats chats)
+            {
+                if (message.ClientService.TryGetChatFromUser(message.ClientService.Options.MyId, out Chat self))
+                {
+                    var item = flyout.CreateFlyoutItem(() => ViewModel.ForwardMessageTo(message, self), Strings.SavedMessages, Icons.Person);
+                    item.Style = BootStrapper.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
+                    item.Tag = new ProfilePicture
+                    {
+                        Size = 20,
+                        Source = ProfilePictureSource.Chat(message.ClientService, self)
+                    };
+                }
+
+                foreach (var chat in message.ClientService.GetChats(chats.ChatIds))
+                {
+                    if (flyout.Items.Count > 9 || chat.IsUser(message.ClientService.Options.MyId))
+                    {
+                        continue;
+                    }
+
+                    var item = flyout.CreateFlyoutItem(() => ViewModel.ForwardMessageTo(message, chat), chat.Title, Icons.Person);
+                    item.Style = BootStrapper.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
+                    item.Tag = new ProfilePicture
+                    {
+                        Size = 20,
+                        Source = ProfilePictureSource.Chat(message.ClientService, chat)
+                    };
+                }
+            }
+            else
+            {
+                flyout.IsEnabled = false;
             }
         }
 
