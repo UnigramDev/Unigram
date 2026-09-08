@@ -124,6 +124,24 @@ namespace Telegram.Streams
             return count > 0 && !AtEndOfStream;
         }
 
+        /// <summary>
+        /// How long one wait may last before the range is asked for again. An update that
+        /// never arrives - a DownloadFile TDLib answered with an error, a download cancelled
+        /// from somewhere else - would otherwise never be noticed.
+        /// </summary>
+        private const int ReadRetryInterval = 5 * 1000;
+
+        /// <summary>
+        /// How long the whole read may take before it gives up.
+        ///
+        /// A read that never returns keeps libvlc's input thread alive for good, and
+        /// libvlc_media_player_stop joins that thread while holding the lock that answers
+        /// position and duration - so this is what bounds anyone waiting on those. Long
+        /// enough that a slow link still plays: only one delivering nothing at all for this
+        /// long gives up.
+        /// </summary>
+        private const ulong ReadTimeout = 30 * 1000;
+
         public override void ReadCallback(long count, long buffer, out long bytesRead)
         {
             var started = Logger.TickCount;
@@ -134,7 +152,7 @@ namespace Telegram.Streams
                 if (MustWait(count, PrefetchWindow(buffer)))
                 {
                     var blocked = Logger.TickCount;
-                    _event.WaitOne();
+                    _event.WaitOne(ReadRetryInterval);
                     waited += Logger.TickCount - blocked;
                 }
 
@@ -153,6 +171,18 @@ namespace Telegram.Streams
                     _prefetch?.Advance(count,
                         TimeSpan.FromMilliseconds(elapsed > waited ? elapsed - waited : 0),
                         DownloadBitsPerSecond);
+                    return;
+                }
+
+                if (Logger.TickCount - started >= ReadTimeout)
+                {
+                    // Reported as an error rather than as zero: zero is the end of the media
+                    // to libvlc, which would truncate the file without saying so. An error
+                    // ends the input instead, which is what lets a stop waiting to join it
+                    // finish.
+                    Logger.Warning($"Nothing for {_file.Id} in {Logger.TickCount - started}ms, offset: {_offset}, count: {count}");
+
+                    bytesRead = -1;
                     return;
                 }
 
