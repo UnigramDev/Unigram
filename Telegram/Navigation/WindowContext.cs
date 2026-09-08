@@ -414,6 +414,13 @@ namespace Telegram.Navigation
                 toast.Key.IsOpen = false;
             }
         }
+
+        public void ClearAllToasts()
+        {
+            HideAllToasts();
+
+            _toasts.Clear();
+        }
     }
 
     /// <summary>
@@ -598,13 +605,20 @@ namespace Telegram.Navigation
 
         private void OnShutdownDrain()
         {
-            FormattedTextBlock.ReleaseNative(_xamlRoot);
-            FormattedTextBlockRecyclePool.Release(_xamlRoot);
+            ReleaseNative();
 
             _drain = Task.Run(Drain);
 
             Task.WhenAny(_drain, Task.Delay(ShutdownDrainTimeout))
                 .ContinueWith(OnDrained, _deferral, TaskScheduler.Default);
+        }
+
+        private void ReleaseNative()
+        {
+            FormattedTextBlock.ReleaseNative(_xamlRoot);
+            FormattedTextBlockRecyclePool.Release(_xamlRoot);
+
+            _content?.ClearAllToasts();
         }
 
         // DIAGNOSTIC: the releases still fault after this drain, and the two explanations want
@@ -814,8 +828,7 @@ namespace Telegram.Navigation
             }
 
 #if NET9_0_OR_GREATER
-            FormattedTextBlock.ReleaseNative(_xamlRoot);
-            FormattedTextBlockRecyclePool.Release(_xamlRoot);
+            ReleaseNative();
 #endif
         }
 
