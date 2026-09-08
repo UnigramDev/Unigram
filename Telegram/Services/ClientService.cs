@@ -1060,7 +1060,7 @@ namespace Telegram.Services
 
         public Task<Object> SendAsync(Function function)
         {
-            var tsc = new TaskCompletionSource<Object>();
+            var tsc = new TaskCompletionSource<Object>(TaskCreationOptions.RunContinuationsAsynchronously);
             _client.Send(function, tsc.SetResult);
 
             return tsc.Task;
