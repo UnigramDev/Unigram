@@ -999,7 +999,7 @@ namespace Telegram.Td.Api
             {
                 if (items == null)
                 {
-                    items = new byte[4];
+                    items = new byte[4][];
                 }
                 else if (count == items.Length)
                 {

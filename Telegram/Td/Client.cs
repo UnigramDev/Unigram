@@ -9,9 +9,10 @@ using System;
 #if NET9_0_OR_GREATER
 using System.Runtime.CompilerServices;
 #endif
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Td.Api;
 #if TD_READER_PARSER
@@ -93,8 +94,15 @@ namespace Telegram.Td
 #endif
 
         private static long _currentRequestId = 0;
-        private static readonly ReaderWriterDictionary<long, Action<Object>> _handlers = new();
-        private static readonly ReaderWriterDictionary<int, ClientResultHandler> _updateHandlers = new();
+
+        // Never read, only inserted into and taken out of once - so the reader/writer split the
+        // caches are on buys nothing here, and a write lock is the expensive half of
+        // ReaderWriterLockSlim. A Dictionary under a lock also allocates nothing per request.
+        private static readonly Dictionary<long, Action<Object>> _handlers = new();
+
+        // Read twice for every payload the receive thread takes and written once per account, so
+        // this one wants the lock-free read rather than no lock at all.
+        private static readonly ConcurrentDictionary<int, ClientResultHandler> _updateHandlers = new();
 
         private readonly int _clientId;
 
@@ -115,7 +123,10 @@ namespace Telegram.Td
             var requestId = Interlocked.Increment(ref _currentRequestId);
             if (handler != null)
             {
-                _handlers[requestId] = handler;
+                lock (_handlers)
+                {
+                    _handlers[requestId] = handler;
+                }
             }
 
             if (_writer == null)
@@ -222,9 +233,9 @@ namespace Telegram.Td
                         _updateHandlers.TryGetValue(client_id, out ClientResultHandler handler);
                         handler?.OnResult(response);
                     }
-                    else if (_handlers.TryRemove(request_id, out Action<Object> action))
+                    else
                     {
-                        action(response);
+                        RemoveHandler(request_id)?.Invoke(response);
                     }
 
                     if (isClosed)
@@ -232,6 +243,20 @@ namespace Telegram.Td
                         _updateHandlers.TryRemove(client_id, out _);
                     }
                 }
+            }
+        }
+
+        private static Action<Object>? RemoveHandler(long requestId)
+        {
+            lock (_handlers)
+            {
+                if (_handlers.TryGetValue(requestId, out var handler))
+                {
+                    _handlers.Remove(requestId);
+                    return handler;
+                }
+
+                return null;
             }
         }
 
