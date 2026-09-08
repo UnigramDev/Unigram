@@ -395,8 +395,6 @@ namespace Telegram.Navigation.Services
                 var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
-                    // allow the viewmodel to cancel navigation
-                    NavigatingFrom(page, null, null, dataContext, true, NavigationMode.New);
                     NavigateFrom(page, dataContext, true);
                 }
 
