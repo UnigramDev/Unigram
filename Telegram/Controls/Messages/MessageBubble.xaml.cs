@@ -1490,6 +1490,8 @@ namespace Telegram.Controls.Messages
                 {
                     HeaderLink.Click += From_Click;
                 }
+
+                UpdateHeaderPanelState();
             }
 
             return HeaderLabel;
@@ -1966,7 +1968,7 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessagePoll or MessageChecklist)
             {
-                ContentPanel.Padding = new Thickness(0, 0, 0, 0);
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(0);
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);
@@ -2465,43 +2467,56 @@ namespace Telegram.Controls.Messages
 
         private string _currentState = "Normal";
 
-        private void FooterToLightMedia(bool isOut)
+        private void GoToState(string state)
         {
-            var state = "LightState" + (isOut ? "Out" : string.Empty);
-            if (state != _currentState)
+            if (_currentState != state)
             {
                 _currentState = state;
                 VisualStateManager.GoToState(this, state, false);
+
+                UpdateHeaderPanelState();
             }
+        }
+
+        // The light states cannot carry this as a setter: HeaderPanel is deferred, and a state
+        // entered before it was realized records no value to revert to when the state is left.
+        private void UpdateHeaderPanelState()
+        {
+            if (HeaderPanel == null)
+            {
+                return;
+            }
+
+            if (_currentState is "LightState" or "LightStateOut")
+            {
+                HeaderPanel.Margin = new Thickness(0, 2, 0, 2);
+            }
+            else
+            {
+                HeaderPanel.Margin = new Thickness(0, 0, 0, 2);
+            }
+        }
+
+        private void FooterToLightMedia(bool isOut)
+        {
+            GoToState(isOut ? "LightStateOut" : "LightState");
 
             BackgroundPanel?.Visibility = Visibility.Collapsed;
         }
 
         private void FooterToMedia()
         {
-            if (_currentState != "MediaState")
-            {
-                _currentState = "MediaState";
-                VisualStateManager.GoToState(this, "MediaState", false);
-            }
+            GoToState("MediaState");
         }
 
         private void FooterToHidden()
         {
-            if (_currentState != "HiddenState")
-            {
-                _currentState = "HiddenState";
-                VisualStateManager.GoToState(this, "HiddenState", false);
-            }
+            GoToState("HiddenState");
         }
 
         private void FooterToNormal()
         {
-            if (_currentState != "Normal")
-            {
-                _currentState = "Normal";
-                VisualStateManager.GoToState(this, "Normal", false);
-            }
+            GoToState("Normal");
         }
 
         public void RegisterEvents()
@@ -4034,6 +4049,7 @@ namespace Telegram.Controls.Messages
         {
             switch (content)
             {
+                case MessageLiveLocation:
                 case MessageLocation:
                 case MessageVenue:
                 case MessagePhoto:

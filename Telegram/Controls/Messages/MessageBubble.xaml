@@ -51,10 +51,6 @@
                                                 Value="8,2,8,4" />
                                         <Setter Target="Header.(Grid.Row)"
                                                 Value="1" />
-                                        <Setter Target="HeaderPanel.Margin"
-                                                Value="0,2,0,2" />
-                                        <Setter Target="HeaderLabel.Foreground"
-                                                Value="#FFFFFF" />
 
                                         <Setter Target="Header.Margin"
                                                 Value="-4,0,4,0" />
@@ -103,10 +99,6 @@
                                                 Value="8,2,8,4" />
                                         <Setter Target="Header.(Grid.Row)"
                                                 Value="1" />
-                                        <Setter Target="HeaderPanel.Margin"
-                                                Value="0,2,0,2" />
-                                        <Setter Target="HeaderLabel.Foreground"
-                                                Value="#FFFFFF" />
 
                                         <Setter Target="Header.Margin"
                                                 Value="4,0,-4,0" />
@@ -254,6 +246,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid x:Name="HeaderPanel"
+                                      x:Load="False"
                                       Visibility="Collapsed"
                                       HorizontalAlignment="Left"
                                       Margin="0,0,0,2">
