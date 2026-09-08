@@ -166,6 +166,10 @@ namespace Telegram.Controls.Messages
 
         protected override void OnUnloaded()
         {
+            // Added here because InRecycleQueue can be missed at times
+            // TODO: investigate in which conditions we don't receive InRecycleQueue
+            Recycle();
+
             // Detached, not dropped: the container goes back to the pool and comes out again
             // with new content, and Detach leaves the manager clean for it.
             _textSelectionManager?.Detach();
