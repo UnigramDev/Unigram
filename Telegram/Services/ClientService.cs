@@ -573,7 +573,6 @@ namespace Telegram.Services
         {
             Send(new CreatePrivateChat(Options.MyId, true));
             Send(new LoadChats(new ChatListMain(), 20));
-            Send(new SearchEmojis("cucumber", new[] { NativeUtils.GetKeyboardCulture() }));
 
             UpdateGreetingStickers();
             UpdateTimeZones();
