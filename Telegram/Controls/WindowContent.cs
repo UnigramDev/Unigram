@@ -5,86 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Views.Host;
-using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
-    /// <summary>
-    /// Raised by <see cref="WindowContent.OnWindowCloseRequested"/>. Wraps the UWP args rather
-    /// than exposing them, so a root only ever sees Handled and a deferral - the two things
-    /// every caller actually used, and the two an island host can supply by other means.
-    /// </summary>
-    public class WindowCloseRequestedEventArgs : EventArgs
-    {
-        private readonly SystemNavigationCloseRequestedPreviewEventArgs _args;
-        private TaskCompletionSource<bool> _deferral;
-        private bool _handled;
-
-        internal WindowCloseRequestedEventArgs(SystemNavigationCloseRequestedPreviewEventArgs args)
-        {
-            _args = args;
-        }
-
-        /// <summary>
-        /// Raised by the app rather than by the system - the window's own close button. Handled is
-        /// then just a bool, and the deferral has to be honoured by whoever raised it.
-        /// </summary>
-        internal WindowCloseRequestedEventArgs()
-        {
-        }
-
-        public bool Handled
-        {
-            get => _args?.Handled ?? _handled;
-            set
-            {
-                if (_args != null)
-                {
-                    _args.Handled = value;
-                }
-                else
-                {
-                    _handled = value;
-                }
-            }
-        }
-
-        public Deferral GetDeferral()
-        {
-            if (_args != null)
-            {
-                return _args.GetDeferral();
-            }
-
-            // Allocated only when a handler actually asks to defer, which is the uncommon case.
-            _deferral ??= new TaskCompletionSource<bool>();
-            return new Deferral(CompleteDeferral);
-        }
-
-        private void CompleteDeferral()
-        {
-            _deferral.TrySetResult(true);
-        }
-
-        /// <summary>
-        /// Completes once every handler that took a deferral has released it. Only meaningful for
-        /// an app-raised request: the system waits on its own.
-        /// </summary>
-        internal Task WaitAsync()
-        {
-            return _deferral?.Task ?? Task.CompletedTask;
-        }
-    }
-
     /// <summary>
     /// Base for anything assigned to <see cref="WindowContext.Content"/> - the root of a window,
     /// though not a window itself. Was WindowEx, declared at the bottom of VoipWindow.xaml.cs.
@@ -137,7 +66,7 @@ namespace Telegram.Controls
 
         /// <summary>
         /// Wired once, here, rather than in each root: what raises these is the part that differs
-        /// between a CoreWindow and an island host, and this is the only place that should know.
+        /// between a CoreWindow and an island host, and no root should have to know.
         ///
         /// OnLoaded rather than the constructor or the raw Loaded event: roots used to subscribe
         /// from their constructors and never unsubscribe, keeping themselves reachable from the
@@ -153,9 +82,8 @@ namespace Telegram.Controls
             {
                 window.Activated += OnWindowActivatedCore;
                 window.VisibilityChanged += OnWindowVisibilityChangedCore;
+                window.CloseRequested += OnCloseRequestedCore;
             }
-
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequestedCore;
 
             var view = ApplicationView.GetForCurrentView();
             view.Consolidated += OnConsolidatedCore;
@@ -168,9 +96,8 @@ namespace Telegram.Controls
             {
                 window.Activated -= OnWindowActivatedCore;
                 window.VisibilityChanged -= OnWindowVisibilityChangedCore;
+                window.CloseRequested -= OnCloseRequestedCore;
             }
-
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequestedCore;
 
             var view = ApplicationView.GetForCurrentView();
             view.Consolidated -= OnConsolidatedCore;
@@ -187,9 +114,9 @@ namespace Telegram.Controls
             OnWindowVisibilityChanged(args.IsVisible);
         }
 
-        private void OnCloseRequestedCore(object sender, SystemNavigationCloseRequestedPreviewEventArgs args)
+        private void OnCloseRequestedCore(object sender, WindowCloseRequestedEventArgs args)
         {
-            OnWindowCloseRequested(new WindowCloseRequestedEventArgs(args));
+            OnWindowCloseRequested(args);
         }
 
         // Neither carries a payload worth forwarding: the one caller of Consolidated ignored its
@@ -216,24 +143,6 @@ namespace Telegram.Controls
 
         protected virtual void OnWindowCloseRequested(WindowCloseRequestedEventArgs args)
         {
-        }
-
-        /// <summary>
-        /// The window's own close button, routed into the same override the system's close request
-        /// uses: a root has one place to intercept a close, whatever asked for it. Returns false
-        /// when the root refused.
-        ///
-        /// Awaited, because the answer can be a question: the web app window takes a deferral and
-        /// asks the user whether to discard the bot's changes.
-        /// </summary>
-        internal async Task<bool> RequestCloseAsync()
-        {
-            var args = new WindowCloseRequestedEventArgs();
-            OnWindowCloseRequested(args);
-
-            await args.WaitAsync();
-
-            return !args.Handled;
         }
 
         protected virtual void OnWindowConsolidated()

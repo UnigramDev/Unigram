@@ -28,6 +28,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -78,6 +79,74 @@ namespace Telegram.Navigation
         public WindowVisibilityEventArgs(bool isVisible)
         {
             IsVisible = isVisible;
+        }
+    }
+
+    /// <summary>
+    /// Raised by <see cref="WindowContext.CloseRequested"/>. Wraps the UWP args rather than
+    /// exposing them, so a handler only ever sees Handled and a deferral - the two things every
+    /// caller actually used, and the two an island host can supply by other means.
+    /// </summary>
+    public class WindowCloseRequestedEventArgs : EventArgs
+    {
+        private readonly SystemNavigationCloseRequestedPreviewEventArgs _args;
+        private TaskCompletionSource<bool> _deferral;
+        private bool _handled;
+
+        internal WindowCloseRequestedEventArgs(SystemNavigationCloseRequestedPreviewEventArgs args)
+        {
+            _args = args;
+        }
+
+        /// <summary>
+        /// Raised by the app rather than by the system - the window's own close button, or an
+        /// island's WM_CLOSE. Handled is then just a bool, and the deferral has to be honoured by
+        /// whoever raised it.
+        /// </summary>
+        internal WindowCloseRequestedEventArgs()
+        {
+        }
+
+        public bool Handled
+        {
+            get => _args?.Handled ?? _handled;
+            set
+            {
+                if (_args != null)
+                {
+                    _args.Handled = value;
+                }
+                else
+                {
+                    _handled = value;
+                }
+            }
+        }
+
+        public Deferral GetDeferral()
+        {
+            if (_args != null)
+            {
+                return _args.GetDeferral();
+            }
+
+            // Allocated only when a handler actually asks to defer, which is the uncommon case.
+            _deferral ??= new TaskCompletionSource<bool>();
+            return new Deferral(CompleteDeferral);
+        }
+
+        private void CompleteDeferral()
+        {
+            _deferral.TrySetResult(true);
+        }
+
+        /// <summary>
+        /// Completes once every handler that took a deferral has released it. Only meaningful for
+        /// an app-raised request: the system waits on its own.
+        /// </summary>
+        internal Task WaitAsync()
+        {
+            return _deferral?.Task ?? Task.CompletedTask;
         }
     }
 
@@ -332,13 +401,13 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// Through the root's close request rather than straight to WindowContext.Close: a root
-        /// can have something to ask first - the web app window does - and that is the same
-        /// question the system asks it when the window is closed any other way.
+        /// Through the window's close request rather than straight to WindowContext.Close: a
+        /// handler can have something to ask first - the web app window does - and that is the
+        /// same question the system asks when the window is closed any other way.
         /// </summary>
         private async void OnCloseButtonClick(object sender, RoutedEventArgs e)
         {
-            if (Content is WindowContent root && !await root.RequestCloseAsync())
+            if (!await _context.RequestCloseAsync())
             {
                 return;
             }
@@ -949,6 +1018,68 @@ namespace Telegram.Navigation
         public event EventHandler<WindowSizeChangedEventArgs> SizeChanged;
 
         public event EventHandler<object> VisibleBoundsChanged;
+
+        private EventHandler<WindowCloseRequestedEventArgs> _closeRequested;
+
+        /// <summary>
+        /// Where a close request arrives, whoever asked: the system on UWP, an island's
+        /// WM_CLOSE, the app's own caption button.
+        ///
+        /// The system half is attached only while someone is listening. Registering with
+        /// SystemNavigationManagerPreview is what makes the shell ask this view before closing it,
+        /// and a window nobody is listening to has nothing to answer with.
+        /// </summary>
+        public event EventHandler<WindowCloseRequestedEventArgs> CloseRequested
+        {
+            add
+            {
+                if (_closeRequested == null)
+                {
+                    AttachCloseRequested();
+                }
+
+                _closeRequested += value;
+            }
+            remove
+            {
+                _closeRequested -= value;
+
+                if (_closeRequested == null)
+                {
+                    DetachCloseRequested();
+                }
+            }
+        }
+
+        // Implemented by whichever host has a system-level request to forward. The island host
+        // raises CloseRequested itself, so it leaves these unimplemented and the compiler drops
+        // the calls.
+        partial void AttachCloseRequested();
+
+        partial void DetachCloseRequested();
+
+        private void RaiseCloseRequested(WindowCloseRequestedEventArgs args)
+        {
+            _closeRequested?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// The app asking to close this window - the caption button, an island's WM_CLOSE - routed
+        /// into the same event the system's own request raises, so a handler has one place to
+        /// intercept a close whatever asked for it. Returns false when a handler refused.
+        ///
+        /// Awaited, because the answer can be a question: the web app window takes a deferral and
+        /// asks the user whether to discard the bot's changes.
+        /// </summary>
+        internal async Task<bool> RequestCloseAsync()
+        {
+            var args = new WindowCloseRequestedEventArgs();
+            RaiseCloseRequested(args);
+
+            await args.WaitAsync();
+
+            return !args.Handled;
+        }
 
         public IDispatcherContext Dispatcher { get; }
         public NavigationServiceList NavigationServices { get; } = new NavigationServiceList();

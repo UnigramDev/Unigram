@@ -13,7 +13,6 @@ using Telegram.Navigation.Services;
 using Telegram.Views.Host;
 using Windows.Devices.Input;
 using Windows.UI;
-using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -28,6 +27,7 @@ namespace Telegram.Controls
         private Popup _popupHost;
 
         private bool _closing;
+        private bool _watching;
 
         private TaskCompletionSource<ContentDialogResult> _callback;
         private ContentDialogResult _result;
@@ -77,6 +77,34 @@ namespace Telegram.Controls
         private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             UpdateViewBase();
+        }
+
+        /// <summary>
+        /// Subscribed from <see cref="ShowAsync"/> rather than from the popup's Opened, which the
+        /// XAML core raises asynchronously: a Loaded handler runs synchronously inside the tick
+        /// that opens the popup, and the gallery's enters full screen from there. Subscribing
+        /// afterwards races the resize, and losing it leaves the overlay at its windowed size for
+        /// as long as it stays open.
+        /// </summary>
+        private void WatchWindow(bool watch)
+        {
+            if (_watching == watch || XamlRoot == null)
+            {
+                return;
+            }
+
+            _watching = watch;
+
+            if (watch)
+            {
+                XamlRoot.Changed += OnXamlRootChanged;
+                Window.CloseRequested += OnCloseRequested;
+            }
+            else
+            {
+                XamlRoot.Changed -= OnXamlRootChanged;
+                Window.CloseRequested -= OnCloseRequested;
+            }
         }
 
         protected virtual void MaskTitleAndStatusBar(WindowContext window)
@@ -146,12 +174,16 @@ namespace Telegram.Controls
 
             _closing = false;
             _popupHost.XamlRoot = XamlRoot;
+
+            WatchWindow(true);
+            UpdateViewBase();
+
             _popupHost.IsOpen = true;
 
             return await _callback.Task;
         }
 
-        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        private void OnCloseRequested(object sender, WindowCloseRequestedEventArgs e)
         {
             var args = new BackRequestedRoutedEventArgs();
             OnBackRequested(args);
@@ -204,9 +236,6 @@ namespace Telegram.Controls
         private void PopupHost_Opened(object sender, object e)
         {
             MaskTitleAndStatusBar(Window);
-
-            _popupHost.XamlRoot.Changed += OnXamlRootChanged;
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
         private void PopupHost_Closed(object sender, object e)
@@ -214,9 +243,6 @@ namespace Telegram.Controls
             UnmaskTitleAndStatusBar(Window);
 
             //_callback.TrySetResult(_result);
-
-            _popupHost.XamlRoot.Changed -= OnXamlRootChanged;
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs e)
@@ -286,6 +312,11 @@ namespace Telegram.Controls
 
             _result = result;
             _popupHost.IsOpen = false;
+
+            // Paired with ShowAsync, not with the popup's Closed: that one arrives late enough for
+            // a re-show to have already opened the popup again, and it would unsubscribe the live
+            // instance.
+            WatchWindow(false);
 
             if (_instances.TryGetValue(XamlRoot, out OverlayWindow window))
             {

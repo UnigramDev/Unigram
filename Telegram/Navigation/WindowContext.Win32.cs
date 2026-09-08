@@ -147,7 +147,7 @@ namespace Telegram.Navigation
                 return;
             }
 
-            if (Content is WindowContent root && !await root.RequestCloseAsync())
+            if (!await RequestCloseAsync())
             {
                 return;
             }

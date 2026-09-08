@@ -22,6 +22,7 @@ using Windows.Security.Credentials.UI;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
@@ -150,6 +151,25 @@ namespace Telegram.Navigation
         {
             Logger.Debug(sender.VisibleBounds);
             VisibleBoundsChanged?.Invoke(this, args);
+        }
+
+        partial void AttachCloseRequested()
+        {
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+        }
+
+        partial void DetachCloseRequested()
+        {
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
+        }
+
+        /// <summary>
+        /// The system's own request. Raised and returned rather than awaited: the system honours
+        /// the deferrals its args hand out, so there is nothing here to wait for.
+        /// </summary>
+        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs args)
+        {
+            RaiseCloseRequested(new WindowCloseRequestedEventArgs(args));
         }
 
         public void Close()
