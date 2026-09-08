@@ -42,10 +42,9 @@ namespace Telegram.Services
                 var lastMessage = topic.LastMessage?.Id != newTopic.LastMessage?.Id;
 
                 topic.LastMessage = newTopic.LastMessage;
-                topic.IsMarkedAsUnread = newTopic.IsMarkedAsUnread;
 
                 UpdateLastReadOutboxMessageId(topic, newTopic.LastReadOutboxMessageId);
-                UpdateLastReadInboxMessageId(topic, newTopic.LastReadInboxMessageId, newTopic.UnreadCount);
+                UpdateLastReadInboxMessageId(topic, newTopic);
 
                 if (topic.UnreadReactionCount != newTopic.UnreadReactionCount)
                 {
@@ -80,13 +79,19 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateLastReadInboxMessageId(DirectMessagesChatTopic topic, long lastReadInboxMessageId, long unreadCount)
+        private void UpdateLastReadInboxMessageId(DirectMessagesChatTopic topic, DirectMessagesChatTopic newTopic)
         {
-            if (topic.LastReadInboxMessageId < lastReadInboxMessageId || topic.UnreadCount != unreadCount)
+            // The row draws its badge from the mark as much as from the count, so the mark moving
+            // on its own is a change of the same reading, and the three travel together.
+            if (topic.LastReadInboxMessageId < newTopic.LastReadInboxMessageId
+                || topic.UnreadCount != newTopic.UnreadCount
+                || topic.IsMarkedAsUnread != newTopic.IsMarkedAsUnread)
             {
-                topic.LastReadInboxMessageId = lastReadInboxMessageId;
-                topic.UnreadCount = unreadCount;
-                _aggregator.Publish(new UpdateDirectMessagesChatTopicReadInbox(_chatId, topic.Id, lastReadInboxMessageId, unreadCount));
+                topic.LastReadInboxMessageId = newTopic.LastReadInboxMessageId;
+                topic.UnreadCount = newTopic.UnreadCount;
+                topic.IsMarkedAsUnread = newTopic.IsMarkedAsUnread;
+
+                _aggregator.Publish(new UpdateDirectMessagesChatTopicReadInbox(_chatId, topic.Id, topic.LastReadInboxMessageId, topic.UnreadCount));
             }
         }
 
@@ -160,6 +165,7 @@ namespace Telegram.Td.Api
             ChatId = chatId;
             TopicId = topicId;
             LastReadInboxMessageId = lastReadInboxMessageId;
+            UnreadCount = unreadCount;
         }
 
         public long ChatId { get; set; }
