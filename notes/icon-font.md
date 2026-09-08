@@ -15,6 +15,10 @@ that carried the same drawing now share one glyph.
 | 206 | local artwork in `Tools/IconFont/icons/` |
 | 29 | aliases: a codepoint that carries another codepoint's glyph |
 
+An alias means one drawing serves several codepoints, so adopting a glyph moves all of them - and
+the one you are adopting may be the unreferenced half of the pair. `compose_20_regular` at U+E994
+is used nowhere, but `Icons.Compose` at U+E932 aliases it and moved with it.
+
 Two thirds of the font now follows upstream, so it stops going stale on its own.
 
 Microsoft's icons come from npm rather than the GitHub repository on purpose. The repository has

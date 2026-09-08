@@ -2139,15 +2139,10 @@ namespace Telegram.Controls
         {
             var element = new ReplyMarkupInlineButton
             {
-                Tag = button,
-                Padding = new Thickness(4, 0, 4, 0),
-                BorderThickness = new Thickness(0),
-                CornerRadius = new CornerRadius(10),
-                Height = 20,
-                MinWidth = 20,
+                Tag = button
             };
 
-            element.SetButton(clientService, null, 0, button.Style, button.Type);
+            element.SetButton(clientService, null, 0, button.Style, button.Type, inline: true);
             element.Click += InlineButton_Click;
 
             if (button.Text is RichTextPlain plain)

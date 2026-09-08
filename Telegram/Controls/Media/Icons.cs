@@ -62,8 +62,8 @@ namespace Telegram.Controls.Media
         public const string PictureInPictureEnter = "\uE92C";
         public const string PictureInPictureExit = "\uE92D";
 
-        public const string ArrowDownLeft16 = "\uE928";
-        public const string ArrowUpRight16 = "\uE9B7";
+        public const string ArrowDownLeftFilled16 = "\uE928";
+        public const string ArrowUpRightFilled16 = "\uE9B7";
 
         public const string ArrowReset = "\uEA09";
         public const string ArrowSync = "\uE981";
@@ -169,6 +169,7 @@ namespace Telegram.Controls.Media
 
         public const string Payment16 = "\uE9AB";
         public const string Window16 = "\uE9AA";
+        public const string WindowFilled16 = "\uEAC5";
         public const string CopyFilled16 = "\uEA97";
 
         public const string NumberSymbolFilled16 = "\uE9FB";

@@ -201,6 +201,221 @@
         </Setter>
     </Style>
 
+    <Style x:Key="TextReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Foreground"
+                Value="#FFFFFFFF" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="{ThemeResource ButtonBorderThemeThickness}" />
+        <Setter Property="Padding"
+                Value="8,0,8,0" />
+        <Setter Property="HorizontalAlignment"
+                Value="Center" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+        <Setter Property="FontFamily"
+                Value="{ThemeResource EmojiThemeFontFamilyWithSymbols}" />
+        <Setter Property="FontWeight"
+                Value="SemiBold" />
+        <Setter Property="FontSize"
+                Value="14" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="Width"
+                Value="Auto" />
+        <Setter Property="MinWidth"
+                Value="20" />
+        <Setter Property="Height"
+                Value="20" />
+        <Setter Property="CornerRadius"
+                Value="10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ReplyMarkupInlineButton">
+                    <Border CornerRadius="{TemplateBinding CornerRadius}"
+                            Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background"
+                                                Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background"
+                                                Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Opacity"
+                                                Value="0.6" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="GlyphVisibility">
+                                <VisualState x:Name="GlyphCollapsed" />
+                                <VisualState x:Name="GlyphVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Margin"
+                                                Value="0,0,4,0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid x:Name="RootGrid"
+                              Padding="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid x:Name="LayoutRoot"
+                                  VerticalAlignment="Center"
+                                  Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="IconPresenter"
+                                           x:Load="False"
+                                           Text="{TemplateBinding Icon}"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           FontSize="20"
+                                           Margin="0,0,8,0"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                                <controls:CustomEmojiIcon x:Name="EmojiPresenter"
+                                                          x:Load="False"
+                                                          Source="{TemplateBinding Source}"
+                                                          ReplacementColor="#FFFFFFFF"
+                                                          Margin="0,0,8,0"
+                                                          AutomationProperties.AccessibilityView="Raw" />
+                                <ContentPresenter x:Name="ContentPresenter"
+                                                  Content="{TemplateBinding Content}"
+                                                  TextWrapping="NoWrap"
+                                                  VerticalAlignment="Center"
+                                                  AutomationProperties.AccessibilityView="Raw"
+                                                  Grid.Column="1">
+                                    <ContentPresenter.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextTrimming"
+                                                    Value="CharacterEllipsis" />
+                                            <Setter Property="TextWrapping"
+                                                    Value="NoWrap" />
+                                        </Style>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                                <TextBlock Margin="0,0,-4,0"
+                                           FontSize="12"
+                                           FontWeight="Normal"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Text="{TemplateBinding Glyph}"
+                                           Grid.Column="2" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultTextReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton"
+           BasedOn="{StaticResource TextReplyMarkupInlineButtonStyle}">
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+    </Style>
+
+    <Style x:Key="DefaultReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton">
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+    </Style>
+
+    <Style x:Key="PrimaryTextReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton"
+           BasedOn="{StaticResource TextReplyMarkupInlineButtonStyle}">
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Foreground"
+                Value="#FFFFFF" />
+    </Style>
+
+    <Style x:Key="PrimaryReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton">
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Foreground"
+                Value="#FFFFFF" />
+    </Style>
+
+    <Style x:Key="DangerTextReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton"
+           BasedOn="{StaticResource TextReplyMarkupInlineButtonStyle}">
+        <Setter Property="Background"
+                Value="#40FF3B30" />
+        <Setter Property="Foreground"
+                Value="#FF3B30" />
+    </Style>
+
+    <Style x:Key="DangerReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton">
+        <Setter Property="Background"
+                Value="#40FF3B30" />
+        <Setter Property="Foreground"
+                Value="#FF3B30" />
+    </Style>
+
+    <Style x:Key="SuccessTextReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton"
+           BasedOn="{StaticResource TextReplyMarkupInlineButtonStyle}">
+        <Setter Property="Background"
+                Value="#401EA641" />
+        <Setter Property="Foreground"
+                Value="#1EA641" />
+    </Style>
+
+    <Style x:Key="SuccessReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton">
+        <Setter Property="Background"
+                Value="#401EA641" />
+        <Setter Property="Foreground"
+                Value="#1EA641" />
+    </Style>
+
+
+    <Style x:Key="LinkTextReplyMarkupInlineButtonStyle"
+           TargetType="controls:ReplyMarkupInlineButton"
+           BasedOn="{StaticResource TextReplyMarkupInlineButtonStyle}">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageForegroundLinkBrush}" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="CornerRadius"
+                Value="0" />
+    </Style>
+
     <ControlTemplate x:Key="HorizontalNextTemplate"
                      TargetType="Button">
         <Border x:Name="Root"

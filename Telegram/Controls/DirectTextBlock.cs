@@ -661,7 +661,7 @@ namespace Telegram.Controls
                 var element = GetOrCreateButton(i);
 
                 element.Tag = button;
-                element.SetButton(clientService, null, 0, button.Style, button.Type);
+                element.SetButton(clientService, null, 0, button.Style, button.Type, inline: true);
 
                 if (button.Text is RichTextPlain plain)
                 {
@@ -712,14 +712,7 @@ namespace Telegram.Controls
                 return _buttons[index];
             }
 
-            var element = new ReplyMarkupInlineButton
-            {
-                Padding = new Thickness(4, 0, 4, 0),
-                BorderThickness = new Thickness(0),
-                CornerRadius = new CornerRadius(10),
-                Height = 20,
-                MinWidth = 20
-            };
+            var element = new ReplyMarkupInlineButton();
 
             element.Click += OnInlineButtonClick;
 

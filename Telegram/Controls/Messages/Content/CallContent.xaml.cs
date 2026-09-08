@@ -88,7 +88,7 @@ namespace Telegram.Controls.Messages.Content
             //Button.FontSize = call.IsVideo ? 24 : 20;
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
-            IconLabel.Text = outgoing ? Icons.ArrowUpRight16 : Icons.ArrowDownLeft16;
+            IconLabel.Text = outgoing ? Icons.ArrowUpRightFilled16 : Icons.ArrowDownLeftFilled16;
 
             var date = Formatter.Time(message.Date);
 
@@ -110,7 +110,7 @@ namespace Telegram.Controls.Messages.Content
             //Button.FontSize = call.IsVideo ? 24 : 20;
 
             TitleLabel.Text = groupCall.ToOutcomeText(message.IsOutgoing);
-            IconLabel.Text = outgoing ? Icons.ArrowUpRight16 : Icons.ArrowDownLeft16;
+            IconLabel.Text = outgoing ? Icons.ArrowUpRightFilled16 : Icons.ArrowDownLeftFilled16;
 
             var date = Formatter.Time(message.Date);
 

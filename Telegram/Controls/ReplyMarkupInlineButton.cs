@@ -8,6 +8,7 @@
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -57,7 +58,7 @@ namespace Telegram.Controls
         /// plain string would overwrite.
         /// </param>
         /// <param name="receipt">An already-paid invoice: the Buy button reads as a receipt.</param>
-        public void SetButton(IClientService clientService, string text, long iconCustomEmojiId, ButtonStyle style, InlineKeyboardButtonType type, bool receipt = false)
+        public void SetButton(IClientService clientService, string text, long iconCustomEmojiId, ButtonStyle style, InlineKeyboardButtonType type, bool receipt = false, bool inline = false)
         {
             if (text != null)
             {
@@ -74,14 +75,14 @@ namespace Telegram.Controls
             switch (type)
             {
                 case InlineKeyboardButtonTypeUrl typeUrl:
-                    Glyph = "\uE9B7";
+                    Glyph = Icons.ArrowUpRightFilled16;
                     Extensions.SetToolTip(this, typeUrl.Url);
                     break;
                 case InlineKeyboardButtonTypeLoginUrl:
-                    Glyph = "\uE9B7";
+                    Glyph = Icons.ArrowUpRightFilled16;
                     break;
                 case InlineKeyboardButtonTypeSwitchInline:
-                    Glyph = "\uEE35";
+                    Glyph = Icons.ShareFilled;
                     break;
                 case InlineKeyboardButtonTypeBuy:
                     if (text != null)
@@ -90,10 +91,13 @@ namespace Telegram.Controls
                     }
                     break;
                 case InlineKeyboardButtonTypeWebApp:
-                    Glyph = Icons.Window16;
+                    Glyph = Icons.WindowFilled16;
                     break;
                 case InlineKeyboardButtonTypeCopyText:
                     Glyph = Icons.CopyFilled16;
+                    break;
+                case InlineKeyboardButtonTypeUser:
+                    Glyph = Icons.PersonCircleFilled16;
                     break;
 
                 case InlineKeyboardButtonTypeSuggestionDecline suggestionDecline:
@@ -107,6 +111,7 @@ namespace Telegram.Controls
                 case InlineKeyboardButtonTypeSuggestionEdit:
                     Icon = Icons.EditFilled;
                     break;
+
                 case InlineKeyboardButtonTypeDisabled:
                     IsEnabled = false;
                     disabled = true;
@@ -133,24 +138,19 @@ namespace Telegram.Controls
                 switch (style)
                 {
                     case ButtonStylePrimary:
-                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7a, 0xff));
-                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x66, 0xaf, 0xff) : Color.FromArgb(0xFF, 0xff, 0xff, 0xff));
+                        Style = BootStrapper.Current.Resources[inline ? "PrimaryTextReplyMarkupInlineButtonStyle" : "PrimaryReplyMarkupInlineButtonStyle"] as Style;
                         break;
                     case ButtonStyleDanger:
-                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xff, 0xe2, 0xe0));
-                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0xff, 0x8e, 0x88) : Color.FromArgb(0xFF, 0xff, 0x3b, 0x30));
+                        Style = BootStrapper.Current.Resources[inline ? "DangerTextReplyMarkupInlineButtonStyle" : "DangerReplyMarkupInlineButtonStyle"] as Style;
                         break;
                     case ButtonStyleSuccess:
-                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe8, 0xf6, 0xec));
-                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x83, 0xce, 0x96) : Color.FromArgb(0xFF, 0x1e, 0xa6, 0x41));
+                        Style = BootStrapper.Current.Resources[inline ? "SuccessTextReplyMarkupInlineButtonStyle" : "SuccessReplyMarkupInlineButtonStyle"] as Style;
                         break;
                     case ButtonStyleLink:
-                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe5, 0xf2, 0xff));
-                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0xa0, 0xce, 0xff) : Color.FromArgb(0xFF, 0x00, 0x7a, 0xff));
+                        Style = BootStrapper.Current.Resources["LinkTextReplyMarkupInlineButtonStyle"] as Style;
                         break;
                     default:
-                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe4, 0xe4, 0xe6));
-                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x94, 0x94, 0x95) : Color.FromArgb(0xFF, 0x00, 0x00, 0x00));
+                        Style = BootStrapper.Current.Resources[inline ? "DefaultTextReplyMarkupInlineButtonStyle" : "DefaultReplyMarkupInlineButtonStyle"] as Style;
                         break;
                 }
             }
@@ -173,6 +173,11 @@ namespace Telegram.Controls
             {
                 EmojiPresenter = GetTemplateChild(nameof(EmojiPresenter)) as UIElement;
                 EmojiPresenter.Visibility = Visibility.Visible;
+            }
+
+            if (!string.IsNullOrEmpty(Glyph))
+            {
+                VisualStateManager.GoToState(this, "GlyphVisible", false);
             }
 
             base.OnApplyTemplate();
