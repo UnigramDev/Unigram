@@ -58,6 +58,11 @@ namespace Telegram.Controls
 
         private int _prevIndex = -1;
 
+        private readonly DispatcherTimer _deactivateTimer = new()
+        {
+            Interval = TimeSpan.FromSeconds(2)
+        };
+
         public StickerPanel()
         {
             InitializeComponent();
@@ -68,6 +73,14 @@ namespace Telegram.Controls
             var shadow = VisualUtilities.DropShadow(ShadowElement);
 
             header.Clip = header.Compositor.CreateInsetClip(0, -40, 0, 40);
+
+            _deactivateTimer.Tick += Deactivate_Tick;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Deactivate_Tick(null, null);
         }
 
         private void Emojis_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
@@ -325,6 +338,8 @@ namespace Telegram.Controls
 
         public void Activate()
         {
+            _deactivateTimer.Stop();
+
             switch (AppSettings.Stickers.SelectedTab)
             {
                 case StickersTab.Emoji:
@@ -343,28 +358,30 @@ namespace Telegram.Controls
         {
             Logger.Info();
 
+            _prevIndex = -1;
+
+            _deactivateTimer.Stop();
+            _deactivateTimer.Start();
+
+            Tab0.Visibility = Visibility.Collapsed;
+            Tab1.Visibility = Visibility.Collapsed;
+            Tab2.Visibility = Visibility.Collapsed;
+
+            EmojisRoot?.UnloadVisibleItems();
+            AnimationsRoot?.UnloadVisibleItems();
+            StickersRoot?.UnloadVisibleItems();
+        }
+
+        private void Deactivate_Tick(object sender, object e)
+        {
+            Logger.Info();
+
             for (int i = 0; i < 3; i++)
             {
                 UnloadAtIndex(i);
             }
 
-            _prevIndex = -1;
-        }
-
-        public void UnloadVisibleItems()
-        {
-            foreach (var drawer in GetDrawers())
-            {
-                drawer?.UnloadVisibleItems();
-            }
-        }
-
-        public void LoadVisibleItems()
-        {
-            foreach (var drawer in GetDrawers())
-            {
-                drawer?.LoadVisibleItems();
-            }
+            _deactivateTimer.Stop();
         }
 
         private void EmojisRoot_Loaded(object sender, RoutedEventArgs e)

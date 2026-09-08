@@ -120,6 +120,7 @@ namespace Telegram.Controls.Drawers
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
             Bindings.StopTracking();
+            ViewModel.Unsubscribe();
         }
 
         public void LoadVisibleItems()

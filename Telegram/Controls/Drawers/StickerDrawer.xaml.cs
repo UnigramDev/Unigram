@@ -125,6 +125,7 @@ namespace Telegram.Controls.Drawers
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
             Bindings.StopTracking();
+            ViewModel.Unsubscribe();
 
             // Same as EmojiDrawer: the bindings' last value keeps a CollectionChanged handler
             // on the view model's collections alive past UnloadObject, and the view model can
