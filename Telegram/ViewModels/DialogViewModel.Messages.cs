@@ -1704,11 +1704,7 @@ namespace Telegram.ViewModels
             }
             else if (inline.Type is InlineKeyboardButtonTypeUser user)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(user.UserId, false));
-                if (response is Chat userChat)
-                {
-                    NavigationService.NavigateToChat(userChat);
-                }
+                NavigationService.NavigateToUser(user.UserId);
             }
             else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
             {
