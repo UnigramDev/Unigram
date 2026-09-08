@@ -471,7 +471,14 @@ namespace Telegram.Navigation.Services
             var page = frameContent as Page;
             if (page != null)
             {
-                page.XamlRoot = XamlRoot;
+                try
+                {
+                    page.XamlRoot ??= XamlRoot;
+                }
+                catch
+                {
+                    // Guard against navigation failure
+                }
 
                 if (page is IActivablePage cleanup)
                 {
