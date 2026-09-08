@@ -1539,6 +1539,7 @@ namespace Telegram.ViewModels
                 if (result.Count > 0)
                 {
                     InsertMessageInOrder(result[0], oldMessageId);
+                    TrimHistoryAfterInsert();
                 }
             }
             else if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)

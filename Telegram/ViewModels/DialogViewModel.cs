@@ -749,6 +749,58 @@ namespace Telegram.ViewModels
 
         public Stack<long> RepliesStack => _repliesStack;
 
+        private const int HistoryWindow = 200;
+
+        /// <summary>
+        /// Trims the end opposite to <paramref name="direction"/> back to the window, leaving
+        /// <paramref name="room"/> for what is about to be added at the growing end.
+        /// </summary>
+        /// <remarks>
+        /// The history is a window into the chat, not the chat: every path that grows one end owes
+        /// the other a trim, or a session that never scrolls up never stops growing. The removal
+        /// and whatever grows the list must agree on the anchor when they share a layout pass —
+        /// they do while the list follows the end, and not otherwise, which is why a slice load
+        /// trims before its request rather than after it.
+        /// </remarks>
+        private void TrimHistory(PanelScrollingDirection direction, int room = 0)
+        {
+            if (Items.Count + room <= HistoryWindow)
+            {
+                return;
+            }
+
+            if (direction == PanelScrollingDirection.Backward)
+            {
+                IsNewestSliceLoaded = false;
+            }
+            else
+            {
+                IsOldestSliceLoaded = false;
+            }
+
+            while (Items.Count + room > HistoryWindow)
+            {
+                Items.RemoveAt(direction == PanelScrollingDirection.Backward ? Items.Count - 1 : 0);
+            }
+        }
+
+        /// <summary>
+        /// Trims the oldest end once a message has joined the newest one.
+        /// </summary>
+        /// <remarks>
+        /// Only while the list follows the end, where the removal and the insert share a layout
+        /// pass and want the same anchor; anywhere else they want opposite ones, and the growth is
+        /// bounded by how long the user reads before coming back to the end. Scheduled messages are
+        /// the whole list rather than a window into one, and nothing would load a trimmed one back.
+        /// </remarks>
+        private void TrimHistoryAfterInsert()
+        {
+            if (Type != DialogType.ScheduledMessages && HistoryField?.IsFollowingEnd is true)
+            {
+                TrimHistory(PanelScrollingDirection.Forward);
+            }
+        }
+
         public virtual async Task LoadNextSliceAsync(PanelScrollingDirection direction)
         {
             // Backward => Going to top, to the past
@@ -811,6 +863,12 @@ namespace Telegram.ViewModels
 
                 return;
             }
+
+            // Trimmed here rather than once the slice has landed, because the two touch opposite
+            // ends of the list: applied in one run of mutations they reach the panel with no layout
+            // between them, and a single anchor cannot both absorb the prepend and leave the
+            // removal alone. The request is what separates them.
+            TrimHistory(direction, Constants.HistoryLimit);
 
             Function func;
             if (Type == DialogType.Pinned)
@@ -891,23 +949,6 @@ namespace Telegram.ViewModels
                     else
                     {
                         Items.AppendSlice(replied, true, out bool empty);
-                    }
-
-                    if (Items.Count > 200)
-                    {
-                        if (direction == PanelScrollingDirection.Backward)
-                        {
-                            IsNewestSliceLoaded = false;
-                        }
-                        else
-                        {
-                            IsOldestSliceLoaded = false;
-                        }
-
-                        while (Items.Count > 200)
-                        {
-                            Items.RemoveAt(direction == PanelScrollingDirection.Backward ? Items.Count - 1 : 0);
-                        }
                     }
                 }
 
