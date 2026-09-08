@@ -221,15 +221,19 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                var items = new RangeObservableCollection<StickerSetViewModel>();
-                SearchStickers = items;
+                SearchStickers = new RangeObservableCollection<StickerSetViewModel>();
 
                 var response = await ClientService.SendAsync(new GetPremiumStickers(100));
                 if (response is Stickers stickers)
                 {
-                    items.Add(new StickerSetViewModel(ClientService,
-                        new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                        new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
+                    // Filled before it is bound: adding the group afterwards would mutate the
+                    // grouped source the drawer is already showing.
+                    SearchStickers = new RangeObservableCollection<StickerSetViewModel>
+                    {
+                        new StickerSetViewModel(ClientService,
+                            new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
+                            new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue, Array.Empty<Emojis>()))
+                    };
                 }
             }
         }
@@ -709,6 +713,37 @@ namespace Telegram.ViewModels.Drawers
 
         public string Query => _query;
 
+        // Appending a group to a live grouped source takes the GridView through
+        // ModernCollectionBasePanel::OnGroupAdded, whose incremental group-cache renewal
+        // faults; a single Reset makes it rebuild the cache instead.
+        private void AddGroup(StickerSetViewModel group)
+        {
+            using (SuppressEvents())
+            {
+                Add(group);
+            }
+
+            Reset();
+        }
+
+        private void AddGroups(IEnumerable<StickerSetViewModel> groups)
+        {
+            var count = Count;
+
+            using (SuppressEvents())
+            {
+                foreach (var group in groups)
+                {
+                    Add(group);
+                }
+            }
+
+            if (Count != count)
+            {
+                Reset();
+            }
+        }
+
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
         {
             return IncrementalLoading.Run(async token =>
@@ -722,16 +757,11 @@ namespace Telegram.ViewModels.Drawers
                     var response = await _clientService.SendAsync(task);
                     if (response is StickerSets sets)
                     {
-                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_clientService, x)))
-                        {
-                            Add(item);
-                        }
-
-                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_clientService, _aggregator, x)));
+                        AddGroups(sets.Sets.Select(x => new StickerSetViewModel(_clientService, x)));
                     }
                     else if (response is Stickers stickers)
                     {
-                        Add(new StickerSetViewModel(_clientService,
+                        AddGroup(new StickerSetViewModel(_clientService,
                             new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
                             new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
                     }
@@ -743,7 +773,7 @@ namespace Telegram.ViewModels.Drawers
                         var response = await _clientService.SendAsync(new GetStickers(_type, _query, 100, _chatId));
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetViewModel(_clientService,
+                            AddGroup(new StickerSetViewModel(_clientService,
                                 new StickerSetInfo(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
                                 new StickerSet(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
                         }
@@ -783,7 +813,7 @@ namespace Telegram.ViewModels.Drawers
                                 }
                             }
 
-                            Add(new StickerSetViewModel(_clientService,
+                            AddGroup(new StickerSetViewModel(_clientService,
                                 new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items.Count, items),
                                 new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items, Array.Empty<Emojis>())));
                         }
@@ -794,12 +824,7 @@ namespace Telegram.ViewModels.Drawers
                     var response = await _clientService.SendAsync(new SearchStickerSets(_type, _query));
                     if (response is StickerSets sets)
                     {
-                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_clientService, x, x.Covers)))
-                        {
-                            Add(item);
-                        }
-
-                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_clientService, _aggregator, x)));
+                        AddGroups(sets.Sets.Select(x => new StickerSetViewModel(_clientService, x, x.Covers)));
                     }
                 }
 
