@@ -218,7 +218,7 @@ namespace Telegram.Services.Settings
         private bool? _directTextDebug;
         public bool DirectTextDebug
         {
-            get => _directTextDebug ??= GetValueOrDefault("DirectTextDebug", ApiInfo.IsPackagedRelease);
+            get => _directTextDebug ??= GetValueOrDefault("DirectTextDebug", false);
             set => AddOrUpdateValue(ref _directTextDebug, "DirectTextDebug", value);
         }
 
