@@ -21,20 +21,12 @@ namespace Telegram.Controls
         public SuggestTextBox()
         {
             DefaultStyleKey = typeof(SuggestTextBox);
-            TextChanged += OnTextChanged;
-        }
-
-        private void OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (ControlledList != null)
-            {
-                ControlledList.ChoosingItemContainer -= OnChoosingItemContainer;
-                ControlledList.ChoosingItemContainer += OnChoosingItemContainer;
-            }
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
+            // TODO: skip disabled items
+
             if (e.Key == VirtualKey.Down && ControlledList != null)
             {
                 var nextIndex = Math.Max(ControlledList.SelectedIndex + 1, StartingIndex);
@@ -83,15 +75,6 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
-        {
-            if (sender.Items.Count > StartingIndex)
-            {
-                sender.SelectedIndex = StartingIndex;
-                sender.ChoosingItemContainer -= OnChoosingItemContainer;
-            }
-        }
-
         #region ControlledList
 
         public ListViewBase ControlledList
@@ -112,13 +95,11 @@ namespace Telegram.Controls
         {
             if (oldValue != null)
             {
-                oldValue.ChoosingItemContainer -= OnChoosingItemContainer;
                 AutomationProperties.GetControlledPeers(this).Remove(oldValue);
             }
 
             if (newValue != null)
             {
-                newValue.ChoosingItemContainer += OnChoosingItemContainer;
                 AutomationProperties.GetControlledPeers(this).Add(newValue);
             }
         }
