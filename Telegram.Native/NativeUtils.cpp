@@ -352,7 +352,8 @@ namespace winrt::Telegram::Native::implementation
         if (Callback != nullptr && !s_failFasting)
         {
             auto code = exceptionRecord != nullptr ? exceptionRecord->ExceptionCode : 0;
-            ReportFailFast(GetBackTrace(L"FailFastException", hstring(wstrprintf(L"Fail-fast 0x%08X", (ULONG)code))));
+            auto address = exceptionRecord != nullptr ? exceptionRecord->ExceptionAddress : nullptr;
+            ReportFailFast(GetBackTrace(L"FailFastException", hstring(wstrprintf(L"Fail-fast 0x%08X", (ULONG)code)), address));
         }
 
         s_RaiseFailFastException(exceptionRecord, contextRecord, flags);
@@ -549,8 +550,22 @@ namespace winrt::Telegram::Native::implementation
         std::wstring detail = wstrprintf(L"Stowed HRESULT 0x%08X on thread %u",
             (ULONG)stowed->ResultCode, (ULONG)stowed->ThreadId);
 
+        FatalErrorFrame fault{};
+
         if (stowed->ExceptionForm == 1)
         {
+            // Only this form has the address union; the text form overlaps it with ErrorText.
+            if (stowed->ExceptionAddress != nullptr)
+            {
+                void* moduleBaseVoid = nullptr;
+                RtlPcToFileHeader(stowed->ExceptionAddress, &moduleBaseVoid);
+
+                if (moduleBaseVoid != nullptr)
+                {
+                    fault = { (intptr_t)stowed->ExceptionAddress, (intptr_t)moduleBaseVoid };
+                }
+            }
+
             for (int i = 0; i < stowed->StackTraceWords; ++i)
             {
                 PVOID pointer;
@@ -597,6 +612,7 @@ namespace winrt::Telegram::Native::implementation
         // Also a property, not only text in the trace: the caller has to be able to tell a record
         // stowed on this thread from one that came back over RPC, which reports zero.
         error.ThreadId(stowed->ThreadId);
+        error.Fault(fault);
 
         if (stowed->NestedExceptionType == STOWED_EXCEPTION_NESTED_TYPE_STOWED)
         {
@@ -607,7 +623,7 @@ namespace winrt::Telegram::Native::implementation
     }
 
     // From http://davidpritchard.org/archives/907
-    winrt::Telegram::Native::FatalError NativeUtils::GetBackTrace(hstring type, hstring message)
+    winrt::Telegram::Native::FatalError NativeUtils::GetBackTrace(hstring type, hstring message, void* faultAddress)
     {
         constexpr uint32_t TRACE_MAX_STACK_FRAMES = 99;
         void* stack[TRACE_MAX_STACK_FRAMES];
@@ -667,6 +683,17 @@ namespace winrt::Telegram::Native::implementation
         }
 
         auto error = winrt::make_self<FatalError>(type, message, hstring(trace), frames);
+
+        if (faultAddress != nullptr)
+        {
+            void* moduleBaseVoid = nullptr;
+            RtlPcToFileHeader(faultAddress, &moduleBaseVoid);
+
+            if (moduleBaseVoid != nullptr)
+            {
+                error->Fault({ (intptr_t)faultAddress, (intptr_t)moduleBaseVoid });
+            }
+        }
 
         // A backtrace is always this thread's, by construction. Filling it in anyway keeps the
         // property meaningful whichever of the two sources a record came from.

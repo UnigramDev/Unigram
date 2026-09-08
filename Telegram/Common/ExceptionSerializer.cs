@@ -31,18 +31,14 @@ namespace Telegram.Common
         {
             var hashBuilder = new StringBuilder();
             var binaries = new Dictionary<long, ExceptionBinary>();
-            var modelException = ProcessException(exception, null, binaries, hashBuilder);
+            var budget = MaxHashedFrames;
+            var modelException = ProcessException(exception, null, binaries, hashBuilder, ref budget);
 
             var error = new ErrorExceptionAndBinaries
             {
                 Binaries = binaries.Count > 0 ? binaries.Values.ToList() : null,
                 Exception = modelException,
             };
-
-            foreach (var binary in binaries.Values.OrderBy(x => x.Name))
-            {
-                hashBuilder.Append(binary.Name.ToLowerInvariant());
-            }
 
             return Serialize(error, id, userId, logs, hashBuilder);
         }
@@ -51,18 +47,14 @@ namespace Telegram.Common
         {
             var hashBuilder = new StringBuilder();
             var binaries = new Dictionary<long, ExceptionBinary>();
-            var modelException = ProcessException(exception, null, binaries, hashBuilder);
+            var budget = MaxHashedFrames;
+            var modelException = ProcessException(exception, null, binaries, hashBuilder, ref budget);
 
             var error = new ErrorExceptionAndBinaries
             {
                 Binaries = binaries.Count > 0 ? binaries.Values.ToList() : null,
                 Exception = modelException,
             };
-
-            foreach (var binary in binaries.Values.OrderBy(x => x.Name))
-            {
-                hashBuilder.Append(binary.Name.ToLowerInvariant());
-            }
 
             return Serialize(error, id, userId, logs, hashBuilder);
         }
@@ -107,6 +99,19 @@ namespace Telegram.Common
             return JsonSerializer.Serialize(report, ErrorJsonContext.Default.ErrorReport);
         }
 
+        /// <summary>
+        /// How many stack frames a report's group is allowed to be described by.
+        /// </summary>
+        /// <remarks>
+        /// The signature is the code of ours that was running and nothing else. A module that
+        /// merely appears in the stack says nothing about the fault and everything about the
+        /// machine: OS binaries move with every Windows update and a GPU driver is named after
+        /// its vendor, so hashing them splits one fault into a group per configuration. The cap
+        /// is there for the same reason - the tail of a stack is the message pump, which varies
+        /// while the fault above it does not.
+        /// </remarks>
+        private const int MaxHashedFrames = 8;
+
         private static string ComputeHash(string input)
         {
             using (MD5 md5 = MD5.Create())
@@ -129,15 +134,22 @@ namespace Telegram.Common
         // Only frames with a method signature: the description above them arrives in the user's
         // language, a native backtrace renders as "at module.dll+0x..." and is already covered by
         // the binary names, and the offsets are per-build noise.
-        private static void AppendStackTraceHash(StringBuilder hashBuilder, string stackTrace)
+        private static bool AppendStackTraceHash(StringBuilder hashBuilder, string stackTrace, ref int budget)
         {
             if (string.IsNullOrEmpty(stackTrace))
             {
-                return;
+                return false;
             }
+
+            var described = false;
 
             foreach (var line in stackTrace.Split('\n'))
             {
+                if (budget <= 0)
+                {
+                    break;
+                }
+
                 var frame = line.Trim();
 
                 if (!frame.StartsWith("at ", StringComparison.Ordinal) || !frame.Contains('('))
@@ -151,11 +163,56 @@ namespace Telegram.Common
                     frame = frame.Substring(0, plus).TrimEnd();
                 }
 
+                budget--;
+                described = true;
                 hashBuilder.Append(frame);
             }
+
+            return described;
         }
 
-        private static ExceptionModel ProcessException(System.Exception exception, ExceptionModel outerException, Dictionary<long, ExceptionBinary> seenBinaries, StringBuilder hashBuilder)
+        /// <summary>
+        /// Adds the module the fault happened in, and where in it when the module is one of ours.
+        /// </summary>
+        /// <remarks>
+        /// The name alone for anything else: an OS binary and a driver move their addresses with
+        /// every update they ship, so an offset into one forks the group per machine, while the
+        /// name is stable and is the whole of what separates a crash inside a display driver from
+        /// one inside XAML.
+        /// </remarks>
+        private static bool AppendFaultHash(StringBuilder hashBuilder, FatalErrorFrame fault, Dictionary<long, ExceptionBinary> seenBinaries)
+        {
+            if (fault.NativeImageBase == 0)
+            {
+                return false;
+            }
+
+            if (!seenBinaries.TryGetValue(fault.NativeImageBase, out ExceptionBinary binary))
+            {
+                binary = ImageToBinary((IntPtr)fault.NativeImageBase);
+
+                if (binary != null)
+                {
+                    seenBinaries[fault.NativeImageBase] = binary;
+                }
+            }
+
+            if (binary == null)
+            {
+                return false;
+            }
+
+            hashBuilder.Append(binary.Name.ToLowerInvariant());
+
+            if (_builtinBinaries.Contains(binary.Name))
+            {
+                hashBuilder.Append(FunctionOffset(fault.NativeIP, fault.NativeImageBase));
+            }
+
+            return true;
+        }
+
+        private static ExceptionModel ProcessException(System.Exception exception, ExceptionModel outerException, Dictionary<long, ExceptionBinary> seenBinaries, StringBuilder hashBuilder, ref int budget)
         {
             var type = exception.GetType().Name;
             var modelException = new ExceptionModel
@@ -171,15 +228,17 @@ namespace Telegram.Common
                     modelException.InnerExceptions = new List<ExceptionModel>();
                     foreach (var innerException in aggregateException.InnerExceptions)
                     {
-                        ProcessException(innerException, modelException, seenBinaries, hashBuilder);
+                        ProcessException(innerException, modelException, seenBinaries, hashBuilder, ref budget);
                     }
                 }
             }
             if (exception.InnerException != null)
             {
                 modelException.InnerExceptions = modelException.InnerExceptions ?? new List<ExceptionModel>();
-                ProcessException(exception.InnerException, modelException, seenBinaries, hashBuilder);
+                ProcessException(exception.InnerException, modelException, seenBinaries, hashBuilder, ref budget);
             }
+
+            var described = false;
 
             var stackTrace = new StackTrace(exception, true);
             var frames = stackTrace.GetFrames();
@@ -207,41 +266,40 @@ namespace Telegram.Common
                         continue;
                     }
 
-                    void AppendHash(ExceptionBinary binary)
-                    {
-                        if (_builtinBinaries.Contains(binary.Name))
-                        {
-                            hashBuilder.Append(binary.Name.ToLowerInvariant());
-                            hashBuilder.Append(nativeIP - nativeImageBase);
-                        }
-                    }
-
-                    if (seenBinaries.TryGetValue(nativeImageBase, out ExceptionBinary binary))
-                    {
-                        AppendHash(binary);
-                    }
-                    else
+                    if (!seenBinaries.TryGetValue(nativeImageBase, out ExceptionBinary binary))
                     {
                         binary = ImageToBinary(frame.GetNativeImageBase());
 
                         if (binary != null)
                         {
                             seenBinaries[nativeImageBase] = binary;
-                            AppendHash(binary);
                         }
+                    }
+
+                    if (budget > 0 && binary != null && _builtinBinaries.Contains(binary.Name))
+                    {
+                        budget--;
+                        described = true;
+                        hashBuilder.Append(binary.Name.ToLowerInvariant());
+                        hashBuilder.Append(FunctionOffset(nativeIP, nativeImageBase));
                     }
                 }
             }
             else
             {
-                hashBuilder.Append(exception.StackTrace);
+                described = AppendStackTraceHash(hashBuilder, exception.StackTrace, ref budget);
+            }
+
+            if (described)
+            {
+                budget = 0;
             }
 
             outerException?.InnerExceptions.Add(modelException);
             return modelException;
         }
 
-        private static ExceptionModel ProcessException(FatalError exception, ExceptionModel outerException, Dictionary<long, ExceptionBinary> seenBinaries, StringBuilder hashBuilder)
+        private static ExceptionModel ProcessException(FatalError exception, ExceptionModel outerException, Dictionary<long, ExceptionBinary> seenBinaries, StringBuilder hashBuilder, ref int budget)
         {
             var modelException = new ExceptionModel
             {
@@ -252,14 +310,17 @@ namespace Telegram.Common
                 StackTrace = exception.StackTrace?.Replace("\r\n", "\n")
             };
 
+            var faulted = budget > 0 && AppendFaultHash(hashBuilder, exception.Fault, seenBinaries);
+
             // The frames below are the pump for anything that arrived through the stowed path, so
             // without this two unrelated faults sharing a generic HRESULT message group as one.
-            AppendStackTraceHash(hashBuilder, exception.StackTrace);
+            var described = AppendStackTraceHash(hashBuilder, exception.StackTrace, ref budget);
 
-            if (exception.InnerException != null)
+            // A managed trace names the origin better than this record's own frames do, which are
+            // the pump underneath it, so when there is one it takes the whole budget.
+            if (described)
             {
-                modelException.InnerExceptions ??= new List<ExceptionModel>();
-                ProcessException(exception.InnerException, modelException, seenBinaries, hashBuilder);
+                budget = 0;
             }
 
             foreach (var frame in exception.Frames)
@@ -281,33 +342,73 @@ namespace Telegram.Common
                     continue;
                 }
 
-                void AppendHash(ExceptionBinary binary)
-                {
-                    if (_builtinBinaries.Contains(binary.Name))
-                    {
-                        hashBuilder.Append(binary.Name.ToLowerInvariant());
-                        hashBuilder.Append(nativeIP - nativeImageBase);
-                    }
-                }
-
-                if (seenBinaries.TryGetValue(nativeImageBase, out ExceptionBinary binary))
-                {
-                    AppendHash(binary);
-                }
-                else
+                if (!seenBinaries.TryGetValue(nativeImageBase, out ExceptionBinary binary))
                 {
                     binary = ImageToBinary((IntPtr)frame.NativeImageBase);
 
                     if (binary != null)
                     {
                         seenBinaries[nativeImageBase] = binary;
-                        AppendHash(binary);
                     }
                 }
+
+                if (budget > 0 && binary != null && _builtinBinaries.Contains(binary.Name))
+                {
+                    budget--;
+                    described = true;
+                    hashBuilder.Append(binary.Name.ToLowerInvariant());
+                    hashBuilder.Append(FunctionOffset(nativeIP, nativeImageBase));
+                }
+            }
+
+            // The first record to say anything is the fault, and the chain under it is not: a
+            // fail-fast carries every other context the thread had stowed, up to 64 of them, so
+            // hashing the rest splits one fault by whatever else went wrong beside it. The walk
+            // below has to stay below this for that to hold.
+            if (described || faulted)
+            {
+                budget = 0;
+            }
+
+            if (exception.InnerException != null)
+            {
+                modelException.InnerExceptions ??= new List<ExceptionModel>();
+                ProcessException(exception.InnerException, modelException, seenBinaries, hashBuilder, ref budget);
             }
 
             outerException?.InnerExceptions.Add(modelException);
             return modelException;
+        }
+
+        [DllImport("ntdll.dll")]
+        private static extern IntPtr RtlLookupFunctionEntry(ulong controlPc, out ulong imageBase, IntPtr historyTable);
+
+        /// <summary>
+        /// The address of the function a frame is in, rather than the frame's own address.
+        /// </summary>
+        /// <remarks>
+        /// Two calls in one method are the same fault but return to different addresses, so an
+        /// offset from the image base gives each of them a group of its own. The unwind tables
+        /// name the function an address belongs to without needing a symbol file; an address they
+        /// do not cover keeps the offset it had.
+        /// </remarks>
+        private static long FunctionOffset(long nativeIP, long nativeImageBase)
+        {
+            try
+            {
+                var entry = RtlLookupFunctionEntry((ulong)nativeIP, out ulong imageBase, IntPtr.Zero);
+                if (entry != IntPtr.Zero && (long)imageBase == nativeImageBase)
+                {
+                    // BeginAddress, an RVA, is the first field of RUNTIME_FUNCTION on x64 and ARM64 alike.
+                    return Marshal.ReadInt32(entry);
+                }
+            }
+            catch
+            {
+                // Reporting a crash is not allowed to raise one.
+            }
+
+            return nativeIP - nativeImageBase;
         }
 
         private const string AddressFormat = "0x{0:x16}";

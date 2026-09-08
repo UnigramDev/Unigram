@@ -15,6 +15,11 @@ namespace Telegram.Native
         String StackTrace;
         Windows.Foundation.Collections.IVector<FatalErrorFrame> Frames{ get; };
 
+        // Where the fault happened, which the frames do not say: a backtrace taken in an
+        // exception filter starts at the filter, so everything above the fault is the dispatcher
+        // on its way here. Zero when the record came from a path that has no address to give.
+        FatalErrorFrame Fault;
+
         // The thread the record was stowed on. Zero when it came back across an RPC boundary from
         // another process, which is the tell for a record that has nothing to do with the failure
         // being reported.

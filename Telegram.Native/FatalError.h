@@ -51,6 +51,16 @@ namespace winrt::Telegram::Native::implementation
             return m_frames;
         }
 
+        FatalErrorFrame Fault()
+        {
+            return m_fault;
+        }
+
+        void Fault(FatalErrorFrame const& value)
+        {
+            m_fault = value;
+        }
+
         uint32_t ThreadId()
         {
             return m_threadId;
@@ -76,6 +86,7 @@ namespace winrt::Telegram::Native::implementation
         hstring m_message;
         hstring m_stackTrace;
         winrt::Windows::Foundation::Collections::IVector<FatalErrorFrame> m_frames;
+        FatalErrorFrame m_fault{};
         uint32_t m_threadId{ 0 };
 
         winrt::Telegram::Native::FatalError m_innerException;

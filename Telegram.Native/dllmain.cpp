@@ -8,7 +8,12 @@ LONG WINAPI Filter(EXCEPTION_POINTERS* exceptionInfo)
 {
     if (NativeUtils::Callback)
     {
-        NativeUtils::Callback(NativeUtils::GetBackTrace(winrt::hstring(), winrt::hstring(GetExceptionMessage(exceptionInfo->ExceptionRecord))));
+        auto record = exceptionInfo->ExceptionRecord;
+
+        // The backtrace is this thread's as it stands here, so it opens with the dispatcher that
+        // reached the filter and the fault is somewhere below it. ExceptionAddress is the only
+        // thing on the way in that names where the crash actually was.
+        NativeUtils::Callback(NativeUtils::GetBackTrace(winrt::hstring(), winrt::hstring(GetExceptionMessage(record)), record->ExceptionAddress));
     }
 
     // This code would allow the app to continue running,
