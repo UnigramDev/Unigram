@@ -7,12 +7,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Composition;
+using Telegram.Controls.Messages;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -475,39 +478,11 @@ namespace Telegram.ViewModels
             };
         }
 
-        private string _deserialized;
-        public string Deserialized
+        private string _deserialization;
+        public string Deserialization
         {
-            get => _deserialized;
-            private set => Set(ref _deserialized, value);
-        }
-
-        private string _deserializationRate;
-        public string DeserializationRate
-        {
-            get => _deserializationRate;
-            private set => Set(ref _deserializationRate, value);
-        }
-
-        private string _deserializationShare;
-        public string DeserializationShare
-        {
-            get => _deserializationShare;
-            private set => Set(ref _deserializationShare, value);
-        }
-
-        private string _deserializationHandler;
-        public string DeserializationHandler
-        {
-            get => _deserializationHandler;
-            private set => Set(ref _deserializationHandler, value);
-        }
-
-        private string _deserializationFileChecks;
-        public string DeserializationFileChecks
-        {
-            get => _deserializationFileChecks;
-            private set => Set(ref _deserializationFileChecks, value);
+            get => _deserialization;
+            private set => Set(ref _deserialization, value);
         }
 
         private void UpdateDeserialization()
@@ -515,15 +490,11 @@ namespace Telegram.ViewModels
             var payloads = TdThroughput.Payloads;
             if (payloads == 0)
             {
-                var idle = TdThroughput.Enabled ? "nothing yet" : "off";
-
-                Deserialized = idle;
-                DeserializationRate = idle;
-                DeserializationShare = idle;
-                DeserializationHandler = idle;
-                DeserializationFileChecks = idle;
+                Deserialization = TdThroughput.Enabled ? "Nothing yet." : "Off.";
                 return;
             }
+
+            var builder = new StringBuilder();
 
             var megabytes = TdThroughput.Bytes / 1048576d;
             var seconds = TdThroughput.Seconds;
@@ -533,19 +504,27 @@ namespace Telegram.ViewModels
             var handler = TdThroughput.HandlerSeconds;
             var parsing = seconds - handler;
 
-            Deserialized = string.Format("{0:N0} updates, {1:N1} MB", payloads, megabytes);
-            DeserializationRate = string.Format("{0:N1} MB/s, {1:N1} µs each of {2:N1}",
+            builder.AppendFormat("Parsed: {0:N0} updates, {1:N1} MB\n", payloads, megabytes);
+            builder.AppendFormat("Throughput: {0:N1} MB/s, {1:N1} µs each of {2:N1}\n",
                 megabytes / parsing, parsing * 1000000d / payloads, seconds * 1000000d / payloads);
-            DeserializationHandler = string.Format("{0:N2}s, {1:N0}% of the parse",
+            builder.AppendFormat("File handling: {0:N2}s, {1:N0}% of the parse\n",
                 handler, handler * 100 / seconds);
 
             var checks = TdThroughput.FileChecks;
-            DeserializationFileChecks = checks == 0
-                ? "none"
-                : string.Format("{0:N0} checks, {1:N2}s, {2:N0} µs each",
+            if (checks == 0)
+            {
+                builder.Append("File checks (off-thread): none\n");
+            }
+            else
+            {
+                builder.AppendFormat("File checks (off-thread): {0:N0} checks, {1:N2}s, {2:N0} µs each\n",
                     checks, TdThroughput.FileCheckSeconds, TdThroughput.FileCheckSeconds * 1000000d / checks);
-            DeserializationShare = string.Format("{0:N2}% of {1:N0}s",
+            }
+
+            builder.AppendFormat("Share of wall clock: {0:N2}% of {1:N0}s",
                 seconds * 100 / TdThroughput.WallSeconds, TdThroughput.WallSeconds);
+
+            Deserialization = builder.ToString();
         }
 
         public void ResetDeserialization(object sender, RoutedEventArgs e)
@@ -561,34 +540,30 @@ namespace Telegram.ViewModels
             private set => Set(ref _fileUpdates, value);
         }
 
-        private string _fileUpdateDeliveries;
-        public string FileUpdateDeliveries
-        {
-            get => _fileUpdateDeliveries;
-            private set => Set(ref _fileUpdateDeliveries, value);
-        }
-
         private void UpdateFileUpdates()
         {
             var publishes = UpdateManager.Publishes;
             if (publishes == 0)
             {
-                FileUpdates = "nothing yet";
-                FileUpdateDeliveries = "nothing yet";
+                FileUpdates = "Nothing yet.";
                 return;
             }
 
             var deliveries = UpdateManager.Deliveries;
             var seconds = UpdateManager.WallSeconds;
 
-            FileUpdates = string.Format("{0:N0} updates over {1:N0}s, {2:N1}/s", publishes, seconds, publishes / seconds);
+            var builder = new StringBuilder();
+
+            builder.AppendFormat("Received: {0:N0} updates over {1:N0}s, {2:N1}/s\n", publishes, seconds, publishes / seconds);
 
             // Under one call per update is the bus doing its job: either nothing on screen is
             // showing the file, or a burst for it collapsed into a single call. What was absorbed
             // is what the old path would have delivered on top, so the two together are the before
             // and after of the same run.
-            FileUpdateDeliveries = string.Format("{0:N0} calls, {1:N2} per update, {2:N0} absorbed, {3:N0} hops",
+            builder.AppendFormat("Delivered: {0:N0} calls, {1:N2} per update, {2:N0} absorbed, {3:N0} hops",
                 deliveries, deliveries / (double)publishes, UpdateManager.Collapsed, UpdateManager.Hops);
+
+            FileUpdates = builder.ToString();
         }
 
         public void ResetFileUpdates(object sender, RoutedEventArgs e)
@@ -597,72 +572,94 @@ namespace Telegram.ViewModels
             UpdateFileUpdates();
         }
 
-        private string _textDirectSetText;
-        public string TextDirectSetText
+        private string _textLayout;
+        public string TextLayout
         {
-            get => _textDirectSetText;
-            private set => Set(ref _textDirectSetText, value);
+            get => _textLayout;
+            private set => Set(ref _textLayout, value);
         }
 
-        private string _textDirectMeasure;
-        public string TextDirectMeasure
-        {
-            get => _textDirectMeasure;
-            private set => Set(ref _textDirectMeasure, value);
-        }
-
-        private string _textDirectArrange;
-        public string TextDirectArrange
-        {
-            get => _textDirectArrange;
-            private set => Set(ref _textDirectArrange, value);
-        }
-
-        private string _textInlineSetText;
-        public string TextInlineSetText
-        {
-            get => _textInlineSetText;
-            private set => Set(ref _textInlineSetText, value);
-        }
-
-        private string _textInlineMeasure;
-        public string TextInlineMeasure
-        {
-            get => _textInlineMeasure;
-            private set => Set(ref _textInlineMeasure, value);
-        }
-
-        private string _textInlineArrange;
-        public string TextInlineArrange
-        {
-            get => _textInlineArrange;
-            private set => Set(ref _textInlineArrange, value);
-        }
-
-        // Only one engine is alive in a process - the flag is read once, so a list never mixes
-        // them - which is why the two sets are not on screen to be read against each other but
-        // against the same chat scrolled again on the other engine.
         private void UpdateTextLayout()
         {
-            TextDirectSetText = FormatTextLayout(TextThroughput.DirectSetText);
-            TextDirectMeasure = FormatTextLayout(TextThroughput.DirectMeasure);
-            TextDirectArrange = FormatTextLayout(TextThroughput.DirectArrange);
+            if (!TextThroughput.Enabled && TextThroughput.DirectSetText.Calls == 0)
+            {
+                TextLayout = "Off.";
+                return;
+            }
 
-            TextInlineSetText = FormatTextLayout(TextThroughput.InlineSetText);
-            TextInlineMeasure = FormatTextLayout(TextThroughput.InlineMeasure);
-            TextInlineArrange = FormatTextLayout(TextThroughput.InlineArrange);
+            var builder = new StringBuilder();
+
+            builder.AppendFormat("Messages: {0}, page blocks: {1}\n\n",
+                MessageTextBlock.IsDirectText ? "direct" : "inline",
+                PageBlockRenderer.IsDirectText ? "direct" : "inline");
+
+
+            builder.AppendFormat("Blocks: {0:N0} made, {1:N0} torn down - {2:N0} for a quote or a code block, {3:N0} with nothing to tear down\n",
+                TextThroughput.BlocksMade, TextThroughput.BlocksCleared,
+                TextThroughput.BlocksClearedComplex, TextThroughput.BlocksClearedEmpty);
+            builder.AppendFormat("Hosts: {0:N0} made\n", TextThroughput.HostsMade);
+            builder.AppendFormat("Layouts: {0:N0} made, {1:N0} disposed, in {2:N0} blocks of every kind\n",
+                TextThroughput.LayoutsMade, TextThroughput.LayoutsDisposed, TextThroughput.ControlsMade);
+
+            AppendTextLayout(builder, "Set text", TextThroughput.DirectSetText);
+            AppendTextLayout(builder, "Emoji, part of set text", TextThroughput.DirectEmoji);
+            AppendTextLayout(builder, "Buttons, part of set text", TextThroughput.DirectButtons);
+            AppendTextLayout(builder, "Formulas, part of set text", TextThroughput.DirectMath);
+            AppendTextLayout(builder, "Measure", TextThroughput.DirectMeasure);
+            AppendTextLayout(builder, "Layout, part of measure", TextThroughput.DirectLayout);
+            AppendTextLayout(builder, "Arrange", TextThroughput.DirectArrange);
+            AppendTextLayout(builder, "Draw, part of arrange", TextThroughput.DirectRender);
+            AppendTextLayout(builder, "Layout, part of draw", TextThroughput.DirectSurface);
+
+
+            // The layout's own, which is where the two above end up: what a build costs against
+            // a reflow, and what the three parts of a draw cost each.
+            builder.Append('\n');
+            builder.Append(DirectTextLayout.Counters);
+
+            AppendFrames(builder);
+
+            TextLayout = builder.ToString().TrimEnd();
         }
 
-        private static string FormatTextLayout(in TextThroughput.Counter counter)
+        // What the µs above are worth: the same work counted per frame, which is the form that
+        // says whether anything stuttered - against the frame this display actually gives,
+        // which is 16.7 ms on one machine and 4.2 on the next.
+        private static void AppendFrames(StringBuilder builder)
+        {
+            if (TextThroughput.Frame.Calls == 0)
+            {
+                return;
+            }
+
+            var period = TextThroughput.FramePeriod / (double)Stopwatch.Frequency * 1000;
+
+            builder.AppendFormat("\nFrames: {0:N0} at {1:N2} ms, {2:N0} of them with text in them\n",
+                TextThroughput.Frame.Calls, period, TextThroughput.BusyFrames);
+
+            if (TextThroughput.BusyFrames > 0)
+            {
+                builder.AppendFormat("Text per frame: {0:N2} ms each, worst {1:N2} ms across {2:N0} blocks\n",
+                    TextThroughput.Frame.Seconds * 1000 / TextThroughput.BusyFrames,
+                    TextThroughput.Frame.PeakSeconds * 1000,
+                    TextThroughput.PeakFrameBlocks);
+
+                builder.AppendFormat("Over a frame on text alone: {0:N0} of them\n", TextThroughput.LateFrames);
+            }
+        }
+
+        // The peak is the one that decides whether a frame was dropped; the average is what the
+        // engine costs.
+        private static void AppendTextLayout(StringBuilder builder, string name, in TextThroughput.Counter counter)
         {
             if (counter.Calls == 0)
             {
-                return TextThroughput.Enabled ? "nothing yet" : "off";
+                builder.AppendFormat("{0}: nothing yet\n", name);
+                return;
             }
 
-            // The peak is the one that decides whether a frame was dropped; the average is what
-            // the engine costs.
-            return string.Format("{0:N0} calls, {1:N1} µs each, {2:N1} µs peak, {3:N2}s total",
+            builder.AppendFormat("{0}: {1:N0} calls, {2:N1} µs each, {3:N1} µs peak, {4:N2}s total\n",
+                name,
                 counter.Calls,
                 counter.Seconds * 1000000d / counter.Calls,
                 counter.PeakSeconds * 1000000d,
@@ -672,6 +669,7 @@ namespace Telegram.ViewModels
         public void ResetTextLayout(object sender, RoutedEventArgs e)
         {
             TextThroughput.Reset();
+            DirectTextLayout.ResetCounters();
             UpdateTextLayout();
         }
 

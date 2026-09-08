@@ -8,6 +8,7 @@
 #include "RichMathSurface.h"
 
 #include <cmath>
+#include <format>
 #include <mutex>
 
 #include <winrt/Windows.Graphics.DirectX.h>
@@ -38,6 +39,133 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return S_OK;
+    }
+
+    namespace
+    {
+        // What the layout spends, in QueryPerformanceCounter ticks - the clock Stopwatch reads
+        // on the managed side, so the two sets of numbers on the diagnostics page are in the
+        // same units. Written from every view's thread without interlocks, for the reason
+        // TextThroughput gives: a meter is not worth a locked bus cycle per draw.
+        struct Counter
+        {
+            int64_t Calls;
+            int64_t Ticks;
+            int64_t Peak;
+        };
+
+        Counter s_build;
+        Counter s_reflow;
+        Counter s_extent;
+        Counter s_surfaceCreate;
+
+        // Draws that found the surface they already had big enough, which is what the rounding
+        // up is for, and the ones that gave it back because it was not.
+        int64_t s_surfaceKept;
+        int64_t s_surfaceDropped;
+        Counter s_beginDraw;
+        Counter s_drawText;
+        Counter s_endDraw;
+
+        int64_t Now()
+        {
+            LARGE_INTEGER value;
+            QueryPerformanceCounter(&value);
+
+            return value.QuadPart;
+        }
+
+        void Record(Counter& counter, int64_t started)
+        {
+            const auto elapsed = Now() - started;
+
+            counter.Calls++;
+            counter.Ticks += elapsed;
+
+            if (elapsed > counter.Peak)
+            {
+                counter.Peak = elapsed;
+            }
+        }
+
+        // What a surface is made in whole steps of, and how far past the text one is allowed to
+        // be before it is worth resizing. Both in pixels: a line of text is around 20 of them
+        // tall, so a step of 32 covers most of what a redraw asks for.
+        constexpr int32_t c_surfaceStep = 32;
+
+        int32_t Grow(int32_t value)
+        {
+            return ((value + c_surfaceStep - 1) / c_surfaceStep) * c_surfaceStep;
+        }
+
+        // Whether a surface this big is worth keeping for a text that needs this much. Twice
+        // the pixels plus a fixed allowance, because the two vary in different ways: a block is
+        // as wide as the bubble it is in and stays that way, while its height is a line or
+        // twenty. Without the allowance every one-line message after a long one resizes; with
+        // it, a block holds at most half a megabyte it is not using, and only until it is
+        // handed something long again.
+        constexpr int64_t c_surfaceSlack = 32768;
+
+        bool Keep(Windows::Graphics::SizeInt32 size, Windows::Graphics::SizeInt32 pixels)
+        {
+            if (size.Width < pixels.Width || size.Height < pixels.Height)
+            {
+                return false;
+            }
+
+            const int64_t have = (int64_t)size.Width * size.Height;
+            const int64_t used = (int64_t)pixels.Width * pixels.Height;
+
+            return have <= used * 2 + c_surfaceSlack;
+        }
+
+        void Append(std::wstring& text, const wchar_t* name, const Counter& counter, int64_t frequency)
+        {
+            if (counter.Calls == 0)
+            {
+                text += std::format(L"{}: nothing yet\n", name);
+                return;
+            }
+
+            const double seconds = counter.Ticks / (double)frequency;
+
+            text += std::format(L"{}: {} calls, {:.1f} \u00b5s each, {:.1f} \u00b5s peak, {:.2f}s total\n",
+                name, counter.Calls, seconds * 1000000 / counter.Calls,
+                counter.Peak / (double)frequency * 1000000, seconds);
+        }
+    }
+
+    hstring DirectTextLayout::Counters()
+    {
+        LARGE_INTEGER frequency;
+        QueryPerformanceFrequency(&frequency);
+
+        std::wstring text;
+
+        Append(text, L"Build", s_build, frequency.QuadPart);
+        Append(text, L"Reflow", s_reflow, frequency.QuadPart);
+        Append(text, L"Extent", s_extent, frequency.QuadPart);
+        Append(text, L"Surface create", s_surfaceCreate, frequency.QuadPart);
+
+        text += std::format(L"Surface kept: {}, dropped: {}\n", s_surfaceKept, s_surfaceDropped);
+        Append(text, L"BeginDraw", s_beginDraw, frequency.QuadPart);
+        Append(text, L"DrawTextLayout", s_drawText, frequency.QuadPart);
+        Append(text, L"EndDraw", s_endDraw, frequency.QuadPart);
+
+        return hstring(text);
+    }
+
+    void DirectTextLayout::ResetCounters()
+    {
+        s_build = {};
+        s_reflow = {};
+        s_extent = {};
+        s_surfaceCreate = {};
+        s_surfaceKept = 0;
+        s_surfaceDropped = 0;
+        s_beginDraw = {};
+        s_drawText = {};
+        s_endDraw = {};
     }
 
     // Which language a Han character belongs to cannot be read off the character: simplified
@@ -727,11 +855,22 @@ namespace winrt::Telegram::Native::implementation
 
         if (m_invalid || m_paragraphs.empty())
         {
+            const auto started = Now();
+
             m_width = availableWidth;
-            ReturnIfFailed(result, Build());
+            result = Build();
+
+            Record(s_build, started);
+
+            if (FAILED(result))
+            {
+                return result;
+            }
         }
         else if (m_width != availableWidth)
         {
+            const auto started = Now();
+
             m_width = availableWidth;
 
             for (Paragraph& paragraph : m_paragraphs)
@@ -742,7 +881,14 @@ namespace winrt::Telegram::Native::implementation
                 }
             }
 
-            ReturnIfFailed(result, Stack());
+            result = Stack();
+
+            Record(s_reflow, started);
+
+            if (FAILED(result))
+            {
+                return result;
+            }
         }
 
         return S_OK;
@@ -753,7 +899,40 @@ namespace winrt::Telegram::Native::implementation
         HRESULT result;
         ReturnDefaultIfFailed(result, Reflow(availableWidth));
 
-        return Bounds();
+        const auto bounds = Bounds();
+
+        // The box laid out again in the width the text needs, which is where it has to end up:
+        // a paragraph that is not drawn from the leading edge is placed IN the box - right to
+        // left against its far edge, centred against its middle - and a box wider than the
+        // block puts that outside it.
+        //
+        // Only then. Reflowing is where a measure spends its time, and for a paragraph drawn
+        // from the leading edge the width of the box behind it moves nothing.
+        if (bounds.Width > 0 && bounds.Width < availableWidth && !IsLeading())
+        {
+            ReturnDefaultIfFailed(result, Reflow(bounds.Width));
+
+            return Bounds();
+        }
+
+        return bounds;
+    }
+
+    // Whether every paragraph is drawn from the leading edge of the box, left to right - the
+    // ordinary case, and the one where the box is only ever as wide as it has to be.
+    bool DirectTextLayout::IsLeading() const
+    {
+        for (const Paragraph& paragraph : m_paragraphs)
+        {
+            if (paragraph.RightToLeft
+                || (paragraph.Alignment != Telegram::Native::TextAlignmentMode::Leading
+                    && paragraph.Alignment != Telegram::Native::TextAlignmentMode::Left))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // What the surface has to cover: the text's own box, measured from the layout's origin
@@ -795,7 +974,20 @@ namespace winrt::Telegram::Native::implementation
             width = std::min(width, (float)m_width);
         }
 
+        // Where the pen ended, which is not quite where the ink does: an italic leans past the
+        // advance width it was measured with. What covers that is the surface being rounded up
+        // to a whole number of 32 pixel steps - see Grow - rather than anything measured here.
+        // DirectWrite will say where the ink ends (GetOverhangMetrics) and it was tried: it
+        // costs 40 microseconds a draw against the 1.4 this function costs, because it walks
+        // the glyph runs to find out. See the note.
         return { width, height };
+    }
+
+    // The size of the text as it was last drawn, in pixels, which is what the surface holds in
+    // its top left corner - the surface itself is rounded up from it.
+    Windows::Graphics::SizeInt32 DirectTextLayout::RenderedPixels()
+    {
+        return m_pixels;
     }
 
     Windows::Foundation::Size DirectTextLayout::Bounds()
@@ -1084,12 +1276,16 @@ namespace winrt::Telegram::Native::implementation
             return nullptr;
         }
 
+        auto started = Now();
+
         const auto bounds = Extent();
         const auto pixels = Windows::Graphics::SizeInt32
         {
             (int32_t)std::ceil(bounds.Width * rasterizationScale),
             (int32_t)std::ceil(bounds.Height * rasterizationScale)
         };
+
+        Record(s_extent, started);
 
         if (pixels.Width <= 0 || pixels.Height <= 0)
         {
@@ -1098,39 +1294,49 @@ namespace winrt::Telegram::Native::implementation
 
         m_color = color;
         m_scale = rasterizationScale;
+        m_pixels = pixels;
 
         // The surface is kept rather than replaced: a text change is a redraw, and a list
         // scrolling past recycled items would otherwise allocate and free one atlas region per
         // item. Resizing drops the content, which is redrawn below anyway.
+        //
+        // Kept at a size the next text is likely to fit in as well, rather than at the size of
+        // this one: a recycled block is handed text of a different size nearly every time, so
+        // an exact fit gives the surface back on nearly every draw. The caller is told what was
+        // drawn (RenderedPixels) rather than reading the surface, which is now bigger than the
+        // text.
+        //
+        // One that no longer fits is given back rather than resized. Resizing was measured at
+        // five times the cost of making a new one - 293 microseconds against 52, and 17
+        // milliseconds at its worst, a dropped frame on its own - because it has to reconcile
+        // the region with the compositor, where a new surface is only another region.
         if (m_surface != nullptr)
         {
-            const auto size = m_surface.SizeInt32();
-
-            if (size.Width != pixels.Width || size.Height != pixels.Height)
+            if (Keep(m_surface.SizeInt32(), pixels))
             {
-                try
-                {
-                    m_surface.Resize(pixels);
-                }
-                catch (...)
-                {
-                    // A surface that cannot be resized is the wrong size, so it is dropped for
-                    // a new one rather than drawn into.
-                    m_surface = nullptr;
-                }
+                s_surfaceKept++;
+            }
+            else
+            {
+                s_surfaceDropped++;
+                m_surface = nullptr;
             }
         }
 
         if (m_surface == nullptr)
         {
+            const auto started = Now();
+
             try
             {
-                m_surface = m_device.CreateDrawingSurface2(pixels, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+                m_surface = m_device.CreateDrawingSurface2({ Grow(pixels.Width), Grow(pixels.Height) }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
             }
             catch (...)
             {
                 return nullptr;
             }
+
+            Record(s_surfaceCreate, started);
 
             // Once there is something to redraw. A layout that only answers questions - a
             // measure, a hit test - never registers, and this is where drawing starts.
@@ -1171,12 +1377,16 @@ namespace winrt::Telegram::Native::implementation
         // BeginDraw can fail with DXGI_ERROR_DEVICE_REMOVED. Nothing to do about it here:
         // Direct2DDevice rebuilds the device on the next access and replacing the rendering
         // device brings this back through the handler above.
+        auto started = Now();
         HRESULT result = surfaceInterop->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), context.put_void(), &offset);
+        Record(s_beginDraw, started);
 
         if (FAILED(result))
         {
             return result;
         }
+
+        started = Now();
 
         // Only one surface may be open for drawing on a device at a time, so everything from
         // here reaches EndDraw whatever it returns.
@@ -1203,7 +1413,12 @@ namespace winrt::Telegram::Native::implementation
             result = Draw(context.get(), brush.get());
         }
 
+        Record(s_drawText, started);
+
+        started = Now();
         surfaceInterop->EndDraw();
+        Record(s_endDraw, started);
+
         return result;
     }
 

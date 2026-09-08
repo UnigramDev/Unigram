@@ -267,6 +267,9 @@ namespace Telegram.Controls.Messages.Content
 
                     removed++;
 
+                    // Before the remove, while it is still in the tree to be walked.
+                    _renderer.Release(LayoutRoot.Children[diff.OldIndex]);
+
                     LayoutRoot.Children.RemoveAt(diff.OldIndex);
 
                     if (diff.OldValue is PageBlockAnchor anchor)

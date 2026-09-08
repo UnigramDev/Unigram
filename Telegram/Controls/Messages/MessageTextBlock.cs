@@ -57,6 +57,8 @@ namespace Telegram.Controls.Messages
         {
             // Match RichTextBlock's default text-y baseline behaviour for stacking.
             Instrumentation.Register(this);
+
+            TextThroughput.HostsMade++;
         }
 
         public bool HasCodeBlocks { get; private set; }
@@ -170,7 +172,13 @@ namespace Telegram.Controls.Messages
 
             if (styled == null || string.IsNullOrEmpty(styled.Text))
             {
-                ClearBlocks();
+                // A media message with no caption, in a bubble that showed text a moment ago
+                // and will again: the blocks are put away rather than torn down, because what
+                // they hold is exactly what the next one would have to build - a DirectWrite
+                // layout and a region of the device's atlas on one engine, a templated control
+                // over a native base on the other. This is where most of the tearing down was
+                // coming from, and almost none of it was quotes or code.
+                RecycleBlocks();
                 HasCodeBlocks = false;
                 return;
             }
@@ -191,6 +199,12 @@ namespace Telegram.Controls.Messages
                 if (_blocks.Count == 1 && Children.Count == 1 && Children[0] == _blocks[0])
                 {
                     var block = _blocks[0];
+
+                    if (block.Visibility != Visibility.Visible)
+                    {
+                        block.Visibility = Visibility.Visible;
+                    }
+
                     block.ShowHideSkeleton(_showSkeleton);
                     block.SetText(_clientService, styled, 0, last, _fontSize);
                     block.SetQuery(_query);
@@ -308,13 +322,41 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        // What a recycled bubble does to the text it was showing. The inline blocks go back to
+        // their pool; the direct ones stay where they are, because what they hold - a
+        // DirectWrite layout and the region of the atlas it draws into - is what the next
+        // message would otherwise build again, and building it again per message is the single
+        // largest thing recycling can save here.
         public void Clear()
         {
             _styled = null;
             _query = null;
             HasCodeBlocks = false;
 
-            ClearBlocks();
+            RecycleBlocks();
+        }
+
+        // Everything the last message put in the blocks, without the blocks themselves: each
+        // keeps its slot and goes collapsed until it is given text again. Collapsed rather than
+        // emptied because both engines still hold what they last rendered - a layout and the
+        // surface it was drawn into, or a tree of inlines - and a block left visible would show
+        // text the bubble no longer has.
+        private void RecycleBlocks()
+        {
+            foreach (var block in _directBlocks)
+            {
+                block.Recycle();
+            }
+
+            foreach (var block in _blocks)
+            {
+                block.Clear();
+
+                if (block.Visibility != Visibility.Collapsed)
+                {
+                    block.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         // Drops all blocks. Removing them from Children unloads each FormattedTextBlock, whose
@@ -356,6 +398,12 @@ namespace Telegram.Controls.Messages
         // Read once per process, like the chat cell: a message list never mixes the two.
         private static readonly bool _directText = AppSettings.Diagnostics.DirectTextDebug;
 
+        /// <summary>
+        /// Which engine this process builds messages with, for the diagnostics page: the flag is
+        /// read once, so it cannot be answered by reading the setting back.
+        /// </summary>
+        public static bool IsDirectText => _directText;
+
         // The blocks the direct engine renders into, when it is the one in use. They replace
         // the whole of _blocks: one for a message with nothing but ordinary paragraphs - which
         // is most of them - and otherwise one per quote or code block plus one per run of
@@ -374,6 +422,13 @@ namespace Telegram.Controls.Messages
             {
                 if (_directBlocks.Count != 1 || Children.Count != 1 || Children[0] != _directBlocks[0])
                 {
+                    TextThroughput.BlocksCleared++;
+
+                    if (_directBlocks.Count == 0)
+                    {
+                        TextThroughput.BlocksClearedEmpty++;
+                    }
+
                     ClearBlocks();
                 }
 
@@ -386,6 +441,9 @@ namespace Telegram.Controls.Messages
             // Built again rather than reused: a slot can go from a bare block to one inside a
             // quote and back, and moving a block between the two costs more care than it saves
             // for a shape of message this rare.
+            TextThroughput.BlocksCleared++;
+            TextThroughput.BlocksClearedComplex++;
+
             ClearBlocks();
 
             var index = 0;
@@ -424,6 +482,11 @@ namespace Telegram.Controls.Messages
         private void ApplyDirectBlock(int index, int first, int last, TextParagraphType type)
         {
             var block = GetOrCreateDirect(index);
+
+            if (block.Visibility != Visibility.Visible)
+            {
+                block.Visibility = Visibility.Visible;
+            }
             var quote = type as TextParagraphTypeQuote;
             var monospace = type as TextParagraphTypeMonospace;
 
@@ -483,6 +546,8 @@ namespace Telegram.Controls.Messages
             {
                 return _directBlocks[index];
             }
+
+            TextThroughput.BlocksMade++;
 
             var block = new DirectTextBlock
             {

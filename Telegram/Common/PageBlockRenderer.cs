@@ -111,6 +111,32 @@ namespace Telegram.Common
             _anchors.Clear();
         }
 
+        /// <summary>
+        /// Releases the text blocks under an element the host is dropping. A DirectTextBlock owns a
+        /// native layout and the surface it drew into, and nothing else here gives them back: these
+        /// blocks belong to no pool and are never recycled, so without this they wait for the GC to
+        /// collect the wrapper.
+        ///
+        /// Per removed element rather than wholesale, because a host that diffs its tree keeps the
+        /// blocks it did not remove, and clearing one still in use blanks it.
+        /// </summary>
+        public void Release(DependencyObject root)
+        {
+            if (root is DirectTextBlock block)
+            {
+                block.TextEntityClick -= Block_TextEntityClick;
+                block.Clear();
+                return;
+            }
+
+            var count = VisualTreeHelper.GetChildrenCount(root);
+
+            for (int i = 0; i < count; i++)
+            {
+                Release(VisualTreeHelper.GetChild(root, i));
+            }
+        }
+
         public FrameworkElement ProcessBlock(IClientService clientService, PageBlock block, PageBlock parent)
         {
             return block switch
@@ -1113,6 +1139,12 @@ namespace Telegram.Common
         // Read once per process, like everywhere else this engine is picked: a page never
         // mixes the two.
         private static readonly bool _directText = AppSettings.Diagnostics.DirectTextDebug;
+
+        /// <summary>
+        /// Which engine this process builds page blocks with, for the diagnostics page: the flag
+        /// is read once, so it cannot be answered by reading the setting back.
+        /// </summary>
+        public static bool IsDirectText => _directText;
 
         // Every text in a page, on whichever engine is in use. What the two disagree about is
         // how they are dressed - a Style targets a type - so ApplyStyle picks between the two

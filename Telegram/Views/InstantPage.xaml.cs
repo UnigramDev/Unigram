@@ -104,6 +104,14 @@ namespace Telegram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            foreach (var item in ScrollingHost.Items)
+            {
+                if (item is DependencyObject element)
+                {
+                    _renderer.Release(element);
+                }
+            }
+
             ScrollingHost.Items.Clear();
             _renderer.ClearAnchors();
 

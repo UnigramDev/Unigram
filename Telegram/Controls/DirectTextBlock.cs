@@ -51,6 +51,8 @@ namespace Telegram.Controls
 
         public DirectTextBlock()
         {
+            TextThroughput.ControlsMade++;
+
             // Built here rather than on the first render: adding a child in a layout pass
             // invalidates the pass that is running, and the pass never converges.
             _host = new Border();
@@ -433,7 +435,13 @@ namespace Telegram.Controls
         // rebuilds itself when any of that changes.
         private DirectTextLayout Layout()
         {
-            return _layout ??= Direct2D.Current.CreateLayout();
+            if (_layout == null)
+            {
+                TextThroughput.LayoutsMade++;
+                _layout = Direct2D.Current.CreateLayout();
+            }
+
+            return _layout;
         }
 
         public void SetText(string text, IList<TextStylePart> entities = null)
@@ -1338,11 +1346,6 @@ namespace Telegram.Controls
         // without a caller selecting it again.
         private void UpdateSelection()
         {
-            if (_selectionShape == null)
-            {
-                return;
-            }
-
             var start = Math.Min(_selectionFrom, _selectionTo);
             var length = Math.Abs(_selectionTo - _selectionFrom);
 
@@ -1350,7 +1353,20 @@ namespace Telegram.Controls
             // back to null, and doing it takes the process with it.
             if (length <= 0)
             {
-                _selectionVisual.IsVisible = false;
+                if (_selectionVisual != null)
+                {
+                    _selectionVisual.IsVisible = false;
+                }
+
+                return;
+            }
+
+            // Built here rather than with the text: this is the first time this block is known
+            // to need it, and most never do.
+            EnsureSelectionVisual();
+
+            if (_selectionShape == null)
+            {
                 return;
             }
 
@@ -1553,14 +1569,20 @@ namespace Telegram.Controls
         // text is rasterized, and colouring a rectangle behind it costs nothing to move.
         private void UpdateQueryHighlight()
         {
-            if (_queryGeometry == null)
+            if (_queryOffset < 0 || _queryLength <= 0)
             {
+                if (_queryVisual != null)
+                {
+                    _queryVisual.IsVisible = false;
+                }
+
                 return;
             }
 
-            if (_queryOffset < 0 || _queryLength <= 0)
+            EnsureQueryVisual();
+
+            if (_queryGeometry == null)
             {
-                _queryVisual.IsVisible = false;
                 return;
             }
 
@@ -1755,7 +1777,7 @@ namespace Telegram.Controls
         {
             var started = TextThroughput.Begin();
             SetTextCore(clientService, styled, first, last);
-            TextThroughput.Record(ref TextThroughput.DirectSetText, started);
+            TextThroughput.Record(ref TextThroughput.DirectSetText, started, true);
         }
 
         private void SetTextCore(IClientService clientService, StyledText styled, int first, int last)
@@ -1869,9 +1891,19 @@ namespace Telegram.Controls
 
             // Spoilers first: an emoji under one plays nothing.
             SetSpoilers(spoilers);
+
+            var started = TextThroughput.Begin();
             SetCustomEmoji(_clientService, emoji);
+            TextThroughput.Record(ref TextThroughput.DirectEmoji, started);
+
+            started = TextThroughput.Begin();
             SetInlineButtons(_clientService, buttons);
+            TextThroughput.Record(ref TextThroughput.DirectButtons, started);
+
+            started = TextThroughput.Begin();
             SetMath(math);
+            TextThroughput.Record(ref TextThroughput.DirectMath, started);
+
             SetLinks(links);
 
             // Last: it is written over whatever the ranges above coloured.
@@ -2430,7 +2462,7 @@ namespace Telegram.Controls
         {
             var started = TextThroughput.Begin();
             var size = MeasureCore(availableSize);
-            TextThroughput.Record(ref TextThroughput.DirectMeasure, started);
+            TextThroughput.Record(ref TextThroughput.DirectMeasure, started, true);
 
             return size;
         }
@@ -2468,19 +2500,13 @@ namespace Telegram.Controls
 
             // A layout box has to be finite: an unconstrained measure is the natural width.
             var width = double.IsInfinity(availableSize.Width) ? 100000 : availableSize.Width;
-            var size = Layout().Measure(width);
 
-            // Laid out again in the width it needs, which is where the box has to end up: the
-            // text is placed IN the box - right to left against its far edge - and a box wider
-            // than the element puts that edge outside it.
-            //
-            // Nothing moves: the longest line is exactly what was asked for, so no line wraps
-            // again and the height is the one just measured. Only the maximum width changes,
-            // which DirectWrite does in place.
-            if (size.Width > 0 && size.Width < width)
-            {
-                size = Layout().Measure(size.Width);
-            }
+            // The layout shrinks its own box to the text where that matters - a paragraph
+            // that is not drawn from the leading edge - and leaves it alone where it does not,
+            // which is most of the time and half the cost of a measure.
+            var layout = TextThroughput.Begin();
+            var size = Layout().Measure(width);
+            TextThroughput.Record(ref TextThroughput.DirectLayout, layout);
 
             // Whether the text fits is settled by that measure, and a quote offering to expand
             // is waiting on the answer. Asked both ways round because only one of them holds in
@@ -2508,7 +2534,7 @@ namespace Telegram.Controls
         {
             var started = TextThroughput.Begin();
             var size = ArrangeCore(finalSize);
-            TextThroughput.Record(ref TextThroughput.DirectArrange, started);
+            TextThroughput.Record(ref TextThroughput.DirectArrange, started, true);
 
             return size;
         }
@@ -2517,7 +2543,9 @@ namespace Telegram.Controls
         {
             _arranged = finalSize;
 
+            var started = TextThroughput.Begin();
             Render(finalSize);
+            TextThroughput.Record(ref TextThroughput.DirectRender, started);
 
             _host?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
 
@@ -2551,6 +2579,88 @@ namespace Telegram.Controls
             return finalSize;
         }
 
+        // The visuals the text itself needs. The selection and the search highlight are not
+        // among them: most blocks are never selected and never searched, and a shape visual, a
+        // sprite shape and a path geometry each are worth more than they look next to a draw.
+        private void EnsureVisual()
+        {
+            if (_visual != null)
+            {
+                return;
+            }
+
+            // The compositor of the view this element is in - a CompositionObject cannot cross
+            // views, and this one belongs to the window.
+            var compositor = BootStrapper.Current.Compositor;
+
+            _brush = compositor.CreateSurfaceBrush();
+            _visual = compositor.CreateSpriteVisual();
+            _visual.Brush = _brush;
+
+            // An element takes a single child visual, and what is drawn under the text - a
+            // search match, a selection - moves with it when the text does not start at the
+            // block's edge, so they share a container.
+            _root = compositor.CreateContainerVisual();
+            _root.RelativeSizeAdjustment = Vector2.One;
+            _root.Children.InsertAtTop(_visual);
+
+            ElementCompositionPreview.SetElementChildVisual(_host, _root);
+        }
+
+        // Under the glyphs, and under the search match when there is one: inserted rather than
+        // appended, because the order of the three is what decides what covers what.
+        private void EnsureSelectionVisual()
+        {
+            if (_selectionVisual != null || _root == null)
+            {
+                return;
+            }
+
+            var compositor = BootStrapper.Current.Compositor;
+
+            _selectionGeometry = compositor.CreatePathGeometry();
+            _selectionShape = compositor.CreateSpriteShape(_selectionGeometry);
+
+            // Through a source rather than a colour brush of its own: it keeps the brush in
+            // step with the property, including the colour changing in place.
+            _selectionSource = new CompositionColorSource(SelectionHighlightColor, IsConnected);
+            _selectionShape.FillBrush = _selectionSource;
+
+            _selectionVisual = compositor.CreateShapeVisual();
+            _selectionVisual.RelativeSizeAdjustment = Vector2.One;
+            _selectionVisual.Shapes.Add(_selectionShape);
+
+            if (_queryVisual != null)
+            {
+                _root.Children.InsertAbove(_selectionVisual, _queryVisual);
+            }
+            else
+            {
+                _root.Children.InsertAtBottom(_selectionVisual);
+            }
+        }
+
+        private void EnsureQueryVisual()
+        {
+            if (_queryVisual != null || _root == null)
+            {
+                return;
+            }
+
+            var compositor = BootStrapper.Current.Compositor;
+
+            _queryGeometry = compositor.CreatePathGeometry();
+
+            var queryShape = compositor.CreateSpriteShape(_queryGeometry);
+            queryShape.FillBrush = compositor.CreateColorBrush(Colors.Orange);
+
+            _queryVisual = compositor.CreateShapeVisual();
+            _queryVisual.RelativeSizeAdjustment = Vector2.One;
+            _queryVisual.Shapes.Add(queryShape);
+
+            _root.Children.InsertAtBottom(_queryVisual);
+        }
+
         private void Render(Size size)
         {
             if (size.Width < 1 || size.Height < 1)
@@ -2569,7 +2679,9 @@ namespace Telegram.Controls
             // The layout owns the surface: the same one comes back every time, and it redraws
             // itself when the rendering device is replaced, so this is only told about it when
             // it is a different object - which is the first render, and a resize that failed.
+            var render = TextThroughput.Begin();
             var surface = Layout().Render(color, scale);
+            TextThroughput.Record(ref TextThroughput.DirectSurface, render);
 
             if (surface == null)
             {
@@ -2583,64 +2695,23 @@ namespace Telegram.Controls
             var previous = _surface;
             _surface = surface;
 
-            if (_visual == null)
-            {
-                // The compositor of the view this element is in - a CompositionObject cannot
-                // cross views, and this one belongs to the window.
-                var compositor = BootStrapper.Current.Compositor;
-
-                _queryGeometry = compositor.CreatePathGeometry();
-
-                var queryShape = compositor.CreateSpriteShape(_queryGeometry);
-                queryShape.FillBrush = compositor.CreateColorBrush(Colors.Orange);
-
-                _queryVisual = compositor.CreateShapeVisual();
-                _queryVisual.RelativeSizeAdjustment = Vector2.One;
-                _queryVisual.IsVisible = false;
-                _queryVisual.Shapes.Add(queryShape);
-
-                _selectionGeometry = compositor.CreatePathGeometry();
-                _selectionShape = compositor.CreateSpriteShape(_selectionGeometry);
-
-                // Through a source rather than a colour brush of its own: it keeps the brush
-                // in step with the property, including the colour changing in place.
-                _selectionSource = new CompositionColorSource(SelectionHighlightColor, IsConnected);
-                _selectionShape.FillBrush = _selectionSource;
-
-                _selectionVisual = compositor.CreateShapeVisual();
-                _selectionVisual.RelativeSizeAdjustment = Vector2.One;
-                _selectionVisual.IsVisible = false;
-                _selectionVisual.Shapes.Add(_selectionShape);
-
-                _brush = compositor.CreateSurfaceBrush();
-                _visual = compositor.CreateSpriteVisual();
-                _visual.Brush = _brush;
-
-                // The search match under the selection, the selection under the glyphs, and
-                // the text over both, in one container: an element takes a single child visual,
-                // and the three move together when the text does not start at the block's edge.
-                _root = compositor.CreateContainerVisual();
-                _root.RelativeSizeAdjustment = Vector2.One;
-                _root.Children.InsertAtTop(_queryVisual);
-                _root.Children.InsertAtTop(_selectionVisual);
-                _root.Children.InsertAtTop(_visual);
-
-                ElementCompositionPreview.SetElementChildVisual(_host, _root);
-            }
+            EnsureVisual();
 
             if (previous != surface)
             {
                 _brush.Surface = surface;
+
+                // The layout gave the old one back rather than resizing it, and this is the
+                // last reference to it: an atlas region waiting on a finalizer is a region
+                // nobody else can have.
+                previous?.Dispose();
             }
 
             // The size the surface actually got, back in DIPs, and not the size the element was
             // arranged at: the surface is a whole number of pixels and the arranged size is not,
             // so sizing the visual to the latter makes the brush resample the text by the
-            // fraction between them - which blurs every glyph.
-            // The size the surface actually got, back in DIPs, and not the size the element was
-            // arranged at: the surface is a whole number of pixels and the arranged size is not,
-            // so sizing the visual to the latter makes the brush resample the text by the
-            // fraction between them - which blurs every glyph.
+            // fraction between them - which blurs every glyph. The surface is rounded up past
+            // the text, and that margin was cleared, so what hangs over the block is nothing.
             //
             // It sits at the origin, because that is where the layout box starts: the text is
             // drawn at the position the layout gives it, which is the position everything else
@@ -2648,10 +2719,14 @@ namespace Telegram.Controls
             var pixels = surface.SizeInt32;
             _visual.Size = new Vector2((float)(pixels.Width / scale), (float)(pixels.Height / scale));
 
+            // What the layout actually drew, which is what the text takes: the surface is
+            // rounded up from it so that a recycled block redraws without resizing one.
+            var content = Layout().RenderedPixels;
+
             // The room the block was given over what the text takes, handed to whichever side
             // the text reads from. Here, because this is where the size it is measured against
             // is known and where the visual it moves is sized.
-            _contentLeft = ContentLeft(size.Width, _visual.Size.X);
+            _contentLeft = ContentLeft(size.Width, content.Width / scale);
             _root.Offset = new Vector3((float)_contentLeft, 0, 0);
 
             // The text moved, so everything drawn around it has to follow.
@@ -2706,10 +2781,47 @@ namespace Telegram.Controls
 
         /// <summary>
         /// Releases the layout, and with it the surface: both hold the text of whatever this
-        /// element was last used for.
+        /// element was last used for. For a block that is being put away rather than handed
+        /// the next message - see <see cref="Recycle"/>, which is the other one.
         /// </summary>
         public void Clear()
         {
+            Recycle();
+
+            // Last, so that nothing above answers a question with a layout built to be thrown
+            // away. Closed rather than dropped: the surface it owns is a region of the device's
+            // atlas, and waiting for the wrapper to be collected holds it for as long as that
+            // takes.
+            if (_layout != null)
+            {
+                TextThroughput.LayoutsDisposed++;
+
+                _layout.Dispose();
+                _layout = null;
+            }
+
+            _surface = null;
+
+            if (_brush != null)
+            {
+                _brush.Surface = null;
+            }
+        }
+
+        /// <summary>
+        /// Everything the last message left here, without the layout it was laid out with or
+        /// the surface it was drawn into: a recycled bubble is handed those back, and building
+        /// them again per message is a DirectWrite layout and a region of the device's atlas
+        /// per message - measured, and the single largest thing recycling saves.
+        /// </summary>
+        public void Recycle()
+        {
+            // Collapsed rather than emptied: the layout still holds the last message, and the
+            // surface still has it drawn, so a block left visible would show text the bubble no
+            // longer has. Collapsed it is neither measured nor composed, and the next message
+            // brings it back.
+            Visibility = Visibility.Collapsed;
+
             _text = null;
             _links = null;
             _entities = null;
@@ -2757,19 +2869,8 @@ namespace Telegram.Controls
                 _buttons[i].Content = null;
             }
 
-            // Last, so that nothing above answers a question with a layout built to be thrown
-            // away. Closed rather than dropped: the surface it owns is a region of the device's
-            // atlas, and waiting for the wrapper to be collected holds it for as long as that
-            // takes.
-            _layout?.Dispose();
-            _layout = null;
-
-            _surface = null;
-
-            if (_brush != null)
-            {
-                _brush.Surface = null;
-            }
+            // The layout stays, holding the text it was given and the surface it drew into:
+            // the next message replaces the first and draws into the second.
         }
     }
 }

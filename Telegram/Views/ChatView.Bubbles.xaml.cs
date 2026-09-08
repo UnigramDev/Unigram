@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
@@ -1180,6 +1181,17 @@ namespace Telegram.Views
             public HashSet<SelectorItem> Queue { get; }
 
             public int TotalCount { get; set; }
+
+            // Where this type's containers came from, which is what says whether a type is being
+            // served by recycling or is paying for a tree of its own every time. The app-wide
+            // totals in TextThroughput cannot: the cost is in which pair of types mismatches.
+            public int Matched { get; set; }
+
+            public int Pooled { get; set; }
+
+            public int Retyped { get; set; }
+
+            public int Made { get; set; }
         }
 
 #if INSTRUMENTATION
@@ -1257,6 +1269,56 @@ namespace Telegram.Views
             return string.Empty;
         }
 
+        /// <summary>
+        /// One line per type that has containers, for the overlay behind ShowMemoryUsage. Retyped
+        /// against Matched and Pooled is the number that matters: a re-template rebuilds the tree
+        /// under the container, and which types it happens between is what says whether merging
+        /// two of them would pay.
+        /// </summary>
+        public string GetContainerInfo()
+        {
+            var builder = new StringBuilder();
+
+            if (Messages.ItemsPanelRoot is ItemsStackPanel panel)
+            {
+                builder.AppendFormat("live {0}   cache [{1}-{2}]", panel.Children.Count, panel.FirstCacheIndex, panel.LastCacheIndex);
+                builder.AppendLine();
+            }
+
+            // Padded to the longest name in use, not to the longest one there is: a chat realizes
+            // two or three of the sixteen types, and the widest of them all is 44 characters.
+            var width = 0;
+
+            foreach (var pair in _typeToStrategy)
+            {
+                if (pair.Value.TotalCount > 0)
+                {
+                    width = Math.Max(width, pair.Key.ToString().Length);
+                }
+            }
+
+            foreach (var pair in _typeToStrategy)
+            {
+                var strategy = pair.Value;
+
+                if (strategy.TotalCount == 0)
+                {
+                    continue;
+                }
+
+                var name = pair.Key.ToString();
+
+                builder.Append(name);
+                builder.Append(' ', width - name.Length + 2);
+
+                builder.AppendFormat("queued {0,4}  total {1,4}  matched {2,6}  pooled {3,5}  retyped {4,5}  made {5,4}",
+                    strategy.Queue.Count, strategy.TotalCount, strategy.Matched, strategy.Pooled, strategy.Retyped, strategy.Made);
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var typeName = SelectTemplateCore(args.Item);
@@ -1270,6 +1332,7 @@ namespace Telegram.Views
                 if (selector.TypeName.Equals(typeName))
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
+                    relevantHashSet.Matched++;
                     relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
@@ -1278,12 +1341,29 @@ namespace Telegram.Views
                     // By example if we are in a channel and typeName is UserMessageTemplate, we can just override
                     // Same thing should probably apply to all service messages.
 
-                    // Code inside this branch is the one recommended by Microsoft, that bugs in some scenarios.
+                    // A suggestion is refused by handing back a different container: null alone
+                    // is consent, and XAML then uses the one it suggested as-is. The refused one
+                    // is marked and pushed onto the recycle queue, which is popped from the back,
+                    // so it is the very next suggestion - refusing is bounded only because each
+                    // refusal spends a container from our own queue, and the branch below
+                    // re-templates as soon as that runs dry.
+                    //
+                    // Refusing past that point is microsoft-ui-xaml#9307: the mark is cleared
+                    // only when a container is recycled again, so refused ones stay refused,
+                    // FindRecyclingCandidate stops finding candidates, and the panel realizes
+                    // everything it is asked for instead of recycling. Measured in a spike, 5000
+                    // items: 104 containers with this guard, 1970 without it.
+                    //
+                    // Re-templating throws away the tree below it - bubble, text block, layout,
+                    // surface. It is not a choice made on cost: it is the only way out, because
+                    // the panel goes on suggesting the container it has already been told is
+                    // unusable until something consumes it.
                     if (relevantHashSet.Queue.Count > 0)
                     {
                         // The ItemContainer's datatemplate does not match the needed
                         // datatemplate.
-                        // Don't remove it from the recycle queue, since XAML will resuggest it later
+                        // Don't remove it from the recycle queue: XAML suggests it again on the
+                        // very next call, and taking it then is what drains the pool safely
                         args.ItemContainer = null;
                     }
                     else
@@ -1291,6 +1371,7 @@ namespace Telegram.Views
                         var recycledHashSet = _typeToStrategy[selector.TypeName];
 
                         // Suggested container doesn't match what we want, but ICG2 is stuck in a loop.
+                        relevantHashSet.Retyped++;
                         relevantHashSet.TotalCount++;
 
                         selector.TypeName = typeName;
@@ -1320,10 +1401,12 @@ namespace Telegram.Views
                         break;
                     }
 
+                    relevantHashSet.Pooled++;
                     relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
                 {
+                    relevantHashSet.Made++;
                     relevantHashSet.TotalCount++;
 
                     // There aren't any (recycled) ItemContainers available. So a new one

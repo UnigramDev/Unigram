@@ -266,6 +266,102 @@ Every one of these was a crash or a visible bug, and none of them is about text:
   Runs inside the inline paragraph; every use of one from shared code behind is a null
   reference the moment the direct style is picked.
 
+## What it costs, measured in the app
+
+Behind `Diagnostics.MeasureTextLayout`, `TextThroughput` times set-text, measure and arrange for
+both engines, `DirectTextLayout::Counters` times the layout's own parts, and the whole lot is one
+selectable block on the diagnostics page. A `CompositionTarget.Rendering` handler turns the
+microseconds into the only unit that decides anything - work per frame - against the display's own
+period, taken as the most common gap between two frames rather than assumed.
+
+Numbers below are one chat scrolled the same way each time, debug build, and are worth reading as
+ratios rather than absolutes: the AOT release build was ~4x faster on set text.
+
+**What the measurements settled**, in the order they were taken:
+
+- **The composition surface brackets are not the cost.** `BeginDraw` 15 us and `EndDraw` 3 us of a
+  460 us draw, so there is no case for batching blocks into an atlas. That hypothesis is dead, and
+  it would have been a week.
+- **`Resize` on a drawing surface costs five times what creating one does** - 293 us against 52,
+  with a 17 ms worst case that was the whole draw peak. A surface that no longer fits is given
+  back and a new one made; the surface is rounded up to a multiple of 32 pixels so that a recycled
+  block redraws into the one it already has.
+- **The second `Measure` was a third of the measure pass.** It exists to shrink the box the text
+  sits in, which only matters where a paragraph is not drawn from the leading edge; the layout now
+  decides that for itself (`IsLeading`). Measure fell from 0.13s to 0.09s and reflows from 383 to 35.
+- **Most of the managed tail of a draw was composition objects nobody used.** Every block built two
+  path geometries, two sprite shapes, two shape visuals and a colour source for a selection and a
+  search highlight it would probably never have. Built on first use instead: the tail fell from
+  122 us to 41 us per draw.
+- **Recycling did not reach the text layer at all.** `MessageBubble.Recycle` called
+  `MessageTextBlock.Clear`, which called `ClearBlocks`, which disposed every block's layout and
+  surface. `Recycle` now drops what the message put in a block and keeps the layout, the surface
+  and the block itself, collapsed until it is given text again - collapsed because both engines
+  still hold what they last rendered, and a kept-but-visible block would show it.
+- **The largest churn is above all of this, in the container pool - and it is not ours to remove.**
+  `OnChoosingItemContainer` re-templates a container when XAML suggests one of the wrong type and
+  this view's queue for the right type is empty. Swapping `ContentTemplate` on a live container
+  discards the whole tree under it - bubble, text block, layout, surface - and it fired 79 times in
+  one scroll without converging, because a re-template leaves that type's pool as empty as it
+  found it.
+
+  Refusing every mismatch instead (`args.ItemContainer = null`) fixes exactly that: measured at 202
+  matched, 61 from the queue, 69 made, hosts built down from 88 to 51, blocks from 109 to 77, and
+  the worst frame from 45.8 ms to 29.0 ms. **It is also microsoft-ui-xaml#9307 waiting to happen** -
+  the issue Fela filed from this app - which is why the re-template is there: a refused
+  container is marked, the mark is only cleared when it is recycled again, so containers
+  refused and never taken stay refused,
+  `FindRecyclingCandidateImpl` reports no candidate, and the list stops recycling and realizes
+  everything it is asked for. The issue's own workaround is to consume one of the mismatched
+  containers, which is what the re-template does. The todo chat never hit it; a view whose visible
+  run switches template wholesale would.
+
+  So the code is back to re-templating as the last resort, and the counters stay. The way out that
+  does not trade one bug for the other is the recycling context below.
+
+**What the XAML source says** (`microsoft-ui-xaml`, read rather than recalled):
+
+- `ItemsControl::GetRecyclingContext` hands out a template-aware recycling context **only** when
+  the list has an `ItemTemplateSelector` and no `ItemTemplate`. With one, XAML matches a recycled
+  container by the template it was built with (`VirtualizationInformation::GetSelectedTemplate`,
+  `IsCompatible`) and only re-templates when its queue holds 30 or more
+  (`QueueLengthBeforeFallback`), preferring to build a new container until then. Without one - our
+  case - its suggestion is template-blind, which is why mismatches are structural rather than bad
+  luck.
+- Returning a **different** container from `ChoosingItemContainer` is the supported protocol: XAML
+  puts its suggestion back and marks it `WasRejectedAsAContainerByApp`, which
+  `FindRecyclingCandidateImpl` skips, so it offers a different one next time. The mark is cleared
+  the moment that container is recycled again (`RecycleLinkedContainer`), so nothing is stranded.
+- Setting `args.ItemContainer = null` and providing nothing does **not** make XAML re-suggest for
+  that item: it falls through to using the container it had suggested. The app must hand back a
+  container of the right type or build one.
+
+**Where the time goes**, per block, debug build - measured in the run with the container change
+that was then reverted, so the shape holds and the container counts do not: set text 144 us, measure 261 (of which the
+layout itself 231, and `Build` 195), arrange 330 (of which the draw 315, of which `DrawTextLayout`
+200 and the surface 55). Per frame, which is what matters: 1.3 ms in the 4% of frames that carry
+any text work, and two frames in 1,851 where text alone exceeded the display's period.
+
+**Where the surfaces come from.** 186 layouts were made against 100 blocks and only 10 disposals -
+and the disposals match the real tear-downs, so nothing is throwing layouts away. `BlocksMade`
+counts only what a message asks for, and `DirectTextBlock` is also built by `PageBlockRenderer`,
+once per text in an instant view preview inside a bubble, and once per inline button label. Those
+are built fresh per message and never recycled, which is where the rest of the surfaces go. A
+counter in the constructor now counts every block whatever built it.
+
+**The ink is wider than the pen, and we do not measure it.** A message whose longest line is italic
+had its last character clipped in the release build of 2026-09-07: `Extent` sizes the surface from
+`DWRITE_TEXT_METRICS.width`, the advance width, and an italic's last glyph leans past it - as do a
+swash, a long tail and some diacritics. What covers it now is the surface being rounded up to a
+whole 32 pixel step (`Grow`), which is why it no longer reproduces; a text whose advance width lands
+within a lean of that boundary would still clip.
+
+`IDWriteTextLayout::GetOverhangMetrics` answers exactly this - the ink's right edge is the box width
+plus its right overhang, whether the text fills the box or stops short - and it was implemented,
+measured and taken back out: **40 microseconds a draw against the 1.4 the whole of `Extent` costs**,
+because it walks the glyph runs to find out. Gating it on "this text has italic in it" works and is
+what to do if the clipping ever reappears; it was not worth carrying for a bug the rounding hides.
+
 ## What the first slice has to prove
 
 - realization cost and memory per cell against the current control, measured, not argued;

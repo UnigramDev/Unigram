@@ -124,6 +124,9 @@ namespace winrt::Telegram::Native::implementation
         Telegram::Native::TextAlignmentMode Alignment();
         void Alignment(Telegram::Native::TextAlignmentMode value);
 
+        static hstring Counters();
+        static void ResetCounters();
+
         bool IsTrimmed();
         int32_t LineCount();
 
@@ -151,6 +154,7 @@ namespace winrt::Telegram::Native::implementation
         void Close();
 
         Windows::Foundation::Size Bounds();
+        Windows::Graphics::SizeInt32 RenderedPixels();
 
     private:
         struct ColorRange
@@ -203,6 +207,7 @@ namespace winrt::Telegram::Native::implementation
         CompositionDrawingSurface m_surface{ nullptr };
         winrt::event_token m_renderingDeviceReplaced{};
         Windows::UI::Color m_color{};
+        Windows::Graphics::SizeInt32 m_pixels{};
         double m_scale{ 0 };
         bool m_closed{ false };
 
@@ -240,6 +245,8 @@ namespace winrt::Telegram::Native::implementation
         HRESULT Reflow(double availableWidth);
 
         const Paragraph* Find(double y) const;
+
+        bool IsLeading() const;
 
         bool HitTestPoint(Windows::Foundation::Point point, bool& inside, const Paragraph*& paragraph, DWRITE_HIT_TEST_METRICS& metrics, BOOL& isTrailingHit);
 

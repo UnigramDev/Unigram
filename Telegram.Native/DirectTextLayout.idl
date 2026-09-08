@@ -95,8 +95,18 @@ namespace Telegram.Native
 
 
         // The text drawn into a surface of its own. The same surface comes back every time -
-        // resized when the text no longer fits it, and redrawn by itself when the rendering
-        // device is replaced - so a brush set on it once never has to be set again.
+        // resized only when the text no longer fits it, and redrawn by itself when the
+        // rendering device is replaced - so a brush set on it once never has to be set again.
         Windows.UI.Composition.CompositionDrawingSurface Render(Windows.UI.Color color, Double rasterizationScale);
+
+        // The size of the text as it was last drawn, in the top left of that surface. The
+        // surface is rounded up from it, so this is what says how much of it carries the text.
+        Windows.Graphics.SizeInt32 RenderedPixels{ get; };
+
+        // What the layout itself spends, split the way the work splits: building a layout from
+        // scratch, reflowing one to another width, the surface, and the parts of a draw.
+        // Process-wide.
+        static String Counters{ get; };
+        static void ResetCounters();
     }
 }
