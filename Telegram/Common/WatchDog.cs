@@ -218,6 +218,7 @@ namespace Telegram
             }
 
             var managed = NativeUtils.CreateError(ex.GetType().Name, ex.Message, ex.StackTrace);
+            managed.HResult = ex.HResult;
 
             foreach (var frame in frames)
             {
@@ -353,7 +354,7 @@ namespace Telegram
             if (supersede != null || _limiter.TryConsume())
             {
                 var reportId = supersede ?? Guid.NewGuid().ToString();
-                var report = ExceptionSerializer.Serialize(ex, reportId, _userId, BuildReport(0));
+                var report = ExceptionSerializer.Serialize(ex, reportId, _userId, BuildReport(ex.HResult));
 
                 var reportPath = GetErrorReportPath(reportId);
 

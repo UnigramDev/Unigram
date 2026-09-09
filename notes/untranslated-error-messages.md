@@ -16,6 +16,23 @@ map them onto. They are parked here rather than guessed at. When an English repo
 them turns up, add the `case` beside its siblings and delete its section here, in the same
 commit.
 
+## Most sentences no longer need a case at all
+
+`FatalError` now carries the HRESULT the failure was stowed with, so `TryTranslateHResult` can
+rebuild the message from the number on the path where the sentence used to be all there was —
+`UnhandledErrorDetected` flattens the exception it hands over to `E_FAIL`, and the record's own
+code is the only copy of the real one. A code `TranslateHResult` knows is therefore handled in
+every language at once, and no `case` is needed for it.
+
+What still has to be matched as a sentence, and is what this file is for:
+
+- Anything whose code is not in `TranslateHResult`, DirectWrite and Direct2D above all: those
+  reports arrive as `E_FAIL` with the original wording, so the number says nothing.
+- Anything on a line of its own after the first. Only the first line is rebuilt from the code;
+  an originating description below it is separate text and is translated separately.
+- Types other than `Exception` and `COMException`, whose message may be .NET's own rather than
+  Windows' — the remarks on `TryTranslateHResult` say why the code must not overrule it there.
+
 ## How to check whether the English has landed
 
 ```

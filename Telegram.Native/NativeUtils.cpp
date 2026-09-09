@@ -454,6 +454,7 @@ namespace winrt::Telegram::Native::implementation
 
         // Declared up here because CleanupIfFailed is a goto and cannot jump over an initialization.
         hstring description;
+        HRESULT details = S_OK;
 
         CleanupIfFailed(result, GetRestrictedErrorInfo(info.put()));
         //CleanupIfFailed(result, info->QueryInterface(info2.put()));
@@ -484,6 +485,8 @@ namespace winrt::Telegram::Native::implementation
 
             if (SUCCEEDED(info->GetErrorDetails(&bstrDescription, &error, &bstrRestricted, &bstrCapabilitySid)))
             {
+                details = error;
+
                 if (SysStringLen(bstrRestricted) > 0)
                 {
                     description = hstring(bstrRestricted, SysStringLen(bstrRestricted));
@@ -507,6 +510,13 @@ namespace winrt::Telegram::Native::implementation
             auto error = GetStowedException2(stowed);
             if (error != nullptr)
             {
+                // Only for a record that reported none: the error info's code is the same failure
+                // seen from one layer up, so it is the weaker of the two.
+                if (error.HResult() == 0)
+                {
+                    error.HResult(details);
+                }
+
                 if (!description.empty())
                 {
                     // GetStowedException2 already put the record's own details here.
@@ -529,7 +539,13 @@ namespace winrt::Telegram::Native::implementation
             return nullptr;
         }
 
-        return winrt::Telegram::Native::FatalError(L"", L"", description, winrt::single_threaded_vector<FatalErrorFrame>());
+        // Scoped, because CleanupIfFailed is a goto and cannot jump over an initialization.
+        {
+            auto error = winrt::Telegram::Native::FatalError(L"", L"", description, winrt::single_threaded_vector<FatalErrorFrame>());
+            error.HResult(details);
+
+            return error;
+        }
 
     Cleanup:
         return nullptr;
@@ -613,6 +629,11 @@ namespace winrt::Telegram::Native::implementation
         // stowed on this thread from one that came back over RPC, which reports zero.
         error.ThreadId(stowed->ThreadId);
         error.Fault(fault);
+
+        // Likewise for the code: this is the one place the pre-propagation HRESULT survives, and
+        // the serializer needs the number rather than the sentence Windows wrote in the user's
+        // language.
+        error.HResult(stowed->ResultCode);
 
         if (stowed->NestedExceptionType == STOWED_EXCEPTION_NESTED_TYPE_STOWED)
         {

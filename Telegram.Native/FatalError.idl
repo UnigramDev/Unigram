@@ -25,6 +25,11 @@ namespace Telegram.Native
         // being reported.
         UInt32 ThreadId;
 
+        // The code the failure was stowed with, before propagation flattened it to E_FAIL. It is
+        // the same number in every language, which the message is not, so it is what the serializer
+        // rebuilds the message from. Zero when the record came from a path that has no code.
+        Int32 HResult;
+
         FatalError InnerException;
     }
 }

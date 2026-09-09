@@ -71,6 +71,16 @@ namespace winrt::Telegram::Native::implementation
             m_threadId = value;
         }
 
+        int32_t HResult()
+        {
+            return m_hresult;
+        }
+
+        void HResult(int32_t value)
+        {
+            m_hresult = value;
+        }
+
         winrt::Telegram::Native::FatalError InnerException()
         {
             return m_innerException;
@@ -88,6 +98,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::Windows::Foundation::Collections::IVector<FatalErrorFrame> m_frames;
         FatalErrorFrame m_fault{};
         uint32_t m_threadId{ 0 };
+        int32_t m_hresult{ 0 };
 
         winrt::Telegram::Native::FatalError m_innerException;
     };

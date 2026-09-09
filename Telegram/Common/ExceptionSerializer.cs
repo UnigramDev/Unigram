@@ -304,9 +304,10 @@ namespace Telegram.Common
             var modelException = new ExceptionModel
             {
                 Type = exception.Type,
-                // FatalError has no HRESULT of its own, so the lookup falls back to the one .NET
-                // printed into the message, when it printed one.
-                Message = TranslateMessage(exception.Message.Replace("\r\n", "\n"), exception.Type, 0),
+                // The record's own code, which is the pre-propagation one: UnhandledErrorDetected
+                // flattens the exception it hands over to E_FAIL, so on that path this is the only
+                // thing that still names the failure in a language-independent way.
+                Message = TranslateMessage(exception.Message.Replace("\r\n", "\n"), exception.Type, exception.HResult),
                 StackTrace = exception.StackTrace?.Replace("\r\n", "\n")
             };
 
@@ -607,9 +608,10 @@ namespace Telegram.Common
                 return false;
             }
 
-            // The FatalError path has no HRESULT to pass, so recover it from the message when .NET
-            // appended one there.
-            if (hresult == 0 && suffix.Success
+            // A code .NET printed into the message wins over the one the record carries: the two
+            // come from different layers and only the printed one is certain to belong to the
+            // sentence in front of it, which is the sentence about to be replaced.
+            if (suffix.Success
                 && uint.TryParse(suffix.Groups[1].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint parsed))
             {
                 hresult = (int)parsed;
@@ -645,6 +647,7 @@ namespace Telegram.Common
                 case 0x80000016: return "The text associated with this error code could not be found.";
                 case 0x80000019: return "An async operation was not properly started.";
 
+                case 0x80004002: return "No such interface supported";
                 case 0x80004003: return "Invalid pointer";
                 case 0x80004004: return "Operation aborted";
                 case 0x8000FFFF: return "Catastrophic failure";
