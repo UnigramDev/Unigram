@@ -478,17 +478,27 @@ namespace Telegram.Navigation
 
         public void HideAllToasts()
         {
-            foreach (var toast in _toasts)
-            {
-                toast.Key.IsOpen = false;
-            }
+            HideAllToasts(true);
         }
 
         public void ClearAllToasts()
         {
-            HideAllToasts();
+            // Teardown, so nothing is animated: the completion would call back into a window
+            // that is on its way out.
+            HideAllToasts(false);
 
             _toasts.Clear();
+        }
+
+        private void HideAllToasts(bool animate)
+        {
+            // ToastPopup keeps its own, as it is not registered here.
+            ToastPopup.HideAll(XamlRoot, animate);
+
+            foreach (var toast in _toasts)
+            {
+                toast.Key.IsOpen = false;
+            }
         }
     }
 

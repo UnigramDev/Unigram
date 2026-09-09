@@ -1145,12 +1145,12 @@ namespace Telegram.Controls.Stories
             ActiveCard.Resume(StoryPauseSource.Flyout);
         }
 
-        public TeachingTip ShowToast(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowToast(FrameworkElement target, string text, ToastPlacementMode placement = ToastPlacementMode.TopRight)
         {
             return ShowToast(target, text, ToastPopupIcon.None, placement);
         }
 
-        public TeachingTip ShowToast(FrameworkElement target, string text, ToastPopupIcon icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowToast(FrameworkElement target, string text, ToastPopupIcon icon, ToastPlacementMode placement = ToastPlacementMode.TopRight)
         {
             var toast = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
             toast.Closing += Toast_Closing;
@@ -1158,7 +1158,7 @@ namespace Telegram.Controls.Stories
             return toast;
         }
 
-        public Task<ContentDialogResult> ShowActionAsync(FrameworkElement target, object text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark)
+        public Task<ContentDialogResult> ShowActionAsync(FrameworkElement target, object text, ToastPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             var toast = ToastPopup.ShowImpl(XamlRoot, null as FormattedText, null, placement, requestedTheme, target: target);
             if (toast?.Content is Grid content)

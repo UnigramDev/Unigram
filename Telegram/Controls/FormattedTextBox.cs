@@ -789,7 +789,7 @@ namespace Telegram.Controls
                 ActionButtonContent = Strings.OK,
                 ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
                 CloseButtonContent = Strings.Cancel,
-                PreferredPlacement = TeachingTipPlacementMode.Center,
+                PreferredPlacement = ToastPlacementMode.Center,
                 IsLightDismissEnabled = true,
                 ShouldConstrainToRootBounds = true,
             };
@@ -847,12 +847,12 @@ namespace Telegram.Controls
             if (CreateLinkTarget != null)
             {
                 popup.Target = CreateLinkTarget;
-                popup.PreferredPlacement = TeachingTipPlacementMode.TopRight;
+                popup.PreferredPlacement = ToastPlacementMode.TopRight;
             }
             else
             {
                 popup.Target = this;
-                popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+                popup.PreferredPlacement = ToastPlacementMode.Top;
             }
 
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
@@ -949,12 +949,12 @@ namespace Telegram.Controls
             if (CreateLinkTarget != null)
             {
                 popup.Target = CreateLinkTarget;
-                popup.PreferredPlacement = TeachingTipPlacementMode.TopRight;
+                popup.PreferredPlacement = ToastPlacementMode.TopRight;
             }
             else
             {
                 popup.Target = this;
-                popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+                popup.PreferredPlacement = ToastPlacementMode.Top;
             }
 
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;

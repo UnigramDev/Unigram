@@ -138,7 +138,7 @@ namespace Telegram.Views.Stars.Popups
 
             var popup = new UpgradedGiftValuePopup(clientService, navigationService, gift, valueInfo)
             {
-                PreferredPlacement = TeachingTipPlacementMode.Center,
+                PreferredPlacement = ToastPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
@@ -159,12 +159,12 @@ namespace Telegram.Views.Stars.Popups
 
         private void MinimumPriceInfo_Click(object sender, RoutedEventArgs e)
         {
-            ToastPopup.Show(MinimumPriceInfo, string.Format(Strings.GiftValueMinPriceInfo, Locale.FormatCurrency(_valueInfo.MinimumPrice, _valueInfo.Currency), _gift.Title), TeachingTipPlacementMode.Top);
+            ToastPopup.Show(MinimumPriceInfo, string.Format(Strings.GiftValueMinPriceInfo, Locale.FormatCurrency(_valueInfo.MinimumPrice, _valueInfo.Currency), _gift.Title), ToastPlacementMode.Top);
         }
 
         private void AveragePriceInfo_Click(object sender, RoutedEventArgs e)
         {
-            ToastPopup.Show(AveragePriceInfo, string.Format(Strings.GiftValueAveragePriceInfo, Locale.FormatCurrency(_valueInfo.AverageSalePrice, _valueInfo.Currency), _gift.Title), TeachingTipPlacementMode.Top);
+            ToastPopup.Show(AveragePriceInfo, string.Format(Strings.GiftValueAveragePriceInfo, Locale.FormatCurrency(_valueInfo.AverageSalePrice, _valueInfo.Currency), _gift.Title), ToastPlacementMode.Top);
         }
 
         private void TelegramListedGiftCount_Click(object sender, RoutedEventArgs e)

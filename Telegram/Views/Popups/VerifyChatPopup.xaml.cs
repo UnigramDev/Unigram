@@ -106,7 +106,7 @@ namespace Telegram.Views.Popups
 
             var popup = new VerifyChatPopup(clientService, chat, remove, canSetCustomDescription)
             {
-                PreferredPlacement = TeachingTipPlacementMode.Center,
+                PreferredPlacement = ToastPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,

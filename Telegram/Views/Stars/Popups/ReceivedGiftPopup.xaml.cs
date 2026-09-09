@@ -996,7 +996,7 @@ namespace Telegram.Views.Stars.Popups
             popup.ActionButtonContent = Strings.ResellGiftButton;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Center;
+            popup.PreferredPlacement = ToastPlacementMode.Center;
             popup.IsLightDismissEnabled = false;
             popup.ShouldConstrainToRootBounds = true;
 

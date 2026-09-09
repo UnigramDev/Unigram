@@ -263,7 +263,7 @@ namespace Telegram.Views.Popups
                 ActionButtonContent = Strings.OK,
                 ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
                 CloseButtonContent = Strings.Cancel,
-                PreferredPlacement = TeachingTipPlacementMode.Center,
+                PreferredPlacement = ToastPlacementMode.Center,
                 IsLightDismissEnabled = true,
                 ShouldConstrainToRootBounds = true,
             };

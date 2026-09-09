@@ -3081,7 +3081,7 @@ namespace Telegram.Controls.Messages
             }
 
             var entities = ClientEx.GetTextEntities(type);
-            ToastPopup.Show(PsaInfo, new FormattedText(type, entities), TeachingTipPlacementMode.TopLeft);
+            ToastPopup.Show(PsaInfo, new FormattedText(type, entities), ToastPlacementMode.TopLeft);
         }
 
         private void Thread_Click(object sender, RoutedEventArgs e)

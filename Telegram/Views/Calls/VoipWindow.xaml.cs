@@ -387,7 +387,7 @@ namespace Telegram.Views.Calls
                 Emoji.Content = string.Join(string.Empty, ready.Emojis);
                 Emoji.Visibility = Visibility.Visible;
 
-                ToastPopup.Show(Emoji, Icons.LockClosedFilled12 + Icons.Spacing + Strings.VoipHintEncryptionKey, TeachingTipPlacementMode.Bottom, ElementTheme.Light, TimeSpan.FromSeconds(4));
+                ToastPopup.Show(Emoji, Icons.LockClosedFilled12 + Icons.Spacing + Strings.VoipHintEncryptionKey, ToastPlacementMode.Bottom, ElementTheme.Light, TimeSpan.FromSeconds(4));
             }
             else
             {

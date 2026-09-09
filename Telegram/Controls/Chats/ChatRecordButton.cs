@@ -324,7 +324,7 @@ namespace Telegram.Controls.Chats
                 ? Strings.HoldToVideo
                 : Strings.HoldToAudio;
 
-            ToastPopup.Show(this, message, TeachingTipPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
+            ToastPopup.Show(this, message, ToastPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
         }
 
         private async void OnClick(object sender, RoutedEventArgs e)
@@ -343,7 +343,7 @@ namespace Telegram.Controls.Chats
 
                     var formatted = string.Format(message, ViewModel.Chat.Title);
                     var markdown = ClientEx.ParseMarkdown(formatted);
-                    ToastPopup.Show(this, markdown, TeachingTipPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
+                    ToastPopup.Show(this, markdown, ToastPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
                     return;
                 }
 

@@ -153,7 +153,7 @@ namespace Telegram.Controls.Stories.Popups
             var popup = new TeachingTipEx
             {
                 Content = content,
-                PreferredPlacement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Top,
+                PreferredPlacement = ToastPlacementMode.Top,
                 MinWidth = 0,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,

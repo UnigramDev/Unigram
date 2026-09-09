@@ -189,7 +189,7 @@ namespace Telegram.Controls.Messages.Content
 
             Grid.SetColumn(button, 1);
 
-            var confirm = await ToastPopup.ShowActionAsync(XamlRoot, grid, Strings.StakeDiceButton, null, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Center, cancellationToken: cancellationToken.Token);
+            var confirm = await ToastPopup.ShowActionAsync(XamlRoot, grid, Strings.StakeDiceButton, null, ToastPlacementMode.Center, cancellationToken: cancellationToken.Token);
             if (confirm == ContentDialogResult.Primary)
             {
                 _message.Delegate.SendMessage(new InputMessageStakeDice(_message.ClientService.StakeDiceState.StateHash, _message.ClientService.StakeDiceState.StakeGramAmount, false));
@@ -212,7 +212,7 @@ namespace Telegram.Controls.Messages.Content
             //}
 
             //var formatted = ClientEx.ParseMarkdown(text);
-            //ToastPopup.Show(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
+            //ToastPopup.Show(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? ToastPlacementMode.TopLeft : ToastPlacementMode.TopRight);
         }
 
         #region IPlaybackView

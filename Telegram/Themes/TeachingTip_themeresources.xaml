@@ -9,8 +9,88 @@
     <Style TargetType="local:TeachingTip"
            BasedOn="{StaticResource DefaultTeachingTipStyle}" />
 
-    <Style TargetType="controls:ToastPopup"
-           BasedOn="{StaticResource DefaultTeachingTipStyle}" />
+    <!-- ToastPopup is our own control rather than a TeachingTip, but it keeps the tip's look and
+         its geometry: the content sits in a band wide enough for the tail on all four sides, so
+         that moving the tail never changes the measured size. ToastPopup.TailBand and TailInset
+         have to agree with the outer rows and columns below. -->
+    <Style TargetType="controls:ToastPopup">
+        <Setter Property="Background"
+                Value="{ThemeResource TeachingTipBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource TeachingTipForegroundBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TeachingTipBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="{ThemeResource TeachingTipContentBorderThicknessUntargeted}" />
+        <Setter Property="CornerRadius"
+                Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="MinHeight"
+                Value="{ThemeResource TeachingTipMinHeight}" />
+        <Setter Property="MinWidth"
+                Value="{ThemeResource TeachingTipMinWidth}" />
+        <Setter Property="MaxHeight"
+                Value="{ThemeResource TeachingTipMaxHeight}" />
+        <Setter Property="MaxWidth"
+                Value="{ThemeResource TeachingTipMaxWidth}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ToastPopup">
+                    <Grid x:Name="TailOcclusionGrid"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
+                            <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />
+                            <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="{StaticResource TeachingTipTailShortSideLength}" />
+                            <RowDefinition Height="{StaticResource TeachingTipTailMargin}" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="{StaticResource TeachingTipTailMargin}" />
+                            <RowDefinition Height="{StaticResource TeachingTipTailShortSideLength}" />
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="ContentRootBorder"
+                                AutomationProperties.LandmarkType="Custom"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Grid.RowSpan="3"
+                                Grid.ColumnSpan="3">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ContentPresenter x:Name="ContentPresenter"
+                                                  Margin="{StaticResource TeachingTipContentMargin}"
+                                                  Content="{TemplateBinding Content}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Foreground="{TemplateBinding Foreground}"
+                                                  FontSize="{TemplateBinding FontSize}"
+                                                  FontWeight="{TemplateBinding FontWeight}"
+                                                  FontStyle="{TemplateBinding FontStyle}"
+                                                  FontFamily="{TemplateBinding FontFamily}"
+                                                  FontStretch="{TemplateBinding FontStretch}" />
+                            </ScrollViewer>
+                        </Border>
+
+                        <!-- Row, column, points and alignment are all set by UpdateTail. -->
+                        <Polygon x:Name="TailPolygon"
+                                 Fill="{TemplateBinding Background}"
+                                 Stroke="{TemplateBinding BorderBrush}"
+                                 StrokeThickness="{StaticResource TeachingTipBorderThickness}"
+                                 Visibility="Collapsed" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="controls:TeachingTipEx"
            BasedOn="{StaticResource DefaultTeachingTipStyle}" />

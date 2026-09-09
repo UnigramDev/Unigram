@@ -110,7 +110,7 @@ namespace Telegram.Views.Settings.Popups
                 ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
                 ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
                 CloseButtonContent = Strings.Cancel,
-                PreferredPlacement = TeachingTipPlacementMode.Top,
+                PreferredPlacement = ToastPlacementMode.Top,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,

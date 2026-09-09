@@ -62,7 +62,7 @@ namespace Telegram.Controls.Messages
 
             if (_message?.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed)
             {
-                ToastPopup.Show(this, Strings.VideoConversionTimeInfo, TeachingTipPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
+                ToastPopup.Show(this, Strings.VideoConversionTimeInfo, ToastPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
             }
         }
 
