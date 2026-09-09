@@ -16,7 +16,7 @@ namespace winrt::Telegram::Native::Composition::implementation
     struct WindowVisual : WindowVisualT<WindowVisual>
     {
         static bool IsValid(WindowId windowId, hstring& title);
-        static winrt::Telegram::Native::Composition::WindowVisual Create(WindowId windowId, float rasterizationScale);
+        static winrt::Telegram::Native::Composition::WindowVisual Create(WindowId windowId, WindowId destinationId, Compositor compositor, float rasterizationScale);
 
         static uint32_t GetWindowProcessId(WindowId windowId);
         static WindowId GetCurrentWindowId();

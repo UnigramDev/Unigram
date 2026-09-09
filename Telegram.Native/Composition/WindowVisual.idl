@@ -4,7 +4,7 @@ namespace Telegram.Native.Composition
     runtimeclass WindowVisual
     {
         static Boolean IsValid(Windows.UI.WindowId windowId, out String title);
-        static WindowVisual Create(Windows.UI.WindowId windowId, Single rasterizationScale);
+        static WindowVisual Create(Windows.UI.WindowId windowId, Windows.UI.WindowId destinationId, Windows.UI.Composition.Compositor compositor, Single rasterizationScale);
 
         static UInt32 GetWindowProcessId(Windows.UI.WindowId windowId);
         static Windows.UI.WindowId GetCurrentWindowId();
