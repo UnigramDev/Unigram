@@ -106,6 +106,8 @@ namespace Telegram.Controls
     ///
     /// Placement reproduces TeachingTip's, so that toasts land where they always have.
     /// </remarks>
+    [TemplatePart(Name = "ContentRoot", Type = typeof(Border))]
+    [TemplatePart(Name = "Tail", Type = typeof(Polygon))]
     public partial class ToastPopup : ContentControl
     {
         // The template holds the content in a band wide enough for the tail on all four sides, so
@@ -127,7 +129,8 @@ namespace Telegram.Controls
         [ThreadStatic]
         private static List<ToastPopup> _opened;
 
-        private Polygon _tail;
+        private Polygon Tail;
+        private Border ContentRoot;
 
         private XamlRoot _xamlRoot;
         private Popup _popup;
@@ -211,14 +214,27 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _tail = GetTemplateChild("TailPolygon") as Polygon;
+            base.OnApplyTemplate();
+
+            Tail = GetTemplateChild(nameof(Tail)) as Polygon;
+            ContentRoot = GetTemplateChild(nameof(ContentRoot)) as Border;
+
+            // TeachingTip cast this from EstablishShadows rather than from its template, so the
+            // template carries no trace of it. Same elevation, and unguarded like TeachingTip's:
+            // ThemeShadow arrived in 18362, which is TargetPlatformMinVersion. Deliberately not
+            // ApiInfo.CanCreateThemeShadow - that withholds shadows from Windows 10 for reasons
+            // that are about messages overlapping each other, and a toast is alone in its popup.
+            // The tail stays out of it: TeachingTip's own tail shadow is behind a debug switch.
+            if (ContentRoot != null)
+            {
+                ContentRoot.Shadow = new ThemeShadow();
+                ContentRoot.Translation = new Vector3(0, 0, 32);
+            }
 
             // Target and PreferredPlacement are both set before the toast is opened, and the
             // template is applied on the way in, so the tail is settled in one go here rather
             // than rebuilt every time the toast is placed again.
             UpdateTail();
-
-            base.OnApplyTemplate();
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -520,7 +536,7 @@ namespace Telegram.Controls
         /// </summary>
         private void UpdateTail()
         {
-            if (_tail == null)
+            if (Tail == null)
             {
                 return;
             }
@@ -528,11 +544,11 @@ namespace Telegram.Controls
             if (Target == null)
             {
                 // Nothing to point at: an untargeted toast is a plain rectangle.
-                _tail.Visibility = Visibility.Collapsed;
+                Tail.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            _tail.Visibility = Visibility.Visible;
+            Tail.Visibility = Visibility.Visible;
 
             switch (PreferredPlacement)
             {
@@ -596,48 +612,87 @@ namespace Telegram.Controls
                 points.Add(new Point(0, 10));
                 points.Add(new Point(10, 0));
                 points.Add(new Point(20, 10));
-                _tail.Margin = new Thickness(0, 0, 0, -1);
+                Tail.Margin = new Thickness(0, 0, 0, -1);
             }
             else if (row == 4)
             {
                 points.Add(new Point(0, 0));
                 points.Add(new Point(10, 10));
                 points.Add(new Point(20, 0));
-                _tail.Margin = new Thickness(0, -1, 0, 0);
+                Tail.Margin = new Thickness(0, -1, 0, 0);
             }
             else if (column == 0)
             {
                 points.Add(new Point(10, 0));
                 points.Add(new Point(0, 10));
                 points.Add(new Point(10, 20));
-                _tail.Margin = new Thickness(0, 0, -1, 0);
+                Tail.Margin = new Thickness(0, 0, -1, 0);
             }
             else
             {
                 points.Add(new Point(0, 0));
                 points.Add(new Point(10, 10));
                 points.Add(new Point(0, 20));
-                _tail.Margin = new Thickness(-1, 0, 0, 0);
+                Tail.Margin = new Thickness(-1, 0, 0, 0);
             }
 
-            _tail.Points = points;
-            _tail.HorizontalAlignment = horizontal;
-            _tail.VerticalAlignment = vertical;
+            Tail.Points = points;
+            Tail.HorizontalAlignment = horizontal;
+            Tail.VerticalAlignment = vertical;
 
-            Grid.SetRow(_tail, row);
-            Grid.SetColumn(_tail, column);
+            Grid.SetRow(Tail, row);
+            Grid.SetColumn(Tail, column);
         }
 
         #endregion
 
         #region Animation
 
+        /// <summary>
+        /// The point the toast grows out of and shrinks back into.
+        /// </summary>
+        /// <remarks>
+        /// A targeted toast pivots on its tail, so it appears to come out of what it points at.
+        /// The pivot is the corner of the content nearest the tail rather than the tail's own
+        /// point - transcribed from TeachingTip, where it is the tail occlusion grid's first two
+        /// rows and columns.
+        /// </remarks>
+        private Vector3 GetPivot()
+        {
+            var size = ActualSize;
+
+            if (Target == null)
+            {
+                return new Vector3(size / 2, 0);
+            }
+
+            const float edge = (float)TailBand;
+            const float inner = (float)(TailBand + TailInset) + 1;
+
+            return PreferredPlacement switch
+            {
+                ToastPlacementMode.Top or ToastPlacementMode.Center => new Vector3(size.X / 2, size.Y - edge, 0),
+                ToastPlacementMode.Bottom => new Vector3(size.X / 2, edge, 0),
+                ToastPlacementMode.Left => new Vector3(size.X - edge, size.Y / 2, 0),
+                ToastPlacementMode.Right => new Vector3(edge, size.Y / 2, 0),
+                ToastPlacementMode.TopRight => new Vector3(inner, size.Y - edge, 0),
+                ToastPlacementMode.TopLeft => new Vector3(size.X - inner, size.Y - edge, 0),
+                ToastPlacementMode.BottomRight => new Vector3(inner, edge, 0),
+                ToastPlacementMode.BottomLeft => new Vector3(size.X - inner, edge, 0),
+                ToastPlacementMode.LeftTop => new Vector3(size.X - edge, size.Y - inner, 0),
+                ToastPlacementMode.LeftBottom => new Vector3(size.X - edge, inner, 0),
+                ToastPlacementMode.RightTop => new Vector3(edge, size.Y - inner, 0),
+                ToastPlacementMode.RightBottom => new Vector3(edge, inner, 0),
+                _ => new Vector3(size / 2, 0)
+            };
+        }
+
         private void PlayOpenAnimation()
         {
             var visual = ElementComposition.GetElementVisual(this);
             var compositor = visual.Compositor;
 
-            visual.CenterPoint = new Vector3(ActualSize / 2, 0);
+            visual.CenterPoint = GetPivot();
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
@@ -660,6 +715,10 @@ namespace Telegram.Controls
 
             _batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             _batch.Completed += OnCloseAnimationCompleted;
+
+            // Re-read: the toast can have been resized after it opened, by an action button or a
+            // countdown appended once it was already up.
+            visual.CenterPoint = GetPivot();
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 1);

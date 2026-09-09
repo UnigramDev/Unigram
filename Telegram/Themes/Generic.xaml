@@ -863,6 +863,88 @@
         </Setter>
     </Style>
 
+    <!-- The brushes are still the TeachingTip ones: ToastPopup replaced the control, not the
+         look, and those keys are registered theme entries. The 8 and 10 in the outer rows and
+         columns are the band the tail moves in, and ToastPopup.TailBand and TailInset have to
+         agree with them. -->
+    <Style TargetType="local:ToastPopup">
+        <Setter Property="Background"
+                Value="{ThemeResource TeachingTipBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource TeachingTipForegroundBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TeachingTipBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="CornerRadius"
+                Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="MinHeight"
+                Value="40" />
+        <Setter Property="MinWidth"
+                Value="320" />
+        <Setter Property="MaxHeight"
+                Value="520" />
+        <Setter Property="MaxWidth"
+                Value="336" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ToastPopup">
+                    <Grid x:Name="LayoutRoot"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="8" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="8" />
+                        </Grid.RowDefinitions>
+
+                        <!-- The shadow is cast from OnApplyTemplate, on Windows 11 only. -->
+                        <Border x:Name="ContentRoot"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                AutomationProperties.LandmarkType="Custom"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Grid.RowSpan="3"
+                                Grid.ColumnSpan="3">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontWeight="{TemplateBinding FontWeight}"
+                                              FontStyle="{TemplateBinding FontStyle}"
+                                              FontFamily="{TemplateBinding FontFamily}"
+                                              FontStretch="{TemplateBinding FontStretch}"
+                                              Margin="12" />
+                        </Border>
+
+                        <!-- Row, column, points and alignment are all set by UpdateTail. -->
+                        <Polygon x:Name="Tail"
+                                 Fill="{TemplateBinding Background}"
+                                 Stroke="{TemplateBinding BorderBrush}"
+                                 StrokeThickness="1"
+                                 Visibility="Collapsed" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:BlockQuote">
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
