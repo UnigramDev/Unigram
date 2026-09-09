@@ -295,7 +295,7 @@ namespace Telegram.Views
 
         private void FocusText(FocusState state)
         {
-            if (XamlRoot != null && state == FocusState.Keyboard || state == FocusState.Programmatic)
+            if (XamlRoot != null && (state == FocusState.Keyboard || state == FocusState.Programmatic))
             {
                 var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
