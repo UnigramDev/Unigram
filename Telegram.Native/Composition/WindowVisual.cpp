@@ -291,6 +291,11 @@ namespace winrt::Telegram::Native::Composition::implementation
     {
         const static auto lDwmpQueryWindowThumbnailSourceSize = (DwmpQueryWindowThumbnailSourceSize)GetProcAddress(GetDwmApi(), MAKEINTRESOURCEA(162));
 
+        // Both callers hand thumb straight to DWM without looking at the result, so it has
+        // to be safe to pass on when this returns early - a minimized or cloaked window
+        // reports no size at all.
+        thumb = {};
+
         SIZE windowSize{};
         HRESULT result = lDwmpQueryWindowThumbnailSourceSize(window, false, &windowSize);
 
@@ -308,7 +313,6 @@ namespace winrt::Telegram::Native::Composition::implementation
         long width = windowSize.cx * ratio;
         long height = windowSize.cy * ratio;
 
-        thumb = {};
         thumb.dwFlags = DWM_TNP_VISIBLE | DWM_TNP_RECTDESTINATION | DWM_TNP_OPACITY | DWM_TNP_ENABLE3D;
         thumb.opacity = 255;
         thumb.fVisible = TRUE;
