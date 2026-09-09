@@ -142,7 +142,7 @@ namespace Telegram.Views.Popups
 
             var popup = new TransferGiftPopup(clientService, gift, chat, resale)
             {
-                PreferredPlacement = ToastPlacementMode.Center,
+                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
@@ -169,7 +169,7 @@ namespace Telegram.Views.Popups
 
             var popup = new TransferGiftPopup(clientService, gift, chat)
             {
-                PreferredPlacement = ToastPlacementMode.Center,
+                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,

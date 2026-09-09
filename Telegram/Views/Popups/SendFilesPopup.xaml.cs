@@ -1710,7 +1710,7 @@ namespace Telegram.Views.Popups
             popup.ActionButtonContent = Strings.PaidContentUpdateButton;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = ToastPlacementMode.Center;
+            popup.PreferredPlacement = TeachingTipPlacementMode.Center;
             popup.IsLightDismissEnabled = true;
             popup.ShouldConstrainToRootBounds = true;
 
