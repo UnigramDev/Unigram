@@ -33,8 +33,8 @@ namespace Telegram.Navigation
             // handle window
 
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
-            CreateWindowWrapper(args.Window);
-            ViewService.OnWindowCreated();
+            var window = CreateWindowWrapper(args.Window);
+            ViewService.OnWindowCreated(window);
 
             args.Window.Activated += OnActivated;
             args.Window.Closed += OnClosed;

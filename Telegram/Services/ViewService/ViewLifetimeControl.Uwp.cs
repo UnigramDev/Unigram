@@ -6,11 +6,8 @@
 //
 
 using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using Telegram.Navigation;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Telegram.Services
@@ -24,15 +21,6 @@ namespace Telegram.Services
     // it to the user, etc.) When the reference count drops to zero, the secondary view is closed.
     public sealed partial class ViewLifetimeControl
     {
-        private static readonly ConcurrentDictionary<int, ViewLifetimeControl> WindowControlsMap = new();
-
-        #region CoreDispatcher
-        // Dispatcher for this view. Kept here for sending messages between this view and the main view.
-        public IDispatcherContext Dispatcher { get; }
-        #endregion
-
-        #region Internal tracking fields
-
         private readonly object syncObject = new();
 
         // This class uses references counts to make sure the secondary views isn't closed prematurely.
@@ -41,88 +29,44 @@ namespace Telegram.Services
         // by calling "StopViewInUse"
         private int refCount;
 
-        // Each view has a unique Id, found using the ApplicationView.Id property or
-        // ApplicationView.GetApplicationViewIdForCoreWindow method. This id is used in all of the ApplicationViewSwitcher
-        // and ProjectionManager APIs. 
-
         // Tracks if this ViewLifetimeControl object is still valid. If this is true, then the view is in the process
         // of closing itself down
         private bool released;
 
-        private bool isDisposing = false;
-
         // Used to store pubicly registered events under the protection of a lock
         private event ViewReleasedHandler InternalReleased;
-        #endregion
 
-        #region Id
-        // Each view has a unique Id, found using the ApplicationView.Id property or
-        // ApplicationView.GetApplicationViewIdForCoreWindow method. This id is used in all of the ApplicationViewSwitcher
-        // and ProjectionManager APIs. 
-        public int Id { get; }
-        #endregion
-
-        #region WindowWrapper
         public Window Window { get; }
-        #endregion
 
-        public Task ConsolidateAsync()
+        /// <summary>
+        /// One per secondary view, created by that view's <see cref="WindowContext"/> and by
+        /// nothing else - the sample this comes from says "only do this once per view", and the
+        /// lookup that replaced it let any caller mint a control for a view that had never taken
+        /// the baseline reference, whose first consolidation then drove the count to -1.
+        /// </summary>
+        internal ViewLifetimeControl(Window window)
         {
-            if (Dispatcher.HasThreadAccess)
-            {
-                return ConsolidateAsyncImpl();
-            }
+            Window = window;
 
-            return Dispatcher.DispatchAsync(ConsolidateAsyncImpl);
+            // Taken here rather than by the caller, so a control cannot exist without it. The
+            // window drops it again when the view consolidates - this class does not watch for
+            // that itself, so that the one Consolidated handler can order the two.
+            StartViewInUse();
         }
 
-        private Task ConsolidateAsyncImpl()
-        {
-            return WindowContext.Current.ConsolidateAsync();
-        }
-
-        private ViewLifetimeControl()
-        {
-            Window = Window.Current;
-            Dispatcher = DispatcherContext.Current;
-            Id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-
-            // This class will automatically tell the view when its time to close
-            // or stay alive in a few cases
-            RegisterForEvents();
-        }
-
-        private void RegisterForEvents()
-        {
-            ApplicationView.GetForCurrentView().Consolidated += ViewConsolidated;
-        }
-
-        private void UnregisterForEvents()
-        {
-            try
-            {
-                ApplicationView.GetForCurrentView().Consolidated -= ViewConsolidated;
-            }
-            catch { }
-        }
-
-        // A view is consolidated with other views hen there's no way for the user to get to it (it's not in the list of recently used apps, cannot be
-        // launched from Start, etc.) A view stops being consolidated when it's visible--at that point the user can interact with it, move it on or off screen, etc. 
-        // It's generally a good idea to close a view after it has been consolidated, but keep it open while it's visible.
-        private void ViewConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs e)
-        {
-            StopViewInUse();
-        }
-
-        // Called when a view has been "consolidated" (no longer accessible to the user) 
-        // and no other view is trying to interact with it. This should only be closed after the reference
-        // count goes to 0 (including being consolidated). At the end of this, the view should be closed manually. 
+        // Called when a view has been "consolidated" (no longer accessible to the user)
+        // and no other view is trying to interact with it. Raising Released is all this does:
+        // the handler releases what the view owns and closes last, as the MSDN sample has it.
+        // Closing here put the apartment teardown ahead of every release, and an RCW finalized
+        // after that point faults - see WindowContext.OnViewReleased.
         private void FinalizeRelease()
         {
             bool justReleased = false;
             lock (syncObject)
             {
-                if (refCount == 0)
+                // Redundant posts are expected - every return to zero queues one - so the guard
+                // is what stops a second one closing an already closed window.
+                if (!released && refCount == 0)
                 {
                     justReleased = true;
                     released = true;
@@ -133,34 +77,8 @@ namespace Telegram.Services
             // it has been set to true
             if (justReleased)
             {
-                UnregisterForEvents();
                 InternalReleased?.Invoke(this, new EventArgs());
-                WindowControlsMap.TryRemove(Id, out _);
-
-                // Explicitly calling Close breaks everything
-                if (Window.Current.Content is WindowPresenter control)
-                {
-                    control.Content = null;
-                }
-                else
-                {
-                    Window.Current.Content = null;
-                }
-
-                Window.Current.Close();
             }
-        }
-
-        /// <summary>
-        /// Retrieves existing or creates new instance of <see cref="ViewLifetimeControl"/> for current <see cref="CoreWindow"/>
-        /// </summary>
-        /// <returns>Instance of <see cref="ViewLifetimeControl"/> that is associated with current window</returns>
-        public static ViewLifetimeControl GetForCurrentView()
-        {
-            var wnd = Window.Current.CoreWindow;
-            /*BUG: use this strange way to get Id as for ShareTarget hosted window on desktop version ApplicationView.GetForCurrentView() throws "Catastrofic failure" COMException.
-              Link to question on msdn: https://social.msdn.microsoft.com/Forums/security/en-US/efa50111-043a-4007-8af8-2b53f72ba207/uwp-c-xaml-comexception-catastrofic-failure-due-to-applicationviewgetforcurrentview-in?forum=wpdevelop  */
-            return WindowControlsMap.GetOrAdd(ApplicationView.GetApplicationViewIdForWindow(wnd), id => new ViewLifetimeControl());
         }
 
         // Signals that the view is being interacted with by another view,
@@ -201,7 +119,7 @@ namespace Telegram.Services
                 if (!released)
                 {
                     refCountCopy = --refCount;
-                    if (refCountCopy == 0 && !isDisposing)
+                    if (refCountCopy == 0)
                     {
                         // If no other view is interacting with this view, and
                         // the view isn't accessible to the user, it's appropriate
@@ -213,7 +131,6 @@ namespace Telegram.Services
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         Window.Dispatcher.RunAsync(CoreDispatcherPriority.Low, FinalizeRelease);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        isDisposing = true;
                     }
                 }
             }

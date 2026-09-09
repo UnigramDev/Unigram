@@ -55,8 +55,10 @@ namespace Telegram.Services
 
         public override SynchronizationContext CreateCopy()
         {
-            var control = ViewLifetimeControl.GetForCurrentView();
-            return new SecondaryViewSynchronizationContextDecorator(control, _context.CreateCopy());
+            // The same control, not a fresh lookup: a copy of this context belongs to the same
+            // view, and re-resolving it was the other way a control could appear for a view that
+            // never took the baseline reference.
+            return new SecondaryViewSynchronizationContextDecorator(_control, _context.CreateCopy());
         }
     }
 }

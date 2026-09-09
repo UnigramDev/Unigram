@@ -117,6 +117,13 @@ namespace Telegram.Navigation
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
 
+            // Not for the main view, which never closes this way, and not for a hosted one,
+            // where ApplicationView.GetForCurrentView throws.
+            if (!IsInMainView && !CoreApplication.GetCurrentView().IsHosted)
+            {
+                AttachLifetime(new ViewLifetimeControl(window));
+            }
+
             // WARNING: this is used by Xbox (and some Windows users)
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
@@ -202,28 +209,28 @@ namespace Telegram.Navigation
                 return;
             }
 
+            // Only what consolidation actually means: the user can no longer reach this view, so
+            // the ApplicationView events and the input listener have nothing left to report, and
+            // the title bar has to be cleared while the view is still valid. Everything else -
+            // Detach, the native releases, the collect and the close - waits for OnViewReleased,
+            // because the tree here is still alive and its Unloaded cascade has not run.
             _consolidated = true;
             _inputListener.Release();
             sender.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             sender.Consolidated -= OnConsolidated;
 
-            // TODO: since we can't call Close directly,
-            // Closed event will be never fired.
-            OnClosed(null, null);
             ClearTitleBar(sender);
 
-#if NET9_0_OR_GREATER
             // Unroot the tree here rather than leaving it to the framework: until the content is
-            // dropped every element in it is still reachable, so the collect in OnShutdownStarting
-            // would have nothing to hand back and the releases would fall past the XAML core.
+            // dropped every element in it is still reachable, so the collect later would have
+            // nothing to hand back. This is also what queues the Unloaded cascade the release
+            // step waits behind.
             _window.Content = null;
-#endif
 
-            // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
-            if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
-            {
-                SynchronizationContext.SetSynchronizationContext(decorator.Context);
-            }
+            // Last, and from here rather than from a second Consolidated handler inside the
+            // control: the count reaching zero is what schedules the release, and it must not
+            // do so before the work above has run.
+            _lifetime?.StopViewInUse();
         }
 
         private void OnClosed(object sender, CoreWindowEventArgs e)
@@ -575,6 +582,129 @@ namespace Telegram.Navigation
             {
                 await already.Dispatcher.DispatchAsync(() => ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId).AsTask());
             }
+        }
+
+        private ViewLifetimeControl _lifetime;
+
+        /// <summary>
+        /// Hooks the view's lifetime control, whose Released event is the one point at which
+        /// everything this window owns can be released before the apartment starts going down.
+        /// Nothing subscribed it before, so the control closed the window itself the moment the
+        /// count reached zero - ahead of the Unloaded cascade, the native releases and the drain.
+        /// </summary>
+        private void AttachLifetime(ViewLifetimeControl control)
+        {
+            _lifetime = control;
+            control.Released += OnViewReleased;
+        }
+
+        /// <summary>
+        /// The view's lifetime control, or null for the main and hosted views, which have none.
+        /// Read by <see cref="ViewService"/> to build the synchronization context decorator.
+        /// </summary>
+        internal ViewLifetimeControl Lifetime => _lifetime;
+
+        private void OnViewReleased(object sender, EventArgs e)
+        {
+            _lifetime.Released -= OnViewReleased;
+            _lifetime = null;
+
+            Logger.Info();
+
+            // Idle, not Low: the Unloaded cascade that consolidation queued when it dropped the
+            // content has to have run first, and Low is not behind it - the shutdown drain runs
+            // at Low and was seen releasing a block's handles 80ms before ChatHistoryView.OnUnloaded
+            // reached them. A closing view's queue empties at once, so idle arrives immediately.
+            _ = _window.Dispatcher.RunIdleAsync(OnViewIdle);
+        }
+
+        private void OnViewIdle(IdleDispatchedHandlerArgs args)
+        {
+            ReleaseAndClose();
+        }
+
+#if NET9_0_OR_GREATER
+        private async void ReleaseAndClose()
+        {
+            // Order matters throughout, and every step depends on the one before it. ReleaseNative
+            // reads _xamlRoot and _content, so it goes first; Detach reads _xamlRoot and clears
+            // _content; ReleaseRoots then drops _xamlRoot itself. The collect has to see all of
+            // that already done or it finds the objects live and they are finalized once the
+            // apartment is gone. The close is last, because it is what starts the apartment down.
+            ReleaseNative();
+            OnClosed(null, null);
+            ReleaseRoots();
+
+            // Off-thread, and not as a detail: the finalizer marshals its release back into this
+            // apartment, so waiting for it here would block the very thread that has to service it.
+            var drain = Task.Run(Drain);
+            await Task.WhenAny(drain, Task.Delay(ShutdownDrainTimeout));
+
+            Logger.Info(drain.IsCompleted ? "drained, closing" : "drain timed out, closing anyway");
+
+            Close(_window);
+        }
+#else
+        private void ReleaseAndClose()
+        {
+            OnClosed(null, null);
+            ReleaseRoots();
+
+            Close(_window);
+        }
+#endif
+
+        /// <summary>
+        /// Drops the last managed references to this window's XAML objects. Without this the
+        /// collect below has nothing to do - the objects are reachable, so they are finalized
+        /// much later, by which time the apartment cannot service the release. XamlRoot itself
+        /// is one of them, which is why releasing handles by type could never be enough.
+        /// </summary>
+        private void ReleaseRoots()
+        {
+            _xamlRoot = null;
+            _lockedContent = null;
+
+            lock (_activeLock)
+            {
+                if (Active == this)
+                {
+                    Active = null;
+                }
+            }
+
+            // _current is the remaining root and is deliberately left to OnShutdownCompleted:
+            // it is thread-static, so anything still running on this thread reads it, and
+            // clearing it early only moves the failure. It holds no XamlRoot once the two
+            // fields above are null.
+
+            // Was left installed until OnShutdownCompleted, which put the uninstall after the
+            // point the counting mattered. The count is spent by now either way.
+            if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
+            {
+                SynchronizationContext.SetSynchronizationContext(decorator.Context);
+            }
+        }
+
+        /// <summary>
+        /// Unroots and closes, in that order. The presenter branch is not decoration: dropping
+        /// the presenter itself rather than its content is what the original close did, and the
+        /// comment it carried - "explicitly calling Close breaks everything" - is the only record
+        /// of why. Under .NET 10 consolidation has already unrooted the tree, so this is a no-op
+        /// there and the branch only matters to the legacy flavour.
+        /// </summary>
+        private static void Close(Window window)
+        {
+            if (window.Content is WindowPresenter presenter)
+            {
+                presenter.Content = null;
+            }
+            else
+            {
+                window.Content = null;
+            }
+
+            window.Close();
         }
 
         private void OnShutdownCompleted(DispatcherQueue sender, object args)

@@ -24,7 +24,7 @@ namespace Telegram.Services
     /// </summary>
     public sealed partial class ViewService
     {
-        internal static void OnWindowCreated()
+        internal static void OnWindowCreated(WindowContext window)
         {
             var view = CoreApplication.GetCurrentView();
             if (view.IsMain)
@@ -47,8 +47,17 @@ namespace Telegram.Services
                 return;
             }
 
-            var control = ViewLifetimeControl.GetForCurrentView();
-            control.StartViewInUse();
+            // The window context makes the control in its constructor and subscribes its Released
+            // event, which is what closes the view. Nothing else closes a secondary view, so if
+            // there is no control here the thread leaks outright rather than degrading.
+            var control = window.Lifetime;
+            if (control == null)
+            {
+                Logger.Error("No view lifetime control on this view, it will never close");
+                SynchronizationContext.SetSynchronizationContext(context);
+                return;
+            }
+
             SynchronizationContext.SetSynchronizationContext(new SecondaryViewSynchronizationContextDecorator(control, context));
         }
 
