@@ -331,6 +331,10 @@ namespace Telegram.Collections
                             }
                         }
 
+                        // Retire the whole block that was asked for, not only what came back:
+                        // a failed or short response covers less than the request, and leaving
+                        // the remainder pending makes the retry below ask for it again forever.
+                        _requests.Subtract(nextRequest);
                         _requests.Subtract(data.Range);
                     }
                 }
