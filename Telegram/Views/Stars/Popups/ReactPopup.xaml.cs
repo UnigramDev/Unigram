@@ -43,7 +43,7 @@ namespace Telegram.Views.Stars.Popups
 
         private bool _loaded;
 
-        private TeachingTipEx _balance;
+        private ModalPopup _balance;
 
         public ReactPopup(IClientService clientService, MessageViewModel message)
         {
@@ -80,11 +80,6 @@ namespace Telegram.Views.Stars.Popups
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            if (XamlRoot.Content is not IToastHost host)
-            {
-                return;
-            }
-
             var markdown = ClientEx.ParseMarkdown(Strings.Gift2MessageStarsInfoLink);
 
             var hyperlink = new Hyperlink();
@@ -101,29 +96,19 @@ namespace Telegram.Views.Stars.Popups
             content.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
             content.Margin = new Thickness(0, -8, 0, -6);
 
-            var popup = new TeachingTipEx
+            var popup = new ModalPopup
             {
                 Content = content,
-                PreferredPlacement = TeachingTipPlacementMode.Top,
                 MinWidth = 0,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 IsLightDismissEnabled = false,
-                ShouldConstrainToRootBounds = true,
-                RequestedTheme = ElementTheme.Dark,
-                XamlRoot = XamlRoot
+                RequestedTheme = ElementTheme.Dark
             };
 
             AutomationProperties.SetName(popup, "title");
 
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(popup);
-            popup.IsOpen = true;
-
+            _ = popup.ShowAsync(XamlRoot);
             _balance = popup;
         }
 
@@ -135,7 +120,7 @@ namespace Telegram.Views.Stars.Popups
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            _balance?.IsOpen = false;
+            _balance?.Hide();
         }
 
         private void StarCountSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

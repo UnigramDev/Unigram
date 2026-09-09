@@ -307,7 +307,7 @@ namespace Telegram.Services
                 }
                 else if (ContentPopup.IsAnyPopupOpen(xamlRoot))
                 {
-                    await MessagePopup.ShowAsync(xamlRoot, target: null, text, Strings.AppName, Strings.OK);
+                    await MessagePopup.ShowNestedAsync(xamlRoot, text, Strings.AppName, Strings.OK);
                 }
                 else
                 {

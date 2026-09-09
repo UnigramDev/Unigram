@@ -19,11 +19,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class TransferGiftPopup : TeachingTipEx
+    public sealed partial class TransferGiftPopup : ModalPopup
     {
         public string Text { get; set; } = string.Empty;
-
-        private readonly TaskCompletionSource<ContentDialogResult> _tsc = new();
 
         public TransferGiftPopup(IClientService clientService, ReceivedGift gift, Chat chat, bool resale)
         {
@@ -55,26 +53,24 @@ namespace Telegram.Views.Popups
                         TextBlockHelper.SetMarkdown(MessageLabel, Locale.Declension(Strings.R.Gift2BuyPriceSelfText, upgraded.Gift.ResaleParameters.StarCount, upgraded.Gift.ToName()));
                     }
 
-                    ActionButtonContent = Strings.Gift2TransferDo;
+                    PrimaryButtonContent = Strings.Gift2TransferDo;
                 }
                 else if (gift.TransferStarCount > 0)
                 {
                     TextBlockHelper.SetMarkdown(MessageLabel, Locale.Declension(Strings.R.Gift2TransferPriceText, gift.TransferStarCount, upgraded.Gift.ToName(), chat.Title));
-                    ActionButtonContent = Strings.Gift2TransferDo;
+                    PrimaryButtonContent = Strings.Gift2TransferDo;
                 }
                 else
                 {
                     TextBlockHelper.SetMarkdown(MessageLabel, string.Format(Strings.Gift2TransferText, upgraded.Gift.ToName(), chat.Title));
-                    ActionButtonContent = Strings.Gift2TransferDo;
+                    PrimaryButtonContent = Strings.Gift2TransferDo;
                 }
             }
 
-            ActionButtonClick += OnAction;
 
-            ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            CloseButtonContent = Strings.Cancel;
+            PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            SecondaryButtonContent = Strings.Cancel;
 
-            Closed += OnClosed;
         }
 
         public TransferGiftPopup(IClientService clientService, GiftForResale upgraded, Chat chat)
@@ -105,86 +101,39 @@ namespace Telegram.Views.Popups
                     TextBlockHelper.SetMarkdown(MessageLabel, Locale.Declension(Strings.R.Gift2BuyPriceSelfText, upgraded.Gift.ResaleParameters.StarCount, upgraded.Gift.ToName()));
                 }
 
-                ActionButtonContent = Strings.Gift2TransferDo;
+                PrimaryButtonContent = Strings.Gift2TransferDo;
             }
 
-            ActionButtonClick += OnAction;
 
-            ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            CloseButtonContent = Strings.Cancel;
+            PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            SecondaryButtonContent = Strings.Cancel;
 
-            Closed += OnClosed;
-        }
-
-        private void OnAction(TeachingTip sender, object args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Primary);
-            IsOpen = false;
-        }
-
-        private void OnClosed(TeachingTip sender, TeachingTipClosedEventArgs args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Secondary);
-        }
-
-        public Task<ContentDialogResult> ShowAsync()
-        {
-            IsOpen = true;
-            return _tsc.Task;
         }
 
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, ReceivedGift gift, Chat chat, bool resale)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return null;
-            }
-
             var popup = new TransferGiftPopup(clientService, gift, chat, resale)
             {
-                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(popup);
-
-            return popup.ShowAsync();
+            return popup.ShowAsync(xamlRoot);
         }
 
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, GiftForResale gift, Chat chat)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return null;
-            }
-
             var popup = new TransferGiftPopup(clientService, gift, chat)
             {
-                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(popup);
-
-            return popup.ShowAsync();
+            return popup.ShowAsync(xamlRoot);
         }
     }
 }

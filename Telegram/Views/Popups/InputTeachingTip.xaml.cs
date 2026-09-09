@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class InputTeachingTip : TeachingTipEx
+    public sealed partial class InputTeachingTip : ModalPopup
     {
         public string Header { get; set; }
 
@@ -40,9 +40,6 @@ namespace Telegram.Views.Popups
 
         private readonly InputPopupType _type;
 
-        private readonly TaskCompletionSource<ContentDialogResult> _tsc = new();
-        private readonly RelayCommand _actionButtonCommand;
-        private bool _actionButtonEnabled;
 
         public InputTeachingTip(InputPopupType type = InputPopupType.Text)
         {
@@ -66,10 +63,14 @@ namespace Telegram.Views.Popups
                     break;
             }
 
-            ActionButtonCommand = _actionButtonCommand = new RelayCommand(ActionButtonExecute, () => _actionButtonEnabled);
+            // Disabled until the input says otherwise, which is what the action button's
+            // command used to decide. Label_TextChanged and Label_PasswordChanged run on the
+            // way in, so a prefilled value enables it before the popup is even seen.
+            IsPrimaryButtonEnabled = false;
+
+            PrimaryButtonClick += OnPrimaryButtonClick;
 
             (Content as FrameworkElement).Loaded += OnOpened;
-            Closed += OnClosed;
         }
 
         // This was largely copied from Calculator's GetRegionalSettingsAwareDecimalFormatter()
@@ -238,7 +239,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ActionButtonExecute()
+        private bool ActionButtonExecute()
         {
             if (Label != null)
             {
@@ -247,7 +248,7 @@ namespace Telegram.Views.Popups
                     if (Label.Text.Length < MinLength)
                     {
                         VisualUtilities.ShakeView(InputRoot);
-                        return;
+                        return false;
                     }
 
                     Text = Label.Text;
@@ -260,7 +261,7 @@ namespace Telegram.Views.Popups
                     if (newValue < Minimum || newValue > Maximum || newValue == null)
                     {
                         VisualUtilities.ShakeView(InputRoot);
-                        return;
+                        return false;
                     }
 
                     Value = newValue.Value;
@@ -271,7 +272,7 @@ namespace Telegram.Views.Popups
                 if (Password.Password.Length < MinLength)
                 {
                     VisualUtilities.ShakeView(InputRoot);
-                    return;
+                    return false;
                 }
 
                 Text = Password.Password;
@@ -286,12 +287,16 @@ namespace Telegram.Views.Popups
                 if (temp.Cancel)
                 {
                     VisualUtilities.ShakeView(InputRoot);
-                    return;
+                    return false;
                 }
             }
 
-            _tsc.TrySetResult(ContentDialogResult.Primary);
-            IsOpen = false;
+            return true;
+        }
+
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            args.Cancel = !ActionButtonExecute();
         }
 
         private void Label_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -301,30 +306,21 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            _actionButtonCommand.Execute();
+            if (IsPrimaryButtonEnabled && ActionButtonExecute())
+            {
+                Hide(ContentDialogResult.Primary);
+            }
         }
 
         private void Label_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _actionButtonEnabled = Label.Text.Length >= MinLength;
-            _actionButtonCommand.RaiseCanExecuteChanged();
+            IsPrimaryButtonEnabled = Label.Text.Length >= MinLength;
         }
 
         private void Label_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            _actionButtonEnabled = Password.Password.Length >= MinLength;
-            _actionButtonCommand.RaiseCanExecuteChanged();
+            IsPrimaryButtonEnabled = Password.Password.Length >= MinLength;
         }
 
-        private void OnClosed(TeachingTip sender, TeachingTipClosedEventArgs args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Secondary);
-        }
-
-        public Task<ContentDialogResult> ShowAsync()
-        {
-            IsOpen = true;
-            return _tsc.Task;
-        }
     }
 }

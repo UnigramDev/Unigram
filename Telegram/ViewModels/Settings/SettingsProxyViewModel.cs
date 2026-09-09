@@ -379,7 +379,7 @@ namespace Telegram.ViewModels.Settings
                 Popup.IsFinalized = true;
             }
 
-            var confirm = await ShowPopupAsync(target: null, message, title, primary, secondary, destructive);
+            var confirm = await ShowPopupNestedAsync(message, title, primary, secondary, destructive);
 
             if (Popup != null)
             {

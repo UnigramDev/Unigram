@@ -21,10 +21,8 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ScheduleMessageToast : TeachingTipEx
+    public sealed partial class ScheduleMessageToast : ModalPopup
     {
-        private readonly TaskCompletionSource<ContentDialogResult> _tsc = new();
-
         public ScheduleMessageToast(User user, bool reminder)
         {
             InitializeComponent();
@@ -43,8 +41,8 @@ namespace Telegram.Views.Popups
             Date.MaxDate = DateTime.Today.AddYears(1);
 
             Title = reminder ? Strings.SetReminder : Strings.ScheduleMessage;
-            ActionButtonContent = Strings.OK;
-            CloseButtonContent = Strings.Cancel;
+            PrimaryButtonContent = Strings.OK;
+            SecondaryButtonContent = Strings.Cancel;
 
             if (user != null && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !reminder)
             {
@@ -55,8 +53,7 @@ namespace Telegram.Views.Popups
                 Online.Visibility = Visibility.Collapsed;
             }
 
-            ActionButtonClick += OnActionButtonClick;
-            Closed += OnClosed;
+            PrimaryButtonClick += OnPrimaryButtonClick;
         }
 
         public MessageSchedulingState SchedulingState { get; private set; }
@@ -79,31 +76,29 @@ namespace Telegram.Views.Popups
             return DateTime.MinValue;
         }
 
-        private void OnActionButtonClick(TeachingTip sender, object args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (Date.Date == null || Date.Date < DateTime.Today)
             {
+                args.Cancel = true;
                 VisualUtilities.ShakeView(Date);
                 return;
             }
             else if (Date.Date == DateTime.Today && Time.Time <= DateTime.Now.TimeOfDay)
             {
+                args.Cancel = true;
                 VisualUtilities.ShakeView(Time);
                 return;
             }
 
             SchedulingState = new MessageSchedulingStateSendAtDate(GetDateTime(true).ToUnixTimeSeconds(), _repeat);
-
-            _tsc.TrySetResult(ContentDialogResult.Primary);
-            IsOpen = false;
         }
 
         private void Online_Click(object sender, RoutedEventArgs e)
         {
             SchedulingState = new MessageSchedulingStateSendWhenOnline();
 
-            _tsc.TrySetResult(ContentDialogResult.Primary);
-            IsOpen = false;
+            Hide(ContentDialogResult.Primary);
         }
 
         private int _repeat;
@@ -143,28 +138,5 @@ namespace Telegram.Views.Popups
             new SettingsOptionItem<int>(365 * 86400, Strings.MessageScheduledRepeatOptionYearly),
         };
 
-        private void OnClosed(TeachingTip sender, TeachingTipClosedEventArgs args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Secondary);
-        }
-
-        public Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot)
-        {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return Task.FromResult(ContentDialogResult.None);
-            }
-
-            XamlRoot = xamlRoot;
-            Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(this);
-
-            IsOpen = true;
-            return _tsc.Task;
-        }
     }
 }

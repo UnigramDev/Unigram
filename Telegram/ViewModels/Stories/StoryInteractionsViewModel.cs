@@ -113,8 +113,7 @@ namespace Telegram.ViewModels
         {
             if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
-                var confirm = await ShowPopupAsync(
-                    container as FrameworkElement,
+                var confirm = await ShowPopupNestedAsync(
                     string.Format(Strings.AreYouSureBlockContact2, user.FirstName),
                     Strings.BlockUser,
                     Strings.BlockUser,
@@ -133,8 +132,7 @@ namespace Telegram.ViewModels
         {
             if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
-                var confirm = await ShowPopupAsync(
-                    container as FrameworkElement,
+                var confirm = await ShowPopupNestedAsync(
                     Strings.AreYouSureDeleteContact,
                     Strings.DeleteContact,
                     Strings.Delete,

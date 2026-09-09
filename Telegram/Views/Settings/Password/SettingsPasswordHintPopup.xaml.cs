@@ -74,7 +74,7 @@ namespace Telegram.Views.Settings.Password
                     }
                     else
                     {
-                        await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                        await MessagePopup.ShowNestedAsync(XamlRoot, error.Message, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                     }
 
                     args.Cancel = true;

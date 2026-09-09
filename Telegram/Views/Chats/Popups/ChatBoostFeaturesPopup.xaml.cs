@@ -221,7 +221,7 @@ namespace Telegram.Views.Chats.Popups
                         ? Locale.Declension(Strings.R.BoostingGetMoreBoostByGiftingCount, _clientService.Options.PremiumGiftBoostCount, _chat.Title)
                         : string.Format(Strings.BoostingGetMoreBoostByGifting, _chat.Title);
 
-                    var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, message, Strings.BoostingMoreBoostsNeeded, Strings.GiftPremium, Strings.Close);
+                    var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, message, Strings.BoostingMoreBoostsNeeded, Strings.GiftPremium, Strings.Close);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _completed = true;
@@ -231,7 +231,7 @@ namespace Telegram.Views.Chats.Popups
             }
             else
             {
-                var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, _channel ? Strings.PremiumNeededForBoosting : Strings.PremiumNeededForBoostingGroup, Strings.PremiumNeeded, Strings.CheckPhoneNumberYes, Strings.Cancel);
+                var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, _channel ? Strings.PremiumNeededForBoosting : Strings.PremiumNeededForBoostingGroup, Strings.PremiumNeeded, Strings.CheckPhoneNumberYes, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _completed = true;

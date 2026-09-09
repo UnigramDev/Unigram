@@ -204,11 +204,7 @@ namespace Telegram.Views.Host
             Window.CaptionButtons = CaptionButtons.Close;
         }
 
-        #region IToastHost
-
         protected override UIElement TitleBarElement => TitleBar;
-
-        #endregion
 
         private void Handle(UpdateWebAppMessageSent update)
         {

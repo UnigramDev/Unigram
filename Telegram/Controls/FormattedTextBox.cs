@@ -768,7 +768,6 @@ namespace Telegram.Controls
             Document.ApplyDisplayUpdates();
         }
 
-        public FrameworkElement CreateLinkTarget { get; set; }
 
         public async void CreateDate()
         {
@@ -786,12 +785,10 @@ namespace Telegram.Controls
             var popup = new ChooseDateTimeToast
             {
                 Title = Strings.RelativeDateAddDate,
-                ActionButtonContent = Strings.OK,
-                ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                CloseButtonContent = Strings.Cancel,
-                PreferredPlacement = TeachingTipPlacementMode.Center,
+                PrimaryButtonContent = Strings.OK,
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                SecondaryButtonContent = Strings.Cancel,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
             CheckBox relative = null;
@@ -842,17 +839,6 @@ namespace Telegram.Controls
                 panel.Children.Add(long_time);
 
                 popup.Footer = panel;
-            }
-
-            if (CreateLinkTarget != null)
-            {
-                popup.Target = CreateLinkTarget;
-                popup.PreferredPlacement = TeachingTipPlacementMode.TopRight;
-            }
-            else
-            {
-                popup.Target = this;
-                popup.PreferredPlacement = TeachingTipPlacementMode.Top;
             }
 
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
@@ -944,17 +930,6 @@ namespace Telegram.Controls
                         popup.Link = link;
                     }
                 }
-            }
-
-            if (CreateLinkTarget != null)
-            {
-                popup.Target = CreateLinkTarget;
-                popup.PreferredPlacement = TeachingTipPlacementMode.TopRight;
-            }
-            else
-            {
-                popup.Target = this;
-                popup.PreferredPlacement = TeachingTipPlacementMode.Top;
             }
 
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;

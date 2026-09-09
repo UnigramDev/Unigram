@@ -543,7 +543,7 @@ namespace Telegram.Views.Popups
             {
                 var deferral = args.GetDeferral();
 
-                var confirm = await MessagePopup.ShowAsync(XamlRoot, null as FrameworkElement, Strings.CancelTodoAlertText, Strings.CancelTodoAlertTitle, Strings.PassportDiscard, Strings.Cancel, destructive: true);
+                var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.CancelTodoAlertText, Strings.CancelTodoAlertTitle, Strings.PassportDiscard, Strings.Cancel, destructive: true);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     args.Cancel = true;

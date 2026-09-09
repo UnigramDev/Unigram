@@ -310,7 +310,6 @@
                             <controls:FormattedTextBox x:Name="TextField"
                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                        Background="Transparent"
-                                                       CreateLinkTarget="{x:Bind ButtonAttach}"
                                                        PlaceholderText="{CustomResource ReplyPrivately}"
                                                        AcceptsReturn="False"
                                                        BorderThickness="0"

@@ -136,15 +136,15 @@ namespace Telegram.Navigation
         {
             if (ContentPopup.IsAnyPopupOpen(XamlRoot))
             {
-                return MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
+                return MessagePopup.ShowNestedAsync(XamlRoot, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
             }
 
             return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<ContentDialogResult> ShowPopupNestedAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(XamlRoot, target, message, title, primary, secondary, destructive, requestedTheme);
+            return MessagePopup.ShowNestedAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
         }
 
         public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
@@ -172,9 +172,9 @@ namespace Telegram.Navigation
             return InputPopup.ShowAsync(XamlRoot, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
         }
 
-        public Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<InputPopupResult> ShowInputNestedAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return InputPopup.ShowAsync(XamlRoot, target, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
+            return InputPopup.ShowNestedAsync(XamlRoot, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
         }
 
         public ToastPopup ShowToast(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)

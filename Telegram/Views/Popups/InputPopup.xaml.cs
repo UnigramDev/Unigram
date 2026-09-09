@@ -376,40 +376,25 @@ namespace Telegram.Views.Popups
             return new InputPopupResult(confirm, popup.Text, popup.Value);
         }
 
-        public static async Task<InputPopupResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        // Nested: see MessagePopup.ShowNestedAsync - a ContentDialog cannot open over another one.
+        public static async Task<InputPopupResult> ShowNestedAsync(XamlRoot xamlRoot, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return null;
-            }
-
             var popup = new InputTeachingTip(type)
             {
                 Title = title ?? string.Empty,
                 Header = message,
                 PlaceholderText = placeholderText ?? string.Empty,
-                ActionButtonContent = primary,
-                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
-                CloseButtonContent = secondary,
-                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
+                PrimaryButtonContent = primary,
+                PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                SecondaryButtonContent = secondary,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
-                Target = target,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
-                // TODO:
-                RequestedTheme = target?.ActualTheme ?? requestedTheme
+                RequestedTheme = requestedTheme
             };
 
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(popup);
-
-            var confirm = await popup.ShowAsync();
+            var confirm = await popup.ShowAsync(xamlRoot);
             return new InputPopupResult(confirm, popup.Text, popup.Value);
         }
 

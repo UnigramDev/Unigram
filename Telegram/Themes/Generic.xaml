@@ -945,6 +945,115 @@
         </Setter>
     </Style>
 
+    <!-- The metrics and the brushes are TeachingTip's, transcribed rather than inherited:
+         ModalPopup replaced the control, not the look. 12 is TeachingTipContentMargin, and the
+         four sizes are TeachingTipMinWidth/MaxWidth/MinHeight/MaxHeight. -->
+    <Style TargetType="local:ModalPopup">
+        <Setter Property="Background"
+                Value="{ThemeResource TeachingTipBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource TeachingTipForegroundBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TeachingTipBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="CornerRadius"
+                Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="PrimaryButtonStyle"
+                Value="{ThemeResource DefaultButtonStyle}" />
+        <Setter Property="SecondaryButtonStyle"
+                Value="{ThemeResource DefaultButtonStyle}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="MinHeight"
+                Value="40" />
+        <Setter Property="MinWidth"
+                Value="320" />
+        <Setter Property="MaxHeight"
+                Value="520" />
+        <Setter Property="MaxWidth"
+                Value="336" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ModalPopup">
+                    <!-- The shadow is cast from OnApplyTemplate. -->
+                    <Border x:Name="ContentRoot"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            MinHeight="{TemplateBinding MinHeight}"
+                            MinWidth="{TemplateBinding MinWidth}"
+                            MaxHeight="{TemplateBinding MaxHeight}"
+                            MaxWidth="{TemplateBinding MaxWidth}"
+                            AutomationProperties.LandmarkType="Custom">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="12">
+                                <!-- Text and visibility are set by the control: the subtitle is
+                                     markdown, and an empty one takes no room. -->
+                                <TextBlock x:Name="TitleTextBlock"
+                                           Foreground="{ThemeResource TeachingTipTitleForegroundBrush}"
+                                           FontFamily="{TemplateBinding FontFamily}"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           TextWrapping="WrapWholeWords"
+                                           Margin="{ThemeResource ContentDialogTitleMargin}"
+                                           Visibility="Collapsed" />
+                                <TextBlock x:Name="SubtitleTextBlock"
+                                           Foreground="{ThemeResource TeachingTipSubtitleForegroundBrush}"
+                                           FontFamily="{TemplateBinding FontFamily}"
+                                           TextWrapping="WrapWholeWords"
+                                           Margin="0,0,0,8"
+                                           Visibility="Collapsed" />
+                                <ContentPresenter x:Name="ContentPresenter"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Foreground="{TemplateBinding Foreground}"
+                                                  FontSize="{TemplateBinding FontSize}"
+                                                  FontWeight="{TemplateBinding FontWeight}"
+                                                  FontStyle="{TemplateBinding FontStyle}"
+                                                  FontFamily="{TemplateBinding FontFamily}"
+                                                  FontStretch="{TemplateBinding FontStretch}" />
+                                <!-- Column, span and visibility are set by UpdateButtons: a
+                                     button with nothing to say leaves the row to the other. -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="PrimaryButton"
+                                            HorizontalAlignment="Stretch"
+                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                            Style="{TemplateBinding PrimaryButtonStyle}"
+                                            IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
+                                            Visibility="Collapsed">
+                                        <ContentPresenter TextWrapping="WrapWholeWords"
+                                                          Content="{TemplateBinding PrimaryButtonContent}" />
+                                    </Button>
+                                    <Button x:Name="SecondaryButton"
+                                            HorizontalAlignment="Stretch"
+                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                            Style="{TemplateBinding SecondaryButtonStyle}"
+                                            Visibility="Collapsed"
+                                            Grid.Column="1">
+                                        <ContentPresenter TextWrapping="WrapWholeWords"
+                                                          Content="{TemplateBinding SecondaryButtonContent}" />
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:BlockQuote">
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />

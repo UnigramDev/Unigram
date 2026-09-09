@@ -1,4 +1,4 @@
-﻿<controls:TeachingTipEx x:Class="Telegram.Views.Popups.CreateLinkPopup"
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.CreateLinkPopup"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,9 +6,8 @@
                         xmlns:controls="using:Telegram.Controls"
                         mc:Ignorable="d"
                         Title="CreateLink"
-                        Style="{StaticResource DefaultTeachingTipStyle}"
-                        ActionButtonStyle="{StaticResource AccentButtonStyle}"
-                        ActionButtonClick="TeachingTip_ActionButtonClick">
+                        PrimaryButtonStyle="{StaticResource AccentButtonStyle}"
+                        PrimaryButtonClick="OnPrimaryButtonClick">
 
     <StackPanel>
         <TextBox x:Name="TextField"
@@ -22,4 +21,4 @@
                  InputScope="Url"
                  KeyDown="LinkField_KeyDown" />
     </StackPanel>
-</controls:TeachingTipEx>
+</controls:ModalPopup>

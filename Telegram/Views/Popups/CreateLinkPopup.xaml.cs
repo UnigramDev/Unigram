@@ -11,19 +11,20 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Views.Host;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CreateLinkPopup : TeachingTipEx
+    public sealed partial class CreateLinkPopup : ModalPopup
     {
         public CreateLinkPopup()
         {
             InitializeComponent();
 
             Title = Strings.CreateLink;
-            ActionButtonContent = Strings.OK;
-            CloseButtonContent = Strings.Cancel;
+            PrimaryButtonContent = Strings.OK;
+            SecondaryButtonContent = Strings.Cancel;
         }
 
         public string Text
@@ -40,22 +41,30 @@ namespace Telegram.Views.Popups
 
         public bool IsValid { get; set; }
 
-        private void TeachingTip_ActionButtonClick(TeachingTip sender, object args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            if (!Validate())
+            {
+                args.Cancel = true;
+            }
+        }
+
+        private bool Validate()
         {
             if (string.IsNullOrWhiteSpace(Text))
             {
                 VisualUtilities.ShakeView(TextField);
-                return;
+                return false;
             }
 
             if (IsUrlInvalid(Link))
             {
                 VisualUtilities.ShakeView(LinkField);
-                return;
+                return false;
             }
 
             IsValid = true;
-            IsOpen = false;
+            return true;
         }
 
         private bool IsUrlInvalid(string url)
@@ -76,7 +85,11 @@ namespace Telegram.Views.Popups
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                TeachingTip_ActionButtonClick(null, null);
+                if (Validate())
+                {
+                    Hide(ContentDialogResult.Primary);
+                }
+
                 e.Handled = true;
             }
         }
@@ -93,27 +106,10 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public Task<bool> ShowQueuedAsync(XamlRoot xamlRoot)
+        public async Task<bool> ShowQueuedAsync(XamlRoot xamlRoot)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return Task.FromResult(false);
-            }
-
-            var tsc = new TaskCompletionSource<bool>();
-            void handler(TeachingTip sender, TeachingTipClosedEventArgs args)
-            {
-                sender.Closed -= handler;
-
-                host.ToastClosed(sender);
-                tsc.SetResult(IsValid);
-            }
-
-            host.ToastOpened(this);
-            Closed += handler;
-            IsOpen = true;
-
-            return tsc.Task;
+            await ShowAsync(xamlRoot);
+            return IsValid;
         }
     }
 }

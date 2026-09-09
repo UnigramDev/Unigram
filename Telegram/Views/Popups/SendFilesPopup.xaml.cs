@@ -1707,12 +1707,10 @@ namespace Telegram.Views.Popups
 
             popup.Title = Strings.PaidContentTitle;
             popup.Header = Strings.PaidContentPriceTitle;
-            popup.ActionButtonContent = Strings.PaidContentUpdateButton;
-            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Center;
+            popup.PrimaryButtonContent = Strings.PaidContentUpdateButton;
+            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.SecondaryButtonContent = Strings.Cancel;
             popup.IsLightDismissEnabled = true;
-            popup.ShouldConstrainToRootBounds = true;
 
             //popup.Validating += (s, args) =>
             //{
@@ -1723,7 +1721,7 @@ namespace Telegram.Views.Popups
             //    }
             //};
 
-            var confirm = await popup.ShowAsync();
+            var confirm = await popup.ShowAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

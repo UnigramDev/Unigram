@@ -435,21 +435,17 @@ namespace Telegram.Views.Premium.Popups
                 return;
             }
 
-            var popup = new TeachingTipEx();
+            var popup = new ModalPopup();
             popup.Title = Strings.AppName;
             popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.RevokeLinkAlertChannel : Strings.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title);
-            popup.ActionButtonContent = Strings.RevokeButton;
-            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.PrimaryButtonContent = Strings.RevokeButton;
+            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.SecondaryButtonContent = Strings.Cancel;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
-            popup.Target = /*badge ??*/ container;
             popup.IsLightDismissEnabled = true;
-            popup.ShouldConstrainToRootBounds = true;
 
-            popup.ActionButtonClick += async (s, args) =>
+            popup.PrimaryButtonClick += async (s, args) =>
             {
-                popup.IsOpen = false;
 
                 var response = await _clientService.SendAsync(new SetSupergroupUsername(supergroup.Id, string.Empty));
                 if (response is Ok)
@@ -458,19 +454,7 @@ namespace Telegram.Views.Premium.Popups
                 }
             };
 
-            if (XamlRoot.Content is IToastHost host)
-            {
-                void handler(object sender, object e)
-                {
-                    host.ToastClosed(popup);
-                    popup.Closed -= handler;
-                }
-
-                host.ToastOpened(popup);
-                popup.Closed += handler;
-            }
-
-            popup.IsOpen = true;
+            _ = popup.ShowAsync(XamlRoot);
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

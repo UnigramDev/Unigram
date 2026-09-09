@@ -59,41 +59,25 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
-            var popup = new TeachingTipEx();
+            var popup = new ModalPopup();
             popup.Title = username.IsActive
                 ? Strings.UsernameDeactivateLink
                 : Strings.UsernameActivateLink;
             popup.Subtitle = username.IsActive
                 ? Strings.UsernameDeactivateLinkProfileMessage
                 : Strings.UsernameActivateLinkProfileMessage;
-            popup.ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
-            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
+            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.SecondaryButtonContent = Strings.Cancel;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
-            popup.Target = /*badge ??*/ container;
             popup.IsLightDismissEnabled = true;
-            popup.ShouldConstrainToRootBounds = true;
 
-            popup.ActionButtonClick += (s, args) =>
+            popup.PrimaryButtonClick += (s, args) =>
             {
-                popup.IsOpen = false;
                 ViewModel.ToggleUsername(username);
             };
 
-            if (XamlRoot.Content is IToastHost host)
-            {
-                void handler(object sender, object e)
-                {
-                    host.ToastClosed(popup);
-                    popup.Closed -= handler;
-                }
-
-                host.ToastOpened(popup);
-                popup.Closed += handler;
-            }
-
-            popup.IsOpen = true;
+            _ = popup.ShowAsync(XamlRoot);
         }
 
         #region Delegate

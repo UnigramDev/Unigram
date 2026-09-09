@@ -186,7 +186,7 @@ namespace Telegram.Navigation
         All = Minimize | Maximize | Close
     }
 
-    public partial class WindowPresenter : ContentControl, IPopupHost, IToastHost
+    public partial class WindowPresenter : ContentControl, IPopupHost
     {
         private readonly WindowContext _context;
 
@@ -415,8 +415,19 @@ namespace Telegram.Navigation
             _context.Close();
         }
 
+        // Counted rather than a flag, because popups nest: MessagePopup.ShowNestedAsync opens a
+        // ModalPopup over a ContentPopup that is still up - that is the whole reason the nested
+        // variants exist - and the inner one closing must not tell the window, or the page under
+        // it, that there is no popup any more. Only the outermost open and close are forwarded.
+        private int _popupDepth;
+
         public void PopupOpened()
         {
+            if (_popupDepth++ > 0)
+            {
+                return;
+            }
+
             _context.RaisePopupActivated(true);
 
             if (OverlayWindow.PopupOpened(XamlRoot))
@@ -432,6 +443,16 @@ namespace Telegram.Navigation
 
         public void PopupClosed()
         {
+            if (_popupDepth > 0)
+            {
+                _popupDepth--;
+            }
+
+            if (_popupDepth > 0)
+            {
+                return;
+            }
+
             _context.RaisePopupActivated(false);
 
             if (OverlayWindow.PopupClosed(XamlRoot))
@@ -445,37 +466,6 @@ namespace Telegram.Navigation
             }
         }
 
-        private ConditionalWeakTable<TeachingTip, string> _toasts = new();
-
-        public void ToastOpened(TeachingTip toast)
-        {
-            var key = "Toast" + Guid.NewGuid().ToString("N");
-
-            _toasts.Add(toast, key);
-            Resources.Add(key, toast);
-            toast.Closed += Toast_Closed;
-        }
-
-        public void ToastClosed(TeachingTip toast)
-        {
-            if (_toasts.Remove(toast, out string key))
-            {
-                Resources.Remove(key);
-            }
-
-            toast.Closed -= Toast_Closed;
-        }
-
-        private void Toast_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
-        {
-            if (_toasts.Remove(sender, out string key))
-            {
-                Resources.Remove(key);
-            }
-
-            sender.Closed -= Toast_Closed;
-        }
-
         public void HideAllToasts()
         {
             HideAllToasts(true);
@@ -486,19 +476,11 @@ namespace Telegram.Navigation
             // Teardown, so nothing is animated: the completion would call back into a window
             // that is on its way out.
             HideAllToasts(false);
-
-            _toasts.Clear();
         }
 
         private void HideAllToasts(bool animate)
         {
-            // ToastPopup keeps its own, as it is not registered here.
             ToastPopup.HideAll(XamlRoot, animate);
-
-            foreach (var toast in _toasts)
-            {
-                toast.Key.IsOpen = false;
-            }
         }
     }
 
@@ -1473,11 +1455,11 @@ namespace Telegram.Navigation
                 {
                     toolTip.IsOpen = false;
                 }
-                else if (popup.Child is TeachingTip teachingTip)
+                else if (popup.Child is ModalPopup modal)
                 {
-                    if (teachingTip.IsLightDismissEnabled)
+                    if (modal.IsLightDismissEnabled)
                     {
-                        teachingTip.IsOpen = false;
+                        modal.Hide();
                     }
                 }
                 else if (key == VirtualKey.Escape)

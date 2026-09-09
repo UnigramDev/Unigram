@@ -84,7 +84,7 @@ namespace Telegram.Views.Settings.Password
 
         private async void Abort()
         {
-            var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.CancelEmailQuestion, Strings.CancelEmailQuestionTitle, Strings.Abort, Strings.Cancel, destructive: true);
+            var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.CancelEmailQuestion, Strings.CancelEmailQuestionTitle, Strings.Abort, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await _clientService.SendAsync(new CancelRecoveryEmailAddressVerification());
@@ -97,7 +97,7 @@ namespace Telegram.Views.Settings.Password
                 }
                 else if (response is Error error)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message, Strings.AppName, Strings.OK);
+                    await MessagePopup.ShowNestedAsync(XamlRoot, error.Message, Strings.AppName, Strings.OK);
                 }
             }
         }
@@ -137,16 +137,16 @@ namespace Telegram.Views.Settings.Password
                         VisualUtilities.ShakeView(Field);
                         args.Cancel = true;
 
-                        await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                        await MessagePopup.ShowNestedAsync(XamlRoot, Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                     }
                     else if (passwordState.HasPassword is false)
                     {
-                        await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                        await MessagePopup.ShowNestedAsync(XamlRoot, Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                     }
                 }
                 else if (response is Error error)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message, Strings.AppName, Strings.OK);
+                    await MessagePopup.ShowNestedAsync(XamlRoot, error.Message, Strings.AppName, Strings.OK);
                 }
 
                 deferral.Complete();
@@ -186,7 +186,7 @@ namespace Telegram.Views.Settings.Password
         {
             if (_recovery)
             {
-                var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.RestoreEmailTroubleText2, Strings.ResendCode, Strings.Reset, Strings.Cancel);
+                var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.RestoreEmailTroubleText2, Strings.ResendCode, Strings.Reset, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await _clientService.SendAsync(new ResetPassword());
@@ -204,13 +204,13 @@ namespace Telegram.Views.Settings.Password
                     if (passwordState.RecoveryEmailAddressCodeInfo != null)
                     {
                         _codeInfo = passwordState.RecoveryEmailAddressCodeInfo;
-                        await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.ResendCodeInfo, Strings.TwoStepVerification, Strings.OK);
+                        await MessagePopup.ShowNestedAsync(XamlRoot, Strings.ResendCodeInfo, Strings.TwoStepVerification, Strings.OK);
                     }
                     else
                     {
                         if (passwordState.HasPassword is false)
                         {
-                            await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                            await MessagePopup.ShowNestedAsync(XamlRoot, Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                         }
 
                         Hide();
@@ -218,7 +218,7 @@ namespace Telegram.Views.Settings.Password
                 }
                 else if (response is Error error)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message, Strings.AppName, Strings.OK);
+                    await MessagePopup.ShowNestedAsync(XamlRoot, error.Message, Strings.AppName, Strings.OK);
                 }
             }
         }

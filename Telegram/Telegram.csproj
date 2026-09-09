@@ -641,6 +641,7 @@
     <Compile Include="Controls\ProfileColorBadge.xaml.cs">
       <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ModalPopup.cs" />
     <Compile Include="Controls\ToastPopup.cs" />
     <Compile Include="Controls\UndoToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
@@ -3520,10 +3521,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\TextBox_themeresources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\TeachingTip_themeresources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

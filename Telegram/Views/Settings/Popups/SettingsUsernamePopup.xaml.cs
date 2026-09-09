@@ -99,7 +99,7 @@ namespace Telegram.Views.Settings.Popups
                 return;
             }
 
-            var popup = new TeachingTipEx
+            var popup = new ModalPopup
             {
                 Title = username.IsActive
                     ? Strings.UsernameDeactivateLink
@@ -107,37 +107,21 @@ namespace Telegram.Views.Settings.Popups
                 Subtitle = username.IsActive
                     ? Strings.UsernameDeactivateLinkProfileMessage
                     : Strings.UsernameActivateLinkProfileMessage,
-                ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
-                ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                CloseButtonContent = Strings.Cancel,
-                PreferredPlacement = TeachingTipPlacementMode.Top,
+                PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                SecondaryButtonContent = Strings.Cancel,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
-                Target = /*badge ??*/ container,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
-            popup.ActionButtonClick += (s, args) =>
+            popup.PrimaryButtonClick += (s, args) =>
             {
-                popup.IsOpen = false;
                 ViewModel.ToggleUsername(username);
             };
 
-            if (XamlRoot.Content is IToastHost host)
-            {
-                void handler(object sender, object e)
-                {
-                    host.ToastClosed(popup);
-                    popup.Closed -= handler;
-                }
-
-                host.ToastOpened(popup);
-                popup.Closed += handler;
-            }
-
-            popup.IsOpen = true;
+            _ = popup.ShowAsync(XamlRoot);
         }
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)

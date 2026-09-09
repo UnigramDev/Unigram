@@ -18,11 +18,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class VerifyChatPopup : TeachingTipEx
+    public sealed partial class VerifyChatPopup : ModalPopup
     {
         public string Text { get; set; } = string.Empty;
-
-        private readonly TaskCompletionSource<ContentDialogResult> _tsc = new();
 
         public VerifyChatPopup(IClientService clientService, Chat chat, bool remove, bool canSetCustomDescription)
         {
@@ -37,8 +35,8 @@ namespace Telegram.Views.Popups
 
                 Label.Visibility = Visibility.Collapsed;
 
-                ActionButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
-                ActionButtonContent = Strings.Remove;
+                PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+                PrimaryButtonContent = Strings.Remove;
             }
             else
             {
@@ -70,58 +68,24 @@ namespace Telegram.Views.Popups
                     Label.Visibility = Visibility.Collapsed;
                 }
 
-                ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-                ActionButtonContent = Title;
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                PrimaryButtonContent = Title;
             }
 
-            ActionButtonClick += OnAction;
-            CloseButtonContent = Strings.Cancel;
-
-            Closed += OnClosed;
-        }
-
-        private void OnAction(TeachingTip sender, object args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Primary);
-            IsOpen = false;
-        }
-
-        private void OnClosed(TeachingTip sender, TeachingTipClosedEventArgs args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Secondary);
-        }
-
-        public Task<ContentDialogResult> ShowAsync()
-        {
-            IsOpen = true;
-            return _tsc.Task;
+            SecondaryButtonContent = Strings.Cancel;
         }
 
         public static async Task<InputPopupResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, Chat chat, bool remove, bool canSetCustomDescription)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return null;
-            }
-
             var popup = new VerifyChatPopup(clientService, chat, remove, canSetCustomDescription)
             {
-                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(popup);
-
-            var confirm = await popup.ShowAsync();
+            var confirm = await popup.ShowAsync(xamlRoot);
             return new InputPopupResult(confirm, popup.Text, 0);
         }
     }

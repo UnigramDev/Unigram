@@ -87,7 +87,7 @@ namespace Telegram.Views.Settings.Password
 
         private async void CancelReset_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.CancelPasswordReset, Strings.AppName, Strings.CancelPasswordResetYes, Strings.CancelPasswordResetNo);
+            var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.CancelPasswordReset, Strings.AppName, Strings.CancelPasswordResetYes, Strings.CancelPasswordResetNo);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await _clientService.SendAsync(new CancelPasswordReset());
@@ -176,12 +176,12 @@ namespace Telegram.Views.Settings.Password
                 }
                 else if (response is Error error)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message ?? "Error message", error.Code.ToString(), Strings.OK);
+                    await MessagePopup.ShowNestedAsync(XamlRoot, error.Message ?? "Error message", error.Code.ToString(), Strings.OK);
                 }
             }
             else if (_passwordState.PendingResetDate == 0)
             {
-                var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.RestorePasswordNoEmailText2, Strings.RestorePasswordNoEmailTitle, Strings.Reset, Strings.Cancel);
+                var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.RestorePasswordNoEmailText2, Strings.RestorePasswordNoEmailTitle, Strings.Reset, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ResetPassword();
@@ -189,7 +189,7 @@ namespace Telegram.Views.Settings.Password
             }
             else
             {
-                await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.RestorePasswordNoEmailText, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                await MessagePopup.ShowNestedAsync(XamlRoot, Strings.RestorePasswordNoEmailText, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 //IsResettable = true;
             }
         }
@@ -216,7 +216,7 @@ namespace Telegram.Views.Settings.Password
                 var diff = _passwordState.PendingResetDate - DateTime.Now.ToUnixTimeSeconds();
                 if (diff > 0)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, target: null, string.Format(Strings.ResetPasswordWait, Locale.FormatTtl(diff)), Strings.AppName, Strings.OK);
+                    await MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.ResetPasswordWait, Locale.FormatTtl(diff)), Strings.AppName, Strings.OK);
                 }
             }
         }

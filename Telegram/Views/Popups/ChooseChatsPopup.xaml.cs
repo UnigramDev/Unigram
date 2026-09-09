@@ -1264,12 +1264,10 @@ namespace Telegram.Views.Popups
             {
                 //Title = Strings.ExpireAfter,
                 //Header = Strings.PaidContentPriceTitle,
-                //ActionButtonContent = Strings.OK,
-                ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                //CloseButtonContent = Strings.Cancel,
-                PreferredPlacement = TeachingTipPlacementMode.Center,
+                //PrimaryButtonContent = Strings.OK,
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                //SecondaryButtonContent = Strings.Cancel,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
             var confirm = await popup.ShowAsync(XamlRoot);

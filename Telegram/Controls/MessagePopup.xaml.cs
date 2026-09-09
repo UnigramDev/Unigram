@@ -138,56 +138,19 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync(xamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        // Nested: a ContentDialog cannot open over another one, so an alert raised while a popup
+        // is already up is a ModalPopup instead. It used to be told apart by a FrameworkElement
+        // target that every caller passed as null, and that the tip then pointed at nothing.
+        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return Task.FromResult(ContentDialogResult.None);
-            }
+            var popup = CreateNested(title, primary, secondary, destructive, requestedTheme);
+            popup.Subtitle = message;
 
-            var tsc = new TaskCompletionSource<ContentDialogResult>();
-            var popup = new TeachingTipEx
-            {
-                Title = title,
-                Subtitle = message,
-                ActionButtonContent = primary,
-                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
-                CloseButtonContent = secondary,
-                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
-                Target = target,
-                IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
-                // TODO:
-                RequestedTheme = target?.ActualTheme ?? requestedTheme
-            };
-
-            popup.ActionButtonClick += (s, args) =>
-            {
-                popup.IsOpen = false;
-                tsc.TrySetResult(ContentDialogResult.Primary);
-            };
-
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-                tsc.TrySetResult(ContentDialogResult.Secondary);
-            };
-
-            host.ToastOpened(popup);
-            popup.IsOpen = true;
-            return tsc.Task;
+            return popup.ShowAsync(xamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return Task.FromResult(ContentDialogResult.None);
-            }
-
             var content = new TextBlock
             {
                 Style = BootStrapper.Current.Resources["BodyTextBlockStyle"] as Style
@@ -195,129 +158,35 @@ namespace Telegram.Controls
 
             TextBlockHelper.SetFormattedText(content, message);
 
-            var tsc = new TaskCompletionSource<ContentDialogResult>();
-            var popup = new TeachingTipEx
+            var popup = CreateNested(title, primary, secondary, destructive, requestedTheme);
+            popup.Content = content;
+
+            return popup.ShowAsync(xamlRoot);
+        }
+
+        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, string message, string title, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var popup = CreateNested(title, primary, secondary, destructive, requestedTheme);
+            popup.Subtitle = message;
+            popup.Content = content;
+
+            return popup.ShowAsync(xamlRoot);
+        }
+
+        private static ModalPopup CreateNested(string title, string primary, string secondary, bool destructive, ElementTheme requestedTheme)
+        {
+            return new ModalPopup
             {
                 Title = title,
-                Content = content,
-                ActionButtonContent = primary,
-                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
-                CloseButtonContent = secondary,
-                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
+                PrimaryButtonContent = primary,
+                PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                SecondaryButtonContent = secondary,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
-                Target = target,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
-                // TODO:
-                RequestedTheme = target?.ActualTheme ?? requestedTheme
+                RequestedTheme = requestedTheme
             };
-
-            popup.ActionButtonClick += (s, args) =>
-            {
-                popup.IsOpen = false;
-                tsc.TrySetResult(ContentDialogResult.Primary);
-            };
-
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-                tsc.TrySetResult(ContentDialogResult.Secondary);
-            };
-
-            host.ToastOpened(popup);
-            popup.IsOpen = true;
-            return tsc.Task;
-        }
-
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, string message, string title = null, FrameworkElement content = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return Task.FromResult(ContentDialogResult.None);
-            }
-
-            var tsc = new TaskCompletionSource<ContentDialogResult>();
-            var popup = new TeachingTipEx
-            {
-                Title = title,
-                Subtitle = message,
-                Content = content,
-                ActionButtonContent = primary,
-                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
-                CloseButtonContent = secondary,
-                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
-                Target = target,
-                IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
-                // TODO:
-                RequestedTheme = target?.ActualTheme ?? requestedTheme
-            };
-
-            AutomationProperties.SetName(popup, title);
-
-            popup.ActionButtonClick += (s, args) =>
-            {
-                popup.IsOpen = false;
-                tsc.TrySetResult(ContentDialogResult.Primary);
-            };
-
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-                tsc.TrySetResult(ContentDialogResult.Secondary);
-            };
-
-            host.ToastOpened(popup);
-            popup.IsOpen = true;
-            return tsc.Task;
-        }
-    }
-
-    public partial class TeachingTipEx : TeachingTip
-    {
-        public TeachingTipEx()
-        {
-            DefaultStyleKey = typeof(TeachingTipEx);
-
-            RegisterPropertyChangedCallback(TitleProperty, OnTitleChanged);
-        }
-
-        private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            AutomationProperties.SetName(this, Title);
-        }
-
-        protected override void OnApplyTemplate()
-        {
-            // TODO: Name
-            var container = GetTemplateChild("Container") as Border;
-
-            var rootElement = container?.Child as FrameworkElement;
-            if (rootElement != null)
-            {
-                rootElement.Loaded += Container_Loaded;
-            }
-
-            base.OnApplyTemplate();
-        }
-
-        private void Container_Loaded(object sender, RoutedEventArgs e)
-        {
-            //var subtitleTextBlock = GetTemplateChild("SubtitleTextBlock") as TextBlock;
-            //if (subtitleTextBlock.Visibility == Visibility.Visible)
-            //{
-            //    subtitleTextBlock.Focus(FocusState.Keyboard);
-            //}
-            //else
-            {
-                var focusable = FocusManager.FindFirstFocusableElement(sender as DependencyObject) as Control;
-                focusable?.Focus(FocusState.Programmatic);
-            }
         }
     }
 }

@@ -21,15 +21,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Stars.Popups
 {
-    public sealed partial class UpgradedGiftValuePopup : TeachingTipEx
+    public sealed partial class UpgradedGiftValuePopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
         private readonly UpgradedGift _gift;
         private readonly UpgradedGiftValueInfo _valueInfo;
-
-        private readonly TaskCompletionSource<ContentDialogResult> _tsc = new();
 
         public UpgradedGiftValuePopup(IClientService clientService, INavigationService navigationService, UpgradedGift gift, UpgradedGiftValueInfo valueInfo)
         {
@@ -104,57 +102,24 @@ namespace Telegram.Views.Stars.Popups
                 FragmentListedGiftCount.Visibility = Visibility.Collapsed;
             }
 
-            ActionButtonClick += OnAction;
 
-            ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            //ActionButtonContent = Strings.OK;
+            PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            //PrimaryButtonContent = Strings.OK;
 
-            Closed += OnClosed;
-        }
-
-        private void OnAction(TeachingTip sender, object args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Primary);
-            IsOpen = false;
-        }
-
-        private void OnClosed(TeachingTip sender, TeachingTipClosedEventArgs args)
-        {
-            _tsc.TrySetResult(ContentDialogResult.Secondary);
-        }
-
-        public Task<ContentDialogResult> ShowAsync()
-        {
-            IsOpen = true;
-            return _tsc.Task;
         }
 
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, INavigationService navigationService, UpgradedGift gift, UpgradedGiftValueInfo valueInfo)
         {
-            if (xamlRoot.Content is not IToastHost host)
-            {
-                return null;
-            }
-
             var popup = new UpgradedGiftValuePopup(clientService, navigationService, gift, valueInfo)
             {
-                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
                 MaxHeight = 720,
                 IsLightDismissEnabled = true,
-                ShouldConstrainToRootBounds = true,
             };
 
-            popup.Closed += (s, args) =>
-            {
-                host.ToastClosed(s);
-            };
-
-            host.ToastOpened(popup);
-
-            return popup.ShowAsync();
+            return popup.ShowAsync(xamlRoot);
         }
 
         private void MinimumPriceInfo_Click(object sender, RoutedEventArgs e)
@@ -169,14 +134,14 @@ namespace Telegram.Views.Stars.Popups
 
         private void TelegramListedGiftCount_Click(object sender, RoutedEventArgs e)
         {
-            IsOpen = false;
+            Hide();
             _navigationService.HidePopup(typeof(ReceivedGiftPopup));
             _navigationService.ShowPopup(new ResoldGiftsPopup(_clientService, _navigationService, _gift, _valueInfo, _clientService.MyId));
         }
 
         private void FragmentListedGiftCount_Click(object sender, RoutedEventArgs e)
         {
-            IsOpen = false;
+            Hide();
             MessageHelper.OpenUrl(_clientService, _navigationService, _valueInfo.FragmentUrl);
         }
     }

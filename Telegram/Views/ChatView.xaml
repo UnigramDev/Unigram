@@ -1251,7 +1251,6 @@
                                                    FontFamily="{ThemeResource EmojiTextThemeFontFamily}"
                                                    Background="Transparent"
                                                    ControlledList="{x:Bind ListAutocomplete}"
-                                                   CreateLinkTarget="{x:Bind ButtonAttach}"
                                                    AcceptsReturn="False"
                                                    BorderThickness="0"
                                                    TextWrapping="Wrap"

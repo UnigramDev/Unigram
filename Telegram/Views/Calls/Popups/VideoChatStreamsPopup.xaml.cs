@@ -79,7 +79,7 @@ namespace Telegram.Views.Calls.Popups
 
         private async void Revoke()
         {
-            var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.RevokeStreamKeyAlert, Strings.RevokeStreamKey, Strings.RevokeButton, Strings.Cancel, destructive: true, requestedTheme: ElementTheme.Dark);
+            var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.RevokeStreamKeyAlert, Strings.RevokeStreamKey, Strings.RevokeButton, Strings.Cancel, destructive: true, requestedTheme: ElementTheme.Dark);
             if (confirm == ContentDialogResult.Primary)
             {
                 StreamKeyField.Text = string.Empty;

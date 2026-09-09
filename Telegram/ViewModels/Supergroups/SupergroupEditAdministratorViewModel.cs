@@ -758,7 +758,7 @@ namespace Telegram.ViewModels.Supergroups
                     return;
                 }
 
-                var result = await ShowInputAsync(null, InputPopupType.Password, Strings.PleaseEnterCurrentPasswordTransfer, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel);
+                var result = await ShowInputNestedAsync(InputPopupType.Password, Strings.PleaseEnterCurrentPasswordTransfer, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel);
                 if (result.Result != ContentDialogResult.Primary)
                 {
                     return;

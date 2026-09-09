@@ -641,7 +641,7 @@ namespace Telegram.Views.Stars.Popups
 
                 var message = Locale.Declension(Strings.R.Gift2ConvertText2, (long)diff.TotalDays, _clientService.GetTitle(_gift.SenderId), Locale.Declension(Strings.R.StarsCount, regular.Gift.StarCount));
 
-                var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, message, Strings.Gift2ConvertTitle, Strings.Gift2ConvertButton, Strings.Cancel);
+                var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, message, Strings.Gift2ConvertTitle, Strings.Gift2ConvertButton, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await _clientService.SendAsync(new SellGift(_gift.ReceivedGiftId));
@@ -993,12 +993,10 @@ namespace Telegram.Views.Stars.Popups
 
             popup.Title = Strings.ResellGiftTitle;
             popup.Header = Strings.ResellGiftPriceTitle;
-            popup.ActionButtonContent = Strings.ResellGiftButton;
-            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Center;
+            popup.PrimaryButtonContent = Strings.ResellGiftButton;
+            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.SecondaryButtonContent = Strings.Cancel;
             popup.IsLightDismissEnabled = false;
-            popup.ShouldConstrainToRootBounds = true;
 
             popup.ValueChanged += (s, args) =>
             {
@@ -1025,7 +1023,7 @@ namespace Telegram.Views.Stars.Popups
                 }
             };
 
-            var confirm = await popup.ShowAsync();
+            var confirm = await popup.ShowAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

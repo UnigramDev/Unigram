@@ -560,7 +560,7 @@ namespace Telegram.Navigation.Services
         {
             if (ContentPopup.IsAnyPopupOpen(XamlRoot))
             {
-                return MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
+                return MessagePopup.ShowNestedAsync(XamlRoot, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
             }
 
             return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
@@ -585,7 +585,7 @@ namespace Telegram.Navigation.Services
         {
             if (ContentPopup.IsAnyPopupOpen(XamlRoot))
             {
-                _ = MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
                 return;
             }
 
@@ -596,7 +596,7 @@ namespace Telegram.Navigation.Services
         {
             if (ContentPopup.IsAnyPopupOpen(XamlRoot))
             {
-                _ = MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
                 return;
             }
 

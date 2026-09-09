@@ -267,12 +267,10 @@ namespace Telegram.Views.Chats.Popups
                     {
                         Title = Strings.ExpireAfter,
                         //Header = Strings.PaidContentPriceTitle,
-                        ActionButtonContent = Strings.OK,
-                        ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                        CloseButtonContent = Strings.Cancel,
-                        PreferredPlacement = TeachingTipPlacementMode.Center,
+                        PrimaryButtonContent = Strings.OK,
+                        PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                        SecondaryButtonContent = Strings.Cancel,
                         IsLightDismissEnabled = true,
-                        ShouldConstrainToRootBounds = true,
                     };
 
                     var confirm = await popup.ShowAsync(XamlRoot);
@@ -330,15 +328,13 @@ namespace Telegram.Views.Chats.Popups
                         Maximum = 99999,
                         Title = Strings.UsesLimitHint,
                         //Header = Strings.PaidContentPriceTitle,
-                        ActionButtonContent = Strings.OK,
-                        ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                        CloseButtonContent = Strings.Cancel,
-                        PreferredPlacement = TeachingTipPlacementMode.Center,
+                        PrimaryButtonContent = Strings.OK,
+                        PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                        SecondaryButtonContent = Strings.Cancel,
                         IsLightDismissEnabled = true,
-                        ShouldConstrainToRootBounds = true,
                     };
 
-                    var confirm = await popup.ShowAsync();
+                    var confirm = await popup.ShowAsync(XamlRoot);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         InsertLimitNumberOfUses((int)popup.Value);
