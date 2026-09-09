@@ -1374,6 +1374,15 @@ namespace Telegram.Views
                         relevantHashSet.Retyped++;
                         relevantHashSet.TotalCount++;
 
+                        if (selector.ContentTemplateRoot is MessageSelector discarded)
+                        {
+                            discarded.Recycle();
+                        }
+                        else if (selector.ContentTemplateRoot is MessageService service)
+                        {
+                            service.Recycle();
+                        }
+
                         selector.TypeName = typeName;
                         selector.ContentTemplate = relevantHashSet.ItemTemplate;
 
