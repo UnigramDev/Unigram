@@ -196,20 +196,36 @@ namespace winrt::Telegram::Native::Media::implementation
         HANDLE file;
     };
 
-    static int OpenCallback(void* opaque, void** datap, uint64_t* sizep)
+    // The four callbacks below are called by libvlc from C. An exception unwinding into it
+    // skips whatever it was going to unlock, so each one has to end at this boundary and turn
+    // into the error code libvlc documents. Everything they touch is a projection call into
+    // the managed source, which throws on any fault there.
+    static int OpenCallback(void* opaque, void** datap, uint64_t* sizep) noexcept
     {
-        IAsyncMediaPlayerSource source{ nullptr };
-        winrt::copy_from_abi(source, opaque);
+        try
+        {
+            IAsyncMediaPlayerSource source{ nullptr };
+            winrt::copy_from_abi(source, opaque);
 
-        auto* ctx = new MediaContext(source);
+            // Owned until both outputs are written: FileSize is asked after the source is
+            // opened, as it always was, and a throw there used to strand the context.
+            auto ctx = std::make_unique<MediaContext>(source);
 
-        *datap = ctx;
-        *sizep = source.FileSize();
+            *sizep = source.FileSize();
+            *datap = ctx.release();
 
-        return 0;
+            return 0;
+        }
+        catch (...)
+        {
+            // Non-zero means the other callbacks are never invoked, so there is nothing left
+            // to clean up here.
+            return -1;
+        }
     }
 
-    static ssize_t ReadCallback(void* opaque, unsigned char* buf, size_t len)
+    static ssize_t ReadCallback(void* opaque, unsigned char* buf, size_t len) noexcept
+    try
     {
         auto* ctx = static_cast<MediaContext*>(opaque);
 
@@ -247,8 +263,15 @@ namespace winrt::Telegram::Native::Media::implementation
 
         return -1;
     }
+    catch (...)
+    {
+        // -1 is a non-recoverable read error, which ends the input. Zero would mean the end of
+        // the media, and libvlc would truncate the file without saying so.
+        return -1;
+    }
 
-    static int SeekCallback(void* opaque, uint64_t offset)
+    static int SeekCallback(void* opaque, uint64_t offset) noexcept
+    try
     {
         auto* ctx = static_cast<MediaContext*>(opaque);
         ctx->source.SeekCallback(offset);
@@ -264,11 +287,23 @@ namespace winrt::Telegram::Native::Media::implementation
 
         return 0;
     }
+    catch (...)
+    {
+        return -1;
+    }
 
-    static void CloseCallback(void* opaque)
+    static void CloseCallback(void* opaque) noexcept
     {
         auto* ctx = static_cast<MediaContext*>(opaque);
-        ctx->source.Close();
+
+        try
+        {
+            ctx->source.Close();
+        }
+        catch (...)
+        {
+            // The handle and the context still have to go, whatever the source made of this.
+        }
 
         if (ctx->file != INVALID_HANDLE_VALUE)
         {
@@ -276,6 +311,18 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         delete ctx;
+    }
+
+    // libvlc_media_new_callbacks takes an opaque but offers no callback for destroying it, and
+    // CloseCallback cannot do it because open/close pair more than once per media. So the
+    // reference is released by hand at the two points where the media that carries it is
+    // certainly gone: replaced by another set_media, or dropped with the player.
+    void AsyncMediaPlayer::ReleaseStreamAbi(void* abi) noexcept
+    {
+        if (abi != nullptr)
+        {
+            static_cast<::IUnknown*>(abi)->Release();
+        }
     }
 
     void AsyncMediaPlayer::Play(IAsyncMediaPlayerSource stream, double position)
@@ -291,14 +338,22 @@ namespace winrt::Telegram::Native::Media::implementation
 
             m_stream = stream;
 
-            // TODO: make sure IAsyncMediaPlayerSource is not leaked once playback is done
+            // The opaque has to stay alive for as long as libvlc might open the media again --
+            // it reopens to replay -- so it carries a reference of its own. See ReleaseStreamAbi
+            // for why nothing else can hold it.
             winrt::Windows::Foundation::IInspectable obj = stream;
-            void* ptr = winrt::detach_abi(obj);
-            auto media = libvlc_media_new_callbacks(m_instance, &OpenCallback, &ReadCallback, &SeekCallback, &CloseCallback, ptr);
+            void* abi = winrt::detach_abi(obj);
+            void* previous = m_streamAbi.exchange(abi);
+            auto media = libvlc_media_new_callbacks(m_instance, &OpenCallback, &ReadCallback, &SeekCallback, &CloseCallback, abi);
 
             libvlc_media_player_set_media(m_player, media);
             libvlc_media_player_play(m_player);
             libvlc_media_release(media);
+
+            // Only now: set_media dropped the media that carried the previous opaque, and we
+            // had already given up our own reference to it, so it is gone and nothing can call
+            // OpenCallback against it any more.
+            ReleaseStreamAbi(previous);
 
             if (position != 0)
             {
@@ -328,9 +383,13 @@ namespace winrt::Telegram::Native::Media::implementation
             auto media = libvlc_media_new_location(m_instance, path.c_str());
             libvlc_media_add_option(media, ":network-caching=300");
 
+            void* previous = m_streamAbi.exchange(nullptr);
+
             libvlc_media_player_set_media(m_player, media);
             libvlc_media_player_play(m_player);
             libvlc_media_release(media);
+
+            ReleaseStreamAbi(previous);
 
             if (position != 0)
             {
@@ -465,7 +524,9 @@ namespace winrt::Telegram::Native::Media::implementation
             std::lock_guard<std::mutex> lock(work_lock_);
             // work_thread_ is only created on the first Write(); if the player is closed before
             // any command was issued it is still null, so don't dereference it.
-            CleanupManager::Close(m_instance, m_player, m_events, m_context, work_thread_ ? std::move(*work_thread_) : std::thread{});
+            // The opaque goes with the player: it has to outlive any OpenCallback still to come,
+            // and the last of those cannot happen until the player is released.
+            CleanupManager::Close(m_instance, m_player, m_events, m_context, m_streamAbi.exchange(nullptr), work_thread_ ? std::move(*work_thread_) : std::thread{});
         }
     }
 
@@ -572,10 +633,24 @@ namespace winrt::Telegram::Native::Media::implementation
         Set(libvlc_audio_set_mute, value);
     }
 
-    void AsyncMediaPlayer::LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args)
+    void AsyncMediaPlayer::LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args) noexcept
     {
         AsyncMediaPlayer* instance = static_cast<AsyncMediaPlayer*>(data);
-        instance->HandleLog(level, ctx, fmt, args);
+
+        try
+        {
+            instance->HandleLog(level, ctx, fmt, args);
+        }
+        catch (...)
+        {
+            // vlc_vaLogCallback holds the logger rwlock for read and has cancellation disabled
+            // across this call, and unwinding past it restores neither: libvlc_log_unset then
+            // blocks forever on the write lock, and the thread can no longer be cancelled, so
+            // libvlc_media_player_stop hangs joining the input. HandleLog reaches the managed
+            // logger and TDLib from here, so it really does throw -- out of memory is what the
+            // reports show. A dropped line is the cheap outcome, and there is nowhere to report
+            // it that would not come straight back through this callback.
+        }
     }
 
     void AsyncMediaPlayer::HandleLog(int level, const libvlc_log_t* ctx, const char* fmt, va_list args)

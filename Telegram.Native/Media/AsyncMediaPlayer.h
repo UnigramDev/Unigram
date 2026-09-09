@@ -274,9 +274,9 @@ namespace winrt::Telegram::Native::Media::implementation
         class CleanupManager
         {
         public:
-            static void Close(libvlc_instance_t* instance, libvlc_media_player_t* player, EventContext* events, AsyncMediaPlayerSwapChain const& swapChain, std::thread workerThread)
+            static void Close(libvlc_instance_t* instance, libvlc_media_player_t* player, EventContext* events, AsyncMediaPlayerSwapChain const& swapChain, void* streamAbi, std::thread workerThread)
             {
-                post_to_threadpool([instance, player, events, swapChain, workerThread = std::move(workerThread)]() mutable {
+                post_to_threadpool([instance, player, events, swapChain, streamAbi, workerThread = std::move(workerThread)]() mutable {
                     // First we wait for any pending operation to be completed
                     if (workerThread.joinable())
                     {
@@ -296,6 +296,10 @@ namespace winrt::Telegram::Native::Media::implementation
                         libvlc_media_player_set_media(player, nullptr);
                         libvlc_media_player_release(player);
                     }
+                    // After the player: nothing can reach OpenCallback once the media it holds
+                    // has gone with it.
+                    ReleaseStreamAbi(streamAbi);
+
                     if (instance)
                     {
                         libvlc_release(instance);
@@ -324,6 +328,11 @@ namespace winrt::Telegram::Native::Media::implementation
         EventContext* m_events;
         IAsyncMediaPlayerSource m_stream{ nullptr };
 
+        // The reference handed to libvlc_media_new_callbacks as its opaque, owned by whoever
+        // exchanges it out. Atomic because Close() takes it from the caller's thread while the
+        // worker may still be inside Play.
+        std::atomic<void*> m_streamAbi{ nullptr };
+
         // Position, duration and can-pause are answered from here instead of from libvlc.
         // libvlc_media_player_stop holds the same lock that get_time, get_length and
         // can_pause take, and it holds it across the join of the input thread -- which can
@@ -338,7 +347,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
         void OnDefaultAudioRenderDeviceChanged(winrt::Windows::Foundation::IInspectable const& sender, DefaultAudioRenderDeviceChangedEventArgs const& args);
 
-        static void LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args);
+        static void ReleaseStreamAbi(void* abi) noexcept;
+
+        static void LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args) noexcept;
 
         void HandleLog(int level, const libvlc_log_t* ctx, const char* fmt, va_list args);
 
