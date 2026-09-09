@@ -107,15 +107,19 @@ namespace Telegram.Controls
             {
                 var status = supergroup.VerificationStatus;
 
-                if (clientService.IsPremiumAvailable && chat.EmojiStatus != null && status.IsFalse())
+                // The cached chat is mutated in place from the TDLib update thread, so the status is
+                // read once: re-reading it after the null check below can hand back null.
+                var emojiStatus = chat.EmojiStatus;
+
+                if (clientService.IsPremiumAvailable && emojiStatus != null && status.IsFalse())
                 {
                     CurrentType = IdentityIconType.None;
                     UnloadTemplateChild(ref Icon);
 
                     LoadTemplateChild(ref Status);
-                    Status.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);
+                    Status.Source = new CustomEmojiFileSource(clientService, emojiStatus.Type);
 
-                    if (chat.EmojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
+                    if (emojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
                     {
                         LoadTemplateChild(ref Particles);
                         Particles.Source = new ParticlesImageSource(upgraded.BackdropColors);
@@ -151,15 +155,19 @@ namespace Telegram.Controls
 
             var status = user.VerificationStatus;
 
-            if (clientService.IsPremiumAvailable && user.EmojiStatus != null && status.IsFalse() && (!chatList || user.Id != clientService.Options.MyId))
+            // The cached user is mutated in place from the TDLib update thread, so the status is
+            // read once: re-reading it after the null check below can hand back null.
+            var emojiStatus = user.EmojiStatus;
+
+            if (clientService.IsPremiumAvailable && emojiStatus != null && status.IsFalse() && (!chatList || user.Id != clientService.Options.MyId))
             {
                 CurrentType = IdentityIconType.Premium;
                 UnloadTemplateChild(ref Icon);
 
                 LoadTemplateChild(ref Status);
-                Status.Source = new CustomEmojiFileSource(clientService, user.EmojiStatus.Type);
+                Status.Source = new CustomEmojiFileSource(clientService, emojiStatus.Type);
 
-                if (user.EmojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
+                if (emojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
                 {
                     LoadTemplateChild(ref Particles);
                     Particles.Source = new ParticlesImageSource(upgraded.BackdropColors);
