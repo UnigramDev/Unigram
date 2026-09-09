@@ -36,7 +36,7 @@ the reported crash stacks were read closely.
 
 | # | Line | Sev | Finding | Status |
 |---|------|-----|---------|--------|
-| 6 | 21 | B | `InitializeCriticalSectionEx` return value ignored. It fails under low memory, leaving the section uninitialised; every later `EnterCriticalSection` is then undefined behaviour. Relevant because the crashes being chased happen precisely under memory exhaustion. | open |
+| 6 | 21 | B | `InitializeCriticalSectionEx` return value ignored. It fails under low memory, leaving the section uninitialised; every later `EnterCriticalSection` is then undefined behaviour. Relevant because the crashes being chased happen precisely under memory exhaustion. Now `RTC_CHECK`ed, so the failure is named instead of corrupting at the first lock. | fixed 1c52f4a4 |
 | 7 | 16–32, 42–55 | B | Neither `CritSec` nor `AutoLock` suppresses copy. A copied `AutoLock` unlocks twice; a copied `CritSec` double-deletes the section. | fixed fa8232a7 |
 | 8 | 18 | C | `m_criticalSection` is public. | open |
 
@@ -234,7 +234,7 @@ before `InitWriter` reads them at 212, so that change cannot alter live behaviou
 | 85 | ss .h 33-39 / .cc 413-420 | B | `ValidStateMatrix` is declared `[State_Count][Op_Count]` with `Op_Count == 5`, but every initialiser row lists only four entries, so the `OpPlaceMarker` column is silently zero-filled to `FALSE`. Harmless today because `PlaceMarker` is the one operation that never calls `ValidateOperation`; adding that call would reject every marker. | open |
 | 86 | dec .cc 336-355 | **A** | The NV12 to I420 conversion trusts the output buffer's size completely: it checks only `cur_length > 0`, then reads `src_data + buffer_width * buffer_height` for the UV plane and converts a full frame. A short sample is read out of bounds. Same shape as #18 in the encoder. The visible-area width/height taken from `MF_MT_MINIMUM_DISPLAY_APERTURE` are likewise not validated against the buffer dimensions. | fixed 52c01a6f |
 | 87 | ss .cc 371-382 | B | `GetMajorType` reads `spCurrentType_` without holding `critSec_`, while every other method on the class takes it; `SetCurrentMediaType` replaces that pointer under the lock. | open |
-| 88 | vc .cc 705 | B | `SetDeviceUniqueId` uses throwing `new char[]`; with exceptions disabled an allocation failure terminates rather than returning an error. Same class as #49. | open |
+| 88 | vc .cc 705 | B | `SetDeviceUniqueId` uses throwing `new char[]`; with exceptions disabled an allocation failure terminates rather than returning an error. Same class as #49. Now `new (std::nothrow)` with a real check, returning -1 as the length guard above already does. | fixed 4f4c4d6f |
 | 89 | ss .cc 27-33, 48 | B | The stream sink holds a strong reference to its parent (`spSink_`) while the parent holds one to it (`outputStream_`). The cycle is broken only by `H264StreamSink::Shutdown` resetting `spSink_`, so any path that drops the sinks without shutting down leaks both objects and the serial work queue with them. Relates to #23. | open |
 | 90 | ss .cc 335-343 | C | Nested `if (SUCCEEDED(hr))` inside a block already guarded by the same condition. | open |
 | 91 | enc .cc 75-79 / dec .cc 45-50 | **A** | `MFShutdown()` is called from both destructors even when the matching `MFStartup()` failed. The pair is refcounted per process, so one failed startup decrements a reference belonging to another encoder or decoder instance and tears Media Foundation down while it is still in use. Supersedes #17, which saw only the discarded HRESULT. | fixed ca88e9db |
@@ -247,6 +247,34 @@ Findings 91 and 92 came from crash telemetry rather than the read: an access vio
 `RTWorkQ` threadpool callback, during a group call with screen sharing, with no frames of ours
 on the stack. Either defect produces that signature; the report cannot say which, or whether
 the cause is here at all.
+
+---
+
+## modules/video_capture/windows/video_capture_winrt.cc - teardown
+
+Read from a production crash on 12.10.3 rather than from the line-by-line pass.
+
+| # | Line | Sev | Finding | Status |
+|---|------|-----|---------|--------|
+| 94 | 138, 384 | A | The `FrameArrived` delegate captured `this` raw and nothing joined a handler already dispatched to a media foundation work queue thread. `remove_FrameArrived` only unhooks future invocations, and `StopCapture`'s `WaitForAsyncAction(..., 250)` gives up after 250 ms - on timeout it also skips `IClosable::Close` on the `MediaCapture` and leaves `is_capturing` true, then resets both ComPtrs and returns the failure, which `~VideoCaptureWinRTInternal` only asserts on. So `~VideoCaptureImpl` could reach `DeleteCriticalSection` on `api_lock_` while a frame was still being delivered. The reported fault is a write to `0x24`, which is `DebugInfo->ContentionCount`: a deleted critical section is zeroed, so `LockCount == 0` sends `EnterCriticalSection` down the contended path and `RtlpWaitOnCriticalSection` dereferences the now null `DebugInfo`. Deliveries now go through a `FrameArrivedLatch` the delegate co-owns, cleared under its own lock at the top of the destructor, so a delivery in flight is waited out and every later one is a no-op. | fixed 4ea3b7ba |
+
+---
+
+## modules/video_coding/codecs/h264/win/encoder/h264_encoder_mf_impl.cc - rate plumbing
+
+Read from the production crash family that faults inside the graphics driver under
+`SetInputMediaType`, 2026-09-09.
+
+| # | Line | Sev | Finding | Status |
+|---|------|-----|---------|--------|
+| 95 | enc .cc 469-471 | B | `Encode`'s reconfigure passed `next_target_bps_` / `next_frame_rate_` unconditionally, but those are written only by a *postponed* `SetRates` - zero-initialised until one happens, stale once one has been applied, and never cleared. A resolution change with no rate change pending therefore reconfigured with 0 bps and 0 fps, and `InitWriter` handed the encoder MFT a media type with `MF_MT_AVG_BITRATE` 0 and `MF_MT_FRAME_RATE` 0/1. Reachable on any quality-scaler resolution step, which is exactly the path the `nvEncMFTH264x` / `igd10um64xe` access violations come down. Now carries the current rates unless a postponed change is being applied. | fixed e5c55527 |
+
+**Not a finding, recorded so it is not re-chased:** the access violation itself is in the Intel
+UMD (`igd10um64xe`) under `D3D11CreateDevice`, called by the NVIDIA encoder MFT that
+`SetInputMediaType` instantiates on a hybrid-graphics laptop. Nothing in this file can fix a
+driver fault; #95 only stops us handing it a degenerate media type. Reducing how often the MFT
+is instantiated at all is the other lever - `ReconfigureSinkWriter` already throttles to one
+per 5 s and ignores rate moves under 10 %, so the remaining cost is resolution steps.
 
 ---
 

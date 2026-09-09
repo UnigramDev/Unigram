@@ -19,7 +19,7 @@ older than the pin and prints the fix if it is.
 |---|---|
 | ffmpeg 7.1.2 | overlay port, `Libraries/vcpkg-ports/ffmpeg`, carrying the `--enable-*` flag set |
 | libvlc 3.0.23 | overlay port downloading `libvlc-3.0.23-2` from UnigramDev/deps |
-| webrtc m123 | overlay port downloading `webrtc-2026-08-19-1` from UnigramDev/deps |
+| webrtc m123 | overlay port downloading `webrtc-2026-09-09-1` from UnigramDev/deps |
 | everything else | stock ports at the pinned baseline |
 
 **UnigramDev/deps** holds the build and packaging scripts, the webrtc patches, and the release
@@ -28,7 +28,7 @@ publishing a new archive.
 
 **The forks**: [UnigramDev/vlc](https://github.com/UnigramDev/vlc) `unigram-12.7.5` at
 `739b198e18`, [UnigramDev/webrtc-uwp](https://github.com/UnigramDev/webrtc-uwp) `m123` at
-`801b013618`. Both are pushed and both releases name their commit. The VLC checkout that used to
+`4f4c4d6fcc`. Both are pushed and both releases name their commit. The VLC checkout that used to
 be a submodule is an ordinary clone at `C:\Source\vlc`.
 
 `Libraries/vlc` and `Libraries/webrtc` are gone from this repository.
@@ -43,6 +43,12 @@ be a submodule is an ordinary clone at `C:\Source\vlc`.
 - `deps/webrtc/build.ps1 -SkipAcquire` and `pack.ps1`, run 2026-08-19: all four configurations
   built clean under Visual Studio 18 and were published as `webrtc-2026-08-19-1`. The acquire half
   — fetch, sync, patch — is still unexercised.
+- **A second repack, 2026-09-09**, published as `webrtc-2026-09-09-1` from `m123` at `4f4c4d6fcc`:
+  four crash and robustness fixes on top of `801b013618`. Ninja rebuilt all four configurations
+  incrementally (three translation units), `pack.ps1` produced the five archives, and both
+  triplets were installed from the release URLs with an empty download cache. The header archive
+  came out with the same 7,622 files as the previous one, differing only in `REVISION` and
+  `crit_sec.h`.
 - **A build that downloads from the releases**, 2026-08-25. Nothing was seeded: vcpkg fetched
   `libvlc-3.0.23-x64-uwp.zip` and both webrtc x64 archives from the release URLs and verified them.
   Only the webrtc headers came from the cache.
