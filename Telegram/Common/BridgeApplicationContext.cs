@@ -28,6 +28,9 @@ namespace Telegram.Common
 
         private static TaskCompletionSource<bool> _connected = new();
 
+        // Every acquisition must be asynchronous: the lock is held across the app service round
+        // trip below, and the UI thread is an ASTA, so blocking it here would stall the very
+        // continuation that releases the lock. COM reports that as "the application is busy".
         private static readonly DisposableMutex _lock = new();
 
         public static async Task AddLoopbackExemptionAsync()
@@ -80,7 +83,7 @@ namespace Telegram.Common
 
             task.Canceled += OnCanceled;
 
-            using (_lock.Wait())
+            using (await _lock.WaitAsync())
             {
                 _connection = connection;
                 _connection.RequestReceived += OnRequestReceived;
@@ -249,7 +252,7 @@ namespace Telegram.Common
             try
             {
                 AppServiceResponse response = null;
-                using (_lock.Wait())
+                using (await _lock.WaitAsync())
                 {
                     var connection = _connection;
                     if (connection == null)
@@ -334,14 +337,14 @@ namespace Telegram.Common
             Cancel();
         }
 
-        private static void Cancel()
+        private static async void Cancel()
         {
             if (AppSettings.Diagnostics.BridgeDebug)
             {
                 Logger.Info();
             }
 
-            using (_lock.Wait())
+            using (await _lock.WaitAsync())
             {
                 if (_connection != null)
                 {
