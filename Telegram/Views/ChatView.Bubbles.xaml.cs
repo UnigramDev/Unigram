@@ -58,6 +58,14 @@ namespace Telegram.Views
         {
             _viewChanged = true;
             UpdateArrowVisibility();
+
+            // Only what the ScrollViewer itself reports, and only once it has stopped: the list is
+            // suspended for the whole of a restore, and ScrollToItem signals the end of one by
+            // raising this with no arguments at all — which is not the user coming to rest.
+            if (e is { IsIntermediate: false })
+            {
+                ViewModel?.UpdateScrollingPosition();
+            }
         }
 
         private void ItemsPanelRoot_LayoutUpdated(object sender, object e)

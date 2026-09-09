@@ -2475,31 +2475,37 @@ namespace Telegram.ViewModels
                 {
                     var details = GetCurrentDetails();
 
-                    bool TryRemove(long chatId, out long v1, out long v2)
+                    // Read, not consumed: the chat may well be closed again before it has settled
+                    // anywhere worth recording, and this is then still the best answer there is.
+                    bool TryGet(out long v1, out long v2)
                     {
-                        var a = Settings.Chats.TryRemove(chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId, out v1);
-                        var b = Settings.Chats.TryRemove(chat.Id, details.TopicId, ChatSetting.Index, out v2);
+                        var a = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId, out v1);
+                        var b = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Index, out v2);
                         return a && b;
                     }
 
-                    if (TryRemove(chat.Id, out long readInboxMaxId, out long start) &&
+                    if (TryGet(out long readInboxMaxId, out long start) &&
                         readInboxMaxId == details.LastReadInboxMessageId &&
                         start <= details.LastReadInboxMessageId)
                     {
-                        if (Settings.Chats.TryRemove(chat.Id, details.TopicId, ChatSetting.Pixel, out double pixel))
+                        if (Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Pixel, out double pixel))
                         {
-                            Logger.Debug(string.Format("{0} - Loading messages from specific pixel", chat.Id));
+                            Logger.Info(string.Format("{0} - Loading messages from specific pixel", chat.Id));
                             LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                         }
                         else
                         {
-                            Logger.Debug(string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
+                            Logger.Info(string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
                             LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                         }
                     }
                     else /*if (chat.UnreadCount > 0)*/
                     {
-                        Logger.Debug(string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
+                        // The read marker has moved on since, so the position describes a place
+                        // the user has already been past. Nothing will make it valid again.
+                        Settings.Chats.Clear(chat.Id, details.TopicId);
+
+                        Logger.Info(string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
                         LoadMessageSliceAsync(null, details.LastReadInboxMessageId, VerticalAlignment.Top);
                     }
                 }
@@ -2660,6 +2666,67 @@ namespace Telegram.ViewModels
             return new ChatMessageTopicDetails(Chat.Id, topicId, lastMessageId, lastReadInboxMessageId);
         }
 
+        /// <summary>
+        /// Where the history was standing the last time it came to rest. Geometry only: whether it
+        /// is worth keeping depends on the read markers, which are read when it is saved.
+        /// </summary>
+        private ScrollingPosition? _scrollingPosition;
+
+        private readonly record struct ScrollingPosition(long LastVisibleId, long FirstNonVisibleId, double? Pixel);
+
+        /// <summary>
+        /// Samples where the history is standing, for <see cref="OnNavigatedFrom"/> to save.
+        /// </summary>
+        /// <remarks>
+        /// Taken while the view is at rest rather than derived on the way out. Switching chats
+        /// quickly closes one before its restore has landed, and a scroll still in flight answers
+        /// with an artifact — which used to overwrite the position that was right. Nothing is
+        /// recorded until there is an answer, so a chat closed before it settles keeps what it had.
+        /// </remarks>
+        public void UpdateScrollingPosition()
+        {
+            if (Type is not DialogType.History and not DialogType.Thread || IsSavedMessagesTab)
+            {
+                return;
+            }
+
+            var field = HistoryField;
+            if (field == null || field.IsSuspended)
+            {
+                return;
+            }
+
+            try
+            {
+                if (!TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
+                {
+                    return;
+                }
+
+                // The message the view is cut off at, which decides whether restoring here would
+                // hide anything unread.
+                var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
+                    ? Items[lastVisibleIndex + 1].Id
+                    : lastVisibleId;
+
+                double? pixel = null;
+
+                if (field.ContainerFromIndex(lastVisibleIndex) is ListViewItem container)
+                {
+                    var position = container.TransformToVisual(field).TransformPoint(new Point());
+                    pixel = field.ActualHeight - (position.Y + container.ActualHeight);
+                }
+
+                _scrollingPosition = new ScrollingPosition(lastVisibleId, firstNonVisibleId, pixel);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block. The last
+                // sample stands: it is a position this chat really was at, unlike anything that
+                // could be derived from a view that just failed to answer.
+            }
+        }
+
         protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             var chat = _chat;
@@ -2685,59 +2752,47 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var details = GetCurrentDetails();
-
-            void Remove(string reason)
+            // Only a position the history was actually seen resting at is written. Without one it
+            // never settled while this chat was open — a fast switch, or a restore still in flight
+            // — and whatever is already saved describes it better than anything derivable now.
+            if (_scrollingPosition is ScrollingPosition scrolling)
             {
-                Settings.Chats.Clear(chat.Id, details.TopicId);
-                Logger.Debug(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
-            }
+                var details = GetCurrentDetails();
 
-            try
-            {
-                var field = HistoryField;
-                if (field != null && !field.IsSuspended && TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
+                void Remove(string reason)
                 {
-                    var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
-                        ? Items[lastVisibleIndex + 1].Id
-                        : lastVisibleId;
+                    Settings.Chats.Clear(chat.Id, details.TopicId);
+                    Logger.Info(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
+                }
 
-                    if (lastVisibleId != 0 && lastVisibleId != chat.LastMessage?.Id)
+                if (scrolling.LastVisibleId == 0 || scrolling.LastVisibleId == chat.LastMessage?.Id)
+                {
+                    Remove("as last item is chat.LastMessage");
+                }
+                else if (scrolling.FirstNonVisibleId >= details.LastReadInboxMessageId)
+                {
+                    Remove("as first non visible item is unread");
+                }
+                else
+                {
+                    Settings.Chats[chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId] = details.LastReadInboxMessageId;
+                    Settings.Chats[chat.Id, details.TopicId, ChatSetting.Index] = scrolling.LastVisibleId;
+
+                    if (scrolling.Pixel is double pixel)
                     {
-                        if (firstNonVisibleId < details.LastReadInboxMessageId)
-                        {
-                            Settings.Chats[chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId] = details.LastReadInboxMessageId;
-                            Settings.Chats[chat.Id, details.TopicId, ChatSetting.Index] = lastVisibleId;
-
-                            var container = field.ContainerFromIndex(lastVisibleIndex) as ListViewItem;
-                            if (container != null)
-                            {
-                                var transform = container.TransformToVisual(field);
-                                var position = transform.TransformPoint(new Point());
-
-                                Settings.Chats[chat.Id, details.TopicId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
-                                Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, lastVisibleId, field.ActualHeight - (position.Y + container.ActualHeight)));
-                            }
-                            else
-                            {
-                                Settings.Chats.TryRemove(chat.Id, details.TopicId, ChatSetting.Pixel, out double pixel);
-                                Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, lastVisibleId));
-                            }
-                        }
-                        else
-                        {
-                            Remove("as first non visible item is unread");
-                        }
+                        Settings.Chats[chat.Id, details.TopicId, ChatSetting.Pixel] = pixel;
+                        Logger.Info(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, scrolling.LastVisibleId, pixel));
                     }
                     else
                     {
-                        Remove("as last item is chat.LastMessage");
+                        Settings.Chats.TryRemove(chat.Id, details.TopicId, ChatSetting.Pixel, out double _);
+                        Logger.Info(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, scrolling.LastVisibleId));
                     }
                 }
             }
-            catch
+            else
             {
-                Remove("exception");
+                Logger.Info(string.Format("{0} - Keeping scrolling position, as the history never settled", chat.Id));
             }
 
             SaveDraft();
