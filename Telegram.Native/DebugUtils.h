@@ -65,8 +65,8 @@ public:
 };
 
 // The code goes on when there is no name for it: it is a constant, not a per-crash value, and
-// without it every unnamed code - a C++ throw, a heap corruption, a CLR exception - groups as one
-// "UNKNOWN" and nothing afterwards can tell them apart.
+// without it everything left over groups as one "UNKNOWN" and nothing afterwards can tell two of
+// them apart.
 inline std::wstring GetExceptionName(DWORD code)
 {
     switch (code) {
@@ -90,6 +90,19 @@ inline std::wstring GetExceptionName(DWORD code)
     case EXCEPTION_PRIV_INSTRUCTION: return L"PRIV_INSTRUCTION";
     case EXCEPTION_SINGLE_STEP: return L"SINGLE_STEP";
     case EXCEPTION_STACK_OVERFLOW: return L"STACK_OVERFLOW";
+
+    // No EXCEPTION_ macro exists for these - winnt.h names only the processor faults - but they
+    // are what the unnamed bucket is mostly made of, and each is a different bug from the others.
+    case 0xC0000008: return L"INVALID_HANDLE";               // STATUS_INVALID_HANDLE
+    case 0xC0000017: return L"NO_MEMORY";                    // STATUS_NO_MEMORY
+    case 0xC0000374: return L"HEAP_CORRUPTION";              // STATUS_HEAP_CORRUPTION
+    case 0xC0000409: return L"STACK_BUFFER_OVERRUN";         // STATUS_STACK_BUFFER_OVERRUN
+    case 0xC000041D: return L"FATAL_USER_CALLBACK";          // STATUS_FATAL_USER_CALLBACK_EXCEPTION
+    case 0xC0000420: return L"ASSERTION_FAILURE";            // STATUS_ASSERTION_FAILURE
+    case 0xC0000602: return L"FAIL_FAST";                    // STATUS_FAIL_FAST_EXCEPTION
+    case 0xE06D7363: return L"CPP_EXCEPTION";                // a C++ throw, 'msc' in the low bytes
+    case 0xE0434352: return L"CLR_EXCEPTION";                // a managed throw, 'CCR' in the low bytes
+
     default: return wstrprintf(L"UNKNOWN 0x%08X", code);
     };
 }
