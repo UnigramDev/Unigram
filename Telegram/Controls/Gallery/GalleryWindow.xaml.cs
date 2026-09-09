@@ -1444,7 +1444,7 @@ namespace Telegram.Controls.Gallery
 
             if (AppSettings.ToolTip.Increment("TextRecognizer"))
             {
-                ToastPopup.Show(Recognize, Strings.ScanTextFirstTime, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
+                ToastPopup.Show(Recognize, Strings.ScanTextFirstTime, ToastPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
             }
         }
 

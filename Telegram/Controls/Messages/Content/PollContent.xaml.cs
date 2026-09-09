@@ -534,7 +534,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            ToastPopup.Show(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
+            ToastPopup.Show(Explanation, quiz.Explanation, ToastPlacementMode.TopLeft);
         }
 
         public void ShowExplanation()

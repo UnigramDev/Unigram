@@ -2809,7 +2809,7 @@ namespace Telegram.Views
 
                 if (((ViewModelBase)ViewModel).Settings.HideArchivedChats)
                 {
-                    ToastPopup.Show(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
+                    ToastPopup.Show(Photo, Strings.ArchiveMoveToMainMenuInfo, ToastPlacementMode.BottomRight);
                 }
             }
 

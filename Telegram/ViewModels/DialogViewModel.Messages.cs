@@ -1910,7 +1910,7 @@ namespace Telegram.ViewModels
                 }
 
                 disclaimer = ToastPopup.Show(XamlRoot, Strings.SuggestedMessageAcceptStarsDisclaimer.AsFormattedText(), ToastPopupIcon.Info, dismissAfter: TimeSpan.Zero);
-                disclaimer.PreferredPlacement = TeachingTipPlacementMode.Top;
+                disclaimer.PreferredPlacement = ToastPlacementMode.Top;
             }
             else if (message.SuggestedPostInfo.SendDate == 0)
             {

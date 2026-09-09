@@ -647,7 +647,7 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, ToastPlacementMode.Top);
 
                     if (result == ContentDialogResult.Primary)
                     {
@@ -678,7 +678,7 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, ToastPlacementMode.Top);
 
                     if (result == ContentDialogResult.Primary)
                     {
@@ -703,7 +703,7 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, ToastPlacementMode.Top);
 
                     if (result == ContentDialogResult.Primary)
                     {
@@ -720,7 +720,7 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, ToastPlacementMode.Top);
 
                     if (result == ContentDialogResult.Primary)
                     {
@@ -1585,7 +1585,7 @@ namespace Telegram.Controls.Stories
             if (sender is FrameworkElement element)
             {
                 var window = element.GetParent<StoriesWindow>();
-                window?.ShowToast(element, Strings.StoryNoSound, TeachingTipPlacementMode.BottomLeft);
+                window?.ShowToast(element, Strings.StoryNoSound, ToastPlacementMode.BottomLeft);
             }
         }
 
@@ -1622,7 +1622,7 @@ namespace Telegram.Controls.Stories
                 }
 
                 var window = element.GetParent<StoriesWindow>();
-                window?.ShowToast(element, message, TeachingTipPlacementMode.BottomLeft);
+                window?.ShowToast(element, message, ToastPlacementMode.BottomLeft);
             }
         }
 

@@ -69,7 +69,7 @@ namespace Telegram.Views.Supergroups
             popup.ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.PreferredPlacement = ToastPlacementMode.Top;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.Target = /*badge ??*/ container;
             popup.IsLightDismissEnabled = true;

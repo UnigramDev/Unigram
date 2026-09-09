@@ -441,7 +441,7 @@ namespace Telegram.Views.Premium.Popups
             popup.ActionButtonContent = Strings.RevokeButton;
             popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
+            popup.PreferredPlacement = ToastPlacementMode.Top;
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.Target = /*badge ??*/ container;
             popup.IsLightDismissEnabled = true;

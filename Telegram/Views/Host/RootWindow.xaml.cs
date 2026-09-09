@@ -38,6 +38,10 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Host
 {
+    // Only the TeachingTipEx family needs this: a TeachingTip is collected out from under itself
+    // unless something holds it, and the host keeps it in the window's resources while it is open.
+    // ToastPopup is our own control and holds itself through the popup it opens, so it does not
+    // register here - see ToastPopup.HideAll for the one thing the host still did for it.
     public interface IToastHost
     {
         void ToastOpened(TeachingTip toast);

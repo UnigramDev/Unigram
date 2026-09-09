@@ -79,7 +79,7 @@ namespace Telegram.Views.Settings.Popups
         {
             if (NewChats.IsFaux)
             {
-                ToastPopup.Show(NewChatsLock, Strings.UnlockPremium, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight, ElementTheme.Dark);
+                ToastPopup.Show(NewChatsLock, Strings.UnlockPremium, ToastPlacementMode.BottomRight, ElementTheme.Dark);
             }
         }
     }
