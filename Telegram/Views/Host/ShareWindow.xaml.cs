@@ -79,7 +79,9 @@ namespace Telegram.Views.Host
 
         private void OnAccountClick(object sender, EventArgs e)
         {
-            foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+            // The window's XamlRoot, not this control's: the passcode lock swaps the window
+            // content out, so this root is detached - and its XamlRoot null - while it is up.
+            foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(Window.XamlRoot))
             {
                 if (popup.Child is ChooseChatsPopup chooseChats && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationShareOperation shareOperation)
                 {
