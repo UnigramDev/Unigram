@@ -439,7 +439,6 @@ namespace Telegram.Views.Premium.Popups
             popup.PrimaryButtonContent = Strings.RevokeButton;
             popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.SecondaryButtonContent = Strings.Cancel;
-            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.IsLightDismissEnabled = true;
 
             popup.PrimaryButtonClick += async (s, args) =>

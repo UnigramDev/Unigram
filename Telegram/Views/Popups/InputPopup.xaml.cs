@@ -385,9 +385,6 @@ namespace Telegram.Views.Popups
                 PrimaryButtonContent = primary,
                 PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 SecondaryButtonContent = secondary,
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
                 IsLightDismissEnabled = true,
                 RequestedTheme = requestedTheme
             };

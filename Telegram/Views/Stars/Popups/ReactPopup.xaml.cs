@@ -97,9 +97,8 @@ namespace Telegram.Views.Stars.Popups
             var popup = new ModalPopup
             {
                 Content = content,
-                MinWidth = 0,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
+                ContentMinWidth = 0,
+                ContentMinHeight = 0,
                 IsLightDismissEnabled = false,
                 RequestedTheme = ElementTheme.Dark
             };

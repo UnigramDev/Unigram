@@ -7,7 +7,6 @@
 
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -30,12 +29,6 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
-    public enum ContentPopupButtonsLayout
-    {
-        Horizontal,
-        Vertical
-    }
-
     public partial class ContentPopup : ContentDialogEx
     {
         private ContentDialogResult _result;
@@ -333,8 +326,6 @@ namespace Telegram.Controls
             _closingTask?.TrySetResult(_closingResult);
         }
 
-        private static readonly ConditionalWeakTable<XamlRoot, TaskCompletionSource<ContentDialogResult>> _currentDialogShowRequests = new();
-
         /// <summary>
         /// Begins an asynchronous operation showing a dialog.
         /// If another dialog is already shown using
@@ -346,10 +337,9 @@ namespace Telegram.Controls
         /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
         public async Task<ContentDialogResult> ShowQueuedAsync(XamlRoot xamlRoot)
         {
-            while (_currentDialogShowRequests.TryGetValue(xamlRoot, out var tsc))
-            {
-                await tsc.Task;
-            }
+            // Shared with ModalPopup, so that the two kinds wait for each other while callers
+            // are moved from one to the other.
+            await PopupQueue.WaitAsync(xamlRoot);
 
             Logger.Info(GetType().Name);
 
@@ -368,7 +358,7 @@ namespace Telegram.Controls
             OnCreate();
 
             _closingTask = new TaskCompletionSource<ContentDialogResult>();
-            _currentDialogShowRequests.AddOrUpdate(xamlRoot, _closingTask);
+            PopupQueue.Enqueue(xamlRoot, _closingTask);
             _ = ShowAsync();
 
             if (XamlRoot.TryGetContent(out IPopupHost host))
@@ -377,7 +367,7 @@ namespace Telegram.Controls
             }
 
             var result = await _closingTask.Task;
-            _currentDialogShowRequests.Remove(xamlRoot);
+            PopupQueue.Dequeue(xamlRoot);
 
             if (XamlRoot.TryGetContent(out host))
             {
@@ -771,7 +761,7 @@ namespace Telegram.Controls
 
             foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
             {
-                if (popup.Child is ContentDialog)
+                if (popup.Child is ContentDialog or ModalPopup)
                 {
                     return true;
                 }

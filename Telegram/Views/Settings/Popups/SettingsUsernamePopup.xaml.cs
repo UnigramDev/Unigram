@@ -108,9 +108,6 @@ namespace Telegram.Views.Settings.Popups
                 PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
                 PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
                 SecondaryButtonContent = Strings.Cancel,
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
                 IsLightDismissEnabled = true,
             };
 

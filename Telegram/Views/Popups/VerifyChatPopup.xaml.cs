@@ -76,9 +76,6 @@ namespace Telegram.Views.Popups
         {
             var popup = new VerifyChatPopup(clientService, chat, remove, canSetCustomDescription)
             {
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
                 IsLightDismissEnabled = true,
             };
 

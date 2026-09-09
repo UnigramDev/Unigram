@@ -110,10 +110,7 @@ namespace Telegram.Views.Stars.Popups
         {
             var popup = new UpgradedGiftValuePopup(clientService, navigationService, gift, valueInfo)
             {
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
-                MaxHeight = 720,
+                ContentMaxHeight = 720,
                 IsLightDismissEnabled = true,
             };
 

@@ -64,6 +64,8 @@ namespace Telegram.Navigation.Services
         Task<WindowContext> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
         void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
+        Task<ContentDialogResult> ShowPopupAsync(ModalPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(ModalPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
 
         Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         //Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
@@ -537,6 +539,44 @@ namespace Telegram.Navigation.Services
                 }
 
                 void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                {
+                    if (popup.IsFinalized)
+                    {
+                        viewModel.NavigatedFrom(null, false);
+                        popup.OnNavigatedFrom();
+                        popup.Closed -= OnClosed;
+                    }
+                }
+
+                popup.DataContext = viewModel;
+
+                _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                popup.OnNavigatedTo(parameter);
+                popup.Closed += OnClosed;
+            }
+
+            return popup.ShowQueuedAsync(XamlRoot);
+        }
+
+        public void ShowPopup(ModalPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            _ = ShowPopupAsync(popup, parameter, requestedTheme);
+        }
+
+        public Task<ContentDialogResult> ShowPopupAsync(ModalPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
+
+            var viewModel = BootStrapper.Current.ViewModelForPage(popup, Session);
+            if (viewModel != null)
+            {
+                viewModel.NavigationService = this;
+                viewModel.Dispatcher = Dispatcher;
+
+                void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
                 {
                     if (popup.IsFinalized)
                     {

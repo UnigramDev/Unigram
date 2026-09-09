@@ -1456,9 +1456,12 @@ namespace Telegram.Navigation
                 }
                 else if (popup.Child is ModalPopup modal)
                 {
-                    if (modal.IsLightDismissEnabled)
+                    // Escape reaches a ContentDialog on its own, but a ModalPopup lives in a
+                    // popup of its own that no accelerator scope covers, so the window routes it.
+                    if (modal.CancelRequested())
                     {
-                        modal.Hide();
+                        handled = args.Handled = true;
+                        return;
                     }
                 }
                 else if (key == VirtualKey.Escape)

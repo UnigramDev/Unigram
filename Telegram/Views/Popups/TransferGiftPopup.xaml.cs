@@ -112,9 +112,6 @@ namespace Telegram.Views.Popups
         {
             var popup = new TransferGiftPopup(clientService, gift, chat, resale)
             {
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
                 IsLightDismissEnabled = true,
             };
 
@@ -125,9 +122,6 @@ namespace Telegram.Views.Popups
         {
             var popup = new TransferGiftPopup(clientService, gift, chat)
             {
-                Width = 314,
-                MinWidth = 314,
-                MaxWidth = 314,
                 IsLightDismissEnabled = true,
             };
 

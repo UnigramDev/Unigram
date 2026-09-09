@@ -67,7 +67,6 @@ namespace Telegram.Views.Supergroups
             popup.PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
             popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
             popup.SecondaryButtonContent = Strings.Cancel;
-            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.IsLightDismissEnabled = true;
 
             popup.PrimaryButtonClick += (s, args) =>

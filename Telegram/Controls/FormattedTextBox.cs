@@ -840,7 +840,6 @@ namespace Telegram.Controls
                 popup.Footer = panel;
             }
 
-            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.IsLightDismissEnabled = true;
 
             var confirm = await popup.ShowAsync(XamlRoot);
@@ -931,7 +930,6 @@ namespace Telegram.Controls
                 }
             }
 
-            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.IsLightDismissEnabled = true;
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);

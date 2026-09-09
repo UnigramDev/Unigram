@@ -238,22 +238,35 @@ navigation (`_unallowedTypes`), so a user cannot navigate forward into a passwor
 `ViewModelForPage` only creates a view model when `DataContext` is not already `INavigable`, so
 re-entering a cached page reuses the existing instance.
 
-## Popup hosting — Telegram/Controls/ContentPopup.cs, Telegram/Views/Popups/ (166 files)
-<!-- map: verified=95560d9f7 paths=Telegram/Controls/ContentPopup.cs,Telegram/Controls/ContentPopup.Win32.cs,Telegram/Controls/MessagePopup.xaml.cs,Telegram/Controls/ToastPopup.cs,Telegram/Views/Popups -->
-`ContentPopup : ContentDialogEx` (Telegram/Controls/ContentPopup.cs:39) is the base for essentially every
-popup in the app — the 166 under Views/Popups plus those scattered through Settings, Supergroups and
-Stars. It adds view model binding, queued one-at-a-time presentation, and theme and animation plumbing.
+## Popup hosting — Telegram/Controls/ContentPopup.cs, Telegram/Controls/ModalPopup.cs, Telegram/Views/Popups/ (166 files)
+<!-- map: verified=46c467caa paths=Telegram/Controls/ContentPopup.cs,Telegram/Controls/ContentPopup.Win32.cs,Telegram/Controls/ModalPopup.cs,Telegram/Controls/MessagePopup.xaml.cs,Telegram/Controls/ToastPopup.cs,Telegram/Views/Popups -->
+Two bases, one API. `ContentPopup : ContentDialogEx` (Telegram/Controls/ContentPopup.cs:32) still carries
+essentially every popup in the app — the 166 under Views/Popups plus those scattered through Settings,
+Supergroups and Stars. `ModalPopup : ContentControl` (Telegram/Controls/ModalPopup.cs) is the replacement
+being grown alongside it: it hosts itself in a `Popup` instead of deriving from `ContentDialog`, and it now
+carries the same surface — three buttons with cancellable, deferrable click events, `Opened`/`Closing`/
+`Closed`, `Title`/`TitleTemplate`, the `Content*` sizing four, `ButtonsLayout`, the dismiss button, the
+pending ring, the split button, `ShowQueuedAsync`/`OpenAsync`/`SetResult` and the `OnCreate`/`OnNavigatedTo`/
+`OnNavigatedFrom` contract — so a caller can move between the two without being rewritten.
 **Key types:** `ContentPopup` (Telegram/Controls/ContentPopup.cs) — `ShowQueuedAsync`, `OnNavigatedTo`/
-`OnNavigatedFrom`, `IsAnyPopupOpen`; `MessagePopup` (Telegram/Controls/MessagePopup.xaml.cs) — the generic
-message box behind `ShowPopupAsync(string message, …)`; `ToastPopup` (Telegram/Controls/ToastPopup.cs) —
-the non-modal toast behind `NavigationService.ShowToast`.
+`OnNavigatedFrom`, `IsAnyPopupOpen`; `ModalPopup` (Telegram/Controls/ModalPopup.cs) — the same, plus
+`Subtitle` (markdown) and `CancelRequested`; `PopupQueue` (same file) — the one per-`XamlRoot` queue both
+kinds wait on; `MessagePopup` (Telegram/Controls/MessagePopup.xaml.cs) — the generic message box behind
+`ShowPopupAsync(string message, …)`, and `ShowNestedAsync` for the ModalPopup variant raised over an open
+popup; `ToastPopup` (Telegram/Controls/ToastPopup.cs) — the non-modal toast behind
+`NavigationService.ShowToast`.
 **Entry points:** `ViewModelBase.ShowPopupAsync(...)` delegates to `INavigationService.ShowPopupAsync`,
-which resolves a view model through the same `ViewModelForPage` switch as pages, sets `DataContext`, calls
-`NavigatedToAsync` and `OnNavigatedTo`, then `ShowQueuedAsync(XamlRoot)`.
+overloaded for both bases, which resolves a view model through the same `ViewModelForPage` switch as pages,
+sets `DataContext`, calls `NavigatedToAsync` and `OnNavigatedTo`, then `ShowQueuedAsync(XamlRoot)`.
 **Traps:** `ShowQueuedAsync` serializes popups per `XamlRoot` — a second popup awaits the first's
-`_closingTask` rather than stacking. `Closed` only tears the view model down (`NavigatedFrom`) when
+`_closingTask` rather than stacking; nesting is what `MessagePopup.ShowNestedAsync` and the plain
+`ModalPopup.ShowAsync` are for. `Closed` only tears the view model down (`NavigatedFrom`) when
 `IsFinalized` is true, so a popup that is reused or re-shown must manage that flag. Popups need the chat
-theme forwarded to them explicitly.
+theme forwarded to them explicitly. A ModalPopup's own popup fills the `XamlRoot` — the card is centred by
+layout inside it — so sizing it means `ContentMinWidth`/`ContentMaxWidth`, never `Width` on the control.
+Nothing here may derive from a WinUI 2 control: a managed subclass dies in two halves (see
+`muxc-subclass-destructor-fault`), which is why TeachingTipEx became ModalPopup in the first place.
+See `notes/modal-popup-migration.md` for what moving the remaining callers costs.
 
 ## WindowContext and secondary windows — Telegram/Navigation/WindowContext*.cs, Telegram/Services/ViewService/
 <!-- map: verified=95560d9f7 paths=Telegram/Navigation/WindowContext.cs,Telegram/Navigation/WindowContext.Uwp.cs,Telegram/Navigation/WindowContext.Win32.cs,Telegram/Services/ViewService -->
