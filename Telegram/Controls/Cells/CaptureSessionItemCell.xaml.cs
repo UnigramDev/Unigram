@@ -41,7 +41,7 @@ namespace Telegram.Controls.Cells
 
                 if (item is WindowCaptureSessionItem window)
                 {
-                    _windowVisual = WindowVisual.Create(window.WindowId);
+                    _windowVisual = WindowVisual.Create(window.WindowId, (float)XamlRoot.RasterizationScale);
                     _displayVisual = null;
 
                     if (_windowVisual != null)
@@ -72,7 +72,13 @@ namespace Telegram.Controls.Cells
         {
             if (_windowVisual != null)
             {
-                _windowVisual.Size = e.NewSize.ToVector2();
+                // DWM rasterizes the thumbnail in physical pixels, so the visual needs the scale
+                // handed to it. An element that has left the tree has no XamlRoot to ask, and
+                // nothing to show it in either.
+                if (XamlRoot is XamlRoot xamlRoot)
+                {
+                    _windowVisual.Size = new Vector3(e.NewSize.ToVector2(), (float)xamlRoot.RasterizationScale);
+                }
             }
             else
             {

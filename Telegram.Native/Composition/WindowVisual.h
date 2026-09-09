@@ -16,18 +16,18 @@ namespace winrt::Telegram::Native::Composition::implementation
     struct WindowVisual : WindowVisualT<WindowVisual>
     {
         static bool IsValid(WindowId windowId, hstring& title);
-        static winrt::Telegram::Native::Composition::WindowVisual Create(WindowId windowId);
+        static winrt::Telegram::Native::Composition::WindowVisual Create(WindowId windowId, float rasterizationScale);
 
         static uint32_t GetWindowProcessId(WindowId windowId);
         static WindowId GetCurrentWindowId();
 
-        WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size);
+        WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size, float scale);
         ~WindowVisual();
 
         Visual Child();
 
-        float2 Size();
-        void Size(float2 value);
+        float3 Size();
+        void Size(float3 value);
 
     private:
         static HRESULT GetScaledWindowSize(HWND window, float3* size, DWM_THUMBNAIL_PROPERTIES& thumb);
@@ -36,6 +36,7 @@ namespace winrt::Telegram::Native::Composition::implementation
         HTHUMBNAIL m_thumbnail;
 
         float2 m_size;
+        float m_scale;
         Visual m_visual;
     };
 }

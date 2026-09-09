@@ -4,12 +4,14 @@ namespace Telegram.Native.Composition
     runtimeclass WindowVisual
     {
         static Boolean IsValid(Windows.UI.WindowId windowId, out String title);
-        static WindowVisual Create(Windows.UI.WindowId windowId);
+        static WindowVisual Create(Windows.UI.WindowId windowId, Single rasterizationScale);
 
         static UInt32 GetWindowProcessId(Windows.UI.WindowId windowId);
         static Windows.UI.WindowId GetCurrentWindowId();
 
         Windows.UI.Composition.Visual Child{ get; };
-        Windows.Foundation.Numerics.Vector2 Size;
+        // Z carries the rasterization scale of the element showing the thumbnail: DWM
+        // rasterizes it in physical pixels, and the visual has no way of asking.
+        Windows.Foundation.Numerics.Vector3 Size;
     }
 }

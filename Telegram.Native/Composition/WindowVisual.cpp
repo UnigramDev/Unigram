@@ -203,7 +203,7 @@ namespace winrt::Telegram::Native::Composition::implementation
         return windowId;
     }
 
-    winrt::Telegram::Native::Composition::WindowVisual WindowVisual::Create(WindowId windowId)
+    winrt::Telegram::Native::Composition::WindowVisual WindowVisual::Create(WindowId windowId, float rasterizationScale)
     {
         const static auto lDwmpQueryWindowThumbnailSourceSize = (DwmpQueryWindowThumbnailSourceSize)GetProcAddress(GetDwmApi(), MAKEINTRESOURCEA(162));
         const static auto lDwmpCreateSharedThumbnailVisual = (DwmpCreateSharedThumbnailVisual)GetProcAddress(GetDwmApi(), MAKEINTRESOURCEA(147));
@@ -223,7 +223,7 @@ namespace winrt::Telegram::Native::Composition::implementation
         winrt::com_ptr<IDCompositionDevice3> dcompDevice = compositor.as<IDCompositionDevice3>();
         winrt::com_ptr<IDCompositionVisual2> windowVisual;
 
-        float3 size(320, 320, 1);
+        float3 size(320, 320, rasterizationScale);
         DWM_THUMBNAIL_PROPERTIES thumb;
         result = GetScaledWindowSize(destination, &size, thumb);
 
@@ -236,16 +236,17 @@ namespace winrt::Telegram::Native::Composition::implementation
         }
 
         auto visual = windowVisual.as<Visual>();
-        auto window = winrt::make_self<WindowVisual>(source, thumbnail, visual, size);
+        auto window = winrt::make_self<WindowVisual>(source, thumbnail, visual, size, rasterizationScale);
 
         return window.as<winrt::Telegram::Native::Composition::WindowVisual>();
     }
 
-    WindowVisual::WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size)
+    WindowVisual::WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size, float scale)
         : m_window(window)
         , m_thumbnail(thumbnail)
         , m_visual(visual)
         , m_size(float2(size.x, size.y))
+        , m_scale(scale)
     {
         m_visual.Scale(float3(size.z));
     }
@@ -266,16 +267,17 @@ namespace winrt::Telegram::Native::Composition::implementation
         return m_visual;
     }
 
-    float2 WindowVisual::Size()
+    float3 WindowVisual::Size()
     {
-        return m_size;
+        return float3(m_size, m_scale);
     }
 
-    void WindowVisual::Size(float2 value)
+    void WindowVisual::Size(float3 value)
     {
         const static auto lDwmUpdateThumbnailProperties = (DwmUpdateThumbnailProperties)GetProcAddress(GetDwmApi(), "DwmUpdateThumbnailProperties");
 
-        float3 size(value.x, value.y, 1);
+        float2 available(value.x, value.y);
+        float3 size = value;
 
         DWM_THUMBNAIL_PROPERTIES thumb;
         HRESULT result = GetScaledWindowSize(m_window, &size, thumb);
@@ -284,11 +286,14 @@ namespace winrt::Telegram::Native::Composition::implementation
         if (result == S_OK)
         {
             m_size = float2(size.x, size.y);
-            m_visual.Offset(float3((value - m_size) / 2, 0));
+            m_scale = value.z;
+            m_visual.Offset(float3((available - m_size) / 2, 0));
             m_visual.Scale(float3(size.z));
         }
     }
 
+    // size->z carries the rasterization scale of whatever shows the thumbnail on the way in,
+    // and the reciprocal of the factor it was rasterized at on the way out.
     HRESULT WindowVisual::GetScaledWindowSize(HWND window, float3* size, DWM_THUMBNAIL_PROPERTIES& thumb)
     {
         const static auto lDwmpQueryWindowThumbnailSourceSize = (DwmpQueryWindowThumbnailSourceSize)GetProcAddress(GetDwmApi(), MAKEINTRESOURCEA(162));
@@ -301,11 +306,7 @@ namespace winrt::Telegram::Native::Composition::implementation
             return result;
         }
 
-        UIElement content = Window::Current().Content();
-        if (content.XamlRoot())
-        {
-            size->z = content.XamlRoot().RasterizationScale() * 2;
-        }
+        size->z *= 2;
 
         double ratioX = (size->x * size->z) / windowSize.cx;
         double ratioY = (size->y * size->z) / windowSize.cy;
