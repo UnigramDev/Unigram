@@ -11,6 +11,7 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
@@ -73,6 +74,14 @@ namespace Telegram.Controls
                 // Disabled/Extended keep it off (Extended is driven by TextSelectionManager).
                 sender.TextBlock.IsTextSelectionEnabled = sender._textSelection == TextSelectionMode.Enabled;
             }
+
+            // The offset table is built with the inlines, and only for an Extended block, so one
+            // that becomes Extended after its text was applied has to render again to get one.
+            // Every caller sets the mode before the text; this is here so that stays a choice.
+            if (sender._textSelection == TextSelectionMode.Extended && sender._textApplied)
+            {
+                sender.SetText(sender._clientService, sender._text, sender._first, sender._last, sender._fontSize);
+            }
         }
 
         // Back-compat shim over TextSelection: true == Enabled (native), false == Disabled.
@@ -88,32 +97,22 @@ namespace Telegram.Controls
         // Only Extended blocks are collected by TextSelectionManager.
         public bool IsSelectionEnabled => _textSelection == TextSelectionMode.Extended;
 
-        // Cached: GetHighlightIndex(ContentEnd) walks the whole inline tree, and ContentLength
-        // is hit on every Select() during a drag — for a syntax-highlighted code block (a deep
-        // span tree) that re-walk per pointer move is the selection lag. Invalidated (-1) by
-        // SetText and when ProcessCodeBlock rebuilds the inlines.
-        private int _contentLength = -1;
+        // The last entry ends where the content does, so this is a read rather than the tree
+        // walk it used to be — which mattered, because Select() asks for it on every pointer
+        // move of a drag.
         public int ContentLength
         {
             get
             {
-                if (_contentLength < 0 && TextBlock != null)
+                var last = _offsets != null ? _offsets.Count - 1 : -1;
+                if (last < 0)
                 {
-                    var offsets = Offsets;
-                    var last = offsets.Length - 1;
-
-                    _contentLength = last < 0 ? 0 : offsets[last].Rendered + offsets[last].Length;
+                    return 0;
                 }
 
-                return _contentLength < 0 ? 0 : _contentLength;
+                var entry = _offsets[last];
+                return entry.Rendered + entry.Length;
             }
-        }
-
-        internal void InvalidateContentLength()
-        {
-            _contentLength = -1;
-            _offsets = null;
-            _blockRanges = null;
         }
 
         // The hit token handed back to GetSelectionBoundary is the StyledText paragraph the
@@ -447,100 +446,355 @@ namespace Telegram.Controls
             }
         }
 
-        private OffsetEntry[] _offsets;
+        // One entry per leaf inline, in document order. Both lists are reused across builds: a
+        // recycled bubble runs SetText on every message it shows.
+        private List<OffsetEntry> _offsets;
 
         // Where each Block begins and ends in TextPointer space. A position outside every one of
         // them sits between blocks - an empty paragraph, which holds no inline to expand to - and
         // that used to be read off pointer.Parent, at the cost of projecting one more object per
         // pointer move. _contentEnd is the same story: TextBlock.ContentEnd allocates a
         // TextPointer to answer, and the answer only changes when the text does.
-        private (int Start, int End)[] _blockRanges;
+        private List<(int Start, int End)> _blockRanges;
         private int _contentEnd;
 
-        // Built on the first hit test after SetText rather than during it: rendering must not pay
-        // for a table only a pointer needs, and reading an offset means projecting a TextPointer
-        // per property, which is exactly the cost being moved out of the per-move path. Once
-        // built, resolving a point is a binary search with no calls into XAML at all.
-        private OffsetEntry[] Offsets
+        #region Building
+
+        // The table is built as the inlines are, and never by reading the tree back. An inline
+        // built through XamlDirect is a bare core object with no framework peer, so asking the
+        // projection for one - Blocks[i], Inlines[i], ElementStart - inflates a peer and an RCW
+        // for every element the build deliberately left deflated. SetText fills the table,
+        // UpdateDate shifts it, ProcessCodeBlock splices it.
+        //
+        // TextPointer space is a position count, and a TextElement's four offsets are fixed
+        // distances into the span of it the element reserves (CTextElement::GetOffsetForEdge):
+        //
+        //     ElementStart = 0   ContentStart = 1   ContentEnd = count - 1   ElementEnd = count
+        //
+        // and `count` is what each type reserves:
+        //
+        //     Run                text length + 2   CRun::GetPositionCount
+        //     Span, Hyperlink    children + 2      CSpan -> CInlineCollection::GetPositionCount,
+        //                                          "plus one each for the start and end"
+        //     Paragraph          children + 2      CParagraph::GetPositionCount
+        //     InlineUIContainer  2                 no override, so CTextElement's two edges:
+        //                                          "InlineUIContainer only has 2 positions -
+        //                                          Open/Close" (CInlineUIContainer::GetRun).
+        //                                          The embedded object reserves none of its own.
+        //     LineBreak          2                 no override either. Nothing emits one today.
+        //     RichTextBlock      sum of blocks     CBlockCollection::GetPositionCount adds no
+        //                                          wrapper of its own, and CRichTextBlock
+        //                                          "always starts at 0", so block 0 opens at 0.
+        //
+        // Read out of the XAML text core, microsoft-ui-xaml/src/dxaml/xcp/core/text - the same
+        // tree the system XAML names in its own frames (onecoreuap/windows/dxaml/xcp/core/...).
+        // These are the values, not an inference from them: do not re-derive by experiment.
+        private const int ObjectLength = 2;
+
+        private int _offsetPosition;    // running TextPointer offset
+        private int _offsetRendered;    // running TextHighlighter.Ranges index
+        private int _offsetBlock;       // index of the block being filled
+        private bool _offsetLink;       // inside a Hyperlink
+        private bool _offsetsEnabled;
+
+        // Where the entries go: _offsets while SetText builds, a scratch list while
+        // ProcessCodeBlock rebuilds one paragraph in the middle of it.
+        private List<OffsetEntry> _offsetTarget;
+
+        private void BeginOffsets()
         {
-            get
+            // Only an Extended block reads the table - IsLinkAt and the whole ISelectableControl
+            // surface are gated on it - so nothing else pays to build one. A block rendering
+            // into a Span owned by another control is gated out for the same reason: it has no
+            // Blocks of its own, and OnPointerMoved already skips it.
+            _offsetsEnabled = _textSelection == TextSelectionMode.Extended
+                && _spanForInlines == null
+                && TextBlock != null;
+
+            ClearOffsets();
+
+            if (!_offsetsEnabled)
             {
-                if (_offsets == null)
-                {
-                    var entries = new List<OffsetEntry>();
-                    var blocks = new List<(int, int)>();
+                return;
+            }
 
-                    if (TextBlock != null)
-                    {
-                        var index = 0;
-                        var block = 0;
+            _offsetTarget = _offsets ??= new List<OffsetEntry>();
+            _blockRanges ??= new List<(int, int)>();
 
-                        foreach (var current in TextBlock.Blocks)
-                        {
-                            blocks.Add((current.ElementStart.Offset, current.ElementEnd.Offset));
+            _offsetPosition = 0;
+            _offsetRendered = 0;
+            _offsetBlock = 0;
+            _offsetLink = false;
+        }
 
-                            if (current is Paragraph paragraph)
-                            {
-                                CollectOffsets(paragraph.Inlines, entries, ref index, block, false);
-                            }
+        // The tree the table describes is gone, and only SetText builds another.
+        private void ClearOffsets()
+        {
+            _offsets?.Clear();
+            _blockRanges?.Clear();
+            _contentEnd = 0;
+        }
 
-                            block++;
-                        }
-
-                        _contentEnd = TextBlock.ContentEnd.Offset;
-                    }
-
-                    _blockRanges = blocks.ToArray();
-                    _offsets = entries.ToArray();
-                }
-
-                return _offsets;
+        private void OpenBlock()
+        {
+            if (_offsetsEnabled)
+            {
+                _blockRanges.Add((_offsetPosition, 0));
+                _offsetPosition++;
             }
         }
 
-        private static void CollectOffsets(InlineCollection inlines, List<OffsetEntry> entries, ref int index, int block, bool link)
+        private void CloseBlock()
         {
-            var total = inlines.Count;
-
-            for (int i = 0; i < total; i++)
+            if (_offsetsEnabled)
             {
-                var inline = inlines[i];
-
-                switch (inline)
-                {
-                    case Run run:
-                        var text = run.Text;
-                        var length = text != null ? text.Length : 0;
-
-                        entries.Add(new OffsetEntry(run.ElementStart.Offset, run.ContentStart.Offset, run.ContentEnd.Offset,
-                            run.ElementEnd.Offset, index, length, block, false, IsZeroWidth(text), link));
-
-                        index += length;
-                        break;
-                    case Span span: // Bold/Italic/Underline/Hyperlink/... derive from Span
-                        CollectOffsets(span.Inlines, entries, ref index, block, link || span is Hyperlink);
-                        break;
-                    case InlineUIContainer:
-                        entries.Add(new OffsetEntry(inline.ElementStart.Offset, 0, 0, inline.ElementEnd.Offset,
-                            index, 0, block, true, false, link));
-                        break;
-                    case LineBreak:
-                        entries.Add(new OffsetEntry(inline.ElementStart.Offset, 0, 0, inline.ElementEnd.Offset,
-                            index, 1, block, false, false, link));
-                        index += 1; // one object-replacement / break unit
-                        break;
-                }
+                // ElementEnd sits one past ContentEnd, and the next block opens there.
+                var last = _blockRanges.Count - 1;
+                _blockRanges[last] = (_blockRanges[last].Start, ++_offsetPosition);
+                _offsetBlock++;
             }
         }
+
+        // A Span, Hyperlink or any other element that holds inlines of its own. `link` is passed
+        // at both ends rather than saved: nothing here nests a hyperlink inside another.
+        private void OpenInline(bool link)
+        {
+            if (_offsetsEnabled)
+            {
+                _offsetPosition++;
+                _offsetLink |= link;
+            }
+        }
+
+        private void CloseInline(bool link)
+        {
+            if (_offsetsEnabled)
+            {
+                _offsetPosition++;
+                _offsetLink &= !link;
+            }
+        }
+
+        private void AddRunOffset(int length, bool mark)
+        {
+            if (_offsetsEnabled)
+            {
+                var start = _offsetPosition;
+
+                _offsetTarget.Add(new OffsetEntry(start, start + 1, start + 1 + length, start + length + 2,
+                    _offsetRendered, length, _offsetBlock, false, mark, _offsetLink));
+
+                _offsetPosition = start + length + 2;
+                _offsetRendered += length;
+            }
+        }
+
+        private void AddObjectOffset()
+        {
+            if (_offsetsEnabled)
+            {
+                var start = _offsetPosition;
+
+                _offsetTarget.Add(new OffsetEntry(start, 0, 0, start + ObjectLength,
+                    _offsetRendered, 0, _offsetBlock, true, false, _offsetLink));
+
+                _offsetPosition = start + ObjectLength;
+            }
+        }
+
+        private void EndOffsets()
+        {
+            if (_offsetsEnabled)
+            {
+                _contentEnd = _offsetPosition;
+            }
+        }
+
+        // A relative date rewrote its Run, so that entry grew by `delta` and every offset after
+        // it moved with it. The rendered space is shifted by ShiftRenderedSpace, which owns the
+        // index map and the highlighter ranges; this is the same shift in TextPointer space.
+        private void ShiftOffsets(object element, int delta)
+        {
+            if (!_offsetsEnabled || _dates == null || _dateOffsets == null)
+            {
+                return;
+            }
+
+            var date = _dates.IndexOf(element as IXamlDirectObject);
+            if (date < 0 || date >= _dateOffsets.Count)
+            {
+                return;
+            }
+
+            var found = _dateOffsets[date];
+            if (found < 0 || found >= _offsets.Count)
+            {
+                return;
+            }
+
+            var entry = _offsets[found];
+            _offsets[found] = new OffsetEntry(entry.Start, entry.ContentStart, entry.ContentEnd + delta, entry.End + delta,
+                entry.Rendered, entry.Length + delta, entry.Block, entry.Object, entry.Mark, entry.Link);
+
+            ShiftOffsetsFrom(found + 1, entry.Block, delta, delta);
+        }
+
+        // Moves everything from `first` on by `delta` in TextPointer space and `rendered` in
+        // highlighter space, and the blocks it spans with it. `block` is the one the change
+        // happened in: its start does not move, only its end.
+        private void ShiftOffsetsFrom(int first, int block, int delta, int rendered)
+        {
+            for (int i = first; i < _offsets.Count; i++)
+            {
+                var next = _offsets[i];
+
+                // ContentStart/ContentEnd are 0 on an inline object rather than offsets, and
+                // GetHighlightIndex reads that zero as "no content of its own".
+                _offsets[i] = new OffsetEntry(next.Start + delta,
+                    next.Object ? 0 : next.ContentStart + delta,
+                    next.Object ? 0 : next.ContentEnd + delta,
+                    next.End + delta, next.Rendered + rendered, next.Length, next.Block,
+                    next.Object, next.Mark, next.Link);
+            }
+
+            for (int i = block; i < _blockRanges.Count; i++)
+            {
+                var range = _blockRanges[i];
+                _blockRanges[i] = (i == block ? range.Start : range.Start + delta, range.End + delta);
+            }
+
+            _contentEnd += delta;
+        }
+
+        // Tokenization replaced one paragraph's inlines wholesale, so its entries are rebuilt
+        // between these two: the old ones come out, whatever is emitted in between goes in
+        // their place, and everything after moves by what the paragraph gained.
+        private List<OffsetEntry> _offsetSplice;
+        private int _spliceFirst = -1;
+        private int _spliceCount;
+        private int _spliceBlock;
+        private int _spliceEnd;
+        private int _spliceRendered;
+
+        private void BeginSplice(int block)
+        {
+            _spliceFirst = -1;
+
+            if (!_offsetsEnabled)
+            {
+                return;
+            }
+
+            // Everything the rebuild emits lands here first. That has to be set up before the
+            // search below can give up: a paragraph with no entries left to replace - the block
+            // was unloaded while the tokenizer ran - would otherwise have its new inlines
+            // appended to the end of the table.
+            _offsetTarget = _offsetSplice ??= new List<OffsetEntry>();
+            _offsetTarget.Clear();
+
+            var first = -1;
+            var last = -1;
+
+            for (int i = 0; i < _offsets.Count; i++)
+            {
+                if (_offsets[i].Block != block)
+                {
+                    continue;
+                }
+
+                if (first < 0)
+                {
+                    first = i;
+                }
+
+                last = i;
+            }
+
+            if (first < 0)
+            {
+                return;
+            }
+
+            var head = _offsets[first];
+            var tail = _offsets[last];
+
+            _spliceFirst = first;
+            _spliceCount = last - first + 1;
+            _spliceBlock = block;
+            _spliceEnd = tail.End;
+            _spliceRendered = tail.Rendered + tail.Length;
+
+            _offsets.RemoveRange(first, last - first + 1);
+
+            _offsetPosition = head.Start;
+            _offsetRendered = head.Rendered;
+            _offsetBlock = block;
+            _offsetLink = false;
+        }
+
+        // _dateOffsets holds indices into _offsets, so a splice that changes how many entries
+        // the paragraph takes moves every date after it. One inside the spliced paragraph is
+        // gone with the inlines that were replaced - a code block cannot hold a date today, but
+        // dropping the index is what keeps a shift from landing on someone else's entry.
+        private void ReindexDates(int moved)
+        {
+            if (_dateOffsets == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _dateOffsets.Count; i++)
+            {
+                var index = _dateOffsets[i];
+
+                if (index < _spliceFirst)
+                {
+                    continue;
+                }
+
+                _dateOffsets[i] = index < _spliceFirst + _spliceCount ? -1 : index + moved;
+            }
+        }
+
+        private void EndSplice()
+        {
+            if (!_offsetsEnabled)
+            {
+                return;
+            }
+
+            var scratch = _offsetSplice;
+            _offsetTarget = _offsets;
+
+            if (_spliceFirst < 0)
+            {
+                scratch.Clear();
+                return;
+            }
+
+            _offsets.InsertRange(_spliceFirst, scratch);
+
+            // A date in a LATER paragraph is still in the table, but its entry has moved.
+            ReindexDates(scratch.Count - _spliceCount);
+
+            ShiftOffsetsFrom(_spliceFirst + scratch.Count, _spliceBlock,
+                _offsetPosition - _spliceEnd, _offsetRendered - _spliceRendered);
+
+            scratch.Clear();
+            _spliceFirst = -1;
+        }
+
+        #endregion
+
 
         // The last element beginning at or before the position; everything after it is
         // irrelevant. -1 when the position precedes every element.
         private int FindOffset(int target)
         {
-            var offsets = Offsets;
+            var offsets = _offsets;
             var found = -1;
             var lo = 0;
-            var hi = offsets.Length - 1;
+            var hi = offsets != null ? offsets.Count - 1 : -1;
 
             while (lo <= hi)
             {
@@ -570,7 +824,7 @@ namespace Telegram.Controls
                 return false;
             }
 
-            var entry = Offsets[found];
+            var entry = _offsets[found];
             return entry.Link && target <= entry.End;
         }
 
@@ -589,8 +843,8 @@ namespace Telegram.Controls
             block = -1;
             mark = false;
 
-            var offsets = Offsets;
-            if (offsets.Length == 0)
+            var offsets = _offsets;
+            if (offsets == null || offsets.Count == 0)
             {
                 return 0;
             }
@@ -626,13 +880,13 @@ namespace Telegram.Controls
                 var count = target - entry.ContentStart;
 
                 block = entry.Block;
-                mark = count > 0 && entry.Mark && found + 1 < offsets.Length && offsets[found + 1].Object;
+                mark = count > 0 && entry.Mark && found + 1 < offsets.Count && offsets[found + 1].Object;
                 return entry.Rendered + count;
             }
 
             // Past this element: the position belongs to whatever comes next, which adds nothing
             // to the index of its own. Past the last one it resolves in no block at all.
-            if (found + 1 < offsets.Length)
+            if (found + 1 < offsets.Count)
             {
                 block = offsets[found + 1].Block;
             }
@@ -642,12 +896,13 @@ namespace Telegram.Controls
 
         private bool IsBetweenBlocks(int target)
         {
-            // Harvested with the offsets, so touching it first is what builds both.
-            _ = Offsets;
-
             var blocks = _blockRanges;
+            if (blocks == null)
+            {
+                return true;
+            }
 
-            for (int i = 0; i < blocks.Length; i++)
+            for (int i = 0; i < blocks.Count; i++)
             {
                 if (target > blocks[i].Start && target < blocks[i].End)
                 {
@@ -663,6 +918,14 @@ namespace Telegram.Controls
         private static bool IsZeroWidth(string text)
         {
             return text is Icons.ZWNJ or Icons.LTR or Icons.RTL;
+        }
+
+        // The same question over a range of a larger string, which is how the build asks it -
+        // the Run's text is a substring the native path never materializes.
+        private static bool IsZeroWidth(string text, int offset, int length)
+        {
+            return length == 1
+                && (text[offset] == Icons.ZWNJ[0] || text[offset] == Icons.LTR[0] || text[offset] == Icons.RTL[0]);
         }
     }
 }

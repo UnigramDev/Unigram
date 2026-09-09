@@ -255,6 +255,10 @@ namespace Telegram.Controls
         // Null until the text actually carries one of these, which for most blocks is never.
         private List<Hyperlink> _links;
         private List<IXamlDirectObject> _dates;
+
+        // The offset table entry each of _dates was emitted as, so a tick can shift the table
+        // from it without looking for the run in the tree.
+        private List<int> _dateOffsets;
         private List<TextStyleSpoiler> _spoilers;
 
         // Offset and Length are in the paragraph's SOURCE text, so they never go stale. The
@@ -882,6 +886,7 @@ namespace Telegram.Controls
                 _dates.Clear();
             }
 
+            _dateOffsets?.Clear();
             _spoilers?.Clear();
 
             if (_effectiveViewportChanged != null)
@@ -1198,6 +1203,9 @@ namespace Telegram.Controls
         // of the next plain run instead of in a Run of its own - see the emoji branch in SetText.
         private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, int offset, int length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, string prefix = null)
         {
+            AddRunOffset(prefix != null ? prefix.Length + length : length,
+                prefix == null && IsZeroWidth(text, offset, length));
+
             if (_pools != null && _pools.TryTakeRun(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, prefix == null
@@ -1220,6 +1228,8 @@ namespace Telegram.Controls
 
         private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
         {
+            AddRunOffset(text.Length, IsZeroWidth(text));
+
             if (_pools != null && _pools.TryTakeRun(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
@@ -1356,6 +1366,7 @@ namespace Telegram.Controls
             }
 
             Recycle(direct);
+            ClearOffsets();
         }
 
         public void SetText(IClientService clientService, StyledText styled, double fontSize = 0)
@@ -1399,7 +1410,7 @@ namespace Telegram.Controls
             _fontSize = fontSize;
             _first = rangeStart;
             _last = rangeEnd;
-            InvalidateContentLength();
+            BeginOffsets();
             _cursorResolved = false;
             _origin = styled != null && rangeStart <= rangeEnd && rangeStart < styled.Paragraphs.Count
                 ? styled.Paragraphs[rangeStart].Offset
@@ -1457,7 +1468,9 @@ namespace Telegram.Controls
                         inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
                     }
 
+                    OpenBlock();
                     _fastRun = GetOrCreateRun(direct, inlines, styled.Paragraphs[rangeStart].Text, direction, TextStyle.None, null, fontSize);
+                    CloseBlock();
 
                     if (paragraph != null)
                     {
@@ -1483,6 +1496,11 @@ namespace Telegram.Controls
                     }
 
                     direct.SetStringProperty(_fastRun, XamlPropertyIndex.Run_Text, styled.Paragraphs[rangeStart].Text);
+
+                    // The tree keeps the shape it had, so only the one run's length moved.
+                    OpenBlock();
+                    AddRunOffset(styled.Paragraphs[rangeStart].Text.Length, false);
+                    CloseBlock();
                 }
 
                 // Plain single run: rendered index == styled offset shifted by _origin, which
@@ -1499,6 +1517,7 @@ namespace Telegram.Controls
                     RegisterLayoutChanged();
                 }
 
+                EndOffsets();
                 return;
             }
 
@@ -1529,6 +1548,8 @@ namespace Telegram.Controls
 
                 // Clear any highlighters left over from previous content.
                 ApplyHighlighters();
+
+                EndOffsets();
                 return;
             }
 
@@ -1610,6 +1631,8 @@ namespace Telegram.Controls
                     inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
                 }
 
+                OpenBlock();
+
                 // TODO: we use DetectFromContent, but this could be used too:
                 //direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, part.Direction switch
                 //{
@@ -1673,9 +1696,11 @@ namespace Telegram.Controls
 
                                 MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
 
+                                OpenInline(true);
                                 GetOrCreateRun(direct, hyperlink.Inlines, data, direction, Native.TextStyle.None, Theme.MonospaceFontFamily, partFontSize);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
+                                CloseInline(true);
 
                                 direct.AddToCollection(inlines, hyperlink.Native);
                             }
@@ -1691,7 +1716,7 @@ namespace Telegram.Controls
 
                                 if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
                                 {
-                                    ProcessCodeBlock(direct, inlines, placeholder, data, preCode.Language, generation);
+                                    ProcessCodeBlock(direct, inlines, placeholder, data, preCode.Language, generation, i - _first);
                                 }
                             }
                         }
@@ -1712,6 +1737,9 @@ namespace Telegram.Controls
                         // from - so the range is written now and measured at the end.
                         var spoilerRange = -1;
                         var spoilerStart = offset;
+
+                        var parentLink = false;
+                        var parentOpened = false;
 
                         if (paragraph != null)
                         {
@@ -1752,6 +1780,7 @@ namespace Telegram.Controls
 
                                     ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground, UnderlineStyle.None, HyperlinkFontWeight);
 
+                                    parentLink = true;
                                     parent = hyperlink.Native;
                                     parentInlines = hyperlink.Inlines;
                                 }
@@ -1773,6 +1802,7 @@ namespace Telegram.Controls
 
                                     MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
 
+                                    parentLink = true;
                                     parent = hyperlink.Native;
                                     parentInlines = hyperlink.Inlines;
                                 }
@@ -1919,6 +1949,7 @@ namespace Telegram.Controls
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                            AddObjectOffset();
                             pending = Icons.ZWNJ;
                             MapObject(part.Offset + entity.Offset, entity.Length); // alt-text
                             offset++;
@@ -1927,6 +1958,12 @@ namespace Telegram.Controls
                         {
                             entity.Update(part);
 
+                            if (parent != null && !parentOpened)
+                            {
+                                parentOpened = true;
+                                OpenInline(parentLink);
+                            }
+
                             var run = GetOrCreateRun(direct, parentInlines, entity.FormattedText, direction, entity.Flags, null, partFontSize);
                             Map(part.Offset + entity.Offset, entity.FormattedText.Length, entity.Length); // displayed date <-> original
                             offset += entity.FormattedText.Length;
@@ -1934,6 +1971,7 @@ namespace Telegram.Controls
                             if (date.FormattingType is DateTimeFormattingTypeRelative)
                             {
                                 (_dates ??= new List<IXamlDirectObject>()).Add(run);
+                                (_dateOffsets ??= new List<int>()).Add(_offsets != null ? _offsets.Count - 1 : -1);
 
                                 // Map was called for this date immediately above, so its segment
                                 // is the last one - that is what a tick has to shift from.
@@ -1969,12 +2007,19 @@ namespace Telegram.Controls
                                 }
 
                                 direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                                AddObjectOffset();
                                 GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize);
                                 MapObject(part.Offset + entity.Offset, entity.Length); // expression
                                 offset++;
                             }
                             else
                             {
+                                if (parent != null && !parentOpened)
+                                {
+                                    parentOpened = true;
+                                    OpenInline(parentLink);
+                                }
+
                                 GetOrCreateRun(direct, parentInlines, mathematicalExpression.Expression, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize);
                                 Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                                 offset += entity.Length;
@@ -2000,6 +2045,7 @@ namespace Telegram.Controls
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                            AddObjectOffset();
                             GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize);
                             MapObject(part.Offset + entity.Offset, entity.Length); // button text
                             offset++;
@@ -2010,6 +2056,12 @@ namespace Telegram.Controls
                         }
                         else
                         {
+                            if (parent != null && !parentOpened)
+                            {
+                                parentOpened = true;
+                                OpenInline(parentLink);
+                            }
+
                             GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize);
                             Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                             offset += entity.Length;
@@ -2023,6 +2075,13 @@ namespace Telegram.Controls
 
                         if (parent != null)
                         {
+                            if (!parentOpened)
+                            {
+                                OpenInline(parentLink);
+                            }
+
+                            CloseInline(parentLink);
+
                             direct.AddToCollection(inlines, parent);
                         }
                     }
@@ -2042,6 +2101,8 @@ namespace Telegram.Controls
                     GetOrCreateRun(direct, inlines, pending, direction, Native.TextStyle.None, null, partFontSize);
                     pending = null;
                 }
+
+                CloseBlock();
 
                 if (paragraph != null)
                 {
@@ -2140,6 +2201,8 @@ namespace Telegram.Controls
             {
                 RegisterLayoutChanged();
             }
+
+            EndOffsets();
         }
 
         private UIElement CreateInlineButton(IClientService clientService, InlineButton button)
@@ -2243,6 +2306,7 @@ namespace Telegram.Controls
             if (delta != 0)
             {
                 ShiftRenderedSpace(segment, delta);
+                ShiftOffsets(element, delta);
             }
 
             RegisterLayoutChanged();
@@ -2273,9 +2337,6 @@ namespace Telegram.Controls
                 var next = map[i];
                 map[i] = new IndexSegment(next.Rendered + delta, next.Styled, next.RenderedLength, next.StyledLength);
             }
-
-            // The date's Run changed length, so every TextPointer offset after it moved.
-            InvalidateContentLength();
 
             ShiftRanges(_spoiler, from, delta);
             ShiftRanges(_marked, from, delta);
@@ -2586,7 +2647,7 @@ namespace Telegram.Controls
 
         #region PreCode
 
-        private async void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IXamlDirectObject placeholder, string text, string language, int generation)
+        private async void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IXamlDirectObject placeholder, string text, string language, int generation, int block)
         {
             try
             {
@@ -2605,11 +2666,12 @@ namespace Telegram.Controls
                     }
 
                     direct.ClearCollection(inlines);
-                    ProcessCodeBlock(direct, inlines, tokens.Children);
 
-                    // The inline tree changed (placeholder -> syntax spans); the cached
-                    // selection length must be recomputed on next access.
-                    InvalidateContentLength();
+                    // The paragraph's inlines are replaced wholesale (placeholder -> syntax
+                    // spans), so its entries in the offset table are rebuilt with them.
+                    BeginSplice(block);
+                    ProcessCodeBlock(direct, inlines, tokens.Children);
+                    EndSplice();
                 }
             }
             catch
@@ -2652,7 +2714,10 @@ namespace Telegram.Controls
                         direct.SetEnumProperty(span, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
                     }
 
+                    OpenInline(false);
                     ProcessCodeBlock(direct, collection, syntax.Children);
+                    CloseInline(false);
+
                     direct.AddToCollection(inlines, span);
                 }
                 else if (token is TextToken text)
@@ -3003,6 +3068,7 @@ namespace Telegram.Controls
             // that is left, and it has to happen: ClearEntities would otherwise hand a disposed
             // handle to RelativeDateService.Unsubscribe.
             _dates?.Clear();
+            _dateOffsets?.Clear();
 
             // Shared by the blocks of one chat, so this runs once per block - the queues are
             // emptied by the first pass and the rest see nothing to do.
