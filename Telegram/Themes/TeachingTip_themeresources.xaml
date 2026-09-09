@@ -65,19 +65,17 @@
                                 Grid.Column="1"
                                 Grid.RowSpan="3"
                                 Grid.ColumnSpan="3">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ContentPresenter x:Name="ContentPresenter"
-                                                  Margin="{StaticResource TeachingTipContentMargin}"
-                                                  Content="{TemplateBinding Content}"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  Foreground="{TemplateBinding Foreground}"
-                                                  FontSize="{TemplateBinding FontSize}"
-                                                  FontWeight="{TemplateBinding FontWeight}"
-                                                  FontStyle="{TemplateBinding FontStyle}"
-                                                  FontFamily="{TemplateBinding FontFamily}"
-                                                  FontStretch="{TemplateBinding FontStretch}" />
-                            </ScrollViewer>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Margin="{StaticResource TeachingTipContentMargin}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontWeight="{TemplateBinding FontWeight}"
+                                              FontStyle="{TemplateBinding FontStyle}"
+                                              FontFamily="{TemplateBinding FontFamily}"
+                                              FontStretch="{TemplateBinding FontStretch}" />
                         </Border>
 
                         <!-- Row, column, points and alignment are all set by UpdateTail. -->

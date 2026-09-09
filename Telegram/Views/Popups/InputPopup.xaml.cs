@@ -391,7 +391,7 @@ namespace Telegram.Views.Popups
                 ActionButtonContent = primary,
                 ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 CloseButtonContent = secondary,
-                PreferredPlacement = target != null ? ToastPlacementMode.Top : ToastPlacementMode.Center,
+                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,7 +104,7 @@ namespace Telegram.Views.Stars.Popups
             var popup = new TeachingTipEx
             {
                 Content = content,
-                PreferredPlacement = ToastPlacementMode.Top,
+                PreferredPlacement = TeachingTipPlacementMode.Top,
                 MinWidth = 0,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
