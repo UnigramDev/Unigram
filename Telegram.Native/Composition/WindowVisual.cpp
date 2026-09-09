@@ -203,20 +203,13 @@ namespace winrt::Telegram::Native::Composition::implementation
         return windowId;
     }
 
-    winrt::Telegram::Native::Composition::WindowVisual WindowVisual::Create(WindowId windowId, float rasterizationScale)
+    winrt::Telegram::Native::Composition::WindowVisual WindowVisual::Create(WindowId windowId, WindowId destinationId, Compositor compositor, float rasterizationScale)
     {
-        const static auto lDwmpQueryWindowThumbnailSourceSize = (DwmpQueryWindowThumbnailSourceSize)GetProcAddress(GetDwmApi(), MAKEINTRESOURCEA(162));
         const static auto lDwmpCreateSharedThumbnailVisual = (DwmpCreateSharedThumbnailVisual)GetProcAddress(GetDwmApi(), MAKEINTRESOURCEA(147));
         const static auto GetParent = (pGetParent)GetProcAddress(GetUser32(), "GetParent");
 
-        Compositor compositor = Window::Current().Compositor();
-        CoreWindow coreWnd = Window::Current().CoreWindow();
-
-        winrt::com_ptr<ICoreWindowInterop> interop = coreWnd.as<ICoreWindowInterop>();
-
-        HWND destination;
         HWND source = (HWND)windowId.Value;
-        interop->get_WindowHandle(&destination);
+        HWND destination = (HWND)destinationId.Value;
 
         HRESULT result;
 

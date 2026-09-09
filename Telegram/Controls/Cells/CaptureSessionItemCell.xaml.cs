@@ -41,7 +41,9 @@ namespace Telegram.Controls.Cells
 
                 if (item is WindowCaptureSessionItem window)
                 {
-                    _windowVisual = WindowVisual.Create(window.WindowId, (float)XamlRoot.RasterizationScale);
+                    var destination = new WindowId { Value = (ulong)WindowContext.GetWindowHandle(XamlRoot).ToInt64() };
+
+                    _windowVisual = WindowVisual.Create(window.WindowId, destination, BootStrapper.Current.Compositor, (float)XamlRoot.RasterizationScale);
                     _displayVisual = null;
 
                     if (_windowVisual != null)
