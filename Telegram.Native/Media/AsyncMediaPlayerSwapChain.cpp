@@ -14,6 +14,38 @@
 
 namespace winrt::Telegram::Native::Media::implementation
 {
+    namespace
+    {
+        // Held whenever this class touches the device context or swap chain that libvlc's vout
+        // and decoder threads are also driving. A null mutex means Create() never got one, and
+        // then this is what the class did before: no locking, rather than a deadlock.
+        struct ContextLock
+        {
+            explicit ContextLock(HANDLE mutex) noexcept
+                : m_mutex(mutex)
+            {
+                if (m_mutex != nullptr)
+                {
+                    WaitForSingleObjectEx(m_mutex, INFINITE, FALSE);
+                }
+            }
+
+            ~ContextLock() noexcept
+            {
+                if (m_mutex != nullptr)
+                {
+                    ReleaseMutex(m_mutex);
+                }
+            }
+
+            ContextLock(const ContextLock&) = delete;
+            ContextLock& operator=(const ContextLock&) = delete;
+
+        private:
+            HANDLE m_mutex;
+        };
+    }
+
     AsyncMediaPlayerSwapChain::AsyncMediaPlayerSwapChain(bool create)
     {
         if (create)
@@ -47,6 +79,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
         try
         {
+            ContextLock lock(m_contextMutex);
+
             winrt::com_ptr<ID3D11Texture2D> backBuffer;
             winrt::check_hresult(m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.put())));
 
@@ -159,6 +193,35 @@ namespace winrt::Telegram::Native::Media::implementation
                 throw std::runtime_error("Could not create Direct3D11 device: No compatible adapter found.");
             }
 
+            // Everything below is what libvlc requires of a host that supplies its own device --
+            // see its reference integration, doc/libvlc/d3d11_swapr.cpp. The vout and the DXVA
+            // decoder each run on their own thread and drive this context, so it needs the
+            // runtime lock, and it needs a mutex published where libvlc's modules look for it:
+            // d3d11va reads the handle back off the context and hands it to ffmpeg as the lock
+            // around DecoderBeginFrame/SubmitDecoderBuffers/DecoderEndFrame. Without it libvlc
+            // logs "No mutex found to lock the decoder" and that sequence runs unguarded.
+            stage = L"ID3D11Multithread";
+
+            winrt::com_ptr<ID3D11Multithread> multithread;
+            winrt::check_hresult(m_d3d11Device->QueryInterface(IID_PPV_ARGS(multithread.put())));
+            multithread->SetMultithreadProtected(TRUE);
+
+            stage = L"CreateMutexEx";
+
+            if (m_contextMutex != nullptr)
+            {
+                CloseHandle(m_contextMutex);
+                m_contextMutex = nullptr;
+            }
+
+            m_contextMutex = CreateMutexEx(nullptr, nullptr, 0, SYNCHRONIZE);
+            winrt::check_bool(m_contextMutex != nullptr);
+
+            stage = L"SetPrivateData";
+
+            winrt::check_hresult(m_deviceContext->SetPrivateData(CONTEXT_MUTEX_GUID,
+                sizeof(m_contextMutex), &m_contextMutex));
+
             stage = L"IDXGIDevice1";
 
             winrt::com_ptr<IDXGIDevice1> device;
@@ -265,6 +328,14 @@ namespace winrt::Telegram::Native::Media::implementation
         if (m_d3d11Device)
         {
             m_d3d11Device = nullptr;
+        }
+
+        // Last, once nothing can still be waiting on it: libvlc reads the handle but never owns
+        // it, so releasing the context does not release this.
+        if (m_contextMutex != nullptr)
+        {
+            CloseHandle(m_contextMutex);
+            m_contextMutex = nullptr;
         }
 
         m_loaded = false;

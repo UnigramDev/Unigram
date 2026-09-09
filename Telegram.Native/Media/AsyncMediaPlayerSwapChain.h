@@ -76,6 +76,7 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::com_ptr<IDXGISwapChain2> m_swapChain2;
         winrt::com_ptr<IDXGISwapChain1> m_swapChain;
         winrt::com_ptr<ID3D11DeviceContext> m_deviceContext;
+        HANDLE m_contextMutex{ nullptr };
 
         bool m_loaded = false;
 
@@ -90,6 +91,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
         static constexpr GUID SWAPCHAIN_HEIGHT_GUID = {
             0x6ea976a0, 0x9d60, 0x4bb7, {0xa5, 0xa9, 0x7d, 0xd1, 0x18, 0x7f, 0xc9, 0xbd}
+        };
+
+        // Set on the device context rather than the swap chain: it is the context that libvlc's
+        // decoder, filters and vout share with us.
+        static constexpr GUID CONTEXT_MUTEX_GUID = {
+            0x472e8835, 0x3f8e, 0x4f93, {0xa0, 0xcb, 0x25, 0x79, 0x77, 0x6c, 0xed, 0x86}
         };
     };
 }
