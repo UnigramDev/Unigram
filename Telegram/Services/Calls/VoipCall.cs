@@ -708,6 +708,8 @@ namespace Telegram.Services.Calls
 
             _devices.Changed += OnDeviceChanged;
 
+            StartMemorySampling();
+
             _coordinator?.TryNotifyMutedChanged(manager.IsMuted);
         }
 
@@ -799,6 +801,8 @@ namespace Telegram.Services.Calls
 
             _devices.Changed -= OnDeviceChanged;
             _devices.Stop();
+
+            StopMemorySampling();
 
             lock (_managerLock)
             {

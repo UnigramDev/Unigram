@@ -142,6 +142,8 @@ namespace Telegram.Services.Calls
 
             _devices.Changed += OnDeviceChanged;
 
+            StartMemorySampling();
+
             var descriptor = new VoipGroupDescriptor
             {
                 IsConference = false,
@@ -292,6 +294,8 @@ namespace Telegram.Services.Calls
 
             _devices.Changed += OnDeviceChanged;
 
+            StartMemorySampling();
+
             var descriptor = new VoipGroupDescriptor
             {
                 IsConference = true,
@@ -351,6 +355,8 @@ namespace Telegram.Services.Calls
             _isScheduled = false;
 
             _devices.Changed += OnDeviceChanged;
+
+            StartMemorySampling();
 
             var descriptor = new VoipGroupDescriptor
             {
@@ -1198,6 +1204,8 @@ namespace Telegram.Services.Calls
 
             _devices.Changed -= OnDeviceChanged;
             _devices.Stop();
+
+            StopMemorySampling();
 
             // This runs on TDLib's update thread, not the UI thread, which is the whole
             // reason the lock exists: the UI thread calls into the manager meanwhile.
