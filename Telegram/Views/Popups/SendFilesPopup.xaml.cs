@@ -6,7 +6,6 @@
 //
 
 using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

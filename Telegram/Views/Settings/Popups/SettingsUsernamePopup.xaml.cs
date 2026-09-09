@@ -5,13 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.ViewModels.Settings;
-using Telegram.Views.Host;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

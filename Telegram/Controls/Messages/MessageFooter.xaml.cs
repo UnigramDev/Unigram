@@ -6,7 +6,6 @@
 //
 
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;

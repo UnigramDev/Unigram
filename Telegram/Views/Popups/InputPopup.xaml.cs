@@ -5,14 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
-using Telegram.Views.Host;
 using Windows.Globalization.NumberFormatting;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;

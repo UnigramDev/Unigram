@@ -693,7 +693,7 @@
                                             <TextBlock Text="{x:Bind Name}"
                                                        TextWrapping="NoWrap"
                                                        TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{x:Bind TotalBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                            <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                                        VerticalAlignment="Bottom"
