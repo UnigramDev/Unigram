@@ -562,10 +562,21 @@ namespace Telegram.Controls.Cells
         {
             thumbnail = null;
 
+            var draft = topic.DraftMessage;
             var topMessage = topic.LastMessage;
-            if (topMessage != null)
+
+            if (draft != null)
             {
-                return ChatCell.UpdateBriefLabel(topMessage.Content, topMessage.IsOutgoing, topic.DraftMessage, false, out thumbnail);
+                return draft.Content switch
+                {
+                    DraftMessageContentText draftText => draftText.Text,
+                    DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
+                    _ => string.Empty.AsFormattedText()
+                };
+            }
+            else if (topMessage != null)
+            {
+                return ChatCell.UpdateBriefLabel(topMessage.Content, topMessage.IsOutgoing, false, out thumbnail);
             }
 
             return string.Empty.AsFormattedText();

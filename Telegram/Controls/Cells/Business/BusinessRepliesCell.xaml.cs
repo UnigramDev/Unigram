@@ -52,7 +52,7 @@ namespace Telegram.Controls.Cells.Business
             var message = replies.FirstMessage;
             if (message != null)
             {
-                CustomEmojiIcon.Add(BriefText, BriefLabel.Inlines, clientService, ChatCell.UpdateBriefLabel(message.Content, true, null, false, out MinithumbnailId thumbnail), "InfoCustomEmojiStyle");
+                CustomEmojiIcon.Add(BriefText, BriefLabel.Inlines, clientService, ChatCell.UpdateBriefLabel(message.Content, true, false, out MinithumbnailId thumbnail), "InfoCustomEmojiStyle");
                 UpdateMinithumbnail(thumbnail);
             }
 

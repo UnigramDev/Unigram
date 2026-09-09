@@ -296,7 +296,7 @@ namespace Telegram.Controls.Cells
 
                 TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-                UpdateBriefLabel(null, UpdateBriefLabel(message.Content, message.IsOutgoing, null, false, out MinithumbnailId thumbnail));
+                UpdateBriefLabel(null, UpdateBriefLabel(message.Content, message.IsOutgoing, false, out MinithumbnailId thumbnail));
                 UpdateMinithumbnail(thumbnail);
             }
         }
@@ -351,7 +351,7 @@ namespace Telegram.Controls.Cells
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-            UpdateBriefLabel(chat, UpdateBriefLabel(message.Content, message.IsOutgoing, null, false, out MinithumbnailId thumbnail));
+            UpdateBriefLabel(chat, UpdateBriefLabel(message.Content, message.IsOutgoing, false, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
         }
 
@@ -1651,17 +1651,28 @@ namespace Telegram.Controls.Cells
                 return psa.Text.Replace('\n', ' ').AsFormattedText();
             }
 
+            var draft = chat.DraftMessage;
             var topMessage = chat.LastMessage;
-            if (topMessage != null)
+
+            if (draft != null)
+            {
+                return draft.Content switch
+                {
+                    DraftMessageContentText draftText => draftText.Text,
+                    DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
+                    _ => string.Empty.AsFormattedText()
+                };
+            }
+            else if (topMessage != null)
             {
                 FormattedText text;
                 if (_clientService.TryGetMediaAlbum(chat.Id, topMessage.MediaAlbumId, out MessageAlbumLastMessage album))
                 {
-                    text = UpdateBriefLabel(album, topMessage.IsOutgoing, chat.DraftMessage, false, out thumbnail);
+                    text = UpdateBriefLabel(album, topMessage.IsOutgoing, false, out thumbnail);
                 }
                 else
                 {
-                    text = UpdateBriefLabel(topMessage.Content, topMessage.IsOutgoing, chat.DraftMessage, false, out thumbnail);
+                    text = UpdateBriefLabel(topMessage.Content, topMessage.IsOutgoing, false, out thumbnail);
                 }
 
                 // TODO: this is better than nothing, although it's not the best 
@@ -1695,19 +1706,9 @@ namespace Telegram.Controls.Cells
             return string.Empty.AsFormattedText();
         }
 
-        public static FormattedText UpdateBriefLabel(MessageContent content, bool outgoing, DraftMessage draft, bool forceEmoji, out MinithumbnailId thumbnail)
+        public static FormattedText UpdateBriefLabel(MessageContent content, bool outgoing, bool forceEmoji, out MinithumbnailId thumbnail)
         {
             thumbnail = null;
-
-            if (draft != null)
-            {
-                return draft.Content switch
-                {
-                    DraftMessageContentText draftText => draftText.Text,
-                    DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
-                    _ => string.Empty.AsFormattedText()
-                };
-            }
 
             static FormattedText Text(string text)
             {
