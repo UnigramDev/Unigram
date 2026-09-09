@@ -61,7 +61,7 @@ namespace Telegram.Collections
                     ? Phase.SearchStickers
                     : Phase.None;
 
-                var response = await _clientService.SendAsync(new GetStickers(_type, _query, 1000, _chatId));
+                var response = await _clientService.SendAsync(new GetStickers(_type, _query, 50, _chatId));
                 if (response is Stickers stickers)
                 {
                     foreach (var sticker in stickers.StickersValue)
