@@ -840,6 +840,7 @@
     <Compile Include="Common\Direct2D.cs" />
     <Compile Include="Td\Api\TdExtensions.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
+    <Compile Include="Common\ToggleHelper.cs" />
     <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\TLNavigationService.cs" />
     <Compile Include="Common\TLRootNavigationService.cs" />

@@ -3,6 +3,7 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:settings="using:Telegram.Services.Settings"
                   xmlns:local="using:Telegram.Views"
@@ -31,7 +32,7 @@
 
                 <controls:HeaderedControl Header="{CustomResource AutomaticMediaDownload}"
                                           Footer="{CustomResource AutoDownloadAudioInfo}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                               Content="{CustomResource AutoDownloadMedia}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
@@ -74,13 +75,13 @@
                                           x:Load="{x:Bind ViewModel.HasDownloadFolder}"
                                           Header="{CustomResource DownloadPath}"
                                           Footer="{CustomResource TemporaryFolderHint}">
-                    <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.IsDownloadFolderEnabled, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                    <controls:SettingsRadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsDownloadFolderEnabled, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                   Content="{CustomResource TemporaryFolder}"
                                                   GroupName="DownloadFolder" />
                     <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                           Margin="0,0,0,0"
                           Canvas.ZIndex="-1">
-                        <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.IsDownloadFolderEnabled, Mode=TwoWay}"
+                        <controls:SettingsRadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsDownloadFolderEnabled, Mode=TwoWay}"
                                                       Content="{CustomResource DownloadFolder}"
                                                       Description="{x:Bind ViewModel.DownloadFolder, Mode=OneWay}"
                                                       GroupName="DownloadFolder" />
@@ -96,7 +97,7 @@
 
                 <controls:HeaderedControl Header="{CustomResource Streaming}"
                                           Footer="{CustomResource EnableAllStreamingInfo}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
                               Content="{CustomResource EnableStreaming}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>

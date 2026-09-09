@@ -106,7 +106,7 @@
                 <controls:HeaderedControl>
                     <CheckBox Content="{CustomResource SettingsSwitchToNightMode}"
                               Style="{StaticResource SettingsCheckBoxStyle}"
-                              IsChecked="{x:Bind ViewModel.ForceNightMode, Mode=TwoWay}" />
+                              common:ToggleHelper.IsChecked="{x:Bind ViewModel.ForceNightMode, Mode=TwoWay}" />
                     <controls:SettingsButton Content="{CustomResource AutoNightTheme}"
                                              Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
                                              Click="{x:Bind ViewModel.OpenNightMode}"
@@ -224,26 +224,26 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource ChatQuickActions}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToShare, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.SwipeToShare, Mode=TwoWay}"
                               Content="{CustomResource SwipeShare}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToReply, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.SwipeToReply, Mode=TwoWay}"
                               Content="{CustomResource SwipeReply}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToGoBack, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.SwipeToGoBack, Mode=TwoWay}"
                               Content="{CustomResource SwipeGoBack}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource ChatDoubleClickAction}"
                                           Footer="{x:Bind ConvertQuickAction(ViewModel.DoubleClickToReply), Mode=OneWay}">
-                    <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.DoubleClickToReply, Mode=TwoWay}"
+                    <controls:SettingsRadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.DoubleClickToReply, Mode=TwoWay}"
                                                   Content="{CustomResource DoubleClickReply}"
                                                   GroupName="DoubleClick" />
                     <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
-                        <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.DoubleClickToReact, Mode=TwoWay}"
+                        <controls:SettingsRadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.DoubleClickToReact, Mode=TwoWay}"
                                                       Content="{CustomResource DoubleClickReact}"
                                                       MinHeight="46"
                                                       GroupName="DoubleClick"
@@ -257,19 +257,19 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource OtherSettings}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
                               Content="{CustomResource EnableFullScreenGallery}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.UseSystemSpellChecker, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.UseSystemSpellChecker, Mode=TwoWay}"
                               Content="{CustomResource UseSystemSpellChecker}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource ReplaceEmoji}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
                               Content="{CustomResource AdaptiveLayout}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 

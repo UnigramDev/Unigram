@@ -33,10 +33,10 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
-                        <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}"
+                        <controls:SettingsRadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}"
                                                       Content="{CustomResource DisableProxy}"
                                                       GroupName="ProxyType" />
-                        <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.IsSystem, Mode=TwoWay}"
+                        <controls:SettingsRadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsSystem, Mode=TwoWay}"
                                                       Content="{CustomResource UseSystemProxySettings}"
                                                       GroupName="ProxyType" />
                     </controls:HeaderedControl>

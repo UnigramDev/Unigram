@@ -27,10 +27,10 @@
             <ListView.Header>
                 <StackPanel Margin="12,0">
                     <StackPanel>
-                        <RadioButton IsChecked="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}"
+                        <RadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}"
                                      Content="{CustomResource DisableProxy}"
                                      GroupName="ProxyType" />
-                        <RadioButton IsChecked="{x:Bind ViewModel.IsSystem, Mode=TwoWay}"
+                        <RadioButton common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsSystem, Mode=TwoWay}"
                                      Content="{CustomResource UseSystemProxySettings}"
                                      GroupName="ProxyType" />
                     </StackPanel>
