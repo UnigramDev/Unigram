@@ -774,6 +774,13 @@ namespace Telegram.Controls
 
         private void OnBackStackChanged(object sender, EventArgs e)
         {
+            // The template parts do not exist yet, and OnApplyTemplate replays the current
+            // content once they do.
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             if (DetailFrame.Content is HostedPage hosted && hosted.ShowHeader && !string.IsNullOrEmpty(hosted.Title))
             {
                 DetailHeaderPresenter.Text = hosted.Title;
