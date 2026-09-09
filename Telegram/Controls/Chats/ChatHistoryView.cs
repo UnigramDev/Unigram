@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -88,19 +89,61 @@ namespace Telegram.Controls.Chats
             ApplyAnchor();
         }
 
-        internal void ApplyAnchor()
+        // The caller is forwarded rather than recaptured, so the log names the path that wanted the
+        // edge - SetFollowingEnd or the panel loading - and not this method.
+        internal void ApplyAnchor([CallerMemberName] string source = null)
         {
-            SetAnchor(IsFollowingEnd != IsReversed);
+            SetAnchor(IsFollowingEnd != IsReversed, source);
         }
 
-        private void SetAnchor(bool end)
+        /// <summary>
+        /// The single writer of the panel's edge, so the one write that matters can be spotted
+        /// whatever asked for it.
+        /// </summary>
+        /// <remarks>
+        /// The panel elects its tracked element on the first mutation of a run and captures the
+        /// viewport offsets in the units this property chose at that instant, but re-reads the
+        /// property when it measures and again when it arranges. Changing it in between leaves the
+        /// two disagreeing by a viewport, so the panel finds the container it is tracking outside
+        /// the shifted window and recycles it — after which <c>GetTrackedElement</c> returns null at
+        /// arrange, the only <c>Reset</c> on that path is skipped, and tracking never ends. A later
+        /// pass then generates from a dead anchor and fail-fasts in <c>PlaceInValidElements</c>.
+        ///
+        /// So a change is refused while a run is in flight, and only a change: writing the value the
+        /// panel already holds cannot make anything disagree. The intent is not lost, it stays in
+        /// <see cref="IsFollowingEnd"/>, and the next run's first mutation applies it.
+        ///
+        /// The window this has to stay out of is bounded by the panel's own arrange, and
+        /// <see cref="_anchorCount"/> brackets it on both ends: <see cref="PrepareAnchor"/> runs just
+        /// before the mutation reaches the list, so it opens before the election, and
+        /// <see cref="InvalidateAnchor"/> runs on <c>LayoutUpdated</c>, so it closes after the
+        /// arrange. Nothing else can elect — <c>SynchronizedList</c> raises <c>Inserting</c> and
+        /// <c>Removing</c> immediately before every insertion and removal, drops moves and replaces
+        /// outright, and applies a reset as a single <c>Reset</c>, which the panel does not track.
+        /// </remarks>
+        private void SetAnchor(bool end, [CallerMemberName] string source = null)
         {
-            if (ItemsPanelRoot is ItemsStackPanel panel)
+            if (ItemsPanelRoot is not ItemsStackPanel panel)
             {
-                panel.ItemsUpdatingScrollMode = end
-                    ? ItemsUpdatingScrollMode.KeepLastItemInView
-                    : ItemsUpdatingScrollMode.KeepItemsInView;
+                return;
             }
+
+            var mode = end
+                ? ItemsUpdatingScrollMode.KeepLastItemInView
+                : ItemsUpdatingScrollMode.KeepItemsInView;
+
+            if (panel.ItemsUpdatingScrollMode == mode)
+            {
+                return;
+            }
+
+            if (_anchorCount > 0)
+            {
+                Logger.Warning($"{source} refused: would change the edge to {mode} with {_anchorCount} mutations in flight");
+                return;
+            }
+
+            panel.ItemsUpdatingScrollMode = mode;
         }
 
         /// <summary>
@@ -185,9 +228,7 @@ namespace Telegram.Controls.Chats
             var above = index <= _anchorIndex;
             var end = IsFollowingEnd ? !IsReversed : above;
 
-            panel.ItemsUpdatingScrollMode = end
-                ? ItemsUpdatingScrollMode.KeepLastItemInView
-                : ItemsUpdatingScrollMode.KeepItemsInView;
+            SetAnchor(end);
 
             if (_anchorCount++ == 0)
             {
