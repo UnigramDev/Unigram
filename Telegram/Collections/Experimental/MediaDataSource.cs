@@ -357,9 +357,9 @@ namespace Telegram.Collections
                     messages.Add(new MessageWithOwner(_clientService, foundChatMessages.Messages[i]));
                 }
             }
-            else
+            else if (response is Error error)
             {
-                Logger.Info(response);
+                Logger.Info(string.Format("{0} {1}", error.Code, error.Message));
             }
 
             return new ItemCacheRange<MessageWithOwner>(position.FirstIndex, messages.Count, messages);
