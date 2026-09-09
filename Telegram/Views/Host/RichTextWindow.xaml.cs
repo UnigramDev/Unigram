@@ -118,6 +118,24 @@ namespace Telegram.Views.Host
         {
             await View.EnsureCoreWebView2Async();
 
+            // EnsureCoreWebView2Async doesn't throw when the environment can't be created - the WebView2
+            // runtime being absent is the usual reason: WebView2 swallows the error, reports it through
+            // CoreWebView2Initialized and leaves CoreWebView2 null, having put its own "download the
+            // runtime" message in the control. Nothing below can work, so uncover that message and stop:
+            // the chrome would otherwise sit over it with every button reaching a null CoreWebView2.
+            if (View.CoreWebView2 == null)
+            {
+                foreach (var child in LayoutRoot.Children)
+                {
+                    if (child != View)
+                    {
+                        child.Visibility = Visibility.Collapsed;
+                    }
+                }
+
+                return;
+            }
+
             _state = new RichEditorState();
             _commands = new RichEditorCommands(View.CoreWebView2);
 
