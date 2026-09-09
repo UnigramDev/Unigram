@@ -281,3 +281,125 @@ direction, because the row is gone by the time the shift is animated.
   and where the index bookkeeping was demonstrably wrong before.
 - `ViewChanging` now only assigns `ScrollingDirection`, which nothing reads, and `OnSizeChanged`
   calls it for no remaining reason. Left alone rather than widening the diff.
+
+---
+
+## First run — the drift, and what it cost
+
+Fela: *"the anchoring drifts a lot when scrolling up, it jumps down of a viewport or so at times
+when new messages are loaded"*, with the guess that it happens once `Count > 200` and items are
+removed from the bottom. It does, and the guess names the trigger exactly.
+
+**One anchor per layout pass, not per mutation.** `PrepareAnchor` answers for every mutation, but
+`ItemsStackPanel` reads `ItemsUpdatingScrollMode` when it measures, so a run of mutations with no
+layout between them gets a single answer — whichever the last one wrote. `ChatView`'s own
+`ItemsPanelRoot_LayoutUpdated` already reads the bit that way for `_messagesShift`, one value for
+the whole accumulated batch. That does not invalidate the per-mutation framing of Task 4, but it
+does bound it: the batch is the unit, and the writers inside one have to agree.
+
+`LoadNextSliceAsync` made them disagree. A backward load was 24 inserts at index 0 — above the
+viewport, so end-anchored — followed by ~24 `RemoveAt(Count - 1)` trimming back to 200, below the
+viewport, so start-anchored, and last. The whole batch therefore anchored to the start and the
+prepended height went uncompensated. `HistoryLimit` is 24, which at 40-60 DIPs a row is the
+viewport Fela saw it jump by. It only starts past 200 items, about eight scroll-ups in, which is
+why it is intermittent. Forward loads have the mirror shape (append at the end, trim from index 0)
+and would yank the view to the bottom instead.
+
+Two changes:
+
+- **The trim moved to before the request** (`DialogViewModel.cs`, right after the `fromMessageId`
+  guard, threshold `Count + HistoryLimit > 200` so the cap after the load is unchanged). The await
+  is what separates the two batches; each is then homogeneous, and the trim's removals are far
+  outside the viewport on their own frame. The `IsNewestSliceLoaded`/`IsOldestSliceLoaded` reset
+  moved with it and stays correct even if the response comes back empty — the rows are gone either
+  way. The cost is trimming on speculation: an empty response drops 24 rows for nothing, at the far
+  end of a 200-row history.
+- **`_anchorEnd` latching within a batch** — proposed, **not committed**, and still not in the tree.
+  Once a mutation lands at or above the first visible index the batch would be end-anchored and a
+  later one below the viewport could not take it back: uncompensated content above moves what the
+  user is reading, while a mutation below only fails to be absorbed. `IsFollowingEnd` would stay
+  assigned rather than latched, being the one term that can legitimately change between two
+  mutations of a batch that spans frames. Reordering the trim removed the batch that made this
+  visible, so it is an open question rather than a known bug; see the second run below for how to
+  tell.
+
+Still open from the list above: the 8 DIP threshold and tall messages, both untouched.
+
+### The other end of the same hole
+
+Fela, straight after: *"the same should happen on UpdateNewMessage, otherwise a chat will keep
+increasing forever when receiving messages without scrolling up"*. Right — the trim only ever ran
+on a slice load, so a chat left open at the bottom grew for as long as messages arrived.
+
+`TrimHistory(direction, room)` in `DialogViewModel.cs` is now the one implementation, and
+`HistoryWindow` the one 200. `InsertMessage` — the funnel for every message that joins the newest
+slice, incoming and sent alike — calls it through `TrimHistoryAfterInsert`, which adds the two
+conditions that make it safe:
+
+- **Only while the list follows the end.** The trim runs in the same layout pass as the insert, so
+  the two share one anchor. While following, both want the end and nothing moves. While the user is
+  reading above, the removal at index 0 is above the viewport and the insert below it, which is the
+  disagreement this whole note is about — so it is simply not trimmed there, and the growth is
+  bounded by how long the user reads before returning to the end, when the next message trims the
+  backlog in one go.
+- **Never for scheduled messages.** That list is the whole thing rather than a window into one, and
+  nothing would load a trimmed one back.
+
+`TrimHistoryAfterInsert` lives in `DialogViewModel.cs` rather than at the call site because
+`PanelScrollingDirection` is `Windows.UI.Xaml.Controls`, which `DialogViewModel.Handle.cs` does not
+import — not worth widening its usings for one call.
+
+---
+
+## Second run — following the end of the window instead of the end of the chat
+
+Fela: *"when scrolling down (from old history to new history) the scroll stays attached to the end
+instead of moving to the top, causing tons of pages to be loaded and rendered"*, and *"this happens
+when scrolling fast towards the bottom"*.
+
+`UpdateFollowingEnd` asked only where the offset was, never whether there was anything left to load
+below it. A fast scroll outruns the loader and comes to rest at the bottom of the *loaded window*,
+which is a paging boundary and not the end of the chat — so `IsFollowingEnd` latched true there.
+From that point every mutation was end-anchored, including the forward slice's own append: each
+page pulled the view onto its last message, `CheckContinueLoading` saw `distanceFromBottom ≈ 0`,
+and the list raced to the present a page at a time, measuring and realising all of them. The
+scroll mode it replaced could not do this — `LoadNextSliceAsync` set `KeepItemsInView` by hand
+before `RawAddRange`, so an append never moved the view.
+
+The term was always meant to be "the user is following the conversation", and there is no
+conversation to follow while the newest slice is missing: `InsertMessage` drops an arriving message
+outright unless `IsNewestSliceLoaded == true`. So `UpdateFollowingEnd` now requires it, and the
+offset test only decides the case where it holds. `IsNewestSliceLoaded` rather than
+`HasMoreItemsAtBottom`, which names a visual edge and inverts in the saved-messages tab, where
+following the end still means following the newest message.
+
+Sampling on `ViewChanged` alone is then not enough: the load that makes the newest slice available
+lands without the view having moved, so nothing would ask again and the list would stop following
+the end just as it arrived there. `LoadNextSliceAsync` re-samples in its forward branch.
+
+`SetFollowingEnd` is deliberately left unguarded — it is the explicit form, and navigation calls it
+before anything is loaded, when `IsNewestSliceLoaded` is still null.
+
+### Logging
+
+There was none. What the log now carries, all at rates bounded by user interaction:
+
+| Where | Line |
+| --- | --- |
+| `BidirectionalIncrementalLoader.LoadItems` | direction, offset/scrollable, item count, loads in flight |
+| `DialogViewModel.LoadNextSliceAsync` | direction, item count, whether the list was following |
+| `DialogViewModel.TrimHistory` | direction, how many rows go |
+| `ChatHistoryView.Set`/`UpdateFollowingEnd` | the new value and the offset it was read at, on change only |
+| `ChatHistoryView.InvalidateAnchor` | one line per batch: how many mutations, from which first-visible index, which edge they ended on, and whether they disagreed on the way |
+
+The last is the one to read first. It is emitted from the layout pass that closes the batch rather
+than per mutation, because the panel reads `ItemsUpdatingScrollMode` once when it measures — the
+batch is the unit that decides where the view lands, and 24 lines per slice load would bury it.
+`disagreed` marks a batch whose writers asked for opposite edges, which is the failure mode the
+trim reordering above was for.
+
+### The latch, still open
+
+`PrepareAnchor` still lets a later mutation in a batch take the edge back from an earlier one — only
+the trim half of the first run's pair was committed (`a7e6c3644`). `disagreed` in the new batch line
+is what answers whether any batch still needs the latch.

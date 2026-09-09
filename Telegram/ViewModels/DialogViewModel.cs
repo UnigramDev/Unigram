@@ -769,6 +769,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            Logger.Info($"{direction}, removing {Items.Count + room - HistoryWindow} of {Items.Count}");
+
             if (direction == PanelScrollingDirection.Backward)
             {
                 IsNewestSliceLoaded = false;
@@ -837,7 +839,7 @@ namespace Telegram.ViewModels
             _loadingSlice = true;
             IsLoading = true;
 
-            System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+            Logger.Info($"{direction}, items: {Items.Count}, following: {HistoryField?.IsFollowingEnd}");
 
             MessageViewModel fromMessage;
             long fromMessageId;
@@ -960,6 +962,11 @@ namespace Telegram.ViewModels
                 else
                 {
                     IsNewestSliceLoaded = replied.IsEndReached || IsEndReached();
+
+                    // The list only follows the end once the newest slice is loaded, and this is
+                    // the one path that makes that true without the view having moved since it
+                    // was last sampled, so nothing else would ask the question again.
+                    HistoryField?.UpdateFollowingEnd();
                 }
             }
 

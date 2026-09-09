@@ -82,6 +82,8 @@ namespace Telegram.Controls.Chats
         /// </remarks>
         public void SetFollowingEnd(bool value)
         {
+            Logger.Info(value);
+
             IsFollowingEnd = value;
             ApplyAnchor();
         }
@@ -101,7 +103,12 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void UpdateFollowingEnd()
+        /// <summary>
+        /// Samples whether the list is following the end. Called once the view has come to rest,
+        /// and once more when a forward load reaches the newest slice: the answer depends on that
+        /// as much as on the offset, and the load lands without the view having moved.
+        /// </summary>
+        internal void UpdateFollowingEnd()
         {
             var scroll = ScrollingHost;
             if (scroll == null)
@@ -109,9 +116,21 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            IsFollowingEnd = IsReversed
-                ? scroll.VerticalOffset < FollowThreshold
-                : scroll.ScrollableHeight - scroll.VerticalOffset < FollowThreshold;
+            // The end of the loaded window is not the end of the chat: outrunning a forward load
+            // comes to rest at a paging boundary, and following that would anchor the page that
+            // lands there to the end, pull the view into it, and so trigger the load after it —
+            // the list races to the present, rendering every page on the way. Nothing can arrive
+            // at the end while the newest slice is missing either, as InsertMessage drops it.
+            var following = ViewModel?.IsNewestSliceLoaded is true
+                && (IsReversed
+                    ? scroll.VerticalOffset < FollowThreshold
+                    : scroll.ScrollableHeight - scroll.VerticalOffset < FollowThreshold);
+
+            if (following != IsFollowingEnd)
+            {
+                IsFollowingEnd = following;
+                Logger.Info($"{following}, offset: {scroll.VerticalOffset:F0}/{scroll.ScrollableHeight:F0}");
+            }
         }
 
         // ItemsStackPanel.FirstVisibleIndex only catches up on the next layout pass, and a slice
@@ -119,8 +138,25 @@ namespace Telegram.Controls.Chats
         // panel is asked once and the index kept up to date by hand until layout runs again.
         private int _anchorIndex = -1;
 
+        // The panel reads ItemsUpdatingScrollMode when it measures, so it is the run of mutations
+        // between two layout passes and not the single mutation that decides where the view lands.
+        // Accumulated rather than logged per mutation: a slice load is 24 of them, and the line
+        // that answers "why did the view jump" is the one describing the whole batch.
+        private int _anchorCount;
+        private int _anchorFirst;
+        private bool _anchorEnd;
+        private bool _anchorDisagreed;
+
         internal void InvalidateAnchor()
         {
+            if (_anchorCount > 0)
+            {
+                Logger.Info($"{_anchorCount} mutations from {_anchorFirst}, anchored to the {(_anchorEnd ? "end" : "start")}{(_anchorDisagreed ? ", disagreed" : string.Empty)}, following: {IsFollowingEnd}");
+
+                _anchorCount = 0;
+                _anchorDisagreed = false;
+            }
+
             _anchorIndex = -1;
         }
 
@@ -147,10 +183,22 @@ namespace Telegram.Controls.Chats
             }
 
             var above = index <= _anchorIndex;
+            var end = IsFollowingEnd ? !IsReversed : above;
 
-            panel.ItemsUpdatingScrollMode = (IsFollowingEnd ? !IsReversed : above)
+            panel.ItemsUpdatingScrollMode = end
                 ? ItemsUpdatingScrollMode.KeepLastItemInView
                 : ItemsUpdatingScrollMode.KeepItemsInView;
+
+            if (_anchorCount++ == 0)
+            {
+                _anchorFirst = _anchorIndex;
+            }
+            else if (end != _anchorEnd)
+            {
+                _anchorDisagreed = true;
+            }
+
+            _anchorEnd = end;
 
             if (above)
             {
@@ -1158,6 +1206,8 @@ namespace Telegram.Controls.Chats
         {
             if (_viewModel == null)
                 return;
+
+            Logger.Info($"{direction}, offset: {_scrollViewer.VerticalOffset:F0}/{_scrollViewer.ScrollableHeight:F0}, items: {_viewModel.Items.Count}, pending: {_activeLoadOperations}");
 
             Interlocked.Increment(ref _activeLoadOperations);
 
