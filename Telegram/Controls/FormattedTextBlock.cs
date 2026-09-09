@@ -735,6 +735,13 @@ namespace Telegram.Controls
                         _cursorResolved = true;
                     }
                 }
+                else
+                {
+                    // Not just the fast path: the answer outlives the text it was resolved for,
+                    // and a recycled block whose new text has no link would keep the previous
+                    // one's true - leaving the I-beam off for good.
+                    _cursorOverLink = false;
+                }
 
                 if (!_cursorOverLink)
                 {
