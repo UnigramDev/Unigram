@@ -29,19 +29,21 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
-                    <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
-                                  TintColor="#2C2C2C"
-                                  TintOpacity="0.15"
-                                  TintLuminosityOpacity="1"
-                                  FallbackColor="#2C2C2C"
-                                  BackgroundSource="Backdrop" />
+                    <!-- TODO: MUX AcrylicBrush doesn't work in XAML Islands
+                               but setting TintLuminosityOpacity on WUX corrupts memory -->
+                    <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
+                                        TintColor="#2C2C2C"
+                                        TintOpacity="0.15"
+                                        TintLuminosityOpacity="1"
+                                        FallbackColor="#2C2C2C"
+                                        BackgroundSource="Backdrop" />
 
-                    <AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
-                                  FallbackColor="#1C1C1C"
-                                  TintColor="#202020"
-                                  TintLuminosityOpacity="0.96"
-                                  TintOpacity="0.5"
-                                  BackgroundSource="Backdrop" />
+                    <media:AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
+                                        FallbackColor="#1C1C1C"
+                                        TintColor="#202020"
+                                        TintLuminosityOpacity="0.96"
+                                        TintOpacity="0.5"
+                                        BackgroundSource="Backdrop" />
 
                     <StaticResource x:Key="SplitMenuFlyoutItemButtonDividerBrush"
                                     ResourceKey="DividerStrokeColorDefaultBrush" />
@@ -74,19 +76,19 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
-                    <AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
-                                  TintColor="#FCFCFC"
-                                  TintOpacity="0.0"
-                                  TintLuminosityOpacity="1"
-                                  FallbackColor="#F9F9F9"
-                                  BackgroundSource="Backdrop" />
+                    <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
+                                        TintColor="#FCFCFC"
+                                        TintOpacity="0.0"
+                                        TintLuminosityOpacity="1"
+                                        FallbackColor="#F9F9F9"
+                                        BackgroundSource="Backdrop" />
 
-                    <AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
-                                  FallbackColor="#EEEEEE"
-                                  TintColor="#F3F3F3"
-                                  TintLuminosityOpacity="0.9"
-                                  TintOpacity="0"
-                                  BackgroundSource="Backdrop" />
+                    <media:AcrylicBrush x:Key="AcrylicToastFillColorBaseBrush"
+                                        FallbackColor="#EEEEEE"
+                                        TintColor="#F3F3F3"
+                                        TintLuminosityOpacity="0.9"
+                                        TintOpacity="0"
+                                        BackgroundSource="Backdrop" />
 
                     <StaticResource x:Key="SplitMenuFlyoutItemButtonDividerBrush"
                                     ResourceKey="DividerStrokeColorDefaultBrush" />
@@ -104,10 +106,10 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <AcrylicBrush x:Name="GlassAcrylicBackground"
-                          TintColor="#FFFFFF"
-                          TintOpacity="0"
-                          FallbackColor="#64FFFFFF" />
+            <media:AcrylicBrush x:Name="GlassAcrylicBackground"
+                                TintColor="#FFFFFF"
+                                TintOpacity="0"
+                                FallbackColor="#64FFFFFF" />
 
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/xxxx -->
             <x:Boolean x:Key="HyperlinkUnderlineVisible">True</x:Boolean>
