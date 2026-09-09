@@ -64,7 +64,10 @@ public:
         /* [out] */ __RPC__deref_out_opt STOWED_EXCEPTION_INFORMATION_V2** exception) = 0;
 };
 
-inline const wchar_t* GetExceptionName(DWORD code)
+// The code goes on when there is no name for it: it is a constant, not a per-crash value, and
+// without it every unnamed code - a C++ throw, a heap corruption, a CLR exception - groups as one
+// "UNKNOWN" and nothing afterwards can tell them apart.
+inline std::wstring GetExceptionName(DWORD code)
 {
     switch (code) {
     case EXCEPTION_ACCESS_VIOLATION: return L"ACCESS_VIOLATION";
@@ -87,7 +90,7 @@ inline const wchar_t* GetExceptionName(DWORD code)
     case EXCEPTION_PRIV_INSTRUCTION: return L"PRIV_INSTRUCTION";
     case EXCEPTION_SINGLE_STEP: return L"SINGLE_STEP";
     case EXCEPTION_STACK_OVERFLOW: return L"STACK_OVERFLOW";
-    default: return L"UNKNOWN";
+    default: return wstrprintf(L"UNKNOWN 0x%08X", code);
     };
 }
 
