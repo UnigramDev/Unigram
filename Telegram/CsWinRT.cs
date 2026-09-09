@@ -33,7 +33,6 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.QuickReplyShortcut>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.PremiumFeature[]))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Views.Stories.Popups.StealthPopup.StealthModeFeature[]))]
 
 // A grouped CollectionViewSource boxes every group on its own to QI it for IBindableIterable, so
 // the group type needs a vtable of its own and not just the collection holding it. TG1001 cannot

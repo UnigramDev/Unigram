@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -16,20 +17,27 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Stories.Popups
 {
+    public abstract class StealthModeFeature
+    {
+
+    }
+
+    public partial class StealthModeFeatureHideRecentViews : StealthModeFeature
+    {
+
+    }
+
+    public partial class StealthModeFeatureHideNextViews : StealthModeFeature
+    {
+
+    }
+
     public sealed partial class StealthPopup : ContentPopup
     {
         private readonly IClientService _clientService;
         private readonly DispatcherTimer _cooldownTimer;
 
         private readonly bool _opening;
-
-        // Internal rather than private so that CsWinRT.cs can name the array in a
-        // GeneratedWinRTExposedExternalType attribute; it is the ItemsSource below.
-        internal enum StealthModeFeature
-        {
-            HideRecentViews,
-            HideNextViews
-        }
 
         public StealthPopup(IClientService clientService, bool opening)
         {
@@ -47,10 +55,10 @@ namespace Telegram.Views.Stories.Popups
                 _cooldownTimer.Start();
             }
 
-            ScrollingHost.ItemsSource = new StealthModeFeature[]
+            ScrollingHost.ItemsSource = new List<StealthModeFeature>
             {
-                StealthModeFeature.HideRecentViews,
-                StealthModeFeature.HideNextViews,
+                new StealthModeFeatureHideRecentViews(),
+                new StealthModeFeatureHideNextViews(),
             };
 
             if (clientService.IsPremium)
@@ -114,12 +122,12 @@ namespace Telegram.Views.Stories.Popups
 
             switch (feature)
             {
-                case StealthModeFeature.HideRecentViews:
+                case StealthModeFeatureHideRecentViews:
                     iconValue = Icons.Rewind524;
                     titleValue = Strings.HideRecentViews;
                     subtitleValue = Strings.HideRecentViewsDescription;
                     break;
-                case StealthModeFeature.HideNextViews:
+                case StealthModeFeatureHideNextViews:
                     iconValue = Icons.Rewind2524;
                     titleValue = Strings.HideNextViews;
                     subtitleValue = Strings.HideNextViewsDescription;
