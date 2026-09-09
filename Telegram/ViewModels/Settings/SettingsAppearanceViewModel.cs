@@ -514,7 +514,7 @@ namespace Telegram.ViewModels.Settings
             ClientService = clientService;
             DarkSettings = Copy(chatTheme.DarkSettings);
             LightSettings = Copy(chatTheme.LightSettings);
-            Type = new ChatThemeEmoji(chatTheme.Name);
+            Type = chatTheme.Name != "\u274C" ? new ChatThemeEmoji(chatTheme.Name) : null;
             IsChannel = isChannel;
         }
 
@@ -541,7 +541,7 @@ namespace Telegram.ViewModels.Settings
             ClientService = clientService;
             DarkSettings = darkSettings;
             LightSettings = lightSettings;
-            Type = new ChatThemeEmoji(name);
+            Type = name != "\u274C" ? new ChatThemeEmoji(name) : null;
             IsChannel = isChannel;
         }
 
