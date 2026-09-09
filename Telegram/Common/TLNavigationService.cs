@@ -554,7 +554,7 @@ namespace Telegram.Common
 
                         chatPage.ViewModel.NavigatedFrom(null, false);
 
-                        chatPage.Deactivate(true);
+                        chatPage.Deactivate(false);
                         chatPage.Activate(this);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
