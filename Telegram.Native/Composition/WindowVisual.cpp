@@ -301,10 +301,15 @@ namespace winrt::Telegram::Native::Composition::implementation
             return result;
         }
 
-        UIElement content = Window::Current().Content();
-        if (content.XamlRoot())
+        // A consolidated view unroots its tree, so Window.Content is null for as long as
+        // the window is torn down - and the capture picker lives in the popup root, which
+        // outlives that and keeps laying its cells out.
+        if (UIElement content = Window::Current().Content())
         {
-            size->z = content.XamlRoot().RasterizationScale() * 2;
+            if (XamlRoot xamlRoot = content.XamlRoot())
+            {
+                size->z = xamlRoot.RasterizationScale() * 2;
+            }
         }
 
         double ratioX = (size->x * size->z) / windowSize.cx;
