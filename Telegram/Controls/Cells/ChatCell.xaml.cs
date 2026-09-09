@@ -7,6 +7,7 @@
 
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -1370,6 +1371,10 @@ namespace Telegram.Controls.Cells
             UpdateBotOpen(chat);
         }
 
+        // Reference equality is enough: updateChatFolders replaces every ChatFolderInfo, so a
+        // rename, a recolour and a new emoji all arrive as a different instance.
+        private ChatFolderInfo[] _folders;
+
         public void UpdateChatChatLists(Chat chat)
         {
             if (!_templateApplied || _clientService == null)
@@ -1385,66 +1390,101 @@ namespace Telegram.Controls.Cells
 
             var folders = _clientService.GetChatFolders(chat);
 
-            for (int i = 0; i < Math.Max(folders.Count, Folders.Children.Count); i++)
+            // Realizing a cell reaches here through UpdateViewState and again through
+            // UpdateChatLastMessage, which every incoming message also runs: without this the
+            // badges are torn down and rebuilt, a control and a brush per tag, each time.
+            if (AreFoldersEqual(folders))
             {
-                if (i < folders.Count)
+                return;
+            }
+
+            for (int i = 0; i < folders.Count; i++)
+            {
+                var folder = folders[i];
+                var foreground = _clientService.GetAccentBrush(folder.ColorId);
+
+                Border badge;
+                RichTextBlock block;
+                Paragraph paragraph;
+                if (i < Folders.Children.Count)
                 {
-                    var folder = folders[i];
-                    var foreground = _clientService.GetAccentBrush(folder.ColorId);
-
-                    Border badge;
-                    RichTextBlock block;
-                    Paragraph paragraph;
-                    if (i < Folders.Children.Count)
-                    {
-                        badge = Folders.Children[i] as Border;
-                        block = badge.Child as RichTextBlock;
-                        paragraph = block.Blocks[0] as Paragraph;
-                    }
-                    else
-                    {
-                        badge = new Border
-                        {
-                            Height = 16,
-                            MinWidth = 16,
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            VerticalAlignment = VerticalAlignment.Bottom,
-                            CornerRadius = new CornerRadius(4),
-                            Margin = new Thickness(0, 0, 2, 0)
-                        };
-
-                        block = new RichTextBlock
-                        {
-                            TextLineBounds = TextLineBounds.Tight,
-                            TextAlignment = TextAlignment.Center,
-                            OpticalMarginAlignment = OpticalMarginAlignment.TrimSideBearings,
-                            TextWrapping = TextWrapping.Wrap,
-                            TextTrimming = TextTrimming.CharacterEllipsis,
-                            MaxLines = 1,
-                            FontSize = 11,
-                            Padding = new Thickness(4, 0, 4, 0),
-                            VerticalAlignment = VerticalAlignment.Center,
-                            IsTextSelectionEnabled = false
-                        };
-
-                        paragraph = new Paragraph();
-
-                        block.Blocks.Add(paragraph);
-                        badge.Child = block;
-
-                        Folders.Children.Add(badge);
-                    }
-
-                    CustomEmojiIcon.Add(block, paragraph.Inlines, _clientService, folder.Name, 14);
-
-                    block.Foreground = foreground;
-                    badge.Background = foreground.WithOpacity(0.2);
+                    badge = Folders.Children[i] as Border;
+                    block = badge.Child as RichTextBlock;
+                    paragraph = block.Blocks[0] as Paragraph;
                 }
                 else
                 {
-                    Folders.Children.RemoveAt(i);
+                    badge = new Border
+                    {
+                        Height = 16,
+                        MinWidth = 16,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Bottom,
+                        CornerRadius = new CornerRadius(4),
+                        Margin = new Thickness(0, 0, 2, 0)
+                    };
+
+                    block = new RichTextBlock
+                    {
+                        TextLineBounds = TextLineBounds.Tight,
+                        TextAlignment = TextAlignment.Center,
+                        OpticalMarginAlignment = OpticalMarginAlignment.TrimSideBearings,
+                        TextWrapping = TextWrapping.Wrap,
+                        TextTrimming = TextTrimming.CharacterEllipsis,
+                        MaxLines = 1,
+                        FontSize = 11,
+                        Padding = new Thickness(4, 0, 4, 0),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        IsTextSelectionEnabled = false
+                    };
+
+                    paragraph = new Paragraph();
+
+                    block.Blocks.Add(paragraph);
+                    badge.Child = block;
+
+                    Folders.Children.Add(badge);
+                }
+
+                CustomEmojiIcon.Add(block, paragraph.Inlines, _clientService, folder.Name, 14);
+
+                block.Foreground = foreground;
+                badge.Background = foreground.WithOpacity(0.2);
+            }
+
+            while (Folders.Children.Count > folders.Count)
+            {
+                Folders.Children.RemoveAt(Folders.Children.Count - 1);
+            }
+
+            if (_folders == null || _folders.Length != folders.Count)
+            {
+                _folders = folders.Count > 0
+                    ? new ChatFolderInfo[folders.Count]
+                    : Array.Empty<ChatFolderInfo>();
+            }
+
+            folders.CopyTo(_folders, 0);
+        }
+
+        private bool AreFoldersEqual(IList<ChatFolderInfo> folders)
+        {
+            // Against the panel as well, so that anything else emptying it - a second
+            // OnApplyTemplate, the branch above - invalidates the cache on its own.
+            if (_folders == null || _folders.Length != folders.Count || Folders.Children.Count != folders.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < _folders.Length; i++)
+            {
+                if (_folders[i] != folders[i])
+                {
+                    return false;
                 }
             }
+
+            return true;
         }
 
         #endregion
