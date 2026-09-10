@@ -947,12 +947,12 @@
 
     <!-- The chrome is ContentPopup's, transcribed rather than inherited: the brushes, the 24
          padding, the pinned command row over its separator, and the four Content sizes that name
-         the card rather than the popup, which fills the window. What is not here is the pair of
-         layers ContentPopup needs for its resize morph - BackgroundElement, BorderElement and
-         AnimationElement are one Border here, because that animation was not carried over. -->
+         the card rather than the popup, which fills the window. The card is one Border where
+         ContentPopup needs three, because the resize animation clips a rounded rectangle rather
+         than scaling a fill and a stroke apart - see PlayResizeAnimation. -->
     <Style TargetType="local:ModalPopup">
         <Setter Property="Background"
-                Value="{ThemeResource ContentDialogBackground}" />
+                Value="{ThemeResource ContentDialogTopOverlaySolid}" />
         <Setter Property="Foreground"
                 Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="BorderBrush"
@@ -982,18 +982,18 @@
                          code, so that the smoke has somewhere to live and nothing behind the
                          popup can be clicked. The card is placed by layout inside it. -->
                     <Grid x:Name="LayoutRoot">
-                        <!-- Two layers, as a ContentPopup has: its own LayoutRoot background and
-                             the smoke rectangle the dialog host owns. SmokeOverlay's brush is
-                             mixed from the theme in code, the way ContentPopup's is. -->
+                        <!-- One layer, where a ContentPopup needs two: the second is only there to
+                             retheme the smoke rectangle the dialog host owns, which does not see
+                             the app's theme override. This one is inside the popup and does. -->
                         <Border x:Name="SmokeElement"
-                                Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}">
-                            <Border x:Name="SmokeOverlay" />
-                        </Border>
+                                Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
+                                AutomationProperties.AccessibilityView="Raw" />
 
                         <!-- Separate from the smoke, which a popup may turn off while still
                              wanting a click away from the card to take it down. -->
                         <Rectangle x:Name="LightDismiss"
-                                   Fill="Transparent" />
+                                   Fill="Transparent"
+                                   AutomationProperties.AccessibilityView="Raw" />
 
                         <!-- CardRoot is what the open and close animations scale, so that the
                              shadow travels with the card. The 40 is ContentPopup's, and it is what
@@ -1006,169 +1006,191 @@
                                  ContentRoot: a ThemeShadow set on an element breaks the hit test of
                                  every child it has. Same reason MessageBubble carries one, and
                                  unfilled for the same reason - the radii are set from code. -->
-                            <Rectangle x:Name="ShadowCaster" />
+                            <Rectangle x:Name="ShadowCaster"
+                                       AutomationProperties.AccessibilityView="Raw" />
 
-                            <Border x:Name="ContentRoot"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    MinHeight="{TemplateBinding ContentMinHeight}"
-                                    MinWidth="{TemplateBinding ContentMinWidth}"
-                                    MaxHeight="{TemplateBinding ContentMaxHeight}"
-                                    MaxWidth="{TemplateBinding ContentMaxWidth}"
-                                    TabFocusNavigation="Cycle"
-                                    AutomationProperties.LandmarkType="Custom">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <Grid Background="{ThemeResource ContentDialogTopOverlaySolid}">
+                            <!-- ClipRoot is what the resize animation clips, and it holds the two
+                                 halves that animation needs apart: a fill it can scale, and the
+                                 content, which must not be scaled. The shadow stays outside it,
+                                 because a clip does not reach a cast shadow anyway. -->
+                            <!-- Rounded off by a composition clip that PlayResizeAnimation owns
+                                 and animates; it is what gives the card its corners at rest too. -->
+                            <Grid x:Name="ClipRoot">
+                                <!-- Paints nothing of its own: it hosts the composition shape that
+                                     draws the card from Background, BorderBrush and BorderThickness,
+                                     so the corner radius and the stroke width stay exact at every
+                                     size the resize animation puts it through. -->
+                                <Border x:Name="BackgroundElement"
+                                        AutomationProperties.AccessibilityView="Raw" />
+
+                                <!-- No CornerRadius, deliberately: a non-zero one on an element
+                                     that has children clips those children to it
+                                     (CFrameworkElement::UpdateRequiresCompNodeForRoundedCorners),
+                                     and the resize animation walks CommandSpace below this
+                                     border's bottom edge. ClipRoot does the rounding instead. -->
+                                <Border x:Name="ContentRoot"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        MinHeight="{TemplateBinding ContentMinHeight}"
+                                        MinWidth="{TemplateBinding ContentMinWidth}"
+                                        MaxHeight="{TemplateBinding ContentMaxHeight}"
+                                        MaxWidth="{TemplateBinding ContentMaxWidth}"
+                                        TabFocusNavigation="Cycle">
+                                    <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
                                             <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <!-- Visibility is set by the control. The margins are
-                                             ContentPopup's: the -12 pulls the body up into the 24
-                                             below, leaving 12 between title and content. -->
-                                        <ContentPresenter x:Name="TitlePresenter"
-                                                          Content="{TemplateBinding Title}"
-                                                          ContentTemplate="{TemplateBinding TitleTemplate}"
-                                                          Foreground="{TemplateBinding Foreground}"
-                                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                          FontSize="20"
-                                                          FontWeight="SemiBold"
-                                                          MaxLines="1"
-                                                          TextWrapping="NoWrap"
-                                                          Margin="24,24,0,-12"
-                                                          VerticalAlignment="Top"
-                                                          Visibility="Collapsed"
-                                                          Canvas.ZIndex="1"
-                                                          Grid.Row="0" />
-                                        <!-- ContentPopup leaves the body to fend for itself; this
-                                             one scrolls, because the tips it took over are as
-                                             likely to be a paragraph as a list. -->
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                                      Grid.Row="1">
-                                            <StackPanel Margin="{TemplateBinding Padding}">
-                                                <!-- Markdown, and an empty one takes no room. -->
-                                                <TextBlock x:Name="SubtitleTextBlock"
-                                                           Foreground="{TemplateBinding Foreground}"
-                                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                           FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                                           TextWrapping="Wrap"
-                                                           Margin="0,0,0,12"
-                                                           Visibility="Collapsed" />
-                                                <ContentPresenter x:Name="ContentPresenter"
-                                                                  Content="{TemplateBinding Content}"
-                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                  Foreground="{TemplateBinding Foreground}"
-                                                                  FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                                  FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                                                  TextWrapping="Wrap" />
-                                            </StackPanel>
-                                        </ScrollViewer>
-                                    </Grid>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <!-- Visibility is set by the control. The margins are
+                                                 ContentPopup's: the -12 pulls the body up into the 24
+                                                 below, leaving 12 between title and content. -->
+                                            <ContentPresenter x:Name="TitlePresenter"
+                                                              Content="{TemplateBinding Title}"
+                                                              ContentTemplate="{TemplateBinding TitleTemplate}"
+                                                              Foreground="{TemplateBinding Foreground}"
+                                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                              FontSize="20"
+                                                              FontWeight="SemiBold"
+                                                              MaxLines="1"
+                                                              TextWrapping="NoWrap"
+                                                              Margin="24,24,0,-12"
+                                                              VerticalAlignment="Top"
+                                                              Visibility="Collapsed"
+                                                              Canvas.ZIndex="1"
+                                                              Grid.Row="0" />
+                                            <!-- ContentPopup leaves the body to fend for itself; this
+                                                 one scrolls, because the tips it took over are as
+                                                 likely to be a paragraph as a list. -->
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                                          Grid.Row="1">
+                                                <StackPanel Margin="{TemplateBinding Padding}">
+                                                    <!-- Markdown, and an empty one takes no room. -->
+                                                    <TextBlock x:Name="SubtitleTextBlock"
+                                                               Foreground="{TemplateBinding Foreground}"
+                                                               FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                               FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                                               TextWrapping="Wrap"
+                                                               Margin="0,0,0,12"
+                                                               Visibility="Collapsed" />
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      Foreground="{TemplateBinding Foreground}"
+                                                                      FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                                      FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                                                      TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </ScrollViewer>
+                                        </Grid>
 
-                                    <!-- Outside the body: the buttons stay reachable however long
-                                         the content is. Column, row, span, margin and visibility
-                                         are all set by UpdateButtons - a button with nothing to
-                                         say leaves the row to its neighbours. The four columns are
-                                         ContentPopup's, so the placements carry over. -->
-                                    <Grid x:Name="CommandSpace"
-                                          Padding="{TemplateBinding Padding}"
-                                          BorderBrush="{ThemeResource ContentDialogSeparatorBorderBrush}"
-                                          BorderThickness="0,1,0,0"
-                                          XYFocusKeyboardNavigation="Enabled"
-                                          VerticalAlignment="Bottom"
-                                          Grid.Row="1">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="0.5*" />
-                                            <ColumnDefinition Width="0.5*" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid x:Name="PrimaryRoot"
-                                              Visibility="Collapsed"
-                                              Grid.Column="0"
-                                              Grid.ColumnSpan="2">
+                                        <!-- Outside the body: the buttons stay reachable however long
+                                             the content is. Column, row, span, margin and visibility
+                                             are all set by UpdateButtons - a button with nothing to
+                                             say leaves the row to its neighbours. The four columns are
+                                             ContentPopup's, so the placements carry over. -->
+                                        <Grid x:Name="CommandSpace"
+                                              Padding="{TemplateBinding Padding}"
+                                              Background="{ThemeResource ContentDialogBackground}"
+                                              BackgroundSizing="OuterBorderEdge"
+                                              BorderBrush="{ThemeResource ContentDialogSeparatorBorderBrush}"
+                                              BorderThickness="0,1,0,0"
+                                              CornerRadius="0,0,8,8"
+                                              XYFocusKeyboardNavigation="Enabled"
+                                              VerticalAlignment="Bottom"
+                                              Grid.Row="1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition />
-                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="0.5*" />
+                                                <ColumnDefinition Width="0.5*" />
+                                                <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <Button x:Name="PrimaryButton"
-                                                    Content="{TemplateBinding PrimaryButtonContent}"
-                                                    IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
-                                                    Style="{TemplateBinding PrimaryButtonStyle}"
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid x:Name="PrimaryRoot"
+                                                  Visibility="Collapsed"
+                                                  Grid.Column="0"
+                                                  Grid.ColumnSpan="2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button x:Name="PrimaryButton"
+                                                        Content="{TemplateBinding PrimaryButtonContent}"
+                                                        IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
+                                                        Style="{TemplateBinding PrimaryButtonStyle}"
+                                                        FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                                        ElementSoundMode="FocusOnly"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Stretch" />
+                                                <muxc:ProgressRing x:Name="PrimaryButtonPending"
+                                                                   Visibility="Collapsed"
+                                                                   Foreground="#FFFFFF"
+                                                                   Width="20"
+                                                                   Height="20" />
+                                                <Button x:Name="PrimarySplitButton"
+                                                        IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
+                                                        Style="{TemplateBinding PrimaryButtonStyle}"
+                                                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                                                        HorizontalContentAlignment="Stretch"
+                                                        VerticalContentAlignment="Stretch"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Stretch"
+                                                        Padding="4,0,4,0"
+                                                        Margin="1,0,0,0"
+                                                        CornerRadius="0,2,2,0"
+                                                        IsTabStop="True"
+                                                        Visibility="Collapsed"
+                                                        Grid.Column="1">
+                                                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                               FontSize="16"
+                                                               Text="&#xEA16;"
+                                                               VerticalAlignment="Center"
+                                                               HorizontalAlignment="Right"
+                                                               AutomationProperties.AccessibilityView="Raw" />
+                                                </Button>
+                                            </Grid>
+                                            <Button x:Name="SecondaryButton"
+                                                    Content="{TemplateBinding SecondaryButtonContent}"
+                                                    IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
+                                                    Style="{TemplateBinding SecondaryButtonStyle}"
                                                     FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                                     ElementSoundMode="FocusOnly"
                                                     HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Stretch" />
-                                            <muxc:ProgressRing x:Name="PrimaryButtonPending"
-                                                               Visibility="Collapsed"
-                                                               Foreground="#FFFFFF"
-                                                               Width="20"
-                                                               Height="20" />
-                                            <Button x:Name="PrimarySplitButton"
-                                                    IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
-                                                    Style="{TemplateBinding PrimaryButtonStyle}"
-                                                    AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                                                    HorizontalContentAlignment="Stretch"
-                                                    VerticalContentAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Visibility="Collapsed"
+                                                    Grid.Column="2"
+                                                    Grid.ColumnSpan="2" />
+                                            <Button x:Name="CloseButton"
+                                                    Content="{TemplateBinding CloseButtonContent}"
+                                                    Style="{TemplateBinding CloseButtonStyle}"
+                                                    FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                                    ElementSoundMode="FocusOnly"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
-                                                    Padding="4,0,4,0"
-                                                    Margin="1,0,0,0"
-                                                    CornerRadius="0,2,2,0"
-                                                    IsTabStop="True"
+                                                    FontWeight="SemiBold"
                                                     Visibility="Collapsed"
-                                                    Grid.Column="1">
-                                                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                           FontSize="16"
-                                                           Text="&#xEA16;"
-                                                           VerticalAlignment="Center"
-                                                           HorizontalAlignment="Right"
-                                                           AutomationProperties.AccessibilityView="Raw" />
-                                            </Button>
+                                                    Grid.Row="1"
+                                                    Grid.ColumnSpan="4" />
                                         </Grid>
-                                        <Button x:Name="SecondaryButton"
-                                                Content="{TemplateBinding SecondaryButtonContent}"
-                                                IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
-                                                Style="{TemplateBinding SecondaryButtonStyle}"
-                                                FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                                ElementSoundMode="FocusOnly"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Visibility="Collapsed"
-                                                Grid.Column="2"
-                                                Grid.ColumnSpan="2" />
-                                        <Button x:Name="CloseButton"
-                                                Content="{TemplateBinding CloseButtonContent}"
-                                                Style="{TemplateBinding CloseButtonStyle}"
-                                                FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                                ElementSoundMode="FocusOnly"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                FontWeight="SemiBold"
-                                                Visibility="Collapsed"
-                                                Grid.Row="1"
-                                                Grid.ColumnSpan="4" />
-                                    </Grid>
 
-                                    <local:GlyphButton x:Name="DismissButton"
-                                                       x:Load="False"
-                                                       AutomationProperties.Name="{CustomResource Close}"
-                                                       HorizontalAlignment="Right"
-                                                       VerticalAlignment="Top"
-                                                       Glyph="&#xE711;"
-                                                       CornerRadius="20" />
-                                </Grid>
-                            </Border>
+                                        <local:GlyphButton x:Name="DismissButton"
+                                                           x:Load="False"
+                                                           AutomationProperties.Name="{CustomResource Close}"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Top"
+                                                           Glyph="&#xE711;"
+                                                           CornerRadius="20" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </ControlTemplate>

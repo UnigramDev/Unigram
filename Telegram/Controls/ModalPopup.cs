@@ -5,16 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Input;
@@ -169,10 +170,11 @@ namespace Telegram.Controls
     /// </remarks>
     [TemplatePart(Name = "LayoutRoot", Type = typeof(Grid))]
     [TemplatePart(Name = "SmokeElement", Type = typeof(Border))]
-    [TemplatePart(Name = "SmokeOverlay", Type = typeof(Border))]
     [TemplatePart(Name = "LightDismiss", Type = typeof(Rectangle))]
     [TemplatePart(Name = "CardRoot", Type = typeof(Grid))]
     [TemplatePart(Name = "ShadowCaster", Type = typeof(Rectangle))]
+    [TemplatePart(Name = "ClipRoot", Type = typeof(Grid))]
+    [TemplatePart(Name = "BackgroundElement", Type = typeof(Border))]
     [TemplatePart(Name = "ContentRoot", Type = typeof(Border))]
     [TemplatePart(Name = "TitlePresenter", Type = typeof(ContentPresenter))]
     [TemplatePart(Name = "SubtitleTextBlock", Type = typeof(TextBlock))]
@@ -189,10 +191,11 @@ namespace Telegram.Controls
     {
         private Grid LayoutRoot;
         private Border SmokeElement;
-        private Border SmokeOverlay;
         private Rectangle LightDismiss;
         private Grid CardRoot;
         private Rectangle ShadowCaster;
+        private Grid ClipRoot;
+        private Border BackgroundElement;
         private Border ContentRoot;
         private ContentPresenter TitlePresenter;
         private TextBlock SubtitleTextBlock;
@@ -208,7 +211,22 @@ namespace Telegram.Controls
 
         private XamlRoot _xamlRoot;
         private Popup _popup;
+        private WeakReference _focusedBefore;
         private CompositionScopedBatch _batch;
+        private CompositionScopedBatch _resizeBatch;
+
+        // The card is drawn rather than laid out: a shape whose geometry is animated keeps the
+        // corner radius and the stroke width exact at every size, where a scaled Border squashes
+        // both. _clipGeometry is the outer rounded rect, and rounds the content off at rest as
+        // well as hiding what a growing card has not reached yet.
+        private CompositionRoundedRectangleGeometry _clipGeometry;
+        private CompositionRoundedRectangleGeometry _cardGeometry;
+        private ShapeVisual _cardVisual;
+        private CompositionColorSource _fillBrush;
+        private CompositionColorSource _strokeBrush;
+
+        private long _fillToken;
+        private long _strokeToken;
 
         private TaskCompletionSource<ContentDialogResult> _tsc;
 
@@ -220,6 +238,7 @@ namespace Telegram.Controls
 
         private bool _isOpen;
         private bool _isClosing;
+        private bool _themeApplied;
         private bool _entered;
 
         // Set while a button handler runs, so that a handler hiding with its own result closes
@@ -309,6 +328,7 @@ namespace Telegram.Controls
             }
 
             XamlRoot = xamlRoot;
+            ApplyTheme(xamlRoot);
 
             _tsc = new TaskCompletionSource<ContentDialogResult>();
             Open();
@@ -338,16 +358,9 @@ namespace Telegram.Controls
 
             Logger.Info(GetType().Name);
 
-            if (RequestedTheme == ElementTheme.Default && xamlRoot.TryGetContent(out FrameworkElement element))
-            {
-                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                if (app != element.RequestedTheme)
-                {
-                    RequestedTheme = NightModeService.Current.GetCalculatedElementTheme();
-                }
-            }
-
-            this.ApplyChatTheme(xamlRoot);
+            // Before OnCreate, as ContentPopup does it, so a subclass building its content already
+            // has the theme it will be shown in. ShowAsync would otherwise do it a moment later.
+            ApplyTheme(xamlRoot);
 
             OnCreate();
 
@@ -372,6 +385,36 @@ namespace Telegram.Controls
         {
             await ShowQueuedAsync(xamlRoot);
             return _result;
+        }
+
+        /// <summary>
+        /// Resolves the popup's theme against the window it opens on, and forwards that window's
+        /// chat brushes into it. Popups hang off the PopupRoot, a sibling of the window's content,
+        /// so neither reaches them by inheritance.
+        /// </summary>
+        /// <remarks>
+        /// Once only, whichever way the popup was shown: ApplyChatTheme adds a merged dictionary
+        /// rather than setting one.
+        /// </remarks>
+        private void ApplyTheme(XamlRoot xamlRoot)
+        {
+            if (_themeApplied)
+            {
+                return;
+            }
+
+            _themeApplied = true;
+
+            if (RequestedTheme == ElementTheme.Default && xamlRoot.TryGetContent(out FrameworkElement element))
+            {
+                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                if (app != element.RequestedTheme)
+                {
+                    RequestedTheme = NightModeService.Current.GetCalculatedElementTheme();
+                }
+            }
+
+            this.ApplyChatTheme(xamlRoot);
         }
 
         protected void SetResult(ContentDialogResult result)
@@ -489,12 +532,23 @@ namespace Telegram.Controls
                 LayoutRoot.ProcessKeyboardAccelerators -= OnProcessKeyboardAccelerators;
             }
 
+            if (ContentRoot != null)
+            {
+                ContentRoot.SizeChanged -= OnContentRootSizeChanged;
+            }
+
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
             SmokeElement = GetTemplateChild(nameof(SmokeElement)) as Border;
-            SmokeOverlay = GetTemplateChild(nameof(SmokeOverlay)) as Border;
             LightDismiss = GetTemplateChild(nameof(LightDismiss)) as Rectangle;
             CardRoot = GetTemplateChild(nameof(CardRoot)) as Grid;
             ShadowCaster = GetTemplateChild(nameof(ShadowCaster)) as Rectangle;
+            ClipRoot = GetTemplateChild(nameof(ClipRoot)) as Grid;
+
+            // All of it belongs to the parts that were just replaced.
+            _clipGeometry = null;
+            _cardGeometry = null;
+            _cardVisual = null;
+            BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
             ContentRoot = GetTemplateChild(nameof(ContentRoot)) as Border;
             TitlePresenter = GetTemplateChild(nameof(TitlePresenter)) as ContentPresenter;
             SubtitleTextBlock = GetTemplateChild(nameof(SubtitleTextBlock)) as TextBlock;
@@ -541,6 +595,11 @@ namespace Telegram.Controls
                 LayoutRoot.ProcessKeyboardAccelerators += OnProcessKeyboardAccelerators;
             }
 
+            if (ContentRoot != null)
+            {
+                ContentRoot.SizeChanged += OnContentRootSizeChanged;
+            }
+
             // Same elevation and the same lack of a guard as ToastPopup's: ThemeShadow arrived in
             // 18362, which is TargetPlatformMinVersion, and this is alone in its own popup. It
             // goes on the caster and never on ContentRoot - a ThemeShadow set on an element
@@ -551,6 +610,11 @@ namespace Telegram.Controls
                 ShadowCaster.Shadow = new ThemeShadow();
                 ShadowCaster.Translation = new Vector3(0, 0, 32);
             }
+
+            // The card is painted from these, so a theme that swaps either brush has to reach
+            // the composition side too.
+            this.RegisterPropertyChangedCallback(BackgroundProperty, OnCardBrushChanged, ref _fillToken);
+            this.RegisterPropertyChangedCallback(BorderBrushProperty, OnCardBrushChanged, ref _strokeToken);
 
             // The template can be applied after the properties were set - a XAML subclass sets
             // them on itself, and the style is resolved later - so the parts catch up here.
@@ -576,6 +640,14 @@ namespace Telegram.Controls
 
             _isOpen = true;
 
+            // Saved before the popup takes focus and given back on the way out, as
+            // ContentDialog::SetInitialFocusElement does: a dialog that swallows the caret is the
+            // loudest accessibility failure there is. Weak, because the element can be gone by
+            // the time the popup closes - a page swapped, a container recycled.
+            _focusedBefore = FocusManagerEx.TryGetFocusedElement(_xamlRoot) is DependencyObject focused
+                ? new WeakReference(focused)
+                : null;
+
             // The first layout pass is what reveals it, so a popup shown a second time has to
             // wait for one again.
             _entered = false;
@@ -586,12 +658,18 @@ namespace Telegram.Controls
                 Child = this
             };
 
+            // What makes Narrator treat this as a dialog: it announces the popup by name on
+            // entry, reads the contents, and stops walking what is behind. On the popup rather
+            // than on the control, which is where ContentDialog puts it too - see
+            // EnsurePopupAndSmokeLayer in ContentDialog_Partial.cpp.
+            AutomationProperties.SetIsDialog(_popup, true);
+            UpdateAutomationName();
+
             // Hidden until the first layout pass has placed the card, or it would show up
             // unsized for a frame.
             ElementComposition.GetElementVisual(this).Opacity = 0;
 
             StretchToWindow();
-            UpdateSmoke();
 
             SizeChanged += OnSizeChanged;
             _xamlRoot.Changed += OnXamlRootChanged;
@@ -644,12 +722,23 @@ namespace Telegram.Controls
                 _popup = null;
             }
 
+            // The theme brushes outlive the popup, and these hold callbacks on them.
+            _fillBrush?.Unregister();
+            _strokeBrush?.Unregister();
+
             // Resolved again rather than held from Open: ContentPopup does the same, and the
             // content of a window can have been swapped while the popup was up.
             if (_xamlRoot != null && _xamlRoot.TryGetContent(out IPopupHost host))
             {
                 host.PopupClosed();
             }
+
+            if (_focusedBefore?.Target is Control control)
+            {
+                control.Focus(FocusState.Programmatic);
+            }
+
+            _focusedBefore = null;
 
             Closed?.Invoke(this, new ModalPopupClosedEventArgs(_closingResult));
 
@@ -776,11 +865,16 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// What Escape and the back gesture do: the close button if there is one, a dismissal if
-        /// the popup allows it, nothing otherwise. Called by
-        /// <see cref="WindowContext"/> too, for the windows that take the key before an
-        /// accelerator scope can see it.
+        /// What Escape and the back gesture do. Called by <see cref="WindowContext"/> too, for the
+        /// windows that take the key before an accelerator scope can see it.
         /// </summary>
+        /// <remarks>
+        /// ContentDialog::ExecuteCloseAction: the close button if it has something to say and is
+        /// enabled, a plain None close otherwise - and it always closes, and always reports the
+        /// key handled. <see cref="IsLightDismissEnabled"/> has no say here; it governs a click
+        /// outside the card and nothing else, exactly as it does on a ContentPopup. A popup that
+        /// must not go away this way cancels <see cref="Closing"/>, the way Block does.
+        /// </remarks>
         public bool CancelRequested()
         {
             if (!_isOpen)
@@ -788,18 +882,16 @@ namespace Telegram.Controls
                 return false;
             }
 
-            if (HasContent(CloseButtonContent))
+            if (HasContent(CloseButtonContent) && CloseButton?.IsEnabled != false)
             {
                 InvokeButton(ContentDialogButton.Close);
-                return true;
             }
-            else if (IsLightDismissEnabled)
+            else
             {
                 Hide();
-                return true;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -864,10 +956,22 @@ namespace Telegram.Controls
 
         #region Animation
 
+        // ContentDialogOpenCloseThemeTransition, which is what actually animates a ContentDialog -
+        // the storyboards in its template's DialogShowingStates never run. It is built in code, in
+        // ContentDialogOpenCloseThemeTransition::CreateStoryboardImpl (LayoutTransition_partial.cpp),
+        // and these are its numbers: the dialog settles INWARD from 1.05 rather than growing into
+        // place, on a cubic-bezier(0, 0, 0, 1), while opacity crosses linearly in a third of the time.
+        private static readonly TimeSpan OpenScaleDuration = TimeSpan.FromMilliseconds(250);   // s_OpenScaleDuration
+        private static readonly TimeSpan CloseScaleDuration = TimeSpan.FromMilliseconds(167);  // s_CloseScaleDuration
+        private static readonly TimeSpan OpacityChangeDuration = TimeSpan.FromMilliseconds(83); // s_OpacityChangeDuration
+
+        private const float ScaledFactor = 1.05f;
+
         private void PlayOpenAnimation()
         {
             // The smoke fades with the root, the card scales on its own: scaling the root would
-            // scale the dimming with it.
+            // scale the dimming with it. ContentDialog animates the two separately for the same
+            // reason, and gives both the same linear fade.
             FrameworkElement element = CardRoot ?? (FrameworkElement)this;
 
             var visual = ElementComposition.GetElementVisual(this);
@@ -878,13 +982,13 @@ namespace Telegram.Controls
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
-            opacity.InsertKeyFrame(1, 1);
-            opacity.Duration = Constants.FastAnimation;
+            opacity.InsertKeyFrame(1, 1, compositor.CreateLinearEasingFunction());
+            opacity.Duration = OpacityChangeDuration;
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, new Vector3(0.85f, 0.85f, 1));
-            scale.InsertKeyFrame(1, Vector3.One);
-            scale.Duration = Constants.FastAnimation;
+            scale.InsertKeyFrame(0, new Vector3(ScaledFactor, ScaledFactor, 1));
+            scale.InsertKeyFrame(1, Vector3.One, CreateSettleEasing(compositor));
+            scale.Duration = OpenScaleDuration;
 
             visual.StartAnimation("Opacity", opacity);
             card.StartAnimation("Scale", scale);
@@ -906,18 +1010,25 @@ namespace Telegram.Controls
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 1);
-            opacity.InsertKeyFrame(1, 0);
-            opacity.Duration = Constants.FastAnimation;
+            opacity.InsertKeyFrame(1, 0, compositor.CreateLinearEasingFunction());
+            opacity.Duration = OpacityChangeDuration;
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, Vector3.One);
-            scale.InsertKeyFrame(1, new Vector3(0.85f, 0.85f, 1));
-            scale.Duration = Constants.FastAnimation;
+            scale.InsertKeyFrame(1, new Vector3(ScaledFactor, ScaledFactor, 1), CreateSettleEasing(compositor));
+            scale.Duration = CloseScaleDuration;
 
             visual.StartAnimation("Opacity", opacity);
             card.StartAnimation("Scale", scale);
 
             _batch.End();
+        }
+
+        // cubic-bezier(0, 0, 0, 1): the easing CreateStoryboardImpl builds by taking a linear
+        // TimingFunctionDescription and moving cp3.X to zero.
+        private static CompositionEasingFunction CreateSettleEasing(Compositor compositor)
+        {
+            return compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(0, 1));
         }
 
         private void OnCloseAnimationCompleted(object sender, CompositionBatchCompletedEventArgs args)
@@ -931,6 +1042,224 @@ namespace Telegram.Controls
             Dismiss();
         }
 
+        private void OnContentRootSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var previous = e.PreviousSize.ToVector2();
+            var next = e.NewSize.ToVector2();
+
+            // The resting shape, every time. PlayResizeAnimation takes it from here when there is
+            // something to animate, and an assignment stops whatever animation is on it.
+            EnsureCardGeometry();
+            UpdateCardGeometry(next, next.Y);
+
+            // Nothing to grow from on the way in, nothing to grow to on the way out, and a card
+            // told to fill the window never changes height by itself. ContentPopup guards the
+            // same three.
+            if (previous.Y == 0 || next.Y == 0 || previous.Y == next.Y
+                || VerticalContentAlignment == VerticalAlignment.Stretch)
+            {
+                return;
+            }
+
+            PlayResizeAnimation(previous, next);
+        }
+
+        /// <summary>
+        /// Builds the card: one rounded rectangle painted by a shape, and a second one used as a
+        /// clip. Both outlive the animation, because they are also what the card looks like at rest.
+        /// </summary>
+        private void EnsureCardGeometry()
+        {
+            if (_cardVisual != null || ClipRoot == null || BackgroundElement == null)
+            {
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(ClipRoot);
+            var compositor = visual.Compositor;
+
+            _clipGeometry = compositor.CreateRoundedRectangleGeometry();
+            visual.Clip = compositor.CreateGeometricClip(_clipGeometry);
+
+            _cardGeometry = compositor.CreateRoundedRectangleGeometry();
+
+            _fillBrush = new CompositionColorSource(Background, true);
+            _strokeBrush = new CompositionColorSource(BorderBrush, true);
+
+            var thickness = (float)BorderThickness.Top;
+
+            // A composition stroke straddles its path, so it is drawn at twice the width and the
+            // fill goes over the inner half of it - which leaves exactly the outer half showing,
+            // one thickness wide, sitting on the card's edge like a Border's would.
+            var stroke = compositor.CreateSpriteShape(_cardGeometry);
+            stroke.StrokeBrush = _strokeBrush;
+            stroke.StrokeThickness = thickness * 2;
+
+            var fill = compositor.CreateSpriteShape(_cardGeometry);
+            fill.FillBrush = _fillBrush;
+            fill.StrokeBrush = compositor.CreateColorBrush(Colors.Transparent);
+            fill.StrokeThickness = thickness * 2;
+
+            _cardVisual = compositor.CreateShapeVisual();
+            _cardVisual.Shapes.Add(stroke);
+            _cardVisual.Shapes.Add(fill);
+
+            ElementCompositionPreview.SetElementChildVisual(BackgroundElement, _cardVisual);
+        }
+
+        private void OnCardBrushChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (dp == BackgroundProperty)
+            {
+                _fillBrush?.PropertyChanged(Background as SolidColorBrush, true);
+            }
+            else
+            {
+                _strokeBrush?.PropertyChanged(BorderBrush as SolidColorBrush, true);
+            }
+        }
+
+        /// <summary>
+        /// Sizes the painted card and the clip to <paramref name="size"/>. The card's path is
+        /// inset by a whole stroke and drawn twice that wide, so that half of it lands back on
+        /// the card's edge - see EnsureCardGeometry for why the stroke is built that way.
+        /// </summary>
+        private void UpdateCardGeometry(Vector2 size, float extent)
+        {
+            if (_cardVisual == null)
+            {
+                return;
+            }
+
+            var thickness = (float)BorderThickness.Top;
+            var radius = (float)CornerRadius.TopLeft;
+
+            _clipGeometry.CornerRadius = new Vector2(radius, radius);
+            _clipGeometry.Size = size;
+
+            _cardGeometry.Offset = new Vector2(thickness, thickness);
+            _cardGeometry.CornerRadius = new Vector2(radius, radius);
+            _cardGeometry.Size = new Vector2(size.X - thickness * 2, size.Y - thickness * 2);
+
+            // A ShapeVisual clips to its own Size, and the card is drawn beyond the element's
+            // bounds while a shrink is running.
+            _cardVisual.Size = new Vector2(size.X, extent);
+        }
+
+        /// <summary>
+        /// Carries the card from one height to the next when its content changes size.
+        /// </summary>
+        /// <remarks>
+        /// The card is DRAWN, not laid out and not scaled: a shape whose rounded-rectangle
+        /// geometry is animated is exact at every size, where scaling a Border turns its corners
+        /// into ellipses and its stroke into an uneven one. That also lets it paint outside the
+        /// element's own bounds, which is what a shrink needs - a clip cannot do it, because a
+        /// clip only ever hides what is already laid out. ContentPopup scales instead, and pays
+        /// for it in squashed corners plus an offscreen surface for the command row it redirects.
+        ///
+        /// Two rectangles animate together: the painted one, whose path is inset by a stroke's
+        /// width, and the clip on ClipRoot, which hides the content a growing card has not reached
+        /// yet and rounds it off at rest.
+        ///
+        /// The shadow is scaled rather than clipped - a clip does not reach a cast shadow, which
+        /// is why it kept the new size when this was clip-only. The command row is a real element
+        /// and only needs translating, so it stays interactive throughout.
+        /// </remarks>
+        private void PlayResizeAnimation(Vector2 previous, Vector2 next)
+        {
+            if (CardRoot == null || BackgroundElement == null || _cardVisual == null)
+            {
+                return;
+            }
+
+            // A second resize landing mid-animation must not let the first batch complete and
+            // undo what the second one just set up.
+            if (_resizeBatch != null)
+            {
+                _resizeBatch.Completed -= OnResizeAnimationCompleted;
+                _resizeBatch = null;
+            }
+
+            var compositor = ElementComposition.GetElementVisual(ClipRoot).Compositor;
+
+            var delta = next.Y - previous.Y;
+            var thickness = (float)BorderThickness.Top;
+
+            // Both rectangles have to be able to draw beyond the element's own bounds, which is
+            // what a shrink needs and what no clip can give.
+            UpdateCardGeometry(next, Math.Max(previous.Y, next.Y));
+
+            var clip = compositor.CreateVector2KeyFrameAnimation();
+            clip.InsertKeyFrame(0, new Vector2(next.X, previous.Y));
+            clip.InsertKeyFrame(1, next);
+            clip.Duration = Constants.FastAnimation;
+
+            var card = compositor.CreateVector2KeyFrameAnimation();
+            card.InsertKeyFrame(0, new Vector2(next.X - thickness * 2, previous.Y - thickness * 2));
+            card.InsertKeyFrame(1, new Vector2(next.X - thickness * 2, next.Y - thickness * 2));
+            card.Duration = Constants.FastAnimation;
+
+            // The shadow is scaled and not clipped: a clip does not reach a cast shadow.
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector3(1, previous.Y / next.Y, 1));
+            scale.InsertKeyFrame(1, Vector3.One);
+            scale.Duration = Constants.FastAnimation;
+
+            // The card is centred, so growing by delta moves its top up by half of that. This
+            // puts it back where it was and lets it drift into place.
+            var translate = compositor.CreateScalarKeyFrameAnimation();
+            translate.InsertKeyFrame(0, delta / 2);
+            translate.InsertKeyFrame(1, 0);
+            translate.Duration = Constants.FastAnimation;
+
+            _resizeBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            _resizeBatch.Completed += OnResizeAnimationCompleted;
+
+            _clipGeometry.StartAnimation("Size", clip);
+            _cardGeometry.StartAnimation("Size", card);
+
+            // From the top edge, which is the one that stays put once CardRoot is translated.
+            if (ShadowCaster != null)
+            {
+                var shadow = ElementComposition.GetElementVisual(ShadowCaster);
+                shadow.CenterPoint = Vector3.Zero;
+                shadow.StartAnimation("Scale", scale);
+            }
+
+            ElementCompositionPreview.SetIsTranslationEnabled(CardRoot, true);
+            ElementComposition.GetElementVisual(CardRoot).StartAnimation("Translation.Y", translate);
+
+            // The buttons ride the bottom edge rather than waiting behind the clip for it.
+            if (CommandSpace != null && CommandSpace.Visibility == Visibility.Visible)
+            {
+                var command = compositor.CreateScalarKeyFrameAnimation();
+                command.InsertKeyFrame(0, -delta);
+                command.InsertKeyFrame(1, 0);
+                command.Duration = Constants.FastAnimation;
+
+                ElementCompositionPreview.SetIsTranslationEnabled(CommandSpace, true);
+                ElementComposition.GetElementVisual(CommandSpace).StartAnimation("Translation.Y", command);
+            }
+
+            _resizeBatch.End();
+        }
+
+        private void OnResizeAnimationCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (_resizeBatch != null)
+            {
+                _resizeBatch.Completed -= OnResizeAnimationCompleted;
+                _resizeBatch = null;
+            }
+
+            // The card and its clip stay - they are what it looks like at rest - but they have to
+            // settle on the size it actually ended at.
+            if (ContentRoot != null)
+            {
+                UpdateCardGeometry(ContentRoot.ActualSize, ContentRoot.ActualSize.Y);
+            }
+        }
+
         #endregion
 
         #region Smoke
@@ -942,16 +1271,6 @@ namespace Telegram.Controls
                 SmokeElement.Visibility = _isSmokeEnabled
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-            }
-
-            // Mixed here rather than named in the theme dictionaries, because that is where
-            // ContentPopup gets it from too - it paints the dialog host's smoke rectangle from
-            // ActualTheme on load.
-            if (SmokeOverlay != null && _isSmokeEnabled)
-            {
-                SmokeOverlay.Background = new SolidColorBrush(ActualTheme == ElementTheme.Light
-                    ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
-                    : Color.FromArgb(0x99, 0x00, 0x00, 0x00));
             }
         }
 
@@ -986,9 +1305,7 @@ namespace Telegram.Controls
         {
             var title = Title;
 
-            // Narrator has nothing else to read a popup out by: it is not focusable, and the
-            // title is the only thing every one of them has.
-            AutomationProperties.SetName(this, title as string ?? string.Empty);
+            UpdateAutomationName();
 
             if (TitlePresenter != null)
             {
@@ -1031,6 +1348,73 @@ namespace Telegram.Controls
             SubtitleTextBlock.Visibility = string.IsNullOrEmpty(subtitle)
                 ? Visibility.Collapsed
                 : Visibility.Visible;
+
+            UpdateAutomationName();
+        }
+
+        /// <summary>
+        /// What Narrator reads the dialog out by. The title if there is one, and otherwise the
+        /// subtitle cut short, which is ContentDialog's fallback to its content's plain text -
+        /// see ContentDialog::GetPlainText, which truncates the same way.
+        /// </summary>
+        private void UpdateAutomationName()
+        {
+            var name = Title as string;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = TruncateAutomationName(Subtitle);
+            }
+
+            name ??= string.Empty;
+
+            AutomationProperties.SetName(this, name);
+
+            // The popup is the element Narrator announces, so it needs the name too; the control
+            // inside it carries the same one for anything that walks the tree instead.
+            if (_popup != null)
+            {
+                AutomationProperties.SetName(_popup, name);
+            }
+        }
+
+        // Popup::TruncateAutomationName, Popup_Partial.cpp: cut at the first newline, or after
+        // twenty words.
+        private static string TruncateAutomationName(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            var words = 0;
+            var space = true;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                var c = text[i];
+
+                if (c is '\r' or '\n')
+                {
+                    return text.Substring(0, i);
+                }
+
+                if (char.IsWhiteSpace(c))
+                {
+                    space = true;
+                }
+                else if (space)
+                {
+                    space = false;
+
+                    if (++words > 20)
+                    {
+                        return text.Substring(0, i);
+                    }
+                }
+            }
+
+            return text;
         }
 
         #endregion

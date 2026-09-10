@@ -250,7 +250,8 @@ pending ring, the split button, `ShowQueuedAsync`/`OpenAsync`/`SetResult` and th
 `OnNavigatedFrom` contract — so a caller can move between the two without being rewritten.
 **Key types:** `ContentPopup` (Telegram/Controls/ContentPopup.cs) — `ShowQueuedAsync`, `OnNavigatedTo`/
 `OnNavigatedFrom`, `IsAnyPopupOpen`; `ModalPopup` (Telegram/Controls/ModalPopup.cs) — the same, plus
-`Subtitle` (markdown) and `CancelRequested`; `PopupQueue` (same file) — the one per-`XamlRoot` queue both
+`Subtitle` (markdown) and `CancelRequested`, plus ContentDialog's accessibility contract and its
+open/close transition, both transcribed from the framework source rather than from its template; `PopupQueue` (same file) — the one per-`XamlRoot` queue both
 kinds wait on; `MessagePopup` (Telegram/Controls/MessagePopup.xaml.cs) — the generic message box behind
 `ShowPopupAsync(string message, …)`, and `ShowNestedAsync` for the ModalPopup variant raised over an open
 popup; `ToastPopup` (Telegram/Controls/ToastPopup.cs) — the non-modal toast behind
