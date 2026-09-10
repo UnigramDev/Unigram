@@ -5,6 +5,7 @@
 #include <vlc/vlc.h>
 
 #include <thread>
+#include <iterator>
 #include <mutex>
 #include <condition_variable>
 #include <queue>
@@ -222,44 +223,60 @@ namespace winrt::Telegram::Native::Media::implementation
     private:
         struct EventContext
         {
+            static constexpr libvlc_event_e s_events[] =
+            {
+                libvlc_MediaPlayerESSelected,
+                libvlc_MediaPlayerVout,
+                libvlc_MediaPlayerBuffering,
+                libvlc_MediaPlayerEndReached,
+                libvlc_MediaPlayerTimeChanged,
+                libvlc_MediaPlayerLengthChanged,
+                libvlc_MediaPlayerPlaying,
+                libvlc_MediaPlayerPaused,
+                libvlc_MediaPlayerStopped,
+                libvlc_MediaPlayerAudioVolume,
+                libvlc_MediaPlayerEncounteredError,
+                libvlc_MediaPlayerNothingSpecial,
+                libvlc_MediaPlayerOpening,
+            };
+
+            static_assert(std::size(s_events) <= 32);
+
             EventContext(libvlc_media_player_t* player, winrt::weak_ref<AsyncMediaPlayer> weak)
                 : m_weak(weak)
             {
                 libvlc_event_manager_t* em = libvlc_media_player_event_manager(player);
-                libvlc_event_attach(em, libvlc_MediaPlayerESSelected, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerVout, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerBuffering, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerEndReached, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerTimeChanged, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerLengthChanged, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerPlaying, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerPaused, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerStopped, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerAudioVolume, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerEncounteredError, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerNothingSpecial, &EventCallback, this);
-                libvlc_event_attach(em, libvlc_MediaPlayerOpening, &EventCallback, this);
+
+                for (uint32_t i = 0; i < std::size(s_events); i++)
+                {
+                    // libvlc_event_attach fails on a failed allocation, and libvlc_event_detach
+                    // ends in a bare abort() when it cannot find the listener -- in release too.
+                    // So the successes have to be remembered, or one allocation lost under memory
+                    // pressure kills the process at teardown, with nothing to show for it.
+                    if (libvlc_event_attach(em, s_events[i], &EventCallback, this) == 0)
+                    {
+                        m_attached |= 1u << i;
+                    }
+                }
             }
 
             void Detach(libvlc_media_player_t* player)
             {
                 libvlc_event_manager_t* em = libvlc_media_player_event_manager(player);
-                libvlc_event_detach(em, libvlc_MediaPlayerESSelected, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerVout, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerBuffering, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerEndReached, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerTimeChanged, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerLengthChanged, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerPlaying, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerPaused, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerStopped, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerAudioVolume, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerEncounteredError, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerNothingSpecial, &EventCallback, this);
-                libvlc_event_detach(em, libvlc_MediaPlayerOpening, &EventCallback, this);
+
+                for (uint32_t i = 0; i < std::size(s_events); i++)
+                {
+                    if (m_attached & (1u << i))
+                    {
+                        libvlc_event_detach(em, s_events[i], &EventCallback, this);
+                    }
+                }
+
+                m_attached = 0;
             }
 
             winrt::weak_ref<AsyncMediaPlayer> m_weak;
+            uint32_t m_attached = 0;
 
             static void EventCallback(const libvlc_event_t* event, void* user_data)
             {
