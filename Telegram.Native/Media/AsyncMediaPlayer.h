@@ -230,6 +230,24 @@ namespace winrt::Telegram::Native::Media::implementation
         void Log(winrt::event_token const& token);
 
     private:
+        // Position, duration and can-pause are answered from here instead of from libvlc.
+        // libvlc_media_player_stop holds the same lock that get_time, get_length and
+        // can_pause take, and it holds it across the join of the input thread -- which can
+        // be parked in a read for as long as the network takes. A UI thread asking for the
+        // position would wait on that lock for just as long.
+        //
+        // Nothing is lost by not asking: libvlc reports each of these through an event, or
+        // we are the one setting it. Written from the event thread and the worker.
+        //
+        // Shared with EventContext rather than reached through the player, so that a libvlc
+        // callback can record what it was told without holding a reference to the player.
+        struct PlayerState
+        {
+            std::atomic<double> position{ 0 };
+            std::atomic<double> duration{ 0 };
+            std::atomic<bool> canPause{ true };
+        };
+
         struct EventContext
         {
             static constexpr libvlc_event_e s_events[] =
@@ -251,8 +269,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
             static_assert(std::size(s_events) <= 32);
 
-            EventContext(libvlc_media_player_t* player, winrt::weak_ref<AsyncMediaPlayer> weak)
+            EventContext(libvlc_media_player_t* player, winrt::weak_ref<AsyncMediaPlayer> weak, DispatcherQueue dispatcherQueue, std::shared_ptr<PlayerState> state)
                 : m_weak(weak)
+                , m_dispatcherQueue(dispatcherQueue)
+                , m_state(state)
             {
                 libvlc_event_manager_t* em = libvlc_media_player_event_manager(player);
 
@@ -285,16 +305,22 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             winrt::weak_ref<AsyncMediaPlayer> m_weak;
+            DispatcherQueue m_dispatcherQueue{ nullptr };
+            std::shared_ptr<PlayerState> m_state;
             uint32_t m_attached = 0;
 
             static void EventCallback(const libvlc_event_t* event, void* user_data)
             {
-                auto* ctx = static_cast<EventContext*>(user_data);
-                if (auto strong = ctx->m_weak.get())
-                {
-                    strong->HandleEvent(event);
-                }
+                // Deliberately not resolving m_weak here. A strong reference taken on libvlc's
+                // thread can turn out to be the last one, and then ~AsyncMediaPlayer runs on
+                // that thread: inside the event manager's lock, and re-entering the source the
+                // very same thread may be parked in. The player is reached only from the
+                // dispatcher, where dropping the last reference is safe.
+                static_cast<EventContext*>(user_data)->HandleEvent(event);
             }
+
+            void HandleEvent(const libvlc_event_t* event);
+            void TryEnqueue(DispatcherQueueHandler const& callback) const;
         };
 
         class CleanupManager
@@ -366,17 +392,7 @@ namespace winrt::Telegram::Native::Media::implementation
         // worker may still be inside Play.
         std::atomic<void*> m_streamAbi{ nullptr };
 
-        // Position, duration and can-pause are answered from here instead of from libvlc.
-        // libvlc_media_player_stop holds the same lock that get_time, get_length and
-        // can_pause take, and it holds it across the join of the input thread -- which can
-        // be parked in a read for as long as the network takes. A UI thread asking for the
-        // position would wait on that lock for just as long.
-        //
-        // Nothing is lost by not asking: libvlc reports each of these through an event, or
-        // we are the one setting it. Written from the event thread and the worker.
-        std::atomic<double> m_position{ 0 };
-        std::atomic<double> m_duration{ 0 };
-        std::atomic<bool> m_canPause{ true };
+        std::shared_ptr<PlayerState> m_state{ std::make_shared<PlayerState>() };
 
         void OnDefaultAudioRenderDeviceChanged(winrt::Windows::Foundation::IInspectable const& sender, DefaultAudioRenderDeviceChangedEventArgs const& args);
 
@@ -385,9 +401,6 @@ namespace winrt::Telegram::Native::Media::implementation
         static void LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args) noexcept;
 
         void HandleLog(int level, const libvlc_log_t* ctx, const char* fmt, va_list args);
-
-        void HandleEvent(const libvlc_event_t* event);
-        void TryEnqueue(DispatcherQueueHandler const& callback) const;
 
         void GetVideoTrackInfo(int32_t trackId, int32_t& width, int32_t& height);
 
