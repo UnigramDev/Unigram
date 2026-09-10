@@ -32,14 +32,6 @@ namespace Telegram.Common
 
         }
 
-        private TextStyleRun(TextStyleRun run)
-        {
-            Flags = run.Flags;
-            Start = run.Start;
-            End = run.End;
-            Type = run.Type;
-        }
-
         #region DateTime
 
         public string FormattedText { get; set; } = string.Empty;
@@ -60,18 +52,6 @@ namespace Telegram.Common
         public bool HasFlag(TextStyle flag)
         {
             return (Flags & flag) != 0;
-        }
-
-        private void Merge(TextStyleRun run)
-        {
-            Flags |= run.Flags;
-            Type ??= run.Type;
-
-            // TODO: probably makes sense to add all entity types that provide some additional value.
-            if (run.Type is TextEntityTypeCustomEmoji)
-            {
-                Type = run.Type;
-            }
         }
 
         // Not Array.Empty: TextStylePart is a WinRT struct and the native side takes an
@@ -137,30 +117,26 @@ namespace Telegram.Common
                 return Array.Empty<TextStyleRun>();
             }
 
-            var runs = new List<TextStyleRun>();
-            var entitiesCopy = new List<TextEntity>(entities);
+            List<TextStyleRun> runs = null;
+            var sorted = true;
 
-            entitiesCopy.Sort((x, y) => x.Offset.CompareTo(y.Offset));
-
-            for (int a = 0, N = entitiesCopy.Count; a < N; a++)
+            for (int i = 0; i < entities.Count; i++)
             {
-                var entity = entitiesCopy[a];
+                var entity = entities[i];
                 if (entity.Length <= 0 || entity.Offset < 0 || entity.Offset >= text.Length)
                 {
                     continue;
                 }
-                else if (entity.Offset + entity.Length > text.Length)
-                {
-                    entity.Length = text.Length - entity.Offset;
-                }
 
-                var newRun = new TextStyleRun
+                var run = new TextStyleRun
                 {
                     Start = entity.Offset,
-                    End = entity.Offset + entity.Length
+                    // Clamped here rather than on the entity: entities belong to the message and
+                    // are rendered again against other text - a paragraph of it, a search preview.
+                    End = Math.Min(entity.Offset + entity.Length, text.Length)
                 };
 
-                (newRun.Flags, newRun.Type) = entity.Type switch
+                (run.Flags, run.Type) = entity.Type switch
                 {
                     TextEntityTypeStrikethrough => (TextStyle.Strikethrough, null),
                     TextEntityTypeUnderline => (TextStyle.Underline, null),
@@ -178,101 +154,115 @@ namespace Telegram.Common
                     TextEntityTypeIcon => (TextStyle.Icon, entity.Type),
                     TextEntityTypeMathematicalExpression => (TextStyle.Math, entity.Type),
                     TextEntityTypeButton => (TextStyle.Button, entity.Type),
-                    // A marker laid over a link, never standing alone. Type stays null so
-                    // the link's own entity survives the merge below — Merge keeps the
-                    // first non-null Type and ORs the flags together.
+                    // A marker laid over a link, never standing alone, so it leaves Type null
+                    // and the link it covers keeps its own.
                     TextEntityTypeCached => (TextStyle.Cached, null),
                     _ => (TextStyle.Url, entity.Type)
                 };
 
-                for (int b = 0, N2 = runs.Count; b < N2; b++)
+                runs ??= new List<TextStyleRun>(entities.Count);
+                sorted = sorted && (runs.Count == 0 || runs[runs.Count - 1].Start <= run.Start);
+                runs.Add(run);
+            }
+
+            if (runs == null)
+            {
+                return Array.Empty<TextStyleRun>();
+            }
+
+            if (!sorted)
+            {
+                runs.Sort((x, y) => x.Start.CompareTo(y.Start));
+            }
+
+            // Nothing overlaps in the overwhelming majority of messages, and then the entities
+            // already are the runs - no splitting, and nothing allocated beyond this list.
+            for (int i = 1; i < runs.Count; i++)
+            {
+                if (runs[i].Start < runs[i - 1].End)
                 {
-                    TextStyleRun run = runs[b];
-
-                    if (newRun.Start > run.Start)
-                    {
-                        if (newRun.Start >= run.End)
-                        {
-                            continue;
-                        }
-
-                        if (newRun.End < run.End)
-                        {
-                            TextStyleRun r = new(newRun);
-                            r.Merge(run);
-                            b++;
-                            N2++;
-                            runs.Insert(b, r);
-
-                            r = new TextStyleRun(run);
-                            r.Start = newRun.End;
-                            b++;
-                            N2++;
-                            runs.Insert(b, r);
-                        }
-                        else if (newRun.End >= run.End)
-                        {
-                            TextStyleRun r = new(newRun);
-                            r.Merge(run);
-                            r.End = run.End;
-                            b++;
-                            N2++;
-                            runs.Insert(b, r);
-                        }
-
-                        (newRun.Start, run.End) = (run.End, newRun.Start);
-                    }
-                    else
-                    {
-                        if (run.Start >= newRun.End)
-                        {
-                            continue;
-                        }
-                        int temp = run.Start;
-                        if (newRun.End == run.End)
-                        {
-                            run.Merge(newRun);
-                        }
-                        else if (newRun.End < run.End)
-                        {
-                            TextStyleRun r = new(run);
-                            r.Merge(newRun);
-                            r.End = newRun.End;
-                            b++;
-                            N2++;
-                            runs.Insert(b, r);
-
-                            run.Start = newRun.End;
-                        }
-                        else
-                        {
-                            TextStyleRun r = new(newRun);
-                            r.Start = run.End;
-                            b++;
-                            N2++;
-                            runs.Insert(b, r);
-
-                            run.Merge(newRun);
-                        }
-                        newRun.End = temp;
-                    }
-
-                    // Both branches above leave newRun holding whatever of it still extends past
-                    // run, and that remainder is inverted - not empty - when there is none. Carried
-                    // into the next run it is copied into the list as a run whose End precedes its
-                    // Start, and a negative length reaches Run creation as a ~4GB hstring.
-                    if (newRun.Start >= newRun.End)
-                    {
-                        break;
-                    }
-                }
-                if (newRun.Start < newRun.End)
-                {
-                    runs.Add(newRun);
+                    return Split(runs);
                 }
             }
 
-            runs.Sort((x, y) => x.Offset.CompareTo(y.Offset));
+            return runs;
+        }
+
+        /// <summary>
+        /// Cuts <paramref name="sources"/> at every entity edge and gives each resulting segment
+        /// the union of the entities covering it, so the result is an ordered partition: no gaps
+        /// invented, no segment empty or inverted, and no two overlapping.
+        /// </summary>
+        private static List<TextStyleRun> Split(List<TextStyleRun> sources)
+        {
+            var bounds = new int[sources.Count * 2];
+
+            for (int i = 0; i < sources.Count; i++)
+            {
+                bounds[i * 2] = sources[i].Start;
+                bounds[i * 2 + 1] = sources[i].End;
+            }
+
+            Array.Sort(bounds);
+
+            var runs = new List<TextStyleRun>(bounds.Length);
+
+            for (int i = 0; i < bounds.Length - 1; i++)
+            {
+                var start = bounds[i];
+                var end = bounds[i + 1];
+
+                if (start == end)
+                {
+                    continue;
+                }
+
+                TextStyleRun merged = null;
+                TextStyleRun owner = null;
+
+                for (int j = 0; j < sources.Count; j++)
+                {
+                    var source = sources[j];
+
+                    // The bounds are consecutive edges, so a source spans the whole segment or
+                    // none of it - there is no partial case to split further.
+                    if (source.Start > start || source.End < end)
+                    {
+                        continue;
+                    }
+
+                    merged ??= new TextStyleRun
+                    {
+                        Start = start,
+                        End = end
+                    };
+
+                    merged.Flags |= source.Flags;
+
+                    if (source.Type == null)
+                    {
+                        continue;
+                    }
+
+                    // A wrapper is longer than what it wraps, so the shortest entity over the
+                    // segment is the content - and the renderer branches on the flags and then
+                    // reads Type expecting the content's. A custom emoji wins outright: it is
+                    // drawn inside its spoiler, not instead of it.
+                    if (owner == null
+                        || source.Type is TextEntityTypeCustomEmoji
+                        || (owner.Type is not TextEntityTypeCustomEmoji && source.Length < owner.Length))
+                    {
+                        owner = source;
+                    }
+                }
+
+                if (merged != null)
+                {
+                    merged.Type = owner?.Type;
+                    runs.Add(merged);
+                }
+            }
+
             return runs;
         }
 
