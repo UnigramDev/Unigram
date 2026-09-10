@@ -37,6 +37,15 @@ inline void post_to_threadpool(Func&& func)
         nullptr
     );
 
+    // Submitting a null work item is an access violation. Dropping the work instead leaks
+    // whatever it was going to release, which for the teardown path is one player and one
+    // libvlc instance -- the better outcome of the two, in a process already out of memory.
+    if (work == nullptr)
+    {
+        delete heapFunc;
+        return;
+    }
+
     SubmitThreadpoolWork(work);
     CloseThreadpoolWork(work);
 }
