@@ -407,7 +407,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
     private:
         mutable std::mutex close_lock_;
-        bool closed_ = false;
+        // Written under close_lock_, but read without it where taking that lock would invert the
+        // close_lock_ -> work_lock_ order Close() holds them in.
+        std::atomic<bool> closed_{ false };
 
         std::atomic<bool> work_started_{ false };
         std::unique_ptr<std::thread> work_thread_;
@@ -438,6 +440,15 @@ namespace winrt::Telegram::Native::Media::implementation
             work_queue_.push(work_item);
 
             std::lock_guard<std::mutex> lock(work_lock_);
+
+            // Checked again, because the close_lock_ above was given up before the queue push:
+            // Close() can have run in between, taken the thread away and left nobody to join
+            // the one started here -- and destroying a joinable thread terminates the process.
+            if (closed_.load())
+            {
+                return;
+            }
+
             if (!work_started_.load())
             {
                 if (work_thread_ && work_thread_->joinable())
