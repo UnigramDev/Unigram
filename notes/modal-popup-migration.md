@@ -47,7 +47,7 @@ swap plus the differences below.
   ones. That is the cleanest single win in the whole migration — see `MessagePopup`, `InputPopup`
   and `ViewModelBase`.
 - **`ContentPopupButtonsLayout` was moved into `ModalPopup.cs`** so it outlives `ContentPopup.cs`.
-  It wants a better name once the old file is gone.
+  It keeps its name — see the naming decision below; it is already the final one.
 
 ## Accessibility
 
@@ -154,6 +154,24 @@ thickness, so the command row stops short of the stroke rather than covering it.
 Guards, all of them ContentPopup's: skip when either height is zero (opening or closing) or
 unchanged, and when `VerticalContentAlignment` is `Stretch`, since a card told to fill the window
 does not change height by itself.
+
+## The name
+
+**`ModalPopup` is a transitional name. The end state is called `ContentPopup`.** Fela's decision,
+and the right one: 154 subclasses keep the base class they already name, so nothing churns twice.
+
+The sequence that follows from it:
+
+1. move callers to `ModalPopup` a batch at a time, while both classes exist;
+2. delete `ContentPopup.cs`, `ContentPopup.Win32.cs` and the `ContentPopup` style once nothing
+   derives from it;
+3. rename `ModalPopup` to `ContentPopup` in one mechanical sweep — the class, its file, its style,
+   and the `ModalPopup*EventArgs` types with it.
+
+Do **not** rename the event args types early to get ahead of step 3. It buys nothing: every handler
+signature names the sender type as well (`TypedEventHandler<ModalPopup, ModalPopupClosedEventArgs>`
+forces `(ModalPopup sender, …)` at the method), so the sweep has to pass over all of them regardless,
+and it renames both halves in the same pass.
 
 ## Deliberate gaps
 
