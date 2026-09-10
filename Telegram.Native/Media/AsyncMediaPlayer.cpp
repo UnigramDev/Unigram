@@ -504,21 +504,35 @@ namespace winrt::Telegram::Native::Media::implementation
 
         MediaDevice::DefaultAudioRenderDeviceChanged(m_defaultAudioRenderDeviceChanged);
 
-        libvlc_media_player_set_pause(m_player, true);
-
-        libvlc_log_unset(m_instance);
-
-        if (m_context)
-        {
-            m_context.Detach();
-        }
-
+        // First, because it is what lets a parked read fail so libvlc's input thread can finish.
+        // Everything else here waits on that thread one way or another, and the pause this used
+        // to issue waited on it for the whole of RemoteFileSource's read timeout: set_pause takes
+        // the lock libvlc_media_player_stop holds across the join. Nothing pauses now -- the
+        // player is stopped a moment later by CleanupManager, on a thread that may block.
         if (m_stream)
         {
             m_stream.Close();
         }
 
         m_stream = nullptr;
+
+        // Stays here rather than moving into CleanupManager: the log callback is registered with
+        // a raw this, and this object can be gone before the cleanup runs.
+        libvlc_log_unset(m_instance);
+
+        // Detaching from the SwapChainPanel is a XAML call, and Close runs on whichever thread
+        // dropped the last reference, which is not necessarily the one that owns the panel.
+        if (m_context)
+        {
+            if (m_dispatcherQueue && !m_dispatcherQueue.HasThreadAccess())
+            {
+                m_dispatcherQueue.TryEnqueue([context = m_context] { context.Detach(); });
+            }
+            else
+            {
+                m_context.Detach();
+            }
+        }
 
         {
             std::lock_guard<std::mutex> lock(work_lock_);
