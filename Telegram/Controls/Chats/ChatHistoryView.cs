@@ -72,28 +72,81 @@ namespace Telegram.Controls.Chats
         private bool IsReversed => ViewModel?.IsSavedMessagesTab is true;
 
         /// <summary>
-        /// Records whether the list follows the end, and pushes the matching edge to the panel
-        /// straight away.
+        /// Records whether the list follows the end of the history. The flag and nothing else: the
+        /// panel's edge is a constant, and only <see cref="ReleaseAnchor"/> departs from it.
         /// </summary>
-        /// <remarks>
-        /// For the paths that know their intent — navigation, an explicit scroll, a slice loaded
-        /// around a specific message. A reset never reaches <see cref="PrepareAnchor"/>, because
-        /// <see cref="SynchronizedList{T}"/> applies one wholesale, so the edge has to be on the
-        /// panel before it arrives.
-        /// </remarks>
         public void SetFollowingEnd(bool value)
         {
             Logger.Info(value);
 
             IsFollowingEnd = value;
-            ApplyAnchor();
         }
 
-        // The caller is forwarded rather than recaptured, so the log names the path that wanted the
-        // edge - SetFollowingEnd or the panel loading - and not this method.
+        /// <summary>
+        /// Puts the panel on the edge the list rests on, which is the bottom of the panel.
+        /// </summary>
+        /// <remarks>
+        /// It anchors the first visible element for every mutation — wherever it lands, and whether
+        /// or not the rows it touches were realized — and follows the extent while the list is
+        /// resting against the bottom. The only batch it is wrong for is one that must not be
+        /// followed into, which is what <see cref="ReleaseAnchor"/> is for.
+        ///
+        /// Not mirrored for the saved messages tab. What is mirrored there is which load lands at
+        /// which end of the list, not which end the panel holds still.
+        ///
+        /// The caller is forwarded rather than recaptured, so the log names the path that wanted
+        /// the edge and not this method.
+        /// </remarks>
         internal void ApplyAnchor([CallerMemberName] string source = null)
         {
-            SetAnchor(IsFollowingEnd != IsReversed, source);
+            SetAnchor(true, source);
+        }
+
+        /// <summary>
+        /// Takes the panel off that edge for the next batch of mutations and only that one:
+        /// <see cref="InvalidateAnchor"/> puts it back on the layout pass that consumes the batch.
+        /// </summary>
+        /// <remarks>
+        /// For a batch that must not be followed into — the reset behind a slice loaded around some
+        /// other message, and the ad, which the user reveals by pulling past the end rather than
+        /// being scrolled to it.
+        ///
+        /// It writes before the batch rather than during it, which is the one position that cannot
+        /// poison the panel: the election happens on the first collection change after an arrange,
+        /// so a write ahead of that change is one the election reads, not one it can be left
+        /// disagreeing with.
+        /// </remarks>
+        internal void ReleaseAnchor()
+        {
+            _anchorReleased = true;
+            SetAnchor(false);
+        }
+
+        /// <summary>
+        /// The same, for a slice about to join the list at the bottom of the panel.
+        /// </summary>
+        /// <remarks>
+        /// Resting against the bottom of a window that is not the end of the history is a paging
+        /// boundary, and from there the panel follows its own extent: the page that lands pulls the
+        /// view into it, which triggers the load after it, and the list pages through the history
+        /// one screenful at a time, realizing every one of them. Sixty DIPs short of the bottom
+        /// none of it happens, so the test is deliberately narrow.
+        ///
+        /// Which load lands there is what the saved messages tab mirrors: the newest message is at
+        /// the top, so scrolling down asks for older ones and it is the backward slice that joins
+        /// at the end.
+        /// </remarks>
+        internal void PrepareSlice(PanelScrollingDirection direction)
+        {
+            if ((direction == PanelScrollingDirection.Forward) != IsReversed && IsAtExtentEnd)
+            {
+                ReleaseAnchor();
+
+                // A slice reaches the list through SynchronizedList, which can hold a batch back by
+                // a frame, so the edge has to stay released until that batch has actually landed —
+                // unlike a reset, which is applied on the spot.
+                _anchorAwaitsMutation = true;
+            }
         }
 
         /// <summary>
@@ -110,16 +163,11 @@ namespace Telegram.Controls.Chats
         /// pass then generates from a dead anchor and fail-fasts in <c>PlaceInValidElements</c>.
         ///
         /// So a change is refused while a run is in flight, and only a change: writing the value the
-        /// panel already holds cannot make anything disagree. The intent is not lost, it stays in
-        /// <see cref="IsFollowingEnd"/>, and the next run's first mutation applies it.
+        /// panel already holds cannot make anything disagree.
         ///
-        /// The window this has to stay out of is bounded by the panel's own arrange, and
-        /// <see cref="_anchorCount"/> brackets it on both ends: <see cref="PrepareAnchor"/> runs just
-        /// before the mutation reaches the list, so it opens before the election, and
-        /// <see cref="InvalidateAnchor"/> runs on <c>LayoutUpdated</c>, so it closes after the
-        /// arrange. Nothing else can elect — <c>SynchronizedList</c> raises <c>Inserting</c> and
-        /// <c>Removing</c> immediately before every insertion and removal, drops moves and replaces
-        /// outright, and applies a reset as a single <c>Reset</c>, which the panel does not track.
+        /// Both writers are outside that window by construction — <see cref="ReleaseAnchor"/> runs
+        /// before a batch and <see cref="InvalidateAnchor"/> on the layout pass that consumed one —
+        /// so the refusal is a bracket around them rather than the thing that makes them safe.
         /// </remarks>
         private void SetAnchor(bool end, [CallerMemberName] string source = null)
         {
@@ -143,7 +191,36 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
+            Logger.Info("Applied " + mode);
             panel.ItemsUpdatingScrollMode = mode;
+        }
+
+        /// <summary>
+        /// Whether the view is resting against the bottom of the panel — the edge the panel follows
+        /// the extent of, whichever end of the history happens to be down there.
+        /// </summary>
+        private bool IsAtExtentEnd => ScrollingHost is ScrollViewer scroll
+            && scroll.ScrollableHeight - scroll.VerticalOffset < FollowThreshold;
+
+        /// <summary>
+        /// Whether the view is resting against the edge new messages arrive at, which is the top in
+        /// the saved messages tab. Geometry only: it says nothing about whether the end of the
+        /// loaded window is the end of the chat.
+        /// </summary>
+        public bool IsAtFollowingEdge
+        {
+            get
+            {
+                var scroll = ScrollingHost;
+                if (scroll == null)
+                {
+                    return false;
+                }
+
+                return IsReversed
+                    ? scroll.VerticalOffset < FollowThreshold
+                    : scroll.ScrollableHeight - scroll.VerticalOffset < FollowThreshold;
+            }
         }
 
         /// <summary>
@@ -159,15 +236,10 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            // The end of the loaded window is not the end of the chat: outrunning a forward load
-            // comes to rest at a paging boundary, and following that would anchor the page that
-            // lands there to the end, pull the view into it, and so trigger the load after it —
-            // the list races to the present, rendering every page on the way. Nothing can arrive
-            // at the end while the newest slice is missing either, as InsertMessage drops it.
-            var following = ViewModel?.IsNewestSliceLoaded is true
-                && (IsReversed
-                    ? scroll.VerticalOffset < FollowThreshold
-                    : scroll.ScrollableHeight - scroll.VerticalOffset < FollowThreshold);
+            // The end of the loaded window is not the end of the chat, and nothing can arrive at
+            // the end while the newest slice is missing — InsertMessage drops it — so the offset
+            // only decides the case where it is loaded.
+            var following = ViewModel?.IsNewestSliceLoaded is true && IsAtFollowingEdge;
 
             if (following != IsFollowingEnd)
             {
@@ -176,82 +248,53 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        // ItemsStackPanel.FirstVisibleIndex only catches up on the next layout pass, and a slice
-        // load raises one event per message (MessageCollection.PrependSlice/AppendSlice), so the
-        // panel is asked once and the index kept up to date by hand until layout runs again.
-        private int _anchorIndex = -1;
-
-        // The panel reads ItemsUpdatingScrollMode when it measures, so it is the run of mutations
-        // between two layout passes and not the single mutation that decides where the view lands.
-        // Accumulated rather than logged per mutation: a slice load is 24 of them, and the line
-        // that answers "why did the view jump" is the one describing the whole batch.
+        // The panel reads ItemsUpdatingScrollMode when it measures, so what decides where the view
+        // lands is the run of mutations between two layout passes and not the single mutation.
         private int _anchorCount;
-        private int _anchorFirst;
-        private bool _anchorEnd;
-        private bool _anchorDisagreed;
+        private bool _anchorReleased;
+        private bool _anchorAwaitsMutation;
 
+        /// <summary>
+        /// Records that a mutation is about to reach the list.
+        /// </summary>
+        /// <remarks>
+        /// Only counted. It says which layout pass consumed the batch a release was written for,
+        /// which is not the next one to run: <see cref="SynchronizedList{T}"/> can hold a mutation
+        /// back by a frame, and restoring the edge before the batch it was released for has landed
+        /// would leave the batch anchored to the edge the release was avoiding.
+        /// </remarks>
+        internal void TrackMutation()
+        {
+            _anchorCount++;
+        }
+
+        /// <summary>
+        /// Closes the batch, and puts a released edge back.
+        /// </summary>
+        /// <remarks>
+        /// Called from <c>LayoutUpdated</c>, so it runs after the arrange of the pass that consumed
+        /// the batch — which is where the edge can be written without the panel's election and its
+        /// measure ending up in disagreement.
+        /// </remarks>
         internal void InvalidateAnchor()
         {
             if (_anchorCount > 0)
             {
-                Logger.Info($"{_anchorCount} mutations from {_anchorFirst}, anchored to the {(_anchorEnd ? "end" : "start")}{(_anchorDisagreed ? ", disagreed" : string.Empty)}, following: {IsFollowingEnd}");
+                Logger.Info($"{_anchorCount} mutations, {(_anchorReleased ? "released" : "anchored")}, following: {IsFollowingEnd}");
 
                 _anchorCount = 0;
-                _anchorDisagreed = false;
+                _anchorAwaitsMutation = false;
             }
 
-            _anchorIndex = -1;
-        }
-
-        /// <summary>
-        /// Picks the edge the scroll offset anchors to for the mutation about to be applied at
-        /// <paramref name="index"/>, which displaces everything after it by <paramref name="delta"/>.
-        /// </summary>
-        /// <remarks>
-        /// While the list follows the end that edge is the answer for every mutation: a prepend is
-        /// compensated and leaves the user at the end, an append reveals the new message. Otherwise
-        /// the requirement is that content already on screen must not move, and only the part of
-        /// the list above the viewport can disturb it.
-        /// </remarks>
-        internal void PrepareAnchor(int index, int delta)
-        {
-            if (ItemsPanelRoot is not ItemsStackPanel panel)
+            if (_anchorReleased && !_anchorAwaitsMutation)
             {
-                return;
-            }
-
-            if (_anchorIndex < 0)
-            {
-                _anchorIndex = Math.Max(panel.FirstVisibleIndex, 0);
-            }
-
-            var above = index <= _anchorIndex;
-            var end = IsFollowingEnd ? !IsReversed : above;
-
-            SetAnchor(end);
-
-            if (_anchorCount++ == 0)
-            {
-                _anchorFirst = _anchorIndex;
-            }
-            else if (end != _anchorEnd)
-            {
-                _anchorDisagreed = true;
-            }
-
-            _anchorEnd = end;
-
-            if (above)
-            {
-                // A range straddling the viewport edge is approximate here, and the layout that
-                // follows corrects it.
-                _anchorIndex = Math.Max(_anchorIndex + delta, 0);
+                _anchorReleased = false;
+                ApplyAnchor();
             }
         }
 
         /// <summary>
-        /// The side the rows moved on, for the size change and removal animations: the same
-        /// question <see cref="PrepareAnchor"/> just answered for the mutation in flight.
+        /// The side the rows moved on, for the size change and removal animations.
         /// </summary>
         internal static int GetShiftDirection(ItemsStackPanel panel, int index, SelectorItem selector, ScrollViewer scroll)
         {
@@ -414,6 +457,7 @@ namespace Telegram.Controls.Chats
                 // The ad is revealed by the user pulling past the end, so the list must stop
                 // following: inserting it while anchored to the end would scroll it into view.
                 SetFollowingEnd(false);
+                ReleaseAnchor();
 
                 ViewModel.PendingSponsoredMessage = null;
                 ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null, null)));
@@ -474,6 +518,7 @@ namespace Telegram.Controls.Chats
                 if (point.Properties.MouseWheelDelta < 0)
                 {
                     SetFollowingEnd(false);
+                    ReleaseAnchor();
 
                     ViewModel.PendingSponsoredMessage = null;
                     ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null, null)));

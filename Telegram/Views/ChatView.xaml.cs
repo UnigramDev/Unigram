@@ -607,13 +607,13 @@ namespace Telegram.Views
         /// </summary>
         public void Inserting(int index, IList items)
         {
-            Messages.PrepareAnchor(index, items.Count);
+            Messages.TrackMutation();
             _messagesShift.RegisterInsert(index);
         }
 
         public void Removing(int index, IList items)
         {
-            Messages.PrepareAnchor(index, -items.Count);
+            Messages.TrackMutation();
 
             if (Messages.ItemsPanelRoot is not ItemsStackPanel panel)
             {

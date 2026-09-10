@@ -403,3 +403,101 @@ trim reordering above was for.
 `PrepareAnchor` still lets a later mutation in a batch take the edge back from an earlier one — only
 the trim half of the first run's pair was committed (`a7e6c3644`). `disagreed` in the new batch line
 is what answers whether any batch still needs the latch.
+
+---
+
+## Third run — the spike, and the rule that replaces the per-mutation flip
+
+Fela: *"we flip because when scrolling and loading more items the anchoring should change to prevent
+jumping around"*. Right, and the reason is sharper than the model this note was built on. Measured in
+`C:\Source\ListRecycleSpike` (`PagingPage`, `Run.ps1 -Case paging`); the README carries the table.
+
+**`ItemsUpdatingScrollMode` is not "which end is anchored". Both modes track the first visible
+element and hold it still; each releases at one edge, and that is the entire difference.**
+`KeepItemsInView` stops tracking at offset 0 (`BeginTrackingFirstVisibleElement`, the early exit),
+so a prepend there jumps — measured at +2616 DIPs, a viewport and a half. `KeepLastItemInView` sets
+`isTrackingExtentEnd` when the estimated extent fits the viewport bottom, so an append there follows
+the new end — measured at -2616, which is the runaway paging of the second run. Sixty DIPs off
+either edge both modes are exact, whatever is mutated, above or below, realized or not.
+
+So the flip is real, but the index comparison it is built on is not what makes it work: the
+mutation's position never mattered in any shape measured. Only which edge the list is resting against
+does.
+
+**Per-mutation flipping is worse than not flipping.** `Flip` — the rule in the tree — is the only
+mechanism that fails a backward slice with its trim behind it (24 in at 0, 24 out at the far end):
+-994 DIPs, the prepend uncompensated, because the panel reads the mode when it measures and the
+trim's removals take the edge back from the prepend. That is the first run's drift, reproduced
+outside the app, and it is still in the tree wherever a batch touches both edges.
+
+**The rule that passes all ten shapes** is one mode per *resting position* rather than one per
+mutation:
+
+```
+KeepLastItemInView, unless parked at the extent end of a window that is not the end of the chat
+```
+
+which is `IsFollowingEnd` plus "am I at the end of the loaded window" — both already known, both
+sampled at rest. Written from `UpdateFollowingEnd`, it can never land inside a batch, which is the
+condition `46c467caa` is guarding against; the guard stays as a belt but stops being load-bearing.
+`PrepareAnchor`, `_anchorIndex`, the disagreement counter and the never-committed latch all go.
+
+**The ScrollViewer's own anchoring was the other candidate and the spike killed it.**
+`VerticalAnchorRatio` strictly between 0 and 1 has no release zone at either edge — `IsAnchoring`
+takes its far-edge branch only at exactly 1.0 and its no-anchoring branch only at exactly 0.0 — so on
+paper it needs no flip at all. It does not survive virtualization here: `KeepScrollOffset` turns off
+the panel's tracking, the panel then generates its realization window from the *uncorrected* offset,
+and the ScrollViewer's correction only runs afterwards in its own `ArrangeOverride`. A 24-row insert
+far above the viewport made the panel realize a completely different range and recycle the anchor
+before it could be corrected against — the view ends up somewhere else in the chat entirely. The
+panel has `GetRealizationWindowAfterViewportShift` for exactly this, and `KeepScrollOffset` gives it
+up. Not a tuning problem; the ordering is wrong.
+
+Still open and untouched by any of this: the 8 DIP threshold, and tall messages.
+
+### What landed for it
+
+`ItemsUpdatingScrollMode` is now a constant with two named exceptions, and no code reads the
+mutation's index any more.
+
+| | |
+| --- | --- |
+| `ChatView.xaml` | the panel starts at `KeepLastItemInView` |
+| `ApplyAnchor` | writes that constant. Called when the control and the panel load, and by `InvalidateAnchor` |
+| `ReleaseAnchor` | takes it off for the next batch and only that one: the reset behind a slice loaded around some other message, and the two ad insertions |
+| `PrepareSlice` | the same, called by `LoadNextSliceAsync` before either slice reaches the list, and only for one joining at the bottom of the panel while the view rests within `FollowThreshold` of it |
+| `TrackMutation` | replaces `PrepareAnchor` at the `Inserting`/`Removing` hooks, and only counts |
+| `InvalidateAnchor` | closes the batch on `LayoutUpdated` and puts a released edge back |
+
+**The anchoring is not mirrored for the saved messages tab.** Both release zones are geometric —
+`KeepItemsInView` lets go at offset zero, `KeepLastItemInView` follows the extent at the bottom — and
+the bottom of the panel is the bottom of the panel whichever end of the history is down there. What
+the tab mirrors is which load lands there: the newest message is at the top, so scrolling down asks
+for older ones and it is the **backward** slice that joins at the end, which is why `PrepareSlice`
+takes the direction and tests `(direction == Forward) != IsReversed`. `IsAtExtentEnd` is the
+unmirrored test it uses; `IsAtFollowingEdge`, which is mirrored, is left to `UpdateFollowingEnd`,
+where the question really is about the newest message.
+
+One consequence to weigh if messages can arrive live in that tab: a message inserted at the top no
+longer reveals itself while the view rests there, because the constant anchors the first visible
+element instead of letting go at offset zero the way the old mirrored edge did.
+
+`SetFollowingEnd` no longer touches the panel; `IsFollowingEnd` is read by the trim gate and the
+arrow, not by the anchoring. Deleted with `PrepareAnchor`: `_anchorIndex` and its hand-kept index
+arithmetic, `_anchorFirst`, `_anchorEnd`, `_anchorDisagreed`.
+
+Two things worth keeping in mind about the restore:
+
+- It waits for the batch, not for the next layout pass. `SynchronizedList` can hold a batch back a
+  frame behind the dust effect, and restoring before it lands would leave it anchored to the edge
+  the release was avoiding — hence `_anchorAwaitsMutation`, set only by `PrepareNewerSlice`.
+- A **reset raises neither `Inserting` nor `Removing`** (`OnCollectionChanged` returns for every
+  action but Add and Remove), so its release has nothing to wait for and is restored on the next
+  pass. That is also why the reset's `ReleaseAnchor` sits immediately above `Items.ReplaceSlice`
+  rather than beside the `SetFollowingEnd` at the top of the method.
+
+`ChatView.Removing` still derives its removal-animation direction from the panel's bit, which is now
+all but constant. Left alone: it is the same value it has been reading, and the animations are not
+what this note is about.
+
+Unbuilt.

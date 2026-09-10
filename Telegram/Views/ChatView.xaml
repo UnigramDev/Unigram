@@ -863,7 +863,7 @@
                                 <ItemsStackPanel Loading="ItemsPanelRoot_Loading"
                                                  LayoutUpdated="ItemsPanelRoot_LayoutUpdated"
                                                  SizeChanged="OnViewSizeChanged"
-                                                 ItemsUpdatingScrollMode="KeepItemsInView"
+                                                 ItemsUpdatingScrollMode="KeepLastItemInView"
                                                  VerticalAlignment="Bottom" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>

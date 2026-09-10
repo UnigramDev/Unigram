@@ -944,6 +944,11 @@ namespace Telegram.ViewModels
                 {
                     ProcessMessages(chat, replied);
 
+                    // Before the slice reaches the list rather than after: a slice joining at the
+                    // bottom of the panel must not be followed into, and the panel elects what it
+                    // tracks on the first change of a run.
+                    HistoryField?.PrepareSlice(direction);
+
                     if (direction == PanelScrollingDirection.Backward)
                     {
                         Items.PrependSlice(replied, true, out bool empty);
@@ -1359,6 +1364,14 @@ namespace Telegram.ViewModels
                         messages.Add(newThread);
                         fromMessageId = long.MaxValue;
                     }
+                }
+
+                // The panel scrolls a reset it is tracking the end for to the last element
+                // (BeginTrackingOnRefresh), so a slice loaded around some other message has to say
+                // so before it lands.
+                if (!slice.IsFollowingEnd)
+                {
+                    HistoryField?.ReleaseAnchor();
                 }
 
                 Items.ReplaceSlice(messages);
