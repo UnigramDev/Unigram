@@ -63,6 +63,11 @@ namespace Telegram.Controls.Stories
             UpdateStealthTimer();
         }
 
+        private void StartStealthTimer()
+        {
+            _stealthTimer.Start();
+        }
+
         private void UpdateStealthTimer()
         {
             if (_viewModel == null || _viewModel.ClientService.StealthMode.ActiveUntilDate == 0)
@@ -305,7 +310,7 @@ namespace Telegram.Controls.Stories
         {
             if (update.ActiveUntilDate > 0)
             {
-                _dispatcherQueue.TryEnqueue(_stealthTimer.Start);
+                _dispatcherQueue.TryEnqueue(StartStealthTimer);
             }
             else
             {
