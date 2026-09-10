@@ -62,6 +62,7 @@ namespace Telegram.Controls.Stories
             _activeStories?.Aggregator.Unsubscribe(this);
             _paidReaction?.Completed -= PaidReaction_Completed;
             _groupCall?.TotalStarCountChanged -= OnTotalStarCountChanged;
+            _groupCall?.Changed -= OnChanged;
         }
 
         public void Update(StoryContent content, ActiveStoriesViewModel activeStories, StoryViewModel story)
@@ -77,7 +78,7 @@ namespace Telegram.Controls.Stories
             }
 
             _groupCall.TotalStarCountChanged += OnTotalStarCountChanged;
-            _groupCall.PropertyChanged += OnPropertyChanged;
+            _groupCall.Changed += OnChanged;
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(activeStories.Session);
             MessageField.CustomEmoji = CustomEmoji;
@@ -93,12 +94,9 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnChanged(object sender, EventArgs e)
         {
-            if (e.PropertyName == nameof(Call))
-            {
-                this.BeginOnUIThread(UpdateMessageSender);
-            }
+            this.BeginOnUIThread(UpdateMessageSender);
         }
 
         private void UpdateMessageSender()

@@ -10,7 +10,6 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -128,7 +127,7 @@ namespace Telegram.Controls.Stories
                 _call.ReactionsChanged -= OnReactionsChanged;
                 _call.TopDonorsChanged -= OnTopDonorsChanged;
                 _call.StreamerChanged -= OnStreamerChanged;
-                _call.PropertyChanged -= OnPropertyChanged;
+                _call.Changed -= OnChanged;
                 _call.Discard();
                 _call = null;
             }
@@ -836,7 +835,7 @@ namespace Telegram.Controls.Stories
                 _call.ReactionsChanged += OnReactionsChanged;
                 _call.TopDonorsChanged += OnTopDonorsChanged;
                 _call.StreamerChanged += OnStreamerChanged;
-                _call.PropertyChanged += OnPropertyChanged;
+                _call.Changed += OnChanged;
 
                 if (_call.IsRtmpStream)
                 {
@@ -929,9 +928,9 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnChanged(object sender, EventArgs e)
         {
-            if (sender is VoipGroupCall groupCall && e.PropertyName == nameof(Call))
+            if (sender is VoipGroupCall groupCall)
             {
                 this.BeginOnUIThread(() =>
                 {

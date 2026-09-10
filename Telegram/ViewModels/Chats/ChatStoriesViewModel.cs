@@ -571,7 +571,7 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public partial class StoryAlbumViewModel : ServiceBase, IIncrementalCollectionOwner
+    public partial class StoryAlbumViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private readonly ChatStoriesViewModel _viewModel;
 

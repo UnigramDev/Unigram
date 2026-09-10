@@ -1567,7 +1567,7 @@ namespace Telegram.Services.Calls
                 JoinedStateChanged?.Invoke(this, new VoipGroupCallJoinedStateChangedEventArgs(IsJoined, NeedRejoin));
             }
 
-            RaisePropertyChanged(nameof(Call));
+            RaiseChanged();
         }
 
         public void UpdateParticipant(GroupCallParticipant participant)
@@ -1614,7 +1614,7 @@ namespace Telegram.Services.Calls
                 }
 
                 _currentUser = participant;
-                RaisePropertyChanged(nameof(CurrentUser));
+                RaiseChanged();
             }
 
             // Reading into a local kept this from throwing, but not from calling into an

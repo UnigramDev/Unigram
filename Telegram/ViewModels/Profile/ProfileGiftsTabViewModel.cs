@@ -784,7 +784,7 @@ namespace Telegram.ViewModels.Profile
         }
     }
 
-    public partial class GiftCollectionViewModel : ServiceBase
+    public partial class GiftCollectionViewModel : ViewModelBase
     {
         private readonly ProfileGiftsTabViewModel _viewModel;
         private readonly ProfileGiftsTabViewModel.ReceivedGiftsCollection _items;

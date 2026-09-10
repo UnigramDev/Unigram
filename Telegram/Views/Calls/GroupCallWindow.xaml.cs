@@ -107,7 +107,7 @@ namespace Telegram.Views.Calls
             _call.MessagesChanged += OnMessagesChanged;
             _call.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _call.MutedChanged += OnMutedChanged;
-            _call.PropertyChanged += OnCallPropertyChanged;
+            _call.Changed += OnChanged;
 
             _participants = new GroupCallParticipantsCollection(_call.Participants, _dispatcherQueue);
             _participants.ParticipantChanged += OnParticipantChanged;
@@ -283,7 +283,7 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => UpdateNetworkState(_call.CurrentUser, _call.IsConnected));
         }
 
-        private void OnCallPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnChanged(object sender, EventArgs e)
         {
             this.BeginOnUIThread(() => Update(_call, _call?.CurrentUser));
         }
@@ -308,7 +308,7 @@ namespace Telegram.Views.Calls
             _call.MessagesChanged -= OnMessagesChanged;
             _call.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             _call.MutedChanged -= OnMutedChanged;
-            _call.PropertyChanged -= OnCallPropertyChanged;
+            _call.Changed -= OnChanged;
 
             _participants.ParticipantChanged -= OnParticipantChanged;
             _participants.Dispose();

@@ -17,7 +17,7 @@ namespace Telegram.Services
         IEventAggregator Aggregator { get; }
     }
 
-    public partial class ServiceBase : BindableBase, IService
+    public partial class ServiceBase : IService
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;

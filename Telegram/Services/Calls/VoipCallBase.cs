@@ -28,6 +28,13 @@ namespace Telegram.Services.Calls
 
         public abstract void Discard();
 
+        public event EventHandler Changed;
+
+        protected void RaiseChanged()
+        {
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+
         // A crash report carries one memory figure, taken at the fault, so a call that grew
         // steadily and one that spiked at the end look identical. Sampling here puts the shape
         // of the growth in the log tail instead.

@@ -65,7 +65,7 @@ namespace Telegram.Views.Calls
             _call.NetworkStateChanged += OnNetworkStateChanged;
             _call.JoinedStateChanged += OnJoinedStateChanged;
             _call.StreamStateChanged += OnStreamStateChanged;
-            _call.PropertyChanged += OnPropertyChanged;
+            _call.Changed += OnChanged;
             _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport));
 
             Window.SetTitleBar(TitleArea);
@@ -76,7 +76,7 @@ namespace Telegram.Views.Calls
             //ViewportAspect.Constraint = new Size(16, 9);
 
             OnStreamStateChanged(_call.StreamState);
-            OnPropertyChanged();
+            OnChanged();
         }
 
         protected override UIElement TitleBarElement => TitleArea;
@@ -247,7 +247,7 @@ namespace Telegram.Views.Calls
             _call.NetworkStateChanged -= OnNetworkStateChanged;
             _call.JoinedStateChanged -= OnJoinedStateChanged;
             _call.StreamStateChanged -= OnStreamStateChanged;
-            _call.PropertyChanged -= OnPropertyChanged;
+            _call.Changed -= OnChanged;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -270,12 +270,12 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnChanged(object sender, EventArgs e)
         {
-            this.BeginOnUIThread(() => OnPropertyChanged());
+            this.BeginOnUIThread(OnChanged);
         }
 
-        private void OnPropertyChanged()
+        private void OnChanged()
         {
             TitleInfo.Text = _call.GetTitle();
 
