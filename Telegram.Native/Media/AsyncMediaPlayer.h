@@ -282,17 +282,24 @@ namespace winrt::Telegram::Native::Media::implementation
                     {
                         workerThread.join();
                     }
-                    // Then we release all objects
+                    // Then we release all objects, the listeners first: stop sends
+                    // MediaPlayerStopped synchronously, and by now there is nobody left to hear
+                    // it. Detach is what makes the delete safe -- libvlc_event_send invokes a
+                    // callback with the event manager's lock held and detach takes that same
+                    // lock, so it cannot return while one is running.
+                    if (events)
+                    {
+                        if (player)
+                        {
+                            events->Detach(player);
+                        }
+
+                        delete events;
+                    }
+
                     if (player)
                     {
                         libvlc_media_player_stop(player);
-
-                        if (events)
-                        {
-                            events->Detach(player);
-                            delete events;
-                        }
-
                         libvlc_media_player_set_media(player, nullptr);
                         libvlc_media_player_release(player);
                     }
