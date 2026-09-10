@@ -256,6 +256,15 @@ namespace Telegram.Common
                         }
                         newRun.End = temp;
                     }
+
+                    // Both branches above leave newRun holding whatever of it still extends past
+                    // run, and that remainder is inverted - not empty - when there is none. Carried
+                    // into the next run it is copied into the list as a run whose End precedes its
+                    // Start, and a negative length reaches Run creation as a ~4GB hstring.
+                    if (newRun.Start >= newRun.End)
+                    {
+                        break;
+                    }
                 }
                 if (newRun.Start < newRun.End)
                 {
