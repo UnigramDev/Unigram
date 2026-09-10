@@ -158,7 +158,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Player_Ready(object sender, EventArgs e)
         {
-            _message?.Delegate.ViewVisibleMessages();
+            _message?.Delegate?.ViewVisibleMessages();
 
             var sticker = _message?.Content as MessageSticker;
             if (sticker?.Sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && sticker.IsPremium && _message.GeneratedContentUnread && IsLoaded)
