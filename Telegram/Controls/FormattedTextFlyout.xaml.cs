@@ -70,5 +70,45 @@ namespace Telegram.Controls
             Monospace.IsChecked = string.Equals(character.Name, "Consolas", StringComparison.OrdinalIgnoreCase);
             Spoiler.IsChecked = character.BackgroundColor == Colors.Gray;
         }
+
+        private void Bold_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleBold();
+        }
+
+        private void Italic_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleItalic();
+        }
+
+        private void Underline_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleUnderline();
+        }
+
+        private void Strikethrough_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleStrikethrough();
+        }
+
+        private void Quote_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleQuote();
+        }
+
+        private void Monospace_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleMonospace();
+        }
+
+        private void Spoiler_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.ToggleSpoiler();
+        }
+
+        private void Link_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox.CreateLink();
+        }
     }
 }
