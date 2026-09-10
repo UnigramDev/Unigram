@@ -59,9 +59,21 @@ Read from `ContentDialog_Partial.cpp` rather than guessed, and each piece is cit
 - **The name comes from the title**, and falls back to the subtitle cut at the first newline or
   after twenty words — `Popup::TruncateAutomationName`, which is what `ContentDialog::GetPlainText`
   applies to its content. It is set on both the popup and the control.
-- **The focused element is saved before the popup opens and restored when it closes**, weakly, as
+- **The focused element is saved and handed back when the popup closes**, weakly, as
   `ContentDialog::SetInitialFocusElement` does. A dialog that swallows the caret is the loudest
-  accessibility failure there is.
+  accessibility failure there is. Two pieces of timing carry the whole thing, and both are copied
+  from ContentDialog rather than reasoned out:
+  - **Save at the first layout pass, not when the popup opens.** ContentDialog saves from
+    `OnLayoutRootLoaded`, once its content has loaded inside the popup. Save any earlier and a
+    popup raised from a context menu records the `MenuFlyoutItem` that opened it — an element the
+    flyout destroys moments later, so focus can never go back to it. By first layout the flyout has
+    closed and focus has settled on whatever it handed back to.
+  - **Restore before the popup is closed, never after.** `ContentDialog::HideInternal` is emphatic
+    about it, and rightly: as the popup goes away the FocusManager moves focus to the first
+    focusable element of the page, and anything done afterwards has already been undone.
+
+  Focus is not always on a `Control` either — a `Hyperlink` is a `TextElement`, and ContentDialog
+  carries its own special case for that.
 - **Escape and back run ContentDialog's close action**: the close button if it has text and is
   enabled, a plain `None` close otherwise — always closing, always reporting the key handled.
   `IsLightDismissEnabled` has no say in it; it governs a click outside the card and nothing else.
