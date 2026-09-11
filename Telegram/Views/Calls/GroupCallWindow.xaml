@@ -14,8 +14,6 @@
                         mc:Ignorable="d"
                         d:DesignWidth="320"
                         d:DesignHeight="200"
-                        Connected="OnLoaded"
-                        Disconnected="OnUnloaded"
                         SizeChanged="OnSizeChanged">
 
     <UserControl.Resources>

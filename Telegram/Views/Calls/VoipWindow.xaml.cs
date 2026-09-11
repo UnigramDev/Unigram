@@ -905,17 +905,22 @@ namespace Telegram.Views.Calls
             _call.Discard();
         }
 
-        private VoipVideoCapture _test;
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
+            base.OnLoaded();
+
             _displayRequest.TryRequestActive();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
-            _displayRequest.TryRequestRelease();
+            base.OnUnloaded();
 
+            _displayRequest.TryRequestRelease();
+        }
+
+        protected override void OnWindowClosed()
+        {
             _call.StateChanged -= OnStateChanged;
             _call.ConnectionStateChanged -= OnConnectionStateChanged;
             _call.RemoteMediaStateChanged -= OnRemoteMediaStateChanged;

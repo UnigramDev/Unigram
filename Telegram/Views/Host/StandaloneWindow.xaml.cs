@@ -95,11 +95,17 @@ namespace Telegram.Views.Host
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            //MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
-            //MasterDetail.Dispose();
-
             UnloadTitleBar();
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackSourceChanged;
+        }
+
+        protected override void OnWindowClosed()
+        {
+            MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
+            MasterDetail.NavigationService.FrameFacade.ShortcutInvoked -= OnShortcutInvoked;
+            MasterDetail.Dispose();
+
+            base.OnWindowClosed();
         }
 
         private void InitializeTitleBar()

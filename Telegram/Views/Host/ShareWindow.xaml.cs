@@ -23,7 +23,6 @@ namespace Telegram.Views.Host
 {
     public sealed partial class ShareWindow : WindowContent
     {
-
         public ShareWindow(WindowContext window, ISession session)
             : base(window)
         {
@@ -44,6 +43,7 @@ namespace Telegram.Views.Host
             {
                 var popup = new ChooseChatsPopup();
                 popup.IsSmokeEnabled = false;
+                popup.IsLightDismissEnabled = false;
                 popup.Closed += OnClosed;
                 popup.AccountClick += OnAccountClick;
 
@@ -69,6 +69,7 @@ namespace Telegram.Views.Host
         {
             var popup = new ChooseChatsPopup();
             popup.IsSmokeEnabled = false;
+            popup.IsLightDismissEnabled = false;
             popup.Closed += OnClosed;
             popup.AccountClick += OnAccountClick;
 
@@ -86,6 +87,7 @@ namespace Telegram.Views.Host
                 if (popup.Child is ChooseChatsPopup chooseChats && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationShareOperation shareOperation)
                 {
                     chooseChats.Closed -= OnClosed;
+                    chooseChats.AccountClick -= OnAccountClick;
                     chooseChats.Hide();
 
                     ShowPopup(sender as ISession, shareOperation.ShareOperation);
@@ -95,9 +97,15 @@ namespace Telegram.Views.Host
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            sender.Closed -= OnClosed;
+            if (sender is not ChooseChatsPopup chooseChats)
+            {
+                return;
+            }
 
-            if (args.Result != ContentDialogResult.Primary && sender is ChooseChatsPopup chooseChats && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationShareOperation shareOperation)
+            chooseChats.Closed -= OnClosed;
+            chooseChats.AccountClick -= OnAccountClick;
+
+            if (args.Result != ContentDialogResult.Primary && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationShareOperation shareOperation)
             {
                 shareOperation.ShareOperation.TryReportCompleted();
             }

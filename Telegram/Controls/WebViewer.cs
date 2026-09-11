@@ -243,9 +243,17 @@ namespace Telegram.Controls
         {
             _closed = true;
 
-            _presenter?.Close();
-            _presenter = null;
+            if (_presenter != null)
+            {
+                _presenter.Navigating -= OnNavigating;
+                _presenter.Navigated -= OnNavigated;
+                _presenter.EventReceived -= OnEventReceived;
+                _presenter.NewWindowRequested -= OnNewWindowRequested;
+                _presenter.ScriptDialogOpening -= OnScriptDialogOpening;
+                _presenter.Close();
+            }
 
+            _presenter = null;
             Content = null;
         }
     }
@@ -577,7 +585,23 @@ postEvent: function(eventType, eventData) {
 
         public override void Close()
         {
-            View?.Close();
+            if (View != null)
+            {
+                View.CoreWebView2Initialized -= OnCoreWebView2Initialized;
+                View.NavigationStarting -= OnNavigationStarting;
+                View.NavigationCompleted -= OnNavigationCompleted;
+                View.WebMessageReceived -= OnWebMessageReceived;
+
+                View.PointerPressed -= OnPointerPressed;
+
+                if (View.CoreWebView2 != null)
+                {
+                    View.CoreWebView2.NewWindowRequested -= OnNewWindowRequested;
+                    View.CoreWebView2.ScriptDialogOpening -= OnScriptDialogOpening;
+                }
+
+                View.Close();
+            }
         }
     }
 }

@@ -310,18 +310,6 @@ namespace Telegram.Views.Host
         }
 #endif
 
-        protected override void OnUnloaded()
-        {
-            base.OnUnloaded();
-
-            if (_launchId != 0)
-            {
-                _clientService.Send(new CloseWebApp(_launchId));
-            }
-
-            View.Close();
-        }
-
         protected override void OnWindowActivated(bool active)
         {
             PostEvent("visibility_changed", "is_visible", active);
@@ -347,8 +335,22 @@ namespace Telegram.Views.Host
             }
         }
 
-        protected override void OnWindowConsolidated()
+        protected override void OnWindowClosed()
         {
+            if (_launchId != 0)
+            {
+                _clientService.Send(new CloseWebApp(_launchId));
+            }
+
+            View.Navigating -= View_Navigating;
+            View.Navigated -= View_Navigated;
+            View.EventReceived -= View_EventReceived;
+            View.NewWindowRequested -= View_NewWindowRequested;
+            View.ScriptDialogOpening -= View_ScriptDialogOpening;
+            View.Close();
+
+            _aggregator.Unsubscribe(this);
+
             if (_ageVerificationRaised)
             {
                 return;

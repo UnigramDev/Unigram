@@ -288,15 +288,22 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => Update(_call, _call?.CurrentUser));
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
+            base.OnLoaded();
+
             _displayRequest.TryRequestActive();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
-            _displayRequest.TryRequestRelease();
+            base.OnUnloaded();
 
+            _displayRequest.TryRequestRelease();
+        }
+
+        protected override void OnWindowClosed()
+        {
             _scheduledTimer.Stop();
             _debouncerTimer.Stop();
 

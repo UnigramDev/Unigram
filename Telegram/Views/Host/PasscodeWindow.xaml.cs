@@ -20,7 +20,6 @@ namespace Telegram.Views.Host
 {
     public sealed partial class PasscodeWindow : WindowContent
     {
-
         private readonly IPasscodeService _passcodeService;
         private readonly bool _biometrics;
 
@@ -123,7 +122,17 @@ namespace Telegram.Views.Host
         {
             Field.LosingFocus += Field_LosingFocus;
 
-            if (_passcodeService.IsBiometricsEnabled && UserConsentVerifierAvailability.Available == await UserConsentVerifier.CheckAvailabilityAsync())
+            UserConsentVerifierAvailability availability;
+            try
+            {
+                availability = await UserConsentVerifier.CheckAvailabilityAsync();
+            }
+            catch
+            {
+                availability = UserConsentVerifierAvailability.DeviceBusy;
+            }
+
+            if (_passcodeService.IsBiometricsEnabled && availability == UserConsentVerifierAvailability.Available)
             {
                 Biometrics.Visibility = Visibility.Visible;
 

@@ -200,6 +200,11 @@ namespace Telegram.Navigation
             DefaultStyleKey = typeof(WindowPresenter);
         }
 
+        ~WindowPresenter()
+        {
+            Logger.Info();
+        }
+
         private CaptionButtons _buttons = CaptionButtons.All;
         public CaptionButtons Buttons
         {
@@ -631,7 +636,7 @@ namespace Telegram.Navigation
 
 #if NET9_0_OR_GREATER
         // A stuck finalizer must not keep a closed window alive, so the drain is bounded.
-        private static readonly TimeSpan ShutdownDrainTimeout = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan ShutdownDrainTimeout = TimeSpan.FromSeconds(10);
 
         private Task _drain;
         private Deferral _deferral;
@@ -1070,6 +1075,13 @@ namespace Telegram.Navigation
             await args.WaitAsync();
 
             return !args.Handled;
+        }
+
+        public event EventHandler Closed;
+
+        private void RaiseClosed()
+        {
+            Closed?.Invoke(this, EventArgs.Empty);
         }
 
         public IDispatcherContext Dispatcher { get; }

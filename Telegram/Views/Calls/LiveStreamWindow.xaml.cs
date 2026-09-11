@@ -50,16 +50,12 @@ namespace Telegram.Views.Calls
 
             _inactivityTimer = new DispatcherTimer();
             _inactivityTimer.Interval = TimeSpan.FromSeconds(2);
-            _inactivityTimer.Tick += (s, args) =>
-            {
-                _inactivityTimer.Stop();
-                ShowHideTransport(false);
-            };
+            _inactivityTimer.Tick += Inactivity_Tick;
             _inactivityTimer.Start();
 
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
-            _scheduledTimer.Tick += OnTick;
+            _scheduledTimer.Tick += Scheduled_Tick;
 
             _call = call;
             _call.NetworkStateChanged += OnNetworkStateChanged;
@@ -218,7 +214,13 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void OnTick(object sender, object e)
+        private void Inactivity_Tick(object sender, object e)
+        {
+            _inactivityTimer.Stop();
+            ShowHideTransport(false);
+        }
+
+        private void Scheduled_Tick(object sender, object e)
         {
             if (_call != null && _call != null && _call.ScheduledStartDate != 0)
             {
@@ -230,16 +232,26 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
+            base.OnLoaded();
+
             _displayRequest.TryRequestActive();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
-            _displayRequest.TryRequestRelease();
+            base.OnUnloaded();
 
+            _displayRequest.TryRequestRelease();
+        }
+
+        protected override void OnWindowClosed()
+        {
+            _scheduledTimer.Tick -= Scheduled_Tick;
             _scheduledTimer.Stop();
+
+            _inactivityTimer.Tick -= Inactivity_Tick;
             _inactivityTimer.Stop();
 
             _unifiedVideo?.Stop();
@@ -546,38 +558,6 @@ namespace Telegram.Views.Calls
         private void ShareInviteLink()
         {
             this.ShowPopup(_call.ClientService.Session, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id, true));
-        }
-
-        private readonly ScrollViewer _scrollingHost;
-
-        private bool _bottomRootCollapsed;
-
-        private void ShowHideBottomRoot(bool show)
-        {
-            if (_bottomRootCollapsed == !show)
-            {
-                return;
-            }
-
-            _bottomRootCollapsed = !show;
-
-            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            anim.InsertKeyFrame(0, show ? 0 : 1);
-            anim.InsertKeyFrame(1, show ? 1 : 0);
-
-            var root = ElementComposition.GetElementVisual(BottomPanel);
-
-            root.StartAnimation("Opacity", anim);
-        }
-
-        private void Viewport_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-
-        }
-
-        private void Viewport_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-
         }
     }
 }

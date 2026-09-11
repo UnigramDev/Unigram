@@ -77,6 +77,12 @@ namespace Telegram.Views.Host
             }
         }
 
+        protected override void OnUnloaded()
+        {
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.LayoutMetricsChanged -= OnLayoutMetricsChanged;
+        }
+
         protected override UIElement TitleBarElement => Footer;
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)

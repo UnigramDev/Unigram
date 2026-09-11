@@ -75,10 +75,15 @@ namespace Telegram.Navigation
                 NativeUtils.OverrideScaleForCurrentView(scaling);
             }
 
-            if (CoreApplication.MainView == CoreApplication.GetCurrentView())
+            var coreView = CoreApplication.GetCurrentView();
+            if (coreView.IsMain)
             {
                 Main = this;
                 IsInMainView = true;
+            }
+            else if (coreView.IsHosted)
+            {
+                IsInHostView = true;
             }
 
             lock (_allLock)
@@ -117,9 +122,11 @@ namespace Telegram.Navigation
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
 
-            // Not for the main view, which never closes this way, and not for a hosted one,
-            // where ApplicationView.GetForCurrentView throws.
-            if (!IsInMainView && !CoreApplication.GetCurrentView().IsHosted)
+            // Not for the main view, which never closes this way, and not for a hosted one: the
+            // control's whole job is to raise Released when the reference count reaches zero at
+            // consolidation, and a hosted view is never consolidated - the host takes it down
+            // through HostedViewClosing instead, see AttachCloseRequested.
+            if (!IsInMainView && !IsInHostView)
             {
                 AttachLifetime(new ViewLifetimeControl(window));
             }
@@ -127,6 +134,8 @@ namespace Telegram.Navigation
             // WARNING: this is used by Xbox (and some Windows users)
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
+
+        public bool IsInHostView { get; }
 
         public long Handle
         {
@@ -162,12 +171,71 @@ namespace Telegram.Navigation
 
         partial void AttachCloseRequested()
         {
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            if (!IsInHostView)
+            {
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            }
+            else
+            {
+                // A hosted view is never consolidated and closes directly, so this is the only
+                // notice its teardown gets - it is not the system's close request the branch above
+                // forwards, it is the whole shutdown path. The handler detaches itself when it
+                // fires, and DetachCloseRequested deliberately leaves it alone: removing it early
+                // would leave a share window with nothing to tear it down.
+                //
+                // Attached here rather than from the constructor because the add throws there.
+                // Unexplained: the view already reports IsHosted by then, so it is not that.
+                CoreApplication.GetCurrentView().HostedViewClosing += OnHostedViewClosing;
+            }
         }
 
+        private Task _hostedViewDrain;
+        private Deferral _hostedViewDeferral;
+
+        private void OnHostedViewClosing(CoreApplicationView sender, HostedViewClosingEventArgs args)
+        {
+            sender.HostedViewClosing -= OnHostedViewClosing;
+            Consolidate(ApplicationView.GetForCurrentView());
+
+            // We steal the same logic from shutdown starting
+            _hostedViewDeferral = args.GetDeferral();
+
+            if (!sender.DispatcherQueue.TryEnqueue(Windows.System.DispatcherQueuePriority.Low, OnHostedViewClosingDrain))
+            {
+                Logger.Info("queue refused, releasing inline");
+                OnHostedViewClosingDrain();
+            }
+        }
+
+        private void OnHostedViewClosingDrain()
+        {
+            _window.Content = new Border();
+
+            ReleaseNative();
+            ReleaseRoots();
+
+            _hostedViewDrain = Task.Run(Drain);
+
+            Task.WhenAny(_hostedViewDrain, Task.Delay(ShutdownDrainTimeout))
+                .ContinueWith(OnHostedViewClosingDrained, _hostedViewDeferral, TaskScheduler.Default);
+        }
+
+        private void OnHostedViewClosingDrained(Task task, object state)
+        {
+            Logger.Info(_hostedViewDrain.IsCompleted ? "drained" : $"timed out after {ShutdownDrainTimeout.TotalMilliseconds}ms");
+
+            (state as Deferral)?.Complete();
+        }
+
+        // No hosted branch on purpose: HostedViewClosing is that view's only teardown signal and
+        // outlives every CloseRequested subscriber, so it is detached by the handler itself and
+        // by nothing else. See AttachCloseRequested.
         partial void DetachCloseRequested()
         {
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
+            if (!IsInHostView)
+            {
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
+            }
         }
 
         /// <summary>
@@ -204,6 +272,11 @@ namespace Telegram.Navigation
 
         private void OnConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
         {
+            Consolidate(sender);
+        }
+
+        private void Consolidate(ApplicationView sender)
+        {
             if (IsInMainView)
             {
                 return;
@@ -221,11 +294,19 @@ namespace Telegram.Navigation
 
             ClearTitleBar(sender);
 
-            // Unroot the tree here rather than leaving it to the framework: until the content is
-            // dropped every element in it is still reachable, so the collect later would have
-            // nothing to hand back. This is also what queues the Unloaded cascade the release
-            // step waits behind.
-            _window.Content = null;
+            // We forcefully close any ContentDialog still open.
+            if (_xamlRoot != null)
+            {
+                foreach (var popup in Windows.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(_xamlRoot))
+                {
+                    if (popup.Child is ContentDialog dialog)
+                    {
+                        dialog.Hide();
+                    }
+                }
+            }
+
+            RaiseClosed();
 
             // Last, and from here rather than from a second Consolidated handler inside the
             // control: the count reaching zero is what schedules the release, and it must not
@@ -695,15 +776,8 @@ namespace Telegram.Navigation
         /// </summary>
         private static void Close(Window window)
         {
-            if (window.Content is WindowPresenter presenter)
-            {
-                presenter.Content = null;
-            }
-            else
-            {
-                window.Content = null;
-            }
-
+            // Replacing the window content to trigger Unloaded on the current tree
+            window.Content = new Border();
             window.Close();
         }
 

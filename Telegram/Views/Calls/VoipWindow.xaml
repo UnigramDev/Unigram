@@ -10,8 +10,6 @@
                         d:DesignHeight="300"
                         d:DesignWidth="400"
                         RequestedTheme="Dark"
-                        Connected="OnLoaded"
-                        Disconnected="OnUnloaded"
                         SizeChanged="OnSizeChanged">
 
     <Grid x:Name="RootGrid">

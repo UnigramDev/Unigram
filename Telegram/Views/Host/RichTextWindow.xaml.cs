@@ -82,6 +82,8 @@ namespace Telegram.Views.Host
             _replyTo = replyTo;
             _sendOptions = sendOptions;
 
+            ActualThemeChanged += OnActualThemeChanged;
+
             if (ApiInfo.CanCreateThemeShadow)
             {
                 var shadow = new ThemeShadow();
@@ -147,20 +149,20 @@ namespace Telegram.Views.Host
             View.CoreWebView2.ContextMenuRequested += OnContextMenuRequested;
             View.CoreWebView2.Navigate("https://editor.unigram/editor.html");
 
-            ActualThemeChanged += OnActualThemeChanged;
-
             // Premium can change at runtime (UpdateOption "is_premium"); re-evaluate the send-button lock.
             _aggregator = _clientService.Session.Resolve<IEventAggregator>();
             _aggregator.Subscribe<UpdateOption>(this, Handle);
-
-            Unloaded += OnUnloaded;
         }
 
         private IEventAggregator _aggregator;
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnWindowClosed()
         {
-            Unloaded -= OnUnloaded;
+            View.CoreWebView2.NavigationCompleted -= OnNavigationCompleted;
+            View.CoreWebView2.WebMessageReceived -= OnWebMessageReceived;
+            View.CoreWebView2.ContextMenuRequested -= OnContextMenuRequested;
+            View.Close();
+
             _aggregator?.Unsubscribe(this);
         }
 

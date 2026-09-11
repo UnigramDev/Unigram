@@ -281,6 +281,11 @@ namespace Telegram.Views
             }
         }
 
+        ~ChatView()
+        {
+            Logger.Info();
+        }
+
         private ThemeShadow _shadow;
 
         private bool CanFocusText(FocusState state)

@@ -5,8 +5,8 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:controls="using:Telegram.Controls"
                         mc:Ignorable="d"
-                        Connected="OnLoaded"
-                        Disconnected="OnUnloaded">
+                        Loaded="OnLoaded"
+                        Unloaded="OnUnloaded">
 
     <Grid x:Name="LayoutRoot"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
