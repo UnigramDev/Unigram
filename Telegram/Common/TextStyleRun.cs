@@ -172,7 +172,11 @@ namespace Telegram.Common
 
             if (!sorted)
             {
-                runs.Sort((x, y) => x.Start.CompareTo(y.Start));
+                // Shorter first where two start together, so Split sees a wrapper's content
+                // before the wrapper. List.Sort is unstable, and a RichText flattens to entities
+                // in post-order - inner before outer, frequently at the same offset - so without
+                // the second key which of the two owns the run would come down to the sort.
+                runs.Sort((x, y) => x.Start != y.Start ? x.Start.CompareTo(y.Start) : x.End.CompareTo(y.End));
             }
 
             // Nothing overlaps in the overwhelming majority of messages, and then the entities
@@ -247,7 +251,9 @@ namespace Telegram.Common
                     // A wrapper is longer than what it wraps, so the shortest entity over the
                     // segment is the content - and the renderer branches on the flags and then
                     // reads Type expecting the content's. A custom emoji wins outright: it is
-                    // drawn inside its spoiler, not instead of it.
+                    // drawn inside its spoiler, not instead of it. Two entities over exactly the
+                    // same range cannot be told apart this way and the first wins; the flags of
+                    // both survive either way, and they are what the renderer dispatches on.
                     if (owner == null
                         || source.Type is TextEntityTypeCustomEmoji
                         || (owner.Type is not TextEntityTypeCustomEmoji && source.Length < owner.Length))
