@@ -127,6 +127,11 @@ namespace Telegram.Controls
 
             if (ProgressBarIndicator == null)
             {
+                // Nothing is drawn yet, but the origin still has to describe this update: it is
+                // what OnApplyTemplate replays, and DrawnPosition would otherwise measure the
+                // time since an update that never happened.
+                _origin = position;
+                _originTicks = Logger.TickCount;
                 return;
             }
 
@@ -314,7 +319,7 @@ namespace Telegram.Controls
                 PositionStarted?.Invoke(this, null);
 
                 var position = CalculatePosition(point);
-                UpdateValue(position, _duration, false);
+                UpdateValue(position, _duration, false, _rate);
                 PositionChanging?.Invoke(this, new PlaybackSliderPositionChanged(position));
 
                 if (ComputedIsThumbToolTipEnabled)
@@ -329,7 +334,7 @@ namespace Telegram.Controls
             if (_pressed)
             {
                 var position = CalculatePosition(e.GetCurrentPoint(this));
-                UpdateValue(position, _duration, false);
+                UpdateValue(position, _duration, false, _rate);
                 PositionChanging?.Invoke(this, new PlaybackSliderPositionChanged(position));
             }
 
