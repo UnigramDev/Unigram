@@ -2763,6 +2763,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            UpdateScrollingPosition();
+
             // Only a position the history was actually seen resting at is written. Without one it
             // never settled while this chat was open — a fast switch, or a restore still in flight
             // — and whatever is already saved describes it better than anything derivable now.
