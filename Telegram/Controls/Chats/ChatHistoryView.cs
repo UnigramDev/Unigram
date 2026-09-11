@@ -348,15 +348,23 @@ namespace Telegram.Controls.Chats
 
         public bool HasBeenScrolled { get; private set; }
 
-        public void Suspend()
+        public bool ShouldViewMessage { get; private set; }
+
+        public void Suspend(bool clearState)
         {
             _raiseViewChanged = false;
             HasBeenScrolled = false;
+
+            if (clearState)
+            {
+                ShouldViewMessage = false;
+            }
         }
 
         public void Resume()
         {
             _raiseViewChanged = true;
+            ShouldViewMessage = true;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -575,7 +583,7 @@ namespace Telegram.Controls.Chats
 
         public async void ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null, TaskCompletionSource<bool> tsc = null)
         {
-            Suspend();
+            Suspend(false);
 
             var scrollViewer = ScrollingHost;
             var handler = Delegate;

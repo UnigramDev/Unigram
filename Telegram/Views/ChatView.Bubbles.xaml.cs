@@ -62,7 +62,7 @@ namespace Telegram.Views
             // Only what the ScrollViewer itself reports, and only once it has stopped: the list is
             // suspended for the whole of a restore, and ScrollToItem signals the end of one by
             // raising this with no arguments at all — which is not the user coming to rest.
-            if (e is { IsIntermediate: false })
+            if (e is null or { IsIntermediate: false })
             {
                 ViewModel?.UpdateScrollingPosition();
             }
@@ -707,7 +707,7 @@ namespace Telegram.Views
             }
 
             // Read and play messages logic:
-            if (_viewVisibleMessages.Count > 0 && ViewModel.NavigationService.Window.IsActive && !FromPreview)
+            if (_viewVisibleMessages.Count > 0 && Messages.ShouldViewMessage && ViewModel.NavigationService.Window.IsActive && !FromPreview)
             {
                 MessageSource source = ViewModel.Type switch
                 {

@@ -1139,10 +1139,10 @@ namespace Telegram.ViewModels
 
                 for (int i = lastVisibleIndex + 1; i < Items.Count; i++)
                 {
-                    var message = Items[i].Id;
-                    if (message != 0)
+                    var message = Items[i];
+                    if (!message.IsSynthetic)
                     {
-                        firstNonVisibleId = message;
+                        firstNonVisibleId = message.Id;
                         break;
                     }
                 }
@@ -1167,19 +1167,17 @@ namespace Telegram.ViewModels
                     for (int i = panel.LastVisibleIndex; i >= panel.FirstVisibleIndex; i--)
                     {
                         var item = Items[i];
-                        if (item.Id == 0)
+                        if (!item.IsSynthetic)
                         {
-                            continue;
-                        }
+                            if (item.Content is MessageAlbum album)
+                            {
+                                item = album.Messages.LastOrDefault();
+                            }
 
-                        if (item.Content is MessageAlbum album)
-                        {
-                            item = album.Messages.LastOrDefault();
+                            id = item.Id;
+                            index = i;
+                            return true;
                         }
-
-                        id = item.Id;
-                        index = i;
-                        return true;
                     }
                 }
             }
@@ -1667,7 +1665,7 @@ namespace Telegram.ViewModels
 
                     // If we're loading the last message and it has been read already
                     // then we want to align it at bottom, as it might be taller than the window height
-                    if (fromMessageId == details.LastMessageId && !unread)
+                    if (fromMessageId == details.LastMessageId && pixel == null && !unread)
                     {
                         alignment = VerticalAlignment.Bottom;
                         pixel = null;
@@ -2500,8 +2498,8 @@ namespace Telegram.ViewModels
                     }
 
                     if (TryGet(out long readInboxMaxId, out long start) &&
-                        readInboxMaxId == details.LastReadInboxMessageId &&
-                        start <= details.LastReadInboxMessageId)
+                        readInboxMaxId == details.LastReadInboxMessageId /*&&
+                        start <= details.LastReadInboxMessageId*/)
                     {
                         if (Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Pixel, out double pixel))
                         {
@@ -2687,7 +2685,7 @@ namespace Telegram.ViewModels
         /// </summary>
         private ScrollingPosition? _scrollingPosition;
 
-        private readonly record struct ScrollingPosition(long LastVisibleId, long FirstNonVisibleId, double? Pixel);
+        private readonly record struct ScrollingPosition(long LastVisibleId, double? Pixel);
 
         /// <summary>
         /// Samples where the history is standing, for <see cref="OnNavigatedFrom"/> to save.
@@ -2718,12 +2716,6 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                // The message the view is cut off at, which decides whether restoring here would
-                // hide anything unread.
-                var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
-                    ? Items[lastVisibleIndex + 1].Id
-                    : lastVisibleId;
-
                 double? pixel = null;
 
                 if (field.ContainerFromIndex(lastVisibleIndex) is ListViewItem container)
@@ -2732,7 +2724,7 @@ namespace Telegram.ViewModels
                     pixel = field.ActualHeight - (position.Y + container.ActualHeight);
                 }
 
-                _scrollingPosition = new ScrollingPosition(lastVisibleId, firstNonVisibleId, pixel);
+                _scrollingPosition = new ScrollingPosition(lastVisibleId, pixel);
             }
             catch
             {
@@ -2784,13 +2776,13 @@ namespace Telegram.ViewModels
                     Logger.Info(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
                 }
 
-                if (scrolling.LastVisibleId == 0 || scrolling.LastVisibleId == chat.LastMessage?.Id)
+                if (scrolling.LastVisibleId == 0)
+                {
+                    Remove("as last item is not valid");
+                }
+                else if (scrolling.LastVisibleId == chat.LastMessage?.Id && scrolling.Pixel >= -5)
                 {
                     Remove("as last item is chat.LastMessage");
-                }
-                else if (scrolling.FirstNonVisibleId >= details.LastReadInboxMessageId)
-                {
-                    Remove("as first non visible item is unread");
                 }
                 else
                 {
