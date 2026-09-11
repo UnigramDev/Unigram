@@ -3733,6 +3733,10 @@ namespace Telegram.Views
             _topicListCollapsed = !show;
             TopicListPresenter.Visibility = Visibility.Visible;
 
+            // Hiding clears the model below while the presenter stays visible for the
+            // animation, so input has to stop now: a click landing in between finds a null Chat.
+            TopicListPresenter.IsHitTestVisible = show;
+
             MasterDetail.CornerRadius = new CornerRadius(show ? 0 : 8, 0, 0, 0);
             Canvas.SetZIndex(ChatsRoot, show ? 1 : 0);
 
