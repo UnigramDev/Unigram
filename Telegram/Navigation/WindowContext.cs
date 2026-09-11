@@ -694,6 +694,8 @@ namespace Telegram.Navigation
             FormattedTextBlock.ReleaseNative(_xamlRoot);
             FormattedTextBlockRecyclePool.Release(_xamlRoot);
 
+            AnimatedImageLoader.Release(_xamlRoot);
+
             _content?.ClearAllToasts();
         }
 

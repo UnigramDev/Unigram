@@ -2382,6 +2382,27 @@ namespace Telegram.Controls
             Debug.Assert(_dispatcherQueue != null);
         }
 
+        public static void Release(XamlRoot xamlRoot)
+        {
+            if (xamlRoot != null && _loaders.TryGetValue(xamlRoot, out var loader))
+            {
+                loader.Release();
+            }
+        }
+
+        private void Release()
+        {
+            if (_rendering.Count > 0)
+            {
+                _closed = true;
+            }
+            else
+            {
+                _loaders.Remove(_window.XamlRoot);
+                Bitmaps.Clear();
+            }
+        }
+
         /// <summary>The frame bitmaps this window's presenters render into.</summary>
         public BitmapRecyclePool Bitmaps { get; } = new();
 
@@ -2410,6 +2431,8 @@ namespace Telegram.Controls
 
             private DispatcherTimer _timer;
             private int _count;
+
+            private bool _closed;
 
             private readonly record struct Entry(WriteableBitmap Bitmap, ulong Expires);
 
@@ -2442,7 +2465,7 @@ namespace Telegram.Controls
 
             public void Return(WriteableBitmap bitmap)
             {
-                if (bitmap == null)
+                if (bitmap == null || _closed)
                 {
                     return;
                 }
@@ -2472,13 +2495,13 @@ namespace Telegram.Controls
             /// <summary>Drops everything at once, for a window that is going away.</summary>
             public void Clear()
             {
-                foreach (var value in _bitmaps.Values)
-                {
-                    for (int i = 0; i < value.Count; i++)
-                    {
-                        Release(value[i].Bitmap);
-                    }
-                }
+                //foreach (var value in _bitmaps.Values)
+                //{
+                //    for (int i = 0; i < value.Count; i++)
+                //    {
+                //        Release(value[i].Bitmap);
+                //    }
+                //}
 
                 _bitmaps.Clear();
                 _count = 0;
@@ -2590,11 +2613,8 @@ namespace Telegram.Controls
 
                 if (_closed)
                 {
-                    // The window is going: hand the bitmaps back now rather than waiting for a
-                    // sweep on a dispatcher that is about to stop running.
-                    Bitmaps.Clear();
-
                     _loaders.Remove(_window.XamlRoot);
+                    Bitmaps.Clear();
                 }
             }
         }
