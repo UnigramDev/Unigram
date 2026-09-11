@@ -608,6 +608,13 @@ namespace Telegram.Common
             {
                 try
                 {
+#if NET9_0_OR_GREATER
+                    if (Utils.IsReleased(subscriber))
+                    {
+                        table.Remove(subscriber);
+                        return false;
+                    }
+#endif
                     handler(file);
                     return true;
                 }

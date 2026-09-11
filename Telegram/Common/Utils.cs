@@ -7,6 +7,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 
@@ -24,6 +25,14 @@ namespace Telegram.Common
                 projected.NativeObject.Dispose();
             }
         }
+
+        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_disposedFlags")]
+        private static extern ref int DisposedFlags(WinRT.IObjectReference objRef);
+
+        // 0 == NOT_DISPOSED; 1 (DISPOSE_PENDING) is already unsafe to call into.
+        internal static bool IsReleased(object handle)
+            => handle is WinRT.IWinRTObject projected
+            && Volatile.Read(ref DisposedFlags(projected.NativeObject)) != 0;
 #endif
 
         public static byte[] ComputeSHA1(byte[] data)
