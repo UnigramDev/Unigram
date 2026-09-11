@@ -1454,6 +1454,10 @@ namespace Telegram.Navigation
                 {
                     toolTip.IsOpen = false;
                 }
+                else if (popup.Child is ToastPopup toast)
+                {
+                    toast.IsOpen = false;
+                }
                 else if (popup.Child is ModalPopup modal)
                 {
                     // Escape reaches a ContentDialog on its own, but a ModalPopup lives in a
