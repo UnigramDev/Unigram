@@ -696,17 +696,34 @@ namespace Telegram.Controls.Chats
 
         private void TryFocus(SelectorItem selectorItem, MessageBubbleHighlightOptions options)
         {
+            // Asked first so that with no reader attached nothing below runs and nothing is
+            // logged: the answer would be the same on every scroll-to-item, and a line each time
+            // would push the ones that matter out of the tail.
+            if (!AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            {
+                return;
+            }
+
+            if (options != null && !options.MoveFocus)
+            {
+                Logger.Info("Leaving focus where it is, as the caller asked");
+                return;
+            }
+
+            bool moved;
+
             try
             {
-                if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
-                {
-                    selectorItem.Focus(FocusState.Keyboard);
-                }
+                moved = selectorItem.Focus(FocusState.Keyboard);
             }
-            catch
+            catch (Exception ex)
             {
                 // Focus cannot be moved while getting or losing focus.
+                Logger.Warning(ex);
+                return;
             }
+
+            Logger.Info($"Focus returned {moved}");
         }
 
         private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment, bool fastPath)
