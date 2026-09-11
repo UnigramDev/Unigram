@@ -210,7 +210,7 @@ namespace Telegram.Common
         /// </summary>
         private static CoreDispatcher DispatcherOf(object subscriber)
         {
-            if (subscriber is FrameworkElement element)
+            if (subscriber is FrameworkElement element && !Utils.IsReleased(subscriber))
             {
                 return element.Dispatcher;
             }
