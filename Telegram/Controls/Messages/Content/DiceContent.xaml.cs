@@ -111,7 +111,7 @@ namespace Telegram.Controls.Messages.Content
         /// </summary>
         private void OnReady(object sender, EventArgs e)
         {
-            _message?.Delegate.ViewVisibleMessages();
+            _message?.Delegate?.ViewVisibleMessages();
         }
 
         private void OnPositionChanged(object sender, AnimatedImagePositionChangedEventArgs e)
