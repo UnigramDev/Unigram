@@ -146,7 +146,16 @@ namespace Telegram.Views.Host
 
             View.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
             View.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
-            View.CoreWebView2.ContextMenuRequested += OnContextMenuRequested;
+            try
+            {
+                _contextRequestedSubscribed = true;
+                View.CoreWebView2.ContextMenuRequested += OnContextMenuRequested;
+            }
+            catch
+            {
+                // Requires ICoreWebView2_11
+                _contextRequestedSubscribed = false;
+            }
             View.CoreWebView2.Navigate("https://editor.unigram/editor.html");
 
             // Premium can change at runtime (UpdateOption "is_premium"); re-evaluate the send-button lock.
@@ -156,11 +165,16 @@ namespace Telegram.Views.Host
 
         private IEventAggregator _aggregator;
 
+        private bool _contextRequestedSubscribed;
+
         protected override void OnWindowClosed()
         {
             View.CoreWebView2.NavigationCompleted -= OnNavigationCompleted;
             View.CoreWebView2.WebMessageReceived -= OnWebMessageReceived;
-            View.CoreWebView2.ContextMenuRequested -= OnContextMenuRequested;
+            if (_contextRequestedSubscribed)
+            {
+                View.CoreWebView2.ContextMenuRequested -= OnContextMenuRequested;
+            }
             View.Close();
 
             _aggregator?.Unsubscribe(this);
