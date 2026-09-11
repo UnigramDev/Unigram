@@ -98,9 +98,10 @@ namespace Telegram.Views.Popups
         {
             var position = args.Position;
             var duration = args.Duration;
-            var playing = sender.IsPlaying;
+            var playing = sender.IsAdvancing;
+            var speed = sender.PlaybackSpeed;
 
-            this.BeginOnUIThread(() => UpdatePosition(position, duration, playing));
+            this.BeginOnUIThread(() => UpdatePosition(position, duration, playing, speed));
         }
 
         private void OnPlaylistChanged(IPlaybackService sender, object args)
@@ -111,7 +112,7 @@ namespace Telegram.Views.Popups
             });
         }
 
-        private void UpdatePosition(TimeSpan position, TimeSpan duration, bool playing)
+        private void UpdatePosition(TimeSpan position, TimeSpan duration, bool playing, double speed)
         {
             Position.Text = position.ToDuration(duration.TotalHours >= 1);
             Duration.Text = duration.ToDuration(duration.TotalHours >= 1);
@@ -121,12 +122,13 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            Slider.UpdateValue(position, duration, playing);
+            Slider.UpdateValue(position, duration, playing, speed);
         }
 
         private void UpdateGlyph()
         {
-            UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration, LifetimeService.Current.Playback.IsPlaying);
+            var playback = LifetimeService.Current.Playback;
+            UpdatePosition(playback.Position, playback.Duration, playback.IsAdvancing, playback.PlaybackSpeed);
 
             var item = LifetimeService.Current.Playback.CurrentItem;
             if (item == null)

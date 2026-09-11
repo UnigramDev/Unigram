@@ -42,6 +42,10 @@ namespace Telegram.Controls
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _staleTimer?.Stop();
+
+            // The animation runs to the end of the track, so a recycled control would otherwise
+            // keep one alive for as long as the track lasts.
+            Freeze();
         }
 
         protected override void OnApplyTemplate()
@@ -51,7 +55,11 @@ namespace Telegram.Controls
             ThumbToolTipPopup = GetTemplateChild(nameof(ThumbToolTipPopup)) as Popup;
             ThumbToolTip = GetTemplateChild(nameof(ThumbToolTip)) as ToolTip;
 
-            UpdateValue(_position, _duration, _playing);
+            // The expressions are bound to the visuals of the template that was replaced.
+            _expressionsStarted = false;
+            _toolTipStarted = false;
+
+            UpdateValue(_position, _duration, _playing, _rate);
 
             base.OnApplyTemplate();
         }
@@ -78,19 +86,44 @@ namespace Telegram.Controls
         private TimeSpan _position;
         private TimeSpan _duration;
         private bool _playing;
+        private double _rate = 1;
+
+        // Where the running animation was started from, and when. With the rate they say where
+        // the bar is drawn at any instant, which is what an update landing slightly behind is
+        // measured against.
+        private TimeSpan _origin;
+        private ulong _originTicks;
 
         private CompositionPropertySet _props;
+        private LinearEasingFunction _easing;
 
-        public void UpdateValue(double position, double duration, bool playing)
+        private bool _expressionsStarted;
+        private bool _toolTipStarted;
+
+        // A position update describes a moment that has already passed by the time it lands, so
+        // a report a little behind the drawn value is the reporting delay rather than a move:
+        // carrying on from where the bar is keeps it from stuttering backwards several times a
+        // second. Anything further off than this is a seek, and still snaps.
+        private static readonly TimeSpan MaxLead = TimeSpan.FromMilliseconds(250);
+
+        // Composition rejects a zero-length animation, and a track this close to its end has
+        // nothing left to animate anyway.
+        private static readonly TimeSpan MinDuration = TimeSpan.FromMilliseconds(1);
+
+        public void UpdateValue(double position, double duration, bool playing, double rate = 1)
         {
-            UpdateValue(TimeSpan.FromSeconds(position), TimeSpan.FromSeconds(duration), playing);
+            UpdateValue(TimeSpan.FromSeconds(position), TimeSpan.FromSeconds(duration), playing, rate);
         }
 
-        public void UpdateValue(TimeSpan position, TimeSpan duration, bool playing)
+        public void UpdateValue(TimeSpan position, TimeSpan duration, bool playing, double rate = 1)
         {
+            var drawn = DrawnPosition();
+            var wasPlaying = _playing;
+
             _position = position;
             _duration = duration;
             _playing = playing;
+            _rate = rate > 0 ? rate : 1;
 
             if (ProgressBarIndicator == null)
             {
@@ -98,17 +131,7 @@ namespace Telegram.Controls
             }
 
             var compositor = BootStrapper.Current.Compositor;
-
             var visual = ElementComposition.GetElementVisual(ProgressBarIndicator);
-            var clip = (visual.Clip ??= compositor.CreateInsetClip()) as InsetClip;
-
-            var step = (float)(position.TotalSeconds / duration.TotalSeconds);
-            if (double.IsNaN(step))
-            {
-                step = 0;
-            }
-
-            _staleTimer?.Stop();
 
             if (_props == null)
             {
@@ -116,13 +139,33 @@ namespace Telegram.Controls
                 _props.InsertScalar("Progress", 0);
             }
 
-            if (playing && duration - position > TimeSpan.Zero)
+            EnsureExpressions(compositor, visual);
+
+            _staleTimer?.Stop();
+
+            // Scrubbing is the one case where the bar has to land exactly where it is told.
+            var origin = position;
+            if (wasPlaying && !_pressed && drawn > position && drawn - position <= MaxLead)
             {
-                var linearEasing = compositor.CreateLinearEasingFunction();
+                origin = drawn;
+            }
+
+            _origin = origin;
+            _originTicks = Logger.TickCount;
+
+            // The bar is a straight line from where the player says it is to the end of the
+            // track, re-based by every update. Media time and wall time are only the same thing
+            // at 1x, so the remainder has to be divided by the rate the player is running at.
+            var remaining = TimeSpan.FromTicks((long)((duration - origin).Ticks / _rate));
+
+            if (playing && remaining >= MinDuration)
+            {
+                _easing ??= compositor.CreateLinearEasingFunction();
+
                 var animation = compositor.CreateScalarKeyFrameAnimation();
-                animation.Duration = duration - position;
-                animation.InsertKeyFrame(0, step, linearEasing);
-                animation.InsertKeyFrame(1, 1, linearEasing);
+                animation.Duration = remaining;
+                animation.InsertKeyFrame(0, ToStep(origin), _easing);
+                animation.InsertKeyFrame(1, 1, _easing);
 
                 _props.StartAnimation("Progress", animation);
 
@@ -137,9 +180,28 @@ namespace Telegram.Controls
             }
             else
             {
+                _playing = false;
+
                 _props.StopAnimation("Progress");
-                _props.InsertScalar("Progress", step);
+                _props.InsertScalar("Progress", ToStep(origin));
             }
+        }
+
+        /// <summary>
+        /// Starts the expressions that map Progress onto the template, once per template: every
+        /// update writes the property set they read, so they never have to be started again.
+        /// </summary>
+        private void EnsureExpressions(Compositor compositor, Visual visual)
+        {
+            if (_expressionsStarted)
+            {
+                EnsureThumbToolTip(compositor, visual);
+                return;
+            }
+
+            _expressionsStarted = true;
+
+            var clip = (visual.Clip ??= compositor.CreateInsetClip()) as InsetClip;
 
             var progressAnimation = compositor.CreateExpressionAnimation("visual.Size.X - (_.Progress * visual.Size.X)");
             progressAnimation.SetReferenceParameter("_", _props);
@@ -157,37 +219,81 @@ namespace Telegram.Controls
                 thumb.StartAnimation("Offset.X", thumbAnimation);
             }
 
-            if (ComputedIsThumbToolTipEnabled)
+            EnsureThumbToolTip(compositor, visual);
+        }
+
+        // Unlike the rest of the template this one is switched on and off while the control is
+        // loaded, so it can't be bound once and forgotten.
+        private void EnsureThumbToolTip(Compositor compositor, Visual visual)
+        {
+            if (_toolTipStarted || !ComputedIsThumbToolTipEnabled)
             {
-                var toolTipAnimation = compositor.CreateExpressionAnimation("Vector3(_.Progress * visual.Size.X - this.Target.Size.X / 2, -this.Target.Size.Y - 8, 0)");
-                toolTipAnimation.SetReferenceParameter("_", _props);
-                toolTipAnimation.SetReferenceParameter("visual", visual);
-
-                var toolTip = ElementComposition.GetElementVisual(ThumbToolTip);
-                toolTip.StartAnimation("Offset", toolTipAnimation);
-
-                ThumbToolTip.Shadow = new Windows.UI.Xaml.Media.ThemeShadow();
-                ThumbToolTip.Translation = new System.Numerics.Vector3(0, 0, 32);
+                return;
             }
+
+            _toolTipStarted = true;
+
+            var toolTipAnimation = compositor.CreateExpressionAnimation("Vector3(_.Progress * visual.Size.X - this.Target.Size.X / 2, -this.Target.Size.Y - 8, 0)");
+            toolTipAnimation.SetReferenceParameter("_", _props);
+            toolTipAnimation.SetReferenceParameter("visual", visual);
+
+            var toolTip = ElementComposition.GetElementVisual(ThumbToolTip);
+            toolTip.StartAnimation("Offset", toolTipAnimation);
+
+            ThumbToolTip.Shadow = new Windows.UI.Xaml.Media.ThemeShadow();
+            ThumbToolTip.Translation = new System.Numerics.Vector3(0, 0, 32);
+        }
+
+        /// <summary>
+        /// Where the bar is drawn at this instant: the point the running animation started from
+        /// plus the media time that has passed since, which is wall time scaled by the rate.
+        /// </summary>
+        private TimeSpan DrawnPosition()
+        {
+            if (!_playing)
+            {
+                return _origin;
+            }
+
+            var drawn = _origin + TimeSpan.FromMilliseconds((Logger.TickCount - _originTicks) * _rate);
+            return drawn > _duration ? _duration : drawn;
+        }
+
+        private float ToStep(TimeSpan position)
+        {
+            var step = (float)(position.TotalSeconds / _duration.TotalSeconds);
+            if (float.IsNaN(step) || float.IsInfinity(step))
+            {
+                return 0;
+            }
+
+            return Math.Clamp(step, 0f, 1f);
         }
 
         private void OnStaleTimerTick(object sender, object e)
         {
             _staleTimer.Stop();
 
-            if (_props == null)
+            // Updates have stopped arriving, so the player has stalled or gone away. Holding the
+            // bar where it is drawn is what keeps it from snapping back to a report that is a
+            // whole interval old by now.
+            Freeze();
+        }
+
+        private void Freeze()
+        {
+            if (_props == null || !_playing)
             {
                 return;
             }
 
-            var step = (float)(_position.TotalSeconds / _duration.TotalSeconds);
-            if (double.IsNaN(step))
-            {
-                step = 0;
-            }
+            var drawn = DrawnPosition();
+
+            _origin = drawn;
+            _playing = false;
 
             _props.StopAnimation("Progress");
-            _props.InsertScalar("Progress", step);
+            _props.InsertScalar("Progress", ToStep(drawn));
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)

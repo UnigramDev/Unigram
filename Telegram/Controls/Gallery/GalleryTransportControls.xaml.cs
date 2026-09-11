@@ -420,7 +420,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            Slider.UpdateValue(sender.Position, sender.Duration, false);
+            Slider.UpdateValue(sender.Position, sender.Duration, args.IsPlaying, sender.Rate);
         }
 
         private void OnPositionChanged(VideoPlayerBase sender, VideoPlayerPositionChangedEventArgs args)
@@ -430,7 +430,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            Slider.UpdateValue(args.Position, sender.Duration, sender.IsPlaying);
+            Slider.UpdateValue(args.Position, sender.Duration, sender.IsPlaying, sender.Rate);
             TimeText.Text = FormatTime(args.Position);
         }
 
@@ -447,7 +447,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            Slider.UpdateValue(sender.Position, args.Duration, false);
+            Slider.UpdateValue(sender.Position, args.Duration, sender.IsPlaying, sender.Rate);
             LengthText.Text = FormatTime(args.Duration);
 
             SkipBackButton.Visibility = args.Duration > 30
@@ -575,7 +575,19 @@ namespace Telegram.Controls.Gallery
             value = Math.Clamp(value, 0.2, 2.5);
             AppSettings.Playback.VideoSpeed = value;
 
-            _player?.Rate = value;
+            if (_player == null)
+            {
+                return;
+            }
+
+            _player.Rate = value;
+
+            // The bar is drawn as a line to the end at the rate it was given, so it has to be
+            // re-based now rather than at the next position update.
+            if (!Slider.IsScrubbing)
+            {
+                Slider.UpdateValue(_player.Position, _player.Duration, _player.IsPlaying, value);
+            }
         }
 
         private void ChangePlaybackSpeed(float amount)

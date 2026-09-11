@@ -157,6 +157,8 @@ namespace Telegram.Services
 
         public bool IsPlaying { get; }
 
+        public bool IsAdvancing { get; }
+
         PlaybackState PlaybackState { get; }
 
 
@@ -532,6 +534,13 @@ namespace Telegram.Services
         public TimeSpan Duration => _positionChanged.Duration;
 
         public bool IsPlaying => PlaybackState == PlaybackState.Playing;
+
+        // PlaybackState is what was asked for, so the play and pause glyphs flip the moment the
+        // user presses. This is what the player is actually doing: opening a track and filling
+        // its buffer can take a while, and anything drawing a moving position from the request
+        // runs through all of it and then jumps back when the first update finally lands.
+        private bool _isAdvancing;
+        public bool IsAdvancing => _isAdvancing && _playbackState == PlaybackState.Playing;
 
         private PlaybackState _playbackState;
         public PlaybackState PlaybackState
@@ -909,6 +918,10 @@ namespace Telegram.Services
                 _playbackSpeed = item.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
                 CurrentItem = item;
 
+                // The new track reports that it is playing once it has opened; until then the
+                // one being replaced is what the old value describes.
+                _isAdvancing = false;
+
                 player.Rate = _playbackSpeed;
                 player.Play(new RemoteFileSource(item.ClientService, item.Document, item.Duration));
                 PlaybackState = PlaybackState.Playing;
@@ -940,6 +953,8 @@ namespace Telegram.Services
                 _items = _previous.Items;
                 _playbackSpeed = _previous.CurrentItem.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
                 CurrentItem = _previous.CurrentItem;
+
+                _isAdvancing = false;
 
                 player.Rate = _playbackSpeed;
                 player.Play(new RemoteFileSource(_previous.CurrentItem.ClientService, _previous.CurrentItem.Document, _previous.CurrentItem.Duration));
@@ -1177,6 +1192,9 @@ namespace Telegram.Services
                 }
             }
 
+            // The events are gone with the player, so nothing is left to report that it stopped.
+            _isAdvancing = false;
+
             // Dropping the source is what makes a page still in flight for the playlist being
             // torn down land on nothing.
             _items = null;
@@ -1187,7 +1205,12 @@ namespace Telegram.Services
 
         private void OnStateChanged(AsyncMediaPlayer sender, AsyncMediaPlayerStateChangedEventArgs args)
         {
-            //IsPlaying = args.State == AsyncMediaPlayerState.Playing;
+            var advancing = args.State == AsyncMediaPlayerState.Playing;
+            if (advancing != _isAdvancing)
+            {
+                _isAdvancing = advancing;
+                StateChanged?.Invoke(this, null);
+            }
 
             if (args.State == AsyncMediaPlayerState.Ended)
             {

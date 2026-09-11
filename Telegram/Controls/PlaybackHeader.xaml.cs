@@ -114,24 +114,31 @@ namespace Telegram.Controls
         {
             var position = args.Position;
             var duration = args.Duration;
-            var playing = sender.IsPlaying;
+            var playing = sender.IsAdvancing;
+            var speed = sender.PlaybackSpeed;
 
-            this.BeginOnUIThread(() => UpdatePosition(position, duration, playing));
+            this.BeginOnUIThread(() => UpdatePosition(position, duration, playing, speed));
         }
 
-        private void UpdatePosition(TimeSpan position, TimeSpan duration, bool playing)
+        private void UpdatePosition(TimeSpan position, TimeSpan duration, bool playing, double speed)
         {
             if (Slider.IsScrubbing)
             {
                 return;
             }
 
-            Slider.UpdateValue(position, duration, playing);
+            Slider.UpdateValue(position, duration, playing, speed);
+        }
+
+        private void UpdatePosition()
+        {
+            var playback = LifetimeService.Current.Playback;
+            UpdatePosition(playback.Position, playback.Duration, playback.IsAdvancing, playback.PlaybackSpeed);
         }
 
         private void UpdateGlyph()
         {
-            UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration, LifetimeService.Current.Playback.IsPlaying);
+            UpdatePosition();
 
             var item = LifetimeService.Current.Playback.CurrentItem;
             if (item == null)
@@ -377,6 +384,10 @@ namespace Telegram.Controls
             LifetimeService.Current.Playback.PlaybackSpeed = value;
             SpeedText.Text = string.Format("{0:N1}x", value);
             SpeedButton.Badge = string.Format("{0:N1}x", value);
+
+            // The bar is drawn as a line to the end of the track at the rate it was given, so
+            // it has to be re-based now rather than at the next position update.
+            UpdatePosition();
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
