@@ -166,6 +166,9 @@
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>Forwarding from</value>
   </data>
+  <data name="AccDescrForwardOptions" xml:space="preserve">
+    <value>More forward options</value>
+  </data>
   <data name="AccDescrFullScreen" xml:space="preserve">
     <value>Full screen</value>
   </data>

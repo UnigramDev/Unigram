@@ -3594,6 +3594,8 @@ namespace Telegram.Views
                         HorizontalAlignment = HorizontalAlignment.Right
                     };
 
+                    AutomationProperties.SetName(split, Strings.AccDescrForwardOptions);
+
                     forward.CornerRadius = new CornerRadius(4, 0, 0, 4);
 
                     split.SizeChanged += (s, args) =>

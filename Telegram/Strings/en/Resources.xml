@@ -13797,4 +13797,6 @@
     <string name="FilterUserAddedToExisting">**{0}** added to **{1}**</string>
     <string name="FilterUserRemovedFrom">**{0}** removed from **{1}**</string>
     <string name="PasscodeWindowsHello">Telegram wants to unlock with Windows Hello.</string>
+
+    <string name="AccDescrForwardOptions">More forward options</string>
 </resources>
