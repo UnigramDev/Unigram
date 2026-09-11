@@ -219,7 +219,8 @@
                                 Background="{ThemeResource MessageMediaBackgroundBrush}"
                                 VerticalAlignment="Top">
                             <controls:FileButton x:Name="Button"
-                                                 Style="{StaticResource InlineFileButtonStyle}" />
+                                                 Background="Transparent"
+                                                 Style="{StaticResource ImmersiveFileButtonStyle}" />
                         </Border>
                         <Border x:Name="ViewOnce"
                                 Width="24"

@@ -146,7 +146,6 @@
                         CornerRadius="24"
                         Background="{ThemeResource MessageMediaBackgroundBrush}"
                         VerticalAlignment="Top">
-                    <!--<controls:FileButton x:Name="Button" Style="{StaticResource InlineFileButtonStyle}"/>-->
                     <controls:AnimatedGlyphButton x:Name="Glyph"
                                                   Click="Remove_Click"
                                                   Foreground="{ThemeResource MessageMediaForegroundBrush}"

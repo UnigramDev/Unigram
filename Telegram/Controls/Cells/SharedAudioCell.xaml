@@ -27,7 +27,7 @@
         </Border.Style>
         <controls:FileButton x:Name="Button"
                              Click="Button_Click"
-                             Style="{StaticResource InlineFileButtonStyle}" />
+                             Style="{StaticResource ImmersiveFileButtonStyle}" />
     </Border>
     <Grid x:Name="DownloadRoot"
           Width="24"

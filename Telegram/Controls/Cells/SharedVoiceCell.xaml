@@ -28,7 +28,7 @@
         </Border.Style>
         <controls:FileButton x:Name="Button"
                              Click="Button_Click"
-                             Style="{StaticResource InlineFileButtonStyle}" />
+                             Style="{StaticResource ImmersiveFileButtonStyle}" />
     </Border>
     <StackPanel x:Name="TextRoot"
                 Margin="8,0,0,2"

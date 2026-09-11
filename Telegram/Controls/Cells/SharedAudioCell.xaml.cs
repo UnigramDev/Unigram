@@ -9,7 +9,6 @@ using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native.Controls;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -352,7 +351,7 @@ namespace Telegram.Controls.Cells
             {
                 _thumbnailController?.Recycle();
                 ButtonRoot.ClearValue(Border.BackgroundProperty);
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Background = null;
                 return;
             }
 
@@ -380,13 +379,13 @@ namespace Telegram.Controls.Cells
 
                 _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
                 ButtonRoot.Background = _thumbnailTexture;
-                Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                Button.ClearValue(Control.BackgroundProperty);
             }
             else
             {
                 _thumbnailController.Recycle();
                 ButtonRoot.ClearValue(Border.BackgroundProperty);
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                Button.Background = null;
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

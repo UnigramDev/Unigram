@@ -12,7 +12,6 @@ using Telegram.Native.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -30,9 +29,6 @@ namespace Telegram.Controls.Messages.Content
 
         private ThumbnailController _thumbnailController;
         private ImageBrush _thumbnailTexture;
-
-        // The scrim under the button, needed only once the cover is behind it.
-        private SolidColorBrush _scrim;
 
         public AudioContent(MessageViewModel message)
         {
@@ -386,6 +382,7 @@ namespace Telegram.Controls.Messages.Content
             if (thumbnail == null)
             {
                 _thumbnailController?.Recycle();
+                Texture.ClearValue(Border.BackgroundProperty);
                 Button.Background = null;
                 return;
             }
@@ -414,7 +411,7 @@ namespace Telegram.Controls.Messages.Content
 
                 _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
                 Texture.Background = _thumbnailTexture;
-                Button.Background = _scrim ??= new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
+                Button.ClearValue(Control.BackgroundProperty);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
