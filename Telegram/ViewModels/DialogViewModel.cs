@@ -2301,6 +2301,8 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            _navigatedFrom = false;
+
             if (parameter is ChatMessageTopic chatMessageTopic)
             {
                 parameter = chatMessageTopic.ChatId;
@@ -2740,8 +2742,12 @@ namespace Telegram.ViewModels
             }
         }
 
+        private bool _navigatedFrom;
+
         protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
+            _navigatedFrom = true;
+
             var chat = _chat;
             if (chat == null)
             {
@@ -2808,7 +2814,7 @@ namespace Telegram.ViewModels
                 Logger.Info(string.Format("{0} - Keeping scrolling position, as the history never settled", chat.Id));
             }
 
-            SaveDraft();
+            SaveDraft(false, true);
         }
 
         private void ShowSwitchInline(IDictionary<string, object> state)
@@ -3059,12 +3065,12 @@ namespace Telegram.ViewModels
 
         public void SaveDraft()
         {
-            SaveDraft(false);
+            SaveDraft(false, false);
         }
 
-        public void SaveDraft(bool clear = false)
+        public void SaveDraft(bool clear, bool force)
         {
-            if (Type is not DialogType.History and not DialogType.Thread)
+            if (Type is not DialogType.History and not DialogType.Thread || (_navigatedFrom && !force))
             {
                 return;
             }

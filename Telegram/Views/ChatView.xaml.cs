@@ -5230,7 +5230,7 @@ namespace Telegram.Views
                     ButtonReport.Visibility = Visibility.Collapsed;
                 }
 
-                ViewModel.SaveDraft(true);
+                ViewModel.SaveDraft(true, false);
                 ShowHideComposerHeader(false);
             }
             else
