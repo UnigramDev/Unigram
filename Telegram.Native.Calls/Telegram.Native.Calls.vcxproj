@@ -89,7 +89,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <ModuleDefinitionFile>VoipManager.def</ModuleDefinitionFile>
-      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;ole32.lib;oleaut32.lib;Kernel32.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;ole32.lib;oleaut32.lib;Kernel32.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Mfplat.dll;MFReadWrite.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
