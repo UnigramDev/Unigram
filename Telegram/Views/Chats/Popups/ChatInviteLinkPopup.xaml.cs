@@ -320,7 +320,7 @@ namespace Telegram.Views.Chats.Popups
             {
                 if (value.Value == int.MaxValue)
                 {
-                    var popup = new InputTeachingTip(InputPopupType.Value)
+                    var popup = new InputPopup(InputPopupType.Value)
                     {
                         Value = 1,
                         Minimum = 1,

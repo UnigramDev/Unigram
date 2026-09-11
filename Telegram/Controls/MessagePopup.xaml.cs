@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public sealed partial class MessagePopup : ContentPopup
+    public sealed partial class MessagePopup : ModalPopup
     {
         public MessagePopup()
         {
@@ -86,10 +86,44 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            var popup = Create(title, primary, secondary, tertiary, destructive, requestedTheme);
+            popup.Message = message;
+
+            return popup.ShowQueuedAsync(xamlRoot);
+        }
+
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var popup = Create(title, primary, secondary, tertiary, destructive, requestedTheme);
+            popup.FormattedMessage = message;
+
+            return popup.ShowQueuedAsync(xamlRoot);
+        }
+
+        // Nested: a ContentDialog cannot open over another one, so an alert raised while a popup
+        // is already up is a ModalPopup instead. It used to be told apart by a FrameworkElement
+        // target that every caller passed as null, and that the tip then pointed at nothing.
+        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var popup = Create(title, primary, secondary, null, destructive, requestedTheme);
+            popup.Message = message;
+
+            return popup.ShowAsync(xamlRoot);
+        }
+
+        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var popup = Create(title, primary, secondary, null, destructive, requestedTheme);
+            popup.FormattedMessage = message;
+
+            return popup.ShowAsync(xamlRoot);
+        }
+
+        private static MessagePopup Create (string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
             var popup = new MessagePopup
             {
                 Title = title ?? Strings.AppName,
-                Message = message,
                 PrimaryButtonText = primary ?? Strings.OK,
                 SecondaryButtonText = secondary ?? string.Empty,
                 CloseButtonText = tertiary ?? string.Empty,
@@ -106,80 +140,8 @@ namespace Telegram.Controls
                 popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
             }
 
-            return popup.ShowQueuedAsync(xamlRoot);
+            return popup;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            var popup = new MessagePopup
-            {
-                Title = title ?? Strings.AppName,
-                FormattedMessage = message,
-                PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty,
-                CloseButtonText = tertiary ?? string.Empty
-            };
-
-            if (requestedTheme != ElementTheme.Default)
-            {
-                popup.RequestedTheme = requestedTheme;
-            }
-
-            if (destructive)
-            {
-                popup.DefaultButton = ContentDialogButton.None;
-                popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
-            }
-
-            return popup.ShowQueuedAsync(xamlRoot);
-        }
-
-        // Nested: a ContentDialog cannot open over another one, so an alert raised while a popup
-        // is already up is a ModalPopup instead. It used to be told apart by a FrameworkElement
-        // target that every caller passed as null, and that the tip then pointed at nothing.
-        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            var popup = CreateNested(title, primary, secondary, destructive, requestedTheme);
-            popup.Subtitle = message;
-
-            return popup.ShowAsync(xamlRoot);
-        }
-
-        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            var content = new TextBlock
-            {
-                Style = BootStrapper.Current.Resources["BodyTextBlockStyle"] as Style
-            };
-
-            TextBlockHelper.SetFormattedText(content, message);
-
-            var popup = CreateNested(title, primary, secondary, destructive, requestedTheme);
-            popup.Content = content;
-
-            return popup.ShowAsync(xamlRoot);
-        }
-
-        public static Task<ContentDialogResult> ShowNestedAsync(XamlRoot xamlRoot, string message, string title, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            var popup = CreateNested(title, primary, secondary, destructive, requestedTheme);
-            popup.Subtitle = message;
-            popup.Content = content;
-
-            return popup.ShowAsync(xamlRoot);
-        }
-
-        private static ModalPopup CreateNested(string title, string primary, string secondary, bool destructive, ElementTheme requestedTheme)
-        {
-            return new ModalPopup
-            {
-                Title = title,
-                PrimaryButtonContent = primary,
-                PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
-                SecondaryButtonContent = secondary,
-                IsLightDismissEnabled = true,
-                RequestedTheme = requestedTheme
-            };
-        }
     }
 }

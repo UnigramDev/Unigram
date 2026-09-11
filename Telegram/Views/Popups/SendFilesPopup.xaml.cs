@@ -1700,7 +1700,7 @@ namespace Telegram.Views.Popups
 
         private async void MakeContentPaid()
         {
-            var popup = new InputTeachingTip(InputPopupType.Stars);
+            var popup = new InputPopup(InputPopupType.Stars);
             popup.Value = StarCount;
             popup.Maximum = ViewModel.ClientService.Options.PaidMediaMessageStarCountMax;
 

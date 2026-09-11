@@ -985,7 +985,7 @@ namespace Telegram.Views.Stars.Popups
                 resaleStarCount = await _resaleStarCount.Task;
             }
 
-            var popup = new InputTeachingTip(InputPopupType.Stars);
+            var popup = new InputPopup(InputPopupType.Stars);
             popup.Value = Math.Clamp(resaleStarCount, _clientService.Options.GiftResaleStarCountMin, _clientService.Options.GiftResaleStarCountMax);
             //popup.Minimum = _clientService.Options.GiftResaleStarCountMin;
             popup.Maximum = _clientService.Options.GiftResaleStarCountMax;

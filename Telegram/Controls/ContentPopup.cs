@@ -161,11 +161,6 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetElementChildVisual(AnimationElement, null);
         }
 
-        public virtual void OnCreate()
-        {
-
-        }
-
         public virtual void OnNavigatedTo(object parameter)
         {
 
@@ -354,8 +349,6 @@ namespace Telegram.Controls
 
             XamlRoot = xamlRoot;
             this.ApplyChatTheme(xamlRoot);
-
-            OnCreate();
 
             _closingTask = new TaskCompletionSource<ContentDialogResult>();
             PopupQueue.Enqueue(xamlRoot, _closingTask);

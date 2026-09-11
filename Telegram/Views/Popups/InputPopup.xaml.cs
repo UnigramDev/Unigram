@@ -71,7 +71,7 @@ namespace Telegram.Views.Popups
         public string Footer { get; set; }
     }
 
-    public sealed partial class InputPopup : ContentPopup
+    public sealed partial class InputPopup : ModalPopup
     {
         public string Header { get; set; }
 
@@ -114,6 +114,8 @@ namespace Telegram.Views.Popups
                     Label.BeforeTextChanging += OnBeforeTextChanging;
                     break;
             }
+
+            Loaded += OnLoaded;
         }
 
         // This was largely copied from Calculator's GetRegionalSettingsAwareDecimalFormatter()
@@ -215,7 +217,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public override void OnCreate()
+        public void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(Header))
             {
@@ -282,7 +284,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void ContentDialog_PrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (Label != null)
             {
@@ -359,7 +361,24 @@ namespace Telegram.Views.Popups
 
         public static async Task<InputPopupResult> ShowAsync(XamlRoot xamlRoot, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            var popup = new InputPopup(type)
+            var popup = Create(type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
+
+            var confirm = await popup.ShowQueuedAsync(xamlRoot);
+            return new InputPopupResult(confirm, popup.Text, popup.Value);
+        }
+
+        // Nested: see MessagePopup.ShowNestedAsync - a ContentDialog cannot open over another one.
+        public static async Task<InputPopupResult> ShowNestedAsync(XamlRoot xamlRoot, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var popup = Create(type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
+
+            var confirm = await popup.ShowAsync(xamlRoot);
+            return new InputPopupResult(confirm, popup.Text, popup.Value);
+        }
+
+        private static InputPopup Create(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return new InputPopup(type)
             {
                 Title = title ?? string.Empty,
                 Header = message,
@@ -369,28 +388,6 @@ namespace Telegram.Views.Popups
                 SecondaryButtonText = secondary,
                 RequestedTheme = requestedTheme
             };
-
-            var confirm = await popup.ShowQueuedAsync(xamlRoot);
-            return new InputPopupResult(confirm, popup.Text, popup.Value);
-        }
-
-        // Nested: see MessagePopup.ShowNestedAsync - a ContentDialog cannot open over another one.
-        public static async Task<InputPopupResult> ShowNestedAsync(XamlRoot xamlRoot, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            var popup = new InputTeachingTip(type)
-            {
-                Title = title ?? string.Empty,
-                Header = message,
-                PlaceholderText = placeholderText ?? string.Empty,
-                PrimaryButtonContent = primary,
-                PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
-                SecondaryButtonContent = secondary,
-                IsLightDismissEnabled = true,
-                RequestedTheme = requestedTheme
-            };
-
-            var confirm = await popup.ShowAsync(xamlRoot);
-            return new InputPopupResult(confirm, popup.Text, popup.Value);
         }
 
         #endregion

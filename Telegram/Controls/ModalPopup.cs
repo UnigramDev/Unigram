@@ -303,11 +303,6 @@ namespace Telegram.Controls
 
         #region Show and hide
 
-        public virtual void OnCreate()
-        {
-
-        }
-
         public virtual void OnNavigatedTo(object parameter)
         {
 
@@ -359,11 +354,7 @@ namespace Telegram.Controls
 
             Logger.Info(GetType().Name);
 
-            // Before OnCreate, as ContentPopup does it, so a subclass building its content already
-            // has the theme it will be shown in. ShowAsync would otherwise do it a moment later.
             ApplyTheme(xamlRoot);
-
-            OnCreate();
 
             var queued = new TaskCompletionSource<ContentDialogResult>();
             PopupQueue.Enqueue(xamlRoot, queued);
@@ -804,7 +795,7 @@ namespace Telegram.Controls
         {
             if (FocusPrimaryButton && PrimaryButton != null && PrimaryButton.Visibility == Visibility.Visible)
             {
-                if (PrimaryButton.Focus(FocusState.Keyboard))
+                if (PrimaryButton.Focus(FocusState.Programmatic))
                 {
                     return;
                 }
