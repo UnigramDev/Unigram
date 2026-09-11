@@ -189,6 +189,7 @@ namespace Telegram.Navigation
     {
         private readonly WindowContext _context;
 
+        private ContentPresenter ContentHost;
         private StackPanel CaptionPanel;
         private Button MinimizeButton;
         private Button MaximizeButton;
@@ -339,6 +340,7 @@ namespace Telegram.Navigation
                 CloseButton.Click -= OnCloseButtonClick;
             }
 
+            ContentHost = GetTemplateChild(nameof(ContentHost)) as ContentPresenter;
             CaptionPanel = GetTemplateChild(nameof(CaptionPanel)) as StackPanel;
             MinimizeButton = GetTemplateChild(nameof(MinimizeButton)) as Button;
             MaximizeButton = GetTemplateChild(nameof(MaximizeButton)) as Button;
@@ -356,6 +358,15 @@ namespace Telegram.Navigation
             if (CaptionPanel != null)
             {
                 CaptionPanel.RequestedTheme = _captionTheme;
+            }
+
+            // Only where nothing outside the content would take the tab: on UWP the CoreWindow
+            // wraps for us, and making the content a cycle region there turns every focus XAML
+            // has to re-resolve - a programmatic Focus, or the focused element leaving the tree -
+            // into the region's first tab stop.
+            if (ContentHost != null && !WindowContext.HasSystemTabNavigation)
+            {
+                ContentHost.TabFocusNavigation = KeyboardNavigationMode.Cycle;
             }
 
             // The window can already be maximized by the time the template arrives.

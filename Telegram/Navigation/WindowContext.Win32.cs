@@ -465,6 +465,12 @@ namespace Telegram.Navigation
         /// </summary>
         public static bool HasSystemCaptionButtons => false;
 
+        /// <summary>
+        /// The XAML island is a child window, and tab leaving its last element leaves the island
+        /// rather than wrapping, so the content has to cycle for itself.
+        /// </summary>
+        public static bool HasSystemTabNavigation => false;
+
         partial void SetHostCaptionButtons(CaptionButtons buttons)
         {
             _island.SetCaptionButtons(buttons);

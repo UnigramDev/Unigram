@@ -498,6 +498,12 @@ namespace Telegram.Navigation
         public static bool HasSystemCaptionButtons => true;
 
         /// <summary>
+        /// The CoreWindow is the whole window, so tab already wraps within it once it runs out of
+        /// elements, and the content must not declare a navigation region of its own.
+        /// </summary>
+        public static bool HasSystemTabNavigation => true;
+
+        /// <summary>
         /// Undocumented, and the only way a UWP view can be rid of the shell's caption buttons
         /// while keeping the window: ExtendViewIntoTitleBar draws under them but does not remove
         /// them. Reached through the CoreWindow's navigation client.
