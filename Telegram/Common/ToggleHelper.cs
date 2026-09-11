@@ -8,6 +8,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Common
@@ -25,9 +26,10 @@ namespace Telegram.Common
     /// itself, is what the user sees. Bound here instead, the write is caught, probed, retried
     /// once, and still reported.
     ///
-    /// The probes exist to answer two questions the reports cannot: whether a second attempt
-    /// succeeds (transient, so we are looking for a timing window) and whether an unrelated
-    /// property on the same element fails too (the element is broken, not the property).
+    /// The probes exist to answer questions the reports cannot: whether an unrelated property on
+    /// the same element fails too (the element is broken, not the property), and whether a write
+    /// that the property system cannot short-circuit succeeds (transient, so we are looking for a
+    /// timing window) or fails again (the failure is in what the write raises, not in reaching it).
     ///
     /// Delete this, and the probes with it, once the cause is known.
     /// </remarks>
@@ -38,30 +40,36 @@ namespace Telegram.Common
             return (bool)obj.GetValue(IsCheckedProperty);
         }
 
+        // Everything happens here rather than in a change callback, because a binding's first write
+        // is usually false, which is this property's default, and a change callback does not run
+        // for it. Subscribing there left every toggle that starts unchecked with no Checked handler,
+        // so the user's click never reached the view model and the setting was silently dropped.
+        // The setter is the one door in: the generated x:Bind calls it, and so does XAML markup.
         public static void SetIsChecked(DependencyObject obj, bool value)
         {
             obj.SetValue(IsCheckedProperty, value);
+
+            if (obj is ToggleButton toggle)
+            {
+                Attach(toggle);
+
+                Write(toggle, value, true);
+            }
         }
 
         // bool and not bool?: every binding this stands in for carries a bool, and a nullable value
         // crosses the ABI boxed - one more moving part on the exact path that is failing.
-        // The default matches ToggleButton.IsChecked's own, which is what makes it safe that a
-        // first write of false raises no change callback: the target is already false.
         public static readonly DependencyProperty IsCheckedProperty =
-            DependencyProperty.RegisterAttached("IsChecked", typeof(bool), typeof(ToggleHelper), new PropertyMetadata(false, OnIsCheckedChanged));
+            DependencyProperty.RegisterAttached("IsChecked", typeof(bool), typeof(ToggleHelper), new PropertyMetadata(false));
 
         private static readonly DependencyProperty AttachedProperty =
             DependencyProperty.RegisterAttached("Attached", typeof(bool), typeof(ToggleHelper), new PropertyMetadata(false));
 
         private static bool _reported;
+        private static bool _probing;
 
-        private static void OnIsCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void Attach(ToggleButton toggle)
         {
-            if (d is not ToggleButton toggle)
-            {
-                return;
-            }
-
             // Both handlers are static methods, so the delegate holds nothing that could keep the
             // element alive: the element owns the subscription and takes it to the grave. There is
             // deliberately no matching -=, because there is nothing to detach it from.
@@ -72,15 +80,16 @@ namespace Telegram.Common
                 toggle.Checked += OnToggled;
                 toggle.Unchecked += OnToggled;
             }
-
-            Write(toggle, (bool)e.NewValue, true);
         }
 
         // The other half of Mode=TwoWay: the user's click lands on the real property, and pushing it
         // back into this one is what lets the binding carry it to the view model.
         private static void OnToggled(object sender, RoutedEventArgs e)
         {
-            if (sender is ToggleButton toggle)
+            // The clear/restore probe raises both of these, and the view model must not see that:
+            // the intermediate value would reach it as a real change, and would stay there if the
+            // restore is the write that fails.
+            if (sender is ToggleButton toggle && _probing is false)
             {
                 SetIsChecked(toggle, toggle.IsChecked is true);
             }
@@ -123,12 +132,44 @@ namespace Telegram.Common
                 toggle.XamlRoot != null,
                 toggle.Parent != null));
 
+            // The one thing put_IsChecked raises that every failing flavour has in common, and that
+            // Tag does not: a PropertyChanged automation event, raised only while a UIA client is
+            // listening - which would be why this is a handful of machines and not everyone.
+            // Whether this element already has a peer would say more, but every way of asking risks
+            // creating one, and a peer this code made would change what the writes below raise.
+            Probe("automation listeners", () => AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged).ToString());
+
             // Does anything at all still work on this element? Tag is the cheapest unrelated
             // property on it, and it is not read anywhere, so writing it changes nothing.
-            Probe("read IsChecked", () => _ = toggle.IsChecked);
-            Probe("write Tag", () => toggle.Tag = value);
+            // The value read back is what makes the write below mean anything: if IsChecked
+            // already holds what was asked for, the failed write applied and threw from what it
+            // raised afterwards, and writing the same value again is an equal-value no-op.
+            Probe("read IsChecked", () => toggle.IsChecked?.ToString() ?? "null");
+            Probe("write Tag", () => { toggle.Tag = value; return "ok"; });
 
-            var recovered = Probe("write IsChecked again", () => toggle.IsChecked = value);
+            var recovered = Probe("write IsChecked again", () => { toggle.IsChecked = value; return "ok"; });
+
+            if (recovered)
+            {
+                // A change the property system cannot short-circuit, so everything put_IsChecked
+                // raises runs again - and this is the split the equal-value write cannot make:
+                // fail here and the failure lives in what the write raises, succeed and the window
+                // really has closed. Clearing rather than inverting because a grouped RadioButton
+                // driven to true unchecks a sibling that restoring this one does not bring back;
+                // to null it only unchecks itself, and null and false share a visual state.
+                try
+                {
+                    _probing = true;
+
+                    Probe("clear IsChecked", () => { toggle.ClearValue(ToggleButton.IsCheckedProperty); return "ok"; });
+                    Probe("write IsChecked back", () => { toggle.IsChecked = value; return "ok"; });
+                }
+                finally
+                {
+                    // Left set, it would silence the pushback for the rest of the session.
+                    _probing = false;
+                }
+            }
 
             if (retry && recovered is false)
             {
@@ -150,12 +191,11 @@ namespace Telegram.Common
             }
         }
 
-        private static bool Probe(string name, Action action)
+        private static bool Probe(string name, Func<string> action)
         {
             try
             {
-                action();
-                Logger.Error("    " + name + ": ok");
+                Logger.Error("    " + name + ": " + action());
                 return true;
             }
             catch (Exception ex)

@@ -110,17 +110,17 @@ namespace Telegram.Views.Settings
             if (theme is ThemeCustomInfo custom)
             {
                 radio.RequestedTheme = custom.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                ToggleHelper.SetIsChecked(radio, AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase));
             }
             else if (theme is ThemeAccentInfo accent)
             {
                 radio.RequestedTheme = accent.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == accent.Type && AppSettings.Appearance.Accents[accent.Type] == accent.AccentColor;
+                ToggleHelper.SetIsChecked(radio, AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == accent.Type && AppSettings.Appearance.Accents[accent.Type] == accent.AccentColor);
             }
             else
             {
                 radio.RequestedTheme = theme.Parent == TelegramTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && AppSettings.Appearance.RequestedTheme == theme.Parent;
+                ToggleHelper.SetIsChecked(radio, AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && AppSettings.Appearance.RequestedTheme == theme.Parent);
             }
 
             args.ItemContainer.Tag = args.Item;
@@ -134,15 +134,15 @@ namespace Telegram.Views.Settings
             {
                 if (theme is ThemeCustomInfo custom)
                 {
-                    radio.IsChecked = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                    ToggleHelper.SetIsChecked(radio, AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase));
                 }
                 else if (theme is ThemeAccentInfo accent)
                 {
-                    radio.IsChecked = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == accent.Type && AppSettings.Appearance.Accents[accent.Type] == accent.AccentColor;
+                    ToggleHelper.SetIsChecked(radio, AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == accent.Type && AppSettings.Appearance.Accents[accent.Type] == accent.AccentColor);
                 }
                 else
                 {
-                    radio.IsChecked = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && AppSettings.Appearance.RequestedTheme == theme.Parent;
+                    ToggleHelper.SetIsChecked(radio, AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type == TelegramThemeType.Classic && AppSettings.Appearance.RequestedTheme == theme.Parent);
                 }
             }
         }

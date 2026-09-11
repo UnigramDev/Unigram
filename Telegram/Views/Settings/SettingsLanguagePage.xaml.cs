@@ -78,7 +78,7 @@ namespace Telegram.Views.Settings
 
                 // Justified because Checked
                 content.Tag = language;
-                content.IsChecked = language == ViewModel.SelectedItem;
+                ToggleHelper.SetIsChecked(content, language == ViewModel.SelectedItem);
 
                 content.Checked += RadioButton_Checked;
 
