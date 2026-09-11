@@ -63,7 +63,7 @@ namespace Telegram.Services.Calls
 
             _memoryTimer = new Timer(OnMemorySample, null, MemorySampleInterval, MemorySampleInterval);
 
-            Logger.Info($"{_memoryLogged / 1024 / 1024} MB");
+            Logger.Info($"{_memoryLogged / 1024 / 1024} MB, managed {ManagedMegabytes()} MB");
         }
 
         protected void StopMemorySampling()
@@ -76,7 +76,16 @@ namespace Telegram.Services.Calls
 
             timer.Dispose();
 
-            Logger.Info($"{(long)MemoryManager.AppMemoryUsage / 1024 / 1024} MB, peak {_memoryPeak / 1024 / 1024} MB");
+            // The closing reading counts towards the peak as well. Without it a call shorter
+            // than the sample interval reports a peak that is whatever the call opened at,
+            // which can read lower than the value on the same line.
+            var usage = (long)MemoryManager.AppMemoryUsage;
+            if (usage > _memoryPeak)
+            {
+                _memoryPeak = usage;
+            }
+
+            Logger.Info($"{usage / 1024 / 1024} MB, peak {_memoryPeak / 1024 / 1024} MB, managed {ManagedMegabytes()} MB");
         }
 
         private void OnMemorySample(object state)
@@ -102,7 +111,17 @@ namespace Telegram.Services.Calls
             _memoryLogged = usage;
             _memoryLoggedAt = now;
 
-            Logger.Info($"{usage / 1024 / 1024} MB, {delta / 1024 / 1024:+#;-#;0} MB in {elapsed}s");
+            Logger.Info($"{usage / 1024 / 1024} MB, {delta / 1024 / 1024:+#;-#;0} MB in {elapsed}s, managed {ManagedMegabytes()} MB");
+        }
+
+        // The app memory figure is committed memory, so a managed heap that grew and then emptied
+        // still shows in it. Logged beside it to tell that apart from memory that is still held:
+        // app memory climbing while this stays flat is native.
+        private static long ManagedMegabytes()
+        {
+            // No collection forced: this has to be cheap enough to sit on the sample path, and a
+            // forced collection would also change the thing being measured.
+            return GC.GetTotalMemory(false) / 1024 / 1024;
         }
     }
 }
