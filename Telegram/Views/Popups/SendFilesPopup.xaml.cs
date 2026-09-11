@@ -270,7 +270,7 @@ namespace Telegram.Views.Popups
         public bool CanSchedule { get; set; }
         public bool IsSavedMessages { get; set; }
 
-        public SchedulingState Schedule { get; private set; }
+        public SchedulingState Schedule { get; private set; } = SchedulingState.Auto;
         public bool? Silent { get; private set; }
 
         public long PaidMessageStarCount { get; private set; }
