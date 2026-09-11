@@ -212,19 +212,15 @@ namespace Telegram.Views
         private void MemoryUsageTimer_Tick(object sender, object e)
         {
             var memoryUsage = Math.Round(Windows.System.MemoryManager.AppMemoryUsage / 1024.0 / 1024.0);
-            var occurred = PollGC();
+            //var occurred = PollGC();
             var paused = PollPause();
 
             //double unmanaged = currentProcess.NativeHeap / 1024.0 / 1024.0;
             double managed = GC.GetTotalMemory(false) / 1024.0 / 1024.0; // currentProcess.ManagedHeap / 1024.0 / 1024.0;
 
-            if (MasterDetail?.NavigationService?.Frame?.Content is ChatPage page)
+            if (memoryUsage != _memoryUsage)
             {
-                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + paused + occurred + page.View.GetVirtualizationInfo();
-            }
-            else if (memoryUsage != _memoryUsage)
-            {
-                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + paused + occurred;
+                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + paused /*+ occurred*/ + WindowContent.DebugInline();
             }
 
             _memoryUsage = memoryUsage;
@@ -1392,6 +1388,8 @@ namespace Telegram.Views
         private async void CollectAndAnalyze()
         {
             await CollectAsync();
+
+            Logger.Info(WindowContent.DebugCounters());
 
 #if INSTRUMENTATION
             Logger.Info(DebugAnalyzeOrphans());

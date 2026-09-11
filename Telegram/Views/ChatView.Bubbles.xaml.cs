@@ -1264,19 +1264,6 @@ namespace Telegram.Views
         }
 #endif
 
-        public string GetVirtualizationInfo()
-        {
-            if (Messages.ItemsPanelRoot is ItemsStackPanel panel)
-            {
-                var queued = _typeToStrategy.Values.Sum(x => x.Queue.Count);
-                var total = _typeToStrategy.Values.Sum(x => x.TotalCount);
-                var cached = panel.LastCacheIndex + panel.FirstCacheIndex + 1;
-                return string.Format(", [{0}-{1}] {2}/{3}{4}", panel.FirstCacheIndex, panel.LastCacheIndex, queued, total, total - queued - cached > 0 ? $", {total - queued - cached} missing" : "");
-            }
-
-            return string.Empty;
-        }
-
         /// <summary>
         /// One line per type that has containers, for the overlay behind ShowMemoryUsage. Retyped
         /// against Matched and Pooled is the number that matters: a re-template rebuilds the tree
