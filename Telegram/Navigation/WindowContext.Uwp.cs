@@ -845,7 +845,17 @@ namespace Telegram.Navigation
 
         partial void SetHostContent(UIElement content)
         {
+            if (_window.Content is IPopupHost oldHost)
+            {
+                oldHost.PopupOpened();
+            }
+
             _window.Content = content;
+
+            if (_window.Content is IPopupHost newHost)
+            {
+                newHost.PopupClosed();
+            }
         }
 
         partial void SetScreenCaptureEnabled(bool enabled)

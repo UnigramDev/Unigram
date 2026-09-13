@@ -43,7 +43,6 @@ namespace Telegram.Views.Host
             : base(context)
         {
             InitializeComponent();
-            Window.SetTitleBar(Footer);
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;

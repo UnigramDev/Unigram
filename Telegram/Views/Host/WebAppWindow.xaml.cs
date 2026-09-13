@@ -108,7 +108,6 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.SetTitleBar(TitleBar);
             Window.CaptionButtons = CaptionButtons.Close;
 
             LoadPlaceholder();
@@ -200,7 +199,6 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.SetTitleBar(TitleBar);
             Window.CaptionButtons = CaptionButtons.Close;
         }
 

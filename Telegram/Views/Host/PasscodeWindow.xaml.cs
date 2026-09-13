@@ -29,7 +29,6 @@ namespace Telegram.Views.Host
             : base(window)
         {
             InitializeComponent();
-            Window.SetTitleBar(TitleBar);
 
             _passcodeService = LifetimeService.Current.Passcode;
             _biometrics = biometrics;
@@ -56,6 +55,8 @@ namespace Telegram.Views.Host
             Field.InputScope = confirmScope;
             Field.MaxLength = _passcodeService.IsSimple ? 4 : int.MaxValue;
         }
+
+        protected override UIElement TitleBarElement => TitleBar;
 
         private void Retry_Tick(object sender, object e)
         {
