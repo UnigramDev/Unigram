@@ -21,6 +21,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.UI.Composition.h>
+#include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Xaml.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Graphics.h>
@@ -510,6 +511,13 @@ struct VoipVideoOutput : public std::enable_shared_from_this<VoipVideoOutput>, r
 
     winrt::event_token m_renderingDeviceReplaced;
 
+    // The view this output draws into. Nothing is drawn while it is off screen, so its
+    // visibility is watched here rather than plumbed down from the app. Null in the
+    // flavours that have no CoreWindow, where the output simply always draws.
+    winrt::Windows::UI::Core::CoreWindow m_coreWindow{ nullptr };
+    winrt::event_token m_visibilityChanged{};
+    std::atomic<bool> m_visible{ true };
+
 private:
     static inline std::atomic<uint64_t> s_nextInstanceId{ 1 };
     const uint64_t m_instanceId;
@@ -527,6 +535,12 @@ public:
     }
 
 private:
+    void OnVisibilityChanged(winrt::Windows::UI::Core::CoreWindow const&,
+        winrt::Windows::UI::Core::VisibilityChangedEventArgs const& args)
+    {
+        m_visible.store(args.Visible(), std::memory_order_relaxed);
+    }
+
     void OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&)
     {
         std::lock_guard<std::recursive_mutex> guard(m_deviceMutex);
@@ -586,12 +600,39 @@ public:
         m_brush.Stretch(uniformToFill ? CompositionStretch::UniformToFill : CompositionStretch::Uniform);
 
         visual.Brush(m_brush);
+
+        // Drawing into a window that is off screen is not free and buys nothing: the
+        // surface updates are never consumed, and they accumulate in graphics memory -
+        // which a user hit as gigabytes of growth while a call window sat minimized, all
+        // of it released the moment the window came back. Constructed on the view's own
+        // thread, so this is that view's window.
+        try
+        {
+            m_coreWindow = winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread();
+        }
+        catch (...)
+        {
+            m_coreWindow = nullptr;
+        }
+
+        if (m_coreWindow)
+        {
+            m_visible = m_coreWindow.Visible();
+            m_visibilityChanged = m_coreWindow.VisibilityChanged(
+                { this, &VoipVideoOutput::OnVisibilityChanged });
+        }
     }
 
     ~VoipVideoOutput()
     {
         m_disposed = true;
         m_compositionDevice.RenderingDeviceReplaced(m_renderingDeviceReplaced);
+
+        if (m_coreWindow && m_visibilityChanged)
+        {
+            m_coreWindow.VisibilityChanged(m_visibilityChanged);
+            m_visibilityChanged = {};
+        }
 
         std::lock_guard<std::recursive_mutex> deviceGuard(m_deviceMutex);
         winrt::slim_lock_guard const frameGuard(m_frameMutex);
@@ -819,7 +860,9 @@ public:
 
     void OnFrame(const webrtc::VideoFrame& frame) override
     {
-        if (m_disposed.load())
+        // A frame dropped here costs nothing to recover: the next one is a whole picture,
+        // and the brush keeps showing the last one that was drawn.
+        if (m_disposed.load() || !m_visible.load(std::memory_order_relaxed))
         {
             return;
         }
