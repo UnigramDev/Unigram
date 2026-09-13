@@ -35,6 +35,52 @@ namespace Telegram.Controls
         }
     }
 
+    public partial class ContentControlEx : ContentControl
+    {
+        private bool _loaded;
+        private bool _unloaded;
+
+        public bool IsConnected => _loaded;
+        public bool IsDisconnected => _unloaded;
+
+        public ContentControlEx()
+        {
+            Loaded += OnChanged;
+            Unloaded += OnChanged;
+        }
+
+        protected virtual void OnLoaded()
+        {
+
+        }
+
+        protected virtual void OnUnloaded()
+        {
+
+        }
+
+        private void OnChanged(object sender, RoutedEventArgs e)
+        {
+            // TODO: unfortunately FrameworkElement.Parent returns null
+            // whenever the control is a DataTemplate root or similar,
+            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+
+            var parent = this.GetParent();
+            if (parent != null && !_loaded)
+            {
+                _loaded = true;
+                _unloaded = false;
+                OnLoaded();
+            }
+            else if (parent == null && _loaded)
+            {
+                _loaded = false;
+                _unloaded = true;
+                OnUnloaded();
+            }
+        }
+    }
+
     public partial class ToggleButtonEx2 : ToggleButton
     {
         private bool _loaded;
