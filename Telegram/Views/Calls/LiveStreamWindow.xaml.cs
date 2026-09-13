@@ -64,8 +64,6 @@ namespace Telegram.Views.Calls
             _call.Changed += OnChanged;
             _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport));
 
-            Window.SetTitleBar(TitleArea);
-
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
@@ -76,6 +74,7 @@ namespace Telegram.Views.Calls
         }
 
         protected override UIElement TitleBarElement => TitleArea;
+
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
             _inactivityTimer.Stop();
