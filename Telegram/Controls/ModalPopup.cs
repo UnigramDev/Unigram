@@ -611,7 +611,6 @@ namespace Telegram.Controls
             // them on itself, and the style is resolved later - so the parts catch up here.
             UpdateSmoke();
             UpdateTitle();
-            UpdateSubtitle();
             UpdateButtons();
             UpdateSplitButton();
         }
@@ -1355,43 +1354,6 @@ namespace Telegram.Controls
             }
         }
 
-        #endregion
-
-        #region Subtitle
-
-        public string Subtitle
-        {
-            get => (string)GetValue(SubtitleProperty);
-            set => SetValue(SubtitleProperty, value);
-        }
-
-        public static readonly DependencyProperty SubtitleProperty =
-            DependencyProperty.Register("Subtitle", typeof(string), typeof(ModalPopup), new PropertyMetadata(null, OnSubtitleChanged));
-
-        private static void OnSubtitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ModalPopup)d).UpdateSubtitle();
-        }
-
-        private void UpdateSubtitle()
-        {
-            if (SubtitleTextBlock == null)
-            {
-                return;
-            }
-
-            var subtitle = Subtitle;
-
-            // Markdown, as the TeachingTip template read it: the strings come from Android and
-            // carry **bold**.
-            TextBlockHelper.SetMarkdown(SubtitleTextBlock, subtitle);
-            SubtitleTextBlock.Visibility = string.IsNullOrEmpty(subtitle)
-                ? Visibility.Collapsed
-                : Visibility.Visible;
-
-            UpdateAutomationName();
-        }
-
         /// <summary>
         /// What Narrator reads the dialog out by. The title if there is one, and otherwise the
         /// subtitle cut short, which is ContentDialog's fallback to its content's plain text -
@@ -1400,13 +1362,9 @@ namespace Telegram.Controls
         private void UpdateAutomationName()
         {
             var name = Title as string;
-
-            if (string.IsNullOrEmpty(name))
-            {
-                name = TruncateAutomationName(Subtitle);
-            }
-
             name ??= string.Empty;
+
+            // TODO: truncate?
 
             AutomationProperties.SetName(this, name);
 

@@ -7,7 +7,6 @@
 
 using Telegram.Controls;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
@@ -57,17 +56,17 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
-            var popup = new ModalPopup();
-            popup.Title = username.IsActive
-                ? Strings.UsernameDeactivateLink
-                : Strings.UsernameActivateLink;
-            popup.Subtitle = username.IsActive
-                ? Strings.UsernameDeactivateLinkProfileMessage
-                : Strings.UsernameActivateLinkProfileMessage;
-            popup.PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
-            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.SecondaryButtonContent = Strings.Cancel;
-            popup.IsLightDismissEnabled = true;
+            var popup = new ModalPopup
+            {
+                Title = username.IsActive
+                    ? Strings.UsernameDeactivateLink
+                    : Strings.UsernameActivateLink,
+                Content = username.IsActive
+                    ? Strings.UsernameDeactivateLinkProfileMessage
+                    : Strings.UsernameActivateLinkProfileMessage,
+                PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
+                SecondaryButtonContent = Strings.Cancel
+            };
 
             popup.PrimaryButtonClick += (s, args) =>
             {
