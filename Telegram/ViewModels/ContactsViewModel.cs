@@ -81,6 +81,8 @@ namespace Telegram.ViewModels
                         items.Add(user);
                     }
 
+                    items.Sort(_comparer);
+
                     Items.ReplaceWith(items);
                     IsEmpty = items.Empty();
                 }
