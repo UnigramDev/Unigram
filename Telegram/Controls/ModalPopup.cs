@@ -592,15 +592,14 @@ namespace Telegram.Controls
                 ContentRoot.SizeChanged += OnContentRootSizeChanged;
             }
 
-            // Same elevation and the same lack of a guard as ToastPopup's: ThemeShadow arrived in
-            // 18362, which is TargetPlatformMinVersion, and this is alone in its own popup. It
-            // goes on the caster and never on ContentRoot - a ThemeShadow set on an element
-            // breaks the hit test of every child it has.
+            // No guard, as in ToastPopup: ThemeShadow arrived in 18362, which is
+            // TargetPlatformMinVersion. It goes on the caster and never on ContentRoot - a
+            // ThemeShadow set on an element breaks the hit test of every child it has.
             if (ShadowCaster != null)
             {
                 ShadowCaster.RadiusX = ShadowCaster.RadiusY = CornerRadius.TopLeft;
                 ShadowCaster.Shadow = new ThemeShadow();
-                ShadowCaster.Translation = new Vector3(0, 0, 32);
+                ShadowCaster.Translation = new Vector3(0, 0, DialogElevation);
             }
 
             // The card is painted from these, so a theme that swaps either brush has to reach
@@ -1000,6 +999,13 @@ namespace Telegram.Controls
         private static readonly TimeSpan OpacityChangeDuration = TimeSpan.FromMilliseconds(83); // s_OpacityChangeDuration
 
         private const float ScaledFactor = 1.05f;
+
+        // A dialog sits higher than anything else that elevates. ElevationHelper.cpp's
+        // s_elevationBaseDepth is 32 - what a flyout, a menu or a toast gets, plus 8 per nesting
+        // tier - but ContentDialog asks for its own base of 128, in the drop shadow branch of
+        // ContentDialog::OnApplyTemplate, and CThemeShadow::IsDropShadowMode is now an
+        // unconditional true. 32 was this popup's number while it was a copy of ToastPopup's.
+        private const float DialogElevation = 128;
 
         private void PlayOpenAnimation()
         {
