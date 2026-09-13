@@ -119,6 +119,8 @@ namespace Telegram.Controls
 
         public override void Play(GalleryMedia video, double position)
         {
+            IsLoopingEnabled = video.IsLoopingEnabled;
+
             if (_core == null)
             {
                 _video = video;
