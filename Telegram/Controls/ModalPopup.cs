@@ -188,7 +188,7 @@ namespace Telegram.Controls
     [TemplatePart(Name = "SecondaryButton", Type = typeof(Button))]
     [TemplatePart(Name = "CloseButton", Type = typeof(Button))]
     [TemplatePart(Name = "DismissButton", Type = typeof(Button))]
-    public partial class ModalPopup : ContentControl
+    public partial class ModalPopup : ContentControlEx
     {
         private Grid LayoutRoot;
         private Border SmokeElement;
@@ -617,6 +617,18 @@ namespace Telegram.Controls
             UpdateSplitButton();
         }
 
+        protected override void OnLoaded()
+        {
+            _fillBrush?.Register();
+            _strokeBrush?.Register();
+        }
+
+        protected override void OnUnloaded()
+        {
+            _fillBrush?.Unregister();
+            _strokeBrush?.Unregister();
+        }
+
         #region Hosting
 
         private void Open()
@@ -707,10 +719,6 @@ namespace Telegram.Controls
                 _popup.Child = null;
                 _popup = null;
             }
-
-            // The theme brushes outlive the popup, and these hold callbacks on them.
-            _fillBrush?.Unregister();
-            _strokeBrush?.Unregister();
 
             // Resolved again rather than held from Open: ContentPopup does the same, and the
             // content of a window can have been swapped while the popup was up.
@@ -1109,8 +1117,8 @@ namespace Telegram.Controls
 
             _cardGeometry = compositor.CreateRoundedRectangleGeometry();
 
-            _fillBrush = new CompositionColorSource(Background, true);
-            _strokeBrush = new CompositionColorSource(BorderBrush, true);
+            _fillBrush = new CompositionColorSource(Background, IsConnected);
+            _strokeBrush = new CompositionColorSource(BorderBrush, IsConnected);
 
             var thickness = (float)BorderThickness.Top;
 
@@ -1137,11 +1145,11 @@ namespace Telegram.Controls
         {
             if (dp == BackgroundProperty)
             {
-                _fillBrush?.PropertyChanged(Background as SolidColorBrush, true);
+                _fillBrush?.PropertyChanged(Background as SolidColorBrush, IsConnected);
             }
             else
             {
-                _strokeBrush?.PropertyChanged(BorderBrush as SolidColorBrush, true);
+                _strokeBrush?.PropertyChanged(BorderBrush as SolidColorBrush, IsConnected);
             }
         }
 
