@@ -9,7 +9,6 @@ using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Globalization.NumberFormatting;
@@ -258,11 +257,9 @@ namespace Telegram.Views.Popups
             var popup = new ChooseDateTimeToast
             {
                 Title = Strings.PostSuggestionsAddTime,
-                Subtitle = Strings.PostSuggestionsAddTimeHint,
+                Content = Strings.PostSuggestionsAddTimeHint,
                 PrimaryButtonContent = Strings.OK,
-                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                SecondaryButtonContent = Strings.Cancel,
-                IsLightDismissEnabled = true,
+                SecondaryButtonContent = Strings.Cancel
             };
 
             var confirm = await popup.ShowAsync(XamlRoot);

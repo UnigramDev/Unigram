@@ -8,7 +8,6 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.ViewModels.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
@@ -102,13 +101,11 @@ namespace Telegram.Views.Settings.Popups
                 Title = username.IsActive
                     ? Strings.UsernameDeactivateLink
                     : Strings.UsernameActivateLink,
-                Subtitle = username.IsActive
+                Content = username.IsActive
                     ? Strings.UsernameDeactivateLinkProfileMessage
                     : Strings.UsernameActivateLinkProfileMessage,
                 PrimaryButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
-                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                SecondaryButtonContent = Strings.Cancel,
-                IsLightDismissEnabled = true,
+                SecondaryButtonContent = Strings.Cancel
             };
 
             popup.PrimaryButtonClick += (s, args) =>

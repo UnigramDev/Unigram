@@ -1067,29 +1067,15 @@
                                                               Visibility="Collapsed"
                                                               Canvas.ZIndex="1"
                                                               Grid.Row="0" />
-                                            <!-- ContentPopup leaves the body to fend for itself; this
-                                                 one scrolls, because the tips it took over are as
-                                                 likely to be a paragraph as a list. -->
-                                            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                                          Grid.Row="1">
-                                                <StackPanel Margin="{TemplateBinding Padding}">
-                                                    <!-- Markdown, and an empty one takes no room. -->
-                                                    <TextBlock x:Name="SubtitleTextBlock"
-                                                               Foreground="{TemplateBinding Foreground}"
-                                                               FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                               FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                                               TextWrapping="Wrap"
-                                                               Margin="0,0,0,12"
-                                                               Visibility="Collapsed" />
-                                                    <ContentPresenter x:Name="ContentPresenter"
-                                                                      Content="{TemplateBinding Content}"
-                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                      Foreground="{TemplateBinding Foreground}"
-                                                                      FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                                      FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                                                      TextWrapping="Wrap" />
-                                                </StackPanel>
-                                            </ScrollViewer>
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Content="{TemplateBinding Content}"
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                              Foreground="{TemplateBinding Foreground}"
+                                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                              FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                                              TextWrapping="Wrap"
+                                                              Margin="{TemplateBinding Padding}"
+                                                              Grid.Row="1" />
                                         </Grid>
 
                                         <!-- Outside the body: the buttons stay reachable however long
@@ -1098,7 +1084,7 @@
                                              say leaves the row to its neighbours. The four columns are
                                              ContentPopup's, so the placements carry over. -->
                                         <Grid x:Name="CommandSpace"
-                                              Padding="{TemplateBinding Padding}"
+                                              Padding="24"
                                               Background="{ThemeResource ContentDialogBackground}"
                                               BackgroundSizing="OuterBorderEdge"
                                               BorderBrush="{ThemeResource ContentDialogSeparatorBorderBrush}"
