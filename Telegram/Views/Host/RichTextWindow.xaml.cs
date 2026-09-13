@@ -169,11 +169,11 @@ namespace Telegram.Views.Host
 
         protected override void OnWindowClosed()
         {
-            View.CoreWebView2.NavigationCompleted -= OnNavigationCompleted;
-            View.CoreWebView2.WebMessageReceived -= OnWebMessageReceived;
+            View.CoreWebView2?.NavigationCompleted -= OnNavigationCompleted;
+            View.CoreWebView2?.WebMessageReceived -= OnWebMessageReceived;
             if (_contextRequestedSubscribed)
             {
-                View.CoreWebView2.ContextMenuRequested -= OnContextMenuRequested;
+                View.CoreWebView2?.ContextMenuRequested -= OnContextMenuRequested;
             }
             View.Close();
 
