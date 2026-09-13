@@ -433,13 +433,13 @@ namespace Telegram.Views.Premium.Popups
                 return;
             }
 
-            var popup = new ModalPopup();
-            popup.Title = Strings.AppName;
-            popup.Subtitle = string.Format(supergroup.IsChannel ? Strings.RevokeLinkAlertChannel : Strings.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title);
-            popup.PrimaryButtonContent = Strings.RevokeButton;
-            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.SecondaryButtonContent = Strings.Cancel;
-            popup.IsLightDismissEnabled = true;
+            var popup = new ModalPopup
+            {
+                Title = Strings.AppName,
+                Content = string.Format(supergroup.IsChannel ? Strings.RevokeLinkAlertChannel : Strings.RevokeLinkAlert, MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true), chat.Title),
+                PrimaryButtonContent = Strings.RevokeButton,
+                SecondaryButtonContent = Strings.Cancel
+            };
 
             popup.PrimaryButtonClick += async (s, args) =>
             {
