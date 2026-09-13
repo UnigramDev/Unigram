@@ -450,7 +450,7 @@ namespace Telegram.Common.Recording
                 var paused = await recorder.PauseAsync();
                 if (paused != null)
                 {
-                    tsc.SetResult(new ChatRecordResult(paused.RecordDuration, GetWaveform()));
+                    tsc.SetResult(new ChatRecordResult(paused.Value, GetWaveform()));
 
                     if (_reader != null)
                     {
@@ -568,8 +568,7 @@ namespace Telegram.Common.Recording
                 }
                 else
                 {
-                    var result = await recorder.StopAsync();
-                    duration = result?.RecordDuration ?? TimeSpan.Zero;
+                    duration = await recorder.StopAsync() ?? TimeSpan.Zero;
 
                     if (mode == ChatRecordMode.Voice)
                     {
@@ -793,7 +792,7 @@ namespace Telegram.Common.Recording
                 return rounded % 2 == 0 ? rounded : rounded + 1;
             }
 
-            public async Task<MediaCapturePauseResult> PauseAsync()
+            public async Task<TimeSpan?> PauseAsync()
             {
                 try
                 {
@@ -806,7 +805,8 @@ namespace Telegram.Common.Recording
                     else
                     {
                         m_paused = true;
-                        return await m_lowLag.PauseWithResultAsync(MediaCapturePauseBehavior.RetainHardwareResources);
+
+                        return Close(await m_lowLag.PauseWithResultAsync(MediaCapturePauseBehavior.RetainHardwareResources));
                     }
                 }
                 catch
@@ -815,15 +815,15 @@ namespace Telegram.Common.Recording
                 }
             }
 
-            public async Task<MediaCaptureStopResult> StopAsync()
+            public async Task<TimeSpan?> StopAsync()
             {
-                MediaCaptureStopResult result = null;
+                TimeSpan? duration = null;
                 try
                 {
                     // Null when the sink did the recording: there is only the device to close.
                     if (m_lowLag != null)
                     {
-                        result = await m_lowLag.StopWithResultAsync();
+                        duration = Close(await m_lowLag.StopWithResultAsync());
                         await m_lowLag.FinishAsync();
                     }
                 }
@@ -833,7 +833,46 @@ namespace Telegram.Common.Recording
                     m_mediaCapture?.Dispose();
                     m_mediaCapture = null;
                 }
-                return result;
+                return duration;
+            }
+
+            /// <summary>
+            /// Reads the duration off a stop or pause result and closes it.
+            /// </summary>
+            /// <remarks>
+            /// The result owns a <see cref="VideoFrame"/> over a sample from the capture
+            /// pipeline's pool, and nothing here wants it. Left to the finalizer it is released
+            /// once the device has been closed and the sample's attributes are then cleared
+            /// against a module that is no longer loaded, which faults.
+            /// </remarks>
+            private static TimeSpan? Close(MediaCaptureStopResult result)
+            {
+                if (result == null)
+                {
+                    return null;
+                }
+
+                var duration = result.RecordDuration;
+
+                result.LastFrame?.Dispose();
+                result.Dispose();
+
+                return duration;
+            }
+
+            private static TimeSpan? Close(MediaCapturePauseResult result)
+            {
+                if (result == null)
+                {
+                    return null;
+                }
+
+                var duration = result.RecordDuration;
+
+                result.LastFrame?.Dispose();
+                result.Dispose();
+
+                return duration;
             }
 
             public void Dispose()
