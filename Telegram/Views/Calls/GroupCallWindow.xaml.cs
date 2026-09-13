@@ -124,8 +124,6 @@ namespace Telegram.Views.Calls
             MessageField.MaxLength = (int)_call.ClientService.Options.GroupCallMessageTextLengthMax;
             MessageReactions.Initialize(_call.ClientService);
 
-            Window.SetTitleBar(TitleArea);
-
             Update(call, call.CurrentUser);
 
             var verificationState = _call.VerificationState;

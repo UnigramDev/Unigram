@@ -135,8 +135,6 @@ namespace Telegram.Views.Calls
 
             var weakNetwork = ElementComposition.GetElementVisual(WeakNetwork);
             weakNetwork.Opacity = 0;
-
-            Window.SetTitleBar(TitleBar);
         }
 
         protected override UIElement TitleBarElement => TitleBar;
@@ -937,8 +935,6 @@ namespace Telegram.Views.Calls
 
             _remoteVideo.StateChanged -= OnVideoStateChanged;
             _remoteVideo.Stop();
-
-            Window.SetTitleBar(null);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
