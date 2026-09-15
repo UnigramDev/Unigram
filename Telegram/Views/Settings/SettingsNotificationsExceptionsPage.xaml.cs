@@ -9,7 +9,6 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Telegram.Views.Popups;
@@ -17,7 +16,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings
 {
@@ -110,12 +108,7 @@ namespace Telegram.Views.Settings
                 var toggle = flyout.CreateFlyoutItem(
                     muted ? ViewModel.Unmute : ViewModel.Mute,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
-                    muted ? Icons.Speaker3 : Icons.SpeakerOff);
-
-                if (muted is false)
-                {
-                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
-                }
+                    muted ? Icons.Speaker3 : Icons.SpeakerOff, destructive: !muted);
 
                 flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.BottomEdgeAlignedLeft);
             }
