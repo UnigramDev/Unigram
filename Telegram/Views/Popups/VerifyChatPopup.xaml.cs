@@ -12,9 +12,23 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
+    public partial class VerifyChatPopupResult
+    {
+        public ContentDialogResult Result { get; set; }
+
+        public FormattedText Text { get; set; }
+
+        public VerifyChatPopupResult(ContentDialogResult result, FormattedText text)
+        {
+            Result = result;
+            Text = text;
+        }
+    }
+
     public sealed partial class VerifyChatPopup : ModalPopup
     {
         public string Text { get; set; } = string.Empty;
@@ -72,7 +86,7 @@ namespace Telegram.Views.Popups
             SecondaryButtonContent = Strings.Cancel;
         }
 
-        public static async Task<InputPopupResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, Chat chat, bool remove, bool canSetCustomDescription)
+        public static async Task<VerifyChatPopupResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, Chat chat, bool remove, bool canSetCustomDescription)
         {
             var popup = new VerifyChatPopup(clientService, chat, remove, canSetCustomDescription)
             {
@@ -80,7 +94,7 @@ namespace Telegram.Views.Popups
             };
 
             var confirm = await popup.ShowAsync(xamlRoot);
-            return new InputPopupResult(confirm, popup.Text, 0);
+            return new VerifyChatPopupResult(confirm, popup.Text.AsFormattedText());
         }
     }
 }

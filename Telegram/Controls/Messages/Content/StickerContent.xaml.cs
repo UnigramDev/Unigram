@@ -247,8 +247,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     PlayInteraction(_message, interaction);
                 }
-                // TODO: only for custom emojis--to be added to TDLib
-                else if (response is Error && this.IsConnected())
+                else if (response is Error && !animatedEmoji.AnimatedEmoji.IsRegularEmoji && this.IsConnected())
                 {
                     _message.Delegate?.OpenSticker(sticker);
                 }
