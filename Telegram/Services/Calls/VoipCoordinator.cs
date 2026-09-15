@@ -65,7 +65,7 @@ namespace Telegram.Services
                     }
                     else
                     {
-                        activeCall.Show();
+                        activeCall.Show(navigation);
                         return true;
                     }
 
@@ -95,7 +95,7 @@ namespace Telegram.Services
                     }
                     else
                     {
-                        activeCall.Show();
+                        activeCall.Show(navigation);
                         return true;
                     }
 

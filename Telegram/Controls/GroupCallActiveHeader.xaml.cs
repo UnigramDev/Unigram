@@ -11,6 +11,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Native.Calls;
+using Telegram.Navigation.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -22,6 +23,7 @@ namespace Telegram.Controls
     {
         private readonly CompositionCurveVisual _curveVisual;
 
+        private INavigationService _navigationService;
         private VoipCallBase _call;
 
         public GroupCallActiveHeader()
@@ -33,8 +35,10 @@ namespace Telegram.Controls
             _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
         }
 
-        public void Update(VoipCallBase value)
+        public void Update(INavigationService navigationService, VoipCallBase value)
         {
+            _navigationService = navigationService;
+
             if (_call is VoipCall oldPrivateCall)
             {
                 oldPrivateCall.MediaStateChanged -= OnMediaStateChanged;
@@ -199,7 +203,7 @@ namespace Telegram.Controls
 
         private void Title_Click(object sender, RoutedEventArgs e)
         {
-            _call?.Show();
+            _call?.Show(_navigationService);
         }
 
         private void Curve_SizeChanged(object sender, SizeChangedEventArgs e)
