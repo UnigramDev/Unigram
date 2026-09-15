@@ -241,10 +241,12 @@ namespace Telegram.Services
             var setting1 = ConvertToKey(chatId, topicId, ChatSetting.ReadInboxMaxId);
             var setting2 = ConvertToKey(chatId, topicId, ChatSetting.Index);
             var setting3 = ConvertToKey(chatId, topicId, ChatSetting.Pixel);
+            var setting4 = ConvertToKey(chatId, topicId, ChatSetting.LastMessageId);
 
             _container.Remove(setting1);
             _container.Remove(setting2);
             _container.Remove(setting3);
+            _container.Remove(setting4);
         }
 
         private string ConvertToKey(long chatId, MessageTopic topicId, ChatSetting setting)
@@ -265,6 +267,7 @@ namespace Telegram.Services
         Index,
         Pixel,
         ReadInboxMaxId,
+        LastMessageId,
         IsTranslating,
         PaidMessageStarCount
     }
