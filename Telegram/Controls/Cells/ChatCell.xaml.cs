@@ -1760,9 +1760,9 @@ namespace Telegram.Controls.Cells
                         return Text1("\U0001F4F9 ", video.Caption, Strings.AttachVideo);
                     }
 
-                    if (video.Cover != null)
+                    if (video.Cover?.Minithumbnail != null)
                     {
-                        thumbnail = new MinithumbnailId(video.Video.VideoValue.Id, video.Cover.Minithumbnail, false);
+                        thumbnail = new MinithumbnailId(video.Cover.Sizes[^1].Photo.Id, video.Cover.Minithumbnail, false);
                     }
                     else
                     {
