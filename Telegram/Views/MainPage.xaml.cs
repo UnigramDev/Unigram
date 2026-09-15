@@ -851,7 +851,7 @@ namespace Telegram.Views
                     UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
 
-                    CallBanner.Update(call);
+                    CallBanner.Update(ViewModel.NavigationService, call);
 
                     _activeCallVisible = true;
                     MasterDetail.ShowHideBanner(_activeCallVisible || _playbackVisible);
@@ -860,7 +860,7 @@ namespace Telegram.Views
                 {
                     UpdatePlaybackHidden(false);
 
-                    CallBanner?.Update(null);
+                    CallBanner?.Update(null, null);
 
                     _activeCallVisible = false;
                     MasterDetail.ShowHideBanner(_activeCallVisible || _playbackVisible);
@@ -872,7 +872,7 @@ namespace Telegram.Views
         {
             if (CallBanner != null && !_activeCallVisible)
             {
-                CallBanner.Update(null);
+                CallBanner.Update(null, null);
                 UnloadObject(CallBanner);
             }
         }

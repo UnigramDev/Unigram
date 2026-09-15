@@ -12,12 +12,14 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Calls;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Telegram.Services.Calls
@@ -777,9 +779,38 @@ namespace Telegram.Services.Calls
             return new VoipWindow(window, this);
         }
 
-        public override void Show()
+        public override async void Show(INavigationService navigationService)
         {
-            WindowContext.Activate("Call");
+            var persistedId = "Call";
+
+            var oldViewId = navigationService.Window.Id;
+            var found = false;
+
+            await WindowContext.ForEachAsync(window =>
+            {
+                if (window.PersistedId == persistedId)
+                {
+                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                    found = true;
+                }
+            });
+
+            if (found)
+            {
+                return;
+            }
+
+            var service = ClientService.Session.Resolve<IViewService>();
+            var options = new ViewServiceOptions
+            {
+                Width = 720,
+                Height = 540,
+                PersistedId = persistedId,
+                Content = CreatePresentation,
+            };
+
+            Logger.Info("Waiting for window creation");
+            _ = service.OpenAsync(options);
         }
 
         private void DisposeImpl()
