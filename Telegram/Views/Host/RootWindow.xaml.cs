@@ -56,7 +56,7 @@ namespace Telegram.Views.Host
         private long _menuBots;
 
         public RootWindow(WindowContext context, NavigationService service)
-            : base(context)
+            : base(context, false)
         {
             InitializeComponent();
 

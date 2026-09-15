@@ -37,10 +37,13 @@ namespace Telegram.Controls
         /// </summary>
         public WindowContext Window { get; private set; }
 
-        protected WindowContent(WindowContext context)
+        protected WindowContent(WindowContext context, bool count = true)
         {
-            _counter = s_counters.GetOrAdd(GetType().Name, static name => new LifetimeCounter(name));
-            Logger.Info(_counter.TypeName + ": " + Interlocked.Increment(ref _counter.Constructed));
+            if (count)
+            {
+                _counter = s_counters.GetOrAdd(GetType().Name, static name => new LifetimeCounter(name));
+                Logger.Info(_counter.TypeName + ": " + Interlocked.Increment(ref _counter.Constructed));
+            }
 
             Window = context;
             Loaded += OnChanged;

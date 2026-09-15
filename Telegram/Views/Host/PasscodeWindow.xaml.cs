@@ -26,7 +26,7 @@ namespace Telegram.Views.Host
         private readonly DispatcherTimer _retryTimer;
 
         public PasscodeWindow(WindowContext window, bool biometrics)
-            : base(window)
+            : base(window, false)
         {
             InitializeComponent();
 
