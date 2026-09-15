@@ -66,6 +66,13 @@ namespace Telegram.Services
             set => _local.AddOrUpdateValue(ref _distanceUnits, "DistanceUnits", (int)value);
         }
 
+        private static string _walletCurrency;
+        public static string WalletCurrency
+        {
+            get => _walletCurrency ??= _local.GetValueOrDefault("WalletCurrency", "USD");
+            set => _local.AddOrUpdateValue(ref _walletCurrency, "WalletCurrency", value);
+        }
+
         private static double? _dialogsWidthRatio;
         public static double DialogsWidthRatio
         {
