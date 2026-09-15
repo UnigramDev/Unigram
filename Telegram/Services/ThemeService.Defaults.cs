@@ -106,12 +106,12 @@ namespace Telegram.Services
             {
                 TelegramThemeType.Night, new Dictionary<string, Color>
                 {
-                    { "PinnedMessageForegroundBrush", Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { "PageHeaderHighlightBrush", Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { "ChatVerifiedBadgeBrush", Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { "ChatLastMessageStateBrush", Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { "ChatFromLabelBrush", Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { "ChatUnreadBadgeBrush", Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
+                    { "PinnedMessageForegroundBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+                    { "PageHeaderHighlightBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+                    { "ChatVerifiedBadgeBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+                    { "ChatLastMessageStateBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+                    { "ChatFromLabelBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+                    { "ChatUnreadBadgeBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
                     //{ "ChatUnreadBadgeMutedBrush", Color.FromArgb(0xFF7D8E98) },
                     //{ "ChatFailedBadgeBrush", Color.FromArgb(0xFFD32F2F) },
                     { "MessageBackgroundIncoming", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
