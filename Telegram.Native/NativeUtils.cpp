@@ -411,6 +411,16 @@ namespace winrt::Telegram::Native::implementation
             root = winrt::Telegram::Native::FatalError(L"", L"", L"", winrt::single_threaded_vector<FatalErrorFrame>());
         }
 
+        // A record stowed by RoOriginateError carries a stack but no ExceptionAddress, and with no
+        // fault the group hash finds nothing to say in this record and goes on to the rest of the
+        // chain - which is whatever else the thread had stowed, not this failure, so one fault
+        // ends up with a group per thing that happened to go wrong beside it. The first frame is
+        // where the error was raised, which is what the address would have named.
+        if (root.Fault().NativeImageBase == 0 && root.Frames().Size() > 0)
+        {
+            root.Fault(root.Frames().GetAt(0));
+        }
+
         if (root.Type().empty())
         {
             root.Type(L"FailFastException");
