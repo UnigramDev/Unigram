@@ -1876,12 +1876,7 @@ namespace Telegram.Controls
                 var toggle = flyout.CreateFlyoutItem(
                     muted ? ViewModel.Unmute : ViewModel.Mute,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
-                    muted ? Icons.Speaker3 : Icons.SpeakerOff);
-
-                if (muted is false)
-                {
-                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
-                }
+                    muted ? Icons.Speaker3 : Icons.SpeakerOff, destructive: !muted);
 
                 NotificationsTarget.RequestedTheme = ActualTheme;
 
