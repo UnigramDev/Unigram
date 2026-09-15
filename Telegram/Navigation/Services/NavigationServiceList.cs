@@ -22,22 +22,15 @@ namespace Telegram.Navigation.Services
         public void Add(INavigationService navigationService)
         {
             _items.Add(navigationService);
-            navigationService.Connect();
         }
 
         public void Remove(INavigationService navigationService)
         {
             _items.Remove(navigationService);
-            navigationService?.Disconnect();
         }
 
         public void Clear()
         {
-            foreach (var service in _items)
-            {
-                service.Disconnect();
-            }
-
             _items.Clear();
         }
 
