@@ -211,6 +211,7 @@ namespace Telegram.Navigation
         {
             _window.Content = new Border();
 
+#if NET9_0_OR_GREATER
             ReleaseNative();
             ReleaseRoots();
 
@@ -225,6 +226,9 @@ namespace Telegram.Navigation
             Logger.Info(_hostedViewDrain.IsCompleted ? "drained" : $"timed out after {ShutdownDrainTimeout.TotalMilliseconds}ms");
 
             (state as Deferral)?.Complete();
+#else
+            ReleaseRoots();
+#endif
         }
 
         // No hosted branch on purpose: HostedViewClosing is that view's only teardown signal and

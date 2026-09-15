@@ -127,7 +127,7 @@ namespace Telegram.Common
         private static readonly Lazy<IntPtr> _webAuthNGetApiVersionNumber = new(() => NativeMethodInvoker.GetNativeMethod("webauthn.dll", "WebAuthNGetApiVersionNumber"));
 
 #if !NET9_0_OR_GREATER
-        [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+        [System.Runtime.InteropServices.UnmanagedFunctionPointer(System.Runtime.InteropServices.CallingConvention.Winapi)]
         private delegate int WebAuthNGetApiVersionNumber();
 #endif
 
@@ -147,7 +147,7 @@ namespace Telegram.Common
                 return ((delegate* unmanaged[Stdcall]<int>)address)() >= 3;
             }
 #else
-            return Marshal.GetDelegateForFunctionPointer<WebAuthNGetApiVersionNumber>(address)() >= 3;
+            return System.Runtime.InteropServices.Marshal.GetDelegateForFunctionPointer<WebAuthNGetApiVersionNumber>(address)() >= 3;
 #endif
         }
 

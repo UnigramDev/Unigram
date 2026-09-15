@@ -72,23 +72,23 @@ namespace Telegram.Td
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void TdLogMessageCallback(int verbosity_level, IntPtr message);
 
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void td_set_log_message_callback(int max_verbosity_level, TdLogMessageCallback? callback);
 
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int td_create_client_id();
 
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe void td_send(int client_id, long request_id, byte* request);
 
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe byte* td_execute(byte* request);
 
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe byte* td_receive(double timeout, out int client_id, out long request_id);
 #endif
