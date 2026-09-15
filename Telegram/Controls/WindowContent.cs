@@ -220,7 +220,6 @@ namespace Telegram.Controls
                 window.VisibleBoundsChanged -= OnVisibleBoundsChangedCore;
                 window.CloseRequested -= OnCloseRequestedCore;
                 window.Closed -= OnClosedCore;
-                window.SetTitleBar(null);
             }
 
             OnUnloaded();

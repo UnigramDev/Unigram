@@ -164,8 +164,6 @@ namespace Telegram.Views.Host
                 return;
             }
 
-            Window.SetTitleBar(TitleBar);
-
             if (active)
             {
                 Field.Focus(FocusState.Keyboard);
