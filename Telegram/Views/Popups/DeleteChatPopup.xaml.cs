@@ -18,6 +18,8 @@ namespace Telegram.Views.Popups
     {
         public DeleteChatPopup(IClientService clientService, Chat chat, ChatList chatList, bool clear, bool asOwner = false)
         {
+            Theme.AddCheckBoxPalette(this, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
+
             InitializeComponent();
 
             var position = chat.GetPosition(chatList);

@@ -36,6 +36,8 @@ namespace Telegram.Views.Popups
 
         public DeleteMessagesPopup(IClientService clientService, Chat chat, MessageTopic topic, IList<MessageWithOwner> messages, IDictionary<MessageId, MessageProperties> properties)
         {
+            Theme.AddCheckBoxPalette(this, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
+
             InitializeComponent();
 
             DataContext = clientService.Session.Resolve<SupergroupEditRestrictedViewModel>();
