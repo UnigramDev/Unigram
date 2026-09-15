@@ -84,7 +84,7 @@ namespace Telegram
         [LibraryImport("kernel32.dll")]
         private static partial ulong GetTickCount64();
 #else
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll")]
         private static extern ulong GetTickCount64();
 #endif
@@ -95,7 +95,7 @@ namespace Telegram
         [LibraryImport("kernel32.dll")]
         private unsafe static partial void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
 #else
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll")]
         private unsafe static extern void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
 #endif
