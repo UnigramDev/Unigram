@@ -42,7 +42,6 @@ namespace Telegram.Controls.Messages.Content
             _album = album;
 
             DefaultStyleKey = typeof(PhotoContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         public PhotoContent()

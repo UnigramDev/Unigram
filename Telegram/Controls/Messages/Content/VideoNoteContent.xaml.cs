@@ -39,7 +39,6 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(VideoNoteContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         protected override void OnLoaded()

@@ -39,8 +39,6 @@ namespace Telegram.Controls.Messages
         public MessageForwardHeader()
         {
             DefaultStyleKey = typeof(MessageForwardHeader);
-
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

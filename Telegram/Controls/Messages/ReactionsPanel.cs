@@ -32,8 +32,6 @@ namespace Telegram.Controls.Messages
 
         public ReactionsPanel()
         {
-            Telegram.Common.Instrumentation.Register(this);
-
             TabFocusNavigation = KeyboardNavigationMode.Once;
 
             ChildrenTransitions = new TransitionCollection
@@ -45,7 +43,9 @@ namespace Telegram.Controls.Messages
         }
 
 #if INSTRUMENTATION
-        internal IEnumerable<object> DebugChildren() => _cache.Values;
+        // The cache outlives the Children it was built for, so a button that is only in here is in
+        // no tree at all.
+        internal IEnumerable<object> DebugDetached() => _cache.Values;
 #endif
 
         protected override AutomationPeer OnCreateAutomationPeer()

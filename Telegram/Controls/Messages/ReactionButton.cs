@@ -45,8 +45,6 @@ namespace Telegram.Controls.Messages
             DefaultStyleKey = typeof(ReactionButton);
 
             Click += OnClick;
-
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

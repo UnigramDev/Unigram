@@ -27,18 +27,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(GameContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
-
-#if INSTRUMENTATION
-        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
-        {
-            if (Media?.Child != null)
-            {
-                yield return Media.Child;
-            }
-        }
-#endif
 
         #region InitializeComponent
 

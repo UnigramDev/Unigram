@@ -31,15 +31,10 @@ namespace Telegram.Controls.Gallery
         private static readonly object _lock = new();
 
 #if INSTRUMENTATION
-        // A STRONG static, so while picture-in-picture is up this is a legitimate
-        // root — and if it is ever left set after the window closes, it is a leak of
-        // the whole overlay, the transport controls and the player with it. Exposed
-        // so GalleryWindow's analysis can tell those two cases apart.
-        internal static GalleryCompactOverlay DebugCurrent => _current;
-
-        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
+        // A field rather than a child: picture-in-picture outlives the gallery, and an
+        // overlay left behind by _current takes the decoder with it.
+        internal System.Collections.Generic.IEnumerable<object> DebugDetached()
         {
-            yield return Controls;
             yield return _player;
         }
 #endif
@@ -47,8 +42,6 @@ namespace Telegram.Controls.Gallery
         public GalleryCompactOverlay(AppWindow window, GalleryViewModelBase viewModel, GalleryMedia media, VideoPlayerBase player)
         {
             InitializeComponent();
-
-            Telegram.Common.Instrumentation.Register(this);
 
             _window = window;
             _disposed = false;

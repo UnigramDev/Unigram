@@ -1161,8 +1161,6 @@ namespace Telegram.Common
                 direct.ShowHideSkeleton(_context.IsSkeletonVisible);
                 direct.TextEntityClick += Block_TextEntityClick;
 
-                Instrumentation.Register(direct);
-
                 return direct;
             }
 
@@ -1174,8 +1172,6 @@ namespace Telegram.Common
             };
 
             block.ShowHideSkeleton(_context.IsSkeletonVisible);
-
-            Instrumentation.Register(block);
 
             //if (_context.IsConnected)
             {
@@ -1583,8 +1579,6 @@ namespace Telegram.Common
                     IconForeground = element.Foreground
                 };
 
-                Instrumentation.Register(block);
-
                 block.SetText(clientService, button.Text);
                 element.Content = block;
             }
@@ -1597,8 +1591,6 @@ namespace Telegram.Common
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
                     TextSelection = TextSelectionMode.Disabled,
                 };
-
-                Instrumentation.Register(block);
 
                 block.IconForeground = element.Foreground;
                 block.SetText(clientService, button.Text);
