@@ -231,11 +231,12 @@ namespace Telegram.Controls.Messages
                 {
                     if (normalStart >= 0)
                     {
-                        hasCode |= ApplyBlock(normalStart, i - 1).HasCodeBlocks;
+                        ApplyBlock(normalStart, i - 1);
                         normalStart = -1;
                     }
 
-                    hasCode |= ApplyBlock(i, i).HasCodeBlocks;
+                    hasCode |= paragraphs[i].Type is TextParagraphTypeMonospace;
+                    ApplyBlock(i, i);
                 }
                 else if (normalStart < 0)
                 {
@@ -245,7 +246,7 @@ namespace Telegram.Controls.Messages
 
             if (normalStart >= 0)
             {
-                hasCode |= ApplyBlock(normalStart, paragraphs.Count - 1).HasCodeBlocks;
+                ApplyBlock(normalStart, paragraphs.Count - 1);
             }
 
             HasCodeBlocks = hasCode;
@@ -570,7 +571,7 @@ namespace Telegram.Controls.Messages
 
         #region Blocks
 
-        private FormattedTextBlock ApplyBlock(int first, int last)
+        private void ApplyBlock(int first, int last)
         {
             var block = CreateBlock();
             block.ShowHideSkeleton(_showSkeleton);
@@ -609,8 +610,6 @@ namespace Telegram.Controls.Messages
 
             _blocks.Add(block);
             _ranges.Add((first, last));
-
-            return block;
         }
 
         private FormattedTextBlock CreateBlock()
