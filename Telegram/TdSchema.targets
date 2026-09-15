@@ -29,10 +29,16 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="TdSchemaMode" />
     <!-- Ordering only, hence ReferenceOutputAssembly=false: the app runs the built dll by path.
-         Platform is removed because this is an AnyCPU tool and the app builds x64 and ARM64. -->
+         Platform is removed because this is an AnyCPU tool and the app builds x64 and ARM64.
+
+         ReferenceOutputAssembly stops the reference, not the copy: the publish walk still
+         collected the tool's own outputs, and Telegram.Generators.Cli.exe shipped in the package
+         beside the app. Private and ExcludeAssets are what keep a build-time tool out of it. -->
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\Telegram.Generators.Cli.csproj"
                       Condition="'$(TdSchemaMode)' == 'MSBuild'"
                       ReferenceOutputAssembly="false"
+                      Private="false"
+                      ExcludeAssets="all"
                       GlobalPropertiesToRemove="Platform;RuntimeIdentifier;PublishAot;SelfContained" />
   </ItemGroup>
 
