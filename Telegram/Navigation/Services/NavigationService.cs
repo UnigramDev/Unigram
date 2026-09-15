@@ -17,7 +17,6 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,9 +28,6 @@ namespace Telegram.Navigation.Services
 {
     public interface INavigationService
     {
-        void Connect();
-        void Disconnect();
-
         void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null);
         void GoBackAt(int index, bool back = true);
         void GoForward();
@@ -55,6 +51,7 @@ namespace Telegram.Navigation.Services
 
         void Refresh();
 
+        void Resume();
         void Suspend();
 
         void Block();
@@ -236,40 +233,6 @@ namespace Telegram.Navigation.Services
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += OnNavigating;
             FrameFacade.Navigated += OnNavigated;
-        }
-
-        private bool _connected;
-
-        public void Connect()
-        {
-            if (_connected)
-            {
-                return;
-            }
-
-            _connected = true;
-            Application.Current.Resuming += OnResuming;
-            Application.Current.Suspending += OnSuspending;
-        }
-
-        public void Disconnect()
-        {
-            if (_connected)
-            {
-                _connected = false;
-                Application.Current.Resuming -= OnResuming;
-                Application.Current.Suspending -= OnSuspending;
-            }
-        }
-
-        private void OnResuming(object sender, object e)
-        {
-            Dispatcher.Dispatch(Resume);
-        }
-
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            Dispatcher.Dispatch(Suspend);
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
