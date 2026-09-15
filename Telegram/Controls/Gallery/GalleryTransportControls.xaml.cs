@@ -36,11 +36,11 @@ namespace Telegram.Controls.Gallery
         private VideoPlayerBase _player;
 
 #if INSTRUMENTATION
-        internal IEnumerable<object> DebugChildren()
+        // Attach/Detach is the pairing that matters here: controls that outlive a
+        // gallery while still holding a player keep the decoder alive with them, and
+        // the player is a field rather than a child, so only this makes it visible.
+        internal IEnumerable<object> DebugDetached()
         {
-            // Attach/Detach is the pairing that matters here: controls that outlive
-            // a gallery while still holding a player keep the decoder alive with
-            // them, and this is what makes that visible.
             yield return _player;
         }
 #endif
@@ -52,8 +52,6 @@ namespace Telegram.Controls.Gallery
         public GalleryTransportControls()
         {
             InitializeComponent();
-
-            Telegram.Common.Instrumentation.Register(this);
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 

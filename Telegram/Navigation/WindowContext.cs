@@ -916,6 +916,10 @@ namespace Telegram.Navigation
         /// </summary>
         private void Detach()
         {
+            // Last moment this thread can walk its own tree: a closed view stops pumping, and from
+            // any other thread its controls can only be counted.
+            Instrumentation.Capture();
+
             lock (_allLock)
             {
                 if (_xamlRoot != null)

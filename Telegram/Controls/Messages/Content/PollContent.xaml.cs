@@ -31,21 +31,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(PollContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
-
-#if INSTRUMENTATION
-        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
-        {
-            if (Options != null)
-            {
-                foreach (var child in Options.Children)
-                {
-                    yield return child;
-                }
-            }
-        }
-#endif
 
         protected override void OnUnloaded()
         {

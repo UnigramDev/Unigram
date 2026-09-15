@@ -1195,25 +1195,14 @@ namespace Telegram.Views
         }
 
 #if INSTRUMENTATION
-        // The message tree's legitimate holders: realized containers + the recycle pools.
+        // What the view holds OFF the tree, and so the only thing the generic walk cannot reach on
+        // its own: the recycle queues, and the sticker panel while every tab of it is unloaded.
+        // Live containers, and everything under them, come from the tree.
         //
-        // Roots and descent are exposed separately, rather than as one Analyze call, because orphans are
-        // "registered but unreachable from the roots" — analysing one area at a time would report every
-        // OTHER area's live objects as leaked. There is one call, over the union of every area's roots;
-        // MainPage.DebugAnalyzeOrphans assembles it.
-        public IEnumerable<object> DebugRoots()
+        // Reached through the view, so a ChatView that is itself unreachable roots nothing: its
+        // pooled containers are reported under it rather than as unparented orphans.
+        internal IEnumerable<object> DebugPooled()
         {
-            if (Messages?.ItemsPanelRoot is Panel panel)
-            {
-                foreach (var child in panel.Children)
-                {
-                    if (child is ChatHistoryViewItem)
-                    {
-                        yield return child;
-                    }
-                }
-            }
-
             foreach (var strategy in _typeToStrategy.Values)
             {
                 foreach (var container in strategy.Queue)
@@ -1228,31 +1217,6 @@ namespace Telegram.Views
             {
                 yield return StickersPanel;
             }
-        }
-
-        // Hardcoded per-type descent (each instrumented type exposes its instrumented children).
-        // Returns nothing for types this area does not own, so it composes with the other areas'.
-        internal static IEnumerable<object> DebugChildrenOf(object node)
-        {
-            return node switch
-            {
-                // A ChatView that is still alive owns its containers through the realized panel
-                // and the recycle queues, so descending into it reports them under it instead of
-                // as unparented orphans -- which is what a leaked view looked like before.
-                ChatView x => x.DebugRoots(),
-                ChatHistoryViewItem x => x.DebugChildren(),
-                MessageSelector x => x.DebugChildren(),
-                MessageBubble x => x.DebugChildren(),
-                MessageTextBlock x => x.DebugChildren(),
-                ReactionsPanel x => x.DebugChildren(),
-                Telegram.Controls.Messages.Content.InstantContent x => x.DebugChildren(),
-                Telegram.Controls.Messages.Content.ChecklistContent x => x.DebugChildren(),
-                Telegram.Controls.Messages.Content.PollContent x => x.DebugChildren(),
-                Telegram.Controls.Messages.Content.WebPageContent x => x.DebugChildren(),
-                Telegram.Controls.Messages.Content.GameContent x => x.DebugChildren(),
-                Telegram.Controls.Messages.Content.AlbumContent x => x.DebugChildren(),
-                _ => System.Array.Empty<object>()
-            };
         }
 #endif
 

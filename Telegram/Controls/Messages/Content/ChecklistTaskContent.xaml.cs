@@ -33,7 +33,6 @@ namespace Telegram.Controls.Messages.Content
         public ChecklistTaskContent()
         {
             DefaultStyleKey = typeof(ChecklistTaskContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

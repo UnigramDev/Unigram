@@ -51,8 +51,6 @@ namespace Telegram.Controls.Messages
         public MessageFooter()
         {
             DefaultStyleKey = typeof(MessageFooter);
-
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         protected override void OnLoaded()

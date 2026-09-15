@@ -34,7 +34,6 @@ namespace Telegram.Controls.Messages.Content
             _renderer = new PageBlockRenderer(this);
 
             DefaultStyleKey = typeof(InstantContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         public InstantContent()
@@ -43,40 +42,6 @@ namespace Telegram.Controls.Messages.Content
 
             DefaultStyleKey = typeof(InstantContent);
         }
-
-#if INSTRUMENTATION
-        // The instrumented controls (text blocks + media content controls) this InstantContent
-        // currently holds. They're nested arbitrarily deep, so one panel's Children won't do.
-        //
-        // Walked rather than accumulated as they're created: the diff replaces elements on every
-        // edit of a streaming message, and a list of everything ever built both keeps the discarded
-        // ones alive and reports them as still reachable -- which is exactly the orphan the analysis
-        // exists to find.
-        internal IEnumerable<object> DebugChildren()
-        {
-            return LayoutRoot != null ? Descendants(LayoutRoot) : Array.Empty<object>();
-
-            static IEnumerable<object> Descendants(DependencyObject parent)
-            {
-                var count = Windows.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
-
-                for (int i = 0; i < count; i++)
-                {
-                    var child = Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
-
-                    if (child is FormattedTextBlock or IContent)
-                    {
-                        yield return child;
-                    }
-
-                    foreach (var nested in Descendants(child))
-                    {
-                        yield return nested;
-                    }
-                }
-            }
-        }
-#endif
 
         #region InitializeComponent
 
