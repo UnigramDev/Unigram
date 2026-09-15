@@ -30,6 +30,7 @@ namespace Telegram.Controls.Chats
         ServiceUpgradedGift,
         ServiceUpgradedGiftPurchaseOffer,
         ServiceChatHasProtectedContentDisableRequested,
+        ServiceMessageTonWalletTransfer,
         ServiceAccountInfo,
         ServiceNewThread,
         Unsupported,

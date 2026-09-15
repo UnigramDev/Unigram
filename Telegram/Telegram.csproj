@@ -436,6 +436,9 @@
     <Compile Include="Controls\Messages\Service\MessageSuggestBirthdateContent.xaml.cs">
       <DependentUpon>MessageSuggestBirthdateContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Service\MessageTonWalletTransferContent.xaml.cs">
+      <DependentUpon>MessageTonWalletTransferContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Service\MessageUnsupportedContent.xaml.cs">
       <DependentUpon>MessageUnsupportedContent.xaml</DependentUpon>
     </Compile>
@@ -3412,6 +3415,10 @@
     <Page Include="Controls\Messages\Service\MessageSuggestBirthdateContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Service\MessageTonWalletTransferContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Service\MessageUnsupportedContent.xaml">
       <SubType>Designer</SubType>

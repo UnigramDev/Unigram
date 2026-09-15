@@ -16,10 +16,12 @@ using Telegram.Entities;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Factories;
+using Telegram.Services.Wallet;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
+using Telegram.Views.Wallet.Popups;
 using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -882,6 +884,15 @@ namespace Telegram.ViewModels
             await SendContactAsync(contact, plan);
 
             WatchDog.TrackEvent("SendContact");
+        }
+
+        public async void SendMoney()
+        {
+            if (ClientService.TryGetUser(Chat, out User user))
+            {
+                var wallet = Session.Resolve<IWalletService>();
+                ShowPopup(new WalletSendPopup(ClientService, wallet, NavigationService, user.Id));
+            }
         }
 
         public Task<Object> SendContactAsync(Contact contact, SendPlan plan)

@@ -154,6 +154,7 @@ namespace Telegram.Views
             AddStrategy(ChatHistoryViewItemType.ServiceUpgradedGift, ServiceMessageUpgradedGiftTemplate);
             AddStrategy(ChatHistoryViewItemType.ServiceUpgradedGiftPurchaseOffer, ServiceMessageUpgradedGiftPurchaseOfferTemplate);
             AddStrategy(ChatHistoryViewItemType.ServiceChatHasProtectedContentDisableRequested, ServiceMessageChatHasProtectedContentDisableRequestedTemplate);
+            AddStrategy(ChatHistoryViewItemType.ServiceMessageTonWalletTransfer, ServiceMessageTonWalletTransferTemplate);
             AddStrategy(ChatHistoryViewItemType.ServiceAccountInfo, ServiceMessageAccountInfoTemplate);
             AddStrategy(ChatHistoryViewItemType.ServiceNewThread, ServiceMessageNewThreadTemplate);
             AddStrategy(ChatHistoryViewItemType.Unsupported, UnsupportedTemplate);
@@ -2242,12 +2243,14 @@ namespace Telegram.Views
 
             if (header == null || header.Editing == null || (header.IsEmpty && header.LinkPreviewDisabled))
             {
+                var isUser = ViewModel.ClientService.TryGetUser(chat, out User user);
+
                 var audioRights = !ViewModel.VerifyRights(chat, x => x.CanSendAudios);
                 var messageRights = !ViewModel.VerifyRights(chat, x => x.CanSendBasicMessages);
                 var pollRights = !ViewModel.VerifyRights(chat, x => x.CanSendPolls);
 
                 var pollsAllowed = chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup;
-                if (!pollsAllowed && ViewModel.ClientService.TryGetUser(chat, out User user))
+                if (!pollsAllowed && isUser)
                 {
                     pollsAllowed = user.Type is UserTypeBot || user.Id == ViewModel.ClientService.Options.MyId;
                 }
@@ -2263,6 +2266,11 @@ namespace Telegram.Views
                 if (documentRights)
                 {
                     flyout.CreateFlyoutItem(ViewModel.SendDocument, Strings.ChatDocument, Icons.Document);
+                }
+
+                if (messageRights && chat.Type is ChatTypePrivate && user?.Type is UserTypeRegular)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.SendMoney, "[Money]", Icons.Gram);
                 }
 
                 if (audioRights)
