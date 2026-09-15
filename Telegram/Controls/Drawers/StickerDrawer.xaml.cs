@@ -56,8 +56,6 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            Instrumentation.Register(this);
-
             this.CreateInsetClip();
 
             var header = VisualUtilities.DropShadow(Separator);

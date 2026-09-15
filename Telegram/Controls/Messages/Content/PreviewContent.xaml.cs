@@ -31,7 +31,6 @@ namespace Telegram.Controls.Messages.Content
             _paidMedia = paidMedia;
 
             DefaultStyleKey = typeof(PreviewContent);
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

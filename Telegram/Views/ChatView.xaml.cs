@@ -129,8 +129,6 @@ namespace Telegram.Views
         {
             InitializeComponent();
 
-            Instrumentation.Register(this);
-
             // TODO: this might need to change depending on context
             _autocompleteHandler = new AnimatedListHandler(ListAutocomplete, AnimatedListType.Stickers);
 

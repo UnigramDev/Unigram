@@ -76,6 +76,11 @@ namespace Telegram.Views
         public MainPage()
         {
             InitializeComponent();
+#if INSTRUMENTATION
+            // Here rather than at the first analysis: a window can be closed, and its tree captured,
+            // long before anyone asks for a report.
+            Telegram.Common.Instrumentation.Detached = DebugDetachedOf;
+#endif
             DataContext = LifetimeService.Current.ActiveItem.Resolve<MainViewModel>();
 
             var queue = DispatcherQueue.GetForCurrentThread();
@@ -1392,7 +1397,7 @@ namespace Telegram.Views
             Logger.Info(WindowContent.DebugCounters());
 
 #if INSTRUMENTATION
-            Logger.Info(DebugAnalyzeOrphans());
+            Logger.Info(await DebugAnalyzeOrphans());
             Profiler.Report();
 #endif
 
@@ -1431,57 +1436,29 @@ namespace Telegram.Views
         }
 
 #if INSTRUMENTATION
-        // ONE Analyze over the union of every instrumented area's roots.
+        // Every registered control that no window can reach, as a report.
         //
-        // It has to be one call. Orphans are "registered but not reachable from the roots", so a per-area
-        // call would mark every other area's live objects as leaked — analysing the chat alone reports the
-        // open gallery as a leak, and analysing the gallery alone reports the whole message list as one.
-        //
-        // Adding an area means adding its roots here and chaining its descent below; both return nothing
-        // for types they do not own, so the order does not matter and overlaps are harmless (the walk is
-        // over a set).
-        private string DebugAnalyzeOrphans()
+        // The walk is generic - VisualTreeHelper over every window's tree and its open popups - so
+        // the only thing left to name here is what the app deliberately keeps OFF the tree.
+        private static async Task<string> DebugAnalyzeOrphans()
         {
-            var roots = new List<object>();
-
-            // The view itself, not its containers: descent reaches those through it now. Any
-            // OTHER ChatView still alive is therefore unreachable from the roots and gets
-            // reported -- which is the point, since its containers used to show up as orphans
-            // while the view that held them stayed invisible to the analysis.
-            var chat = this.GetChild<ChatView>();
-            if (chat != null)
-            {
-                roots.Add(chat);
-            }
-
-            roots.AddRange(Telegram.Controls.Gallery.GalleryWindow.DebugRoots());
-            roots.AddRange(WebAppWindow.DebugRoots());
-
-            return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf)
+            return await Telegram.Common.Instrumentation.AnalyzeAsync()
                 + AnimatedImageLoader.DebugReport();
         }
 
-        private static IEnumerable<object> DebugChildrenOf(object node)
+        // The controls held in a field or a pool rather than under a parent, which is the one thing
+        // a tree walk cannot find. Returns nothing for every other type.
+        private static IEnumerable<object> DebugDetachedOf(object node)
         {
-            foreach (var child in ChatView.DebugChildrenOf(node))
+            return node switch
             {
-                yield return child;
-            }
-
-            foreach (var child in Telegram.Controls.Gallery.GalleryWindow.DebugChildrenOf(node))
-            {
-                yield return child;
-            }
-
-            foreach (var child in WebAppWindow.DebugChildrenOf(node))
-            {
-                yield return child;
-            }
-
-            foreach (var child in Telegram.Controls.StickerPanel.DebugChildrenOf(node))
-            {
-                yield return child;
-            }
+                ChatView x => x.DebugPooled(),
+                Telegram.Controls.Messages.MessageTextBlock x => x.DebugDetached(),
+                Telegram.Controls.Messages.ReactionsPanel x => x.DebugDetached(),
+                Telegram.Controls.Gallery.GalleryTransportControls x => x.DebugDetached(),
+                Telegram.Controls.Gallery.GalleryCompactOverlay x => x.DebugDetached(),
+                _ => Array.Empty<object>()
+            };
         }
 #endif
 

@@ -9,7 +9,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
@@ -81,7 +80,6 @@ namespace Telegram.Views.Host
             : base(context)
         {
             InitializeComponent();
-            RegisterInstance();
 
             _clientService = clientService;
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, context);
@@ -179,7 +177,6 @@ namespace Telegram.Views.Host
             : base(context)
         {
             InitializeComponent();
-            RegisterInstance();
 
             _clientService = clientService;
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, context);
@@ -256,57 +253,6 @@ namespace Telegram.Views.Host
             _closed = true;
             Window.Close();
         }
-
-        // Live pages, so the analysis has a root for each one. Registered instances that
-        // are not reachable from a root count as orphans, so without this every open
-        // mini app would be reported as a leak.
-        private static readonly List<WeakReference<WebAppWindow>> s_instances = new();
-
-        [Conditional("INSTRUMENTATION")]
-        private void RegisterInstance()
-        {
-            Instrumentation.Register(this);
-
-            lock (s_instances)
-            {
-                for (int i = s_instances.Count - 1; i >= 0; i--)
-                {
-                    if (!s_instances[i].TryGetTarget(out _))
-                    {
-                        s_instances.RemoveAt(i);
-                    }
-                }
-
-                s_instances.Add(new WeakReference<WebAppWindow>(this));
-            }
-        }
-
-#if INSTRUMENTATION
-        public static IEnumerable<object> DebugRoots()
-        {
-            lock (s_instances)
-            {
-                foreach (var reference in s_instances)
-                {
-                    if (reference.TryGetTarget(out var page) && page.IsConnected)
-                    {
-                        yield return page;
-                    }
-                }
-            }
-        }
-
-        // Returns nothing for types this area does not own, so it composes with the
-        // other areas' descents.
-        public static IEnumerable<object> DebugChildrenOf(object node)
-        {
-            if (node is WebAppWindow page)
-            {
-                yield return page.View;
-                yield return page._navigationService;
-            }
-        }
-#endif
 
         protected override void OnWindowActivated(bool active)
         {

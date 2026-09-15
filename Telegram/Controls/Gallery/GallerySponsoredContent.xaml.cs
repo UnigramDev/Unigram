@@ -41,8 +41,6 @@ namespace Telegram.Controls.Gallery
         {
             InitializeComponent();
             InitializeRemoveIcon();
-
-            Telegram.Common.Instrumentation.Register(this);
         }
 
         protected override void OnLoaded()

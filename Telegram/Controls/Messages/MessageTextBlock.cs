@@ -53,8 +53,6 @@ namespace Telegram.Controls.Messages
         public MessageTextBlock()
         {
             // Match RichTextBlock's default text-y baseline behaviour for stacking.
-            Instrumentation.Register(this);
-
             TextThroughput.HostsMade++;
         }
 
@@ -556,8 +554,6 @@ namespace Telegram.Controls.Messages
             };
 
             block.TextEntityClick += OnDirectTextEntityClick;
-            Instrumentation.Register(block);
-
             _directBlocks.Add(block);
             return block;
         }
@@ -621,8 +617,6 @@ namespace Telegram.Controls.Messages
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
             };
 
-            Instrumentation.Register(block);
-
             // !!!
             if (_textEntityClick != null)
             {
@@ -633,7 +627,9 @@ namespace Telegram.Controls.Messages
         }
 
 #if INSTRUMENTATION
-        internal IEnumerable<object> DebugChildren() => _blocks;
+        // Blocks the tree walk cannot see: the list outlives the Children of any one SetText, and a
+        // block held here without being in the panel is the leak worth naming.
+        internal IEnumerable<object> DebugDetached() => _blocks;
 #endif
 
         private void OnBlockTextEntityClick(object sender, TextEntityClickEventArgs e)
