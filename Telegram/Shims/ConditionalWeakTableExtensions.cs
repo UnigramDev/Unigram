@@ -6,8 +6,6 @@
 //
 
 #if !NET9_0_OR_GREATER
-using System;
-
 namespace System.Runtime.CompilerServices
 {
     /// <summary>
@@ -44,9 +42,9 @@ namespace System.Runtime.CompilerServices
             where TKey : class
             where TValue : class
         {
-            if (table.TryGetValue(key, out value))
+            if (table.TryGetValue(key, out TValue existing))
             {
-                return value;
+                return existing;
             }
 
             table.Add(key, value);
