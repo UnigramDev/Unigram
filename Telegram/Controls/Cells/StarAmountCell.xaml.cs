@@ -6,9 +6,8 @@
 //
 
 using System;
-using System.Globalization;
+using System.Numerics;
 using Telegram.Converters;
-using Telegram.Native;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 
@@ -41,14 +40,13 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
+            // Nanostars are billionths of a star, so they have to be placed against that
+            // exponent: printed raw, 50,000,000 of them read as ".50000000" rather than ".05".
             var integerAmount = Math.Abs(amount.StarCount);
-            var decimalAmount = Math.Abs(amount.NanostarCount);
+            var split = Formatter.SplitAmount(BigInteger.Abs(Formatter.Nanostars(amount)), 9, 9);
 
-            var culture = new CultureInfo(NativeUtils.GetCurrentCulture());
-            var separator = culture.NumberFormat.NumberDecimalSeparator;
-
-            CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
-            CryptocurrencyDecimalLabel.Text = decimalAmount > 0 ? string.Format("{0}{1}", separator, decimalAmount) : string.Empty;
+            CryptocurrencyAmountLabel.Text = split.Integer;
+            CryptocurrencyDecimalLabel.Text = split.Fraction;
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(integerAmount * UsdRate), "USD"));
         }
