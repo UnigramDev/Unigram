@@ -109,13 +109,15 @@
                             Value="Transparent" />
                     <Setter Property="BorderThickness"
                             Value="0" />
+                    <Setter Property="IsTabStop"
+                            Value="False" />
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <controls:SettingsRadioButton GroupName="Languages"
-                                                  CornerRadius="4"
-                                                  BorderThickness="1">
+                    <controls:ListRadioButton GroupName="Languages"
+                                              CornerRadius="4"
+                                              BorderThickness="1">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -131,7 +133,7 @@
                                        TextTrimming="CharacterEllipsis"
                                        Grid.Row="1" />
                         </Grid>
-                    </controls:SettingsRadioButton>
+                    </controls:ListRadioButton>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <!--<ListView.Header>

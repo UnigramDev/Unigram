@@ -454,6 +454,7 @@
     <Compile Include="Controls\PopupInfo.cs" />
     <Compile Include="Controls\PremiumProgressBar.cs" />
     <Compile Include="Controls\ProgressRingIndeterminate.cs" />
+    <Compile Include="Controls\ListRadioButton.cs" />
     <Compile Include="Controls\ReplyMarkupButton.cs" />
     <Compile Include="Controls\ReplyMarkupInlineButton.cs" />
     <Compile Include="Controls\Ribbon.cs" />
