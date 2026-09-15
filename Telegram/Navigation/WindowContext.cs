@@ -279,9 +279,7 @@ namespace Telegram.Navigation
             _hotButton = button;
             _hotPressed = pressed;
 
-            GoToCaptionButtonState(MinimizeButton, CaptionButtons.Minimize);
-            GoToCaptionButtonState(MaximizeButton, CaptionButtons.Maximize);
-            GoToCaptionButtonState(CloseButton, CaptionButtons.Close);
+            ApplyCaptionButtonStates();
         }
 
         /// <summary>
@@ -289,7 +287,7 @@ namespace Telegram.Navigation
         /// do. Pushed in by the host: neither the buttons nor the presenter can see activation, and
         /// on Win32 the pointer is over the drag bar rather than over them.
         /// </summary>
-        private void GoToCaptionButtonState(Button button, CaptionButtons which)
+        private void GoToCaptionButtonState(Button button, CaptionButtons which, bool useTransitions = true)
         {
             if (button == null)
             {
@@ -300,8 +298,26 @@ namespace Telegram.Navigation
                 ? _isActive ? "Normal" : "Unfocused"
                 : _hotPressed ? "Pressed" : "PointerOver";
 
-            // Transitions, so leaving a button fades the way the system's do rather than snapping.
-            VisualStateManager.GoToState(button, state, true);
+            VisualStateManager.GoToState(button, state, useTransitions);
+        }
+
+        /// <summary>
+        /// Puts the caption buttons into the state the window is actually in.
+        /// </summary>
+        /// <remarks>
+        /// Called from the template as well as from the two pushes, because a template arrives with
+        /// no visual state applied and nothing else applied one: activation only reaches the buttons
+        /// when the value changes, and a window that is active from birth - the common case - never
+        /// changes it. The result was a window whose buttons looked dimmed until it was defocused
+        /// and focused again, which is the first moment <see cref="IsActive"/> actually moved.
+        /// </remarks>
+        /// <param name="useTransitions">False from the template, where there is no state to fade
+        /// from.</param>
+        private void ApplyCaptionButtonStates(bool useTransitions = true)
+        {
+            GoToCaptionButtonState(MinimizeButton, CaptionButtons.Minimize, useTransitions);
+            GoToCaptionButtonState(MaximizeButton, CaptionButtons.Maximize, useTransitions);
+            GoToCaptionButtonState(CloseButton, CaptionButtons.Close, useTransitions);
         }
 
         private bool _isActive = true;
@@ -318,9 +334,7 @@ namespace Telegram.Navigation
                 {
                     _isActive = value;
 
-                    GoToCaptionButtonState(MinimizeButton, CaptionButtons.Minimize);
-                    GoToCaptionButtonState(MaximizeButton, CaptionButtons.Maximize);
-                    GoToCaptionButtonState(CloseButton, CaptionButtons.Close);
+                    ApplyCaptionButtonStates();
                 }
             }
         }
@@ -376,6 +390,35 @@ namespace Telegram.Navigation
             ApplyCaptionButtons();
 
             base.OnApplyTemplate();
+
+            // Once each button has a template of its own. GoToState does nothing to a control whose
+            // template has not been applied yet, and ours have not been at this point - so seeding
+            // here would silently do nothing, which is what left the buttons looking unfocused
+            // until the first real activation change.
+            SubscribeCaptionButton(MinimizeButton);
+            SubscribeCaptionButton(MaximizeButton);
+            SubscribeCaptionButton(CloseButton);
+        }
+
+        private void SubscribeCaptionButton(Button button)
+        {
+            if (button != null)
+            {
+                button.Loaded -= OnCaptionButtonLoaded;
+                button.Loaded += OnCaptionButtonLoaded;
+            }
+        }
+
+        private void OnCaptionButtonLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                // One shot: the pair for this subscription. OnApplyTemplate subscribes again if the
+                // template is ever replaced.
+                button.Loaded -= OnCaptionButtonLoaded;
+            }
+
+            ApplyCaptionButtonStates(false);
         }
 
         private void ApplyCaptionButtons()
