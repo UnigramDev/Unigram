@@ -8,7 +8,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Common
@@ -26,10 +26,11 @@ namespace Telegram.Common
     /// itself, is what the user sees. Bound here instead, the write is caught, probed, retried
     /// once, and still reported.
     ///
-    /// The probes exist to answer questions the reports cannot: whether an unrelated property on
-    /// the same element fails too (the element is broken, not the property), and whether a write
-    /// that the property system cannot short-circuit succeeds (transient, so we are looking for a
-    /// timing window) or fails again (the failure is in what the write raises, not in reaching it).
+    /// It reports and it repairs, and it no longer probes. The probes answered what they were for -
+    /// the element is not broken, the value applies before the throw, the failure is a state and not
+    /// a window, and only a write of true fails - which leaves the RadioButton group walk, and that
+    /// is answered in a spike. One of them answered its question and then left a live user looking
+    /// at an unchecked radio, because restoring the value fails the same way the write did.
     ///
     /// Delete this, and the probes with it, once the cause is known.
     /// </remarks>
@@ -66,7 +67,6 @@ namespace Telegram.Common
             DependencyProperty.RegisterAttached("Attached", typeof(bool), typeof(ToggleHelper), new PropertyMetadata(false));
 
         private static bool _reported;
-        private static bool _probing;
 
         private static void Attach(ToggleButton toggle)
         {
@@ -86,10 +86,7 @@ namespace Telegram.Common
         // back into this one is what lets the binding carry it to the view model.
         private static void OnToggled(object sender, RoutedEventArgs e)
         {
-            // The clear/restore probe raises both of these, and the view model must not see that:
-            // the intermediate value would reach it as a real change, and would stay there if the
-            // restore is the write that fails.
-            if (sender is ToggleButton toggle && _probing is false)
+            if (sender is ToggleButton toggle)
             {
                 SetIsChecked(toggle, toggle.IsChecked is true);
             }
@@ -122,59 +119,30 @@ namespace Telegram.Common
 
         private static void ReportCore(ToggleButton toggle, bool value, Exception ex, bool retry)
         {
-            Logger.Error(string.Format("IsChecked = {0} failed on {1} '{2}' -> {3} 0x{4:X8}, loaded {5}, root {6}, parent {7}",
+            // Reading it back is not a probe but the repair condition below: the failing write
+            // applies the value before it throws, so most of the time there is nothing to repair.
+            var current = toggle.IsChecked;
+
+            // The group name is the one thing left worth collecting. Only a write of true fails,
+            // clearing the same property works, and unchecking is the one that does not walk the
+            // group - so the walk is the suspect, and every failing radio so far is in a group.
+            Logger.Error(string.Format("IsChecked = {0} failed on {1} '{2}' group '{3}', now {4} -> {5} 0x{6:X8}, loaded {7}, root {8}, parent {9}",
                 value,
                 toggle.GetType().Name,
                 toggle.Name,
+                toggle is RadioButton radio ? radio.GroupName : null,
+                current?.ToString() ?? "null",
                 ex.GetType().Name,
                 Marshal.GetHRForException(ex),
                 toggle.IsLoaded,
                 toggle.XamlRoot != null,
                 toggle.Parent != null));
 
-            // The one thing put_IsChecked raises that every failing flavour has in common, and that
-            // Tag does not: a PropertyChanged automation event, raised only while a UIA client is
-            // listening - which would be why this is a handful of machines and not everyone.
-            // Whether this element already has a peer would say more, but every way of asking risks
-            // creating one, and a peer this code made would change what the writes below raise.
-            Probe("automation listeners", () => AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged).ToString());
-
-            // Does anything at all still work on this element? Tag is the cheapest unrelated
-            // property on it, and it is not read anywhere, so writing it changes nothing.
-            // The value read back is what makes the write below mean anything: if IsChecked
-            // already holds what was asked for, the failed write applied and threw from what it
-            // raised afterwards, and writing the same value again is an equal-value no-op.
-            Probe("read IsChecked", () => toggle.IsChecked?.ToString() ?? "null");
-            Probe("write Tag", () => { toggle.Tag = value; return "ok"; });
-
-            var recovered = Probe("write IsChecked again", () => { toggle.IsChecked = value; return "ok"; });
-
-            if (recovered)
+            if (retry && current != value)
             {
-                // A change the property system cannot short-circuit, so everything put_IsChecked
-                // raises runs again - and this is the split the equal-value write cannot make:
-                // fail here and the failure lives in what the write raises, succeed and the window
-                // really has closed. Clearing rather than inverting because a grouped RadioButton
-                // driven to true unchecks a sibling that restoring this one does not bring back;
-                // to null it only unchecks itself, and null and false share a visual state.
-                try
-                {
-                    _probing = true;
-
-                    Probe("clear IsChecked", () => { toggle.ClearValue(ToggleButton.IsCheckedProperty); return "ok"; });
-                    Probe("write IsChecked back", () => { toggle.IsChecked = value; return "ok"; });
-                }
-                finally
-                {
-                    // Left set, it would silence the pushback for the rest of the session.
-                    _probing = false;
-                }
-            }
-
-            if (retry && recovered is false)
-            {
-                // Same thread, next tick. If this one lands, the failure was a window and not a
-                // state, which is the single most useful thing the reports do not say.
+                // Only when the value did not stick, and then it is repair rather than diagnosis:
+                // the write that failed usually applies before it throws, and re-running one that
+                // already took hold would be a no-op anyway.
                 var ignore = toggle.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     Logger.Error("retrying IsChecked = " + value);
@@ -188,20 +156,6 @@ namespace Telegram.Common
             {
                 _reported = true;
                 Logger.Exception(ex);
-            }
-        }
-
-        private static bool Probe(string name, Func<string> action)
-        {
-            try
-            {
-                Logger.Error("    " + name + ": " + action());
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(string.Format("    {0}: {1} 0x{2:X8}", name, ex.GetType().Name, Marshal.GetHRForException(ex)));
-                return false;
             }
         }
     }
