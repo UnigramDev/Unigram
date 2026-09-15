@@ -735,14 +735,6 @@ static class _UniFFILib {
         ulong @callbackData,_UniFFILib.UniffiForeignFutureResultVoid @result
     );
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void UniffiCallbackInterfaceWalletHttpHostMethod0(
-        ulong @uniffiHandle,RustBuffer @request,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
-    );
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void UniffiCallbackInterfaceWalletHttpHostMethod1(
-        ulong @uniffiHandle,RustBuffer @requestId,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
-    );
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void UniffiCallbackInterfaceWalletPlatformHostMethod0(
         ulong @uniffiHandle,RustBuffer @request,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
     );
@@ -762,14 +754,22 @@ static class _UniFFILib {
     public delegate void UniffiCallbackInterfaceWalletPlatformHostMethod4(
         ulong @uniffiHandle,RustBuffer @mutation,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
     );
-    [StructLayout(LayoutKind.Sequential)]
-    public struct UniffiVTableCallbackInterfaceWalletHttpHost
-    {
-        public IntPtr @uniffiFree;
-        public IntPtr @uniffiClone;
-        public IntPtr @executeHttp;
-        public IntPtr @cancelHttp;
-    }
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void UniffiCallbackInterfaceWalletHttpHostMethod0(
+        ulong @uniffiHandle,RustBuffer @request,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
+    );
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void UniffiCallbackInterfaceWalletHttpHostMethod1(
+        ulong @uniffiHandle,RustBuffer @requestId,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
+    );
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void UniffiCallbackInterfaceWalletStatuslessHostMethod0(
+        ulong @uniffiHandle,RustBuffer @request,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
+    );
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void UniffiCallbackInterfaceWalletStatuslessHostMethod1(
+        ulong @uniffiHandle,RustBuffer @requestId,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback
+    );
     [StructLayout(LayoutKind.Sequential)]
     public struct UniffiVTableCallbackInterfaceWalletPlatformHost
     {
@@ -781,6 +781,67 @@ static class _UniFFILib {
         public IntPtr @loadJournal;
         public IntPtr @compareExchangeJournal;
     }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct UniffiVTableCallbackInterfaceWalletHttpHost
+    {
+        public IntPtr @uniffiFree;
+        public IntPtr @uniffiClone;
+        public IntPtr @executeHttp;
+        public IntPtr @cancelHttp;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct UniffiVTableCallbackInterfaceWalletStatuslessHost
+    {
+        public IntPtr @uniffiFree;
+        public IntPtr @uniffiClone;
+        public IntPtr @executeStatusless;
+        public IntPtr @cancelStatusless;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -961,6 +1022,7 @@ static class _UniFFILib {
         
         UniffiCallbackInterfaceWalletHttpHost.Register();
         UniffiCallbackInterfaceWalletPlatformHost.Register();
+        UniffiCallbackInterfaceWalletStatuslessHost.Register();
         }
 
     #if NET8_0_OR_GREATER
@@ -994,6 +1056,17 @@ static class _UniFFILib {
     public static extern
 #endif
      ulong uniffi_wallet_engine_fn_constructor_walletclient_new(RustBuffer @config,ulong @httpHost,ulong @platformHost,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_constructor_walletclient_new_statusless(RustBuffer @config,ulong @statuslessHost,ulong @platformHost,ref UniffiRustCallStatus _uniffi_out_err
     );
 
     #if NET8_0_OR_GREATER
@@ -1049,6 +1122,50 @@ static class _UniFFILib {
     public static extern
 #endif
      ulong uniffi_wallet_engine_fn_method_walletclient_wait_for_change(ulong @ptr,ulong @afterRevision
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_resolve_dns(ulong @ptr,RustBuffer @name
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_create_encrypted_comment(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_decrypt_comment(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_prepare_key_rotation(ulong @ptr,RustBuffer @request
     );
 
     #if NET8_0_OR_GREATER
@@ -1125,6 +1242,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_prepare_transfer(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ulong uniffi_wallet_engine_fn_method_walletclient_cancel_send_preview(ulong @ptr
     );
 
@@ -1137,6 +1265,17 @@ static class _UniFFILib {
     public static extern
 #endif
      ulong uniffi_wallet_engine_fn_method_walletclient_preview_send(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_preview_send_boc(ulong @ptr,RustBuffer @request
     );
 
     #if NET8_0_OR_GREATER
@@ -1224,62 +1363,18 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_send_boc(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ulong uniffi_wallet_engine_fn_method_walletclient_sign_message(ulong @ptr,RustBuffer @request
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     ulong uniffi_wallet_engine_fn_clone_wallethttphost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     void uniffi_wallet_engine_fn_free_wallethttphost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     void uniffi_wallet_engine_fn_init_callback_vtable_wallethttphost(IntPtr /*_UniFFILib.UniffiVTableCallbackInterfaceWalletHttpHost*/ @vtable
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     ulong uniffi_wallet_engine_fn_method_wallethttphost_execute_http(ulong @ptr,RustBuffer @request
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     ulong uniffi_wallet_engine_fn_method_wallethttphost_cancel_http(ulong @ptr,RustBuffer @requestId
     );
 
     #if NET8_0_OR_GREATER
@@ -1565,6 +1660,116 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ulong uniffi_wallet_engine_fn_clone_wallethttphost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     void uniffi_wallet_engine_fn_free_wallethttphost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     void uniffi_wallet_engine_fn_init_callback_vtable_wallethttphost(IntPtr /*_UniFFILib.UniffiVTableCallbackInterfaceWalletHttpHost*/ @vtable
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_wallethttphost_execute_http(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_wallethttphost_cancel_http(ulong @ptr,RustBuffer @requestId
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_clone_walletstatuslesshost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     void uniffi_wallet_engine_fn_free_walletstatuslesshost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     void uniffi_wallet_engine_fn_init_callback_vtable_walletstatuslesshost(IntPtr /*_UniFFILib.UniffiVTableCallbackInterfaceWalletStatuslessHost*/ @vtable
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletstatuslesshost_execute_statusless(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletstatuslesshost_cancel_statusless(ulong @ptr,RustBuffer @requestId
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ulong uniffi_wallet_engine_fn_clone_walletlifecycle(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
     );
 
@@ -1664,6 +1869,105 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     RustBuffer uniffi_wallet_engine_fn_method_walletclienterror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_journalhosterror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_protectedsecrethosterror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectsessionerror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_httphosterror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_statuslesshosterror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonaddresserror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_walletlifecycleerror_uniffi_trait_display(RustBuffer @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_func_parse_ton_transfer_link(RustBuffer @value,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      RustBuffer uniffi_wallet_engine_fn_func_parse_ton_connect_manifest(RustBuffer @json,ref UniffiRustCallStatus _uniffi_out_err
     );
 
@@ -1687,6 +1991,72 @@ static class _UniFFILib {
     public static extern
 #endif
      ulong uniffi_wallet_engine_fn_func_ton_connect_session_restore(RustBuffer @persisted,RustBuffer @config,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_func_convert_ton_address(RustBuffer @value,RustBuffer @format,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     sbyte uniffi_wallet_engine_fn_func_is_valid_ton_address(RustBuffer @value,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_func_parse_ton_address(RustBuffer @value,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_func_mnemonic_wordlist(ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_func_detect_mnemonic_schemes(RustBuffer @words,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_func_rotation_mnemonic_public_key(RustBuffer @phrase,ref UniffiRustCallStatus _uniffi_out_err
     );
 
     #if NET8_0_OR_GREATER
@@ -2269,6 +2639,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_func_parse_ton_transfer_link(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_func_parse_ton_connect_manifest(
     );
 
@@ -2292,6 +2673,72 @@ static class _UniFFILib {
     public static extern
 #endif
      ushort uniffi_wallet_engine_checksum_func_ton_connect_session_restore(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_func_convert_ton_address(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_func_is_valid_ton_address(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_func_parse_ton_address(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_func_mnemonic_wordlist(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_func_detect_mnemonic_schemes(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_func_rotation_mnemonic_public_key(
     );
 
     #if NET8_0_OR_GREATER
@@ -2347,6 +2794,50 @@ static class _UniFFILib {
     public static extern
 #endif
      ushort uniffi_wallet_engine_checksum_method_walletclient_wait_for_change(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_resolve_dns(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation(
     );
 
     #if NET8_0_OR_GREATER
@@ -2423,6 +2914,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_prepare_transfer(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_method_walletclient_cancel_send_preview(
     );
 
@@ -2435,6 +2937,17 @@ static class _UniFFILib {
     public static extern
 #endif
      ushort uniffi_wallet_engine_checksum_method_walletclient_preview_send(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_preview_send_boc(
     );
 
     #if NET8_0_OR_GREATER
@@ -2522,29 +3035,18 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_send_boc(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_method_walletclient_sign_message(
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     ushort uniffi_wallet_engine_checksum_method_wallethttphost_execute_http(
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     ushort uniffi_wallet_engine_checksum_method_wallethttphost_cancel_http(
     );
 
     #if NET8_0_OR_GREATER
@@ -2775,6 +3277,50 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_method_wallethttphost_execute_http(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_wallethttphost_cancel_http(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletstatuslesshost_execute_statusless(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletstatuslesshost_cancel_statusless(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_method_walletlifecycle_create_wallet(
     );
 
@@ -2852,6 +3398,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_constructor_walletclient_new_statusless(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_constructor_walletlifecycle_new(
     );
 
@@ -2876,6 +3433,12 @@ static class _UniFFILib {
     }
     static void uniffiCheckApiChecksums() {
         {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_parse_ton_transfer_link();
+            if (checksum != 38144) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_parse_ton_transfer_link` checksum `38144`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_parse_ton_connect_manifest();
             if (checksum != 55166) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_parse_ton_connect_manifest` checksum `55166`, library returned `{checksum}`");
@@ -2891,6 +3454,42 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_ton_connect_session_restore();
             if (checksum != 63276) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_ton_connect_session_restore` checksum `63276`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_convert_ton_address();
+            if (checksum != 28540) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_convert_ton_address` checksum `28540`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_is_valid_ton_address();
+            if (checksum != 32896) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_is_valid_ton_address` checksum `32896`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_parse_ton_address();
+            if (checksum != 26131) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_parse_ton_address` checksum `26131`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_mnemonic_wordlist();
+            if (checksum != 1718) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_mnemonic_wordlist` checksum `1718`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_detect_mnemonic_schemes();
+            if (checksum != 22911) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_detect_mnemonic_schemes` checksum `22911`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_func_rotation_mnemonic_public_key();
+            if (checksum != 40177) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_func_rotation_mnemonic_public_key` checksum `40177`, library returned `{checksum}`");
             }
         }
         {
@@ -2921,6 +3520,30 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_wait_for_change();
             if (checksum != 21890) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_wait_for_change` checksum `21890`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_resolve_dns();
+            if (checksum != 63449) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_resolve_dns` checksum `63449`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment();
+            if (checksum != 19247) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `19247`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment();
+            if (checksum != 19839) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment` checksum `19839`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation();
+            if (checksum != 59543) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation` checksum `59543`, library returned `{checksum}`");
             }
         }
         {
@@ -2960,15 +3583,27 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_prepare_transfer();
+            if (checksum != 35005) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_prepare_transfer` checksum `35005`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_cancel_send_preview();
-            if (checksum != 5266) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_cancel_send_preview` checksum `5266`, library returned `{checksum}`");
+            if (checksum != 28394) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_cancel_send_preview` checksum `28394`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_preview_send();
             if (checksum != 55971) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_preview_send` checksum `55971`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_preview_send_boc();
+            if (checksum != 21004) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_preview_send_boc` checksum `21004`, library returned `{checksum}`");
             }
         }
         {
@@ -2985,8 +3620,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_cancel_refresh();
-            if (checksum != 24904) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_cancel_refresh` checksum `24904`, library returned `{checksum}`");
+            if (checksum != 16959) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_cancel_refresh` checksum `16959`, library returned `{checksum}`");
             }
         }
         {
@@ -3014,21 +3649,15 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_send_boc();
+            if (checksum != 4063) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_send_boc` checksum `4063`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_sign_message();
             if (checksum != 31537) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_sign_message` checksum `31537`, library returned `{checksum}`");
-            }
-        }
-        {
-            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_wallethttphost_execute_http();
-            if (checksum != 51263) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_wallethttphost_execute_http` checksum `51263`, library returned `{checksum}`");
-            }
-        }
-        {
-            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_wallethttphost_cancel_http();
-            if (checksum != 52861) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_wallethttphost_cancel_http` checksum `52861`, library returned `{checksum}`");
             }
         }
         {
@@ -3152,9 +3781,33 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_wallethttphost_execute_http();
+            if (checksum != 43126) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_wallethttphost_execute_http` checksum `43126`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_wallethttphost_cancel_http();
+            if (checksum != 55221) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_wallethttphost_cancel_http` checksum `55221`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletstatuslesshost_execute_statusless();
+            if (checksum != 29141) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletstatuslesshost_execute_statusless` checksum `29141`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletstatuslesshost_cancel_statusless();
+            if (checksum != 58537) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletstatuslesshost_cancel_statusless` checksum `58537`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_create_wallet();
-            if (checksum != 44482) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_create_wallet` checksum `44482`, library returned `{checksum}`");
+            if (checksum != 58283) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_create_wallet` checksum `58283`, library returned `{checksum}`");
             }
         }
         {
@@ -3189,8 +3842,14 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_constructor_walletclient_new();
-            if (checksum != 28656) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_constructor_walletclient_new` checksum `28656`, library returned `{checksum}`");
+            if (checksum != 8434) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_constructor_walletclient_new` checksum `8434`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_constructor_walletclient_new_statusless();
+            if (checksum != 59466) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_constructor_walletclient_new_statusless` checksum `59466`, library returned `{checksum}`");
             }
         }
         {
@@ -3861,6 +4520,43 @@ internal interface IWalletClient {
     /// <exception cref="WalletClientException"></exception>
     Task<WalletSnapshot> WaitForChange(ulong @afterRevision);
     /// <summary>
+    /// Resolves the standard TON DNS `wallet` record for a `.ton` name.
+    ///
+    /// The operation is read-only and never requests protected wallet secrets.
+    /// It uses the configured or network-default root resolver, then asks the
+    /// configured provider to perform bounded DNS recursion.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<TonAddressString?> ResolveDns(string @name);
+    /// <summary>
+    /// Creates a TON encrypted-comment body ready for `SendMessageBody::RawPayload`.
+    ///
+    /// The engine calls the recipient wallet's `get_public_key` get-method, then
+    /// asks the platform host to authorize this wallet's protected mnemonic.
+    /// No secret is requested when the comment is already too large.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<Boc> CreateEncryptedComment(CreateEncryptedCommentRequest @request);
+    /// <summary>
+    /// Decrypts one TON encrypted-comment body after explicit host authorization.
+    ///
+    /// The caller supplies the sender address because TON uses its bounceable,
+    /// URL-safe, non-test-only representation as authenticated salt.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<string> DecryptComment(DecryptCommentRequest @request);
+    /// <summary>
+    /// Generates a new signing half and a signed Wallet rev00 key-change message.
+    ///
+    /// The client first fetches fresh account state through its configured
+    /// provider. Active wallets use the on-chain `seqno` getter, while an
+    /// account without deployed contract code uses sequence number zero. The
+    /// client then asks the host to unlock the protected phrase. It does not
+    /// update protected storage and does not submit the returned BOC.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<PreparedKeyRotation> PrepareKeyRotation(PrepareKeyRotationRequest @request);
+    /// <summary>
     /// Cancels the active additional-page NFT load.
     ///
     /// This method has no effect when no NFT page load is active.
@@ -3908,7 +4604,18 @@ internal interface IWalletClient {
     /// <exception cref="WalletClientException"></exception>
     Task<SendResult> SendNftTransfer(NftTransferRequest @request);
     /// <summary>
-    /// Cancels the current send preview and its active HTTP request.
+    /// Signs external and internal delivery forms without submitting either one.
+    ///
+    /// The client fetches account state and `seqno` once, resolves one
+    /// `valid_until`, and unlocks the protected phrase once. Both returned BOCs
+    /// therefore authorize the same transfer and are mutually exclusive
+    /// delivery alternatives. This method does not read or write the send
+    /// journal and does not submit either message.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<PreparedTransfer> PrepareTransfer(PrepareTransferRequest @request);
+    /// <summary>
+    /// Cancels the current send preview and its active provider request.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task CancelSendPreview();
@@ -3922,6 +4629,17 @@ internal interface IWalletClient {
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task<SendPreview> PreviewSend(SendPreviewRequest @request);
+    /// <summary>
+    /// Emulates an already signed external-message BOC without submitting it.
+    ///
+    /// The request is validated against the configured source and fresh wallet
+    /// seqno and provider time. The exact BOC is sent only to the emulation
+    /// endpoint; this operation does not read or write the journal and does not
+    /// publish the message to the network. The operation identifier and force
+    /// flag are ignored, so the same request can be reused with [`Self::send_boc`].
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<SendPreview> PreviewSendBoc(SendBocRequest @request);
     /// <summary>
     /// Validates an internal-message signing request from fresh public state.
     ///
@@ -3940,7 +4658,7 @@ internal interface IWalletClient {
     /// <exception cref="WalletClientException"></exception>
     Task<SendPreview> PreviewTonConnect(SendRequest @request);
     /// <summary>
-    /// Cancels the active refresh and requests cancellation of its HTTP requests.
+    /// Cancels the active refresh and requests cancellation of its provider requests.
     ///
     /// This method has no effect when no refresh is active.
     /// </summary>
@@ -3991,6 +4709,16 @@ internal interface IWalletClient {
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task<SendResult> Send(SendRequest @request);
+    /// <summary>
+    /// Durably records and submits an already signed external-message BOC.
+    ///
+    /// The request must carry the exact `seqno` and expiration covered by the
+    /// BOC. The engine validates them against fresh provider state, stores the
+    /// exact BOC in the wallet-wide journal before provider handoff, and exposes
+    /// the normal pending-resolution and cancellation behavior.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<SendResult> SendBoc(SendBocRequest @request);
     /// <summary>
     /// Signs and durably records a Wallet V5 `internal_signed` request.
     ///
@@ -4228,6 +4956,123 @@ internal class WalletClient : IWalletClient, IDisposable {
     }
     
     /// <summary>
+    /// Resolves the standard TON DNS `wallet` record for a `.ton` name.
+    ///
+    /// The operation is read-only and never requests protected wallet secrets.
+    /// It uses the configured or network-default root resolver, then asks the
+    /// configured provider to perform bounded DNS recursion.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<TonAddressString?> ResolveDns(string @name) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_resolve_dns(thisPtr, FfiConverterString.INSTANCE.Lower(@name));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterOptionalTypeTonAddressString.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Creates a TON encrypted-comment body ready for `SendMessageBody::RawPayload`.
+    ///
+    /// The engine calls the recipient wallet's `get_public_key` get-method, then
+    /// asks the platform host to authorize this wallet's protected mnemonic.
+    /// No secret is requested when the comment is already too large.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<Boc> CreateEncryptedComment(CreateEncryptedCommentRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_create_encrypted_comment(thisPtr, FfiConverterTypeCreateEncryptedCommentRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterTypeBoc.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Decrypts one TON encrypted-comment body after explicit host authorization.
+    ///
+    /// The caller supplies the sender address because TON uses its bounceable,
+    /// URL-safe, non-test-only representation as authenticated salt.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<string> DecryptComment(DecryptCommentRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_decrypt_comment(thisPtr, FfiConverterTypeDecryptCommentRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterString.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Generates a new signing half and a signed Wallet rev00 key-change message.
+    ///
+    /// The client first fetches fresh account state through its configured
+    /// provider. Active wallets use the on-chain `seqno` getter, while an
+    /// account without deployed contract code uses sequence number zero. The
+    /// client then asks the host to unlock the protected phrase. It does not
+    /// update protected storage and does not submit the returned BOC.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<PreparedKeyRotation> PrepareKeyRotation(PrepareKeyRotationRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_prepare_key_rotation(thisPtr, FfiConverterTypePrepareKeyRotationRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterTypePreparedKeyRotation.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
     /// Cancels the active additional-page NFT load.
     ///
     /// This method has no effect when no NFT page load is active.
@@ -4387,7 +5232,38 @@ internal class WalletClient : IWalletClient, IDisposable {
     }
     
     /// <summary>
-    /// Cancels the current send preview and its active HTTP request.
+    /// Signs external and internal delivery forms without submitting either one.
+    ///
+    /// The client fetches account state and `seqno` once, resolves one
+    /// `valid_until`, and unlocks the protected phrase once. Both returned BOCs
+    /// therefore authorize the same transfer and are mutually exclusive
+    /// delivery alternatives. This method does not read or write the send
+    /// journal and does not submit either message.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<PreparedTransfer> PrepareTransfer(PrepareTransferRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_prepare_transfer(thisPtr, FfiConverterTypePrepareTransferRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterTypePreparedTransfer.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Cancels the current send preview and its active provider request.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     public async Task CancelSendPreview() {await _UniFFIAsync.UniffiRustCallAsync(
@@ -4421,6 +5297,37 @@ internal class WalletClient : IWalletClient, IDisposable {
         // Get rust future
         CallWithPointer(thisPtr => {
             return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_preview_send(thisPtr, FfiConverterTypeSendPreviewRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterTypeSendPreview.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Emulates an already signed external-message BOC without submitting it.
+    ///
+    /// The request is validated against the configured source and fresh wallet
+    /// seqno and provider time. The exact BOC is sent only to the emulation
+    /// endpoint; this operation does not read or write the journal and does not
+    /// publish the message to the network. The operation identifier and force
+    /// flag are ignored, so the same request can be reused with [`Self::send_boc`].
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<SendPreview> PreviewSendBoc(SendBocRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_preview_send_boc(thisPtr, FfiConverterTypeSendBocRequest.INSTANCE.Lower(@request));
         }),
         // Poll
         (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
@@ -4495,7 +5402,7 @@ internal class WalletClient : IWalletClient, IDisposable {
     }
     
     /// <summary>
-    /// Cancels the active refresh and requests cancellation of its HTTP requests.
+    /// Cancels the active refresh and requests cancellation of its provider requests.
     ///
     /// This method has no effect when no refresh is active.
     /// </summary>
@@ -4639,6 +5546,36 @@ internal class WalletClient : IWalletClient, IDisposable {
     }
     
     /// <summary>
+    /// Durably records and submits an already signed external-message BOC.
+    ///
+    /// The request must carry the exact `seqno` and expiration covered by the
+    /// BOC. The engine validates them against fresh provider state, stores the
+    /// exact BOC in the wallet-wide journal before provider handoff, and exposes
+    /// the normal pending-resolution and cancellation behavior.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<SendResult> SendBoc(SendBocRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_send_boc(thisPtr, FfiConverterTypeSendBocRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterTypeSendResult.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
     /// Signs and durably records a Wallet V5 `internal_signed` request.
     ///
     /// This method does not submit the message. The returned BOC is a complete
@@ -4669,6 +5606,22 @@ internal class WalletClient : IWalletClient, IDisposable {
     }
     
 
+    
+    /// <summary>
+    /// Creates a client backed by a provider transport without HTTP metadata.
+    ///
+    /// Use this constructor for a relay or protocol proxy that can return only
+    /// a response body or an opaque transport error. The engine does not apply
+    /// HTTP status, header, redirect, or final-URL checks in this mode.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public static WalletClient NewStatusless(WalletClientConfig @config, IWalletStatuslessHost @statuslessHost, IWalletPlatformHost @platformHost) {
+        return new WalletClient(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeWalletClientError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_constructor_walletclient_new_statusless(FfiConverterTypeWalletClientConfig.INSTANCE.Lower(@config), FfiConverterTypeWalletStatuslessHost.INSTANCE.Lower(@statuslessHost), FfiConverterTypeWalletPlatformHost.INSTANCE.Lower(@platformHost), ref _status)
+));
+    }
+    
     
 }
 class FfiConverterTypeWalletClient: FfiConverter<WalletClient, ulong> {
@@ -4711,7 +5664,7 @@ internal interface IWalletHttpHost {
     ///
     /// The host can add its Toncenter credential according to the actual URL
     /// and its local security policy. It must return
-    /// [`crate::HttpHostErrorKind::Timeout`] when `request.timeout_ms` expires.
+    /// [`HttpHostErrorKind::Timeout`] when `request.timeout_ms` expires.
     /// </summary>
     /// <exception cref="HttpHostException"></exception>
     Task<HttpResponse> ExecuteHttp(HttpRequest @request);
@@ -4824,7 +5777,7 @@ internal class WalletHttpHostImpl : IWalletHttpHost, IDisposable {
     ///
     /// The host can add its Toncenter credential according to the actual URL
     /// and its local security policy. It must return
-    /// [`crate::HttpHostErrorKind::Timeout`] when `request.timeout_ms` expires.
+    /// [`HttpHostErrorKind::Timeout`] when `request.timeout_ms` expires.
     /// </summary>
     /// <exception cref="HttpHostException"></exception>
     public async Task<HttpResponse> ExecuteHttp(HttpRequest @request) {
@@ -5150,7 +6103,11 @@ class FfiConverterTypeWalletHttpHost: FfiConverter<IWalletHttpHost, ulong> {
 /// </summary>
 internal interface IWalletLifecycle {
     /// <summary>
-    /// Generates and derives a wallet account, then stores its mnemonic.
+    /// Generates the initial 12-word recovery phrase, derives its wallet
+    /// account, and stores the phrase.
+    ///
+    /// A new wallet starts before its first key rotation, so its signing
+    /// key equals its anchor key and the user records a single 12-word half.
     ///
     /// Persist `descriptor` after this method succeeds. Present the recovery
     /// phrase once, then release all application copies of it.
@@ -5304,7 +6261,11 @@ internal class WalletLifecycle : IWalletLifecycle, IDisposable {
 
     
     /// <summary>
-    /// Generates and derives a wallet account, then stores its mnemonic.
+    /// Generates the initial 12-word recovery phrase, derives its wallet
+    /// account, and stores the phrase.
+    ///
+    /// A new wallet starts before its first key rotation, so its signing
+    /// key equals its anchor key and the user records a single 12-word half.
     ///
     /// Persist `descriptor` after this method succeeds. Present the recovery
     /// phrase once, then release all application copies of it.
@@ -6194,6 +7155,410 @@ class FfiConverterTypeWalletPlatformHost: FfiConverter<IWalletPlatformHost, ulon
 
 
 /// <summary>
+/// Executes provider requests through a transport without HTTP response metadata.
+///
+/// The request URL is the logical Toncenter destination and does not require a
+/// direct connection to that origin. The host can route it through a trusted
+/// relay or protocol proxy, but must not follow or emulate provider redirects.
+/// A successful callback returns only the provider body: it makes no claim
+/// about an HTTP status, response headers, or final URL.
+/// </summary>
+internal interface IWalletStatuslessHost {
+    /// <summary>
+    /// Executes one complete logical provider request.
+    ///
+    /// The host must enforce `request.timeout_ms`. It reports timeout and
+    /// cancellation explicitly; opaque RPC failures can use
+    /// [`StatuslessHostErrorKind::Other`] with a bounded diagnostic.
+    /// </summary>
+    /// <exception cref="StatuslessHostException"></exception>
+    Task<byte[]> ExecuteStatusless(HttpRequest @request);
+    /// <summary>
+    /// Requests cancellation of the request with `request_id`.
+    ///
+    /// This callback has the same idempotency and early-cancellation contract
+    /// as [`crate::WalletHttpHost::cancel_http`].
+    /// </summary>
+    Task CancelStatusless(HttpRequestId @requestId);
+}
+/// <summary>
+/// Executes provider requests through a transport without HTTP response metadata.
+///
+/// The request URL is the logical Toncenter destination and does not require a
+/// direct connection to that origin. The host can route it through a trusted
+/// relay or protocol proxy, but must not follow or emulate provider redirects.
+/// A successful callback returns only the provider body: it makes no claim
+/// about an HTTP status, response headers, or final URL.
+/// </summary>
+internal class WalletStatuslessHostImpl : IWalletStatuslessHost, IDisposable {
+    protected ulong pointer;
+    private int _wasDestroyed = 0;
+    private long _callCounter = 1;
+
+    public WalletStatuslessHostImpl(ulong pointer) {
+        this.pointer = pointer;
+    }
+
+    ~WalletStatuslessHostImpl() {
+        Destroy();
+    }
+
+    protected void FreeRustArcPtr() {
+        _UniffiHelpers.RustCall((ref UniffiRustCallStatus status) => {
+            _UniFFILib.uniffi_wallet_engine_fn_free_walletstatuslesshost(this.pointer, ref status);
+        });
+    }
+
+    protected ulong CloneRustArcPtr() {
+        return _UniffiHelpers.RustCall((ref UniffiRustCallStatus status) => {
+            return _UniFFILib.uniffi_wallet_engine_fn_clone_walletstatuslesshost(this.pointer, ref status);
+        });
+    }
+
+    public void Destroy()
+    {
+        // Only allow a single call to this method.
+        if (Interlocked.CompareExchange(ref _wasDestroyed, 1, 0) == 0)
+        {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (Interlocked.Decrement(ref _callCounter) == 0)
+            {
+                FreeRustArcPtr();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        Destroy();
+        GC.SuppressFinalize(this); // Suppress finalization to avoid unnecessary GC overhead.
+    }
+
+    private void IncrementCallCounter() 
+    {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        long count;
+        do
+        {
+            count = Interlocked.Read(ref _callCounter);
+            if (count == 0L) throw new System.ObjectDisposedException(String.Format("'{0}' object has already been destroyed", this.GetType().Name));
+            if (count == long.MaxValue) throw new System.OverflowException(String.Format("'{0}' call counter would overflow", this.GetType().Name));
+
+        } while (Interlocked.CompareExchange(ref _callCounter, count + 1, count) != count);
+    }
+
+    private void DecrementCallCounter() 
+    {
+        // This decrement always matches the increment we performed above.
+        if (Interlocked.Decrement(ref _callCounter) == 0) {
+            FreeRustArcPtr();
+        }
+    }
+
+    internal void CallWithPointer(Action<ulong> action)
+    {
+        IncrementCallCounter();
+        try {
+            action(CloneRustArcPtr());
+        }
+        finally {
+            DecrementCallCounter();
+        }
+    }
+
+    internal T CallWithPointer<T>(Func<ulong, T> func)
+    {   
+        IncrementCallCounter();
+        try {
+            return func(CloneRustArcPtr());
+        }
+        finally {
+            DecrementCallCounter();
+        }
+    }
+
+    
+    /// <summary>
+    /// Executes one complete logical provider request.
+    ///
+    /// The host must enforce `request.timeout_ms`. It reports timeout and
+    /// cancellation explicitly; opaque RPC failures can use
+    /// [`StatuslessHostErrorKind::Other`] with a bounded diagnostic.
+    /// </summary>
+    /// <exception cref="StatuslessHostException"></exception>
+    public async Task<byte[]> ExecuteStatusless(HttpRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletstatuslesshost_execute_statusless(thisPtr, FfiConverterTypeHttpRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterByteArray.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeStatuslessHostError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Requests cancellation of the request with `request_id`.
+    ///
+    /// This callback has the same idempotency and early-cancellation contract
+    /// as [`crate::WalletHttpHost::cancel_http`].
+    /// </summary>
+    public async Task CancelStatusless(HttpRequestId @requestId) {await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletstatuslesshost_cancel_statusless(thisPtr, FfiConverterTypeHttpRequestId.INSTANCE.Lower(@requestId));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_void(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {_UniFFILib.ffi_wallet_engine_rust_future_complete_void(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_void(future),
+        // Error
+        NullCallStatusErrorHandler.INSTANCE
+        
+    );
+    }
+    
+
+    
+}
+class UniffiCallbackInterfaceWalletStatuslessHost {
+    static void ExecuteStatusless(ulong @uniffiHandle,RustBuffer @request,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback) {
+        var handle = @uniffiHandle;
+        var futureHandle = new UniffiForeignFutureHandle();
+        var foreignHandle = _UniFFIAsync._foreign_futures_map.Insert(futureHandle);
+        unsafe {
+            (*(_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*)@uniffiOutDroppedCallback).handle = foreignHandle;
+            (*(_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*)@uniffiOutDroppedCallback).free = Marshal.GetFunctionPointerForDelegate(_UniFFIAsync.UniffiForeignFutureDroppedCallbackImpl.callback);
+        }
+        if (!FfiConverterTypeWalletStatuslessHost.INSTANCE.handleMap.TryGet(handle, out var uniffiObject)) {
+            var ret = new _UniFFILib.UniffiForeignFutureResultRustBuffer();
+            ret.@callStatus = new UniffiRustCallStatus();
+            ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+            try {
+                ret.@callStatus.error_buf = FfiConverterString.INSTANCE.Lower($"No callback in handlemap '{handle}'");
+            } catch { }
+            var earlyCb = Marshal.GetDelegateForFunctionPointer<_UniFFILib.UniffiForeignFutureCompleteRustBuffer>(@uniffiFutureCallback);
+            futureHandle.InvokeCallbackOnce(() => { earlyCb(@uniffiCallbackData, ret); });
+            futureHandle.Dispose();
+            return;
+        }
+
+        // Optimization: skip queuing if already cancelled before Task.Run schedules.
+        // TryInvokeCallback is the definitive cancellation guard inside the task body.
+        Task.Run(async () => {
+            var ret = new _UniFFILib.UniffiForeignFutureResultRustBuffer();
+            ret.@callStatus = new UniffiRustCallStatus();
+
+            try {
+            try {
+            var result =
+
+            await uniffiObject.ExecuteStatusless(
+                FfiConverterTypeHttpRequest.INSTANCE.Lift(@request))
+            #if NET6_0_OR_GREATER
+                .WaitAsync(futureHandle.Cts.Token)
+            #endif
+                ;
+            ret.@returnValue = FfiConverterByteArray.INSTANCE.Lower(result);
+
+            ret.@callStatus.code = UniffiCallbackResponseStatus.SUCCESS;
+            } catch (StatuslessHostException e) {
+                try {
+                    ret.@callStatus.code = UniffiCallbackResponseStatus.ERROR;
+                    ret.@callStatus.error_buf = FfiConverterTypeStatuslessHostError.INSTANCE.Lower(e);
+                } catch {
+                    ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+                }
+            } catch (OperationCanceledException) when (futureHandle.Cts.IsCancellationRequested) {
+                ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+                try {
+                    ret.@callStatus.error_buf = FfiConverterString.INSTANCE.Lower("Future cancelled");
+                } catch { }
+            } catch (System.Exception e) {
+                ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+                try {
+                    ret.@callStatus.error_buf = FfiConverterString.INSTANCE.Lower(e.Message);
+                }
+                catch {
+                }
+            }
+
+            
+            var cb = Marshal.GetDelegateForFunctionPointer<_UniFFILib.UniffiForeignFutureCompleteRustBuffer>(@uniffiFutureCallback);
+            futureHandle.InvokeCallbackOnce(() => {
+                cb(@uniffiCallbackData, ret);
+            });
+            } finally {
+                futureHandle.Dispose();
+            }
+        }, futureHandle.Cts.Token);
+    }
+    static void CancelStatusless(ulong @uniffiHandle,RustBuffer @requestId,IntPtr @uniffiFutureCallback,ulong @uniffiCallbackData,IntPtr /*_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*/ @uniffiOutDroppedCallback) {
+        var handle = @uniffiHandle;
+        var futureHandle = new UniffiForeignFutureHandle();
+        var foreignHandle = _UniFFIAsync._foreign_futures_map.Insert(futureHandle);
+        unsafe {
+            (*(_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*)@uniffiOutDroppedCallback).handle = foreignHandle;
+            (*(_UniFFILib.UniffiForeignFutureDroppedCallbackStruct*)@uniffiOutDroppedCallback).free = Marshal.GetFunctionPointerForDelegate(_UniFFIAsync.UniffiForeignFutureDroppedCallbackImpl.callback);
+        }
+        if (!FfiConverterTypeWalletStatuslessHost.INSTANCE.handleMap.TryGet(handle, out var uniffiObject)) {
+            var ret = new _UniFFILib.UniffiForeignFutureResultVoid();
+            ret.@callStatus = new UniffiRustCallStatus();
+            ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+            try {
+                ret.@callStatus.error_buf = FfiConverterString.INSTANCE.Lower($"No callback in handlemap '{handle}'");
+            } catch { }
+            var earlyCb = Marshal.GetDelegateForFunctionPointer<_UniFFILib.UniffiForeignFutureCompleteVoid>(@uniffiFutureCallback);
+            futureHandle.InvokeCallbackOnce(() => { earlyCb(@uniffiCallbackData, ret); });
+            futureHandle.Dispose();
+            return;
+        }
+
+        // Optimization: skip queuing if already cancelled before Task.Run schedules.
+        // TryInvokeCallback is the definitive cancellation guard inside the task body.
+        Task.Run(async () => {
+            var ret = new _UniFFILib.UniffiForeignFutureResultVoid();
+            ret.@callStatus = new UniffiRustCallStatus();
+
+            try {
+            try {
+
+            await uniffiObject.CancelStatusless(
+                FfiConverterTypeHttpRequestId.INSTANCE.Lift(@requestId))
+            #if NET6_0_OR_GREATER
+                .WaitAsync(futureHandle.Cts.Token)
+            #endif
+                ;
+
+            ret.@callStatus.code = UniffiCallbackResponseStatus.SUCCESS;
+            } catch (OperationCanceledException) when (futureHandle.Cts.IsCancellationRequested) {
+                ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+                try {
+                    ret.@callStatus.error_buf = FfiConverterString.INSTANCE.Lower("Future cancelled");
+                } catch { }
+            } catch (System.Exception e) {
+                ret.@callStatus.code = UniffiCallbackResponseStatus.UNEXPECTED_ERROR;
+                try {
+                    ret.@callStatus.error_buf = FfiConverterString.INSTANCE.Lower(e.Message);
+                }
+                catch {
+                }
+            }
+
+            
+            var cb = Marshal.GetDelegateForFunctionPointer<_UniFFILib.UniffiForeignFutureCompleteVoid>(@uniffiFutureCallback);
+            futureHandle.InvokeCallbackOnce(() => {
+                cb(@uniffiCallbackData, ret);
+            });
+            } finally {
+                futureHandle.Dispose();
+            }
+        }, futureHandle.Cts.Token);
+    }
+
+    static void UniffiFree(ulong @handle) {
+        FfiConverterTypeWalletStatuslessHost.INSTANCE.handleMap.Remove(@handle);
+    }
+
+    static ulong UniffiClone(ulong @handle) {
+        try {
+            if (!FfiConverterTypeWalletStatuslessHost.INSTANCE.handleMap.TryGet(@handle, out var obj)) {
+                throw new InternalException($"No callback in handlemap '{@handle}'");
+            }
+            return FfiConverterTypeWalletStatuslessHost.INSTANCE.handleMap.Insert(obj);
+        } catch (System.Exception) {
+            return 0; // 0 is never a valid handle; ConcurrentHandleMap starts at 1
+        }
+    }
+    static _UniFFILib.UniffiCallbackInterfaceWalletStatuslessHostMethod0 _m0 = new _UniFFILib.UniffiCallbackInterfaceWalletStatuslessHostMethod0(ExecuteStatusless);
+    static _UniFFILib.UniffiCallbackInterfaceWalletStatuslessHostMethod1 _m1 = new _UniFFILib.UniffiCallbackInterfaceWalletStatuslessHostMethod1(CancelStatusless);
+    static _UniFFILib.UniffiCallbackInterfaceFree _callback_interface_free = new _UniFFILib.UniffiCallbackInterfaceFree(UniffiFree);
+    static _UniFFILib.UniffiCallbackInterfaceClone _callback_interface_clone = new _UniFFILib.UniffiCallbackInterfaceClone(UniffiClone);
+
+    private static GCHandle? _vtablePin;
+
+    public static void Register() {
+        if (_vtablePin.HasValue) return;
+        _UniFFILib.UniffiVTableCallbackInterfaceWalletStatuslessHost _vtable = new _UniFFILib.UniffiVTableCallbackInterfaceWalletStatuslessHost {
+            @executeStatusless = Marshal.GetFunctionPointerForDelegate(_m0),
+            @cancelStatusless = Marshal.GetFunctionPointerForDelegate(_m1),
+            @uniffiFree = Marshal.GetFunctionPointerForDelegate(_callback_interface_free),
+            @uniffiClone = Marshal.GetFunctionPointerForDelegate(_callback_interface_clone),
+        };
+
+        // Pin the vtable so the GC never moves it. The GCHandle is intentionally never freed —
+        // this pin must remain valid for the process lifetime.
+        _vtablePin = GCHandle.Alloc(_vtable, GCHandleType.Pinned);
+        _UniFFILib.uniffi_wallet_engine_fn_init_callback_vtable_walletstatuslesshost(_vtablePin.Value.AddrOfPinnedObject());
+    }
+}
+
+
+
+
+class FfiConverterTypeWalletStatuslessHost: FfiConverter<IWalletStatuslessHost, ulong> {
+    public ConcurrentHandleMap<IWalletStatuslessHost> handleMap = new ConcurrentHandleMap<IWalletStatuslessHost>();
+    
+    public static FfiConverterTypeWalletStatuslessHost INSTANCE = new FfiConverterTypeWalletStatuslessHost();
+
+    static FfiConverterTypeWalletStatuslessHost() {
+        UniffiCallbackInterfaceWalletStatuslessHost.Register();
+    }
+
+    public override ulong Lower(IWalletStatuslessHost value) {
+        if (value is WalletStatuslessHostImpl rustObj) {
+            // Rust-implemented object. Clone the handle and return it.
+            return rustObj.CallWithPointer(thisPtr => thisPtr);
+        } else {
+            // C# object, generate a new handle map entry and return it.
+            return handleMap.Insert(value);
+        }
+    }
+
+    public override IWalletStatuslessHost Lift(ulong value) {
+        if ((value & 1UL) == 0UL) {
+            // Rust-generated handle, construct a new wrapper.
+            return new WalletStatuslessHostImpl(value);
+        } else {
+            // C#-generated handle, retrieve and remove from the handle map.
+            if (handleMap.Remove(value, out var obj)) {
+                return obj;
+            } else {
+                throw new InternalException($"No callback in handlemap '{value}'");
+            }
+        }
+    }
+
+    public override IWalletStatuslessHost Read(BigEndianStream stream) {
+        return Lift(stream.ReadULong());
+    }
+
+    public override int AllocationSize(IWalletStatuslessHost value) {
+        return 8;
+    }
+
+    public override void Write(IWalletStatuslessHost value, BigEndianStream stream) {
+        stream.WriteULong(Lower(value));
+    }
+}
+
+
+
+/// <summary>
 /// The latest parsed balance and status for a wallet account.
 /// </summary>
 /// <param name="BalanceNanograms">
@@ -6314,6 +7679,22 @@ class FfiConverterTypeActivityCursor: FfiConverterRustBuffer<ActivityCursor> {
 /// <param name="AmountNanograms">
 /// The exact transferred value, in nanograms.
 /// </param>
+/// <param name="TransactionFeeNanograms">
+/// The total fee charged by this transaction, in nanograms.
+/// 
+/// A transaction with multiple visible messages repeats this value on each
+/// activity item; callers must not sum it per row.
+/// </param>
+/// <param name="Status">
+/// The on-chain execution status for this message and transaction.
+/// </param>
+/// <param name="Comment">
+/// A decoded zero-opcode plaintext comment, including an empty comment.
+/// </param>
+/// <param name="EncryptedComment">
+/// An opaque encrypted-comment body that can be passed to
+/// [`crate::WalletClient::decrypt_comment`].
+/// </param>
 /// <param name="Counterparty">
 /// The source or destination address, if the provider supplies it.
 /// </param>
@@ -6343,6 +7724,26 @@ internal record ActivityItem (
     /// </summary>
     UnsignedDecimalString AmountNanograms, 
     /// <summary>
+    /// The total fee charged by this transaction, in nanograms.
+    ///
+    /// A transaction with multiple visible messages repeats this value on each
+    /// activity item; callers must not sum it per row.
+    /// </summary>
+    UnsignedDecimalString TransactionFeeNanograms, 
+    /// <summary>
+    /// The on-chain execution status for this message and transaction.
+    /// </summary>
+    ActivityStatus Status, 
+    /// <summary>
+    /// A decoded zero-opcode plaintext comment, including an empty comment.
+    /// </summary>
+    string? Comment, 
+    /// <summary>
+    /// An opaque encrypted-comment body that can be passed to
+    /// [`crate::WalletClient::decrypt_comment`].
+    /// </summary>
+    Boc? EncryptedComment, 
+    /// <summary>
     /// The source or destination address, if the provider supplies it.
     /// </summary>
     TonAddressString? Counterparty
@@ -6360,6 +7761,10 @@ class FfiConverterTypeActivityItem: FfiConverterRustBuffer<ActivityItem> {
             Timestamp: FfiConverterUInt64.INSTANCE.Read(stream),
             Direction: FfiConverterTypeActivityDirection.INSTANCE.Read(stream),
             AmountNanograms: FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream),
+            TransactionFeeNanograms: FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream),
+            Status: FfiConverterTypeActivityStatus.INSTANCE.Read(stream),
+            Comment: FfiConverterOptionalString.INSTANCE.Read(stream),
+            EncryptedComment: FfiConverterOptionalTypeBoc.INSTANCE.Read(stream),
             Counterparty: FfiConverterOptionalTypeTonAddressString.INSTANCE.Read(stream)
         );
     }
@@ -6372,6 +7777,10 @@ class FfiConverterTypeActivityItem: FfiConverterRustBuffer<ActivityItem> {
             + FfiConverterUInt64.INSTANCE.AllocationSize(value.Timestamp)
             + FfiConverterTypeActivityDirection.INSTANCE.AllocationSize(value.Direction)
             + FfiConverterTypeUnsignedDecimalString.INSTANCE.AllocationSize(value.AmountNanograms)
+            + FfiConverterTypeUnsignedDecimalString.INSTANCE.AllocationSize(value.TransactionFeeNanograms)
+            + FfiConverterTypeActivityStatus.INSTANCE.AllocationSize(value.Status)
+            + FfiConverterOptionalString.INSTANCE.AllocationSize(value.Comment)
+            + FfiConverterOptionalTypeBoc.INSTANCE.AllocationSize(value.EncryptedComment)
             + FfiConverterOptionalTypeTonAddressString.INSTANCE.AllocationSize(value.Counterparty);
     }
 
@@ -6382,6 +7791,10 @@ class FfiConverterTypeActivityItem: FfiConverterRustBuffer<ActivityItem> {
             FfiConverterUInt64.INSTANCE.Write(value.Timestamp, stream);
             FfiConverterTypeActivityDirection.INSTANCE.Write(value.Direction, stream);
             FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(value.AmountNanograms, stream);
+            FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(value.TransactionFeeNanograms, stream);
+            FfiConverterTypeActivityStatus.INSTANCE.Write(value.Status, stream);
+            FfiConverterOptionalString.INSTANCE.Write(value.Comment, stream);
+            FfiConverterOptionalTypeBoc.INSTANCE.Write(value.EncryptedComment, stream);
             FfiConverterOptionalTypeTonAddressString.INSTANCE.Write(value.Counterparty, stream);
     }
 }
@@ -6448,6 +7861,54 @@ class FfiConverterTypeActivityList: FfiConverterRustBuffer<ActivityList> {
             FfiConverterTypeResourceState.INSTANCE.Write(value.Resource, stream);
             FfiConverterTypeResourceState.INSTANCE.Write(value.PaginationResource, stream);
             FfiConverterBoolean.INSTANCE.Write(value.HasMore, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Requests a ready-to-send TON encrypted-comment body.
+///
+/// The engine loads the recipient's public key from chain state and asks the
+/// platform host to authorize access to this wallet's protected mnemonic.
+/// </summary>
+/// <param name="Recipient">
+/// Wallet contract that must be able to expose `get_public_key`.
+/// </param>
+/// <param name="Comment">
+/// UTF-8 comment to encrypt. Its encoded form must not exceed 960 bytes.
+/// </param>
+internal record CreateEncryptedCommentRequest (
+    /// <summary>
+    /// Wallet contract that must be able to expose `get_public_key`.
+    /// </summary>
+    TonAddressString Recipient, 
+    /// <summary>
+    /// UTF-8 comment to encrypt. Its encoded form must not exceed 960 bytes.
+    /// </summary>
+    string Comment
+) {
+}
+
+class FfiConverterTypeCreateEncryptedCommentRequest: FfiConverterRustBuffer<CreateEncryptedCommentRequest> {
+    public static FfiConverterTypeCreateEncryptedCommentRequest INSTANCE = new FfiConverterTypeCreateEncryptedCommentRequest();
+
+    public override CreateEncryptedCommentRequest Read(BigEndianStream stream) {
+        return new CreateEncryptedCommentRequest(
+            Recipient: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
+            Comment: FfiConverterString.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(CreateEncryptedCommentRequest value) {
+        return 0
+            + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Recipient)
+            + FfiConverterString.INSTANCE.AllocationSize(value.Comment);
+    }
+
+    public override void Write(CreateEncryptedCommentRequest value, BigEndianStream stream) {
+            FfiConverterTypeTonAddressString.INSTANCE.Write(value.Recipient, stream);
+            FfiConverterString.INSTANCE.Write(value.Comment, stream);
     }
 }
 
@@ -6547,6 +8008,59 @@ class FfiConverterTypeCreatedWallet: FfiConverterRustBuffer<CreatedWallet> {
 
 
 /// <summary>
+/// Requests explicit decryption of one encrypted-comment message body.
+/// </summary>
+/// <param name="Sender">
+/// Address that sent the encrypted comment.
+/// 
+/// TON binds this bounceable, URL-safe, non-test-only address to the
+/// authentication tag. For an incoming activity item this is its
+/// `counterparty`.
+/// </param>
+/// <param name="Body">
+/// Complete message-body cell encoded as a Base64 BOC.
+/// </param>
+internal record DecryptCommentRequest (
+    /// <summary>
+    /// Address that sent the encrypted comment.
+    ///
+    /// TON binds this bounceable, URL-safe, non-test-only address to the
+    /// authentication tag. For an incoming activity item this is its
+    /// `counterparty`.
+    /// </summary>
+    TonAddressString Sender, 
+    /// <summary>
+    /// Complete message-body cell encoded as a Base64 BOC.
+    /// </summary>
+    Boc Body
+) {
+}
+
+class FfiConverterTypeDecryptCommentRequest: FfiConverterRustBuffer<DecryptCommentRequest> {
+    public static FfiConverterTypeDecryptCommentRequest INSTANCE = new FfiConverterTypeDecryptCommentRequest();
+
+    public override DecryptCommentRequest Read(BigEndianStream stream) {
+        return new DecryptCommentRequest(
+            Sender: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
+            Body: FfiConverterTypeBoc.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(DecryptCommentRequest value) {
+        return 0
+            + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Sender)
+            + FfiConverterTypeBoc.INSTANCE.AllocationSize(value.Body);
+    }
+
+    public override void Write(DecryptCommentRequest value, BigEndianStream stream) {
+            FfiConverterTypeTonAddressString.INSTANCE.Write(value.Sender, stream);
+            FfiConverterTypeBoc.INSTANCE.Write(value.Body, stream);
+    }
+}
+
+
+
+/// <summary>
 /// Structured error data for account and activity resources.
 /// </summary>
 /// <param name="Code">
@@ -6568,7 +8082,10 @@ class FfiConverterTypeCreatedWallet: FfiConverterRustBuffer<CreatedWallet> {
 /// The provider delay in milliseconds, if it returned a numeric `Retry-After` header.
 /// </param>
 /// <param name="HostKind">
-/// The original host failure kind, if the error came from a callback.
+/// The normalized host failure kind, if the error came from a callback.
+/// 
+/// Status-less host kinds map to the corresponding legacy HTTP kind so
+/// existing consumers retain one stable classification field.
 /// </param>
 internal record DomainError (
     /// <summary>
@@ -6596,7 +8113,10 @@ internal record DomainError (
     /// </summary>
     ulong? RetryAfterMs, 
     /// <summary>
-    /// The original host failure kind, if the error came from a callback.
+    /// The normalized host failure kind, if the error came from a callback.
+    ///
+    /// Status-less host kinds map to the corresponding legacy HTTP kind so
+    /// existing consumers retain one stable classification field.
     /// </summary>
     HttpHostErrorKind? HostKind
 ) {
@@ -6899,7 +8419,15 @@ class FfiConverterTypeHttpResponse: FfiConverterRustBuffer<HttpResponse> {
 /// The network used to derive the wallet contract and address.
 /// </param>
 /// <param name="RecoveryWords">
-/// Exactly 24 lowercase English TON mnemonic words.
+/// Lowercase English words of a rotation mnemonic (TEP-0003 section 3.3).
+/// 
+/// Pass the phrase exactly as the user recorded it: 12 words for a wallet
+/// whose key was never rotated, or 24 words - two independently
+/// checksummed BIP-39 halves - after rotation. The engine expands the
+/// 12-word form itself; never duplicate the words in the application.
+/// 
+/// [`detect_mnemonic_schemes`] classifies the same word vector without
+/// importing it, so the application can explain a rejection.
 /// </param>
 internal record ImportWalletRequest (
     /// <summary>
@@ -6911,7 +8439,15 @@ internal record ImportWalletRequest (
     /// </summary>
     Network Network, 
     /// <summary>
-    /// Exactly 24 lowercase English TON mnemonic words.
+    /// Lowercase English words of a rotation mnemonic (TEP-0003 section 3.3).
+    ///
+    /// Pass the phrase exactly as the user recorded it: 12 words for a wallet
+    /// whose key was never rotated, or 24 words - two independently
+    /// checksummed BIP-39 halves - after rotation. The engine expands the
+    /// 12-word form itself; never duplicate the words in the application.
+    ///
+    /// [`detect_mnemonic_schemes`] classifies the same word vector without
+    /// importing it, so the application can explain a rejection.
     /// </summary>
     string[] RecoveryWords
 ) {
@@ -7135,6 +8671,84 @@ class FfiConverterTypeJournalRecord: FfiConverterRustBuffer<JournalRecord> {
 
 
 /// <summary>
+/// Chain-derived metadata for an NFT collection.
+///
+/// Product-specific classification, such as Telegram gifts or usernames,
+/// intentionally stays outside the engine.
+/// </summary>
+/// <param name="Address">
+/// The NFT collection contract address.
+/// </param>
+/// <param name="Name">
+/// The standard TEP-64 collection name, when available.
+/// </param>
+/// <param name="Description">
+/// The standard TEP-64 collection description, when available.
+/// </param>
+/// <param name="Image">
+/// The standard TEP-64 collection image reference, when available.
+/// </param>
+/// <param name="Content">
+/// All string-valued collection metadata returned by the provider.
+/// </param>
+internal record NftCollectionDescriptor (
+    /// <summary>
+    /// The NFT collection contract address.
+    /// </summary>
+    TonAddressString Address, 
+    /// <summary>
+    /// The standard TEP-64 collection name, when available.
+    /// </summary>
+    string? Name, 
+    /// <summary>
+    /// The standard TEP-64 collection description, when available.
+    /// </summary>
+    string? Description, 
+    /// <summary>
+    /// The standard TEP-64 collection image reference, when available.
+    /// </summary>
+    string? Image, 
+    /// <summary>
+    /// All string-valued collection metadata returned by the provider.
+    /// </summary>
+    Dictionary<string, string> Content
+) {
+}
+
+class FfiConverterTypeNftCollectionDescriptor: FfiConverterRustBuffer<NftCollectionDescriptor> {
+    public static FfiConverterTypeNftCollectionDescriptor INSTANCE = new FfiConverterTypeNftCollectionDescriptor();
+
+    public override NftCollectionDescriptor Read(BigEndianStream stream) {
+        return new NftCollectionDescriptor(
+            Address: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
+            Name: FfiConverterOptionalString.INSTANCE.Read(stream),
+            Description: FfiConverterOptionalString.INSTANCE.Read(stream),
+            Image: FfiConverterOptionalString.INSTANCE.Read(stream),
+            Content: FfiConverterDictionaryStringString.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(NftCollectionDescriptor value) {
+        return 0
+            + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Address)
+            + FfiConverterOptionalString.INSTANCE.AllocationSize(value.Name)
+            + FfiConverterOptionalString.INSTANCE.AllocationSize(value.Description)
+            + FfiConverterOptionalString.INSTANCE.AllocationSize(value.Image)
+            + FfiConverterDictionaryStringString.INSTANCE.AllocationSize(value.Content);
+    }
+
+    public override void Write(NftCollectionDescriptor value, BigEndianStream stream) {
+            FfiConverterTypeTonAddressString.INSTANCE.Write(value.Address, stream);
+            FfiConverterOptionalString.INSTANCE.Write(value.Name, stream);
+            FfiConverterOptionalString.INSTANCE.Write(value.Description, stream);
+            FfiConverterOptionalString.INSTANCE.Write(value.Image, stream);
+            FfiConverterDictionaryStringString.INSTANCE.Write(value.Content, stream);
+    }
+}
+
+
+
+/// <summary>
 /// One NFT item returned by the configured Toncenter v3 provider.
 ///
 /// `content` contains the string-valued on-chain and indexed metadata fields.
@@ -7146,6 +8760,9 @@ class FfiConverterTypeJournalRecord: FfiConverterRustBuffer<JournalRecord> {
 /// </param>
 /// <param name="CollectionAddress">
 /// The collection contract address, if this item belongs to a collection.
+/// </param>
+/// <param name="Collection">
+/// Chain-derived collection metadata, if this item belongs to a collection.
 /// </param>
 /// <param name="OwnerAddress">
 /// The current owner reported by the NFT item contract.
@@ -7195,6 +8812,10 @@ internal record NftItem (
     /// The collection contract address, if this item belongs to a collection.
     /// </summary>
     TonAddressString? CollectionAddress, 
+    /// <summary>
+    /// Chain-derived collection metadata, if this item belongs to a collection.
+    /// </summary>
+    NftCollectionDescriptor? Collection, 
     /// <summary>
     /// The current owner reported by the NFT item contract.
     /// </summary>
@@ -7257,6 +8878,7 @@ class FfiConverterTypeNftItem: FfiConverterRustBuffer<NftItem> {
         return new NftItem(
             Address: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
             CollectionAddress: FfiConverterOptionalTypeTonAddressString.INSTANCE.Read(stream),
+            Collection: FfiConverterOptionalTypeNftCollectionDescriptor.INSTANCE.Read(stream),
             OwnerAddress: FfiConverterOptionalTypeTonAddressString.INSTANCE.Read(stream),
             RealOwner: FfiConverterOptionalTypeTonAddressString.INSTANCE.Read(stream),
             SaleContractAddress: FfiConverterOptionalTypeTonAddressString.INSTANCE.Read(stream),
@@ -7277,6 +8899,7 @@ class FfiConverterTypeNftItem: FfiConverterRustBuffer<NftItem> {
         return 0
             + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Address)
             + FfiConverterOptionalTypeTonAddressString.INSTANCE.AllocationSize(value.CollectionAddress)
+            + FfiConverterOptionalTypeNftCollectionDescriptor.INSTANCE.AllocationSize(value.Collection)
             + FfiConverterOptionalTypeTonAddressString.INSTANCE.AllocationSize(value.OwnerAddress)
             + FfiConverterOptionalTypeTonAddressString.INSTANCE.AllocationSize(value.RealOwner)
             + FfiConverterOptionalTypeTonAddressString.INSTANCE.AllocationSize(value.SaleContractAddress)
@@ -7295,6 +8918,7 @@ class FfiConverterTypeNftItem: FfiConverterRustBuffer<NftItem> {
     public override void Write(NftItem value, BigEndianStream stream) {
             FfiConverterTypeTonAddressString.INSTANCE.Write(value.Address, stream);
             FfiConverterOptionalTypeTonAddressString.INSTANCE.Write(value.CollectionAddress, stream);
+            FfiConverterOptionalTypeNftCollectionDescriptor.INSTANCE.Write(value.Collection, stream);
             FfiConverterOptionalTypeTonAddressString.INSTANCE.Write(value.OwnerAddress, stream);
             FfiConverterOptionalTypeTonAddressString.INSTANCE.Write(value.RealOwner, stream);
             FfiConverterOptionalTypeTonAddressString.INSTANCE.Write(value.SaleContractAddress, stream);
@@ -7557,6 +9181,349 @@ class FfiConverterTypeNftTransferRequest: FfiConverterRustBuffer<NftTransferRequ
 
 
 /// <summary>
+/// A syntax-validated transfer invoice parsed from a `ton://transfer/` link.
+///
+/// This value is not an executable send request. Network policy, expiration,
+/// asset resolution, bounce selection, emulation, and user approval remain the
+/// responsibility of the later admission and send stages.
+/// </summary>
+/// <param name="Recipient">
+/// The Gram recipient or the jetton owner's account address.
+/// </param>
+/// <param name="Asset">
+/// The asset requested by the link.
+/// </param>
+/// <param name="Amount">
+/// The exact amount in the asset's elementary units, when supplied.
+/// </param>
+/// <param name="Payload">
+/// The optional decoded text or binary payload.
+/// </param>
+/// <param name="Expiration">
+/// The requested Unix expiration, or the engine-default policy when absent.
+/// </param>
+internal record ParsedTonTransferLink (
+    /// <summary>
+    /// The Gram recipient or the jetton owner's account address.
+    /// </summary>
+    TonAddressString Recipient, 
+    /// <summary>
+    /// The asset requested by the link.
+    /// </summary>
+    TonTransferAsset Asset, 
+    /// <summary>
+    /// The exact amount in the asset's elementary units, when supplied.
+    /// </summary>
+    UnsignedDecimalString? Amount, 
+    /// <summary>
+    /// The optional decoded text or binary payload.
+    /// </summary>
+    TonTransferPayload Payload, 
+    /// <summary>
+    /// The requested Unix expiration, or the engine-default policy when absent.
+    /// </summary>
+    SendExpiration Expiration
+) {
+}
+
+class FfiConverterTypeParsedTonTransferLink: FfiConverterRustBuffer<ParsedTonTransferLink> {
+    public static FfiConverterTypeParsedTonTransferLink INSTANCE = new FfiConverterTypeParsedTonTransferLink();
+
+    public override ParsedTonTransferLink Read(BigEndianStream stream) {
+        return new ParsedTonTransferLink(
+            Recipient: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
+            Asset: FfiConverterTypeTonTransferAsset.INSTANCE.Read(stream),
+            Amount: FfiConverterOptionalTypeUnsignedDecimalString.INSTANCE.Read(stream),
+            Payload: FfiConverterTypeTonTransferPayload.INSTANCE.Read(stream),
+            Expiration: FfiConverterTypeSendExpiration.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(ParsedTonTransferLink value) {
+        return 0
+            + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Recipient)
+            + FfiConverterTypeTonTransferAsset.INSTANCE.AllocationSize(value.Asset)
+            + FfiConverterOptionalTypeUnsignedDecimalString.INSTANCE.AllocationSize(value.Amount)
+            + FfiConverterTypeTonTransferPayload.INSTANCE.AllocationSize(value.Payload)
+            + FfiConverterTypeSendExpiration.INSTANCE.AllocationSize(value.Expiration);
+    }
+
+    public override void Write(ParsedTonTransferLink value, BigEndianStream stream) {
+            FfiConverterTypeTonAddressString.INSTANCE.Write(value.Recipient, stream);
+            FfiConverterTypeTonTransferAsset.INSTANCE.Write(value.Asset, stream);
+            FfiConverterOptionalTypeUnsignedDecimalString.INSTANCE.Write(value.Amount, stream);
+            FfiConverterTypeTonTransferPayload.INSTANCE.Write(value.Payload, stream);
+            FfiConverterTypeSendExpiration.INSTANCE.Write(value.Expiration, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Requests creation of the data needed for Wallet rev00 key rotation.
+/// </summary>
+/// <param name="ValidUntil">
+/// Unix timestamp covered by the current key's request signature.
+/// </param>
+/// <param name="MessageKind">
+/// Delivery channel and channel-specific request opcode.
+/// </param>
+internal record PrepareKeyRotationRequest (
+    /// <summary>
+    /// Unix timestamp covered by the current key's request signature.
+    /// </summary>
+    ulong ValidUntil, 
+    /// <summary>
+    /// Delivery channel and channel-specific request opcode.
+    /// </summary>
+    KeyRotationMessageKind MessageKind
+) {
+}
+
+class FfiConverterTypePrepareKeyRotationRequest: FfiConverterRustBuffer<PrepareKeyRotationRequest> {
+    public static FfiConverterTypePrepareKeyRotationRequest INSTANCE = new FfiConverterTypePrepareKeyRotationRequest();
+
+    public override PrepareKeyRotationRequest Read(BigEndianStream stream) {
+        return new PrepareKeyRotationRequest(
+            ValidUntil: FfiConverterUInt64.INSTANCE.Read(stream),
+            MessageKind: FfiConverterTypeKeyRotationMessageKind.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(PrepareKeyRotationRequest value) {
+        return 0
+            + FfiConverterUInt64.INSTANCE.AllocationSize(value.ValidUntil)
+            + FfiConverterTypeKeyRotationMessageKind.INSTANCE.AllocationSize(value.MessageKind);
+    }
+
+    public override void Write(PrepareKeyRotationRequest value, BigEndianStream stream) {
+            FfiConverterUInt64.INSTANCE.Write(value.ValidUntil, stream);
+            FfiConverterTypeKeyRotationMessageKind.INSTANCE.Write(value.MessageKind, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Requests both signed delivery forms for one wallet transfer.
+///
+/// The engine resolves one fresh wallet sequence number and one expiration
+/// timestamp, then signs the transfer as both an incoming external message and
+/// an owner-signed internal message. It does not submit or persist either BOC.
+/// </summary>
+/// <param name="OperationId">
+/// A unique identifier chosen by the application for the prepared transfer.
+/// </param>
+/// <param name="Intent">
+/// The immutable messages and expiration policy covered by both signatures.
+/// </param>
+internal record PrepareTransferRequest (
+    /// <summary>
+    /// A unique identifier chosen by the application for the prepared transfer.
+    /// </summary>
+    NonEmptyString OperationId, 
+    /// <summary>
+    /// The immutable messages and expiration policy covered by both signatures.
+    /// </summary>
+    SendIntent Intent
+) {
+}
+
+class FfiConverterTypePrepareTransferRequest: FfiConverterRustBuffer<PrepareTransferRequest> {
+    public static FfiConverterTypePrepareTransferRequest INSTANCE = new FfiConverterTypePrepareTransferRequest();
+
+    public override PrepareTransferRequest Read(BigEndianStream stream) {
+        return new PrepareTransferRequest(
+            OperationId: FfiConverterTypeNonEmptyString.INSTANCE.Read(stream),
+            Intent: FfiConverterTypeSendIntent.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(PrepareTransferRequest value) {
+        return 0
+            + FfiConverterTypeNonEmptyString.INSTANCE.AllocationSize(value.OperationId)
+            + FfiConverterTypeSendIntent.INSTANCE.AllocationSize(value.Intent);
+    }
+
+    public override void Write(PrepareTransferRequest value, BigEndianStream stream) {
+            FfiConverterTypeNonEmptyString.INSTANCE.Write(value.OperationId, stream);
+            FfiConverterTypeSendIntent.INSTANCE.Write(value.Intent, stream);
+    }
+}
+
+
+
+/// <summary>
+/// One-shot data prepared for a Wallet rev00 signing-key rotation.
+///
+/// This value does not mean that rotation succeeded on-chain. Before
+/// submission, the host must store `replacement_recovery_phrase` in protected
+/// storage. It must store `signed_boc` as a pending durable record. Words 13-24
+/// are the new signing half. Until chain state resolves the request, the host
+/// must block ordinary signing.
+/// </summary>
+/// <param name="ReplacementRecoveryPhrase">
+/// Full 24-word phrase that preserves the anchor and contains the new signing half.
+/// </param>
+/// <param name="NewPublicKey">
+/// New raw 32-byte Ed25519 signing public key stored by the contract on success.
+/// </param>
+/// <param name="SignedBoc">
+/// Complete external or relaxed internal signed message as a validated BOC.
+/// </param>
+/// <param name="Seqno">
+/// Sequence number covered by the signed request.
+/// </param>
+/// <param name="ValidUntil">
+/// Unix expiration timestamp covered by the signed request.
+/// </param>
+/// <param name="MessageKind">
+/// Delivery channel encoded into the request opcode.
+/// </param>
+internal record PreparedKeyRotation (
+    /// <summary>
+    /// Full 24-word phrase that preserves the anchor and contains the new signing half.
+    /// </summary>
+    RecoveryPhrase ReplacementRecoveryPhrase, 
+    /// <summary>
+    /// New raw 32-byte Ed25519 signing public key stored by the contract on success.
+    /// </summary>
+    byte[] NewPublicKey, 
+    /// <summary>
+    /// Complete external or relaxed internal signed message as a validated BOC.
+    /// </summary>
+    Boc SignedBoc, 
+    /// <summary>
+    /// Sequence number covered by the signed request.
+    /// </summary>
+    uint Seqno, 
+    /// <summary>
+    /// Unix expiration timestamp covered by the signed request.
+    /// </summary>
+    ulong ValidUntil, 
+    /// <summary>
+    /// Delivery channel encoded into the request opcode.
+    /// </summary>
+    KeyRotationMessageKind MessageKind
+) {
+}
+
+class FfiConverterTypePreparedKeyRotation: FfiConverterRustBuffer<PreparedKeyRotation> {
+    public static FfiConverterTypePreparedKeyRotation INSTANCE = new FfiConverterTypePreparedKeyRotation();
+
+    public override PreparedKeyRotation Read(BigEndianStream stream) {
+        return new PreparedKeyRotation(
+            ReplacementRecoveryPhrase: FfiConverterTypeRecoveryPhrase.INSTANCE.Read(stream),
+            NewPublicKey: FfiConverterByteArray.INSTANCE.Read(stream),
+            SignedBoc: FfiConverterTypeBoc.INSTANCE.Read(stream),
+            Seqno: FfiConverterUInt32.INSTANCE.Read(stream),
+            ValidUntil: FfiConverterUInt64.INSTANCE.Read(stream),
+            MessageKind: FfiConverterTypeKeyRotationMessageKind.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(PreparedKeyRotation value) {
+        return 0
+            + FfiConverterTypeRecoveryPhrase.INSTANCE.AllocationSize(value.ReplacementRecoveryPhrase)
+            + FfiConverterByteArray.INSTANCE.AllocationSize(value.NewPublicKey)
+            + FfiConverterTypeBoc.INSTANCE.AllocationSize(value.SignedBoc)
+            + FfiConverterUInt32.INSTANCE.AllocationSize(value.Seqno)
+            + FfiConverterUInt64.INSTANCE.AllocationSize(value.ValidUntil)
+            + FfiConverterTypeKeyRotationMessageKind.INSTANCE.AllocationSize(value.MessageKind);
+    }
+
+    public override void Write(PreparedKeyRotation value, BigEndianStream stream) {
+            FfiConverterTypeRecoveryPhrase.INSTANCE.Write(value.ReplacementRecoveryPhrase, stream);
+            FfiConverterByteArray.INSTANCE.Write(value.NewPublicKey, stream);
+            FfiConverterTypeBoc.INSTANCE.Write(value.SignedBoc, stream);
+            FfiConverterUInt32.INSTANCE.Write(value.Seqno, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.ValidUntil, stream);
+            FfiConverterTypeKeyRotationMessageKind.INSTANCE.Write(value.MessageKind, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Two signed delivery forms prepared from the same wallet state.
+///
+/// Both BOCs cover the same `seqno` and `valid_until`, so they are alternative
+/// representations of one transfer. The caller must hand off only the delivery
+/// form selected by its server. This result is not written to the send journal.
+/// </summary>
+/// <param name="OperationId">
+/// The application operation identifier.
+/// </param>
+/// <param name="ExternalBoc">
+/// Complete incoming external message for direct provider submission.
+/// </param>
+/// <param name="InternalBoc">
+/// Complete owner-signed internal message for a gas-paying relayer.
+/// </param>
+/// <param name="Seqno">
+/// Fresh wallet sequence number covered by both signed messages.
+/// </param>
+/// <param name="ValidUntil">
+/// Unix expiration timestamp covered by both signed messages.
+/// </param>
+internal record PreparedTransfer (
+    /// <summary>
+    /// The application operation identifier.
+    /// </summary>
+    NonEmptyString OperationId, 
+    /// <summary>
+    /// Complete incoming external message for direct provider submission.
+    /// </summary>
+    Boc ExternalBoc, 
+    /// <summary>
+    /// Complete owner-signed internal message for a gas-paying relayer.
+    /// </summary>
+    Boc InternalBoc, 
+    /// <summary>
+    /// Fresh wallet sequence number covered by both signed messages.
+    /// </summary>
+    uint Seqno, 
+    /// <summary>
+    /// Unix expiration timestamp covered by both signed messages.
+    /// </summary>
+    ulong ValidUntil
+) {
+}
+
+class FfiConverterTypePreparedTransfer: FfiConverterRustBuffer<PreparedTransfer> {
+    public static FfiConverterTypePreparedTransfer INSTANCE = new FfiConverterTypePreparedTransfer();
+
+    public override PreparedTransfer Read(BigEndianStream stream) {
+        return new PreparedTransfer(
+            OperationId: FfiConverterTypeNonEmptyString.INSTANCE.Read(stream),
+            ExternalBoc: FfiConverterTypeBoc.INSTANCE.Read(stream),
+            InternalBoc: FfiConverterTypeBoc.INSTANCE.Read(stream),
+            Seqno: FfiConverterUInt32.INSTANCE.Read(stream),
+            ValidUntil: FfiConverterUInt64.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(PreparedTransfer value) {
+        return 0
+            + FfiConverterTypeNonEmptyString.INSTANCE.AllocationSize(value.OperationId)
+            + FfiConverterTypeBoc.INSTANCE.AllocationSize(value.ExternalBoc)
+            + FfiConverterTypeBoc.INSTANCE.AllocationSize(value.InternalBoc)
+            + FfiConverterUInt32.INSTANCE.AllocationSize(value.Seqno)
+            + FfiConverterUInt64.INSTANCE.AllocationSize(value.ValidUntil);
+    }
+
+    public override void Write(PreparedTransfer value, BigEndianStream stream) {
+            FfiConverterTypeNonEmptyString.INSTANCE.Write(value.OperationId, stream);
+            FfiConverterTypeBoc.INSTANCE.Write(value.ExternalBoc, stream);
+            FfiConverterTypeBoc.INSTANCE.Write(value.InternalBoc, stream);
+            FfiConverterUInt32.INSTANCE.Write(value.Seqno, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.ValidUntil, stream);
+    }
+}
+
+
+
+/// <summary>
 /// A request to read and authorize access to protected secret bytes.
 /// </summary>
 /// <param name="SecretRef">
@@ -7711,12 +9678,21 @@ class FfiConverterTypeProtectedSecretStore: FfiConverterRustBuffer<ProtectedSecr
 /// deployment prefix is preserved, so `https://provider.example/toncenter`
 /// produces paths below `/toncenter/api/...`.
 /// Loopback HTTP URLs are accepted for local development networks.
+/// Supply an already serialized ASCII URL, with any path escaping applied
+/// and no credentials, query, or fragment. The engine does not normalize it.
+/// </param>
+/// <param name="DnsRootAddress">
+/// Optional TON DNS root resolver override.
+/// 
+/// When absent, the engine selects the built-in current root for the wallet
+/// network. Set an explicit address to update the resolver without changing
+/// the engine.
 /// </param>
 /// <param name="RequestTimeoutMs">
 /// End-to-end timeout applied to every provider request, in milliseconds.
 /// 
-/// The embedding HTTP host must enforce this deadline across connection,
-/// response headers, and response-body reads.
+/// The selected provider host must enforce this deadline across its
+/// complete HTTP, relay, or protocol-proxy call.
 /// </param>
 internal record ProviderConfig (
     /// <summary>
@@ -7726,13 +9702,23 @@ internal record ProviderConfig (
     /// deployment prefix is preserved, so `https://provider.example/toncenter`
     /// produces paths below `/toncenter/api/...`.
     /// Loopback HTTP URLs are accepted for local development networks.
+    /// Supply an already serialized ASCII URL, with any path escaping applied
+    /// and no credentials, query, or fragment. The engine does not normalize it.
     /// </summary>
     string ToncenterBaseUrl, 
     /// <summary>
+    /// Optional TON DNS root resolver override.
+    ///
+    /// When absent, the engine selects the built-in current root for the wallet
+    /// network. Set an explicit address to update the resolver without changing
+    /// the engine.
+    /// </summary>
+    TonAddressString? DnsRootAddress, 
+    /// <summary>
     /// End-to-end timeout applied to every provider request, in milliseconds.
     ///
-    /// The embedding HTTP host must enforce this deadline across connection,
-    /// response headers, and response-body reads.
+    /// The selected provider host must enforce this deadline across its
+    /// complete HTTP, relay, or protocol-proxy call.
     /// </summary>
     ulong RequestTimeoutMs
 ) {
@@ -7744,6 +9730,7 @@ class FfiConverterTypeProviderConfig: FfiConverterRustBuffer<ProviderConfig> {
     public override ProviderConfig Read(BigEndianStream stream) {
         return new ProviderConfig(
             ToncenterBaseUrl: FfiConverterString.INSTANCE.Read(stream),
+            DnsRootAddress: FfiConverterOptionalTypeTonAddressString.INSTANCE.Read(stream),
             RequestTimeoutMs: FfiConverterUInt64.INSTANCE.Read(stream)
         );
     }
@@ -7751,11 +9738,13 @@ class FfiConverterTypeProviderConfig: FfiConverterRustBuffer<ProviderConfig> {
     public override int AllocationSize(ProviderConfig value) {
         return 0
             + FfiConverterString.INSTANCE.AllocationSize(value.ToncenterBaseUrl)
+            + FfiConverterOptionalTypeTonAddressString.INSTANCE.AllocationSize(value.DnsRootAddress)
             + FfiConverterUInt64.INSTANCE.AllocationSize(value.RequestTimeoutMs);
     }
 
     public override void Write(ProviderConfig value, BigEndianStream stream) {
             FfiConverterString.INSTANCE.Write(value.ToncenterBaseUrl, stream);
+            FfiConverterOptionalTypeTonAddressString.INSTANCE.Write(value.DnsRootAddress, stream);
             FfiConverterUInt64.INSTANCE.Write(value.RequestTimeoutMs, stream);
     }
 }
@@ -7767,19 +9756,22 @@ class FfiConverterTypeProviderConfig: FfiConverterRustBuffer<ProviderConfig> {
 ///
 /// The UI must discard this value as soon as the recovery-phrase screen is
 /// dismissed. Neither `WalletDescriptor` nor `WalletSnapshot` contains it.
+///
+/// A newly created wallet has a 12-word phrase; the phrase becomes 24 words
+/// when the wallet's key is rotated.
 /// </summary>
 /// <param name="Phrase">
-/// The 24 recovery words in order, separated by one ASCII space.
+/// The recovery words in order, separated by one ASCII space.
 /// 
-/// Keeping the phrase in one allocation avoids 24 separately allocated
+/// Keeping the phrase in one allocation avoids separately allocated
 /// secret strings at the FFI boundary. Split it only while presenting
 /// individual words, then release those temporary views.
 /// </param>
 internal record RecoveryPhrase (
     /// <summary>
-    /// The 24 recovery words in order, separated by one ASCII space.
+    /// The recovery words in order, separated by one ASCII space.
     ///
-    /// Keeping the phrase in one allocation avoids 24 separately allocated
+    /// Keeping the phrase in one allocation avoids separately allocated
     /// secret strings at the FFI boundary. Split it only while presenting
     /// individual words, then release those temporary views.
     /// </summary>
@@ -7923,6 +9915,85 @@ class FfiConverterTypeResourceState: FfiConverterRustBuffer<ResourceState> {
     public override void Write(ResourceState value, BigEndianStream stream) {
             FfiConverterTypeResourcePhase.INSTANCE.Write(value.Phase, stream);
             FfiConverterOptionalTypeDomainError.INSTANCE.Write(value.Error, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Requests durable submission of an already signed external wallet message.
+///
+/// `seqno` and `valid_until` must be the exact values covered by `signed_boc`.
+/// They let the engine reconcile an ambiguous submission without parsing a
+/// wallet-version-specific body.
+/// </summary>
+/// <param name="OperationId">
+/// A unique idempotency identifier chosen by the application.
+/// </param>
+/// <param name="Force">
+/// Allows this submission to replace an unresolved durable send after confirmation.
+/// </param>
+/// <param name="SignedBoc">
+/// The complete signed external-message BOC.
+/// </param>
+/// <param name="Seqno">
+/// The wallet sequence number covered by the signed message.
+/// </param>
+/// <param name="ValidUntil">
+/// The Unix expiration timestamp covered by the signed message.
+/// </param>
+internal record SendBocRequest (
+    /// <summary>
+    /// A unique idempotency identifier chosen by the application.
+    /// </summary>
+    NonEmptyString OperationId, 
+    /// <summary>
+    /// Allows this submission to replace an unresolved durable send after confirmation.
+    /// </summary>
+    bool Force, 
+    /// <summary>
+    /// The complete signed external-message BOC.
+    /// </summary>
+    Boc SignedBoc, 
+    /// <summary>
+    /// The wallet sequence number covered by the signed message.
+    /// </summary>
+    uint Seqno, 
+    /// <summary>
+    /// The Unix expiration timestamp covered by the signed message.
+    /// </summary>
+    ulong ValidUntil
+) {
+}
+
+class FfiConverterTypeSendBocRequest: FfiConverterRustBuffer<SendBocRequest> {
+    public static FfiConverterTypeSendBocRequest INSTANCE = new FfiConverterTypeSendBocRequest();
+
+    public override SendBocRequest Read(BigEndianStream stream) {
+        return new SendBocRequest(
+            OperationId: FfiConverterTypeNonEmptyString.INSTANCE.Read(stream),
+            Force: FfiConverterBoolean.INSTANCE.Read(stream),
+            SignedBoc: FfiConverterTypeBoc.INSTANCE.Read(stream),
+            Seqno: FfiConverterUInt32.INSTANCE.Read(stream),
+            ValidUntil: FfiConverterUInt64.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(SendBocRequest value) {
+        return 0
+            + FfiConverterTypeNonEmptyString.INSTANCE.AllocationSize(value.OperationId)
+            + FfiConverterBoolean.INSTANCE.AllocationSize(value.Force)
+            + FfiConverterTypeBoc.INSTANCE.AllocationSize(value.SignedBoc)
+            + FfiConverterUInt32.INSTANCE.AllocationSize(value.Seqno)
+            + FfiConverterUInt64.INSTANCE.AllocationSize(value.ValidUntil);
+    }
+
+    public override void Write(SendBocRequest value, BigEndianStream stream) {
+            FfiConverterTypeNonEmptyString.INSTANCE.Write(value.OperationId, stream);
+            FfiConverterBoolean.INSTANCE.Write(value.Force, stream);
+            FfiConverterTypeBoc.INSTANCE.Write(value.SignedBoc, stream);
+            FfiConverterUInt32.INSTANCE.Write(value.Seqno, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.ValidUntil, stream);
     }
 }
 
@@ -8328,6 +10399,9 @@ class FfiConverterTypeSendMessage: FfiConverterRustBuffer<SendMessage> {
 /// </summary>
 /// <param name="Messages">
 /// The complete ordered outgoing message batch that was emulated.
+/// 
+/// This is empty for [`crate::WalletClient::preview_send_boc`] because a
+/// caller-supplied signed message is preserved as an opaque BOC.
 /// </param>
 /// <param name="ValidUntil">
 /// The resolved wallet message expiration timestamp used by this emulation.
@@ -8335,7 +10409,10 @@ class FfiConverterTypeSendMessage: FfiConverterRustBuffer<SendMessage> {
 /// and preserves the same timestamp for `Exact`.
 /// </param>
 /// <param name="MessageBocBase64">
-/// The complete fake-signed external message submitted for emulation.
+/// The complete external message submitted for emulation.
+/// 
+/// Intent previews use a fake signature; BOC previews preserve the caller's
+/// exact signed message.
 /// The value is a standard padded Base64-encoded BOC. Clients can pass it
 /// to an independent emulator or explorer without reconstructing the message.
 /// </param>
@@ -8345,6 +10422,9 @@ class FfiConverterTypeSendMessage: FfiConverterRustBuffer<SendMessage> {
 internal record SendPreview (
     /// <summary>
     /// The complete ordered outgoing message batch that was emulated.
+    ///
+    /// This is empty for [`crate::WalletClient::preview_send_boc`] because a
+    /// caller-supplied signed message is preserved as an opaque BOC.
     /// </summary>
     SendMessage[] Messages, 
     /// <summary>
@@ -8354,7 +10434,10 @@ internal record SendPreview (
     /// </summary>
     ulong ValidUntil, 
     /// <summary>
-    /// The complete fake-signed external message submitted for emulation.
+    /// The complete external message submitted for emulation.
+    ///
+    /// Intent previews use a fake signature; BOC previews preserve the caller's
+    /// exact signed message.
     /// The value is a standard padded Base64-encoded BOC. Clients can pass it
     /// to an independent emulator or explorer without reconstructing the message.
     /// </summary>
@@ -8801,6 +10884,61 @@ class FfiConverterTypeSignMessageResult: FfiConverterRustBuffer<SignMessageResul
             FfiConverterTypeBoc.INSTANCE.Write(value.InternalBoc, stream);
             FfiConverterUInt64.INSTANCE.Write(value.ValidUntil, stream);
             FfiConverterTypeSendPhase.INSTANCE.Write(value.Phase, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Parsed TON address identity and any flags carried by its input representation.
+/// </summary>
+/// <param name="Raw">
+/// Canonical lowercase `workchain:64-hex` account identity.
+/// </param>
+/// <param name="Workchain">
+/// Signed workchain identifier from the address.
+/// </param>
+/// <param name="Format">
+/// Representation and flags used by the parsed input.
+/// </param>
+internal record TonAddressInfo (
+    /// <summary>
+    /// Canonical lowercase `workchain:64-hex` account identity.
+    /// </summary>
+    string Raw, 
+    /// <summary>
+    /// Signed workchain identifier from the address.
+    /// </summary>
+    int Workchain, 
+    /// <summary>
+    /// Representation and flags used by the parsed input.
+    /// </summary>
+    TonAddressFormat Format
+) {
+}
+
+class FfiConverterTypeTonAddressInfo: FfiConverterRustBuffer<TonAddressInfo> {
+    public static FfiConverterTypeTonAddressInfo INSTANCE = new FfiConverterTypeTonAddressInfo();
+
+    public override TonAddressInfo Read(BigEndianStream stream) {
+        return new TonAddressInfo(
+            Raw: FfiConverterString.INSTANCE.Read(stream),
+            Workchain: FfiConverterInt32.INSTANCE.Read(stream),
+            Format: FfiConverterTypeTonAddressFormat.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonAddressInfo value) {
+        return 0
+            + FfiConverterString.INSTANCE.AllocationSize(value.Raw)
+            + FfiConverterInt32.INSTANCE.AllocationSize(value.Workchain)
+            + FfiConverterTypeTonAddressFormat.INSTANCE.AllocationSize(value.Format);
+    }
+
+    public override void Write(TonAddressInfo value, BigEndianStream stream) {
+            FfiConverterString.INSTANCE.Write(value.Raw, stream);
+            FfiConverterInt32.INSTANCE.Write(value.Workchain, stream);
+            FfiConverterTypeTonAddressFormat.INSTANCE.Write(value.Format, stream);
     }
 }
 
@@ -9460,10 +11598,12 @@ class FfiConverterTypeWalletClientConfig: FfiConverterRustBuffer<WalletClientCon
 /// The derived friendly non-bounceable TON address.
 /// </param>
 /// <param name="PublicKey">
-/// The raw 32-byte Ed25519 public key used by the wallet contract.
+/// The raw 32-byte Ed25519 anchor public key of the rotation mnemonic.
 /// 
-/// This is safe to persist. It lets the engine emulate a first deployment
-/// before it asks the host to unlock the recovery phrase.
+/// The anchor key determines the wallet account address and never
+/// changes, so this is safe to persist. It lets the engine emulate a
+/// first deployment before it asks the host to unlock the recovery
+/// phrase.
 /// </param>
 /// <param name="Network">
 /// The network used for derivation and future operations.
@@ -9481,10 +11621,12 @@ internal record WalletDescriptor (
     /// </summary>
     TonAddressString Address, 
     /// <summary>
-    /// The raw 32-byte Ed25519 public key used by the wallet contract.
+    /// The raw 32-byte Ed25519 anchor public key of the rotation mnemonic.
     ///
-    /// This is safe to persist. It lets the engine emulate a first deployment
-    /// before it asks the host to unlock the recovery phrase.
+    /// The anchor key determines the wallet account address and never
+    /// changes, so this is safe to persist. It lets the engine emulate a
+    /// first deployment before it asks the host to unlock the recovery
+    /// phrase.
     /// </summary>
     byte[] PublicKey, 
     /// <summary>
@@ -9835,6 +11977,57 @@ class FfiConverterTypeActivityDirection: FfiConverterRustBuffer<ActivityDirectio
 
 
 /// <summary>
+/// The on-chain result of the transaction or internal message.
+/// </summary>
+internal enum ActivityStatus: int {
+    /// <summary>
+    /// The transaction completed and this message was not a bounce.
+    /// </summary>
+    Success,
+    /// <summary>
+    /// The transaction was aborted while processing the message.
+    /// </summary>
+    Failed,
+    /// <summary>
+    /// The internal message has the on-chain `bounced` flag.
+    /// </summary>
+    Bounced
+}
+
+class FfiConverterTypeActivityStatus: FfiConverterRustBuffer<ActivityStatus> {
+    public static FfiConverterTypeActivityStatus INSTANCE = new FfiConverterTypeActivityStatus();
+
+    public override ActivityStatus Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1: return ActivityStatus.Success;
+            case 2: return ActivityStatus.Failed;
+            case 3: return ActivityStatus.Bounced;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeActivityStatus.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(ActivityStatus value) {
+        return 4;
+    }
+
+    public override void Write(ActivityStatus value, BigEndianStream stream) {
+        switch (value) {
+            case ActivityStatus.Success: stream.WriteInt(1); break;
+            case ActivityStatus.Failed: stream.WriteInt(2); break;
+            case ActivityStatus.Bounced: stream.WriteInt(3); break;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeActivityStatus.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
 /// The broad source of a provider or host error.
 /// </summary>
 internal enum ErrorCategory: int {
@@ -9973,7 +12166,7 @@ class FfiConverterTypeErrorCode: FfiConverterRustBuffer<ErrorCode> {
 
 
 /// <summary>
-/// An HTTP failure returned by [`crate::WalletHttpHost`].
+/// An HTTP failure returned by [`WalletHttpHost`].
 /// </summary>
 internal class HttpHostException: UniffiException {
     HttpHostException() : base() {}
@@ -10005,6 +12198,12 @@ internal class HttpHostException: UniffiException {
     
 
     
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_httphosterror_uniffi_trait_display(FfiConverterTypeHttpHostError.INSTANCE.Lower(this),  ref _status)
+));
+    }
 }
 
 class FfiConverterTypeHttpHostError : FfiConverterRustBuffer<HttpHostException>, CallStatusErrorHandler<HttpHostException> {
@@ -10216,6 +12415,12 @@ internal class JournalHostException: UniffiException {
     
 
     
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_journalhosterror_uniffi_trait_display(FfiConverterTypeJournalHostError.INSTANCE.Lower(this),  ref _status)
+));
+    }
 }
 
 class FfiConverterTypeJournalHostError : FfiConverterRustBuffer<JournalHostException>, CallStatusErrorHandler<JournalHostException> {
@@ -10309,6 +12514,111 @@ class FfiConverterTypeJournalHostErrorKind: FfiConverterRustBuffer<JournalHostEr
             case JournalHostErrorKind.Cancelled: stream.WriteInt(3); break;
             case JournalHostErrorKind.Other: stream.WriteInt(4); break;
             default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeJournalHostErrorKind.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// Selects how the signed key-rotation request will reach Wallet rev00.
+/// </summary>
+internal enum KeyRotationMessageKind: int {
+    /// <summary>
+    /// Complete incoming external message for direct provider submission.
+    /// </summary>
+    External,
+    /// <summary>
+    /// Complete owner-signed internal message for a gas-paying relayer.
+    /// </summary>
+    Internal
+}
+
+class FfiConverterTypeKeyRotationMessageKind: FfiConverterRustBuffer<KeyRotationMessageKind> {
+    public static FfiConverterTypeKeyRotationMessageKind INSTANCE = new FfiConverterTypeKeyRotationMessageKind();
+
+    public override KeyRotationMessageKind Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1: return KeyRotationMessageKind.External;
+            case 2: return KeyRotationMessageKind.Internal;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeKeyRotationMessageKind.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(KeyRotationMessageKind value) {
+        return 4;
+    }
+
+    public override void Write(KeyRotationMessageKind value, BigEndianStream stream) {
+        switch (value) {
+            case KeyRotationMessageKind.External: stream.WriteInt(1); break;
+            case KeyRotationMessageKind.Internal: stream.WriteInt(2); break;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeKeyRotationMessageKind.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// A recovery-phrase scheme recognized by [`detect_mnemonic_schemes`].
+///
+/// The names follow
+/// [TEP-0003](https://github.com/ton-blockchain/TEPs/blob/master/text/0003-wallets.md).
+/// </summary>
+internal enum MnemonicScheme: int {
+    /// <summary>
+    /// A rotation mnemonic (TEP-0003 section 3.3): 12 words before the
+    /// wallet's first key rotation or 24 words after it. The only scheme
+    /// wallet import accepts; later rotations replace the signing half.
+    /// </summary>
+    Rotation,
+    /// <summary>
+    /// A passwordless legacy 24-word TON mnemonic (TEP-0003 section 3.1).
+    /// Recognized so the application can explain the rejection; never
+    /// imported, and no key is derived from it.
+    /// </summary>
+    Ton,
+    /// <summary>
+    /// A standard 24-word BIP-39 phrase - the Multichain mnemonic of TEP-0003
+    /// section 3.2. Recognized so the application can explain the rejection;
+    /// never imported, and no key is derived from it.
+    /// </summary>
+    Bip39
+}
+
+class FfiConverterTypeMnemonicScheme: FfiConverterRustBuffer<MnemonicScheme> {
+    public static FfiConverterTypeMnemonicScheme INSTANCE = new FfiConverterTypeMnemonicScheme();
+
+    public override MnemonicScheme Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1: return MnemonicScheme.Rotation;
+            case 2: return MnemonicScheme.Ton;
+            case 3: return MnemonicScheme.Bip39;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeMnemonicScheme.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(MnemonicScheme value) {
+        return 4;
+    }
+
+    public override void Write(MnemonicScheme value, BigEndianStream stream) {
+        switch (value) {
+            case MnemonicScheme.Rotation: stream.WriteInt(1); break;
+            case MnemonicScheme.Ton: stream.WriteInt(2); break;
+            case MnemonicScheme.Bip39: stream.WriteInt(3); break;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeMnemonicScheme.Write()", value));
         }
     }
 }
@@ -10600,6 +12910,12 @@ internal class ProtectedSecretHostException: UniffiException {
     
 
     
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_protectedsecrethosterror_uniffi_trait_display(FfiConverterTypeProtectedSecretHostError.INSTANCE.Lower(this),  ref _status)
+));
+    }
 }
 
 class FfiConverterTypeProtectedSecretHostError : FfiConverterRustBuffer<ProtectedSecretHostException>, CallStatusErrorHandler<ProtectedSecretHostException> {
@@ -10840,6 +13156,18 @@ internal enum SecretAccessReason: int {
     /// </summary>
     SignTonConnectProof,
     /// <summary>
+    /// The engine needs the current mnemonic to prepare a signing-key rotation.
+    /// </summary>
+    PrepareKeyRotation,
+    /// <summary>
+    /// The engine needs the mnemonic to encrypt a transfer comment.
+    /// </summary>
+    EncryptComment,
+    /// <summary>
+    /// The engine needs the mnemonic to decrypt a transfer comment.
+    /// </summary>
+    DecryptComment,
+    /// <summary>
     /// The user requested the recovery phrase.
     /// </summary>
     RevealRecoveryPhrase
@@ -10854,7 +13182,10 @@ class FfiConverterTypeSecretAccessReason: FfiConverterRustBuffer<SecretAccessRea
             case 1: return SecretAccessReason.CreateWallet;
             case 2: return SecretAccessReason.SignTransfer;
             case 3: return SecretAccessReason.SignTonConnectProof;
-            case 4: return SecretAccessReason.RevealRecoveryPhrase;
+            case 4: return SecretAccessReason.PrepareKeyRotation;
+            case 5: return SecretAccessReason.EncryptComment;
+            case 6: return SecretAccessReason.DecryptComment;
+            case 7: return SecretAccessReason.RevealRecoveryPhrase;
             default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeSecretAccessReason.Read()", value));
         }
     }
@@ -10868,7 +13199,10 @@ class FfiConverterTypeSecretAccessReason: FfiConverterRustBuffer<SecretAccessRea
             case SecretAccessReason.CreateWallet: stream.WriteInt(1); break;
             case SecretAccessReason.SignTransfer: stream.WriteInt(2); break;
             case SecretAccessReason.SignTonConnectProof: stream.WriteInt(3); break;
-            case SecretAccessReason.RevealRecoveryPhrase: stream.WriteInt(4); break;
+            case SecretAccessReason.PrepareKeyRotation: stream.WriteInt(4); break;
+            case SecretAccessReason.EncryptComment: stream.WriteInt(5); break;
+            case SecretAccessReason.DecryptComment: stream.WriteInt(6); break;
+            case SecretAccessReason.RevealRecoveryPhrase: stream.WriteInt(7); break;
             default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeSecretAccessReason.Write()", value));
         }
     }
@@ -11257,6 +13591,324 @@ class FfiConverterTypeSendPhase: FfiConverterRustBuffer<SendPhase> {
 
 
 /// <summary>
+/// A failure returned by [`WalletStatuslessHost`].
+/// </summary>
+internal class StatuslessHostException: UniffiException {
+    StatuslessHostException() : base() {}
+    StatuslessHostException(String @Message) : base(@Message) {}
+
+    // Each variant is a nested class
+    
+    /// <summary>
+    /// Reports a classified transport failure with a safe diagnostic message.
+    /// </summary>
+    
+    public class Failed : StatuslessHostException {
+        // Members
+        public StatuslessHostErrorKind @kind;
+        public string @diagnostic;
+
+        // Constructor
+        public Failed(
+                StatuslessHostErrorKind @kind, 
+                string @diagnostic) : base(
+                "@kind" + "=" + @kind+ ", " +
+                "@diagnostic" + "=" + @diagnostic) {
+
+            this.@kind = @kind;
+
+            this.@diagnostic = @diagnostic;
+        }
+    }
+    
+
+    
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_statuslesshosterror_uniffi_trait_display(FfiConverterTypeStatuslessHostError.INSTANCE.Lower(this),  ref _status)
+));
+    }
+}
+
+class FfiConverterTypeStatuslessHostError : FfiConverterRustBuffer<StatuslessHostException>, CallStatusErrorHandler<StatuslessHostException> {
+    public static FfiConverterTypeStatuslessHostError INSTANCE = new FfiConverterTypeStatuslessHostError();
+
+    public override StatuslessHostException Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new StatuslessHostException.Failed(
+                    FfiConverterTypeStatuslessHostErrorKind.INSTANCE.Read(stream),
+                    FfiConverterString.INSTANCE.Read(stream));
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeStatuslessHostError.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(StatuslessHostException value) {
+        switch (value) {
+
+            case StatuslessHostException.Failed variant_value:
+                return 4
+                    + FfiConverterTypeStatuslessHostErrorKind.INSTANCE.AllocationSize(variant_value.@kind)
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeStatuslessHostError.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(StatuslessHostException value, BigEndianStream stream) {
+        switch (value) {
+            case StatuslessHostException.Failed variant_value:
+                stream.WriteInt(1);
+                FfiConverterTypeStatuslessHostErrorKind.INSTANCE.Write(variant_value.@kind, stream);
+                FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeStatuslessHostError.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+/// <summary>
+/// Classifies a failure reported by a status-less provider host.
+/// </summary>
+internal enum StatuslessHostErrorKind: int {
+    /// <summary>
+    /// No network connection is available.
+    /// </summary>
+    Offline,
+    /// <summary>
+    /// The request exceeded the host deadline.
+    /// </summary>
+    Timeout,
+    /// <summary>
+    /// An established relay or proxy connection ended before completion.
+    /// </summary>
+    ConnectionLost,
+    /// <summary>
+    /// The request violated a host security policy.
+    /// </summary>
+    PolicyViolation,
+    /// <summary>
+    /// The response exceeded a limit imposed by the host.
+    /// </summary>
+    ResponseTooLarge,
+    /// <summary>
+    /// The host cancelled the request.
+    /// </summary>
+    Cancelled,
+    /// <summary>
+    /// The failure does not match another kind.
+    /// </summary>
+    Other
+}
+
+class FfiConverterTypeStatuslessHostErrorKind: FfiConverterRustBuffer<StatuslessHostErrorKind> {
+    public static FfiConverterTypeStatuslessHostErrorKind INSTANCE = new FfiConverterTypeStatuslessHostErrorKind();
+
+    public override StatuslessHostErrorKind Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1: return StatuslessHostErrorKind.Offline;
+            case 2: return StatuslessHostErrorKind.Timeout;
+            case 3: return StatuslessHostErrorKind.ConnectionLost;
+            case 4: return StatuslessHostErrorKind.PolicyViolation;
+            case 5: return StatuslessHostErrorKind.ResponseTooLarge;
+            case 6: return StatuslessHostErrorKind.Cancelled;
+            case 7: return StatuslessHostErrorKind.Other;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeStatuslessHostErrorKind.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(StatuslessHostErrorKind value) {
+        return 4;
+    }
+
+    public override void Write(StatuslessHostErrorKind value, BigEndianStream stream) {
+        switch (value) {
+            case StatuslessHostErrorKind.Offline: stream.WriteInt(1); break;
+            case StatuslessHostErrorKind.Timeout: stream.WriteInt(2); break;
+            case StatuslessHostErrorKind.ConnectionLost: stream.WriteInt(3); break;
+            case StatuslessHostErrorKind.PolicyViolation: stream.WriteInt(4); break;
+            case StatuslessHostErrorKind.ResponseTooLarge: stream.WriteInt(5); break;
+            case StatuslessHostErrorKind.Cancelled: stream.WriteInt(6); break;
+            case StatuslessHostErrorKind.Other: stream.WriteInt(7); break;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeStatuslessHostErrorKind.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// Reports invalid address text or a raw address that cannot use TEP-2 formatting.
+/// </summary>
+internal class TonAddressException: UniffiException {
+    TonAddressException() : base() {}
+    TonAddressException(String @Message) : base(@Message) {}
+
+    // Each variant is a nested class
+    
+    /// <summary>
+    /// The input is neither a valid raw address nor a valid TEP-2 friendly address.
+    /// </summary>
+    public class InvalidAddress : TonAddressException {
+        public InvalidAddress() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// The workchain cannot be encoded by the supported TEP-2 friendly format.
+    /// </summary>
+    public class UnsupportedWorkchain : TonAddressException {
+        public UnsupportedWorkchain() : base() {}
+    }
+    
+    
+
+    
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonaddresserror_uniffi_trait_display(FfiConverterTypeTonAddressError.INSTANCE.Lower(this),  ref _status)
+));
+    }
+}
+
+class FfiConverterTypeTonAddressError : FfiConverterRustBuffer<TonAddressException>, CallStatusErrorHandler<TonAddressException> {
+    public static FfiConverterTypeTonAddressError INSTANCE = new FfiConverterTypeTonAddressError();
+
+    public override TonAddressException Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonAddressException.InvalidAddress();
+            case 2:
+                return new TonAddressException.UnsupportedWorkchain();
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeTonAddressError.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonAddressException value) {
+        switch (value) {
+
+            case TonAddressException.InvalidAddress variant_value:
+                return 4;
+
+            case TonAddressException.UnsupportedWorkchain variant_value:
+                return 4;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeTonAddressError.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonAddressException value, BigEndianStream stream) {
+        switch (value) {
+            case TonAddressException.InvalidAddress variant_value:
+                stream.WriteInt(1);
+                break;
+            case TonAddressException.UnsupportedWorkchain variant_value:
+                stream.WriteInt(2);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeTonAddressError.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+/// <summary>
+/// Selects a raw representation or a user-friendly representation with flags.
+/// </summary>
+internal record TonAddressFormat {
+    
+    /// <summary>
+    /// `workchain:64-hex` without display or network flags.
+    /// </summary>
+    public record Raw: TonAddressFormat {}
+    
+    
+    /// <summary>
+    /// TEP-2 user-friendly Base64 with a checksum and display flags.
+    /// </summary>
+    public record UserFriendly (
+        bool Bounceable,
+        bool Testnet
+    ) : TonAddressFormat {}
+    
+
+    
+}
+
+class FfiConverterTypeTonAddressFormat : FfiConverterRustBuffer<TonAddressFormat>{
+    public static FfiConverterRustBuffer<TonAddressFormat> INSTANCE = new FfiConverterTypeTonAddressFormat();
+
+    public override TonAddressFormat Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonAddressFormat.Raw(
+                );
+            case 2:
+                return new TonAddressFormat.UserFriendly(
+                    FfiConverterBoolean.INSTANCE.Read(stream),
+                    FfiConverterBoolean.INSTANCE.Read(stream)
+                );
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonAddressFormat.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonAddressFormat value) {
+        switch (value) {
+            case TonAddressFormat.Raw variant_value:
+                return 4;
+            case TonAddressFormat.UserFriendly variant_value:
+                return 4
+                    + FfiConverterBoolean.INSTANCE.AllocationSize(variant_value.Bounceable)
+                    + FfiConverterBoolean.INSTANCE.AllocationSize(variant_value.Testnet);
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonAddressFormat.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonAddressFormat value, BigEndianStream stream) {
+        switch (value) {
+            case TonAddressFormat.Raw variant_value:
+                stream.WriteInt(1);
+                break;
+            case TonAddressFormat.UserFriendly variant_value:
+                stream.WriteInt(2);
+                FfiConverterBoolean.INSTANCE.Write(variant_value.Bounceable, stream);
+                FfiConverterBoolean.INSTANCE.Write(variant_value.Testnet, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonAddressFormat.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
 /// Runtime platform advertised as the TypeScript protocol's `DeviceInfo.platform`.
 ///
 /// This is deliberately different from wallets-list platforms such as `ios`,
@@ -11571,6 +14223,12 @@ internal class TonConnectSessionException: UniffiException {
     
 
     
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectsessionerror_uniffi_trait_display(FfiConverterTypeTonConnectSessionError.INSTANCE.Lower(this),  ref _status)
+));
+    }
 }
 
 class FfiConverterTypeTonConnectSessionError : FfiConverterRustBuffer<TonConnectSessionException>, CallStatusErrorHandler<TonConnectSessionException> {
@@ -11666,6 +14324,429 @@ class FfiConverterTypeTonConnectSessionPhase: FfiConverterRustBuffer<TonConnectS
 
 
 /// <summary>
+/// The asset selected by a parsed TON transfer link.
+/// </summary>
+internal record TonTransferAsset {
+    
+    /// <summary>
+    /// Transfer Gram.
+    /// </summary>
+    public record Gram: TonTransferAsset {}
+    
+    
+    /// <summary>
+    /// Transfer a jetton identified by its master contract.
+    /// </summary>
+    public record Jetton (
+        TonAddressString Master
+    ) : TonTransferAsset {}
+    
+
+    
+}
+
+class FfiConverterTypeTonTransferAsset : FfiConverterRustBuffer<TonTransferAsset>{
+    public static FfiConverterRustBuffer<TonTransferAsset> INSTANCE = new FfiConverterTypeTonTransferAsset();
+
+    public override TonTransferAsset Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonTransferAsset.Gram(
+                );
+            case 2:
+                return new TonTransferAsset.Jetton(
+                    FfiConverterTypeTonAddressString.INSTANCE.Read(stream)
+                );
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonTransferAsset.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonTransferAsset value) {
+        switch (value) {
+            case TonTransferAsset.Gram variant_value:
+                return 4;
+            case TonTransferAsset.Jetton variant_value:
+                return 4
+                    + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(variant_value.Master);
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonTransferAsset.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonTransferAsset value, BigEndianStream stream) {
+        switch (value) {
+            case TonTransferAsset.Gram variant_value:
+                stream.WriteInt(1);
+                break;
+            case TonTransferAsset.Jetton variant_value:
+                stream.WriteInt(2);
+                FfiConverterTypeTonAddressString.INSTANCE.Write(variant_value.Master, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonTransferAsset.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// Reports why a `ton://transfer/` link could not be parsed.
+/// </summary>
+internal class TonTransferLinkException: UniffiException {
+    TonTransferLinkException() : base() {}
+    TonTransferLinkException(String @Message) : base(@Message) {}
+
+    // Each variant is a nested class
+    
+    /// <summary>
+    /// The URI belongs to a different scheme or command.
+    /// </summary>
+    public class NotTonTransfer : TonTransferLinkException {
+        public NotTonTransfer() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// The URI structure or encoding is invalid.
+    /// </summary>
+    public class InvalidUrl : TonTransferLinkException {
+        public InvalidUrl() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// The transfer command has no recipient path segment.
+    /// </summary>
+    public class MissingRecipient : TonTransferLinkException {
+        public MissingRecipient() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// The recipient is not a valid TON account address.
+    /// </summary>
+    public class InvalidRecipient : TonTransferLinkException {
+        public InvalidRecipient() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// A singleton baseline query parameter occurs more than once.
+    /// </summary>
+    
+    public class DuplicateParameter : TonTransferLinkException {
+        // Members
+        public string @name;
+
+        // Constructor
+        public DuplicateParameter(
+                string @name) : base(
+                "@name" + "=" + @name) {
+
+            this.@name = @name;
+        }
+    }
+    
+    /// <summary>
+    /// The strict baseline does not recognize a query parameter.
+    /// </summary>
+    
+    public class UnsupportedParameter : TonTransferLinkException {
+        // Members
+        public string @name;
+
+        // Constructor
+        public UnsupportedParameter(
+                string @name) : base(
+                "@name" + "=" + @name) {
+
+            this.@name = @name;
+        }
+    }
+    
+    /// <summary>
+    /// `amount` is not a canonical unsigned decimal integer.
+    /// </summary>
+    public class InvalidAmount : TonTransferLinkException {
+        public InvalidAmount() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// `exp` is not a canonical unsigned `u64` Unix timestamp.
+    /// </summary>
+    public class InvalidExpiration : TonTransferLinkException {
+        public InvalidExpiration() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// `jetton` is not a valid TON account address.
+    /// </summary>
+    public class InvalidJettonMaster : TonTransferLinkException {
+        public InvalidJettonMaster() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// `bin` is not standard Base64 containing one valid BOC root.
+    /// </summary>
+    public class InvalidBinaryPayload : TonTransferLinkException {
+        public InvalidBinaryPayload() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// `text` and `bin` cannot both define the payload.
+    /// </summary>
+    public class ConflictingPayloads : TonTransferLinkException {
+        public ConflictingPayloads() : base() {}
+    }
+    
+    
+    /// <summary>
+    /// Strict baseline mode does not define the meaning of `bin` for a jetton.
+    /// </summary>
+    public class BinaryJettonConflict : TonTransferLinkException {
+        public BinaryJettonConflict() : base() {}
+    }
+    
+    
+
+    
+}
+
+class FfiConverterTypeTonTransferLinkError : FfiConverterRustBuffer<TonTransferLinkException>, CallStatusErrorHandler<TonTransferLinkException> {
+    public static FfiConverterTypeTonTransferLinkError INSTANCE = new FfiConverterTypeTonTransferLinkError();
+
+    public override TonTransferLinkException Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonTransferLinkException.NotTonTransfer();
+            case 2:
+                return new TonTransferLinkException.InvalidUrl();
+            case 3:
+                return new TonTransferLinkException.MissingRecipient();
+            case 4:
+                return new TonTransferLinkException.InvalidRecipient();
+            case 5:
+                return new TonTransferLinkException.DuplicateParameter(
+                    FfiConverterString.INSTANCE.Read(stream));
+            case 6:
+                return new TonTransferLinkException.UnsupportedParameter(
+                    FfiConverterString.INSTANCE.Read(stream));
+            case 7:
+                return new TonTransferLinkException.InvalidAmount();
+            case 8:
+                return new TonTransferLinkException.InvalidExpiration();
+            case 9:
+                return new TonTransferLinkException.InvalidJettonMaster();
+            case 10:
+                return new TonTransferLinkException.InvalidBinaryPayload();
+            case 11:
+                return new TonTransferLinkException.ConflictingPayloads();
+            case 12:
+                return new TonTransferLinkException.BinaryJettonConflict();
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeTonTransferLinkError.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonTransferLinkException value) {
+        switch (value) {
+
+            case TonTransferLinkException.NotTonTransfer variant_value:
+                return 4;
+
+            case TonTransferLinkException.InvalidUrl variant_value:
+                return 4;
+
+            case TonTransferLinkException.MissingRecipient variant_value:
+                return 4;
+
+            case TonTransferLinkException.InvalidRecipient variant_value:
+                return 4;
+
+            case TonTransferLinkException.DuplicateParameter variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@name);
+
+            case TonTransferLinkException.UnsupportedParameter variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@name);
+
+            case TonTransferLinkException.InvalidAmount variant_value:
+                return 4;
+
+            case TonTransferLinkException.InvalidExpiration variant_value:
+                return 4;
+
+            case TonTransferLinkException.InvalidJettonMaster variant_value:
+                return 4;
+
+            case TonTransferLinkException.InvalidBinaryPayload variant_value:
+                return 4;
+
+            case TonTransferLinkException.ConflictingPayloads variant_value:
+                return 4;
+
+            case TonTransferLinkException.BinaryJettonConflict variant_value:
+                return 4;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeTonTransferLinkError.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonTransferLinkException value, BigEndianStream stream) {
+        switch (value) {
+            case TonTransferLinkException.NotTonTransfer variant_value:
+                stream.WriteInt(1);
+                break;
+            case TonTransferLinkException.InvalidUrl variant_value:
+                stream.WriteInt(2);
+                break;
+            case TonTransferLinkException.MissingRecipient variant_value:
+                stream.WriteInt(3);
+                break;
+            case TonTransferLinkException.InvalidRecipient variant_value:
+                stream.WriteInt(4);
+                break;
+            case TonTransferLinkException.DuplicateParameter variant_value:
+                stream.WriteInt(5);
+                FfiConverterString.INSTANCE.Write(variant_value.@name, stream);
+                break;
+            case TonTransferLinkException.UnsupportedParameter variant_value:
+                stream.WriteInt(6);
+                FfiConverterString.INSTANCE.Write(variant_value.@name, stream);
+                break;
+            case TonTransferLinkException.InvalidAmount variant_value:
+                stream.WriteInt(7);
+                break;
+            case TonTransferLinkException.InvalidExpiration variant_value:
+                stream.WriteInt(8);
+                break;
+            case TonTransferLinkException.InvalidJettonMaster variant_value:
+                stream.WriteInt(9);
+                break;
+            case TonTransferLinkException.InvalidBinaryPayload variant_value:
+                stream.WriteInt(10);
+                break;
+            case TonTransferLinkException.ConflictingPayloads variant_value:
+                stream.WriteInt(11);
+                break;
+            case TonTransferLinkException.BinaryJettonConflict variant_value:
+                stream.WriteInt(12);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeTonTransferLinkError.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+/// <summary>
+/// The optional payload carried by a parsed TON transfer link.
+/// </summary>
+internal record TonTransferPayload {
+    
+    /// <summary>
+    /// The link contains no message payload.
+    /// </summary>
+    public record None: TonTransferPayload {}
+    
+    
+    /// <summary>
+    /// The link contains a plaintext comment, which may intentionally be empty.
+    /// </summary>
+    public record Text (
+        string TextValue
+    ) : TonTransferPayload {}
+    
+    /// <summary>
+    /// The link contains a validated single-root BOC.
+    /// </summary>
+    public record Boc (
+        String BocValue
+    ) : TonTransferPayload {}
+    
+
+    
+}
+
+class FfiConverterTypeTonTransferPayload : FfiConverterRustBuffer<TonTransferPayload>{
+    public static FfiConverterRustBuffer<TonTransferPayload> INSTANCE = new FfiConverterTypeTonTransferPayload();
+
+    public override TonTransferPayload Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonTransferPayload.None(
+                );
+            case 2:
+                return new TonTransferPayload.Text(
+                    FfiConverterString.INSTANCE.Read(stream)
+                );
+            case 3:
+                return new TonTransferPayload.Boc(
+                    FfiConverterTypeBoc.INSTANCE.Read(stream)
+                );
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonTransferPayload.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonTransferPayload value) {
+        switch (value) {
+            case TonTransferPayload.None variant_value:
+                return 4;
+            case TonTransferPayload.Text variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.TextValue);
+            case TonTransferPayload.Boc variant_value:
+                return 4
+                    + FfiConverterTypeBoc.INSTANCE.AllocationSize(variant_value.BocValue);
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonTransferPayload.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonTransferPayload value, BigEndianStream stream) {
+        switch (value) {
+            case TonTransferPayload.None variant_value:
+                stream.WriteInt(1);
+                break;
+            case TonTransferPayload.Text variant_value:
+                stream.WriteInt(2);
+                FfiConverterString.INSTANCE.Write(variant_value.TextValue, stream);
+                break;
+            case TonTransferPayload.Boc variant_value:
+                stream.WriteInt(3);
+                FfiConverterTypeBoc.INSTANCE.Write(variant_value.BocValue, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonTransferPayload.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
 /// An operational failure returned by [`crate::WalletClient`].
 /// </summary>
 internal class WalletClientException: UniffiException {
@@ -11749,6 +14830,57 @@ internal class WalletClientException: UniffiException {
     }
     
     /// <summary>
+    /// Encrypted-comment preparation or decryption failed safely.
+    /// </summary>
+    
+    public class EncryptedCommentUnavailable : WalletClientException {
+        // Members
+        public string @diagnostic;
+
+        // Constructor
+        public EncryptedCommentUnavailable(
+                string @diagnostic) : base(
+                "@diagnostic" + "=" + @diagnostic) {
+
+            this.@diagnostic = @diagnostic;
+        }
+    }
+    
+    /// <summary>
+    /// TON DNS validation, provider resolution, or wallet-record parsing failed.
+    /// </summary>
+    
+    public class DnsResolutionUnavailable : WalletClientException {
+        // Members
+        public string @diagnostic;
+
+        // Constructor
+        public DnsResolutionUnavailable(
+                string @diagnostic) : base(
+                "@diagnostic" + "=" + @diagnostic) {
+
+            this.@diagnostic = @diagnostic;
+        }
+    }
+    
+    /// <summary>
+    /// Key-rotation chain-state loading or signed-message construction failed.
+    /// </summary>
+    
+    public class KeyRotationUnavailable : WalletClientException {
+        // Members
+        public string @diagnostic;
+
+        // Constructor
+        public KeyRotationUnavailable(
+                string @diagnostic) : base(
+                "@diagnostic" + "=" + @diagnostic) {
+
+            this.@diagnostic = @diagnostic;
+        }
+    }
+    
+    /// <summary>
     /// The wallet has public identity but no protected secret configured for local signing.
     /// </summary>
     public class LocalSigningUnavailable : WalletClientException {
@@ -11773,7 +14905,7 @@ internal class WalletClientException: UniffiException {
     
     
     /// <summary>
-    /// Another transfer is already being prepared or submitted by this client.
+    /// Another signed message is already being prepared or submitted by this client.
     /// </summary>
     public class SendAlreadyInProgress : WalletClientException {
         public SendAlreadyInProgress() : base() {}
@@ -12017,6 +15149,12 @@ internal class WalletClientException: UniffiException {
     
 
     
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_walletclienterror_uniffi_trait_display(FfiConverterTypeWalletClientError.INSTANCE.Lower(this),  ref _status)
+));
+    }
 }
 
 class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientException>, CallStatusErrorHandler<WalletClientException> {
@@ -12042,56 +15180,65 @@ class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientExc
                 return new WalletClientException.NftTransferEmulationRejected(
                     FfiConverterString.INSTANCE.Read(stream));
             case 8:
-                return new WalletClientException.LocalSigningUnavailable();
+                return new WalletClientException.EncryptedCommentUnavailable(
+                    FfiConverterString.INSTANCE.Read(stream));
             case 9:
-                return new WalletClientException.IdentifierExhausted();
+                return new WalletClientException.DnsResolutionUnavailable(
+                    FfiConverterString.INSTANCE.Read(stream));
             case 10:
-                return new WalletClientException.StateUnavailable();
+                return new WalletClientException.KeyRotationUnavailable(
+                    FfiConverterString.INSTANCE.Read(stream));
             case 11:
-                return new WalletClientException.SendAlreadyInProgress();
+                return new WalletClientException.LocalSigningUnavailable();
             case 12:
-                return new WalletClientException.SendPreviewAlreadyInProgress();
+                return new WalletClientException.IdentifierExhausted();
             case 13:
-                return new WalletClientException.PreviousSubmissionUnresolved();
+                return new WalletClientException.StateUnavailable();
             case 14:
-                return new WalletClientException.WalletSeqnoNotAdvanced();
+                return new WalletClientException.SendAlreadyInProgress();
             case 15:
+                return new WalletClientException.SendPreviewAlreadyInProgress();
+            case 16:
+                return new WalletClientException.PreviousSubmissionUnresolved();
+            case 17:
+                return new WalletClientException.WalletSeqnoNotAdvanced();
+            case 18:
                 return new WalletClientException.SendAccountUnavailable(
                     FfiConverterTypeAccountStatus.INSTANCE.Read(stream));
-            case 16:
+            case 19:
                 return new WalletClientException.InsufficientBalance(
                     FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream),
                     FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream));
-            case 17:
+            case 20:
                 return new WalletClientException.InsufficientBalanceForFees(
                     FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream),
                     FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream),
                     FfiConverterTypeUnsignedDecimalString.INSTANCE.Read(stream));
-            case 18:
+            case 21:
                 return new WalletClientException.InvalidProtectedSecret();
-            case 19:
+            case 22:
                 return new WalletClientException.SendPreviewFailed(
                     FfiConverterString.INSTANCE.Read(stream));
-            case 20:
+            case 23:
                 return new WalletClientException.EmulationFailed(
                     FfiConverterString.INSTANCE.Read(stream));
-            case 21:
+            case 24:
                 return new WalletClientException.EmulationMessageNotAccepted(
                     FfiConverterString.INSTANCE.Read(stream));
-            case 22:
+            case 25:
                 return new WalletClientException.EmulationRejected(
                     FfiConverterString.INSTANCE.Read(stream),
                     FfiConverterOptionalInt32.INSTANCE.Read(stream),
                     FfiConverterOptionalInt32.INSTANCE.Read(stream));
-            case 23:
+            case 26:
                 return new WalletClientException.SendFailed(
                     FfiConverterString.INSTANCE.Read(stream));
-            case 24:
+            case 27:
                 return new WalletClientException.SubmissionUnknown(
                     FfiConverterString.INSTANCE.Read(stream));
-            case 25:
+            case 28:
                 return new WalletClientException.SendCancellationTooLate();
-            case 26:
+            case 29:
                 return new WalletClientException.Shutdown();
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletClientError.Read()", value));
@@ -12121,6 +15268,18 @@ class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientExc
                     + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
 
             case WalletClientException.NftTransferEmulationRejected variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
+
+            case WalletClientException.EncryptedCommentUnavailable variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
+
+            case WalletClientException.DnsResolutionUnavailable variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
+
+            case WalletClientException.KeyRotationUnavailable variant_value:
                 return 4
                     + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
 
@@ -12224,76 +15383,88 @@ class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientExc
                 stream.WriteInt(7);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
-            case WalletClientException.LocalSigningUnavailable variant_value:
+            case WalletClientException.EncryptedCommentUnavailable variant_value:
                 stream.WriteInt(8);
+                FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
-            case WalletClientException.IdentifierExhausted variant_value:
+            case WalletClientException.DnsResolutionUnavailable variant_value:
                 stream.WriteInt(9);
+                FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
-            case WalletClientException.StateUnavailable variant_value:
+            case WalletClientException.KeyRotationUnavailable variant_value:
                 stream.WriteInt(10);
+                FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
-            case WalletClientException.SendAlreadyInProgress variant_value:
+            case WalletClientException.LocalSigningUnavailable variant_value:
                 stream.WriteInt(11);
                 break;
-            case WalletClientException.SendPreviewAlreadyInProgress variant_value:
+            case WalletClientException.IdentifierExhausted variant_value:
                 stream.WriteInt(12);
                 break;
-            case WalletClientException.PreviousSubmissionUnresolved variant_value:
+            case WalletClientException.StateUnavailable variant_value:
                 stream.WriteInt(13);
                 break;
-            case WalletClientException.WalletSeqnoNotAdvanced variant_value:
+            case WalletClientException.SendAlreadyInProgress variant_value:
                 stream.WriteInt(14);
                 break;
-            case WalletClientException.SendAccountUnavailable variant_value:
+            case WalletClientException.SendPreviewAlreadyInProgress variant_value:
                 stream.WriteInt(15);
+                break;
+            case WalletClientException.PreviousSubmissionUnresolved variant_value:
+                stream.WriteInt(16);
+                break;
+            case WalletClientException.WalletSeqnoNotAdvanced variant_value:
+                stream.WriteInt(17);
+                break;
+            case WalletClientException.SendAccountUnavailable variant_value:
+                stream.WriteInt(18);
                 FfiConverterTypeAccountStatus.INSTANCE.Write(variant_value.@status, stream);
                 break;
             case WalletClientException.InsufficientBalance variant_value:
-                stream.WriteInt(16);
+                stream.WriteInt(19);
                 FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(variant_value.@availableNanograms, stream);
                 FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(variant_value.@requestedNanograms, stream);
                 break;
             case WalletClientException.InsufficientBalanceForFees variant_value:
-                stream.WriteInt(17);
+                stream.WriteInt(20);
                 FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(variant_value.@availableNanograms, stream);
                 FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(variant_value.@requestedNanograms, stream);
                 FfiConverterTypeUnsignedDecimalString.INSTANCE.Write(variant_value.@estimatedFeeNanograms, stream);
                 break;
             case WalletClientException.InvalidProtectedSecret variant_value:
-                stream.WriteInt(18);
+                stream.WriteInt(21);
                 break;
             case WalletClientException.SendPreviewFailed variant_value:
-                stream.WriteInt(19);
+                stream.WriteInt(22);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
             case WalletClientException.EmulationFailed variant_value:
-                stream.WriteInt(20);
+                stream.WriteInt(23);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
             case WalletClientException.EmulationMessageNotAccepted variant_value:
-                stream.WriteInt(21);
+                stream.WriteInt(24);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
             case WalletClientException.EmulationRejected variant_value:
-                stream.WriteInt(22);
+                stream.WriteInt(25);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 FfiConverterOptionalInt32.INSTANCE.Write(variant_value.@computeExitCode, stream);
                 FfiConverterOptionalInt32.INSTANCE.Write(variant_value.@actionResultCode, stream);
                 break;
             case WalletClientException.SendFailed variant_value:
-                stream.WriteInt(23);
+                stream.WriteInt(26);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
             case WalletClientException.SubmissionUnknown variant_value:
-                stream.WriteInt(24);
+                stream.WriteInt(27);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
                 break;
             case WalletClientException.SendCancellationTooLate variant_value:
-                stream.WriteInt(25);
+                stream.WriteInt(28);
                 break;
             case WalletClientException.Shutdown variant_value:
-                stream.WriteInt(26);
+                stream.WriteInt(29);
                 break;
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletClientError.Write()", value));
@@ -12323,7 +15494,11 @@ internal class WalletLifecycleException: UniffiException {
     
     
     /// <summary>
-    /// The recovery phrase is not a valid 24-word TON mnemonic.
+    /// The recovery phrase is not a valid 12- or 24-word Rotation mnemonic.
+    ///
+    /// [`detect_mnemonic_schemes`] reports whether the words form a TON or
+    /// 24-word BIP-39 mnemonic instead, so the application can say why the
+    /// phrase was rejected.
     /// </summary>
     public class InvalidRecoveryPhrase : WalletLifecycleException {
         public InvalidRecoveryPhrase() : base() {}
@@ -12378,6 +15553,12 @@ internal class WalletLifecycleException: UniffiException {
     
 
     
+    public override string ToString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_walletlifecycleerror_uniffi_trait_display(FfiConverterTypeWalletLifecycleError.INSTANCE.Lower(this),  ref _status)
+));
+    }
 }
 
 class FfiConverterTypeWalletLifecycleError : FfiConverterRustBuffer<WalletLifecycleException>, CallStatusErrorHandler<WalletLifecycleException> {
@@ -12804,6 +15985,37 @@ class FfiConverterOptionalTypeJournalRecord: FfiConverterRustBuffer<JournalRecor
         } else {
             stream.WriteByte(1);
             FfiConverterTypeJournalRecord.INSTANCE.Write((JournalRecord)value, stream);
+        }
+    }
+}
+
+
+
+
+class FfiConverterOptionalTypeNftCollectionDescriptor: FfiConverterRustBuffer<NftCollectionDescriptor?> {
+    public static FfiConverterOptionalTypeNftCollectionDescriptor INSTANCE = new FfiConverterOptionalTypeNftCollectionDescriptor();
+
+    public override NftCollectionDescriptor? Read(BigEndianStream stream) {
+        if (stream.ReadByte() == 0) {
+            return null;
+        }
+        return FfiConverterTypeNftCollectionDescriptor.INSTANCE.Read(stream);
+    }
+
+    public override int AllocationSize(NftCollectionDescriptor? value) {
+        if (value == null) {
+            return 1;
+        } else {
+            return 1 + FfiConverterTypeNftCollectionDescriptor.INSTANCE.AllocationSize((NftCollectionDescriptor)value);
+        }
+    }
+
+    public override void Write(NftCollectionDescriptor? value, BigEndianStream stream) {
+        if (value == null) {
+            stream.WriteByte(0);
+        } else {
+            stream.WriteByte(1);
+            FfiConverterTypeNftCollectionDescriptor.INSTANCE.Write((NftCollectionDescriptor)value, stream);
         }
     }
 }
@@ -13505,6 +16717,52 @@ class FfiConverterSequenceTypeSendMessage: FfiConverterRustBuffer<SendMessage[]>
 
 
 
+class FfiConverterSequenceTypeMnemonicScheme: FfiConverterRustBuffer<MnemonicScheme[]> {
+    public static FfiConverterSequenceTypeMnemonicScheme INSTANCE = new FfiConverterSequenceTypeMnemonicScheme();
+
+    public override MnemonicScheme[]  Read(BigEndianStream stream) {
+        var length = stream.ReadInt();
+        if (length == 0) {
+            return [];
+        }
+
+        var result = new MnemonicScheme[length];
+        var readFn = FfiConverterTypeMnemonicScheme.INSTANCE.Read;
+        for (int i = 0; i < length; i++) {
+            result[i] = readFn(stream);
+        }
+        return result;
+    }
+
+    public override int AllocationSize(MnemonicScheme[]  value) {
+        var sizeForLength = 4;
+
+        // details/1-empty-list-as-default-method-parameter.md
+        if (value == null) {
+            return sizeForLength;
+        }
+
+        var allocationSizeFn = FfiConverterTypeMnemonicScheme.INSTANCE.AllocationSize;
+        var sizeForItems = value.Sum(item => allocationSizeFn(item));
+        return sizeForLength + sizeForItems;
+    }
+
+    public override void Write(MnemonicScheme[] value, BigEndianStream stream) {
+        // details/1-empty-list-as-default-method-parameter.md
+        if (value == null) {
+            stream.WriteInt(0);
+            return;
+        }
+
+        stream.WriteInt(value.Length);
+        var writerFn = FfiConverterTypeMnemonicScheme.INSTANCE.Write;
+        value.ForEach(item => writerFn(item, stream));
+    }
+}
+
+
+
+
 class FfiConverterSequenceTypeTonConnectIncomingRequest: FfiConverterRustBuffer<TonConnectIncomingRequest[]> {
     public static FfiConverterSequenceTypeTonConnectIncomingRequest INSTANCE = new FfiConverterSequenceTypeTonConnectIncomingRequest();
 
@@ -13872,6 +17130,21 @@ internal static class _UniFFIAsync {
 #pragma warning restore 8625
 internal static class WalletEngineMethods {
     /// <summary>
+    /// Parses the strict baseline `ton://transfer/` format without reading chain or clock state.
+    ///
+    /// Query names are case-sensitive. Percent escapes are decoded exactly once,
+    /// and literal `+` characters remain plus signs instead of becoming spaces.
+    /// </summary>
+    /// <exception cref="TonTransferLinkException"></exception>
+    public static ParsedTonTransferLink ParseTonTransferLink(string @value) {
+        return FfiConverterTypeParsedTonTransferLink.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonTransferLinkError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_parse_ton_transfer_link(FfiConverterString.INSTANCE.Lower(@value), ref _status)
+));
+    }
+
+
+    /// <summary>
     /// Parses and validates a dApp manifest with the Rust protocol implementation.
     /// </summary>
     /// <exception cref="TonConnectSessionException"></exception>
@@ -13903,6 +17176,106 @@ internal static class WalletEngineMethods {
         return FfiConverterTypeTonConnectSession.INSTANCE.Lift(
     _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
     _UniFFILib.uniffi_wallet_engine_fn_func_ton_connect_session_restore(FfiConverterString.INSTANCE.Lower(@persisted), FfiConverterTypeTonConnectSessionConfig.INSTANCE.Lower(@config), ref _status)
+));
+    }
+
+
+    /// <summary>
+    /// Converts a TON address to the requested canonical representation.
+    ///
+    /// Raw output is lowercase `workchain:64-hex`. User-friendly output is
+    /// unpadded URL-safe TEP-2 Base64. Requested friendly flags replace any flags
+    /// carried by the input.
+    /// </summary>
+    /// <exception cref="TonAddressException"></exception>
+    public static string ConvertTonAddress(string @value, TonAddressFormat @format) {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonAddressError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_convert_ton_address(FfiConverterString.INSTANCE.Lower(@value), FfiConverterTypeTonAddressFormat.INSTANCE.Lower(@format), ref _status)
+));
+    }
+
+
+    /// <summary>
+    /// Reports whether `value` is a valid raw or user-friendly TON address.
+    /// </summary>
+    public static bool IsValidTonAddress(string @value) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_is_valid_ton_address(FfiConverterString.INSTANCE.Lower(@value), ref _status)
+));
+    }
+
+
+    /// <summary>
+    /// Parses a raw or user-friendly TON address without changing its account identity.
+    ///
+    /// Friendly input accepts the standard and URL-safe Base64 alphabets and returns
+    /// the flags protected by its checksum in [`TonAddressFormat::UserFriendly`].
+    /// </summary>
+    /// <exception cref="TonAddressException"></exception>
+    public static TonAddressInfo ParseTonAddress(string @value) {
+        return FfiConverterTypeTonAddressInfo.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonAddressError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_parse_ton_address(FfiConverterString.INSTANCE.Lower(@value), ref _status)
+));
+    }
+
+
+    /// <summary>
+    /// Returns the English word list accepted by recovery-phrase validation.
+    ///
+    /// This is the canonical BIP-39 English list, so the source order is also the
+    /// BIP-39 index order. Both halves of a rotation mnemonic draw from it.
+    /// </summary>
+    public static string[] MnemonicWordlist() {
+        return FfiConverterSequenceString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_mnemonic_wordlist( ref _status)
+));
+    }
+
+
+    /// <summary>
+    /// Reports every scheme under which the entered recovery words validate.
+    ///
+    /// Pass the words exactly as the user recorded them, one word per element -
+    /// the same value an `ImportWalletRequest` would carry. Each word is trimmed
+    /// and lowercased before validation, exactly like wallet import.
+    ///
+    /// The result lists all matching schemes in the fixed order
+    /// [`Rotation`](MnemonicScheme::Rotation), [`Ton`](MnemonicScheme::Ton),
+    /// [`Bip39`](MnemonicScheme::Bip39); the checks are independent, so one
+    /// phrase can match more than one scheme. An empty result means the words
+    /// validate under no scheme the engine knows.
+    ///
+    /// Wallet import succeeds exactly when the result contains
+    /// [`MnemonicScheme::Rotation`]. A result without it explains why import
+    /// reports `InvalidRecoveryPhrase`; the user-facing wording of that
+    /// explanation belongs to the application.
+    ///
+    /// The function derives no key material and logs nothing. Password-protected
+    /// TON mnemonics are not detectable without the password and report no match.
+    /// </summary>
+    public static MnemonicScheme[] DetectMnemonicSchemes(string[] @words) {
+        return FfiConverterSequenceTypeMnemonicScheme.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_detect_mnemonic_schemes(FfiConverterSequenceString.INSTANCE.Lower(@words), ref _status)
+));
+    }
+
+
+    /// <summary>
+    /// Returns the 32-byte anchor public key of a 12- or 24-word Rotation mnemonic.
+    ///
+    /// The anchor key is independent of network and does not change on key rotation.
+    /// Both halves of a 24-word phrase must validate. No storage or network is used.
+    /// </summary>
+    /// <exception cref="WalletLifecycleException"></exception>
+    public static byte[] RotationMnemonicPublicKey(string @phrase) {
+        return FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeWalletLifecycleError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_func_rotation_mnemonic_public_key(FfiConverterString.INSTANCE.Lower(@phrase), ref _status)
 ));
     }
 
