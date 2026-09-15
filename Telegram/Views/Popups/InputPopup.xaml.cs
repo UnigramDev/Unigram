@@ -378,16 +378,29 @@ namespace Telegram.Views.Popups
 
         private static InputPopup Create(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return new InputPopup(type)
+            var popup = new InputPopup(type)
             {
                 Title = title ?? string.Empty,
                 Header = message,
                 PlaceholderText = placeholderText ?? string.Empty,
                 PrimaryButtonText = primary,
-                PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 SecondaryButtonText = secondary,
-                RequestedTheme = requestedTheme
             };
+
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
+
+            if (destructive)
+            {
+                Theme.AddCheckBoxPalette(popup, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
+
+                popup.DefaultButton = ContentDialogButton.None;
+                popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+            }
+
+            return popup;
         }
 
         #endregion

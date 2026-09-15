@@ -136,6 +136,8 @@ namespace Telegram.Controls
 
             if (destructive)
             {
+                Theme.AddCheckBoxPalette(popup, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
+
                 popup.DefaultButton = ContentDialogButton.None;
                 popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
             }
