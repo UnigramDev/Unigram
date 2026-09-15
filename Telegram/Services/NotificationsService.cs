@@ -515,8 +515,6 @@ namespace Telegram.Services
             if (time < DateTime.Now.AddHours(-1))
             {
                 _clientService.Send(new RemoveNotification(group, notification.Id));
-
-                Logger.Info("Notification is too old");
                 return;
             }
 
