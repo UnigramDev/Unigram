@@ -38,18 +38,12 @@ namespace Telegram.Controls.Chats
 
     public partial class ChatHistoryViewItem : ListViewItem
     {
-        private readonly ChatHistoryView _owner;
         private ChatHistoryViewItemType _typeName;
 
-        public ChatHistoryViewItem(ChatHistoryView owner, ChatHistoryViewItemType typeName)
+        public ChatHistoryViewItem(ChatHistoryViewItemType typeName)
         {
-            _owner = owner;
             _typeName = typeName;
-
-            Instrumentation.Register(this);
         }
-
-        public ChatHistoryView Owner => _owner;
 
         public ChatHistoryViewItemType TypeName
         {
@@ -78,16 +72,6 @@ namespace Telegram.Controls.Chats
                 Padding = new Thickness(0, newTop, 0, newBottom);
             }
         }
-
-#if INSTRUMENTATION
-        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
-        {
-            if (ContentTemplateRoot != null)
-            {
-                yield return ContentTemplateRoot;
-            }
-        }
-#endif
     }
 
     public partial class TableAccessibleChatListViewItem : TableListViewItem

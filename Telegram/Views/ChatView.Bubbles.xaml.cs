@@ -1371,7 +1371,7 @@ namespace Telegram.Views
 
                     // There aren't any (recycled) ItemContainers available. So a new one
                     // needs to be created.
-                    selector = new ChatHistoryViewItem(Messages, typeName);
+                    selector = new ChatHistoryViewItem(typeName);
                     selector.ContentTemplate = relevantHashSet.ItemTemplate;
                     selector.Style = sender.ItemContainerStyle;
                     selector.IsHitTestVisible = !FromPreview;
