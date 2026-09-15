@@ -715,6 +715,8 @@ namespace Telegram
 
             info += $"HRESULT: 0x{hresult:X4}\n\n";
 
+            info += WindowContent.DebugCounters() + "\n";
+
             var dump = Logger.Dump();
             return info + dump;
         }
