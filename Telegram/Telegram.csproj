@@ -483,6 +483,7 @@
     <Compile Include="Streams\RemoteFilePrefetch.cs" />
     <Compile Include="Td\Api\FormattedText.cs" />
     <Compile Include="Td\Api\FormattedTextBuilder.cs" />
+    <Compile Include="Td\Api\TonWalletTransactionStatePending.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionApprove.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionDecline.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionEdit.cs" />
@@ -2265,10 +2266,12 @@
     <Compile Include="Services\Wallet\Generated\wallet_engine.cs" />
     <Compile Include="Services\Wallet\IProtectedSecretStore.cs" />
     <Compile Include="Services\Wallet\IWalletJournal.cs" />
-    <Compile Include="Services\Wallet\WalletHttpHost.cs" />
+    <Compile Include="Services\Wallet\WalletStatuslessHost.cs" />
     <Compile Include="Services\Wallet\WalletPlatformHost.cs" />
     <Compile Include="Services\Wallet\IWalletService.cs" />
     <Compile Include="Services\Wallet\WalletJournalStore.cs" />
+    <Compile Include="Services\Wallet\WalletChainStream.cs" />
+    <Compile Include="Services\Wallet\WalletCommentBody.cs" />
     <Compile Include="Services\Wallet\WalletSecretStore.cs" />
     <Compile Include="Services\Wallet\WalletService.cs" />
     <Compile Include="Services\Wallet\WalletState.cs" />
@@ -2325,6 +2328,7 @@
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\MessageHelper.cs" />
+    <Compile Include="Common\WalletHelper.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\PivotRadioButton.cs" />

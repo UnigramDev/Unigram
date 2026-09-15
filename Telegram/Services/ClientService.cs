@@ -90,6 +90,8 @@ namespace Telegram.Services
 
         StarAmount OwnedStarCount { get; }
 
+        TonWalletState TonWalletState { get; }
+
         UnconfirmedSession UnconfirmedSession { get; }
 
         MessageSender MyId { get; }
@@ -419,6 +421,7 @@ namespace Telegram.Services
 
         private StarAmount _ownedStarCount;
         private long? _ownedGramCount;
+        private TonWalletState _tonWalletState;
 
         private JsonValueObject _config;
 
@@ -968,8 +971,10 @@ namespace Telegram.Services
             AvailableProfileColors = null;
             _ownedStarCount = null;
             _ownedGramCount = null;
+            _tonWalletState = null;
             _requestedStarCount = false;
             _requestedGramCount = false;
+            _requestedWalletState = false;
             DefaultPaidReactionType = new PaidReactionTypeRegular();
             AgeVerificationParameters = null;
             SavedMessagesTopicCount = 0;
@@ -1472,6 +1477,7 @@ namespace Telegram.Services
         // sent a fresh request on every read until the update came back.
         private bool _requestedStarCount;
         private bool _requestedGramCount;
+        private bool _requestedWalletState;
 
         public StarAmount OwnedStarCount
         {
@@ -1508,6 +1514,20 @@ namespace Telegram.Services
                 }
 
                 return _ownedGramCount ?? 0;
+            }
+        }
+
+        public TonWalletState TonWalletState
+        {
+            get
+            {
+                if (_tonWalletState == null && !_requestedWalletState)
+                {
+                    _requestedWalletState = true;
+                    Send(new LoadTonWalletState());
+                }
+
+                return _tonWalletState;
             }
         }
 
@@ -4370,6 +4390,9 @@ namespace Telegram.Services
                     break;
                 case UpdateOwnedStarCount updateOwnedStarCount:
                     _ownedStarCount = updateOwnedStarCount.StarAmount;
+                    break;
+                case UpdateTonWalletState updateTonWalletState:
+                    _tonWalletState = updateTonWalletState.State;
                     break;
                 case UpdateOwnedGramCount updateOwnedGramCount:
                     _ownedGramCount = updateOwnedGramCount.GramAmount;
