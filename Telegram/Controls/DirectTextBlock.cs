@@ -51,8 +51,6 @@ namespace Telegram.Controls
 
         public DirectTextBlock()
         {
-            TextThroughput.ControlsMade++;
-
             // Built here rather than on the first render: adding a child in a layout pass
             // invalidates the pass that is running, and the pass never converges.
             _host = new Border();
@@ -437,7 +435,6 @@ namespace Telegram.Controls
         {
             if (_layout == null)
             {
-                TextThroughput.LayoutsMade++;
                 _layout = Direct2D.Current.CreateLayout();
             }
 
@@ -1768,13 +1765,6 @@ namespace Telegram.Controls
         /// </summary>
         public void SetText(IClientService clientService, StyledText styled, int first, int last)
         {
-            var started = TextThroughput.Begin();
-            SetTextCore(clientService, styled, first, last);
-            TextThroughput.Record(ref TextThroughput.DirectSetText, started, true);
-        }
-
-        private void SetTextCore(IClientService clientService, StyledText styled, int first, int last)
-        {
             _clientService = clientService;
 
             UnsubscribeDates();
@@ -1885,18 +1875,9 @@ namespace Telegram.Controls
             // Spoilers first: an emoji under one plays nothing.
             SetSpoilers(spoilers);
 
-            var started = TextThroughput.Begin();
             SetCustomEmoji(_clientService, emoji);
-            TextThroughput.Record(ref TextThroughput.DirectEmoji, started);
-
-            started = TextThroughput.Begin();
             SetInlineButtons(_clientService, buttons);
-            TextThroughput.Record(ref TextThroughput.DirectButtons, started);
-
-            started = TextThroughput.Begin();
             SetMath(math);
-            TextThroughput.Record(ref TextThroughput.DirectMath, started);
-
             SetLinks(links);
 
             // Last: it is written over whatever the ranges above coloured.
@@ -2453,15 +2434,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var started = TextThroughput.Begin();
-            var size = MeasureCore(availableSize);
-            TextThroughput.Record(ref TextThroughput.DirectMeasure, started, true);
-
-            return size;
-        }
-
-        private Size MeasureCore(Size availableSize)
-        {
             // The buttons first, and before the text: the layout has to flow it around a box
             // whose size is whatever the button measures to. Unbounded, because a button is as
             // wide as its label and the line it lands on does not decide that.
@@ -2497,9 +2469,7 @@ namespace Telegram.Controls
             // The layout shrinks its own box to the text where that matters - a paragraph
             // that is not drawn from the leading edge - and leaves it alone where it does not,
             // which is most of the time and half the cost of a measure.
-            var layout = TextThroughput.Begin();
             var size = Layout().Measure(width);
-            TextThroughput.Record(ref TextThroughput.DirectLayout, layout);
 
             // Whether the text fits is settled by that measure, and a quote offering to expand
             // is waiting on the answer. Asked both ways round because only one of them holds in
@@ -2525,20 +2495,9 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var started = TextThroughput.Begin();
-            var size = ArrangeCore(finalSize);
-            TextThroughput.Record(ref TextThroughput.DirectArrange, started, true);
-
-            return size;
-        }
-
-        private Size ArrangeCore(Size finalSize)
-        {
             _arranged = finalSize;
 
-            var started = TextThroughput.Begin();
             Render(finalSize);
-            TextThroughput.Record(ref TextThroughput.DirectRender, started);
 
             _host?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
 
@@ -2672,10 +2631,7 @@ namespace Telegram.Controls
             // The layout owns the surface: the same one comes back every time, and it redraws
             // itself when the rendering device is replaced, so this is only told about it when
             // it is a different object - which is the first render, and a resize that failed.
-            var render = TextThroughput.Begin();
             var surface = Layout().Render(color, scale);
-            TextThroughput.Record(ref TextThroughput.DirectSurface, render);
-
             if (surface == null)
             {
                 return;
@@ -2787,8 +2743,6 @@ namespace Telegram.Controls
             // takes.
             if (_layout != null)
             {
-                TextThroughput.LayoutsDisposed++;
-
                 _layout.Dispose();
                 _layout = null;
             }

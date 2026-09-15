@@ -163,20 +163,6 @@
                                              Click="{x:Bind ViewModel.ResetFileUpdates}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="Text"
-                                          Footer="What a text block costs: the call that gives it its text, and the two layout passes. Only the blocks the two engines both build - a message, a page block - are counted, so the chat list and the rest of the app stay out of it. Arrange is not comparable between them: the direct engine rasterizes there, the inline one in the render pass, which no timer here reaches.">
-                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.MeasureTextLayout, Mode=TwoWay}"
-                              Content="Measure Text Layout"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
-                    <controls:SettingsButton Description="Blocks">
-                        <TextBlock Text="{x:Bind ViewModel.TextLayout, Mode=OneWay}"
-                                   IsTextSelectionEnabled="True" />
-                    </controls:SettingsButton>
-                    <controls:SettingsButton Content="Reset"
-                                             Click="{x:Bind ViewModel.ResetTextLayout}" />
-                </controls:HeaderedControl>
-
                 <controls:HeaderedControl Header="Garbage collection"
                                           Footer="Every pause suspends every managed thread, so the time here is time the interface did not exist. A blocking collection covering every generation is one the app was asked for rather than one the collector chose - XAML requests those through the reference tracker when its own memory grows.">
                     <controls:SettingsButton Description="Collections">

@@ -50,12 +50,6 @@ namespace Telegram.Controls.Messages
         private string _query;
         private bool _showSkeleton;
 
-        public MessageTextBlock()
-        {
-            // Match RichTextBlock's default text-y baseline behaviour for stacking.
-            TextThroughput.HostsMade++;
-        }
-
         public bool HasCodeBlocks { get; private set; }
 
         // TODO: make sure all this event thing is actually needed
@@ -418,13 +412,6 @@ namespace Telegram.Controls.Messages
             {
                 if (_directBlocks.Count != 1 || Children.Count != 1 || Children[0] != _directBlocks[0])
                 {
-                    TextThroughput.BlocksCleared++;
-
-                    if (_directBlocks.Count == 0)
-                    {
-                        TextThroughput.BlocksClearedEmpty++;
-                    }
-
                     ClearBlocks();
                 }
 
@@ -437,9 +424,6 @@ namespace Telegram.Controls.Messages
             // Built again rather than reused: a slot can go from a bare block to one inside a
             // quote and back, and moving a block between the two costs more care than it saves
             // for a shape of message this rare.
-            TextThroughput.BlocksCleared++;
-            TextThroughput.BlocksClearedComplex++;
-
             ClearBlocks();
 
             var index = 0;
@@ -542,8 +526,6 @@ namespace Telegram.Controls.Messages
             {
                 return _directBlocks[index];
             }
-
-            TextThroughput.BlocksMade++;
 
             var block = new DirectTextBlock
             {
