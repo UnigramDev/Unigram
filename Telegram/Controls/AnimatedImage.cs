@@ -2386,21 +2386,22 @@ namespace Telegram.Controls
         {
             if (xamlRoot != null && _loaders.TryGetValue(xamlRoot, out var loader))
             {
-                loader.Release();
+                loader.ReleaseImpl(xamlRoot);
             }
         }
 
-        private void Release()
+        private void ReleaseImpl(XamlRoot xamlRoot)
         {
             if (_rendering.Count > 0)
             {
                 _closed = true;
             }
-            else
+            else if (_window.XamlRoot != null)
             {
                 _loaders.Remove(_window.XamlRoot);
-                Bitmaps.Clear();
             }
+
+            Bitmaps.Clear();
         }
 
         /// <summary>The frame bitmaps this window's presenters render into.</summary>
