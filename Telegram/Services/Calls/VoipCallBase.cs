@@ -7,6 +7,7 @@
 
 using System;
 using System.Threading;
+using Telegram.Navigation.Services;
 using Windows.System;
 
 namespace Telegram.Services.Calls
@@ -24,7 +25,7 @@ namespace Telegram.Services.Calls
 
         public abstract string AudioOutputId { get; set; }
 
-        public abstract void Show();
+        public abstract void Show(INavigationService navigationService);
 
         public abstract void Discard();
 
