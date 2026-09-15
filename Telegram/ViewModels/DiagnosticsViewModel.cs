@@ -7,15 +7,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Composition;
-using Telegram.Controls.Messages;
-using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -50,7 +47,6 @@ namespace Telegram.ViewModels
         {
             UpdateDeserialization();
             UpdateFileUpdates();
-            UpdateTextLayout();
             UpdateGarbageCollection();
             UpdatePowerSaving();
 
@@ -570,107 +566,6 @@ namespace Telegram.ViewModels
         {
             UpdateManager.ResetCounters();
             UpdateFileUpdates();
-        }
-
-        private string _textLayout;
-        public string TextLayout
-        {
-            get => _textLayout;
-            private set => Set(ref _textLayout, value);
-        }
-
-        private void UpdateTextLayout()
-        {
-            if (!TextThroughput.Enabled && TextThroughput.DirectSetText.Calls == 0)
-            {
-                TextLayout = "Off.";
-                return;
-            }
-
-            var builder = new StringBuilder();
-
-            builder.AppendFormat("Messages: {0}, page blocks: {1}\n\n",
-                MessageTextBlock.IsDirectText ? "direct" : "inline",
-                PageBlockRenderer.IsDirectText ? "direct" : "inline");
-
-
-            builder.AppendFormat("Blocks: {0:N0} made, {1:N0} torn down - {2:N0} for a quote or a code block, {3:N0} with nothing to tear down\n",
-                TextThroughput.BlocksMade, TextThroughput.BlocksCleared,
-                TextThroughput.BlocksClearedComplex, TextThroughput.BlocksClearedEmpty);
-            builder.AppendFormat("Hosts: {0:N0} made\n", TextThroughput.HostsMade);
-            builder.AppendFormat("Layouts: {0:N0} made, {1:N0} disposed, in {2:N0} blocks of every kind\n",
-                TextThroughput.LayoutsMade, TextThroughput.LayoutsDisposed, TextThroughput.ControlsMade);
-
-            AppendTextLayout(builder, "Set text", TextThroughput.DirectSetText);
-            AppendTextLayout(builder, "Emoji, part of set text", TextThroughput.DirectEmoji);
-            AppendTextLayout(builder, "Buttons, part of set text", TextThroughput.DirectButtons);
-            AppendTextLayout(builder, "Formulas, part of set text", TextThroughput.DirectMath);
-            AppendTextLayout(builder, "Measure", TextThroughput.DirectMeasure);
-            AppendTextLayout(builder, "Layout, part of measure", TextThroughput.DirectLayout);
-            AppendTextLayout(builder, "Arrange", TextThroughput.DirectArrange);
-            AppendTextLayout(builder, "Draw, part of arrange", TextThroughput.DirectRender);
-            AppendTextLayout(builder, "Layout, part of draw", TextThroughput.DirectSurface);
-
-
-            // The layout's own, which is where the two above end up: what a build costs against
-            // a reflow, and what the three parts of a draw cost each.
-            builder.Append('\n');
-            builder.Append(DirectTextLayout.Counters);
-
-            AppendFrames(builder);
-
-            TextLayout = builder.ToString().TrimEnd();
-        }
-
-        // What the µs above are worth: the same work counted per frame, which is the form that
-        // says whether anything stuttered - against the frame this display actually gives,
-        // which is 16.7 ms on one machine and 4.2 on the next.
-        private static void AppendFrames(StringBuilder builder)
-        {
-            if (TextThroughput.Frame.Calls == 0)
-            {
-                return;
-            }
-
-            var period = TextThroughput.FramePeriod / (double)Stopwatch.Frequency * 1000;
-
-            builder.AppendFormat("\nFrames: {0:N0} at {1:N2} ms, {2:N0} of them with text in them\n",
-                TextThroughput.Frame.Calls, period, TextThroughput.BusyFrames);
-
-            if (TextThroughput.BusyFrames > 0)
-            {
-                builder.AppendFormat("Text per frame: {0:N2} ms each, worst {1:N2} ms across {2:N0} blocks\n",
-                    TextThroughput.Frame.Seconds * 1000 / TextThroughput.BusyFrames,
-                    TextThroughput.Frame.PeakSeconds * 1000,
-                    TextThroughput.PeakFrameBlocks);
-
-                builder.AppendFormat("Over a frame on text alone: {0:N0} of them\n", TextThroughput.LateFrames);
-            }
-        }
-
-        // The peak is the one that decides whether a frame was dropped; the average is what the
-        // engine costs.
-        private static void AppendTextLayout(StringBuilder builder, string name, in TextThroughput.Counter counter)
-        {
-            if (counter.Calls == 0)
-            {
-                builder.AppendFormat("{0}: nothing yet\n", name);
-                return;
-            }
-
-            builder.AppendFormat("{0}: {1:N0} calls, {2:N1} µs each, {3:N1} µs peak, {4:N2}s total\n",
-                name,
-                counter.Calls,
-                counter.Seconds * 1000000d / counter.Calls,
-                counter.PeakSeconds * 1000000d,
-                counter.Seconds);
-        }
-
-        public void ResetTextLayout(object sender, RoutedEventArgs e)
-        {
-            TextThroughput.Reset();
-            DirectTextLayout.ResetCounters();
-            UpdateTextLayout();
         }
 
         public void SendLogOld(object sender, RoutedEventArgs e)
