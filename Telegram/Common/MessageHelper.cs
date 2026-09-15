@@ -2206,11 +2206,12 @@ namespace Telegram.Common
 
         public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, ContextRequestedEventArgs args, MessageViewModel message)
         {
+            var flyout = new MenuFlyout();
+            var text = sender as RichTextBlock;
+
             if (args.TryGetPosition(sender, out Point point))
             {
-                var flyout = new MenuFlyout();
-
-                if (sender is RichTextBlock text)
+                if (text != null)
                 {
                     Hyperlink_ContextRequested(flyout, service, text, point, message);
                 }
@@ -2218,21 +2219,42 @@ namespace Telegram.Common
                 {
                     Hyperlink_ContextRequested(flyout, service, direct, point, message);
                 }
-
-                if (flyout.Items.Count > 0)
-                {
-                    // We don't want to unfocus the text are when the context menu gets opened
-                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-                    args.Handled = true;
-                }
-                else
-                {
-                    args.Handled = false;
-                }
             }
-            else
+            else if (text != null)
             {
-                args.Handled = false;
+                // A keyboard request carries no position, so the menu comes from the selection or
+                // from the link that holds focus. DirectTextBlock has no counterpart: a link there
+                // is a range of a layout, and focus never reaches one.
+                Hyperlink_ContextRequested(flyout, service, text, args, message);
+            }
+
+            // Transient: we don't want to unfocus the text are when the context menu gets opened.
+            // An empty menu shows nothing and leaves the request unhandled, so that in a chat the
+            // message menu takes it instead.
+            args.Handled = flyout.ShowAt(sender, args, FlyoutShowMode.Transient);
+        }
+
+        /// <summary>
+        /// The menu for a request that carries no position - a keyboard one. What the pointer path
+        /// takes from under the pointer, this takes from the selection, or from the link that holds
+        /// focus.
+        /// </summary>
+        private static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, RichTextBlock text, ContextRequestedEventArgs args, MessageViewModel message)
+        {
+            if (text.SelectedText.Length > 0)
+            {
+                Hyperlink_ContextRequested(text.XamlRoot, flyout, service, text.SelectedText);
+                return;
+            }
+
+            // A Hyperlink is no UIElement, but it does take focus, and which link has it is all
+            // there is to say which link the request is about.
+            var hyperlink = args.OriginalSource as Hyperlink
+                ?? FocusManagerEx.TryGetFocusedElement(text.XamlRoot) as Hyperlink;
+
+            if (hyperlink != null)
+            {
+                Hyperlink_ContextRequested(flyout, service, hyperlink, message);
             }
         }
 
@@ -2242,41 +2264,20 @@ namespace Telegram.Common
 
             Hyperlink_ContextRequested(flyout, service, sender, message);
 
-            if (flyout.Items.Count > 0)
-            {
-                // We don't want to unfocus the text are when the context menu gets opened
-                flyout.ShowAt(sender.ElementStart.VisualParent as FrameworkElement);
-                args.Handled = true;
-            }
-            else
-            {
-                args.Handled = false;
-            }
+            // A link is a range, so the menu hangs off the block that drew it.
+            args.Handled = flyout.ShowAt(sender.ElementStart.VisualParent, args, FlyoutShowMode.Transient);
         }
 
         public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, string text, ContextRequestedEventArgs args)
         {
-            if (args.TryGetPosition(sender, out Point point))
-            {
-                var flyout = new MenuFlyout();
+            var flyout = new MenuFlyout();
 
-                Hyperlink_ContextRequested(sender.XamlRoot, flyout, service, text);
+            // The text is the caller's, not something a hit test found, so a request with no
+            // position - a keyboard one - has the same menu, placed against the element instead.
+            Hyperlink_ContextRequested(sender.XamlRoot, flyout, service, text);
 
-                if (flyout.Items.Count > 0)
-                {
-                    // We don't want to unfocus the text are when the context menu gets opened
-                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-                    args.Handled = true;
-                }
-                else
-                {
-                    args.Handled = false;
-                }
-            }
-            else
-            {
-                args.Handled = false;
-            }
+            // We don't want to unfocus the text are when the context menu gets opened
+            args.Handled = flyout.ShowAt(sender, args, FlyoutShowMode.Transient);
         }
 
         private static void Hyperlink_ContextRequested(XamlRoot xamlRoot, MenuFlyout flyout, ITranslateService service, string text)
@@ -2520,22 +2521,12 @@ namespace Telegram.Common
 
         public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
         {
-            if (args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(() => LinkOpen_Click(sender.XamlRoot, link), Strings.Open, Icons.OpenIn);
+            flyout.CreateFlyoutItem(() => LinkCopy_Click(sender.XamlRoot, link), Strings.Copy, Icons.Copy);
 
-                var flyout = new MenuFlyout();
-                flyout.CreateFlyoutItem(() => LinkOpen_Click(sender.XamlRoot, link), Strings.Open, Icons.OpenIn);
-                flyout.CreateFlyoutItem(() => LinkCopy_Click(sender.XamlRoot, link), Strings.Copy, Icons.Copy);
-
-                // We don't want to unfocus the text are when the context menu gets opened
-                flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-
-                args.Handled = true;
-            }
+            // We don't want to unfocus the text are when the context menu gets opened
+            args.Handled = flyout.ShowAt(sender, args, FlyoutShowMode.Transient);
         }
 
         private static async void LinkOpen_Click(XamlRoot xamlRoot, string link)
