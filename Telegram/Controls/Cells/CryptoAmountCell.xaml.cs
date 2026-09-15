@@ -5,9 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Globalization;
 using Telegram.Converters;
-using Telegram.Native;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
@@ -46,15 +44,14 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
-            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
-            var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
+            // Split on the exact integer TDLib sent rather than on a double: the old round trip
+            // through double.ToString could reach scientific notation, and splitting "1E-07" on
+            // '.' gives one part and no decimals at all.
+            var exponent = Formatter.GetAmountExponent(value.Cryptocurrency);
+            var amount = Formatter.SplitAmount(value.CryptocurrencyAmount, exponent, exponent);
 
-            var culture = new CultureInfo(NativeUtils.GetCurrentCulture());
-            var separator = culture.NumberFormat.NumberDecimalSeparator;
-
-            CryptocurrencyAmountLabel.Text = stringAmount[0];
-            CryptocurrencyDecimalLabel.Text = string.Format("{0}{1}", separator, decimalAmount.PadRight(2, '0'));
+            CryptocurrencyAmountLabel.Text = amount.Integer;
+            CryptocurrencyDecimalLabel.Text = amount.Fraction;
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
         }
