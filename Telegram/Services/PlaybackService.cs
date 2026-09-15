@@ -1933,8 +1933,8 @@ namespace Telegram.Services
 
         public File Document { get; protected set; }
 
-        public string Title { get; protected set; }
-        public string Performer { get; protected set; }
+        public string Title { get; protected set; } = string.Empty;
+        public string Performer { get; protected set; } = string.Empty;
 
         /// <summary>
         /// Album cover to show in the system media transport controls; null for anything
