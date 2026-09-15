@@ -31,7 +31,7 @@ namespace Telegram.Common
         private static partial bool GetFileAttributesExFromApp(string path, int level,
             out WIN32_FILE_ATTRIBUTE_DATA data);
 #else
-        [SuppressUnmanagedCodeSecurity]
+        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("api-ms-win-core-file-fromapp-l1-1-0.dll", EntryPoint = "GetFileAttributesExFromAppW",
             CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
