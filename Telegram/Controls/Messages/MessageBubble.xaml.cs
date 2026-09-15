@@ -2714,15 +2714,17 @@ namespace Telegram.Controls.Messages
                 return 1;
             }
 
-            var panel = selector.Owner.ItemsPanelRoot as ItemsStackPanel;
+            var owner = ItemsControl.ItemsControlFromItemContainer(selector) as ChatHistoryView;
+
+            var panel = owner?.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
             {
                 return 1;
             }
 
-            var index = selector.Owner.IndexFromContainer(selector);
+            var index = owner.IndexFromContainer(selector);
 
-            var direction = ChatHistoryView.GetShiftDirection(panel, index, selector, selector.Owner.ScrollingHost);
+            var direction = ChatHistoryView.GetShiftDirection(panel, index, selector, owner.ScrollingHost);
 
             var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
             var last = direction == 1 ? index : panel.LastCacheIndex;
