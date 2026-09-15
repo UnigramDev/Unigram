@@ -93,6 +93,10 @@ namespace Telegram.Common
                 XamlAutoFontFamily = xamlAutoFontFamilyValue + comma + emojiFontFamily;
             }
 
+            // Code spans and blocks. The text fallback comes last so a character the monospace
+            // faces don't cover - an emoji inside a code span - still renders.
+            _monospaceFontFamily = new FontFamily("Cascadia Mono, Consolas" + comma + XamlAutoFontFamily);
+
             // Text input only (TextBox, RichEditBox, ChatTextBox), and there the emoji font can't
             // come first: the editor resolves the font once per run and it breaks runs at every
             // space, so resolving each one against a packaged font file costs about a millisecond
@@ -107,10 +111,7 @@ namespace Telegram.Common
             this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             this["EmojiThemeFontFamilyWithRounded"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Nunito.ttf#Nunito Bold" + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             this["EmojiThemeFontFamilyWithSerif"] = new FontFamily(emojiFontFamily + comma + "Times New Roman");
-
-            // Code spans and blocks. The text fallback comes last so a character the monospace
-            // faces don't cover - an emoji inside a code span - still renders.
-            _monospaceFontFamily = new FontFamily("Cascadia Mono, Consolas" + comma + XamlAutoFontFamily);
+            this["EmojiThemeFontFamilyWithMonospace"] = _monospaceFontFamily;
         }
 
         // The font the user picked, which is a plain string and so genuinely global. The
