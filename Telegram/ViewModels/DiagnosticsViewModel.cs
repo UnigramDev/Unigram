@@ -80,6 +80,20 @@ namespace Telegram.ViewModels
                 LogOldSize = basic.Size;
             }
 
+            var app = await ApplicationData.Current.LocalFolder.TryGetItemAsync(Logger.LogFileName) as StorageFile;
+            if (app != null)
+            {
+                var basic = await app.GetBasicPropertiesAsync();
+                AppLogSize = basic.Size;
+            }
+
+            var appOld = await ApplicationData.Current.LocalFolder.TryGetItemAsync(Logger.OldLogFileName) as StorageFile;
+            if (appOld != null)
+            {
+                var basic = await appOld.GetBasicPropertiesAsync();
+                AppLogOldSize = basic.Size;
+            }
+
             var properties = typeof(IOptionsService).GetProperties();
 
             foreach (var prop in properties)
@@ -257,6 +271,20 @@ namespace Telegram.ViewModels
             set => Set(ref _logOldSize, value);
         }
 
+        private ulong _appLogSize;
+        public ulong AppLogSize
+        {
+            get => _appLogSize;
+            set => Set(ref _appLogSize, value);
+        }
+
+        private ulong _appLogOldSize;
+        public ulong AppLogOldSize
+        {
+            get => _appLogOldSize;
+            set => Set(ref _appLogOldSize, value);
+        }
+
         public int Verbosity
         {
             get => Array.IndexOf(_verbosityIndexer, AppSettings.VerbosityLevel);
@@ -334,6 +362,18 @@ namespace Telegram.ViewModels
         public void SendLog()
         {
             SendFile("tdlib_log.txt", true);
+        }
+
+        // Posted as a plain document, unlike the TDLib log: the verbosity dance that comes with
+        // logs only silences TDLib, which does not write this file.
+        public void SendAppLog(object sender, RoutedEventArgs e)
+        {
+            SendFile(Logger.LogFileName, false);
+        }
+
+        public void SendAppLogOld(object sender, RoutedEventArgs e)
+        {
+            SendFile(Logger.OldLogFileName, false);
         }
 
         // Read when the page is opened rather than bound live: the counters are written on the
