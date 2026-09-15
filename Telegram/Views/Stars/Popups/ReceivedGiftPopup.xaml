@@ -187,28 +187,11 @@
                                    Grid.Column="1" />
                     </Grid>
 
-                    <Grid x:Name="RibbonRoot"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
-                          Width="72"
-                          Height="72"
-                          Visibility="Collapsed">
-                        <Path Data="M2.3431 41.1569L41.1569 2.34315C42.6571 0.842855 44.692 0 46.8137 0H69.1716C70.9534 0 71.8457 2.15429 70.5858 3.41422L3.41422 70.5858C2.15429 71.8457 0 70.9534 0 69.1716V46.8137C0 44.692 0.842855 42.6571 2.3431 41.1569Z"
-                              Fill="{StaticResource MessageServiceBackgroundBrush}" />
-
-                        <Border Width="72"
-                                VerticalAlignment="Center"
-                                RenderTransformOrigin="0.5,0.5"
-                                Margin="-14,-14,0,0">
-                            <Border.RenderTransform>
-                                <RotateTransform Angle="-45" />
-                            </Border.RenderTransform>
-                            <TextBlock x:Name="Ribbon"
-                                       Foreground="#FFFFFF"
-                                       TextAlignment="Center"
-                                       FontSize="12" />
-                        </Border>
-                    </Grid>
+                    <controls:Ribbon x:Name="Ribbon"
+                                     Background="{StaticResource MessageServiceBackgroundBrush}"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Top"
+                                     Visibility="Collapsed" />
 
                     <Grid x:Name="DetailRoot"
                           Grid.Row="1">

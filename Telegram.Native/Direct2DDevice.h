@@ -375,6 +375,7 @@ namespace winrt::Telegram::Native::implementation
         CompositionPath GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius);
         CompositionPath GetVoiceNoteClip(array_view<uint8_t const> waveform, double waveformWidth);
         CompositionPath GetRoundedPolygon(array_view<Windows::Foundation::Rect const> rects, array_view<int32_t const> shapes);
+        CompositionPath GetTextOutline(hstring text, hstring fontFamily, int32_t fontWeight, double fontSize, double maxWidth, float2& size);
 
         HRESULT Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation);
 

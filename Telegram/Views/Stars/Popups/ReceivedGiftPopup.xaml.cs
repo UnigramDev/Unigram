@@ -290,7 +290,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (gift.IsCrafted)
             {
-                RibbonRoot.Visibility = Visibility.Visible;
+                Ribbon.Visibility = Visibility.Visible;
                 Ribbon.Text = Strings.GiftCrafted;
             }
 

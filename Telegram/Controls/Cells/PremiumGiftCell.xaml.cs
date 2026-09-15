@@ -34,18 +34,18 @@ namespace Telegram.Controls.Cells
 
                 if (option.DiscountPercentage > 0)
                 {
-                    RibbonRoot.Visibility = Visibility.Visible;
+                    Ribbon.Visibility = Visibility.Visible;
                     Ribbon.Text = string.Format(Strings.GiftPremiumOptionDiscount, option.DiscountPercentage);
                 }
                 else
                 {
-                    RibbonRoot.Visibility = Visibility.Collapsed;
+                    Ribbon.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 PriceRoot.Opacity = 0;
-                RibbonRoot.Visibility = Visibility.Collapsed;
+                Ribbon.Visibility = Visibility.Collapsed;
             }
         }
     }

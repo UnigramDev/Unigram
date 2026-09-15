@@ -2117,6 +2117,161 @@ namespace winrt::Telegram::Native::implementation
         return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     }
 
+    // Collects a layout's glyph outlines into one sink. GetGlyphRunOutline emits every run around
+    // the origin, so each one is streamed back out through a translation to its own baseline:
+    // Simplify writes straight into the caller's open sink, which a transformed geometry per run
+    // would not.
+    class GlyphRunOutlineRenderer
+        : public winrt::implements<GlyphRunOutlineRenderer, IDWriteTextRenderer>
+    {
+    public:
+        GlyphRunOutlineRenderer(ID2D1Factory* factory, ID2D1GeometrySink* sink)
+            : m_factory(factory)
+            , m_sink(sink)
+        {
+        }
+
+        IFACEMETHODIMP2 DrawGlyphRun(
+            _In_opt_ void* /* clientDrawingContext */,
+            FLOAT baselineOriginX,
+            FLOAT baselineOriginY,
+            DWRITE_MEASURING_MODE /* measuringMode */,
+            _In_ DWRITE_GLYPH_RUN const* glyphRun,
+            _In_ DWRITE_GLYPH_RUN_DESCRIPTION const* /* glyphRunDescription */,
+            _In_opt_ IUnknown* /* clientDrawingEffect */
+        ) override
+        {
+            HRESULT result;
+
+            winrt::com_ptr<ID2D1PathGeometry> runGeometry;
+            winrt::com_ptr<ID2D1GeometrySink> runSink;
+
+            ReturnIfFailed(result, m_factory->CreatePathGeometry(runGeometry.put()));
+            ReturnIfFailed(result, runGeometry->Open(runSink.put()));
+
+            ReturnIfFailed(result, glyphRun->fontFace->GetGlyphRunOutline(
+                glyphRun->fontEmSize,
+                glyphRun->glyphIndices,
+                glyphRun->glyphAdvances,
+                glyphRun->glyphOffsets,
+                glyphRun->glyphCount,
+                glyphRun->isSideways,
+                glyphRun->bidiLevel & 1,
+                runSink.get()
+            ));
+
+            ReturnIfFailed(result, runSink->Close());
+
+            return runGeometry->Simplify(
+                D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES,
+                D2D1::Matrix3x2F::Translation(baselineOriginX, baselineOriginY),
+                m_sink);
+        }
+
+        // Nothing reaches these: GetTextOutline applies no styles, so the layout has no
+        // decorations and no inline objects to draw.
+        IFACEMETHODIMP2 DrawUnderline(_In_opt_ void*, FLOAT, FLOAT, _In_ DWRITE_UNDERLINE const*, _In_opt_ IUnknown*) override
+        {
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 DrawStrikethrough(_In_opt_ void*, FLOAT, FLOAT, _In_ DWRITE_STRIKETHROUGH const*, _In_opt_ IUnknown*) override
+        {
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 DrawInlineObject(_In_opt_ void*, FLOAT, FLOAT, _In_ IDWriteInlineObject*, BOOL, BOOL, _In_opt_ IUnknown*) override
+        {
+            return S_OK;
+        }
+
+        // Outlines are resolution independent and the compositor rasterizes them through whatever
+        // transform the visual carries, so there is no pixel grid here to snap a baseline to.
+        IFACEMETHODIMP2 IsPixelSnappingDisabled(_In_opt_ void*, _Out_ BOOL* isDisabled) override
+        {
+            *isDisabled = TRUE;
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetCurrentTransform(_In_opt_ void*, _Out_ DWRITE_MATRIX* transform) override
+        {
+            *transform = { 1, 0, 0, 1, 0, 0 };
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetPixelsPerDip(_In_opt_ void*, _Out_ FLOAT* pixelsPerDip) override
+        {
+            *pixelsPerDip = 1;
+            return S_OK;
+        }
+
+    private:
+        ID2D1Factory* m_factory;
+        ID2D1GeometrySink* m_sink;
+    };
+
+    // The text as filled outlines rather than glyphs, for a caller that draws it through a
+    // transform XAML would otherwise resolve by rotating an axis-aligned glyph texture. A
+    // CompositionSpriteShape built from this rasterizes in the compositor under the visual's
+    // world transform, so it stays sharp at any angle and any scale.
+    CompositionPath Direct2DDevice::GetTextOutline(hstring text, hstring fontFamily, int32_t fontWeight, double fontSize, double maxWidth, float2& size)
+    {
+        // No lock: DirectWrite's factory is DWRITE_FACTORY_TYPE_SHARED and thread-safe, the font
+        // collections are read-only after CreateDeviceIndependentResources, and m_d2dFactory is
+        // D2D1_FACTORY_TYPE_MULTI_THREADED, so it serializes itself. Everything below is local
+        // to this call.
+        size = {};
+
+        HRESULT result;
+
+        // The system collection, not m_fontCollection: that one holds only the packaged icon and
+        // Apple emoji faces, so a system family name would fall back out of it.
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnNullIfFailed(result, m_dwriteFactory->CreateTextFormat(
+            fontFamily.c_str(),
+            m_systemCollection.get(),
+            static_cast<DWRITE_FONT_WEIGHT>(fontWeight),
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            fontSize,
+            L"",
+            textFormat.put()
+        ));
+        ReturnNullIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnNullIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+
+        winrt::com_ptr<IDWriteTextLayout> textLayout;
+        ReturnNullIfFailed(result, m_dwriteFactory->CreateTextLayout(
+            text.data(),
+            text.size(),
+            textFormat.get(),
+            maxWidth,
+            INFINITY,
+            textLayout.put()
+        ));
+
+        winrt::com_ptr<ID2D1GeometrySink> d2dGeometrySink;
+        winrt::com_ptr<ID2D1PathGeometry1> d2dPathGeometry;
+
+        ReturnNullIfFailed(result, m_d2dFactory->CreatePathGeometry(d2dPathGeometry.put()));
+        ReturnNullIfFailed(result, d2dPathGeometry->Open(d2dGeometrySink.put()));
+
+        // Glyph contours are wound so that a counter - the hole in an 'o' - runs opposite its
+        // outer contour. The sink defaults to alternate fill, which fills them in.
+        d2dGeometrySink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+        auto renderer = winrt::make_self<GlyphRunOutlineRenderer>(m_d2dFactory.get(), d2dGeometrySink.get());
+        ReturnNullIfFailed(result, textLayout->Draw(nullptr, renderer.as<IDWriteTextRenderer>().get(), 0, 0));
+        ReturnNullIfFailed(result, d2dGeometrySink->Close());
+
+        DWRITE_TEXT_METRICS metrics;
+        ReturnNullIfFailed(result, textLayout->GetMetrics(&metrics));
+        size = { metrics.left + metrics.width, metrics.top + metrics.height };
+
+        auto geometry = winrt::make_self<CompositionPathSource>(d2dPathGeometry);
+        return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
+    }
+
     HRESULT Direct2DDevice::Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation)
     {
         HRESULT result;

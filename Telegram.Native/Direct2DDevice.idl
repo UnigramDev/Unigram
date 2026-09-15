@@ -31,6 +31,7 @@ namespace Telegram.Native
         Windows.UI.Composition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);
         Windows.UI.Composition.CompositionPath GetVoiceNoteClip(byte[] waveform, Double waveformWidth);
         Windows.UI.Composition.CompositionPath GetRoundedPolygon(Windows.Foundation.Rect[] rects, Int32[] shapes);
+        Windows.UI.Composition.CompositionPath GetTextOutline(String text, String fontFamily, Int32 fontWeight, Double fontSize, Double maxWidth, out Windows.Foundation.Numerics.Vector2 size);
 
         void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height, Int32 rotation);
 

@@ -129,12 +129,12 @@ namespace Telegram.Controls.Messages.Service
 
             if (gift.Gift.OverallLimits != null)
             {
-                RibbonRoot.Visibility = Visibility.Visible;
+                Ribbon.Visibility = Visibility.Visible;
                 Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.TotalText());
             }
             else
             {
-                RibbonRoot.Visibility = Visibility.Collapsed;
+                Ribbon.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -203,7 +203,7 @@ namespace Telegram.Controls.Messages.Service
             Animation.Source = DelayedFileSource.FromSticker(message.ClientService, sticker);
 
             Publisher.Visibility = Visibility.Collapsed;
-            RibbonRoot.Visibility = Visibility.Collapsed;
+            Ribbon.Visibility = Visibility.Collapsed;
         }
 
         public override void Recycle()

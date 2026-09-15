@@ -109,28 +109,11 @@
                 </StackPanel>
             </messages:MessageService>
 
-            <Grid x:Name="RibbonRoot"
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Top"
-                  Margin="0,2,-2,0"
-                  Width="72"
-                  Height="72">
-                <Path Data="M69.6569 41.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154286 2.15429 1.41422 3.41422L68.5858 70.5858C69.8457 71.8457 72 70.9534 72 69.1716V46.8137C72 44.692 71.1571 42.6571 69.6569 41.1569Z"
-                      Fill="{StaticResource MessageServiceBackgroundBrush}" />
-
-                <Border Width="72"
-                        VerticalAlignment="Center"
-                        RenderTransformOrigin="0.5,0.5"
-                        Margin="0,-14,-14,0">
-                    <Border.RenderTransform>
-                        <RotateTransform Angle="45" />
-                    </Border.RenderTransform>
-                    <TextBlock x:Name="Ribbon"
-                               Foreground="#FFFFFF"
-                               TextAlignment="Center"
-                               FontSize="12" />
-                </Border>
-            </Grid>
+            <controls:Ribbon x:Name="Ribbon"
+                             Background="{StaticResource MessageServiceBackgroundBrush}"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="0,2,-2,0" />
         </Grid>
     </StackPanel>
 </messages:MessageService>

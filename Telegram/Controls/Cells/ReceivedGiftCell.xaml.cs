@@ -91,20 +91,20 @@ namespace Telegram.Controls.Cells
 
                 if (regular.Gift.OverallLimits != null)
                 {
-                    RibbonRoot.Visibility = Visibility.Visible;
+                    Ribbon.Visibility = Visibility.Visible;
                     Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, Formatter.ShortNumber(regular.Gift.OverallLimits.TotalCount, true));
 
                     RibbonTop.Color = _ribbonLimitedTop;
                     RibbonBottom.Color = _ribbonLimitedBottom;
 
-                    if (RibbonPath.Fill is not LinearGradientBrush)
+                    if (Ribbon.Background is not LinearGradientBrush)
                     {
-                        RibbonPath.Fill = RibbonGradient;
+                        Ribbon.Background = RibbonGradient;
                     }
                 }
                 else
                 {
-                    RibbonRoot.Visibility = Visibility.Collapsed;
+                    Ribbon.Visibility = Visibility.Collapsed;
                 }
 
                 ResaleStarCountRoot?.Visibility = Visibility.Collapsed;
@@ -133,7 +133,7 @@ namespace Telegram.Controls.Cells
 
                 Animated.Source = new DelayedFileSource(clientService, upgraded.Gift.Model.Sticker);
 
-                RibbonRoot.Visibility = Visibility.Visible;
+                Ribbon.Visibility = Visibility.Visible;
 
                 if (upgraded.Gift.ResaleParameters != null)
                 {
@@ -191,7 +191,7 @@ namespace Telegram.Controls.Cells
 
             Animated.Source = new DelayedFileSource(clientService, upgraded.Gift.Model.Sticker);
 
-            RibbonRoot.Visibility = Visibility.Collapsed;
+            Ribbon.Visibility = Visibility.Collapsed;
 
             ResaleStarCountRoot?.Visibility = Visibility.Collapsed;
         }
@@ -223,7 +223,7 @@ namespace Telegram.Controls.Cells
 
             Animated.Source = new CustomEmojiFileSource(clientService, upgraded.ModelCustomEmojiId);
 
-            RibbonRoot.Visibility = Visibility.Collapsed;
+            Ribbon.Visibility = Visibility.Collapsed;
 
             ResaleStarCountRoot?.Visibility = Visibility.Collapsed;
         }
@@ -248,7 +248,7 @@ namespace Telegram.Controls.Cells
             ResaleStarCountRoot.Background = new SolidColorBrush(edgeColor.Darken());
             ResaleStarCount.Text = gift.Gift.ResaleParameters.StarCount.ToString("N0");
 
-            RibbonRoot.Visibility = Visibility.Visible;
+            Ribbon.Visibility = Visibility.Visible;
             Ribbon.Text = string.Format("#{0:N0}", gift.Gift.Number);
 
             RibbonTop.Color = centerColor.Darken();
@@ -281,7 +281,7 @@ namespace Telegram.Controls.Cells
             ResaleStarCount.Text = Strings.Gift2TransferMine;
             ResaleStar.Visibility = Visibility.Collapsed;
 
-            RibbonRoot.Visibility = Visibility.Visible;
+            Ribbon.Visibility = Visibility.Visible;
             Ribbon.Text = string.Format("#{0:N0}", upgraded.Gift.Number);
 
             RibbonTop.Color = centerColor.Darken();
@@ -319,7 +319,7 @@ namespace Telegram.Controls.Cells
                         FindName(nameof(PremiumRoot));
                         PremiumRoot.Visibility = Visibility.Visible;
 
-                        RibbonRoot.Visibility = Visibility.Visible;
+                        Ribbon.Visibility = Visibility.Visible;
                         Ribbon.Text = gift.Gift.UserLimits != null
                             ? Locale.Declension(Strings.R.Gift2AvailabilityLeft, gift.Gift.UserLimits.RemainingCount)
                             : Strings.Gift2LimitedPremium;
@@ -331,7 +331,7 @@ namespace Telegram.Controls.Cells
                     {
                         PremiumRoot?.Visibility = Visibility.Collapsed;
 
-                        RibbonRoot.Visibility = Visibility.Visible;
+                        Ribbon.Visibility = Visibility.Visible;
                         Ribbon.Text = Strings.Gift2LimitedRibbon;
 
                         RibbonTop.Color = _ribbonLimitedTop;
@@ -342,7 +342,7 @@ namespace Telegram.Controls.Cells
                 {
                     PremiumRoot?.Visibility = Visibility.Collapsed;
 
-                    RibbonRoot.Visibility = Visibility.Visible;
+                    Ribbon.Visibility = Visibility.Visible;
                     Ribbon.Text = Strings.Gift2SoldOut;
 
                     RibbonTop.Color = _ribbonSoldOutTop;
@@ -355,7 +355,7 @@ namespace Telegram.Controls.Cells
 
                 StarCount.Text = gift.MinResaleStarCount.ToString("N0");
 
-                RibbonRoot.Visibility = Visibility.Visible;
+                Ribbon.Visibility = Visibility.Visible;
                 Ribbon.Text = Strings.Gift2Resale;
 
                 RibbonTop.Color = _ribbonResaleTop;
@@ -367,7 +367,7 @@ namespace Telegram.Controls.Cells
 
                 StarCount.Text = gift.Gift.StarCount.ToString("N0");
 
-                RibbonRoot.Visibility = Visibility.Collapsed;
+                Ribbon.Visibility = Visibility.Collapsed;
             }
 
             Hidden?.Visibility = Visibility.Collapsed;

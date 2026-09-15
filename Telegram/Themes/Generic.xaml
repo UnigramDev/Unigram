@@ -95,6 +95,36 @@
     <Style TargetType="local:ButtonEx"
            BasedOn="{StaticResource DefaultButtonStyle}" />
 
+    <Style TargetType="local:Ribbon">
+        <Setter Property="Foreground"
+                Value="#FFFFFF" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0"
+                                     EndPoint="1,1">
+                    <GradientStop Color="#6ED2FF"
+                                  Offset="0" />
+                    <GradientStop Color="#35A5FC"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:Ribbon">
+                    <Grid x:Name="RootGrid"
+                          Width="64"
+                          Height="64">
+                        <Path Data="M60.8353 33.16L30.0185 2.34315C28.5183 0.842855 26.4902 0 24.3685 0H2.00835C0.226538 0 -0.671548 2.15429 0.588386 3.41422L59.7642 62.59C61.0241 63.8499 63.1784 62.9518 63.1784 61.17V38.81C63.1784 36.6883 62.3355 34.6602 60.8353 33.16Z"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Fill="{TemplateBinding Background}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="host:WindowPresenter">
         <Setter Property="IsTabStop"
                 Value="False" />
