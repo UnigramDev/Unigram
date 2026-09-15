@@ -2490,26 +2490,41 @@ namespace Telegram.ViewModels
 
                     // Read, not consumed: the chat may well be closed again before it has settled
                     // anywhere worth recording, and this is then still the best answer there is.
-                    bool TryGet(out long v1, out long v2)
+                    bool TryGet(out long lastVisibleId)
                     {
-                        var a = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId, out v1);
-                        var b = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Index, out v2);
-                        return a && b;
+                        var a = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId, out long readInboxMaxId);
+                        var b = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Index, out lastVisibleId);
+                        var c = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.LastMessageId, out long lastMessageId);
+                        
+                        if (!a || !b)
+                        {
+                            return false;
+                        }
+
+                        if (readInboxMaxId != details.LastReadInboxMessageId)
+                        {
+                            return false;
+                        }
+
+                        if (lastVisibleId == lastMessageId)
+                        {
+                            return lastMessageId == details.LastMessageId;
+                        }
+
+                        return true;
                     }
 
-                    if (TryGet(out long readInboxMaxId, out long start) &&
-                        readInboxMaxId == details.LastReadInboxMessageId /*&&
-                        start <= details.LastReadInboxMessageId*/)
+                    if (TryGet(out long lastVisibleId))
                     {
                         if (Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Pixel, out double pixel))
                         {
                             Logger.Info(string.Format("{0} - Loading messages from specific pixel", chat.Id));
-                            LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
+                            LoadMessageSliceAsync(null, lastVisibleId, VerticalAlignment.Bottom, pixel);
                         }
                         else
                         {
                             Logger.Info(string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
-                            LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
+                            LoadMessageSliceAsync(null, lastVisibleId, VerticalAlignment.Bottom);
                         }
                     }
                     else /*if (chat.UnreadCount > 0)*/
