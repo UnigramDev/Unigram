@@ -222,7 +222,6 @@
     <Compile Include="Common\RichHtml.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Common\TdThroughput.cs" />
-    <Compile Include="Common\TextThroughput.cs" />
     <Compile Include="Common\TextSelectionCoordinator.cs" />
     <Compile Include="Common\ThemeShadowEx.cs" />
     <Compile Include="Common\NormalizingStringBuilder.cs" />
@@ -1668,9 +1667,6 @@
     </Compile>
     <Compile Include="Views\Popups\IdenticonPopup.xaml.cs">
       <DependentUpon>IdenticonPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\InputTeachingTip.xaml.cs">
-      <DependentUpon>InputTeachingTip.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
@@ -4094,10 +4090,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\IdenticonPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\InputTeachingTip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -70,7 +70,7 @@ namespace Telegram
         {
             AppSettings.Initialize();
 #if !NET9_0_OR_GREATER
-            GarbageCollectionMonitor.Initialize(GC.Collect, AppSettings.Diagnostics.DisableXamlGcCollect, AppSettings.Diagnostics.DisableMemoryPressure);
+            Native.GarbageCollectionMonitor.Initialize(GC.Collect, AppSettings.Diagnostics.DisableXamlGcCollect, AppSettings.Diagnostics.DisableMemoryPressure);
 #endif
             WatchDog.Initialize();
             LifetimeService.Initialize();
