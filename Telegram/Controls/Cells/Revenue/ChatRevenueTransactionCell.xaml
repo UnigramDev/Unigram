@@ -30,9 +30,10 @@
                FontWeight="SemiBold"
                Grid.RowSpan="2"
                Grid.Column="1">
-        <Run x:Name="Symbol" /><Run Text="&#xEA7E;"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
-        <Run x:Name="Amount" /><Run x:Name="Decimal"
-                                    FontSize="12" />
+        <Run x:Name="Symbol" /><Run x:Name="Amount" /><Run x:Name="Decimal"
+                                                           FontSize="12" />
+        <Run Text="&#xEA7E;"
+             FontFamily="{StaticResource SymbolThemeFontFamily}"
+             FontWeight="Normal" />
     </TextBlock>
 </Grid>
