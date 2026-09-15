@@ -64,7 +64,10 @@ namespace Telegram.Controls.Media
 
         public const string ArrowDownLeftFilled16 = "\uE928";
         public const string ArrowUpRightFilled16 = "\uE9B7";
+        public const string ArrowCircleDownFilled = "\uEB2C";
+        public const string ArrowCircleUpFilled = "\uEB2D";
 
+        public const string ArrowSort = "\uE9E6";
         public const string ArrowReset = "\uEA09";
         public const string ArrowSync = "\uE981";
 
@@ -318,6 +321,7 @@ namespace Telegram.Controls.Media
         public const string Send = "\uE919";
 
         public const string Key = "\uE192";
+        public const string KeyFilled = "\uEB2E";
         public const string Record = "\uE903";
 
         public const string AppsListDetails = "\uEA67";
@@ -331,6 +335,7 @@ namespace Telegram.Controls.Media
         public const string CopyAsPath = "\uEAC3";
         public const string SaveAs = "\uE792";
         public const string SaveAsLocked = "\uEA2B";
+        public const string Cloud = "\uEB2A";
         public const string FolderOpen = "\uE838";
         public const string OpenIn = "\uE7AC";
         public const string OpenWith = "\uEAC8";
@@ -502,7 +507,8 @@ namespace Telegram.Controls.Media
 
         public const string FragmentFilled = "\uEA8E";
         public const string Premium = "\uEA87";
-        public const string Ton = "\uEA7E";
+        public const string Ton = "\uEA7E"; // Filled, optimized for 14pt inline
+        public const string Gram = "\uEB2F";
         public const string Premium16 = "\uE9B5";
         public const string LockClosed16 = "\uE9BE";
         public const string Verified16 = "\uE97A";
