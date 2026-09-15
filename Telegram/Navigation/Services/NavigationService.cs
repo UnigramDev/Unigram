@@ -556,7 +556,7 @@ namespace Telegram.Navigation.Services
                 popup.Closed += OnClosed;
             }
 
-            return popup.ShowQueuedAsync(XamlRoot);
+            return popup.ShowAsync(XamlRoot);
         }
 
         public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
@@ -623,6 +623,10 @@ namespace Telegram.Navigation.Services
                 if (popup.Child is ContentPopup dialog && type == dialog.GetType())
                 {
                     dialog.Hide();
+                }
+                else if (popup.Child is ModalPopup modal && type == modal.GetType())
+                {
+                    modal.Hide();
                 }
             }
         }
