@@ -191,6 +191,16 @@
                                              Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="App Logs"
+                                          Footer="App Logs use the same Verbosity Level, and are kept in two files: when the newest one reaches 10 MB it replaces the oldest.">
+                    <controls:SettingsButton Content="app_log.txt"
+                                             Click="{x:Bind ViewModel.SendAppLog}"
+                                             Badge="{x:Bind ConvertSize(ViewModel.AppLogSize), Mode=OneWay}" />
+                    <controls:SettingsButton Content="app_log.txt.old"
+                                             Click="{x:Bind ViewModel.SendAppLogOld}"
+                                             Badge="{x:Bind ConvertSize(ViewModel.AppLogOldSize), Mode=OneWay}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl>
                     <controls:SettingsButton Content="Disable Database"
                                              Click="{x:Bind ViewModel.DisableDatabase}"
