@@ -233,7 +233,7 @@ namespace Telegram.Common
 
                 if (destructive)
                 {
-                    flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+                    flyoutItem.Style = BootStrapper.Current.Resources["DangerMenuFlyoutItemStyle"] as Style;
                 }
 
                 if (icon != null)
@@ -280,7 +280,7 @@ namespace Telegram.Common
 
                 if (destructive)
                 {
-                    flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+                    flyoutItem.Style = BootStrapper.Current.Resources["DangerMenuFlyoutItemStyle"] as Style;
                 }
 
                 if (icon != null)
@@ -359,7 +359,7 @@ namespace Telegram.Common
 
             if (destructive)
             {
-                flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+                flyoutItem.Style = BootStrapper.Current.Resources["DangerMenuFlyoutItemStyle"] as Style;
             }
 
             if (icon != null)
@@ -444,7 +444,7 @@ namespace Telegram.Common
 
             if (destructive)
             {
-                flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+                flyoutItem.Style = BootStrapper.Current.Resources["DangerMenuFlyoutItemStyle"] as Style;
             }
 
             if (icon != null)

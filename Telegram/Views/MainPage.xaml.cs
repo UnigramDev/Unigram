@@ -3510,15 +3510,9 @@ namespace Telegram.Views
                     ViewModel.Chats.NotifyChat,
                     chat,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
-                    muted ? Icons.Speaker3 : Icons.SpeakerOff);
-
-                if (muted is false)
-                {
-                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
-                }
+                    muted ? Icons.Speaker3 : Icons.SpeakerOff, destructive: !muted);
 
                 flyout.Items.Add(mute);
-
             }
 
             flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.MarkChatAsRead, chat, chat.IsUnread() ? Strings.MarkAsRead : Strings.MarkAsUnread, chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread);

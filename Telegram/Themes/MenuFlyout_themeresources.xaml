@@ -81,6 +81,13 @@
     <Style TargetType="local:MenuFlyoutInfoItem"
            BasedOn="{StaticResource DefaultMenuFlyoutInfoItemStyle}" />
 
+    <Style x:Key="DangerMenuFlyoutItemStyle"
+           TargetType="MenuFlyoutItem"
+           BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
+        <Setter Property="Foreground"
+                Value="{ThemeResource DangerButtonBackground}" />
+    </Style>
+
     <Style TargetType="MenuFlyoutItem"
            x:Key="DefaultMenuFlyoutItemStyle">
         <Setter Property="Background"

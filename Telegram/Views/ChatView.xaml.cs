@@ -2792,12 +2792,7 @@ namespace Telegram.Views
                 var toggle = mute.CreateFlyoutItem(
                     muted ? ViewModel.Unmute : ViewModel.Mute,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
-                    muted ? Icons.Speaker3 : Icons.SpeakerOff);
-
-                if (muted is false)
-                {
-                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
-                }
+                    muted ? Icons.Speaker3 : Icons.SpeakerOff, destructive: !muted);
 
                 flyout.Items.Add(mute);
             }
@@ -3749,7 +3744,7 @@ namespace Telegram.Views
                             Description = string.Format(Strings.SuggestedOfferPaidUntil, Formatter.DateAt((int)message.ClientService.Options.SuggestedPostLifetimeMin + message.GetDate())),
                             Text = Strings.Delete,
                             Icon = MenuFlyoutHelper.CreateIcon(Icons.Delete),
-                            Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush,
+                            Style = BootStrapper.Current.Resources["DangerMenuFlyoutItemStyle"] as Style,
                             CommandParameter = message,
                             Command = new RelayCommand<MessageViewModel>(ViewModel.DeleteMessage)
                         };
