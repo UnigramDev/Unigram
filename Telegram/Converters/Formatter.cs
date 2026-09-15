@@ -35,35 +35,85 @@ namespace Telegram.Converters
         /// <summary>Nanotons per TON: the amount is an exact integer of these.</summary>
         private const int TonDecimals = 9;
 
+        private static readonly BigInteger OneTon = BigInteger.Pow(10, TonDecimals);
+
+        // How far under one TON an amount is still spelled out. Nanotons go nine deep, but the
+        // last four are dust nobody reads, and every other wallet stops here.
+        private const int TonSubDecimals = 5;
+
+        /// <summary>
+        /// A TON balance, in nanotons. Two decimals where there is a whole part, and
+        /// five where there is not: under one TON every digit that matters is in the
+        /// fraction, and a fee of 0.00027 rounds away to nothing at two. Trailing
+        /// zeros come off either way, so the extra precision only shows where it says
+        /// something.
+        ///
+        /// Five, unless five would be five zeros - then as deep as the first digit
+        /// that is not one. An amount too small to show is still not the same amount
+        /// as none.
+        /// </summary>
+        public static (string Integer, string Fraction) TonBalance(BigInteger nanograms, int decimals = 2)
+        {
+            var fraction = BigInteger.Abs(nanograms);
+
+            if (fraction < OneTon && !fraction.IsZero)
+            {
+                // Nine digits make one TON, so a value of n digits has its first significant one
+                // at the (9 - n + 1)-th decimal place.
+                var length = fraction.ToString(CultureInfo.InvariantCulture).Length;
+                decimals = Math.Max(TonSubDecimals, TonDecimals - length + 1);
+            }
+
+            return SplitAmount(nanograms, TonDecimals, decimals);
+        }
+
+        /// <summary>
+        /// The two halves as one string, for everywhere that is not drawing them at two sizes.
+        /// </summary>
+        public static string Join(this (string Integer, string Fraction) amount)
+        {
+            return amount.Integer + amount.Fraction;
+        }
+
         /// <summary>
         /// Splits an amount into the part before the decimal separator and the part
         /// from the separator onwards, both in the app's language — "1,344" + ".02"
         /// in en, "1.344" + ",02" in it. Kept apart so the two can be drawn at
         /// different sizes, which is the only reason to want them separately.
         ///
-        /// The split is done on the nanotons, never on a double or a decimal: the
-        /// amount is an exact integer and it stays one, so nothing can drift in the
-        /// last digits of a balance.
+        /// The split is done on the exact integer the amount is made of, never on a
+        /// double: 0.1 is not a double, and a balance must not drift in its last
+        /// digits on the way to the screen.
         /// </summary>
-        /// <param name="decimals">
-        /// Fractional digits to keep, up to the 9 a TON has. Fixed rather than
-        /// trimmed — a balance that switches between "1,344" and "1,344.02" as it
-        /// changes jitters in the layout.
+        /// <param name="units">The amount, in whatever the smallest unit is.</param>
+        /// <param name="exponent">
+        /// How many of those units make one — 9 for nanotons and nanostars, 2 for
+        /// most currencies.
         /// </param>
-        public static (string Integer, string Fraction) TonBalance(BigInteger nanograms, int decimals = 2)
+        /// <param name="decimals">
+        /// The most fractional digits to show. Trailing zeros are dropped, and a
+        /// whole amount comes back with no fraction at all: "1", not "1.00", and
+        /// "0.1", not "0.10".
+        /// </param>
+        /// <param name="trim">
+        /// Whether those trailing zeros come off. Money keeps them - "5.50" is what
+        /// an amount of money looks like - and everything else does not.
+        /// </param>
+        public static (string Integer, string Fraction) SplitAmount(BigInteger units, int exponent, int decimals, bool trim = true)
         {
             var culture = LocaleService.Current.CurrentCulture;
             var format = culture.NumberFormat;
 
-            var nanotons = nanograms;
-            var negative = nanotons.Sign < 0;
+            var negative = units.Sign < 0;
 
             if (negative)
             {
-                nanotons = -nanotons;
+                units = -units;
             }
 
-            var whole = BigInteger.DivRem(nanotons, BigInteger.Pow(10, TonDecimals), out var rest);
+            exponent = Math.Max(exponent, 0);
+
+            var whole = BigInteger.DivRem(units, BigInteger.Pow(10, exponent), out var rest);
 
             var integer = whole.ToString("N0", culture);
             if (negative)
@@ -74,7 +124,7 @@ namespace Telegram.Converters
                 integer = format.NegativeSign + integer;
             }
 
-            decimals = Math.Min(Math.Max(decimals, 0), TonDecimals);
+            decimals = Math.Min(Math.Max(decimals, 0), exponent);
             if (decimals == 0)
             {
                 return (integer, string.Empty);
@@ -82,9 +132,37 @@ namespace Telegram.Converters
 
             // Truncated, not rounded. Rounding up would show a balance the user does
             // not have, and they would find out when a transfer of it fails.
-            var digits = rest.ToString(CultureInfo.InvariantCulture).PadLeft(TonDecimals, '0');
+            var digits = rest.ToString(CultureInfo.InvariantCulture)
+                .PadLeft(exponent, '0')
+                .Substring(0, decimals);
 
-            return (integer, format.NumberDecimalSeparator + digits.Substring(0, decimals));
+            if (trim)
+            {
+                digits = digits.TrimEnd('0');
+            }
+
+            return digits.Length > 0
+                ? (integer, format.NumberDecimalSeparator + digits)
+                : (integer, string.Empty);
+        }
+
+        /// <summary>
+        /// A star amount as the one exact integer of nanostars it is. TDLib splits
+        /// it in two, and both halves carry the same sign.
+        /// </summary>
+        public static BigInteger Nanostars(StarAmount amount)
+        {
+            return new BigInteger(amount.StarCount) * 1_000_000_000 + amount.NanostarCount;
+        }
+
+        /// <summary>
+        /// How many of a currency's smallest units make one of it — 2 for dollars, 0
+        /// for yen. The counterpart of <see cref="GetAmountFraction"/>, for the exact
+        /// path: a fraction is a double and an exponent is not.
+        /// </summary>
+        public static int GetAmountExponent(string currency)
+        {
+            return (int)Math.Round(Math.Log10(GetAmountFraction(currency)));
         }
 
         public static string UtcTimeOffset(int value)
@@ -239,6 +317,45 @@ namespace Telegram.Converters
         public static string FormatAmount(long amount, string currency)
         {
             return Locale.FormatCurrency(amount, currency);
+        }
+
+        /// <summary>
+        /// An amount in its currency, with enough decimals to be worth reading.
+        /// </summary>
+        /// <remarks>
+        /// Below the currency's smallest unit the usual path cannot carry the value at all - a
+        /// thousandth of a cent is not a number of cents, and <see cref="AmountBack"/> truncates it
+        /// to none - so anything smaller is formatted from the value itself, with as many decimals
+        /// as it takes to reach two significant digits.
+        ///
+        /// For wallet amounts, where a fee of a few hundred thousand nanograms is worth a fraction
+        /// of a cent and is still worth showing.
+        /// </remarks>
+        public static string FormatAmountExact(double amount, string currency)
+        {
+            var exponent = GetAmountExponent(currency);
+            var scale = Math.Abs(amount);
+
+            // As deep as it takes to reach the first digit that is not a zero, and no deeper: the
+            // currency's own precision says nothing about an amount below its smallest unit, and
+            // everything past that first digit is the rate's noise rather than the amount's.
+            var digits = exponent;
+
+            while (digits < 8 && scale > 0 && scale * Math.Pow(10, digits) < 1)
+            {
+                digits++;
+            }
+
+            // Written out in the app's own language, like every other number beside it. The
+            // formatter speaks the region's, and the two disagree often enough to be read as two
+            // amounts in one line.
+            var units = (BigInteger)Math.Round(amount * Math.Pow(10, digits));
+            var (integer, fraction) = SplitAmount(units, digits, digits, digits > exponent);
+
+            var formatter = Locale.GetCurrencyFormatter(currency);
+            var number = integer + fraction;
+
+            return formatter != null ? formatter.Format(number) : number;
         }
 
         public static double Amount(long amount, string currency)
