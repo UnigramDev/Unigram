@@ -248,6 +248,10 @@
             <service:MessageUpgradedGiftContent />
         </DataTemplate>
 
+        <DataTemplate x:Name="ServiceMessageTonWalletTransferTemplate">
+            <service:MessageTonWalletTransferContent />
+        </DataTemplate>
+
         <DataTemplate x:Name="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click"
                                      Margin="0,8,0,0"

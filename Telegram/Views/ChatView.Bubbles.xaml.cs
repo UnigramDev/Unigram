@@ -1697,6 +1697,7 @@ namespace Telegram.Views
                     MessageGiftedPremium or MessageGiftedStars or MessageGift or MessagePremiumGiftCode => ChatHistoryViewItemType.ServiceGift,
                     MessageUpgradedGift => ChatHistoryViewItemType.ServiceUpgradedGift,
                     MessageUpgradedGiftPurchaseOffer => ChatHistoryViewItemType.ServiceUpgradedGiftPurchaseOffer,
+                    MessageTonWalletTransfer => ChatHistoryViewItemType.ServiceMessageTonWalletTransfer,
                     MessageChatHasProtectedContentDisableRequested => ChatHistoryViewItemType.ServiceChatHasProtectedContentDisableRequested,
                     MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory => ChatHistoryViewItemType.ServicePhoto,
                     MessageSuggestBirthdate => ChatHistoryViewItemType.ServiceBirthdate,
