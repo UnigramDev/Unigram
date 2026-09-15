@@ -1,0 +1,62 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletCurrencyPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Wallet.Popups"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     mc:Ignorable="d"
+                     Padding="0,20,0,0">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="SearchField"
+                 PlaceholderText="{CustomResource Search}"
+                 TextChanged="SearchField_TextChanged"
+                 KeyDown="SearchField_KeyDown"
+                 VerticalAlignment="Center"
+                 Margin="24,0" />
+
+        <TextBlock x:Name="NoResult"
+                   Text="{CustomResource NoResult}"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Visibility="Collapsed"
+                   Margin="24,12,24,24"
+                   Grid.Row="1" />
+
+        <controls:TextListView x:Name="ScrollingHost"
+                               SelectionMode="None"
+                               IsItemClickEnabled="True"
+                               ItemClick="ScrollingHost_ItemClick"
+                               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
+                               Padding="12,12,12,24"
+                               Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:WalletCurrency">
+                    <Grid Padding="12,6"
+                          Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{x:Bind Name}"
+                                   VerticalAlignment="Bottom"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Code}"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                                   VerticalAlignment="Top"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Grid.Row="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </controls:TextListView>
+    </Grid>
+</controls:ModalPopup>

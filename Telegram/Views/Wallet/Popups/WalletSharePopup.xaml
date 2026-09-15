@@ -108,7 +108,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="CardAddress"
-                               FontFamily="Cascadia Mono, Consolas"
+                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
                                FontSize="16"
                                TextAlignment="Center" />
                     <TextBlock Text="Address copied"

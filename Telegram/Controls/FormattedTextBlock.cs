@@ -822,7 +822,7 @@ namespace Telegram.Controls
 
                 if (IsPointerWithinSpoiler(position))
                 {
-                    RevealSpoilers();
+                    Entity_Click(new TextEntityClickEventArgs(new TextEntityTypeSpoiler()));
                     e.Handled = true;
                 }
             }

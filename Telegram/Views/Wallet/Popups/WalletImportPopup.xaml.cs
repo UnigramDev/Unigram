@@ -8,10 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
-using Telegram.Services;
 using Telegram.Services.Wallet;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
@@ -101,11 +101,8 @@ namespace Telegram.Views.Wallet.Popups
                         Content = Strings.Paste,
                         HorizontalAlignment = HorizontalAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Center,
-                        Style = BootStrapper.Current.Resources["SmallPillButtonStyle"] as Style,
-                        Padding = new Thickness(8, 5, 8, 7),
-                        Margin = new Thickness(0, 0, 6, 0),
-                        Height = 20,
-                        CornerRadius = new CornerRadius(10)
+                        Style = BootStrapper.Current.Resources["BadgeControlButtonStyle"] as Style,
+                        Margin = new Thickness(0, 0, 6, 0)
                     };
 
                     paste.Click += Paste_Click;
@@ -208,20 +205,40 @@ namespace Telegram.Views.Wallet.Popups
 
             var deferral = args.GetDeferral();
 
-            try
-            {
-                await _wallet.ImportAsync(_words);
+            var result = await _wallet.BindAsync(_words);
 
-                _submitted = false;
+            _submitted = false;
+            IsPrimaryButtonPending = false;
+
+            if (result.Failure is WalletBindFailure failure)
+            {
+                // The popup stays open: the words are still on screen, and two of the three are
+                // something the user can do something about.
+                args.Cancel = true;
                 deferral.Complete();
 
-                _navigationService.Navigate(typeof(WalletPage));
-                _navigationService.ShowToast("[**Wallet Imported**\nYour wallet was restored from your recovery phrase.]", ToastPopupIcon.Success);
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Explain(failure), "[Import Wallet]", Strings.OK);
+                return;
             }
-            catch (Exception ex)
+
+            deferral.Complete();
+
+            _navigationService.NavigateToWallet();
+            _navigationService.ShowToast("[**Wallet Imported**\nYour wallet was restored from your recovery phrase.]", ToastPopupIcon.Success);
+        }
+
+        /// <summary>
+        /// What to say about a phrase that did not bind. The service reports which of the three it
+        /// was; the words are the view's.
+        /// </summary>
+        private static string Explain(WalletBindFailure failure)
+        {
+            return failure switch
             {
-                _navigationService.ShowPopup(ex.ToString(), "Error", "OK");
-            }
+                WalletBindFailure.OtherWallet => "[That recovery phrase belongs to a different wallet.]",
+                WalletBindFailure.NoWallet => "[This account doesn't have a wallet yet.]",
+                _ => "[That's not a valid recovery phrase. Check the words and their order.]"
+            };
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

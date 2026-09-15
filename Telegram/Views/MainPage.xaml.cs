@@ -2572,6 +2572,10 @@ namespace Telegram.Views
             {
                 ViewModel.NavigationService.ShowPopup(new CallsPopup());
             }
+            else if (destination == RootDestination.Wallet)
+            {
+                ViewModel.NavigationService.NavigateToWallet();
+            }
             else if (destination == RootDestination.Settings)
             {
                 SetPivotSelectedIndex(INDEX_SETTINGS);

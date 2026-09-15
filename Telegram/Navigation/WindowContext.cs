@@ -23,6 +23,7 @@ using Telegram.Views.Authorization;
 using Telegram.Views.Calls;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
+using Telegram.Views.Wallet;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Storage;
@@ -881,7 +882,7 @@ namespace Telegram.Navigation
                 }
             }
 
-            if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow or WebAppWindow)
+            if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow or WebAppWindow or WalletWindow)
             {
                 _contentMaterial = true;
                 SetBackdropMaterial(_content);

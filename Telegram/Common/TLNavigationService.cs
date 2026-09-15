@@ -26,6 +26,7 @@ using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Stars.Popups;
 using Telegram.Views.Tabbed;
+using Telegram.Views.Wallet;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -128,6 +129,42 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "WebApp",
                 Content = window => new WebAppWindow(window, ClientService, this, botUser, url, title, gameChatId, gameMessageId)
+            });
+        }
+
+        /// <summary>
+        /// Opens the wallet, or brings the one this account already has in front.
+        /// </summary>
+        /// <remarks>
+        /// One per account rather than one per app: another account's wallet is a different wallet
+        /// and may legitimately be open beside this one.
+        /// </remarks>
+        public async void NavigateToWallet()
+        {
+            var oldViewId = Window.Id;
+            var sessionId = ClientService.SessionId;
+            var found = false;
+
+            await WindowContext.ForEachAsync(window =>
+            {
+                if (window.Content is WalletWindow wallet && wallet.SessionId == sessionId)
+                {
+                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                    found = true;
+                }
+            });
+
+            if (found)
+            {
+                return;
+            }
+
+            await OpenAsync(new ViewServiceOptions
+            {
+                Width = 384,
+                Height = 640,
+                PersistedId = "Wallet",
+                Content = window => new WalletWindow(window, ClientService, this)
             });
         }
 

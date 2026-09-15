@@ -13,9 +13,4 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-
-    <Grid>
-        <Button Content="Test" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center" />
-    </Grid>
-    
 </Page>

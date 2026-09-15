@@ -1,0 +1,39 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletBackupPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Wallet.Popups"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     mc:Ignorable="d"
+                     IsDismissButtonVisible="True"
+                     Padding="0,24">
+
+    <!-- The popup does not scroll its own content, so the panel keeps the scroll viewer it had
+         as a page: three rows fit, and the footers under them are what make it tall. -->
+    <ScrollViewer x:Name="ScrollingHost"
+                  VerticalScrollBarVisibility="Auto"
+                  VerticalScrollMode="Auto">
+        <StackPanel>
+            <controls:HeaderedControl Header="[Recovery Phrase]"
+                                      Footer="[You can transfer your wallet to another device by copying your 24-word recovery phrase.]">
+                <controls:SettingsButton Click="{x:Bind ViewModel.ShowRecoveryPhrase}"
+                                         Content="[Show Recovery Phrase]" />
+            </controls:HeaderedControl>
+
+            <controls:HeaderedControl Header="[Encrypted Backup]"
+                                      Footer="[Telegram stores an encrypted backup of your keys, split across several datacenters. No Telegram employee can access them.]">
+                <controls:SettingsButton Click="{x:Bind ViewModel.DisableBackup}"
+                                         Content="[Disable Backup]"
+                                         Foreground="{ThemeResource DangerButtonBackground}" />
+            </controls:HeaderedControl>
+
+            <controls:HeaderedControl>
+                <controls:SettingsButton Click="{x:Bind ViewModel.DeleteWallet}"
+                                         Content="[Delete Wallet]"
+                                         Foreground="{ThemeResource DangerButtonBackground}" />
+            </controls:HeaderedControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</controls:ModalPopup>

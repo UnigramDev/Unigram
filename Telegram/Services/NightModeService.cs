@@ -12,6 +12,7 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
+using Telegram.Views.Wallet;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -141,6 +142,11 @@ namespace Telegram.Services
                     // The app pass recoloured the defaults underneath; a window showing a chat
                     // theme has to put its own override back on top of them.
                     window.ReapplyChatTheme();
+
+                    if (window.Content is WalletWindow wallet)
+                    {
+                        wallet.Test();
+                    }
                 }
 
                 if (window.ActualTheme != theme || force is true)
