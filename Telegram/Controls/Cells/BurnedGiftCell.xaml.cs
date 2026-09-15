@@ -33,7 +33,7 @@ namespace Telegram.Controls.Cells
 
             Animated.Source = new DelayedFileSource(clientService, upgraded.Gift.Model.Sticker);
 
-            RibbonRoot.Visibility = Visibility.Visible;
+            Ribbon.Visibility = Visibility.Visible;
             Ribbon.Text = string.Format("#{0:N0}", upgraded.Gift.Number);
 
             RibbonTop.Color = _ribbonSoldOutTop;
