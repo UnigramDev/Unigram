@@ -46,6 +46,44 @@ namespace Telegram.Common
 
         public string Format(double value) => _formatter.Format(value);
 
+        /// <summary>
+        /// The currency's own decoration around a number that has already been written out - the
+        /// symbol where this currency puts it, and whatever separates the two.
+        /// </summary>
+        /// <remarks>
+        /// For an amount that has to be formatted elsewhere: one with more decimals than the
+        /// currency has, or one standing beside a number in the app's own language, which is not
+        /// always the language this formatter speaks.
+        ///
+        /// The layout is read off a formatted zero rather than assembled, so a currency that
+        /// trails its symbol, or spaces it differently, still comes out right.
+        /// </remarks>
+        public string Format(string number)
+        {
+            var formatted = _formatter.Format(0);
+
+            var first = -1;
+            var last = -1;
+
+            for (int i = 0; i < formatted.Length; i++)
+            {
+                if (char.IsDigit(formatted[i]))
+                {
+                    if (first < 0)
+                    {
+                        first = i;
+                    }
+
+                    last = i;
+                }
+            }
+
+            // Everything from the first digit to the last is the number, separator included.
+            return first < 0
+                ? number
+                : formatted.Substring(0, first) + number + formatted.Substring(last + 1);
+        }
+
         public string FormatInt(long value) => _formatter.FormatInt(value);
 
         public string FormatUInt(ulong value) => _formatter.FormatUInt(value);
