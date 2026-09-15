@@ -61,16 +61,18 @@
                             Value="Transparent" />
                     <Setter Property="BorderThickness"
                             Value="0" />
+                    <Setter Property="IsTabStop"
+                            Value="False" />
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ProxyViewModel">
-                    <controls:SettingsRadioButton GroupName="ProxyType"
-                                                  CornerRadius="4"
-                                                  BorderThickness="1">
+                    <controls:ListRadioButton GroupName="ProxyType"
+                                              CornerRadius="4"
+                                              BorderThickness="1">
                         <cells:ProxyCell DisplayName="{x:Bind DisplayName}"
                                          Status="{x:Bind Status, Mode=OneWay}" />
-                    </controls:SettingsRadioButton>
+                    </controls:ListRadioButton>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

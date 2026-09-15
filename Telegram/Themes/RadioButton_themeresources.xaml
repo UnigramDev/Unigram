@@ -10,6 +10,8 @@
 
     <Style TargetType="controls:SettingsRadioButton"
            BasedOn="{StaticResource SettingsRadioButtonStyle}" />
+    <Style TargetType="controls:ListRadioButton"
+           BasedOn="{StaticResource SettingsRadioButtonStyle}" />
 
     <Style x:Key="SettingsRadioButtonStyle"
            TargetType="controls:SettingsRadioButton">
