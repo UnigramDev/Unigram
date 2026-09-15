@@ -203,6 +203,12 @@
     <Content Remove="Assets\i420.hlsl" />
 
     <Content Update="Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Content rather than ReferenceCopyLocalPaths, which is what the other natives here use:
+         those reach the package through their own project's CopyLocalFilesOutputGroup, while the
+         copy-local entries the app adds only make its own output folder self-contained. The
+         engine has no project to arrive from, so named that way it reached the output folder, the
+         publish folder and the deployment recipe - and never the package layout. -->
+    <Content Include="$(TelegramRoot)Libraries\wallet-engine\$(Platform)\wallet_engine.dll" Link="wallet_engine.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

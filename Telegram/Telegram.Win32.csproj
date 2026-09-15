@@ -389,6 +389,7 @@
          paths, and there is no Reference here to find them from. -->
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\wallet-engine\$(Platform)\wallet_engine.dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
