@@ -468,6 +468,67 @@ namespace Telegram.Common
             }
         }
 
+        // Fill and stroke, checked and indeterminate. Each of the four is the accent at rest, and
+        // the framework's 0.9 and 0.8 - folded into alpha - hovered and pressed.
+        private static readonly string[] _checkBoxParts =
+        {
+            "FillChecked",
+            "FillIndeterminate",
+            "StrokeChecked",
+            "StrokeIndeterminate",
+        };
+
+        /// <summary>
+        /// Merges a check box palette into <paramref name="element"/> under the framework's own key
+        /// names, so that every check box beneath it is drawn in <paramref name="accent"/> rather
+        /// than in the accent colour.
+        /// </summary>
+        /// <remarks>
+        /// One dictionary per theme, so the palette follows a theme change by itself. Writing the
+        /// brushes straight into the element's resources, as the popups that do this in XAML have
+        /// to, pins one set of colours to both themes instead.
+        ///
+        /// The disabled pair is left to the framework: it is the same grey whatever the accent.
+        /// </remarks>
+        public static void AddCheckBoxPalette(FrameworkElement element, Color accent)
+        {
+            var dictionary = new ResourceDictionary();
+            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light);
+            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark);
+
+            element.Resources.MergedDictionaries.Add(dictionary);
+        }
+
+        public static void AddCheckBoxPalette(ResourceDictionary dictionary, Color accent)
+        {
+            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light);
+            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark);
+        }
+
+        private static ResourceDictionary CreateCheckBoxPalette(Color accent, TelegramTheme requested)
+        {
+            var shade = SystemAccentPalette.GetShade(accent, requested == TelegramTheme.Light
+                ? AccentShade.Dark1
+                : AccentShade.Light2);
+
+            var rest = new SolidColorBrush(shade);
+            var pointerOver = new SolidColorBrush(shade.WithAlpha(230));
+            var pressed = new SolidColorBrush(shade.WithAlpha(204));
+
+            var dictionary = new ResourceDictionary();
+
+            foreach (var part in _checkBoxParts)
+            {
+                var key = "CheckBoxCheckBackground" + part;
+
+                dictionary[key] = rest;
+                dictionary[key + "PointerOver"] = pointerOver;
+                dictionary[key + "Pressed"] = pressed;
+            }
+
+            return dictionary;
+        }
+
         private void PatchTextControlElevationBorderFocusedBrush(TelegramTheme requested, ResourceDictionary target, ThemeLookup lookup, string key, bool create, Func<AccentShade, Color> getShade)
         {
             // TextControlElevationBorderFocusedBrush is the only gradient that requires theming,
