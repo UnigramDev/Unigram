@@ -1,0 +1,146 @@
+<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletSendPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Wallet.Popups"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     mc:Ignorable="d"
+                     Padding="24,0,24,24"
+                     IsDismissButtonVisible="True"
+                     PrimaryButtonClick="OnPrimaryButtonClick">
+
+    <Grid MinHeight="320">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Beside the dismiss button the template draws at the card's corner, as in the other
+             wallet popups. -->
+        <controls:MoreButton x:Name="MoreButton"
+                             Click="More_ContextRequested"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             CornerRadius="20"
+                             Margin="0,0,16,0" />
+
+        <StackPanel VerticalAlignment="Center"
+                    Margin="0,48,0,0">
+            <!-- The amount sizes itself to what is typed: a horizontal StackPanel measures its
+                 children against infinity, so the field asks for the width of its text and the
+                 three parts stay centred together as it grows. -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Viewbox Width="36"
+                         Margin="0,0,8,2">
+                    <Border x:Name="Glyph"
+                            Width="28"
+                            Height="28"
+                            VerticalAlignment="Center">
+                        <Path Data="M16.9411 5.6001C18.0579 5.6001 18.6166 5.60019 19.1217 5.75635C19.5688 5.89458 19.9835 6.12107 20.3415 6.42236C20.7459 6.76276 21.0482 7.23215 21.652 8.17139L23.1999 10.5806C23.663 11.301 23.8948 11.6615 23.9577 12.0405C24.013 12.3747 23.9764 12.7179 23.8512 13.0327C23.7093 13.3897 23.406 13.6928 22.8005 14.2983L15.696 21.4028C15.1021 21.9967 14.8049 22.2944 14.4626 22.4058C14.1613 22.5036 13.8361 22.5036 13.5348 22.4058C13.1924 22.2945 12.8954 21.9968 12.3014 21.4028L5.19596 14.2983C4.59052 13.6929 4.28814 13.3897 4.14616 13.0327C4.02101 12.7179 3.98438 12.3747 4.03971 12.0405C4.10256 11.6615 4.33358 11.3007 4.79655 10.5806L6.34538 8.17139C6.94913 7.23221 7.25149 6.76275 7.65592 6.42236C8.01393 6.12107 8.42861 5.89456 8.87565 5.75635C9.38075 5.60019 9.93953 5.6001 11.0563 5.6001H16.9411ZM16.8112 8.30713C16.6984 8.00251 16.2677 8.00252 16.1549 8.30713L15.3757 10.4126C15.3289 10.5391 15.2287 10.6392 15.1022 10.686L12.9967 11.4653C12.6925 11.5783 12.6924 12.0088 12.9967 12.1216L15.1022 12.9009C15.2286 12.9477 15.3288 13.047 15.3757 13.1733L16.1549 15.2788C16.2677 15.5835 16.6984 15.5835 16.8112 15.2788L17.5905 13.1733C17.6373 13.0471 17.7368 12.9477 17.863 12.9009L19.9694 12.1216C20.2737 12.0087 20.2736 11.5783 19.9694 11.4653L17.863 10.686C17.7366 10.6392 17.6372 10.5389 17.5905 10.4126L16.8112 8.30713Z"
+                              Fill="{ThemeResource SystemColorControlAccentBrush}" />
+                    </Border>
+                </Viewbox>
+                <TextBox x:Name="Amount"
+                         BeforeTextChanging="Amount_BeforeTextChanging"
+                         TextChanged="Amount_TextChanged"
+                         PlaceholderText="0"
+                         FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                         FontWeight="SemiBold"
+                         FontSize="32"
+                         MinWidth="0"
+                         MinHeight="0"
+                         Padding="0"
+                         BorderThickness="0"
+                         VerticalAlignment="Center"
+                         VerticalContentAlignment="Center">
+                    <TextBox.Resources>
+                        <!-- The field is the number, not a box around it. Overriding the brushes
+                             here rather than the properties keeps the focused and pointer-over
+                             states from painting themselves back in. -->
+                        <SolidColorBrush x:Key="TextControlBackground"
+                                         Color="Transparent" />
+                        <SolidColorBrush x:Key="TextControlBackgroundPointerOver"
+                                         Color="Transparent" />
+                        <SolidColorBrush x:Key="TextControlBackgroundFocused"
+                                         Color="Transparent" />
+                        <SolidColorBrush x:Key="TextControlBorderBrush"
+                                         Color="Transparent" />
+                        <SolidColorBrush x:Key="TextControlBorderBrushPointerOver"
+                                         Color="Transparent" />
+                        <SolidColorBrush x:Key="TextControlBorderBrushFocused"
+                                         Color="Transparent" />
+                    </TextBox.Resources>
+                </TextBox>
+
+                <TextBlock x:Name="Suffix"
+                           Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"
+                           FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                           FontWeight="SemiBold"
+                           FontSize="32"
+                           VerticalAlignment="Center"
+                           Margin="6,0,0,0" />
+            </StackPanel>
+
+            <Button x:Name="SwapButton"
+                    Click="Swap_Click"
+                    Background="{ThemeResource MessageBackgroundBrush}"
+                    BorderThickness="0"
+                    CornerRadius="14"
+                    Padding="12,4"
+                    MinHeight="28"
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="Converted"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="SwapGlyph"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               VerticalAlignment="Center"
+                               Margin="4,0,0,0" />
+                </StackPanel>
+            </Button>
+
+            <TextBlock x:Name="Validation"
+                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed"
+                       Margin="0,8,0,0" />
+
+            <!-- The comment as it will travel, in the bubble a message would be in. -->
+            <Border x:Name="CommentRoot"
+                    Background="{ThemeResource MessageBackgroundBrush}"
+                    CornerRadius="15"
+                    Padding="12,6"
+                    HorizontalAlignment="Center"
+                    MaxWidth="280"
+                    Visibility="Collapsed"
+                    Margin="0,12,0,0">
+                <TextBlock x:Name="Comment"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           MaxLines="3"
+                           TextTrimming="CharacterEllipsis" />
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock x:Name="BalanceLabel"
+                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                       TextAlignment="Center" />
+
+            <HyperlinkButton x:Name="FeesButton"
+                             Click="Fees_Click"
+                             HorizontalAlignment="Center"
+                             Padding="8,2"
+                             Margin="0,-2,0,0" />
+        </StackPanel>
+    </Grid>
+</controls:ModalPopup>

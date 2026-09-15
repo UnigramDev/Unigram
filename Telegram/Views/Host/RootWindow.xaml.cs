@@ -78,6 +78,7 @@ namespace Telegram.Views.Host
                 RootDestination.Chats,
                 RootDestination.Contacts,
                 RootDestination.Calls,
+                RootDestination.Wallet,
                 RootDestination.Settings,
                 // ------------
                 RootDestination.Separator,
@@ -648,6 +649,10 @@ namespace Telegram.Views.Host
                         content.Text = Strings.Calls;
                         content.Glyph = Icons.Call;
                         break;
+                    case RootDestination.Wallet:
+                        content.Text = "[Wallet]";
+                        content.Glyph = Icons.Gram;
+                        break;
                     case RootDestination.Settings:
                         content.Text = Strings.Settings;
                         content.Glyph = Icons.Settings;
@@ -1201,6 +1206,7 @@ namespace Telegram.Views.Host
         Chats,
         Contacts,
         Calls,
+        Wallet,
         Settings,
 
         Tips,

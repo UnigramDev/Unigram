@@ -865,6 +865,9 @@
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\WalletTransactionCell.xaml.cs">
+      <DependentUpon>WalletTransactionCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\ChartCell.xaml.cs">
       <DependentUpon>ChartCell.xaml</DependentUpon>
     </Compile>
@@ -1764,11 +1767,29 @@
     <Compile Include="Views\Wallet\Popups\WalletImportPopup.xaml.cs">
       <DependentUpon>WalletImportPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallet\WalletBackupPage.xaml.cs">
-      <DependentUpon>WalletBackupPage.xaml</DependentUpon>
+    <Compile Include="Views\Wallet\Popups\WalletAboutPopup.xaml.cs">
+      <DependentUpon>WalletAboutPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallet\WalletPage.xaml.cs">
-      <DependentUpon>WalletPage.xaml</DependentUpon>
+    <Compile Include="Views\Wallet\Popups\WalletPhrasePopup.xaml.cs">
+      <DependentUpon>WalletPhrasePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletCurrencyPopup.xaml.cs">
+      <DependentUpon>WalletCurrencyPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletSendPopup.xaml.cs">
+      <DependentUpon>WalletSendPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletTransactionPopup.xaml.cs">
+      <DependentUpon>WalletTransactionPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletRecoveryInfoPopup.xaml.cs">
+      <DependentUpon>WalletRecoveryInfoPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletBackupPopup.xaml.cs">
+      <DependentUpon>WalletBackupPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\WalletWindow.xaml.cs">
+      <DependentUpon>WalletWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Host\WebAppWindow.xaml.cs">
       <DependentUpon>WebAppWindow.xaml</DependentUpon>
@@ -2328,6 +2349,7 @@
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\MessageHelper.cs" />
+    <Compile Include="Common\WalletCardSheen.cs" />
     <Compile Include="Common\WalletHelper.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\MasterDetailView.cs" />
@@ -2868,6 +2890,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\CallCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\WalletTransactionCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4251,11 +4277,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Wallet\WalletBackupPage.xaml">
+    <Page Include="Views\Wallet\Popups\WalletAboutPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletPhrasePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletCurrencyPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletSendPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletTransactionPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletRecoveryInfoPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletBackupPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Wallet\WalletPage.xaml">
+    <Page Include="Views\Wallet\WalletWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

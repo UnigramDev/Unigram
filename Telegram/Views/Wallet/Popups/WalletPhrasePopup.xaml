@@ -1,0 +1,47 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletPhrasePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Wallet.Popups"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     mc:Ignorable="d">
+
+    <controls:ModalPopup.Resources>
+        <!-- A template rather than a loop: the number is drawn in the theme's own brush, and a run
+             built in code can only be handed a brush - which then stops following the theme. -->
+        <DataTemplate x:Key="WordTemplate"
+                      x:DataType="local:WalletPhraseWord">
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                       Margin="0,2"><Run Text="{x:Bind Number}"
+                                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" /><Run Text="{x:Bind Word}" /></TextBlock>
+        </DataTemplate>
+    </controls:ModalPopup.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  VerticalScrollMode="Auto">
+        <StackPanel>
+            <TextBlock Text="[Write these 24 words down in order and keep them somewhere safe. Anyone who has them can spend your funds.]"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,16" />
+
+            <!-- Two columns, numbered down the first and on down the second, which is the order the
+                 words have to be written in and the order every other client shows them in. A
+                 phrase is 12 or 24 words, so how far down each column runs depends on the phrase. -->
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <ItemsControl x:Name="FirstColumn"
+                              ItemTemplate="{StaticResource WordTemplate}" />
+
+                <ItemsControl x:Name="SecondColumn"
+                              ItemTemplate="{StaticResource WordTemplate}"
+                              Grid.Column="1" />
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</controls:ModalPopup>

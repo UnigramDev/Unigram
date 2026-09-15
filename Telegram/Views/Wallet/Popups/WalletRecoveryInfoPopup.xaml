@@ -1,0 +1,47 @@
+<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletRecoveryInfoPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:common="using:Telegram.Common"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     Padding="0"
+                     IsDismissButtonVisible="True">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  VerticalScrollMode="Auto">
+        <StackPanel>
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/WalletImport.tgs"
+                                    IsCachingEnabled="False"
+                                    AutoPlay="True"
+                                    FrameSize="120,120"
+                                    DecodeFrameType="Logical"
+                                    LoopCount="1"
+                                    Width="120"
+                                    Height="120"
+                                    Margin="0,12,0,12" />
+
+            <TextBlock Text="[Recovery Phrase]"
+                       Style="{StaticResource PopupTextBlockStyle}"
+                       TextAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="12,0,12,8" />
+
+            <TextBlock common:TextBlockHelper.Markdown="[Your Secret Recovery Phrase is the key to back up your wallet. Keep it secret and secure at all times.]"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Grid.Row="2" />
+
+            <controls:PopupInfo Title="[**Never share** your secret Recovery Phrase with anyone.]"
+                                Glyph="&#xE9A6;"
+                                Margin="12,12,12,0" />
+            <controls:PopupInfo Title="[If someone has your Recovery Phrase they **can steal your funds**.]"
+                                Glyph="&#xEA22;"
+                                Margin="12,0,12,0" />
+            <controls:PopupInfo Title="[Telegram Support **will never ask you** for your Recovery Phrase.]"
+                                Glyph="&#xE9F9;"
+                                Margin="12,0,12,0" />
+        </StackPanel>
+    </ScrollViewer>
+</controls:ModalPopup>

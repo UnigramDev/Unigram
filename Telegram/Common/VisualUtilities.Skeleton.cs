@@ -36,6 +36,15 @@ namespace Telegram.Common
         /// </param>
         public static void SetSkeleton(FrameworkElement element, Vector2 size, params CanvasGeometry[] shapes)
         {
+            SetSkeleton(element, size, null, shapes);
+        }
+
+        /// <param name="shimmer">
+        /// The colour to fill and sweep in, for a surface that is not the theme's - a card that is
+        /// the same blue whichever theme is on would take a dark hover colour and wear it.
+        /// </param>
+        public static void SetSkeleton(FrameworkElement element, Vector2 size, Color? shimmer, params CanvasGeometry[] shapes)
+        {
             // An empty group clips everything away, so the skeleton would be attached
             // and invisible. Callers that build shapes from a row count reach this
             // whenever the count is zero, which includes being called before layout has
@@ -55,26 +64,33 @@ namespace Telegram.Common
             // than a change of colour. Six percent white stands in when the theme has
             // no entry for it.
             var transparent = Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF);
-            var shimmer = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
+            var sweep = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
 
-            var lookup = ThemeService.GetLookup(element.ActualTheme);
-            if (lookup.TryGetColor("MenuFlyoutItemBackgroundPointerOver", out Color color))
+            if (shimmer is Color given)
             {
-                shimmer = color;
+                sweep = given;
+            }
+            else
+            {
+                var lookup = ThemeService.GetLookup(element.ActualTheme);
+                if (lookup.TryGetColor("MenuFlyoutItemBackgroundPointerOver", out Color color))
+                {
+                    sweep = color;
+                }
             }
 
             var gradient = compositor.CreateLinearGradientBrush();
             gradient.StartPoint = new Vector2(0, 0);
             gradient.EndPoint = new Vector2(1, 0);
             gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
-            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, shimmer));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, sweep));
             gradient.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
 
             var background = compositor.CreateRectangleGeometry();
             background.Size = size;
 
             var backgroundShape = compositor.CreateSpriteShape(background);
-            backgroundShape.FillBrush = compositor.CreateColorBrush(shimmer);
+            backgroundShape.FillBrush = compositor.CreateColorBrush(sweep);
 
             var foreground = compositor.CreateRectangleGeometry();
             foreground.Size = size;

@@ -67,6 +67,14 @@ namespace Telegram.Common
             }
         }
 
+        public static void NavigateToWallet(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToWallet();
+            }
+        }
+
         public static void NavigateToInstant(this INavigationService service, string url, string fallbackUrl = null)
         {
             if (service is TLNavigationService serviceEx)

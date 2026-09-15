@@ -6,10 +6,14 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Wallet;
+using Telegram.Views.Wallet.Popups;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Wallet
@@ -51,9 +55,45 @@ namespace Telegram.ViewModels.Wallet
         //    set => Set(ref _balance, value);
         //}
 
-        public void ShowRecoveryPhrase()
+        public async void ShowRecoveryPhrase()
         {
+            var confirm = await ShowPopupAsync(new WalletRecoveryInfoPopup());
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
 
+            var words = await RequestRecoveryPhraseAsync();
+            if (words != null)
+            {
+                await ShowPopupAsync(new WalletPhrasePopup(words));
+            }
+        }
+
+        /// <summary>
+        /// The recovery phrase, once this device is allowed to have it.
+        /// </summary>
+        /// <remarks>
+        /// Binding is what the account password is for, and it happens once; reading the phrase
+        /// back afterwards is the device's own prompt. Null when either was refused, or when there
+        /// is no way to get the key onto this device - all of which say so for themselves.
+        /// </remarks>
+        private async Task<IReadOnlyList<string>> RequestRecoveryPhraseAsync()
+        {
+            if (!await WalletHelper.EnsureBoundAsync(_wallet, NavigationService))
+            {
+                return null;
+            }
+
+            try
+            {
+                return await _wallet.RevealRecoveryPhraseAsync();
+            }
+            catch (WalletAccessDeniedException)
+            {
+                // They were asked and declined.
+                return null;
+            }
         }
 
         public async void DisableBackup()
@@ -85,8 +125,10 @@ namespace Telegram.ViewModels.Wallet
                     return;
                 }
 
-                _ = _wallet.DeleteAsync();
-                NavigationService.GoBackAt(0);
+                // Forgets the key on this device only. Deleting the account's wallet is
+                // deleteTonWallet, which replaces it with a new one and needs the account password.
+                _ = _wallet.ForgetAsync();
+                HidePopup(typeof(WalletBackupPopup));
 
                 // TODO: create/import UI
             }

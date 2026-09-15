@@ -82,6 +82,14 @@ namespace Telegram.Views.Popups
 
         public string PlaceholderText { get; set; } = string.Empty;
 
+        /// <summary>
+        /// An option offered under the field, shown only when it has something to say. Read back
+        /// from <see cref="IsChecked"/> once the popup closes.
+        /// </summary>
+        public string CheckBoxText { get; set; }
+
+        public bool IsChecked { get; set; }
+
         public int MaxLength { get; set; } = int.MaxValue;
         public int MinLength { get; set; } = 1;
 
@@ -239,6 +247,14 @@ namespace Telegram.Views.Popups
                 FooterText.Visibility = Visibility.Visible;
             }
 
+            if (CheckBoxText != null)
+            {
+                FindName(nameof(Check));
+
+                Check.Content = CheckBoxText;
+                Check.IsChecked = IsChecked;
+            }
+
             if (Label != null)
             {
                 Label.PlaceholderText = PlaceholderText;
@@ -321,6 +337,11 @@ namespace Telegram.Views.Popups
                 }
 
                 Text = Password.Password;
+            }
+
+            if (Check != null)
+            {
+                IsChecked = Check.IsChecked == true;
             }
 
             if (Validating != null)

@@ -9,7 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -19,15 +23,19 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Telegram.Views.Wallet.Popups
 {
     public sealed partial class WalletSharePopup : ContentPopup
     {
-        public WalletSharePopup(string address)
+        private readonly IClientService _clientService;
+        private readonly INavigationService _navigationService;
+
+        public WalletSharePopup(IClientService clientService, INavigationService navigationService, string address)
         {
-            this.InitializeComponent();
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
 
             var geometry = QrCode.CreateGeometry("ton://transfer/" + address, 3, 4, true, 148);
             var visual = ElementComposition.GetElementVisual(Code);
@@ -68,8 +76,28 @@ namespace Telegram.Views.Wallet.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var response = await _clientService.SendAsync(new GetOnRampProviders("gram"));
+            if (response is OnRampProviders providers)
+            {
+                if (providers.Providers.Count == 1)
+                {
+                    var provider = providers.Providers[0];
+
+                    response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _clientService.TonWalletState.Address, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, /*_navigationService.Window.ThemeParameters*/ null, string.Empty, string.Empty));
+                    
+                    if (response is OnRampPaymentSession session)
+                    {
+                        response = await _clientService.SendAsync(new GetInternalLinkType(session.Url));
+
+                        if (response is InternalLinkType internalLink)
+                        {
+                            MessageHelper.OpenTelegramUrl(_clientService, _navigationService, internalLink, null);
+                        }
+                    }
+                }
+            }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -155,6 +183,8 @@ namespace Telegram.Views.Wallet.Popups
 
         private void Flip_Click(object sender, RoutedEventArgs e)
         {
+            ContentDialog_PrimaryButtonClick(null, null);
+
             // A second click mid-turn would snap both faces to the start of the new
             // rotation, since the animation below pins its first keyframe.
             if (_flipping)
@@ -350,6 +380,51 @@ namespace Telegram.Views.Wallet.Popups
             angle = 0;
         }
 
+        /// <summary>
+        /// The distances a keyframe is needed at to trace the whole path: every segment boundary,
+        /// and <paramref name="cornerSteps"/> samples across each corner.
+        /// </summary>
+        /// <remarks>
+        /// The straight runs need nothing between their ends, interpolating exactly. The corners do
+        /// not: a chord across a quarter turn of radius r misses the arc by r(1 - cos(θ/2)), which
+        /// at this size is a tenth of a pixel by the eighth step and half a pixel by the fourth.
+        /// </remarks>
+        public void GetKeyDistances(int cornerSteps, List<float> distances)
+        {
+            distances.Clear();
+
+            var distance = 0f;
+            distances.Add(distance);
+
+            distance += _edgeH / 2;
+            AddCorner(distances, cornerSteps, ref distance);        // top-right
+
+            distance += _edgeV;
+            AddCorner(distances, cornerSteps, ref distance);        // bottom-right
+
+            distance += _edgeH;
+            AddCorner(distances, cornerSteps, ref distance);        // bottom-left
+
+            distance += _edgeV;
+            AddCorner(distances, cornerSteps, ref distance);        // top-left
+
+            distance += _edgeH / 2;
+            distances.Add(distance);                                // back to where it started
+        }
+
+        private void AddCorner(List<float> distances, int steps, ref float distance)
+        {
+            distances.Add(distance);
+
+            for (int i = 1; i < steps; i++)
+            {
+                distances.Add(distance + _arc * i / steps);
+            }
+
+            distance += _arc;
+            distances.Add(distance);
+        }
+
         private void EvaluateArc(Vector2 center, float theta, out Vector2 point, out float angle)
         {
             point = center + new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta)) * _radius;
@@ -376,9 +451,22 @@ namespace Telegram.Views.Wallet.Popups
         private readonly List<Cell> _cells = new List<Cell>();
         private double _totalWeight;
 
+        // Whether the glyphs are being carried by the compositor. False leaves them where arrange
+        // put them, which is what a machine asking for less motion gets.
+        private bool _running;
+
         public RingTextPresenter()
         {
             IsHitTestVisible = false;
+
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            // A popup that has been dismissed would otherwise keep the compositor busy turning a
+            // ring nobody is looking at.
+            Stop();
         }
 
         #region Dependency properties
@@ -433,6 +521,22 @@ namespace Telegram.Views.Wallet.Popups
         public double TotalWeight => _totalWeight;
 
         /// <summary>
+        /// How long the band takes to travel the path once. Zero leaves it still.
+        /// </summary>
+        /// <remarks>
+        /// Slow: the band is ambient, and a lap the eye can follow reads as something loading.
+        /// </remarks>
+        public TimeSpan LapDuration
+        {
+            get => _lapDuration;
+            set { _lapDuration = value; InvalidateArrange(); }
+        }
+        private TimeSpan _lapDuration = TimeSpan.FromSeconds(30);
+
+        // Enough to keep the chord error inside a tenth of a pixel at this radius.
+        private const int CornerSteps = 8;
+
+        /// <summary>
         /// Shifts the whole ring along the path, as a fraction of the perimeter. Zero centres
         /// the first glyph on the middle of the top edge.
         /// </summary>
@@ -447,6 +551,9 @@ namespace Telegram.Views.Wallet.Popups
 
         private void Rebuild()
         {
+            // The children the animations were running on are about to go.
+            _running = false;
+
             Children.Clear();
             _cells.Clear();
             _totalWeight = 0;
@@ -460,7 +567,7 @@ namespace Telegram.Views.Wallet.Popups
                     var glyph = new TextBlock
                     {
                         Text = character.ToString(),
-                        FontFamily = new FontFamily("Cascadia Mono, Consolas"),
+                        FontFamily = Theme.MonospaceFontFamily,
                         FontSize = 12,
                         // Rotated elements should not be snapped to the layout grid; rounding
                         // makes the ring wobble.
@@ -500,6 +607,9 @@ namespace Telegram.Views.Wallet.Popups
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            // Whatever is running belongs to the size that has just changed.
+            Stop();
+
             if (_totalWeight <= 0)
             {
                 return finalSize;
@@ -515,6 +625,21 @@ namespace Telegram.Views.Wallet.Popups
             // against it, so a leading separator glyph lands on the top edge midpoint itself.
             var cursor = (float)(_startOffset * path.Length) - (float)_cells[0].Weight * unit / 2;
 
+            // The band travels along the path rather than the panel turning: on a rounded
+            // rectangle a rotation would swing the glyphs off the edges and back. Since every cell
+            // covers the same fraction of the perimeter, every glyph walks the same poses and
+            // differs only in where it starts - so one pair of animations serves all of them, each
+            // visual seeked to its own place in the lap.
+            var running = _lapDuration > TimeSpan.Zero && PowerSavingPolicy.AreSmoothTransitionsEnabled;
+
+            CompositionAnimation offset = null;
+            CompositionAnimation rotation = null;
+
+            if (running)
+            {
+                Build(path, out offset, out rotation);
+            }
+
             foreach (var cell in _cells)
             {
                 var length = (float)(cell.Weight * unit);
@@ -524,7 +649,8 @@ namespace Telegram.Views.Wallet.Popups
                     var size = cell.Glyph.DesiredSize;
                     cell.Glyph.Arrange(new Rect(0, 0, size.Width, size.Height));
 
-                    path.Evaluate(cursor + length / 2, out var point, out var angle);
+                    var distance = cursor + length / 2;
+                    path.Evaluate(distance, out var point, out var angle);
 
                     // The glyph-local point that should land on the path: horizontally centred,
                     // vertically on the baseline, pushed out by Gap.
@@ -532,21 +658,147 @@ namespace Telegram.Views.Wallet.Popups
                         (float)(size.Width / 2),
                         (float)(cell.Glyph.BaselineOffset + _gap));
 
-                    var matrix =
-                        Matrix3x2.CreateTranslation(-anchor) *
-                        Matrix3x2.CreateRotation(angle) *
-                        Matrix3x2.CreateTranslation(point);
+                    if (running)
+                    {
+                        // Only the anchor stays here, so that the visual's own origin is the point
+                        // riding the path; the compositor supplies the place and the turn. Started
+                        // after Arrange rather than before, because layout writes Offset too and
+                        // the last writer wins.
+                        cell.Transform.Matrix = new Matrix(1, 0, 0, 1, -anchor.X, -anchor.Y);
 
-                    cell.Transform.Matrix = new Matrix(
-                        matrix.M11, matrix.M12,
-                        matrix.M21, matrix.M22,
-                        matrix.M31, matrix.M32);
+                        var visual = ElementComposition.GetElementVisual(cell.Glyph);
+
+                        visual.StartAnimation("Offset", offset);
+                        visual.StartAnimation("RotationAngleInDegrees", rotation);
+
+                        var progress = distance / path.Length;
+
+                        Seek(visual, "Offset", progress);
+                        Seek(visual, "RotationAngleInDegrees", progress);
+                    }
+                    else
+                    {
+                        var matrix =
+                            Matrix3x2.CreateTranslation(-anchor) *
+                            Matrix3x2.CreateRotation(angle) *
+                            Matrix3x2.CreateTranslation(point);
+
+                        cell.Transform.Matrix = new Matrix(
+                            matrix.M11, matrix.M12,
+                            matrix.M21, matrix.M22,
+                            matrix.M31, matrix.M32);
+                    }
                 }
 
                 cursor += length;
             }
 
+            _running = running;
             return finalSize;
         }
+
+        /// <summary>
+        /// One lap of the path, as the pair of animations every glyph runs.
+        /// </summary>
+        /// <remarks>
+        /// Keyframed rather than expressed: the path is eight segments, and an expression that
+        /// walked them would be worse to read than the geometry it came from. Straight runs need
+        /// nothing between their ends - see <see cref="RoundedRectPath.GetKeyDistances"/>.
+        /// </remarks>
+        private void Build(RoundedRectPath path, out CompositionAnimation offset, out CompositionAnimation rotation)
+        {
+            var compositor = ElementComposition.GetElementVisual(this).Compositor;
+
+            // Linear at every keyframe. The default easing is a cubic, which would have each glyph
+            // slowing into every sample and pulsing its way round.
+            var linear = compositor.CreateLinearEasingFunction();
+
+            var position = compositor.CreateVector3KeyFrameAnimation();
+            var angle = compositor.CreateScalarKeyFrameAnimation();
+
+            var distances = new List<float>();
+            path.GetKeyDistances(CornerSteps, distances);
+
+            var turns = 0f;
+            var previous = 0f;
+
+            for (int i = 0; i < distances.Count; i++)
+            {
+                var distance = distances[i];
+                path.Evaluate(distance, out var point, out var radians);
+
+                // Evaluate answers with a direction, not a running total: the left edge comes back
+                // as a quarter turn anticlockwise where the band is three quarters of the way
+                // round. Unwrapped here so the keyframes climb once to a full turn, which makes the
+                // loop's restart a whole turn rather than a rewind.
+                if (i > 0)
+                {
+                    while (radians + turns < previous - Pi)
+                    {
+                        turns += Tau;
+                    }
+
+                    while (radians + turns > previous + Pi)
+                    {
+                        turns -= Tau;
+                    }
+                }
+
+                previous = radians + turns;
+
+                var progress = distance / path.Length;
+
+                position.InsertKeyFrame(1 - progress, new Vector3(point, 0), linear);
+                angle.InsertKeyFrame(1 - progress, previous * 180 / Pi, linear);
+            }
+
+            position.Duration = _lapDuration;
+            position.IterationBehavior = AnimationIterationBehavior.Forever;
+
+            angle.Duration = _lapDuration;
+            angle.IterationBehavior = AnimationIterationBehavior.Forever;
+
+            offset = position;
+            rotation = angle;
+        }
+
+        /// <summary>
+        /// Puts one visual at its own place in the lap. The animation is shared; where each glyph
+        /// is in it is not.
+        /// </summary>
+        private static void Seek(Visual visual, string property, float progress)
+        {
+            var controller = visual.TryGetAnimationController(property);
+            if (controller != null)
+            {
+                // A fraction of a lap, wrapped: StartOffset can put a glyph past the end of the
+                // path or before its start.
+                controller.Progress = progress - MathF.Floor(progress);
+            }
+        }
+
+        private void Stop()
+        {
+            if (!_running)
+            {
+                return;
+            }
+
+            _running = false;
+
+            foreach (var cell in _cells)
+            {
+                if (cell.Glyph != null)
+                {
+                    var visual = ElementComposition.GetElementVisual(cell.Glyph);
+
+                    visual.StopAnimation("Offset");
+                    visual.StopAnimation("RotationAngleInDegrees");
+                }
+            }
+        }
+
+        private const float Pi = (float)Math.PI;
+        private const float Tau = (float)(Math.PI * 2);
     }
 }
