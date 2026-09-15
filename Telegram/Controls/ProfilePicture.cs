@@ -22,6 +22,7 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -264,10 +265,11 @@ namespace Telegram.Controls
                 if (_glyph != text.IsGlyph)
                 {
                     _glyph = text.IsGlyph;
-                    Initials.Margin = new Thickness(0, 1, 0, _glyph ? 0 : 2);
+                    Initials.Margin = new Thickness(0, _glyph ? 0 : 1, 0, _glyph ? 0 : 2);
+                    Initials.FontWeight = _glyph ? FontWeights.Normal : FontWeights.Bold;
                 }
 
-                InvalidateFontSize();
+                InvalidateFontSize(text.IsGlyph);
             }
             else if (newValue is ProfilePictureSourceBitmap bitmap)
             {
@@ -369,7 +371,7 @@ namespace Telegram.Controls
             });
         }
 
-        private void InvalidateFontSize()
+        private void InvalidateFontSize(bool glyph)
         {
             if (Initials == null || Size == 0)
             {
@@ -381,7 +383,7 @@ namespace Telegram.Controls
                 < 20 => 10,
                 < 30 => 12,
                 < 36 => 14,
-                < 48 => 16,
+                < 48 => glyph ? 20 : 16,
                 < 64 => 20,
                 < 96 => 24,
                 < 120 => 32,
