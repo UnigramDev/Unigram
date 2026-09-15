@@ -16,9 +16,11 @@
                        FontWeight="SemiBold"
                        TextWrapping="Wrap"
                        TextAlignment="Center">
-                <Run x:Name="Symbol" /><Run Text="&#xEA7E;"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}" /><Run x:Name="Amount" /><Run x:Name="Decimal"
-                                                                                                                              FontSize="20" />
+                <Run x:Name="Symbol" /><Run x:Name="Amount" /><Run x:Name="Decimal"
+                                                                   FontSize="20" />
+                <Run Text="&#xEA7E;"
+                     FontFamily="{StaticResource SymbolThemeFontFamily}"
+                     FontWeight="Normal" />
             </TextBlock>
 
             <TextBlock x:Name="Date"
