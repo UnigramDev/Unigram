@@ -40,6 +40,36 @@ namespace Telegram.Views.Stars
             }
         }
 
+        private readonly ScrollPosition[] _positions = new ScrollPosition[3];
+        private int _index;
+
+        private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Navigation.SelectedIndex < 0 || Navigation.SelectedIndex == _index)
+            {
+                return;
+            }
+
+            // Each tab is meant to come back where it was left, and the offset it was left at
+            // does not survive a tab whose content is shorter: the view clamps it on the way
+            // through and there is nothing to clamp back to on the way in.
+            _positions[_index] = ScrollingHost.SaveScrollPosition();
+
+            _index = Navigation.SelectedIndex;
+            ViewModel.SelectedIndex = _index;
+
+            // The list keeps the same ItemsSource, so the panel holds its place by index through
+            // the patch: a tab being opened for the first time would otherwise inherit the place
+            // of the one it was switched from.
+            var position = _positions[_index];
+            if (position.IsEmpty)
+            {
+                return;
+            }
+
+            ScrollingHost.RestoreScrollPosition(position);
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)

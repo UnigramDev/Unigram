@@ -13813,4 +13813,46 @@
     <string name="PremiumPreviewAIEditorDescription">Transform your messages and entire chats in your preferred style and language.</string>
     <string name="PremiumPreviewSharingDisable">Disable Sharing</string>
     <string name="PremiumPreviewSharingDisableDescription">Disable screenshots, saving and forwarding messages in private chats.</string>
+
+    <string name="StarsTransactionAds">Ads</string>
+    <string name="StarsTransactionPostsSearch">Public Post Search</string>
+    <string name="StarsTransactionSuggestedPost">Suggested Post</string>
+    <string name="StarsTransactionLiveStoryMessageFee">Fee for Live Story Comment</string>
+    <string name="StarsTransactionLiveStoryReactionFee">Fee for Live Story Reaction</string>
+    <string name="StarsTransactionMessageFeeInfo">You receive **{0}** of the price that you charge for each incoming message.</string>
+    <string name="StarsTransactionFullPrice">Full Price</string>
+    <string name="StarTransactionCommission">{0} Commission</string>
+    <string name="StarSubscriptionTo">To</string>
+    <string name="AppStore">App Store</string>
+    <string name="PlayMarket">Google Play</string>
+
+    <string name="Gift2TransactionUpgraded">Collectible Upgrade</string>
+    <string name="Gift2TransactionRefundedUpgrade">Refunded Gift Upgrade</string>
+    <string name="Gift2TransactionPrepaidUpgrade">Gift Upgrade</string>
+    <string name="Gift2TransactionAuctionBid">Auction Bid</string>
+    <string name="Gift2TransactionRefundedAuctionBid">Refunded Auction Bid</string>
+    <string name="Gift2TransactionRemovedDescription">Removed Gift Description</string>
+    <string name="StarGiftTransactionGiftOffer">Gift Offer</string>
+    <string name="StarGiftTransactionGiftOfferRefund">Refunded Gift Offer</string>
+
+    <string name="Gift2Gift">Gift</string>
+
+    <string name="StarGiftReason">Reason</string>
+    <string name="StarGiftReasonUpgrade">Gift Upgraded</string>
+    <string name="StarGiftReasonSale">Gift Sale</string>
+    <string name="StarGiftReasonPurchase">Gift Purchase</string>
+    <string name="StarGiftReasonOffer">Gift Offer</string>
+    <string name="StarGiftReasonOfferRefund">Gift Offer Refund</string>
+    <string name="StarGiftReasonRemovedDescription">Removed Description</string>
+    <string name="StarGiftReasonTransfer">Gift Transferred</string>
+    <string name="StarGiftUpgradeGiftFrom">Gift From</string>
+
+    <string name="StarAffiliateReason">Reason</string>
+    <string name="StarAffiliateReasonProgram">Affiliate Program</string>
+    <string name="StarAffiliate">Affiliate</string>
+    <string name="StarAffiliateCommission">Commission</string>
+
+    <string name="StarGiveawayPrizeFrom">From</string>
+    <string name="StarGiveawayReason">Reason</string>
+    <string name="StarGiveawayReasonLink">Giveaway</string>
 </resources>

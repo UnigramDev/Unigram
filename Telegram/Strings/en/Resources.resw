@@ -1475,6 +1475,9 @@ rewrite your messages.</value>
   <data name="AppsTab" xml:space="preserve">
     <value>Apps</value>
   </data>
+  <data name="AppStore" xml:space="preserve">
+    <value>App Store</value>
+  </data>
   <data name="Archive" xml:space="preserve">
     <value>Archive</value>
   </data>
@@ -7625,6 +7628,9 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2From" xml:space="preserve">
     <value>From</value>
   </data>
+  <data name="Gift2Gift" xml:space="preserve">
+    <value>Gift</value>
+  </data>
   <data name="Gift2GiftAnUpgrade" xml:space="preserve">
     <value>Gift an Upgrade</value>
   </data>
@@ -8027,8 +8033,17 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2ToBalance_other" xml:space="preserve">
     <value>Convert to {0} Stars</value>
   </data>
+  <data name="Gift2TransactionAuctionBid" xml:space="preserve">
+    <value>Auction Bid</value>
+  </data>
   <data name="Gift2TransactionConverted" xml:space="preserve">
     <value>Converted Gift</value>
+  </data>
+  <data name="Gift2TransactionPrepaidUpgrade" xml:space="preserve">
+    <value>Gift Upgrade</value>
+  </data>
+  <data name="Gift2TransactionRefundedAuctionBid" xml:space="preserve">
+    <value>Refunded Auction Bid</value>
   </data>
   <data name="Gift2TransactionRefundedConverted" xml:space="preserve">
     <value>Refunded Converted Gift</value>
@@ -8036,8 +8051,17 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2TransactionRefundedSent" xml:space="preserve">
     <value>Refunded Sent Gift</value>
   </data>
+  <data name="Gift2TransactionRefundedUpgrade" xml:space="preserve">
+    <value>Refunded Gift Upgrade</value>
+  </data>
+  <data name="Gift2TransactionRemovedDescription" xml:space="preserve">
+    <value>Removed Gift Description</value>
+  </data>
   <data name="Gift2TransactionSent" xml:space="preserve">
     <value>Gift</value>
+  </data>
+  <data name="Gift2TransactionUpgraded" xml:space="preserve">
+    <value>Collectible Upgrade</value>
   </data>
   <data name="Gift2Transfer" xml:space="preserve">
     <value>Transfer {0}</value>
@@ -11568,6 +11592,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PlayerAudioUnmute" xml:space="preserve">
     <value>Unmute</value>
   </data>
+  <data name="PlayMarket" xml:space="preserve">
+    <value>Google Play</value>
+  </data>
   <data name="PleaseEnterCurrentPasswordTransfer" xml:space="preserve">
     <value>Please enter your password to complete the transfer.</value>
   </data>
@@ -14342,6 +14369,48 @@ messages?</value>
   <data name="StakeDiceToastButton" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="StarAffiliate" xml:space="preserve">
+    <value>Affiliate</value>
+  </data>
+  <data name="StarAffiliateCommission" xml:space="preserve">
+    <value>Commission</value>
+  </data>
+  <data name="StarAffiliateReason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="StarAffiliateReasonProgram" xml:space="preserve">
+    <value>Affiliate Program</value>
+  </data>
+  <data name="StarGiftReason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="StarGiftReasonOffer" xml:space="preserve">
+    <value>Gift Offer</value>
+  </data>
+  <data name="StarGiftReasonOfferRefund" xml:space="preserve">
+    <value>Gift Offer Refund</value>
+  </data>
+  <data name="StarGiftReasonPurchase" xml:space="preserve">
+    <value>Gift Purchase</value>
+  </data>
+  <data name="StarGiftReasonRemovedDescription" xml:space="preserve">
+    <value>Removed Description</value>
+  </data>
+  <data name="StarGiftReasonSale" xml:space="preserve">
+    <value>Gift Sale</value>
+  </data>
+  <data name="StarGiftReasonTransfer" xml:space="preserve">
+    <value>Gift Transferred</value>
+  </data>
+  <data name="StarGiftReasonUpgrade" xml:space="preserve">
+    <value>Gift Upgraded</value>
+  </data>
+  <data name="StarGiftTransactionGiftOffer" xml:space="preserve">
+    <value>Gift Offer</value>
+  </data>
+  <data name="StarGiftTransactionGiftOfferRefund" xml:space="preserve">
+    <value>Refunded Gift Offer</value>
+  </data>
   <data name="StarGiftTransactionGiftPurchase" xml:space="preserve">
     <value>Gift Purchase</value>
   </data>
@@ -14359,6 +14428,18 @@ messages?</value>
   </data>
   <data name="StarGiftTransactionGiftTransferRefund" xml:space="preserve">
     <value>Refunded Gift Transfer</value>
+  </data>
+  <data name="StarGiftUpgradeGiftFrom" xml:space="preserve">
+    <value>Gift From</value>
+  </data>
+  <data name="StarGiveawayPrizeFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="StarGiveawayReason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="StarGiveawayReasonLink" xml:space="preserve">
+    <value>Giveaway</value>
   </data>
   <data name="StarMediaPurchase" xml:space="preserve">
     <value>Media Purchase</value>
@@ -14680,6 +14761,9 @@ on Telegram. It is based on:</value>
   <data name="StarsTOSLink" xml:space="preserve">
     <value>https://telegram.org/tos/stars</value>
   </data>
+  <data name="StarsTransactionAds" xml:space="preserve">
+    <value>Ads</value>
+  </data>
   <data name="StarsTransactionBot" xml:space="preserve">
     <value>Stars Top-Up Bot</value>
   </data>
@@ -14707,6 +14791,9 @@ on Telegram. It is based on:</value>
   <data name="StarsTransactionFragment" xml:space="preserve">
     <value>Purchase from Fragment</value>
   </data>
+  <data name="StarsTransactionFullPrice" xml:space="preserve">
+    <value>Full Price</value>
+  </data>
   <data name="StarsTransactionHidden" xml:space="preserve">
     <value>Hidden User</value>
   </data>
@@ -14719,6 +14806,12 @@ on Telegram. It is based on:</value>
   <data name="StarsTransactionInApp" xml:space="preserve">
     <value>In-App Purchase</value>
   </data>
+  <data name="StarsTransactionLiveStoryMessageFee" xml:space="preserve">
+    <value>Fee for Live Story Comment</value>
+  </data>
+  <data name="StarsTransactionLiveStoryReactionFee" xml:space="preserve">
+    <value>Fee for Live Story Reaction</value>
+  </data>
   <data name="StarsTransactionMedia" xml:space="preserve">
     <value>Media</value>
   </data>
@@ -14727,6 +14820,12 @@ on Telegram. It is based on:</value>
   </data>
   <data name="StarsTransactionMessageFee_other" xml:space="preserve">
     <value>Fee for {0} Messages</value>
+  </data>
+  <data name="StarsTransactionMessageFeeInfo" xml:space="preserve">
+    <value>You receive **{0}** of the price that you charge for each incoming message.</value>
+  </data>
+  <data name="StarsTransactionPostsSearch" xml:space="preserve">
+    <value>Public Post Search</value>
   </data>
   <data name="StarsTransactionPremiumGift" xml:space="preserve">
     <value>Telegram Premium</value>
@@ -14752,6 +14851,15 @@ on Telegram. It is based on:</value>
   <data name="StarsTransactionSubscriptionMonthly" xml:space="preserve">
     <value>Monthly subscription fee</value>
   </data>
+  <data name="StarsTransactionSuggestedPost" xml:space="preserve">
+    <value>Suggested Post</value>
+  </data>
+  <data name="StarsTransactionTONDate" xml:space="preserve">
+    <value>Gram Transaction Date</value>
+  </data>
+  <data name="StarsTransactionTONFromFragment" xml:space="preserve">
+    <value>Fragment</value>
+  </data>
   <data name="StarsTransactionTOS" xml:space="preserve">
     <value>Review the **Terms of Service** for Stars.</value>
   </data>
@@ -14764,8 +14872,14 @@ on Telegram. It is based on:</value>
   <data name="StarsTransactionUnsupported" xml:space="preserve">
     <value>In-App Purchase</value>
   </data>
+  <data name="StarsTransactionViewInBlockchainExplorer" xml:space="preserve">
+    <value>View in Blockchain Explorer</value>
+  </data>
   <data name="StarsTransactionWithdrawFragment" xml:space="preserve">
     <value>Withdraw to Fragment</value>
+  </data>
+  <data name="StarSubscriptionTo" xml:space="preserve">
+    <value>To</value>
   </data>
   <data name="StarsYourBalance" xml:space="preserve">
     <value>your balance</value>
@@ -14778,6 +14892,9 @@ on Telegram. It is based on:</value>
   </data>
   <data name="StartMessaging" xml:space="preserve">
     <value>Start Messaging</value>
+  </data>
+  <data name="StarTransactionCommission" xml:space="preserve">
+    <value>{0} Commission</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Please confirm your country code

@@ -14,22 +14,21 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Stars
 {
-    public partial class StarsViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
+    public partial class StarsViewModel : ViewModelBase, IHandle
     {
         private readonly SubscriptionCollection _subscriptions;
-
-        private string _nextOffset = string.Empty;
-        private TransactionDirection _direction;
+        private readonly TransactionTabs<StarTransaction> _transactions;
 
         public StarsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             _subscriptions = new SubscriptionCollection(clientService, settingsService, aggregator);
-
-            Items = new IncrementalCollection<StarTransaction>(this);
+            _transactions = new TransactionTabs<StarTransaction>(LoadPageAsync, GetId, IsIncoming, OnTransactionsChanged, LoadSubscriptionsAsync);
         }
 
-        public IncrementalCollection<StarTransaction> Items { get; private set; }
+        public IncrementalCollectionView<StarTransaction, IncrementalCollection<StarTransaction>> Items => _transactions.Items;
+
+        public bool HasTransactions => _transactions.HasTransactions;
 
         public IncrementalCollection<StarSubscription> Subscriptions => _subscriptions.Items;
 
@@ -45,13 +44,39 @@ namespace Telegram.ViewModels.Stars
             BeginOnUIThread(() => RaisePropertyChanged(nameof(OwnedStarCount)));
         }
 
-        public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
+        private static string GetId(StarTransaction transaction)
+        {
+            return transaction.Id;
+        }
+
+        private static bool IsIncoming(StarTransaction transaction)
+        {
+            return !transaction.StarAmount.IsNegative();
+        }
+
+        private void OnTransactionsChanged()
+        {
+            RaisePropertyChanged(nameof(HasTransactions));
+        }
+
+        private async Task<TransactionPage<StarTransaction>> LoadPageAsync(TransactionDirection direction, string offset, int limit)
         {
             Logger.Info();
 
-            // Subscriptions are pumped through this list too, and running out of them is not the
-            // end of it: the transactions follow. Routed through the collection rather than the
-            // owner, so that the collection is the one applying the result to its own flag.
+            var response = await ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, direction, offset, limit);
+            if (response is StarTransactions transactions)
+            {
+                return new TransactionPage<StarTransaction>(transactions.Transactions, transactions.NextOffset);
+            }
+
+            return default;
+        }
+
+        // Subscriptions have no list of their own to page them: they render inside the transaction
+        // list's header, where nothing would ever ask for more. Running out of them is not the end
+        // of it, so the All tab drains them first and only then starts on its own pages.
+        private async Task<IncrementalLoadResult?> LoadSubscriptionsAsync(uint count)
+        {
             if (Subscriptions.HasMoreItems)
             {
                 var subscriptions = await Subscriptions.LoadMoreItemsAsync(count);
@@ -61,28 +86,7 @@ namespace Telegram.ViewModels.Stars
                 }
             }
 
-            return await LoadMoreItemsAsync2(count);
-        }
-
-        public async Task<IncrementalLoadResult> LoadMoreItemsAsync2(uint count)
-        {
-            var totalCount = 0u;
-            var hasMoreItems = false;
-
-            var response = await ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, _direction, _nextOffset, 20);
-            if (response is StarTransactions transactions)
-            {
-                foreach (var item in transactions.Transactions)
-                {
-                    Items.Add(item);
-                    totalCount++;
-                }
-
-                _nextOffset = transactions.NextOffset;
-                hasMoreItems = transactions.NextOffset.Length > 0;
-            }
-
-            return new IncrementalLoadResult(totalCount, hasMoreItems);
+            return null;
         }
 
         partial class SubscriptionCollection : ViewModelBase, IIncrementalCollectionOwner
@@ -121,26 +125,17 @@ namespace Telegram.ViewModels.Stars
             }
         }
 
-        private int _selectedIndex;
         public int SelectedIndex
         {
-            get => _selectedIndex;
-            set => SetSelectedIndex(value);
-        }
-
-        private void SetSelectedIndex(int value)
-        {
-            if (Set(ref _selectedIndex, value, nameof(SelectedIndex)))
+            get => _transactions.SelectedIndex;
+            set
             {
-                _nextOffset = string.Empty;
-                _direction = _selectedIndex switch
+                if (_transactions.SelectedIndex != value)
                 {
-                    1 => new TransactionDirectionIncoming(),
-                    2 => new TransactionDirectionOutgoing(),
-                    _ => null
-                };
+                    _transactions.SelectedIndex = value;
 
-                Items.Restart();
+                    RaisePropertyChanged(nameof(SelectedIndex));
+                }
             }
         }
     }

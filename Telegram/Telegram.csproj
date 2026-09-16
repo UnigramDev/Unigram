@@ -1134,6 +1134,7 @@
     <Compile Include="Controls\QrCode.cs" />
     <Compile Include="Controls\RecentUserHeads.cs" />
     <Compile Include="Controls\ScrollViewerScrim.cs" />
+    <Compile Include="Controls\TransactionInfo.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -2334,6 +2335,7 @@
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
+    <Compile Include="Collections\TransactionTabs.cs" />
     <Compile Include="Common\Emoticon.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Shims\ClipboardEx.cs" />

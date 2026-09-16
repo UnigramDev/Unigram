@@ -233,5 +233,101 @@ namespace Telegram.Common
                 scrollViewer?.TryChangeView(null, 0, null);
             }
         }
+
+        /// <summary>
+        /// Where a list is scrolled, so that the position survives the list being given a
+        /// different <see cref="ItemsControl.ItemsSource"/>.
+        /// </summary>
+        /// <remarks>
+        /// Not <see cref="ListViewPersistenceHelper"/>, which anchors on the key of the top item
+        /// and would be the better answer to virtualization. That one is built for restoring onto
+        /// a list that has settled - the platform sample calls it from Loaded - and it has no
+        /// anchor to find on a list whose source was replaced a moment ago and not yet measured,
+        /// so it leaves the list at the top. An offset applied after an explicit layout pass is
+        /// what actually holds the position here.
+        /// </remarks>
+        public static ScrollPosition SaveScrollPosition(this ListViewBase listViewBase)
+        {
+            var scrollViewer = GetScrollViewer(listViewBase);
+            if (scrollViewer == null)
+            {
+                return default;
+            }
+
+            return new ScrollPosition(scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset);
+        }
+
+        /// <summary>
+        /// Puts back a position taken by <see cref="SaveScrollPosition"/>. The list has to be
+        /// showing the items that position was taken against.
+        /// </summary>
+        public static void RestoreScrollPosition(this ListViewBase listViewBase, ScrollPosition position)
+        {
+            if (position.IsEmpty)
+            {
+                return;
+            }
+
+            var scrollViewer = GetScrollViewer(listViewBase);
+            if (scrollViewer == null)
+            {
+                return;
+            }
+
+            // An offset means nothing until the list has measured what it is showing now.
+            listViewBase.UpdateLayout();
+
+            if (position.Apply(scrollViewer))
+            {
+                return;
+            }
+
+            // Came up short: a virtualized extent is an estimate from the containers realized so
+            // far, and a deep offset can outrun it. One more go once the list has grown, detached
+            // either way so a list that never does is not left holding a handler. Named rather
+            // than inline so that -= matches what += added.
+            void layoutUpdated(object sender, object e)
+            {
+                listViewBase.LayoutUpdated -= layoutUpdated;
+                position.Apply(scrollViewer);
+            }
+
+            listViewBase.LayoutUpdated += layoutUpdated;
+        }
+    }
+
+    public readonly struct ScrollPosition
+    {
+        private readonly bool _hasValue;
+
+        internal ScrollPosition(double horizontalOffset, double verticalOffset)
+        {
+            HorizontalOffset = horizontalOffset;
+            VerticalOffset = verticalOffset;
+            _hasValue = true;
+        }
+
+        /// <summary>The top of a list, for a caller that has no saved place to go back to.</summary>
+        public static ScrollPosition Top { get; } = new ScrollPosition(0, 0);
+
+        public double HorizontalOffset { get; }
+
+        public double VerticalOffset { get; }
+
+        /// <summary>
+        /// True for a default instance: nothing was saved, so there is nothing to put back.
+        /// Restoring one does nothing rather than scrolling to the top, which is where a list
+        /// nobody saved a position for already is.
+        /// </summary>
+        public bool IsEmpty => !_hasValue;
+
+        // False when the view came up short of what was asked for.
+        internal bool Apply(ScrollViewer scrollViewer)
+        {
+            scrollViewer.TryChangeView(HorizontalOffset, VerticalOffset, null, true);
+
+            return scrollViewer.VerticalOffset.AlmostEquals(VerticalOffset)
+                && scrollViewer.HorizontalOffset.AlmostEquals(HorizontalOffset);
+        }
     }
 }
