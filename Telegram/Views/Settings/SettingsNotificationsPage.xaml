@@ -167,7 +167,7 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(local:AnimatedIcon.State)"
+                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
                                                     Value="PointerOverOn" />
                                         </VisualState.Setters>
                                     </VisualState>
