@@ -13800,4 +13800,6 @@
     <string name="PasscodeWindowsHello">Telegram wants to unlock with Windows Hello.</string>
 
     <string name="AccDescrForwardOptions">More forward options</string>
+    <string name="AccDescrQuizCorrectAnswer">Correct answer</string>
+    <string name="AccDescrQuizIncorrectAnswer">Incorrect answer</string>
 </resources>

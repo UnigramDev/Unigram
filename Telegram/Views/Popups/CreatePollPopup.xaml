@@ -715,6 +715,7 @@
                                           Visibility="{x:Bind IsQuiz, Mode=OneWay}"
                                           Checked="Option_Checked"
                                           Unchecked="Option_Unchecked"
+                                          AutomationProperties.Name="{CustomResource AccDescrQuizCorrectAnswer}"
                                           MinWidth="0" />
 
                                 <Grid Grid.Column="1">

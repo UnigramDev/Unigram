@@ -265,6 +265,12 @@
   <data name="AccDescrProfilePicture" xml:space="preserve">
     <value>Profile photo</value>
   </data>
+  <data name="AccDescrQuizCorrectAnswer" xml:space="preserve">
+    <value>Correct answer</value>
+  </data>
+  <data name="AccDescrQuizIncorrectAnswer" xml:space="preserve">
+    <value>Incorrect answer</value>
+  </data>
   <data name="AccDescrReactedWith" xml:space="preserve">
     <value>{0} reacted with {1}</value>
   </data>
