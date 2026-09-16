@@ -335,9 +335,9 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                                 <VisualState.Setters>
-                                                    <Setter Target="BackContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="BackContent.(muxc:AnimatedIcon.State)"
                                                             Value="PointerOver" />
-                                                    <Setter Target="PaneContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="PaneContent.(muxc:AnimatedIcon.State)"
                                                             Value="PointerOver" />
                                                 </VisualState.Setters>
                                             </VisualState>
@@ -362,9 +362,9 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                                 <VisualState.Setters>
-                                                    <Setter Target="BackContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="BackContent.(muxc:AnimatedIcon.State)"
                                                             Value="Pressed" />
-                                                    <Setter Target="PaneContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="PaneContent.(muxc:AnimatedIcon.State)"
                                                             Value="Pressed" />
                                                 </VisualState.Setters>
                                             </VisualState>
@@ -389,9 +389,9 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                                 <VisualState.Setters>
-                                                    <Setter Target="BackContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="BackContent.(muxc:AnimatedIcon.State)"
                                                             Value="PointerOver" />
-                                                    <Setter Target="PaneContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="PaneContent.(muxc:AnimatedIcon.State)"
                                                             Value="PointerOver" />
                                                 </VisualState.Setters>
                                             </VisualState>
@@ -416,9 +416,9 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                                 <VisualState.Setters>
-                                                    <Setter Target="BackContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="BackContent.(muxc:AnimatedIcon.State)"
                                                             Value="Pressed" />
-                                                    <Setter Target="PaneContent.(local:AnimatedIcon.State)"
+                                                    <Setter Target="PaneContent.(muxc:AnimatedIcon.State)"
                                                             Value="Pressed" />
                                                 </VisualState.Setters>
                                             </VisualState>
