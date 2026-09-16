@@ -95,7 +95,8 @@ def write(manifest, path, references=None, only=None):
         where = sorted(set(references.get(icon.code) or []))
         try:
             holder = manifest.resolve(icon)
-            art = svgdoc.parse(sourcelib.read(holder, sources), name=holder.src)
+            art = svgdoc.parse(sourcelib.read(holder, sources), name=holder.src,
+                               colour=holder.colour)
             trouble = art.errors
             data = "" if trouble else _path_data(art, upem, ascent)
             width = icon.advance or natural_advance(art, upem)

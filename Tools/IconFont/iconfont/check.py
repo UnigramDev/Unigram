@@ -40,7 +40,8 @@ def run(manifest, icons_cs, repo_root):
         if icon.is_alias:
             continue
         try:
-            art = svgdoc.parse(sourcelib.read(icon, sources), name=icon.src)
+            art = svgdoc.parse(sourcelib.read(icon, sources), name=icon.src,
+                               colour=icon.colour)
         except (sourcelib.SourceError, svgdoc.SvgError) as e:
             problems.append("%s: %s" % (icon.name, e))
             continue

@@ -14,6 +14,7 @@ identically for the non-self-intersecting outlines icon art is made of.
 import re
 
 from fontTools.misc.transform import Transform
+from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.cu2quPen import Cu2QuPen
 from fontTools.pens.pointPen import ReverseContourPointPen
 from fontTools.pens.recordingPen import RecordingPen
@@ -21,7 +22,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.svgLib.path import parse_path
 
-from iconfont.svgdoc import SvgError
+from iconfont.svgdoc import Gradient, SvgError
 
 # Maximum deviation, in font units, allowed when the cubics that SVG uses are
 # approximated by the quadratics TrueType stores. A 1024 em rendered at 20px
@@ -192,25 +193,78 @@ def _reverse(contour):
     return out.value
 
 
-def art_to_glyph(art, upem, ascent, glyph_set=None, error=CU2QU_ERROR):
-    """Draw parsed SVG art as a TrueType glyph."""
+def _to_font(art, upem, ascent):
     scale = float(upem) / art.height
-    to_font = Transform(scale, 0, 0, -scale, 0, ascent)
+    return Transform(scale, 0, 0, -scale, 0, ascent)
 
+
+def _contours(elements, to_font):
     contours = []
-    for element in art.contours:
+    for element in elements:
         recorded = _record(element.d, to_font.transform(element.transform))
         split = split_contours(recorded)
         # evenodd is a per-element rule in SVG, so nesting is resolved within
         # the element that declared it.
         contours.extend(_rewind(split) if element.evenodd else split)
+    return contours
 
+
+def _glyph(contours, glyph_set, error):
     pen = TTGlyphPen(glyph_set)
     quad = Cu2QuPen(pen, error)
     for contour in contours:
         for op, args in contour:
             getattr(quad, op)(*args)
     return pen.glyph()
+
+
+def art_to_glyph(art, upem, ascent, glyph_set=None, error=CU2QU_ERROR):
+    """Draw parsed SVG art as a TrueType glyph."""
+    return _glyph(_contours(art.contours, _to_font(art, upem, ascent)),
+                  glyph_set, error)
+
+
+def art_to_layers(art, upem, ascent, glyph_set=None, error=CU2QU_ERROR):
+    """Draw parsed SVG art as one glyph per fill colour, in paint order.
+
+    Returns `[(rgb, glyph)]` and a note for every gradient that had to be
+    flattened, which is a lossy step the build should say out loud.
+
+    Elements are grouped only where they are adjacent: two runs of the same
+    colour with a different one between them stay two layers, because a colour
+    glyph paints its layers in order and merging them would move ink.
+    """
+    to_font = _to_font(art, upem, ascent)
+    notes = []
+    groups = []
+    for element in art.contours:
+        fill = element.fill
+        if isinstance(fill, Gradient):
+            fill = fill.flatten(_bounds(element.d))
+            if fill is None:
+                raise SvgError("a gradient fill has no usable colour stop")
+            notes.append("gradient flattened to #%02X%02X%02X - COLRv0 layers are "
+                         "flat" % fill)
+        if fill is None:
+            raise SvgError("a colour glyph needs a fill on every element")
+        if groups and groups[-1][0] == fill:
+            groups[-1][1].append(element)
+        else:
+            groups.append((fill, [element]))
+    return ([(colour, _glyph(_contours(elements, to_font), glyph_set, error))
+             for colour, elements in groups], notes)
+
+
+def _bounds(d):
+    """The path's bounds in its own user space, which is where a gradient in
+    user space is measured too."""
+    pen = BoundsPen(None)
+    for op, args in _parse(d):
+        if op == "endPath":
+            pen.closePath()
+        else:
+            getattr(pen, op)(*args)
+    return pen.bounds
 
 
 def natural_advance(art, upem):

@@ -12,9 +12,10 @@ PRIVATE_USE = range(0xE000, 0xF900)
 
 
 class Icon:
-    __slots__ = ("name", "code", "src", "advance", "note", "blank")
+    __slots__ = ("name", "code", "src", "advance", "note", "blank", "colour")
 
-    def __init__(self, name, code, src, advance=None, note=None, blank=False):
+    def __init__(self, name, code, src, advance=None, note=None, blank=False,
+                 colour=False):
         self.name = name
         self.code = code
         self.src = src
@@ -27,6 +28,10 @@ class Icon:
         # advance but paints nothing. Declared so that artwork which fails to
         # import cannot quietly become one.
         self.blank = blank
+        # Built as COLR/CPAL layers, one per fill colour in the artwork, instead
+        # of the single monochrome outline every other glyph is. The outline is
+        # still built and still what a rasteriser that ignores COLR draws.
+        self.colour = colour
 
     @property
     def is_alias(self):
@@ -65,6 +70,8 @@ class Icon:
             d["advance"] = self.advance
         if self.blank:
             d["blank"] = True
+        if self.colour:
+            d["color"] = True
         if self.note:
             d["note"] = self.note
         return d
@@ -108,6 +115,7 @@ class Manifest:
                 advance=e.get("advance"),
                 note=e.get("note"),
                 blank=bool(e.get("blank")),
+                colour=bool(e.get("color")),
             )
             for e in raw["icons"]
         ]
@@ -149,6 +157,9 @@ class Manifest:
             if icon.name in seen_name:
                 problems.append("duplicate icon name %s" % icon.name)
             seen_name[icon.name] = icon
+            if icon.colour and (icon.is_alias or icon.blank):
+                problems.append("%s is declared colour but has no artwork of its own"
+                                % icon.name)
             if icon.is_remote and icon.source_kind not in self.sources:
                 problems.append(
                     "%s refers to unknown source %r" % (icon.name, icon.source_kind)

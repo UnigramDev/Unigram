@@ -45,12 +45,70 @@ class SvgError(Exception):
 class Contour:
     """One `d` string plus the transform and fill rule in force where it sat."""
 
-    __slots__ = ("d", "transform", "evenodd")
+    __slots__ = ("d", "transform", "evenodd", "fill")
 
-    def __init__(self, d, transform, evenodd):
+    def __init__(self, d, transform, evenodd, fill=None):
         self.d = d
         self.transform = transform
         self.evenodd = evenodd
+        # An RGB triple, or a Gradient a colour glyph has to flatten. None in
+        # monochrome art, where nothing downstream asks what colour it was.
+        self.fill = fill
+
+
+class Gradient:
+    """A linear gradient, kept only so that a colour glyph can flatten it.
+
+    COLRv0 - the only colour format DirectWrite draws in a XAML TextBlock - has
+    flat layers and no gradients, so one has to be picked. `flatten` does that;
+    this holds what it needs.
+    """
+
+    __slots__ = ("stops", "vector", "user_space", "transform")
+
+    def __init__(self, stops, vector, user_space, transform):
+        # [(offset, (r, g, b))], in the order declared.
+        self.stops = stops
+        self.vector = vector
+        self.user_space = user_space
+        self.transform = transform
+
+    def at(self, t):
+        """The colour at `t` along the vector, with the stops' own offsets."""
+        if not self.stops:
+            return None
+        if t <= self.stops[0][0]:
+            return self.stops[0][1]
+        for (o0, c0), (o1, c1) in zip(self.stops, self.stops[1:]):
+            if t <= o1:
+                span = o1 - o0
+                k = 0.0 if span <= 0 else (t - o0) / span
+                return tuple(int(round(a + (b - a) * k)) for a, b in zip(c0, c1))
+        return self.stops[-1][1]
+
+    def flatten(self, bounds):
+        """The one colour that best stands in for the gradient over `bounds`.
+
+        The shape's centre is projected onto the gradient vector and the colour
+        read off there. Exporters routinely emit a vector that covers a sliver
+        of the shape and leaves the rest on an end stop - the premium star's
+        three gradients all run out within the top fifth of the artwork - so
+        sampling where the ink actually is beats averaging the stops.
+        """
+        x0, y0, x1, y1 = self.vector
+        if self.user_space:
+            cx = (bounds[0] + bounds[2]) / 2.0
+            cy = (bounds[1] + bounds[3]) / 2.0
+        else:
+            cx = cy = 0.5
+        x0, y0 = self.transform.transformPoint((x0, y0))
+        x1, y1 = self.transform.transformPoint((x1, y1))
+        dx, dy = x1 - x0, y1 - y0
+        length = dx * dx + dy * dy
+        if length <= 0:
+            return self.at(1.0)
+        t = ((cx - x0) * dx + (cy - y0) * dy) / length
+        return self.at(min(1.0, max(0.0, t)))
 
 
 class SvgArt:
@@ -236,6 +294,39 @@ def parse_colour(value):
     return None
 
 
+def _length(text, default):
+    """One gradient coordinate. A percentage is a fraction of the target box."""
+    if text is None:
+        return default
+    text = text.strip()
+    numbers = _floats(text)
+    if not numbers:
+        return default
+    return numbers[0] / 100.0 if text.endswith("%") else numbers[0]
+
+
+def _linear_gradient(el):
+    stops = []
+    for child in el:
+        if _tag(child) != "stop":
+            continue
+        props = _declarations(child.get("style"))
+        colour = parse_colour(props.get("stop-color") or child.get("stop-color"))
+        if colour is None:
+            continue
+        stops.append((_length(props.get("offset") or child.get("offset"), 0.0), colour))
+    user_space = (el.get("gradientUnits") or "").strip() == "userSpaceOnUse"
+    names = ("x1", "y1", "x2", "y2")
+    if user_space and any((el.get(n) or "").strip().endswith("%") for n in names):
+        # Resolving those needs the viewport, which is not what the vector is
+        # measured against here. Nothing emits them; refuse rather than guess.
+        raise SvgError("gradient %s is in user space with percentage coordinates"
+                       % el.get("id"))
+    vector = tuple(_length(el.get(n), d) for n, d in zip(names, (0.0, 0.0, 1.0, 0.0)))
+    return Gradient(stops, vector, user_space,
+                    parse_transform(el.get("gradientTransform")))
+
+
 def _colour_key(rgb):
     """Collapse every near-black to one bucket; keep real hues apart."""
     luma = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255.0
@@ -263,8 +354,12 @@ def _clip_is_noop(el, clips, box):
             and abs(max(nums) - max(w, h)) < 0.01)
 
 
-def parse(source, name=None):
-    """Read an SVG from a path or a string of markup."""
+def parse(source, name=None, colour=False):
+    """Read an SVG from a path or a string of markup.
+
+    `colour` says the artwork is destined for a layered colour glyph, which is
+    the one case where more than one fill, and a gradient fill, are not faults.
+    """
     if "<" in source[:200]:
         text = source
         name = name or "<svg>"
@@ -290,10 +385,13 @@ def parse(source, name=None):
     # turns out to be a no-op.
     clips = {}
     sheet = {}
+    gradients = {}
     for el in root.iter():
         tag = _tag(el)
         if tag == "style":
             sheet.update(parse_stylesheet("".join(el.itertext())))
+        elif tag == "linearGradient" and el.get("id"):
+            gradients[el.get("id")] = _linear_gradient(el)
         elif tag == "clipPath" and el.get("id"):
             for child in el:
                 d = _shape_path(child)
@@ -335,25 +433,32 @@ def parse(source, name=None):
                                 "dropped" % (tag, stroke))
             if fill is not None and fill.strip() in ("none", "transparent"):
                 continue
+            paint_ref = None
             if fill and fill.strip().startswith("url("):
-                errors.append("<%s> is filled with a gradient or pattern (%s)" % (tag, fill))
-            colour = parse_colour(fill)
-            if colour:
-                fills.append(colour)
-            contours.append(Contour(d, ct, (rule or "").strip() == "evenodd"))
+                ref = re.match(r"url\(#(.+?)\)", fill.strip())
+                paint_ref = gradients.get(ref.group(1)) if ref else None
+                if paint_ref is None or not colour:
+                    errors.append("<%s> is filled with a gradient or pattern (%s)"
+                                  % (tag, fill))
+            # An absent fill is black in SVG, and a layer has to have a colour.
+            rgb = paint_ref or parse_colour(fill) or ((0, 0, 0) if colour else None)
+            if rgb and not isinstance(rgb, Gradient):
+                fills.append(rgb)
+            contours.append(Contour(d, ct, (rule or "").strip() == "evenodd", rgb))
 
     walk(root, Identity, (None, None, None, True))
 
     if not contours:
         errors.append("no drawable geometry")
     distinct = {_colour_key(c) for c in fills}
-    if len(distinct) > 1:
+    if len(distinct) > 1 and not colour:
         errors.append("%d distinct fill colours - this icon is multicolour and cannot "
                       "become a monochrome glyph" % len(distinct))
 
     # Shift the viewBox origin to 0,0 so callers only deal with width/height.
     if box[0] or box[1]:
         shift = Transform().translate(-box[0], -box[1])
-        contours = [Contour(c.d, shift.transform(c.transform), c.evenodd) for c in contours]
+        contours = [Contour(c.d, shift.transform(c.transform), c.evenodd, c.fill)
+                    for c in contours]
 
     return SvgArt(box[2], box[3], contours, warnings, errors)
