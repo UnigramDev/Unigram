@@ -347,8 +347,15 @@ namespace winrt::Telegram::Native::Media::implementation
             auto media = libvlc_media_new_callbacks(m_instance, &OpenCallback, &ReadCallback, &SeekCallback, &CloseCallback, abi);
 
             libvlc_media_player_set_media(m_player, media);
-            libvlc_media_player_play(m_player);
+
+            // Before play, not after: play starts the input thread, and every state change
+            // that thread reports retains the media under the player's lock and releases it
+            // outside one. libvlc 3.0 holds the media refcount in a plain int, so a release
+            // racing that retain loses an update and the media is destroyed while the player
+            // still points at it. set_media already took the player's own reference.
             libvlc_media_release(media);
+
+            libvlc_media_player_play(m_player);
 
             // Only now: set_media dropped the media that carried the previous opaque, and we
             // had already given up our own reference to it, so it is gone and nothing can call
@@ -386,8 +393,11 @@ namespace winrt::Telegram::Native::Media::implementation
             void* previous = m_streamAbi.exchange(nullptr);
 
             libvlc_media_player_set_media(m_player, media);
-            libvlc_media_player_play(m_player);
+
+            // Before play, for the reason given in the overload above.
             libvlc_media_release(media);
+
+            libvlc_media_player_play(m_player);
 
             ReleaseStreamAbi(previous);
 
