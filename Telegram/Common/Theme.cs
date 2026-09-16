@@ -409,7 +409,14 @@ namespace Telegram.Common
                         {
                             update.TintColor = tintColor;
                             update.TintOpacity = tintOpacity;
-                            update.TintLuminosityOpacity = tintLuminosityOpacity;
+                            if (ApiInfo.CanSetTintLuminosityOpacity)
+                            {
+                                update.TintLuminosityOpacity = tintLuminosityOpacity;
+                            }
+                            else
+                            {
+                                update.SetValue(AcrylicBrush.TintLuminosityOpacityProperty, tintLuminosityOpacity);
+                            }
                             update.FallbackColor = fallbackColor;
                             update.AlwaysUseFallback = !PowerSavingPolicy.AreMaterialsEnabled;
                         });

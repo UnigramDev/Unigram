@@ -45,6 +45,9 @@ namespace Telegram.Common
         private static bool? _canCreateRectangleClip;
         public static bool CanCreateRectangleClip => _canCreateRectangleClip ??= ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRectangleClip");
 
+        private static bool? _canSetTintLuminosityOpacity;
+        public static bool CanSetTintLuminosityOpacity => _canSetTintLuminosityOpacity ??= ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 10);
+
         // We only enable shadows on Windows 11 for three reasons:
         // First: they look terrible on Windows 10
         // Second: they are way more optimized on Windows 11 (they use a nine-grid instead of dynamically casted shadows)
