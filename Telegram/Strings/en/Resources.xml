@@ -13807,6 +13807,7 @@
     <string name="TerminateWebSessionTitle">Disconnect website</string>
     <string name="TerminateWebSessionText">Are you sure you want to disconnect {0}?</string>
     <string name="Disconnect">Disconnect</string>
+    <string name="AreYouSureClearDraftsTitle">Delete cloud drafts</string>
     <string name="AreYouSureSessionsTitle">Terminate sessions</string>
     <string name="PremiumPreviewAIEditor">AI Tools</string>
     <string name="PremiumPreviewAIEditorDescription">Transform your messages and entire chats in your preferred style and language.</string>

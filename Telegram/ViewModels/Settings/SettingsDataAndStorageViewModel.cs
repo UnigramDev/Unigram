@@ -224,7 +224,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ClearDrafts()
         {
-            var confirm = await ShowPopupAsync(Strings.AreYouSureClearDrafts, Strings.AppName, Strings.OK, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureClearDrafts, Strings.AreYouSureClearDraftsTitle, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

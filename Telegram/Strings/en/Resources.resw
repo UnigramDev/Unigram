@@ -1569,6 +1569,9 @@ Right click the archive button to return the Archive to your chat list.</value>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>Are you sure you want to delete all cloud drafts?</value>
   </data>
+  <data name="AreYouSureClearDraftsTitle" xml:space="preserve">
+    <value>Delete cloud drafts</value>
+  </data>
   <data name="AreYouSureClearHistoryChannel" xml:space="preserve">
     <value>Delete all cached text and media from this channel?</value>
   </data>
