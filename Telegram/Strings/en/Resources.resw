@@ -1642,6 +1642,9 @@ You can use Telegram on all your devices at once and use several accounts in the
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>Are you sure you want to terminate all other sessions?</value>
   </data>
+  <data name="AreYouSureSessionsTitle" xml:space="preserve">
+    <value>Terminate sessions</value>
+  </data>
   <data name="AreYouSureShareMyContactInfo" xml:space="preserve">
     <value>Are you sure you want to share your phone number?</value>
   </data>

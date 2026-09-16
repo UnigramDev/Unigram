@@ -9,7 +9,8 @@
                        PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
                        Opened="OnOpened"
                        Padding="0,24,0,16"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       ButtonsLayout="Vertical">
 
     <Grid>
         <Grid.RowDefinitions>

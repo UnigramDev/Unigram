@@ -2768,6 +2768,11 @@ namespace Telegram
         public static string AreYouSureSessions => Resource.GetString("AreYouSureSessions");
         
         /// <summary>
+        /// Localized resource similar to "Terminate sessions"
+        /// </summary>
+        public static string AreYouSureSessionsTitle => Resource.GetString("AreYouSureSessionsTitle");
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to share your phone number?"
         /// </summary>
         public static string AreYouSureShareMyContactInfo => Resource.GetString("AreYouSureShareMyContactInfo");
