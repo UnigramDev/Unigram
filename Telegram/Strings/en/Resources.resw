@@ -5806,6 +5806,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="Discard" xml:space="preserve">
     <value>Discard</value>
   </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
   <data name="DiscussChannel" xml:space="preserve">
     <value>channel</value>
   </data>
@@ -15520,8 +15523,17 @@ in mini apps on Telegram.</value>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>Disconnect {0}?</value>
   </data>
+  <data name="TerminateWebSessionsTitle" xml:space="preserve">
+    <value>Disconnect websites</value>
+  </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Block {0}</value>
+  </data>
+  <data name="TerminateWebSessionText" xml:space="preserve">
+    <value>Are you sure you want to disconnect {0}?</value>
+  </data>
+  <data name="TerminateWebSessionTitle" xml:space="preserve">
+    <value>Disconnect website</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
     <value>Terms of Service</value>

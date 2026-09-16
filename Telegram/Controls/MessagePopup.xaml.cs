@@ -21,19 +21,17 @@ namespace Telegram.Controls
             InitializeComponent();
         }
 
-        public MessagePopup(string message)
-            : this(message, null)
-        {
-
-        }
-
-        public MessagePopup(string message, string title)
+        public MessagePopup(bool destructive)
         {
             InitializeComponent();
+            
+            if (destructive)
+            {
+                Theme.AddCheckBoxPalette(this, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
 
-            Message = message;
-            Title = title;
-            PrimaryButtonText = "OK";
+                DefaultButton = ContentDialogButton.None;
+                PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+            }
         }
 
         public string Message
@@ -119,9 +117,9 @@ namespace Telegram.Controls
             return popup.ShowAsync(xamlRoot);
         }
 
-        private static MessagePopup Create (string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static MessagePopup Create (string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            var popup = new MessagePopup
+            var popup = new MessagePopup(destructive)
             {
                 Title = title ?? Strings.AppName,
                 PrimaryButtonText = primary ?? Strings.OK,
@@ -132,14 +130,6 @@ namespace Telegram.Controls
             if (requestedTheme != ElementTheme.Default)
             {
                 popup.RequestedTheme = requestedTheme;
-            }
-
-            if (destructive)
-            {
-                Theme.AddCheckBoxPalette(popup, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
-
-                popup.DefaultButton = ContentDialogButton.None;
-                popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
             }
 
             return popup;
