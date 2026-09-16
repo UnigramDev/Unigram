@@ -2649,6 +2649,11 @@ namespace Telegram
         public static string AreYouSureClearDrafts => Resource.GetString("AreYouSureClearDrafts");
         
         /// <summary>
+        /// Localized resource similar to "Delete cloud drafts"
+        /// </summary>
+        public static string AreYouSureClearDraftsTitle => Resource.GetString("AreYouSureClearDraftsTitle");
+        
+        /// <summary>
         /// Localized resource similar to "Delete all cached text and media from this channel?"
         /// </summary>
         public static string AreYouSureClearHistoryChannel => Resource.GetString("AreYouSureClearHistoryChannel");
