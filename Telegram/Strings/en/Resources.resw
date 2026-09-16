@@ -11927,6 +11927,12 @@ countries can vote</value>
   <data name="PremiumPreviewAdvancedChatManagementDescription" xml:space="preserve">
     <value>Tools to set the default folder, auto-archive and hide new chats from non-contacts.</value>
   </data>
+  <data name="PremiumPreviewAIEditor" xml:space="preserve">
+    <value>AI Tools</value>
+  </data>
+  <data name="PremiumPreviewAIEditorDescription" xml:space="preserve">
+    <value>Transform your messages and entire chats in your preferred style and language.</value>
+  </data>
   <data name="PremiumPreviewAnimatedProfiles" xml:space="preserve">
     <value>Animated Profile Pictures</value>
   </data>
@@ -12031,6 +12037,12 @@ countries can vote</value>
   </data>
   <data name="PremiumPreviewRichEditorDescription" xml:space="preserve">
     <value>Add headers, tables, inline media and AI content to messages.</value>
+  </data>
+  <data name="PremiumPreviewSharingDisable" xml:space="preserve">
+    <value>Disable Sharing</value>
+  </data>
+  <data name="PremiumPreviewSharingDisableDescription" xml:space="preserve">
+    <value>Disable screenshots, saving and forwarding messages in private chats.</value>
   </data>
   <data name="PremiumPreviewStickers" xml:space="preserve">
     <value>Premium Stickers</value>
