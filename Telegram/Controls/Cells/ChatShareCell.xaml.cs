@@ -318,6 +318,8 @@ namespace Telegram.Controls.Cells
             Photo.Source = ProfilePictureSourceText.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
             Identity.ClearStatus(BotVerified);
 
+            Stroke = ProfilePictureSourceText.GetBrush((int)folder.Flag);
+
             SelectionOutline.RadiusX = 18;
             SelectionOutline.RadiusY = 18;
 
