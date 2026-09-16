@@ -21,6 +21,7 @@ using Telegram.ViewModels.Gallery;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -105,6 +106,7 @@ namespace Telegram.Controls.Messages.Content
         private long _chatId;
         private long _messageId;
         private int _optionId;
+        private bool _chosen;
 
         public void UpdatePollOption(MessageViewModel message, Poll poll, PollOption option)
         {
@@ -213,16 +215,33 @@ namespace Telegram.Controls.Messages.Content
 
             if (results)
             {
-                AutomationProperties.SetName(this, $"{option.Text.Text}, {votes}, {option.VotePercentage}%");
+                var name = $"{option.Text.Text}, {votes}, {option.VotePercentage}%";
+
+                if (poll.Type is PollTypeQuiz && (option.IsChosen || correct))
+                {
+                    name += ", " + (correct ? Strings.AccDescrQuizCorrectAnswer : Strings.AccDescrQuizIncorrectAnswer);
+                }
+
+                AutomationProperties.SetName(this, name);
             }
             else
             {
                 AutomationProperties.SetName(this, option.Text.Text);
             }
 
+            // Voting leaves focus on the option, and a name change alone is never read,
+            // so the outcome of a quiz answer has to be announced.
+            if (recycled && option.IsChosen && !_chosen && poll.Type is PollTypeQuiz)
+            {
+                var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
+                peer?.RaiseNotificationEvent(AutomationNotificationKind.Other, AutomationNotificationProcessing.MostRecent,
+                    correct ? Strings.AccDescrQuizCorrectAnswer : Strings.AccDescrQuizIncorrectAnswer, "PollVoted");
+            }
+
             _chatId = message.ChatId;
             _messageId = message.Id;
             _optionId = optionId;
+            _chosen = option.IsChosen;
         }
 
         private void RecentVoters_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
