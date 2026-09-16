@@ -8850,6 +8850,11 @@ namespace Telegram
         public static string Discard => Resource.GetString("Discard");
         
         /// <summary>
+        /// Localized resource similar to "Disconnect"
+        /// </summary>
+        public static string Disconnect => Resource.GetString("Disconnect");
+        
+        /// <summary>
         /// Localized resource similar to "channel"
         /// </summary>
         public static string DiscussChannel => Resource.GetString("DiscussChannel");

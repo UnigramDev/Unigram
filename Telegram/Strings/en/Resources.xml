@@ -13803,6 +13803,10 @@
     <string name="AccDescrQuizCorrectAnswer">Correct answer</string>
     <string name="AccDescrQuizIncorrectAnswer">Incorrect answer</string>
 
+    <string name="TerminateWebSessionsTitle">Disconnect websites</string>
+    <string name="TerminateWebSessionTitle">Disconnect website</string>
+    <string name="TerminateWebSessionText">Are you sure you want to disconnect {0}?</string>
+    <string name="Disconnect">Disconnect</string>
     <string name="AreYouSureSessionsTitle">Terminate sessions</string>
     <string name="PremiumPreviewAIEditor">AI Tools</string>
     <string name="PremiumPreviewAIEditorDescription">Transform your messages and entire chats in your preferred style and language.</string>

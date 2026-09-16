@@ -92,14 +92,16 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var dialog = new MessagePopup();
-            dialog.Title = Strings.AppName;
-            dialog.Message = string.Format(Strings.TerminateWebSessionQuestion, session.DomainName);
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.SecondaryButtonText = Strings.Cancel;
-            dialog.CheckBoxLabel = string.Format(Strings.TerminateWebSessionStop, bot.FullName());
+            var popup = new MessagePopup(true)
+            {
+                Title = Strings.TerminateWebSessionTitle,
+                Message = string.Format(Strings.TerminateWebSessionText, session.DomainName),
+                PrimaryButtonText = Strings.Disconnect,
+                SecondaryButtonText = Strings.Cancel,
+                CheckBoxLabel = string.Format(Strings.TerminateWebSessionStop, bot.FullName())
+            };
 
-            var terminate = await ShowPopupAsync(dialog);
+            var terminate = await ShowPopupAsync(popup);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new DisconnectWebsite(session.Id));
@@ -118,7 +120,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void TerminateOthers()
         {
-            var terminate = await ShowPopupAsync(Strings.AreYouSureWebSessions, Strings.AppName, Strings.OK, Strings.Cancel);
+            var terminate = await ShowPopupAsync(Strings.AreYouSureWebSessions, Strings.TerminateWebSessionsTitle, Strings.Disconnect, Strings.Cancel, destructive: true);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new DisconnectAllWebsites());
