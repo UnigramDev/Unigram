@@ -332,7 +332,6 @@ namespace Telegram.Controls.Messages
                 button.Width = 28;
                 button.Height = 28;
                 button.Background = new SolidColorBrush(Colors.Transparent);
-                button.CornerRadius = new CornerRadius(14);
                 button.Margin = new Thickness(2, 0, 2, 0);
                 button.Content = visible;
                 button.Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style;
