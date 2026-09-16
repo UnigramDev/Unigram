@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
@@ -308,6 +309,23 @@ namespace Telegram.Controls
 
         #endregion
 
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            // Handled here rather than by the ListView some of these buttons sit in, because its
+            // own arrow navigation stops at the last item and the set continues past it.
+            if (e.Key is VirtualKey.Up or VirtualKey.Down)
+            {
+                var sibling = SettingsButtonSet.Sibling(this, e.Key == VirtualKey.Down);
+                if (sibling != null && sibling.Focus(FocusState.Keyboard))
+                {
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            base.OnKeyDown(e);
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return _peer ??= new BadgeButtonAutomationPeer(this);
@@ -367,6 +385,22 @@ namespace Telegram.Controls
             }
 
             return _owner.Description?.ToString() ?? string.Empty;
+        }
+
+        // Both fall back to the attached property, which is zero unless the page declares a set:
+        // every other SettingsButton in the app keeps reporting no position at all.
+        protected override int GetPositionInSetCore()
+        {
+            return SettingsButtonSet.TryGetPosition(_owner, out var index, out _)
+                ? index + 1
+                : base.GetPositionInSetCore();
+        }
+
+        protected override int GetSizeOfSetCore()
+        {
+            return SettingsButtonSet.TryGetPosition(_owner, out _, out var count)
+                ? count
+                : base.GetSizeOfSetCore();
         }
 
         public string Value
