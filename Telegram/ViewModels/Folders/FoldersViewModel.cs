@@ -88,7 +88,8 @@ namespace Telegram.ViewModels.Folders
             {
                 Id = Constants.ChatListMain,
                 Name = new ChatFolderName(Strings.FilterAllChats.AsFormattedText(), false),
-                Icon = new ChatFolderIcon("All")
+                Icon = new ChatFolderIcon("All"),
+                ColorId = -1
             });
 
             CanCreateNew = Items.Count < ClientService.Options.ChatFolderCountMax;

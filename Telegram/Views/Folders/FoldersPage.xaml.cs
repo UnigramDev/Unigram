@@ -161,7 +161,7 @@ namespace Telegram.Views.Folders
                     glyph.Text = Icons.FolderToGlyph(icon).Item1;
                     badge.Content = index >= ViewModel.ClientService.Options.ChatFolderCountMax
                         ? Icons.LockClosed
-                        : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
+                        : folder.HasMyInviteLinks || folder.IsShareable ? Icons.Link : string.Empty;
 
                     var visual1 = ElementComposition.GetElementVisual(plate);
                     var visual2 = ElementComposition.GetElementVisual(chevron);

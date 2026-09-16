@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -535,26 +536,26 @@ namespace Telegram.ViewModels.Folders
         {
             if (string.IsNullOrEmpty(Title?.Text))
             {
-                ShowPopup(Strings.FilterInviteErrorEmptyName, Strings.AppName, Strings.OK);
+                ShowToast(Strings.FilterInviteErrorEmptyName, ToastPopupIcon.Info);
                 return;
             }
 
             if (Exclude.Any())
             {
-                ShowPopup(Strings.FilterInviteErrorExcluded, Strings.AppName, Strings.OK);
+                ShowToast(Strings.FilterInviteErrorExcluded, ToastPopupIcon.Info);
                 return;
             }
 
             if (Include.Any(x => x is FolderFlag) || Include.Empty())
             {
-                ShowPopup(Strings.FilterInviteErrorTypes, Strings.AppName, Strings.OK);
+                ShowToast(Strings.FilterInviteErrorTypes, ToastPopupIcon.Info);
                 return;
             }
 
             if (Id == null)
             {
                 // TODO: IMHO folder should be created here
-                ShowPopup(Strings.FilterFinishCreating, Strings.AppName, Strings.OK);
+                ShowToast(Strings.FilterFinishCreating, ToastPopupIcon.Info);
                 return;
             }
 
