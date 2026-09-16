@@ -387,7 +387,12 @@ namespace Telegram.Td.Api
 
         public static string CommissionPercent(this AffiliateProgramParameters parameters)
         {
-            return (parameters.CommissionPerMille / 10d).ToString("0.##") + "%";
+            return parameters.CommissionPerMille.CommissionPercent();
+        }
+
+        public static string CommissionPercent(this int commissionPerMille)
+        {
+            return (commissionPerMille / 10d).ToString("0.##") + "%";
         }
 
         public static string Duration(this AffiliateProgramParameters parameters)
@@ -2820,6 +2825,18 @@ namespace Telegram.Td.Api
         public static bool IsVideo(this PaidMedia media)
         {
             return media is PaidMediaVideo or PaidMediaPreview { Duration: > 0 };
+        }
+
+        public static File GetThumbnailFile(this PaidMedia media)
+        {
+            return media switch
+            {
+                PaidMediaPhoto photo => photo.Photo.GetSmall()?.Photo,
+                PaidMediaVideo video => video.Cover != null
+                    ? video.Cover.GetSmall()?.Photo
+                    : video.Video.Thumbnail?.File,
+                _ => null
+            };
         }
 
         public static bool IsMedia(this InlineQueryResult result)

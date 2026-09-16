@@ -9,6 +9,13 @@
       d:DesignWidth="400"
       Padding="12,8,8,8">
 
+    <Grid.Resources>
+        <!-- Here rather than looked up from the app: a ThemeResource on the colour keeps it
+             following the theme, and the cell hands the brush to the amount when it is incoming. -->
+        <SolidColorBrush x:Key="AmountReceivedBrush"
+                         Color="{ThemeResource SystemFillColorSuccess}" />
+    </Grid.Resources>
+
     <Grid.RowDefinitions>
         <RowDefinition />
         <RowDefinition />
@@ -18,7 +25,6 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
-        <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
     <controls:ProfilePicture x:Name="Photo"
@@ -50,11 +56,6 @@
                 Margin="-2" />
     </Grid>
 
-    <controls:PremiumStarCount Width="24"
-                               Height="24"
-                               Grid.Column="4"
-                               Grid.RowSpan="3" />
-
     <StackPanel x:Name="Subtracted"
                 Orientation="Horizontal"
                 Grid.Column="1">
@@ -75,11 +76,22 @@
                Grid.Column="1"
                Grid.Row="1" />
 
-    <TextBlock x:Name="StarCount"
-               Style="{StaticResource BaseTextBlockStyle}"
+    <!-- The decimals are drawn smaller than the whole part, and the two runs touch: any
+         whitespace between them in the markup would be a space in the number. U+F78E is a COLR
+         glyph, so it paints its own colours and takes no Foreground. -->
+    <TextBlock x:Name="Amount"
+               TextWrapping="NoWrap"
                VerticalAlignment="Center"
+               Style="{StaticResource BaseTextBlockStyle}"
+               Margin="8,0,0,0"
                Grid.Column="3"
-               Grid.RowSpan="3" />
+               Grid.RowSpan="3">
+        <Run x:Name="AmountInteger" /><Run x:Name="AmountFraction"
+                                           FontSize="12" />
+        <Run Text="&#xF78E;"
+             FontFamily="{StaticResource SymbolThemeFontFamily}"
+             FontWeight="Normal" />
+    </TextBlock>
 
     <TextBlock x:Name="Date"
                Style="{StaticResource InfoCaptionTextBlockStyle}"

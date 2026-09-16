@@ -118,7 +118,7 @@
                             <Border Visibility="{x:Bind ViewModel.Subscriptions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Margin="12,12,12,0" />
 
-                            <Grid Visibility="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            <Grid Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                   MaxWidth="1000"
                                   Margin="24,16,24,2">
                                 <Border Background="{ThemeResource SettingsItemBackground}"
@@ -127,9 +127,16 @@
                                         CornerRadius="4" />
 
                                 <controls:TopNavView x:Name="Navigation"
-                                                     SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
-                                                     Height="40"
-                                                     Margin="8,4">
+                                                     SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}"
+                                                     SelectionChanged="Navigation_SelectionChanged"
+                                                     Height="48"
+                                                     Padding="8,0,8,4">
+                                    <controls:TopNavView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Center" />
+                                        </ItemsPanelTemplate>
+                                    </controls:TopNavView.ItemsPanel>
                                     <controls:TopNavViewItem Content="{CustomResource StarsTransactionsAll}" />
                                     <controls:TopNavViewItem Content="{CustomResource StarsTransactionsIncoming}" />
                                     <controls:TopNavViewItem Content="{CustomResource StarsTransactionsOutgoing}" />
