@@ -166,7 +166,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void TerminateOthers()
         {
-            var terminate = await ShowPopupAsync(Strings.AreYouSureSessions, Strings.AppName, Strings.OK, Strings.Cancel);
+            var terminate = await ShowPopupAsync(Strings.AreYouSureSessions, Strings.AreYouSureSessionsTitle, Strings.Terminate, Strings.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new TerminateAllOtherSessions());
