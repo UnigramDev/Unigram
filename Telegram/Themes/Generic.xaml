@@ -347,7 +347,7 @@
                                                                     </VisualTransition>
 
                                                                     <VisualTransition From="PointerOver"
-                                                                                      To="Unfocused">
+                                                                                      To="Deactivated">
                                                                         <Storyboard>
                                                                             <ColorAnimation Storyboard.TargetName="ButtonBaseElement"
                                                                                             Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"
@@ -370,7 +370,7 @@
                                                                     </VisualState.Setters>
                                                                 </VisualState>
 
-                                                                <VisualState x:Name="Unfocused">
+                                                                <VisualState x:Name="Deactivated">
                                                                     <VisualState.Setters>
                                                                         <Setter Target="ButtonBaseElement.Background"
                                                                                 Value="{ThemeResource CaptionButtonBackground}" />
