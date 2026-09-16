@@ -2,12 +2,13 @@
 
 import os
 
+from fontTools.colorLib.builder import buildCOLR, buildCPAL
 from fontTools.fontBuilder import FontBuilder
 from fontTools.ttLib import newTable
 
 from iconfont import sources as sourcelib
 from iconfont import svgdoc
-from iconfont.outline import art_to_glyph, natural_advance
+from iconfont.outline import art_to_glyph, art_to_layers, natural_advance
 
 # The three glyphs IcoMoon puts in front of the icons. They carry no artwork but
 # the app has shipped with them mapped for years, so they stay.
@@ -52,6 +53,9 @@ def build(manifest, strict=True, sources=None):
     cmap = {code: name for name, code, _ in LEADING if code is not None}
 
     warnings, errors, origins = [], list(problems), {}
+    # Colour glyphs, as {base glyph: [(layer glyph, palette index)]} plus the
+    # palette those indices are into. Both stay empty for a font with none.
+    colr, palette = {}, []
 
     for icon in sorted(manifest.icons, key=lambda i: i.code):
         if icon.is_alias:
@@ -59,7 +63,7 @@ def build(manifest, strict=True, sources=None):
         name = glyph_name(icon.code)
         try:
             text = sourcelib.read(icon, sources)
-            art = svgdoc.parse(text, name=icon.src)
+            art = svgdoc.parse(text, name=icon.src, colour=icon.colour)
         except (sourcelib.SourceError, svgdoc.SvgError) as e:
             errors.append("%s: %s" % (icon.name, e))
             continue
@@ -77,6 +81,29 @@ def build(manifest, strict=True, sources=None):
         except svgdoc.SvgError as e:
             errors.append("%s (%s): %s" % (icon.name, icon.src, e))
             continue
+        advance = (icon.advance if icon.advance is not None
+                   else natural_advance(art, upem))
+
+        if icon.colour:
+            try:
+                layers, notes = art_to_layers(art, upem, ascent)
+            except svgdoc.SvgError as e:
+                errors.append("%s (%s): %s" % (icon.name, icon.src, e))
+                continue
+            for message in notes:
+                warnings.append("%s (%s): %s" % (icon.name, icon.src, message))
+            records = []
+            for index, (colour, layer) in enumerate(layers):
+                layer_name = "%s.l%d" % (name, index)
+                order.append(layer_name)
+                glyphs[layer_name] = layer
+                metrics[layer_name] = (advance, _left(layer))
+                rgba = tuple(c / 255.0 for c in colour) + (1.0,)
+                if rgba not in palette:
+                    palette.append(rgba)
+                records.append((layer_name, palette.index(rgba)))
+            colr[name] = records
+
         order.append(name)
         glyphs[name] = glyph
         # The side bearing has to be the real xMin. fontTools translates every
@@ -84,8 +111,7 @@ def build(manifest, strict=True, sources=None):
         # blanket 0 would shove all 663 glyphs against the left edge of the em.
         # IcoMoon got away with writing 0 because rasterisers draw the stored
         # coordinates and only use lsb for hinting.
-        metrics[name] = (icon.advance if icon.advance is not None
-                         else natural_advance(art, upem), _left(glyph))
+        metrics[name] = (advance, _left(glyph))
         cmap[icon.code] = name
         origins[icon.name] = icon.src
 
@@ -134,6 +160,13 @@ def build(manifest, strict=True, sources=None):
     gasp.version = 1
     gasp.gaspRange = {0xFFFF: 15}
     fb.font["gasp"] = gasp
+
+    if colr:
+        # Version 0 on purpose. It is flat layers and nothing else, which is
+        # what DirectWrite draws for a XAML TextBlock; COLRv1's gradients need a
+        # paint API that the XAML text stack does not go through.
+        fb.font["CPAL"] = buildCPAL([palette])
+        fb.font["COLR"] = buildCOLR(colr, version=0)
 
     return Result(fb.font, warnings, errors, origins)
 

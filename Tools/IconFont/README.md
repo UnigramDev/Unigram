@@ -97,10 +97,46 @@ U+E932, which aliases it, and the compose button moved by 9.6%. Before adopting 
 re-pointing anything, check whether another codepoint aliases it: `changes` will
 show both, and the second one carries the call site.
 
+## Colour glyphs
+
+Almost every glyph is one monochrome outline that takes the `Foreground` of
+whatever draws it. An entry marked
+
+```json
+{"name": "tl_fluent_star_14_regular", "code": "F78E", "src": "icons/tl_fluent_star_14_regular.svg", "color": true},
+```
+
+is built the other way: one glyph per fill colour in the SVG, in paint order,
+tied together by a COLR table with the colours in CPAL. The premium star is the
+only one, and `PremiumStarCount` draws it.
+
+The format is **COLRv0**, which is flat layers and nothing else. That is what
+DirectWrite draws for a XAML `TextBlock`; COLRv1 has gradients but needs a paint
+API the XAML text stack does not go through. So a gradient in the artwork has to
+become one colour, and `build` says which one it picked:
+
+```
+warning: tl_fluent_star_14_regular: gradient flattened to #EB7814 - COLRv0 layers are flat
+```
+
+The colour is the gradient sampled where the centre of that shape falls on it,
+clamped to the end stops. Exporters habitually emit a vector that crosses a
+sliver of the shape and leaves the rest sitting on one stop - all three of the
+star's gradients run out within the top fifth of the artwork - so sampling where
+the ink is beats averaging the stops. Check the warnings against the artwork
+when adding one; if the drawing really does need the gradient, it cannot be a
+glyph.
+
+Two things follow for the call site. A colour glyph **ignores `Foreground`**: it
+paints its palette. And the base glyph is still built as an ordinary outline, so
+anything that does not read COLR - the contact sheet, `verify`, a rasteriser
+with colour off - draws the whole icon in one colour rather than nothing.
+
 ## Adding an icon
 
 1. Put the SVG in `icons/`, or find its name in the live source.
 2. Add an entry to `icons.json` with the next free codepoint.
+   Multicolour artwork needs `"color": true` - see **Colour glyphs**.
 3. `py -m iconfont build && py -m iconfont check`
 4. Add the constant to `Icons.cs` by hand.
 

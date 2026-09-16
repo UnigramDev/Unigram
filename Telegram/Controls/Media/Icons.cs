@@ -297,6 +297,10 @@ namespace Telegram.Controls.Media
         public const string Star = "\uE734";
         public const string StarOff = "\uE8D9";
 
+        // The only colour glyph in the font: three COLR layers in the palette's
+        // golds, so Foreground does nothing to it.
+        public const string PremiumStar = "\uF78E";
+
         public const string Chat = "\uE9BF";
         public const string ChatFilled = "\uEAE1";
         public const string ChatOff = "\uEAE2";
