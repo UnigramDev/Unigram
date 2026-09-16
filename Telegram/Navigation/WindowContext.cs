@@ -295,7 +295,7 @@ namespace Telegram.Navigation
             }
 
             var state = _hotButton != which
-                ? _isActive ? "Normal" : "Unfocused"
+                ? _isActive ? "Normal" : "Deactivated"
                 : _hotPressed ? "Pressed" : "PointerOver";
 
             VisualStateManager.GoToState(button, state, useTransitions);
