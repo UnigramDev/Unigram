@@ -924,7 +924,7 @@ namespace Telegram.Navigation
                 }
             }
 
-            if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow or WebAppWindow)
+            if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow)
             {
                 _contentMaterial = true;
                 SetBackdropMaterial(_content);
