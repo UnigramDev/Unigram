@@ -17757,6 +17757,16 @@ namespace Telegram
         public static string PremiumPreviewAdvancedChatManagementDescription => Resource.GetString("PremiumPreviewAdvancedChatManagementDescription");
         
         /// <summary>
+        /// Localized resource similar to "AI Tools"
+        /// </summary>
+        public static string PremiumPreviewAIEditor => Resource.GetString("PremiumPreviewAIEditor");
+        
+        /// <summary>
+        /// Localized resource similar to "Transform your messages and entire chats in your preferred style and language."
+        /// </summary>
+        public static string PremiumPreviewAIEditorDescription => Resource.GetString("PremiumPreviewAIEditorDescription");
+        
+        /// <summary>
         /// Localized resource similar to "Animated Profile Pictures"
         /// </summary>
         public static string PremiumPreviewAnimatedProfiles => Resource.GetString("PremiumPreviewAnimatedProfiles");
@@ -17930,6 +17940,16 @@ namespace Telegram
         /// Localized resource similar to "Add headers, tables, inline media and AI content to messages."
         /// </summary>
         public static string PremiumPreviewRichEditorDescription => Resource.GetString("PremiumPreviewRichEditorDescription");
+        
+        /// <summary>
+        /// Localized resource similar to "Disable Sharing"
+        /// </summary>
+        public static string PremiumPreviewSharingDisable => Resource.GetString("PremiumPreviewSharingDisable");
+        
+        /// <summary>
+        /// Localized resource similar to "Disable screenshots, saving and forwarding messages in private chats."
+        /// </summary>
+        public static string PremiumPreviewSharingDisableDescription => Resource.GetString("PremiumPreviewSharingDisableDescription");
         
         /// <summary>
         /// Localized resource similar to "Premium Stickers"

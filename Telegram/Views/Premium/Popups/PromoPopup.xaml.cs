@@ -495,9 +495,19 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewTodoDescription;
                     break;
                 case PremiumFeatureRichMessages:
-                    iconValue = Icons.WarningFilled;
+                    iconValue = Icons.NewsFilled;
                     titleValue = Strings.PremiumPreviewRichEditor;
                     subtitleValue = Strings.PremiumPreviewRichEditorDescription;
+                    break;
+                case PremiumFeatureTextComposition:
+                    iconValue = Icons.AIToolsFilled;
+                    titleValue = Strings.PremiumPreviewAIEditor;
+                    subtitleValue = Strings.PremiumPreviewAIEditorDescription;
+                    break;
+                case PremiumFeatureProtectPrivateChatContent:
+                    iconValue = Icons.AuthorHiddenFilled;
+                    titleValue = Strings.PremiumPreviewSharingDisable;
+                    subtitleValue = Strings.PremiumPreviewSharingDisableDescription;
                     break;
             }
 
