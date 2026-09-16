@@ -109,13 +109,37 @@ namespace Telegram.Composition
 
             if (!surface.TryGetPartner(out var partner))
             {
+                surface.Dispose();
                 return false;
             }
+
+            // Scaled component by component because the vector spelling does not survive .NET Native
+            // here: `size * (float)scale * SnapshotScale` logged as <165, 30> * 1 * 1 = <0, 0>, the
+            // empty size Freeze() throws on, while this form is right in the same build. Not the
+            // toolchain - C:\Source\VectorMathSpike runs every shape of it on .NET Native x64 and
+            // x86, interop included, and they all come out correct - so why is still open. Leave it
+            // written out.
+            var factor = (float)scale * SnapshotScale;
+            var realization = new Vector2(size.X * factor, size.Y * factor);
 
             partner.SetStretch(CompositionStretch.Fill);
             // A visual surface is a raster, and without this dwm picks the size: the burst would
             // sample an upscale on a scaled display.
-            partner.SetRealizationSize(size * (float)scale * SnapshotScale);
+            partner.SetRealizationSize(realization);
+
+            // Read back rather than trust the write: on .NET Native the setter cannot report a
+            // rejected one, its stub drops the HRESULT. Freezing an empty surface throws, and the
+            // throw unwinds into the collection changed handler that asked for the snapshot, which
+            // leaves the list a row behind the source with nothing left to remove it.
+            var applied = partner.GetRealizationSize();
+            if (applied.X < 1 || applied.Y < 1)
+            {
+                Logger.Error(string.Format("Realization size {0} applied as {1}", realization, applied));
+
+                surface.Dispose();
+                return false;
+            }
+
             partner.Freeze();
 
             Discard(id);

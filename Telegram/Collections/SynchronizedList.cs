@@ -165,20 +165,27 @@ namespace Telegram.Collections
 
             _flushing = true;
 
-            while (_queue.Count > 0)
+            // Cleared in a finally, or a throw on the way through would leave the flag set and every
+            // later flush would return at the guard above, owing the queue forever.
+            try
             {
-                Apply(_queue.Dequeue());
-            }
+                while (_queue.Count > 0)
+                {
+                    Apply(_queue.Dequeue());
+                }
 
-            // O(1), and it runs on every flush: a divergence caused by holding a frame back is
-            // detectable here and recoverable, which is what makes holding one defensible.
-            if (_source != null && Count != _source.Count)
+                // O(1), and it runs on every flush: a divergence caused by holding a frame back is
+                // detectable here and recoverable, which is what makes holding one defensible.
+                if (_source != null && Count != _source.Count)
+                {
+                    Logger.Error(string.Format("SynchronizedList diverged: {0} against {1}", Count, _source.Count));
+                    Resync();
+                }
+            }
+            finally
             {
-                Logger.Error(string.Format("SynchronizedList diverged: {0} against {1}", Count, _source.Count));
-                Resync();
+                _flushing = false;
             }
-
-            _flushing = false;
 
             if (_captured.Count > 0)
             {
@@ -272,10 +279,21 @@ namespace Telegram.Collections
 
             foreach (T item in items)
             {
-                if (_delegate.Capturing(item))
+                // The source has already applied the removal by the time this runs, so a delegate
+                // that throws must not take the mirror with it: unwinding here would return through
+                // the source's own CollectionChanged with the row still on screen and nothing left
+                // to remove it, and every later removal would throw at the same place.
+                try
                 {
-                    _captured.Add(item);
-                    any = true;
+                    if (_delegate.Capturing(item))
+                    {
+                        _captured.Add(item);
+                        any = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex.ToString());
                 }
             }
 

@@ -114,6 +114,15 @@ namespace Telegram.Composition
 #endif
         }
 
+        public static Vector2 GetRealizationSize(this ICompositionVisualSurfacePartner partner)
+        {
+#if NET9_0_OR_GREATER
+            return partner.get_RealizationSize();
+#else
+            return partner.RealizationSize;
+#endif
+        }
+
         public static void SetStretch(this ICompositionVisualSurfacePartner partner, CompositionStretch value)
         {
 #if NET9_0_OR_GREATER
