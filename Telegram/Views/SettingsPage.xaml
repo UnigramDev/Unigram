@@ -12,7 +12,8 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Padding="0,0,0,24">
+            <StackPanel Padding="0,0,0,24"
+                        controls:SettingsButtonSet.IsRoot="True">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -83,6 +84,7 @@
                            Height="1" />
 
                 <controls:TopNavView x:Name="Navigation"
+                                     SingleSelectionFollowsFocus="False"
                                      Orientation="Vertical"
                                      Height="Auto">
                     <controls:TopNavView.ItemsPanel>
@@ -102,6 +104,8 @@
                                     Value="Stretch" />
                             <Setter Property="UseSystemFocusVisuals"
                                     Value="True" />
+                            <Setter Property="IsTabStop"
+                                    Value="False" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="controls:TopNavViewItem">

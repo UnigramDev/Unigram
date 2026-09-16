@@ -1101,6 +1101,7 @@
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\SettingsButton.cs" />
+    <Compile Include="Controls\SettingsButtonSet.cs" />
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\Payments\LabeledPricesPanel.cs" />
