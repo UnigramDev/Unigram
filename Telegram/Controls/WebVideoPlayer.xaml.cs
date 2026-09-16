@@ -262,8 +262,15 @@ namespace Telegram.Controls
             finally
             {
                 // The request stays outstanding until this runs, and the player stalls
-                // waiting for a segment that is never answered.
-                deferral.Complete();
+                // waiting for a segment that is never answered - but only while the
+                // WebView2 it came from is still the live one. OnUnloaded closes it with
+                // requests still in flight, and completing the deferral of a closed
+                // CoreWebView2 raises in the browser, which unwinds into a P/Invoke frame
+                // as a fail-fast rather than an exception anything here could catch.
+                if (_core == sender)
+                {
+                    deferral.Complete();
+                }
             }
         }
 
