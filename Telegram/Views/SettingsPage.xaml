@@ -272,7 +272,11 @@
                                              Badge="{x:Bind ViewModel.OwnedGramCount, Mode=OneWay}"
                                              Content="{CustomResource MyTON}"
                                              Style="{StaticResource IconBadgeButtonStyle}"
-                                             Visibility="{x:Bind ViewModel.IsGramsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             Visibility="{x:Bind ViewModel.IsGramsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <controls:SettingsButton.IconSource>
+                            <icons:MyGrams />
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
 
                     <controls:SettingsButton Click="Business_Click"
                                              Content="{CustomResource TelegramBusiness}"
