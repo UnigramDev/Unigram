@@ -20,9 +20,7 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <ScrollViewer x:Name="ScrollingHost"
-                      SizeChanged="OnSizeChanged"
-                      ViewChanged="OnViewChanged">
+        <ScrollViewer x:Name="ScrollingHost">
             <Grid>
                 <StackPanel x:Name="Header"
                             SizeChanged="ProfileHeader_SizeChanged"

@@ -16,7 +16,6 @@ using Telegram.Views.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -29,12 +28,16 @@ namespace Telegram.Views
 
         private CompositionPropertySet _properties;
 
+        private readonly ScrollViewerIncrementalLoader _loader;
+
         public RevenuePage()
         {
             InitializeComponent();
             InitializeScrolling();
 
             Title = Strings.Monetization;
+
+            _loader = new ScrollViewerIncrementalLoader(ScrollingHost);
         }
 
         private void InitializeScrolling()
@@ -109,14 +112,16 @@ namespace Telegram.Views
         }
 
         private long _itemsSourceToken;
-        private long _selectionModeToken;
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
         {
-            if (MediaFrame.Content is ProfileTabPage tabPage)
+            // Ahead of the page that is leaving nulling its own source: the callback has to be
+            // gone before that, or the teardown arrives as a change.
+            _loader.ItemsSource = null;
+
+            if (TryGetScrollingHost(MediaFrame.Content, out ListViewBase scrollingHost))
             {
-                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, ref _itemsSourceToken);
-                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, ref _selectionModeToken);
+                scrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, ref _itemsSourceToken);
             }
         }
 
@@ -135,29 +140,33 @@ namespace Telegram.Views
                 revenue.DataContext = ViewModel.Revenue;
             }
 
-            if (e.Content is not ProfileTabPage tabPage)
+            if (!TryGetScrollingHost(e.Content, out ListViewBase scrollingHost))
             {
                 return;
             }
 
-            if (tabPage.ScrollingHost.ItemsSource != null)
-            {
-                LoadMore(tabPage.ScrollingHost);
-            }
-            else
-            {
-                tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged, ref _itemsSourceToken);
-            }
+            _loader.ItemsSource = scrollingHost.ItemsSource;
+            scrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged, ref _itemsSourceToken);
         }
 
         private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
+            if (sender is ListViewBase scrollingHost)
             {
-                return;
+                _loader.ItemsSource = scrollingHost.ItemsSource;
+            }
+        }
+
+        private bool TryGetScrollingHost(object content, out ListViewBase scrollingHost)
+        {
+            if (content is Page page)
+            {
+                scrollingHost = page.FindName("ScrollingHost") as ListViewBase;
+                return scrollingHost != null;
             }
 
-            LoadMore(scrollingHost);
+            scrollingHost = null;
+            return false;
         }
 
         private void ProfileHeader_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -165,64 +174,6 @@ namespace Telegram.Views
             _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
             ViewModel.HeaderHeight = Math.Max(e.NewSize.Height, 48 + 10);
             MediaFrame.MinHeight = ScrollingHost.ActualHeight + e.NewSize.Height - 48;
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            MediaFrame.MinHeight = Header.ActualHeight + e.NewSize.Height - 48;
-
-            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
-            {
-                return;
-            }
-
-            LoadMore(scrollingHost);
-        }
-
-        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
-            {
-                return;
-            }
-
-            LoadMore(scrollingHost);
-        }
-
-        private bool _loadingMore;
-
-        private async void LoadMore(ListViewBase scrollingHost)
-        {
-            if (_loadingMore)
-            {
-                return;
-            }
-
-            _loadingMore = true;
-
-            uint loadedMore = 0;
-            int lastCacheIndex = scrollingHost.ItemsPanelRoot switch
-            {
-                ItemsStackPanel stackPanel => stackPanel.LastCacheIndex,
-                ItemsWrapGrid wrapGrid => wrapGrid.LastCacheIndex,
-                _ => -1
-            };
-
-            var needsMore = lastCacheIndex == scrollingHost.Items.Count - 1;
-            needsMore |= scrollingHost.ActualHeight < ScrollingHost.ActualHeight;
-
-            if (needsMore && scrollingHost.ItemsSource is ISupportIncrementalLoading supportIncrementalLoading && supportIncrementalLoading.HasMoreItems)
-            {
-                var result = await supportIncrementalLoading.LoadMoreItemsAsync(50);
-                loadedMore = result.Count;
-            }
-
-            _loadingMore = false;
-
-            if (loadedMore > 0)
-            {
-                LoadMore(scrollingHost);
-            }
         }
 
         private void Header_ItemClick(object sender, ItemClickEventArgs e)
