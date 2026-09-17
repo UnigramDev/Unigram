@@ -25,31 +25,26 @@
 
                 <controls:HeaderedControl Header="{CustomResource MessageLifetime}"
                                           Footer="{CustomResource GlobalAutoDeleteInfo}">
-                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="0,0,0,1">
-                        <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items}"
-                                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                            <ItemsControl.Template>
-                                <ControlTemplate>
-                                    <ItemsPresenter />
-                                </ControlTemplate>
-                            </ItemsControl.Template>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <controls:HeaderedControlPanel />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="settings:SettingsAutoDeleteItem">
-                                    <controls:SettingsRadioButton Content="{x:Bind Text}"
-                                                                  IsFaux="True"
-                                                                  IsChecked="{x:Bind IsChecked, Mode=OneWay}"
-                                                                  Click="OnChecked"
-                                                                  MinHeight="46" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </controls:HeaderedControl>
-                    </Border>
+                    <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items}">
+                        <ItemsControl.Template>
+                            <ControlTemplate>
+                                <ItemsPresenter />
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <controls:HeaderedControlPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="settings:SettingsAutoDeleteItem">
+                                <controls:SettingsRadioButton Content="{x:Bind Text}"
+                                                              IsFaux="True"
+                                                              IsChecked="{x:Bind IsChecked, Mode=OneWay}"
+                                                              Click="OnChecked" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </controls:HeaderedControl>
                     <controls:SettingsButton Click="{x:Bind ViewModel.SetCustomTime}"
                                              Content="{CustomResource SetCustomTime}"
                                              Glyph="&#xE916;" />
