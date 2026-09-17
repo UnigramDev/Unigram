@@ -59,7 +59,11 @@ namespace Telegram.Services
         private const int QUANTITY_FEW = 0x0008;
         private const int QUANTITY_MANY = 0x0010;
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new();
+        private readonly ConcurrentDictionary<string, LanguagePack> _languagePacks = new();
+
+        // The pack for _languageCode, so the accessors don't look it up by name on every call.
+        private LanguagePack _pack;
+
         private string _languageCode;
         private string _languageBase;
         private string _languagePlural;
@@ -75,6 +79,7 @@ namespace Telegram.Services
             _languageCode = AppSettings.LanguagePackId;
             _languageBase = AppSettings.LanguageBaseId;
             _languagePlural = AppSettings.LanguagePluralId;
+            _pack = GetLanguagePack(_languageCode);
 
             LoadCurrentCulture();
         }
@@ -136,6 +141,7 @@ namespace Telegram.Services
             _languageCode = info.Id;
             _languageBase = info.BaseLanguagePackId;
             _languagePlural = info.PluralCode;
+            _pack = GetLanguagePack(_languageCode);
 
             AppSettings.LanguagePackId = info.Id;
             AppSettings.LanguageBaseId = info.BaseLanguagePackId;
@@ -171,8 +177,7 @@ namespace Telegram.Services
 
         public string GetString(string key)
         {
-            var values = GetLanguagePack(_languageCode);
-            if (values.TryGetValue(key, out string value))
+            if (_pack.Ordinary.TryGetValue(key, out string value))
             {
                 return value;
             }
@@ -180,7 +185,8 @@ namespace Telegram.Services
             var result = Client.Execute(new GetLanguagePackString(_languagePath, LANGPACK, _languageCode, key));
             if (result is LanguagePackStringValueOrdinary ordinary)
             {
-                return values[key] = ordinary.Value;
+                _pack.Ordinary[key] = ordinary.Value;
+                return ordinary.Value;
             }
 
 #if zDEBUG
@@ -192,49 +198,27 @@ namespace Telegram.Services
 
         public string GetString(string key, int quantity)
         {
-            var selector = key + StringForQuantity(quantity);
-
-            var values = GetLanguagePack(_languageCode);
-            if (values.TryGetValue(selector, out string value))
+            // The six forms are stored together rather than under six suffixed keys, so a hit is one
+            // hash and an array index. Building `key + "_other"` per call was the only allocation on
+            // this path, and Formatter's relative times put it on every chat row.
+            if (_pack.Pluralized.TryGetValue(key, out string[] forms))
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    values.TryGetValue(key + "_other", out value);
-                }
-
-                return value;
+                return Select(forms, quantity);
             }
 
             var result = Client.Execute(new GetLanguagePackString(_languagePath, LANGPACK, _languageCode, key));
             if (result is LanguagePackStringValuePluralized pluralized)
             {
-                values[key + "_zero"] = pluralized.ZeroValue;
-                values[key + "_one"] = pluralized.OneValue;
-                values[key + "_two"] = pluralized.TwoValue;
-                values[key + "_few"] = pluralized.FewValue;
-                values[key + "_many"] = pluralized.ManyValue;
-                values[key + "_other"] = pluralized.OtherValue;
+                forms = Forms(pluralized);
+                _pack.Pluralized[key] = forms;
 
-                value = quantity switch
-                {
-                    QUANTITY_ZERO => pluralized.ZeroValue,
-                    QUANTITY_ONE => pluralized.OneValue,
-                    QUANTITY_TWO => pluralized.TwoValue,
-                    QUANTITY_FEW => pluralized.FewValue,
-                    QUANTITY_MANY => pluralized.ManyValue,
-                    _ => pluralized.OtherValue
-                };
-
-                if (string.IsNullOrEmpty(value))
-                {
-                    value = pluralized.OtherValue;
-                }
-
-                return value;
+                return Select(forms, quantity);
             }
 
+            var selector = key + StringForQuantity(quantity);
+
             // The English table carries all six forms, but a language's rules can ask for one the
-            // key does not have, so this falls back the same way the two branches above do.
+            // key does not have, so this falls back the same way Select does.
             var fallback = LocaleFallback.GetString(selector) ?? LocaleFallback.GetString(key + "_other");
 
 #if zDEBUG
@@ -278,7 +262,7 @@ namespace Telegram.Services
 
         public void Handle(UpdateLanguagePackStrings update)
         {
-            var values = GetLanguagePack(update.LanguagePackId);
+            var pack = GetLanguagePack(update.LanguagePackId);
 
             if (update.Strings.Count > 0)
             {
@@ -287,25 +271,22 @@ namespace Telegram.Services
                     switch (value.Value)
                     {
                         case LanguagePackStringValueOrdinary ordinary:
-                            values[value.Key] = ordinary.Value;
+                            pack.Ordinary[value.Key] = ordinary.Value;
                             break;
                         case LanguagePackStringValuePluralized pluralized:
-                            values[value.Key + "Zero"] = pluralized.ZeroValue;
-                            values[value.Key + "One"] = pluralized.OneValue;
-                            values[value.Key + "Two"] = pluralized.TwoValue;
-                            values[value.Key + "Few"] = pluralized.FewValue;
-                            values[value.Key + "Many"] = pluralized.ManyValue;
-                            values[value.Key + "Other"] = pluralized.OtherValue;
+                            pack.Pluralized[value.Key] = Forms(pluralized);
                             break;
                         case LanguagePackStringValueDeleted:
-                            values.TryRemove(value.Key, out _);
+                            pack.Ordinary.TryRemove(value.Key, out _);
+                            pack.Pluralized.TryRemove(value.Key, out _);
                             break;
                     }
                 }
             }
             else
             {
-                values.Clear();
+                pack.Ordinary.Clear();
+                pack.Pluralized.Clear();
             }
 
             Changed?.Invoke(this, new LocaleChangedEventArgs(update.Strings));
@@ -313,20 +294,65 @@ namespace Telegram.Services
 
         #endregion
 
-        private ConcurrentDictionary<string, string> GetLanguagePack(string key)
+        /// <summary>
+        /// One language's cached strings. Pluralized keys hold all six forms in one entry, in
+        /// QUANTITY order, because that is how TDLib delivers them and how they are read back.
+        /// </summary>
+        private sealed class LanguagePack
         {
-            if (_languagePack.TryGetValue(key, out ConcurrentDictionary<string, string> values))
-            {
-            }
-            else
-            {
-                values = _languagePack[key] = new ConcurrentDictionary<string, string>();
-            }
-
-            return values;
+            public readonly ConcurrentDictionary<string, string> Ordinary = new();
+            public readonly ConcurrentDictionary<string, string[]> Pluralized = new();
         }
 
-        private string StringForQuantity(int quantity)
+        private LanguagePack GetLanguagePack(string key)
+        {
+            // GetOrAdd, not an add after a miss: two threads reaching a new language would
+            // otherwise each build a pack and one would silently lose whatever it had cached.
+            return _languagePacks.GetOrAdd(key, static _ => new LanguagePack());
+        }
+
+        private static string[] Forms(LanguagePackStringValuePluralized value)
+        {
+            return new[]
+            {
+                value.ZeroValue,
+                value.OneValue,
+                value.TwoValue,
+                value.FewValue,
+                value.ManyValue,
+                value.OtherValue
+            };
+        }
+
+        private static string Select(string[] forms, int quantity)
+        {
+            // A language pack only fills the forms its own rules use, so anything else is empty
+            // and "other" is the universal answer.
+            var value = forms[IndexForQuantity(quantity)];
+            return string.IsNullOrEmpty(value) ? forms[5] : value;
+        }
+
+        private static int IndexForQuantity(int quantity)
+        {
+            switch (quantity)
+            {
+                case QUANTITY_ZERO:
+                    return 0;
+                case QUANTITY_ONE:
+                    return 1;
+                case QUANTITY_TWO:
+                    return 2;
+                case QUANTITY_FEW:
+                    return 3;
+                case QUANTITY_MANY:
+                    return 4;
+                case QUANTITY_OTHER:
+                default:
+                    return 5;
+            }
+        }
+
+        private static string StringForQuantity(int quantity)
         {
             switch (quantity)
             {
