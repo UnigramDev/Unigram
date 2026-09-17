@@ -500,23 +500,23 @@ namespace Telegram.Common
         public static void AddCheckBoxPalette(FrameworkElement element, Color accent)
         {
             var dictionary = new ResourceDictionary();
-            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light);
-            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark);
+            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light, true);
+            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark, true);
 
             element.Resources.MergedDictionaries.Add(dictionary);
         }
 
-        public static void AddCheckBoxPalette(ResourceDictionary dictionary, Color accent)
+        public static void AddCheckBoxPalette(ResourceDictionary dictionary, Color accent, bool useShade)
         {
-            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light);
-            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark);
+            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light, useShade);
+            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark, useShade);
         }
 
-        private static ResourceDictionary CreateCheckBoxPalette(Color accent, TelegramTheme requested)
+        private static ResourceDictionary CreateCheckBoxPalette(Color accent, TelegramTheme requested, bool useShade)
         {
-            var shade = SystemAccentPalette.GetShade(accent, requested == TelegramTheme.Light
+            var shade = useShade ? SystemAccentPalette.GetShade(accent, requested == TelegramTheme.Light
                 ? AccentShade.Dark1
-                : AccentShade.Light2);
+                : AccentShade.Light2) : accent;
 
             var rest = new SolidColorBrush(shade);
             var pointerOver = new SolidColorBrush(shade.WithAlpha(230));
