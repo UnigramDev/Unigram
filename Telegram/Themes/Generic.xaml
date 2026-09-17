@@ -1809,6 +1809,137 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:StickyHeader">
+        <Setter Property="Background"
+                Value="{ThemeResource PageSubHeaderBackgroundBrush2}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource NavigationViewContentGridBorderBrush}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Left" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:StickyHeader">
+                    <Grid>
+                        <!-- Neither part carries an Opacity: XAML pushes UIElement.Opacity onto the
+                             element visual, which would overwrite the expression driving it. The
+                             control hides them on their visuals instead. -->
+                        <Border x:Name="BackgroundPart"
+                                Background="{TemplateBinding Background}"
+                                Height="48"
+                                VerticalAlignment="Top" />
+
+                        <!-- Drawn apart from the background so that a pinned StickyHeaderTabs can
+                             take it over; StickyHeader keeps it glued to the scaled bottom edge. -->
+                        <Border x:Name="SeparatorPart"
+                                Background="{TemplateBinding BorderBrush}"
+                                Height="1"
+                                Margin="0,47,0,0"
+                                VerticalAlignment="Top" />
+
+                        <!-- Symmetric side margins: 28 clears the back button, and keeps a centred
+                             title centred. The back button and the action are the page's, not the
+                             header's: they stay outside the scrolled content. -->
+                        <TextBlock x:Name="TextPart"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   FontSize="24"
+                                   FontWeight="SemiBold"
+                                   AutomationProperties.HeadingLevel="Level1"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   Padding="1,3,1,3"
+                                   Margin="52,20,52,0"
+                                   MaxWidth="1000"
+                                   VerticalAlignment="Top" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:StickyHeaderChrome">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:StickyHeaderChrome">
+                    <!-- The box every page used to restate: it is what puts the two parts where
+                         StickyHeader.Follow expects to find them. -->
+                    <Grid MaxWidth="1000"
+                          Margin="24,0">
+                        <local:BackButton x:Name="BackPart"
+                                          AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+                                          Glyph="&#xE93E;"
+                                          CornerRadius="20"
+                                          Width="48"
+                                          Height="48"
+                                          VerticalAlignment="Top"
+                                          Margin="-20,18,0,0" />
+
+                        <ContentPresenter x:Name="ActionPart"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Top"
+                                          Height="48"
+                                          Margin="0,16,0,0" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:StickyHeaderTabs">
+        <Setter Property="Background"
+                Value="{ThemeResource PageSubHeaderBackgroundBrush2}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource NavigationViewContentGridBorderBrush}" />
+        <Setter Property="CornerRadius"
+                Value="20" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:StickyHeaderTabs">
+                    <Grid>
+                        <!-- See the note in the StickyHeader template: hidden on the visual, not
+                             through UIElement.Opacity. -->
+                        <Border x:Name="BackgroundPart"
+                                Background="{TemplateBinding Background}" />
+
+                        <Border x:Name="SeparatorPart"
+                                Background="{TemplateBinding BorderBrush}"
+                                Height="1"
+                                VerticalAlignment="Bottom" />
+
+                        <!-- The card the strip wears while it floats in the content, cross-faded
+                             against the pinned surface above. It is sized by this wrapper, so it
+                             hugs the content when the control is centred and spans the column when
+                             it stretches. -->
+                        <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              MaxWidth="1000"
+                              Margin="24,0">
+                            <Border x:Name="CardPart"
+                                    Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="{TemplateBinding CornerRadius}" />
+
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:MasterDetailView">
         <Setter Property="BackgroundMargin"
                 Value="0,0,0,0" />
