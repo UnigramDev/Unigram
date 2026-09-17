@@ -9,12 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings
 {
@@ -97,33 +96,22 @@ namespace Telegram.Views.Settings
 
         public Vector<FileType> SelectedItems { get; private set; }
 
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            if (args.InRecycleQueue)
+            if (args.ItemContainer == null && args.Item is StorageChartItem item)
             {
-                return;
+                args.ItemContainer = new ListViewItem
+                {
+                    Style = sender.ItemContainerStyle,
+                    ContentTemplate = sender.ItemTemplate,
+                    Resources = new CheckBoxResources
+                    {
+                        Color = item.Stroke
+                    }
+                };
             }
-            else if (args.ItemContainer.ContentTemplateRoot is CheckBox check && args.Item is StorageChartItem item)
-            {
-                var content = check.Content as StackPanel;
 
-                var title = content.Children[0] as TextBlock;
-                var subtitle = content.Children[1] as TextBlock;
-
-                check.Click -= CheckBox_Click;
-                check.Click += CheckBox_Click;
-
-                check.Background = new SolidColorBrush(item.Stroke);
-                check.IsChecked = item.IsVisible;
-
-                // Justified because used in CheckBox_Click
-                check.Tag = item;
-
-                title.Text = item.Name;
-                subtitle.Text = FileSizeConverter.Convert(item.TotalBytes, true);
-
-                args.Handled = true;
-            }
+            args.IsContainerPrepared = true;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -144,10 +132,12 @@ namespace Telegram.Views.Settings
             SelectedItems = null;
         }
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private void StorageChartItem_Checked(object sender, RoutedEventArgs e)
         {
-            var check = sender as CheckBox;
-            var item = check.Tag as StorageChartItem;
+            if (sender is not CheckBox check || check.DataContext is not StorageChartItem item)
+            {
+                return;
+            }
 
             var index = Chart.Items.IndexOf(item);
             if (index < 0)
