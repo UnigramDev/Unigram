@@ -12,6 +12,7 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
+                                IncrementalLoadingTrigger="None"
                                 ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
