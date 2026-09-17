@@ -6,10 +6,8 @@
 //
 
 using System;
-using System.ComponentModel;
 using Telegram.Converters;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
 {
@@ -23,35 +21,7 @@ namespace Telegram.Views.Settings
             Title = Strings.NetworkUsage;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            ViewModel.PropertyChanged += OnPropertyChanged;
-
-            UpdateTotalBytes(ViewModel.TotalBytes);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            ViewModel.PropertyChanged -= OnPropertyChanged;
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ViewModel.TotalBytes))
-            {
-                UpdateTotalBytes(ViewModel.TotalBytes);
-            }
-        }
-
         #region Binding
-
-        private void UpdateTotalBytes(long totalBytes)
-        {
-            var readable = FileSizeConverter.Convert(totalBytes, true).Split(' ');
-
-            SizeLabel.Text = readable[0];
-            UnitLabel.Text = readable[1];
-        }
 
         private string ConvertSinceDate(DateTime sinceDate, long totalBytes)
         {

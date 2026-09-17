@@ -93,12 +93,6 @@ namespace Telegram.Views.Settings
 
             ScrollingHost.ItemsSource = items;
             Chart.Items = items;
-
-            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
-            var readable = FileSizeConverter.Convert(size, true).Split(' ');
-
-            SizeLabel.Text = readable[0];
-            UnitLabel.Text = readable[1];
         }
 
         public Vector<FileType> SelectedItems { get; private set; }
@@ -179,12 +173,6 @@ namespace Telegram.Views.Settings
             {
                 VisualUtilities.ShakeView(check);
             }
-
-            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
-            var readable = FileSizeConverter.Convert(size, true).Split(' ');
-
-            SizeLabel.Text = readable[0];
-            UnitLabel.Text = readable[1];
         }
     }
 }

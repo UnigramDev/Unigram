@@ -628,27 +628,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid Width="140"
-                          Height="140">
-                        <controls:StorageChart x:Name="Chart"
-                                               Width="120"
-                                               Height="120" />
-
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="SizeLabel"
-                                       Style="{StaticResource PopupTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextAlignment="Center"
-                                       Margin="0,0,0,-4" />
-                            <TextBlock x:Name="UnitLabel"
-                                       Style="{StaticResource InfoBodyTextBlockStyle}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       TextAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
+                    <controls:StorageChart x:Name="Chart"
+                                           SeparatorBrush="{ThemeResource ContentDialogBackground}" />
 
                     <TextBlock x:Name="TitleLabel"
                                Style="{StaticResource PopupTextBlockStyle}"
