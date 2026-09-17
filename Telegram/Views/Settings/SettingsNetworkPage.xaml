@@ -28,29 +28,10 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid Width="140"
-                          Height="140"
-                          Margin="0,16,0,16">
-                        <controls:StorageChart x:Name="Chart"
-                                               Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
-                                               Width="120"
-                                               Height="120" />
-
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="SizeLabel"
-                                       Style="{StaticResource PopupTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextAlignment="Center"
-                                       Margin="0,0,0,-4" />
-                            <TextBlock x:Name="UnitLabel"
-                                       Style="{StaticResource InfoBodyTextBlockStyle}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       TextAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
+                    <controls:StorageChart x:Name="Chart"
+                                           Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
+                                           SeparatorBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           Margin="0,16,0,16" />
                     <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertSinceDate(ViewModel.SinceDate, ViewModel.TotalBytes), Mode=OneWay}"
                                Style="{StaticResource InfoBodyTextBlockStyle}"
                                TextAlignment="Center"

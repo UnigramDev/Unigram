@@ -55,21 +55,16 @@ namespace Telegram.Views.Settings
             }
         }
 
+        // The chart owns the size in the middle of the ring, and is its own spinner while the
+        // statistics are still being counted. All that is left here is the line underneath it.
         private void UpdateTotalBytes(long totalBytes, ulong totalDeviceSize, ulong totalDeviceFreeSize)
         {
             if (totalBytes < 0)
             {
-                SizeLabel.Text = string.Empty;
-                UnitLabel.Text = string.Empty;
-
                 TextBlockHelper.SetMarkdown(Subtitle, Strings.StorageUsageCalculating);
-
-                FindName(nameof(Ring));
             }
             else
             {
-                var readable = FileSizeConverter.Convert(totalBytes, true).Split(' ');
-
                 var percent = totalDeviceSize <= 0 ? 0 : (float)totalBytes / totalDeviceSize;
                 var usedPercent = totalDeviceFreeSize <= 0 || totalDeviceSize <= 0 ? 0 : (float)(totalDeviceSize - totalDeviceFreeSize) / totalDeviceSize;
 
@@ -81,11 +76,6 @@ namespace Telegram.Views.Settings
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.StorageUsageTelegram, Formatter.Percent(percent)));
                 }
-
-                SizeLabel.Text = readable[0];
-                UnitLabel.Text = readable[1];
-
-                UnloadObject(Ring);
             }
         }
 
@@ -272,13 +262,8 @@ namespace Telegram.Views.Settings
             }
 
             var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
-            var formatted = FileSizeConverter.Convert(size, true);
-            var readable = formatted.Split(' ');
 
-            SizeLabel.Text = readable[0];
-            UnitLabel.Text = readable[1];
-
-            ClearSize.Text = formatted;
+            ClearSize.Text = FileSizeConverter.Convert(size, true);
         }
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)

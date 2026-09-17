@@ -1146,6 +1146,7 @@
       <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\StorageChart.cs" />
+    <Compile Include="Controls\StorageChartParticles.cs" />
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TopNavView.cs" />
