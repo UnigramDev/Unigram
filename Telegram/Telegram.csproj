@@ -1149,6 +1149,9 @@
     <Compile Include="Controls\StickerPanel.xaml.cs">
       <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\StickyHeader.cs" />
+    <Compile Include="Controls\StickyHeaderChrome.cs" />
+    <Compile Include="Controls\StickyHeaderTabs.cs" />
     <Compile Include="Controls\StorageChart.cs" />
     <Compile Include="Controls\StorageChartParticles.cs" />
     <Compile Include="Controls\TableListView.cs" />
