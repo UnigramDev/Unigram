@@ -11,7 +11,7 @@ namespace Telegram.Charts.Data
 {
     public partial class StackBarChartData : ChartData
     {
-        public int[] ySum;
+        public long[] ySum;
         public SegmentTree ySumSegmentTree;
 
         public StackBarChartData(JsonObject jsonObject)
@@ -25,7 +25,7 @@ namespace Telegram.Charts.Data
             int n = lines[0].y.Length;
             int k = lines.Count;
 
-            ySum = new int[n];
+            ySum = new long[n];
             for (int i = 0; i < n; i++)
             {
                 ySum[i] = 0;
@@ -38,7 +38,7 @@ namespace Telegram.Charts.Data
             ySumSegmentTree = new SegmentTree(ySum);
         }
 
-        public int FindMax(int start, int end)
+        public long FindMax(int start, int end)
         {
             return ySumSegmentTree.rMaxQ(start, end);
         }

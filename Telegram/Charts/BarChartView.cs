@@ -88,7 +88,7 @@ namespace Telegram.Charts
                     {
                         p = chartData.xPercentage[1] * fullWidth;
                     }
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
                     int j = 0;
 
                     float selectedX = 0f;
@@ -191,7 +191,7 @@ namespace Telegram.Charts
                     {
                         p = chartData.xPercentage[1] * pickerWidth;
                     }
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
                     float a = line.alpha;
 

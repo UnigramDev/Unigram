@@ -74,7 +74,7 @@ namespace Telegram.Charts
                         continue;
                     }
 
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
                     line.chartPath?.Dispose();
                     line.chartPath = new CanvasPathBuilder(canvas);
@@ -209,7 +209,7 @@ namespace Telegram.Charts
                         p = chartData.xPercentage[1] * pickerWidth;
                     }
 
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
                     //line.chartPath.reset();
                     for (int i = 0; i < n; i++)
@@ -407,17 +407,19 @@ namespace Telegram.Charts
             return new LineViewData(line);
         }
 
-        public override int FindMaxValue(int startXIndex, int endXIndex)
+        public override long FindMaxValue(int startXIndex, int endXIndex)
         {
             if (lines.Count < 1)
             {
                 return 0;
             }
             int n = lines.Count;
-            int max = 0;
+            long max = 0;
             for (int i = 0; i < n; i++)
             {
-                int localMax = lines[i].enabled ? (int)(chartData.lines[i].segmentTree.rMaxQ(startXIndex, endXIndex) * chartData.linesK[i]) : 0;
+                // Scaled through double: linesK is a float, and a nanogram sample multiplied by one
+                // loses more than the smallest unit it is about to be formatted in.
+                long localMax = lines[i].enabled ? (long)(chartData.lines[i].segmentTree.rMaxQ(startXIndex, endXIndex) * (double)chartData.linesK[i]) : 0;
                 if (localMax > max)
                 {
                     max = localMax;
@@ -426,17 +428,17 @@ namespace Telegram.Charts
             return max;
         }
 
-        public override int FindMinValue(int startXIndex, int endXIndex)
+        public override long FindMinValue(int startXIndex, int endXIndex)
         {
             if (lines.Count < 1)
             {
                 return 0;
             }
             int n = lines.Count;
-            int min = int.MaxValue;
+            long min = long.MaxValue;
             for (int i = 0; i < n; i++)
             {
-                int localMin = lines[i].enabled ? (int)(chartData.lines[i].segmentTree.rMinQ(startXIndex, endXIndex) * chartData.linesK[i]) : int.MaxValue;
+                long localMin = lines[i].enabled ? (long)(chartData.lines[i].segmentTree.rMinQ(startXIndex, endXIndex) * (double)chartData.linesK[i]) : long.MaxValue;
                 if (localMin < min)
                 {
                     min = localMin;
@@ -458,7 +460,7 @@ namespace Telegram.Charts
                 return;
             }
 
-            int max = 0;
+            long max = 0;
             foreach (LineViewData l in lines)
             {
                 if (l.enabled && l.line.maxValue > max)
@@ -468,7 +470,7 @@ namespace Telegram.Charts
             }
             if (lines.Count > 1)
             {
-                max = (int)(max * chartData.linesK[1]);
+                max = (long)(max * chartData.linesK[1]);
             }
 
             if (max > 0 && max != animatedToPickerMaxHeight)
@@ -486,9 +488,9 @@ namespace Telegram.Charts
             }
         }
 
-        protected override ChartHorizontalLinesData CreateHorizontalLinesData(int newMaxHeight, int newMinHeight)
+        protected override ChartHorizontalLinesData CreateHorizontalLinesData(long newMaxHeight, long newMinHeight)
         {
-            float k;
+            double k;
             if (chartData.linesK.Length < 2)
             {
                 k = 1;

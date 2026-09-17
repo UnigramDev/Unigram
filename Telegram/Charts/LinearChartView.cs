@@ -49,7 +49,7 @@ namespace Telegram.Charts
                     {
                         p = chartData.xPercentage[1] * fullWidth;
                     }
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
                     int additionalPoints = (int)(HORIZONTAL_PADDING / p) + 1;
 
                     line.chartPath?.Dispose();
@@ -201,7 +201,7 @@ namespace Telegram.Charts
                         p = chartData.xPercentage[1] * pickerWidth;
                     }
 
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
                     //line.chartPath.reset();
                     for (int i = 0; i < n; i++)

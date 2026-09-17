@@ -13,10 +13,10 @@ namespace Telegram.Charts.Data
 {
     public partial class StackLinearChartData : ChartData
     {
-        readonly int[] ySum;
+        readonly long[] ySum;
         readonly SegmentTree ySumSegmentTree;
 
-        public int[][] simplifiedY;
+        public long[][] simplifiedY;
         public int simplifiedSize;
 
         public StackLinearChartData(JsonObject jsonObject)
@@ -25,7 +25,7 @@ namespace Telegram.Charts.Data
             int n = lines[0].y.Length;
             int k = lines.Count;
 
-            ySum = new int[n];
+            ySum = new long[n];
             for (int i = 0; i < n; i++)
             {
                 ySum[i] = 0;
@@ -68,7 +68,7 @@ namespace Telegram.Charts.Data
             for (int k = 0; k < data.lines.Count; k++)
             {
                 Line line = new();
-                line.y = new int[n];
+                line.y = new long[n];
                 line.id = data.lines[k].id;
                 line.name = data.lines[k].name;
                 line.colorKey = data.lines[k].colorKey;
@@ -101,14 +101,14 @@ namespace Telegram.Charts.Data
             int nl = lines.Count;
             int step = (int)Math.Max(1, Math.Round(n / 140f));
             int maxSize = n / step;
-            simplifiedY = new int[nl][];
+            simplifiedY = new long[nl][];
 
             for (int i = 0; i < nl; i++)
             {
-                simplifiedY[i] = new int[maxSize];
+                simplifiedY[i] = new long[maxSize];
             }
 
-            int[] max = new int[nl];
+            long[] max = new long[nl];
 
             for (int i = 0; i < n; i++)
             {

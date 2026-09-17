@@ -322,7 +322,7 @@ namespace Telegram.Charts
                             continue;
                         }
 
-                        int[] y = line.line.y;
+                        long[] y = line.line.y;
 
                         float yPercentage;
                         if (drawingLinesCount == 1)
