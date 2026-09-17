@@ -14,7 +14,6 @@ using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Services;
-using Windows.ApplicationModel.Resources;
 using Windows.System.UserProfile;
 
 namespace Telegram.Common
@@ -75,14 +74,11 @@ namespace Telegram.Common
         private static readonly Dictionary<string, CurrencyNumberFormatter> _currencyCache = new();
 
         private static readonly Dictionary<string, PluralRules> _allRules = new();
-        private static readonly ResourceLoader _loader;
 
         private static PluralRules _currentRules;
 
         static Locale()
         {
-            _loader = ResourceLoader.GetForViewIndependentUse("Resources");
-
             AddRules(new string[]{"bem", "brx", "da", "de", "el", "en", "eo", "es", "et", "fi", "fo", "gl", "he", "iw", "it", "nb",
                 "nl", "nn", "no", "sv", "af", "bg", "bn", "ca", "eu", "fur", "fy", "gu", "ha", "is", "ku",
                 "lb", "ml", "mr", "nah", "ne", "om", "or", "pa", "pap", "ps", "so", "sq", "sw", "ta", "te",
@@ -123,11 +119,6 @@ namespace Telegram.Common
             {
                 _currentRules = rules;
             }
-        }
-
-        public static string GetString(string key)
-        {
-            return _loader.GetString(key);
         }
 
         public static string Declension(string key, long count)
