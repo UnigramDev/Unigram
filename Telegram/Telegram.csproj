@@ -128,6 +128,7 @@
     <Compile Include="Assets\Icons\Location.cs" />
     <Compile Include="Assets\Icons\More.cs" />
     <Compile Include="Assets\Icons\MuteUnmute.cs" />
+    <Compile Include="Assets\Icons\MyGrams.cs" />
     <Compile Include="Assets\Icons\Notifications.cs" />
     <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
