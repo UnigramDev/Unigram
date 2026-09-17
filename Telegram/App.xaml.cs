@@ -19,6 +19,7 @@ using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Create;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Grams;
 using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Premium;
 using Telegram.ViewModels.Settings;
@@ -33,6 +34,7 @@ using Telegram.Views.Chats;
 using Telegram.Views.Create;
 using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
+using Telegram.Views.Grams;
 using Telegram.Views.Host;
 using Telegram.Views.Payments;
 using Telegram.Views.Popups;
@@ -471,6 +473,7 @@ namespace Telegram
                 CreateChatPhotoPopup => session.Resolve<CreateChatPhotoViewModel>(),
                 PromoPopup => session.Resolve<PromoViewModel>(),
                 StarsPage => session.Resolve<StarsViewModel>(),
+                GramsPage => session.Resolve<GramsViewModel>(),
                 BuyPopup => session.Resolve<BuyViewModel>(),
                 PayPopup => session.Resolve<PayViewModel>(),
                 StoryInteractionsPopup => session.Resolve<StoryInteractionsViewModel>(),

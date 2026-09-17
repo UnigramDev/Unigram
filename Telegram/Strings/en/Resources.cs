@@ -15638,6 +15638,11 @@ namespace Telegram
         public static string MyStory => Resource.GetString("MyStory");
         
         /// <summary>
+        /// Localized resource similar to "My Grams"
+        /// </summary>
+        public static string MyTON => Resource.GetString("MyTON");
+        
+        /// <summary>
         /// Localized resource similar to "Create a Local Group"
         /// </summary>
         public static string NearbyCreateGroup => Resource.GetString("NearbyCreateGroup");
@@ -23650,6 +23655,16 @@ namespace Telegram
         public static string TodoUncheck => Resource.GetString("TodoUncheck");
         
         /// <summary>
+        /// Localized resource similar to "Use Grams to buy gifts and suggest posts to channels."
+        /// </summary>
+        public static string TONBalanceText => Resource.GetString("TONBalanceText");
+        
+        /// <summary>
+        /// Localized resource similar to "Gram Balance"
+        /// </summary>
+        public static string TONBalanceTitle => Resource.GetString("TONBalanceTitle");
+        
+        /// <summary>
         /// Localized resource similar to "{0} Grams"
         /// </summary>
         public static string TonCountX => Resource.GetString("TonCountX");
@@ -23809,6 +23824,21 @@ namespace Telegram
         /// Localized resource similar to "Top members"
         /// </summary>
         public static string TopMembers => Resource.GetString("TopMembers");
+        
+        /// <summary>
+        /// Localized resource similar to "Top-Up via Fragment"
+        /// </summary>
+        public static string TopUpViaFragment => Resource.GetString("TopUpViaFragment");
+        
+        /// <summary>
+        /// Localized resource similar to "You can top-up your Gram balance via Fragment."
+        /// </summary>
+        public static string TopUpViaFragmentInfo => Resource.GetString("TopUpViaFragmentInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "https://fragment.com/ads/topup"
+        /// </summary>
+        public static string TopUpViaFragmentLink => Resource.GetString("TopUpViaFragmentLink");
         
         /// <summary>
         /// Localized resource similar to "Click Agree to confirm that you are {0} or older."
@@ -26224,6 +26254,11 @@ namespace Telegram
         /// Localized resource similar to "Your public communities"
         /// </summary>
         public static string YourPublicCommunities => Resource.GetString("YourPublicCommunities");
+        
+        /// <summary>
+        /// Localized resource similar to "your balance"
+        /// </summary>
+        public static string YourTonBalance => Resource.GetString("YourTonBalance");
         
         /// <summary>
         /// Localized resource similar to "Zoom out"

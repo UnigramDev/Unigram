@@ -13855,4 +13855,16 @@
     <string name="StarGiveawayPrizeFrom">From</string>
     <string name="StarGiveawayReason">Reason</string>
     <string name="StarGiveawayReasonLink">Giveaway</string>
+
+    <string name="MyTON">My Grams</string>
+    <string name="TONBalanceTitle">Gram Balance</string>
+    <string name="TONBalanceText">Use Grams to buy gifts and suggest posts to channels.</string>
+    <string name="YourTonBalance">your balance</string>
+    <string name="TopUpViaFragment">Top-Up via Fragment</string>
+    <string name="TopUpViaFragmentLink">https://fragment.com/ads/topup</string>
+    <string name="TopUpViaFragmentInfo">You can top-up your Gram balance via Fragment.</string>
+    <string name="StarsTransactionTONFromFragment">Fragment</string>
+    <string name="StarsTransactionTONDate">Gram Transaction Date</string>
+    <string name="StarsTransactionViewInBlockchainExplorer">View in Blockchain Explorer</string>
+
 </resources>

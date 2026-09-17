@@ -69,6 +69,10 @@ namespace Telegram.Services
 
         Task<Object> GetStarTransactionsAsync(MessageSender ownerId, string subscriptionId, TransactionDirection direction, string offset, int limit);
 
+        Task<Object> GetTonTransactionsAsync(TransactionDirection direction, string offset, int limit);
+
+        bool HasGramTransactions { get; }
+
         Sticker NextGreetingSticker();
 
         ISession Session { get; }
@@ -89,6 +93,7 @@ namespace Telegram.Services
         PaidReactionType DefaultPaidReactionType { get; }
 
         StarAmount OwnedStarCount { get; }
+        long OwnedGramCount { get; }
 
         TonWalletState TonWalletState { get; }
 
@@ -1180,6 +1185,21 @@ namespace Telegram.Services
             return response;
         }
 
+        public bool HasGramTransactions => _hasGramTransactions;
+
+        public async Task<Object> GetTonTransactionsAsync(TransactionDirection direction, string offset, int limit)
+        {
+            var response = await SendAsync(new GetTonTransactions(direction, offset, limit));
+            if (response is TonTransactions transactions)
+            {
+                _hasGramTransactions |= transactions.Transactions.Count > 0;
+                _ownedGramCount = transactions.GramAmount;
+                _aggregator.Publish(new UpdateOwnedGramCount(transactions.GramAmount));
+            }
+
+            return response;
+        }
+
         public async Task<Object> GetCustomEmojiStickerSets(Vector<long> customEmojiIds)
         {
             var stickers = await SendAsync(new GetCustomEmojiStickers(customEmojiIds)) as Stickers;
@@ -1507,7 +1527,7 @@ namespace Telegram.Services
                     if (!_requestedGramCount)
                     {
                         _requestedGramCount = true;
-                        Send(new GetTonTransactions(null, string.Empty, 1));
+                        _ = GetTonTransactionsAsync(null, string.Empty, 1);
                     }
 
                     return 0;

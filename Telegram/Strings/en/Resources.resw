@@ -10550,6 +10550,9 @@ to unlock up to {0} similar channels.</value>
   <data name="MyStory" xml:space="preserve">
     <value>My Story</value>
   </data>
+  <data name="MyTON" xml:space="preserve">
+    <value>My Grams</value>
+  </data>
   <data name="NearbyCreateGroup" xml:space="preserve">
     <value>Create a Local Group</value>
   </data>
@@ -15940,6 +15943,12 @@ in mini apps on Telegram.</value>
   <data name="TodoUncheck" xml:space="preserve">
     <value>Uncheck</value>
   </data>
+  <data name="TONBalanceText" xml:space="preserve">
+    <value>Use Grams to buy gifts and suggest posts to channels.</value>
+  </data>
+  <data name="TONBalanceTitle" xml:space="preserve">
+    <value>Gram Balance</value>
+  </data>
   <data name="TonCount_one" xml:space="preserve">
     <value>{0} Gram</value>
   </data>
@@ -16042,6 +16051,15 @@ Please try again in {0}.</value>
   </data>
   <data name="TopMembers" xml:space="preserve">
     <value>Top members</value>
+  </data>
+  <data name="TopUpViaFragment" xml:space="preserve">
+    <value>Top-Up via Fragment</value>
+  </data>
+  <data name="TopUpViaFragmentInfo" xml:space="preserve">
+    <value>You can top-up your Gram balance via Fragment.</value>
+  </data>
+  <data name="TopUpViaFragmentLink" xml:space="preserve">
+    <value>https://fragment.com/ads/topup</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Click Agree to confirm that you are {0} or older.</value>
@@ -17615,6 +17633,9 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="YourPublicCommunities" xml:space="preserve">
     <value>Your public communities</value>
+  </data>
+  <data name="YourTonBalance" xml:space="preserve">
+    <value>your balance</value>
   </data>
   <data name="ZoomOut" xml:space="preserve">
     <value>Zoom out</value>
