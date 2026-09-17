@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Windows.ApplicationModel.Resources;
 using Windows.Globalization;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -60,8 +59,6 @@ namespace Telegram.Services
         private const int QUANTITY_FEW = 0x0008;
         private const int QUANTITY_MANY = 0x0010;
 
-        private readonly ResourceLoader _loader;
-
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new();
         private string _languageCode;
         private string _languageBase;
@@ -73,8 +70,6 @@ namespace Telegram.Services
 
         public LocaleService()
         {
-            _loader = ResourceLoader.GetForViewIndependentUse("Resources");
-
             _languagePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack");
 
             _languageCode = AppSettings.LanguagePackId;
@@ -189,15 +184,9 @@ namespace Telegram.Services
             }
 
 #if zDEBUG
-            var text = _loader.GetString(key);
-            if (text.Length > 0)
-            {
-                return text;
-            }
-
-            return key;
+            return LocaleFallback.GetString(key) ?? key;
 #else
-            return _loader.GetString(key);
+            return LocaleFallback.GetString(key) ?? string.Empty;
 #endif
         }
 
@@ -244,16 +233,14 @@ namespace Telegram.Services
                 return value;
             }
 
-#if zDEBUG
-            var text = _loader.GetString(selector);
-            if (text.Length > 0)
-            {
-                return text;
-            }
+            // The English table carries all six forms, but a language's rules can ask for one the
+            // key does not have, so this falls back the same way the two branches above do.
+            var fallback = LocaleFallback.GetString(selector) ?? LocaleFallback.GetString(key + "_other");
 
-            return selector;
+#if zDEBUG
+            return fallback ?? selector;
 #else
-            return _loader.GetString(selector);
+            return fallback ?? string.Empty;
 #endif
         }
 

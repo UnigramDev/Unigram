@@ -51,7 +51,7 @@ synchronization context from the generated Main; see `notes/` on that.
 
 # The spine: TDLib, services, collections
 
-## TDLib interop — Telegram/Td/ (6 files outside Api/), Telegram.Generators/ (8 files)
+## TDLib interop — Telegram/Td/ (6 files outside Api/), Telegram.Generators/ (9 files)
 <!-- map: verified=95560d9f7 paths=Telegram/Td/Client.cs,Telegram/Td/ClientJson.cs,Telegram/Td/PtrClientJson.cs,Telegram/Td/TdJsonReader.cs,Telegram.Generators -->
 The managed binding to `tdjson.dll`, and the source generator that turns `td_api.tl` into the
 ~3000-class `Telegram.Td.Api` surface plus its JSON parsers. The generated code is not checked
@@ -798,22 +798,31 @@ which rejects a CRLF-converted tree.
 
 # Resources and tooling
 
-## Localization — Telegram/Strings/ (32 languages), Telegram/Services/LocaleService.cs
-<!-- map: verified=95560d9f7 paths=Telegram/Strings,Telegram/Services/LocaleService.cs -->
-All user-facing strings. `en` is the source of truth; every other locale is a translation carrying only a
-`Resources.resw`, arriving through its own pipeline.
+## Localization — Telegram/Strings/ (32 languages), Telegram/Services/LocaleService.cs, Telegram.Generators/ResourcesGenerator.cs
+<!-- map: verified=95560d9f7 paths=Telegram/Strings,Telegram/Services/LocaleService.cs,Telegram/Common/Locale.cs,Telegram.Generators/ResourcesGenerator.cs -->
+All user-facing strings. `en` is the source of truth; every other locale is a translation arriving through
+its own pipeline, and none of them ship their text in the package — it is pulled from the cloud language
+pack (localization target `unigram`) at runtime.
 **Key files:** `Telegram/Strings/en/Resources.xml` — **the only file to edit by hand**;
-`Telegram/Strings/en/Resources.resw` and `Resources.cs` — **generated**, tracked, so they do show up in
-diffs after the generator runs; `Telegram/Services/LocaleService.cs` — the runtime resolver,
+`Telegram/Strings/<lang>/Resources.resw` — two keys each, `AppDisplayName` and `AppName`, and nothing
+else. They are not a string store: they exist so `<Resource Language="x-generate"/>` declares the
+language to Windows (system language matching, the Asian font chain) and so the manifest's
+`ms-resource:AppDisplayName` resolves. `Telegram/Services/LocaleService.cs` — the runtime resolver,
 `GetString(key)` / `GetString(key, quantity)`, applying CLDR plural rules.
-**Entry points:** app code calls `Strings.Xxx` or `Strings.GetString(Strings.R.Xxx)`; plurals go through
+**Generated:** `ResourcesGenerator` reads `Resources.xml` as an `AdditionalFiles` item and emits two
+files that are **not** checked in — `Strings.g.cs` (the `R` constants and a property per key, each
+reading through `ILocaleService`) and `LocaleFallback.g.cs` (the English text itself, as a switch bucketed
+by key length). Read them under `obj/<config>/<tfm>/generated/Telegram.Generators/`.
+**Entry points:** app code calls `Strings.Xxx`; XAML uses `{CustomResource Key}`, which reaches
+`LocaleService.GetString` through `Common/XamlResourceLoader.cs`; plurals go through
 `Locale.Declension(Strings.R.<Name>, count)`, which picks the `_one`/`_other` entry by CLDR rule, not by
 an English singular/plural test.
-**Traps:** never add a string by adding a property to `Resources.cs`. The generator lives outside this
-repo (`C:\Source\UnigramUtils\SynchronizeResources`) and Fela runs it, so a new string does not compile
-until then — expected, not a mistake to work around. Wording is taken from the Android app wherever it
-exists. `.gitattributes` pins `Resources.xml` to LF: the one deliberate exception to the CRLF rule. Never
-pass several `Strings.X` values to a picker method — every one gets realized.
+**Traps:** never add a string by adding a property to a generated file — put it in `Resources.xml` and
+rebuild. Wording is taken from the Android app wherever it exists. `.gitattributes` pins `Resources.xml`
+to LF: the one deliberate exception to the CRLF rule. Never pass several `Strings.X` values to a picker
+method — every one gets realized. A key the cloud pack has no answer for is **not cached**: every lookup
+re-runs `Client.Execute(GetLanguagePackString)` against the langpack database, and `{CustomResource}`
+re-resolves on every control instantiation, so a missing key is a per-row cost on the chat list.
 
 ## Themes and generated defaults — Telegram/Themes/ (13 files), Tools/ThemeDefaults/
 <!-- map: verified=95560d9f7 paths=Telegram/Themes,Tools/ThemeDefaults,Telegram/Services/Theme/ThemeDefaults.g.cs,Telegram/Services/Theme/ThemeDefaults.cs -->

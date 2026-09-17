@@ -374,6 +374,7 @@
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
+    <AdditionalFiles Include="Strings\en\Resources.xml" />
     <CompilerVisibleProperty Include="TdParsers" />
   </ItemGroup>
 

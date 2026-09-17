@@ -1187,9 +1187,6 @@
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="Services\TranslateService.cs" />
     <Compile Include="Td\Api\UpdatePremiumState.cs" />
-    <Compile Include="Strings\en\Resources.cs">
-      <DependentUpon>Resources.resw</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\Authorization\AuthorizationCodeViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationEmailAddressViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationEmailCodeViewModel.cs" />
@@ -2716,7 +2713,6 @@
     <Content Include="Assets\i420.bin" />
     <None Include=".editorconfig" />
     <PRIResource Include="Strings\en\Resources.resw">
-      <CustomToolNamespace>Telegram</CustomToolNamespace>
       <SubType>Designer</SubType>
     </PRIResource>
     <PRIResource Include="Strings\ar\Resources.resw">
@@ -4905,6 +4901,7 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="TdParsers" />
     <AdditionalFiles Include="$(ProjectDir)\..\Libraries\tdjson\td_api.tl" />
+    <AdditionalFiles Include="$(ProjectDir)\Strings\en\Resources.xml" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.dll" />
     <!-- tdjson comes in as a copy-local path rather than a Reference, so RAR never runs its
          related-file discovery and the .pdb has to be named explicitly. Without it the appxsym
