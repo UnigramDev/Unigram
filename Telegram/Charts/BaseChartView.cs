@@ -8,20 +8,25 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
-using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.Graphics.Canvas.UI.Composition;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Telegram.Charts.Data;
 using Telegram.Charts.DataView;
 using Telegram.Common;
+using Telegram.Controls;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -32,7 +37,7 @@ namespace Telegram.Charts
     // Takes keyboard focus, so it has to be a Control rather than a panel: focusable by
     // construction, and FocusState and the key overrides come with it. The canvas and the
     // legend live in LayoutRoot, which is the content.
-    public abstract class BaseChartView : ContentControl
+    public abstract class BaseChartView : ContentControlEx
     {
         protected readonly Grid LayoutRoot = new();
 
@@ -59,6 +64,13 @@ namespace Telegram.Charts
         /// </summary>
         protected static void DrawGeometry(CanvasDrawingSession canvas, CanvasPathBuilder path, Paint paint)
         {
+            // A line whose point loop never ran has no builder: the field is only assigned on the
+            // first point.
+            if (path == null)
+            {
+                return;
+            }
+
             using var geometry = CanvasGeometry.CreatePath(path);
             canvas.DrawGeometry(geometry, paint);
         }
@@ -66,6 +78,11 @@ namespace Telegram.Charts
         /// <inheritdoc cref="DrawGeometry"/>
         protected static void FillGeometry(CanvasDrawingSession canvas, CanvasPathBuilder path, Color color)
         {
+            if (path == null)
+            {
+                return;
+            }
+
             using var geometry = CanvasGeometry.CreatePath(path);
             canvas.FillGeometry(geometry, color);
         }
@@ -142,6 +159,8 @@ namespace Telegram.Charts
         public abstract void AnimateLegend(bool show);
 
         public abstract void SelectDate(long activeZoom);
+
+        public abstract AnimatorCoordinator Coordinator { get; }
     }
 
     public abstract class BaseChartView<T, L> : BaseChartView, ChartPickerDelegate.IListener where T : ChartData where L : LineViewData
@@ -153,7 +172,7 @@ namespace Telegram.Charts
 
         public List<L> lines = new();
 
-        private const int ANIM_DURATION = 400;
+        private const uint ANIM_DURATION = 400;
         private const float LINE_WIDTH = 1;
         private const float SELECTED_LINE_WIDTH = 1.5f;
         private const float SIGNATURE_TEXT_SIZE = 12;
@@ -229,6 +248,65 @@ namespace Telegram.Charts
 
         //private Bitmap bottomChartBitmap;
         private CanvasRenderTarget bottomChartCanvas;
+        private int _pickerCacheHeight;
+
+        // The value labels can carry a currency glyph, so they are drawn in the icon font. A format
+        // built per DrawText meant resolving a packaged ms-appx font once per label per frame, and
+        // that resolution is around a millisecond each - see the composer's paste cost. One format,
+        // built once, shared by every chart: it carries no per-instance state.
+        private static CanvasTextFormat _signatureFormat;
+        private static CanvasTextFormat SignatureFormat => _signatureFormat ??= new CanvasTextFormat
+        {
+            //FontFamily = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
+        };
+
+        // DrawText resolves the family on every call, and resolving a packaged one costs about two
+        // milliseconds - measured at 12ms a frame for these labels against 21us for the bottom
+        // signatures, which are the same call through the default font. A CanvasTextLayout resolves
+        // once, when it is built, so the labels are cached as layouts and drawn with DrawTextLayout.
+        //
+        // Keyed by the string because that and the format are all a layout depends on. The colour is
+        // not: it is passed at draw time, so the alpha animation still runs. The axis labels repeat
+        // frame to frame and across the fading line sets, which is what makes the cache worth having.
+        private readonly Dictionary<string, CanvasTextLayout> _signatureLayouts = new();
+        private float _signatureLayoutSize = -1;
+
+        private CanvasTextLayout GetSignatureLayout(CanvasDrawingSession canvas, string text)
+        {
+            var textSize = signaturePaint.TextSize ?? SignatureFormat.FontSize;
+
+            // Bounded, and dropped wholesale on a size change: the labels turn over as the range
+            // does, so this would otherwise hold every string the chart has ever shown.
+            if (_signatureLayoutSize != textSize || _signatureLayouts.Count >= 128)
+            {
+                ClearSignatureLayouts();
+
+                SignatureFormat.FontSize = textSize;
+                _signatureLayoutSize = textSize;
+            }
+
+            if (!_signatureLayouts.TryGetValue(text, out var layout))
+            {
+                layout = new CanvasTextLayout(canvas, text, SignatureFormat, float.PositiveInfinity, 0);
+                _signatureLayouts[text] = layout;
+            }
+
+            return layout;
+        }
+
+        private void ClearSignatureLayouts()
+        {
+            foreach (var layout in _signatureLayouts.Values)
+            {
+                layout.Dispose();
+            }
+
+            _signatureLayouts.Clear();
+
+            // Forgotten as well, so the next layout built reapplies the size to the shared format
+            // rather than trusting one this view may no longer be the last to have set.
+            _signatureLayoutSize = -1;
+        }
 
         protected bool chartCaptured = false;
         protected int selectedIndex = -1;
@@ -308,6 +386,13 @@ namespace Telegram.Charts
         private float startFromMaxH;
         private float startFromMinH;
         private float minMaxUpdateStep;
+        private long _minMaxTimestamp;
+        private long _frameTimestamp;
+
+        // Shared with the subclasses that override DrawSignaturesToHorizontalLines: only one of the
+        // overrides runs per instance, and they all measure "0" at the same size.
+        protected float _baselineTextSize = -1;
+        protected int _baselineTextOffset;
 
         public BaseChartView()
         {
@@ -316,83 +401,218 @@ namespace Telegram.Charts
             //touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         }
 
+        private bool _subscribed;
+        private bool _invalidated;
+
         public override void Invalidate()
         {
-            canvas.Invalidate();
+            _invalidated = true;
+
+            if (_subscribed)
+            {
+                return;
+            }
+
+            _subscribed = true;
+            CompositionTarget.Rendering += OnRendering;
+
+            //canvas.Invalidate();
         }
 
-        protected int MeasuredHeight => (int)canvas.Size.Height;
-        protected int MeasuredWidth => (int)canvas.Size.Width;
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            // The paints hold resolved colours rather than brushes, so nothing repaints itself:
+            // the surface has to be redrawn for a theme switch to be visible at all.
+            UpdateColors();
+            Invalidate();
+        }
 
-        private CanvasControl canvas;
+        private void OnRendering(object sender, object e)
+        {
+            // Cleared before the frame, so anything that asks for another one while it is being
+            // drawn is honoured: Tick() animates min/max from inside OnDraw and re-invalidates.
+            _invalidated = false;
+
+            _frameTimestamp = Stopwatch.GetTimestamp();
+            _coordinator.Tick(_frameTimestamp);
+
+            // Everything DrawPicker lays out hangs off pickerWidth, which is MeasuredWidth less
+            // the padding on both sides: narrower than that and it builds rectangles whose right
+            // edge is left of their left one, which Rect throws on. The coordinator is ticked
+            // either way so it drains, and the arrange that gives the chart room asks for the frame.
+            if (_surface != null && MeasuredWidth > HORIZONTAL_PADDING * 2 && MeasuredHeight > 0)
+            {
+                Profiler.Begin("chart.draw");
+
+                // Scoped rather than a using declaration so that EndDraw, which is where a
+                // composition surface can stall, falls inside the measurement.
+                using (var args = CanvasComposition.CreateDrawingSession(_surface))
+                {
+                    args.Clear(Colors.Transparent);
+
+                    // The surface is in pixels and everything below draws in DIPs. The session DPI
+                    // would be the natural place for that, but it belongs to the shared composition
+                    // device, so raising it corrupts every other surface in the app. Hence a base
+                    // transform that every Transform assignment in the draw code composes with.
+                    args.Transform = _baseTransform;
+
+                    OnDraw(args);
+                }
+
+                Profiler.Tally("chart.draw");
+            }
+
+            // One frame per Invalidate, and further frames only while something still needs them:
+            // CompositionTarget.Rendering is static and keeps firing until detached.
+            if (!_invalidated && !_coordinator.IsRunning)
+            {
+                _subscribed = false;
+                CompositionTarget.Rendering -= OnRendering;
+            }
+        }
+
+        protected override void OnLoaded()
+        {
+            // Unloaded released the surface, and re-entering the tree at the same size does not
+            // have to produce an arrange - so the rebuild cannot be left waiting for one. Every
+            // other released object is rebuilt by the draw that Invalidate asks for.
+            if (_surface == null && MeasuredWidth > 0 && MeasuredHeight > 0)
+            {
+                OnMeasure(0, 0);
+            }
+
+            Invalidate();
+        }
+
+        protected override void OnUnloaded()
+        {
+            if (_subscribed)
+            {
+                _subscribed = false;
+                CompositionTarget.Rendering -= OnRendering;
+            }
+
+            ReleaseResources();
+        }
+
+        /// <summary>
+        /// Releases every native object the view holds for drawing. All of them are rebuilt lazily
+        /// by the next draw or arrange, so a view that is loaded again needs nothing restored -
+        /// which matters because Unloaded also fires when a container is recycled.
+        /// </summary>
+        protected virtual void ReleaseResources()
+        {
+            ClearSignatureLayouts();
+
+            bottomChartCanvas?.Dispose();
+            bottomChartCanvas = null;
+
+            _surface?.Dispose();
+            _surface = null;
+
+            // The measured size is deliberately kept: it is what MeasuredWidth/MeasuredHeight
+            // report, and the layout code reads those whether or not the view is in the tree.
+            // A null surface is what tells the next arrange to rebuild.
+            //
+            // Everything below is recreated lazily rather than here: the paths at the top of
+            // DrawChart and DrawPickerChart, the formats and stroke styles behind their accessors.
+            foreach (var line in lines)
+            {
+                line.Release();
+            }
+
+            linePaint.Release();
+            selectedLinePaint.Release();
+            signaturePaint.Release();
+            signaturePaint2.Release();
+            bottomSignaturePaint.Release();
+            pickerSelectorPaint.Release();
+            unactiveBottomChartPaint.Release();
+            selectionBackgroundPaint.Release();
+            ripplePaint.Release();
+            whiteLinePaint.Release();
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var result = base.ArrangeOverride(finalSize);
+
+            var width = (int)finalSize.Width;
+            var height = (int)finalSize.Height;
+            var scale = (float)(XamlRoot?.RasterizationScale ?? 1);
+
+            // Arrange rather than SizeChanged: a rasterization scale change forces a layout pass
+            // but leaves the element the same size in DIPs, so SizeChanged never sees it. finalSize
+            // rather than ActualWidth/ActualHeight, which are only updated once this returns.
+            // The null surface is a condition in its own right, not just a consequence of the size
+            // moving: a view released on Unloaded comes back at exactly the size it left at.
+            if (_surface == null || width != _measuredWidth || height != _measuredHeight || scale != _rasterizationScale)
+            {
+                _measuredWidth = width;
+                _measuredHeight = height;
+                _rasterizationScale = scale;
+                _baseTransform = Matrix3x2.CreateScale(scale);
+
+                OnMeasure(0, 0);
+                Invalidate();
+            }
+
+            return result;
+        }
+
+        private int _measuredWidth;
+        private int _measuredHeight;
+
+        //protected int MeasuredHeight => (int)canvas.Size.Height;
+        //protected int MeasuredWidth => (int)canvas.Size.Width;
+        protected int MeasuredHeight => _measuredHeight;
+        protected int MeasuredWidth => _measuredWidth;
+
+        //private CanvasControl canvas;
+
+        private CompositionGraphicsDevice _device;
+        private CompositionDrawingSurface _surface;
+        private CompositionSurfaceBrush _brush;
+        private SpriteVisual _visual;
+
+        private float _rasterizationScale = 1;
+
+        protected Matrix3x2 _baseTransform = Matrix3x2.Identity;
+
+        protected AnimatorCoordinator _coordinator;
+        public override AnimatorCoordinator Coordinator => _coordinator;
 
         protected virtual void InitializeComponent()
         {
             pickerDelegate = new ChartPickerDelegate(this);
 
-            canvas = new CanvasControl();
-            canvas.Draw += (s, args) =>
-            {
-                if (s.Size.IsEmpty)
-                {
-                    return;
-                }
+            ActualThemeChanged += OnActualThemeChanged;
 
-                //lock (_animatorsLock)
-                //{
-                //    foreach (var animator in _animators.ToArray())
-                //    {
-                //        animator.onTick();
-                //    }
+            _coordinator = new AnimatorCoordinator(Invalidate);
 
-                //    paused = _animators.Count < 1;
-                //}
+            _device = Direct2D.Current.Device;
+            _visual = Window.Current.Compositor.CreateSpriteVisual();
 
-                lock (AnimatorLoopThread.DrawLock)
-                {
-                    OnDraw(args.DrawingSession);
-                }
-            };
-            canvas.SizeChanged += (s, args) =>
-            {
-                lock (AnimatorLoopThread.DrawLock)
-                {
-                    OnMeasure(0, 0);
-                }
-            };
-            canvas.ActualThemeChanged += (s, args) =>
-            {
-                UpdateColors();
-                canvas.Invalidate();
-            };
+            _brush = _visual.Compositor.CreateSurfaceBrush();
+            _brush.Stretch = CompositionStretch.Fill;
+            _visual.Brush = _brush;
 
-            //timer = new Timer(new TimerCallback(state =>
-            //{
-            //    lock (drawLock)
-            //    lock (_animatorsLock)
-            //    {
-            //        foreach (var animator in _animators.ToArray())
-            //        {
-            //            animator.tick();
-            //        }
+            var presenter = new Border();
 
-            //        change(_animators.Count < 1);
-            //    }
-            //}), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
+            ElementComposition.SetElementChildVisual(presenter, _visual);
+            LayoutRoot.Children.Add(presenter);
 
-            canvas.Background = new SolidColorBrush() { Color = Colors.Transparent };
-            canvas.PointerPressed += OnPointerPressed;
-            canvas.PointerMoved += OnPointerMoved;
-            canvas.PointerReleased += OnPointerReleased;
-            //canvas.PointerCanceled += OnPointerReleased;
-            //canvas.PointerCaptureLost += OnPointerReleased;
-            canvas.PointerExited += OnPointerExited;
+            LayoutRoot.Background = new SolidColorBrush() { Color = Colors.Transparent };
+            LayoutRoot.PointerPressed += OnPointerPressed;
+            LayoutRoot.PointerMoved += OnPointerMoved;
+            LayoutRoot.PointerReleased += OnPointerReleased;
+            //LayoutRoot.PointerCanceled += OnPointerReleased;
+            //LayoutRoot.PointerCaptureLost += OnPointerReleased;
+            LayoutRoot.PointerExited += OnPointerExited;
 
             Content = LayoutRoot;
             HorizontalContentAlignment = HorizontalAlignment.Stretch;
             VerticalContentAlignment = VerticalAlignment.Stretch;
-
-            LayoutRoot.Children.Add(canvas);
 
             // The chart is drawn, so selecting a point is the only way to read a value:
             // it has to be reachable without a pointer.
@@ -614,29 +834,24 @@ namespace Telegram.Charts
         //@Override
         protected virtual void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            //if (!landscape)
-            //{
-            //    setMeasuredDimension(
-            //            MeasureSpec.getSize(widthMeasureSpec),
-            //            MeasureSpec.getSize(widthMeasureSpec)
-            //    );
-            //}
-            //else
-            //{
-            //    setMeasuredDimension(
-            //            MeasureSpec.getSize(widthMeasureSpec),
-            //            AndroidUtilities.displaySize.y - AndroidUtilities.dp(56)
-            //    );
-            //}
+            // The surface holds device pixels while everything else here is in DIPs, so a scale
+            // change resizes it even when the element itself has not moved. Rounded up, so the
+            // last fractional pixel of the DIP extent still has somewhere to land.
+            var width = (int)Math.Ceiling(MeasuredWidth * _rasterizationScale);
+            var height = (int)Math.Ceiling(MeasuredHeight * _rasterizationScale);
 
-
-            if (MeasuredWidth != lastW || MeasuredHeight != lastH)
+            if (width != _surface?.SizeInt32.Width || height != _surface?.SizeInt32.Height)
             {
-                lastW = MeasuredWidth;
-                lastH = MeasuredHeight;
-                //bottomChartBitmap = Bitmap.createBitmap(MeasuredWidth - (HORIZONTAL_PADDING << 1), pikerHeight, Bitmap.Config.ARGB_4444);
-                //bottomChartCanvas = new Canvas(bottomChartBitmap);
+                _surface?.Dispose();
+                _surface = _device.CreateDrawingSurface2(new SizeInt32 { Width = width, Height = height }, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized, Windows.Graphics.DirectX.DirectXAlphaMode.Premultiplied);
+
+                // The brush outlives the surface: a new one per resize leaks the old one.
+                _brush.Surface = _surface;
+                _visual.Size = new Vector2(MeasuredWidth, MeasuredHeight);
+
+                // Rebuilt at the new DPI. A scale change alone leaves lastW/lastH untouched below,
+                // so nothing else here would notice it had gone stale.
+                bottomChartCanvas?.Dispose();
                 bottomChartCanvas = null;
 
                 //sharedUiComponents.getPickerMaskBitmap(pikerHeight, MeasuredWidth - HORIZONTAL_PADDING * 2);
@@ -737,9 +952,17 @@ namespace Telegram.Charts
             {
                 return;
             }
+
+            // minMaxUpdateStep is a per-frame increment inherited from the Android original, whose
+            // loop ran at 60 Hz. Left as one, the transition finishes three times too fast at 200 Hz
+            // and stretches into slow motion the moment frames get expensive, because its duration
+            // is a frame count rather than a time. Scaled back onto that 60 Hz baseline.
+            var step = minMaxUpdateStep * 60 * (_frameTimestamp - _minMaxTimestamp) / (float)Stopwatch.Frequency;
+            _minMaxTimestamp = _frameTimestamp;
+
             if (currentMaxHeight != animateToMaxHeight)
             {
-                startFromMax += minMaxUpdateStep;
+                startFromMax += step;
                 if (startFromMax > 1)
                 {
                     startFromMax = 1;
@@ -755,7 +978,7 @@ namespace Telegram.Charts
             {
                 if (currentMinHeight != animateToMinHeight)
                 {
-                    startFromMin += minMaxUpdateStep;
+                    startFromMin += step;
                     if (startFromMin > 1)
                     {
                         startFromMin = 1;
@@ -878,13 +1101,21 @@ namespace Telegram.Charts
             linePaint.A = (byte)(hintLinePaintAlpha * transitionAlpha);
             signaturePaint.A = (byte)(255 * signaturePaintAlpha * transitionAlpha);
 
-            var format = new CanvasTextFormat { FontSize = signaturePaint.TextSize ?? 0 };
-            var layout = new CanvasTextLayout(canvas, "0", format, 0, 0);
+            // Measuring "0" builds a DWrite layout, and its result only depends on the font size,
+            // so it is measured when that changes rather than on every frame.
+            var textSize = signaturePaint.TextSize ?? 0;
 
-            int textOffset = (int)(4 + layout.DrawBounds.Bottom);
+            if (_baselineTextSize != textSize)
+            {
+                using var format = new CanvasTextFormat { FontSize = textSize };
+                using var layout = new CanvasTextLayout(canvas, "0", format, 0, 0);
+
+                _baselineTextOffset = (int)(4 + layout.DrawBounds.Bottom);
+                _baselineTextSize = textSize;
+            }
+
+            int textOffset = _baselineTextOffset;
             //int textOffset = (int)(SIGNATURE_TEXT_HEIGHT - signaturePaintFormat.FontSize);
-            format.Dispose();
-            layout.Dispose();
 
             int y = MeasuredHeight - chartBottom - 1;
             canvas.DrawLine(
@@ -1033,13 +1264,11 @@ namespace Telegram.Charts
             //int textOffset = (int)(SIGNATURE_TEXT_HEIGHT - signaturePaintFormat.FontSize);
             //layout.Dispose();
             //format.Dispose();
+
             for (int i = useMinHeight ? 0 : 1; i < n; i++)
             {
                 float y = MeasuredHeight - chartBottom - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight));
-                canvas.DrawText(a.valuesStr[i], HORIZONTAL_PADDING, y - textOffset, signaturePaint, new CanvasTextFormat
-                {
-                    FontFamily = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
-                });
+                canvas.DrawTextLayout(GetSignatureLayout(canvas, a.valuesStr[i]), HORIZONTAL_PADDING, y - textOffset, signaturePaint.Color);
             }
         }
 
@@ -1097,21 +1326,42 @@ namespace Telegram.Charts
                             MeasuredWidth - HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING
                         ));
                     //canvas.translate(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight);
-                    canvas.Transform = Matrix3x2.CreateTranslation(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
+                    canvas.Transform = Matrix3x2.CreateTranslation(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight) * _baseTransform;
+
+                    // The uncached path: no render target, the picker redrawn into the frame every
+                    // time. Taken whenever any line is fading, so it is the one to watch there.
                     DrawPickerChart(canvas);
+
                     clip.Dispose();
-                    canvas.Transform = Matrix3x2.Identity;
+                    canvas.Transform = _baseTransform;
                     //canvas.restore();
                 }
                 else if (invalidatePickerChart || bottomChartCanvas == null)
                 {
                     //bottomChartBitmap.eraseColor(0);
                     //drawPickerChart(bottomChartCanvas);
-                    bottomChartCanvas = new CanvasRenderTarget(canvas, MeasuredWidth - (HORIZONTAL_PADDING << 1), pickerHeight);
+
+                    // Erased and reused, as the Android original did. Every picker height listener
+                    // sets invalidatePickerChart on each update tick, so allocating here meant one
+                    // GPU texture per frame for the length of an animation - none of them disposed.
+                    //
+                    // Sized in DIPs like everything else, but at the scaled DPI: the base transform
+                    // blows this up when it is drawn, so a 96 DPI target would arrive soft.
+
+                    if (bottomChartCanvas == null || _pickerCacheHeight != pickerHeight)
+                    {
+                        bottomChartCanvas?.Dispose();
+                        bottomChartCanvas = new CanvasRenderTarget(canvas, MeasuredWidth - (HORIZONTAL_PADDING << 1), pickerHeight, 96 * _rasterizationScale);
+                        _pickerCacheHeight = pickerHeight;
+                    }
+
                     using (var session = bottomChartCanvas.CreateDrawingSession())
                     {
+                        session.Clear(Colors.Transparent);
+
                         DrawPickerChart(session);
                     }
+
                     invalidatePickerChart = false;
                 }
                 if (!instantDraw)
@@ -1128,12 +1378,12 @@ namespace Telegram.Charts
                         //canvas.clipRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom);
                         var clip = canvas.CreateLayer(1, CreateRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom));
                         //canvas.scale(1 + 2 * transitionParams.progress, 1f, pX, pY);
-                        canvas.Transform = Matrix3x2.CreateScale(new Vector2(1 + 2 * transitionParams.progress, 1f), new Vector2(pX, pY));
+                        canvas.Transform = Matrix3x2.CreateScale(new Vector2(1 + 2 * transitionParams.progress, 1f), new Vector2(pX, pY)) * _baseTransform;
                         //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
                         canvas.DrawImage(bottomChartCanvas, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
                         //canvas.restore();
                         clip.Dispose();
-                        canvas.Transform = Matrix3x2.Identity;
+                        canvas.Transform = _baseTransform;
 
 
                     }
@@ -1150,12 +1400,12 @@ namespace Telegram.Charts
 
                         emptyPaint.A = (byte)(transitionParams.progress * 255);
                         //canvas.scale(transitionParams.progress, 1f, pX, pY);
-                        canvas.Transform = Matrix3x2.CreateScale(new Vector2(transitionParams.progress, 1f), new Vector2(pX, pY));
+                        canvas.Transform = Matrix3x2.CreateScale(new Vector2(transitionParams.progress, 1f), new Vector2(pX, pY)) * _baseTransform;
                         //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
                         canvas.DrawImage(bottomChartCanvas, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
                         //canvas.restore();
                         clip.Dispose();
-                        canvas.Transform = Matrix3x2.Identity;
+                        canvas.Transform = _baseTransform;
 
                     }
                     else
@@ -1205,17 +1455,24 @@ namespace Telegram.Charts
                 pickerDelegate.middlePickerArea = new Rect(pickerRect.X, pickerRect.Y, pickerRect.Width, pickerRect.Height);
 
 
-                canvas.FillGeometry(RoundedRect(canvas, (float)pickerRect.Left,
+                // RoundedRect hands back a geometry the caller owns, and these two are rebuilt
+                // every frame the picker is drawn.
+                using (var handle = RoundedRect(canvas, (float)pickerRect.Left,
                         (float)pickerRect.Top - 1,
                         (float)pickerRect.Left + 12,
                         (float)pickerRect.Bottom + 1, 6, 6,
-                        true, false, false, true), pickerSelectorPaint.Color);
+                        true, false, false, true))
+                {
+                    canvas.FillGeometry(handle, pickerSelectorPaint.Color);
+                }
 
-
-                canvas.FillGeometry(RoundedRect(canvas, (float)pickerRect.Right - 12,
+                using (var handle = RoundedRect(canvas, (float)pickerRect.Right - 12,
                         (float)pickerRect.Top - 1, (float)pickerRect.Right,
                         (float)pickerRect.Bottom + 1, 6, 6,
-                        false, true, true, false), pickerSelectorPaint.Color);
+                        false, true, true, false))
+                {
+                    canvas.FillGeometry(handle, pickerSelectorPaint.Color);
+                }
 
                 canvas.FillRectangle(CreateRect(pickerRect.Left + 12,
                         pickerRect.Bottom, pickerRect.Right - 12,
@@ -1340,6 +1597,7 @@ namespace Telegram.Charts
                     startFromMax = 0;
                     startFromMin = 0;
                     minMaxUpdateStep = s;
+                    _minMaxTimestamp = Stopwatch.GetTimestamp();
                 }
             }
 
@@ -1383,7 +1641,7 @@ namespace Telegram.Charts
                 }
                 minMaxUpdateStep = 0;
 
-                AnimatorSet animatorSet = new();
+                AnimatorSet animatorSet = new(_coordinator);
                 animatorSet.PlayTogether(CreateAnimator(currentMaxHeight, newMaxHeight, heightUpdateListener));
 
                 if (useMinHeight)
@@ -1433,7 +1691,7 @@ namespace Telegram.Charts
 
         protected ValueAnimator CreateAnimator(float f1, float f2, AnimatorUpdateListener l)
         {
-            ValueAnimator a = ValueAnimator.OfFloat(f1, f2);
+            ValueAnimator a = ValueAnimator.OfFloat(_coordinator, f1, f2);
             a.SetDuration(ANIM_DURATION);
             a.setInterpolator(INTERPOLATOR);
             a.AddUpdateListener(l);
@@ -1468,7 +1726,7 @@ namespace Telegram.Charts
             int y = (int)point.Position.Y;
 
             capturedTime = Logger.TickCount;
-            canvas.CapturePointer(args.Pointer);
+            LayoutRoot.CapturePointer(args.Pointer);
             //getParent().requestDisallowInterceptTouchEvent(true);
             bool captured = pickerDelegate.Capture(x, y, 0);
             if (captured)
@@ -1497,6 +1755,9 @@ namespace Telegram.Charts
             {
                 return;
             }
+
+            // Counted, not timed: the handler has several early returns, and Tally unwinds by label,
+            // so a pair around it would charge an abandoned scope to the frame that follows.
 
             var point = args.GetCurrentPoint(this);
 
@@ -1527,11 +1788,11 @@ namespace Telegram.Charts
                 //getParent().requestDisallowInterceptTouchEvent(rez);
                 if (rez)
                 {
-                    canvas.CapturePointer(args.Pointer);
+                    LayoutRoot.CapturePointer(args.Pointer);
                 }
                 else
                 {
-                    canvas.ReleasePointerCapture(args.Pointer);
+                    LayoutRoot.ReleasePointerCapture(args.Pointer);
                 }
 
                 return /*true*/;
@@ -1554,11 +1815,11 @@ namespace Telegram.Charts
                 //getParent().requestDisallowInterceptTouchEvent(disable);
                 if (disable)
                 {
-                    canvas.CapturePointer(args.Pointer);
+                    LayoutRoot.CapturePointer(args.Pointer);
                 }
                 else
                 {
-                    canvas.ReleasePointerCapture(args.Pointer);
+                    LayoutRoot.ReleasePointerCapture(args.Pointer);
                 }
                 SelectXOnChart(x, y);
             }
@@ -1608,7 +1869,7 @@ namespace Telegram.Charts
             pickerDelegate.Uncapture();
             UpdateLineSignature();
             //getParent().requestDisallowInterceptTouchEvent(false);
-            canvas.ReleasePointerCapture(args.Pointer);
+            LayoutRoot.ReleasePointerCapture(args.Pointer);
             chartCaptured = false;
             OnActionUp();
             Invalidate();
@@ -2177,7 +2438,7 @@ namespace Telegram.Charts
                 animatedToPickerMaxHeight = max;
                 pickerAnimator?.Cancel();
 
-                AnimatorSet animatorSet = new();
+                AnimatorSet animatorSet = new(_coordinator);
                 animatorSet.PlayTogether(
                     CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, pickerHeightUpdateListener),
                     CreateAnimator(pickerMinHeight, animatedToPickerMinHeight, pickerMinHeightUpdateListener)

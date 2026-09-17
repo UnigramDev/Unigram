@@ -72,7 +72,7 @@ namespace Telegram.Charts
                 canvas.Transform = Matrix3x2.CreateScale(
                     new Vector2(1 + 2 * transitionParams.progress, 1f),
                     new Vector2(transitionParams.pX, transitionParams.pY)
-                );
+                ) * _baseTransform;
 
             }
             else if (transitionMode == TRANSITION_MODE_CHILD)
@@ -83,7 +83,7 @@ namespace Telegram.Charts
                 canvas.Transform = Matrix3x2.CreateScale(
                     new Vector2(transitionParams.progress, 1f),
                     new Vector2(transitionParams.pX, transitionParams.pY)
-                );
+                ) * _baseTransform;
             }
             else if (transitionMode == TRANSITION_MODE_ALPHA_ENTER)
             {

@@ -516,8 +516,8 @@ namespace Telegram.Controls.Cells
             zoomedChartView.transitionParams = param;
             chartView.transitionParams = param;
 
-            int max = 0;
-            int min = int.MaxValue;
+            long max = 0;
+            long min = long.MaxValue;
             for (int i = 0; i < data.chartData.lines.Count; i++)
             {
                 if (data.chartData.lines[i].y[dateIndex] > max)
@@ -537,7 +537,7 @@ namespace Telegram.Controls.Cells
 
             chartView.FillTransitionParams(param);
             zoomedChartView.FillTransitionParams(param);
-            ValueAnimator animator = ValueAnimator.OfFloat(inz ? 0f : 1f, inz ? 1f : 0f);
+            ValueAnimator animator = ValueAnimator.OfFloat(chartView.Coordinator, inz ? 0f : 1f, inz ? 1f : 0f);
             animator.AddUpdateListener(new AnimatorUpdateListener(animation =>
             {
                 float fullWidth = chartView.chartWidth / (chartView.pickerDelegate.pickerEnd - chartView.pickerDelegate.pickerStart);

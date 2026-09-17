@@ -55,5 +55,28 @@ namespace Telegram.Charts
         public CanvasHorizontalAlignment? TextAlignment { get; set; }
 
 
+        // A paint is drawn with on every frame, so the D2D and DWrite objects it needs are kept
+        // here rather than built per call. Both are configured by the draw extensions, which only
+        // assign a property when it actually changes - Win2D drops the realized native object on
+        // every set, so writing the same value back would rebuild it just as often.
+
+        private CanvasTextFormat _textFormat;
+        internal CanvasTextFormat TextFormat => _textFormat ??= new CanvasTextFormat();
+
+        private CanvasStrokeStyle _strokeStyle;
+        internal CanvasStrokeStyle StrokeStyle => _strokeStyle ??= new CanvasStrokeStyle();
+
+        /// <summary>Releases both. Either is rebuilt by its accessor on next use, so this is safe
+        /// on a paint that will be drawn with again.</summary>
+        internal void Release()
+        {
+            _textFormat?.Dispose();
+            _textFormat = null;
+
+            _strokeStyle?.Dispose();
+            _strokeStyle = null;
+        }
+
+
     }
 }

@@ -110,7 +110,7 @@ namespace Telegram.Charts
 
             public void captured()
             {
-                a = ValueAnimator.OfFloat(0, 1f);
+                a = ValueAnimator.OfFloat(view.Coordinator, 0, 1f);
                 a.SetDuration(600);
                 a.setInterpolator(BaseChartView.INTERPOLATOR);
                 a.AddUpdateListener(new AnimatorUpdateListener(animation =>
@@ -360,7 +360,7 @@ namespace Telegram.Charts
                         float moveFromLeft = pickerStart;
                         float moveFromRight = pickerEnd;
 
-                        moveToAnimator = ValueAnimator.OfFloat(0f, 1f);
+                        moveToAnimator = ValueAnimator.OfFloat(view.Coordinator, 0f, 1f);
                         float finalMoveToLeft = moveToLeft;
                         float finalMoveToRight = moveToRight;
                         view.OnPickerJumpTo(finalMoveToLeft, finalMoveToRight, true);
@@ -405,6 +405,8 @@ namespace Telegram.Charts
 
         public interface IListener
         {
+            AnimatorCoordinator Coordinator { get; }
+
             void OnPickerDataChanged();
             void OnPickerJumpTo(float start, float end, bool force);
             void Invalidate();

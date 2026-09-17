@@ -25,6 +25,25 @@ namespace Telegram.Charts.DataView
         public CanvasPathBuilder bottomLinePath;
         public CanvasPathBuilder chartPath;
         public CanvasPathBuilder chartPathPicker;
+
+        /// <summary>Releases the native objects held for drawing. The paths are rebuilt at the top
+        /// of DrawChart and DrawPickerChart, the paints' objects by their own accessors, so this
+        /// leaves the line in the state it was in before its first draw.</summary>
+        public void Release()
+        {
+            bottomLinePath?.Dispose();
+            bottomLinePath = null;
+
+            chartPath?.Dispose();
+            chartPath = null;
+
+            chartPathPicker?.Dispose();
+            chartPathPicker = null;
+
+            bottomLinePaint.Release();
+            paint.Release();
+            selectionPaint.Release();
+        }
         public ValueAnimator animatorIn;
         public ValueAnimator animatorOut;
         public int linesPathBottomSize;
