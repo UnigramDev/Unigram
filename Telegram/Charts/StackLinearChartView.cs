@@ -144,7 +144,7 @@ namespace Telegram.Charts
                             continue;
                         }
 
-                        int[] y = line.line.y;
+                        long[] y = line.line.y;
 
                         float yPercentage;
 
@@ -647,7 +647,7 @@ namespace Telegram.Charts
             base.OnDraw(canvas);
         }
 
-        public override int FindMaxValue(int startXIndex, int endXIndex)
+        public override long FindMaxValue(int startXIndex, int endXIndex)
         {
             return 100;
         }
@@ -721,7 +721,7 @@ namespace Telegram.Charts
                         continue;
                     }
 
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
                     float yPercentage;
 

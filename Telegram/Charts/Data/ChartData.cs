@@ -20,8 +20,8 @@ namespace Telegram.Charts.Data
         public float[] xPercentage;
         public string[] daysLookup;
         public List<Line> lines = new();
-        public int maxValue = 0;
-        public int minValue = int.MaxValue;
+        public long maxValue = 0;
+        public long minValue = long.MaxValue;
 
         public float oneDayPercentage = 0f;
 
@@ -54,10 +54,12 @@ namespace Telegram.Charts.Data
                     lines.Add(l);
                     int len = a.Count - 1;
                     l.id = a.GetStringAt(0);
-                    l.y = new int[len];
+                    l.y = new long[len];
                     for (uint j = 0; j < len; j++)
                     {
-                        l.y[j] = (int)a.GetNumberAt(j + 1);
+                        // Long, not int: a TON graph's values are nanograms, so anything past about
+                        // 2.15 TON overflowed an int here - silently, and before anything drew.
+                        l.y[j] = (long)a.GetNumberAt(j + 1);
                         if (l.y[j] > l.maxValue)
                         {
                             l.maxValue = l.y[j];
@@ -304,13 +306,13 @@ namespace Telegram.Charts.Data
 
         public partial class Line
         {
-            public int[] y;
+            public long[] y;
 
             public SegmentTree segmentTree;
             public string id;
             public string name;
-            public int maxValue = 0;
-            public int minValue = int.MaxValue;
+            public long maxValue = 0;
+            public long minValue = long.MaxValue;
             public string colorKey;
             public Color color = Colors.Black;
             public Color colorDark = Colors.White;

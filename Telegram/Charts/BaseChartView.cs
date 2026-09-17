@@ -822,7 +822,7 @@ namespace Telegram.Charts
 
             if (legendShowing && selectedIndex < chartData.x.Length)
             {
-                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false);
+                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, currency);
             }
 
             invalidatePickerChart = true;
@@ -1536,12 +1536,12 @@ namespace Telegram.Charts
 
         ulong lastTime = 0;
 
-        private void SetMaxMinValue(int newMaxHeight, int newMinHeight, bool animated)
+        private void SetMaxMinValue(long newMaxHeight, long newMinHeight, bool animated)
         {
             SetMaxMinValue(newMaxHeight, newMinHeight, animated, false, false);
         }
 
-        protected void SetMaxMinValue(int newMaxHeight, int newMinHeight, bool animated, bool force, bool useAnimator)
+        protected void SetMaxMinValue(long newMaxHeight, long newMinHeight, bool animated, bool force, bool useAnimator)
         {
             bool heightChanged = true;
             if ((Math.Abs(ChartHorizontalLinesData.lookupHeight(newMaxHeight) - animateToMaxHeight) < thresholdMaxHeight) || newMaxHeight == 0)
@@ -1684,7 +1684,7 @@ namespace Telegram.Charts
             alphaAnimator.Start();
         }
 
-        protected virtual ChartHorizontalLinesData CreateHorizontalLinesData(int newMaxHeight, int newMinHeight)
+        protected virtual ChartHorizontalLinesData CreateHorizontalLinesData(long newMaxHeight, long newMinHeight)
         {
             return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight, currency);
         }
@@ -1873,7 +1873,7 @@ namespace Telegram.Charts
             chartCaptured = false;
             OnActionUp();
             Invalidate();
-            int min = 0;
+            long min = 0;
             if (useMinHeight)
             {
                 min = FindMinValue(startXIndex, endXIndex);
@@ -2005,7 +2005,7 @@ namespace Telegram.Charts
                 return;
             }
 
-            legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false);
+            legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, currency);
             legendSignatureView.setVisibility(Visibility.Visible);
             //legendSignatureView.measure(
             //        MeasureSpec.makeMeasureSpec(MeasuredWidth, MeasureSpec.AT_MOST),
@@ -2035,10 +2035,10 @@ namespace Telegram.Charts
             legendSignatureView.Margin = new Thickness(lXPoint, 22, -lXPoint, 0);
         }
 
-        public virtual int FindMaxValue(int startXIndex, int endXIndex)
+        public virtual long FindMaxValue(int startXIndex, int endXIndex)
         {
             int linesSize = lines.Count;
-            int maxValue = 0;
+            long maxValue = 0;
             for (int j = 0; j < linesSize; j++)
             {
                 if (!lines[j].enabled)
@@ -2046,7 +2046,7 @@ namespace Telegram.Charts
                     continue;
                 }
 
-                int lineMax = lines[j].line.segmentTree.rMaxQ(startXIndex, endXIndex);
+                long lineMax = lines[j].line.segmentTree.rMaxQ(startXIndex, endXIndex);
                 if (lineMax > maxValue)
                 {
                     maxValue = lineMax;
@@ -2056,10 +2056,10 @@ namespace Telegram.Charts
         }
 
 
-        public virtual int FindMinValue(int startXIndex, int endXIndex)
+        public virtual long FindMinValue(int startXIndex, int endXIndex)
         {
             int linesSize = lines.Count;
-            int minValue = int.MaxValue;
+            long minValue = long.MaxValue;
             for (int j = 0; j < linesSize; j++)
             {
                 if (!lines[j].enabled)
@@ -2067,7 +2067,7 @@ namespace Telegram.Charts
                     continue;
                 }
 
-                int lineMin = lines[j].line.segmentTree.rMinQ(startXIndex, endXIndex);
+                long lineMin = lines[j].line.segmentTree.rMinQ(startXIndex, endXIndex);
                 if (lineMin < minValue)
                 {
                     minValue = lineMin;
@@ -2128,10 +2128,10 @@ namespace Telegram.Charts
             if (chartData != null)
             {
                 UpdateIndexes();
-                int min = useMinHeight ? FindMinValue(startXIndex, endXIndex) : 0;
+                long min = useMinHeight ? FindMinValue(startXIndex, endXIndex) : 0;
                 SetMaxMinValue(FindMaxValue(startXIndex, endXIndex), min, false);
                 pickerMaxHeight = 0;
-                pickerMinHeight = int.MaxValue;
+                pickerMinHeight = float.MaxValue;
                 InitPickerMaxHeight();
                 legendSignatureView.setSize(lines.Count);
 
@@ -2218,7 +2218,7 @@ namespace Telegram.Charts
             chartFullWidth = chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart);
 
             UpdateIndexes();
-            int min = useMinHeight ? FindMinValue(startXIndex, endXIndex) : 0;
+            long min = useMinHeight ? FindMinValue(startXIndex, endXIndex) : 0;
             SetMaxMinValue(FindMaxValue(startXIndex, endXIndex), min, animated, force, useAniamtor);
 
             if (legendShowing && !force)
@@ -2407,7 +2407,7 @@ namespace Telegram.Charts
             UpdatePickerMinMaxHeight();
             if (legendShowing)
             {
-                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), true);
+                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), true, currency);
             }
         }
 
@@ -2418,8 +2418,8 @@ namespace Telegram.Charts
                 return;
             }
 
-            int max = 0;
-            int min = int.MaxValue;
+            long max = 0;
+            long min = long.MaxValue;
             foreach (LineViewData l in lines)
             {
                 if (l.enabled && l.line.maxValue > max)
@@ -2433,7 +2433,7 @@ namespace Telegram.Charts
                 }
             }
 
-            if ((min != int.MaxValue && min != animatedToPickerMinHeight) || (max > 0 && max != animatedToPickerMaxHeight))
+            if ((min != long.MaxValue && min != animatedToPickerMinHeight) || (max > 0 && max != animatedToPickerMaxHeight))
             {
                 animatedToPickerMaxHeight = max;
                 pickerAnimator?.Cancel();

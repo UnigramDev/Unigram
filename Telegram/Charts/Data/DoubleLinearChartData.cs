@@ -22,10 +22,10 @@ namespace Telegram.Charts.Data
         {
             base.Measure();
             int n = lines.Count;
-            int max = 0;
+            long max = 0;
             for (int i = 0; i < n; i++)
             {
-                int m = lines[i].maxValue;
+                long m = lines[i].maxValue;
                 if (m > max)
                 {
                     max = m;
@@ -36,14 +36,16 @@ namespace Telegram.Charts.Data
 
             for (int i = 0; i < n; i++)
             {
-                int m = lines[i].maxValue;
+                long m = lines[i].maxValue;
                 if (max == m)
                 {
                     linesK[i] = 1;
                     continue;
                 }
 
-                linesK[i] = max / m;
+                // Cast before dividing, not after: these are two integers, so the ratio that scales
+                // one line onto the other's axis was being truncated to a whole number.
+                linesK[i] = (float)max / m;
             }
         }
     }

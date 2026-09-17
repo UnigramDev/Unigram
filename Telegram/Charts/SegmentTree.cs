@@ -13,10 +13,10 @@ namespace Telegram.Charts
     {
 
         private readonly Node[] heap;
-        private readonly int[] array;
+        private readonly long[] array;
         private readonly int size;
 
-        public SegmentTree(int[] array)
+        public SegmentTree(long[] array)
         {
             this.array = array;
             if (array.Length < 30)
@@ -55,11 +55,11 @@ namespace Telegram.Charts
             }
         }
 
-        public int rMaxQ(int from, int to)
+        public long rMaxQ(int from, int to)
         {
             if (array.Length < 30)
             {
-                int max = int.MinValue;
+                long max = long.MinValue;
                 if (from < 0)
                 {
                     from = 0;
@@ -82,7 +82,7 @@ namespace Telegram.Charts
             return rMaxQ(1, from, to);
         }
 
-        private int rMaxQ(int v, int from, int to)
+        private long rMaxQ(int v, int from, int to)
         {
             Node n = heap[v];
             //If you did a range update that contained this node, you can infer the Min value without going down the tree
@@ -99,8 +99,8 @@ namespace Telegram.Charts
             if (intersects(from, to, n.from, n.to))
             {
                 propagate(v);
-                int leftMin = rMaxQ(2 * v, from, to);
-                int rightMin = rMaxQ(2 * v + 1, from, to);
+                long leftMin = rMaxQ(2 * v, from, to);
+                long rightMin = rMaxQ(2 * v + 1, from, to);
 
                 return Math.Max(leftMin, rightMin);
             }
@@ -108,11 +108,11 @@ namespace Telegram.Charts
             return 0;
         }
 
-        public int rMinQ(int from, int to)
+        public long rMinQ(int from, int to)
         {
             if (array.Length < 30)
             {
-                int min = int.MaxValue;
+                long min = long.MaxValue;
                 if (from < 0)
                 {
                     from = 0;
@@ -135,7 +135,7 @@ namespace Telegram.Charts
             return rMinQ(1, from, to);
         }
 
-        private int rMinQ(int v, int from, int to)
+        private long rMinQ(int v, int from, int to)
         {
             Node n = heap[v];
             //If you did a range update that contained this node, you can infer the Min value without going down the tree
@@ -152,13 +152,13 @@ namespace Telegram.Charts
             if (intersects(from, to, n.from, n.to))
             {
                 propagate(v);
-                int leftMin = rMinQ(2 * v, from, to);
-                int rightMin = rMinQ(2 * v + 1, from, to);
+                long leftMin = rMinQ(2 * v, from, to);
+                long rightMin = rMinQ(2 * v + 1, from, to);
 
                 return Math.Min(leftMin, rightMin);
             }
 
-            return int.MaxValue;
+            return long.MaxValue;
         }
 
         private void propagate(int v)
@@ -173,7 +173,7 @@ namespace Telegram.Charts
             }
         }
 
-        private void change(Node n, int value)
+        private void change(Node n, long value)
         {
             n.pendingVal = value;
             n.sum = n.size() * value;
@@ -196,11 +196,11 @@ namespace Telegram.Charts
 
         struct Node
         {
-            public int sum;
-            public int max;
-            public int min;
+            public long sum;
+            public long max;
+            public long min;
 
-            public int? pendingVal;
+            public long? pendingVal;
             public int from;
             public int to;
 

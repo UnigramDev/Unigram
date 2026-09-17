@@ -16,38 +16,41 @@ namespace Telegram.Charts.DataView
     public partial class ChartHorizontalLinesData
     {
 
-        public int[] values;
+        public long[] values;
         public string[] valuesStr;
         public string[] valuesStr2;
         public int alpha;
 
         public int fixedAlpha = 255;
 
-        public ChartHorizontalLinesData(int newMaxHeight, int newMinHeight, bool useMinHeight, string currency)
+        public ChartHorizontalLinesData(long newMaxHeight, long newMinHeight, bool useMinHeight, string currency)
             : this(newMaxHeight, newMinHeight, useMinHeight, currency, 0)
         {
         }
 
-        public ChartHorizontalLinesData(int newMaxHeight, int newMinHeight, bool useMinHeight, string currency, float k)
+        // The step arithmetic is double rather than float: a TON chart's values are nanograms, and
+        // past 16.7M a float cannot tell consecutive integers apart - which would quantise the step
+        // itself, and the step is what every label is built from.
+        public ChartHorizontalLinesData(long newMaxHeight, long newMinHeight, bool useMinHeight, string currency, double k)
         {
             if (!useMinHeight)
             {
-                int v = newMaxHeight;
+                long v = newMaxHeight;
                 if (newMaxHeight > 100)
                 {
                     v = round(newMaxHeight);
                 }
 
-                int step = Math.Max(1, (int)Math.Ceiling(v / 5f));
+                long step = Math.Max(1, (long)Math.Ceiling(v / 5d));
 
                 int n;
                 if (v < 6)
                 {
-                    n = Math.Max(2, v + 1);
+                    n = (int)Math.Max(2, v + 1);
                 }
                 else if (v / 2 < 6)
                 {
-                    n = v / 2 + 1;
+                    n = (int)(v / 2 + 1);
                     if (v % 2 != 0)
                     {
                         n++;
@@ -58,7 +61,7 @@ namespace Telegram.Charts.DataView
                     n = 6;
                 }
 
-                values = new int[n];
+                values = new long[n];
                 valuesStr = new string[n];
 
                 for (int i = 1; i < n; i++)
@@ -70,31 +73,31 @@ namespace Telegram.Charts.DataView
             else
             {
                 int n;
-                int dif = newMaxHeight - newMinHeight;
-                float step;
+                long dif = newMaxHeight - newMinHeight;
+                double step;
                 if (dif == 0)
                 {
                     newMinHeight--;
                     n = 3;
-                    step = 1f;
+                    step = 1d;
                 }
                 else if (dif < 6)
                 {
-                    n = Math.Max(2, dif + 1);
-                    step = 1f;
+                    n = (int)Math.Max(2, dif + 1);
+                    step = 1d;
                 }
                 else if (dif / 2 < 6)
                 {
-                    n = dif / 2 + dif % 2 + 1;
-                    step = 2f;
+                    n = (int)(dif / 2 + dif % 2 + 1);
+                    step = 2d;
                 }
                 else
                 {
-                    step = (newMaxHeight - newMinHeight) / 5f;
+                    step = (newMaxHeight - newMinHeight) / 5d;
                     if (step <= 0)
                     {
                         step = 1;
-                        n = Math.Max(2, newMaxHeight - newMinHeight + 1);
+                        n = (int)Math.Max(2, newMaxHeight - newMinHeight + 1);
                     }
                     else
                     {
@@ -102,7 +105,7 @@ namespace Telegram.Charts.DataView
                     }
                 }
 
-                values = new int[n];
+                values = new long[n];
                 valuesStr = new string[n];
                 if (k > 0)
                 {
@@ -112,16 +115,16 @@ namespace Telegram.Charts.DataView
                 bool skipFloatValues = step / k < 1;
                 for (int i = 0; i < n; i++)
                 {
-                    values[i] = newMinHeight + (int)(i * step);
+                    values[i] = newMinHeight + (long)(i * step);
                     valuesStr[i] = formatWholeNumber(values[i], dif, currency);
                     if (k > 0)
                     {
-                        float v = values[i] / k;
+                        double v = values[i] / k;
                         if (skipFloatValues)
                         {
-                            if (v - (int)v < 0.01f)
+                            if (v - (long)v < 0.01d)
                             {
-                                valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k), currency);
+                                valuesStr2[i] = formatWholeNumber((long)v, (long)(dif / k), currency);
                             }
                             else
                             {
@@ -130,28 +133,28 @@ namespace Telegram.Charts.DataView
                         }
                         else
                         {
-                            valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k), currency);
+                            valuesStr2[i] = formatWholeNumber((long)v, (long)(dif / k), currency);
                         }
                     }
                 }
             }
         }
 
-        public static int lookupHeight(int maxValue)
+        public static long lookupHeight(long maxValue)
         {
-            int v = maxValue;
+            long v = maxValue;
             if (maxValue > 100)
             {
                 v = round(maxValue);
             }
 
-            int step = (int)Math.Ceiling(v / 5f);
+            long step = (long)Math.Ceiling(v / 5d);
             return step * 5;
         }
 
         public static readonly string[] s = { "", "K", "M", "G", "T", "P" };
 
-        private static string formatWholeNumber(int v, int dif, string currency)
+        private static string formatWholeNumber(long v, long dif, string currency)
         {
             if (currency != null)
             {
@@ -162,7 +165,7 @@ namespace Telegram.Charts.DataView
             {
                 return "0";
             }
-            float num_ = v;
+            double num_ = v;
             int count = 0;
             if (dif == 0)
             {
@@ -185,10 +188,10 @@ namespace Telegram.Charts.DataView
             }
             else
             {
-                if (num_ == (int)num_)
+                if (num_ == (long)num_)
                 {
                     //return String.Format(Locale.ENGLISH, "%s%s", formatCount((int)num_), s[count]);
-                    return string.Format(CultureInfo.InvariantCulture, "{0}{1}", formatCount((int)num_), s[count]);
+                    return string.Format(CultureInfo.InvariantCulture, "{0}{1}", formatCount((long)num_), s[count]);
                 }
                 else
                 {
@@ -198,9 +201,9 @@ namespace Telegram.Charts.DataView
             }
         }
 
-        private static int round(int maxValue)
+        private static long round(long maxValue)
         {
-            float k = maxValue / 5;
+            long k = maxValue / 5;
             if (k % 10 == 0)
             {
                 return maxValue;
@@ -211,7 +214,7 @@ namespace Telegram.Charts.DataView
             }
         }
 
-        public static string formatCount(int count)
+        public static string formatCount(long count)
         {
             if (count < 1000)
             {
@@ -221,7 +224,7 @@ namespace Telegram.Charts.DataView
             List<string> strings = new();
             while (count != 0)
             {
-                int mod = count % 1000;
+                long mod = count % 1000;
                 count /= 1000;
                 if (count > 0)
                 {

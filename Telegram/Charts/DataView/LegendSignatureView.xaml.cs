@@ -120,7 +120,7 @@ namespace Telegram.Charts.DataView
         }
 
 
-        public void setData(int index, long date, List<LineViewData> lines, bool animateChanges)
+        public void setData(int index, long date, List<LineViewData> lines, bool animateChanges, string currency)
         {
             //int n = holdes.Length;
             //if (animateChanges)
@@ -147,7 +147,7 @@ namespace Telegram.Charts.DataView
                 //if (useHour) hourTime.Text = hourFormat.format(date);
             }
 
-            int sum = 0;
+            long sum = 0;
 
             for (int i = 0; i < lines.Count; i++)
             {
@@ -170,15 +170,15 @@ namespace Telegram.Charts.DataView
                     holdes[i].Visibility = Visibility.Visible;
 
                     holdes[i].Signature = l.name;
-                    holdes[i].Value = FormatWholeNumber(l.y[index]);
+                    holdes[i].Value = FormatWholeNumber(l.y[index], currency);
                     holdes[i].Foreground = new SolidColorBrush(lines[i].lineColor);
 
                     if (showPercentage)
                     {
-                        float v = l.y[index] / (float)sum;
-                        if (v is < 0.1f and not 0f)
+                        double v = l.y[index] / (double)sum;
+                        if (v is < 0.1d and not 0d)
                         {
-                            holdes[i].Percentage = string.Format(CultureInfo.InvariantCulture, "{0:0.0}%", 100f * v);
+                            holdes[i].Percentage = string.Format(CultureInfo.InvariantCulture, "{0:0.0}%", 100d * v);
                         }
                         else
                         {
@@ -239,9 +239,16 @@ namespace Telegram.Charts.DataView
             return Formatter.Date(date, Strings.chatFullDate);
         }
 
-        public string FormatWholeNumber(int v)
+        public string FormatWholeNumber(long v, string currency)
         {
-            float num_ = v;
+            // The tooltip shows the same quantity as the axis and has to say so the same way: a
+            // revenue graph's samples are nanograms, which read as a raw integer without this.
+            if (currency != null)
+            {
+                return Formatter.FormatAmount(v, currency);
+            }
+
+            double num_ = v;
             int count = 0;
             if (v < 10_000)
             {

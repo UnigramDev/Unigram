@@ -16,7 +16,7 @@ namespace Telegram.Charts
     public partial class StackBarChartView : BaseChartView<StackBarChartData, StackBarViewData>
     {
 
-        private int[] yMaxPoints;
+        private long[] yMaxPoints;
 
         public StackBarChartView()
         {
@@ -108,7 +108,7 @@ namespace Telegram.Charts
                         continue;
                     }
 
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
 
                     float xPoint = p / 2 + chartData.xPercentage[i] * (fullWidth - p) - offset;
@@ -159,7 +159,7 @@ namespace Telegram.Charts
                         continue;
                     }
 
-                    int[] y = line.line.y;
+                    long[] y = line.line.y;
 
 
                     float xPoint = p / 2 + chartData.xPercentage[selectedIndex] * (fullWidth - p) - offset;
@@ -247,7 +247,7 @@ namespace Telegram.Charts
 
                 if (yMaxPoints == null || yMaxPoints.Length < nl)
                 {
-                    yMaxPoints = new int[nl];
+                    yMaxPoints = new long[nl];
                 }
 
                 for (int i = 0; i < n; i++)
@@ -263,7 +263,7 @@ namespace Telegram.Charts
                             continue;
                         }
 
-                        int y = line.line.y[i];
+                        long y = line.line.y[i];
                         if (y > yMaxPoints[k])
                         {
                             yMaxPoints[k] = y;
@@ -323,7 +323,7 @@ namespace Telegram.Charts
             int n = chartData.lines[0].y.Length;
             int k = chartData.lines.Count;
 
-            chartData.ySum = new int[n];
+            chartData.ySum = new long[n];
             for (int i = 0; i < n; i++)
             {
                 chartData.ySum[i] = 0;
@@ -345,7 +345,7 @@ namespace Telegram.Charts
 
         }
 
-        public override int FindMaxValue(int startXIndex, int endXIndex)
+        public override long FindMaxValue(int startXIndex, int endXIndex)
         {
             return chartData.FindMax(startXIndex, endXIndex);
         }
@@ -358,13 +358,13 @@ namespace Telegram.Charts
                 return;
             }
 
-            int max = 0;
+            long max = 0;
 
             int n = chartData.x.Length;
             int nl = lines.Count;
             for (int i = 0; i < n; i++)
             {
-                int h = 0;
+                long h = 0;
                 for (int k = 0; k < nl; k++)
                 {
                     StackBarViewData l = lines[k];
@@ -405,7 +405,7 @@ namespace Telegram.Charts
             int nl = lines.Count;
             for (int i = 0; i < n; i++)
             {
-                int h = 0;
+                long h = 0;
                 for (int k = 0; k < nl; k++)
                 {
                     StackBarViewData l = lines[k];
