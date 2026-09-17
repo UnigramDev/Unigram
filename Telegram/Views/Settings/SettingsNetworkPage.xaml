@@ -22,15 +22,14 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
-                <Grid MaxWidth="1000"
-                      Margin="24,0">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <controls:StorageChart x:Name="Chart"
                                            Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
-                                           SeparatorBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           SeparatorBrush="{ThemeResource LayerFillColorDefaultBrush}"
                                            Margin="0,16,0,16" />
                     <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertSinceDate(ViewModel.SinceDate, ViewModel.TotalBytes), Mode=OneWay}"
                                Style="{StaticResource InfoBodyTextBlockStyle}"

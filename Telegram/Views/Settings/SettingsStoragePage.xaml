@@ -640,7 +640,7 @@
                         </Grid.RowDefinitions>
                         <controls:StorageChart x:Name="Chart"
                                                Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
-                                               SeparatorBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                               SeparatorBrush="{ThemeResource LayerFillColorDefaultBrush}"
                                                Margin="0,16,0,16" />
 
                         <TextBlock x:Name="Subtitle"

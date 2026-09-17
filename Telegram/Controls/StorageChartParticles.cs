@@ -14,11 +14,11 @@ namespace Telegram.Controls
 {
     // The icons drifting out through StorageChart's ring.
     //
-    // Ported from Android's CacheChart, which rasterizes one SVG per sector and stamps it around the
-    // arc every 7 degrees inside the sector's own draw pass - so the whole field is redrawn on the
-    // UI thread every frame. Here the
-    // glyph is a TextBlock rasterized once into a frozen CompositionVisualSurface and every particle
-    // is a SpriteVisual sharing that one brush, so the UI thread does nothing once the field exists.
+    // Ported from CacheChart, which rasterizes one SVG per sector and stamps it around the arc every
+    // 7 degrees inside the sector's own draw pass - so the whole field is redrawn on the UI thread
+    // every frame. Here the glyph is a TextBlock rasterized once into a frozen
+    // CompositionVisualSurface and every particle is a SpriteVisual sharing that one brush, so the
+    // UI thread does nothing once the field exists.
     //
     // Each particle's motion is a loop with a period of its own, and it is baked into key frames
     // rather than expressed. The first cut gave every particle three ExpressionAnimations - offset,
@@ -32,7 +32,7 @@ namespace Telegram.Controls
     // changes. It only has to be right in the state where the particles are visible at all, which is
     // the settled loaded ring, and that geometry does not move.
     //
-    // The arithmetic is Android's, lifted out of CacheChart.Sector.drawParticles.
+    // The arithmetic is lifted out of CacheChart.Sector.drawParticles.
     // One sector's slice of the ring, and the icon that belongs to it.
     public struct StorageChartBand
     {
@@ -53,7 +53,7 @@ namespace Telegram.Controls
 
         private const float Sqrt2 = 1.4142136f;
 
-        // Android's trip is ten seconds at unit speed.
+        // A trip is ten seconds at unit speed.
         private const float Period = 10;
 
         // A band with room for fewer than this many gets none at all. One or two icons adrift in a
@@ -78,11 +78,11 @@ namespace Telegram.Controls
             _container = container;
             _linear = compositor.CreateLinearEasingFunction();
 
-            // The one expression left. Android holds the field down until the chart has nearly
-            // finished loading, and the curve is steep enough that it is still invisible at three
-            // quarters. S.Particles is the chart hiding it while the bands it was built from are
-            // out of date. On the container, so it multiplies through every particle for the price
-            // of one instead of sitting inside all of them.
+            // The one expression left. The field is held down until the chart has nearly finished
+            // loading, and the curve is steep enough that it is still invisible at three quarters.
+            // S.Particles is the chart hiding it while the bands it was built from are out of date.
+            // On the container, so it multiplies through every particle for the price of one instead
+            // of sitting inside all of them.
             var fade = compositor.CreateExpressionAnimation(
                 "Max(0, (1 - S.Loading) / 0.75 - 0.75) * (1 - S.Complete) * S.Particles");
 
@@ -108,14 +108,13 @@ namespace Telegram.Controls
             Rebuild();
         }
 
-        // One band per sector, each with the icon for its category - which is what Android draws,
-        // and what a single glyph for the whole ring never was.
+        // One band per sector, each with the icon for its category, which a single glyph shared by
+        // the whole ring never was.
         //
-        // A band's particles are placed on a grid of `step` degrees, the way Android walks the
-        // sector's range in sevens, and only on the steps that fall strictly inside it. Android can
-        // afford to overshoot because it clips each particle to its sector's path; nothing clips
-        // angularly here, so a particle past the edge would be the wrong icon over the next
-        // category.
+        // A band's particles are placed on a grid of `step` degrees and only on the steps that fall
+        // strictly inside it. Clipping each particle to its sector's path, which is how the original
+        // affords to overshoot, is not available here - nothing clips angularly - so a particle past
+        // the edge would be the wrong icon over the next category.
         public void SetBands(IList<StorageChartBand> bands)
         {
             _bands = bands;
@@ -167,9 +166,9 @@ namespace Telegram.Controls
             //
             // A particle is a square sprite centred on its step, so one placed closer than this to
             // the edge of its band hangs over the separator and into the next category - wearing the
-            // wrong icon. Android never has to think about it: every particle is clipped to its
-            // sector's path, so one at the edge is simply cut in half. Nothing clips angularly here,
-            // so the band is narrowed instead and the particles keep clear of the edge.
+            // wrong icon. Clipping each particle to its sector's path would cut one at the edge in
+            // half and settle it, but nothing clips angularly here, so the band is narrowed instead
+            // and the particles keep clear of the edge.
             var inset = _glyph * Sqrt2 / 2 / ((_inner + _outer) / 2) * 180 / (float)Math.PI;
 
             foreach (var band in _bands)
@@ -202,11 +201,11 @@ namespace Telegram.Controls
             var direction = new Vector2((float)Math.Cos(radians), (float)Math.Sin(radians));
 
             // Both of these are Math.sin of an angle in degrees fed to a function that wants
-            // radians. Android means it as a hash, not as a curve, so it is copied as written.
+            // radians. It is meant as a hash, not as a curve, so it is copied as written.
             var speed = 1f + ((float)Math.Sin(angle * 2000) + 1) * .25f;
             var jitter = .8f + ((float)Math.Sin(angle) + 1) * .25f;
 
-            // Android's t is ((time + 100) * speed) % 1, so at time zero the particle is already
+            // Upstream t is ((time + 100) * speed) % 1, so at time zero the particle is already
             // this far along. With one loop per particle, that is simply where its track starts.
             var phase = Frac(100 * speed);
 
@@ -255,8 +254,8 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, Position(1, direction), _linear);
             }
 
-            // Each particle loops on a clock of its own, which is what Android's per-particle speed
-            // amounts to once the shared unbounded time is gone.
+            // Each particle loops on a clock of its own, which is what a per-particle speed amounts
+            // to once the shared unbounded time is gone.
             var duration = TimeSpan.FromSeconds(Period / speed);
 
             foreach (var animation in new KeyFrameAnimation[] { offset, opacity, scale })

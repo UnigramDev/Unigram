@@ -36,8 +36,8 @@ namespace Telegram.Controls
     // drifting out through the ring (StorageChartParticles). A page gives it a list and a background
     // colour and nothing else.
     //
-    // NOTHING HERE RUNS PER FRAME. Android drives all of it from dispatchDraw; doing the same from
-    // CompositionTarget.Rendering is a frame of ~90 property writes, eleven of them through XAML
+    // NOTHING HERE RUNS PER FRAME. The original drives all of it from its draw pass; doing the same
+    // from CompositionTarget.Rendering is a frame of ~90 property writes, eleven of them through XAML
     // element visuals, so the XAML tree is dirtied every frame on top of the compositor's own work,
     // and it is visibly laggy. Instead:
     //
@@ -55,7 +55,8 @@ namespace Telegram.Controls
     // whose trims are being re-cut every frame.
     public partial class StorageChart : Grid
     {
-        // Android's dp figures. A UWP effective pixel is the same thing, so they carry over as-is.
+        // The original's dp figures. A UWP effective pixel is the same thing, so they carry over
+        // as-is.
         private const float Diameter = 172;
 
         // The ring's own surface. Wide enough for a selected sector, which grows outwards by
@@ -66,9 +67,9 @@ namespace Telegram.Controls
         private const float ThicknessLoaded = 38;
         private const float ThicknessLoading = 10;
 
-        // Android's gap between sectors, in degrees. A gap measured in degrees is a wedge: at 2
-        // degrees it is 1.7px across at the ring's inner edge and 3.0px at the outer, because those
-        // radii are 48 and 86 - it visibly flares. Android softens it by insetting each sector's
+        // The gap between sectors, in degrees. A gap measured in degrees is a wedge: at 2 degrees
+        // it is 1.7px across at the ring's inner edge and 3.0px at the outer, because those radii
+        // are 48 and 86 - it visibly flares. The original softens it by insetting each sector's
         // inner arc by a quarter of the separator, which makes the sides slightly non-radial, and a
         // stroke cannot do that at all: both ends of a flat-capped arc are chords perpendicular to
         // the tangent, which is to say radial lines.
@@ -82,9 +83,9 @@ namespace Telegram.Controls
         private const float GlyphSize = 15;
         private const int SectorCount = 11;
 
-        // A composition ellipse geometry trims from twelve o'clock, clockwise; Android's angles run
-        // from three. Every sector's rotation crosses this. If the ring ever comes out turned a
-        // quarter, this is the line to change.
+        // A composition ellipse geometry trims from twelve o'clock, clockwise; the angles every
+        // sector is laid out in run from three. Every rotation crosses this. If the ring ever comes
+        // out turned a quarter, this is the line to change.
         private const float TrimZero = 90;
 
         private const double LoadingDuration = 750;
@@ -93,16 +94,15 @@ namespace Telegram.Controls
         private const double TextDuration = 150;
         private const double SelectDuration = 200;
 
-        // Android grows the selected sector by insetting its outer rect by -dp(9), so the outer edge
-        // moves out and the inner edge stays. On a stroke that is half of it on the radius and all
-        // of it on the width.
+        // A selected sector grows outwards only - the outer edge moves out, the inner edge stays.
+        // On a stroke that is half of it on the radius and all of it on the width.
         private const float SelectGrow = 9;
 
-        // dispatchTouchEvent's dp(14).
+        // How far past the rim a pointer still counts as being in the ring.
         private const float HitSlop = 14;
 
-        // Theme.key_statisticChartLine_* in Android's default theme, which is where CacheChart's
-        // DEFAULT_COLORS point. The app's palette in LineViewData agrees on the seven it has.
+        // CacheChart's DEFAULT_COLORS. The app's own palette in LineViewData agrees on the seven
+        // it has.
         private static readonly Color[] DefaultColors =
         {
             Color.FromArgb(0xFF, 0x58, 0xA8, 0xED), // lightblue
@@ -128,12 +128,12 @@ namespace Telegram.Controls
         {
             public const float Period = 5400;
 
-            // Android scales elapsed time by .6 before taking it modulo the period, so one turn of
+            // Elapsed time is scaled by this before being taken modulo the period, so one turn of
             // the spinner is nine seconds of wall clock.
             public const float Rate = .6f;
 
-            // androidx's FastOutSlowInInterpolator, which is what CircularProgressDrawable uses. It
-            // is a path interpolator there, sampled from these same control points.
+            // FastOutSlowInInterpolator, which is what CircularProgressDrawable uses. It is a path
+            // interpolator there, sampled from these same control points.
             private static readonly CubicBezierInterpolator _fastOutSlowIn = new(.4, 0, .2, 1);
 
             public static void GetSegments(float t, out float from, out float to)
@@ -191,8 +191,8 @@ namespace Telegram.Controls
         private readonly CompositionPropertySet _state;
         private readonly CompositionPropertySet _chart;
 
-        // The spinner's window - Android's minAngle and maxAngle. Every sector takes a fixed share
-        // of it while loading, so this is the only thing the sampled animation drives.
+        // The spinner's window - its minimum and maximum angle. Every sector takes a fixed share of
+        // it while loading, so this is the only thing the sampled animation drives.
         private readonly CompositionPropertySet _window;
 
 
@@ -255,9 +255,9 @@ namespace Telegram.Controls
             _compositor = BootStrapper.Current.Compositor;
 
             _linear = _compositor.CreateLinearEasingFunction();
-            // Android's EASE_OUT_QUINT and EASE_OUT. The control points are the ones
-            // Telegram.Charts.CubicBezierInterpolator carries under those names; that class solves
-            // the curve on the CPU, and what is wanted here is for the compositor to have it.
+            // The control points Telegram.Charts.CubicBezierInterpolator carries as EaseOutQuint
+            // and EaseOut. That class solves the curve on the CPU, and what is wanted here is for
+            // the compositor to have it.
             _easeOutQuint = _compositor.CreateCubicBezierEasingFunction(new Vector2(.23f, 1), new Vector2(.32f, 1));
             _easeOut = _compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(.58f, 1));
 
@@ -275,7 +275,7 @@ namespace Telegram.Controls
 
             RestoreThickness();
 
-            // The spinner's window - Android's minAngle and maxAngle. Every sector takes a fixed
+            // The spinner's window - its minimum and maximum angle. Every sector takes a fixed
             // share of it while loading, so this is the only thing the sampled animation drives.
             _window = _compositor.CreatePropertySet();
             _window.InsertScalar("From", 0);
@@ -301,9 +301,8 @@ namespace Telegram.Controls
 
             _trackVisual.StartAnimation("Opacity", Expression("S.Loading"));
 
-            // Android does not touch the sector angles when the cache turns out to be empty
-            // (setSegments leaves them where they are and draws with alpha = 1 - complete), so the
-            // ring thins to 10px and fades while the green ring and the tick come up behind it.
+            // The sector angles are left where they are when the cache turns out to be empty, and
+            // the ring thins to 10px and fades while the green ring and the tick come up behind it.
             // Unwinding every trim to zero at the same time, which is what this used to do, reads as
             // the chart falling apart rather than being replaced.
             _shapeVisual.StartAnimation("Opacity", Expression("1 - S.Complete"));
@@ -538,7 +537,7 @@ namespace Telegram.Controls
         }
 
         // While loading, the sectors tile the spinner's window rather than each running its own arc
-        // 80ms behind the last, the way Android stacks them.
+        // 80ms behind the last, the way the original stacks them.
         //
         // That is what makes the settle clean. Interpolating a sector's centre and half-width is
         // interpolating its two boundaries, so the ring stays partitioned at every intermediate
@@ -586,7 +585,7 @@ namespace Telegram.Controls
             // nothing ever wraps; the shape carries the angle instead, the way the separators
             // already did.
             //
-            // The trim starts at twelve o'clock and Android's angles start at three, which is what
+            // The trim starts at twelve o'clock and the sector angles start at three, which is what
             // the offset is for.
             sector.Shape.StartAnimation("RotationAngleInDegrees",
                 SectorExpression(sector, "B.Center - B.Size + " + TrimZero));
@@ -596,16 +595,15 @@ namespace Telegram.Controls
             // caller filled holds a share of the window and none of them is zero.
             sector.Shape.StartAnimation("StrokeThickness", SectorExpression(sector, ThicknessExpression2));
 
-            // Out with the sector when it grows: Android's label radius is
-            // (rectF.width() + innerRect.width()) / 4, and rectF is the one that was inset by the
-            // selection, so the label moves by half of what the outer edge does.
+            // Out with the sector when it grows: the label radius is halfway between the two edges,
+            // and only the outer one moves on selection, so the label moves by half of what it does.
             sector.LabelVisual.StartAnimation("Translation", SectorExpression(sector,
                 "Vector3(" +
                 "Cos(B.Center * 0.017453292) * ((C.Diameter - C.Thickness) / 2 + T.Selected * " + Half + "), " +
                 "Sin(B.Center * 0.017453292) * ((C.Diameter - C.Thickness) / 2 + T.Selected * " + Half + "), 0)"));
 
-            // Android's angle zero is three o'clock, and the line is drawn along +X, so the
-            // sector's start boundary is the rotation with no correction.
+            // Angle zero is three o'clock and the line is drawn along +X, so the sector's start
+            // boundary is the rotation with no correction.
             sector.Separator.StartAnimation("RotationAngleInDegrees", SectorExpression(sector, "B.Center - B.Size"));
             // Invariant, because a float interpolated into an expression string under a comma
             // decimal locale writes "2,5" and the parser will not have it.
@@ -613,10 +611,9 @@ namespace Telegram.Controls
                 "B.Size > 0.0001 ? " + SeparatorWidth.ToString(CultureInfo.InvariantCulture) + " : 0"));
 
             sector.LabelVisual.StartAnimation("Opacity", SectorExpression(sector, "T.TextAlpha * (1 - S.Loading) * (1 - S.Complete)"));
-            // Android does not do this - its textScale comes from the sector's share and nothing
-            // else - but the ring grows by a quarter of its width on selection, and a label that
-            // stays put against that reads as a mistake. Set SelectText to 0 for Android's
-            // behaviour.
+            // Ours alone: textScale is otherwise the sector's share and nothing else, but the ring
+            // grows by a quarter of its width on selection, and a label that stays put against that
+            // reads as a mistake. Set SelectText to 0 to drop it.
             sector.LabelVisual.StartAnimation("Scale", SectorExpression(sector,
                 "Vector3(T.TextScale * (1 + T.Selected * " + SelectText + "), " +
                 "T.TextScale * (1 + T.Selected * " + SelectText + "), 1)"));
@@ -639,9 +636,9 @@ namespace Telegram.Controls
         {
             var sector = new Sector();
 
-            // Android fills each sector with a radial gradient centred on the chart, running from a
-            // slightly lightened colour at 30% of dp(86) out to the flat colour at the rim. On a
-            // stroke that band is most of the ring's width when it is dp(38) thick, so it shows.
+            // Each sector is filled with a radial gradient centred on the chart, running from a
+            // slightly lightened colour at 30% of the 86px radius out to the flat colour at the rim.
+            // On a stroke that band is most of the ring's width at 38px thick, so it shows.
             sector.Stop0 = _compositor.CreateColorGradientStop(.3f, BlendOver(color, Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF)));
             sector.Stop1 = _compositor.CreateColorGradientStop(1f, BlendOver(color, Color.FromArgb(0x03, 0x00, 0x00, 0x00)));
 
@@ -712,7 +709,7 @@ namespace Telegram.Controls
 
         private static Geometry BuildCheck()
         {
-            // The three points of Android's TYPE_CACHE tick, as fractions of the chart box.
+            // The three points of the tick, as fractions of the chart box.
             var figure = new PathFigure { StartPoint = new Point(Diameter * .348, Diameter * .538) };
             figure.Segments.Add(new LineSegment { Point = new Point(Diameter * .447, Diameter * .636) });
             figure.Segments.Add(new LineSegment { Point = new Point(Diameter * .678, Diameter * .402) });
@@ -739,7 +736,7 @@ namespace Telegram.Controls
         #region Spinner
 
         // getSegments has no closed form, so it is sampled. 120 steps over the period is one sample
-        // every 45ms of Android time - the curve moves at most .37 degrees per ms, so a linear
+        // every 45ms of spinner time - the curve moves at most .37 degrees per ms, so a linear
         // segment across one step is within about a degree of the real thing.
         private const int SpinSteps = 120;
 
@@ -779,8 +776,8 @@ namespace Telegram.Controls
 
             _spinning = false;
 
-            // Android freezes the spinner's clock the moment loading ends, so the ring unwinds
-            // from wherever it had got to rather than from a phase that kept running underneath the
+            // The spinner's clock freezes the moment loading ends, so the ring unwinds from
+            // wherever it had got to rather than from a phase that kept running underneath the
             // transition. Stopping an animation leaves the property at its last value, which is
             // exactly that.
             _window.StopAnimation("From");
@@ -795,7 +792,7 @@ namespace Telegram.Controls
 
                 // The value at the end of the loop is the one just before it restarts, not the one
                 // at zero - otherwise the last segment runs the whole seven turns backwards instead
-                // of jumping the way Android's per-frame evaluation does.
+                // of jumping the way a per-frame evaluation does.
                 var t = s == SpinSteps
                     ? CircularProgress.Period - 1
                     : progress * CircularProgress.Period;
@@ -893,11 +890,38 @@ namespace Telegram.Controls
 
         #region Glyph
 
-        // The ring behind the spinner is the one colour here that is neither the caller's nor fixed,
+        // The track behind the spinner is the one colour here that is neither the caller's nor fixed,
         // and it only has to read as "slightly lighter than the page".
+        //
+        // Both ends of the separator's colour move with the theme - the overlay the page passes and
+        // the Mica tint under it - and a ThemeResource may hand back the same brush with a new
+        // colour rather than a new brush, which would not raise the property changed.
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
             UpdateTrack();
+            UpdateSeparator();
+        }
+
+        // What the window sits on, which is what a separator punched out of the ring can be.
+        //
+        // Mica's own tints, so that turning the effect off does not change the window's colour, only
+        // its depth: MicaController::sc_lightThemeColor and sc_darkThemeColor. High contrast wins
+        // over the theme - the system's background colour is the only one that respects the user's
+        // scheme.
+        //
+        // Telegram.Host.WindowBackdrop says the same thing for the window itself, and is the place
+        // to check if these ever move. It cannot be shared from here: Host is compiled only by the
+        // Win32 flavour, and this control ships in all of them.
+        private Color Behind()
+        {
+            if (new AccessibilitySettings().HighContrast)
+            {
+                return new UISettings().GetColorValue(UIColorType.Background);
+            }
+
+            return ActualTheme == ElementTheme.Dark
+                ? Color.FromArgb(0xFF, 0x20, 0x20, 0x20)
+                : Color.FromArgb(0xFF, 0xF3, 0xF3, 0xF3);
         }
 
         private void UpdateTrack()
@@ -909,6 +933,11 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            // ActualTheme is not settled until the chart is in a tree, and it does not raise a
+            // change for the value it had all along.
+            UpdateTrack();
+            UpdateSeparator();
+
             if (_loading)
             {
                 StartSpin();
@@ -951,10 +980,10 @@ namespace Telegram.Controls
                 return;
             }
 
-            // The icons are decoration and nothing else - the ring says everything they say. Android
-            // gates them on LiteMode.FLAGS_CHAT; the closest thing here is the transitions flag,
-            // which also carries the system's own "play animations in Windows" setting, and a
-            // perpetual ornament is exactly what that setting is for.
+            // The icons are decoration and nothing else - the ring says everything they say, and
+            // upstream they go with the rest of the chat animations. The closest thing here is the
+            // transitions flag, which also carries the system's own "play animations in Windows"
+            // setting, and a perpetual ornament is exactly what that setting is for.
             //
             // Read where it is read, not subscribed to: the settings that move it are a page away,
             // so the chart will have been rebuilt by the time any of them has.
@@ -1050,10 +1079,9 @@ namespace Telegram.Controls
             return true;
         }
 
-        // Android clips each particle to its sector's path with SRC_ATOP. Fading the sprite by how
-        // much of it is outside the ring is not the same thing and cannot be: a sprite half over the
-        // rim is half transparent everywhere, including the half that is outside, so icons kept
-        // spilling a few pixels past the ellipse. This is a real clip, on the pixels.
+        // A real clip, on the pixels. Fading a sprite by how much of it is outside the ring is not
+        // the same thing and cannot be: one half over the rim is half transparent everywhere,
+        // including the half that is outside, so icons kept spilling a few pixels past the ellipse.
         //
         // It is affordable because it never changes. The particles are only visible on the settled
         // loaded ring, whose two radii are constants, so the annulus is built once per layout rather
@@ -1094,8 +1122,8 @@ namespace Telegram.Controls
             }
         }
 
-        // Android walks each sector's angular range in 7 degree steps, which over the whole ring is
-        // a grid of 52. A page can thin it out, but nothing needs to.
+        // Each sector's angular range is walked in 7 degree steps, which over the whole ring is a
+        // grid of 52. A page can thin it out, but nothing needs to.
         public int ParticleCount
         {
             get => _particles.Count;
@@ -1106,9 +1134,9 @@ namespace Telegram.Controls
 
         #region Input
 
-        // Android grows a sector when it is tapped; on a pointer device the same thing belongs on
-        // hover. Hit testing is arithmetic rather than geometry: the ring is an annulus and the
-        // sectors are angular ranges of it, both of which the layout already knows.
+        // A sector grows when it is tapped; on a pointer device the same thing belongs on hover.
+        // Hit testing is arithmetic rather than geometry: the ring is an annulus and the sectors are
+        // angular ranges of it, both of which the layout already knows.
         public event EventHandler<StorageChartItem> SectorClick;
 
         public StorageChartItem SelectedItem => _selected < 0 || _items == null || _selected >= _items.Count
@@ -1154,8 +1182,8 @@ namespace Telegram.Controls
 
             var radius = (float)Math.Sqrt(x * x + y * y);
 
-            // Android allows dp(14) past the rim, which is more than a sector grows - so the pointer
-            // does not fall out of one the moment it has grown to meet it.
+            // The slop is more than a sector grows, so the pointer does not fall out of one the
+            // moment it has grown to meet it.
             if (radius < Diameter / 2 - ThicknessLoaded || radius > Diameter / 2 + HitSlop)
             {
                 return -1;
@@ -1274,10 +1302,10 @@ namespace Telegram.Controls
             // Coming out of loading the arrangement has to be in place before the blend starts, or
             // the blend spends its 750ms chasing a target that is itself easing out of twelve
             // o'clock - two eases of different lengths compounding, which is what made the ring
-            // look like it was assembling out of pieces. Android gets this for free: dispatchDraw
-            // never touches the animated angles while loading >= 1, so the first value they ever
-            // see is the final one and AnimatedFloat.firstSet snaps to it. Once loaded, a new set
-            // of numbers does ease, which is the only case this is false.
+            // look like it was assembling out of pieces. Drawing per frame gets this for free: the
+            // animated angles are never touched while loading >= 1, so the first value they ever
+            // see is the final one and the animator snaps to it. Once loaded, a new set of numbers
+            // does ease, which is the only case this is false.
             var settle = animated && !wasLoading;
 
             Animate(_state, "Loading", 0, LoadingDuration, _easeOutQuint, animated);
@@ -1333,7 +1361,7 @@ namespace Telegram.Controls
             var animation = _compositor.CreateScalarKeyFrameAnimation();
 
             // Starting from wherever the property is means a target that changes mid-flight just
-            // redirects the ease, which is what Android's AnimatedFloat does.
+            // redirects the ease instead of restarting it.
             animation.InsertExpressionKeyFrame(0, "this.StartingValue");
             animation.InsertKeyFrame(1, value, easing);
             animation.Duration = TimeSpan.FromMilliseconds(duration);
@@ -1422,7 +1450,7 @@ namespace Telegram.Controls
 
         // Flat caps are not a nicety: a round cap on a 38px ring adds 19px to each end, which would
         // swallow the 2 degree separator whole. A round one is just as necessary while loading,
-        // where it is Android's dp(60) corner rounding clamped to half the thickness.
+        // where it is a 60px corner rounding clamped to half the thickness.
         private void Caps(bool round)
         {
             var cap = round
@@ -1475,8 +1503,8 @@ namespace Telegram.Controls
                 }
             }
 
-            // Android sorts the segments by size here and pulls "other" to the front, so the ring
-            // reads small-to-large. That cannot survive being animated. Interpolating a sector's
+            // Sorting the segments by size here, so the ring reads small-to-large, cannot survive
+            // being animated. Interpolating a sector's
             // centre and half-width is the same as interpolating its two boundaries, so as long as
             // a sector keeps the same neighbours, the boundary it shares with each of them is the
             // same number on both sides and every intermediate frame is still a partition of the
@@ -1550,8 +1578,7 @@ namespace Telegram.Controls
             }
         }
 
-        // Largest remainder, so the labels add up to 100 the way AndroidUtilities.roundPercents
-        // makes them.
+        // Largest remainder, so the labels add up to 100.
         private static void RoundPercents(float[] shares, int[] percents)
         {
             var total = 0;
@@ -1596,13 +1623,19 @@ namespace Telegram.Controls
 
         #region Geometry
 
-        // What is behind the chart.
+        // Whatever the page layers over the window behind the chart.
         //
-        // A gap measured in degrees is a wedge: at Android's 2 degrees it is 1.7px across the ring's
-        // inner edge and 3.0px across the outer, and it visibly flares. Given a background the
-        // sectors can abut instead and the gaps be drawn over the top as radial lines of a constant
-        // pixel width - which is even the whole way across, and better than Android manages. Without
-        // one there is nothing to draw them in, so the ring falls back to the wedge.
+        // A gap measured in degrees is a wedge: at 2 degrees it is 1.7px across the ring's inner
+        // edge and 3.0px across the outer, and it visibly flares. Given a background the sectors can
+        // abut instead and the gaps be drawn over the top as radial lines of a constant pixel width,
+        // even the whole way across. Without one there is nothing to draw them in, so the ring falls
+        // back to the wedge.
+        //
+        // It is not the colour that gets drawn, though. The window is Mica and the settings pages
+        // put a translucent LayerFillColorDefaultBrush over it, so what is actually behind the ring
+        // is the two composited - and drawing the overlay's own colour instead reads as a hard dark
+        // line on dark, which is nothing like the surface it is meant to be cutting through. So the
+        // brush a page passes is the overlay, and the chart composites it onto what is behind.
         public static readonly DependencyProperty SeparatorBrushProperty =
             DependencyProperty.Register(nameof(SeparatorBrush), typeof(SolidColorBrush), typeof(StorageChart), new PropertyMetadata(null, OnSeparatorBrushChanged));
 
@@ -1614,16 +1647,17 @@ namespace Telegram.Controls
 
         private static void OnSeparatorBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((StorageChart)d).UpdateSeparator(e.NewValue as SolidColorBrush);
+            ((StorageChart)d).UpdateSeparator();
         }
 
-        private void UpdateSeparator(SolidColorBrush brush)
+        private void UpdateSeparator()
         {
+            var brush = SeparatorBrush;
             var even = brush != null;
 
             if (even)
             {
-                _separatorBrush.Color = brush.Color;
+                _separatorBrush.Color = BlendOver(Behind(), brush.Color);
             }
 
             if (_even == even)
