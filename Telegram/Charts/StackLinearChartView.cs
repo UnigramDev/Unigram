@@ -86,7 +86,9 @@ namespace Telegram.Charts
                         cX + radius,
                         cY + radius
                     );
-                    ovalPath = canvas.CreateLayer(1, CanvasGeometry.CreateRoundedRectangle(canvas, rectF, radius, radius));
+                    // The layer holds on to the geometry, so this one is only ours until it does.
+                    using var oval = CanvasGeometry.CreateRoundedRectangle(canvas, rectF, radius, radius);
+                    ovalPath = canvas.CreateLayer(1, oval);
                 }
                 else if (transitionMode == TRANSITION_MODE_ALPHA_ENTER)
                 {
@@ -300,6 +302,7 @@ namespace Telegram.Charts
                                 localX = mapPoints.X;
                                 localY = mapPoints.Y;
                             }
+                            line.chartPath?.Dispose();
                             line.chartPath = new CanvasPathBuilder(canvas);
                             line.chartPath.BeginFigure(localX, localY);
                             skipPoints[k] = false;
@@ -578,6 +581,7 @@ namespace Telegram.Charts
 
                         if (i == 0)
                         {
+                            line.chartPathPicker?.Dispose();
                             line.chartPathPicker = new CanvasPathBuilder(canvas);
                             line.chartPathPicker.BeginFigure(new Vector2(0, pickerHeight));
                             skipPoints[k] = false;

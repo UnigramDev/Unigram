@@ -7,67 +7,64 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 namespace Telegram.Charts
 {
-    public partial class AnimatorLoopThread
+    public partial class AnimatorCoordinator
     {
-        public static object DrawLock = new();
+        private readonly Action _invalidate;
+        private readonly List<Animator> _animators = new();
 
-        protected readonly List<Animator> _animators = new();
-        protected readonly object _animatorsLock = new();
-
-        private readonly Timer _timer;
-        private bool _looping = true;
-
-        public AnimatorLoopThread()
+        public AnimatorCoordinator(Action invalidate)
         {
-            _timer = new Timer(OnTick, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
+            _invalidate = invalidate;
+            //_timer = new Timer(OnTick, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
         }
 
-        private static AnimatorLoopThread _current;
-        public static AnimatorLoopThread Current => _current ??= new AnimatorLoopThread();
+        public bool IsRunning => _animators.Count > 0;
 
-        private void OnTick(object state)
+        //private static AnimatorLoopThread _current;
+        //public static AnimatorLoopThread Current => _current ??= new AnimatorLoopThread();
+
+        //private void OnTick(object state)
+        //{
+        //    lock (DrawLock)
+        //    {
+        //        lock (_animatorsLock)
+        //        {
+        //            foreach (var animator in _animators.ToArray())
+        //            {
+        //                animator.Tick();
+        //            }
+        //        }
+        //    }
+        //}
+
+        // The frame's timestamp comes from the caller: the view needs the same instant for its own
+        // min/max step, and two reads would put them on different sides of a clock edge.
+        public void Tick(long timestamp)
         {
-            lock (DrawLock)
+            foreach (var animator in _animators.ToArray())
             {
-                lock (_animatorsLock)
-                {
-                    foreach (var animator in _animators.ToArray())
-                    {
-                        animator.Tick();
-                    }
-                }
+                animator.Tick(timestamp);
             }
         }
 
         public void Change(Animator animator, bool enable)
         {
-            lock (_animatorsLock)
+            if (enable)
             {
-                if (enable)
-                {
-                    _animators.Add(animator);
+                _animators.Add(animator);
 
-                    if (_animators.Count > 0 && !_looping)
-                    {
-                        _looping = true;
-                        _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
-                    }
-                }
-                else
-                {
-                    _animators.Remove(animator);
-
-                    if (_animators.Count < 1 && _looping)
-                    {
-                        _looping = false;
-                        _timer.Change(Timeout.Infinite, Timeout.Infinite);
-                    }
-                }
+                // An animator can be started from anywhere, so asking for a frame here is what
+                // guarantees it gets ticked. The list draining is what stops the frames again.
+                _invalidate();
+            }
+            else
+            {
+                _animators.Remove(animator);
             }
         }
     }
@@ -77,13 +74,11 @@ namespace Telegram.Charts
         protected readonly List<AnimatorUpdateListener> _listeners = new();
         protected readonly List<AnimatorUpdateListener> _updateListeners = new();
 
-        protected readonly object _listenersLock = new();
-
         protected readonly Action<Animator, bool> _listener;
 
-        public Animator()
+        public Animator(AnimatorCoordinator thread)
         {
-            _listener = AnimatorLoopThread.Current.Change;
+            _listener = thread.Change;
         }
 
         internal abstract void Cancel();
@@ -92,27 +87,18 @@ namespace Telegram.Charts
 
         internal void AddUpdateListener(AnimatorUpdateListener l)
         {
-            lock (_listenersLock)
-            {
-                _updateListeners.Add(l);
-            }
+            _updateListeners.Add(l);
         }
 
         internal void AddListener(AnimatorUpdateListener l)
         {
-            lock (_listenersLock)
-            {
-                _listeners.Add(l);
-            }
+            _listeners.Add(l);
         }
 
         internal void RemoveAllListeners()
         {
-            lock (_listenersLock)
-            {
-                _updateListeners.Clear();
-                _listeners.Clear();
-            }
+            _updateListeners.Clear();
+            _listeners.Clear();
         }
 
         internal virtual object GetAnimatedValue()
@@ -120,15 +106,15 @@ namespace Telegram.Charts
             return null;
         }
 
-        internal abstract bool Tick();
+        internal abstract bool Tick(long timestamp);
     }
 
     public partial class AnimatorSet : Animator
     {
         private readonly List<Animator> _animators = new();
 
-        public AnimatorSet()
-            : base()
+        public AnimatorSet(AnimatorCoordinator thread)
+            : base(thread)
         {
         }
 
@@ -156,12 +142,12 @@ namespace Telegram.Charts
             }
         }
 
-        internal override bool Tick()
+        internal override bool Tick(long timestamp)
         {
             var completed = true;
             foreach (var animator in _animators)
             {
-                if (!animator.Tick())
+                if (!animator.Tick(timestamp))
                 {
                     completed = false;
                 }
@@ -176,15 +162,15 @@ namespace Telegram.Charts
         private readonly float _f1;
         private readonly float _f2;
 
-        private int _begin;
-        private int _duration = 300;
+        private long _begin;
+        private long _duration = DurationToTicks(300);
 
         private float _result;
 
         private FastOutSlowInInterpolator _interpolator;
 
-        public ValueAnimator(float f1, float f2)
-            : base()
+        public ValueAnimator(AnimatorCoordinator thread, float f1, float f2)
+            : base(thread)
         {
             _f1 = _result = f1;
             _f2 = f2;
@@ -197,28 +183,25 @@ namespace Telegram.Charts
                 return;
             }
 
-            _begin = Environment.TickCount;
+            _begin = Stopwatch.GetTimestamp();
             _listener(this, true);
         }
 
         internal override void Cancel()
         {
-            _begin = Timeout.Infinite;
+            _begin = 0;
             _listener(this, false);
 
-            lock (_listenersLock)
+            foreach (var l in _listeners)
             {
-                foreach (var l in _listeners)
-                {
-                    l.Action(this);
-                }
+                l.Action(this);
             }
         }
 
-        internal override bool Tick()
+        internal override bool Tick(long timestamp)
         {
-            var tick = Environment.TickCount;
-            if (tick >= _begin + _duration)
+            var diff = timestamp - _begin;
+            if (diff >= _duration)
             {
                 _result = _f2;
 
@@ -226,7 +209,6 @@ namespace Telegram.Charts
                 return true;
             }
 
-            var diff = tick - _begin;
             var perc = (float)diff / _duration;
 
             if (_interpolator != null)
@@ -256,12 +238,9 @@ namespace Telegram.Charts
             }
             else
             {
-                lock (_listenersLock)
+                foreach (var l in _updateListeners)
                 {
-                    foreach (var l in _updateListeners)
-                    {
-                        l.Action(this);
-                    }
+                    l.Action(this);
                 }
             }
 
@@ -270,27 +249,31 @@ namespace Telegram.Charts
 
         private void Complete()
         {
-            _begin = Timeout.Infinite;
+            _begin = 0;
             _listener(this, false);
 
-            lock (_listenersLock)
+            foreach (var l in _listeners.Union(_updateListeners))
             {
-                foreach (var l in _listeners.Union(_updateListeners))
-                {
-                    l.Action(this);
-                }
+                l.Action(this);
             }
         }
 
-        internal static ValueAnimator OfFloat(float f1, float f2)
+        internal static ValueAnimator OfFloat(AnimatorCoordinator thread, float f1, float f2)
         {
-            return new ValueAnimator(f1, f2);
+            return new ValueAnimator(thread, f1, f2);
         }
 
-        internal ValueAnimator SetDuration(int duration)
+        internal ValueAnimator SetDuration(uint duration)
         {
-            _duration = duration;
+            _duration = DurationToTicks(duration);
             return this;
+        }
+
+        // Durations are authored in milliseconds but compared against Stopwatch ticks,
+        // so convert on assignment rather than dividing by Frequency every frame.
+        private static long DurationToTicks(uint duration)
+        {
+            return duration * Stopwatch.Frequency / 1000;
         }
 
         internal Animator setInterpolator(FastOutSlowInInterpolator interpolator)
@@ -301,7 +284,7 @@ namespace Telegram.Charts
 
         internal bool IsRunning()
         {
-            return _begin != Timeout.Infinite;
+            return _begin != 0;
         }
 
         internal override object GetAnimatedValue()

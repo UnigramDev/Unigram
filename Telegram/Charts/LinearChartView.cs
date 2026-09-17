@@ -52,6 +52,7 @@ namespace Telegram.Charts
                     int[] y = line.line.y;
                     int additionalPoints = (int)(HORIZONTAL_PADDING / p) + 1;
 
+                    line.chartPath?.Dispose();
                     line.chartPath = new CanvasPathBuilder(canvas);
                     bool first = true;
 
@@ -132,7 +133,7 @@ namespace Telegram.Charts
                         canvas.Transform = Matrix3x2.CreateScale(
                             new Vector2(1 + 2 * transitionParams.progress, 1f),
                             new Vector2(transitionParams.pX, transitionParams.pY)
-                        );
+                        ) * _baseTransform;
                     }
                     else if (transitionMode == TRANSITION_MODE_CHILD)
                     {
@@ -184,6 +185,7 @@ namespace Telegram.Charts
                         continue;
                     }
 
+                    line.bottomLinePath?.Dispose();
                     line.bottomLinePath = new CanvasPathBuilder(canvas);
 
                     int n = chartData.xPercentage.Length;

@@ -47,7 +47,7 @@ namespace Telegram.Charts
                     canvas.Transform = Matrix3x2.CreateScale(
                         new Vector2(1 + 2 * transitionParams.progress, 1f),
                         new Vector2(transitionParams.pX, transitionParams.pY)
-                    );
+                    ) * _baseTransform;
 
                 }
                 else if (transitionMode == TRANSITION_MODE_CHILD)
@@ -59,7 +59,7 @@ namespace Telegram.Charts
                     canvas.Transform = Matrix3x2.CreateScale(
                         new Vector2(transitionParams.progress, transitionParams.progress),
                         new Vector2(transitionParams.pX, transitionParams.pY)
-                    );
+                    ) * _baseTransform;
                 }
                 else if (transitionMode == TRANSITION_MODE_ALPHA_ENTER)
                 {
@@ -76,6 +76,7 @@ namespace Telegram.Charts
 
                     int[] y = line.line.y;
 
+                    line.chartPath?.Dispose();
                     line.chartPath = new CanvasPathBuilder(canvas);
                     bool first = true;
 
@@ -192,6 +193,7 @@ namespace Telegram.Charts
                         continue;
                     }
 
+                    line.bottomLinePath?.Dispose();
                     line.bottomLinePath = new CanvasPathBuilder(canvas);
 
                     int n = chartData.xPercentage.Length;
@@ -358,13 +360,21 @@ namespace Telegram.Charts
             linePaint.A = (byte)(a.alpha * 0.1f * transitionAlpha);
             int chartHeight = MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT;
 
-            var format = new CanvasTextFormat { FontSize = signaturePaint.TextSize ?? 0 };
-            var layout = new CanvasTextLayout(canvas, "0", format, 0, 0);
+            // Measuring "0" builds a DWrite layout, and its result only depends on the font size,
+            // so it is measured when that changes rather than on every frame.
+            var textSize = signaturePaint.TextSize ?? 0;
 
-            int textOffset = (int)(4 + layout.DrawBounds.Bottom);
+            if (_baselineTextSize != textSize)
+            {
+                using var format = new CanvasTextFormat { FontSize = textSize };
+                using var layout = new CanvasTextLayout(canvas, "0", format, 0, 0);
+
+                _baselineTextOffset = (int)(4 + layout.DrawBounds.Bottom);
+                _baselineTextSize = textSize;
+            }
+
+            int textOffset = _baselineTextOffset;
             //int textOffset = (int)(SIGNATURE_TEXT_HEIGHT - signaturePaintFormat.FontSize);
-            format.Dispose();
-            layout.Dispose();
             for (int i = 0; i < n; i++)
             {
                 int y = (int)(MeasuredHeight - chartBottom - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));

@@ -103,7 +103,7 @@ namespace Telegram.Charts
             canvas?.Transform = Matrix3x2.CreateScale(
                 new Vector2(sc, sc),
                 new Vector2(chartArea.centerX(), chartArea.centerY())
-            );
+            ) * _baseTransform;
 
             int radius = (int)((chartArea.Width > chartArea.Height ? chartArea.Height : chartArea.Width) * 0.45f);
             rectF = CreateRect(
@@ -163,7 +163,7 @@ namespace Telegram.Charts
                     canvas?.Transform = Matrix3x2.CreateTranslation(
                         MathF.Cos(MathFEx.ToRadians(textAngle)) * 8 * ai,
                         MathF.Sin(MathFEx.ToRadians(textAngle)) * 8 * ai
-                    );
+                    ) * _baseTransform;
                 }
 
                 //lines[i].paint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -204,7 +204,7 @@ namespace Telegram.Charts
                     //lines[i].paint.setStyle(Paint.Style.STROKE);
 
                     //canvas.restore();
-                    canvas.Transform = Matrix3x2.Identity;
+                    canvas.Transform = _baseTransform;
                 }
 
                 lines[i].paint.A = 255;
@@ -215,8 +215,7 @@ namespace Telegram.Charts
 
             if (canvas != null)
             {
-                var textFormat = new CanvasTextFormat();
-                var textLayout = new CanvasTextLayout(canvas, "100%", textFormat, float.PositiveInfinity, float.PositiveInfinity);
+                var textLayout = PercentLayout(canvas);
 
                 for (int i = 0; i < n; i++)
                 {
@@ -236,7 +235,7 @@ namespace Telegram.Charts
                         canvas.Transform = Matrix3x2.CreateTranslation(
                             MathF.Cos(MathFEx.ToRadians(textAngle)) * 8 * ai,
                             MathF.Sin(MathFEx.ToRadians(textAngle)) * 8 * ai
-                        );
+                        ) * _baseTransform;
                     }
 
                     int percent = (int)(100f * currentPercent);
@@ -262,14 +261,14 @@ namespace Telegram.Charts
                     }
 
                     //canvas.restore();
-                    canvas.Transform = Matrix3x2.Identity;
+                    canvas.Transform = _baseTransform;
 
                     lines[i].paint.A = 255;
                     a += currentPercent * 360f;
                 }
 
                 //canvas.restore();
-                canvas.Transform = Matrix3x2.Identity;
+                canvas.Transform = _baseTransform;
             }
         }
 
@@ -550,6 +549,31 @@ namespace Telegram.Charts
             currentSelection = -1;
             //pieLegendView.setVisibility(Visibility.Collapsed);
             Invalidate();
+        }
+
+        // Purely a measuring probe: the per-character regions of "100%" are what centre each slice
+        // label. It depends on nothing that changes, so it outlives the frame that built it.
+        private CanvasTextLayout _percentLayout;
+        private CanvasTextFormat _percentFormat;
+
+        private CanvasTextLayout PercentLayout(CanvasDrawingSession canvas)
+        {
+            // The format is held rather than disposed straight after: whether a layout keeps its
+            // own copy of one is not worth betting a use-after-free on.
+            _percentFormat ??= new CanvasTextFormat();
+
+            return _percentLayout ??= new CanvasTextLayout(canvas, "100%", _percentFormat, float.PositiveInfinity, float.PositiveInfinity);
+        }
+
+        protected override void ReleaseResources()
+        {
+            base.ReleaseResources();
+
+            _percentLayout?.Dispose();
+            _percentLayout = null;
+
+            _percentFormat?.Dispose();
+            _percentFormat = null;
         }
 
         int oldW = 0;

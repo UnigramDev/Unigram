@@ -19,49 +19,63 @@ namespace Telegram.Charts
     {
         public static void DrawText(this CanvasDrawingSession session, string text, float x, float y, Paint paint, CanvasTextFormat textFormat = null)
         {
-            if (paint.TextSize is float textSize)
+            // The format is the paint's, or the caller's - never a new one per call. It is a DWrite
+            // object, and where the family names a packaged font, building one costs about a
+            // millisecond in font resolution: once per label per frame here.
+            //
+            // And nothing is disposed: this used to dispose whatever the caller passed in, so a
+            // format held across frames was dead after its first use.
+            textFormat ??= paint.TextFormat;
+
+            if (paint.TextSize is float textSize && textFormat.FontSize != textSize)
             {
-                textFormat ??= new CanvasTextFormat();
                 textFormat.FontSize = textSize;
             }
-            if (paint.TextAlignment is CanvasHorizontalAlignment textAlignmnet)
+
+            if (paint.TextAlignment is CanvasHorizontalAlignment textAlignmnet && textFormat.HorizontalAlignment != textAlignmnet)
             {
-                textFormat ??= new CanvasTextFormat();
                 textFormat.HorizontalAlignment = textAlignmnet;
             }
 
             session.DrawText(text, x, y, paint.Color, textFormat);
-            textFormat?.Dispose();
         }
 
         public static void DrawLine(this CanvasDrawingSession session, float x0, float y0, float x1, float y1, Paint paint)
         {
+            // The paint's own stroke style, configured only where it differs: a new one per call
+            // is a D2D object built for a single line, and the charts draw a great many of them.
             CanvasStrokeStyle strokeStyle = null;
             if (paint.StrokeCap is CanvasCapStyle capStyle)
             {
-                strokeStyle = new CanvasStrokeStyle();
-                strokeStyle.StartCap = capStyle;
-                strokeStyle.EndCap = capStyle;
-                strokeStyle.LineJoin = capStyle == CanvasCapStyle.Round ? CanvasLineJoin.Round : CanvasLineJoin.Miter;
+                var lineJoin = capStyle == CanvasCapStyle.Round ? CanvasLineJoin.Round : CanvasLineJoin.Miter;
+
+                strokeStyle = paint.StrokeStyle;
+
+                if (strokeStyle.StartCap != capStyle) strokeStyle.StartCap = capStyle;
+                if (strokeStyle.EndCap != capStyle) strokeStyle.EndCap = capStyle;
+                if (strokeStyle.LineJoin != lineJoin) strokeStyle.LineJoin = lineJoin;
             }
 
             session.DrawLine(x0, y0, x1, y1, paint.Color, paint.StrokeWidth, strokeStyle);
-            strokeStyle?.Dispose();
         }
 
         public static void DrawGeometry(this CanvasDrawingSession session, CanvasGeometry geometry, Paint paint)
         {
+            // The paint's own stroke style, configured only where it differs: a new one per call
+            // is a D2D object built for a single line, and the charts draw a great many of them.
             CanvasStrokeStyle strokeStyle = null;
             if (paint.StrokeCap is CanvasCapStyle capStyle)
             {
-                strokeStyle = new CanvasStrokeStyle();
-                strokeStyle.StartCap = capStyle;
-                strokeStyle.EndCap = capStyle;
-                strokeStyle.LineJoin = capStyle == CanvasCapStyle.Round ? CanvasLineJoin.Round : CanvasLineJoin.Miter;
+                var lineJoin = capStyle == CanvasCapStyle.Round ? CanvasLineJoin.Round : CanvasLineJoin.Miter;
+
+                strokeStyle = paint.StrokeStyle;
+
+                if (strokeStyle.StartCap != capStyle) strokeStyle.StartCap = capStyle;
+                if (strokeStyle.EndCap != capStyle) strokeStyle.EndCap = capStyle;
+                if (strokeStyle.LineJoin != lineJoin) strokeStyle.LineJoin = lineJoin;
             }
 
             session.DrawGeometry(geometry, paint.Color, paint.StrokeWidth, strokeStyle);
-            strokeStyle?.Dispose();
         }
 
         public static void FillCircle(this CanvasDrawingSession session, float x, float y, Paint paint)
