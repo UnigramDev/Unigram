@@ -3,19 +3,13 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d"
+                  ShowHeader="False"
                   NavigationMode="Root">
-
-    <Page.Transitions>
-        <TransitionCollection>
-            <NavigationThemeTransition>
-                <SlideNavigationTransitionInfo Effect="FromRight" />
-            </NavigationThemeTransition>
-        </TransitionCollection>
-    </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
@@ -24,13 +18,28 @@
                                 IsItemClickEnabled="True"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
-                                Padding="12,0,12,16">
+                                Padding="0,0,0,16">
             <ListView.Header>
                 <StackPanel>
-                    <controls:SettingsPanel IsHeader="True">
-                        <controls:SettingsHeadline x:Name="Headline"
-                                                   Text="{CustomResource TONBalanceText}"
-                                                   Source="ms-appx:///Assets/Animations/WalletAbout.tgs" />
+                    <controls:SettingsPanel IsHeader="True"
+                                            HasTopPadding="False">
+                        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/WalletAbout.tgs"
+                                                AutoPlay="True"
+                                                IsCachingEnabled="False"
+                                                DecodeFrameType="Logical"
+                                                FrameSize="140,140"
+                                                Width="140"
+                                                Height="140"
+                                                Margin="0,16,0,0"/>
+                        <controls:StickyHeader x:Name="Header"
+                                               Text="{CustomResource TONBalanceTitle}"
+                                               HorizontalContentAlignment="Center"
+                                               Margin="0,-36,0,0" />
+                        <TextBlock common:TextBlockHelper.Markdown="{CustomResource TONBalanceText}"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="12,-16,12,0"
+                                   MaxWidth="480" />
 
                         <controls:HeaderedControl>
                             <StackPanel Background="{ThemeResource SettingsItemBackground}"
@@ -65,30 +74,29 @@
                         <controls:SettingsFooter Text="{CustomResource TopUpViaFragmentInfo}" />
                     </controls:SettingsPanel>
 
-                    <Grid Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          MaxWidth="1000"
-                          Margin="24,16,24,2">
-                        <Border Background="{ThemeResource SettingsItemBackground}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="4" />
-
+                    <controls:StickyHeaderTabs x:Name="HeaderTabs"
+                                               Header="{x:Bind Header}"
+                                               Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                               HorizontalContentAlignment="Center"
+                                               Margin="0,16,0,2">
                         <controls:TopNavView x:Name="Navigation"
                                              SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}"
                                              SelectionChanged="Navigation_SelectionChanged"
                                              Height="48"
-                                             Padding="8,0,8,4">
+                                             Padding="8,0,8,4"
+                                             Margin="-4">
                             <controls:TopNavView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal"
-                                                HorizontalAlignment="Center" />
+                                                HorizontalAlignment="Center"
+                                                Margin="0,0,8,0" />
                                 </ItemsPanelTemplate>
                             </controls:TopNavView.ItemsPanel>
                             <controls:TopNavViewItem Content="{CustomResource StarsTransactionsAll}" />
                             <controls:TopNavViewItem Content="{CustomResource StarsTransactionsIncoming}" />
                             <controls:TopNavViewItem Content="{CustomResource StarsTransactionsOutgoing}" />
                         </controls:TopNavView>
-                    </Grid>
+                    </controls:StickyHeaderTabs>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -97,5 +105,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>

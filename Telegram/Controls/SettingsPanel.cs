@@ -27,13 +27,15 @@ namespace Telegram.Controls
         public bool IsHeader { get; set; }
         public bool IsFooter { get; set; }
 
+        public bool HasTopPadding { get; set; } = true;
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            var accumulated = IsFooter ? 0 : 64d;
+            var accumulated = IsFooter ? 0 : HasTopPadding ? 64d : 0;
 
             foreach (UIElement child in Children)
             {
-                if (child is SettingsFooter && accumulated > (IsFooter ? 16 : 80))
+                if (child is SettingsFooter && accumulated > (IsFooter ? 16 : HasTopPadding ? 80 : 16))
                 {
                     accumulated -= 16;
                 }
@@ -62,11 +64,11 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var accumulated = IsFooter ? 0 : 64d;
+            var accumulated = IsFooter ? 0 : HasTopPadding ? 64d : 0;
 
             foreach (var child in Children)
             {
-                if (child is SettingsFooter && accumulated > (IsFooter ? 16 : 80))
+                if (child is SettingsFooter && accumulated > (IsFooter ? 16 : HasTopPadding ? 80 : 16))
                 {
                     accumulated -= 16;
                 }

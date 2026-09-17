@@ -4,18 +4,12 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d"
+                  ShowHeader="False"
                   NavigationMode="Root">
-
-    <Page.Transitions>
-        <TransitionCollection>
-            <NavigationThemeTransition>
-                <SlideNavigationTransitionInfo Effect="FromRight" />
-            </NavigationThemeTransition>
-        </TransitionCollection>
-    </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
@@ -24,7 +18,7 @@
                                 IsItemClickEnabled="True"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
-                                Padding="12,0,12,16">
+                                Padding="0,0,0,16">
             <ListView.Header>
                 <controls:TableListView ItemsSource="{x:Bind ViewModel.Subscriptions}"
                                         ItemClick="OnItemClick"
@@ -32,11 +26,26 @@
                                         ContainerContentChanging="OnContainerContentChanging"
                                         SelectionMode="None">
                     <ListView.Header>
-                        <controls:SettingsPanel IsHeader="True">
-                            <controls:SettingsHeadline x:Name="Headline"
-                                                       Text="{CustomResource TelegramStarsInfo}"
-                                                       Source="ms-appx:///Assets/Animations/YourStars.tgs"
-                                                       LoopCount="1" />
+                        <controls:SettingsPanel IsHeader="True"
+                                                HasTopPadding="False">
+                            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/YourStars.tgs"
+                                                    AutoPlay="True"
+                                                    IsCachingEnabled="False"
+                                                    DecodeFrameType="Logical"
+                                                    FrameSize="140,140"
+                                                    Width="140"
+                                                    Height="140"
+                                                    LoopCount="1"
+                                                    Margin="0,16,0,0" />
+                            <controls:StickyHeader x:Name="Header"
+                                                   Text="{CustomResource TelegramStars}"
+                                                   HorizontalContentAlignment="Center"
+                                                   Margin="0,-36,0,0" />
+                            <TextBlock common:TextBlockHelper.Markdown="{CustomResource TelegramStarsInfo}"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       TextAlignment="Center"
+                                       Margin="12,-16,12,0"
+                                       MaxWidth="480" />
 
                             <controls:HeaderedControl>
                                 <StackPanel Background="{ThemeResource SettingsItemBackground}"
@@ -116,30 +125,29 @@
                             <Border Visibility="{x:Bind ViewModel.Subscriptions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Margin="12,12,12,0" />
 
-                            <Grid Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                  MaxWidth="1000"
-                                  Margin="24,16,24,2">
-                                <Border Background="{ThemeResource SettingsItemBackground}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="4" />
-
+                            <controls:StickyHeaderTabs x:Name="HeaderTabs"
+                                                       Header="{x:Bind Header}"
+                                                       Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                       HorizontalContentAlignment="Center"
+                                                       Margin="0,16,0,2">
                                 <controls:TopNavView x:Name="Navigation"
                                                      SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}"
                                                      SelectionChanged="Navigation_SelectionChanged"
                                                      Height="48"
-                                                     Padding="8,0,8,4">
+                                                     Padding="8,0,8,4"
+                                                     Margin="-4">
                                     <controls:TopNavView.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Horizontal"
-                                                        HorizontalAlignment="Center" />
+                                                        HorizontalAlignment="Center"
+                                                        Margin="0,0,8,0" />
                                         </ItemsPanelTemplate>
                                     </controls:TopNavView.ItemsPanel>
                                     <controls:TopNavViewItem Content="{CustomResource StarsTransactionsAll}" />
                                     <controls:TopNavViewItem Content="{CustomResource StarsTransactionsIncoming}" />
                                     <controls:TopNavViewItem Content="{CustomResource StarsTransactionsOutgoing}" />
                                 </controls:TopNavView>
-                            </Grid>
+                            </controls:StickyHeaderTabs>
                         </StackPanel>
                     </ListView.Footer>
                 </controls:TableListView>
@@ -150,5 +158,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>
