@@ -4588,14 +4588,6 @@
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="ItemPresenterStyle">
-            <Setter.Value>
-                <Style TargetType="ContentPresenter">
-                    <Setter Property="BorderBrush"
-                            Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                </Style>
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HeaderedControl">

@@ -9,11 +9,15 @@ using System;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
     public partial class HeaderedControl : ItemsControl
     {
+        private static readonly Thickness _cardBorder = new(1);
+        private static readonly CornerRadius _cardCorner = new(4);
+
         private Grid ContentRoot;
 
         public HeaderedControl()
@@ -97,27 +101,41 @@ namespace Telegram.Controls
 
         #endregion
 
-        #region ItemPresenterStyle
-
-        public Style ItemPresenterStyle
-        {
-            get { return (Style)GetValue(ItemPresenterStyleProperty); }
-            set { SetValue(ItemPresenterStyleProperty, value); }
-        }
-
-        public static readonly DependencyProperty ItemPresenterStyleProperty =
-            DependencyProperty.Register("ItemPresenterStyle", typeof(Style), typeof(HeaderedControl), new PropertyMetadata(null));
-
-        #endregion
-
+        // Every row is a rounded card of its own. It is the same card whichever row it is, so there
+        // is nothing for a layout pass to decide - a container is prepared once and keeps it.
+        //
+        // A ContentPresenter when the row was generated from an item, and the element itself when it
+        // was written into the control's content: IsItemItsOwnContainerOverride takes any UIElement,
+        // and this runs for both - with element and item the same object in the second case.
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
-            if (element is ContentPresenter presenter)
-            {
-                presenter.Style = ItemPresenterStyle;
-            }
+            ApplyCardLayout(element);
 
             base.PrepareContainerForItemOverride(element, item);
+        }
+
+        internal static void ApplyCardLayout(DependencyObject element)
+        {
+            switch (element)
+            {
+                case Control control:
+                    control.BorderThickness = _cardBorder;
+                    control.CornerRadius = _cardCorner;
+                    break;
+                case Grid grid:
+                    grid.BorderThickness = _cardBorder;
+                    grid.CornerRadius = _cardCorner;
+                    break;
+                case Border border:
+                    border.BorderThickness = _cardBorder;
+                    border.CornerRadius = _cardCorner;
+                    break;
+            }
+        }
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new HeaderedControlPresenter();
         }
 
         public event EventHandler<TextUrlClickEventArgs> Click;
@@ -174,84 +192,94 @@ namespace Telegram.Controls
         public string Url { get; }
     }
 
-    public partial class HeaderedControlPanel : StackPanel
+    // The rows of a HeaderedControl, stacked, with a gap between the visible ones.
+    //
+    // Not a StackPanel. The gap used to be a bottom margin written onto every child but the last
+    // from inside MeasureOverride, which meant a row could not carry a margin of its own and that
+    // finding the last visible one was a backwards scan on every pass.
+    public partial class HeaderedControlPanel : Panel
     {
+        private const double Spacing = 3;
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            var last = true;
-            var first = default(UIElement);
+            var constraint = new Size(availableSize.Width, double.PositiveInfinity);
 
-            for (int i = Children.Count - 1; i >= 0; i--)
+            var width = 0d;
+            var height = 0d;
+            var any = false;
+
+            for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                if (child.Visibility == Visibility.Visible)
+
+                if (child.Visibility == Visibility.Collapsed)
                 {
-                    switch (child)
-                    {
-                        //case ContentPresenter presenter:
-                        //    presenter.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                        //    presenter.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
-                        //    break;
-                        //case Control control:
-                        //    control.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                        //    control.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
-                        //    break;
-                        //case Grid grid:
-                        //    grid.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                        //    grid.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
-                        //    break;
-                        //case Border border:
-                        //    border.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                        //    border.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
-                        //    break;
-
-                        case ContentPresenter presenter:
-                            presenter.BorderThickness = new Thickness(1);
-                            presenter.CornerRadius = new CornerRadius(4);
-                            presenter.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
-                            break;
-                        case Control control:
-                            control.BorderThickness = new Thickness(1);
-                            control.CornerRadius = new CornerRadius(4);
-                            control.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
-                            break;
-                        case Grid grid:
-                            grid.BorderThickness = new Thickness(1);
-                            grid.CornerRadius = new CornerRadius(4);
-                            grid.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
-                            break;
-                        case Border border:
-                            border.BorderThickness = new Thickness(1);
-                            border.CornerRadius = new CornerRadius(4);
-                            border.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
-                            break;
-                    }
-
-                    last = false;
-                    first = child;
+                    continue;
                 }
+
+                child.Measure(constraint);
+
+                var desired = child.DesiredSize;
+
+                if (any)
+                {
+                    height += Spacing;
+                }
+
+                width = Math.Max(width, desired.Width);
+                height += desired.Height;
+
+                any = true;
             }
 
-            //if (first != null)
-            //{
-            //    switch (first)
-            //    {
-            //        case ContentPresenter presenter:
-            //            presenter.CornerRadius = new CornerRadius(4, 4, presenter.CornerRadius.BottomRight, presenter.CornerRadius.BottomLeft);
-            //            break;
-            //        case Control control:
-            //            control.CornerRadius = new CornerRadius(4, 4, control.CornerRadius.BottomRight, control.CornerRadius.BottomLeft);
-            //            break;
-            //        case Grid grid:
-            //            grid.CornerRadius = new CornerRadius(4, 4, grid.CornerRadius.BottomRight, grid.CornerRadius.BottomLeft);
-            //            break;
-            //        case Border border:
-            //            border.CornerRadius = new CornerRadius(4, 4, border.CornerRadius.BottomRight, border.CornerRadius.BottomLeft);
-            //            break;
-            //    }
-            //}
+            return new Size(width, height);
+        }
 
-            return base.MeasureOverride(availableSize);
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var y = 0d;
+            var any = false;
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var child = Children[i];
+
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
+
+                if (any)
+                {
+                    y += Spacing;
+                }
+
+                // DesiredSize carries the child's own margin and Arrange takes it back out, so a
+                // row that wants one composes with the spacing rather than fighting it.
+                var height = child.DesiredSize.Height;
+
+                child.Arrange(new Rect(0, y, finalSize.Width, height));
+
+                y += height;
+                any = true;
+            }
+
+            return finalSize;
+        }
+    }
+
+    public partial class HeaderedControlPresenter : ContentPresenter
+    {
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            var child = VisualTreeHelper.GetChild(this, 0);
+            if (child != null)
+            {
+                HeaderedControl.ApplyCardLayout(child);
+            }
         }
     }
 }
