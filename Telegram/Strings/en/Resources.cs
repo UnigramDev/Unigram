@@ -23305,9 +23305,24 @@ namespace Telegram
         public static string TerminateWebSessionQuestion => Resource.GetString("TerminateWebSessionQuestion");
         
         /// <summary>
+        /// Localized resource similar to "Disconnect websites"
+        /// </summary>
+        public static string TerminateWebSessionsTitle => Resource.GetString("TerminateWebSessionsTitle");
+        
+        /// <summary>
         /// Localized resource similar to "Block {0}"
         /// </summary>
         public static string TerminateWebSessionStop => Resource.GetString("TerminateWebSessionStop");
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to disconnect {0}?"
+        /// </summary>
+        public static string TerminateWebSessionText => Resource.GetString("TerminateWebSessionText");
+        
+        /// <summary>
+        /// Localized resource similar to "Disconnect website"
+        /// </summary>
+        public static string TerminateWebSessionTitle => Resource.GetString("TerminateWebSessionTitle");
         
         /// <summary>
         /// Localized resource similar to "Terms of Service"
