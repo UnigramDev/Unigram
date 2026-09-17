@@ -173,12 +173,17 @@
                    ContainerContentChanging="OnContainerContentChanging"
                    SelectionMode="None">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
-                    <Border Margin="0,64,0,0" />
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource Statistics}" />
 
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Background="{ThemeResource SettingsItemBackground}"
+                                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                              BorderThickness="1"
+                                              CornerRadius="4"
                                               IsFooterAtBottom="False">
                         <ContentControl Content="{x:Bind ViewModel.Statistics, Mode=OneWay, FallbackValue=''}"
                                         HorizontalContentAlignment="Stretch"
@@ -194,11 +199,15 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:ChartCell Background="{ThemeResource SettingsItemBackground}"
+                                     BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                     BorderThickness="1"
+                                     CornerRadius="4"
                                      Margin="0,16,0,0" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <controls:SettingsPanel IsFooter="True">
+                <controls:SettingsPanel IsFooter="True"
+                                        Margin="0,0,0,48">
                     <controls:HeaderedControl Header="{CustomResource RecentPosts}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Interactions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -254,5 +263,6 @@
                                Height="48" />
         </Grid>
 
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>

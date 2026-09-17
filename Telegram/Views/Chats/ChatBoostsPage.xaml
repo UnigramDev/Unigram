@@ -17,8 +17,10 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 VerticalContentAlignment="Top">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
-                    <Border Margin="0,64,0,0" />
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource Boosts}" />
 
                     <Grid HorizontalAlignment="Stretch"
                           MaxWidth="1000"
@@ -153,7 +155,8 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <controls:SettingsPanel IsFooter="True">
+                <controls:SettingsPanel IsFooter="True"
+                                        Margin="0,0,0,48">
                     <controls:HeaderedControl x:Name="LoadMore"
                                               x:Load="{x:Bind ViewModel.HasRemainingItems, Mode=OneWay}"
                                               Margin="0,-14,0,0">
@@ -183,5 +186,7 @@
                 </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>
