@@ -38,18 +38,17 @@
                                         BorderThickness="1"
                                         CornerRadius="4"
                                         Padding="12,4,12,8">
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Center">
-                                    <TextBlock Text="&#xEA7E;"
-                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                               FontSize="26"
-                                               VerticalAlignment="Center"
-                                               Margin="0,4,6,0" />
-
-                                    <TextBlock Text="{x:Bind ViewModel.OwnedGramCount, Mode=OneWay}"
-                                               Style="{StaticResource BaseTextBlockStyle}"
-                                               FontSize="28" />
-                                </StackPanel>
+                                <TextBlock TextAlignment="Center"
+                                           FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                           FontWeight="SemiBold"
+                                           FontSize="28">
+                                        <Run Text="&#xEA7E;"
+                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                             Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                             FontWeight="Normal" />
+                                        <Run x:Name="Balance" /><Run x:Name="BalanceFraction"
+                                                                     FontSize="24" />
+                                </TextBlock>
 
                                 <TextBlock Text="{CustomResource YourTonBalance}"
                                            Style="{StaticResource InfoBodyTextBlockStyle}"

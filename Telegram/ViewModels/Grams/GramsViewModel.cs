@@ -7,7 +7,6 @@
 
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -28,7 +27,7 @@ namespace Telegram.ViewModels.Grams
 
         public bool HasTransactions => _transactions.HasTransactions;
 
-        public string OwnedGramCount => Formatter.TonBalance(ClientService.OwnedGramCount).Join();
+        public long OwnedGramCount => ClientService.OwnedGramCount;
 
         public override void Subscribe()
         {
