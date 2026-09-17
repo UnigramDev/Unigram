@@ -32,7 +32,7 @@ namespace Telegram.ViewModels.Stars
 
         public IncrementalCollection<StarSubscription> Subscriptions => _subscriptions.Items;
 
-        public string OwnedStarCount => ClientService.OwnedStarCount.ToValue();
+        public StarAmount OwnedStarCount => ClientService.OwnedStarCount;
 
         public override void Subscribe()
         {

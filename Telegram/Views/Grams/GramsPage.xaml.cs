@@ -5,13 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
+using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Controls.Cells.Revenue;
+using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Grams;
 using Telegram.Views.Grams.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Grams
 {
@@ -23,6 +27,31 @@ namespace Telegram.Views.Grams
         {
             InitializeComponent();
             Title = Strings.TONBalanceTitle;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            UpdateOwnedGramCount(ViewModel.OwnedGramCount);
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.OwnedGramCount))
+            {
+                UpdateOwnedGramCount(ViewModel.OwnedGramCount);
+            }
+        }
+
+        private void UpdateOwnedGramCount(long gramAmount)
+        {
+            (Balance.Text, BalanceFraction.Text) = Formatter.TonBalance(Math.Abs(gramAmount));
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)

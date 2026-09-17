@@ -44,18 +44,16 @@
                                             BorderThickness="1"
                                             CornerRadius="4"
                                             Padding="12,4,12,8">
-                                    <StackPanel Orientation="Horizontal"
-                                                HorizontalAlignment="Center">
-                                        <controls:PremiumStarCount Width="34"
-                                                                   Height="34"
-                                                                   Margin="0,4,0,0"
-                                                                   Grid.Column="4"
-                                                                   Grid.RowSpan="2" />
-
-                                        <TextBlock Text="{x:Bind ViewModel.OwnedStarCount, Mode=OneWay}"
-                                                   Style="{StaticResource BaseTextBlockStyle}"
-                                                   FontSize="28" />
-                                    </StackPanel>
+                                    <TextBlock TextAlignment="Center"
+                                               FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                               FontWeight="SemiBold"
+                                               FontSize="28">
+                                        <Run Text="&#xF78E;"
+                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                             FontWeight="Normal" />
+                                        <Run x:Name="Balance" /><Run x:Name="BalanceFraction"
+                                                                     FontSize="24" />
+                                    </TextBlock>
 
                                     <TextBlock Text="{CustomResource StarsYourBalance}"
                                                Style="{StaticResource InfoBodyTextBlockStyle}"

@@ -5,9 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.ComponentModel;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells.Revenue;
+using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stars;
 using Telegram.Views.Chats;
@@ -15,6 +18,7 @@ using Telegram.Views.Popups;
 using Telegram.Views.Stars.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Stars
 {
@@ -26,6 +30,31 @@ namespace Telegram.Views.Stars
         {
             InitializeComponent();
             Title = Strings.TelegramStars;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            UpdateOwnedStarCount(ViewModel.OwnedStarCount);
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.OwnedStarCount))
+            {
+                UpdateOwnedStarCount(ViewModel.OwnedStarCount);
+            }
+        }
+
+        private void UpdateOwnedStarCount(StarAmount starAmount)
+        {
+            (Balance.Text, BalanceFraction.Text) = Formatter.SplitAmount(BigInteger.Abs(Formatter.Nanostars(starAmount)), 9, 9);
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
