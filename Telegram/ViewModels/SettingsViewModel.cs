@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Cells;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -51,6 +52,14 @@ namespace Telegram.ViewModels
             ? ClientService.OwnedStarCount.ToValue()
             : string.Empty;
 
+        public string OwnedGramCount => ClientService.OwnedGramCount > 0
+            ? Formatter.TonBalance(ClientService.OwnedGramCount).Join()
+            : string.Empty;
+
+        // Reading OwnedGramCount is what asks TDLib for the balance in the first place, and
+        // the answer arrives as an update that re-evaluates this.
+        public bool IsGramsAvailable => ClientService.OwnedGramCount > 0 || ClientService.HasGramTransactions;
+
         public RangeObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -71,6 +80,7 @@ namespace Telegram.ViewModels
             Aggregator.Subscribe<UpdateUser>(this, Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
                 .Subscribe<UpdateOwnedStarCount>(Handle)
+                .Subscribe<UpdateOwnedGramCount>(Handle)
                 .Subscribe<UpdateOption>(Handle);
         }
 
@@ -101,6 +111,15 @@ namespace Telegram.ViewModels
         private void Handle(UpdateOwnedStarCount update)
         {
             BeginOnUIThread(() => RaisePropertyChanged(nameof(OwnedStarCount)));
+        }
+
+        private void Handle(UpdateOwnedGramCount update)
+        {
+            BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(nameof(OwnedGramCount));
+                RaisePropertyChanged(nameof(IsGramsAvailable));
+            });
         }
 
         public void Handle(UpdateOption update)

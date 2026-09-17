@@ -29,6 +29,7 @@ using Telegram.Views.Chats.Popups;
 using Telegram.Views.Create;
 using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
+using Telegram.Views.Grams;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
@@ -1051,6 +1052,7 @@ namespace Telegram.Common
                     }
                     break;
                 case SettingsSectionMyGrams myGrams:
+                    navigation.Navigate(typeof(GramsPage));
                     break;
                 case SettingsSectionPowerSaving powerSaving:
                     switch (powerSaving.Subsection)

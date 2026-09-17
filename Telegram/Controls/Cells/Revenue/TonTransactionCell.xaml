@@ -1,0 +1,70 @@
+﻿<Grid x:Class="Telegram.Controls.Cells.Revenue.TonTransactionCell"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:controls="using:Telegram.Controls"
+      mc:Ignorable="d"
+      d:DesignHeight="300"
+      d:DesignWidth="400"
+      Padding="12,8,8,8">
+
+    <Grid.Resources>
+        <!-- Here rather than looked up from the app: a ThemeResource on the colour keeps it
+             following the theme, and the cell hands the brush to the amount when it is incoming. -->
+        <SolidColorBrush x:Key="AmountReceivedBrush"
+                         Color="{ThemeResource SystemFillColorSuccess}" />
+    </Grid.Resources>
+
+    <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <controls:ProfilePicture x:Name="Photo"
+                             VerticalAlignment="Top"
+                             Size="36"
+                             Margin="0,0,8,0"
+                             Grid.RowSpan="3" />
+
+    <TextBlock x:Name="Title"
+               TextWrapping="NoWrap"
+               TextTrimming="CharacterEllipsis"
+               Style="{StaticResource BaseTextBlockStyle}"
+               VerticalAlignment="Top"
+               Grid.Column="1" />
+
+    <TextBlock x:Name="Subtitle"
+               TextWrapping="NoWrap"
+               TextTrimming="CharacterEllipsis"
+               VerticalAlignment="Top"
+               Grid.Column="1"
+               Grid.Row="1" />
+
+    <TextBlock x:Name="Date"
+               Style="{StaticResource InfoCaptionTextBlockStyle}"
+               Grid.Column="1"
+               Grid.Row="2" />
+
+    <!-- The decimals are drawn smaller than the whole part, and the two runs touch: any
+         whitespace between them in the markup would be a space in the number. -->
+    <TextBlock x:Name="Amount"
+               TextWrapping="NoWrap"
+               VerticalAlignment="Center"
+               Style="{StaticResource BaseTextBlockStyle}"
+               Margin="8,0,0,0"
+               Grid.Column="2"
+               Grid.RowSpan="3">
+        <Run x:Name="AmountInteger" /><Run x:Name="AmountFraction"
+                                           FontSize="12" />
+        <Run Text="&#xEA7E;"
+             Foreground="{ThemeResource SystemColorControlAccentBrush}"
+             FontFamily="{StaticResource SymbolThemeFontFamily}"
+             FontWeight="Normal" />
+    </TextBlock>
+</Grid>

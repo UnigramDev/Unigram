@@ -15,6 +15,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business;
 using Telegram.Views.Folders;
+using Telegram.Views.Grams;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars;
 using Windows.UI.Xaml;
@@ -164,6 +165,11 @@ namespace Telegram.Views
         private void Stars_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.Navigate(typeof(StarsPage));
+        }
+
+        private void Grams_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(GramsPage));
         }
 
         private void Business_Click(object sender, RoutedEventArgs e)

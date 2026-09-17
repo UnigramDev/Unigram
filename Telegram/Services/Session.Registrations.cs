@@ -184,6 +184,7 @@ namespace Telegram.Services
             typeof(Telegram.ViewModels.ChatNotificationsViewModel),
             typeof(Telegram.ViewModels.Premium.PromoViewModel),
             typeof(Telegram.ViewModels.Stars.StarsViewModel),
+            typeof(Telegram.ViewModels.Grams.GramsViewModel),
             typeof(Telegram.ViewModels.Stars.BuyViewModel),
             typeof(Telegram.ViewModels.Stars.PayViewModel),
             typeof(Telegram.ViewModels.Business.BusinessViewModel),

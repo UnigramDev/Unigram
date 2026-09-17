@@ -236,5 +236,53 @@ namespace Telegram.Controls
                     return FromSource(_unsupported, Strings.StarsTransactionUnsupported);
             }
         }
+
+        public static TransactionInfo FromTonTransaction(IClientService clientService, TonTransaction transaction)
+        {
+            var refund = transaction.IsRefund;
+
+            switch (transaction.Type)
+            {
+                case TonTransactionTypeFragmentDeposit fragmentDeposit:
+                    // A gift of Grams arrives through Fragment with nobody to name, so
+                    // Fragment itself is the counterparty.
+                    if (fragmentDeposit.IsGift)
+                    {
+                        return FromSource(_fragment, Strings.StarsGiftReceived, Strings.StarsTransactionTONFromFragment);
+                    }
+
+                    return FromSource(_fragment, Strings.StarsTransactionFragment);
+                case TonTransactionTypeFragmentWithdrawal:
+                    return FromSource(_fragment, Strings.StarsTransactionWithdrawFragment);
+
+                case TonTransactionTypeSuggestedPostPayment suggestedPostPayment:
+                    return FromChat(clientService, suggestedPostPayment.ChatId, Strings.StarsTransactionSuggestedPost, Strings.Gift2To);
+
+                case TonTransactionTypeUpgradedGiftPurchase upgradedGiftPurchase:
+                    return FromUser(clientService, upgradedGiftPurchase.UserId, refund
+                        ? Strings.StarGiftTransactionGiftSaleRefund
+                        : Strings.StarGiftTransactionGiftPurchase, Strings.Gift2From);
+                case TonTransactionTypeUpgradedGiftSale upgradedGiftSale:
+                    var sale = refund
+                        ? upgradedGiftSale.ViaOffer
+                            ? Strings.StarGiftTransactionGiftOfferRefund
+                            : Strings.StarGiftTransactionGiftPurchaseRefund
+                        : Strings.StarGiftTransactionGiftSale;
+
+                    return FromUser(clientService, upgradedGiftSale.UserId, sale, Strings.Gift2To);
+
+                case TonTransactionTypeGiftPurchaseOffer giftPurchaseOffer:
+                    return FromSource(_gift, giftPurchaseOffer.Gift.Title, refund ? Strings.StarGiftTransactionGiftSaleRefund : Strings.StarGiftTransactionGiftOffer);
+
+                // Stake and payout share a title: nothing upstream words them apart, and the
+                // sign of the amount already says which way the roll went.
+                case TonTransactionTypeStakeDiceStake:
+                case TonTransactionTypeStakeDicePayout:
+                    return FromSource(_diamond, Strings.StakeDiceTitle);
+
+                default:
+                    return FromSource(_unsupported, Strings.StarsTransactionUnsupported);
+            }
+        }
     }
 }

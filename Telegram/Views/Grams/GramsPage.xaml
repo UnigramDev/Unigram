@@ -1,0 +1,102 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Grams.GramsPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
+                  xmlns:local="using:Telegram.Views"
+                  mc:Ignorable="d"
+                  NavigationMode="Root">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="OnItemClick"
+                                IsItemClickEnabled="True"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None"
+                                Padding="12,0,12,16">
+            <ListView.Header>
+                <StackPanel>
+                    <controls:SettingsPanel IsHeader="True">
+                        <controls:SettingsHeadline x:Name="Headline"
+                                                   Text="{CustomResource TONBalanceText}"
+                                                   Source="ms-appx:///Assets/Animations/WalletAbout.tgs" />
+
+                        <controls:HeaderedControl>
+                            <StackPanel Background="{ThemeResource SettingsItemBackground}"
+                                        BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="12,4,12,8">
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center">
+                                    <TextBlock Text="&#xEA7E;"
+                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               FontSize="26"
+                                               VerticalAlignment="Center"
+                                               Margin="0,4,6,0" />
+
+                                    <TextBlock Text="{x:Bind ViewModel.OwnedGramCount, Mode=OneWay}"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               FontSize="28" />
+                                </StackPanel>
+
+                                <TextBlock Text="{CustomResource YourTonBalance}"
+                                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                                           TextAlignment="Center"
+                                           Margin="0,-2,0,8" />
+
+                                <Button Click="TopUp_Click"
+                                        Content="{CustomResource TopUpViaFragment}"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                        </controls:HeaderedControl>
+
+                        <controls:SettingsFooter Text="{CustomResource TopUpViaFragmentInfo}" />
+                    </controls:SettingsPanel>
+
+                    <Grid Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          MaxWidth="1000"
+                          Margin="24,16,24,2">
+                        <Border Background="{ThemeResource SettingsItemBackground}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4" />
+
+                        <controls:TopNavView x:Name="Navigation"
+                                             SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}"
+                                             SelectionChanged="Navigation_SelectionChanged"
+                                             Height="48"
+                                             Padding="8,0,8,4">
+                            <controls:TopNavView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center" />
+                                </ItemsPanelTemplate>
+                            </controls:TopNavView.ItemsPanel>
+                            <controls:TopNavViewItem Content="{CustomResource StarsTransactionsAll}" />
+                            <controls:TopNavViewItem Content="{CustomResource StarsTransactionsIncoming}" />
+                            <controls:TopNavViewItem Content="{CustomResource StarsTransactionsOutgoing}" />
+                        </controls:TopNavView>
+                    </Grid>
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <revenue:TonTransactionCell />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>
