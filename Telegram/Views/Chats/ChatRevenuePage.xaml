@@ -12,7 +12,6 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
-                                IncrementalLoadingTrigger="None"
                                 ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
@@ -20,43 +19,60 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 VerticalContentAlignment="Top">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
-                    <Border Margin="0,64,0,0" />
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource Monetization}" />
 
                     <controls:SettingsFooter x:Name="FooterInfo"
                                              IsLink="True"
                                              Click="{x:Bind ViewModel.LearnMore}"
                                              Text="{CustomResource MonetizationInfo}" />
 
-                    <ContentControl Content="{x:Bind ViewModel.Impressions, Mode=OneWay}">
+                    <ContentControl Content="{x:Bind ViewModel.Impressions, Mode=OneWay}"
+                                    HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
                                 <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}" />
+                                                 Background="{ThemeResource SettingsItemBackground}"
+                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="4" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
 
-                    <ContentControl Content="{x:Bind ViewModel.Revenue, Mode=OneWay}">
+                    <ContentControl Content="{x:Bind ViewModel.Revenue, Mode=OneWay}"
+                                    HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
                                 <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}" />
+                                                 Background="{ThemeResource SettingsItemBackground}"
+                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="4" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
 
-                    <ContentControl Content="{x:Bind ViewModel.Stars.Revenue, Mode=OneWay}">
+                    <ContentControl Content="{x:Bind ViewModel.Stars.Revenue, Mode=OneWay}"
+                                    HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
                                 <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}" />
+                                                 Background="{ThemeResource SettingsItemBackground}"
+                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="4" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
 
                     <controls:HeaderedControl Header="{CustomResource MonetizationOverview}"
-                                              Background="{ThemeResource SettingsItemBackground}">
+                                              Background="{ThemeResource SettingsItemBackground}"
+                                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                              BorderThickness="1"
+                                              CornerRadius="4">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
@@ -123,8 +139,12 @@
                     <controls:HeaderedControl x:Name="CryptoRoot"
                                               IsFooterLink="True"
                                               Header="{CustomResource MonetizationBalance}"
-                                              Footer="{x:Bind ConvertTransferInfo(ViewModel.WithdrawalEnabled, ViewModel.IsOwner), Mode=OneWay}">
-                        <StackPanel Background="{ThemeResource SettingsItemBackground}">
+                                              Footer="{x:Bind ConvertTransferInfo(ViewModel.WithdrawalEnabled, ViewModel.IsOwner), Mode=OneWay}"
+                                              Background="{ThemeResource SettingsItemBackground}"
+                                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                              BorderThickness="1"
+                                              CornerRadius="4">
+                        <StackPanel>
                             <TextBlock TextAlignment="Center"
                                        Margin="0,8,0,8">
                                 <Run Text="&#xEA7E;"
@@ -206,29 +226,34 @@
                     </controls:HeaderedControl>
 
                     <Grid x:Name="TransactionsRoot"
-                          Visibility="{x:Bind ViewModel.ItemsView.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                          Visibility="{x:Bind ViewModel.ItemsView.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Canvas.ZIndex="1">
                         <TextBlock x:Name="TransactionsHeader"
                                    x:Load="{x:Bind ViewModel.IsSelectionVisible, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                    Text="{CustomResource MonetizationTransactions}"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    Margin="24,16,24,8" />
 
-                        <Grid x:Name="TransactionsNavigation"
-                              x:Load="{x:Bind ViewModel.IsSelectionVisible, Mode=OneWay}"
-                              CornerRadius="4"
-                              MaxWidth="1000"
-                              Margin="24,16,24,2">
-                            <Border Background="{ThemeResource SettingsItemBackground}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="4" />
+                        <controls:StickyHeaderTabs x:Name="HeaderTabs"
+                                                   Header="{x:Bind Header}"
+                                                   Visibility="{x:Bind ViewModel.IsSelectionVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                   HorizontalContentAlignment="Center"
+                                                   Margin="0,16,0,2">
                             <controls:TopNavView SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
-                                                 Height="40"
-                                                 Margin="8,4">
+                                                 Height="48"
+                                                 Padding="8,0,8,4"
+                                                 Margin="-4">
+                                <controls:TopNavView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0,0,8,0" />
+                                    </ItemsPanelTemplate>
+                                </controls:TopNavView.ItemsPanel>
                                 <controls:TopNavViewItem Content="{CustomResource MonetizationTransactionsTON}" />
                                 <controls:TopNavViewItem Content="{CustomResource MonetizationTransactionsStars}" />
                             </controls:TopNavView>
-                        </Grid>
+                        </controls:StickyHeaderTabs>
                     </Grid>
                 </controls:SettingsPanel>
             </ListView.Header>
@@ -252,5 +277,7 @@
                 <Border Height="30" />
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>
