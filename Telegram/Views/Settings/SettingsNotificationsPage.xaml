@@ -12,345 +12,6 @@
                   mc:Ignorable="d"
                   NavigationMode="Root">
 
-    <Page.Resources>
-        <Style x:Key="DefaultCheckBoxStyle"
-               TargetType="CheckBox">
-            <Setter Property="Background"
-                    Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
-            <Setter Property="Foreground"
-                    Value="{ThemeResource CheckBoxForegroundUnchecked}" />
-            <Setter Property="BorderBrush"
-                    Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
-            <Setter Property="Padding"
-                    Value="{StaticResource CheckBoxPadding}" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Left" />
-            <Setter Property="VerticalAlignment"
-                    Value="Center" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Left" />
-            <Setter Property="VerticalContentAlignment"
-                    Value="Top" />
-            <Setter Property="FontFamily"
-                    Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontSize"
-                    Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="MinWidth"
-                    Value="0" />
-            <Setter Property="MinHeight"
-                    Value="{StaticResource CheckBoxHeight}" />
-            <Setter Property="UseSystemFocusVisuals"
-                    Value="{StaticResource UseSystemFocusVisuals}" />
-            <Setter Property="FocusVisualMargin"
-                    Value="{StaticResource CheckBoxFocusVisualMargin}" />
-            <Setter Property="CornerRadius"
-                    Value="{ThemeResource ControlCornerRadius}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
-                        <Grid x:Name="RootGrid"
-                              Background="{TemplateBinding Background}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              CornerRadius="{TemplateBinding CornerRadius}">
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CombinedStates">
-                                    <VisualState x:Name="UncheckedNormal">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="NormalOff" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="UncheckedPointerOver">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="PointerOverOff" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="UncheckedPressed">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="PressedOff" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="UncheckedDisabled">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="NormalOff" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedNormal">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="NormalOn" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedPointerOver">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="PointerOverOn" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedPressed">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="PressedOn" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedDisabled">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="NormalOn" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminateNormal">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminate}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="NormalIndeterminate" />
-                                            <Setter Target="CheckGlyph.Margin"
-                                                    Value="0" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminatePointerOver">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="PointerOverIndeterminate" />
-                                            <Setter Target="CheckGlyph.Margin"
-                                                    Value="0" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminatePressed">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="PressedIndeterminate" />
-                                            <Setter Target="CheckGlyph.Margin"
-                                                    Value="0" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminateDisabled">
-
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
-                                                                           Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <VisualState.Setters>
-                                            <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
-                                            <Setter Target="CheckGlyph.(muxc:AnimatedIcon.State)"
-                                                    Value="NormalIndeterminate" />
-                                            <Setter Target="CheckGlyph.Margin"
-                                                    Value="0" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid Grid.Column="0"
-                                  VerticalAlignment="Center"
-                                  Height="{StaticResource CheckBoxSize}"
-                                  Width="{StaticResource CheckBoxSize}">
-                                <Rectangle x:Name="NormalRectangle"
-                                           Fill="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
-                                           Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                           StrokeThickness="{StaticResource CheckBoxBorderThickness}"
-                                           UseLayoutRounding="False"
-                                           Height="{StaticResource CheckBoxSize}"
-                                           Width="{StaticResource CheckBoxSize}"
-                                           RadiusX="12"
-                                           RadiusY="12" />
-                                <muxc:AnimatedIcon x:Name="CheckGlyph"
-                                                   muxc:AnimatedIcon.State="NormalOff"
-                                                   Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}"
-                                                   Margin="0,1,0,-1">
-                                    <animatedvisuals:AnimatedAcceptVisualSource />
-                                    <muxc:AnimatedIcon.FallbackIconSource>
-                                        <muxc:FontIconSource x:Name="DownLevelCheckGlyph"
-                                                             Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}"
-                                                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                             Glyph="{StaticResource CheckBoxCheckedGlyph}"
-                                                             FontSize="{StaticResource CheckBoxGlyphSize}" />
-                                    </muxc:AnimatedIcon.FallbackIconSource>
-                                </muxc:AnimatedIcon>
-
-                            </Grid>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              Grid.Column="1"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Content}"
-                                              Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              TextWrapping="Wrap" />
-                        </Grid>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -532,39 +193,33 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Padding="6,0,12,0"
-                                    CornerRadius="16"
+                                    CornerRadius="8"
                                     Margin="4,12,4,8">
                                 <CheckBox IsChecked="{x:Bind ViewModel.ShowName, Mode=TwoWay}"
                                           Content="{CustomResource NotificationPreviewName}"
-                                          Padding="8,5,0,0"
-                                          Foreground="#FFFFFF"
-                                          Style="{StaticResource DefaultCheckBoxStyle}"
+                                          MinWidth="0"
                                           RequestedTheme="Dark" />
                             </Border>
                             <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Padding="6,0,12,0"
-                                    CornerRadius="16"
+                                    CornerRadius="8"
                                     Margin="4,12,4,8">
                                 <CheckBox IsChecked="{x:Bind ViewModel.ShowText, Mode=TwoWay}"
                                           Content="{CustomResource NotificationPreviewText}"
-                                          Padding="8,5,0,0"
-                                          Foreground="#FFFFFF"
-                                          Style="{StaticResource DefaultCheckBoxStyle}"
+                                          MinWidth="0"
                                           RequestedTheme="Dark" />
                             </Border>
                             <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Padding="6,0,12,0"
-                                    CornerRadius="16"
+                                    CornerRadius="8"
                                     Margin="4,12,4,8">
                                 <CheckBox IsChecked="{x:Bind ViewModel.ShowReply, Mode=TwoWay}"
                                           Content="{CustomResource NotificationPreviewReply}"
-                                          Padding="8,5,0,0"
-                                          Foreground="#FFFFFF"
-                                          Style="{StaticResource DefaultCheckBoxStyle}"
+                                          MinWidth="0"
                                           RequestedTheme="Dark" />
                             </Border>
                         </StackPanel>
