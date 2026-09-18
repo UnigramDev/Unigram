@@ -71,7 +71,7 @@ namespace Telegram.Views.Wallet.Popups
             UpdateAddress(transaction.PeerAddress);
             UpdateComment(transfer);
 
-            UpdateFee(state, Fees(transaction, transfer));
+            UpdateFee(state, Fees(transaction, transfer), transfer is { IsGasless: true, Amount: < 0 });
 
             DateRow.Content = Formatter.DateAt(transaction.Date);
         }
@@ -80,8 +80,20 @@ namespace Telegram.Views.Wallet.Popups
         /// The fee, with the diamond rather than a sign: it is the wallet's own cost whichever way
         /// the transfer went.
         /// </summary>
-        private void UpdateFee(WalletState state, long fees)
+        private void UpdateFee(WalletState state, long fees, bool gasless)
         {
+            if (gasless)
+            {
+                // The row stays, and what it says is the point: this transfer cost the user
+                // nothing, which is not the same as it having had no fee.
+                FeeRow.Visibility = Visibility.Visible;
+
+                FeeGlyph.Text = string.Empty;
+                FeeAmount.Text = "[Paid by Telegram]";
+                FeeConverted.Text = string.Empty;
+                return;
+            }
+
             if (fees <= 0)
             {
                 FeeRow.Visibility = Visibility.Collapsed;

@@ -31,9 +31,9 @@ namespace Telegram.Td.Api
         public string OperationId { get; }
 
         /// <summary>
-        /// What the account answered the transfer with. Not an identity the transaction can be
-        /// found by - see notes/wallet-pending-resolution.md - but it is what the caller is told,
-        /// and it is unique enough to key the row by.
+        /// What the account answered the transfer with, and how the transaction is asked for once
+        /// it lands: <c>getTonWalletTransactionByMsgHash</c> answers with an error until the
+        /// transfer is final and with the transaction itself afterwards.
         /// </summary>
         public string MsgHash { get; }
 

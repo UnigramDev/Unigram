@@ -102,7 +102,8 @@ namespace Telegram.Services.Wallet
             IReadOnlyList<TonWalletTransaction> activity,
             WalletResource activityResource,
             bool hasMoreActivity,
-            int activityGeneration)
+            int activityGeneration,
+            TonWalletGaslessTransfersInfo gasless)
         {
             Address = address;
             BalanceNanograms = balanceNanograms;
@@ -118,8 +119,16 @@ namespace Telegram.Services.Wallet
             ActivityResource = activityResource ?? WalletResource.Idle;
             HasMoreActivity = hasMoreActivity;
             ActivityGeneration = activityGeneration;
+            Gasless = gasless;
             HasWallet = address.Length > 0;
         }
+
+        /// <summary>
+        /// What is left of the daily allowance of transfers Telegram pays the gas for, or null
+        /// before the account has said. Its quota changes on its own - every transfer spends one,
+        /// and the day rolls over - so it arrives by update rather than being asked for.
+        /// </summary>
+        public TonWalletGaslessTransfersInfo Gasless { get; }
 
         /// <summary>
         /// Which history <see cref="Activity"/> belongs to. A new number means the one before it
@@ -253,11 +262,11 @@ namespace Telegram.Services.Wallet
 
     public sealed class WalletTransferResult
     {
-        public WalletTransferResult(string messageHash, bool isGasless, int gaslessTransfersLeft)
+        public WalletTransferResult(string messageHash, bool isGasless, TonWalletTransaction transaction)
         {
             MessageHash = messageHash;
             IsGasless = isGasless;
-            GaslessTransfersLeft = gaslessTransfersLeft;
+            Transaction = transaction;
         }
 
         public WalletTransferResult(Error error)
@@ -278,10 +287,21 @@ namespace Telegram.Services.Wallet
         public string MessageHash { get; }
 
         /// <summary>
+        /// The transfer as it settled, or null if it had not by the time the account answered.
+        /// </summary>
+        /// <remarks>
+        /// The server holds the request open while it waits for the transfer to be included -
+        /// around twenty seconds, thirty for a gasless one - so in the ordinary case the finished
+        /// transaction comes back with the reply and there is nothing to poll for. Null is a
+        /// normal outcome and not a failure: it means the wait ran out, and
+        /// <see cref="MessageHash"/> is how to ask again.
+        /// </remarks>
+        public TonWalletTransaction Transaction { get; }
+
+        /// <summary>
         /// Whether a relayer paid the gas, which is decided by the server and not by the caller.
         /// </summary>
         public bool IsGasless { get; }
 
-        public int GaslessTransfersLeft { get; }
     }
 }

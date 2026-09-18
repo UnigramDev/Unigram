@@ -97,6 +97,8 @@ namespace Telegram.Services
 
         TonWalletState TonWalletState { get; }
 
+        TonWalletGaslessTransfersInfo TonWalletGaslessTransfersInfo { get; }
+
         UnconfirmedSession UnconfirmedSession { get; }
 
         MessageSender MyId { get; }
@@ -427,6 +429,7 @@ namespace Telegram.Services
         private StarAmount _ownedStarCount;
         private long? _ownedGramCount;
         private TonWalletState _tonWalletState;
+        private TonWalletGaslessTransfersInfo _tonWalletGaslessTransfersInfo;
 
         private JsonValueObject _config;
 
@@ -977,9 +980,11 @@ namespace Telegram.Services
             _ownedStarCount = null;
             _ownedGramCount = null;
             _tonWalletState = null;
+            _tonWalletGaslessTransfersInfo = null;
             _requestedStarCount = false;
             _requestedGramCount = false;
             _requestedWalletState = false;
+            _requestedGaslessTransfersInfo = false;
             DefaultPaidReactionType = new PaidReactionTypeRegular();
             AgeVerificationParameters = null;
             SavedMessagesTopicCount = 0;
@@ -1498,6 +1503,7 @@ namespace Telegram.Services
         private bool _requestedStarCount;
         private bool _requestedGramCount;
         private bool _requestedWalletState;
+        private bool _requestedGaslessTransfersInfo;
 
         public StarAmount OwnedStarCount
         {
@@ -1548,6 +1554,20 @@ namespace Telegram.Services
                 }
 
                 return _tonWalletState;
+            }
+        }
+
+        public TonWalletGaslessTransfersInfo TonWalletGaslessTransfersInfo
+        {
+            get
+            {
+                if (_tonWalletGaslessTransfersInfo == null && !_requestedGaslessTransfersInfo)
+                {
+                    _requestedGaslessTransfersInfo = true;
+                    Send(new LoadTonWalletGaslessTransfersInfo());
+                }
+
+                return _tonWalletGaslessTransfersInfo;
             }
         }
 
@@ -4413,6 +4433,9 @@ namespace Telegram.Services
                     break;
                 case UpdateTonWalletState updateTonWalletState:
                     _tonWalletState = updateTonWalletState.State;
+                    break;
+                case UpdateTonWalletGaslessTransfersInfo updateTonWalletGaslessTransfersInfo:
+                    _tonWalletGaslessTransfersInfo = updateTonWalletGaslessTransfersInfo.Info;
                     break;
                 case UpdateOwnedGramCount updateOwnedGramCount:
                     _ownedGramCount = updateOwnedGramCount.GramAmount;

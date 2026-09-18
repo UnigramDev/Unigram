@@ -101,6 +101,25 @@ namespace Telegram.Services.Wallet
         // changes under a rotation - see CanStillSign. Kept beside the descriptor, saved with it and
         // dropped with it.
         private byte[] _boundKey;
+
+
+        /// <summary>
+        /// One past wallet, as stored. The balance and date are not stored: they are the chain's
+        /// answer, read again each session, because either can move without this device.
+        /// </summary>
+        private sealed class WalletArchiveRecord
+        {
+            public string RecordId;
+            public string Address;
+            public byte[] PublicKey;
+            public Network Network;
+            public string SecretRef;
+            public byte[] BoundKey;
+            public long ArchivedDate;
+
+            public BigInteger Balance;
+            public int LastUsedDate;
+        }
         private WalletClient _client;
 
         private TdTonWalletState _wallet;
@@ -137,7 +156,8 @@ namespace Telegram.Services.Wallet
             _clientService = clientService;
             _aggregator = aggregator;
 
-            _aggregator.Subscribe<UpdateTonWalletState>(this, Handle);
+            _aggregator.Subscribe<UpdateTonWalletState>(this, Handle)
+                .Subscribe<UpdateTonWalletGaslessTransfersInfo>(Handle);
         }
 
         /// <summary>
@@ -283,6 +303,39 @@ namespace Telegram.Services.Wallet
         public void Handle(UpdateTonWalletState update)
         {
             _ = ApplyAsync(update.State);
+        }
+
+        public void Handle(UpdateTonWalletGaslessTransfersInfo update)
+        {
+            _ = ApplyGaslessAsync();
+        }
+
+        /// <summary>
+        /// Re-projects the state so that the new quota reaches whatever is showing it.
+        /// </summary>
+        /// <remarks>
+        /// The value itself is already in <see cref="IClientService"/>, which caches it like every
+        /// other one-value update; this only republishes the state it is part of. Nothing to say
+        /// while there is no wallet: the state is <see cref="WalletState.None"/> either way.
+        /// </remarks>
+        private async Task ApplyGaslessAsync()
+        {
+            if (_wallet == null)
+            {
+                return;
+            }
+
+            await _mutex.WaitAsync();
+            try
+            {
+                SetState(Project());
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            Raise();
         }
 
         private async Task ApplyAsync(TdTonWalletState wallet)
@@ -576,7 +629,18 @@ namespace Telegram.Services.Wallet
                 await _mutex.WaitAsync();
                 try
                 {
-                    AddPending(recipient, peerUserId, peerDomain, amountNanograms, comment, prepared.OperationId, result.MsgHash, prepared.ValidUntil);
+                    if (result.Transaction != null)
+                    {
+                        // The account held the request open until the transfer was included and
+                        // answered with the transaction itself - the same row the history returns -
+                        // so there is nothing to settle and nothing to poll for.
+                        AddConfirmed(result.Transaction);
+                    }
+                    else
+                    {
+                        AddPending(recipient, peerUserId, peerDomain, amountNanograms, comment, result.IsGasless, prepared.OperationId, result.MsgHash, prepared.ValidUntil);
+                    }
+
                     SetState(Project());
                 }
                 finally
@@ -594,7 +658,7 @@ namespace Telegram.Services.Wallet
             return new WalletTransferResult(
                 MessageHash(result.MsgHash),
                 result.IsGasless,
-                result.LeftGaslessTransferCount);
+                result.Transaction);
         }
 
         public async Task<string> ResolveDnsAsync(string name)
@@ -919,7 +983,7 @@ namespace Telegram.Services.Wallet
         /// The message hash is its identity for as long as it has none: a transaction id only
         /// exists once there is a transaction, and there is not one yet.
         /// </remarks>
-        private void AddPending(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, string operationId, byte[] msgHash, ulong validUntil)
+        private void AddPending(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isGasless, string operationId, byte[] msgHash, ulong validUntil)
         {
             var hash = MessageHash(msgHash);
 
@@ -933,6 +997,7 @@ namespace Telegram.Services.Wallet
                 new TonWalletTransactionTypeTransfer(
                     -(long)amountNanograms,
                     0,
+                    isGasless,
                     comment ?? string.Empty,
                     false));
 
@@ -943,6 +1008,29 @@ namespace Telegram.Services.Wallet
 
             RebuildActivity();
             EnsureResolver();
+        }
+
+        /// <summary>
+        /// Puts a transfer the account has already settled at the top of the history.
+        /// </summary>
+        /// <remarks>
+        /// Called under the lock. The row is the account's own, so nothing is invented here and
+        /// nothing has to be reconciled later. The guard is for the history having been refreshed
+        /// between the send and this, and already holding it.
+        /// </remarks>
+        private void AddConfirmed(TonWalletTransaction transaction)
+        {
+            if (_confirmed.Exists(x => x.Id == transaction.Id))
+            {
+                return;
+            }
+
+            var items = new List<TonWalletTransaction>(_confirmed.Count + 1) { transaction };
+            items.AddRange(_confirmed);
+
+            _confirmed = items;
+
+            RebuildActivity();
         }
 
         /// <summary>
@@ -1018,6 +1106,30 @@ namespace Telegram.Services.Wallet
                         return;
                     }
 
+                    // The account is asked first: it answers with the transaction itself as soon as
+                    // the transfer is final, which is both the row we want and cheaper than reading
+                    // the chain. An error from it means "not yet" and never means "never", so
+                    // whatever it does not settle still goes to the engine below.
+                    if (await ResolveByMessageHashAsync(waiting))
+                    {
+                        Raise();
+
+                        await _mutex.WaitAsync();
+                        try
+                        {
+                            waiting = _pending.FindAll(x => x.State is TonWalletTransactionStatePending);
+                        }
+                        finally
+                        {
+                            _mutex.Release();
+                        }
+
+                        if (waiting.Count == 0)
+                        {
+                            return;
+                        }
+                    }
+
                     SendSnapshot snapshot = null;
 
                     try
@@ -1078,6 +1190,73 @@ namespace Telegram.Services.Wallet
             return delay + delay < ResolveMaximumDelay
                 ? delay + delay
                 : ResolveMaximumDelay;
+        }
+
+        /// <summary>
+        /// Asks the account whether any pending transfer has become a transaction.
+        /// </summary>
+        /// <remarks>
+        /// One request per row rather than one for the wallet, because the message hash is what
+        /// identifies a transfer here and each row has its own. The answer is the finished
+        /// transaction, so a row that lands is replaced by it rather than dropped and re-read.
+        /// </remarks>
+        private async Task<bool> ResolveByMessageHashAsync(List<TonWalletTransaction> waiting)
+        {
+            List<(string Id, TonWalletTransaction Transaction)> landed = null;
+
+            foreach (var pending in waiting)
+            {
+                if (pending.State is not TonWalletTransactionStatePending state || string.IsNullOrEmpty(state.MsgHash))
+                {
+                    continue;
+                }
+
+                var response = await _clientService.SendAsync(new GetTonWalletTransactionByMsgHash(state.MsgHash));
+                if (response is TonWalletTransaction transaction)
+                {
+                    Logger.Info(string.Format("wallet transfer landed: {0} is {1}", state.MsgHash, transaction.Id));
+
+                    landed ??= new List<(string, TonWalletTransaction)>();
+                    landed.Add((pending.Id, transaction));
+                }
+            }
+
+            if (landed == null)
+            {
+                return false;
+            }
+
+            await _mutex.WaitAsync();
+            try
+            {
+                var items = new List<TonWalletTransaction>(_pending);
+
+                foreach (var (id, _) in landed)
+                {
+                    var index = items.FindIndex(x => x.Id == id);
+                    if (index >= 0)
+                    {
+                        items.RemoveAt(index);
+                    }
+                }
+
+                // Before the rows are added, because a settled row takes the place the pending one
+                // was holding and RebuildActivity reads both lists.
+                _pending = items;
+
+                foreach (var (_, transaction) in landed)
+                {
+                    AddConfirmed(transaction);
+                }
+
+                SetState(Project());
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1506,7 +1685,8 @@ namespace Telegram.Services.Wallet
                 _activity,
                 _activityResource,
                 _activityOffset.Length > 0,
-                _activityGeneration);
+                _activityGeneration,
+                _clientService.TonWalletGaslessTransfersInfo);
         }
 
         /// <summary>
@@ -1760,89 +1940,6 @@ namespace Telegram.Services.Wallet
 
         private string DescriptorPath => Path.Combine(_path, "descriptor" + _suffix + ".bin");
 
-        private bool TryLoadDescriptor(out WalletDescriptor descriptor, out byte[] boundKey)
-        {
-            descriptor = null;
-            boundKey = null;
-
-            try
-            {
-                if (!File.Exists(DescriptorPath))
-                {
-                    return false;
-                }
-
-                using var stream = File.OpenRead(DescriptorPath);
-                using var reader = new BinaryReader(stream, Encoding.UTF8);
-
-                var magic = reader.ReadUInt32();
-                var version = reader.ReadInt32();
-
-                if (magic != DescriptorMagic || version < 1 || version > DescriptorVersion)
-                {
-                    return false;
-                }
-
-                var recordId = reader.ReadString();
-                var address = reader.ReadString();
-                var publicKey = reader.ReadBytes(reader.ReadInt32());
-                var network = reader.ReadInt32() == 1 ? Network.Testnet : Network.Mainnet;
-                var secretRef = reader.ReadString();
-
-                // Version 1 predates the rotation check and holds no key of its own. The anchor
-                // stands in for it, which is right for every wallet that version could have bound:
-                // before a first rotation the two are the same key, and after one the bind would
-                // have refused the phrase.
-                boundKey = version >= 2 ? reader.ReadBytes(reader.ReadInt32()) : publicKey;
-
-                descriptor = new WalletDescriptor(recordId, address, publicKey, network, new ProtectedSecretRef(secretRef));
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("wallet descriptor unreadable: " + ex.Message);
-                return false;
-            }
-        }
-
-        private void SaveDescriptor(WalletDescriptor descriptor, byte[] boundKey)
-        {
-            Directory.CreateDirectory(_path);
-
-            using var stream = File.Create(DescriptorPath);
-            using var writer = new BinaryWriter(stream, Encoding.UTF8);
-
-            writer.Write(DescriptorMagic);
-            writer.Write(DescriptorVersion);
-            writer.Write(descriptor.RecordId);
-            writer.Write(descriptor.Address);
-            writer.Write(descriptor.PublicKey.Length);
-            writer.Write(descriptor.PublicKey);
-            writer.Write(descriptor.Network == Network.Testnet ? 1 : 0);
-            writer.Write(descriptor.SecretRef.Value);
-
-            writer.Write(boundKey?.Length ?? 0);
-
-            if (boundKey != null)
-            {
-                writer.Write(boundKey);
-            }
-        }
-
-        private void DeleteDescriptor()
-        {
-            try
-            {
-                if (File.Exists(DescriptorPath))
-                {
-                    File.Delete(DescriptorPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("wallet descriptor could not be deleted: " + ex.Message);
-            }
-        }
     }
 
     /// <summary>

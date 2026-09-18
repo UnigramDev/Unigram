@@ -3,8 +3,49 @@
 A transfer leaves as a signed message and becomes a transaction some seconds later. Nothing is
 pushed when that happens, so the row the wallet shows in between has to be settled by asking.
 
-There are two ways to ask. This note records why the app uses the second one, and keeps the first
-in case it becomes usable.
+There are two ways to ask. This note recorded why the app used the second one and kept the first in
+case it became usable. **It became usable on 2026-09-16, and most of what follows is now history.**
+
+---
+
+## Update, 2026-09-16 — the answer arrives with the reply
+
+Layer 230 changed the shape of the problem rather than the answer to it. `wallet.sendTransfer` now
+returns `Updates`, the server holds the request open until the transfer is included in a block, and
+TDLib passes that through:
+
+```
+//@transaction The completed transaction; may be null if the transaction is still pending
+tonWalletTransferResult is_gasless:Bool msg_hash:bytes transaction:tonWalletTransaction = TonWalletTransferResult;
+```
+
+So in the ordinary case **there is no pending row at all**: the reply carries the same
+`tonWalletTransaction` the history returns, and `SendAsync` inserts it straight into `_confirmed`
+through `AddConfirmed`. The wait is about twenty seconds for a normal transfer and thirty for a
+gasless one, which any timeout over the send has to allow for.
+
+`transaction` being null is **a normal outcome, not a failure** — it means the wait ran out. That is
+the only path that still creates a pending row, and everything below still describes what happens
+to it.
+
+What changed for that path: **`getTonWalletTransactionByMsgHash` now works**, and its contract is
+the one this note said it would need - an error until the transfer is final, the transaction itself
+afterwards, gasless included. `ResolveByMessageHashAsync` asks it once per pending row at the top of
+each pass, before the engine is consulted, because it answers with the row we actually want rather
+than with evidence a row has to be rebuilt from. The engine's `ResolvePending` is still there
+underneath it, and is still the only thing that can say a transfer *failed* rather than
+*has not landed yet*.
+
+Two things from the archaeology below are still true and still load-bearing:
+
+- **`msg_hash` is `bytes` carrying text**, so `Encoding.UTF8.GetString` remains the right decode.
+- **Re-sending the same signed BOC is idempotent** — same `msg_hash`, no duplicate service message —
+  which is new, and makes a retry safe in a way it was not.
+
+Also new, and unrelated to resolution: the quota that used to ride on `tonWalletTransferResult` as
+`left_gasless_transfer_count` moved to its own `updateTonWalletGaslessTransfersInfo`, requested with
+`loadTonWalletGaslessTransfersInfo`. It is cached in `ClientService` like every other one-value
+update and projected onto `WalletState.Gasless`.
 
 ---
 
@@ -125,12 +166,15 @@ private async Task<bool> ResolveAsync(TonWalletTransaction pending)
 }
 ```
 
-### What would have to be true to switch back
+### What would have to be true to switch back — both, as of layer 230
 
-- A transfer this device handed off is findable by the `msg_hash` it was given, gasless included.
-- Or the result carries something that is: the relayer's hash, or the transaction id directly.
+- ~~A transfer this device handed off is findable by the `msg_hash` it was given, gasless
+  included.~~ It is; the msg_hash for a gasless transfer is the relayer's outer message, and the
+  method resolves it.
+- ~~Or the result carries something that is.~~ It carries the finished transaction.
 
-Either would also remove the expiry clock's second job, which is guessing failure from silence.
+Neither removed the expiry clock's second job, though: guessing failure from silence is still the
+engine's, because nothing in the account's answer distinguishes "not yet" from "never".
 
 ---
 
