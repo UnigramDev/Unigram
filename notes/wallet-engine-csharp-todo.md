@@ -107,6 +107,112 @@ wallet's life — `tonWalletState` is the source of truth for identity and balan
   base64-decodes it in one place (`Bytes`), which is the only line to change if the server wants
   something else. Same open question for the encrypted-comment body TDLib reports on a transaction.
 
+## State, 2026-09-15 — committed on develop, and deliberately absent from 12.10.6
+
+**Eleven commits on local `develop`, none of them pushed.** Five from 2026-09-11 (generated
+bindings, platform/HTTP hosts, service, UI, `WalletCardDemo`) and six from 2026-09-13/15:
+
+| | |
+|---|---|
+| Regenerate the wallet engine bindings | against the engine's master tip |
+| Add the gram glyphs to the icon font | `tl_fluent_gram_{14,20}`, the arrow circles, `key_20_filled`, `cloud`, `arrow_shuffle` |
+| Rework the wallet service around sending and key rotation | send, pending resolution, history merge, the chain stream |
+| Move the wallet into a window of its own | `WalletWindow` replaces `WalletPage`; seven popups |
+| Show TON transfers in the chat they were sent from | `MessageTonWalletTransferContent` + `SendMoney` |
+| Pack the wallet engine, and stop packing the generator | `wallet_engine.dll` into the msixbundle |
+
+Find them by subject, not by SHA: `develop` has been rewritten twice since (two folds into
+`Remove explicit instrumentation`), so every SHA after that commit has churned.
+
+Three **currency** commits sit immediately before them and are not wallet — *Generalize amount
+formatting beyond nanotons and whole cents*, *Split star and crypto amounts on the exact integer*,
+*Move the currency glyph after the amount*. Fela asked for those to be their own commits, ordered
+first.
+
+### The wallet has never been pushed, and 12.10.6 must not push it
+
+`origin/develop` contains **zero** wallet paths. `release12.10.6` was cut as `origin/develop` plus
+the 19 non-wallet unpushed commits, cherry-picked — **not** as a strip commit in the style of
+`59596cbd14 "Downgrade TDLib to 1.8.66"`. A strip commit deletes the code but leaves it in the
+branch's history, so pushing the branch publishes the whole wallet. Cut by omission instead
+whenever a release branch is going to GitHub.
+
+The currency commits are **not** on `release12.10.6` either: the first of them rewrites
+`Formatter.TonBalance`, which arrived with *Add the wallet UI*, so it has nothing to apply to.
+Porting the wallet-free half (`SplitAmount`, `Nanostars`, `GetAmountExponent`, the three amount
+cells, the glyph move) was offered and left undone — it would ship the nanostars bug fix but would
+stop the release branch being a strict subset of `develop`.
+
+### Adapted to layer 230 on 2026-09-16
+
+`tonWalletTransferResult` now carries the finished `transaction`, so the common send path inserts it
+and never creates a pending row; the resolver asks `getTonWalletTransactionByMsgHash` before the
+engine; the gasless quota moved to `loadTonWalletGaslessTransfersInfo` +
+`updateTonWalletGaslessTransfersInfo`, cached in `ClientService` and projected onto
+`WalletState.Gasless`; `createUserTonWallet` answers with `userTonWalletAddress`; and
+`tonWalletTransactionTypeTransfer.is_gasless` drives the receipt's fee row. See
+`notes/wallet-pending-resolution.md`.
+
+Unused so far: `getAddressTonWallet`, `userTonWalletAddress.public_key`,
+`internalLinkTypeTonWalletTransfer`, `checkWalletBotBalance`, and the whole TON Connect strand
+(`messageTonWalletConnectRequest`, `tonWalletConnectRequestState*`).
+
+### Open, in rough order of how much it matters
+
+- **The send popup never loads the wallet state, and never hears it change.** Open it from a chat
+  (`ComposeViewModel.SendMoney`) without having opened the wallet in this session and
+  `_wallet.State` is still `WalletState.None`: the only callers of `RestoreAsync` are
+  `WalletViewModel` — that is, opening the wallet window — and `WalletHelper.EnsureBoundAsync`,
+  which the popup reaches **only on the Send click**. `WalletSendPopup.State` is a bare
+  `=> _wallet.State`, so nothing corrects it while the popup is open either.
+
+  `WalletState.None` is not empty, it is *wrong*, which is why this does not read as "still
+  loading": `Currency` is `"USD"` and **`CurrencyRate` is 1** — the exact "dollars wearing another
+  currency's name" case `notes/wallet-currency-conversion.md` warns about, and one a
+  `CurrencyRate > 0` gate will not catch. `BalanceNanograms` is 0, so the balance line reads zero
+  and every amount trips `nanograms > State.BalanceNanograms` into the red insufficient-funds
+  message; `Address` is null, so Top Up hands `WalletSharePopup` nothing.
+
+  Two fixes, and the second is wanted whether or not the first lands: **restore on open** — await
+  it behind the skeleton rather than rendering a stale field — and **subscribe to
+  `UpdateWalletState`**. `WalletService` already publishes it (`_aggregator.Publish(new
+  UpdateWalletState(State))`) and `WalletViewModel` consumes it through `IHandle` /
+  `Handle(UpdateWalletState)`; the popup should do the same, so a balance that moves while it is
+  open — an incoming payment over the chain stream, or the rates finally arriving — is reflected
+  instead of frozen at whatever was there when it opened.
+
+- **`WalletWindow.Test()` is live debug code.** It sets the card to `Theme.AccentLight.Dark2` and
+  repaints the accent, and `NightModeService` calls it on every theme change. Committed on purpose
+  — it is Fela's colour experiment — but it is not release code.
+- **`WalletCardSheen.Accent` is unconsumed.** `#6DDCFF` is still a literal in `WalletWindow.xaml`
+  (the `GRAM` run and `CardBalanceUsd`) and in `MessageTonWalletTransferContent.xaml`. Wiring those
+  to the palette is what would make a differently-coloured card work end to end.
+- **`BadgeControlButtonStyle` is not committed.** `WalletTransactionPopup` and `WalletImportPopup`
+  use it; it lives in `Themes/CommonStyles.xaml`, which is still dirty and shared with `ChatCell.xaml`,
+  so it resolves to nothing at runtime until that file lands.
+- **Currency gating.** The send popup's converted pill and the transaction receipt do not wait for
+  `CurrencyRate > 0`, and `WalletWindow.UpdateBalance` keeps its own copy of the conversion
+  arithmetic instead of calling `WalletHelper`. Both are written up in
+  `notes/wallet-currency-conversion.md`.
+- **Questions for the colleague at TON Org.** Layer 230 answered two of them:
+  `getTonWalletTransactionByMsgHash` resolves gasless transfers now, and the finished transaction
+  comes back with the send reply. Still open: TDLib should take BOCs as base64 strings rather than
+  bytes; `msg_hash` is `bytes` carrying ASCII base64 text rather than a hash; the encrypted comment
+  arrives without its opcode and BOC wrapper, which `WalletCommentBody` reconstructs; and
+  `tonWalletState.public_key` still appears not to move on rotation, which is why the descriptor
+  carries its own bound key — unconfirmed either way, and deliberately left alone for now.
+- **Deferred:** Hello/TPM tiering for `WalletSecretStore`, and its no-Hello fail-closed bug;
+  rotate-on-disable-backup; durable pending rows read back from the journal; the skeleton bar sizes
+  to eyeball against the Android screenshot; dead markup in `WalletSharePopup.xaml` (an empty
+  `<local:RingTextPresenter />` and a hardcoded placeholder `Text`).
+
+### Task 4 items now closed
+
+`4.1` the file is listed in `Telegram.csproj` and globbed by `Telegram.Modern.csproj`; `4.2` the
+callbacks are implemented, though `WalletHttpHost` is **gone** — the engine moved to a
+`WalletStatuslessHost` and the old host was deleted; `4.3` and `4.4` are honoured by
+`WalletService` and `WalletSecretStore`.
+
 ## The shape
 
 There is no hand-written binding code in wallet-engine to port. The Swift and Kotlin

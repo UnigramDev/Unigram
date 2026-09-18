@@ -81,6 +81,8 @@ namespace Telegram.Services.Wallet
         private static Network DefaultNetwork => Network.Mainnet;
 
         private const uint DescriptorMagic = 0x4C41574Du; // "MWAL"
+        private const uint ArchiveMagic = 0x4C415741u;    // "AWAL"
+        private const int ArchiveVersion = 1;
         private const int DescriptorVersion = 2;
 
         private static IReadOnlyList<string> _recoveryWords;
@@ -102,6 +104,10 @@ namespace Telegram.Services.Wallet
         // dropped with it.
         private byte[] _boundKey;
 
+        // Wallets this device was the key for before the account moved on. Never emptied by a
+        // rotation - see ArchiveDescriptorAsync for why.
+        private readonly List<WalletArchiveRecord> _archive = new();
+        private bool _archiveLoaded;
 
         /// <summary>
         /// One past wallet, as stored. The balance and date are not stored: they are the chain's
@@ -234,6 +240,14 @@ namespace Telegram.Services.Wallet
             {
                 EnsureStores();
 
+                // Once per session. It is rebuilt from the file, so rereading it would throw away
+                // the balances the chain has since filled in.
+                if (!_archiveLoaded)
+                {
+                    _archiveLoaded = true;
+                    LoadArchive();
+                }
+
                 if (_descriptor == null && TryLoadDescriptor(out _descriptor, out _boundKey))
                 {
                     // The client is very likely already up as a watch-only one: the account's wallet
@@ -245,7 +259,7 @@ namespace Telegram.Services.Wallet
                     {
                         // The stored key is for a wallet this account no longer has, or for the
                         // phrase it held before another device rotated it.
-                        await ForgetDescriptorAsync();
+                        await ArchiveDescriptorAsync();
                     }
 
                     Attach();
@@ -277,6 +291,10 @@ namespace Telegram.Services.Wallet
             // Not awaited: the card shows grams the moment the state arrives, and the price beside
             // them follows when the rates do.
             _ = LoadRatesAsync();
+
+            // Nor this one, and for the same reason: what is left on a wallet the account no longer
+            // points at is the chain's answer, and nothing else waits on it.
+            _ = RefreshArchiveAsync();
 
             // Nor this one: a key that turns out to be stale costs nothing until something signs,
             // and everything the wallet shows is readable either way.
@@ -398,7 +416,7 @@ namespace Telegram.Services.Wallet
                         // This device's key cannot sign for the wallet any more. Dropped the moment
                         // that becomes known rather than left to fail at the next transfer, where
                         // the only symptom would be a rejected message.
-                        await ForgetDescriptorAsync();
+                        await ArchiveDescriptorAsync();
                     }
 
                     Attach();
@@ -808,7 +826,7 @@ namespace Telegram.Services.Wallet
                 }
 
                 await DetachAsync();
-                await ForgetDescriptorAsync();
+                await ArchiveDescriptorAsync();
 
                 Attach();
                 SetState(Project());
@@ -824,6 +842,121 @@ namespace Telegram.Services.Wallet
         /// <summary>
         /// The key the wallet contract itself holds, or null if the chain could not be asked.
         /// </summary>
+        /// <summary>
+        /// Asks the chain what is left on each archived wallet, and when it last moved.
+        /// </summary>
+        /// <remarks>
+        /// Two requests per wallet, and there is normally none: this runs when the archive gains an
+        /// entry and once per restore. The records are mutated in place rather than rebuilt - they
+        /// are written only here, and reading a torn pair would cost a wrong number for one refresh
+        /// rather than anything durable.
+        /// </remarks>
+        private async Task RefreshArchiveAsync()
+        {
+            List<WalletArchiveRecord> records;
+
+            await _mutex.WaitAsync();
+            try
+            {
+                records = new List<WalletArchiveRecord>(_archive);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            var changed = false;
+
+            foreach (var record in records)
+            {
+                if (await ChainBalanceAsync(record.Address) is BigInteger balance && balance != record.Balance)
+                {
+                    record.Balance = balance;
+                    changed = true;
+                }
+
+                var date = await ChainLastActivityAsync(record.Address);
+                if (date > 0 && date != record.LastUsedDate)
+                {
+                    record.LastUsedDate = date;
+                    changed = true;
+                }
+            }
+
+            if (!changed)
+            {
+                return;
+            }
+
+            await _mutex.WaitAsync();
+            try
+            {
+                SetState(Project());
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            Raise();
+        }
+
+        private async Task<BigInteger?> ChainBalanceAsync(string address)
+        {
+            try
+            {
+                var query = string.Format("address={0}&include_boc=false", Uri.EscapeDataString(address));
+                var response = await _clientService.SendAsync(new SendTonCenterApiRequest("/api/v3/accountStates", new TonCenterApiRequestTypeGet(query)));
+
+                if (response is Text text)
+                {
+                    using var document = JsonDocument.Parse(text.TextValue);
+
+                    if (document.RootElement.TryGetProperty("accounts", out var accounts)
+                        && accounts.GetArrayLength() > 0
+                        && accounts[0].TryGetProperty("balance", out var balance)
+                        && BigInteger.TryParse(balance.GetString(), out var value))
+                    {
+                        return value;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet balance could not be read: " + ex.Message);
+            }
+
+            return null;
+        }
+
+        private async Task<int> ChainLastActivityAsync(string address)
+        {
+            try
+            {
+                var query = string.Format("account={0}&limit=1&sort=desc", Uri.EscapeDataString(address));
+                var response = await _clientService.SendAsync(new SendTonCenterApiRequest("/api/v3/transactions", new TonCenterApiRequestTypeGet(query)));
+
+                if (response is Text text)
+                {
+                    using var document = JsonDocument.Parse(text.TextValue);
+
+                    if (document.RootElement.TryGetProperty("transactions", out var transactions)
+                        && transactions.GetArrayLength() > 0
+                        && transactions[0].TryGetProperty("now", out var now)
+                        && now.TryGetInt32(out var date))
+                    {
+                        return date;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet activity could not be read: " + ex.Message);
+            }
+
+            return 0;
+        }
+
         private async Task<byte[]> ChainPublicKeyAsync(string address)
         {
             try
@@ -898,27 +1031,54 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        private async Task ForgetDescriptorAsync()
+        /// <summary>
+        /// Files the wallet this device holds the key for, and stops being it.
+        /// </summary>
+        /// <remarks>
+        /// **The secret is deliberately not deleted.** The account points at one wallet at a time,
+        /// and when it is pointed somewhere else the old one keeps whatever is on it - reachable
+        /// only with the phrase stored here. Deleting it, which is what this used to do, loses
+        /// those funds permanently and with no way back.
+        ///
+        /// Called under the lock, and only for a change this device did not make. The explicit
+        /// delete is <see cref="ForgetAsync"/>, and that one really does delete.
+        /// </remarks>
+        private Task ArchiveDescriptorAsync()
         {
             var descriptor = _descriptor;
             if (descriptor == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            try
+            if (!_archive.Exists(x => string.Equals(x.RecordId, descriptor.RecordId, StringComparison.Ordinal)))
             {
-                await _lifecycle.DeleteWallet(descriptor);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("wallet secret could not be deleted: " + ex.Message);
+                _archive.Add(new WalletArchiveRecord
+                {
+                    RecordId = descriptor.RecordId,
+                    Address = descriptor.Address,
+                    PublicKey = descriptor.PublicKey,
+                    Network = descriptor.Network,
+                    SecretRef = descriptor.SecretRef.Value,
+                    BoundKey = _boundKey,
+                    ArchivedDate = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                });
+
+                SaveArchive();
+
+                Logger.Info(string.Format("wallet archived: {0}", descriptor.Address));
+
+                // What is on it is the account's business no longer, so the chain is the only thing
+                // that can say. Not awaited: the entry exists either way and prices itself later.
+                _ = RefreshArchiveAsync();
             }
 
             DeleteDescriptor();
 
             _descriptor = null;
             _boundKey = null;
+
+            return Task.CompletedTask;
         }
 
         public async Task ForgetAsync()
@@ -1727,7 +1887,34 @@ namespace Telegram.Services.Wallet
                 _activityResource,
                 _activityOffset.Length > 0,
                 _activityGeneration,
-                _clientService.TonWalletGaslessTransfersInfo);
+                _clientService.TonWalletGaslessTransfersInfo,
+                ProjectArchive());
+        }
+
+        /// <summary>
+        /// The archived wallets worth showing, which is the ones that are somewhere else.
+        /// </summary>
+        /// <remarks>
+        /// An entry whose address is the wallet in use is a key rotation on the same contract: the
+        /// phrase is kept in case that reading is wrong, but there is no second balance to show and
+        /// listing it would report the current one twice.
+        /// </remarks>
+        private IReadOnlyList<WalletArchivedWallet> ProjectArchive()
+        {
+            List<WalletArchivedWallet> items = null;
+
+            foreach (var record in _archive)
+            {
+                if (_wallet != null && IsSameAddress(record.Address, _wallet.Address))
+                {
+                    continue;
+                }
+
+                items ??= new List<WalletArchivedWallet>();
+                items.Add(new WalletArchivedWallet(record.Address, record.Balance, record.LastUsedDate));
+            }
+
+            return items ?? WalletState.NoArchive;
         }
 
         /// <summary>
@@ -1850,6 +2037,30 @@ namespace Telegram.Services.Wallet
         /// reports is the one the contract signs with today. Comparing those two would call the
         /// right phrase the wrong one for every wallet that has ever rotated.
         /// </remarks>
+        /// <summary>
+        /// Whether two addresses name the same account, whichever form each is written in.
+        /// </summary>
+        private static bool IsSameAddress(string left, string right)
+        {
+            if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right))
+            {
+                return false;
+            }
+
+            try
+            {
+                return string.Equals(
+                    WalletEngineMethods.ParseTonAddress(left).Raw,
+                    WalletEngineMethods.ParseTonAddress(right).Raw,
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet address could not be compared: " + ex.Message);
+                return false;
+            }
+        }
+
         private static bool IsSameWallet(WalletDescriptor descriptor, TdTonWalletState wallet)
         {
             try
@@ -1981,6 +2192,183 @@ namespace Telegram.Services.Wallet
 
         private string DescriptorPath => Path.Combine(_path, "descriptor" + _suffix + ".bin");
 
+        private string ArchivePath => Path.Combine(_path, "archive" + _suffix + ".bin");
+
+        /// <summary>
+        /// Reads the archive, which is a list of what <see cref="SaveDescriptor"/> writes plus the
+        /// date each one stopped being the wallet.
+        /// </summary>
+        private void LoadArchive()
+        {
+            _archive.Clear();
+
+            try
+            {
+                if (!File.Exists(ArchivePath))
+                {
+                    return;
+                }
+
+                using var stream = File.OpenRead(ArchivePath);
+                using var reader = new BinaryReader(stream, Encoding.UTF8);
+
+                var magic = reader.ReadUInt32();
+                var version = reader.ReadInt32();
+
+                if (magic != ArchiveMagic || version < 1 || version > ArchiveVersion)
+                {
+                    return;
+                }
+
+                var count = reader.ReadInt32();
+
+                for (int i = 0; i < count; i++)
+                {
+                    _archive.Add(new WalletArchiveRecord
+                    {
+                        RecordId = reader.ReadString(),
+                        Address = reader.ReadString(),
+                        PublicKey = reader.ReadBytes(reader.ReadInt32()),
+                        Network = reader.ReadInt32() == 1 ? Network.Testnet : Network.Mainnet,
+                        SecretRef = reader.ReadString(),
+                        BoundKey = reader.ReadBytes(reader.ReadInt32()),
+                        ArchivedDate = reader.ReadInt64()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Left in place rather than rewritten: a file that cannot be read is still the only
+                // record of those phrases, and overwriting it is the one unrecoverable mistake here.
+                Logger.Error("wallet archive unreadable: " + ex.Message);
+            }
+        }
+
+        private void SaveArchive()
+        {
+            try
+            {
+                Directory.CreateDirectory(_path);
+
+                using var stream = File.Create(ArchivePath);
+                using var writer = new BinaryWriter(stream, Encoding.UTF8);
+
+                writer.Write(ArchiveMagic);
+                writer.Write(ArchiveVersion);
+                writer.Write(_archive.Count);
+
+                foreach (var record in _archive)
+                {
+                    writer.Write(record.RecordId);
+                    writer.Write(record.Address);
+                    writer.Write(record.PublicKey?.Length ?? 0);
+
+                    if (record.PublicKey != null)
+                    {
+                        writer.Write(record.PublicKey);
+                    }
+
+                    writer.Write(record.Network == Network.Testnet ? 1 : 0);
+                    writer.Write(record.SecretRef ?? string.Empty);
+                    writer.Write(record.BoundKey?.Length ?? 0);
+
+                    if (record.BoundKey != null)
+                    {
+                        writer.Write(record.BoundKey);
+                    }
+
+                    writer.Write(record.ArchivedDate);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet archive could not be saved: " + ex.Message);
+            }
+        }
+
+        private bool TryLoadDescriptor(out WalletDescriptor descriptor, out byte[] boundKey)
+        {
+            descriptor = null;
+            boundKey = null;
+
+            try
+            {
+                if (!File.Exists(DescriptorPath))
+                {
+                    return false;
+                }
+
+                using var stream = File.OpenRead(DescriptorPath);
+                using var reader = new BinaryReader(stream, Encoding.UTF8);
+
+                var magic = reader.ReadUInt32();
+                var version = reader.ReadInt32();
+
+                if (magic != DescriptorMagic || version < 1 || version > DescriptorVersion)
+                {
+                    return false;
+                }
+
+                var recordId = reader.ReadString();
+                var address = reader.ReadString();
+                var publicKey = reader.ReadBytes(reader.ReadInt32());
+                var network = reader.ReadInt32() == 1 ? Network.Testnet : Network.Mainnet;
+                var secretRef = reader.ReadString();
+
+                // Version 1 predates the rotation check and holds no key of its own. The anchor
+                // stands in for it, which is right for every wallet that version could have bound:
+                // before a first rotation the two are the same key, and after one the bind would
+                // have refused the phrase.
+                boundKey = version >= 2 ? reader.ReadBytes(reader.ReadInt32()) : publicKey;
+
+                descriptor = new WalletDescriptor(recordId, address, publicKey, network, new ProtectedSecretRef(secretRef));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet descriptor unreadable: " + ex.Message);
+                return false;
+            }
+        }
+
+        private void SaveDescriptor(WalletDescriptor descriptor, byte[] boundKey)
+        {
+            Directory.CreateDirectory(_path);
+
+            using var stream = File.Create(DescriptorPath);
+            using var writer = new BinaryWriter(stream, Encoding.UTF8);
+
+            writer.Write(DescriptorMagic);
+            writer.Write(DescriptorVersion);
+            writer.Write(descriptor.RecordId);
+            writer.Write(descriptor.Address);
+            writer.Write(descriptor.PublicKey.Length);
+            writer.Write(descriptor.PublicKey);
+            writer.Write(descriptor.Network == Network.Testnet ? 1 : 0);
+            writer.Write(descriptor.SecretRef.Value);
+
+            writer.Write(boundKey?.Length ?? 0);
+
+            if (boundKey != null)
+            {
+                writer.Write(boundKey);
+            }
+        }
+
+        private void DeleteDescriptor()
+        {
+            try
+            {
+                if (File.Exists(DescriptorPath))
+                {
+                    File.Delete(DescriptorPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet descriptor could not be deleted: " + ex.Message);
+            }
+        }
     }
 
     /// <summary>

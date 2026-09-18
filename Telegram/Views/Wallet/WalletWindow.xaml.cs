@@ -30,6 +30,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -250,8 +251,47 @@ namespace Telegram.Views.Wallet
             }
         }
 
+        /// <summary>
+        /// The line offering the wallets the account has moved on from, when any of them still
+        /// holds something.
+        /// </summary>
+        /// <remarks>
+        /// Zero is the ordinary answer and hides the row - either there is no archive, or the chain
+        /// has not been asked yet and the balances are still zero. It appears when the answer comes
+        /// back rather than sitting there saying nothing.
+        /// </remarks>
+        private void UpdateArchive()
+        {
+            var archived = ViewModel.ArchivedBalance;
+            if (archived <= BigInteger.Zero)
+            {
+                ArchiveButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            var amount = Formatter.TonBalance(archived).Join();
+
+            var text = new TextBlock();
+            text.Inlines.Add(new Run
+            {
+                Text = Icons.Ton,
+                FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily
+            });
+            text.Inlines.Add(new Run { Text = string.Format(" {0} [in old wallets]", amount) });
+
+            ArchiveButton.Content = text;
+            ArchiveButton.Visibility = Visibility.Visible;
+        }
+
+        private void Archive_Click(object sender, RoutedEventArgs e)
+        {
+            _navigationService.ShowPopup(new WalletBackupPopup(_navigationService));
+        }
+
         private void UpdateBalance(BigInteger balance)
         {
+            UpdateArchive();
+
             // Half an answer is not shown: grams with no rate to convert them at would be a number
             // beside a currency it has not been converted into, and a rate of one is what an
             // unfetched rate looks like - dollars wearing the wrong name.
