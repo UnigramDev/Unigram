@@ -127,6 +127,15 @@ namespace Telegram.Charts
                 }
             }
 
+            // Every edge in this pass is shared with the next bar: a segment's top is the bottom of
+            // the one above it, and a column's width is exactly the spacing to the next column.
+            // Antialiased, each side of a shared edge covers about half the boundary pixel, and two
+            // half coverages composite to three quarters rather than one - which is the pale line
+            // that used to run between them. Nothing here is anything but an axis-aligned
+            // rectangle, so aliasing costs no quality and tiles the edges exactly.
+            var antialiasing = canvas.Antialiasing;
+            canvas.Antialiasing = CanvasAntialiasing.Aliased;
+
             for (int k = 0; k < lines.Count; k++)
             {
                 StackBarViewData line = lines[k];
@@ -176,6 +185,8 @@ namespace Telegram.Charts
                     stackOffset += height;
                 }
             }
+
+            canvas.Antialiasing = antialiasing;
             //canvas.restore();
 
         }
@@ -308,6 +319,9 @@ namespace Telegram.Charts
                     p = chartData.xPercentage[1] * pickerWidth;
                 }
 
+                var antialiasing = canvas.Antialiasing;
+                canvas.Antialiasing = CanvasAntialiasing.Aliased;
+
                 for (int k = 0; k < nl; k++)
                 {
                     LineViewData line = lines[k];
@@ -315,6 +329,8 @@ namespace Telegram.Charts
                     line.paint.A = 255;
                     canvas.DrawLines(line.linesPath, 0, line.linesPathBottomSize, line.paint);
                 }
+
+                canvas.Antialiasing = antialiasing;
             }
         }
 
