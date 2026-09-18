@@ -25,6 +25,26 @@ namespace Telegram.Charts.Data
 
         public float oneDayPercentage = 0f;
 
+        public const int FORMATTER_DEFAULT = 0;
+        public const int FORMATTER_TON = 1;
+        public const int FORMATTER_XTR = 2;
+
+        /// <summary>
+        /// Divisor taking a sample to the second axis, in the minor units Formatter.FormatAmount
+        /// expects - so a value over this is what the right hand column reads in USD. Zero means
+        /// there is no second axis, which is every graph but revenue.
+        /// </summary>
+        /// <remarks>
+        /// A divisor rather than a rate because that is the shape Android uses, and keeping it lets
+        /// the two implementations be diffed. TDLib's statisticalGraphData carries no rate of its
+        /// own - unlike the raw TL type Android reads - so the caller sets this from the usd_rate
+        /// that came alongside the graph.
+        /// </remarks>
+        public float yRate = 0;
+
+        public int yTickFormatter = FORMATTER_DEFAULT;
+        public int yTooltipFormatter = FORMATTER_DEFAULT;
+
         protected ChartData()
         {
         }
@@ -82,6 +102,9 @@ namespace Telegram.Charts.Data
                 }
                 Measure();
             }
+
+            yTickFormatter = GetFormatter(jsonObject.GetNamedString("yTickFormatter", string.Empty));
+            yTooltipFormatter = GetFormatter(jsonObject.GetNamedString("yTooltipFormatter", string.Empty));
 
             JsonObject colors = jsonObject.GetNamedObject("colors");
             JsonObject names = jsonObject.GetNamedObject("names");
@@ -302,6 +325,28 @@ namespace Telegram.Charts.Data
                 }
             }
             return right;
+        }
+
+        // Matched on the formatter name the graph carries rather than on the graph type, which is
+        // how Android picks it: the same type serves both currencies.
+        public static int GetFormatter(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return FORMATTER_DEFAULT;
+            }
+
+            if (value.Contains("TON"))
+            {
+                return FORMATTER_TON;
+            }
+
+            if (value.Contains("XTR"))
+            {
+                return FORMATTER_XTR;
+            }
+
+            return FORMATTER_DEFAULT;
         }
 
         public partial class Line
