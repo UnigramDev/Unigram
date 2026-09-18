@@ -86,6 +86,7 @@ namespace Telegram.Services.Wallet
             CurrencyRate = 1;
             Activity = NoActivity;
             ActivityResource = WalletResource.Idle;
+            Archive = NoArchive;
         }
 
         public WalletState(
@@ -103,7 +104,8 @@ namespace Telegram.Services.Wallet
             WalletResource activityResource,
             bool hasMoreActivity,
             int activityGeneration,
-            TonWalletGaslessTransfersInfo gasless)
+            TonWalletGaslessTransfersInfo gasless,
+            IReadOnlyList<WalletArchivedWallet> archive)
         {
             Address = address;
             BalanceNanograms = balanceNanograms;
@@ -120,8 +122,27 @@ namespace Telegram.Services.Wallet
             HasMoreActivity = hasMoreActivity;
             ActivityGeneration = activityGeneration;
             Gasless = gasless;
+            Archive = archive ?? NoArchive;
             HasWallet = address.Length > 0;
+
+            foreach (var item in Archive)
+            {
+                ArchivedBalanceNanograms += item.BalanceNanograms;
+            }
         }
+
+        internal static readonly IReadOnlyList<WalletArchivedWallet> NoArchive = new WalletArchivedWallet[0];
+
+        /// <summary>
+        /// Wallets this device still holds the key for, but which the account no longer points at.
+        /// Empty in the ordinary case, and empty for a rotation that left the address alone.
+        /// </summary>
+        public IReadOnlyList<WalletArchivedWallet> Archive { get; }
+
+        /// <summary>
+        /// What is left across all of them, which is what the header offers to go and look at.
+        /// </summary>
+        public BigInteger ArchivedBalanceNanograms { get; }
 
         /// <summary>
         /// What is left of the daily allowance of transfers Telegram pays the gas for, or null
@@ -258,6 +279,38 @@ namespace Telegram.Services.Wallet
         public WalletState State { get; }
 
         public WalletBindFailure? Failure { get; }
+    }
+
+    /// <summary>
+    /// A wallet this device used to hold the key for, and still does.
+    /// </summary>
+    /// <remarks>
+    /// The account points at one wallet at a time. When it is pointed somewhere else - from another
+    /// session, or by a recovery - the wallet that was there does not stop existing, and whatever is
+    /// left on it is reachable only with the phrase this device stored. That is why the phrase is
+    /// archived rather than deleted, and why this exists.
+    /// </remarks>
+    public sealed class WalletArchivedWallet
+    {
+        public WalletArchivedWallet(string address, BigInteger balanceNanograms, int lastUsedDate)
+        {
+            Address = address;
+            BalanceNanograms = balanceNanograms;
+            LastUsedDate = lastUsedDate;
+        }
+
+        public string Address { get; }
+
+        /// <summary>
+        /// What the chain says is left on it, or zero until it has been asked. The account does not
+        /// report this: it knows the wallet it points at and no other.
+        /// </summary>
+        public BigInteger BalanceNanograms { get; }
+
+        /// <summary>
+        /// The date of its last transaction, or 0 if it has none or has not been read yet.
+        /// </summary>
+        public int LastUsedDate { get; }
     }
 
     public sealed class WalletTransferResult

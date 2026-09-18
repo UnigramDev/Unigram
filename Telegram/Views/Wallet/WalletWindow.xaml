@@ -194,6 +194,17 @@
                                              CornerRadius="4"
                                              Margin="24,8,24,0" />
 
+                    <!-- Only when there is something on them, and the content is built in code
+                         because the amount carries the gram glyph in the icon font. -->
+                    <controls:SettingsButton x:Name="ArchiveButton"
+                                             Click="Archive_Click"
+                                             IsChevronVisible="True"
+                                             IsGlyphVisible="False"
+                                             BorderThickness="1"
+                                             CornerRadius="4"
+                                             Visibility="Collapsed"
+                                             Margin="24,8,24,0" />
+
 
 
                     <controls:AspectView x:Name="Card"

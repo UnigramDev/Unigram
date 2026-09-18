@@ -100,6 +100,7 @@ namespace Telegram.ViewModels.Wallet
             IsSynchronized = state.IsSynchronized;
             Currency = state.Currency;
             CurrencyRate = state.CurrencyRate;
+            ArchivedBalance = state.ArchivedBalanceNanograms;
 
             Mirror(state);
 
@@ -227,6 +228,17 @@ namespace Telegram.ViewModels.Wallet
         {
             get => _balance;
             set => Set(ref _balance, value);
+        }
+
+        /// <summary>
+        /// What is left across the wallets the account has moved on from, which is zero in every
+        /// ordinary case - there is no archive, or the chain has not answered for it yet.
+        /// </summary>
+        private BigInteger _archivedBalance;
+        public BigInteger ArchivedBalance
+        {
+            get => _archivedBalance;
+            set => Set(ref _archivedBalance, value);
         }
 
         /// <summary>

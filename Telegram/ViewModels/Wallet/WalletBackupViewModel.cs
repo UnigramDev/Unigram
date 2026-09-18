@@ -22,6 +22,11 @@ namespace Telegram.ViewModels.Wallet
     {
         private readonly IWalletService _wallet;
 
+        /// <summary>
+        /// Wallets this device still holds the key for, which the account no longer points at.
+        /// </summary>
+        public IReadOnlyList<WalletArchivedWallet> Archive => _wallet.State.Archive;
+
         public WalletBackupViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IWalletService wallet)
             : base(clientService, settingsService, aggregator)
         {
