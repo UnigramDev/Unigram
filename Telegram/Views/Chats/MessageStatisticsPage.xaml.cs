@@ -91,14 +91,7 @@ namespace Telegram.Views.Chats
                 return;
             }
 
-            var header = root.Items[0] as ChartHeaderView;
-            var border = root.Items[1] as AspectView;
-            var checks = root.Items[2] as WrapPanel;
-
-            root.Header = data?.title ?? string.Empty;
-            border.Children.Clear();
-            border.Constraint = data;
-
+            root.PrepareData(data);
             root.UpdateData(data);
         }
     }

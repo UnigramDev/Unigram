@@ -33,11 +33,7 @@
                                     HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
-                                <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}"
-                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                                 BorderThickness="1"
-                                                 CornerRadius="4" />
+                                <cells:ChartCell DataContextChanged="OnElementPrepared" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
@@ -46,11 +42,7 @@
                                     HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
-                                <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}"
-                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                                 BorderThickness="1"
-                                                 CornerRadius="4" />
+                                <cells:ChartCell DataContextChanged="OnElementPrepared" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
@@ -59,11 +51,7 @@
                                     HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
-                                <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}"
-                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                                 BorderThickness="1"
-                                                 CornerRadius="4" />
+                                <cells:ChartCell DataContextChanged="OnElementPrepared" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
@@ -238,7 +226,7 @@
                                                    Header="{x:Bind Header}"
                                                    Visibility="{x:Bind ViewModel.IsSelectionVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                    HorizontalContentAlignment="Center"
-                                                   Margin="0,16,0,2">
+                                                   Margin="0,16,0,6">
                             <controls:TopNavView SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                                                  Height="48"
                                                  Padding="8,0,8,4"

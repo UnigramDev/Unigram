@@ -15,6 +15,7 @@ using Telegram.Charts.DataView;
 using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace Telegram.Charts
 {
@@ -215,8 +216,6 @@ namespace Telegram.Charts
 
             if (canvas != null)
             {
-                var textLayout = PercentLayout(canvas);
-
                 for (int i = 0; i < n; i++)
                 {
                     if (lines[i].alpha <= 0 && !lines[i].enabled)
@@ -242,21 +241,21 @@ namespace Telegram.Charts
                     if (currentPercent >= 0.02f && percent > 0 && percent <= 100)
                     {
                         rText = (float)(rectF.Width * 0.42f * Math.Sqrt(1f - currentPercent));
-                        //textPaint.setTextSize(MIN_TEXT_SIZE + currentPercent * MAX_TEXT_SIZE);
-                        //textPaint.setAlpha((int)(transitionAlpha * lines[i].alpha));
-                        //canvas.drawText(
-                        //        lookupTable[percent],
-                        //        (float)(rectF.centerX() + rText * Math.Cos(MathEx.ToRadians(textAngle))),
-                        //        (float)(rectF.centerY() + rText * Math.Sin(MathEx.ToRadians(textAngle))) - ((textPaint.descent() + textPaint.ascent()) / 2),
-                        //        textPaint);
 
-                        var regions = textLayout.GetCharacterRegions(0, lookupTable[percent].Length);
+                        // Sized to its own slice, which the port never did - every label drew at the
+                        // default size, so the small ones did not fit.
+                        var format = PercentFormat(MIN_TEXT_SIZE + currentPercent * MAX_TEXT_SIZE);
 
+                        var textX = rectF.centerX() + rText * MathF.Cos(MathFEx.ToRadians(textAngle));
+                        var textY = rectF.centerY() + rText * MathF.Sin(MathFEx.ToRadians(textAngle));
+
+                        // A box centred on the point, wide enough that nothing wraps or clips; the
+                        // format centres within it, so nothing here has to be measured.
                         canvas.DrawText(
                             lookupTable[percent],
-                            rectF.centerX() + rText * MathF.Cos(MathFEx.ToRadians(textAngle)) - (float)regions[0].LayoutBounds.Width / 2,
-                            rectF.centerY() + rText * MathF.Sin(MathFEx.ToRadians(textAngle)) - (float)regions[0].LayoutBounds.Height / 2 /*- ((textPaint.descent() + textPaint.ascent()) / 2)*/,
-                            Color.FromArgb((byte)(transitionAlpha * lines[i].alpha), 255, 255, 255)
+                            CreateRect(textX - MAX_TEXT_SIZE * 4, textY - MAX_TEXT_SIZE * 2, textX + MAX_TEXT_SIZE * 4, textY + MAX_TEXT_SIZE * 2),
+                            Color.FromArgb((byte)(transitionAlpha * lines[i].alpha), 255, 255, 255),
+                            format
                         );
                     }
 
@@ -466,10 +465,6 @@ namespace Telegram.Charts
             {
                 currentSelection = newSelection;
                 Invalidate();
-                //pieLegendView.setVisibility(Visibility.Visible);
-                LineViewData l = lines[newSelection];
-
-                //pieLegendView.setData(l.line.name, (int)values[currentSelection], l.lineColor);
 
                 float r = (float)rectF.Width / 2;
                 int xl = (int)Math.Min(
@@ -490,8 +485,9 @@ namespace Telegram.Charts
 
                 // if (yl < 0) yl = 0;
 
-                //pieLegendView.setTranslationX(xl);
-                //pieLegendView.setTranslationY(yl);
+                // Kept for MoveLegend, which is where every chart places its legend.
+                _legendX = xl;
+                _legendY = yl;
 
                 //bool v = false;
                 //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
@@ -546,31 +542,72 @@ namespace Telegram.Charts
 
         protected override void OnActionUp()
         {
-            currentSelection = -1;
-            //pieLegendView.setVisibility(Visibility.Collapsed);
+            ClearSelection();
             Invalidate();
         }
 
-        // Purely a measuring probe: the per-character regions of "100%" are what centre each slice
-        // label. It depends on nothing that changes, so it outlives the frame that built it.
-        private CanvasTextLayout _percentLayout;
+        /// <summary>
+        /// Also drops the selected slice, which the inherited one knows nothing about.
+        /// </summary>
+        /// <remarks>
+        /// The base clears selectedIndex - an index along the x axis, which a pie does not have -
+        /// so on its own it hid the legend and left the slice lifted. Pointer exit goes through
+        /// here, which is why the selection outlived the pointer.
+        /// </remarks>
+        public override void ClearSelection()
+        {
+            base.ClearSelection();
+
+            currentSelection = -1;
+        }
+
+        private int _legendX;
+        private int _legendY;
+
+        /// <summary>
+        /// Placed against the selected slice rather than against a date on the x axis, which is
+        /// what the inherited one does and what a pie has none of.
+        /// </summary>
+        public override void MoveLegend()
+        {
+            if (currentSelection < 0 || currentSelection >= lines.Count)
+            {
+                legendSignatureView.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            var line = lines[currentSelection];
+
+            legendSignatureView.SetPieData(line.line.name, (long)values[currentSelection], line.lineColor);
+            legendSignatureView.Visibility = Visibility.Visible;
+            legendSignatureView.Margin = new Thickness(_legendX, _legendY, 0, 0);
+        }
+
+        // One format for every slice label, its size rewritten per slice. Centred by the format so
+        // that DrawText places the string in a box rather than at a baseline - which is what lets
+        // the size vary at all, since a measured offset would have to be remeasured with it.
         private CanvasTextFormat _percentFormat;
 
-        private CanvasTextLayout PercentLayout(CanvasDrawingSession canvas)
+        private CanvasTextFormat PercentFormat(float size)
         {
-            // The format is held rather than disposed straight after: whether a layout keeps its
-            // own copy of one is not worth betting a use-after-free on.
-            _percentFormat ??= new CanvasTextFormat();
+            _percentFormat ??= new CanvasTextFormat
+            {
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                VerticalAlignment = CanvasVerticalAlignment.Center,
+                WordWrapping = CanvasWordWrapping.NoWrap
+            };
 
-            return _percentLayout ??= new CanvasTextLayout(canvas, "100%", _percentFormat, float.PositiveInfinity, float.PositiveInfinity);
+            if (_percentFormat.FontSize != size)
+            {
+                _percentFormat.FontSize = size;
+            }
+
+            return _percentFormat;
         }
 
         protected override void ReleaseResources()
         {
             base.ReleaseResources();
-
-            _percentLayout?.Dispose();
-            _percentLayout = null;
 
             _percentFormat?.Dispose();
             _percentFormat = null;

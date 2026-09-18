@@ -211,7 +211,7 @@ namespace Telegram.ViewModels.Chats
             var response = await ClientService.SendAsync(new GetChatRevenueStatistics(Chat.Id, false));
             if (response is ChatRevenueStatistics statistics)
             {
-                Impressions = ChartViewData.Create(statistics.RevenueByHourGraph, Strings.MonetizationGraphImpressions, 5);
+                Impressions = ChartViewData.Create(ClientService, Chat.Id, statistics.RevenueByHourGraph, Strings.MonetizationGraphImpressions, 5);
 
                 // The divisor taking a sample to US cents, for the chart's second axis. usd_rate is
                 // quoted alongside the statistics but the server does not always fill it in, and
@@ -226,7 +226,7 @@ namespace Telegram.ViewModels.Chats
                     ? 1e13 / ClientService.Options.MillionGramToUsdRate
                     : 0;
 
-                var revenue = ChartViewData.Create(statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 7);
+                var revenue = ChartViewData.Create(ClientService, Chat.Id, statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 7);
                 if (revenue != null && rate > 0)
                 {
                     revenue.yRate = (float)rate;

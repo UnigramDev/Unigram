@@ -11,12 +11,26 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Background="{ThemeResource MenuFlyoutPresenterBackground}"
+            BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+            BorderThickness="1"
             CornerRadius="4"
             Padding="8,4,8,6">
 
-    <TextBlock x:Name="Time"
-               Margin="0,0,0,2"
-               Style="{StaticResource BaseTextBlockStyle}" />
+    <Grid x:Name="Title">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Time"
+                   Margin="0,0,0,2"
+                   Style="{StaticResource BaseTextBlockStyle}" />
+        <TextBlock x:Name="Chevron"
+                   Text="&#xEAF4;"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   FontSize="16"
+                   Margin="8,2,0,0"
+                   Grid.Column="1" />
+    </Grid>
     <TextBlock x:Name="HourTime"
                Visibility="Collapsed" />
 

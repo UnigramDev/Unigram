@@ -138,18 +138,18 @@ namespace Telegram.ViewModels.Chats
 
                     stats = new List<ChartViewData>(11)
                     {
-                        ChartViewData.Create(channelStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
-                        ChartViewData.Create(channelStats.JoinGraph, Strings.FollowersChartTitle, 0),
-                        ChartViewData.Create(channelStats.MuteGraph, Strings.NotificationsChartTitle, 0),
-                        ChartViewData.Create(channelStats.ViewCountByHourGraph, Strings.TopHoursChartTitle, /*0*/5),
-                        ChartViewData.Create(channelStats.ViewCountBySourceGraph, Strings.ViewsBySourceChartTitle, 2),
-                        ChartViewData.Create(channelStats.JoinBySourceGraph, Strings.NewFollowersBySourceChartTitle, 2),
-                        ChartViewData.Create(channelStats.LanguageGraph, Strings.LanguagesChartTitle, 4),
-                        ChartViewData.Create(channelStats.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6),
-                        ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.IVInteractionsChartTitle, /*1*/6),
-                        ChartViewData.Create(channelStats.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, 2),
-                        ChartViewData.Create(channelStats.StoryInteractionGraph, Strings.StoryInteractionsChartTitle, 6),
-                        ChartViewData.Create(channelStats.StoryReactionGraph, Strings.StoryReactionsByEmotionChartTitle, 2)
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.JoinGraph, Strings.FollowersChartTitle, 0),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.MuteGraph, Strings.NotificationsChartTitle, 0),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.ViewCountByHourGraph, Strings.TopHoursChartTitle, /*0*/5),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.ViewCountBySourceGraph, Strings.ViewsBySourceChartTitle, 2),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.JoinBySourceGraph, Strings.NewFollowersBySourceChartTitle, 2),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.LanguageGraph, Strings.LanguagesChartTitle, 4),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.InstantViewInteractionGraph, Strings.IVInteractionsChartTitle, /*1*/6),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, 2),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.StoryInteractionGraph, Strings.StoryInteractionsChartTitle, 6),
+                        ChartViewData.Create(ClientService, Chat.Id, channelStats.StoryReactionGraph, Strings.StoryReactionsByEmotionChartTitle, 2)
                     };
 
                     MutableVector<long> messageIds = null;
@@ -205,14 +205,14 @@ namespace Telegram.ViewModels.Chats
 
                     stats = new List<ChartViewData>(8)
                     {
-                        ChartViewData.Create(groupStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
-                        ChartViewData.Create(groupStats.JoinGraph, Strings.GroupMembersChartTitle, 0),
-                        ChartViewData.Create(groupStats.JoinBySourceGraph, Strings.NewMembersBySourceChartTitle, 2),
-                        ChartViewData.Create(groupStats.LanguageGraph, Strings.MembersLanguageChartTitle, 4),
-                        ChartViewData.Create(groupStats.MessageContentGraph, Strings.MessagesChartTitle, 2),
-                        ChartViewData.Create(groupStats.ActionGraph, Strings.ActionsChartTitle, 1),
-                        ChartViewData.Create(groupStats.DayGraph, Strings.TopHoursChartTitle, /*0*/5),
-                        ChartViewData.Create(groupStats.WeekGraph, Strings.TopDaysOfWeekChartTitle, 4)
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.JoinGraph, Strings.GroupMembersChartTitle, 0),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.JoinBySourceGraph, Strings.NewMembersBySourceChartTitle, 2),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.LanguageGraph, Strings.MembersLanguageChartTitle, 4),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.MessageContentGraph, Strings.MessagesChartTitle, 2),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.ActionGraph, Strings.ActionsChartTitle, 1),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.DayGraph, Strings.TopHoursChartTitle, /*0*/5),
+                        ChartViewData.Create(ClientService, Chat.Id, groupStats.WeekGraph, Strings.TopDaysOfWeekChartTitle, 4)
                     };
 
                     stats[7]?.useWeekFormat = true;
@@ -313,6 +313,13 @@ namespace Telegram.ViewModels.Chats
         /// </remarks>
         public float yRate;
 
+        private IClientService clientService;
+        private long chatId;
+
+        // Zoomed graphs are fetched per date and the user walks back and forth across them, so each
+        // one is kept. Scoped to this graph rather than static: it dies when the statistics do.
+        private Dictionary<long, ChartData> zoomCache;
+
         public bool loading;
         public bool isEmpty;
         public bool isLanguages;
@@ -324,13 +331,15 @@ namespace Telegram.ViewModels.Chats
             graphType = grahType;
         }
 
-        public static ChartViewData Create(StatisticalGraph graph, string title, int graphType)
+        public static ChartViewData Create(IClientService clientService, long chatId, StatisticalGraph graph, string title, int graphType)
         {
             if (graph is null or StatisticalGraphError)
             {
                 return null;
             }
             var viewData = new ChartViewData(title, graphType);
+            viewData.clientService = clientService;
+            viewData.chatId = chatId;
             if (graph is StatisticalGraphData data)
             {
                 string json = data.JsonData;
@@ -389,7 +398,7 @@ namespace Telegram.ViewModels.Chats
             return null;
         }
 
-        public async Task<bool> LoadAsync(IClientService clientService, long chatId)
+        public async Task<bool> LoadAsync()
         {
             var graph = await clientService.SendAsync(new GetStatisticalGraph(chatId, token, 0)) as StatisticalGraph;
             var viewData = this;
@@ -430,6 +439,53 @@ namespace Telegram.ViewModels.Chats
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Loads the graph behind one date and leaves it in <see cref="childChartData"/>, ready for
+        /// the cell to zoom into. False where there is nothing to zoom to, or the request failed.
+        /// </summary>
+        public async Task<bool> LoadZoomAsync(long x)
+        {
+            if (string.IsNullOrEmpty(zoomToken) || clientService == null)
+            {
+                return false;
+            }
+
+            if (zoomCache != null && zoomCache.TryGetValue(x, out var cached))
+            {
+                childChartData = cached;
+                return true;
+            }
+
+            var graph = await clientService.SendAsync(new GetStatisticalGraph(chatId, zoomToken, x)) as StatisticalGraph;
+            if (graph is not StatisticalGraphData data)
+            {
+                return false;
+            }
+
+            try
+            {
+                var child = CreateChartData(JsonObject.Parse(data.JsonData), graphType);
+                if (child == null)
+                {
+                    return false;
+                }
+
+                // The rate is the parent's: a zoomed revenue graph is the same currency, and the
+                // second axis would otherwise vanish on the way in.
+                child.yRate = yRate;
+
+                zoomCache ??= new Dictionary<long, ChartData>();
+                zoomCache[x] = child;
+
+                childChartData = child;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         //public void load(int accountId, int classGuid, int dc, RecyclerListView recyclerListView, Adapter adapter, DiffUtilsCallback difCallback)

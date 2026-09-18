@@ -198,11 +198,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ChartCell Background="{ThemeResource SettingsItemBackground}"
-                                     BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                     BorderThickness="1"
-                                     CornerRadius="4"
-                                     Margin="0,16,0,0" />
+                    <cells:ChartCell Margin="24,16,24,0" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

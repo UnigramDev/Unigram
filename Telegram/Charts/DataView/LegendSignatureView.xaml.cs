@@ -12,6 +12,7 @@ using System.Text;
 using Telegram.Charts.Data;
 using Telegram.Common;
 using Telegram.Converters;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -40,7 +41,7 @@ namespace Telegram.Charts.DataView
         public bool showPercentage;
         public bool zoomEnabled;
 
-        public bool canGoZoom = true;
+        public bool canGoZoom;
 
         //Drawable shadowDrawable;
         //Drawable backgroundDrawable;
@@ -148,6 +149,8 @@ namespace Telegram.Charts.DataView
                 //if (useHour) hourTime.Text = hourFormat.format(date);
             }
 
+            Title.Visibility = Visibility.Visible;
+
             long sum = 0;
 
             for (int i = 0; i < lines.Count; i++)
@@ -202,16 +205,9 @@ namespace Telegram.Charts.DataView
                 }
             }
 
-            //if (zoomEnabled)
-            //{
-            //    canGoZoom = sum > 0;
-            //    chevron.setVisibility(sum > 0 ? View.VISIBLE : View.GONE);
-            //}
-            //else
-            //{
-            //    canGoZoom = false;
-            //    chevron.setVisibility(View.GONE);
-            //}
+            // Nothing to drill into on a date whose lines are all zero, and no chevron offering it.
+            canGoZoom = zoomEnabled && sum > 0;
+            Chevron.Visibility = canGoZoom ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public string ToPlainText()
@@ -392,17 +388,23 @@ namespace Telegram.Charts.DataView
             }
         }
 
-        internal void setVisibility(Visibility visibility)
+        /// <summary>
+        /// Shows one line's name and value, for the pie chart - which has a slice under the pointer
+        /// rather than a date, so there is nothing for the header to say.
+        /// </summary>
+        public void SetPieData(string name, long value, Color color)
         {
-            //throw new NotImplementedException();
-            if (this.HasThreadAccess())
+            Title.Visibility = Visibility.Collapsed;
+
+            if (holdes == null || holdes.Length != 1)
             {
-                Visibility = visibility;
+                setSize(1);
             }
-            else
-            {
-                this.BeginOnUIThread(() => Visibility = visibility);
-            }
+
+            holdes[0].Visibility = Visibility.Visible;
+            holdes[0].Signature = name;
+            holdes[0].Value = value.ToString();
+            holdes[0].Foreground = new SolidColorBrush(color);
         }
     }
 }
