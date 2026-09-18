@@ -423,10 +423,15 @@ namespace Telegram.Controls.Cells
             //chartView.legendSignatureView.chevron.setAlpha(1f);
             zoomedChartView.SetHeader(null);
 
-            long d = chartView.GetSelectedDate();
+            // The date the chart was zoomed into, not whatever is selected now. Android reads the
+            // live selection here and can, because it is touch driven and nothing clears it; we
+            // clear on pointer exit, and moving the mouse to the header to click back does exactly
+            // that. GetSelectedDate then returns -1, the transition's binary search misses, and it
+            // falls back to the last date - anchoring the whole animation to the right edge.
+            long d = data.activeZoom;
             data.activeZoom = 0;
 
-            //chartView.Visibility = Visibility.Visible;
+            chartView.Visibility = Visibility.Visible;
             zoomedChartView.ClearSelection();
 
             zoomedChartView.SetHeader(null);
@@ -530,8 +535,6 @@ namespace Telegram.Controls.Cells
             float pYPercentage = ((float)min + (max - min) - chartView.currentMinHeight) / (chartView.currentMaxHeight - chartView.currentMinHeight);
 
 
-            var hidden = chartView.Visibility == Visibility.Collapsed;
-
             chartView.FillTransitionParams(param);
             zoomedChartView.FillTransitionParams(param);
             ValueAnimator animator = ValueAnimator.OfFloat(chartView.Coordinator, inz ? 0f : 1f, inz ? 1f : 0f);
@@ -547,14 +550,6 @@ namespace Telegram.Controls.Cells
                 zoomedChartView.Invalidate();
                 zoomedChartView.FillTransitionParams(param);
                 chartView.Invalidate();
-
-                if (hidden)
-                {
-                    chartView.BeginOnUIThread(() =>
-                    {
-                        chartView.Visibility = Visibility.Visible;
-                    });
-                }
             }));
 
             animator.SetDuration(400);
