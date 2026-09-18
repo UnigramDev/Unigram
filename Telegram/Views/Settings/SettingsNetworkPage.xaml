@@ -7,6 +7,8 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:local="using:Telegram.Views"
                   d:DesignHeight="2000"
+                  ShowHeader="False"
+                  ShowHeaderBackground="False"
                   mc:Ignorable="d">
 
     <Page.Transitions>
@@ -21,22 +23,30 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <controls:SettingsPanel>
-                <Grid>
+            <controls:SettingsPanel HasTopPadding="False">
+                <Grid Canvas.ZIndex="1">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <controls:StorageChart x:Name="Chart"
                                            Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
                                            SeparatorBrush="{ThemeResource LayerFillColorDefaultBrush}"
-                                           Margin="0,16,0,16" />
+                                           Margin="0,16,0,0" />
+
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource NetworkUsage}"
+                                           HorizontalContentAlignment="Center"
+                                           Margin="0,-20,0,0"
+                                           Grid.Row="1" />
+
                     <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertSinceDate(ViewModel.SinceDate, ViewModel.TotalBytes), Mode=OneWay}"
                                Style="{StaticResource InfoBodyTextBlockStyle}"
                                TextAlignment="Center"
                                Margin="12,0,12,0"
                                MaxWidth="480"
-                               Grid.Row="1" />
+                               Grid.Row="2" />
                 </Grid>
 
                 <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
@@ -44,12 +54,9 @@
                         <DataTemplate x:DataType="controls:StorageChartItem">
                             <controls:SettingsExpander Badge="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
                                                        HorizontalContentAlignment="Stretch"
-                                                       Background="Transparent"
-                                                       BorderThickness="0"
-                                                       Padding="0"
-                                                       CornerRadius="4">
+                                                       Padding="0">
                                 <controls:SettingsExpander.Header>
-                                    <Grid Margin="-12,0,0,0">
+                                    <Grid Margin="-16,0,0,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="58" />
                                             <ColumnDefinition />
@@ -58,7 +65,7 @@
                                         <Border HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
                                                 CornerRadius="4"
-                                                Margin="18,-2,0,-3"
+                                                Margin="16,-2,0,-3"
                                                 Padding="2">
                                             <Border.Background>
                                                 <SolidColorBrush Color="{x:Bind Stroke}" />
@@ -80,7 +87,7 @@
                                     <controls:SettingsButton Content="{CustomResource BytesReceived}"
                                                              Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
                                                              Glyph="&#xE118;"
-                                                             BorderThickness="0,1,0,1"
+                                                             BorderThickness="0,0,0,1"
                                                              CornerRadius="0" />
 
                                     <controls:SettingsButton Content="{CustomResource BytesSent}"
@@ -112,5 +119,7 @@
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>
