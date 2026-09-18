@@ -20,6 +20,7 @@ using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -1688,7 +1689,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public partial class StorageChartItem
+    public partial class StorageChartItem : BindableBase
     {
         public string Name { get; set; }
 
@@ -1702,7 +1703,68 @@ namespace Telegram.Controls
 
         public Color Stroke { get; set; }
 
-        public bool IsVisible { get; set; } = true;
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (Set(ref _isVisible, value) && _children == null)
+                {
+                    CheckState = value;
+                }
+            }
+        }
+
+        // What the row's checkbox shows, which is IsVisible everywhere but on the fold: that one is
+        // indeterminate while only some of what it stands for is checked, so the row says how much
+        // of it is going without having to be opened.
+        private bool? _checkState = true;
+        public bool? CheckState
+        {
+            get => _checkState;
+            private set => Set(ref _checkState, value);
+        }
+
+        // Called rather than computed: a child being checked is not something the fold can see.
+        public void UpdateCheckState()
+        {
+            var visible = 0;
+
+            foreach (var child in _children)
+            {
+                if (child.IsVisible)
+                {
+                    visible++;
+                }
+            }
+
+            bool? state = null;
+
+            if (visible == 0)
+            {
+                state = false;
+            }
+            else if (visible == _children.Count)
+            {
+                state = true;
+            }
+
+            IsVisible = visible > 0;
+            CheckState = state;
+        }
+
+        // Set on the fold and on nothing else: the categories that were too small to earn a row,
+        // which this entry stands in for until it is expanded.
+        private readonly List<StorageChartItem> _children;
+        public IList<StorageChartItem> Children => _children;
+
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => Set(ref _isExpanded, value);
+        }
 
         protected List<FileType> _types;
         public IList<FileType> Types => _types;
@@ -1789,7 +1851,7 @@ namespace Telegram.Controls
                     Stroke = Color.FromArgb(0xFF, 0x7F, 0x79, 0xF3);
                     break;
                 default:
-                    Name = network ? Strings.MessagesOverview : Strings.LocalCache;
+                    Name = network ? Strings.MessagesOverview : Strings.LocalMiscellaneousCache;
                     Glyph = Icons.ChatEmptyFilled;
                     Stroke = Color.FromArgb(0xFF, 0x58, 0xA8, 0xED);
                     break;
@@ -1810,6 +1872,33 @@ namespace Telegram.Controls
             ReceivedBytes += statistics.ReceivedBytes;
             TotalBytes += statistics.SentBytes + statistics.ReceivedBytes;
             return this;
+        }
+
+        // The fold. It owns every file type its children do, so clearing it clears them.
+        //
+        // Upstream this row is golden, which here would land next to Videos - and the two are the
+        // same yellow. The cyan of DefaultColors instead: it is the one entry in the palette no
+        // category claims, because the two that would have are subtracted out before the chart
+        // sees them.
+        public StorageChartItem(List<StorageChartItem> children)
+        {
+            _children = children;
+            _types = new List<FileType>(children.Count);
+
+            foreach (var child in children)
+            {
+                _types.AddRange(child.Types);
+
+                TotalBytes += child.TotalBytes;
+                SentBytes += child.SentBytes;
+                ReceivedBytes += child.ReceivedBytes;
+            }
+
+            Name = Strings.LocalOther;
+            Glyph = Icons.MoreHorizontalFilled;
+            Stroke = Color.FromArgb(0xFF, 0x40, 0xD0, 0xCA);
+
+            UpdateCheckState();
         }
     }
 }

@@ -7,8 +7,111 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:cells="using:Telegram.Controls.Cells"
                   xmlns:media="using:Telegram.Controls.Media"
+                  xmlns:selectors="using:Telegram.Selectors"
                   xmlns:local="using:Telegram.Views"
+                  ShowHeader="False"
                   mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="StorageChartItemTemplate"
+                      x:DataType="controls:StorageChartItem">
+            <controls:FauxCheckBox Click="StorageChartItem_Checked"
+                                   Style="{StaticResource SettingsCheckBoxStyle}"
+                                   IsChecked="{x:Bind CheckState, Mode=OneWay}"
+                                   IsFaux="True">
+                <CheckBox.Resources>
+                    <media:CheckBoxResources Color="{x:Bind Stroke}" />
+                </CheckBox.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{x:Bind Name}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               VerticalAlignment="Bottom"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               Margin="4,0,0,0"
+                               MaxLines="1" />
+                </StackPanel>
+            </controls:FauxCheckBox>
+        </DataTemplate>
+
+        <!--  The fold. Its own checkbox covers everything inside it, the rest of the header opens
+              it, and opening it is what splits its arc of the ring into the categories it stands
+              for.  -->
+        <DataTemplate x:Key="StorageChartOtherTemplate"
+                      x:DataType="controls:StorageChartItem">
+            <controls:SettingsExpander IsExpanded="{x:Bind IsExpanded, Mode=OneWay}"
+                                       ExpandedChanged="StorageChartOther_ExpandedChanged">
+                <controls:SettingsExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="44" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <controls:FauxCheckBox Click="StorageChartItem_Checked"
+                                               Style="{StaticResource DefaultCheckBoxStyle}"
+                                               IsChecked="{x:Bind CheckState, Mode=OneWay}"
+                                               IsThreeState="True"
+                                               IsFaux="True"
+                                               MinWidth="0"
+                                               Margin="2,-11,0,-12">
+                            <CheckBox.Resources>
+                                <media:CheckBoxResources Color="{x:Bind Stroke}" />
+                            </CheckBox.Resources>
+                        </controls:FauxCheckBox>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Column="1">
+                            <TextBlock Text="{x:Bind Name}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       VerticalAlignment="Bottom"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       Margin="4,0,0,0"
+                                       MaxLines="1" />
+                        </StackPanel>
+                    </Grid>
+                </controls:SettingsExpander.Header>
+                <ItemsControl ItemsSource="{x:Bind Children}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                              BorderThickness="0,1,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="controls:StorageChartItem">
+                            <controls:FauxCheckBox Click="StorageChartItem_Checked"
+                                                   Style="{StaticResource SettingsCheckBoxStyle}"
+                                                   IsChecked="{x:Bind CheckState, Mode=OneWay}"
+                                                   IsFaux="True"
+                                                   Background="Transparent"
+                                                   CornerRadius="0">
+                                <CheckBox.Resources>
+                                    <media:CheckBoxResources Color="{x:Bind Stroke}" />
+                                </CheckBox.Resources>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{x:Bind Name}"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Bottom"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Margin="4,0,0,0"
+                                               MaxLines="1" />
+                                </StackPanel>
+                            </controls:FauxCheckBox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </controls:SettingsExpander>
+        </DataTemplate>
+    </Page.Resources>
 
     <Page.Transitions>
         <TransitionCollection>
@@ -26,17 +129,24 @@
                                 SelectionMode="None"
                                 ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
-                    <Grid MaxWidth="1000"
-                          Margin="24,0">
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
+                    <Grid Canvas.ZIndex="1">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <controls:StorageChart x:Name="Chart"
-                                               Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
+                                               Items="{x:Bind ViewModel.ChartView, Mode=OneWay}"
                                                SeparatorBrush="{ThemeResource LayerFillColorDefaultBrush}"
-                                               Margin="0,16,0,16" />
+                                               Margin="0,16,0,0" />
+
+                        <controls:StickyHeader x:Name="Header"
+                                               Text="{CustomResource NetworkUsage}"
+                                               HorizontalContentAlignment="Center"
+                                               Margin="0,-20,0,0"
+                                               Grid.Row="1" />
 
                         <TextBlock x:Name="Subtitle"
                                    common:TextBlockHelper.Markdown="{CustomResource StorageUsageCalculating}"
@@ -44,60 +154,34 @@
                                    TextAlignment="Center"
                                    Margin="12,0,12,0"
                                    MaxWidth="480"
-                                   Grid.Row="1" />
+                                   Grid.Row="3" />
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind ViewModel.ItemsView, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                         <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}">
-                            <controls:HeaderedControl.ItemTemplate>
-                                <DataTemplate x:DataType="controls:StorageChartItem">
-                                    <controls:FauxCheckBox Click="StorageChartItem_Checked"
-                                                           Style="{StaticResource SettingsCheckBoxStyle}"
-                                                           IsChecked="{x:Bind IsVisible}"
-                                                           IsFaux="True">
-                                        <CheckBox.Resources>
-                                            <media:CheckBoxResources Color="{x:Bind Stroke}" />
-                                        </CheckBox.Resources>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{x:Bind Name}"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                       VerticalAlignment="Bottom"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       TextWrapping="NoWrap"
-                                                       Margin="4,0,0,0"
-                                                       MaxLines="1" />
-                                        </StackPanel>
-                                    </controls:FauxCheckBox>
-                                </DataTemplate>
-                            </controls:HeaderedControl.ItemTemplate>
+                            <controls:HeaderedControl.ItemTemplateSelector>
+                                <selectors:StorageChartTemplateSelector ItemTemplate="{StaticResource StorageChartItemTemplate}"
+                                                                        GroupTemplate="{StaticResource StorageChartOtherTemplate}" />
+                            </controls:HeaderedControl.ItemTemplateSelector>
                         </controls:HeaderedControl>
                         <controls:HeaderedControl Footer="{CustomResource StorageUsageInfo}"
                                                   Padding="0,3,0,0">
-                            <Grid Background="{ThemeResource SettingsItemBackground}"
-                                  BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                  Padding="12,8">
-
-                                <Button Click="{x:Bind ViewModel.ClearCache}"
-                                        Style="{StaticResource AccentButtonStyle}"
-                                        HorizontalAlignment="Stretch">
-                                    <Grid Padding="4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{CustomResource ClearMediaCache}" />
-                                        <TextBlock x:Name="ClearSize"
-                                                   Text="{x:Bind ViewModel.Statistics.Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
-                                                   Opacity="0.6"
-                                                   Margin="4,0,0,0"
-                                                   Grid.Column="1" />
-                                    </Grid>
-                                </Button>
-                            </Grid>
+                            <Button Click="{x:Bind ViewModel.ClearCache}"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    HorizontalAlignment="Stretch">
+                                <Grid Padding="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{CustomResource ClearMediaCache}" />
+                                    <TextBlock x:Name="ClearSize"
+                                               Text="{x:Bind ViewModel.Statistics.Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                               Opacity="0.6"
+                                               Margin="4,0,0,0"
+                                               Grid.Column="1" />
+                                </Grid>
+                            </Button>
                         </controls:HeaderedControl>
                     </StackPanel>
 
@@ -141,5 +225,10 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}">
+            <controls:MoreButton Click="Menu_ContextRequested"
+                                 CornerRadius="20" />
+        </controls:StickyHeaderChrome>
     </Grid>
 </local:HostedPage>

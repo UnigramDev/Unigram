@@ -1840,6 +1840,7 @@
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
+    <Compile Include="Selectors\StorageChartTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacyService.cs" />

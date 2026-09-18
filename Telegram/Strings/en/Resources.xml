@@ -2588,6 +2588,7 @@
     <string name="LocalAudioCache">Voice messages</string>
     <string name="LocalVideoCache">Videos</string>
     <string name="LocalMusicCache">Music</string>
+    <string name="LocalOther">Other</string>
 
     <string name="KeepMedia">Keep Media</string>
 
@@ -13869,5 +13870,7 @@
     <string name="StarsTransactionTONFromFragment">Fragment</string>
     <string name="StarsTransactionTONDate">Gram Transaction Date</string>
     <string name="StarsTransactionViewInBlockchainExplorer">View in Blockchain Explorer</string>
+    
+    <string name="LocalMiscellaneousCache">Miscellaneous</string>
 
 </resources>
