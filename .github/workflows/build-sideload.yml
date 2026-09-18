@@ -107,6 +107,23 @@ jobs:
           $identity.SetAttribute('Publisher', 'CN=Unigram Custom Build')
           $manifest.Save((Resolve-Path Telegram.Msix\Package.appxmanifest))
 
+      - name: Restore legacy native NuGet packages
+        shell: powershell
+        run: |
+          $nuget = Join-Path $env:RUNNER_TEMP 'nuget.exe'
+
+          Invoke-WebRequest `
+            -Uri 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' `
+            -OutFile $nuget
+
+          & $nuget restore Telegram.Native\packages.config `
+            -PackagesDirectory "$env:GITHUB_WORKSPACE\packages" `
+            -NonInteractive
+
+          & $nuget restore Telegram.Native.Calls\packages.config `
+            -PackagesDirectory "$env:GITHUB_WORKSPACE\packages" `
+            -NonInteractive
+
       - name: Build the x64 MSIX bundle
         shell: powershell
         run: |

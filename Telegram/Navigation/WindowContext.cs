@@ -1129,18 +1129,7 @@ namespace Telegram.Navigation
 
         public void DisableScreenCapture(int hash)
         {
-            if (Constants.DEBUG)
-            {
-                return;
-            }
-
-            _screenCaptureDisabled.Add(hash);
-
-            if (_screenCaptureDisabled.Count == 1 && _screenCaptureEnabled)
-            {
-                _screenCaptureEnabled = false;
-                SetScreenCaptureEnabled(false);
-            }
+    
         }
 
         public void EnableScreenCapture(int hash)
