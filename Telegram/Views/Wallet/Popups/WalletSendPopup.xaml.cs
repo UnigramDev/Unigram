@@ -289,6 +289,8 @@ namespace Telegram.Views.Wallet.Popups
 
             IsPrimaryButtonEnabled = message == null && nanograms > BigInteger.Zero;
             PrimaryButtonContent = string.Format("[Send {0} Grams]", Formatter.TonBalance(nanograms).Join());
+
+            UpdateFeeAsync();
         }
 
         /// <summary>
@@ -364,39 +366,48 @@ namespace Telegram.Views.Wallet.Popups
             // UpdateWalletState like everything else the popup shows.
             _gasless = State?.Gasless;
 
-            FeesButton.Content = _gasless is { LeftCount: > 0 }
-                ? "[Fees are covered by Telegram ›]"
-                : "[This transfer pays a network fee ›]";
+            UpdateFeeAsync();
         }
 
-        private void Fees_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// The line under the balance, which says what the transfer will cost when it costs
+        /// anything.
+        /// </summary>
+        /// <remarks>
+        /// Nothing is shown for a transfer Telegram is paying for, and nothing before there is an
+        /// address to price against: opened from a chat the popup holds a user id, and the
+        /// recipient is only resolved when it commits.
+        ///
+        /// The estimate is an emulation, so it waits for the typing to settle, and the generation
+        /// makes a late answer to an amount that has moved on harmless.
+        /// </remarks>
+        private async void UpdateFeeAsync()
         {
-            var text = new StringBuilder();
+            var generation = ++_feeGeneration;
+            var nanograms = Nanograms();
 
-            if (_gasless == null)
+            if (_gasless is { LeftCount: > 0 } || string.IsNullOrEmpty(_address) || nanograms <= BigInteger.Zero)
             {
-                text.Append("[Telegram covers the fee on a number of transfers each day.]");
-            }
-            else
-            {
-                text.AppendFormat("[Telegram covers the fee on {0} transfers a day.]", _gasless.LeftCount);
-                text.AppendLine();
-                text.AppendLine();
-
-                if (_gasless.LeftCount > 0)
-                {
-                    text.AppendFormat("[{0} left today.]", _gasless.LeftCount);
-                }
-                else
-                {
-                    // No number to give: what a transfer costs is settled when it is signed, and
-                    // nothing is signed yet.
-                    text.Append("[None left today, so this transfer pays the network's own fee.]");
-                }
+                FeeLabel.Text = string.Empty;
+                return;
             }
 
-            _ = MessagePopup.ShowNestedAsync(XamlRoot, text.ToString(), "[Fees]", Strings.OK);
+            await Task.Delay(500);
+
+            if (generation != _feeGeneration)
+            {
+                return;
+            }
+
+            var fee = await _wallet.EstimateFeeAsync(_address, nanograms, _comment);
+
+            if (generation == _feeGeneration && fee is BigInteger value)
+            {
+                FeeLabel.Text = string.Format("[Network fee: {0} Grams]", Formatter.TonBalance(value).Join());
+            }
         }
+
+        private int _feeGeneration;
 
         #endregion
 

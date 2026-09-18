@@ -136,11 +136,9 @@
                        Style="{StaticResource InfoBodyTextBlockStyle}"
                        TextAlignment="Center" />
 
-            <HyperlinkButton x:Name="FeesButton"
-                             Click="Fees_Click"
-                             HorizontalAlignment="Center"
-                             Padding="8,2"
-                             Margin="0,-2,0,0" />
+            <TextBlock x:Name="FeeLabel"
+                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                       TextAlignment="Center" />
         </StackPanel>
     </Grid>
 </controls:ModalPopup>

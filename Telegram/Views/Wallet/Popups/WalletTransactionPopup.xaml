@@ -132,13 +132,35 @@
             </controls:TableViewItem>
 
             <controls:TableViewItem x:Name="FeeRow"
-                                    Header="[Fee]">
-                <!-- Three runs, always the same three, so the colours are set here and the code
-                     only fills in the text. -->
-                <TextBlock Style="{StaticResource BodyTextBlockStyle}"><Run x:Name="FeeGlyph"
-                                                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                                            Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run x:Name="FeeAmount" /><Run x:Name="FeeConverted"
-                                                                                                                                                                        Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /></TextBlock>
+                                    Header="[Fee]"
+                                    HorizontalContentAlignment="Stretch"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Three runs, always the same three, so the colours are set here and the code
+                         only fills in the text. -->
+                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Center"
+                               Margin="8,5,4,6"><Run x:Name="FeeGlyph"
+                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                     Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run x:Name="FeeAmount" /><Run x:Name="FeeConverted"
+                                                                                                                                                 Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /></TextBlock>
+
+                    <!-- Only beside the line that needs explaining, which is the free one: a fee
+                         the user paid is a number, and a fee they did not is a claim. -->
+                    <Button x:Name="FeeInfoCommand"
+                            Click="FeeInfo_Click"
+                            Content="?"
+                            Style="{StaticResource BadgeControlButtonStyle}"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed"
+                            Margin="4"
+                            Grid.Column="1" />
+                </Grid>
             </controls:TableViewItem>
 
             <controls:TableViewItem x:Name="DateRow"

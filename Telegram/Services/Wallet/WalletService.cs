@@ -661,6 +661,47 @@ namespace Telegram.Services.Wallet
                 result.Transaction);
         }
 
+        public async Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment)
+        {
+            var client = _client;
+            if (client == null || string.IsNullOrEmpty(recipient) || amountNanograms <= BigInteger.Zero)
+            {
+                return null;
+            }
+
+            try
+            {
+                // The comment goes in as plain text even when the transfer will encrypt it.
+                // Encrypting one is a signing operation - the engine reads the recipient's key and
+                // asks for this wallet's phrase - and a user-presence prompt per keystroke is not a
+                // price worth paying for the few forward-fee nanograms the larger cell would add.
+                var body = string.IsNullOrEmpty(comment)
+                    ? new SendMessageBody.Empty()
+                    : (SendMessageBody)new SendMessageBody.Comment(comment);
+
+                var message = new EngineSendMessage(
+                    recipient,
+                    new SendAmount.Exact(amountNanograms.ToString()),
+                    body,
+                    false,
+                    null);
+
+                var intent = new SendIntent(new SendExpiration.EngineDefault(), new[] { message });
+                var preview = await client.PreviewSend(new SendPreviewRequest(intent));
+
+                // What this wallet's own transaction is charged, not the trace total: the rest of
+                // the trace is the recipient's side, and they pay for it out of what they receive.
+                return BigInteger.Parse(preview.Emulation.WalletFeesNanograms);
+            }
+            catch (Exception ex)
+            {
+                // An estimate nobody can be given is a line that is not shown, never a failure:
+                // the transfer itself does not depend on this having worked.
+                Logger.Error("wallet fee could not be estimated: " + ex.Message);
+                return null;
+            }
+        }
+
         public async Task<string> ResolveDnsAsync(string name)
         {
             var client = _client;
