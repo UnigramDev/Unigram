@@ -107,8 +107,6 @@ namespace Telegram.Views.Wallet.Popups
 
             UpdateAmount();
             UpdateGasless();
-
-            LoadGaslessAsync();
         }
 
         /// <summary>
@@ -359,22 +357,13 @@ namespace Telegram.Views.Wallet.Popups
 
         #region Fees
 
-        private async void LoadGaslessAsync()
-        {
-            var response = await _clientService.SendAsync(new GetTonWalletGaslessTransfersInfo());
-            if (response is TonWalletGaslessTransfersInfo info)
-            {
-                _gasless = info;
-
-                UpdateGasless();
-
-                // The free transfers have their own minimum, so the amount has to be judged again.
-                UpdateAmount();
-            }
-        }
-
         private void UpdateGasless()
         {
+            // Reading it is what asks for it: the quota arrives as an update and is cached with the
+            // rest of the state, so the first read here is a request and the answer lands through
+            // UpdateWalletState like everything else the popup shows.
+            _gasless = State?.Gasless;
+
             FeesButton.Content = _gasless is { LeftCount: > 0 }
                 ? "[Fees are covered by Telegram ›]"
                 : "[This transfer pays a network fee ›]";
@@ -597,9 +586,9 @@ namespace Telegram.Views.Wallet.Popups
             }
 
             var created = await _clientService.SendAsync(new CreateUserTonWallet(_userId));
-            if (created is Text text && text.TextValue.Length > 0)
+            if (created is UserTonWalletAddress wallet && wallet.WalletAddress.Length > 0)
             {
-                _address = text.TextValue;
+                _address = wallet.WalletAddress;
             }
 
             // Null with nothing to send to is the caller's cue that it failed without the account
