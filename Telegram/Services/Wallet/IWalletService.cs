@@ -121,6 +121,16 @@ namespace Telegram.Services.Wallet
         Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless);
 
         /// <summary>
+        /// What the network would charge for a transfer, in nanograms, or null when it cannot be
+        /// said - no wallet, no recipient yet, or the estimate did not come back.
+        /// </summary>
+        /// <remarks>
+        /// An emulation against a recent block rather than a rule of thumb, so it costs a round
+        /// trip and is worth asking for only once the amount has settled.
+        /// </remarks>
+        Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment);
+
+        /// <summary>
         /// Resolves a <c>.ton</c> name to an address, or null when it resolves to nothing. Needs no
         /// key: resolution is a read.
         /// </summary>

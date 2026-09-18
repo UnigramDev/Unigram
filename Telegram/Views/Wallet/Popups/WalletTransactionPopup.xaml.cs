@@ -7,6 +7,7 @@
 
 using System;
 using System.Numerics;
+using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -87,12 +88,15 @@ namespace Telegram.Views.Wallet.Popups
                 // The row stays, and what it says is the point: this transfer cost the user
                 // nothing, which is not the same as it having had no fee.
                 FeeRow.Visibility = Visibility.Visible;
+                FeeInfoCommand.Visibility = Visibility.Visible;
 
-                FeeGlyph.Text = string.Empty;
-                FeeAmount.Text = "[Paid by Telegram]";
+                FeeGlyph.Text = Icons.Ton;
+                FeeAmount.Text = " [Free (paid by Telegram)]";
                 FeeConverted.Text = string.Empty;
                 return;
             }
+
+            FeeInfoCommand.Visibility = Visibility.Collapsed;
 
             if (fees <= 0)
             {
@@ -288,6 +292,18 @@ namespace Telegram.Views.Wallet.Popups
             }
 
             return 0;
+        }
+
+        private void FeeInfo_Click(object sender, RoutedEventArgs e)
+        {
+            var text = new StringBuilder();
+
+            text.Append("[Sending Grams costs a fee paid to the TON network, not to Telegram.]");
+            text.AppendLine();
+            text.AppendLine();
+            text.Append("[Telegram covers that fee on a number of transfers each day. This was one of them.]");
+
+            _ = MessagePopup.ShowNestedAsync(XamlRoot, text.ToString(), "[Network Fee]", Strings.OK);
         }
 
         private void Peer_Click(Hyperlink sender, HyperlinkClickEventArgs args)
