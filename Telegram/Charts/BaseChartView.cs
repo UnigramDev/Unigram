@@ -212,7 +212,6 @@ namespace Telegram.Charts
         public bool enabled = true;
 
 
-        Color emptyPaint;
 
         protected Paint linePaint = new();
         protected Paint selectedLinePaint = new();
@@ -1272,6 +1271,23 @@ namespace Telegram.Charts
             }
         }
 
+        /// <summary>
+        /// Draws the cached picker strip at 1:1, with the opacity the transition asked for.
+        /// </summary>
+        /// <remarks>
+        /// The two-argument DrawImage takes no opacity, which is why these transitions used to fade
+        /// nothing at all. The overload that does needs both rectangles, and the source comes off
+        /// the bitmap rather than from the layout so that it maps one to one whatever rounding the
+        /// render target's own size picked up.
+        /// </remarks>
+        private void DrawPickerImage(CanvasDrawingSession canvas, float opacity)
+        {
+            var source = bottomChartCanvas.Bounds;
+            var destination = new Rect(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight, source.Width, source.Height);
+
+            canvas.DrawImage(bottomChartCanvas, destination, source, Math.Clamp(opacity, 0, 1));
+        }
+
         protected void DrawPicker(CanvasDrawingSession canvas)
         {
             if (chartData == null)
@@ -1299,145 +1315,151 @@ namespace Telegram.Charts
                 transitionAlpha = transitionParams.progress;
             }
 
-            if (chartData != null)
+            // The band is masked to a rounded rectangle, as SharedUiComponents.getPickerMaskBitmap
+            // did on Android - a bitmap of the window background with a rounded hole punched out of
+            // it, drawn over the top. That cannot be copied here: this surface is transparent, so
+            // painting the theme colour into the corners would cover the page behind them. A
+            // geometry clip is the same shape and keeps the transparency.
+            using (var mask = CanvasGeometry.CreateRoundedRectangle(canvas,
+                CreateRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom), 4, 4))
+            using (canvas.CreateLayer(1, mask))
             {
-                bool instantDraw = false;
-                if (transitionMode == TRANSITION_MODE_NONE)
+                if (chartData != null)
                 {
-                    for (int i = 0; i < lines.Count; i++)
+                    bool instantDraw = false;
+                    if (transitionMode == TRANSITION_MODE_NONE)
                     {
-                        L l = lines[i];
-                        if ((l.animatorIn != null && l.animatorIn.IsRunning()) || (l.animatorOut != null && l.animatorOut.IsRunning()))
+                        for (int i = 0; i < lines.Count; i++)
                         {
-                            instantDraw = true;
-                            break;
+                            L l = lines[i];
+                            if ((l.animatorIn != null && l.animatorIn.IsRunning()) || (l.animatorOut != null && l.animatorOut.IsRunning()))
+                            {
+                                instantDraw = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (instantDraw)
-                {
-                    //canvas.save();
-                    //canvas.clipRect(
-                    //        HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight,
-                    //        MeasuredWidth - HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING
-                    //);
-                    var clip = canvas.CreateLayer(1, CreateRect(
-                            HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight,
-                            MeasuredWidth - HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING
-                        ));
-                    //canvas.translate(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight);
-                    canvas.Transform = Matrix3x2.CreateTranslation(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight) * _baseTransform;
-
-                    // The uncached path: no render target, the picker redrawn into the frame every
-                    // time. Taken whenever any line is fading, so it is the one to watch there.
-                    DrawPickerChart(canvas);
-
-                    clip.Dispose();
-                    canvas.Transform = _baseTransform;
-                    //canvas.restore();
-                }
-                else if (invalidatePickerChart || bottomChartCanvas == null)
-                {
-                    //bottomChartBitmap.eraseColor(0);
-                    //drawPickerChart(bottomChartCanvas);
-
-                    // Erased and reused, as the Android original did. Every picker height listener
-                    // sets invalidatePickerChart on each update tick, so allocating here meant one
-                    // GPU texture per frame for the length of an animation - none of them disposed.
-                    //
-                    // Sized in DIPs like everything else, but at the scaled DPI: the base transform
-                    // blows this up when it is drawn, so a 96 DPI target would arrive soft.
-
-                    if (bottomChartCanvas == null || _pickerCacheHeight != pickerHeight)
+                    if (instantDraw)
                     {
-                        bottomChartCanvas?.Dispose();
-                        bottomChartCanvas = new CanvasRenderTarget(canvas, MeasuredWidth - (HORIZONTAL_PADDING << 1), pickerHeight, 96 * _rasterizationScale);
-                        _pickerCacheHeight = pickerHeight;
+                        //canvas.save();
+                        //canvas.clipRect(
+                        //        HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight,
+                        //        MeasuredWidth - HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING
+                        //);
+                        var clip = canvas.CreateLayer(1, CreateRect(
+                                HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight,
+                                MeasuredWidth - HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING
+                            ));
+                        //canvas.translate(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight);
+                        canvas.Transform = Matrix3x2.CreateTranslation(HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight) * _baseTransform;
+
+                        // The uncached path: no render target, the picker redrawn into the frame every
+                        // time. Taken whenever any line is fading, so it is the one to watch there.
+                        DrawPickerChart(canvas);
+
+                        clip.Dispose();
+                        canvas.Transform = _baseTransform;
+                        //canvas.restore();
+                    }
+                    else if (invalidatePickerChart || bottomChartCanvas == null)
+                    {
+                        //bottomChartBitmap.eraseColor(0);
+                        //drawPickerChart(bottomChartCanvas);
+
+                        // Erased and reused, as the Android original did. Every picker height listener
+                        // sets invalidatePickerChart on each update tick, so allocating here meant one
+                        // GPU texture per frame for the length of an animation - none of them disposed.
+                        //
+                        // Sized in DIPs like everything else, but at the scaled DPI: the base transform
+                        // blows this up when it is drawn, so a 96 DPI target would arrive soft.
+
+                        if (bottomChartCanvas == null || _pickerCacheHeight != pickerHeight)
+                        {
+                            bottomChartCanvas?.Dispose();
+                            bottomChartCanvas = new CanvasRenderTarget(canvas, MeasuredWidth - (HORIZONTAL_PADDING << 1), pickerHeight, 96 * _rasterizationScale);
+                            _pickerCacheHeight = pickerHeight;
+                        }
+
+                        using (var session = bottomChartCanvas.CreateDrawingSession())
+                        {
+                            session.Clear(Colors.Transparent);
+
+                            DrawPickerChart(session);
+                        }
+
+                        invalidatePickerChart = false;
+                    }
+                    if (!instantDraw)
+                    {
+                        if (transitionMode == TRANSITION_MODE_PARENT)
+                        {
+
+                            float pY = top + (bottom - top) >> 1;
+                            float pX = HORIZONTAL_PADDING + pickerWidth * transitionParams.xPercentage;
+
+                            //canvas.save();
+                            //canvas.clipRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom);
+                            var clip = canvas.CreateLayer(1, CreateRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom));
+                            //canvas.scale(1 + 2 * transitionParams.progress, 1f, pX, pY);
+                            canvas.Transform = Matrix3x2.CreateScale(new Vector2(1 + 2 * transitionParams.progress, 1f), new Vector2(pX, pY)) * _baseTransform;
+                            //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
+                            DrawPickerImage(canvas, 1f - transitionParams.progress);
+                            //canvas.restore();
+                            clip.Dispose();
+                            canvas.Transform = _baseTransform;
+
+
+                        }
+                        else if (transitionMode == TRANSITION_MODE_CHILD)
+                        {
+                            float pY = top + (bottom - top) >> 1;
+                            float pX = HORIZONTAL_PADDING + pickerWidth * transitionParams.xPercentage;
+
+                            float dX = (transitionParams.xPercentage > 0.5f ? pickerWidth * transitionParams.xPercentage : pickerWidth * (1f - transitionParams.xPercentage)) * transitionParams.progress;
+
+                            //canvas.save();
+                            //canvas.clipRect(pX - dX, top, pX + dX, bottom);
+                            var clip = canvas.CreateLayer(1, CreateRect(pX - dX, top, pX + dX, bottom));
+
+                            //canvas.scale(transitionParams.progress, 1f, pX, pY);
+                            canvas.Transform = Matrix3x2.CreateScale(new Vector2(transitionParams.progress, 1f), new Vector2(pX, pY)) * _baseTransform;
+                            //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
+                            DrawPickerImage(canvas, transitionParams.progress);
+                            //canvas.restore();
+                            clip.Dispose();
+                            canvas.Transform = _baseTransform;
+
+                        }
+                        else
+                        {
+                            //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
+                            DrawPickerImage(canvas, transitionAlpha);
+                        }
                     }
 
-                    using (var session = bottomChartCanvas.CreateDrawingSession())
-                    {
-                        session.Clear(Colors.Transparent);
 
-                        DrawPickerChart(session);
-                    }
-
-                    invalidatePickerChart = false;
-                }
-                if (!instantDraw)
-                {
                     if (transitionMode == TRANSITION_MODE_PARENT)
                     {
-
-                        float pY = top + (bottom - top) >> 1;
-                        float pX = HORIZONTAL_PADDING + pickerWidth * transitionParams.xPercentage;
-
-                        emptyPaint.A = (byte)((1f - transitionParams.progress) * 255);
-
-                        //canvas.save();
-                        //canvas.clipRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom);
-                        var clip = canvas.CreateLayer(1, CreateRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom));
-                        //canvas.scale(1 + 2 * transitionParams.progress, 1f, pX, pY);
-                        canvas.Transform = Matrix3x2.CreateScale(new Vector2(1 + 2 * transitionParams.progress, 1f), new Vector2(pX, pY)) * _baseTransform;
-                        //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
-                        canvas.DrawImage(bottomChartCanvas, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
-                        //canvas.restore();
-                        clip.Dispose();
-                        canvas.Transform = _baseTransform;
-
-
+                        return;
                     }
-                    else if (transitionMode == TRANSITION_MODE_CHILD)
-                    {
-                        float pY = top + (bottom - top) >> 1;
-                        float pX = HORIZONTAL_PADDING + pickerWidth * transitionParams.xPercentage;
 
-                        float dX = (transitionParams.xPercentage > 0.5f ? pickerWidth * transitionParams.xPercentage : pickerWidth * (1f - transitionParams.xPercentage)) * transitionParams.progress;
+                    canvas.FillRectangle(CreateRect(HORIZONTAL_PADDING,
+                            top,
+                            start + 12,
+                            bottom), unactiveBottomChartPaint.Color);
 
-                        //canvas.save();
-                        //canvas.clipRect(pX - dX, top, pX + dX, bottom);
-                        var clip = canvas.CreateLayer(1, CreateRect(pX - dX, top, pX + dX, bottom));
-
-                        emptyPaint.A = (byte)(transitionParams.progress * 255);
-                        //canvas.scale(transitionParams.progress, 1f, pX, pY);
-                        canvas.Transform = Matrix3x2.CreateScale(new Vector2(transitionParams.progress, 1f), new Vector2(pX, pY)) * _baseTransform;
-                        //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
-                        canvas.DrawImage(bottomChartCanvas, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
-                        //canvas.restore();
-                        clip.Dispose();
-                        canvas.Transform = _baseTransform;
-
-                    }
-                    else
-                    {
-                        emptyPaint.A = (byte)(transitionAlpha * 255);
-                        //canvas.drawBitmap(bottomChartBitmap, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pikerHeight, emptyPaint);
-                        canvas.DrawImage(bottomChartCanvas, HORIZONTAL_PADDING, MeasuredHeight - PICKER_PADDING - pickerHeight);
-                    }
+                    canvas.FillRectangle(CreateRect(end - 12,
+                            top,
+                            MeasuredWidth - HORIZONTAL_PADDING,
+                            bottom), unactiveBottomChartPaint.Color);
                 }
-
-
-                if (transitionMode == TRANSITION_MODE_PARENT)
+                else
                 {
-                    return;
+                    canvas.FillRectangle(CreateRect(HORIZONTAL_PADDING,
+                            top,
+                            MeasuredWidth - HORIZONTAL_PADDING,
+                            bottom), unactiveBottomChartPaint.Color);
                 }
-
-                canvas.FillRectangle(CreateRect(HORIZONTAL_PADDING,
-                        top,
-                        start + 12,
-                        bottom), unactiveBottomChartPaint.Color);
-
-                canvas.FillRectangle(CreateRect(end - 12,
-                        top,
-                        MeasuredWidth - HORIZONTAL_PADDING,
-                        bottom), unactiveBottomChartPaint.Color);
-            }
-            else
-            {
-                canvas.FillRectangle(CreateRect(HORIZONTAL_PADDING,
-                        top,
-                        MeasuredWidth - HORIZONTAL_PADDING,
-                        bottom), unactiveBottomChartPaint.Color);
             }
 
             //canvas.drawBitmap(
