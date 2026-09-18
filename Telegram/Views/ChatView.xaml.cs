@@ -3381,7 +3381,7 @@ namespace Telegram.Views
                         flyout.CreateFlyoutItem(ViewModel.ForwardSelectedMessages, Strings.ForwardSelected, Icons.Share);
                     }
 
-                    if (selected.Values.All(x => MessageDownload_Loaded(x)))
+                    if (selected.Values.All(x => MessageDownloadSelected_Loaded(x)))
                     {
                         flyout.CreateFlyoutItem(ViewModel.DownloadSelectedMessages, Strings.DownloadSelected, Icons.ArrowDownload);
                     }
@@ -4862,51 +4862,28 @@ namespace Telegram.Views
 
         private bool MessageOpenMedia_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
+            return message.GetFile() != null;
+        }
 
-            return message.Content switch
-            {
-                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
-                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
-                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
-                _ => false
-            };
+        private bool MessageDownloadSelected_Loaded(MessageViewModel message)
+        {
+            var file = message.GetFile();
+            return message.CanBeAddedToDownloads
+                && file?.Local.CanBeDownloaded == true
+                && !file.Local.IsDownloadingActive
+                && !file.Local.IsDownloadingCompleted;
         }
 
         private bool MessageDownload_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
-
-            return message.Content switch
-            {
-                MessageAudio audio => audio.Audio.AudioValue.Local.CanBeDownloaded && !audio.Audio.AudioValue.Local.IsDownloadingActive && !audio.Audio.AudioValue.Local.IsDownloadingCompleted,
-                MessageDocument document => document.Document.DocumentValue.Local.CanBeDownloaded && !document.Document.DocumentValue.Local.IsDownloadingActive && !document.Document.DocumentValue.Local.IsDownloadingCompleted,
-                MessageVideo video => video.Video.VideoValue.Local.CanBeDownloaded && !video.Video.VideoValue.Local.IsDownloadingActive && !video.Video.VideoValue.Local.IsDownloadingCompleted,
-                _ => false
-            };
+            return MessageDownloadSelected_Loaded(message);
         }
 
         private bool MessageOpenFolder_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
-
-            return message.Content switch
-            {
-                MessagePhoto photo => ViewModel.StorageService.CheckAccessToFolder(photo.Photo.GetBig()?.Photo),
-                MessageAudio audio => ViewModel.StorageService.CheckAccessToFolder(audio.Audio.AudioValue),
-                MessageDocument document => ViewModel.StorageService.CheckAccessToFolder(document.Document.DocumentValue),
-                MessageVideo video => ViewModel.StorageService.CheckAccessToFolder(video.Video.VideoValue),
-                _ => false
-            };
+            var file = message.GetFile();
+            return ViewModel.StorageService.CheckAccessToFolder(file)
+                || (file?.Remote.UniqueId.Length > 0 && StorageService.Future.Contains(file.Remote.UniqueId));
         }
 
         private bool MessageSaveAnimation_Loaded(MessageViewModel message)

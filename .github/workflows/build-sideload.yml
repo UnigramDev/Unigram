@@ -39,7 +39,16 @@ jobs:
 
       - name: Install TDLib build tools
         shell: powershell
-        run: choco install cmake php -y --no-progress
+        run: |
+          choco install cmake php gperf -y --no-progress
+
+          # Make newly installed Chocolatey tools visible in this PowerShell process.
+          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+          refreshenv
+
+          gperf --version
+          cmake --version
+          php --version
 
       - name: Install the pinned vcpkg baseline
         shell: powershell

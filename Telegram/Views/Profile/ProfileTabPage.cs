@@ -10,6 +10,7 @@ using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Profile;
@@ -161,60 +162,19 @@ namespace Telegram.Views.Profile
 
         private bool MessageSaveMedia_Loaded(MessageWithOwner message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
-
-            var file = message.GetFile();
-            if (file != null)
-            {
-                return file.Local.IsDownloadingCompleted;
-            }
-
-            return false;
-
-            return message.Content switch
-            {
-                MessagePhoto photo => photo.Photo.GetBig()?.Photo.Local.IsDownloadingCompleted ?? false,
-                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
-                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
-                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
-                _ => false
-            };
+            return message.GetFile() != null;
         }
 
         private bool MessageOpenMedia_Loaded(MessageWithOwner message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
-
-            return message.Content switch
-            {
-                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
-                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
-                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
-                _ => false
-            };
+            return message.GetFile() != null;
         }
 
         private bool MessageOpenFolder_Loaded(MessageWithOwner message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
-
-            return message.Content switch
-            {
-                MessagePhoto photo => ViewModel.StorageService.CheckAccessToFolder(photo.Photo.GetBig()?.Photo),
-                MessageAudio audio => ViewModel.StorageService.CheckAccessToFolder(audio.Audio.AudioValue),
-                MessageDocument document => ViewModel.StorageService.CheckAccessToFolder(document.Document.DocumentValue),
-                MessageVideo video => ViewModel.StorageService.CheckAccessToFolder(video.Video.VideoValue),
-                _ => false
-            };
+            var file = message.GetFile();
+            return ViewModel.StorageService.CheckAccessToFolder(file)
+                || (file?.Remote.UniqueId.Length > 0 && StorageService.Future.Contains(file.Remote.UniqueId));
         }
 
         private bool MessageDelete_Loaded(MessageWithOwner message, MessageProperties properties)

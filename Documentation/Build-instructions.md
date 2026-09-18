@@ -88,6 +88,7 @@ Two extra tools are needed for the code generation step:
 - **CMake** 4.4 or later, on PATH. Earlier versions have no Visual Studio 18 generator and will
   silently fall back to an older toolset.
 - **PHP**, with `php.exe` on PATH.
+- **gperf**, with `gperf.exe` on PATH.
 
 Then, from `Libraries\tdjson`:
 
