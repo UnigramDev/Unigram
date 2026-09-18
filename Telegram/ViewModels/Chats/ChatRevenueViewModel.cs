@@ -212,7 +212,32 @@ namespace Telegram.ViewModels.Chats
             if (response is ChatRevenueStatistics statistics)
             {
                 Impressions = ChartViewData.Create(statistics.RevenueByHourGraph, Strings.MonetizationGraphImpressions, 5);
-                Revenue = ChartViewData.Create(statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 7);
+
+                // The divisor taking a sample to US cents, for the chart's second axis. usd_rate is
+                // quoted alongside the statistics but the server does not always fill it in, and
+                // the account's million_gram_to_usd_rate is the same conversion by the route the
+                // wallet takes: a million times the per-gram rate, so both reduce to 1e7 over it.
+                //
+                // Assigned to the property last, because that raises PropertyChanged and the
+                // binding hands the data to the chart before the next statement would run.
+                var rate = statistics.UsdRate > 0
+                    ? Constants.ToncoinMin / (statistics.UsdRate * 100)
+                    : ClientService.Options.MillionGramToUsdRate > 0
+                    ? 1e13 / ClientService.Options.MillionGramToUsdRate
+                    : 0;
+
+                var revenue = ChartViewData.Create(statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 7);
+                if (revenue != null && rate > 0)
+                {
+                    revenue.yRate = (float)rate;
+
+                    if (revenue.chartData != null)
+                    {
+                        revenue.chartData.yRate = revenue.yRate;
+                    }
+                }
+
+                Revenue = revenue;
                 UsdRate = statistics.UsdRate;
 
                 UpdateAmount(statistics.RevenueAmount);

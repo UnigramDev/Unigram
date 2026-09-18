@@ -136,7 +136,20 @@ namespace Telegram.ViewModels.Chats
             var response = await ClientService.SendAsync(new GetStarRevenueStatistics(_ownerId, false));
             if (response is StarRevenueStatistics statistics)
             {
-                Revenue = ChartViewData.Create(statistics.RevenueByDayGraph, Strings.BotStarsChartRevenue, 8);
+                // Rate before the assignment, for the reason given in ChatRevenueViewModel.
+                // Samples are whole stars, so this is only the dollars to cents step.
+                var revenue = ChartViewData.Create(statistics.RevenueByDayGraph, Strings.BotStarsChartRevenue, 8);
+                if (revenue != null && statistics.UsdRate > 0)
+                {
+                    revenue.yRate = (float)(1 / (statistics.UsdRate * 100));
+
+                    if (revenue.chartData != null)
+                    {
+                        revenue.chartData.yRate = revenue.yRate;
+                    }
+                }
+
+                Revenue = revenue;
                 UsdRate = statistics.UsdRate;
 
                 UpdateAmount(statistics.Status);

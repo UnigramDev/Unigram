@@ -125,7 +125,6 @@ namespace Telegram.Charts
 
         }
 
-        public string currency = null;
 
         public bool animateLegentTo = false;
 
@@ -821,7 +820,7 @@ namespace Telegram.Charts
 
             if (legendShowing && selectedIndex < chartData.x.Length)
             {
-                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, currency);
+                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, chartData.yTooltipFormatter, chartData.yRate);
             }
 
             invalidatePickerChart = true;
@@ -1264,10 +1263,24 @@ namespace Telegram.Charts
             //layout.Dispose();
             //format.Dispose();
 
+            signaturePaint2.Color = signaturePaint.Color;
+            signaturePaint2.A = signaturePaint.A;
+
             for (int i = useMinHeight ? 0 : 1; i < n; i++)
             {
                 float y = MeasuredHeight - chartBottom - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight));
                 canvas.DrawTextLayout(GetSignatureLayout(canvas, a.valuesStr[i]), HORIZONTAL_PADDING, y - textOffset, signaturePaint.Color);
+
+                // The converted column, present only where the graph declared a rate. Right aligned
+                // by its own width rather than by the paint: a cached layout carries the alignment
+                // it was built with, and these share the left column's format.
+                if (a.valuesStr2 != null && !string.IsNullOrEmpty(a.valuesStr2[i]))
+                {
+                    var layout = GetSignatureLayout(canvas, a.valuesStr2[i]);
+                    var x = MeasuredWidth - HORIZONTAL_PADDING - (float)layout.LayoutBounds.Width;
+
+                    canvas.DrawTextLayout(layout, x, y - textOffset, signaturePaint2.Color);
+                }
             }
         }
 
@@ -1708,7 +1721,7 @@ namespace Telegram.Charts
 
         protected virtual ChartHorizontalLinesData CreateHorizontalLinesData(long newMaxHeight, long newMinHeight)
         {
-            return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight, currency);
+            return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight, chartData.yTickFormatter, chartData.yRate);
         }
 
         protected ValueAnimator CreateAnimator(float f1, float f2, AnimatorUpdateListener l)
@@ -2027,7 +2040,7 @@ namespace Telegram.Charts
                 return;
             }
 
-            legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, currency);
+            legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, chartData.yTooltipFormatter, chartData.yRate);
             legendSignatureView.setVisibility(Visibility.Visible);
             //legendSignatureView.measure(
             //        MeasureSpec.makeMeasureSpec(MeasuredWidth, MeasureSpec.AT_MOST),
@@ -2155,7 +2168,10 @@ namespace Telegram.Charts
                 pickerMaxHeight = 0;
                 pickerMinHeight = float.MaxValue;
                 InitPickerMaxHeight();
-                legendSignatureView.setSize(lines.Count);
+                // Two rows per line where the tooltip converts, matching the axis.
+                legendSignatureView.setSize(chartData.yTooltipFormatter != ChartData.FORMATTER_DEFAULT && chartData.yRate > 0
+                    ? 2 * lines.Count
+                    : lines.Count);
 
                 invalidatePickerChart = true;
                 UpdateLineSignature();
@@ -2429,7 +2445,7 @@ namespace Telegram.Charts
             UpdatePickerMinMaxHeight();
             if (legendShowing)
             {
-                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), true, currency);
+                legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), true, chartData.yTooltipFormatter, chartData.yRate);
             }
         }
 

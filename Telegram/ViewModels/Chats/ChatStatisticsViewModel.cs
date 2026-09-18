@@ -303,6 +303,16 @@ namespace Telegram.ViewModels.Chats
         public readonly int graphType;
         public readonly string title;
 
+        /// <summary>
+        /// Divisor from a sample to US cents, for the second Y axis. See ChartData.yRate.
+        /// </summary>
+        /// <remarks>
+        /// Held here rather than set straight on the data, because a graph can arrive as
+        /// StatisticalGraphAsync - the revenue one does - and then chartData does not exist until
+        /// the load completes, well after the caller has the rate. Both paths copy it across.
+        /// </remarks>
+        public float yRate;
+
         public bool loading;
         public bool isEmpty;
         public bool isLanguages;
@@ -328,6 +338,11 @@ namespace Telegram.ViewModels.Chats
                 {
                     viewData.chartData = CreateChartData(JsonObject.Parse(json), graphType);
                     viewData.zoomToken = data.ZoomToken;
+
+                    if (viewData.chartData != null)
+                    {
+                        viewData.chartData.yRate = viewData.yRate;
+                    }
                     if (viewData.chartData == null || viewData.chartData.x == null || viewData.chartData.x.Length < 2)
                     {
                         viewData.isEmpty = true;
@@ -390,6 +405,11 @@ namespace Telegram.ViewModels.Chats
                 {
                     viewData.chartData = CreateChartData(JsonObject.Parse(json), graphType);
                     viewData.zoomToken = data.ZoomToken;
+
+                    if (viewData.chartData != null)
+                    {
+                        viewData.chartData.yRate = viewData.yRate;
+                    }
                     if (viewData.chartData == null || viewData.chartData.x == null || viewData.chartData.x.Length < 2)
                     {
                         viewData.isEmpty = true;

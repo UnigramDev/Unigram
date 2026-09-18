@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Telegram.Charts.Data;
 using Telegram.Common;
 using Telegram.Converters;
 using Windows.UI.Xaml;
@@ -120,7 +121,7 @@ namespace Telegram.Charts.DataView
         }
 
 
-        public void setData(int index, long date, List<LineViewData> lines, bool animateChanges, string currency)
+        public void setData(int index, long date, List<LineViewData> lines, bool animateChanges, int formatter, float rate)
         {
             //int n = holdes.Length;
             //if (animateChanges)
@@ -157,21 +158,34 @@ namespace Telegram.Charts.DataView
                 }
             }
 
-            for (int i = 0; i < lines.Count; i++)
+            // A currency graph gets two rows per line - the amount, then the same amount in USD -
+            // so the holders are twice the lines and each pair walks one line. setSize is told the
+            // doubled count by the view, which is the only place that knows the formatter.
+            bool converted = formatter != ChartData.FORMATTER_DEFAULT && rate > 0;
+            int count = converted ? holdes.Length : lines.Count;
+
+            for (int i = 0; i < count; i++)
             {
-                if (!lines[i].enabled)
+                int j = converted ? i / 2 : i;
+                bool usd = converted && (i % 2) == 1;
+
+                if (j >= lines.Count || !lines[j].enabled)
                 {
                     holdes[i].Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    var l = lines[i].line;
+                    var l = lines[j].line;
 
                     holdes[i].Visibility = Visibility.Visible;
 
-                    holdes[i].Signature = l.name;
-                    holdes[i].Value = FormatWholeNumber(l.y[index], currency);
-                    holdes[i].Foreground = new SolidColorBrush(lines[i].lineColor);
+                    holdes[i].Signature = converted
+                        ? string.Format(usd ? Strings.ChartInUSD : formatter == ChartData.FORMATTER_TON ? Strings.ChartInTON : Strings.ChartInXTR, l.name)
+                        : l.name;
+                    holdes[i].Value = usd
+                        ? ChartHorizontalLinesData.Format(1, (long)(l.y[index] / rate), formatter)
+                        : FormatWholeNumber(l.y[index], formatter);
+                    holdes[i].Foreground = new SolidColorBrush(lines[j].lineColor);
 
                     if (showPercentage)
                     {
@@ -239,13 +253,13 @@ namespace Telegram.Charts.DataView
             return Formatter.Date(date, Strings.chatFullDate);
         }
 
-        public string FormatWholeNumber(long v, string currency)
+        public string FormatWholeNumber(long v, int formatter)
         {
             // The tooltip shows the same quantity as the axis and has to say so the same way: a
             // revenue graph's samples are nanograms, which read as a raw integer without this.
-            if (currency != null)
+            if (formatter != ChartData.FORMATTER_DEFAULT)
             {
-                return Formatter.FormatAmount(v, currency);
+                return ChartHorizontalLinesData.Format(0, v, formatter);
             }
 
             double num_ = v;

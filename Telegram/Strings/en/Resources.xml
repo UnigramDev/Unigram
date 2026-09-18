@@ -7424,6 +7424,9 @@
     <string name="MonetizationTransactionDetailRefund">Refunded back</string>
     <string name="MonetizationGraphImpressions">Ad impressions</string>
     <string name="MonetizationGraphRevenue">Ad rewards</string>
+    <string name="ChartInTON">{0} in TON</string>
+    <string name="ChartInXTR">{0} in Stars</string>
+    <string name="ChartInUSD">{0} in USD</string>
 
 
 
