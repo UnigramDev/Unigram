@@ -21,6 +21,11 @@ namespace Telegram.Charts
             InitializeComponent();
         }
 
+        public void SetTitle(string title)
+        {
+            Label2.Text = title ?? string.Empty;
+        }
+
         public void SetDates(long v1, long v2)
         {
             var start = Formatter.ToLocalTime(v1 / 1000);
@@ -39,11 +44,13 @@ namespace Telegram.Charts
         public void ZoomTo(BaseChartView zoomedChartView, long d, bool v)
         {
             Back.Visibility = Visibility.Visible;
+            Label2.Visibility = Visibility.Collapsed;
         }
 
         public void ZoomOut(BaseChartView chartView, bool animated)
         {
             Back.Visibility = Visibility.Collapsed;
+            Label2.Visibility = Visibility.Visible;
         }
 
         public event RoutedEventHandler Click;

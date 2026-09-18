@@ -57,13 +57,7 @@ namespace Telegram.Views.Chats
                 return;
             }
 
-            var header = root.Items[0] as ChartHeaderView;
-            var border = root.Items[1] as AspectView;
-            var checks = root.Items[2] as WrapPanel;
-
-            root.Header = data.title;
-            border.Children.Clear();
-            border.Constraint = data;
+            root.PrepareData(data);
 
             // Without a name of its own, ListViewItem announces its content's ToString.
             AutomationProperties.SetName(args.ItemContainer, data.title);
@@ -78,7 +72,7 @@ namespace Telegram.Views.Chats
 
             if (data.token != null && data.chartData == null)
             {
-                await data.LoadAsync(ViewModel.ClientService, ViewModel.Chat.Id);
+                await data.LoadAsync();
             }
 
             if (data.chartData == null)

@@ -43,7 +43,8 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
-                        <Grid Background="{ThemeResource SettingsItemBackground}">
+                        <Grid Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -92,7 +93,7 @@
                     </controls:HeaderedControl>
 
                     <ContentControl Content="{x:Bind ViewModel.Interactions, Mode=OneWay}"
-                                    HorizontalContentAlignment="Center">
+                                    HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
                                 <cells:ChartCell DataContextChanged="OnElementPrepared" />
@@ -101,7 +102,7 @@
                     </ContentControl>
 
                     <ContentControl Content="{x:Bind ViewModel.Reactions, Mode=OneWay}"
-                                    HorizontalContentAlignment="Center">
+                                    HorizontalContentAlignment="Stretch">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
                                 <cells:ChartCell DataContextChanged="OnElementPrepared" />

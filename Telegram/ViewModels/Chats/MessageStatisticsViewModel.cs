@@ -97,8 +97,8 @@ namespace Telegram.ViewModels.Chats
             var response = await ClientService.SendAsync(new GetMessageStatistics(args.ChatId, args.Id, false));
             if (response is MessageStatistics statistics)
             {
-                Interactions = ChartViewData.Create(statistics.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6);
-                Reactions = ChartViewData.Create(statistics.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, /*1*/2);
+                Interactions = ChartViewData.Create(ClientService, Chat.Id, statistics.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6);
+                Reactions = ChartViewData.Create(ClientService, Chat.Id, statistics.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, /*1*/2);
             }
 
             IsLoading = false;

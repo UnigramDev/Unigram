@@ -9,27 +9,37 @@
              d:DesignWidth="400">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
         <TextBlock x:Name="Label1"
-                   Style="{StaticResource BaseTextBlockStyle}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
                    TextAlignment="Center"
-                   Margin="0,8,0,8" />
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="0,8,0,8"
+                   Grid.Column="1" />
         <TextBlock x:Name="Label2"
                    Style="{StaticResource BaseTextBlockStyle}"
                    TextAlignment="Center"
-                   Margin="0,8,0,8" />
+                   Margin="0,8,8,8" />
 
         <HyperlinkButton x:Name="Back"
                          Click="Back_Click"
                          Visibility="Collapsed"
-                         HorizontalAlignment="Left">
+                         HorizontalAlignment="Left"
+                         BorderThickness="0"
+                         Padding="0">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE71F;"
                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                            FontSize="{StaticResource GlyphMediumFontSize}"
-                           Margin="12,0,8,0" />
+                           Margin="0,0,8,-2"
+                           VerticalAlignment="Center" />
                 <TextBlock Text="{CustomResource ZoomOut}"
                            FontWeight="SemiBold"
-                           Margin="0,-4,0,4" />
+                           Margin="0,8,8,8" />
             </StackPanel>
         </HyperlinkButton>
     </Grid>

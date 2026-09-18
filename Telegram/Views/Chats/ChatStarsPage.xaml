@@ -23,8 +23,7 @@
                     <ContentControl Content="{x:Bind ViewModel.Revenue, Mode=OneWay}">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>
-                                <cells:ChartCell DataContextChanged="OnElementPrepared"
-                                                 Background="{ThemeResource SettingsItemBackground}" />
+                                <cells:ChartCell DataContextChanged="OnElementPrepared" />
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
                     </ContentControl>

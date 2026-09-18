@@ -11,16 +11,18 @@ using Telegram.Charts;
 using Telegram.Charts.Data;
 using Telegram.Charts.DataView;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ChartCell : HeaderedControl
+    public sealed partial class ChartCell : StackPanel
     {
         private ChartViewData data;
 
@@ -30,6 +32,48 @@ namespace Telegram.Controls.Cells
         public ChartCell()
         {
             InitializeComponent();
+
+            // Once, here, rather than per UpdateData: the header is a XAML child and outlives every
+            // chart the cell shows, so subscribing alongside them would stack a handler per recycle.
+            chartHeaderView.Click += OnHeaderClick;
+        }
+
+        private void OnHeaderClick(object sender, RoutedEventArgs e)
+        {
+            if (zoomedChartView != null)
+            {
+                ZoomOut(true);
+            }
+        }
+
+        private void OnChartTapped(object sender, TappedRoutedEventArgs e)
+        {
+            OnZoomed();
+        }
+
+        public void PrepareData(ChartViewData data)
+        {
+            chartHeaderView.SetTitle(data?.title ?? string.Empty);
+
+            LayoutRoot.Children.Clear();
+            LayoutRoot.Constraint = data;
+        }
+
+        private static BaseChartView CreateZoomedChartView(int graphType)
+        {
+            BaseChartView view = graphType switch
+            {
+                1 or 6 => new DoubleLinearChartView(),
+                2 or 7 or 8 => new StackBarChartView(),
+                4 => new PieChartView(),
+                _ => new LinearChartView()
+            };
+
+            // A zoomed graph covers one day, so its legend reads hours rather than dates. The pie
+            // is the exception: it shows a share of a whole, and has no time axis to label.
+            view.legendSignatureView.useHour = graphType != 4;
+
+            return view;
         }
 
         public void UpdateData(ChartViewData data)
@@ -51,52 +95,43 @@ namespace Telegram.Controls.Cells
             //    return;
             //}
 
+            // Zoom needs somewhere to go: a token to fetch the day's own graph, or a languages
+            // chart, which builds its child locally. Where there is neither, the zoomed view is
+            // never shown - and it is a whole chart, surface and legend included, so it is not
+            // built at all rather than built and left hidden.
+            var canZoom = !string.IsNullOrEmpty(data.zoomToken) || data.graphType == 4;
+
             BaseChartView chartView = null;
-            BaseChartView zoomedChartView = null;
+            BaseChartView zoomedChartView = canZoom ? CreateZoomedChartView(data.graphType) : null;
 
             switch (data.graphType)
             {
                 case 1:
                     chartView = new DoubleLinearChartView();
-                    //zoomedChartView = new DoubleLinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 case 2:
                     chartView = new StackBarChartView();
-                    //zoomedChartView = new StackBarChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 case 3:
                     chartView = new BarChartView();
-                    //zoomedChartView = new LinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 case 4:
                     chartView = new StackLinearChartView();
                     chartView.legendSignatureView.showPercentage = true;
-                    //zoomedChartView = new PieChartView();
                     break;
                 case 5:
                     chartView = new StepChartView();
                     chartView.legendSignatureView.isTopHourChart = true;
-                    //zoomedChartView = new LinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 case 6:
                     chartView = new DoubleStepChartView();
-                    //zoomedChartView = new DoubleLinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 case 7:
                 case 8:
                     chartView = new StackBarChartView();
-                    //zoomedChartView = new StackBarChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 default:
                     chartView = new LinearChartView();
-                    //zoomedChartView = new LinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
                     break;
             }
 
@@ -111,15 +146,12 @@ namespace Telegram.Controls.Cells
 
             if (zoomedChartView != null)
             {
-                chartView.Tapped += (s, args) =>
-                {
-                    OnZoomed();
-                };
+                chartView.Tapped += OnChartTapped;
 
-                chartHeaderView.Click += (s, args) =>
-                {
-                    ZoomOut(true);
-                };
+                // There is a zoomed view precisely when the chart can zoom, so the chevron follows
+                // from its existence. The zoomed chart is the bottom of the stack: nothing further.
+                chartView.legendSignatureView.zoomEnabled = true;
+                zoomedChartView.legendSignatureView.zoomEnabled = false;
 
                 LayoutRoot.Children.Add(zoomedChartView);
                 zoomedChartView.Visibility = Visibility.Collapsed;
@@ -138,12 +170,14 @@ namespace Telegram.Controls.Cells
                     foreach (var line in lines)
                     {
                         var check = new FauxCheckBox();
-                        check.Style = BootStrapper.Current.Resources["LineCheckBoxStyle"] as Style;
+                        check.Resources = new CheckBoxResources(line.lineColor);
+                        check.Style = BootStrapper.Current.Resources["DefaultCheckBoxStyle"] as Style;
                         check.Content = line.line.name;
                         check.IsFaux = true;
                         check.IsChecked = line.enabled;
                         check.Background = new SolidColorBrush(line.lineColor);
                         check.Margin = new Thickness(12, 0, 0, 12);
+                        check.MinWidth = 0;
                         check.DataContext = line;
                         check.Click += CheckBox_Checked;
 
@@ -219,17 +253,18 @@ namespace Telegram.Controls.Cells
 
         }
 
-        public void OnZoomed()
+        public async void OnZoomed()
         {
             if (data.activeZoom > 0)
             {
                 return;
             }
-            //performClick();
+
             if (!chartView.legendSignatureView.canGoZoom)
             {
                 return;
             }
+
             long x = chartView.GetSelectedDate();
             if (data.graphType == 4)
             {
@@ -238,69 +273,32 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            if (data.zoomToken == null)
+            // Empty rather than null where a graph has no zoom: TDLib strings cross the ABI as
+            // HSTRING, which cannot carry one.
+            if (string.IsNullOrEmpty(data.zoomToken))
             {
                 return;
             }
 
-            //cancelZoom();
-            //String cacheKey = data.zoomToken + "_" + x;
-            //ChartData dataFromCache = childDataCache.get(cacheKey);
-            //if (dataFromCache != null)
-            //{
-            //    data.childChartData = dataFromCache;
-            //    zoomChart(false);
-            //    return;
-            //}
+            // The request is per date and can outlive the cell: a list recycles its rows, so what
+            // comes back is only applied if this cell is still showing the graph that asked.
+            var requested = data;
 
-            //TLRPC.TL_stats_loadAsyncGraph request = new TLRPC.TL_stats_loadAsyncGraph();
-            //request.token = data.zoomToken;
-            //if (x != 0)
-            //{
-            //    request.x = x;
-            //    request.flags |= 1;
-            //}
-            //ZoomCancelable finalCancelabel;
-            //lastCancelable = finalCancelabel = new ZoomCancelable();
-            //finalCancelabel.adapterPosition = recyclerListView.getChildAdapterPosition(ChartCell.this);
+            chartView.legendSignatureView.showProgress(true, false);
 
-            //chartView.legendSignatureView.showProgress(true, false);
+            var loaded = await data.LoadZoomAsync(x);
 
-            //int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(request, (response, error)-> {
-            //    ChartData childData = null;
-            //    if (response instanceof TLRPC.TL_statsGraph) {
-            //        String json = ((TLRPC.TL_statsGraph)response).json.data;
-            //        try
-            //        {
-            //            childData = createChartData(new JSONObject(json), data.graphType, data == languagesData);
-            //        }
-            //        catch (JSONException e)
-            //        {
-            //            e.printStackTrace();
-            //        }
-            //    } else if (response instanceof TLRPC.TL_statsGraphError) {
-            //        Toast.makeText(getContext(), ((TLRPC.TL_statsGraphError)response).error, Toast.LENGTH_LONG).show();
-            //    }
+            if (requested != data)
+            {
+                return;
+            }
 
-            //    ChartData finalChildData = childData;
-            //    AndroidUtilities.runOnUIThread(()-> {
-            //        if (finalChildData != null)
-            //        {
-            //            childDataCache.put(cacheKey, finalChildData);
-            //        }
-            //        if (finalChildData != null && !finalCancelabel.canceled && finalCancelabel.adapterPosition >= 0)
-            //        {
-            //            View view = layoutManager.findViewByPosition(finalCancelabel.adapterPosition);
-            //            if (view instanceof ChartCell) {
-            //                data.childChartData = finalChildData;
-            //                ((ChartCell)view).chartView.legendSignatureView.showProgress(false, false);
-            //                ((ChartCell)view).zoomChart(false);
-            //            }
-            //        }
-            //        cancelZoom();
-            //    });
-            //}, null, null, 0, chat.stats_dc, ConnectionsManager.ConnectionTypeGeneric, true);
-            //ConnectionsManager.getInstance(currentAccount).bindRequestToGuid(reqId, classGuid);
+            chartView.legendSignatureView.showProgress(false, false);
+
+            if (loaded)
+            {
+                ZoomChart(false);
+            }
         }
 
         private void ZoomChart(bool skipTransition)

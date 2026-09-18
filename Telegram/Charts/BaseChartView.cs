@@ -369,7 +369,7 @@ namespace Telegram.Charts
                     if (!animateLegentTo)
                     {
                         legendShowing = false;
-                        legendSignatureView.setVisibility(Visibility.Collapsed);
+                        legendSignatureView.Visibility = Visibility.Collapsed;
                         Invalidate();
                     }
 
@@ -633,7 +633,7 @@ namespace Telegram.Charts
             //setWillNotDraw(false);
 
             legendSignatureView = CreateLegendView();
-            legendSignatureView.setVisibility(Visibility.Collapsed);
+            legendSignatureView.Visibility = Visibility.Collapsed;
 
             LayoutRoot.Children.Add(legendSignatureView);
 
@@ -2041,7 +2041,7 @@ namespace Telegram.Charts
             }
 
             legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false, chartData.yTooltipFormatter, chartData.yRate);
-            legendSignatureView.setVisibility(Visibility.Visible);
+            legendSignatureView.Visibility = Visibility.Visible;
             //legendSignatureView.measure(
             //        MeasureSpec.makeMeasureSpec(MeasuredWidth, MeasureSpec.AT_MOST),
             //        MeasureSpec.makeMeasureSpec(MeasuredHeight, MeasureSpec.AT_MOST)
@@ -2526,7 +2526,7 @@ namespace Telegram.Charts
             selectedIndex = -1;
             legendShowing = false;
             animateLegentTo = false;
-            legendSignatureView.setVisibility(Visibility.Collapsed);
+            legendSignatureView.Visibility = Visibility.Collapsed;
             selectionA = 0f;
         }
 
@@ -2534,7 +2534,7 @@ namespace Telegram.Charts
         {
             selectedIndex = Array.BinarySearch(chartData.x, activeZoom);
             legendShowing = true;
-            legendSignatureView.setVisibility(Visibility.Visible);
+            legendSignatureView.Visibility = Visibility.Visible;
             selectionA = 1f;
             MoveLegend(chartFullWidth * pickerDelegate.pickerStart - HORIZONTAL_PADDING);
         }
