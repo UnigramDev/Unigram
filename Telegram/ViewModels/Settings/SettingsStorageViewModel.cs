@@ -106,11 +106,105 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _totalStatistics, value);
         }
 
+        // The four biggest categories keep a row of their own and the rest are folded into one
+        // "Other" - but only from six up, because at five the fold would trade one row for one row.
+        private const int MaxNotCollapsed = 4;
+
+        // Every category, in the order the ring uses them, with nothing folded. This is what a clear
+        // operates on and what the totals are counted from - the two views below are presentation.
+        private List<StorageChartItem> _sections = new();
+
+        // The fold, or null when there was nothing to fold.
+        private StorageChartItem _other;
+
+        // The rows: at most the four biggest and then the fold.
         private List<StorageChartItem> _itemsView;
         public List<StorageChartItem> ItemsView
         {
             get => _itemsView;
-            set => Set(ref _itemsView, value);
+            set
+            {
+                Set(ref _itemsView, value);
+                RaisePropertyChanged(nameof(ChartView));
+            }
+        }
+
+        // The ring is a partition, so it carries either the fold or its contents, never both.
+        // Expanding splits its arc into the categories it stands for. The order survives that - the
+        // fold sits where its largest child does - so every frame of the blend is still a
+        // partition.
+        public IList<StorageChartItem> ChartView => _other is { IsExpanded: true } ? _sections : _itemsView;
+
+        public void SetExpanded(bool expanded)
+        {
+            if (_other != null)
+            {
+                _other.IsExpanded = expanded;
+                RaisePropertyChanged(nameof(ChartView));
+            }
+        }
+
+        // The ring has to keep something in it, so the last checked category cannot be unchecked.
+        // False says that is what was asked for, which is the caller's cue to shake instead.
+        public bool ToggleVisibility(StorageChartItem item)
+        {
+            var visible = !item.IsVisible;
+            var folded = item.Children;
+
+            if (!visible)
+            {
+                var remaining = 0;
+
+                foreach (var section in _sections)
+                {
+                    if (section.IsVisible && section != item && folded?.Contains(section) is not true)
+                    {
+                        remaining++;
+                    }
+                }
+
+                if (remaining == 0)
+                {
+                    return false;
+                }
+            }
+
+            item.IsVisible = visible;
+
+            if (folded != null)
+            {
+                foreach (var child in folded)
+                {
+                    child.IsVisible = visible;
+                }
+
+                item.UpdateCheckState();
+            }
+            else if (_other != null && _other.Children.Contains(item))
+            {
+                _other.UpdateCheckState();
+            }
+
+            RaisePropertyChanged(nameof(SelectedBytes));
+            return true;
+        }
+
+        public long SelectedBytes
+        {
+            get
+            {
+                long sum = 0;
+
+                foreach (var section in _sections)
+                {
+                    if (section.IsVisible)
+                    {
+                        sum += section.TotalBytes;
+                    }
+                }
+
+                return sum;
+            }
         }
 
         private ulong _systemFreeSpace;
@@ -149,7 +243,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var types = ItemsView.Where(x => x.IsVisible).SelectMany(x => x.Types).ToVector();
+            var types = _sections.Where(x => x.IsVisible).SelectMany(x => x.Types).ToVector();
             if (types == null || types.Empty())
             {
                 return;
@@ -312,7 +406,7 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            ItemsView = new[]
+            _sections = new[]
             {
                 photo,
                 video,
@@ -323,6 +417,22 @@ namespace Telegram.ViewModels.Settings
                 stories,
                 local
             }.Where(x => x != null).OrderByDescending(x => x.TotalBytes).ToList();
+
+            if (_sections.Count > MaxNotCollapsed + 1)
+            {
+                _other = new StorageChartItem(_sections.GetRange(MaxNotCollapsed, _sections.Count - MaxNotCollapsed));
+
+                var rows = _sections.GetRange(0, MaxNotCollapsed);
+                rows.Add(_other);
+
+                ItemsView = rows;
+            }
+            else
+            {
+                _other = null;
+
+                ItemsView = _sections;
+            }
 
             LoadSystem();
 
@@ -338,7 +448,7 @@ namespace Telegram.ViewModels.Settings
             SystemFreeSpace = info.FreeSpace;
             SystemCapacity = info.Capacity;
 
-            TotalBytes = ItemsView.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
+            TotalBytes = SelectedBytes;
         }
 
         private async Task<(ulong FreeSpace, ulong Capacity)> GetSystemTotalBytes()

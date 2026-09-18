@@ -7,7 +7,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -229,6 +228,8 @@ namespace Telegram.Views.Settings
 
         #endregion
 
+        // The checkboxes bind to IsVisible one way, so writing it is all that is needed to move
+        // them - including the fold's own, which follows whatever is left checked inside it.
         private void StorageChartItem_Checked(object sender, RoutedEventArgs e)
         {
             if (sender is not CheckBox check || check.DataContext is not StorageChartItem item)
@@ -236,34 +237,25 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            var index = Chart.Items.IndexOf(item);
-            if (index < 0)
+            if (!ViewModel.ToggleVisibility(item))
             {
+                VisualUtilities.ShakeView(check);
                 return;
             }
 
-            if (item.IsVisible && Chart.Items.Except(new[] { item }).Any(x => x.IsVisible))
+            // The list the ring is holding is the one that changed, so the binding has nothing new
+            // to push and the chart has to be told.
+            Chart.SetItems(ViewModel.ChartView, true);
+
+            ClearSize.Text = FileSizeConverter.Convert(ViewModel.SelectedBytes, true);
+        }
+
+        private void StorageChartOther_ExpandedChanged(object sender, EventArgs e)
+        {
+            if (sender is SettingsExpander expander)
             {
-                item.IsVisible = false;
-                check.IsChecked = false;
-
-                Chart.Update(index, item.IsVisible);
+                ViewModel.SetExpanded(expander.IsExpanded);
             }
-            else if (!item.IsVisible)
-            {
-                item.IsVisible = true;
-                check.IsChecked = true;
-
-                Chart.Update(index, item.IsVisible);
-            }
-            else
-            {
-                VisualUtilities.ShakeView(check);
-            }
-
-            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
-
-            ClearSize.Text = FileSizeConverter.Convert(size, true);
         }
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
