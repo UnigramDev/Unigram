@@ -1470,16 +1470,6 @@ namespace Telegram.Navigation
 
         #region Navigation
 
-        public void Resume()
-        {
-            NavigationServices.ForEach(x => x.Resume());
-        }
-
-        public void Suspend()
-        {
-            NavigationServices.ForEach(x => x.Suspend());
-        }
-
         public bool RaiseShortcutInvoked(InvokedShortcut shortcut, VirtualKeyModifiers modifiers)
         {
             var args = new ShortcutInvokedEventArgs(shortcut, modifiers);
