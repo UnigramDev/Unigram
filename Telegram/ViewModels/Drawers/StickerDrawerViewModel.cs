@@ -104,11 +104,16 @@ namespace Telegram.ViewModels.Drawers
             {
                 if (result is Stickers recent)
                 {
-                    recent.StickersValue = recent.StickersValue
-                        .Where(rec => !_favoriteSet.Stickers.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
-                        .ToVector();
+                    BeginOnUIThread(() =>
+                    {
+                        // Merge mutates _favoriteSet.Stickers on the UI thread, so the filter that
+                        // enumerates it has to run there too: this callback is on the updates thread.
+                        var stickers = recent.StickersValue
+                            .Where(rec => !_favoriteSet.Stickers.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
+                            .ToVector();
 
-                    BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue));
+                        Merge(_recentSet.Stickers, stickers);
+                    });
                 }
             });
         }
