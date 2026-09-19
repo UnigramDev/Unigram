@@ -11,8 +11,12 @@ struct FrameworkElementEx : TBase
 
     FrameworkElementEx()
     {
-        m_loadedRevoker = this->Loaded(winrt::auto_revoke, { this, &FrameworkElementEx::HandleChanged });
-        m_unloadedRevoker = this->Unloaded(winrt::auto_revoke, { this, &FrameworkElementEx::HandleChanged });
+        // Never unhooked, and a revoker must not be used here: the event source is this very
+        // object, so the handlers die with it, while ~FrameworkElementEx runs on the finalizer
+        // thread whenever a managed subclass owns the outer object -- and XAML's remove_* is
+        // thread-affine, so revoking there fails with RPC_E_WRONG_THREAD and fail-fasts.
+        this->Loaded({ this, &FrameworkElementEx::HandleChanged });
+        this->Unloaded({ this, &FrameworkElementEx::HandleChanged });
     }
 
     bool IsConnected() const noexcept { return m_loaded; }
@@ -22,9 +26,6 @@ struct FrameworkElementEx : TBase
     virtual void OnUnloaded() {}
 
 private:
-    winrt::Windows::UI::Xaml::FrameworkElement::Loaded_revoker m_loadedRevoker{};
-    winrt::Windows::UI::Xaml::FrameworkElement::Unloaded_revoker m_unloadedRevoker{};
-
     bool m_loaded{ false };
     bool m_unloaded{ false };
 

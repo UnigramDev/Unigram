@@ -8,22 +8,24 @@ namespace winrt::Telegram::Native::Controls::implementation
 {
     AnimatedImageBase::AnimatedImageBase()
     {
-        m_sizeChangedRevoker = SizeChanged(winrt::auto_revoke, { this, &AnimatedImageBase::HandleSizeChanged });
+        // Never unhooked, see FrameworkElementEx.
+        SizeChanged({ this, &AnimatedImageBase::HandleSizeChanged });
     }
 
     void AnimatedImageBase::RegisterViewportChanged()
     {
-        if (!m_effectiveViewportChangedRevoker)
+        if (!m_effectiveViewportChangedToken)
         {
-            m_effectiveViewportChangedRevoker = EffectiveViewportChanged(winrt::auto_revoke, { this, &AnimatedImageBase::HandleEffectiveViewportChanged });
+            m_effectiveViewportChangedToken = EffectiveViewportChanged({ this, &AnimatedImageBase::HandleEffectiveViewportChanged });
         }
     }
 
     void AnimatedImageBase::UnregisterViewportChanged()
     {
-        if (m_effectiveViewportChangedRevoker)
+        if (m_effectiveViewportChangedToken)
         {
-            m_effectiveViewportChangedRevoker.revoke();
+            EffectiveViewportChanged(m_effectiveViewportChangedToken);
+            m_effectiveViewportChangedToken = {};
         }
     }
 

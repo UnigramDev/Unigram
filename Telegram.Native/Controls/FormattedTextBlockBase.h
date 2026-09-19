@@ -34,13 +34,21 @@ namespace winrt::Telegram::Native::Controls::implementation
 
     private:
         RichTextBlock m_textBlock{ nullptr };
-        FrameworkElement::LostFocus_revoker m_focusLostRevoker{};
-        FrameworkElement::SizeChanged_revoker m_sizeChangedRevoker{};
-        RichTextBlock::ContextMenuOpening_revoker m_contextMenuOpeningRevoker{};
-        FrameworkElement::LayoutUpdated_revoker m_layoutUpdatedRevoker{};
-        FrameworkElement::EffectiveViewportChanged_revoker m_effectiveViewportChangedRevoker{};
+
+        // Tokens, not revokers: a revoker unhooks from the destructor, which is the finalizer
+        // thread once a managed subclass owns the outer object, and XAML's remove_* is
+        // thread-affine. Unhooking happens on the UI thread or not at all -- see
+        // FrameworkElementEx and UnregisterTemplateEvents.
+        winrt::event_token m_lostFocusToken{};
+        winrt::event_token m_sizeChangedToken{};
+        winrt::event_token m_contextMenuOpeningToken{};
+        winrt::event_token m_layoutUpdatedToken{};
+        winrt::event_token m_effectiveViewportChangedToken{};
 
         uint64_t m_expandSelectionDeadline{ 0 };
+
+        void UnregisterLayoutChanged();
+        void UnregisterTemplateEvents();
 
         void HandleLostFocus(const IInspectable&, const RoutedEventArgs&);
         void HandleSizeChanged(const IInspectable&, const SizeChangedEventArgs&);
