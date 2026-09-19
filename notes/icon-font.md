@@ -58,6 +58,17 @@ an edge, and every glyph went through it.
 - **The left side bearing is the real xMin.** IcoMoon wrote 0 for all 663 glyphs. fontTools
   translates every outline so xMin equals the lsb it is given, so passing that through shoves the
   whole font against the left edge of the em.
+- **`usWeightClass` stays at 900.** It does not describe the artwork, it opts out of DirectWrite's
+  bold simulation. Asked for a weight 200 or more above the face it has, DWrite manufactures a
+  bold face out of the one it found: probing the collection at each weight, a font declaring 400
+  simulated from 600 up, and 600 is what the app asks for (`DirectTextLayout.cpp:723`,
+  `Direct2DDevice.cpp:1341`, and XAML like `PaidReactorCell.xaml:40`). The icon came out smeared,
+  its advance 1044 rather than 1024 - and `head` bit 3 rounds advances to whole pixels, so it
+  could land a pixel off the same icon elsewhere. There is no flag asking DWrite not to, and no
+  synthetic *lightening*, so the way out is to declare a weight nothing outranks. Only
+  `usWeightClass` is read: a variant declaring 700 with the style name left at "Regular" behaved
+  exactly like one flagged Bold in `fsSelection` and `macStyle`, and 700 still simulated for a 900
+  request.
 
 ## Found on the way
 

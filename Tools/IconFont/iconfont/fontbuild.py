@@ -146,6 +146,14 @@ def build(manifest, strict=True, sources=None):
     fb.setupOS2(
         sTypoAscender=ascent, sTypoDescender=-descent, sTypoLineGap=descent,
         usWinAscent=ascent, usWinDescent=descent,
+        # DirectWrite synthesises bold for a run whose weight is 200 or more
+        # above the face it found, which the app's SemiBold text does: the icon
+        # is smeared and its advance grows from 1024 to 1044. There is no flag
+        # asking it not to, and no synthetic *lightening*, so the way out is to
+        # declare the heaviest weight - a normal-weight run then still gets
+        # these outlines untouched. Only usWeightClass is read; the style name
+        # stays Regular.
+        usWeightClass=900,
         sxHeight=0, sCapHeight=0, achVendID="NONE", fsType=0,
         ulUnicodeRange1=0x00000001,
     )
