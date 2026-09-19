@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;xaudio2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -377,6 +377,7 @@
     <ClInclude Include="Media\AsyncMediaPlayerStateChangedEventArgs.h" />
     <ClInclude Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.h" />
     <ClInclude Include="Media\AsyncMediaPlayerSwapChain.h" />
+    <ClInclude Include="Media\SoundPlayer.h" />
     <ClInclude Include="MessageBubbleNineGrid.h">
       <DependentUpon>MessageBubbleNineGrid.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1307,6 +1308,7 @@
     <ClCompile Include="Media\AsyncMediaPlayerStateChangedEventArgs.cpp" />
     <ClCompile Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.cpp" />
     <ClCompile Include="Media\AsyncMediaPlayerSwapChain.cpp" />
+    <ClCompile Include="Media\SoundPlayer.cpp" />
     <ClCompile Include="MessageBubbleNineGrid.cpp">
       <DependentUpon>MessageBubbleNineGrid.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1476,6 +1478,7 @@
     <Midl Include="Media\AsyncMediaPlayerStateChangedEventArgs.idl" />
     <Midl Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.idl" />
     <Midl Include="Media\AsyncMediaPlayerSwapChain.idl" />
+    <Midl Include="Media\SoundPlayer.idl" />
     <Midl Include="MessageBubbleNineGrid.idl">
       <SubType>Designer</SubType>
     </Midl>

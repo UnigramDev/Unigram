@@ -611,20 +611,26 @@ MicroTeX formula rasterizer; `CompositionDevice`/`DirectRectangleClip2`/`WindowV
 **Traps:** `Direct2DDevice.Device` is the single shared `CompositionGraphicsDevice`; surfaces subscribe to
 its `RenderingDeviceReplaced` for device-lost recovery rather than owning a device.
 
-## Media decode and audio — Telegram.Native/ (16 files)
-<!-- map: verified=95560d9f7 paths=Telegram.Native/VideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/VideoAnimationStreamSource.cpp,Telegram.Native/Media,Telegram.Native/AudioPitchEffect.cpp,Telegram.Native/Opus -->
+## Media decode and audio — Telegram.Native/ (19 files)
+<!-- map: verified=67626117d paths=Telegram.Native/VideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/VideoAnimationStreamSource.cpp,Telegram.Native/Media,Telegram.Native/AudioPitchEffect.cpp,Telegram.Native/Opus -->
 Video and audio decode and playback. Native because it links ffmpeg (libavformat/libavcodec/libswscale/
 libyuv) and libVLC directly, and runs decode loops on dedicated threads feeding XAML swap chains.
 **Key types:** `VideoAnimation` (Telegram.Native/VideoAnimation.idl) — ffmpeg frame decoder for GIF and
 video stickers; `CachedVideoAnimation` — thread-pooled cache around it; `AsyncMediaPlayer`
 (Telegram.Native/Media/AsyncMediaPlayer.idl) — libVLC player driving a `CompositionSwapChain`;
-`AudioPitchEffect` — `IBasicAudioEffect` for speed/pitch correction; `OpusOutput` (Telegram.Native/Opus/)
-— voice-note encode.
+`AudioPitchEffect` — `IBasicAudioEffect` for speed/pitch correction, declared in the .idl and reached
+from nothing; `OpusOutput` (Telegram.Native/Opus/) — voice-note encode; `SoundPlayer`
+(Telegram.Native/Media/SoundPlayer.idl) — notification and call sounds, decoded with ffmpeg and played
+through XAudio2.
 **Entry points:** `Telegram/Controls/AnimatedImage.cs`, `Telegram/Controls/NativeVideoPlayer.xaml.cs`,
-`Telegram/Services/PlaybackService.cs`, `Telegram/Streams/RemoteFileSource.cs`.
+`Telegram/Services/PlaybackService.cs`, `Telegram/Streams/RemoteFileSource.cs`,
+`Telegram/Common/SoundEffects.cs`.
 **Traps:** ffmpeg is a vcpkg build patched down to the specific decoders and hwaccels this app needs
 (`Libraries/vcpkg-ports/ffmpeg/portfile.cmake`) — not a stock build. ffmpeg is bundled twice; see
-`notes/duplicated-libraries.md`.
+`notes/duplicated-libraries.md`. `SoundPlayer` keeps every XAudio2 call on its own worker: a voice may
+not be destroyed from inside its own callback, and the engine may not be released from its critical
+error, so both only flag the worker. A submitted buffer is not copied either, so the voice holds the
+decoded samples alive until `DestroyVoice` returns.
 
 ## OCR and language identification — Telegram.Native/AI/, LanguageIdentification.* (9 files)
 <!-- map: verified=95560d9f7 paths=Telegram.Native/AI,Telegram.Native/LanguageIdentification.cpp,Telegram.Native/LanguageIdentification.h,Telegram.Native/LanguageIdentification.idl -->

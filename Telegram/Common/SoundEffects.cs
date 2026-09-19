@@ -5,31 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Telegram.Native.Media;
 using Telegram.Td.Api;
-using Windows.Foundation;
-using Windows.Media.Audio;
-using Windows.Media.Render;
-using Windows.Storage;
+using Windows.ApplicationModel;
 
 namespace Telegram.Common
 {
     public static class SoundEffects
     {
-        enum EffectType
-        {
-            Generic,
-            Voip,
-            VideoChat,
-            Custom
-        }
-
-        private static readonly Dictionary<EffectType, AudioGraph> _graphs = new();
-        private static readonly Dictionary<EffectType, int> _counts = new();
-
-        private static readonly DisposableMutex _lock = new();
+        private static string _assets;
 
         private static bool _suspended;
 
@@ -44,37 +28,9 @@ namespace Telegram.Common
             _suspended = false;
         }
 
-        public static async void Stop()
+        public static void Stop()
         {
-            using (await _lock.WaitAsync())
-            {
-                try
-                {
-                    foreach (var graph in _graphs.Values)
-                    {
-                        graph.Stop();
-                        graph.Dispose();
-                    }
-                }
-                catch { }
-
-                _graphs.Clear();
-            }
-        }
-
-        private static void Stop(EffectType type)
-        {
-            try
-            {
-                if (_graphs.TryGetValue(type, out AudioGraph graph))
-                {
-                    graph.Stop();
-                    graph.Dispose();
-                }
-            }
-            catch { }
-
-            _graphs.Remove(type);
+            SoundPlayer.StopAll();
         }
 
         public static void Play(SoundEffect effect)
@@ -84,127 +40,53 @@ namespace Telegram.Common
                 return;
             }
 
-            static Task PlayImpl(string url, int? loopCount = 0, EffectType type = EffectType.Generic)
-            {
-                return Play(StorageFile.GetFileFromApplicationUriAsync(new Uri(url)), loopCount, type);
-            }
-
             switch (effect)
             {
                 case SoundEffect.Sent:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/sent.mp3");
+                    PlayAsset("sent.mp3", 0, SoundCategory.Notification);
                     break;
                 case SoundEffect.Received:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/received.mp3");
+                    PlayAsset("received.mp3", 0, SoundCategory.Notification);
                     break;
                 case SoundEffect.VoipIncoming:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_incoming.mp3", null, EffectType.Voip);
+                    PlayAsset("voip_incoming.mp3", -1, SoundCategory.Call);
                     break;
                 case SoundEffect.VoipRingback:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_ringback.mp3", null, EffectType.Voip);
+                    PlayAsset("voip_ringback.mp3", -1, SoundCategory.Call);
                     break;
                 case SoundEffect.VoipConnecting:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_connecting.mp3", type: EffectType.Voip);
+                    PlayAsset("voip_connecting.mp3", 0, SoundCategory.Call);
                     break;
                 case SoundEffect.VoipBusy:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_busy.mp3", 4, type: EffectType.Voip);
+                    PlayAsset("voip_busy.mp3", 4, SoundCategory.Call);
                     break;
                 case SoundEffect.VoipEnd:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_end.mp3", type: EffectType.Voip);
+                    PlayAsset("voip_end.mp3", 0, SoundCategory.Call);
                     break;
                 case SoundEffect.VoipFailed:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_failed.mp3", type: EffectType.Voip);
+                    PlayAsset("voip_failed.mp3", 0, SoundCategory.Call);
                     break;
                 case SoundEffect.VideoChatJoin:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voicechat_join.mp3", type: EffectType.VideoChat);
+                    PlayAsset("voicechat_join.mp3", 0, SoundCategory.VideoChat);
                     break;
                 case SoundEffect.VideoChatLeave:
-                    _ = PlayImpl("ms-appx:///Assets/Audio/voicechat_leave.mp3", type: EffectType.VideoChat);
+                    PlayAsset("voicechat_leave.mp3", 0, SoundCategory.VideoChat);
                     break;
             }
         }
 
         public static void Play(File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted && !_suspended)
             {
-                _ = Play(StorageFile.GetFileFromPathAsync(file.Local.Path), type: EffectType.Custom);
+                SoundPlayer.Play(file.Local.Path, 0, SoundCategory.Custom);
             }
         }
 
-        private static async Task Play(IAsyncOperation<StorageFile> fileTask, int? loopCount = 0, EffectType type = EffectType.Generic)
+        private static void PlayAsset(string name, int loopCount, SoundCategory category)
         {
-            try
-            {
-                if (_suspended)
-                {
-                    return;
-                }
-
-                var file = await fileTask;
-
-                // This seems to fail in some conditions.
-                var settings = new AudioGraphSettings(AudioRenderCategory.Media);
-                settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.SystemDefault;
-
-                var result = await AudioGraph.CreateAsync(settings);
-                if (result.Status != AudioGraphCreationStatus.Success)
-                {
-                    return;
-                }
-
-                var fileInputNodeResult = await result.Graph.CreateFileInputNodeAsync(file);
-                if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
-                {
-                    return;
-                }
-
-                fileInputNodeResult.FileInputNode.LoopCount = loopCount;
-
-                var deviceOutputNodeResult = await result.Graph.CreateDeviceOutputNodeAsync();
-                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                {
-                    return;
-                }
-
-                fileInputNodeResult.FileInputNode
-                    .AddOutgoingConnection(deviceOutputNodeResult.DeviceOutputNode);
-
-                void handler(AudioFileInputNode node, object args)
-                {
-                    using (_lock.Wait())
-                    {
-                        try
-                        {
-                            if (_counts[type] == 0)
-                            {
-                                node.FileCompleted -= handler;
-                                Stop(type);
-                            }
-                            else
-                            {
-                                _counts[type]--;
-                            }
-                        }
-                        catch
-                        {
-                            Stop(type);
-                        }
-                    }
-                }
-
-                using (_lock.Wait())
-                {
-                    Stop(type);
-
-                    _graphs[type] = result.Graph;
-                    _counts[type] = loopCount ?? -1;
-
-                    fileInputNodeResult.FileInputNode.FileCompleted += handler;
-                    result.Graph.Start();
-                }
-            }
-            catch { }
+            _assets ??= System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Audio");
+            SoundPlayer.Play(System.IO.Path.Combine(_assets, name), loopCount, category);
         }
     }
 

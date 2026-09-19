@@ -1,0 +1,20 @@
+namespace Telegram.Native.Media
+{
+    enum SoundCategory
+    {
+        Notification,
+        Call,
+        VideoChat,
+        Custom
+    };
+
+    [default_interface]
+    runtimeclass SoundPlayer
+    {
+        // Playing a sound replaces whatever the same category was playing.
+        // loopCount: 0 plays the file once, -1 repeats it until StopAll, n repeats it n more times.
+        static void Play(String path, Int32 loopCount, SoundCategory category);
+
+        static void StopAll();
+    }
+}
