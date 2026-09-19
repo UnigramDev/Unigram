@@ -399,20 +399,82 @@ namespace Telegram.Collections
         //}
 
         /// <summary>
+        /// True where an items host is bound to this collection, so a reset it raises is dispatched
+        /// straight into a virtualizing panel. Only those are worth counting: a reset on a source
+        /// the view never sees nests inside one that reaches the view as a matter of course.
+        /// </summary>
+        protected virtual bool TracksResetReentrancy => false;
+
+        /// <summary>
         /// Raises the CollectionChanged event with the provided event data.
         /// </summary>
         /// <param name="e">The event data to report in the event.</param>
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (!EventsAreSuppressed)
+            if (EventsAreSuppressed)
+            {
+                return;
+            }
+
+            if (e.Action != NotifyCollectionChangedAction.Reset || !TracksResetReentrancy)
             {
                 base.OnCollectionChanged(e);
+                return;
+            }
+
+            if (CollectionResetScope.InProgress)
+            {
+                Logger.Error($"Nested reset, depth {CollectionResetScope.Depth + 1}");
+            }
+
+            CollectionResetScope.Enter();
+
+            try
+            {
+                base.OnCollectionChanged(e);
+            }
+            finally
+            {
+                CollectionResetScope.Exit();
             }
         }
 
         public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             OnCollectionChanged(args);
+        }
+    }
+
+    /// <summary>
+    /// How deep, on this thread, we are inside a reset that reaches a virtualizing panel.
+    /// </summary>
+    /// <remarks>
+    /// Diagnostics only: nothing here prevents anything. ModernCollectionBasePanel handles a reset
+    /// inside a cache session (CacheStrongRefs) that carries no nesting count, so a re-entrant call
+    /// into any of the fourteen entry points that open one - a synchronous measure, ScrollIntoView,
+    /// another collection change - closes the session the reset is still inside. The pinned
+    /// container walk that follows the recycling then dereferences the host that was just released,
+    /// which is a fail-fast rather than an exception, because the AV escapes a P/Invoke. Reading
+    /// this at every call of ours that could open a second session is what names the culprit in a
+    /// crash report.
+    /// </remarks>
+    public static class CollectionResetScope
+    {
+        [ThreadStatic]
+        private static int _depth;
+
+        public static bool InProgress => _depth > 0;
+
+        public static int Depth => _depth;
+
+        public static void Enter()
+        {
+            _depth++;
+        }
+
+        public static void Exit()
+        {
+            _depth--;
         }
     }
 }
