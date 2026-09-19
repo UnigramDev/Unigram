@@ -853,7 +853,9 @@ resolving nameless `uniXXXX` glyphs; `notes/icon-font.md` — the project notes.
 `Icons.cs` and XAML), `verify`/`changes`, `update`/`adopt`/`drift` (sync with upstream Fluent),
 `identify`/`rename`/`tidy`.
 **Traps:** metrics are frozen at IcoMoon's values (1024 units/em, ascender 960, descender 64) and every
-glyph position depends on them. Codepoints are append-only: 763 raw `&#xE9F1;`-style literals across 211
+glyph position depends on them. `usWeightClass` is 900 to opt out of DirectWrite's bold simulation, which
+otherwise smears every icon a SemiBold run reaches — not a description of the artwork, and not to be
+"corrected" to 400. Codepoints are append-only: 763 raw `&#xE9F1;`-style literals across 211
 XAML files reference them directly, and `App.xaml` points `TelegramThemeFontFamily`/`SymbolThemeFontFamily`
 at this font — reshuffling one silently changes icons app-wide, and a missing codepoint renders nothing,
 with no fallback. `build` overwrites the ttf in place; keep a `git show HEAD:…` copy first.
