@@ -13,8 +13,10 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -48,6 +50,47 @@ namespace Telegram.Views.Chats
 
         private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            if (args.Item is MessageInteractionCounters counters)
+            {
+                if (args.InRecycleQueue)
+                {
+                    return;
+                }
+
+                PrepareInteractionCounters(counters, args);
+                return;
+            }
+            else if (args.Item is ChatStatisticsMessageSenderInfo senderInfo)
+            {
+                if (args.InRecycleQueue)
+                {
+                    return;
+                }
+
+                PrepareMessageSenderInfo(senderInfo, args);
+                return;
+            }
+            else if (args.Item is ChatStatisticsAdministratorActionsInfo adminInfo)
+            {
+                if (args.InRecycleQueue)
+                {
+                    return;
+                }
+
+                PrepareAdministratorActionsInfo(adminInfo, args);
+                return;
+            }
+            else if (args.Item is ChatStatisticsInviterInfo inviterInfo)
+            {
+                if (args.InRecycleQueue)
+                {
+                    return;
+                }
+
+                PrepareInviterInfo(inviterInfo, args);
+                return;
+            }
+
             var root = args.ItemContainer.ContentTemplateRoot as ChartCell;
             var data = args.Item as ChartViewData;
 
@@ -85,236 +128,204 @@ namespace Telegram.Views.Chats
             }
         }
 
-        private async void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void PrepareInteractionCounters(MessageInteractionCounters counters, ContainerContentChangingEventArgs args)
         {
-            var button = args.Element as Button;
-            var content = button.Content as Grid;
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
-            var title = content.Children[1] as TextBlock;
-            var subtitle = content.Children[2] as TextBlock;
+            var photo = content.Children[0] as Image;
+            var profile = content.Children[1] as ProfilePicture;
 
-            if (button.DataContext is MessageInteractionCounters counters)
+            var title = content.Children[2] as FormattedTextBlock;
+            var subtitle = content.Children[3] as TextBlock;
+
+            var views = content.Children[4] as TextBlock;
+            var shares = content.Children[5] as TextBlock;
+
+            var brief = ChatCell.UpdateBriefLabel(counters.Message.Content, false, false, out var thumbnail);
+
+            title.SetText(ViewModel.ClientService, brief);
+            subtitle.Text = Formatter.DateAt(counters.Message.Date);
+
+            views.Text = Locale.Declension(Strings.R.Views, counters.ViewCount);
+            shares.Text = Locale.Declension(Strings.R.Shares, counters.ForwardCount);
+
+            if (thumbnail != null)
             {
-                var photo = content.Children[0] as Image;
+                double ratioX = (double)36 / thumbnail.Width;
+                double ratioY = (double)36 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
 
-                var views = content.Children[3] as TextBlock;
-                var shares = content.Children[4] as TextBlock;
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
 
-                var caption = counters.Message.GetCaption();
-                if (string.IsNullOrEmpty(caption?.Text))
+                var bitmap = new BitmapImage
                 {
-                    var message = counters.Message;
-                    if (message.Content is MessageVoiceNote)
+                    DecodePixelWidth = width,
+                    DecodePixelHeight = height,
+                    DecodePixelType = DecodePixelType.Logical
+                };
+
+                photo.Source = bitmap;
+                photo.Visibility = Visibility.Visible;
+
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    try
                     {
-                        title.Text = Strings.AttachAudio;
+                        Direct2DDevice.WriteBytes(thumbnail.Data, stream);
+                        _ = bitmap.SetSourceAsync(stream);
                     }
-                    else if (message.Content is MessageVideo)
+                    catch
                     {
-                        title.Text = Strings.AttachVideo;
-                    }
-                    else if (message.Content is MessageAnimation)
-                    {
-                        title.Text = Strings.AttachGif;
-                    }
-                    else if (message.Content is MessageAudio audio)
-                    {
-                        title.Text = audio.Audio.GetTitle();
-                    }
-                    else if (message.Content is MessageDocument document)
-                    {
-                        if (string.IsNullOrEmpty(document.Document.FileName))
-                        {
-                            title.Text = Strings.AttachDocument;
-                        }
-                        else
-                        {
-                            title.Text = document.Document.FileName;
-                        }
-                    }
-                    else if (message.Content is MessageInvoice invoice)
-                    {
-                        title.Text = invoice.ProductInfo.Title;
-                    }
-                    else if (message.Content is MessageContact)
-                    {
-                        title.Text = Strings.AttachContact;
-                    }
-                    else if (message.Content is MessageAnimatedEmoji animatedEmoji)
-                    {
-                        title.Text = animatedEmoji.Emoji;
-                    }
-                    else if (message.Content is MessageLiveLocation)
-                    {
-                        title.Text = Strings.AttachLiveLocation;
-                    }
-                    else if (message.Content is MessageLocation location)
-                    {
-                        title.Text = Strings.AttachLocation;
-                    }
-                    else if (message.Content is MessageVenue)
-                    {
-                        title.Text = Strings.AttachLocation;
-                    }
-                    else if (message.Content is MessagePhoto messagePhoto)
-                    {
-                        title.Text = messagePhoto.Video != null ? Strings.AttachLivePhoto : Strings.AttachPhoto;
-                    }
-                    else if (message.Content is MessagePoll poll)
-                    {
-                        title.Text = "\uD83D\uDCCA " + poll.Poll.Question.Text;
-                    }
-                    else if (message.Content is MessageChecklist checklist)
-                    {
-                        title.Text = "\u2611 " + checklist.List.Title.Text;
-                    }
-                    else if (message.Content is MessageCall call)
-                    {
-                        title.Text = call.ToOutcomeText(message.IsOutgoing);
-                    }
-                    else if (message.Content is MessageUnsupported)
-                    {
-                        title.Text = Strings.UnsupportedAttachment;
+                        // Throws when the data is not a valid encoded image,
+                        // not so frequent, but if it happens during ContainerContentChanging it crashes the app.
                     }
                 }
-                else
-                {
-                    title.Text = caption.Text.Replace('\n', ' ');
-                }
 
-                subtitle.Text = Formatter.DateAt(counters.Message.Date);
-
-                views.Text = Locale.Declension(Strings.R.Views, counters.ViewCount);
-                shares.Text = Locale.Declension(Strings.R.Shares, counters.ForwardCount);
-
-                var thumbnail = counters.Message.GetMinithumbnail();
-                if (thumbnail != null)
-                {
-                    double ratioX = (double)36 / thumbnail.Width;
-                    double ratioY = (double)36 / thumbnail.Height;
-                    double ratio = Math.Max(ratioX, ratioY);
-
-                    var width = (int)(thumbnail.Width * ratio);
-                    var height = (int)(thumbnail.Height * ratio);
-
-                    var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
-                    var bytes = thumbnail.Data.ToArray();
-
-                    using (var stream = new System.IO.MemoryStream(bytes))
-                    {
-                        var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
-                        await bitmap.SetSourceAsync(random);
-                    }
-
-                    photo.Source = bitmap;
-                    photo.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    photo.Visibility = Visibility.Collapsed;
-                    photo.Source = null;
-                }
-
-                button.CommandParameter = counters;
-                button.Command = ViewModel.OpenPostCommand;
+                profile.Visibility = Visibility.Collapsed;
+                profile.Source = null;
             }
             else
             {
-                var photo = content.Children[0] as ProfilePicture;
+                photo.Visibility = Visibility.Collapsed;
+                photo.Source = null;
 
-                if (button.DataContext is ChatStatisticsMessageSenderInfo senderInfo)
+                profile.Source = ProfilePictureSource.Chat(ViewModel.ClientService, ViewModel.Chat);
+                profile.Visibility = Visibility.Visible;
+            }
+
+            args.Handled = true;
+        }
+
+        private void PrepareMessageSenderInfo(ChatStatisticsMessageSenderInfo senderInfo, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            var photo = content.Children[0] as ProfilePicture;
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+
+            var user = ViewModel.ClientService.GetUser(senderInfo.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            var stringBuilder = new StringBuilder();
+            if (senderInfo.SentMessageCount > 0)
+            {
+                stringBuilder.Append(Locale.Declension(Strings.R.messages, senderInfo.SentMessageCount));
+            }
+
+            if (senderInfo.AverageCharacterCount > 0)
+            {
+                if (stringBuilder.Length > 0)
                 {
-                    var user = ViewModel.ClientService.GetUser(senderInfo.UserId);
-                    if (user == null)
-                    {
-                        return;
-                    }
-
-                    var stringBuilder = new StringBuilder();
-                    if (senderInfo.SentMessageCount > 0)
-                    {
-                        stringBuilder.Append(Locale.Declension(Strings.R.messages, senderInfo.SentMessageCount));
-                    }
-
-                    if (senderInfo.AverageCharacterCount > 0)
-                    {
-                        if (stringBuilder.Length > 0)
-                        {
-                            stringBuilder.Append(", ");
-                        }
-                        stringBuilder.AppendFormat(Strings.CharactersPerMessage, Locale.Declension(Strings.R.Characters, senderInfo.AverageCharacterCount));
-                    }
-
-                    title.Text = user.FullName();
-                    subtitle.Text = stringBuilder.ToString();
-                    photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
-
-                    button.CommandParameter = senderInfo.UserId;
-                    button.Command = ViewModel.OpenProfileCommand;
+                    stringBuilder.Append(", ");
                 }
-                else if (button.DataContext is ChatStatisticsAdministratorActionsInfo adminInfo)
+                stringBuilder.AppendFormat(Strings.CharactersPerMessage, Locale.Declension(Strings.R.Characters, senderInfo.AverageCharacterCount));
+            }
+
+            title.Text = user.FullName();
+            subtitle.Text = stringBuilder.ToString();
+            photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
+
+            args.Handled = true;
+        }
+
+        private void PrepareAdministratorActionsInfo(ChatStatisticsAdministratorActionsInfo adminInfo, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            var photo = content.Children[0] as ProfilePicture;
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+
+            var user = ViewModel.ClientService.GetUser(adminInfo.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            var stringBuilder = new StringBuilder();
+            if (adminInfo.DeletedMessageCount > 0)
+            {
+                stringBuilder.Append(Locale.Declension(Strings.R.Deletions, adminInfo.DeletedMessageCount));
+            }
+
+            if (adminInfo.BannedUserCount > 0)
+            {
+                if (stringBuilder.Length > 0)
                 {
-                    var user = ViewModel.ClientService.GetUser(adminInfo.UserId);
-                    if (user == null)
-                    {
-                        return;
-                    }
-
-                    var stringBuilder = new StringBuilder();
-                    if (adminInfo.DeletedMessageCount > 0)
-                    {
-                        stringBuilder.Append(Locale.Declension(Strings.R.Deletions, adminInfo.DeletedMessageCount));
-                    }
-
-                    if (adminInfo.BannedUserCount > 0)
-                    {
-                        if (stringBuilder.Length > 0)
-                        {
-                            stringBuilder.Append(", ");
-                        }
-
-                        stringBuilder.Append(Locale.Declension(Strings.R.Bans, adminInfo.BannedUserCount));
-                    }
-
-                    if (adminInfo.RestrictedUserCount > 0)
-                    {
-                        if (stringBuilder.Length > 0)
-                        {
-                            stringBuilder.Append(", ");
-                        }
-
-                        stringBuilder.Append(Locale.Declension(Strings.R.Restrictions, adminInfo.RestrictedUserCount));
-                    }
-
-                    title.Text = user.FullName();
-                    subtitle.Text = stringBuilder.ToString();
-                    photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
-
-                    button.CommandParameter = adminInfo.UserId;
-                    button.Command = ViewModel.OpenProfileCommand;
+                    stringBuilder.Append(", ");
                 }
-                else if (button.DataContext is ChatStatisticsInviterInfo inviterInfo)
+
+                stringBuilder.Append(Locale.Declension(Strings.R.Bans, adminInfo.BannedUserCount));
+            }
+
+            if (adminInfo.RestrictedUserCount > 0)
+            {
+                if (stringBuilder.Length > 0)
                 {
-                    var user = ViewModel.ClientService.GetUser(inviterInfo.UserId);
-                    if (user == null)
-                    {
-                        return;
-                    }
-
-                    if (inviterInfo.AddedMemberCount > 0)
-                    {
-                        subtitle.Text = Locale.Declension(Strings.R.Invitations, inviterInfo.AddedMemberCount);
-                    }
-                    else
-                    {
-                        subtitle.Text = string.Empty;
-                    }
-
-                    title.Text = user.FullName();
-                    photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
-
-                    button.CommandParameter = inviterInfo.UserId;
-                    button.Command = ViewModel.OpenProfileCommand;
+                    stringBuilder.Append(", ");
                 }
+
+                stringBuilder.Append(Locale.Declension(Strings.R.Restrictions, adminInfo.RestrictedUserCount));
+            }
+
+            title.Text = user.FullName();
+            subtitle.Text = stringBuilder.ToString();
+            photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
+
+            args.Handled = true;
+        }
+
+        private void PrepareInviterInfo(ChatStatisticsInviterInfo inviterInfo, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            var photo = content.Children[0] as ProfilePicture;
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+
+            var user = ViewModel.ClientService.GetUser(inviterInfo.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (inviterInfo.AddedMemberCount > 0)
+            {
+                subtitle.Text = Locale.Declension(Strings.R.Invitations, inviterInfo.AddedMemberCount);
+            }
+            else
+            {
+                subtitle.Text = string.Empty;
+            }
+
+            title.Text = user.FullName();
+            photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
+
+            args.Handled = true;
+        }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is MessageInteractionCounters counters)
+            {
+                ViewModel.OpenPost(counters);
+            }
+            else if (e.ClickedItem is ChatStatisticsMessageSenderInfo senderInfo)
+            {
+                ViewModel.OpenProfile(senderInfo.UserId);
+            }
+            else if (e.ClickedItem is ChatStatisticsAdministratorActionsInfo adminInfo)
+            {
+                ViewModel.OpenProfile(adminInfo.UserId);
+            }
+            else if (e.ClickedItem is ChatStatisticsInviterInfo inviterInfo)
+            {
+                ViewModel.OpenProfile(inviterInfo.UserId);
             }
         }
     }

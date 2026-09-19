@@ -35,9 +35,6 @@ namespace Telegram.ViewModels.Chats
             TopAdministrators = new RangeObservableCollection<ChatStatisticsAdministratorActionsInfo>();
             TopSenders = new RangeObservableCollection<ChatStatisticsMessageSenderInfo>();
             TopSendersLeft = new RangeObservableCollection<ChatStatisticsMessageSenderInfo>();
-
-            OpenProfileCommand = new RelayCommand<long>(OpenProfileExecute);
-            OpenPostCommand = new RelayCommand<ChatItemInteractionCounters>(OpenPostExecute);
         }
 
         private double _headerHeight;
@@ -93,8 +90,7 @@ namespace Telegram.ViewModels.Chats
             TopSendersLeft.Clear();
         }
 
-        public RelayCommand<long> OpenProfileCommand { get; }
-        private async void OpenProfileExecute(long userId)
+        public async void OpenProfile(long userId)
         {
             var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
             if (response is Chat chat)
@@ -103,8 +99,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<ChatItemInteractionCounters> OpenPostCommand { get; }
-        private void OpenPostExecute(ChatItemInteractionCounters item)
+        public void OpenPost(ChatItemInteractionCounters item)
         {
             if (item is MessageInteractionCounters message)
             {
