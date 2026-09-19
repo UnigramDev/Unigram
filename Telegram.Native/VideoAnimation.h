@@ -278,6 +278,10 @@ namespace winrt::Telegram::Native::implementation
         bool has_decoded_frames = false;
         bool closed = false;
         AVPacket* pkt;
+
+        // True exactly while pkt holds a packet avcodec_send_packet refused with EAGAIN, which
+        // has to be sent again once the decoder has been drained rather than read over.
+        bool packet_pending = false;
         //AVPacket orig_pkt;
 
         // Written by Stop() from whichever thread wants to abort, read by the decode loop and by

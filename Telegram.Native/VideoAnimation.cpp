@@ -417,6 +417,14 @@ namespace winrt::Telegram::Native::implementation
         avcodec_flush_buffers(video_dec_ctx);
         dropper.reset();
 
+        // A packet the decoder refused belongs to where the stream was, not to where it now is.
+        if (packet_pending)
+        {
+            av_packet_unref(pkt);
+            packet_pending = false;
+            waiting = Waiting::ReadFrame;
+        }
+
         seeking = false;
 
         if (!precise)
@@ -648,17 +656,23 @@ namespace winrt::Telegram::Native::implementation
                 if (ret >= 0)
                 {
                     waiting = Waiting::ReceiveFrame;
+                    packet_pending = false;
                     av_packet_unref(pkt); // Unref after successful send
                 }
                 else if (ret == AVERROR(EAGAIN))
                 {
-                    // Decoder needs more frames to be received first
+                    // The decoder did NOT take the packet: it has output queued and wants that
+                    // drained first, after which this same packet has to be sent again. Reading
+                    // the next one over it instead loses a packet from the middle of a GOP, and
+                    // the decode stays wrong until the next keyframe.
+                    packet_pending = true;
                     waiting = Waiting::ReceiveFrame;
                 }
                 else
                 {
                     // Error sending packet
                     av_packet_unref(pkt);
+                    packet_pending = false;
                     waiting = Waiting::ReadFrame;
                     continue;
                 }
@@ -704,12 +718,18 @@ namespace winrt::Telegram::Native::implementation
                     }
 
                     av_frame_unref(frame);
-                    waiting = Waiting::ReadFrame;
+
+                    // The drain the decoder asked for is done, so the packet it refused goes back
+                    // in before anything new is read.
+                    waiting = packet_pending ? Waiting::SendPacket : Waiting::ReadFrame;
 
                 }
                 else if (ret == AVERROR(EAGAIN))
                 {
-                    // Need to send more packets
+                    // Need to send more packets. A refused packet and nothing to drain contradict
+                    // each other and ffmpeg does not do it, but giving up on the packet here is
+                    // what keeps this loop bounded if it ever does.
+                    packet_pending = false;
                     waiting = Waiting::ReadFrame;
 
                 }
@@ -733,6 +753,7 @@ namespace winrt::Telegram::Native::implementation
                         avcodec_flush_buffers(video_dec_ctx);
                         dropper.reset();
                         waiting = Waiting::ReadFrame;
+                        packet_pending = false;
                         has_decoded_frames = false;
                         continue;
                     }
@@ -747,6 +768,7 @@ namespace winrt::Telegram::Native::implementation
                 {
                     // Other receive errors
                     waiting = Waiting::ReadFrame;
+                    packet_pending = false;
                     continue;
                 }
             }
@@ -763,6 +785,15 @@ namespace winrt::Telegram::Native::implementation
         if (pkt)
         {
             av_packet_unref(pkt);
+        }
+
+        // Giving up mid-retry drops the refused packet with it, so the state machine cannot be
+        // left pointing at sending it: the next call would hand the decoder the empty packet,
+        // which ffmpeg reads as a drain request and would end the animation a loop early.
+        if (packet_pending)
+        {
+            packet_pending = false;
+            waiting = Waiting::ReadFrame;
         }
 
         // If we stopped due to tries exhaustion without decoding, mark as completed
