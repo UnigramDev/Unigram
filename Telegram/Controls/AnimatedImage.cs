@@ -1036,9 +1036,12 @@ namespace Telegram.Controls
         private volatile bool _disposing;
         private volatile bool _disposed;
 
-        // Renders in flight, and whether the task has already been closed.
+        // Renders in flight, with the sign bit standing for "closed to new ones". One word rather
+        // than two, because taking a slot and finding the gate open has to be a single step: see
+        // NextFrame.
         private int _borrows;
-        private int _taskDisposed;
+
+        private const int BorrowsClosed = int.MinValue;
 
         private AnimatedImageLoopCompletedEventArgs _prevCompleted;
         private AnimatedImagePositionChangedEventArgs _prevPosition;
@@ -1586,25 +1589,58 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Closes the task once nobody is inside a frame. Called by <see cref="Dispose"/> and by the
-        /// last borrow to end, whichever happens second, so exactly one of them does the work.
+        /// Shuts the gate, and closes the task once nobody is inside a frame. Called by
+        /// <see cref="Dispose"/> and by the last borrow to end, whichever happens second, so
+        /// exactly one of them does the work.
         /// </summary>
         private void DisposeTask()
         {
-            if (Volatile.Read(ref _borrows) != 0 || Interlocked.Exchange(ref _taskDisposed, 1) != 0)
-            {
-                return;
-            }
+            int borrows;
 
+            do
+            {
+                borrows = Volatile.Read(ref _borrows);
+
+                if (borrows < 0)
+                {
+                    return;
+                }
+            }
+            while (Interlocked.CompareExchange(ref _borrows, borrows | BorrowsClosed, borrows) != borrows);
+
+            // A render already inside the decoder cannot be waited for - this runs on the UI thread -
+            // so the last one out closes instead. Nothing new can join: the gate is shut above.
+            if (borrows == 0)
+            {
+                CloseTask();
+            }
+        }
+
+        private void CloseTask()
+        {
             Interlocked.Exchange(ref _task, null)?.Dispose();
         }
 
         private bool NextFrame(IBuffer frame)
         {
             // The borrow. Dispose can run on the UI thread while this is inside the native renderer,
-            // and closing the animation underneath it would be a use-after-free - so the close waits
-            // for the count to reach zero rather than the reference merely being dropped.
-            Interlocked.Increment(ref _borrows);
+            // and closing the animation underneath it would be a use-after-free. Reading the count
+            // and then dropping the task was not enough: a render starting between those two steps
+            // was invisible to the close and went on into a decoder that was being freed. Claiming
+            // a slot and finding the gate open is one interlocked step, so a close either sees this
+            // render or is refused by it, never neither.
+            int borrows;
+
+            do
+            {
+                borrows = Volatile.Read(ref _borrows);
+
+                if (borrows < 0)
+                {
+                    return false;
+                }
+            }
+            while (Interlocked.CompareExchange(ref _borrows, borrows + 1, borrows) != borrows);
 
             try
             {
@@ -1612,9 +1648,11 @@ namespace Telegram.Controls
             }
             finally
             {
-                if (Interlocked.Decrement(ref _borrows) == 0 && _disposed)
+                // Only when the gate shut while this render was running, and this is the last one
+                // out: the closer is long gone and left the teardown here.
+                if (Interlocked.Decrement(ref _borrows) == BorrowsClosed)
                 {
-                    DisposeTask();
+                    CloseTask();
                 }
             }
         }
