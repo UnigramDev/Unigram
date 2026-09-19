@@ -1,0 +1,26 @@
+# Deliberate departures from the framework, applied after its values are read.
+# key<TAB>light<TAB>dark, "-" to leave a theme as the framework has it, "like:<theme>" to
+# take the other theme's value. Kept apart from the harvested tables so that a refresh
+# cannot quietly take them back, and so the tables stay a record of what upstream says.
+#
+# Every row wants a reason above it. Without one the next person cannot tell a decision
+# from a mistake, and the table already cost us that once.
+
+# WinUI pairs black-on-accent with SystemAccentColorLight2, a pale tint. Theme.Update remaps
+# that shade to AccentShade.Default, so our dark accent fill is the full accent and black
+# text does not read on it. 43 dark rows follow these two.
+TextOnAccentFillColorPrimaryBrush	-	like:light
+TextOnAccentFillColorSecondaryBrush	-	like:light
+
+# The accent fill itself, which is why the two rows above are needed. WinUI dims the accent
+# for the fill - Dark1 in light, Light2 in dark - and pairs it with a foreground that reads
+# against the dimmed tint. We paint the full accent, so both the fill and its foreground
+# depart. Theme.Update used to do this in code, as a blanket "this theme never uses that
+# shade", which also caught three brushes that are not this fill and should keep the tint:
+# AccentTextFillColorTertiaryBrush is text on the page, not a fill, and forcing it flattened
+# the Primary/Secondary/Tertiary contrast ladder; AccentAAFillColorDefaultBrush and
+# SystemFillColorAttentionBrush carry their own dark-on-accent foregrounds and stay coherent
+# as WinUI has them. Alpha is the tier, so it is preserved.
+AccentFillColorDefaultBrush	shade:Default	shade:Default
+AccentFillColorSecondaryBrush	shade:Default@E6	shade:Default@E6
+AccentFillColorTertiaryBrush	shade:Default@CC	shade:Default@CC

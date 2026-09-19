@@ -13,45 +13,18 @@ namespace Telegram.Services
 {
     public partial class ThemeInfoBase
     {
-        public static Dictionary<TelegramThemeType, Dictionary<AccentShade, Color>> Accents => _accent;
+        public static Dictionary<TelegramThemeType, Color> Accents => _accent;
 
-        protected static readonly Dictionary<TelegramThemeType, Dictionary<AccentShade, Color>> _accent = new()
+        protected static readonly Dictionary<TelegramThemeType, Color> _accent = new()
         {
             {
-                TelegramThemeType.Tinted, new Dictionary<AccentShade, Color>
-                {
-                    { AccentShade.Default, Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { AccentShade.Light1, Color.FromArgb(0xFF, 0x58, 0x94, 0xd4) },
-                    { AccentShade.Light2, Color.FromArgb(0xFF, 0x72, 0xa1, 0xd3) },
-                    { AccentShade.Light3, Color.FromArgb(0xFF, 0x9a, 0xb4, 0xcf) },
-                    { AccentShade.Dark1, Color.FromArgb(0xFF, 0x41, 0x7b, 0xb7) },
-                    { AccentShade.Dark2, Color.FromArgb(0xFF, 0x3c, 0x6e, 0xa3) },
-                    { AccentShade.Dark3, Color.FromArgb(0xFF, 0x35, 0x5d, 0x86) },
-                }
+                TelegramThemeType.Tinted, Color.FromArgb(0xFF, 0x52, 0x88, 0xC1)
             },
             {
-                TelegramThemeType.Night, new Dictionary<AccentShade, Color>
-                {
-                    { AccentShade.Default, Color.FromArgb(0xFF, 0x52, 0x88, 0xC1) },
-                    { AccentShade.Light1, Color.FromArgb(0xFF, 0x58, 0x94, 0xd4) },
-                    { AccentShade.Light2, Color.FromArgb(0xFF, 0x72, 0xa1, 0xd3) },
-                    { AccentShade.Light3, Color.FromArgb(0xFF, 0x9a, 0xb4, 0xcf) },
-                    { AccentShade.Dark1, Color.FromArgb(0xFF, 0x41, 0x7b, 0xb7) },
-                    { AccentShade.Dark2, Color.FromArgb(0xFF, 0x3c, 0x6e, 0xa3) },
-                    { AccentShade.Dark3, Color.FromArgb(0xFF, 0x35, 0x5d, 0x86) },
-                }
+                TelegramThemeType.Night, Color.FromArgb(0xFF, 0x52, 0x88, 0xC1)
             },
             {
-                TelegramThemeType.Day, new Dictionary<AccentShade, Color>
-                {
-                    { AccentShade.Default, Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
-                    { AccentShade.Light1, Color.FromArgb(0xFF, 0x4d, 0xb3, 0xee) },
-                    { AccentShade.Light2, Color.FromArgb(0xFF, 0x6f, 0xba, 0xe6) },
-                    { AccentShade.Light3, Color.FromArgb(0xFF, 0x98, 0xc6, 0xe1) },
-                    { AccentShade.Dark1, Color.FromArgb(0xFF, 0x29, 0x9c, 0xdf) },
-                    { AccentShade.Dark2, Color.FromArgb(0xFF, 0x1e, 0x8f, 0xd1) },
-                    { AccentShade.Dark3, Color.FromArgb(0xFF, 0x21, 0x78, 0xaa) },
-                }
+                TelegramThemeType.Day, Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3)
             }
         };
 

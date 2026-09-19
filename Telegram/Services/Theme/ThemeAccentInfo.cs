@@ -50,8 +50,8 @@ namespace Telegram.Services
                 color = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
             }
 
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], color);
-            var outgoingColorizer = outgoing != default ? ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], outgoing) : null;
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], color);
+            var outgoingColorizer = outgoing != default ? ThemeColorizer.FromTheme(type, _accent[type], outgoing) : null;
             var values = new Dictionary<string, Color>();
             var shades = new Dictionary<AccentShade, Color>();
 
@@ -67,9 +67,9 @@ namespace Telegram.Services
                 }
             }
 
-            foreach (var item in _accent[type])
+            for (int i = 0; i < 7; i++)
             {
-                shades[item.Key] = colorizer.Colorize(item.Value);
+                shades[(AccentShade)i] = SystemAccentPalette.GetShade(color, (AccentShade)i);
             }
 
             return new ThemeAccentInfo(type, accent, values, shades);
@@ -77,7 +77,7 @@ namespace Telegram.Services
 
         public static Color Colorize(TelegramThemeType type, Color accent, string key)
         {
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], accent);
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], accent);
             if (_map[type].TryGetValue(key, out Color color))
             {
                 return colorizer.Colorize(color);

@@ -75,7 +75,8 @@ def read(generated, overlay):
         for name, text in (("light", parts[1]), ("dark", parts[2])):
             text = text.strip()
             if text.startswith("AccentShade."):
-                value = ("shade", text[len("AccentShade."):])
+                # The overlay writes a bare AccentShade, so an overlay shade is always opaque.
+                value = ("shade", text[len("AccentShade."):], None)
             else:
                 value = ("color", _color(text))
             values[name][slot[key]] = table.pack(value, acrylic_colors, acrylic_shades)

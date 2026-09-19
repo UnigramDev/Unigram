@@ -56,6 +56,10 @@ def build(light, dark):
     The orders are kept per theme because the two disagree for about twenty keys, and
     the theme editor lists them in that order.
     """
+    # Edges are a property of the tables; the packed arrays hold one value per slot, so they
+    # are resolved here rather than shipped. Keys and order are untouched by it.
+    light, dark = table.flatten(light), table.flatten(dark)
+
     light_keys = [k for k, _ in light]
     known = set(light_keys)
     keys = light_keys + [k for k, _ in dark if k not in known]

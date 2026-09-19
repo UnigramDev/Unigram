@@ -13,6 +13,16 @@ namespace Telegram.Controls.Media
 {
     public class CheckBoxResources : ResourceDictionary
     {
+        public CheckBoxResources()
+        {
+
+        }
+
+        public CheckBoxResources(Color color)
+        {
+            Create(color);
+        }
+
         private Color _color;
         public Color Color
         {
