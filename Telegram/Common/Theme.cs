@@ -312,6 +312,22 @@ namespace Telegram.Common
                     { "DangerButtonBackground", 0xD13438 }
                 };
 
+                if (shades == null)
+                {
+                    var accent = ThemeInfoBase.Accents[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day];
+
+                    shades = new Dictionary<AccentShade, Color>
+                    {
+                        { AccentShade.Dark1, SystemAccentPalette.GetShade(accent, AccentShade.Dark1) },
+                        { AccentShade.Dark2, SystemAccentPalette.GetShade(accent, AccentShade.Dark2) },
+                        { AccentShade.Dark3, SystemAccentPalette.GetShade(accent, AccentShade.Dark3) },
+                        { AccentShade.Default, SystemAccentPalette.GetShade(accent, AccentShade.Default) },
+                        { AccentShade.Light3, SystemAccentPalette.GetShade(accent, AccentShade.Light3) },
+                        { AccentShade.Light2, SystemAccentPalette.GetShade(accent, AccentShade.Light2) },
+                        { AccentShade.Light1, SystemAccentPalette.GetShade(accent, AccentShade.Light1) },
+                    };
+                }
+
                 Color GetShade(AccentShade shade)
                 {
                     if (shades != null && shades.TryGetValue(shade, out Color accent))
@@ -320,7 +336,7 @@ namespace Telegram.Common
                     }
                     else
                     {
-                        return ThemeInfoBase.Accents[TelegramThemeType.Day][shade];
+                        return SystemAccentPalette.GetShade(ThemeInfoBase.Accents[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day], shade);
                     }
                 }
 
@@ -358,6 +374,7 @@ namespace Telegram.Common
                         {
                             // A shade is the accent, so a theme's own value never overrides it.
                             value = GetShade(item.Value.Shade);
+                            value.A = item.Value.Alpha;
                         }
                         else if (values != null && values.TryGetValue(item.Key, out Color themed))
                         {
@@ -426,6 +443,9 @@ namespace Telegram.Common
                 PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlElevationBorderFocusedBrush", create, GetShade);
                 PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlBorderBrushFocused", create, GetShade);
 
+                AddAccentButtonPalette(requested, target, create, "Danger", Color.FromArgb(0xFF, 0xD1, 0x34, 0x38), false);
+                AddAccentButtonPalette(requested, target, create, "Success", Color.FromArgb(0xFF, 0x00, 0x73, 0x05), false);
+
                 // The incoming message brushes live here rather than in a dictionary of their
                 // own: they are the app-wide default, resolved by every consumer outside a
                 // bubble, so App.xaml merges Theme alone. References only - the brushes are
@@ -475,6 +495,32 @@ namespace Telegram.Common
             }
         }
 
+        /// <summary>
+        /// Writes the accent-dependent brushes of the accent button set under
+        /// <paramref name="prefix"/>, so that "Danger" yields DangerButtonBackground,
+        /// DangerButtonBackgroundPointerOver and DangerButtonBackgroundPressed from
+        /// <paramref name="accent"/>.
+        /// </summary>
+        /// <remarks>
+        /// Those three are the whole of it. The framework takes them from Dark1 in light theme and
+        /// Light2 in dark, at full opacity for rest and at 0.9 and 0.8 - folded into alpha - for
+        /// hover and pressed. Every other key in the set is fixed per theme, so a prefixed style
+        /// takes the foregrounds and borders from AccentButton* directly.
+        /// </remarks>
+        private void AddAccentButtonPalette(TelegramTheme requested, ResourceDictionary target, bool create, string prefix, Color accent, bool useShade)
+        {
+            var shade = useShade ? SystemAccentPalette.GetShade(accent, requested == TelegramTheme.Light
+                ? AccentShade.Dark1
+                : AccentShade.Light2) : accent;
+
+            AddOrUpdate<SolidColorBrush>(target, prefix + "ButtonBackground", create,
+                update => update.Color = shade);
+            AddOrUpdate<SolidColorBrush>(target, prefix + "ButtonBackgroundPointerOver", create,
+                update => update.Color = shade.WithAlpha(230));
+            AddOrUpdate<SolidColorBrush>(target, prefix + "ButtonBackgroundPressed", create,
+                update => update.Color = shade.WithAlpha(204));
+        }
+
         // Fill and stroke, checked and indeterminate. Each of the four is the accent at rest, and
         // the framework's 0.9 and 0.8 - folded into alpha - hovered and pressed.
         private static readonly string[] _checkBoxParts =
@@ -500,8 +546,8 @@ namespace Telegram.Common
         public static void AddCheckBoxPalette(FrameworkElement element, Color accent)
         {
             var dictionary = new ResourceDictionary();
-            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light, true);
-            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark, true);
+            dictionary.ThemeDictionaries["Light"] = CreateCheckBoxPalette(accent, TelegramTheme.Light, false);
+            dictionary.ThemeDictionaries["Default"] = CreateCheckBoxPalette(accent, TelegramTheme.Dark, false);
 
             element.Resources.MergedDictionaries.Add(dictionary);
         }

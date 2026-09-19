@@ -1514,25 +1514,6 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="SuccessButtonBackground"
-                     Color="#007305" />
-    <SolidColorBrush x:Key="SuccessButtonBackgroundPointerOver"
-                     Color="#19801D" />
-    <SolidColorBrush x:Key="SuccessButtonBackgroundPressed"
-                     Color="#318D35" />
-    <SolidColorBrush x:Key="DangerButtonBackground"
-                     Color="#D13438" />
-    <SolidColorBrush x:Key="DangerButtonBackgroundPointerOver"
-                     Color="#FF6469" />
-    <SolidColorBrush x:Key="DangerButtonBackgroundPressed"
-                     Color="#992629" />
-    <SolidColorBrush x:Key="AccentButtonForeground"
-                     Color="#FFFFFF" />
-    <SolidColorBrush x:Key="AccentButtonForegroundPointerOver"
-                     Color="#FFFFFF" />
-    <SolidColorBrush x:Key="AccentButtonForegroundPressed"
-                     Color="#FFFFFF" />
-
     <Style x:Key="DangerButtonStyle"
            TargetType="Button">
         <Setter Property="Foreground"

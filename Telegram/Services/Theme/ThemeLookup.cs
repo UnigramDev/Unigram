@@ -51,6 +51,25 @@ namespace Telegram.Services
 
         public AccentShade Shade => (AccentShade)(uint)_packed;
 
+        /// <summary>
+        /// The alpha a resolved <see cref="Shade"/> is applied at, zero meaning opaque.
+        /// </summary>
+        /// <remarks>
+        /// The framework brushes these replace carry their transparency as Brush.Opacity, which
+        /// a colour can't hold and the table has no room for, so it is folded into alpha - the
+        /// same result for a SolidColorBrush over an opaque colour. 49 of the shades need it, and
+        /// ten of those differ between the two themes, which is why it is packed per value rather
+        /// than keyed off the brush name.
+        /// </remarks>
+        public byte Alpha
+        {
+            get
+            {
+                var alpha = (byte)(_packed >> 40);
+                return alpha == 0 ? byte.MaxValue : alpha;
+            }
+        }
+
         public Acrylic<Windows.UI.Color> AcrylicColor => ThemeDefaults.AcrylicColors[(int)(uint)_packed];
 
         public Acrylic<AccentShade> AcrylicShade => ThemeDefaults.AcrylicShades[(int)(uint)_packed];

@@ -50,7 +50,7 @@ namespace Telegram.Services
             var shades = new Dictionary<AccentShade, Color>();
 
             var requested = AppSettings.Appearance.RequestedTheme;
-            var accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Default];
+            var accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day];
             var name = string.Empty;
 
             foreach (var line in lines)
@@ -62,7 +62,7 @@ namespace Telegram.Services
                 else if (line.StartsWith("parent: "))
                 {
                     requested = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
-                    accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Default];
+                    accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day];
                 }
                 else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
                 {
@@ -109,11 +109,10 @@ namespace Telegram.Services
             }
 
             var type = requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day;
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type][AccentShade.Default], color);
 
-            foreach (var item in _accent[type])
+            for (int i = 0; i < 7; i++)
             {
-                shades[item.Key] = colorizer.Colorize(item.Value);
+                shades[(AccentShade)i] = SystemAccentPalette.GetShade(color, (AccentShade)i);
             }
 
             return new ThemeCustomInfo(path, accent, values, shades)
