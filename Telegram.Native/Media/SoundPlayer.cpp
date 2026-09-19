@@ -571,9 +571,10 @@ namespace winrt::Telegram::Native::Media::implementation
                 return;
             }
 
-            // The two notification sounds are played over and over, so they are worth keeping
-            // decoded for as long as the worker lives. A ringtone is both long and rare, and
-            // the cache is bounded by leaving it out.
+            // Every sound the app ships decodes to under 512 KB - 344 KB for the longest, the
+            // incoming ringtone - so all of them are kept for as long as the worker lives, and
+            // the two blips that play over and over never decode twice. The bound is there for
+            // a custom notification sound, which is whatever the user picked.
             if (cached == _decoded.end() && sound->samples.size() * sizeof(int16_t) <= 512 * 1024)
             {
                 _decoded.emplace(path, sound);
