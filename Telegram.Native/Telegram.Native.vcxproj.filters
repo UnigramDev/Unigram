@@ -711,6 +711,9 @@
     <ClCompile Include="Media\AsyncMediaPlayerOptions.cpp">
       <Filter>Media</Filter>
     </ClCompile>
+    <ClCompile Include="Media\SoundPlayer.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
     <ClCompile Include="..\Libraries\MicroTeX\src\latex.cpp">
       <Filter>MicroTeX</Filter>
     </ClCompile>
@@ -1351,6 +1354,9 @@
     <ClInclude Include="Media\AsyncMediaPlayer.h">
       <Filter>Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\SoundPlayer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
     <ClInclude Include="Media\AsyncMediaPlayerBufferingEventArgs.h">
       <Filter>Media</Filter>
     </ClInclude>
@@ -1589,6 +1595,9 @@
     <Midl Include="AnimationEffects.idl" />
     <Midl Include="ChatBackgroundPattern.idl" />
     <Midl Include="Media\AsyncMediaPlayer.idl">
+      <Filter>Media</Filter>
+    </Midl>
+    <Midl Include="Media\SoundPlayer.idl">
       <Filter>Media</Filter>
     </Midl>
     <Midl Include="Media\AsyncMediaPlayerBufferingEventArgs.idl">
