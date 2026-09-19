@@ -8,17 +8,18 @@ namespace winrt::Telegram::Native::Controls::implementation
 {
     void DirectTextBlockBase::RegisterViewportChanged()
     {
-        if (!m_effectiveViewportChangedRevoker)
+        if (!m_effectiveViewportChangedToken)
         {
-            m_effectiveViewportChangedRevoker = EffectiveViewportChanged(winrt::auto_revoke, { this, &DirectTextBlockBase::HandleEffectiveViewportChanged });
+            m_effectiveViewportChangedToken = EffectiveViewportChanged({ this, &DirectTextBlockBase::HandleEffectiveViewportChanged });
         }
     }
 
     void DirectTextBlockBase::UnregisterViewportChanged()
     {
-        if (m_effectiveViewportChangedRevoker)
+        if (m_effectiveViewportChangedToken)
         {
-            m_effectiveViewportChangedRevoker.revoke();
+            EffectiveViewportChanged(m_effectiveViewportChangedToken);
+            m_effectiveViewportChangedToken = {};
         }
     }
 

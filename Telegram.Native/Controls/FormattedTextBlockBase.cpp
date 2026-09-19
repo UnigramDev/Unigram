@@ -18,12 +18,16 @@ namespace winrt::Telegram::Native::Controls::implementation
     {
         __super::OnApplyTemplate();
 
+        // The outgoing child is dropped here, so this is the only place that has to unhook from
+        // it -- and the only one that can, being on the UI thread. See FrameworkElementEx.
+        UnregisterTemplateEvents();
+
         if (auto textBlock = GetTemplateChild(L"TextBlock"))
         {
             m_textBlock = textBlock.as<RichTextBlock>();
-            m_focusLostRevoker = m_textBlock.LostFocus(winrt::auto_revoke, { this, &FormattedTextBlockBase::HandleLostFocus });
-            m_sizeChangedRevoker = m_textBlock.SizeChanged(winrt::auto_revoke, { this, &FormattedTextBlockBase::HandleSizeChanged });
-            m_contextMenuOpeningRevoker = m_textBlock.ContextMenuOpening(winrt::auto_revoke, { this, &FormattedTextBlockBase::HandleContextMenuOpening });
+            m_lostFocusToken = m_textBlock.LostFocus({ this, &FormattedTextBlockBase::HandleLostFocus });
+            m_sizeChangedToken = m_textBlock.SizeChanged({ this, &FormattedTextBlockBase::HandleSizeChanged });
+            m_contextMenuOpeningToken = m_textBlock.ContextMenuOpening({ this, &FormattedTextBlockBase::HandleContextMenuOpening });
 
             m_textBlock.AddHandler(UIElement::DoubleTappedEvent(), winrt::box_value(DoubleTappedEventHandler({ this, &FormattedTextBlockBase::HandleDoubleTapped })), true);
             m_textBlock.AddHandler(UIElement::TappedEvent(), winrt::box_value(TappedEventHandler({ this, &FormattedTextBlockBase::HandleTapped })), true);
@@ -36,26 +40,65 @@ namespace winrt::Telegram::Native::Controls::implementation
 
     void FormattedTextBlockBase::RegisterLayoutChanged()
     {
-        if (!m_layoutUpdatedRevoker)
+        if (!m_layoutUpdatedToken)
         {
-            m_layoutUpdatedRevoker = m_textBlock.LayoutUpdated(winrt::auto_revoke, { this, &FormattedTextBlockBase::HandleLayoutUpdated });
+            m_layoutUpdatedToken = m_textBlock.LayoutUpdated({ this, &FormattedTextBlockBase::HandleLayoutUpdated });
+        }
+    }
+
+    void FormattedTextBlockBase::UnregisterLayoutChanged()
+    {
+        if (m_layoutUpdatedToken)
+        {
+            m_textBlock.LayoutUpdated(m_layoutUpdatedToken);
+            m_layoutUpdatedToken = {};
         }
     }
 
     void FormattedTextBlockBase::RegisterViewportChanged()
     {
-        if (!m_effectiveViewportChangedRevoker)
+        if (!m_effectiveViewportChangedToken)
         {
-            m_effectiveViewportChangedRevoker = m_textBlock.EffectiveViewportChanged(winrt::auto_revoke, { this, &FormattedTextBlockBase::HandleEffectiveViewportChanged });
+            m_effectiveViewportChangedToken = m_textBlock.EffectiveViewportChanged({ this, &FormattedTextBlockBase::HandleEffectiveViewportChanged });
         }
     }
 
     void FormattedTextBlockBase::UnregisterViewportChanged()
     {
-        if (m_effectiveViewportChangedRevoker)
+        if (m_effectiveViewportChangedToken)
         {
-            m_effectiveViewportChangedRevoker.revoke();
+            m_textBlock.EffectiveViewportChanged(m_effectiveViewportChangedToken);
+            m_effectiveViewportChangedToken = {};
         }
+    }
+
+    void FormattedTextBlockBase::UnregisterTemplateEvents()
+    {
+        if (m_textBlock == nullptr)
+        {
+            return;
+        }
+
+        if (m_lostFocusToken)
+        {
+            m_textBlock.LostFocus(m_lostFocusToken);
+            m_lostFocusToken = {};
+        }
+
+        if (m_sizeChangedToken)
+        {
+            m_textBlock.SizeChanged(m_sizeChangedToken);
+            m_sizeChangedToken = {};
+        }
+
+        if (m_contextMenuOpeningToken)
+        {
+            m_textBlock.ContextMenuOpening(m_contextMenuOpeningToken);
+            m_contextMenuOpeningToken = {};
+        }
+
+        UnregisterLayoutChanged();
+        UnregisterViewportChanged();
     }
 
     void FormattedTextBlockBase::HandleLostFocus(const IInspectable&, const RoutedEventArgs&)
@@ -72,7 +115,7 @@ namespace winrt::Telegram::Native::Controls::implementation
 
     void FormattedTextBlockBase::HandleSizeChanged(const IInspectable&, const SizeChangedEventArgs&)
     {
-        m_layoutUpdatedRevoker.revoke();
+        UnregisterLayoutChanged();
         overridable().OnLayoutUpdated();
     }
 
@@ -184,7 +227,7 @@ namespace winrt::Telegram::Native::Controls::implementation
 
     void FormattedTextBlockBase::HandleLayoutUpdated(const IInspectable&, const IInspectable&)
     {
-        m_layoutUpdatedRevoker.revoke();
+        UnregisterLayoutChanged();
         overridable().OnLayoutUpdated();
     }
 

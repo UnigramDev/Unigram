@@ -25,7 +25,9 @@ namespace winrt::Telegram::Native::Controls::implementation
         void UnregisterViewportChanged();
 
     private:
-        FrameworkElement::EffectiveViewportChanged_revoker m_effectiveViewportChangedRevoker{};
+        // A token, not a revoker: a revoker unhooks from the destructor, which is the finalizer
+        // thread once a managed subclass owns the outer object. See FrameworkElementEx.
+        winrt::event_token m_effectiveViewportChangedToken{};
 
         void HandleEffectiveViewportChanged(FrameworkElement const& sender, EffectiveViewportChangedEventArgs const& args);
     };
