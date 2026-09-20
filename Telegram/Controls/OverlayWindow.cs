@@ -8,6 +8,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Views.Host;
@@ -196,8 +197,14 @@ namespace Telegram.Controls
             _callback.TrySetResult(_result);
         }
 
+        private FocusScope _focus;
+
         private void PopupHost_Loaded(object sender, RoutedEventArgs e)
         {
+            // Before the overlay takes focus, so that closing the gallery goes back to the message
+            // it was opened from rather than to the top of the page.
+            _focus.Save(XamlRoot);
+
             Focus(FocusState.Programmatic);
         }
 
@@ -311,6 +318,10 @@ namespace Telegram.Controls
             Logger.Info();
 
             _result = result;
+
+            // Before the popup closes: see FocusScope, the order is the whole of it.
+            _focus.Restore();
+
             _popupHost.IsOpen = false;
 
             // Paired with ShowAsync, not with the popup's Closed: that one arrives late enough for
