@@ -65,7 +65,8 @@
                         <ProgressBar x:Name="Indicator"
                                      VerticalAlignment="Bottom"
                                      Visibility="Collapsed"
-                                     MinHeight="2" />
+                                     MinHeight="2"
+                                     AutomationProperties.AccessibilityView="Raw" />
                     </controls:AspectView>
                 </ControlTemplate>
             </Setter.Value>
