@@ -11203,7 +11203,9 @@
     <string name="VoipMinimize">minimize</string>
     <string name="VoipMute2">mute</string>
     <string name="VoipMyCameraIsOff">Your camera is off</string>
+    <string name="VoipMyCameraIsOn">Your camera is on</string>
     <string name="VoipMyMicrophoneIsOff">Your microphone is off</string>
+    <string name="VoipMyMicrophoneIsOn">Your microphone is on</string>
     <string name="VoipPlatformUnsupportedText">This feature is not supported on your Windows edition. Consider installing the [Media Feature Pack for Windows N](https://support.microsoft.com/en-us/windows/media-feature-pack-for-windows-n-8622b390-4ce6-43c9-9b42-549e5328e407) to access this feature.</string>
     <string name="VoipPlatformUnsupportedTitle">Feature not supported</string>
     <string name="VoipScreen2">screen</string>
