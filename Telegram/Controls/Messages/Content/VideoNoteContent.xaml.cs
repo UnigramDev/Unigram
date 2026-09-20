@@ -410,6 +410,17 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public bool TryInvoke()
+        {
+            if (_templateApplied && _message != null)
+            {
+                Button_Click(null, null);
+                return true;
+            }
+
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageVideoNote)

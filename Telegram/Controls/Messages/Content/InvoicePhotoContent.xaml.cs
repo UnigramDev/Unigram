@@ -135,6 +135,11 @@ namespace Telegram.Controls.Messages.Content
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageInvoice invoice && invoice.ProductInfo.Photo != null;

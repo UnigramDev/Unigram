@@ -112,6 +112,11 @@ namespace Telegram.Controls.Messages.Content
             UpdateManager.Unsubscribe(this, ref _fileToken);
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageText text)

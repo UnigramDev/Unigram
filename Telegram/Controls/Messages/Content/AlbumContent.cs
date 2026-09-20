@@ -272,6 +272,11 @@ namespace Telegram.Controls.Messages.Content
             _positions = default;
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageAlbum)

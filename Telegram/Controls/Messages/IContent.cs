@@ -20,6 +20,13 @@ namespace Telegram.Controls.Messages
         void Recycle();
 
         bool IsValid(MessageContent content, bool primary);
+
+        /// <summary>
+        /// Performs what the content's own button does - play, open, download - and reports whether
+        /// there was anything to do. This is Space on a focused message, so a content that holds
+        /// more than one piece of media returns false rather than guessing which one was meant.
+        /// </summary>
+        bool TryInvoke();
     }
 
     public interface IContentWithFile : IContent

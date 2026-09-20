@@ -380,6 +380,11 @@ namespace Telegram.Controls.Messages.Content
             _message = null;
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessagePoll;

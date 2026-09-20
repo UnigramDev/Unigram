@@ -97,6 +97,11 @@ namespace Telegram.Controls.Messages.Content
             _message = null;
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageText text && text.LinkPreview != null && !primary)
