@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
@@ -15,6 +16,7 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -24,74 +26,122 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Stories
 {
-    // TODO: Rewrite to use plain animations without rendering callback
+    // TODO: Rewrite to use plain animations without rendering callback.
+    // Both axes are closed form in time - X is baseX + amplitude * sin(2pi * (t / period + phase)),
+    // Y is linear - so an expression animation over a shared time property set would do the whole
+    // thing on the compositor. The integration below would have to become that closed form first.
     public partial class StoryReactionStream : Canvas
     {
-        private class ItemLayer
+        private sealed partial class ItemLayer
         {
+            private readonly StoryReactionStream _owner;
+            private readonly UIElement _image;
             private readonly Visual _visual;
+            private readonly uint _id;
 
-            public float Amplitude;
-            public float Period;
-            public float PhaseOffset;
-            public float BaseX;
-            public float VerticalVelocity;
-            public float TimeValue = 0.0f;
+            private readonly TypedEventHandler<object, CompositionBatchCompletedEventArgs> _batchCompleted;
+            private CompositionScopedBatch _batch;
 
-            public ItemLayer(UIElement image, float amplitude, float period, float phaseOffset, float baseX, float verticalVelocity)
+            public readonly float Amplitude;
+            public readonly float Period;
+            public readonly float PhaseOffset;
+            public readonly float BaseX;
+            public readonly float VerticalVelocity;
+
+            public float TimeValue;
+
+            // Nothing else writes the offset, so the position is kept here rather than read back:
+            // the getter would otherwise be a second call across the ABI per item per frame.
+            private Vector2 _position;
+
+            public ItemLayer(StoryReactionStream owner, uint id, UIElement image, float amplitude, float period, float phaseOffset, float baseX, float verticalVelocity)
             {
+                _owner = owner;
+                _id = id;
+                _image = image;
+                _visual = ElementComposition.GetElementVisual(image);
+                _batchCompleted = OnBatchCompleted;
+
                 Amplitude = amplitude;
                 Period = period;
                 PhaseOffset = phaseOffset;
                 BaseX = baseX;
                 VerticalVelocity = verticalVelocity;
-
-                _visual = ElementComposition.GetElementVisual(image);
-                //super.init()
-
-
-                //self.contents = image.cgImage
-                //self.allowsEdgeAntialiasing = true
-
-                var compositor = _visual.Compositor;
-                var props = compositor.CreatePropertySet();
-                props.InsertScalar("Amplitude", amplitude);
-                props.InsertScalar("Period", period);
-                props.InsertScalar("PhaseOffset", phaseOffset);
-                props.InsertScalar("BaseX", baseX);
-                props.InsertScalar("VerticalVelocity", verticalVelocity);
-                props.InsertScalar("TimeValue", 0);
-                props.InsertScalar("PhaseAngle", 0);
-
-                Properties = props;
             }
-
-            public CompositionPropertySet Properties { get; init; }
 
             public Vector2 Position
             {
-                get => new Vector2(_visual.Offset.X, _visual.Offset.Y);
-                set => _visual.Offset = new Vector3(value, 0);
+                get => _position;
+                set
+                {
+                    _position = value;
+                    _visual.Offset = new Vector3(value, 0);
+                }
             }
 
+            /// <summary>
+            /// In radians, which is what the physics computes and what the layer transform this was
+            /// ported from takes. Writing it to RotationAngleInDegrees, as this used to, turned a
+            /// sway of about 14 degrees into a quarter of one.
+            /// </summary>
             public float RotationAngle
             {
-                get => _visual.RotationAngleInDegrees;
-                set => _visual.RotationAngleInDegrees = value;
+                set => _visual.RotationAngle = value;
             }
 
-            public void StartAnimation(string propertyName, CompositionAnimation animation)
+            public void Play(float duration)
             {
-                _visual.StartAnimation(propertyName, animation);
+                var compositor = _visual.Compositor;
+                var delay = duration - 0.1f - 0.18f;
+
+                // The key frames land on progresses derived from this item's own duration, so these
+                // two cannot be shared templates the way the level animations elsewhere are.
+                var scale = compositor.CreateVector3KeyFrameAnimation();
+                scale.InsertKeyFrame(0, new Vector3(0.001f));
+                scale.InsertKeyFrame(0.2f / duration, new Vector3(1));
+                scale.InsertKeyFrame(delay / duration, new Vector3(1));
+                scale.InsertKeyFrame(1, new Vector3(0.001f));
+                scale.Duration = TimeSpan.FromSeconds(duration);
+
+                var alpha = compositor.CreateScalarKeyFrameAnimation();
+                alpha.InsertKeyFrame(0, 0);
+                alpha.InsertKeyFrame(0.1f / duration, 1);
+                alpha.InsertKeyFrame(delay / duration, 1);
+                alpha.InsertKeyFrame(1, 0);
+                alpha.Duration = TimeSpan.FromSeconds(duration);
+
+                _batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                _batch.Completed += _batchCompleted;
+
+                _visual.CenterPoint = new Vector3(_image.ActualSize / 2, 0);
+                _visual.StartAnimation("Scale", scale);
+                _visual.StartAnimation("Opacity", alpha);
+
+                _batch.End();
+            }
+
+            private void OnBatchCompleted(object sender, CompositionBatchCompletedEventArgs args)
+            {
+                if (_batch != null)
+                {
+                    _batch.Completed -= _batchCompleted;
+                    _batch.Dispose();
+                    _batch = null;
+                }
+
+                _owner.Remove(_id, _image);
             }
         }
 
-        private uint nextId = 0;
-        private Dictionary<uint, ItemLayer> itemLayers = [];
-        private object itemLayerContainer;
-        private double previousTimestamp = 0.0;
-        private CompositionVSync displayLink = new(60);
-        private double previousPhysicsTimestamp = 0.0;
+        private readonly Dictionary<uint, ItemLayer> _itemLayers = [];
+        private readonly CompositionVSync _displayLink = new(60);
+
+        private uint _nextId;
+
+        private long _timestamp;
+        private long _physicsTimestamp;
+
+        private bool _rendering;
 
         public StoryReactionStream()
         {
@@ -101,12 +151,14 @@ namespace Telegram.Controls.Stories
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //displayLink.Rendering += OnRendering;
+            // Badges animate on the compositor whether or not this is in the tree, so one that comes
+            // back with items still in flight has to pick the tick up again.
+            UpdateRendering(_itemLayers.Count > 0);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            displayLink.Rendering -= OnRendering;
+            UpdateRendering(false);
         }
 
         private void OnRendering(object sender, EventArgs e)
@@ -114,25 +166,35 @@ namespace Telegram.Controls.Stories
             UpdatePhysics();
         }
 
-        public void Add(IClientService clientService, MessageSender senderId, long count)
+        private void UpdateRendering(bool rendering)
         {
-            //if (!IsConnected)
-            //{
-            //    return;
-            //}
-
-            var timestamp = Logger.TickCount / 1000d;
-            if (timestamp < previousTimestamp + 0.2)
+            if (_rendering == rendering)
             {
                 return;
             }
 
-            previousTimestamp = timestamp;
+            _rendering = rendering;
 
-            if (Children.Empty())
+            if (rendering)
             {
-                displayLink.Rendering += OnRendering;
+                _physicsTimestamp = Stopwatch.GetTimestamp();
+                _displayLink.Rendering += OnRendering;
             }
+            else
+            {
+                _displayLink.Rendering -= OnRendering;
+            }
+        }
+
+        public void Add(IClientService clientService, MessageSender senderId, long count)
+        {
+            var timestamp = Stopwatch.GetTimestamp();
+            if (timestamp - _timestamp < Stopwatch.Frequency / 5)
+            {
+                return;
+            }
+
+            _timestamp = timestamp;
 
             var image = CreateBadge(clientService, senderId, count);
 
@@ -144,6 +206,8 @@ namespace Telegram.Controls.Stories
 
             image.Loaded += handler;
             Children.Add(image);
+
+            UpdateRendering(true);
         }
 
         private FrameworkElement CreateBadge(IClientService clientService, MessageSender senderId, long count)
@@ -183,88 +247,56 @@ namespace Telegram.Controls.Stories
 
         private void AddRenderedItem(UIElement image)
         {
-            var id = nextId;
-            nextId += 1;
+            var id = _nextId;
+            _nextId += 1;
 
             if (image is FrameworkElement element)
             {
                 element.Margin = new Thickness(0, 0, -element.ActualWidth, -20);
             }
 
-
+            // The draws from this generator are order dependent: amplitude, period and vertical
+            // velocity are pulled by the argument list, and the duration below has to come last.
             var random = new LokiRng(seed0: id, seed1: 1, seed2: 0);
             var itemX = -image.ActualSize.X - 8.0f + 20.0f * (LokiRng.Random(withSeed0: id, seed1: 0, seed2: 0) - 0.5f);
             var phaseOffset = random.Next();
-            var itemLayer = new ItemLayer(image, 0.0f + random.Next() * 6.0f, 1.5f + random.Next() * 2.0f, phaseOffset, itemX, -(1.0f + random.Next() * 0.2f) * 90.0f);
-            //itemLayer.frame = CGRect(origin: CGPoint(x: itemX, y: -image.size.height * 0.5), size: image.size)
+            var itemLayer = new ItemLayer(this, id, image, 0.0f + random.Next() * 6.0f, 1.5f + random.Next() * 2.0f, phaseOffset, itemX, -(1.0f + random.Next() * 0.2f) * 90.0f);
+
             itemLayer.Position = new Vector2(itemX, -20 * 0.5f);
-            itemLayers[id] = itemLayer;
-            //self.itemLayerContainer.addSublayer(itemLayer)
+            _itemLayers[id] = itemLayer;
 
+            itemLayer.Play(1.2f + random.Next() * 0.8f);
+        }
 
-            var itemDuration = 1.2f + random.Next() * 0.8f;
-            var delay = itemDuration - 0.1f - 0.18f;
+        private void Remove(uint id, UIElement image)
+        {
+            _itemLayers.Remove(id);
+            Children.Remove(image);
 
-            var visual = ElementComposition.GetElementVisual(image);
-            var compositor = visual.Compositor;
-
-            //var scale = compositor.CreateVector3KeyFrameAnimation();
-            //scale.InsertKeyFrame(0, new Vector3(0.001f));
-            //scale.InsertKeyFrame(1, new Vector3(1));
-            //scale.Duration = TimeSpan.FromSeconds(0.2);
-
-            //var alpha = compositor.CreateScalarKeyFrameAnimation();
-            //alpha.InsertKeyFrame(0, 0);
-            //alpha.InsertKeyFrame(1, 1);
-            //alpha.Duration = TimeSpan.FromSeconds(0.1);
-
-            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
+            if (Children.Empty())
             {
-                itemLayers.Remove(id);
-                Children.Remove(image);
-
-                if (Children.Empty())
-                {
-                    displayLink.Rendering -= OnRendering;
-                }
-            };
-
-            var scale = compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, new Vector3(0.001f));
-            scale.InsertKeyFrame(0.2f / itemDuration, new Vector3(1));
-            scale.InsertKeyFrame(delay / itemDuration, new Vector3(1));
-            scale.InsertKeyFrame(1, new Vector3(0.001f));
-            scale.Duration = TimeSpan.FromSeconds(itemDuration);
-
-            var alpha = compositor.CreateScalarKeyFrameAnimation();
-            alpha.InsertKeyFrame(0, 0);
-            alpha.InsertKeyFrame(0.1f / itemDuration, 1);
-            alpha.InsertKeyFrame(delay / itemDuration, 1);
-            alpha.InsertKeyFrame(1, 0);
-            alpha.Duration = TimeSpan.FromSeconds(itemDuration);
-
-            visual.CenterPoint = new Vector3(image.ActualSize / 2, 0);
-            visual.StartAnimation("Scale", scale);
-            visual.StartAnimation("Opacity", alpha);
-
-            batch.End();
+                UpdateRendering(false);
+            }
         }
 
         private void UpdatePhysics()
         {
-            var timestamp = Logger.TickCount / 1000f;
-            var dt = (float)Math.Max(1.0 / 120.0, Math.Min(1.0 / 30.0, timestamp - previousPhysicsTimestamp));
+            // GetTickCount64 divided into a float was both too coarse to see a frame - it advances
+            // on the ~15.6ms timer tick - and, past a couple of days of uptime, unable to represent
+            // one at all: the float ulp at 2^19 seconds is already larger than the 1/30 ceiling.
+            // The delta is taken in raw ticks and converted once, so neither depends on uptime.
+            var timestamp = Stopwatch.GetTimestamp();
+            var elapsed = (float)((timestamp - _physicsTimestamp) / (double)Stopwatch.Frequency);
+            var dt = Math.Clamp(elapsed, 1.0f / 120.0f, 1.0f / 30.0f);
 
-            previousPhysicsTimestamp = timestamp;
+            _physicsTimestamp = timestamp;
 
-            foreach (var itemLayer in itemLayers.Values)
+            foreach (var itemLayer in _itemLayers.Values)
             {
                 itemLayer.TimeValue += dt;
                 var itemPhase = MathF.IEEERemainder((MathF.IEEERemainder(itemLayer.TimeValue, itemLayer.Period) / itemLayer.Period + itemLayer.PhaseOffset), 1.0f);
                 var phaseAngle = itemPhase * MathF.PI * 2.0f;
                 var phaseFraction = MathF.Sin(phaseAngle);
-
 
                 var newX = itemLayer.BaseX + phaseFraction * itemLayer.Amplitude;
                 var newY = itemLayer.Position.Y + itemLayer.VerticalVelocity * dt;

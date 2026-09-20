@@ -56,7 +56,18 @@ namespace Telegram.Composition
                 return;
             }
 
-            _elapsed = timestamp;
+            // Advanced by a whole interval rather than reset to now. Resetting makes every tick wait
+            // a full interval from the last one, so a 60Hz request on a 60Hz display loses roughly
+            // every other frame to ordinary vblank jitter; advancing lets it settle onto the frame.
+            // A stall would otherwise leave it permanently behind and firing on every frame, hence
+            // the resync.
+            _elapsed += _interval;
+
+            if (timestamp - _elapsed > _interval * 2)
+            {
+                _elapsed = timestamp;
+            }
+
             _rendering?.Invoke(sender, EventArgs.Empty);
         }
     }
