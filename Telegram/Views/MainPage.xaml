@@ -132,6 +132,7 @@
 
             <controls:ChatFoldersNavView x:Name="ChatFoldersSide"
                                          AutomationProperties.Name="{CustomResource Filters}"
+                                         AutomationProperties.LandmarkType="Navigation"
                                          ItemsSource="{x:Bind ViewModel.Folders}"
                                          SelectedItem="{x:Bind ViewModel.SelectedFolderView, Mode=OneWay}"
                                          SelectionChanged="ChatFolders_SelectionChanged"
@@ -634,6 +635,7 @@
                                         </Border>-->
                                         <controls:ChatFoldersNavView x:Name="ChatFolders"
                                                                      AutomationProperties.Name="{CustomResource Filters}"
+                                                                     AutomationProperties.LandmarkType="Navigation"
                                                                      ItemsSource="{x:Bind ViewModel.Folders}"
                                                                      SelectedItem="{x:Bind ViewModel.SelectedFolderView, Mode=OneWay}"
                                                                      IsItemClickEnabled="True"

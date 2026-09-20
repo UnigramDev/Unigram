@@ -224,6 +224,9 @@ namespace Telegram.Services
             { "call_camera"         , ShortcutCommand.CallToggleCamera },
             { "call_microphone"     , ShortcutCommand.CallToggleMicrophone },
 
+            { "next_region"         , ShortcutCommand.RegionNext },
+            { "previous_region"     , ShortcutCommand.RegionPrevious },
+
             // Shortcuts that have no default values.
             { "message"             , ShortcutCommand.JustSendMessage },
             { "message_silently"    , ShortcutCommand.SendSilentMessage },
@@ -332,6 +335,11 @@ namespace Telegram.Services
                 ShortcutCommand.JustSendMessage,
                 ShortcutCommand.SendSilentMessage,
                 ShortcutCommand.ScheduleMessage,
+            }),
+            (() => Strings.ShortcutsCategoryNavigation, new[]
+            {
+                ShortcutCommand.RegionNext,
+                ShortcutCommand.RegionPrevious,
             }),
             (() => Strings.ShortcutsCategoryFolders, new[]
             {
@@ -889,6 +897,9 @@ namespace Telegram.Services
 
             Set("ctrl+9", ShortcutCommand.ShowArchive);
 
+            Set("f6", ShortcutCommand.RegionNext);
+            Set("shift+f6", ShortcutCommand.RegionPrevious);
+
             Set("ctrl+shift+y", ShortcutCommand.SetStatus);
             Set("ctrl+j", ShortcutCommand.Downloads);
 
@@ -1293,6 +1304,9 @@ namespace Telegram.Services
                 ShortcutCommand.ShowFolderLast => Strings.ShortcutCommandShowFolderLast,
                 ShortcutCommand.ShowArchive => Strings.ShortcutCommandShowArchive,
 
+                ShortcutCommand.RegionNext => Strings.ShortcutCommandRegionNext,
+                ShortcutCommand.RegionPrevious => Strings.ShortcutCommandRegionPrevious,
+
                 ShortcutCommand.CallAccept => Strings.ShortcutCommandCallAccept,
                 ShortcutCommand.CallReject => Strings.ShortcutCommandCallReject,
                 ShortcutCommand.CallToggleMicrophone => Strings.ShortcutCommandCallToggleMicrophone,
@@ -1645,6 +1659,9 @@ namespace Telegram.Services
 
         SetStatus,
         Downloads,
+
+        RegionNext,
+        RegionPrevious,
 
         CallAccept,
         CallReject,

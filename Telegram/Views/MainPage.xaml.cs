@@ -1508,6 +1508,10 @@ namespace Telegram.Views
                 Downloads_Click(null, null);
                 args.Handled = true;
             }
+            else if (command is ShortcutCommand.RegionNext or ShortcutCommand.RegionPrevious)
+            {
+                args.Handled = FocusRegions.MoveFocus(this, XamlRoot, command is ShortcutCommand.RegionPrevious);
+            }
 
             // Quit, Close, Lock, the media commands and the two call ones are answered by
             // WindowContext once this declines them, so that a window without a page still has
