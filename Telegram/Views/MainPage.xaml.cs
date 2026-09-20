@@ -1509,6 +1509,18 @@ namespace Telegram.Views
                 Downloads_Click(null, null);
                 args.Handled = true;
             }
+            else if (command is ShortcutCommand.RegionNext or ShortcutCommand.RegionPrevious)
+            {
+                args.Handled = FocusRegions.MoveFocus(this, XamlRoot, command is ShortcutCommand.RegionPrevious);
+            }
+            else if (command is ShortcutCommand.MentionNext)
+            {
+                if (MasterDetail.NavigationService.Frame.Content is IChatPage page)
+                {
+                    page.ViewModel.Mentions.NextMessage();
+                    args.Handled = true;
+                }
+            }
             else if (command is ShortcutCommand.MediaStop)
             {
                 LifetimeService.Current.Playback.Clear();

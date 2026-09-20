@@ -128,6 +128,10 @@ namespace Telegram.Services
             { "set_status"          , ShortcutCommand.SetStatus },
             { "downloads"           , ShortcutCommand.Downloads },
 
+            { "next_region"         , ShortcutCommand.RegionNext },
+            { "previous_region"     , ShortcutCommand.RegionPrevious },
+            { "next_mention"        , ShortcutCommand.MentionNext },
+
             // Shortcuts that have no default values.
             { "message"             , ShortcutCommand.JustSendMessage },
             { "message_silently"    , ShortcutCommand.SendSilentMessage },
@@ -174,6 +178,10 @@ namespace Telegram.Services
             { ShortcutCommand.ShowArchive       , "show_archive" },
             { ShortcutCommand.SetStatus         , "set_status" },
             { ShortcutCommand.Downloads         , "downloads" },
+
+            { ShortcutCommand.RegionNext        , "next_region" },
+            { ShortcutCommand.RegionPrevious    , "previous_region" },
+            { ShortcutCommand.MentionNext       , "next_mention" },
 
             { ShortcutCommand.CallAccept        , "call_accept" },
             { ShortcutCommand.CallReject        , "call_reject" },
@@ -318,6 +326,14 @@ namespace Telegram.Services
                     }
                 },
                 {
+                    "Navigation", new[]
+                    {
+                        ShortcutCommand.RegionNext         ,
+                        ShortcutCommand.RegionPrevious     ,
+                        ShortcutCommand.MentionNext        ,
+                    }
+                },
+                {
                     "Folders", new[]
                     {
                         ShortcutCommand.FolderPrevious     ,
@@ -420,6 +436,10 @@ namespace Telegram.Services
             Set("ctrl+0", ShortcutCommand.ChatSelf);
 
             Set("ctrl+9", ShortcutCommand.ShowArchive);
+
+            Set("f6", ShortcutCommand.RegionNext);
+            Set("shift+f6", ShortcutCommand.RegionPrevious);
+            Set("ctrl+alt+m", ShortcutCommand.MentionNext);
 
             Set("ctrl+shift+y", ShortcutCommand.SetStatus);
             Set("ctrl+j", ShortcutCommand.Downloads);
@@ -768,6 +788,10 @@ namespace Telegram.Services
 
         SetStatus,
         Downloads,
+
+        RegionNext,
+        RegionPrevious,
+        MentionNext,
 
         CallAccept,
         CallReject,
