@@ -854,6 +854,7 @@
                                            ViewChanged="OnViewChanged"
                                            ChoosingItemContainer="OnChoosingItemContainer"
                                            ContainerContentChanging="OnContainerContentChanging"
+                                           AutomationProperties.LandmarkType="Main"
                                            Margin="0,0,0,8"
                                            Grid.ColumnSpan="2">
                         <ListView.Resources>
@@ -1262,6 +1263,7 @@
                                                    VerticalAlignment="Bottom"
                                                    VerticalContentAlignment="Bottom"
                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                   AutomationProperties.LandmarkType="Form"
                                                    MinHeight="{StaticResource TelegramToolBarHeight}"
                                                    MaxHeight="192"
                                                    TextChanging="TextField_TextChanging"
