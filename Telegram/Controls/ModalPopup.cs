@@ -212,7 +212,7 @@ namespace Telegram.Controls
 
         private XamlRoot _xamlRoot;
         private Popup _popup;
-        private WeakReference _focusedBefore;
+        private FocusScope _focus;
         private CompositionScopedBatch _batch;
         private CompositionScopedBatch _resizeBatch;
 
@@ -709,7 +709,7 @@ namespace Telegram.Controls
 
         private void Dismiss()
         {
-            RestoreFocus();
+            _focus.Restore();
 
             if (_popup != null)
             {
@@ -773,28 +773,8 @@ namespace Telegram.Controls
                 return;
             }
 
-            SaveFocus();
+            _focus.Save(_xamlRoot);
             MoveFocus();
-        }
-
-        /// <summary>
-        /// Remembers what had focus, to hand it back when the popup closes.
-        /// </summary>
-        /// <remarks>
-        /// From the first layout pass and not from Open, which is too early: a popup raised from a
-        /// context menu is opened by a MenuFlyoutItem that still has focus at that point and is
-        /// destroyed with its flyout a moment later, so what gets saved cannot be focused again.
-        /// ContentDialog saves it from OnLayoutRootLoaded - once its content has loaded inside the
-        /// popup - and by then focus has settled on whatever the flyout handed it back to.
-        ///
-        /// Weak, because the element can still be gone by the time the popup closes: a page
-        /// swapped, a container recycled.
-        /// </remarks>
-        private void SaveFocus()
-        {
-            _focusedBefore = FocusManagerEx.TryGetFocusedElement(_xamlRoot) is DependencyObject focused
-                ? new WeakReference(focused)
-                : null;
         }
 
         private void MoveFocus()
@@ -813,33 +793,6 @@ namespace Telegram.Controls
             }
 
             Focus(FocusState.Programmatic);
-        }
-
-        /// <summary>
-        /// Hands focus back to whatever had it before the popup opened.
-        /// </summary>
-        /// <remarks>
-        /// Before the popup closes, never after. ContentDialog::HideInternal puts it in the same
-        /// order and says why: as the popup goes away the FocusManager moves focus to the first
-        /// focusable element of the page, and anything done after that has already been undone.
-        /// That is what sent focus to the window when a ModalPopup closed over a ContentPopup.
-        ///
-        /// Focus is not always on a Control - a Hyperlink is a TextElement, and ContentDialog
-        /// carries its own special case for exactly that.
-        /// </remarks>
-        private void RestoreFocus()
-        {
-            var target = _focusedBefore?.Target;
-            _focusedBefore = null;
-
-            if (target is Control control)
-            {
-                control.Focus(FocusState.Programmatic);
-            }
-            else if (target is Hyperlink hyperlink)
-            {
-                hyperlink.Focus(FocusState.Programmatic);
-            }
         }
 
         private bool ContainsFocus()
