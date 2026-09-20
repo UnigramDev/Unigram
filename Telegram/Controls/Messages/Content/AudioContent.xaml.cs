@@ -154,6 +154,8 @@ namespace Telegram.Controls.Messages.Content
                 TitleTrim.Text = string.Empty;
             }
 
+            Button.Subject = audio.GetTitle() + ", " + audio.GetDuration();
+
             if (audio.AlbumCoverThumbnail != null)
             {
                 UpdateManager.Subscribe(this, message, audio.AlbumCoverThumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);

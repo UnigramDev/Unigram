@@ -92,6 +92,8 @@ namespace Telegram.Controls.Messages.Content
                 TitleTrim.Text = string.Empty;
             }
 
+            Button.Subject = document.FileName + ", " + FileSizeConverter.Convert(Math.Max(document.DocumentValue.Size, document.DocumentValue.ExpectedSize));
+
             if (document.Thumbnail != null)
             {
                 UpdateManager.Subscribe(this, message, document.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
