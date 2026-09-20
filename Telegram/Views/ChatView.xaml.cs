@@ -1604,6 +1604,39 @@ namespace Telegram.Views
                     }
                 }
             }
+            // Reply, edit and forward from the message itself, the way Delete and Ctrl+C already
+            // work. Each is left unhandled when no message has focus, so the global command
+            // - chat search on both Ctrl+E and Ctrl+Shift+F - still runs from everywhere else.
+            else if (args.Key == VirtualKey.Enter && modifiers == VirtualKeyModifiers.None)
+            {
+                args.Handled = InvokeOnFocusedMessage(MessageReply_Loaded, ReplyToMessage);
+            }
+            else if (args.Key == VirtualKey.E && modifiers == VirtualKeyModifiers.Control)
+            {
+                args.Handled = InvokeOnFocusedMessage(MessageEdit_Loaded, EditMessage);
+            }
+            else if (args.Key == VirtualKey.F && modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
+            {
+                args.Handled = InvokeOnFocusedMessage(MessageForward_Loaded, ForwardMessage);
+            }
+            // F3 walks the results in the direction the search runs, further back in the history,
+            // which is what the up button does - hence Previous here and Next under Shift.
+            else if (args.Key == VirtualKey.F3 && modifiers is VirtualKeyModifiers.None or VirtualKeyModifiers.Shift)
+            {
+                if (ViewModel.Search is ChatSearchViewModel search)
+                {
+                    var command = modifiers == VirtualKeyModifiers.Shift
+                        ? search.NextCommand
+                        : search.PreviousCommand;
+
+                    if (command.CanExecute(null))
+                    {
+                        command.Execute(null);
+                    }
+
+                    args.Handled = true;
+                }
+            }
             else if (args.Key == VirtualKey.E && modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
             {
                 ButtonStickers.Show(Services.Settings.StickersTab.Emoji);
@@ -1725,6 +1758,53 @@ namespace Telegram.Views
                 target.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// Runs a context menu action against the focused message, under the same predicate the
+        /// menu builds itself from. The key is claimed on focus alone, because whether the action
+        /// is allowed takes a request to answer and the answer arrives after the event is over.
+        /// </summary>
+        private bool InvokeOnFocusedMessage(Func<MessageViewModel, MessageProperties, bool> canInvoke, Action<MessageViewModel, MessageProperties> invoke)
+        {
+            if (FocusManagerEx.TryGetFocusedElement(XamlRoot) is not MessageSelector selector || selector.Message == null)
+            {
+                return false;
+            }
+
+            InvokeOnMessage(selector.Message, canInvoke, invoke);
+            return true;
+        }
+
+        private async void InvokeOnMessage(MessageViewModel message, Func<MessageViewModel, MessageProperties, bool> canInvoke, Action<MessageViewModel, MessageProperties> invoke)
+        {
+            var properties = await ViewModel.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+            if (properties != null && canInvoke(message, properties))
+            {
+                invoke(message, properties);
+            }
+        }
+
+        private void ReplyToMessage(MessageViewModel message, MessageProperties properties)
+        {
+            if (properties.CanBeReplied)
+            {
+                ViewModel.ReplyToMessage(message);
+            }
+            else if (properties.CanBeRepliedInAnotherChat)
+            {
+                ViewModel.ReplyToMessageInAnotherChat(message);
+            }
+        }
+
+        private void EditMessage(MessageViewModel message, MessageProperties properties)
+        {
+            ViewModel.EditMessage(message);
+        }
+
+        private void ForwardMessage(MessageViewModel message, MessageProperties properties)
+        {
+            ViewModel.ForwardMessage(message);
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
