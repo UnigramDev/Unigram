@@ -4687,6 +4687,8 @@
     <string name="AccDescrAspectRatio">Aspect ratio</string>
     <string name="AccDescrMsgRead">Seen</string>
     <string name="AccDescrMsgUnread">Not seen</string>
+    <string name="AccDescrUnreadChats_one">{0} unread chat</string>
+    <string name="AccDescrUnreadChats_other">{0} unread chats</string>
 
 
 
