@@ -41,6 +41,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -1558,6 +1559,7 @@ namespace Telegram.Views
             {
                 args.Handled = true;
                 ArchivedChats_Click(null, null);
+                AnnounceFolder(Strings.ArchivedChats);
             }
             else if (command is >= ShortcutCommand.ShowFolder1 and <= ShortcutCommand.ShowFolder6)
             {
@@ -1565,6 +1567,7 @@ namespace Telegram.Views
                 if (folders.Count > index)
                 {
                     UpdateFolder(folders[index], false);
+                    AnnounceFolder(folders[index].AutomationName);
                 }
             }
         }
@@ -1739,6 +1742,7 @@ namespace Telegram.Views
             if (index >= 0 && index < ViewModel.Folders.Count)
             {
                 UpdateFolder(ViewModel.Folders[index], true);
+                AnnounceFolder(ViewModel.Folders[index].AutomationName);
             }
         }
 
@@ -1749,7 +1753,6 @@ namespace Telegram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main", Frame, ViewModel);
-                MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
                 MasterDetail.NavigationService.FrameFacade.Navigated += OnNavigated;
             }
 
@@ -2686,6 +2689,8 @@ namespace Telegram.Views
             ChatsList.CanGoNext = ViewModel.Folders.Count > 0 && ViewModel.Folders[^1] != folder;
             ChatsList.CanGoPrev = ViewModel.Folders.Count > 0 && ViewModel.Folders[0] != folder;
 
+            UpdateChatsListName(folder);
+
             return folder;
         }
 
@@ -2957,6 +2962,7 @@ namespace Telegram.Views
             ChatsList.ChangeView(direction, () =>
             {
                 ViewModel.SelectedFolder = folder;
+                UpdateChatsListName(folder);
 
                 if (update)
                 {
@@ -2975,6 +2981,27 @@ namespace Telegram.Views
             }
 
             Search_LostFocus(null, null);
+        }
+
+        // The list is the only element that says which folder is showing: its items don't, and the
+        // tabs are read only when focus is on them.
+        private void UpdateChatsListName(ChatFolderViewModel folder)
+        {
+            AutomationProperties.SetName(ChatsList, folder?.Name.Text.Text ?? string.Empty);
+        }
+
+        // Switching folder from a shortcut moves no focus, and neither event it raises is one a
+        // screen reader reads: selection on an unfocused list is ignored, and the chat list
+        // swapping its items is a structure change. So the new folder has to be announced.
+        //
+        // Not gated on ListenerExists: the raise itself is, on the notification counter, which is
+        // the one that matters and which UWP doesn't expose to us.
+        private void AnnounceFolder(string title)
+        {
+            // MostRecent, so that running through the folders leaves one announcement and not a queue.
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(ChatsList);
+            peer?.RaiseNotificationEvent(AutomationNotificationKind.Other, AutomationNotificationProcessing.MostRecent,
+                title, "ChatFolderChanged");
         }
 
         #region Selection
