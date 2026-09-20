@@ -505,17 +505,9 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            if (message.SendingState is MessageSendingStateFailed)
-            {
-            }
-            else if (message.SendingState is MessageSendingStatePending)
-            {
-            }
-            else if (message.Id <= message.LastReadOutboxMessageId && message.IsOutgoing && !message.IsChannelPost)
-            {
-                builder.Append(". ");
-                builder.Append(Strings.AccDescrMsgRead);
-            }
+            // Read is the state every outgoing message ends up in, so saying it on each one buys
+            // nothing and costs a word on every message in the history. Unread is announced above,
+            // before the content, where it can still change what the reader does about it.
 
             if (message.InteractionInfo?.ViewCount > 0)
             {
