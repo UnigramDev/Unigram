@@ -8,7 +8,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Telegram.Common;
@@ -185,9 +184,17 @@ namespace Telegram.Composition
 
 
 
-        public static CompositionPath CreateSmoothCurve(this Compositor compositor, Vector2[] points, float smoothness)
+        // The blob and curve shapes rebuild their paths a few times a second each, so the
+        // intermediate points go in a buffer that is reused rather than a list that is allocated.
+        // Every caller is on the UI thread and none of them keeps the buffer past the call.
+        private static SmoothPoint[] _smoothPoints = Array.Empty<SmoothPoint>();
+
+        private static SmoothPoint[] ToSmoothPoints(Vector2[] points, float smoothness)
         {
-            var smoothPoints = new List<SmoothPoint>();
+            if (_smoothPoints.Length < points.Length)
+            {
+                _smoothPoints = new SmoothPoint[points.Length];
+            }
 
             for (int index = 0; index < points.Length; index++)
             {
@@ -208,72 +215,30 @@ namespace Telegram.Composition
                     angle = 2 * MathF.PI - angle;
                 }
 
-                smoothPoints.Add(
-                    new SmoothPoint(
-                        point: curr,
-                        inAngle: angle + MathF.PI,
-                        inLength: smoothness * Distance(curr, prev),
-                        outAngle: angle,
-                        outLength: smoothness * Distance(curr, next)
-                    )
+                _smoothPoints[index] = new SmoothPoint(
+                    point: curr,
+                    inAngle: angle + MathF.PI,
+                    inLength: smoothness * Distance(curr, prev),
+                    outAngle: angle,
+                    outLength: smoothness * Distance(curr, next)
                 );
             }
 
-            CanvasGeometry result;
-            using (var builder = new CanvasPathBuilder(null))
-            {
-                builder.BeginFigure(smoothPoints[0].Point);
+            return _smoothPoints;
+        }
 
-                for (int i = 0; i < smoothPoints.Count; i++)
-                {
-                    var prev = smoothPoints[i >= 0 ? i : smoothPoints.Count + i];
-                    var curr = smoothPoints[i];
-                    var next = smoothPoints[(i + 1) % points.Length];
-                    var currSmoothOut = curr.SmoothOut(0.5f);
-                    var nextSmoothIn = next.SmoothIn(2.0f);
-
-                    builder.AddCubicBezier(currSmoothOut, nextSmoothIn, next.Point);
-                }
-
-                builder.EndFigure(CanvasFigureLoop.Closed);
-                result = CanvasGeometry.CreatePath(builder);
-            }
-            return new CompositionPath(result);
+        /// <summary>
+        /// A closed curve through every point, which is the <c>curve: false</c> case of the overload
+        /// below and exists only so the blob shapes need not pass a length they have no use for.
+        /// </summary>
+        public static CompositionPath CreateSmoothCurve(this Compositor compositor, Vector2[] points, float smoothness)
+        {
+            return compositor.CreateSmoothCurve(points, 0, smoothness);
         }
 
         public static CompositionPath CreateSmoothCurve(this Compositor compositor, Vector2[] points, float length, float smoothness, bool curve = false)
         {
-            var smoothPoints = new List<SmoothPoint>();
-
-            for (int index = 0; index < points.Length; index++)
-            {
-                var prevIndex = index - 1;
-                var prev = points[prevIndex >= 0 ? prevIndex : points.Length + prevIndex];
-                var curr = points[index];
-                var next = points[(index + 1) % points.Length];
-
-                var dx = next.X - prev.X;
-                var dy = -next.Y + prev.Y;
-                var angle = MathF.Atan2(dy, dx);
-                if (angle < 0)
-                {
-                    angle = MathF.Abs(angle);
-                }
-                else
-                {
-                    angle = 2 * MathF.PI - angle;
-                }
-
-                smoothPoints.Add(
-                    new SmoothPoint(
-                        point: curr,
-                        inAngle: angle + MathF.PI,
-                        inLength: smoothness * Distance(curr, prev),
-                        outAngle: angle,
-                        outLength: smoothness * Distance(curr, next)
-                    )
-                );
-            }
+            var smoothPoints = ToSmoothPoints(points, smoothness);
 
             CanvasGeometry result;
             using (var builder = new CanvasPathBuilder(null))
@@ -288,7 +253,7 @@ namespace Telegram.Composition
                     builder.BeginFigure(smoothPoints[0].Point);
                 }
 
-                var smoothCount = curve ? smoothPoints.Count - 1 : smoothPoints.Count;
+                var smoothCount = curve ? points.Length - 1 : points.Length;
                 for (int index = 0; index < smoothCount; index++)
                 {
                     var curr = smoothPoints[index];
@@ -331,16 +296,18 @@ namespace Telegram.Composition
                 _outLength = outLength;
             }
 
-            public readonly Vector2 SmoothIn(float multiplier = 1)
+            // Both handles are the same fraction of their chord, as they are on Android and iOS.
+            // The smoothness the blob shapes pass is the circular arc constant, which is only the
+            // right length while that holds: scaling one side and not the other, as this used to,
+            // takes the incoming handle past the point where the segment stays convex.
+            public readonly Vector2 SmoothIn()
             {
-                // TODO: * 2.0f is arbitrary
-                return Smooth(_inAngle, _inLength * multiplier);
+                return Smooth(_inAngle, _inLength);
             }
 
-            public readonly Vector2 SmoothOut(float multiplier = 1)
+            public readonly Vector2 SmoothOut()
             {
-                // TODO: * 0.5f is arbistrary
-                return Smooth(_outAngle, _outLength * multiplier);
+                return Smooth(_outAngle, _outLength);
             }
 
             private readonly Vector2 Smooth(float angle, float length)

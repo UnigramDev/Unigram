@@ -5,10 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -16,7 +14,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Composition
 {
-    public partial class CompositionCurveVisual
+    public partial class CompositionCurveVisual : CompositionLevelVisual
     {
         private readonly ContainerVisual _visual;
 
@@ -26,20 +24,10 @@ namespace Telegram.Composition
 
         private readonly CompositionLinearGradientBrush _gradient;
 
-        private readonly CompositionVSync _vsync = new(30);
-
-        private readonly float _maxLevel;
-
-        private float _presentationAudioLevel;
-        private float _audioLevel;
-
-        private bool _animating;
-
         public CompositionCurveVisual(UIElement element, float width, float height, float maxLevel)
+            : base(maxLevel)
         {
-            _maxLevel = maxLevel;
-
-            var compositor = BootStrapper.Current.Compositor;
+            var compositor = ElementComposition.GetElementVisual(element).Compositor;
 
             var size = new Vector2(width, height);
 
@@ -87,13 +75,18 @@ namespace Telegram.Composition
             ElementCompositionPreview.SetElementChildVisual(element, _visual);
         }
 
-        private void OnRendering(object sender, object e)
+        protected override void UpdateSpeedLevel(float level)
         {
-            _presentationAudioLevel = _presentationAudioLevel * 0.9f + _audioLevel * 0.1f;
+            _smallCurve.UpdateSpeedLevel(level);
+            _mediumCurve.UpdateSpeedLevel(level);
+            _largeCurve.UpdateSpeedLevel(level);
+        }
 
-            _smallCurve.Level = _presentationAudioLevel;
-            _mediumCurve.Level = _presentationAudioLevel;
-            _largeCurve.Level = _presentationAudioLevel;
+        protected override void OnLevelChanged(float level)
+        {
+            _smallCurve.SetLevel(level);
+            _mediumCurve.SetLevel(level);
+            _largeCurve.SetLevel(level);
         }
 
         public void SetColorStops(params uint[] colorStops)
@@ -123,80 +116,9 @@ namespace Telegram.Composition
             }
         }
 
-        public void UpdateLevel(float level)
+        protected override void UpdateShapesState(bool animating)
         {
-            UpdateLevel(level, immediately: false);
-        }
-
-        public void UpdateLevel(float level, bool immediately = false)
-        {
-            var normalizedLevel = MathF.Min(1, MathF.Max(level / _maxLevel, 0));
-
-            _smallCurve.UpdateSpeedLevel(normalizedLevel);
-            _mediumCurve.UpdateSpeedLevel(normalizedLevel);
-            _largeCurve.UpdateSpeedLevel(normalizedLevel);
-
-            _audioLevel = normalizedLevel;
-
-            if (immediately)
-            {
-                _presentationAudioLevel = normalizedLevel;
-            }
-        }
-
-        public void StartAnimating()
-        {
-            StartAnimating(false);
-        }
-
-        public void StartAnimating(bool immediately = false)
-        {
-            if (_animating)
-            {
-                return;
-            }
-
-            _animating = true;
-
-            //if (!immediately)
-            //{
-            //    _mediumBlob.layer.animateScale(from: 0.75, to: 1, duration: 0.35, removeOnCompletion: false);
-            //    _largeBlob.layer.animateScale(from: 0.75, to: 1, duration: 0.35, removeOnCompletion: false);
-            //}
-            //else
-            //{
-            //    _mediumBlob.layer.removeAllAnimations();
-            //    _largeBlob.layer.removeAllAnimations();
-            //}
-
-            UpdateBlobsState();
-            _vsync.Rendering += OnRendering;
-        }
-
-        public void StopAnimating()
-        {
-            StopAnimating(duration: 0.15);
-        }
-
-        public void StopAnimating(double duration)
-        {
-            if (!_animating)
-            {
-                return;
-            }
-
-            _animating = false;
-
-            //_mediumBlob.layer.animateScale(from: 1.0, to: 0.75, duration: duration, removeOnCompletion: false);
-            //_largeBlob.layer.animateScale(from: 1.0, to: 0.75, duration: duration, removeOnCompletion: false);
-
-            UpdateBlobsState();
-            _vsync.Rendering -= OnRendering;
-        }
-
-        private void UpdateBlobsState()
-        {
-            if (_animating)
+            if (animating)
             {
                 _smallCurve.StartAnimating();
                 _mediumCurve.StartAnimating();
@@ -210,7 +132,7 @@ namespace Telegram.Composition
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             _smallCurve.Clear();
             _mediumCurve.Clear();
@@ -218,63 +140,42 @@ namespace Telegram.Composition
         }
     }
 
-    public partial class CompositionCurveShape
+    public partial class CompositionCurveShape : CompositionMorphShape
     {
-        private readonly int _pointsCount;
         private readonly float _smoothness;
 
         private readonly float _minRandomness;
         private readonly float _maxRandomness;
 
-        private readonly float _minSpeed;
-        private readonly float _maxSpeed;
-
         private readonly float _minOffset;
         private readonly float _maxOffset;
 
-        private float _level;
-        public float Level
-        {
-            get => _level;
-            set
-            {
-                if (MathF.Abs(value - _level) > 0.01)
-                {
-                    var lv = _minOffset + (_maxOffset - _minOffset) * value;
-                    var animation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-                    animation.InsertKeyFrame(1, lv * 12.0f);
-                    _shape.StartAnimation("Offset.Y", animation);
-                }
+        private readonly ScalarKeyFrameAnimation _levelAnimation;
 
-                _level = value;
-            }
-        }
-
-        private float _speedLevel = 0;
-        private float _lastSpeedLevel = 0;
-
+        // The curve is built before the header knows how wide it is, so the first path it gets is
+        // degenerate. Keeping the width the last path was built at is what forces a rebuild once a
+        // real one arrives - Path is not null by then, so it cannot be the test.
         private float _lastWidth;
 
-        private readonly CompositionSpriteShape _shape;
-        private readonly CompositionPathGeometry _shapeLayer;
-
-        private readonly Random _random = new();
-
         public CompositionCurveShape(CompositionSpriteShape shape, Vector2 size, int pointsCount, float minRandomness, float maxRandomness, float minSpeed, float maxSpeed, float minOffset, float maxOffset)
+            : base(shape, size, pointsCount, minSpeed, maxSpeed)
         {
-            _shape = shape;
-            _shapeLayer = shape.Geometry as CompositionPathGeometry;
-            _size = size;
-
-            _pointsCount = pointsCount;
             _minRandomness = minRandomness;
             _maxRandomness = maxRandomness;
-            _minSpeed = minSpeed;
-            _maxSpeed = maxSpeed;
             _minOffset = minOffset;
             _maxOffset = maxOffset;
 
             _smoothness = 0.35f;
+
+            _levelAnimation = shape.Compositor.CreateScalarKeyFrameAnimation();
+        }
+
+        public void SetLevel(float level)
+        {
+            var lv = _minOffset + (_maxOffset - _minOffset) * level;
+
+            _levelAnimation.InsertKeyFrame(1, lv * 12.0f);
+            _shape.StartAnimation("Offset.Y", _levelAnimation);
         }
 
         public CompositionBrush FillBrush
@@ -283,108 +184,39 @@ namespace Telegram.Composition
             set => _shape.FillBrush = value;
         }
 
-        private Vector2 _size;
-        public Vector2 Size
+        // Clear() hides a shape by zeroing its scale, and unlike the blobs nothing here ever
+        // writes Scale again - the level drives Offset.Y. The header reuses one control across
+        // calls, so without this a curve cleared when a call ends never comes back.
+        public override void StartAnimating()
         {
-            get => _size;
-            set => _size = value;
+            _shape.Scale = Vector2.One;
+            base.StartAnimating();
         }
 
-        public void UpdateSpeedLevel(float newSpeedLevel)
+        protected override bool ShouldResetPath => _shapeLayer.Path == null || _lastWidth == 0;
+
+        protected override void OnPathAnimated()
         {
-            _speedLevel = MathF.Max(_speedLevel, newSpeedLevel);
+            _lastWidth = Size.X;
         }
 
-        private bool _animating;
-
-        public void StartAnimating()
+        protected override CompositionPath CreateNextPath()
         {
-            _animating = true;
-            AnimateToNewShape();
+            GenerateNextCurve();
+            return _shapeLayer.Compositor.CreateSmoothCurve(_points, Size.X, _smoothness, true);
         }
 
-        public void StopAnimating()
-        {
-            _animating = false;
-            _shapeLayer?.StopAnimation("Path");
-        }
-
-        public void Clear()
-        {
-            _shape.Scale = Vector2.Zero;
-        }
-
-        private void AnimateToNewShape()
-        {
-            if (!_animating)
-            {
-                return;
-            }
-
-            var compositor = _shapeLayer.Compositor;
-
-            if (_shapeLayer.Path == null || _lastWidth == 0)
-            {
-                var points = GenerateNextCurve(_size);
-                _shapeLayer.Path = compositor.CreateSmoothCurve(points, _size.X, _smoothness, true);
-            }
-
-            var nextPoints = GenerateNextCurve(_size);
-            var nextPath = compositor.CreateSmoothCurve(nextPoints, _size.X, _smoothness, true);
-
-            var animation = compositor.CreatePathKeyFrameAnimation();
-            animation.InsertKeyFrame(0, _shapeLayer.Path);
-            animation.InsertKeyFrame(1, nextPath);
-            animation.Duration = TimeSpan.FromSeconds(1 / (_minSpeed + (_maxSpeed - _minSpeed) * _speedLevel));
-
-            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                AnimateToNewShape();
-            };
-
-            _shapeLayer.StartAnimation("Path", animation);
-            batch.End();
-
-            _lastWidth = _size.X;
-
-            _lastSpeedLevel = _speedLevel;
-            _speedLevel = 0;
-        }
-
-        private Vector2[] GenerateNextCurve(Vector2 size)
+        private void GenerateNextCurve()
         {
             var randomness = _minRandomness + (_maxRandomness - _minRandomness) * _speedLevel;
-            var curve = Curve(_pointsCount, randomness);
-            var points = new Vector2[_pointsCount];
 
-            for (int i = 0; i < _pointsCount; i++)
-            {
-                points[i] = new Vector2(curve[i].X * size.X, 40 + curve[i].Y * 12);
-            }
-
-            return points;
-        }
-
-        private Vector2[] Curve(int pointsCount, float randomness)
-        {
+            var pointsCount = _points.Length;
             var segment = 1.0f / (float)(pointsCount - 1);
-
-            float rgen()
-            {
-
-                var accuracy = 1000;
-                var random = _random.Next(accuracy);
-                return (float)random / (float)accuracy;
-            }
-
             var rangeStart = 1.0f / (1.0f + randomness / 10.0f);
-
-            var points = new Vector2[pointsCount];
 
             for (int i = 0; i < pointsCount; i++)
             {
-                var randPointOffset = (rangeStart + rgen() * (1 - rangeStart)) / 2;
+                var randPointOffset = (rangeStart + NextRandom() * (1 - rangeStart)) / 2;
                 var segmentRandomness = randomness;
 
                 float pointX;
@@ -410,10 +242,8 @@ namespace Telegram.Composition
                     randomXDelta = segment - segment * randPointOffset;
                 }
 
-                points[i] = new Vector2(pointX + randomXDelta, pointY);
+                _points[i] = new Vector2((pointX + randomXDelta) * Size.X, 40 + pointY * 12);
             }
-
-            return points;
         }
     }
 }

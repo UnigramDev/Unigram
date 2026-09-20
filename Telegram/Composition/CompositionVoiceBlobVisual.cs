@@ -8,7 +8,6 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -16,7 +15,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Composition
 {
-    public partial class CompositionVoiceBlobVisual
+    public partial class CompositionVoiceBlobVisual : CompositionLevelVisual
     {
         private readonly SpriteVisual _visual;
 
@@ -26,21 +25,11 @@ namespace Telegram.Composition
 
         private readonly CompositionRadialGradientBrush _radial;
 
-        private readonly CompositionVSync _vsync = new(30);
-
-        private readonly float _maxLevel;
-
-        private float _presentationAudioLevel;
-        private float _audioLevel;
-
-        private bool _animating;
-
         public CompositionVoiceBlobVisual(UIElement element, float width, float height, float maxLevel)
+            : base(maxLevel)
         {
-            _maxLevel = maxLevel;
-
-            var compositor = BootStrapper.Current.Compositor;
-            var owner = ElementCompositionPreview.GetElementVisual(element);
+            var owner = ElementComposition.GetElementVisual(element);
+            var compositor = owner.Compositor;
 
             var size = new Vector2(width, height);
             var halfSize = size / 2;
@@ -102,8 +91,8 @@ namespace Telegram.Composition
             _radial.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Blue));
 
             CompositionMaskBrush maskBrush = compositor.CreateMaskBrush();
-            maskBrush.Source = _radial; // Set source to content that is to be masked 
-            maskBrush.Mask = surfaceBrush; // Set mask to content that is the opacity mask 
+            maskBrush.Source = _radial; // Set source to content that is to be masked
+            maskBrush.Mask = surfaceBrush; // Set mask to content that is the opacity mask
 
             _visual = compositor.CreateSpriteVisual();
             _visual.Size = new Vector2(width, height);
@@ -113,13 +102,18 @@ namespace Telegram.Composition
             ElementCompositionPreview.SetElementChildVisual(element, _visual);
         }
 
-        private void OnRendering(object sender, object e)
+        protected override void UpdateSpeedLevel(float level)
         {
-            _presentationAudioLevel = _presentationAudioLevel * 0.9f + _audioLevel * 0.1f;
+            _smallBlob.UpdateSpeedLevel(level);
+            _mediumBlob.UpdateSpeedLevel(level);
+            _largeBlob.UpdateSpeedLevel(level);
+        }
 
-            _smallBlob.Level = _presentationAudioLevel;
-            _mediumBlob.Level = _presentationAudioLevel;
-            _largeBlob.Level = _presentationAudioLevel;
+        protected override void OnLevelChanged(float level)
+        {
+            _smallBlob.SetLevel(level);
+            _mediumBlob.SetLevel(level);
+            _largeBlob.SetLevel(level);
         }
 
         public void SetColorStops(params uint[] colorStops)
@@ -138,80 +132,9 @@ namespace Telegram.Composition
             set => _visual.Scale = value;
         }
 
-        public void UpdateLevel(float level)
+        protected override void UpdateShapesState(bool animating)
         {
-            UpdateLevel(level, immediately: false);
-        }
-
-        public void UpdateLevel(float level, bool immediately = false)
-        {
-            var normalizedLevel = MathF.Min(1, MathF.Max(level / _maxLevel, 0));
-
-            _smallBlob.UpdateSpeedLevel(normalizedLevel);
-            _mediumBlob.UpdateSpeedLevel(normalizedLevel);
-            _largeBlob.UpdateSpeedLevel(normalizedLevel);
-
-            _audioLevel = normalizedLevel;
-
-            if (immediately)
-            {
-                _presentationAudioLevel = normalizedLevel;
-            }
-        }
-
-        public void StartAnimating()
-        {
-            StartAnimating(false);
-        }
-
-        public void StartAnimating(bool immediately = false)
-        {
-            if (_animating)
-            {
-                return;
-            }
-
-            _animating = true;
-
-            //if (!immediately)
-            //{
-            //    _mediumBlob.layer.animateScale(from: 0.75, to: 1, duration: 0.35, removeOnCompletion: false);
-            //    _largeBlob.layer.animateScale(from: 0.75, to: 1, duration: 0.35, removeOnCompletion: false);
-            //}
-            //else
-            //{
-            //    _mediumBlob.layer.removeAllAnimations();
-            //    _largeBlob.layer.removeAllAnimations();
-            //}
-
-            UpdateBlobsState();
-            _vsync.Rendering += OnRendering;
-        }
-
-        public void StopAnimating()
-        {
-            StopAnimating(duration: 0.15);
-        }
-
-        public void StopAnimating(double duration)
-        {
-            if (!_animating)
-            {
-                return;
-            }
-
-            _animating = false;
-
-            //_mediumBlob.layer.animateScale(from: 1.0, to: 0.75, duration: duration, removeOnCompletion: false);
-            //_largeBlob.layer.animateScale(from: 1.0, to: 0.75, duration: duration, removeOnCompletion: false);
-
-            UpdateBlobsState();
-            _vsync.Rendering -= OnRendering;
-        }
-
-        private void UpdateBlobsState()
-        {
-            if (_animating)
+            if (animating)
             {
                 //_smallBlob.StartAnimating();
                 _mediumBlob.StartAnimating();
@@ -225,7 +148,7 @@ namespace Telegram.Composition
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             _mediumBlob.Clear();
             _largeBlob.Clear();

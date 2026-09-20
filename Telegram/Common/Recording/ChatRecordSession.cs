@@ -243,8 +243,8 @@ namespace Telegram.Common.Recording
         {
             // Raised on the capture thread, ~40 times a second. Marshalling would allocate a
             // closure for each one, and there is nothing to marshal for: the only listener hands
-            // the level to CompositionBlobVisual, which stores it and lets its own vsync tick pick
-            // it up on the UI thread.
+            // the level to CompositionBlobVisual, which stores it and does its own coalesced hop
+            // to the UI thread.
             QuantumProcessed?.Invoke(this, amplitude);
         }
 
