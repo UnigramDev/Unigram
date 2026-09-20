@@ -121,6 +121,8 @@ namespace Telegram.Controls.Messages.Content
                 minithumbnail = video.Minithumbnail;
             }
 
+            Button.Subject = video.GetDuration() + ", " + FileSizeConverter.Convert(Math.Max(video.VideoValue.Size, video.VideoValue.ExpectedSize));
+
             UpdateMessageContentOpened(message);
             UpdateThumbnail(message, thumbnail, minithumbnail, true, isSecret, hasSpoiler);
 
