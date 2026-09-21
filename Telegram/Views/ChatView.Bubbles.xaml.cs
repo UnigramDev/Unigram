@@ -1470,11 +1470,6 @@ namespace Telegram.Views
 
                     if (checkbox.Content is MessageBubble bubble)
                     {
-                        if (bubble.NeedShadow && ApiInfo.CanCreateThemeShadow && AppSettings.Diagnostics.BubbleElevationDebug)
-                        {
-                            bubble.UpdateShadow(_shadow);
-                        }
-
                         bubble.UpdateContentRecyclePool(AppSettings.Diagnostics.BubbleContentRecyclingDebug ? _contentRecyclePool : null);
 
                         bubble.UpdateQuery(ViewModel.Search?.Query, false);

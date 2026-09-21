@@ -170,10 +170,12 @@
                                                      IsCachingEnabled="True" />
                         </HyperlinkButton>
 
-                        <Rectangle x:Name="ShadowCaster"
-                                   RadiusX="15"
-                                   RadiusY="15"
-                                   Grid.Column="1" />
+                        <Border x:Name="ShadowCaster"
+                                Visibility="Collapsed"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,2"
+                                Margin="0,0,0,-2"
+                                Grid.Column="1" />
 
                         <Grid x:Name="ContentPanel"
                               Background="{ThemeResource MessageBackgroundBrush}"

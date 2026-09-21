@@ -150,32 +150,6 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private ThemeShadow _shadow;
-
-        public bool NeedShadow => (ContentPanel?.Shadow ?? _shadow) == null;
-
-        public void UpdateShadow(ThemeShadow shadow)
-        {
-            if (ShadowCaster != null)
-            {
-                ShadowCaster.Shadow = shadow;
-
-                var radius = _topLeft == 0 && _topRight == 0 && _bottomRight == 0 && _bottomLeft == 0;
-                if (radius)
-                {
-                    ShadowCaster.Translation = Vector3.Zero;
-                }
-                else
-                {
-                    ShadowCaster.Translation = new Vector3(0, 0, Constants.BubbleElevation);
-                }
-            }
-            else
-            {
-                _shadow = shadow;
-            }
-        }
-
         private MessageContentRecyclePool _contentRecyclePool;
 
         public void UpdateContentRecyclePool(MessageContentRecyclePool recyclePool)
@@ -187,7 +161,7 @@ namespace Telegram.Controls.Messages
 
         private ColumnDefinition PhotoColumn;
 
-        private Rectangle ShadowCaster;
+        private Border ShadowCaster;
         private Grid ContentPanel;
         private Grid Header;
         private MessageBubblePanel Panel;
@@ -235,7 +209,7 @@ namespace Telegram.Controls.Messages
         protected override void OnApplyTemplate()
         {
             PhotoColumn = GetTemplateChild(nameof(PhotoColumn)) as ColumnDefinition;
-            ShadowCaster = GetTemplateChild(nameof(ShadowCaster)) as Rectangle;
+            ShadowCaster = GetTemplateChild(nameof(ShadowCaster)) as Border;
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
@@ -257,12 +231,6 @@ namespace Telegram.Controls.Messages
 
             // Forces ParentForTransform with LayerVisual
             ElementComposition.GetElementVisual(Media);
-
-            if (_shadow != null)
-            {
-                ShadowCaster.Shadow = _shadow;
-                _shadow = null;
-            }
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
@@ -713,11 +681,11 @@ namespace Telegram.Controls.Messages
             var radius = topLeft == 0 && topRight == 0 && bottomRight == 0 && bottomLeft == 0;
             if (radius)
             {
-                ShadowCaster.Translation = Vector3.Zero;
+                ShadowCaster.Visibility = Visibility.Collapsed;
             }
             else
             {
-                ShadowCaster.Translation = new Vector3(0, 0, Constants.BubbleElevation);
+                ShadowCaster.Visibility = Visibility.Visible;
             }
 
             radius |= bottomLeft != 0 && bottomRight != 0;
@@ -744,6 +712,7 @@ namespace Telegram.Controls.Messages
 
                 _corners = true;
                 ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+                ShadowCaster.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
             }
             else
             {
@@ -753,6 +722,7 @@ namespace Telegram.Controls.Messages
                 {
                     _corners = false;
                     ContentPanel.CornerRadius = new CornerRadius();
+                    ShadowCaster.CornerRadius = new CornerRadius();
                 }
             }
         }
