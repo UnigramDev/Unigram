@@ -17,6 +17,7 @@ using Windows.System.Display;
 using Windows.System.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -228,6 +229,17 @@ namespace Telegram.Controls.Chats
                 var permissions = await MediaDevicePermissions.CheckAccessAsync(XamlRoot, requested, ElementTheme.Default, MediaDevicePurpose.Record);
                 if (permissions == false)
                 {
+                    // A lock asked for by Ctrl+R has to go with the recording that never began,
+                    // or it seizes the next one.
+                    _session.CancelLock();
+                    return;
+                }
+
+                // Consent is a prompt, and answering it means letting the button go: the press
+                // that asked for permission is over by the time it is granted, and it bought the
+                // permission rather than a recording. Same for letting go while it was up.
+                if (!_pressed && !_session.IsLockRequested)
+                {
                     return;
                 }
             }
@@ -403,6 +415,16 @@ namespace Telegram.Controls.Chats
         /// </summary>
         public void Cancel()
         {
+            // Ctrl+D is how a recording is thrown away without a pointer, and nothing else says
+            // that it was: the bar simply stops being there. The lock is what Ctrl+R asked for
+            // and hasn't got yet, so a cancel that early has something to report too.
+            if (_session.IsRecording || _session.IsLockRequested)
+            {
+                var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
+                peer?.RaiseNotificationEvent(AutomationNotificationKind.Other, AutomationNotificationProcessing.MostRecent,
+                    Strings.AccDescrRecordingCanceled, "RecordingCanceled");
+            }
+
             _session.Cancel();
         }
 

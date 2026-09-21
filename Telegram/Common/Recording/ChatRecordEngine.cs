@@ -72,9 +72,22 @@ namespace Telegram.Common.Recording
         // recording goes through MediaCapture's own encoder and is transcoded when sent.
         private VoiceSink _sink;
 
+        /// <summary>
+        /// How to read the capture buffer. The subtype and the bit depth have to be taken
+        /// together: 32-bit integer PCM read as float decodes to denormals rather than to
+        /// anything that sounds wrong, so it records as silence instead of failing.
+        /// </summary>
+        private enum SampleFormat
+        {
+            Unsupported,
+            Int16,
+            Int32,
+            Float32
+        }
+
         private float[] _samples;
         private uint _channels;
-        private uint _bitsPerSample;
+        private SampleFormat _format;
 
         private bool _paused;
 
@@ -110,7 +123,7 @@ namespace Telegram.Common.Recording
                     _chat = chat;
                     _paused = false;
                     _channels = 0;
-                    _bitsPerSample = 0;
+                    _format = SampleFormat.Unsupported;
                     _waveform.Reset();
 
                     _recorder = new OpusRecorder(mode == ChatRecordMode.Video);
@@ -246,13 +259,15 @@ namespace Telegram.Common.Recording
 
                 // The encoder is 48kHz: at any other rate the samples would play back at the
                 // wrong speed, so ask for one and give up on streaming if there isn't one.
+                // A layout that can't be read is asked away for the same reason, since a
+                // device sitting on one would otherwise never stream.
                 //
                 // Only ever for a voice message. A video message records through MediaCapture,
                 // and renegotiating the format of the source it is about to record from would
                 // change what lands in the mp4 for the sake of a blob.
-                if (mode == ChatRecordMode.Voice && format.AudioEncodingProperties?.SampleRate != VoiceSink.SampleRate)
+                if (mode == ChatRecordMode.Voice && (format.AudioEncodingProperties?.SampleRate != VoiceSink.SampleRate || GetSampleFormat(format) == SampleFormat.Unsupported))
                 {
-                    var match = source.SupportedFormats.FirstOrDefault(x => x.AudioEncodingProperties?.SampleRate == VoiceSink.SampleRate && IsSupportedSubtype(x.Subtype));
+                    var match = source.SupportedFormats.FirstOrDefault(x => x.AudioEncodingProperties?.SampleRate == VoiceSink.SampleRate && GetSampleFormat(x) != SampleFormat.Unsupported);
                     if (match != null)
                     {
                         await source.SetFormatAsync(match);
@@ -276,12 +291,15 @@ namespace Telegram.Common.Recording
                 }
 
                 _channels = properties.ChannelCount;
-                _bitsPerSample = properties.BitsPerSample;
+                _format = GetSampleFormat(format);
+
+                // Named in the log because a device the encoder can't read is indistinguishable
+                // from a quiet microphone from the outside.
+                Logger.Info($"Capturing {format.Subtype} {properties.BitsPerSample}-bit {properties.SampleRate}Hz x{properties.ChannelCount}, read as {_format}");
 
                 return mode == ChatRecordMode.Voice
                     && properties.SampleRate == VoiceSink.SampleRate
-                    && IsSupportedSubtype(format.Subtype)
-                    && (_bitsPerSample == 32 || _bitsPerSample == 16)
+                    && _format != SampleFormat.Unsupported
                     && _channels > 0;
             }
             catch (Exception ex)
@@ -312,11 +330,27 @@ namespace Telegram.Common.Recording
             }
         }
 
-        private static bool IsSupportedSubtype(string subtype)
+        private static SampleFormat GetSampleFormat(MediaFrameFormat format)
         {
-            // 32-bit float and 16-bit PCM are the two the sink knows how to read.
-            return string.Equals(subtype, MediaEncodingSubtypes.Float, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(subtype, MediaEncodingSubtypes.Pcm, StringComparison.OrdinalIgnoreCase);
+            var bitsPerSample = format.AudioEncodingProperties?.BitsPerSample ?? 0;
+
+            // Float is 32-bit and nothing else, and PCM is an integer at whatever width the
+            // device was configured for, so neither subtype names a layout on its own.
+            if (string.Equals(format.Subtype, MediaEncodingSubtypes.Float, StringComparison.OrdinalIgnoreCase))
+            {
+                return bitsPerSample == 32 ? SampleFormat.Float32 : SampleFormat.Unsupported;
+            }
+            else if (string.Equals(format.Subtype, MediaEncodingSubtypes.Pcm, StringComparison.OrdinalIgnoreCase))
+            {
+                return bitsPerSample switch
+                {
+                    16 => SampleFormat.Int16,
+                    32 => SampleFormat.Int32,
+                    _ => SampleFormat.Unsupported
+                };
+            }
+
+            return SampleFormat.Unsupported;
         }
 
         private unsafe void OnAudioFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
@@ -329,7 +363,7 @@ namespace Telegram.Common.Recording
 
             // The reader can be running with a format we never managed to read, in which case
             // there is nothing to say about how to interpret its bytes.
-            if (_channels == 0 || _bitsPerSample == 0)
+            if (_channels == 0 || _format == SampleFormat.Unsupported)
             {
                 return;
             }
@@ -361,10 +395,10 @@ namespace Telegram.Common.Recording
         private unsafe ReadOnlySpan<float> ReadSamples(byte* buffer, uint length)
         {
             var channels = (int)_channels;
-            var count = (int)(length / (_bitsPerSample / 8 * _channels));
+            var count = (int)(length / ((_format == SampleFormat.Int16 ? 2u : 4u) * _channels));
 
             // Mono float is the common case and needs no conversion at all.
-            if (_bitsPerSample == 32 && channels == 1)
+            if (_format == SampleFormat.Float32 && channels == 1)
             {
                 return new ReadOnlySpan<float>(buffer, count);
             }
@@ -376,7 +410,7 @@ namespace Telegram.Common.Recording
 
             var target = _samples.AsSpan(0, count);
 
-            if (_bitsPerSample == 32)
+            if (_format == SampleFormat.Float32)
             {
                 var source = (float*)buffer;
 
@@ -386,6 +420,21 @@ namespace Telegram.Common.Recording
                     for (int j = 0; j < channels; j++)
                     {
                         sum += source[i * channels + j];
+                    }
+
+                    target[i] = sum / channels;
+                }
+            }
+            else if (_format == SampleFormat.Int32)
+            {
+                var source = (int*)buffer;
+
+                for (int i = 0; i < count; i++)
+                {
+                    var sum = 0f;
+                    for (int j = 0; j < channels; j++)
+                    {
+                        sum += source[i * channels + j] / 2147483648f;
                     }
 
                     target[i] = sum / channels;

@@ -4633,6 +4633,7 @@
     <string name="AccDescrBotKeyboard">Bot keyboard</string>
     <string name="AccDescrVoiceMessage">Record voice message</string>
     <string name="AccDescrVideoMessage">Record video message</string>
+    <string name="AccDescrRecordingCanceled">Recording canceled</string>
     <string name="AccDescrOpenChat">Open chat</string>
     <string name="AccDescrProfilePicture">Profile photo</string>
 

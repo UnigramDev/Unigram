@@ -132,11 +132,26 @@ namespace Telegram.Common.Recording
         }
 
         /// <summary>
+        /// A lock was asked for by a path that holds no pointer down, and the recording it was
+        /// asked for hasn't begun yet.
+        /// </summary>
+        public bool IsLockRequested => _lockRequested;
+
+        /// <summary>
         /// Locks as soon as the recording begins, for the paths that don't hold a pointer down.
         /// </summary>
         public void RequestLock()
         {
             _lockRequested = true;
+        }
+
+        /// <summary>
+        /// Takes back a requested lock, for when the recording it was asked for never begins.
+        /// Nothing else clears it: the state machine only resets on the way out of a recording.
+        /// </summary>
+        public void CancelLock()
+        {
+            _lockRequested = false;
         }
 
         public void Lock()
