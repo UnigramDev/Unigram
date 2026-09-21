@@ -9,40 +9,66 @@
   </thead>
   <tbody>
     <tr>
-      <td rowspan="6">Move among chats</td>
-      <td rowspan="3">Next chat</td>
-      <td>Ctrl + Tab</td>
-    </tr>
-    <tr>
-      <td>Alt + Arrow Up</td>
-    <tr>
-      <td>Ctrl + Page Up</td>
-    <tr>
-      <td rowspan="3">Previous chat</td>
-      <td>Ctrl + Shift + Tab</td>
-    </tr>
-    <tr>
+      <td rowspan="9">Move among chats</td>
+      <td rowspan="2">Next chat</td>
       <td>Alt + Arrow Down</td>
+    </tr>
     <tr>
       <td>Ctrl + Page Down</td>
     </tr>
     <tr>
-      <td rowspan="2">Search</td>
-      <td>Chat search</td>
+      <td rowspan="2">Previous chat</td>
+      <td>Alt + Arrow Up</td>
+    </tr>
+    <tr>
+      <td>Ctrl + Page Up</td>
+    </tr>
+    <tr>
+      <td>Next recently used chat</td>
+      <td>Ctrl + Tab</td>
+    </tr>
+    <tr>
+      <td>Previous recently used chat</td>
+      <td>Ctrl + Shift + Tab</td>
+    </tr>
+    <tr>
+      <td>First chat</td>
+      <td>Ctrl + Alt + Home</td>
+    </tr>
+    <tr>
+      <td>Last chat</td>
+      <td>Ctrl + Alt + End</td>
+    </tr>
+    <tr>
+      <td>Pinned chat 1 to 5 <br>(when no folder exists)</td>
+      <td>Ctrl + 1 ... Ctrl + 5</td>
+    </tr>
+    <tr>
+      <td rowspan="4">Search</td>
+      <td rowspan="2">Chat search</td>
       <td>Ctrl + E</td>
     </tr>
     <tr>
-      <td>Messages search per chat</td>
+      <td>Ctrl + Shift + F</td>
+    </tr>
+    <tr>
+      <td rowspan="2">Messages search per chat</td>
       <td>Ctrl + F</td>
     </tr>
     <tr>
-      <td rowspan="15">Selected Text <br>in typing area</td>
+      <td>Search key</td>
+    </tr>
+    <tr>
+      <td rowspan="17">Selected Text <br>in typing area</td>
       <td>Undo</td>
       <td>Ctrl + Z</td>
     </tr>
     <tr>
-      <td>Redo</td>
+      <td rowspan="2">Redo</td>
       <td>Ctrl + Y</td>
+    </tr>
+    <tr>
+      <td>Ctrl + Shift + Z</td>
     </tr>
     <tr>
       <td>Cut</td>
@@ -97,7 +123,36 @@
       <td>Ctrl + Shift + N</td>
     </tr>
     <tr>
-      <td rowspan="9">Folders</td>
+      <td>Replace four hexadecimal digits <br>with the character they stand for</td>
+      <td>Alt + X</td>
+    </tr>
+    <tr>
+      <td rowspan="4">Attachments</td>
+      <td>Emoji picker</td>
+      <td>Ctrl + Shift + E</td>
+    </tr>
+    <tr>
+      <td>GIF picker</td>
+      <td>Ctrl + Shift + G</td>
+    </tr>
+    <tr>
+      <td>Sticker picker</td>
+      <td>Ctrl + Shift + S</td>
+    </tr>
+    <tr>
+      <td>Send a file</td>
+      <td>Ctrl + O</td>
+    </tr>
+    <tr>
+      <td rowspan="11">Folders</td>
+      <td>Next folder</td>
+      <td>Ctrl + Shift + Arrow Down</td>
+    </tr>
+    <tr>
+      <td>Previous folder</td>
+      <td>Ctrl + Shift + Arrow Up</td>
+    </tr>
+    <tr>
       <td>First folder (All chats)</td>
       <td>Ctrl + 1</td>
     </tr>
@@ -110,7 +165,7 @@
       <td>Ctrl + 3</td>
     </tr>
     <tr>
-      <td>Forth folder</td>
+      <td>Fourth folder</td>
       <td>Ctrl + 4</td>
     </tr>
     <tr>
@@ -134,9 +189,13 @@
       <td>Ctrl + 9</td>
     </tr>
     <tr>
-      <td rowspan="9">Other shortcuts</td>
+      <td rowspan="14">Other shortcuts</td>
       <td>Saved messages</td>
       <td>Ctrl + 0</td>
+    </tr>
+    <tr>
+      <td>Downloads</td>
+      <td>Ctrl + J</td>
     </tr>
     <tr>
       <td rowspan="2">Go back</td>
@@ -158,12 +217,27 @@
       <td>Ctrl + Arrow Up</td>
     </tr>
     <tr>
-      <td>Close current window</td>
+      <td>Reply to next message</td>
+      <td>Ctrl + Arrow Down</td>
+    </tr>
+    <tr>
+      <td>Stop media playback</td>
+      <td>Ctrl + Shift + W</td>
+    </tr>
+    <tr>
+      <td rowspan="2">Close current window</td>
       <td>Ctrl + W</td>
+    </tr>
+    <tr>
+      <td>Ctrl + F4</td>
     </tr>
     <tr>
       <td>Close Unigram <br>(Main window only)</td>
       <td>Ctrl + Q</td>
+    </tr>
+    <tr>
+      <td>Lock Unigram</td>
+      <td>Ctrl + L</td>
     </tr>
     <tr>
       <td>Change status</td>
