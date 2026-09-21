@@ -610,53 +610,6 @@ namespace Telegram.ViewModels
             return true;
         }
 
-        private Task<ContentDialogResult> ShowPaidMessageConfirmationAsync(IList<Chat> chats, int messageCount)
-        {
-            int chatCount = 0;
-            long starCount = 0;
-
-            foreach (var chat in chats)
-            {
-                var paidMessageStarCount = 0L;
-
-                if (ClientService.TryGetUserFull(chat, out UserFullInfo userFullInfo))
-                {
-                    paidMessageStarCount = userFullInfo.OutgoingPaidMessageStarCount;
-                }
-                else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
-                {
-                    paidMessageStarCount = supergroup.PaidMessageStarCount;
-                }
-
-                if (paidMessageStarCount > 0)
-                {
-                    chatCount++;
-                    starCount += paidMessageStarCount;
-                }
-            }
-
-            if (starCount != 0)
-            {
-                if (!string.IsNullOrEmpty(SendMessage?.Text) || !string.IsNullOrEmpty(Caption?.Text))
-                {
-                    messageCount++;
-                }
-
-                var message1 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessageMulti1, chatCount);
-                var message3 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessageMulti2Messages, chatCount * messageCount);
-                var message2 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessageMulti2, starCount * messageCount, message3);
-
-                var title = Strings.MessageLockedStarsConfirmTitle;
-                var message = string.Format("{0} {1}", message1, message2);
-                var primaryButtonText = Icons.Premium16 + Icons.Spacing + (starCount * messageCount).ToString("N0"); //Locale.Declension(Strings.R.MessageLockedStarsConfirmMessagePay, messageCount),
-                var secondaryButtonText = Strings.Cancel;
-
-                return ShowPopupAsync(message, title, primaryButtonText, secondaryButtonText);
-            }
-
-            return Task.FromResult(ContentDialogResult.Primary);
-        }
-
         public void SendWithChat(Chat chat, Action<MessageSendOptions, MessageTopic> action)
         {
             _ = ClientService.PaidMessageStarCount(chat);

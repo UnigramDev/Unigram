@@ -144,11 +144,7 @@ namespace Telegram.ViewModels
             }
             else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                if (supergroup.IsAdministeredDirectMessagesGroup)
-                {
-                    paidMessageStarCount = 0;
-                }
-                else
+                if (supergroup.Status is not ChatMemberStatusAdministrator and not ChatMemberStatusCreator && !supergroup.IsAdministeredDirectMessagesGroup)
                 {
                     paidMessageStarCount = supergroup.PaidMessageStarCount;
                 }
