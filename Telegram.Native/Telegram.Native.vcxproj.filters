@@ -1536,6 +1536,9 @@
     <ClInclude Include="LottieStringUtils.h" />
     <ClInclude Include="TlottieFrameProducer.h" />
     <ClInclude Include="VideoFrameProducer.h" />
+    <ClInclude Include="..\Libraries\libprisma\libprisma\UnicodeEscapes.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Telegram.Native.def" />
@@ -1640,5 +1643,7 @@
     <Midl Include="FreeformGradientSurface.idl" />
     <Midl Include="GarbageCollectionMonitor.idl" />
     <Midl Include="RichMathSurface.idl" />
+    <Midl Include="TextHost.idl" />
+    <Midl Include="DirectTextLayout.idl" />
   </ItemGroup>
 </Project>

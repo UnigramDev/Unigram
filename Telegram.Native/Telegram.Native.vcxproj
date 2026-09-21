@@ -190,6 +190,7 @@
     <ClInclude Include="..\Libraries\libprisma\libprisma\LanguageTree.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h" />
+    <ClInclude Include="..\Libraries\libprisma\libprisma\UnicodeEscapes.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_cpu.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_csp.h" />
