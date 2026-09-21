@@ -401,6 +401,17 @@ namespace Telegram.Controls.Messages.Content
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
         }
 
+        public bool TryInvoke()
+        {
+            if (_templateApplied && _message != null)
+            {
+                Button_Click(null, null);
+                return true;
+            }
+
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content switch

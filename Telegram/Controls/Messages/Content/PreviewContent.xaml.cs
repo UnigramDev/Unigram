@@ -107,6 +107,11 @@ namespace Telegram.Controls.Messages.Content
             _thumbnailController?.Recycle();
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPreview)

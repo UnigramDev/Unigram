@@ -21,6 +21,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -256,6 +257,30 @@ namespace Telegram.Controls.Messages
             {
                 UpdateMessage(_message, _owner, _message.Delegate.IsSelectionEnabled);
             }
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            // Space is the toggle key, and OnToggle above does nothing while selection is off, so
+            // that is when the message's own action can have it. Keyboard only: the same through
+            // OnToggle would fire on a click anywhere in the bubble.
+            //
+            // Nothing to check about focus: a button inside the message handles Space itself, and
+            // a handled event never reaches this.
+            if (e.Key == VirtualKey.Space && !_selectionEnabled)
+            {
+                var content = Content is MessageBubble bubble
+                    ? bubble.MediaTemplateRoot as IContent
+                    : Content as IContent;
+
+                if (content != null && content.TryInvoke())
+                {
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            base.OnKeyDown(e);
         }
 
         protected override void OnToggle()

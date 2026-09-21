@@ -102,6 +102,11 @@ namespace Telegram.Controls.Messages.Content
             _message = null;
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessagePaidAlbum;
@@ -276,6 +281,11 @@ namespace Telegram.Controls.Messages.Content
             }
 
             _positions = default;
+        }
+
+        public bool TryInvoke()
+        {
+            return false;
         }
 
         public bool IsValid(MessageContent content, bool primary)

@@ -177,6 +177,11 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public bool TryInvoke()
+        {
+            return false;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageSticker or MessageAnimatedEmoji)
