@@ -11,6 +11,7 @@ using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
@@ -94,13 +95,18 @@ namespace Telegram.Controls.Messages
                 _reactions.Measure(availableSize);
             }
 
+            // The width the room the footer needs beside the last line is added to. The text for a
+            // plain message; for a rich one the text block is empty and the last line belongs to a
+            // block inside the media, so it is the article that has to widen.
+            var footerTarget = _text.DesiredSize.Width;
+
             if (_reactions != null && _reactions.HasReactions)
             {
                 _margin = new Size(0, 0);
             }
             else if (_textRow == _footerRow && _text.Children.Count > 0)
             {
-                _margin = Margins(availableSize.Width, _text.DesiredSize.Width, _text.Children[^1], _footer);
+                _margin = Margins(availableSize.Width, 0, _text.DesiredSize.Width, _text.Children[^1], _footer);
             }
             else if (_mediaRow == _footerRow)
             {
@@ -110,10 +116,13 @@ namespace Telegram.Controls.Messages
             {
                 if (rich.LastBlock is FormattedTextBlock lastBlock)
                 {
-                    _margin = Margins(availableSize.Width, lastBlock.DesiredSize.Width, lastBlock, _footer);
+                    footerTarget = _media.DesiredSize.Width;
+                    _margin = Margins(availableSize.Width, LeftInset(lastBlock, _media), footerTarget, lastBlock, _footer);
                 }
                 else
                 {
+                    // The article ends on something the footer cannot share a line with - a photo,
+                    // a table, the "Show more" button - so it takes a line of its own.
                     _margin = new Size(0, _footer.DesiredSize.Height);
                 }
             }
@@ -125,7 +134,7 @@ namespace Telegram.Controls.Messages
             var margin = _margin;
             var width = _media.DesiredSize.Width == availableSize.Width
                 ? _media.DesiredSize.Width
-                : Math.Max(_media.DesiredSize.Width, _text.DesiredSize.Width + margin.Width);
+                : Math.Max(_media.DesiredSize.Width, footerTarget + margin.Width);
 
             var reactionsWidth = _reactions?.DesiredSize.Width ?? 0;
             var reactionsHeight = _reactions?.DesiredSize.Height ?? 0;
@@ -191,9 +200,75 @@ namespace Telegram.Controls.Messages
             return finalSize;
         }
 
-        // The last block of the text, whichever engine rendered it: both can say where their
-        // last line ends, and that is all this needs to know.
-        private Size Margins(double availableWidth, double desiredWidth, UIElement text, MessageFooter footer)
+        /// <summary>
+        /// How far the text of <paramref name="element"/> starts from the left edge of the panel.
+        /// </summary>
+        /// <remarks>
+        /// A paragraph of an article is inset by its own margin, and
+        /// <see cref="FormattedTextBlock.ContentEnd"/> answers in the block's own space, so the
+        /// two only line up once what is between them is added. Walked rather than assumed: the
+        /// values belong to the article's renderer and the bubble's template, not here. The depth
+        /// is fixed - <see cref="InstantContent.LastBlock"/> only ever returns a block the article
+        /// holds directly.
+        /// </remarks>
+        private static double LeftInset(FrameworkElement element, FrameworkElement root)
+        {
+            var offset = 0d;
+
+            while (element != null)
+            {
+                offset += element.Margin.Left;
+
+                // Padding is not on FrameworkElement, and the three that carry it here share no
+                // base that declares it.
+                if (element is Control control)
+                {
+                    offset += control.Padding.Left + control.BorderThickness.Left;
+                }
+                else if (element is Border border)
+                {
+                    offset += border.Padding.Left + border.BorderThickness.Left;
+                }
+                else if (element is StackPanel stack)
+                {
+                    offset += stack.Padding.Left + stack.BorderThickness.Left;
+                }
+                else if (element is Grid grid)
+                {
+                    offset += grid.Padding.Left + grid.BorderThickness.Left;
+                }
+
+                if (element == root)
+                {
+                    break;
+                }
+
+                // Not Parent: the root of a control template has no logical parent, and every
+                // article is rendered inside one.
+                element = VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+
+            return offset;
+        }
+
+        /// <summary>
+        /// The room the footer needs beside the last line of <paramref name="text"/>: a width to
+        /// add if it can share that line, a height if it has to take one of its own.
+        /// </summary>
+        /// <param name="left">
+        /// Where the text of <paramref name="text"/> starts within the panel. The block answers in
+        /// its own space and the footer is placed in the panel's, so the two only line up here.
+        /// </param>
+        /// <param name="width">
+        /// The width the footer is placed against, and the one the returned width is added to: the
+        /// whole text for a plain message, the whole article for a rich one, where the last line
+        /// belongs to a block nested inside the media.
+        /// </param>
+        /// <remarks>
+        /// The last block of the text, whichever engine rendered it: both can say where their last
+        /// line ends, and that is all this needs to know.
+        /// </remarks>
+        private Size Margins(double availableWidth, double left, double width, UIElement text, MessageFooter footer)
         {
             var marginLeft = 0d;
             var marginBottom = 0d;
@@ -220,10 +295,9 @@ namespace Telegram.Controls.Messages
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
 
-                var width = desiredWidth;
-                var bounds = text is DirectTextBlock direct
+                var bounds = left + (text is DirectTextBlock direct
                     ? direct.ContentEnd()
-                    : ((FormattedTextBlock)text).ContentEnd();
+                    : ((FormattedTextBlock)text).ContentEnd());
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)

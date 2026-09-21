@@ -568,12 +568,17 @@ namespace Telegram.Controls
             var fontSize = (AutoFontSize ? AppSettings.Appearance.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
             var padding = Padding;
 
+            // DesiredSize carries the margin as well, and the answer is in the block's own text
+            // space - the layout below returns it in that space. Zero for a message's own text,
+            // but an article lays its paragraphs out with one.
+            var margin = Margin;
+
             // Text that fits on one line ends where the line ends, so the layout below is only
             // needed once it has wrapped. Two lines cannot be this short whatever the runs do,
             // so the test can only ever fall through to the layout.
-            if (_first == _last && DesiredSize.Height - padding.Top - padding.Bottom < fontSize * 2)
+            if (_first == _last && DesiredSize.Height - margin.Top - margin.Bottom - padding.Top - padding.Bottom < fontSize * 2)
             {
-                return (float)Math.Max(0, DesiredSize.Width - padding.Left - padding.Right);
+                return (float)Math.Max(0, DesiredSize.Width - margin.Left - margin.Right - padding.Left - padding.Right);
             }
 
             var paragraph = _text.Paragraphs[_last];
@@ -588,7 +593,7 @@ namespace Telegram.Controls
                 // count, and the X belongs to a line that isn't the one on screen.
                 // TODO: only the last paragraph is laid out, so for a block holding more than
                 // one this compares against a height that covers all of them, and never fires.
-                if (bounds.Y < DesiredSize.Height)
+                if (bounds.Y < DesiredSize.Height - margin.Top - margin.Bottom)
                 {
                     return bounds.X;
                 }

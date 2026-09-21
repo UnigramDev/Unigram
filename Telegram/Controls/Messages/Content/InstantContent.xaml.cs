@@ -68,26 +68,31 @@ namespace Telegram.Controls.Messages.Content
 
         #endregion
 
+        /// <summary>
+        /// The block the message footer may share a line with: the article's last block, and only
+        /// when the block is a paragraph in its own right.
+        /// </summary>
+        /// <remarks>
+        /// Not the last text block anywhere in the article. One nested in a quote, a list, a
+        /// details or a table cell is laid out inside that panel, with its own width and its own
+        /// insets, and the panel goes on below it - so the end of its last line says nothing about
+        /// where the article ends. Only the blocks <c>PageBlockRenderer.ProcessText</c> renders
+        /// reach the root as a bare text block, which is exactly the set that can be shared.
+        /// Centered ones are left out: the footer would land in the gap beside the text rather
+        /// than after it.
+        /// </remarks>
         public FormattedTextBlock LastBlock
         {
             get
             {
-                return FindBlock(LayoutRoot);
-
-                static FormattedTextBlock FindBlock(UIElement element)
+                if (LayoutRoot != null && LayoutRoot.Children.Count > 0
+                    && LayoutRoot.Children[^1] is FormattedTextBlock block
+                    && block.TextAlignment == TextAlignment.DetectFromContent)
                 {
-                    if (element is Panel panel && panel.Children.Count > 0)
-                    {
-                        // TODO: a better logic is needed (i.e. only use for some specific panel type)
-                        return FindBlock(panel.Children[^1]);
-                    }
-                    else if (element is FormattedTextBlock block && block.TextAlignment == TextAlignment.DetectFromContent)
-                    {
-                        return block;
-                    }
-
-                    return null;
+                    return block;
                 }
+
+                return null;
             }
         }
 
