@@ -1795,10 +1795,10 @@
     <Compile Include="Views\Wallet\Popups\WalletConnectPopup.xaml.cs">
       <DependentUpon>WalletConnectPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallet\Popups\WalletPopup.cs" />
     <Compile Include="Views\Wallet\Popups\WalletCurrencyPopup.xaml.cs">
       <DependentUpon>WalletCurrencyPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletPopup.cs" />
     <Compile Include="Views\Wallet\Popups\WalletSendPopup.xaml.cs">
       <DependentUpon>WalletSendPopup.xaml</DependentUpon>
     </Compile>
@@ -2647,6 +2647,7 @@
     <Content Include="Assets\Animations\WalletImport.tgs" />
     <Content Include="Assets\Animations\WalletTest.tgs" />
     <Content Include="Assets\Animations\WalletAbout.tgs" />
+    <Content Include="Assets\Animations\Gram.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
