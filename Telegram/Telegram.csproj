@@ -868,6 +868,10 @@
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedIconButton.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
+    <Compile Include="Controls\AmountTextBlock.cs" />
+    <Compile Include="Controls\WalletCard.xaml.cs">
+      <DependentUpon>WalletCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
     <Compile Include="Controls\AnimatedIconToggleButton.cs" />
     <Compile Include="Controls\AnimatedTextBlock.cs" />
@@ -1788,6 +1792,10 @@
     <Compile Include="Views\Wallet\Popups\WalletPhrasePopup.xaml.cs">
       <DependentUpon>WalletPhrasePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletConnectPopup.xaml.cs">
+      <DependentUpon>WalletConnectPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletPopup.cs" />
     <Compile Include="Views\Wallet\Popups\WalletCurrencyPopup.xaml.cs">
       <DependentUpon>WalletCurrencyPopup.xaml</DependentUpon>
     </Compile>
@@ -2310,6 +2318,7 @@
     <Compile Include="Services\Wallet\WalletPlatformHost.cs" />
     <Compile Include="Services\Wallet\IWalletService.cs" />
     <Compile Include="Services\Wallet\WalletJournalStore.cs" />
+    <Compile Include="Services\Wallet\TonConnectLink.cs" />
     <Compile Include="Services\Wallet\WalletChainStream.cs" />
     <Compile Include="Services\Wallet\WalletCommentBody.cs" />
     <Compile Include="Services\Wallet\WalletSecretStore.cs" />
@@ -2912,6 +2921,10 @@
     <Page Include="Controls\Cells\CallCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\WalletCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\WalletTransactionCell.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -4310,6 +4323,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Wallet\Popups\WalletPhrasePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletConnectPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Wallet.Popups
 {
@@ -31,14 +33,13 @@ namespace Telegram.Views.Wallet.Popups
     /// The recipient is settled before this opens - a Telegram user, an address, or both - so
     /// everything here is about how much, and about the comment that travels with it.
     /// </remarks>
-    public sealed partial class WalletSendPopup : ModalPopup
+    public sealed partial class WalletSendPopup : WalletPopup
     {
         // What a comment may weigh, in UTF-8 bytes rather than characters: the engine packs it into
         // a message body and refuses anything larger.
         private const int CommentMaxBytes = 960;
 
         private readonly IClientService _clientService;
-        private readonly IWalletService _wallet;
         private readonly INavigationService _navigationService;
 
         private readonly long _userId;
@@ -74,6 +75,42 @@ namespace Telegram.Views.Wallet.Popups
         }
 
         /// <summary>
+        /// From a transfer link, which may have settled the amount as well as the recipient.
+        /// </summary>
+        public WalletSendPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long userId, long nanograms)
+            : this(clientService, wallet, navigationService, userId, Address(clientService, userId))
+        {
+            Prefill(nanograms);
+        }
+
+        public WalletSendPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long userId, string address, long nanograms)
+            : this(clientService, wallet, navigationService, userId, address)
+        {
+            Prefill(nanograms);
+        }
+
+        /// <summary>
+        /// Puts an amount in the field as though it had been typed.
+        /// </summary>
+        /// <remarks>
+        /// In grams rather than in the chosen currency, whatever the field was last showing: a link
+        /// asks for an amount of grams, and converting it would make what is sent depend on a rate
+        /// that moves. The user can still swap, and then it converts like anything else.
+        /// </remarks>
+        private void Prefill(long nanograms)
+        {
+            if (nanograms <= 0)
+            {
+                return;
+            }
+
+            _inCurrency = false;
+
+            Amount.Text = Typed(nanograms, TonDecimals);
+            UpdateAmount();
+        }
+
+        /// <summary>
         /// The address the account already knows for a user, if it happens to have it.
         /// </summary>
         /// <remarks>
@@ -88,11 +125,11 @@ namespace Telegram.Views.Wallet.Popups
         }
 
         public WalletSendPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long userId, string address, string domain = null)
+            : base(wallet, navigationService)
         {
             InitializeComponent();
 
             _clientService = clientService;
-            _wallet = wallet;
             _navigationService = navigationService;
             _userId = userId;
             _address = address;
@@ -100,13 +137,48 @@ namespace Telegram.Views.Wallet.Popups
 
             Title = CreateTitle();
 
+            Amount.Validate = ValidateAmount;
+
+            // Typed at the popup rather than at the field, so it does not matter which part of the
+            // screen holds focus - the amount is what this screen is for.
+            CharacterReceived += OnCharacterReceived;
+
+            // And focus stays off Send, because a focused button takes the space bar as a press:
+            // on this popup that is a transfer, sent by a key that was meant for the number.
+            FocusPrimaryButton = false;
+
             SwapGlyph.Text = Icons.ArrowSort;
+            Prefix.Text = GramPrefix;
             Suffix.Text = GramSuffix;
 
-            BalanceLabel.Text = string.Format("[Balance: {0} Grams]", Formatter.TonBalance(State.BalanceNanograms).Join());
+            UpdateWalletState(State);
+        }
 
-            UpdateAmount();
+        protected override void OnLoaded()
+        {
+            base.OnLoaded();
+
+            // The field is where every keystroke has to land, and it is not a text box: nothing
+            // gives it focus on its own. FocusPrimaryButton is off for the same reason - the popup
+            // hands focus to Send once it is up, which would take it away again, and its check for
+            // content that focused itself only holds if this succeeded first.
+            Amount.Focus(FocusState.Programmatic);
+        }
+
+        /// <summary>
+        /// Everything on this screen is priced against the wallet, so all of it is rebuilt: the
+        /// balance it is spent from, who is paying the fee, and the amount as converted.
+        /// </summary>
+        protected override void UpdateWalletState(WalletState state)
+        {
+            BalanceLabel.Text = string.Format("[Balance: {0} Grams]", Formatter.TonBalance(state.BalanceNanograms).Join());
+
             UpdateGasless();
+            UpdateAmount();
+
+            // The rates may have just arrived, or gone: the swap is only offered while there is
+            // something to swap into.
+            SwapButton.IsEnabled = _inCurrency || State is { CurrencyRate: > 0 };
         }
 
         /// <summary>
@@ -114,6 +186,7 @@ namespace Telegram.Views.Wallet.Popups
         /// settled: a user without an address is not somewhere grams can go.
         /// </summary>
         private const string GramSuffix = "GRAM";
+        private const string GramPrefix = "\uEA7E";
 
         private UIElement CreateTitle()
         {
@@ -163,8 +236,11 @@ namespace Telegram.Views.Wallet.Popups
             }
 
             // Typed in money: through the rate, and back to the smallest unit the chain deals in.
-            var amount = (double)units / Math.Pow(10, Formatter.GetAmountExponent(Currency));
-            return WalletHelper.ToNanograms(_clientService, State, amount);
+            // Zero when the rate is not known, which reads as nothing typed and leaves the button
+            // disabled - the one answer that cannot send the wrong amount.
+            return WalletHelper.TryToNanograms(_clientService, State, units, Formatter.GetAmountExponent(Currency), out var nanograms)
+                ? nanograms
+                : BigInteger.Zero;
         }
 
         private const int TonDecimals = 9;
@@ -173,9 +249,28 @@ namespace Telegram.Views.Wallet.Popups
         /// The wallet as it is now, not as it was when this opened: the balance moves while the
         /// popup is up, and it is what the amount is judged against.
         /// </summary>
-        private WalletState State => _wallet.State;
-
         private string Currency => State?.Currency ?? "USD";
+
+        private string CurrencySymbol
+        {
+            get
+            {
+                try
+                {
+                    var formatter = Locale.GetCurrencyFormatter(Currency);
+                    if (formatter.Symbol != Currency)
+                    {
+                        return formatter.Symbol;
+                    }
+
+                    return string.Empty;
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+        }
 
         /// <summary>
         /// Reads a typed amount as an exact integer of its smallest unit.
@@ -184,6 +279,37 @@ namespace Telegram.Views.Wallet.Popups
         /// Never through a double: a tenth is not one, and an amount of money must arrive as the
         /// number that was typed.
         /// </remarks>
+        /// <summary>
+        /// An amount as it would have been typed: no group separators, and no trailing zeros.
+        /// </summary>
+        /// <remarks>
+        /// The formatters group thousands, which is right everywhere an amount is read and wrong
+        /// in the one place it is written - the field holds what <see cref="TryParseUnits"/> reads
+        /// back, and that treats a group separator as a decimal one and gives up.
+        /// </remarks>
+        private static string Typed(BigInteger units, int exponent)
+        {
+            if (units <= BigInteger.Zero)
+            {
+                return string.Empty;
+            }
+
+            var scale = BigInteger.Pow(10, exponent);
+            var whole = BigInteger.DivRem(units, scale, out var rest);
+
+            var text = whole.ToString(CultureInfo.InvariantCulture);
+            if (rest.IsZero)
+            {
+                return text;
+            }
+
+            var fraction = rest.ToString(CultureInfo.InvariantCulture)
+                .PadLeft(exponent, '0')
+                .TrimEnd('0');
+
+            return text + LocaleService.Current.CurrentCulture.NumberFormat.NumberDecimalSeparator + fraction;
+        }
+
         private static bool TryParseUnits(string text, int exponent, out BigInteger units)
         {
             units = BigInteger.Zero;
@@ -235,33 +361,25 @@ namespace Telegram.Views.Wallet.Popups
             return true;
         }
 
-        private void Amount_BeforeTextChanging(TextBox sender, TextBoxBeforeTextChangingEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var separators = 0;
-
-            foreach (var character in args.NewText)
-            {
-                if (char.IsDigit(character))
-                {
-                    continue;
-                }
-
-                if (Array.IndexOf(Separators, character) >= 0 && ++separators == 1)
-                {
-                    continue;
-                }
-
-                args.Cancel = true;
-                return;
-            }
-
-            // More decimals than the unit has cannot be entered rather than silently dropped, so
-            // that what is on screen is what will be sent.
-            args.Cancel = !TryParseUnits(args.NewText, _inCurrency ? Formatter.GetAmountExponent(Currency) : TonDecimals, out _)
-                && args.NewText.Length > 0;
+            args.Handled = Amount.TryAppend(args.Character);
         }
 
-        private void Amount_TextChanged(object sender, TextChangedEventArgs e)
+        /// <summary>
+        /// Whether the field will take what this keystroke would make of it.
+        /// </summary>
+        /// <remarks>
+        /// More decimals than the unit has are refused rather than silently dropped, so that what
+        /// is on screen is what will be sent. The unit changes with the swap, which is why this is
+        /// asked per keystroke rather than settled once.
+        /// </remarks>
+        private bool ValidateAmount(string text)
+        {
+            return TryParseUnits(text, _inCurrency ? Formatter.GetAmountExponent(Currency) : TonDecimals, out _);
+        }
+
+        private void Amount_TextChanged(object sender, EventArgs e)
         {
             if (_updating || _sending)
             {
@@ -278,9 +396,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             var nanograms = Nanograms();
 
-            Converted.Text = _inCurrency
-                ? string.Format("≈ {0} {1}", Formatter.TonBalance(nanograms).Join(), GramSuffix)
-                : string.Format("≈ {0}", Formatter.FormatAmountExact(WalletHelper.ToCurrency(_clientService, State, nanograms), Currency));
+            UpdateConverted(nanograms);
 
             var message = Validate(nanograms);
 
@@ -291,6 +407,31 @@ namespace Telegram.Views.Wallet.Popups
             PrimaryButtonContent = string.Format("[Send {0} Grams]", Formatter.TonBalance(nanograms).Join());
 
             UpdateFeeAsync();
+        }
+
+        /// <summary>
+        /// The same amount the other way round, under the field.
+        /// </summary>
+        /// <remarks>
+        /// Blank rather than approximate while the rates are still coming: an amount converted at
+        /// no rate is not a rough answer, it is a different currency's number wearing this one's
+        /// name. The field itself is always grams or always the chosen currency, so nothing here
+        /// is lost by saying nothing.
+        /// </remarks>
+        private void UpdateConverted(BigInteger nanograms)
+        {
+            if (_inCurrency)
+            {
+                Converted.Text = string.Format("{0} {1}", Formatter.TonBalance(nanograms).Join(), GramSuffix);
+            }
+            else if (WalletHelper.TryToCurrency(_clientService, State, nanograms, out var amount))
+            {
+                Converted.Text = string.Format("\u2248 {0}", Formatter.FormatAmountExact(amount, WalletHelper.CurrencyDecimals, Currency));
+            }
+            else
+            {
+                Converted.Text = string.Empty;
+            }
         }
 
         /// <summary>
@@ -323,9 +464,17 @@ namespace Telegram.Views.Wallet.Popups
 
         private void Swap_Click(object sender, RoutedEventArgs e)
         {
+            // Nothing to swap into while the rates are still coming: the field would be handed an
+            // amount converted at no rate, and the button would then send it.
+            if (!_inCurrency && State is not { CurrencyRate: > 0 })
+            {
+                return;
+            }
+
             var nanograms = Nanograms();
 
             _inCurrency = !_inCurrency;
+            Prefix.Text = _inCurrency ? CurrencySymbol : GramPrefix;
             Suffix.Text = _inCurrency ? Currency : GramSuffix;
 
             _updating = true;
@@ -334,18 +483,16 @@ namespace Telegram.Views.Wallet.Popups
             {
                 if (_inCurrency)
                 {
-                    var amount = WalletHelper.ToCurrency(_clientService, State, nanograms);
-                    var units = (long)Math.Round(amount * Math.Pow(10, Formatter.GetAmountExponent(Currency)));
+                    var exponent = Formatter.GetAmountExponent(Currency);
 
-                    var split = Formatter.SplitAmount(units, Formatter.GetAmountExponent(Currency), Formatter.GetAmountExponent(Currency));
-                    Amount.Text = split.Join();
+                    Amount.Text = WalletHelper.TryToCurrency(_clientService, State, nanograms, out var amount)
+                        ? Typed(Formatter.Rescale(amount, WalletHelper.CurrencyDecimals, exponent), exponent)
+                        : string.Empty;
                 }
                 else
                 {
-                    Amount.Text = Formatter.TonBalance(nanograms).Join();
+                    Amount.Text = Typed(nanograms, TonDecimals);
                 }
-
-                Amount.SelectionStart = Amount.Text.Length;
             }
             finally
             {
@@ -452,6 +599,8 @@ namespace Telegram.Views.Wallet.Popups
 
             Comment.Text = _comment ?? string.Empty;
             CommentRoot.Visibility = _comment != null ? Visibility.Visible : Visibility.Collapsed;
+
+            UpdateFeeAsync();
         }
 
         private void Comment_Validating(object sender, InputPopupValidatingEventArgs e)
@@ -528,6 +677,22 @@ namespace Telegram.Views.Wallet.Popups
             try
             {
                 var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 });
+                if (result.IsCommentUnavailable)
+                {
+                    // Nothing was signed and nothing was spent, and what to do about it is on this
+                    // screen: the comment can be made public, or taken off. So the popup stays, with
+                    // the amount still in it and the button armed again.
+                    _sending = false;
+
+                    IsPrimaryButtonPending = false;
+                    args.Cancel = true;
+
+                    deferral.Complete();
+
+                    _ = MessagePopup.ShowNestedAsync(XamlRoot, "[This recipient can't receive a private comment. Make the comment public or remove it, then try again.]", "[Send Grams]", Strings.OK);
+                    return;
+                }
+
                 if (result.Error == null)
                 {
                     Result = result;
