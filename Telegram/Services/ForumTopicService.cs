@@ -462,9 +462,10 @@ namespace Telegram.Services
             DraftMessage = 2,
             UnreadMentionCount = 4,
             UnreadReactionCount = 8,
-            ReadInbox = 16,
-            ReadOutbox = 32,
-            LastMessage = 64
+            UnreadPollVoteCount = 16,
+            ReadInbox = 32,
+            ReadOutbox = 64,
+            LastMessage = 128
         }
 
         /// <summary>
@@ -504,6 +505,12 @@ namespace Telegram.Services
             {
                 topic.UnreadReactionCount = newTopic.UnreadReactionCount;
                 change |= TopicChange.UnreadReactionCount;
+            }
+
+            if (topic.UnreadPollVoteCount != newTopic.UnreadPollVoteCount)
+            {
+                topic.UnreadPollVoteCount = newTopic.UnreadPollVoteCount;
+                change |= TopicChange.UnreadPollVoteCount;
             }
 
             // Ordered: the merge compares against the read position the line below replaces.
@@ -563,6 +570,11 @@ namespace Telegram.Services
             if ((change & TopicChange.UnreadReactionCount) != 0)
             {
                 _aggregator.Publish(new UpdateForumTopicUnreadReactionCount(_chatId, forumTopicId, topic.UnreadReactionCount));
+            }
+
+            if ((change & TopicChange.UnreadPollVoteCount) != 0)
+            {
+                _aggregator.Publish(new UpdateForumTopicUnreadReactionCount(_chatId, forumTopicId, topic.UnreadPollVoteCount));
             }
 
             if ((change & TopicChange.ReadInbox) != 0)
@@ -1236,7 +1248,7 @@ namespace Telegram.Td.Api
 
     public sealed partial class UpdateForumTopicUnreadReactionCount
     {
-        public UpdateForumTopicUnreadReactionCount(long chatId, int forumTopicId, long unreadReactionCount)
+        public UpdateForumTopicUnreadReactionCount(long chatId, int forumTopicId, int unreadReactionCount)
         {
             ChatId = chatId;
             ForumTopicId = forumTopicId;
@@ -1247,12 +1259,28 @@ namespace Telegram.Td.Api
 
         public int ForumTopicId { get; set; }
 
-        public long UnreadReactionCount { get; set; }
+        public int UnreadReactionCount { get; set; }
+    }
+
+    public sealed partial class UpdateForumTopicUnreadPollVoteCount
+    {
+        public UpdateForumTopicUnreadPollVoteCount(long chatId, int forumTopicId, int unreadPollVoteCount)
+        {
+            ChatId = chatId;
+            ForumTopicId = forumTopicId;
+            UnreadPollVoteCount = unreadPollVoteCount;
+        }
+
+        public long ChatId { get; set; }
+
+        public int ForumTopicId { get; set; }
+
+        public int UnreadPollVoteCount { get; set; }
     }
 
     public sealed partial class UpdateForumTopicUnreadMentionCount
     {
-        public UpdateForumTopicUnreadMentionCount(long chatId, int forumTopicId, long unreadMentionCount)
+        public UpdateForumTopicUnreadMentionCount(long chatId, int forumTopicId, int unreadMentionCount)
         {
             ChatId = chatId;
             ForumTopicId = forumTopicId;
@@ -1263,7 +1291,7 @@ namespace Telegram.Td.Api
 
         public int ForumTopicId { get; set; }
 
-        public long UnreadMentionCount { get; set; }
+        public int UnreadMentionCount { get; set; }
     }
 
     public sealed partial class UpdateForumTopicDraftMessage

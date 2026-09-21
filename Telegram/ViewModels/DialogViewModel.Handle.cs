@@ -28,8 +28,11 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatPermissions>(Handle)
                 .Subscribe<UpdateChatReplyMarkup>(Handle)
                 .Subscribe<UpdateChatUnreadMentionCount>(Handle)
+                .Subscribe<UpdateForumTopicUnreadMentionCount>(Handle)
                 .Subscribe<UpdateChatUnreadReactionCount>(Handle)
+                .Subscribe<UpdateForumTopicUnreadReactionCount>(Handle)
                 .Subscribe<UpdateChatUnreadPollVoteCount>(Handle)
+                .Subscribe<UpdateForumTopicUnreadPollVoteCount>(Handle)
                 .Subscribe<UpdateChatReadOutbox>(Handle)
                 .Subscribe<UpdateForumTopicReadOutbox>(Handle)
                 .Subscribe<UpdateChatReadInbox>(Handle)
@@ -490,7 +493,15 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateChatUnreadMentionCount update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && TopicId == null)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
+            }
+        }
+
+        public void Handle(UpdateForumTopicUnreadMentionCount update)
+        {
+            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
             }
@@ -504,9 +515,25 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateForumTopicUnreadReactionCount update)
+        {
+            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatUnreadReactionCount(_chat, update.UnreadReactionCount));
+            }
+        }
+
         public void Handle(UpdateChatUnreadPollVoteCount update)
         {
             if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatUnreadPollVoteCount(_chat, update.UnreadPollVoteCount));
+            }
+        }
+
+        public void Handle(UpdateForumTopicUnreadPollVoteCount update)
+        {
+            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadPollVoteCount(_chat, update.UnreadPollVoteCount));
             }

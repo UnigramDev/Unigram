@@ -5721,9 +5721,19 @@ namespace Telegram.Views
 
             UpdateChatActiveStories(chat);
 
-            UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
-            UpdateChatUnreadReactionCount(chat, chat.UnreadReactionCount);
-            UpdateChatUnreadPollVoteCount(chat, chat.UnreadPollVoteCount);
+            if (ViewModel.ForumTopic is ForumTopic forumTopic)
+            {
+                UpdateChatUnreadMentionCount(chat, forumTopic.UnreadMentionCount);
+                UpdateChatUnreadReactionCount(chat, forumTopic.UnreadReactionCount);
+                UpdateChatUnreadPollVoteCount(chat, forumTopic.UnreadPollVoteCount);
+            }
+            else
+            {
+                UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
+                UpdateChatUnreadReactionCount(chat, chat.UnreadReactionCount);
+                UpdateChatUnreadPollVoteCount(chat, chat.UnreadPollVoteCount);
+            }
+
             UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
             ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;

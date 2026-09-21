@@ -426,6 +426,7 @@ namespace Telegram.ViewModels
                         .Subscribe<UpdateForumTopicReadOutbox>(Handle)
                         .Subscribe<UpdateForumTopicUnreadMentionCount>(Handle)
                         .Subscribe<UpdateForumTopicUnreadReactionCount>(Handle)
+                        .Subscribe<UpdateForumTopicUnreadPollVoteCount>(Handle)
                         .Subscribe<UpdateForumTopicNotificationSettings>(Handle)
                         .Subscribe<UpdateForumTopicDraftMessage>(Handle)
                         .Subscribe<UpdateChatAction>(Handle);
@@ -492,6 +493,14 @@ namespace Telegram.ViewModels
         }
 
         private void Handle(UpdateForumTopicUnreadReactionCount update)
+        {
+            if (update.ChatId == Chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.HandleForumTopic(update.ForumTopicId, (cell, topic) => cell.UpdateForumTopicUnreadMentionCount(topic)));
+            }
+        }
+
+        private void Handle(UpdateForumTopicUnreadPollVoteCount update)
         {
             if (update.ChatId == Chat?.Id)
             {
