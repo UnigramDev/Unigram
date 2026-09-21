@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Text;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -19,9 +20,23 @@ namespace Telegram.Controls.Cells
             this.InitializeComponent();
         }
 
+        // The row is a grid of icons and text, so the list would otherwise announce the item
+        // itself - "Telegram.Td.Api.ChatBoostLevelFeatures". Built here rather than walked back
+        // out of the grid because this is where the features are in the order they are shown.
+        private readonly StringBuilder _automation = new();
+
+        public string GetAutomationName()
+        {
+            return _automation.ToString();
+        }
+
         public void UpdateCell(bool channel, ChatBoostLevelFeatures features, int index)
         {
             Level.Text = string.Format(index == 0 ? Strings.BoostLevelUnlocks : Strings.BoostLevel, features.Level);
+
+            _automation.Clear();
+            _automation.Append(Level.Text);
+
             var i = 0;
 
             if (channel)
@@ -66,7 +81,10 @@ namespace Telegram.Controls.Cells
         {
             if (count > 0)
             {
-                TextBlockHelper.SetMarkdown(text, string.Format(Locale.Declension(key, count, false), $"**{count}**"));
+                var formatted = string.Format(Locale.Declension(key, count, false), $"**{count}**");
+
+                TextBlockHelper.SetMarkdown(text, formatted);
+                AppendAutomation(formatted);
 
                 Grid.SetRow(icon, index + 1);
                 Grid.SetRow(text, index + 1);
@@ -86,6 +104,7 @@ namespace Telegram.Controls.Cells
             if (enabled)
             {
                 TextBlockHelper.SetMarkdown(text, key);
+                AppendAutomation(key);
 
                 Grid.SetRow(icon, index + 1);
                 Grid.SetRow(text, index + 1);
@@ -98,6 +117,14 @@ namespace Telegram.Controls.Cells
                 icon.Visibility = Visibility.Collapsed;
                 text.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void AppendAutomation(string text)
+        {
+            _automation.Append(", ");
+
+            // The same string the text block is given, minus the marks the markdown helper eats.
+            _automation.Append(text.Replace("**", string.Empty));
         }
 
         private void Collapse(TextBlock icon, TextBlock text)

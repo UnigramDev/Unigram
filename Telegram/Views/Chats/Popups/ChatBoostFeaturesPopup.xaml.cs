@@ -15,6 +15,7 @@ using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Chats.Popups
@@ -158,6 +159,8 @@ namespace Telegram.Views.Chats.Popups
             else if (args.ItemContainer.ContentTemplateRoot is ChatBoostFeaturesCell cell && args.Item is ChatBoostLevelFeatures features)
             {
                 cell.UpdateCell(_channel, features, args.ItemIndex);
+
+                AutomationProperties.SetName(args.ItemContainer, cell.GetAutomationName());
             }
         }
 
