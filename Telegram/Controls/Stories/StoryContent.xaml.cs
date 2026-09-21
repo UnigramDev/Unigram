@@ -349,14 +349,12 @@ namespace Telegram.Controls.Stories
         {
             if (story.Content is StoryContentLive && story.GroupCall != null)
             {
-                MessagesRoot.Visibility = Visibility.Visible;
                 LiveBadge.Visibility = Visibility.Visible;
                 Subtitle.Text = Locale.Declension(Strings.R.LiveStoryWatching, story.GroupCall.ParticipantCount);
 
             }
             else
             {
-                MessagesRoot.Visibility = Visibility.Collapsed;
                 LiveBadge.Visibility = Visibility.Collapsed;
                 Subtitle.Text = story.Date != 0
                     ? Locale.FormatRelativeShort(story.Date)
@@ -820,6 +818,8 @@ namespace Telegram.Controls.Stories
 
                 Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Duration);
                 Play(video);
+
+                MessagesRoot.Visibility = Visibility.Collapsed;
             }
             else if (story.Content is StoryContentLive live && story.ClientService.TryGetGroupCall(live.GroupCallId, out GroupCall groupCall) && !_unloaded)
             {
@@ -857,6 +857,8 @@ namespace Telegram.Controls.Stories
                 _pinnedMessages = new SortedObservableCollection<GroupCallMessage>(_call.PinnedMessages, new GroupCallMessageComparer());
                 PinnedMessagesHost.ItemsSource = _pinnedMessages;
 
+                MessagesRoot.Visibility = Visibility.Visible;
+
                 ShowSkeleton();
             }
             else if (!_loading && !_unloaded)
@@ -864,6 +866,8 @@ namespace Telegram.Controls.Stories
                 _timer.Stop();
                 _timer.Start();
                 Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, 5);
+
+                MessagesRoot.Visibility = Visibility.Collapsed;
             }
         }
 
