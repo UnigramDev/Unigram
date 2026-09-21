@@ -79,7 +79,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageReply">
                     <Grid x:Name="LayoutRoot"
-                          Background="Transparent"
                           MinHeight="44"
                           CornerRadius="{TemplateBinding CornerRadius}"
                           Padding="{TemplateBinding Padding}">
@@ -110,24 +109,35 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
                         <Rectangle x:Name="BackgroundOverlay"
                                    Fill="{TemplateBinding Background}"
                                    Opacity="0.1"
-                                   Grid.ColumnSpan="3" />
+                                   Grid.ColumnSpan="4"
+                                   Grid.RowSpan="2" />
                         <Rectangle x:Name="Pill"
                                    Fill="{TemplateBinding BorderBrush}"
                                    HorizontalAlignment="Left"
-                                   Width="3" />
-                        <controls:DashPath x:Name="AccentDash" />
+                                   Width="3"
+                                   Grid.RowSpan="2" />
+                        <controls:DashPath x:Name="AccentDash"
+                                           x:Load="False"
+                                           Grid.RowSpan="2" />
 
                         <local:MessageReplyPattern x:Name="Pattern"
+                                                   x:Load="False"
                                                    Grid.Column="2"
                                                    HorizontalAlignment="Right"
                                                    VerticalAlignment="Stretch"
                                                    BorderBrush="{TemplateBinding Background}"
                                                    IsTabStop="False"
-                                                   Margin="0,-3,7,0" />
+                                                   Margin="0,-3,7,0"
+                                                   Grid.RowSpan="2" />
 
                         <Border x:Name="ThumbRoot"
                                 x:DeferLoadStrategy="Lazy"
@@ -135,9 +145,10 @@
                                 VerticalAlignment="Top"
                                 Width="36"
                                 Height="36"
-                                Margin="8,4,0,0"
+                                Margin="4,4,0,0"
                                 CornerRadius="2"
-                                Grid.Column="1">
+                                Grid.Column="1"
+                                Grid.RowSpan="2">
                             <Border x:Name="ThumbEllipse">
                                 <Border.Background>
                                     <ImageBrush x:Name="ThumbImage"
@@ -148,38 +159,36 @@
                             </Border>
                         </Border>
 
-                        <Grid VerticalAlignment="Center"
-                              Margin="8,4,8,6"
-                              Grid.Column="2">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock x:Name="TitleLabel"
-                                       Style="{StaticResource ReplyBaseTextBlockStyle}"
-                                       Foreground="{TemplateBinding HeaderBrush}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       MaxLines="1" />
-
-                            <controls:FormattedTextBlock x:Name="Label"
-                                                         MaxLines="1"
-                                                         IsTextSelectionEnabled="False"
-                                                         TextTrimming="CharacterEllipsis"
-                                                         TextWrapping="Wrap"
-                                                         Foreground="{TemplateBinding Foreground}"
-                                                         IconForeground="{TemplateBinding SubtleBrush}"
-                                                         FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                                         Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
-                                                         AutoFontSize="False"
-                                                         Grid.Row="1">
-                                <Paragraph>
-                                    <Run x:Name="ServiceLabel" /><Span x:Name="MessageLabel" />
-                                </Paragraph>
-                            </controls:FormattedTextBlock>
-                        </Grid>
+                        <TextBlock x:Name="TitleLabel"
+                                   Style="{StaticResource ReplyBaseTextBlockStyle}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   MaxLines="1"
+                                   Margin="8,4,8,0"
+                                   VerticalAlignment="Bottom"
+                                   Grid.Column="2" />
+                        <controls:FormattedTextBlock x:Name="Label"
+                                                     MaxLines="1"
+                                                     IsTextSelectionEnabled="False"
+                                                     TextTrimming="CharacterEllipsis"
+                                                     TextWrapping="Wrap"
+                                                     Foreground="{TemplateBinding Foreground}"
+                                                     IconForeground="{TemplateBinding SubtleBrush}"
+                                                     FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                                     Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
+                                                     AutoFontSize="False"
+                                                     VerticalAlignment="Top"
+                                                     Margin="8,0,8,6"
+                                                     Grid.Column="2"
+                                                     Grid.ColumnSpan="2"
+                                                     Grid.Row="1">
+                            <Paragraph>
+                                <Run x:Name="ServiceLabel" /><Span x:Name="MessageLabel" />
+                            </Paragraph>
+                        </controls:FormattedTextBlock>
                         <TextBlock x:Name="Quote"
+                                   x:Load="False"
                                    Visibility="Collapsed"
                                    Text="&#xEA01;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -187,8 +196,8 @@
                                    Foreground="{TemplateBinding HeaderBrush}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
-                                   Margin="4"
-                                   Grid.Column="2" />
+                                   Margin="-4,4,4,4"
+                                   Grid.Column="3" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -200,7 +200,12 @@ namespace Telegram.Controls.Messages
         }
 
         public static readonly DependencyProperty HeaderBrushProperty =
-            DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(MessageReply), new PropertyMetadata(null));
+            DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(MessageReply), new PropertyMetadata(null, OnHeaderBrushChanged));
+
+        private static void OnHeaderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MessageReply)d).TitleLabel?.Foreground = e.NewValue as Brush;
+        }
 
         #endregion
 
@@ -230,11 +235,11 @@ namespace Telegram.Controls.Messages
         private TextBlock TitleLabel;
         private Run ServiceLabel;
         private Span MessageLabel;
+
+        // Lazy loaded
         private DashPath AccentDash;
         private MessageReplyPattern Pattern;
         private TextBlock Quote;
-
-        // Lazy loaded
         private Border ThumbRoot;
         private Border ThumbEllipse;
         private ImageBrush ThumbImage;
@@ -247,10 +252,8 @@ namespace Telegram.Controls.Messages
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
-            AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
-            Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
-            Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
 
+            TitleLabel.Foreground = HeaderBrush;
             ServiceLabel.Foreground = SubtleBrush;
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
@@ -328,17 +331,27 @@ namespace Telegram.Controls.Messages
                 ServiceLabel.Text += ", ";
             }
 
-            _quote = quote;
-            Quote.Visibility = quote
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            Label.MaxLines = quote ? 5 : 1;
-
-            var (accent, giftColors, customEmojiId) = outgoing ? (null, null, 0) : clientService.GetMessageSender(messageSender) switch
+            if (_quote != quote)
             {
-                User user => (clientService.GetAccentColor(user.AccentColorId), user.UpgradedGiftColors, user.BackgroundCustomEmojiId),
-                Chat chat => (clientService.GetAccentColor(chat.AccentColorId), chat.UpgradedGiftColors, chat.BackgroundCustomEmojiId),
+                Label.MaxLines = quote ? 5 : 1;
+            }
+
+            _quote = quote;
+
+            if (quote)
+            {
+                Quote ??= GetTemplateChild(nameof(Quote)) as TextBlock;
+                Quote.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Quote?.Visibility = Visibility.Collapsed;
+            }
+
+            var (accent, giftColors, customEmojiId) = clientService?.GetMessageSender(messageSender) switch
+            {
+                User user => (outgoing ? null : clientService.GetAccentColor(user.AccentColorId), outgoing ? null : user.UpgradedGiftColors, user.BackgroundCustomEmojiId),
+                Chat chat => (outgoing ? null : clientService.GetAccentColor(chat.AccentColorId), outgoing ? null : chat.UpgradedGiftColors, chat.BackgroundCustomEmojiId),
                 _ => (null, null, 0)
             };
 
@@ -350,8 +363,7 @@ namespace Telegram.Controls.Messages
                     HeaderBrush =
                     BorderBrush = new SolidColorBrush(Colors.White);
 
-                AccentDash.Stripe1 = default;
-                AccentDash.Stripe2 = default;
+                SetStripes(default, default);
 
                 Margin = new Thickness(-8, -2, -8, -4);
             }
@@ -367,12 +379,13 @@ namespace Telegram.Controls.Messages
 
                     BorderBrush = new SolidColorBrush(giftColors.LightThemeColors[0].ToColor());
 
-                    AccentDash.Stripe1 = giftColors.LightThemeColors.Count > 1
-                        ? giftColors.LightThemeColors[1].ToColor()
-                        : default;
-                    AccentDash.Stripe2 = giftColors.LightThemeColors.Count > 2
-                        ? giftColors.LightThemeColors[2].ToColor()
-                        : default;
+                    SetStripes(
+                        giftColors.LightThemeColors.Count > 1
+                            ? giftColors.LightThemeColors[1].ToColor()
+                            : default,
+                        giftColors.LightThemeColors.Count > 2
+                            ? giftColors.LightThemeColors[2].ToColor()
+                            : default);
                 }
                 else if (accent != null)
                 {
@@ -380,12 +393,13 @@ namespace Telegram.Controls.Messages
                         HeaderBrush =
                         BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
-                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
-                        ? accent.LightThemeColors[1]
-                        : default;
-                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
-                        ? accent.LightThemeColors[2]
-                        : default;
+                    SetStripes(
+                        accent.LightThemeColors.Count > 1
+                            ? accent.LightThemeColors[1]
+                            : default,
+                        accent.LightThemeColors.Count > 2
+                            ? accent.LightThemeColors[2]
+                            : default);
                 }
                 else
                 {
@@ -393,8 +407,7 @@ namespace Telegram.Controls.Messages
                     ClearValue(HeaderBrushProperty);
                     ClearValue(BorderBrushProperty);
 
-                    AccentDash.Stripe1 = default;
-                    AccentDash.Stripe2 = default;
+                    SetStripes(default, default);
                 }
 
                 Margin = new Thickness(0, 4, 0, 4);
@@ -402,18 +415,11 @@ namespace Telegram.Controls.Messages
 
             if (giftColors != null)
             {
-                Pattern.Source = new CustomEmojiFileSource(clientService, giftColors.SymbolCustomEmojiId);
-                Pattern.Model = new CustomEmojiFileSource(clientService, giftColors.ModelCustomEmojiId);
-            }
-            else if (customEmojiId != 0)
-            {
-                Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
-                Pattern.Model = null;
+                SetPattern(clientService, giftColors.SymbolCustomEmojiId, giftColors.ModelCustomEmojiId);
             }
             else
             {
-                Pattern.Source = null;
-                Pattern.Model = null;
+                SetPattern(clientService, customEmojiId, 0);
             }
 
             _accent = white ? null : accent;
@@ -431,27 +437,77 @@ namespace Telegram.Controls.Messages
             Label.SetQuery(string.Empty);
         }
 
+        private void SetStripes(Color stripe1, Color stripe2)
+        {
+            if (AccentDash == null)
+            {
+                if (stripe1 == default && stripe2 == default)
+                {
+                    return;
+                }
+
+                AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
+            }
+
+            AccentDash.Stripe1 = stripe1;
+            AccentDash.Stripe2 = stripe2;
+        }
+
+        private void SetPattern(IClientService clientService, long source, long model)
+        {
+            if (Pattern == null)
+            {
+                if (source == 0 && model == 0)
+                {
+                    return;
+                }
+
+                Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
+            }
+
+            Pattern.Source = source != 0 ? new CustomEmojiFileSource(clientService, source) : null;
+            Pattern.Model = model != 0 ? new CustomEmojiFileSource(clientService, model) : null;
+        }
+
         #endregion
 
-        public double ContentWidth { get; set; }
+        private const double MinContentWidth = 144;
+
+        private double _availableWidth = double.PositiveInfinity;
+        private double _formattedWidth;
+        private double _arrangedWidth;
+
+        private double FormatWidth(double width)
+        {
+            return Math.Min(Math.Max(width, MinContentWidth), _availableWidth);
+        }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ContentWidth > 0 && ContentWidth <= availableSize.Width && !_quote)
+            // A quote is the one case allowed to widen the bubble, and its height depends on the
+            // width it is measured at, so it is measured at the width it will be given.
+            if (_quote)
             {
-                LayoutRoot.Measure(new Size(Math.Max(144, ContentWidth), availableSize.Height));
-                return LayoutRoot.DesiredSize;
+                _formattedWidth = availableSize.Width;
+                return base.MeasureOverride(availableSize);
             }
 
-            return base.MeasureOverride(availableSize);
+            _availableWidth = availableSize.Width;
+            _formattedWidth = FormatWidth(_arrangedWidth);
+
+            var size = base.MeasureOverride(new Size(_formattedWidth, availableSize.Height));
+            return new Size(Math.Min(MinContentWidth, availableSize.Width), size.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (ContentWidth > 0 && ContentWidth <= finalSize.Width && !_quote)
+            // Against what the next measure would format at, not against finalSize: a bubble
+            // wider than the constraint we were measured with would change nothing, and asking
+            // for a pass that changes nothing never stops asking.
+            if (!_quote && FormatWidth(finalSize.Width) != _formattedWidth)
             {
-                LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, LayoutRoot.DesiredSize.Height));
-                return new Size(finalSize.Width, LayoutRoot.DesiredSize.Height);
+                _arrangedWidth = finalSize.Width;
+                InvalidateMeasure();
             }
 
             return base.ArrangeOverride(finalSize);
@@ -459,18 +515,13 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMockup(IClientService clientService, long customEmojiId, int color, UpgradedGiftColors upgradedGift)
         {
-            if (Pattern != null)
+            if (upgradedGift != null)
             {
-                if (upgradedGift != null)
-                {
-                    Pattern.Source = new CustomEmojiFileSource(clientService, upgradedGift.SymbolCustomEmojiId);
-                    Pattern.Model = new CustomEmojiFileSource(clientService, upgradedGift.ModelCustomEmojiId);
-                }
-                else
-                {
-                    Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
-                    Pattern.Model = null;
-                }
+                SetPattern(clientService, upgradedGift.SymbolCustomEmojiId, upgradedGift.ModelCustomEmojiId);
+            }
+            else
+            {
+                SetPattern(clientService, customEmojiId, 0);
             }
 
             if (upgradedGift != null)
@@ -480,15 +531,13 @@ namespace Telegram.Controls.Messages
 
                 BorderBrush = new SolidColorBrush(upgradedGift.LightThemeColors[0].ToColor());
 
-                if (AccentDash != null)
-                {
-                    AccentDash.Stripe1 = upgradedGift.LightThemeColors.Count > 1
+                SetStripes(
+                    upgradedGift.LightThemeColors.Count > 1
                         ? upgradedGift.LightThemeColors[1].ToColor()
-                        : default;
-                    AccentDash.Stripe2 = upgradedGift.LightThemeColors.Count > 2
+                        : default,
+                    upgradedGift.LightThemeColors.Count > 2
                         ? upgradedGift.LightThemeColors[2].ToColor()
-                        : default;
-                }
+                        : default);
             }
             else
             {
@@ -498,15 +547,13 @@ namespace Telegram.Controls.Messages
                     HeaderBrush =
                     BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
-                if (AccentDash != null)
-                {
-                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                SetStripes(
+                    accent.LightThemeColors.Count > 1
                         ? accent.LightThemeColors[1]
-                        : default;
-                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                        : default,
+                    accent.LightThemeColors.Count > 2
                         ? accent.LightThemeColors[2]
-                        : default;
-                }
+                        : default);
             }
         }
     }

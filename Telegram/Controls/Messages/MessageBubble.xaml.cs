@@ -1072,9 +1072,6 @@ namespace Telegram.Controls.Messages
                 {
                     Reply.Click += Reply_Click;
                 }
-
-                // TODO: check if this can be restored
-                //Panel.Reply = Reply;
             }
 
             Reply?.UpdateMessageReply(message);
@@ -3195,8 +3192,6 @@ namespace Telegram.Controls.Messages
 
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
                 Reply.LayoutUpdated += layoutUpdated;
-
-                Panel.Reply = Reply;
             }
             else
             {
@@ -3260,8 +3255,6 @@ namespace Telegram.Controls.Messages
 
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
                 Reply.LayoutUpdated += layoutUpdated;
-
-                Panel.Reply = Reply;
             }
             else
             {
@@ -3335,8 +3328,6 @@ namespace Telegram.Controls.Messages
 
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
                 Reply.LayoutUpdated += layoutUpdated;
-
-                Panel.Reply = Reply;
             }
             else
             {

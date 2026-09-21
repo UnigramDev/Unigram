@@ -19,9 +19,6 @@ namespace Telegram.Controls.Messages
         // Needed for Text CanvasTextLayout
         public bool ForceNewLine { get; set; }
 
-        // Needed for Measure
-        public MessageReply Reply { get; set; }
-
         public bool Placeholder { get; set; } = true;
 
         private Size _margin;
@@ -141,8 +138,6 @@ namespace Telegram.Controls.Messages
 
             var finalWidth = Math.Max(Math.Max(reactionsWidth, _footer.DesiredSize.Width), width);
             var finalHeight = _text.DesiredSize.Height + _media.DesiredSize.Height + reactionsHeight + margin.Height;
-
-            Reply?.ContentWidth = finalWidth;
 
             return new Size(finalWidth, finalHeight);
         }
