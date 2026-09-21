@@ -472,19 +472,17 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Grid Width="40"
-                                  Margin="0,0,-4,0"
-                                  Visibility="{TemplateBinding ProgressVisibility}">
+                            <Grid x:Name="RootOverlay"
+                                  Width="40"
+                                  Margin="0,0,-4,0">
                                 <TextBlock x:Name="ContentPresenter1"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           AutomationProperties.AccessibilityView="Raw"
-                                           Text="{TemplateBinding Glyph}" />
+                                           AutomationProperties.AccessibilityView="Raw" />
                                 <TextBlock x:Name="ContentPresenter2"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           AutomationProperties.AccessibilityView="Raw"
-                                           Text="{TemplateBinding Glyph}" />
+                                           AutomationProperties.AccessibilityView="Raw" />
                                 <controls:ProgressBarRing x:Name="ProgressBar"
                                                           Background="Transparent"
                                                           Foreground="White"

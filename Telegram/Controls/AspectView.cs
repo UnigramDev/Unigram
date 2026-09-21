@@ -56,54 +56,54 @@ namespace Telegram.Controls
 
         #region Constraint
 
+        private object _constraint;
         public object Constraint
         {
-            get => GetValue(ConstraintProperty);
-            set => SetValue(ConstraintProperty, value);
-        }
-
-        public static readonly DependencyProperty ConstraintProperty =
-            DependencyProperty.Register("Constraint", typeof(object), typeof(AspectView), new PropertyMetadata(null, OnConstraintChanged));
-
-        private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AspectView)d).InvalidateMeasure();
+            get => _constraint;
+            set
+            {
+                if (_constraint != value)
+                {
+                    _constraint = value;
+                    InvalidateMeasure();
+                }
+            }
         }
 
         #endregion
 
         #region Rotate
 
+        private RotationAngle _rotationAngle = RotationAngle.Angle0;
         public RotationAngle RotationAngle
         {
-            get => (RotationAngle)GetValue(RotationAngleProperty);
-            set => SetValue(RotationAngleProperty, value);
-        }
-
-        public static readonly DependencyProperty RotationAngleProperty =
-            DependencyProperty.Register("RotationAngle", typeof(RotationAngle), typeof(AspectView), new PropertyMetadata(RotationAngle.Angle0, OnRotationAngleChanged));
-
-        private static void OnRotationAngleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AspectView)d).InvalidateMeasure();
+            get => _rotationAngle;
+            set
+            {
+                if (_rotationAngle != value)
+                {
+                    _rotationAngle = value;
+                    InvalidateMeasure();
+                }
+            }
         }
 
         #endregion
 
         #region Stretch
 
+        private Stretch _stretch;
         public Stretch Stretch
         {
-            get => (Stretch)GetValue(StretchProperty);
-            set => SetValue(StretchProperty, value);
-        }
-
-        public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AspectView), new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
-
-        private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AspectView)d).InvalidateMeasure();
+            get => _stretch;
+            set
+            {
+                if (_stretch != value)
+                {
+                    _stretch = value;
+                    InvalidateMeasure();
+                }
+            }
         }
 
         #endregion

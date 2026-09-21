@@ -97,18 +97,18 @@ namespace Telegram.Controls
 
         #region Constraint
 
+        private object _constraint;
         public object Constraint
         {
-            get => GetValue(ConstraintProperty);
-            set => SetValue(ConstraintProperty, value);
-        }
-
-        public static readonly DependencyProperty ConstraintProperty =
-            DependencyProperty.Register("Constraint", typeof(object), typeof(ImageView), new PropertyMetadata(null, OnConstraintChanged));
-
-        private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ImageView)d).InvalidateMeasure();
+            get => _constraint;
+            set
+            {
+                if (_constraint != value)
+                {
+                    _constraint = value;
+                    InvalidateMeasure();
+                }
+            }
         }
 
         #endregion

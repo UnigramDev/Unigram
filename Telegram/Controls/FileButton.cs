@@ -10,6 +10,7 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Controls.Media;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -38,9 +39,10 @@ namespace Telegram.Controls
         Theme,
     }
 
-    public partial class FileButton : GlyphHyperlinkButton
+    public partial class FileButton : HyperlinkButtonEx
     {
         private Grid RootGrid;
+        private Grid RootOverlay;
 
         private ProgressBarRing ProgressBar;
 
@@ -52,11 +54,14 @@ namespace Telegram.Controls
 
         private long _fileId;
         private MessageContentState _state;
+        private string _glyph;
         private double _enqueuedProgress;
         private bool _shouldEnqueueProgress;
 
         private int _disconnectedFileId;
         private MessageContentState _disconnectedState;
+
+        private bool _templateApplied;
 
         public FileButton()
         {
@@ -76,17 +81,25 @@ namespace Telegram.Controls
         {
             RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
 
+            if (_progressVisibility == Visibility.Collapsed)
+            {
+                RootOverlay = GetTemplateChild(nameof(RootOverlay)) as Grid;
+                RootOverlay?.Visibility = _progressVisibility;
+            }
+
             ProgressBar = GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
 
             ContentPresenter1 = GetTemplateChild(nameof(ContentPresenter1)) as TextBlock;
             ContentPresenter2 = GetTemplateChild(nameof(ContentPresenter2)) as TextBlock;
 
-            ContentPresenter1.Text = Glyph ?? string.Empty;
+            ContentPresenter1.Text = _glyph ?? string.Empty;
             ContentPresenter2.Text = string.Empty;
 
             _label = ContentPresenter1;
 
             ProgressBar?.Value = _progress;
+
+            _templateApplied = true;
         }
 
         protected override void OnLoaded()
@@ -102,14 +115,24 @@ namespace Telegram.Controls
 
         #region ProgressVisibility
 
+        private Visibility _progressVisibility = Visibility.Visible;
         public Visibility ProgressVisibility
         {
-            get => (Visibility)GetValue(ProgressVisibilityProperty);
-            set => SetValue(ProgressVisibilityProperty, value);
-        }
+            get => _progressVisibility;
+            set
+            {
+                if (_progressVisibility != value)
+                {
+                    _progressVisibility = value;
 
-        public static readonly DependencyProperty ProgressVisibilityProperty =
-            DependencyProperty.Register("ProgressVisibility", typeof(Visibility), typeof(FileButton), new PropertyMetadata(Visibility.Visible));
+                    if (RootOverlay != null || (value == Visibility.Collapsed && _templateApplied))
+                    {
+                        RootOverlay = GetTemplateChild(nameof(RootOverlay)) as Grid;
+                        RootOverlay?.Visibility = value;
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -160,12 +183,12 @@ namespace Telegram.Controls
             switch (state)
             {
                 case MessageContentState.Download:
-                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.ArrowDownloadFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionDownload);
+                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.ArrowDownloadFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionDownload);
                     break;
                 case MessageContentState.Downloading:
                     if (IsSmall || (_state != MessageContentState.Download && _state != MessageContentState.Downloading))
                     {
-                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.DismissFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload, false);
+                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.DismissFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload, false);
                     }
                     else if (_state != MessageContentState.Downloading)
                     {
@@ -173,34 +196,34 @@ namespace Telegram.Controls
                     }
                     break;
                 case MessageContentState.Uploading:
-                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.DismissFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.DismissFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
                     break;
                 case MessageContentState.Confirm:
-                    OnGlyphChanged(Icons.CheckmarkFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
+                    OnGlyphChanged(Icons.CheckmarkFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
                     break;
                 case MessageContentState.Document:
-                    OnGlyphChanged(Icons.DocumentFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.DocumentFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Animation:
-                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
+                    OnGlyphChanged(Icons.Animation, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Photo:
-                    OnGlyphChanged(string.Empty, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(string.Empty, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Play:
-                    OnGlyphChanged(Icons.PlayFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
+                    OnGlyphChanged(Icons.PlayFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Pause:
-                    OnGlyphChanged(Icons.PauseFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
+                    OnGlyphChanged(Icons.PauseFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
                     break;
                 case MessageContentState.Ttl:
-                    OnGlyphChanged(Icons.TtlFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.TtlFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Unlock:
-                    OnGlyphChanged(Icons.LockClosedFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.LockClosedFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Theme:
-                    OnGlyphChanged(Icons.ColorFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.ColorFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
             }
 
@@ -215,7 +238,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            Glyph = newValue;
+            _glyph = newValue;
             AutomationProperties.SetName(this, automation);
 
             if (_label == null)
@@ -280,7 +303,7 @@ namespace Telegram.Controls
             catch
             {
                 // Compositor.CreateSpriteShape can throw InvalidCastException
-                OnGlyphChanged(Icons.DismissFilled24, Glyph, animate, Strings.AccActionCancelDownload, false);
+                OnGlyphChanged(Icons.DismissFilled24, _glyph, animate, Strings.AccActionCancelDownload, false);
             }
         }
 
@@ -291,7 +314,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            OnGlyphChanged(string.Empty, Glyph, animate, Strings.AccActionCancelDownload, false);
+            OnGlyphChanged(string.Empty, _glyph, animate, Strings.AccActionCancelDownload, false);
 
             var compositor = BootStrapper.Current.Compositor;
             var diameter = 48f; // min(bounds.size.width, bounds.size.height)
