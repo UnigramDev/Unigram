@@ -33,31 +33,117 @@ namespace Telegram.Common
         /// Dividing gets an answer that looks plausible and is wrong by the square of the rate -
         /// 1.19 grams read as 0.44 AED where it is 5.98.
         /// </remarks>
-        public static double ToCurrency(IClientService clientService, WalletState state, BigInteger nanograms)
+        /// <summary>
+        /// An amount of grams in the wallet's currency, or false when it cannot be said.
+        /// </summary>
+        /// <remarks>
+        /// **Answering false is the point of this returning a bool.** Both rates arrive from the
+        /// account and neither is there at once, and the obvious fallback - leave the amount in
+        /// dollars - is the one thing that must not happen: it produces a number that is wrong by
+        /// the rate and labels it with the currency the user chose. There is no reading of the
+        /// screen that recovers from that, so the caller is made to decide what to show instead.
+        /// </remarks>
+        public static bool TryToCurrency(IClientService clientService, WalletState state, BigInteger nanograms, out BigInteger units)
         {
-            var dollars = (double)nanograms * clientService.Options.MillionGramToUsdRate / 1e15;
+            units = BigInteger.Zero;
 
-            return state is { CurrencyRate: > 0 }
-                ? dollars * state.CurrencyRate
-                : dollars;
+            if (!TryGetRate(clientService, state, out var rate))
+            {
+                return false;
+            }
+
+            // nanograms * usd / 1e15 gives dollars; the rest carries it into the chosen currency
+            // and into CurrencyDecimals. One division, at the end, so nothing is truncated twice.
+            units = nanograms * rate.Usd * rate.Scaled * CurrencyScale
+                / (NanogramsPerMillionGram * RateScale);
+
+            return true;
+        }
+
+        /// <summary>
+        /// The first of the two steps on its own, in <see cref="CurrencyDecimals"/>, for a caller
+        /// that wants dollars and so needs no currency rate to be in yet.
+        /// </summary>
+        public static bool TryToUsd(IClientService clientService, BigInteger nanograms, out BigInteger units)
+        {
+            units = BigInteger.Zero;
+
+            var usd = clientService.Options.MillionGramToUsdRate;
+            if (usd <= 0)
+            {
+                return false;
+            }
+
+            units = nanograms * usd * CurrencyScale / NanogramsPerMillionGram;
+            return true;
+        }
+
+        /// <summary>
+        /// How many decimals <see cref="TryToCurrency"/> counts in. Deeper than any currency, so
+        /// that a fee worth a fraction of a cent survives to be formatted.
+        /// </summary>
+        public const int CurrencyDecimals = 9;
+
+        private static readonly BigInteger CurrencyScale = BigInteger.Pow(10, CurrencyDecimals);
+
+        // A million grams is 1e6 * 1e9 nanograms, which is what million_gram_to_usd_rate is priced
+        // against.
+        private static readonly BigInteger NanogramsPerMillionGram = BigInteger.Pow(10, 15);
+
+        // The currency rate arrives from the account as a double and is the one value here that
+        // cannot be exact. It is turned into a fraction over this once, at the edge, so that
+        // everything after it is integer arithmetic rather than a chain of rounded multiplications.
+        private const int RateDecimals = 9;
+
+        private static readonly BigInteger RateScale = BigInteger.Pow(10, RateDecimals);
+
+        private static bool TryGetRate(IClientService clientService, WalletState state, out (BigInteger Usd, BigInteger Scaled) rate)
+        {
+            rate = default;
+
+            var usd = clientService.Options.MillionGramToUsdRate;
+            if (usd <= 0 || state is not { CurrencyRate: > 0 })
+            {
+                return false;
+            }
+
+            var scaled = new BigInteger(Math.Round(state.CurrencyRate * (double)RateScale));
+            if (scaled <= BigInteger.Zero)
+            {
+                return false;
+            }
+
+            rate = (usd, scaled);
+            return true;
         }
 
         /// <summary>
         /// The same two steps backwards, for an amount typed in money rather than in grams.
         /// </summary>
-        public static BigInteger ToNanograms(IClientService clientService, WalletState state, double amount)
+        /// <summary>
+        /// The same two steps backwards, for an amount typed in money rather than in grams.
+        /// </summary>
+        /// <remarks>
+        /// This one decides what leaves the wallet, so a missing rate has to stop the transfer
+        /// rather than guess at it: treating the typed amount as dollars would send whatever the
+        /// rate would have divided out - for a currency at 3.67 to the dollar, nearly four times
+        /// what was asked for.
+        /// </remarks>
+        public static bool TryToNanograms(IClientService clientService, WalletState state, BigInteger units, int exponent, out BigInteger nanograms)
         {
-            var rate = clientService.Options.MillionGramToUsdRate;
-            if (rate <= 0)
+            nanograms = BigInteger.Zero;
+
+            if (!TryGetRate(clientService, state, out var rate))
             {
-                return BigInteger.Zero;
+                return false;
             }
 
-            var dollars = state is { CurrencyRate: > 0 }
-                ? amount / state.CurrencyRate
-                : amount;
+            // The inverse of the above, and truncating for the same reason: what is sent is never
+            // more than what was asked for.
+            nanograms = units * NanogramsPerMillionGram * RateScale
+                / (BigInteger.Pow(10, exponent) * rate.Usd * rate.Scaled);
 
-            return new BigInteger(dollars * 1e15 / rate);
+            return true;
         }
 
         /// <summary>

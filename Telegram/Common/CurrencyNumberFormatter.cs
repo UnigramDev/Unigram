@@ -44,6 +44,8 @@ namespace Telegram.Common
             _formatter = formatter;
         }
 
+        public string Symbol => _currencySymbol;
+
         public string Format(double value) => _formatter.Format(value);
 
         /// <summary>

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -82,6 +83,7 @@ namespace Telegram.Controls.Messages
                 MessageSuggestBirthdate suggestBirthdate => UpdateSuggestBirthdate(message, suggestBirthdate, history),
                 MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, history),
                 MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, history),
+                MessageTonWalletTransfer tonWalletTransfer => UpdateTonWalletTransfer(message, tonWalletTransfer, history),
                 MessageUpgradedGift upgradedGift => UpdateUpgradedGift(message, upgradedGift, history),
                 MessageUpgradedGiftPurchaseOffer upgradedGiftPurchaseOffer => UpdateUpgradedGiftPurchaseOffer(message, upgradedGiftPurchaseOffer, history),
                 MessageUpgradedGiftPurchaseOfferRejected upgradedGiftPurchaseOfferRejected => UpdateUpgradedGiftPurchaseOfferRejected(message, upgradedGiftPurchaseOfferRejected, history),
@@ -2019,6 +2021,22 @@ namespace Telegram.Controls.Messages
             else
             {
                 return Strings.ActionCreateMega.AsFormattedText();
+            }
+        }
+
+        private static FormattedText UpdateTonWalletTransfer(MessageWithOwner message, MessageTonWalletTransfer tonWalletTransfer, bool history)
+        {
+            if (message.IsOutgoing)
+            {
+                var dollars = WalletHelper.TryToUsd(message.ClientService, tonWalletTransfer.Amount, out var units)
+                    ? Formatter.FormatAmountExact(units, WalletHelper.CurrencyDecimals, "USD")
+                    : string.Empty;
+
+                return ReplaceWithLink(string.Format("[You sent un1 {0} Grams ({1})]", Formatter.TonBalance(tonWalletTransfer.Amount).Join(), dollars), message.ClientService.GetUser(message.Chat));
+            }
+            else
+            {
+                return ReplaceWithLink("[un1 sent you {0} Grams ({1})]", message.GetSender());
             }
         }
 

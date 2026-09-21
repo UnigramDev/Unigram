@@ -331,31 +331,56 @@ namespace Telegram.Converters
         /// For wallet amounts, where a fee of a few hundred thousand nanograms is worth a fraction
         /// of a cent and is still worth showing.
         /// </remarks>
-        public static string FormatAmountExact(double amount, string currency)
+        public static string FormatAmountExact(BigInteger units, int exponent, string currency)
         {
-            var exponent = GetAmountExponent(currency);
-            var scale = Math.Abs(amount);
+            var precision = GetAmountExponent(currency);
 
             // As deep as it takes to reach the first digit that is not a zero, and no deeper: the
             // currency's own precision says nothing about an amount below its smallest unit, and
             // everything past that first digit is the rate's noise rather than the amount's.
-            var digits = exponent;
+            //
+            // Measured by dividing rather than by scaling up, so an amount too large for a double
+            // is counted the same way as one too small for a cent.
+            var digits = precision;
 
-            while (digits < 8 && scale > 0 && scale * Math.Pow(10, digits) < 1)
+            if (!units.IsZero)
             {
-                digits++;
+                var value = BigInteger.Abs(units);
+
+                while (digits < MaxAmountDecimals && value * BigInteger.Pow(10, digits) < BigInteger.Pow(10, exponent))
+                {
+                    digits++;
+                }
             }
 
             // Written out in the app's own language, like every other number beside it. The
             // formatter speaks the region's, and the two disagree often enough to be read as two
             // amounts in one line.
-            var units = (BigInteger)Math.Round(amount * Math.Pow(10, digits));
-            var (integer, fraction) = SplitAmount(units, digits, digits, digits > exponent);
+            var (integer, fraction) = SplitAmount(Rescale(units, exponent, digits), digits, digits, digits > precision);
 
             var formatter = Locale.GetCurrencyFormatter(currency);
             var number = integer + fraction;
 
             return formatter != null ? formatter.Format(number) : number;
+        }
+
+        /// <summary>How deep a converted amount is ever written.</summary>
+        private const int MaxAmountDecimals = 8;
+
+        /// <summary>
+        /// The same amount counted in a different unit, truncated rather than rounded when the new
+        /// one is coarser - money is never rounded up on the way to a screen.
+        /// </summary>
+        public static BigInteger Rescale(BigInteger units, int from, int to)
+        {
+            if (to == from)
+            {
+                return units;
+            }
+
+            return to > from
+                ? units * BigInteger.Pow(10, to - from)
+                : units / BigInteger.Pow(10, from - to);
         }
 
         public static double Amount(long amount, string currency)
