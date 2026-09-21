@@ -80,6 +80,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         bool m_loaded = false;
 
+        // Whether the adapter Create() settled on exposes ID3D11VideoDevice. libvlc reads the
+        // device straight out of SwapChainOptions, so one that can't decode has to say so there.
+        bool m_hardwareDecoding = false;
+
         winrt::event_token m_compositionScaleChangedToken{};
         winrt::event_token m_sizeChangedToken{};
         //winrt::event_token m_suspending{};

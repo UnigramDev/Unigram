@@ -117,6 +117,13 @@ namespace winrt::Telegram::Native::Media::implementation
         swapChainStream << L"--winrt-swapchain=0x" << std::hex << reinterpret_cast<uintptr_t>(m_swapChain.get());
         options.Append(swapChainStream.str());
 
+        // d3d11va would open against the device above, fail on the ID3D11VideoDevice it needs, and
+        // release a reference to it on the way out that it never took. Don't let it start.
+        if (!m_hardwareDecoding)
+        {
+            options.Append(L"--avcodec-hw=none");
+        }
+
         return options;
     }
 
@@ -157,11 +164,25 @@ namespace winrt::Telegram::Native::Media::implementation
 
             m_d3d11Device = nullptr;
             m_deviceContext = nullptr;
+            m_hardwareDecoding = false;
             UINT adapterIndex = 0;
+
+            // This device is handed to libvlc, whose DXVA decoder queries ID3D11VideoDevice off it
+            // and whose vout allocates decoder textures on it. An adapter that can do neither --
+            // the Basic Render Driver, or a display driver that exposes no video support -- fails
+            // every hardware decode, and each failed attempt releases a reference to this device
+            // that libvlc never took. So take the first adapter that can decode, and fall back to
+            // the first one that merely works, so such a machine still gets a picture.
+            winrt::com_ptr<ID3D11Device> fallbackDevice;
+            winrt::com_ptr<ID3D11DeviceContext> fallbackContext;
 
             winrt::com_ptr<IDXGIAdapter1> adapter;
             while (SUCCEEDED(dxgiFactory->EnumAdapters1(adapterIndex, adapter.put())))
             {
+                DXGI_ADAPTER_DESC1 desc{};
+                const bool software = SUCCEEDED(adapter->GetDesc1(&desc))
+                    && (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0;
+
                 HRESULT hr = D3D11CreateDevice(
                     adapter.get(),
                     D3D_DRIVER_TYPE_UNKNOWN,
@@ -176,7 +197,20 @@ namespace winrt::Telegram::Native::Media::implementation
 
                 if (SUCCEEDED(hr))
                 {
-                    break;
+                    winrt::com_ptr<ID3D11VideoDevice> videoDevice;
+                    if (!software && SUCCEEDED(m_d3d11Device->QueryInterface(IID_PPV_ARGS(videoDevice.put()))))
+                    {
+                        m_hardwareDecoding = true;
+                        break;
+                    }
+
+                    LOGGER_WARNING(L"Adapter {} ({}) can't decode video", adapterIndex, desc.Description);
+
+                    if (!fallbackDevice)
+                    {
+                        fallbackDevice = m_d3d11Device;
+                        fallbackContext = m_deviceContext;
+                    }
                 }
 
                 // put() overwrites without releasing, so anything a failed attempt left behind has
@@ -186,6 +220,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
                 adapter = nullptr;
                 adapterIndex++;
+            }
+
+            if (!m_d3d11Device && fallbackDevice)
+            {
+                m_d3d11Device = std::move(fallbackDevice);
+                m_deviceContext = std::move(fallbackContext);
             }
 
             if (!m_d3d11Device)
@@ -339,6 +379,7 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         m_loaded = false;
+        m_hardwareDecoding = false;
     }
 
     void AsyncMediaPlayerSwapChain::Attach(SwapChainPanel const& panel, bool subscribe)
