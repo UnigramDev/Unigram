@@ -6,8 +6,11 @@
 //
 
 using System;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 
 namespace Telegram.Controls
 {
@@ -72,6 +75,32 @@ namespace Telegram.Controls
             container.Drop += Container_Drop;
 
             return container;
+        }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+
+            // Bound rather than assigned: the badge moves under the row without the container ever
+            // being prepared again, and a name read from a recycled container is worse than none.
+            if (element is FrameworkElement container && item is ChatFolderViewModel)
+            {
+                container.SetBinding(AutomationProperties.NameProperty, new Binding
+                {
+                    Path = new PropertyPath(nameof(ChatFolderViewModel.AutomationName)),
+                    Source = item
+                });
+            }
+        }
+
+        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.ClearContainerForItemOverride(element, item);
+
+            if (element is FrameworkElement container)
+            {
+                container.ClearValue(AutomationProperties.NameProperty);
+            }
         }
 
         private void Container_DragEnter(object sender, DragEventArgs e)

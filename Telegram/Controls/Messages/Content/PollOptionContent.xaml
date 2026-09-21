@@ -332,6 +332,7 @@
                                      Style="{StaticResource PollOptionProgressBarStyle}"
                                      Margin="0,-4,0,0"
                                      VerticalAlignment="Top"
+                                     AutomationProperties.AccessibilityView="Raw"
                                      Grid.Row="1"
                                      Grid.Column="1" />
 

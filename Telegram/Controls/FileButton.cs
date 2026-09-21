@@ -143,6 +143,41 @@ namespace Telegram.Controls
             }
         }
 
+        private string _action;
+        private string _subject;
+
+        /// <summary>
+        /// What the button acts on, read after the action: "Download file, report.pdf, 2.4 MB".
+        /// Deliberately the stable part only - progress belongs to the subtitle, and a name that
+        /// changed with it would be re-read on every update.
+        /// </summary>
+        public string Subject
+        {
+            get => _subject;
+            set
+            {
+                if (string.Equals(_subject, value, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                _subject = value;
+                UpdateAutomationName();
+            }
+        }
+
+        private void UpdateAutomationName()
+        {
+            if (_action?.Length > 0 && _subject?.Length > 0)
+            {
+                AutomationProperties.SetName(this, _action + ", " + _subject);
+            }
+            else
+            {
+                AutomationProperties.SetName(this, _action ?? _subject ?? string.Empty);
+            }
+        }
+
         public void SetGlyph(int fileId, MessageContentState state)
         {
             if (IsDisconnected)
@@ -216,7 +251,9 @@ namespace Telegram.Controls
             }
 
             Glyph = newValue;
-            AutomationProperties.SetName(this, automation);
+
+            _action = automation;
+            UpdateAutomationName();
 
             if (_label == null)
             {

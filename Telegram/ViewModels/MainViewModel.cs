@@ -714,7 +714,13 @@ namespace Telegram.ViewModels
         public ChatFolderName Name
         {
             get => _name;
-            set => Set(ref _name, value);
+            set
+            {
+                if (Set(ref _name, value))
+                {
+                    RaisePropertyChanged(nameof(AutomationName));
+                }
+            }
         }
 
         private ChatFolderIcon2 _icon;
@@ -772,7 +778,14 @@ namespace Telegram.ViewModels
             }
 
             RaisePropertyChanged(nameof(ShowCount));
+            RaisePropertyChanged(nameof(AutomationName));
         }
+
+        // The tab reads as its two text children otherwise, "All 535": the badge is a number with
+        // nothing to say what it counts.
+        public string AutomationName => ShowCount
+            ? Name.Text.Text + ", " + Locale.Declension(Strings.R.AccDescrUnreadChats, UnreadCount)
+            : Name.Text.Text;
     }
 
     public enum ChatFolderIcon2

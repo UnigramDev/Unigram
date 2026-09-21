@@ -8,6 +8,7 @@
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
@@ -41,6 +42,14 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
+            // A name set on the container is deliberate and wins: the walk below is the fallback for
+            // templates that don't set one, and it would otherwise shadow every explicit name.
+            var name = AutomationProperties.GetName(_owner);
+            if (name.Length > 0)
+            {
+                return name;
+            }
+
             if (_owner.ContentTemplateRoot is ChatCell cell)
             {
                 return cell.GetAutomationName() ?? base.GetNameCore();
