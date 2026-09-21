@@ -421,6 +421,15 @@ namespace Telegram.Controls
 
         private TimeSpan CalculatePosition(PointerPoint point)
         {
+            // The capture outlives the slider being collapsed - the gallery transport hides itself
+            // when playback stops - so a move can arrive with no width left to divide by, and the
+            // resulting NaN is rejected by TimeSpan. Nothing the pointer says maps onto a bar that
+            // isn't there, so the last position reported stands.
+            if (ActualWidth <= 0)
+            {
+                return _position;
+            }
+
             return TimeSpan.FromSeconds(Math.Clamp(point.Position.X, 0, ActualWidth) / ActualWidth * _duration.TotalSeconds);
         }
 
