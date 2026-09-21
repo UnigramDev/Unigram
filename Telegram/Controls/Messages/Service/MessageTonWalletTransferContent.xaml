@@ -47,17 +47,44 @@
                                          Padding="0,0,0,4" />
         </messages:MessageService>
 
-        <Grid Width="194">
+        <Grid Width="202">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Border BorderBrush="{ThemeResource MessageServiceBackgroundBrush}"
                     BorderThickness="6"
                     CornerRadius="12"
-                    Margin="0,4,0,0" />
+                    Margin="0,4,0,0"
+                    Grid.RowSpan="2" />
+
+            <Border x:Name="CommentRoot"
+                    x:Load="False"
+                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                    CornerRadius="0,0,12,12"
+                    Margin="0,-16,0,0"
+                    Padding="0,16,0,0"
+                    Grid.Row="1">
+                <controls:FormattedTextBlock x:Name="Comment"
+                                             Foreground="#FFFFFF"
+                                             IconForeground="#FFFFFF"
+                                             TextAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                             FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                             AutoFontSize="False"
+                                             IsTextSelectionEnabled="False"
+                                             HyperlinkStyle="None"
+                                             HyperlinkForeground="#FFFFFF"
+                                             HyperlinkFontWeight="SemiBold"
+                                             Padding="0,0,0,4" />
+            </Border>
 
             <Grid x:Name="Pattern"
                   Margin="4,8,4,4"
                   Padding="8,16,8,4"
                   CornerRadius="12"
-                  Width="186">
+                  Width="194">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -93,12 +120,13 @@
                            Foreground="#6DDCFF"
                            FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
                            FontSize="12"
-                           Margin="0,0,0,4"
                            Grid.Row="2" />
                 <Grid Opacity="0.3"
+                      Margin="0,4"
                       Grid.Row="3">
                     <Border x:Name="AddressShadow" />
                     <TextBlock x:Name="Address"
+                               Foreground="#000000"
                                FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
                                FontSize="10"
                                HorizontalAlignment="Center" />

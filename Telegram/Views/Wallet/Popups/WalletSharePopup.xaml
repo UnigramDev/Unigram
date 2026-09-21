@@ -11,16 +11,13 @@
                        IsDismissButtonVisible="True"
                        DismissButtonRequestedTheme="Dark"
                        VerticalContentAlignment="Center"
-                       CornerRadius="32"
                        Padding="0">
 
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0,1">
-                <GradientStop Color="#0079FF" />
-                <GradientStop Color="#77DAFF"
-                              Offset="0.5" />
-                <GradientStop Color="#0079FF"
+                <GradientStop Color="#088FEE" />
+                <GradientStop Color="#45B8F7"
                               Offset="1" />
             </LinearGradientBrush>
         </Grid.Background>
@@ -149,14 +146,13 @@
                    Grid.Row="1" />
 
         <Border Background="#FFFFFF"
-                CornerRadius="20"
+                CornerRadius="4"
                 Margin="24"
                 Grid.Row="2">
 
             <Button Content="[Buy with cash or crypto]"
                     HorizontalAlignment="Stretch"
-                    Height="40"
-                    CornerRadius="20" />
+                    Height="40" />
         </Border>
     </Grid>
 </controls:ContentPopup>

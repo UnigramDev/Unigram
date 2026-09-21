@@ -16,13 +16,11 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Border Margin="0,0,0,-24"
-                RenderTransformOrigin="0.5,0.5"
+                IsHitTestVisible="False"
                 Canvas.ZIndex="1">
-            <Border.RenderTransform>
-                <ScaleTransform ScaleY="-1" />
-            </Border.RenderTransform>
             <Border.Background>
-                <media:LinearGaussianBrush />
+                <media:LinearGaussianBrush StartPoint="0,1"
+                                           EndPoint="0,0" />
             </Border.Background>
         </Border>
         <!--
@@ -184,14 +182,27 @@
             </ListView.ItemTemplate>
             <ListView.Header>
                 <controls:SettingsPanel IsFooter="True">
-                    <controls:SettingsPanel.Transform3D>
-                        <PerspectiveTransform3D Depth="800" />
-                    </controls:SettingsPanel.Transform3D>
-                    <controls:SettingsButton Content="[You also have funds in Walt]"
+                    <!-- Shown only once the account says there is something there, which is
+                         one request answered per window. -->
+                    <controls:SettingsButton x:Name="WalletBotButton"
+                                             Click="WalletBot_Click"
+                                             Content="[You also have funds in Walt]"
                                              IsChevronVisible="True"
                                              IsGlyphVisible="False"
                                              BorderThickness="1"
                                              CornerRadius="4"
+                                             Visibility="Collapsed"
+                                             Margin="24,8,24,0" />
+
+                    <!-- Same terms as the My Grams entry in settings, and the content is built
+                         in code because the amount carries the gram glyph in the icon font. -->
+                    <controls:SettingsButton x:Name="EarningsButton"
+                                             Click="Earnings_Click"
+                                             IsChevronVisible="True"
+                                             IsGlyphVisible="False"
+                                             BorderThickness="1"
+                                             CornerRadius="4"
+                                             Visibility="Collapsed"
                                              Margin="24,8,24,0" />
 
                     <!-- Only when there is something on them, and the content is built in code
@@ -207,196 +218,9 @@
 
 
 
-                    <controls:AspectView x:Name="Card"
-                                         Background="#0079FF"
+                    <controls:WalletCard x:Name="Card"
                                          Margin="24,0"
-                                         MaxWidth="360">
-                        <!-- Carries the conic gradient so it can rotate on its own
-                             while the card tilts. Oversized and clipped by AttachTilt. -->
-                        <Rectangle x:Name="Sheen"
-                                   Visibility="Visible" />
-                        <!--<Image Source="ms-appx:///Views/Wallet/Card.png"
-                               VerticalAlignment="Bottom"
-                               Visibility="Collapsed" />
-                        <Image Source="ms-appx:///Views/Wallet/Card.png"
-                               VerticalAlignment="Top"
-                               Visibility="Collapsed" />-->
-                        <Viewbox>
-                            <!--<Grid Width="360"
-                                  Height="227.333">-->
-                            <Grid Width="360"
-                                  Height="220">
-                                <Grid HorizontalAlignment="Right"
-                                      VerticalAlignment="Center"
-                                      Margin="0,0,12,0"
-                                      Opacity="0.3">
-                                    <!-- box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.06)
-                                         is applied in OnLoaded — it needs the glyph
-                                         alpha mask, which markup cannot express. -->
-                                    <Border x:Name="CardAddressShadow"
-                                            RenderTransformOrigin="0.5,0.5"
-                                            Opacity="0.6">
-                                        <!--<Border.RenderTransform>
-                                            <RotateTransform Angle="90" />
-                                        </Border.RenderTransform>-->
-                                    </Border>
-                                    <TextBlock x:Name="CardAddress"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
-                                               FontSize="10"
-                                               FontWeight="Normal"
-                                               Foreground="#000000"
-                                               RenderTransformOrigin="0.5,0.5">
-                                        <TextBlock.RenderTransform>
-                                            <RotateTransform Angle="90" />
-                                        </TextBlock.RenderTransform>
-                                    </TextBlock>
-                                </Grid>
-                                <HyperlinkButton Style="{StaticResource EmptyHyperlinkButtonStyle}"
-                                                 Width="48"
-                                                 Height="36"
-                                                 HorizontalAlignment="Right"
-                                                 VerticalAlignment="Top"
-                                                 Margin="0,80,48,0">
-                                    <Grid BorderBrush="#28000000"
-                                          BorderThickness="1"
-                                          CornerRadius="8">
-                                        <Grid.Background>
-                                            <LinearGradientBrush StartPoint="-0.039,0.090"
-                                                                 EndPoint="1.039,0.910">
-                                                <GradientStop Color="#E0BBBDC0"
-                                                              Offset="0.0799" />
-                                                <GradientStop Color="#E0FFFFFF"
-                                                              Offset="0.922" />
-                                            </LinearGradientBrush>
-                                        </Grid.Background>
-                                        <!--<TextBlock Text="&#xEACA;"
-                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                   FontSize="20"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />-->
-                                        <Grid Width="16"
-                                              Height="16">
-                                            <Border Width="7"
-                                                    Height="7"
-                                                    BorderThickness="1"
-                                                    BorderBrush="#1A1A1A"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Top"
-                                                    CornerRadius="2" />
-                                            <Border Width="7"
-                                                    Height="7"
-                                                    BorderThickness="1"
-                                                    BorderBrush="#1A1A1A"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    CornerRadius="2" />
-                                            <Border Width="7"
-                                                    Height="7"
-                                                    BorderThickness="1"
-                                                    BorderBrush="#1A1A1A"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Bottom"
-                                                    CornerRadius="2" />
-                                            <Grid Width="7"
-                                                  Height="7"
-                                                  HorizontalAlignment="Right"
-                                                  VerticalAlignment="Bottom">
-                                                <Border Width="2"
-                                                        Height="2"
-                                                        Background="#1A1A1A"
-                                                        HorizontalAlignment="Left"
-                                                        VerticalAlignment="Top" />
-                                                <Border Width="2"
-                                                        Height="2"
-                                                        Background="#1A1A1A"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Top" />
-                                                <Border Width="2"
-                                                        Height="2"
-                                                        Background="#1A1A1A"
-                                                        HorizontalAlignment="Left"
-                                                        VerticalAlignment="Bottom" />
-                                                <Border Width="2"
-                                                        Height="2"
-                                                        Background="#1A1A1A"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom" />
-                                                <Border Width="2"
-                                                        Height="2"
-                                                        Background="#1A1A1A" />
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </HyperlinkButton>
-                                <Grid HorizontalAlignment="Left"
-                                      VerticalAlignment="Top"
-                                      Margin="20,76,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <!--<Border Background="White"
-                                            Width="28"
-                                            Height="28">
-                                        <Border Width="19.968095779418945"
-                                                Height="16.878997802734375"
-                                                Margin="4.01,5.6,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Top"
-                                                Background="Red" />
-                                    </Border>-->
-                                    <Border x:Name="CardBalanceIcon"
-                                            Width="28"
-                                            Height="28">
-                                        <Path Data="M16.9411 5.6001C18.0579 5.6001 18.6166 5.60019 19.1217 5.75635C19.5688 5.89458 19.9835 6.12107 20.3415 6.42236C20.7459 6.76276 21.0482 7.23215 21.652 8.17139L23.1999 10.5806C23.663 11.301 23.8948 11.6615 23.9577 12.0405C24.013 12.3747 23.9764 12.7179 23.8512 13.0327C23.7093 13.3897 23.406 13.6928 22.8005 14.2983L15.696 21.4028C15.1021 21.9967 14.8049 22.2944 14.4626 22.4058C14.1613 22.5036 13.8361 22.5036 13.5348 22.4058C13.1924 22.2945 12.8954 21.9968 12.3014 21.4028L5.19596 14.2983C4.59052 13.6929 4.28814 13.3897 4.14616 13.0327C4.02101 12.7179 3.98438 12.3747 4.03971 12.0405C4.10256 11.6615 4.33358 11.3007 4.79655 10.5806L6.34538 8.17139C6.94913 7.23221 7.25149 6.76275 7.65592 6.42236C8.01393 6.12107 8.42861 5.89456 8.87565 5.75635C9.38075 5.60019 9.93953 5.6001 11.0563 5.6001H16.9411ZM16.8112 8.30713C16.6984 8.00251 16.2677 8.00252 16.1549 8.30713L15.3757 10.4126C15.3289 10.5391 15.2287 10.6392 15.1022 10.686L12.9967 11.4653C12.6925 11.5783 12.6924 12.0088 12.9967 12.1216L15.1022 12.9009C15.2286 12.9477 15.3288 13.047 15.3757 13.1733L16.1549 15.2788C16.2677 15.5835 16.6984 15.5835 16.8112 15.2788L17.5905 13.1733C17.6373 13.0471 17.7368 12.9477 17.863 12.9009L19.9694 12.1216C20.2737 12.0087 20.2736 11.5783 19.9694 11.4653L17.863 10.686C17.7366 10.6392 17.6372 10.5389 17.5905 10.4126L16.8112 8.30713Z"
-                                              Fill="#FFFFFF" />
-                                    </Border>
-
-                                    <TextBlock x:Name="CardBalanceText"
-                                               FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                               FontWeight="SemiBold"
-                                               FontSize="22"
-                                               Foreground="#FFFFFF"
-                                               Grid.Column="1">
-                                        <Run x:Name="CardBalance" /><Run x:Name="CardBalanceFraction"
-                                                                         FontSize="18" />
-                                        <Run x:Name="CardBalanceGram"
-                                             Text="GRAM"
-                                             Foreground="#6DDCFF" />
-                                    </TextBlock>
-                                    <TextBlock x:Name="CardBalanceUsd"
-                                               FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                               FontWeight="Bold"
-                                               Foreground="#6DDCFF"
-                                               Margin="4"
-                                               Grid.ColumnSpan="2"
-                                               Grid.Row="1" />
-                                </Grid>
-                                <!-- What the two lines above look like before there is anything to
-                                     put in them. The bars are drawn by the skeleton itself, clipped
-                                     to its own geometry, so this only reserves the room. -->
-                                <Border x:Name="CardBalanceSkeleton"
-                                        Width="180"
-                                        Height="62"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"
-                                        Visibility="Collapsed"
-                                        Margin="20,76,0,0" />
-
-                                <TextBlock x:Name="CardName"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
-                                           FontWeight="Medium"
-                                           Foreground="#FFFFFF"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Bottom"
-                                           Margin="24,20" />
-                            </Grid>
-                        </Viewbox>
-                    </controls:AspectView>
+                                         MaxWidth="360" />
                     <Grid MaxWidth="360"
                           ColumnSpacing="8"
                           Margin="24,-8,24,0">

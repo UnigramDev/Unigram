@@ -5,11 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.ComponentModel;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -22,15 +20,13 @@ using Telegram.Services;
 using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Wallet;
+using Telegram.Views.Grams;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Wallet.Popups;
-using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -55,7 +51,6 @@ namespace Telegram.Views.Wallet
         private readonly IWalletService _wallet;
         private readonly SecondaryNavigationService _navigationService;
 
-        private readonly WalletCardSheen _sheen = new(/*Theme.AccentLight.Dark2*/);
 
         public WalletViewModel ViewModel => DataContext as WalletViewModel;
 
@@ -86,14 +81,6 @@ namespace Telegram.Views.Wallet
             // before there was a view model to read.
             ScrollingHost.ItemsSource = viewModel.Items;
 
-            //Card.Constraint = new Size(85.60, 53.98);
-            Card.Constraint = new Size(360, 220);
-            Card.SizeChanged += Card_SizeChanged;
-
-            CardBalanceGram.Foreground = new SolidColorBrush(_sheen.Accent);
-            CardBalanceUsd.Foreground = new SolidColorBrush(_sheen.Accent);
-
-            CardAddress.SizeChanged += CardAddress_SizeChanged;
 
             StateLabel.Text = "[Wallet]";
 
@@ -105,50 +92,27 @@ namespace Telegram.Views.Wallet
             // the view model to the aggregator, and OnWindowClosed is the other half of that.
             _ = viewModel.NavigatedToAsync(null, NavigationMode.New, null);
 
+            CheckWalletBotAsync();
+
+            UpdateEarnings();
+
             //        background: linear - gradient(0deg, #0079FF, #0079FF),
             //conic - gradient(from 20.99deg at 50 % 50 %, #0079FF 0deg, #169AF9 90deg, #0079FF 180deg, #169AF9 270deg, #0079FF 360deg);
-
-        }
-
-        public void Test()
-        {
-            _sheen.Background = Theme.AccentLight.Dark2;
-
-            CardBalanceGram.Foreground = new SolidColorBrush(_sheen.Accent);
-            CardBalanceUsd.Foreground = new SolidColorBrush(_sheen.Accent);
         }
 
         protected override UIElement TitleBarElement => TitleBarHandle;
 
         protected override void OnLoaded()
         {
-            VisualUtilities.AttachTilt(Card, Sheen, 10, 20, 0, OnCardTilt);
-
-            // box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.06)
-            //
-            // No blur and a single pixel down: this is the highlight that makes the
-            // address read as engraved into the card rather than printed on it. Here
-            // rather than in the markup because the mask comes from the glyphs, which
-            // only exist once the text has been laid out.
-            VisualUtilities.DropShadow(CardAddress, radius: 0, opacity: 1.0f,
-                target: CardAddressShadow, color: Colors.White, offset: new Vector3(1, 0, 0));
-
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            UpdateAddress(ViewModel.Address);
-            UpdateBalance(ViewModel.Balance);
+            UpdateCard();
             UpdateEmpty(ViewModel.IsEmpty);
         }
 
         protected override void OnUnloaded()
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
-
-            VisualUtilities.DetachTilt(Card);
-
-            // Detaching stops the per-frame callback wherever it happens to be, and the window can
-            // be shown again with its surface intact, so the bands are reset explicitly.
-            OnCardTilt(Vector2.Zero, 0);
         }
 
         protected override void OnWindowClosed()
@@ -161,51 +125,30 @@ namespace Telegram.Views.Wallet
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.Address))
+            if (e.PropertyName == nameof(ViewModel.Address)
+                || e.PropertyName == nameof(ViewModel.Balance)
+                || e.PropertyName == nameof(ViewModel.Currency)
+                || e.PropertyName == nameof(ViewModel.CurrencyRate))
             {
-                UpdateAddress(ViewModel.Address);
-            }
-            else if (e.PropertyName == nameof(ViewModel.Balance))
-            {
-                UpdateBalance(ViewModel.Balance);
-            }
-            else if (e.PropertyName == nameof(ViewModel.Currency) || e.PropertyName == nameof(ViewModel.CurrencyRate))
-            {
-                UpdateBalance(ViewModel.Balance);
+                UpdateCard();
             }
             else if (e.PropertyName == nameof(ViewModel.IsEmpty))
             {
                 UpdateEmpty(ViewModel.IsEmpty);
             }
+            else if (e.PropertyName == nameof(ViewModel.EarnedGramCount))
+            {
+                UpdateEarnings();
+            }
         }
 
-        private void UpdateAddress(string address)
+        /// <summary>
+        /// Hands the card what it draws. One call for all of it: the balance and what it converts
+        /// to are one answer, and the card is the thing that knows not to show half of it.
+        /// </summary>
+        private void UpdateCard()
         {
-            if (string.IsNullOrEmpty(address))
-            {
-                CardAddress.Text = string.Empty;
-            }
-            else
-            {
-                var builder = new StringBuilder();
-
-                for (int i = 0; i < address.Length; i += 4)
-                {
-                    if (i > 0)
-                    {
-                        builder.Append(i == 24 ? "\n" : " ");
-                    }
-
-                    builder.Append(address.Substring(i, 4).ToUpperInvariant());
-                }
-
-                CardAddress.Text = builder.ToString();
-            }
-
-            if (_clientService.TryGetUser(_clientService.Options.MyId, out User user))
-            {
-                CardName.Text = user.FullName().ToUpperInvariant();
-            }
+            Card.SetState(_clientService, _wallet.State);
         }
 
         private void UpdateEmpty(bool empty)
@@ -252,6 +195,101 @@ namespace Telegram.Views.Wallet
         }
 
         /// <summary>
+        /// The banner pointing at the balance the user has in the @walt bot, which is a different
+        /// wallet from this one and is not part of anything else here.
+        /// </summary>
+        /// <remarks>
+        /// Asked once per window rather than watched: nothing updates to say the bot balance moved,
+        /// and a banner that appears mid-session would be stranger than one that waits for the next
+        /// time the wallet is opened. Hidden until the answer arrives, so the row does not offer
+        /// somewhere to go and then take it away.
+        /// </remarks>
+        private async void CheckWalletBotAsync()
+        {
+            var response = await _clientService.SendAsync(new CheckWalletBotBalance());
+            if (response is WalletBotBalance balance && balance.HasBalance)
+            {
+                _walletBotUrl = balance.Url;
+
+                WalletBotButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private string _walletBotUrl;
+
+        private async void WalletBot_Click(object sender, RoutedEventArgs e)
+        {
+            // Empty is a documented answer - the bot is there but there is no link to reach it by -
+            // so the row stays and does nothing rather than opening the app's fallback.
+            if (string.IsNullOrEmpty(_walletBotUrl))
+            {
+                return;
+            }
+
+            // Resolved before it is opened, the same way the on-ramp session URL is: it is a bot
+            // link, and handing the string straight to OpenUrl would send it out to the browser
+            // instead of opening the bot in the app.
+            var response = await _clientService.SendAsync(new GetInternalLinkType(_walletBotUrl));
+            if (response is InternalLinkType internalLink)
+            {
+                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, internalLink, null);
+            }
+        }
+
+        /// <summary>
+        /// The line pointing at the Grams the account has earned, which are not in this wallet and
+        /// are spent from their own page.
+        /// </summary>
+        /// <remarks>
+        /// Shown on exactly the terms the My Grams entry in settings is, so the two never disagree:
+        /// a balance, or a history of one. Reading the balance is what asks for it, and the answer
+        /// arrives as an update that comes back through here.
+        /// </remarks>
+        private void UpdateEarnings()
+        {
+            if (!ViewModel.HasEarnedGrams)
+            {
+                EarningsButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            EarningsButton.Content = CreateAmountContent("[You also have {0} in Grams Earnings]", ViewModel.EarnedGramCount);
+            EarningsButton.Visibility = Visibility.Visible;
+        }
+
+        private void Earnings_Click(object sender, RoutedEventArgs e)
+        {
+            // The wallet's navigation service forwards to the window it was opened from, so this
+            // puts the page in the main window and brings that forward - which is where a page
+            // belongs, the wallet window having no frame of its own.
+            _navigationService.Navigate(typeof(GramsPage));
+        }
+
+        /// <summary>
+        /// One of the banner sentences, with the amount written into it where its own
+        /// <c>{0}</c> is.
+        /// </summary>
+        /// <remarks>
+        /// The whole sentence is one string rather than a fragment with the amount stuck on the
+        /// front: the words around a number are not in the same order in every language, and only
+        /// the translator of that language knows where they belong.
+        ///
+        /// The font is the theme's own chain ending in the icon font, because the amount carries
+        /// the gram glyph: that way it is part of the text rather than a run of its own, and the
+        /// user's chosen font and emoji set still apply to the words around it.
+        /// </remarks>
+        private static TextBlock CreateAmountContent(string format, BigInteger nanograms)
+        {
+            var block = new TextBlock
+            {
+                FontFamily = BootStrapper.Current.Resources["EmojiThemeFontFamilyWithSymbols"] as FontFamily
+            };
+
+            TextBlockHelper.SetMarkdown(block, string.Format(format, $"**{Icons.Ton} {Formatter.TonBalance(nanograms).Join()}**"));
+            return block;
+        }
+
+        /// <summary>
         /// The line offering the wallets the account has moved on from, when any of them still
         /// holds something.
         /// </summary>
@@ -269,137 +307,13 @@ namespace Telegram.Views.Wallet
                 return;
             }
 
-            var amount = Formatter.TonBalance(archived).Join();
-
-            var text = new TextBlock();
-            text.Inlines.Add(new Run
-            {
-                Text = Icons.Ton,
-                FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily
-            });
-            text.Inlines.Add(new Run { Text = string.Format(" {0} [in old wallets]", amount) });
-
-            ArchiveButton.Content = text;
+            ArchiveButton.Content = CreateAmountContent("[You also have {0} in old wallets]", archived);
             ArchiveButton.Visibility = Visibility.Visible;
         }
 
         private void Archive_Click(object sender, RoutedEventArgs e)
         {
-            _navigationService.ShowPopup(new WalletBackupPopup(_navigationService));
-        }
-
-        private void UpdateBalance(BigInteger balance)
-        {
-            UpdateArchive();
-
-            // Half an answer is not shown: grams with no rate to convert them at would be a number
-            // beside a currency it has not been converted into, and a rate of one is what an
-            // unfetched rate looks like - dollars wearing the wrong name.
-            var known = ViewModel.IsSynchronized && ViewModel.CurrencyRate > 0;
-
-            CardBalanceIcon.Visibility = known ? Visibility.Visible : Visibility.Collapsed;
-            CardBalanceText.Visibility = known ? Visibility.Visible : Visibility.Collapsed;
-            CardBalanceUsd.Visibility = known ? Visibility.Visible : Visibility.Collapsed;
-            CardBalanceSkeleton.Visibility = known ? Visibility.Collapsed : Visibility.Visible;
-
-            if (!known)
-            {
-                ShowSkeleton();
-                return;
-            }
-
-            var amount = Formatter.TonBalance(balance);
-            CardBalance.Text = amount.Integer;
-            CardBalanceFraction.Text = amount.Fraction;
-            // million_gram_to_usd_rate is whole dollars per 1,000,000 grams, and a balance is in
-            // nanograms: 1e9 to grams and 1e6 more to millions. In floating point, because in
-            // integers the division lands on whole cents and a balance smaller than one - which a
-            // wallet holds more often than not - comes out as nothing.
-            var rate = _clientService.Options.MillionGramToUsdRate;
-            var dollars = (double)balance * rate / 1e15;
-
-            // TDLib quotes every rate as what one dollar buys, so the chosen currency is one
-            // multiplication away - and none at all when it is the dollar, or when no rate has
-            // arrived for it.
-            var currency = ViewModel.Currency ?? "USD";
-            var converted = ViewModel.CurrencyRate > 0
-                ? dollars * ViewModel.CurrencyRate
-                : dollars;
-
-            CardBalanceUsd.Text = Formatter.FormatAmountExact(converted, currency);
-        }
-
-        /// <summary>
-        /// The two bars the balance and its converted line will fill, shimmering.
-        /// </summary>
-        /// <remarks>
-        /// Once: every call builds a visual and hands it to the element, so calling it on each
-        /// update would stack them. The card is drawn at a fixed design size inside a Viewbox, so
-        /// these numbers are that design's, not the screen's.
-        ///
-        /// White rather than the theme's hover colour, which the skeleton would otherwise take: the
-        /// card is the same blue in either theme, and a light theme's hover is dark.
-        /// </remarks>
-        private void ShowSkeleton()
-        {
-            if (_skeleton)
-            {
-                return;
-            }
-
-            _skeleton = true;
-
-            VisualUtilities.SetSkeleton(CardBalanceSkeleton, new Vector2(180, 62),
-                Color.FromArgb(0x3A, 0xFF, 0xFF, 0xFF),
-                CanvasGeometry.CreateRoundedRectangle(null, 0, 0, 170, 32, 8, 8),
-                CanvasGeometry.CreateRoundedRectangle(null, 0, 40, 120, 22, 8, 8));
-        }
-
-        private bool _skeleton;
-
-        private void Card_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Card.CornerRadius = new CornerRadius(e.NewSize.Width * (3.18 / 85.60));
-
-            // A new surface only when the size actually moved, and the card settles at one size
-            // and is measured again at that size on every reflow.
-            if (_sheen.Update(e.NewSize))
-            {
-                if (Sheen.Fill is ImageBrush brush)
-                {
-                    brush.ImageSource = _sheen.Source;
-                }
-                else
-                {
-                    Sheen.Fill = new ImageBrush
-                    {
-                        ImageSource = _sheen.Source
-                    };
-                }
-            }
-        }
-
-        /// <summary>
-        /// Repaints the card's gradient for one frame of the tilt. What changes is the shape of
-        /// the ramp, which is why it is a redraw rather than something the compositor can do.
-        /// </summary>
-        private void OnCardTilt(Vector2 pointer, float amount)
-        {
-            _sheen.Render(pointer, amount);
-        }
-
-        private void CardAddress_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            CardAddressShadow.RenderTransform = new CompositeTransform
-            {
-                Rotation = 90,
-                TranslateX = -(e.NewSize.Height - e.NewSize.Width) / 2
-            };
-            CardAddress.RenderTransform = new CompositeTransform
-            {
-                Rotation = 90,
-                TranslateX = -(e.NewSize.Height - e.NewSize.Width) / 2
-            };
+            _navigationService.ShowPopup(new WalletBackupPopup(_wallet, _navigationService));
         }
 
         private void More_ContextRequested(object sender, RoutedEventArgs e)
@@ -439,12 +353,12 @@ namespace Telegram.Views.Wallet
 
         private void MenuItemRecoveryPhrase()
         {
-            _navigationService.ShowPopup(new WalletBackupPopup(_navigationService));
+            _navigationService.ShowPopup(new WalletBackupPopup(_wallet, _navigationService));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _navigationService.ShowPopup(new WalletBackupPopup(_navigationService));
+            _navigationService.ShowPopup(new WalletBackupPopup(_wallet, _navigationService));
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)

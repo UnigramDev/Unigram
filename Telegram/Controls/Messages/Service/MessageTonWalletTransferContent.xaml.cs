@@ -80,29 +80,41 @@ namespace Telegram.Controls.Messages.Service
                 ? "sent"
                 : "received";
 
-            //var centerColor = upgradedGift.Gift.Backdrop.Colors.CenterColor.ToColor();
-            //var edgeColor = upgradedGift.Gift.Backdrop.Colors.EdgeColor.ToColor();
+            if (transfer == null || (transfer.Comment.Length == 0 && !transfer.IsCommentEncrypted))
+            {
+                CommentRoot?.Visibility = Visibility.Collapsed;
+                return;
+            }
 
-            //RibbonTop.Color = centerColor.Darken();
-            //RibbonBottom.Color = edgeColor.Darken();
+            if (CommentRoot == null)
+            {
+                FindName(nameof(CommentRoot));
+                Comment.TextEntityClick += OnTextEntityClick;
+            }
 
-            //Pattern.Update(message.ClientService, upgradedGift.Gift);
-            //Animation.Source = DelayedFileSource.FromSticker(message.ClientService, upgradedGift.Gift.Model.Sticker);
+            CommentRoot.Visibility = Visibility.Visible;
 
-            //if (upgradedGift.ReceiverId.IsUser(message.ClientService.Options.MyId) && upgradedGift.ReceiverId.AreTheSame(upgradedGift.SenderId))
-            //{
-            //    Title.Text = Strings.Gift2ActionSelfTitle;
-            //}
-            //else
-            //{
-            //    Title.Text = string.Format(Strings.Gift2UniqueTitle, message.IsOutgoing ? self.FirstName : user.FullName(true));
-            //}
+            if (transfer.IsCommentEncrypted)
+            {
+                var entities = new TextEntity[]
+                {
+                    new TextEntity(0, CommentPlaceholder.Length, new TextEntityTypeSpoiler())
+                };
 
-            //Subtitle.Text = upgradedGift.Gift.ToName();
-
-            //AttributeInfo.Text = Strings.Gift2AttributeModel + "\n" + Strings.Gift2AttributeBackdrop + "\n" + Strings.Gift2AttributeSymbol;
-            //AttributeText.Text = upgradedGift.Gift.Model.Name + "\n" + upgradedGift.Gift.Backdrop.Name + "\n" + upgradedGift.Gift.Symbol.Name;
+                Comment.SetText(message.ClientService, new FormattedText(CommentPlaceholder, entities));
+            }
+            else
+            {
+                Comment.SetText(message.ClientService, transfer.Comment.AsFormattedText());
+            }
         }
+
+        private void OnTextEntityClick(object sender, TextEntityClickEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private const string CommentPlaceholder = "encrypted comment";
 
         public override void Recycle()
         {

@@ -49,7 +49,8 @@ namespace Telegram.ViewModels.Wallet
 
         public override void Subscribe()
         {
-            Aggregator.Subscribe<UpdateWalletState>(this, Handle);
+            Aggregator.Subscribe<UpdateWalletState>(this, Handle)
+                .Subscribe<UpdateOwnedGramCount>(Handle);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -77,6 +78,24 @@ namespace Telegram.ViewModels.Wallet
         {
             BeginOnUIThread(() => Apply(update.State));
         }
+
+        private void Handle(UpdateOwnedGramCount update)
+        {
+            BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(nameof(EarnedGramCount));
+                RaisePropertyChanged(nameof(HasEarnedGrams));
+            });
+        }
+
+        /// <summary>
+        /// The Grams the account has earned, which is a different balance from this wallet's and
+        /// lives on its own page. Shown on the same terms the settings entry is: reading it is what
+        /// asks the account for it, and the answer arrives as an update.
+        /// </summary>
+        public long EarnedGramCount => ClientService.OwnedGramCount;
+
+        public bool HasEarnedGrams => ClientService.OwnedGramCount > 0 || ClientService.HasGramTransactions;
 
         public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
