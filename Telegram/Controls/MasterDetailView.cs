@@ -237,8 +237,9 @@ namespace Telegram.Controls
             var material = ElementComposition.GetElementVisual(MaterialPart);
             var bread = ElementComposition.GetElementVisual(DetailHeaderPresenter);
             var button = ElementComposition.GetElementVisual(BackButton);
+            var buttonVisible = _showDetailHeader;
 
-            ShowHideDetailHeader(show == BackgroundKind.Material, true);
+            ShowHideDetailHeader(show == BackgroundKind.Material && _showDetailHeader, _showDetailHeaderBackground);
 
             if (animate)
             {
@@ -246,7 +247,7 @@ namespace Telegram.Controls
                 BorderPart.Visibility = Visibility.Visible;
                 MaterialPart.Visibility = Visibility.Visible;
                 DetailHeaderPresenter.Visibility = Visibility.Visible;
-                BackButton.Visibility = Visibility.Visible;
+                BackButton.Visibility = buttonVisible ? Visibility.Visible : Visibility.Collapsed;
 
                 var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
@@ -601,6 +602,7 @@ namespace Telegram.Controls
         }
 
         private bool _showDetailHeader = true;
+        private bool _showDetailHeaderBackground = true;
 
         private void ShowHideDetailHeader(bool show, bool showBackground)
         {
@@ -613,6 +615,7 @@ namespace Telegram.Controls
             }
 
             _showDetailHeader = show;
+            _showDetailHeaderBackground = show && showBackground;
 
             BackButton.Visibility = show
                 ? Visibility.Visible

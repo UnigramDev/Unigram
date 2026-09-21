@@ -329,7 +329,6 @@ namespace Telegram.Views
 
                 LifetimeService.Current.Playback.SourceChanged -= OnPlaybackSourceChanged;
 
-                MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
                 MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
                 MasterDetail.Dispose();
                 SettingsView?.Dispose();
@@ -1749,7 +1748,6 @@ namespace Telegram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main", Frame, ViewModel);
-                MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
                 MasterDetail.NavigationService.FrameFacade.Navigated += OnNavigated;
             }
 
@@ -1872,7 +1870,7 @@ namespace Telegram.Views
             }
         }
 
-        private void OnNavigating(object sender, NavigatingEventArgs e)
+        private void OnNavigated(object sender, NavigatedEventArgs e)
         {
             var allowed = e.SourcePageType == typeof(ChatPage) ||
                 e.SourcePageType == typeof(ChatPinnedPage) ||
@@ -1896,10 +1894,7 @@ namespace Telegram.Views
             {
                 MasterDetail.ShowHideBackground(type, animate);
             }
-        }
 
-        private void OnNavigated(object sender, NavigatedEventArgs e)
-        {
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 MasterDetail.AllowCompact = true;
