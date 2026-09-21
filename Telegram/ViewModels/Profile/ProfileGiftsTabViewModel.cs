@@ -684,11 +684,19 @@ namespace Telegram.ViewModels.Profile
                 }
                 else
                 {
+                    // The search has to follow the removal: a position found in the longer list
+                    // is one slot too far down, and Items.Count when the gift sorts last.
+                    Items.Remove(gift);
+
                     var index = Items.BinarySearch(gift, (x, y) => Items.Pinned.Contains(y.ReceivedGiftId) ? 1 : y.Date.CompareTo(x.Date));
-                    if (index < 0 && (~index < Items.Count || !Items.HasMoreItems))
+                    if (index < 0)
                     {
-                        Items.Remove(gift);
-                        Items.Insert(~index, gift);
+                        index = ~index;
+                    }
+
+                    if (index < Items.Count || !Items.HasMoreItems)
+                    {
+                        Items.Insert(index, gift);
                     }
                 }
 
