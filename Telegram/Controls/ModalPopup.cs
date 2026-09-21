@@ -188,6 +188,7 @@ namespace Telegram.Controls
     [TemplatePart(Name = "SecondaryButton", Type = typeof(Button))]
     [TemplatePart(Name = "CloseButton", Type = typeof(Button))]
     [TemplatePart(Name = "DismissButton", Type = typeof(Button))]
+    [TemplatePart(Name = "OptionsButton", Type = typeof(MoreButton))]
     public partial class ModalPopup : ContentControlEx
     {
         private Grid LayoutRoot;
@@ -209,6 +210,7 @@ namespace Telegram.Controls
         private Button SecondaryButton;
         private Button CloseButton;
         private Button DismissButton;
+        private Button OptionsButton;
 
         private XamlRoot _xamlRoot;
         private Popup _popup;
@@ -508,6 +510,12 @@ namespace Telegram.Controls
                 CloseButton.Click -= OnCloseButtonClick;
             }
 
+            if (OptionsButton != null)
+            {
+                OptionsButton.Click -= OnOptionsButtonClick;
+                OptionsButton = null;
+            }
+
             if (DismissButton != null)
             {
                 DismissButton.Click -= OnDismissButtonClick;
@@ -580,6 +588,11 @@ namespace Telegram.Controls
             if (IsDismissButtonVisible || DismissButtonRequestedTheme != ElementTheme.Default)
             {
                 UpdateDismissButton();
+            }
+
+            if (IsOptionsButtonVisible)
+            {
+                UpdateOptionsButton();
             }
 
             if (LayoutRoot != null)
@@ -1516,6 +1529,64 @@ namespace Telegram.Controls
         protected virtual void OnDismissButtonClick()
         {
             Hide();
+        }
+
+        #endregion
+
+        #region Options button
+
+        /// <summary>
+        /// Whether the popup offers a menu in its corner, beside the dismiss button.
+        /// </summary>
+        /// <remarks>
+        /// Here rather than in each popup's own markup, where it was being placed by hand and
+        /// landing in a slightly different corner each time. The popup supplies the menu through
+        /// <see cref="OptionsRequested"/>; this only puts the button there and hands the click on.
+        /// </remarks>
+        public bool IsOptionsButtonVisible
+        {
+            get => (bool)GetValue(IsOptionsButtonVisibleProperty);
+            set => SetValue(IsOptionsButtonVisibleProperty, value);
+        }
+
+        public static readonly DependencyProperty IsOptionsButtonVisibleProperty =
+            DependencyProperty.Register("IsOptionsButtonVisible", typeof(bool), typeof(ModalPopup), new PropertyMetadata(false, OnOptionsButtonVisibleChanged));
+
+        private static void OnOptionsButtonVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ModalPopup)d).UpdateOptionsButton();
+        }
+
+        /// <summary>
+        /// The options button was pressed. The sender is the button, not the popup, because what a
+        /// handler does with it is show a flyout at it - and it makes a popup that was rolling its
+        /// own a one-line change.
+        /// </summary>
+        public event RoutedEventHandler OptionsRequested;
+
+        // Deferred like the dismiss button, and realized from either end for the same reason: a
+        // XAML subclass can set the property on itself before the template is applied.
+        private void UpdateOptionsButton()
+        {
+            OptionsButton ??= GetTemplateChild(nameof(OptionsButton)) as Button;
+
+            if (OptionsButton == null)
+            {
+                return;
+            }
+
+            OptionsButton.Click -= OnOptionsButtonClick;
+            OptionsButton.Click += OnOptionsButtonClick;
+
+            OptionsButton.RequestedTheme = DismissButtonRequestedTheme;
+            OptionsButton.Visibility = IsOptionsButtonVisible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void OnOptionsButtonClick(object sender, RoutedEventArgs e)
+        {
+            OptionsRequested?.Invoke(sender, e);
         }
 
         #endregion

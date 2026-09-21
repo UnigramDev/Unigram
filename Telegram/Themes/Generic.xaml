@@ -1200,13 +1200,24 @@
                                                     Grid.ColumnSpan="4" />
                                         </Grid>
 
-                                        <local:GlyphButton x:Name="DismissButton"
-                                                           x:Load="False"
-                                                           AutomationProperties.Name="{CustomResource Close}"
-                                                           HorizontalAlignment="Right"
-                                                           VerticalAlignment="Top"
-                                                           Glyph="&#xE711;"
-                                                           CornerRadius="20" />
+                                        <!-- The two corner buttons, in the order they are read: options first,
+                                             dismiss last and outermost, so dismiss stays where it
+                                             is whether or not the other one is there. Both are
+                                             deferred, so a popup that asks for neither pays for
+                                             neither. -->
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top">
+                                            <local:MoreButton x:Name="OptionsButton"
+                                                              x:Load="False"
+                                                              CornerRadius="20" />
+                                            <local:GlyphButton x:Name="DismissButton"
+                                                               x:Load="False"
+                                                               AutomationProperties.Name="{CustomResource Close}"
+                                                               Glyph="&#xE711;"
+                                                               CornerRadius="20"
+                                                               Margin="-8,0,0,0" />
+                                        </StackPanel>
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -7299,6 +7310,37 @@
                                    VerticalAlignment="Center"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    Visibility="Collapsed" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:AmountTextBlock">
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AmountTextBlock">
+                    <!-- Transparent rather than unset, so the whole width takes the pointer: the
+                         number is the field, and pressing beside it has to focus it too.
+
+                         The two parts are runs of one block rather than two blocks: only one text
+                         layout can put two font sizes on one baseline, and aligning two blocks
+                         lines up their boxes instead - which at these sizes is visibly wrong. Only
+                         ever one of the two blocks below is visible, so they never have to agree. -->
+                    <Grid Background="Transparent"
+                          VerticalAlignment="Center">
+                        <TextBlock x:Name="PlaceholderText"
+                                   Text="{TemplateBinding Placeholder}"
+                                   Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                   FontFamily="{TemplateBinding FontFamily}"
+                                   FontWeight="{TemplateBinding FontWeight}"
+                                   FontSize="{TemplateBinding FontSize}" />
+                        <TextBlock Foreground="{TemplateBinding Foreground}"
+                                   FontFamily="{TemplateBinding FontFamily}"
+                                   FontWeight="{TemplateBinding FontWeight}"
+                                   FontSize="{TemplateBinding FontSize}"><Run x:Name="WholeText" /><Run x:Name="FractionText" /></TextBlock>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
