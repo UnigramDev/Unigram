@@ -664,6 +664,8 @@ namespace Telegram.Controls.Messages
 
                 UpdatePhoto(message);
             }
+
+            UpdateTrackPointer();
         }
 
         private void SetCorners(float topLeft, float topRight, float bottomRight, float bottomLeft)
@@ -2049,6 +2051,9 @@ namespace Telegram.Controls.Messages
             {
                 recycled.UpdateMessage(message);
                 Media.Child = element;
+
+                _trackPointerAllowed = recycled is StickerContent or AnimationContent;
+                UpdateTrackPointer();
                 return;
             }
 
@@ -2095,6 +2100,64 @@ namespace Telegram.Controls.Messages
                 MessageSponsored => new SponsoredContent(message),
                 _ => null
             };
+
+            _trackPointerAllowed = Media.Child is StickerContent or AnimationContent;
+            UpdateTrackPointer();
+        }
+
+        private bool _trackPointerAllowed;
+        private bool _trackPointer;
+        private Visual _footer;
+
+        private void UpdateTrackPointer()
+        {
+            var trackPointer = _trackPointerAllowed && !_message.IsLast;
+            if (trackPointer == _trackPointer)
+            {
+                return;
+            }
+
+            _trackPointer = trackPointer;
+            _footerCollapsed = trackPointer;
+
+            _footer ??= ElementComposition.GetElementVisual(Footer);
+            _footer.Opacity = trackPointer ? 0 : 1;
+        }
+
+        protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        {
+            ShowHideFooter(true);
+            base.OnPointerEntered(e);
+
+        }
+
+        protected override void OnPointerExited(PointerRoutedEventArgs e)
+        {
+            ShowHideFooter(false);
+            base.OnPointerExited(e);
+        }
+
+        private bool _footerCollapsed;
+
+        private void ShowHideFooter(bool show)
+        {
+            if (!_trackPointer || _footer == null)
+            {
+                return;
+            }
+
+            if (_footerCollapsed != show)
+            {
+                return;
+            }
+
+            _footerCollapsed = !show;
+
+            var anim = _footer.Compositor.CreateScalarKeyFrameAnimation();
+            anim.InsertKeyFrame(0, show ? 0 : 1);
+            anim.InsertKeyFrame(1, show ? 1 : 0);
+
+            _footer.StartAnimation("Opacity", anim);
         }
 
         public IPlayerView GetPlaybackElement()
