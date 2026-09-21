@@ -177,7 +177,13 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
+                // Deleting every child empties the album before its root leaves Items, and a
+                // context menu opened on the root outlives that.
                 message = album.Messages.FirstOrDefault();
+                if (message == null)
+                {
+                    return;
+                }
             }
 
             var should = await ShouldReplyInAnotherChatAsync(message);
@@ -229,7 +235,14 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                message = album.Messages[album.IsMedia ? 0 : ^1];
+                message = album.IsMedia
+                    ? album.Messages.FirstOrDefault()
+                    : album.Messages.LastOrDefault();
+
+                if (message == null)
+                {
+                    return;
+                }
             }
 
             var should = await ShouldReplyInAnotherChatAsync(message);
@@ -281,7 +294,14 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                message = album.Messages[album.IsMedia ? 0 : ^1];
+                message = album.IsMedia
+                    ? album.Messages.FirstOrDefault()
+                    : album.Messages.LastOrDefault();
+
+                if (message == null)
+                {
+                    return;
+                }
             }
 
             var should = await ShouldReplyInAnotherChatAsync(message);
@@ -333,7 +353,14 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                message = album.Messages[album.IsMedia ? 0 : ^1];
+                message = album.IsMedia
+                    ? album.Messages.FirstOrDefault()
+                    : album.Messages.LastOrDefault();
+
+                if (message == null)
+                {
+                    return;
+                }
             }
 
             var should = await ShouldReplyInAnotherChatAsync(message);
