@@ -134,7 +134,11 @@
       <td>Ctrl + 9</td>
     </tr>
     <tr>
-      <td rowspan="9">Other shortcuts</td>
+      <td rowspan="10">Other shortcuts</td>
+      <td>Play, open or download <br>the focused message</td>
+      <td>Space</td>
+    </tr>
+    <tr>
       <td>Saved messages</td>
       <td>Ctrl + 0</td>
     </tr>
