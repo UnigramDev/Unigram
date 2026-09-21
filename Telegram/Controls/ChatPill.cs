@@ -69,8 +69,16 @@ namespace Telegram.Controls
             ChatId = chat.Id;
             UserId = 0;
 
-            Photo.Source = ProfilePictureSource.Chat(clientService, chat);
-            Title.Text = clientService.GetTitle(chat);
+            if (clientService.TryGetUser(chat, out User user))
+            {
+                Photo.Source = ProfilePictureSource.User(clientService, user);
+                Title.Text = user.FullName();
+            }
+            else
+            {
+                Photo.Source = ProfilePictureSource.Chat(clientService, chat);
+                Title.Text = clientService.GetTitle(chat);
+            }
 
             Background = clientService.GetAccentBrush(chat);
         }
