@@ -17,6 +17,7 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -35,6 +36,7 @@ using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
+using Telegram.Views.Wallet.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
@@ -498,6 +500,17 @@ namespace Telegram.Common
                 return;
             }
 
+            // TEMPORARY, with TonConnectLink: TDLib reads one of these as
+            // internalLinkTypeTonWalletTransfer - the wallet's own link, which it is - and that type
+            // carries a receiver and an amount and nowhere to put a start parameter. So the request
+            // is gone by the time there is a link type to switch on, and this has to happen here,
+            // on the URL, while it is still there.
+            if (TryGetStartApp(url, out var startApp) && TonConnectLink.Parse(startApp) is TonConnectLink connect)
+            {
+                NavigateToTonConnect(clientService, navigation, connect);
+                return;
+            }
+
             var response = await clientService.SendAsync(new GetInternalLinkType(url));
             if (response is InternalLinkType internalLink)
             {
@@ -638,6 +651,9 @@ namespace Telegram.Common
                     break;
                 case InternalLinkTypeLiveStory liveStory:
                     NavigateToLiveStory(clientService, navigation, liveStory.StoryPosterUsername);
+                    break;
+                case InternalLinkTypeTonWalletTransfer tonWalletTransfer:
+                    NavigateToTonWalletTransfer(clientService, navigation, tonWalletTransfer);
                     break;
                 case InternalLinkTypeTheme theme:
                     NavigateToTheme(clientService, navigation, theme.ThemeName);
@@ -1585,6 +1601,83 @@ namespace Telegram.Common
             {
                 navigation.NavigateToWebApp(botUser, webApp.Url, menuBot: menuBot, openMode: webApp.Mode, sourceLink: new InternalLinkTypeMainWebApp(botUser.ActiveUsername(), startParameter, webApp.Mode));
             }
+        }
+
+        /// <summary>
+        /// Opens the send screen from a transfer link, with whatever it already settled.
+        /// </summary>
+        /// <remarks>
+        /// The receiver may be a username, which has to be resolved to a user before the popup can
+        /// take it, or an address, which it can take as it stands. It may also be absent - a link
+        /// that says only how much - and then the popup opens with nowhere to send to, which it
+        /// already knows how to ask for.
+        /// </remarks>
+        private static async void NavigateToTonWalletTransfer(IClientService clientService, INavigationService navigation, InternalLinkTypeTonWalletTransfer transfer)
+        {
+            var wallet = clientService.Session.Resolve<IWalletService>();
+
+            if (transfer.Receiver is TonWalletTransferReceiverAddress address)
+            {
+                navigation.ShowPopup(new WalletSendPopup(clientService, wallet, navigation, 0, address.Address, transfer.GramAmount));
+            }
+            else if (transfer.Receiver is TonWalletTransferReceiverUser user)
+            {
+                var response = await clientService.SendAsync(new SearchPublicChat(user.Username));
+                if (response is Chat chat && clientService.TryGetUser(chat, out User item))
+                {
+                    navigation.ShowPopup(new WalletSendPopup(clientService, wallet, navigation, item.Id, transfer.GramAmount));
+                }
+                else
+                {
+                    navigation.ShowPopup(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Puts a dApp's request to connect in front of the user.
+        /// </summary>
+        /// <remarks>
+        /// Everything past the link is the wallet's: this only carries the request over and lets
+        /// the popup say what is being asked for and by whom, so that the two shapes of link -
+        /// and the one TDLib will eventually report - all arrive at the same place.
+        /// </remarks>
+        private static void NavigateToTonConnect(IClientService clientService, INavigationService navigation, TonConnectLink link)
+        {
+            var wallet = clientService.Session.Resolve<IWalletService>();
+
+            navigation.ShowPopup(new WalletConnectPopup(clientService, wallet, navigation, link));
+        }
+
+        /// <summary>
+        /// The <c>startapp</c> parameter of a tg: link, which TDLib hands over whole because it
+        /// does not recognise the host.
+        /// </summary>
+        /// <remarks>
+        /// TEMPORARY. Goes with <see cref="TonConnectLink"/> once TDLib parses these itself.
+        /// </remarks>
+        private static bool TryGetStartApp(string url, out string startApp)
+        {
+            startApp = null;
+
+            if (string.IsNullOrEmpty(url) || !Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            {
+                return false;
+            }
+
+            foreach (var parameter in uri.Query.TrimStart('?').Split('&'))
+            {
+                var separator = parameter.IndexOf('=');
+                if (separator > 0 && string.Equals(parameter.Substring(0, separator), "startapp", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Not unescaped: the folding this carries is not percent escaping, and what
+                    // reads it does the unescaping itself, in the right order.
+                    startApp = parameter.Substring(separator + 1);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static async void NavigateToUnknownDeepLink(IClientService clientService, INavigationService navigation, string url)

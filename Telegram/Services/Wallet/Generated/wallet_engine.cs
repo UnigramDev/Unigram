@@ -3530,8 +3530,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment();
-            if (checksum != 19247) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `19247`, library returned `{checksum}`");
+            if (checksum != 32002) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `32002`, library returned `{checksum}`");
             }
         }
         {
@@ -3830,14 +3830,14 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_proof();
-            if (checksum != 55617) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_proof` checksum `55617`, library returned `{checksum}`");
+            if (checksum != 59978) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_proof` checksum `59978`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_ton_connect_account();
-            if (checksum != 43533) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_ton_connect_account` checksum `43533`, library returned `{checksum}`");
+            if (checksum != 32302) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_ton_connect_account` checksum `32302`, library returned `{checksum}`");
             }
         }
         {
@@ -4531,8 +4531,11 @@ internal interface IWalletClient {
     /// <summary>
     /// Creates a TON encrypted-comment body ready for `SendMessageBody::RawPayload`.
     ///
-    /// The engine calls the recipient wallet's `get_public_key` get-method, then
-    /// asks the platform host to authorize this wallet's protected mnemonic.
+    /// The engine uses the supplied recipient public key or calls the recipient
+    /// wallet's `get_public_key` get-method, then asks the platform host to
+    /// authorize this wallet's protected mnemonic.
+    /// A supplied key must locally derive the recipient's address using supported
+    /// default wallet parameters. Verification happens before secret authorization.
     /// No secret is requested when the comment is already too large.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
@@ -4987,8 +4990,11 @@ internal class WalletClient : IWalletClient, IDisposable {
     /// <summary>
     /// Creates a TON encrypted-comment body ready for `SendMessageBody::RawPayload`.
     ///
-    /// The engine calls the recipient wallet's `get_public_key` get-method, then
-    /// asks the platform host to authorize this wallet's protected mnemonic.
+    /// The engine uses the supplied recipient public key or calls the recipient
+    /// wallet's `get_public_key` get-method, then asks the platform host to
+    /// authorize this wallet's protected mnemonic.
+    /// A supplied key must locally derive the recipient's address using supported
+    /// default wallet parameters. Verification happens before secret authorization.
     /// No secret is requested when the comment is already too large.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
@@ -6139,16 +6145,21 @@ internal interface IWalletLifecycle {
     /// <exception cref="WalletLifecycleException"></exception>
     Task<RecoveryPhrase> RevealRecoveryPhrase(WalletDescriptor @descriptor);
     /// <summary>
-    /// Authorizes the protected key and signs a TON Connect ownership proof.
+    /// Authorizes the current signing key and signs a TON Connect ownership proof.
     ///
     /// Rust constructs the protocol digest itself. The caller cannot use this
     /// API as a generic Ed25519 signing oracle, and no mnemonic or private-key
     /// bytes cross the API boundary.
+    /// The returned public key must accompany the proof in `ton_addr`.
+    /// The host must block this operation while a key rotation is unresolved.
     /// </summary>
     /// <exception cref="WalletLifecycleException"></exception>
     Task<TonConnectProofSignature> SignTonConnectProof(TonConnectProofSignRequest @request);
     /// <summary>
-    /// Derives the public TON Connect account reply without reading a secret.
+    /// Derives initial TON Connect account material without reading a secret.
+    ///
+    /// Address and `StateInit` remain anchor-based after rotation. For a proof
+    /// reply, replace `public_key` with [`TonConnectProofSignature::public_key`].
     /// </summary>
     /// <exception cref="WalletLifecycleException"></exception>
     TonConnectAccountInfo TonConnectAccount(WalletDescriptor @descriptor);
@@ -6373,11 +6384,13 @@ internal class WalletLifecycle : IWalletLifecycle, IDisposable {
     }
     
     /// <summary>
-    /// Authorizes the protected key and signs a TON Connect ownership proof.
+    /// Authorizes the current signing key and signs a TON Connect ownership proof.
     ///
     /// Rust constructs the protocol digest itself. The caller cannot use this
     /// API as a generic Ed25519 signing oracle, and no mnemonic or private-key
     /// bytes cross the API boundary.
+    /// The returned public key must accompany the proof in `ton_addr`.
+    /// The host must block this operation while a key rotation is unresolved.
     /// </summary>
     /// <exception cref="WalletLifecycleException"></exception>
     public async Task<TonConnectProofSignature> SignTonConnectProof(TonConnectProofSignRequest @request) {
@@ -6402,7 +6415,10 @@ internal class WalletLifecycle : IWalletLifecycle, IDisposable {
     }
     
     /// <summary>
-    /// Derives the public TON Connect account reply without reading a secret.
+    /// Derives initial TON Connect account material without reading a secret.
+    ///
+    /// Address and `StateInit` remain anchor-based after rotation. For a proof
+    /// reply, replace `public_key` with [`TonConnectProofSignature::public_key`].
     /// </summary>
     /// <exception cref="WalletLifecycleException"></exception>
     public TonConnectAccountInfo TonConnectAccount(WalletDescriptor @descriptor) {
@@ -7869,24 +7885,40 @@ class FfiConverterTypeActivityList: FfiConverterRustBuffer<ActivityList> {
 /// <summary>
 /// Requests a ready-to-send TON encrypted-comment body.
 ///
-/// The engine loads the recipient's public key from chain state and asks the
-/// platform host to authorize access to this wallet's protected mnemonic.
+/// The engine uses the supplied recipient public key or loads it from chain
+/// state, then asks the platform host to authorize access to this wallet's
+/// protected mnemonic.
 /// </summary>
 /// <param name="Recipient">
-/// Wallet contract that must be able to expose `get_public_key`.
+/// Recipient wallet address. Must expose `get_public_key` when no key is supplied.
 /// </param>
 /// <param name="Comment">
 /// UTF-8 comment to encrypt. Its encoded form must not exceed 960 bytes.
 /// </param>
+/// <param name="RecipientPublicKey">
+/// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+/// 
+/// The engine verifies this key against `recipient` by deriving supported
+/// wallet addresses with default parameters. A mismatch or unsupported
+/// wallet configuration is rejected before authorizing the sender's secret.
+/// </param>
 internal record CreateEncryptedCommentRequest (
     /// <summary>
-    /// Wallet contract that must be able to expose `get_public_key`.
+    /// Recipient wallet address. Must expose `get_public_key` when no key is supplied.
     /// </summary>
     TonAddressString Recipient, 
     /// <summary>
     /// UTF-8 comment to encrypt. Its encoded form must not exceed 960 bytes.
     /// </summary>
-    string Comment
+    string Comment, 
+    /// <summary>
+    /// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+    ///
+    /// The engine verifies this key against `recipient` by deriving supported
+    /// wallet addresses with default parameters. A mismatch or unsupported
+    /// wallet configuration is rejected before authorizing the sender's secret.
+    /// </summary>
+    byte[]? RecipientPublicKey = null
 ) {
 }
 
@@ -7896,19 +7928,22 @@ class FfiConverterTypeCreateEncryptedCommentRequest: FfiConverterRustBuffer<Crea
     public override CreateEncryptedCommentRequest Read(BigEndianStream stream) {
         return new CreateEncryptedCommentRequest(
             Recipient: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
-            Comment: FfiConverterString.INSTANCE.Read(stream)
+            Comment: FfiConverterString.INSTANCE.Read(stream),
+            RecipientPublicKey: FfiConverterOptionalByteArray.INSTANCE.Read(stream)
         );
     }
 
     public override int AllocationSize(CreateEncryptedCommentRequest value) {
         return 0
             + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Recipient)
-            + FfiConverterString.INSTANCE.AllocationSize(value.Comment);
+            + FfiConverterString.INSTANCE.AllocationSize(value.Comment)
+            + FfiConverterOptionalByteArray.INSTANCE.AllocationSize(value.RecipientPublicKey);
     }
 
     public override void Write(CreateEncryptedCommentRequest value, BigEndianStream stream) {
             FfiConverterTypeTonAddressString.INSTANCE.Write(value.Recipient, stream);
             FfiConverterString.INSTANCE.Write(value.Comment, stream);
+            FfiConverterOptionalByteArray.INSTANCE.Write(value.RecipientPublicKey, stream);
     }
 }
 
@@ -10957,7 +10992,10 @@ class FfiConverterTypeTonAddressInfo: FfiConverterRustBuffer<TonAddressInfo> {
 /// Canonical standard-base64 wallet `StateInit` `BoC`.
 /// </param>
 /// <param name="PublicKey">
-/// Raw 32-byte Ed25519 public key.
+/// Raw 32-byte Ed25519 public key advertised to the dApp.
+/// 
+/// [`WalletLifecycle::ton_connect_account`] supplies the initial anchor
+/// key. When signing a proof, replace it with the returned signing key.
 /// </param>
 internal record TonConnectAccountInfo (
     /// <summary>
@@ -10973,7 +11011,10 @@ internal record TonConnectAccountInfo (
     /// </summary>
     string WalletStateInit, 
     /// <summary>
-    /// Raw 32-byte Ed25519 public key.
+    /// Raw 32-byte Ed25519 public key advertised to the dApp.
+    ///
+    /// [`WalletLifecycle::ton_connect_account`] supplies the initial anchor
+    /// key. When signing a proof, replace it with the returned signing key.
     /// </summary>
     byte[] PublicKey
 ) {
@@ -11369,11 +11410,24 @@ class FfiConverterTypeTonConnectProofSignRequest: FfiConverterRustBuffer<TonConn
 /// <param name="Signature">
 /// Exact 64-byte Ed25519 signature.
 /// </param>
+/// <param name="PublicKey">
+/// Current 32-byte Ed25519 signing public key used for this proof.
+/// 
+/// Use this key in the accompanying `ton_addr` reply. After rotation it
+/// differs from the anchor key in the descriptor and initial `StateInit`.
+/// </param>
 internal record TonConnectProofSignature (
     /// <summary>
     /// Exact 64-byte Ed25519 signature.
     /// </summary>
-    byte[] Signature
+    byte[] Signature, 
+    /// <summary>
+    /// Current 32-byte Ed25519 signing public key used for this proof.
+    ///
+    /// Use this key in the accompanying `ton_addr` reply. After rotation it
+    /// differs from the anchor key in the descriptor and initial `StateInit`.
+    /// </summary>
+    byte[] PublicKey
 ) {
 }
 
@@ -11382,17 +11436,20 @@ class FfiConverterTypeTonConnectProofSignature: FfiConverterRustBuffer<TonConnec
 
     public override TonConnectProofSignature Read(BigEndianStream stream) {
         return new TonConnectProofSignature(
-            Signature: FfiConverterByteArray.INSTANCE.Read(stream)
+            Signature: FfiConverterByteArray.INSTANCE.Read(stream),
+            PublicKey: FfiConverterByteArray.INSTANCE.Read(stream)
         );
     }
 
     public override int AllocationSize(TonConnectProofSignature value) {
         return 0
-            + FfiConverterByteArray.INSTANCE.AllocationSize(value.Signature);
+            + FfiConverterByteArray.INSTANCE.AllocationSize(value.Signature)
+            + FfiConverterByteArray.INSTANCE.AllocationSize(value.PublicKey);
     }
 
     public override void Write(TonConnectProofSignature value, BigEndianStream stream) {
             FfiConverterByteArray.INSTANCE.Write(value.Signature, stream);
+            FfiConverterByteArray.INSTANCE.Write(value.PublicKey, stream);
     }
 }
 
@@ -11463,10 +11520,11 @@ class FfiConverterTypeTonConnectSessionConfig: FfiConverterRustBuffer<TonConnect
 /// The friendly TON address that the client reads and sends from.
 /// </param>
 /// <param name="PublicKey">
-/// The raw 32-byte Ed25519 public key stored in this wallet.
+/// The raw 32-byte Ed25519 public key used for wallet preflight.
 /// 
-/// This value is public metadata. The engine uses it to build a faithful
-/// fake-signed message for preflight emulation without unlocking the mnemonic.
+/// For an undeployed wallet, this must be the initial key that derives its
+/// address and `StateInit`. For an active wallet, this can be the current
+/// signing key after rotation; it need not derive the wallet address.
 /// </param>
 /// <param name="LocalSecretRef">
 /// The protected mnemonic reference used for local signing.
@@ -11505,10 +11563,11 @@ internal record WalletClientConfig (
     /// </summary>
     TonAddressString Address, 
     /// <summary>
-    /// The raw 32-byte Ed25519 public key stored in this wallet.
+    /// The raw 32-byte Ed25519 public key used for wallet preflight.
     ///
-    /// This value is public metadata. The engine uses it to build a faithful
-    /// fake-signed message for preflight emulation without unlocking the mnemonic.
+    /// For an undeployed wallet, this must be the initial key that derives its
+    /// address and `StateInit`. For an active wallet, this can be the current
+    /// signing key after rotation; it need not derive the wallet address.
     /// </summary>
     byte[] PublicKey, 
     /// <summary>
@@ -15861,6 +15920,37 @@ class FfiConverterOptionalString: FfiConverterRustBuffer<string?> {
         } else {
             stream.WriteByte(1);
             FfiConverterString.INSTANCE.Write((string)value, stream);
+        }
+    }
+}
+
+
+
+
+class FfiConverterOptionalByteArray: FfiConverterRustBuffer<byte[]?> {
+    public static FfiConverterOptionalByteArray INSTANCE = new FfiConverterOptionalByteArray();
+
+    public override byte[]? Read(BigEndianStream stream) {
+        if (stream.ReadByte() == 0) {
+            return null;
+        }
+        return FfiConverterByteArray.INSTANCE.Read(stream);
+    }
+
+    public override int AllocationSize(byte[]? value) {
+        if (value == null) {
+            return 1;
+        } else {
+            return 1 + FfiConverterByteArray.INSTANCE.AllocationSize((byte[])value);
+        }
+    }
+
+    public override void Write(byte[]? value, BigEndianStream stream) {
+        if (value == null) {
+            stream.WriteByte(0);
+        } else {
+            stream.WriteByte(1);
+            FfiConverterByteArray.INSTANCE.Write((byte[])value, stream);
         }
     }
 }

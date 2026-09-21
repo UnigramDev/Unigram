@@ -1,0 +1,60 @@
+﻿<local:WalletPopup x:Class="Telegram.Views.Wallet.Popups.WalletConnectPopup"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:local="using:Telegram.Views.Wallet.Popups"
+                   xmlns:controls="using:Telegram.Controls"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   mc:Ignorable="d"
+                   Padding="24,0,24,24"
+                   IsDismissButtonVisible="True"
+                   PrimaryButtonClick="OnPrimaryButtonClick">
+
+    <StackPanel>
+        <!-- The dApp's own icon, and nothing standing in for it while it is coming: an icon that
+             changes under the name is worse than one that arrives late. -->
+        <Border x:Name="IconRoot"
+                Width="84"
+                Height="84"
+                CornerRadius="42"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed"
+                Margin="0,8,0,0">
+            <Image x:Name="Icon"
+                   Stretch="UniformToFill" />
+        </Border>
+
+        <TextBlock x:Name="Title"
+                   Style="{StaticResource TitleTextBlockStyle}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,16,0,0" />
+
+        <!-- The domain, which is the one thing that actually identifies who is asking: a name can
+             be anything, and this is what the manifest was fetched from. -->
+        <TextBlock x:Name="Domain"
+                   Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,8,0,0" />
+
+        <TextBlock x:Name="Subtitle"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,16,0,0" />
+
+        <!-- Which wallet is being handed over, shown rather than named: the address down its side
+             is what the user would check it by. -->
+        <controls:WalletCard x:Name="Card"
+                             MaxWidth="360"
+                             Margin="0,16,0,0" />
+
+        <TextBlock x:Name="Footer"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,16,0,0" />
+    </StackPanel>
+</local:WalletPopup>
