@@ -156,17 +156,6 @@ namespace Telegram.ViewModels.Drawers
 
         public RangeObservableCollection<object> Items { get; private set; }
 
-        private SearchStickerSetsCollection _searchStickers;
-        public SearchStickerSetsCollection SearchStickers
-        {
-            get => _searchStickers;
-            set
-            {
-                Set(ref _searchStickers, value);
-                RaisePropertyChanged(nameof(Stickers));
-            }
-        }
-
         private EmojiDrawerMode _mode;
         public EmojiDrawerMode Mode
         {
@@ -174,25 +163,15 @@ namespace Telegram.ViewModels.Drawers
             set => Set(ref _mode, value);
         }
 
-        //public RangeObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (RangeObservableCollection<StickerSetViewModel>)SavedStickers;
-
-        public async void Search(string query, bool emojiOnly)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                SearchStickers = null;
-            }
-            else
-            {
-                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeCustomEmoji(), query, 0, emojiOnly);
-                await items.LoadMoreItemsAsync(0);
-            }
-        }
-
         private long _customEmojiSetId;
+
+        // Which custom emoji are available depends on the chat, so the search carries it too.
+        public long ChatId { get; private set; }
 
         public void OpenChat(Chat chat)
         {
+            ChatId = chat?.Id ?? 0;
+
             if (chat != null && ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
                 _customEmojiSetId = fullInfo.CustomEmojiStickerSetId;

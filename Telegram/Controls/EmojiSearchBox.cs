@@ -48,9 +48,12 @@ namespace Telegram.Controls
         private StackPanel Presenter;
 
         private ToggleButton SearchButton;
+        private ProgressBarRing ProgressBar;
 
         private IClientService _clientService;
         private EmojiSearchType _type;
+
+        private bool _loading;
 
         public EmojiSearchBox()
         {
@@ -68,6 +71,13 @@ namespace Telegram.Controls
             SearchButton = GetTemplateChild(nameof(SearchButton)) as ToggleButton;
             SearchButton.Click += SearchButton_Click;
 
+            ProgressBar = GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
+
+            if (_loading)
+            {
+                ApplyLoading(true);
+            }
+
             ScrollingHost = GetTemplateChild(nameof(ScrollingHost)) as ScrollViewer;
             ScrollingHost.ViewChanging += OnViewChanging;
             //ScrollingHost.ContainerContentChanging += OnContainerContentChanging;
@@ -82,6 +92,36 @@ namespace Telegram.Controls
 
             ShowHidePlaceholder(_placeholderCollapsed);
             base.OnApplyTemplate();
+        }
+
+        /// <summary>
+        /// Shows that a search is in flight, as Telegram Desktop and Android both do: the glyph
+        /// gives way to a spinner rather than the results simply arriving late.
+        /// </summary>
+        public void SetLoading(bool loading)
+        {
+            if (_loading == loading)
+            {
+                return;
+            }
+
+            _loading = loading;
+            ApplyLoading(loading);
+        }
+
+        private void ApplyLoading(bool loading)
+        {
+            if (ProgressBar == null)
+            {
+                return;
+            }
+
+            // A value strictly between the bounds is what makes the ring spin; zero runs it out
+            // and releases the animation with it.
+            ProgressBar.Value = loading ? 0.25 : 0;
+            ProgressBar.Opacity = loading ? 1 : 0;
+
+            SearchButton.Opacity = loading ? 0 : 1;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)

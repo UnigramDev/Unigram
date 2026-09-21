@@ -47,6 +47,10 @@ namespace Telegram.Controls.Drawers
 
         private readonly EventDebouncer<TextChangedEventArgs> _typing;
 
+        // Pages the cloud half of the search results; idle at every other time, because nothing
+        // else in this list has more to fetch.
+        private ScrollViewerIncrementalLoader _loader;
+
         private readonly Dictionary<StickerViewModel, SelectorItem> _itemIdToSelector = new();
         private long _selectedSetId;
 
@@ -69,15 +73,7 @@ namespace Telegram.Controls.Drawers
             _zoomer.Closing += Zoomer_Closing;
 
             _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            _typing.Invoked += async (s, args) =>
-            {
-                var items = ViewModel?.SearchStickers as SearchStickerSetsCollection;
-                if (items != null && string.Equals(SearchField.Text, items.Query))
-                {
-                    await items.LoadMoreItemsAsync(1);
-                    await items.LoadMoreItemsAsync(2);
-                }
-            };
+            _typing.Invoked += OnTypingInvoked;
         }
 
         private void Zoomer_Opening(object sender, EventArgs e)
@@ -131,6 +127,11 @@ namespace Telegram.Controls.Drawers
             List.ItemsSource = null;
             StickersSource.Source = null;
             Toolbar.ItemsSource = null;
+
+            if (_loader != null)
+            {
+                _loader.ItemsSource = null;
+            }
         }
 
         public void LoadVisibleItems()
@@ -188,6 +189,10 @@ namespace Telegram.Controls.Drawers
                 // Syncronizes GridView with the toolbar ListView
                 scrollingHost.ViewChanged += ScrollingHost_ViewChanged;
                 ScrollingHost_ViewChanged(null, null);
+
+                // Loaded comes round again without an Unloaded in between, and the loader hooks
+                // the scroll viewer itself.
+                _loader ??= new ScrollViewerIncrementalLoader(scrollingHost);
             }
         }
 
@@ -365,12 +370,96 @@ namespace Telegram.Controls.Drawers
 
         private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.Search(SearchField.Text, false);
+            // Clearing the field is instant; only a query worth sending waits out the debounce,
+            // which is what both of the other clients do.
+            if (string.IsNullOrWhiteSpace(SearchField.Text))
+            {
+                Search();
+            }
         }
 
-        private void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
+        private void OnTypingInvoked(object sender, TextChangedEventArgs e)
         {
-            ViewModel.Search(e.Category.Source);
+            // The debouncer is armed by the same keystroke that emptied the field, and that case
+            // was handled above the moment it happened.
+            if (!string.IsNullOrWhiteSpace(SearchField.Text))
+            {
+                Search();
+            }
+        }
+
+        private async void Search()
+        {
+            // Deactivate clears the DataContext, and a debounce already armed still arrives.
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var items = viewModel.Search(SearchField.Text, false);
+            BeginSearch(items != null);
+
+            if (items != null)
+            {
+                await items.SearchAsync();
+
+                // A newer query may have replaced this one while its requests were in flight.
+                if (viewModel.SearchStickers != items)
+                {
+                    return;
+                }
+            }
+
+            EndSearch();
+        }
+
+        private async void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            _typing.Cancel();
+            BeginSearch(true);
+
+            await viewModel.SearchAsync(e.Category.Source);
+
+            EndSearch();
+        }
+
+        private void BeginSearch(bool loading)
+        {
+            // Nothing to page until the search that is starting says there is.
+            if (_loader != null)
+            {
+                _loader.ItemsSource = null;
+            }
+
+            SearchField.SetLoading(loading);
+            ShowHideEmpty(false);
+        }
+
+        private void EndSearch()
+        {
+            var results = ViewModel?.SearchStickers;
+
+            if (_loader != null)
+            {
+                _loader.ItemsSource = results;
+            }
+
+            SearchField.SetLoading(false);
+            ShowHideEmpty(results is { Count: 0 });
+        }
+
+        private void ShowHideEmpty(bool show)
+        {
+            EmptyText.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)

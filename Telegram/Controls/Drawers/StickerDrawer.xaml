@@ -110,7 +110,15 @@
                 </GroupStyle>
             </GridView.GroupStyle>
             <GridView.Footer>
-                <Border Height="12" />
+                <StackPanel>
+                    <TextBlock x:Name="EmptyText"
+                               Text="{CustomResource NoStickersFound}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               TextAlignment="Center"
+                               Visibility="Collapsed"
+                               Margin="12,24,12,0" />
+                    <Border Height="12" />
+                </StackPanel>
             </GridView.Footer>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"

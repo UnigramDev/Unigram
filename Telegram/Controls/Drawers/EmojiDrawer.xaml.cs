@@ -146,17 +146,7 @@ namespace Telegram.Controls.Drawers
             }
 
             _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            _typing.Invoked += (s, args) =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchField.Text))
-                {
-                    List.ItemsSource = EmojiCollection.View;
-                }
-                else if (ViewModel != null)
-                {
-                    List.ItemsSource = new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _mode);
-                }
-            };
+            _typing.Invoked += OnTypingInvoked;
         }
 
         private void Zoomer_Opening(object sender, EventArgs e)
@@ -420,12 +410,73 @@ namespace Telegram.Controls.Drawers
             }
         }
 
-        private async void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
+        private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.Category.Source is EmojiCategorySourceSearch search)
+            // Clearing the field is instant; only a query worth sending waits out the debounce,
+            // which is what both of the other clients do.
+            if (string.IsNullOrWhiteSpace(SearchField.Text))
             {
-                List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, search.Emojis);
+                Search(null);
             }
+        }
+
+        private void OnTypingInvoked(object sender, TextChangedEventArgs e)
+        {
+            // The debouncer is armed by the same keystroke that emptied the field, and that case
+            // was handled above the moment it happened.
+            if (ViewModel == null || string.IsNullOrWhiteSpace(SearchField.Text))
+            {
+                return;
+            }
+
+            Search(new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _mode, ViewModel.ChatId));
+        }
+
+        private void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
+        {
+            _typing.Cancel();
+
+            // A category is a list of emoji, and goes through the same passes a typed query does:
+            // the plain emoji it stands for as well as the custom ones, as Desktop shows them.
+            if (ViewModel != null && e.Category.Source is EmojiCategorySourceSearch search)
+            {
+                Search(new SearchEmojiCollection(ViewModel.ClientService, search.Emojis, _mode, ViewModel.ChatId));
+            }
+        }
+
+        private async void Search(SearchEmojiCollection items)
+        {
+            if (items == null)
+            {
+                List.ItemsSource = EmojiCollection.View;
+
+                SearchField.SetLoading(false);
+                ShowHideEmpty(false);
+                return;
+            }
+
+            List.ItemsSource = items;
+
+            SearchField.SetLoading(true);
+            ShowHideEmpty(false);
+
+            await items.SearchAsync();
+
+            // A newer query may have replaced this one while its requests were in flight.
+            if (List.ItemsSource != items)
+            {
+                return;
+            }
+
+            SearchField.SetLoading(false);
+            ShowHideEmpty(items.Count == 0);
+        }
+
+        private void ShowHideEmpty(bool show)
+        {
+            EmptyText.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private bool _emojiCollapsed = false;

@@ -90,6 +90,7 @@
                     <controls:EmojiSearchBox x:Name="SearchField"
                                              AllowFocusOnInteraction="True"
                                              PlaceholderText="{CustomResource Search}"
+                                             TextChanged="SearchField_TextChanged"
                                              CategorySelected="SearchField_CategorySelected"
                                              Margin="12,8,12,8" />
 
@@ -122,6 +123,14 @@
                     </Grid>
                 </StackPanel>
             </GridView.Header>
+            <GridView.Footer>
+                <TextBlock x:Name="EmptyText"
+                           Text="{CustomResource NoEmojiFound}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           TextAlignment="Center"
+                           Visibility="Collapsed"
+                           Margin="12,24,12,12" />
+            </GridView.Footer>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="MinWidth"

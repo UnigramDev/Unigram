@@ -296,23 +296,6 @@ namespace Telegram.Common
             return results;
         }
 
-        public static async Task<IList<StickerViewModel>> SearchAsync(IClientService clientService, IEnumerable<string> emojis)
-        {
-            var result = new List<StickerViewModel>();
-            var query = string.Join(" ", emojis);
-
-            var resp = await clientService.SendAsync(new SearchStickers(new StickerTypeCustomEmoji(), query, string.Empty, Array.Empty<string>(), 0, 100));
-            if (resp is Stickers stickers)
-            {
-                foreach (var item in stickers.StickersValue)
-                {
-                    result.Add(new StickerViewModel(clientService, item));
-                }
-            }
-
-            return result;
-        }
-
         public static bool ContainsSingleEmoji(string text)
         {
             text = text.Trim();

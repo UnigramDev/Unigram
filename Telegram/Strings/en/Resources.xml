@@ -13873,4 +13873,9 @@
     
     <string name="LocalMiscellaneousCache">Miscellaneous</string>
 
+    <string name="StickerOrEmojiSearchResult">Search Result</string>
+    <string name="StickerOrEmojiGlobalSearchResult">Global Search Result</string>
+    <string name="NoStickersFound">No stickers found</string>
+    <string name="NoEmojiFound">No emoji found</string>
+
 </resources>

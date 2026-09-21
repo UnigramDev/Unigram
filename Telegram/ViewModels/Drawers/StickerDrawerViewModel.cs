@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -16,8 +15,6 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 using WinRT;
 
 namespace Telegram.ViewModels.Drawers
@@ -34,6 +31,8 @@ namespace Telegram.ViewModels.Drawers
 
         private long _groupSetId;
         private long _groupSetChatId;
+
+        private long _chatId;
 
         private bool _activated;
         private bool _updated;
@@ -186,6 +185,10 @@ namespace Telegram.ViewModels.Drawers
 
         public RangeObservableCollection<StickerSetViewModel> SavedStickers { get; private set; }
 
+        // The search in flight, kept apart from SearchStickers because that one also holds the
+        // plain list the premium category produces, which has no cascade to cancel.
+        private SearchStickerSetsCollection _searchCollection;
+
         private RangeObservableCollection<StickerSetViewModel> _searchStickers;
         public RangeObservableCollection<StickerSetViewModel> SearchStickers
         {
@@ -199,28 +202,47 @@ namespace Telegram.ViewModels.Drawers
 
         public RangeObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? SavedStickers;
 
-        public async void Search(string query, bool emojiOnly)
+        /// <summary>
+        /// Starts a search and hands back the collection it will fill. The cascade runs on its
+        /// own; the caller awaits <see cref="SearchStickerSetsCollection.SearchAsync"/> on the
+        /// result when it needs to know that it has finished.
+        /// </summary>
+        public SearchStickerSetsCollection Search(string query, bool emojiOnly)
         {
+            // Whatever the previous query still has in flight belongs to a list that is about to
+            // be replaced, and must not write into it.
+            _searchCollection?.Cancel();
+            _searchCollection = null;
+
             if (string.IsNullOrWhiteSpace(query))
             {
                 SearchStickers = null;
+                return null;
             }
-            else
-            {
-                var items = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0, emojiOnly);
-                SearchStickers = items;
-                await items.LoadMoreItemsAsync(0);
-            }
+
+            var items = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, _chatId, emojiOnly);
+
+            _searchCollection = items;
+            SearchStickers = items;
+
+            return items;
         }
 
-        public async void Search(EmojiCategorySource source)
+        public async Task SearchAsync(EmojiCategorySource source)
         {
             if (source is EmojiCategorySourceSearch search)
             {
-                Search(string.Join(" ", search.Emojis), true);
+                var items = Search(string.Join(" ", search.Emojis), true);
+                if (items != null)
+                {
+                    await items.SearchAsync();
+                }
             }
             else
             {
+                _searchCollection?.Cancel();
+                _searchCollection = null;
+
                 SearchStickers = new RangeObservableCollection<StickerSetViewModel>();
 
                 var response = await ClientService.SendAsync(new GetPremiumStickers(100));
@@ -292,6 +314,13 @@ namespace Telegram.ViewModels.Drawers
 
         public async void Update(Chat chat)
         {
+            // Which stickers are available depends on the chat, so the search carries it too.
+            // Set before the guard below, which skips everything else on a re-activation.
+            if (chat != null)
+            {
+                _chatId = chat.Id;
+            }
+
             if (_updated)
             {
                 return;
@@ -692,14 +721,43 @@ namespace Telegram.ViewModels.Drawers
         public int TotalCount { get; set; }
     }
 
-    public partial class SearchStickerSetsCollection : RangeObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
+    /// <summary>
+    /// The sticker panel search. Runs the same four sources Telegram Desktop and Android do, in
+    /// the order they present them: stickers already installed, then what the server finds, then
+    /// the packs whose name matches — locally first, then on the server.
+    /// </summary>
+    /// <remarks>
+    /// Only the cloud sticker search pages; the cascade itself runs once, through
+    /// <see cref="SearchAsync"/>, and applies each source as it lands rather than waiting for the
+    /// slowest one.
+    /// </remarks>
+    public partial class SearchStickerSetsCollection : IncrementalCollection<StickerSetViewModel>
     {
+        // What one page asks for. It is part of the key TDLib caches the result under, so it has
+        // to be the same on every page or none of them ever hit.
+        private const int Limit = 100;
+
         private readonly IClientService _clientService;
         private readonly StickerType _type;
         private readonly string _query;
         private readonly string _inputLanguage;
         private readonly long _chatId;
         private readonly bool _emojiOnly;
+
+        // The emoji half of the query, resolved from the keyword database before the cloud search
+        // that takes it alongside the text. A category arrives as emoji already, and sends no text
+        // half at all: the server would read a string of emoji as a name to match and find nothing.
+        private string _emojis;
+        private readonly string _cloudQuery;
+
+        // Shared by the local and the cloud pass, so a sticker the user already has isn't listed
+        // twice, and by the pages of the cloud pass, which can overlap.
+        private readonly HashSet<int> _ids = new();
+
+        private StickerSetViewModel _cloudSet;
+        private int _offset;
+
+        private bool _cancelled;
 
         public SearchStickerSetsCollection(IClientService clientService, StickerType type, string query, long chatId, bool emojiOnly)
         {
@@ -709,9 +767,163 @@ namespace Telegram.ViewModels.Drawers
             _inputLanguage = NativeUtils.GetKeyboardCulture();
             _chatId = chatId;
             _emojiOnly = emojiOnly;
+            _emojis = emojiOnly ? query : string.Empty;
+            _cloudQuery = emojiOnly ? string.Empty : query;
+
+            // Nothing to page until the first cloud page has come back and said there is.
+            HasMoreItems = false;
         }
 
-        public string Query => _query;
+        /// <summary>
+        /// Stops applying anything further. The cascade is not driven by the list, so there is no
+        /// version for it to check: a query replaced while its requests are in flight says so here.
+        /// </summary>
+        public void Cancel()
+        {
+            _cancelled = true;
+            HasMoreItems = false;
+        }
+
+        public async Task SearchAsync()
+        {
+            // A category stands for a list of emoji and has no text to match a pack name against.
+            if (_emojiOnly)
+            {
+                await SearchCloudStickersAsync(string.Empty);
+                return;
+            }
+
+            // Local first, so something is on screen while the two cloud requests are out — and
+            // the cloud stickers last of all, because that is the group that pages: anything below
+            // it would be pushed further down every time another page arrives. Desktop and Android
+            // can afford to put the packs underneath only because theirs live in a strip above the
+            // grid rather than in it.
+            await SearchInstalledSetsAsync();
+            await ResolveEmojisAsync();
+            await SearchLocalStickersAsync();
+            await SearchCloudSetsAsync();
+            await SearchCloudStickersAsync(Strings.StickerOrEmojiGlobalSearchResult);
+        }
+
+        protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
+        {
+            var before = _cloudSet?.Stickers.Count ?? 0;
+            await SearchCloudStickersAsync(Strings.StickerOrEmojiGlobalSearchResult);
+
+            var added = (_cloudSet?.Stickers.Count ?? 0) - before;
+            return new IncrementalLoadResult((uint)Math.Max(added, 0), HasMoreItems);
+        }
+
+        private async Task ResolveEmojisAsync()
+        {
+            // The server's sticker search takes the text and the emoji it stands for side by side.
+            // Desktop and Android both fill the second from their own keyword database; ours lives
+            // in TDLib, so this is the one request that has to happen before the cloud pass.
+            if (Emoji.ContainsSingleEmoji(_query))
+            {
+                _emojis = _query;
+                return;
+            }
+
+            var response = await _clientService.SendAsync(new SearchEmojis(_query, new[] { _inputLanguage }));
+            if (response is EmojiKeywords emojis && !_cancelled)
+            {
+                _emojis = string.Join(" ", emojis.EmojiKeywordsValue.Select(x => x.Emoji).Distinct());
+            }
+        }
+
+        private async Task SearchLocalStickersAsync()
+        {
+            // By the emoji the query resolved to, which is how both other clients look up what is
+            // installed. Passing the text instead finds almost nothing: get_stickers drops the
+            // whole emoji list if any word in the query isn't an emoji, and falls back to matching
+            // per-sticker keywords, which most regular sets don't carry. The text is still worth
+            // one attempt when nothing resolved, since those keywords are all there is to go on.
+            var query = _emojis.Length > 0 ? _emojis : _query;
+
+            var response = await _clientService.SendAsync(new GetStickers(_type, query, Limit, _chatId));
+            if (response is Stickers stickers && !_cancelled)
+            {
+                var found = Collect(stickers);
+                if (found.Count > 0)
+                {
+                    AddGroup(CreateGroup(Strings.StickerOrEmojiSearchResult, found));
+                }
+            }
+        }
+
+        private async Task SearchCloudStickersAsync(string title)
+        {
+            var response = await _clientService.SendAsync(new SearchStickers(_type, _emojis, _cloudQuery, new[] { _inputLanguage }, _offset, Limit));
+            if (response is not Stickers stickers || _cancelled)
+            {
+                HasMoreItems = false;
+                return;
+            }
+
+            _offset += stickers.StickersValue.Count;
+
+            // td_api has no next offset to hand back, so a short page is the end of the results.
+            HasMoreItems = stickers.StickersValue.Count >= Limit;
+
+            var found = Collect(stickers);
+            if (found.Count == 0)
+            {
+                return;
+            }
+
+            if (_cloudSet == null)
+            {
+                _cloudSet = CreateGroup(title, found);
+                AddGroup(_cloudSet);
+            }
+            else
+            {
+                // A page after the first lands inside a group the list is already showing, which
+                // is an ordinary item add rather than the group add below.
+                _cloudSet.Stickers.AddRange(found.Select(x => new StickerViewModel(_clientService, x)));
+            }
+        }
+
+        private async Task SearchInstalledSetsAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchInstalledStickerSets(_type, _query, Limit));
+            if (response is StickerSets sets && !_cancelled)
+            {
+                AddGroups(sets.Sets.Select(x => new StickerSetViewModel(_clientService, x)));
+            }
+        }
+
+        private async Task SearchCloudSetsAsync()
+        {
+            var response = await _clientService.SendAsync(new SearchStickerSets(_type, _query));
+            if (response is StickerSets sets && !_cancelled)
+            {
+                AddGroups(sets.Sets.Select(x => new StickerSetViewModel(_clientService, x, x.Covers)));
+            }
+        }
+
+        private MutableVector<Sticker> Collect(Stickers stickers)
+        {
+            var result = new MutableVector<Sticker>();
+
+            foreach (var sticker in stickers.StickersValue)
+            {
+                if (_ids.Add(sticker.StickerValue.Id))
+                {
+                    result.Add(sticker);
+                }
+            }
+
+            return result;
+        }
+
+        private StickerSetViewModel CreateGroup(string title, MutableVector<Sticker> stickers)
+        {
+            return new StickerSetViewModel(_clientService,
+                new StickerSetInfo(0, title, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.Count, stickers),
+                new StickerSet(0, title, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers, Array.Empty<Emojis>()));
+        }
 
         // Appending a group to a live grouped source takes the GridView through
         // ModernCollectionBasePanel::OnGroupAdded, whose incremental group-cache renewal
@@ -743,95 +955,5 @@ namespace Telegram.ViewModels.Drawers
                 Reset();
             }
         }
-
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
-        {
-            return IncrementalLoading.Run(async token =>
-            {
-                if (phase == 0)
-                {
-                    Function task = _emojiOnly
-                        ? new SearchStickers(_type, _query, string.Empty, Array.Empty<string>(), 0, 100)
-                        : new SearchInstalledStickerSets(_type, _query, 100);
-
-                    var response = await _clientService.SendAsync(task);
-                    if (response is StickerSets sets)
-                    {
-                        AddGroups(sets.Sets.Select(x => new StickerSetViewModel(_clientService, x)));
-                    }
-                    else if (response is Stickers stickers)
-                    {
-                        AddGroup(new StickerSetViewModel(_clientService,
-                            new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                            new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
-                    }
-                }
-                else if (phase == 1 && _query.Length > 1 && !_emojiOnly)
-                {
-                    if (Emoji.ContainsSingleEmoji(_query))
-                    {
-                        var response = await _clientService.SendAsync(new GetStickers(_type, _query, 100, _chatId));
-                        if (response is Stickers stickers && stickers.StickersValue.Count > 0)
-                        {
-                            AddGroup(new StickerSetViewModel(_clientService,
-                                new StickerSetInfo(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                new StickerSet(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
-                        }
-                    }
-                    else
-                    {
-                        var emojis = await _clientService.SendAsync(new SearchEmojis(_query, new[] { _inputLanguage })) as EmojiKeywords;
-                        if (emojis != null)
-                        {
-                            int i = 0;
-
-                            var added = new HashSet<int>();
-                            var items = new MutableVector<Sticker>();
-
-                            foreach (var suggestion in emojis.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
-                            {
-                                var response = await _clientService.SendAsync(new GetStickers(_type, suggestion.Emoji, 100, _chatId));
-                                if (response is Stickers stickers && stickers.StickersValue.Count > 0)
-                                {
-                                    foreach (var item in stickers.StickersValue)
-                                    {
-                                        if (added.Contains(item.StickerValue.Id))
-                                        {
-                                            continue;
-                                        }
-
-                                        added.Add(item.StickerValue.Id);
-                                        items.Add(item);
-                                    }
-
-                                    i++;
-                                }
-
-                                if (i > 9)
-                                {
-                                    break;
-                                }
-                            }
-
-                            AddGroup(new StickerSetViewModel(_clientService,
-                                new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items.Count, items),
-                                new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items, Array.Empty<Emojis>())));
-                        }
-                    }
-                }
-                else if (phase == 2 && !_emojiOnly)
-                {
-                    var response = await _clientService.SendAsync(new SearchStickerSets(_type, _query));
-                    if (response is StickerSets sets)
-                    {
-                        AddGroups(sets.Sets.Select(x => new StickerSetViewModel(_clientService, x, x.Covers)));
-                    }
-                }
-
-                return new LoadMoreItemsResult();
-            });
-        }
-
-        public bool HasMoreItems => false;
     }
 }

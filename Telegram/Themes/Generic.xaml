@@ -3138,6 +3138,25 @@
                                                          HorizontalAlignment="Left"
                                                          VerticalAlignment="Center"
                                                          AutomationProperties.AccessibilityView="Raw" />
+
+                        <!-- Takes the glyph's place while a search is in flight. Left of the
+                             categories strip, which starts at 36, so the two never overlap. -->
+                        <local:ProgressBarRing x:Name="ProgressBar"
+                                               Foreground="{ThemeResource TextControlButtonForeground}"
+                                               Background="Transparent"
+                                               ShrinkOut="False"
+                                               Thickness="1.5"
+                                               Radius="7"
+                                               Center="9"
+                                               Width="18"
+                                               Height="18"
+                                               Opacity="0"
+                                               IsHitTestVisible="False"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Margin="10,0,0,0"
+                                               AutomationProperties.AccessibilityView="Raw" />
+
                         <ScrollViewer x:Name="ScrollingHost"
                                       Background="{x:Null}"
                                       HorizontalScrollBarVisibility="Hidden"
