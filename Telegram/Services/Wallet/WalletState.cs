@@ -327,6 +327,27 @@ namespace Telegram.Services.Wallet
             Error = error;
         }
 
+        private WalletTransferResult(bool commentUnavailable)
+        {
+            IsCommentUnavailable = commentUnavailable;
+        }
+
+        /// <summary>
+        /// The comment could not be encrypted, so nothing was sent.
+        /// </summary>
+        public static readonly WalletTransferResult CommentUnavailable = new WalletTransferResult(true);
+
+        /// <summary>
+        /// Whether this is <see cref="CommentUnavailable"/>.
+        /// </summary>
+        /// <remarks>
+        /// Its own answer rather than an <see cref="Error"/>, because the account never heard about
+        /// this one: the engine refused before anything was signed, so there is no server message to
+        /// show and nothing was spent. Note that <see cref="Error"/> is null here too, so a caller
+        /// reading only that would take it for a transfer that went through.
+        /// </remarks>
+        public bool IsCommentUnavailable { get; }
+
         /// <summary>
         /// Why the server refused the transfer, or null when it did not. The same shape every other
         /// request in the app answers with, so the caller decides what to say about it.

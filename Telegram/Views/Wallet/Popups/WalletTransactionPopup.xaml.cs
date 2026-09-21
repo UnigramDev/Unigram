@@ -30,23 +30,69 @@ namespace Telegram.Views.Wallet.Popups
     /// Shaped after the Stars receipt, without the picture above the amount: a transfer has
     /// nothing to show but its own numbers.
     /// </remarks>
-    public sealed partial class WalletTransactionPopup : ModalPopup
+    public sealed partial class WalletTransactionPopup : WalletPopup
     {
         private readonly IClientService _clientService;
-        private readonly IWalletService _wallet;
         private readonly INavigationService _navigationService;
-        private readonly TonWalletTransaction _transaction;
 
-        public WalletTransactionPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, TonWalletTransaction transaction)
+        // Not readonly: the row this was opened with is replaced when it settles - see Handle.
+        private TonWalletTransaction _transaction;
+
+        /// <param name="standalone">
+        /// Whether the wallet is not already on screen behind this - opened from a chat rather than
+        /// from the wallet window, which is the only case with somewhere to go from here.
+        /// </param>
+        public WalletTransactionPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, TonWalletTransaction transaction, bool standalone = false)
+            : base(wallet, navigationService)
         {
             InitializeComponent();
 
             _clientService = clientService;
-            _wallet = wallet;
             _navigationService = navigationService;
             _transaction = transaction;
 
-            UpdateTransaction(_wallet.State, transaction);
+            if (standalone)
+            {
+                PrimaryButtonContent = "[Open My Wallet]";
+            }
+
+            UpdateTransaction(State, transaction);
+        }
+
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            // The receipt is done with either way: what it has to say about the transfer is on it,
+            // and the wallet is where the rest of them are.
+            Hide();
+
+            _navigationService.NavigateToWallet();
+        }
+
+        /// <summary>
+        /// Follows the transaction rather than the copy the popup was opened with, and re-prices it
+        /// when the rate it is converted at moves.
+        /// </summary>
+        /// <remarks>
+        /// A pending transfer is a row this device wrote, and it is replaced without anything here
+        /// asking - by the transaction it became, or by a failure. Matched by id, because what
+        /// replaces it is a different object.
+        ///
+        /// A row that disappears from the history entirely leaves the popup showing what it last
+        /// had, which is the right answer: it is still a true account of what was there, and the
+        /// alternative is a popup that empties itself while being read.
+        /// </remarks>
+        protected override void UpdateWalletState(WalletState state)
+        {
+            foreach (var item in state.Activity)
+            {
+                if (string.Equals(item.Id, _transaction.Id, StringComparison.Ordinal))
+                {
+                    _transaction = item;
+                    break;
+                }
+            }
+
+            UpdateTransaction(state, _transaction);
         }
 
         private void UpdateTransaction(WalletState state, TonWalletTransaction transaction)
@@ -113,11 +159,9 @@ namespace Telegram.Views.Wallet.Popups
 
             // The converted fee down to the digit that carries it: a fee is a fraction of a cent
             // more often than not, and rounded to the currency's own precision every one of them
-            // would read the same zero.
-            var converted = ToCurrency(state, fees);
-
-            FeeConverted.Text = converted > 0
-                ? string.Format(" ~ {0}", Formatter.FormatAmountExact(converted, state?.Currency ?? "USD"))
+            // would read the same zero. Nothing at all while the rates are still coming.
+            FeeConverted.Text = WalletHelper.TryToCurrency(_clientService, state, fees, out var converted) && converted > BigInteger.Zero
+                ? string.Format(" ~ {0}", Formatter.FormatAmountExact(converted, WalletHelper.CurrencyDecimals, state?.Currency ?? "USD"))
                 : string.Empty;
         }
 
@@ -150,7 +194,7 @@ namespace Telegram.Views.Wallet.Popups
         // What stands in for an encrypted comment until it is decrypted. The characters are never
         // seen - the spoiler covers them - so only the width matters, and one line of them is what
         // a comment usually is.
-        private const string CommentPlaceholder = "encrypted comment placeholder";
+        private const string CommentPlaceholder = "encrypted comment";
 
         // The link the placeholder carries. Never opened - the handler answers it - so it only has
         // to be something no real comment would contain.
@@ -172,7 +216,7 @@ namespace Telegram.Views.Wallet.Popups
             }
             else
             {
-                Comment.SetText(_clientService, new FormattedText(transfer.Comment, Array.Empty<TextEntity>()));
+                Comment.SetText(_clientService, transfer.Comment.AsFormattedText());
             }
         }
 
@@ -270,12 +314,9 @@ namespace Telegram.Views.Wallet.Popups
 
         private string Convert(WalletState state, BigInteger nanograms)
         {
-            return Formatter.FormatAmountExact(ToCurrency(state, nanograms), state?.Currency ?? "USD");
-        }
-
-        private double ToCurrency(WalletState state, BigInteger nanograms)
-        {
-            return WalletHelper.ToCurrency(_clientService, state, nanograms);
+            return WalletHelper.TryToCurrency(_clientService, state, nanograms, out var amount)
+                ? Formatter.FormatAmountExact(amount, WalletHelper.CurrencyDecimals, state?.Currency ?? "USD")
+                : string.Empty;
         }
 
         private static long Fees(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer)

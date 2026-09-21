@@ -20,6 +20,7 @@ using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -1801,7 +1802,7 @@ namespace Telegram.ViewModels
                     {
                         if (answer.ShowAlert)
                         {
-                            ShowPopup(new MessagePopup(answer.Text));
+                            ShowPopup(answer.Text, Strings.AppName, Strings.OK);
                         }
                         else
                         {
@@ -2539,6 +2540,18 @@ namespace Telegram.ViewModels
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {
                 ShowPopup(new Views.Premium.Popups.PromoPopup(ClientService, giftedPremium));
+            }
+            else if (message.Content is MessageTonWalletTransfer tonWalletTransfer)
+            {
+                // Through the wallet rather than the account, so that a transfer this device has
+                // just sent - which the account does not know about yet - opens too.
+                var wallet = Session.Resolve<IWalletService>();
+
+                var transaction = await wallet.GetTransactionAsync(tonWalletTransfer.TransactionId);
+                if (transaction != null)
+                {
+                    ShowPopup(new Views.Wallet.Popups.WalletTransactionPopup(ClientService, wallet, NavigationService, transaction, true));
+                }
             }
         }
 

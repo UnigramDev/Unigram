@@ -32,11 +32,12 @@ namespace Telegram.Views.Wallet.Popups
     /// navigation machinery only runs for pages - and it is the page's, unchanged, so the content
     /// can go back to being a page if the window ever grows a frame of its own.
     /// </remarks>
-    public sealed partial class WalletBackupPopup : ModalPopup
+    public sealed partial class WalletBackupPopup : WalletPopup
     {
         public WalletBackupViewModel ViewModel => DataContext as WalletBackupViewModel;
 
-        public WalletBackupPopup(INavigationService navigationService)
+        public WalletBackupPopup(IWalletService wallet, INavigationService navigationService)
+            : base(wallet, navigationService)
         {
             var viewModel = navigationService.Session.Resolve<WalletBackupViewModel>();
             viewModel.NavigationService = navigationService;
@@ -47,31 +48,28 @@ namespace Telegram.Views.Wallet.Popups
             InitializeComponent();
 
             Title = "[Keys & Backup]";
-
-            UpdateArchive();
         }
 
         /// <summary>
         /// Lists the wallets the account has moved on from and this device still has the keys for.
         /// </summary>
         /// <remarks>
-        /// Built once, here, rather than bound: the archive only changes when the account's wallet
-        /// is replaced, which closes this popup along with everything else showing the old one.
+        /// Rebuilt rather than merged: the list is short, it changes only when the account's wallet
+        /// is replaced, and what arrives after a restore is usually the first thing there is to
+        /// show - the archive is read from disk by that restore, so before it there is nothing.
         /// </remarks>
-        private void UpdateArchive()
+        protected override void UpdateWalletState(WalletState state)
         {
-            var archive = ViewModel?.Archive;
-            if (archive == null || archive.Count == 0)
-            {
-                return;
-            }
+            ArchivePanel.Children.Clear();
 
-            foreach (var wallet in archive)
+            foreach (var wallet in state.Archive)
             {
                 ArchivePanel.Children.Add(CreateArchiveItem(wallet));
             }
 
-            ArchiveRoot.Visibility = Visibility.Visible;
+            ArchiveRoot.Visibility = state.Archive.Count > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private UIElement CreateArchiveItem(WalletArchivedWallet wallet)

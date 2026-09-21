@@ -137,6 +137,17 @@ namespace Telegram.Services.Wallet
         Task<string> ResolveDnsAsync(string name);
 
         /// <summary>
+        /// The transaction with this identifier, or null if there is no such thing.
+        /// </summary>
+        /// <remarks>
+        /// The history is asked first, and that is the point of the method rather than an
+        /// implementation detail: a transfer this device sent is a row in the history before the
+        /// account has heard of it, and <c>getTonWalletTransaction</c> answers for one of those
+        /// with an error, because there is no transaction yet - only a message.
+        /// </remarks>
+        Task<TonWalletTransaction> GetTransactionAsync(string transactionId);
+
+        /// <summary>
         /// Decrypts the comment of a history entry that carries one. Needs the signing key.
         /// </summary>
         /// <param name="encryptedBody">

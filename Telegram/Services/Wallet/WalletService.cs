@@ -606,7 +606,19 @@ namespace Telegram.Services.Wallet
                 // The engine reads the recipient's key off their contract and asks for this
                 // wallet's phrase, so an encrypted comment is a signing operation of its own -
                 // and the body it hands back is a cell rather than text.
-                body = new SendMessageBody.RawPayload(await client.CreateEncryptedComment(new CreateEncryptedCommentRequest(recipient, comment)));
+                try
+                {
+                    body = new SendMessageBody.RawPayload(await client.CreateEncryptedComment(new CreateEncryptedCommentRequest(recipient, comment)));
+                }
+                catch (WalletClientException.EncryptedCommentUnavailable ex)
+                {
+                    // There is no key to encrypt to: a wallet that has never sent anything has not
+                    // published one, and some contracts never will. Nothing was signed and nothing
+                    // was spent, so this is an answer rather than a fault - and the caller can do
+                    // something about it, because the same comment can go publicly instead.
+                    Logger.Error("wallet comment could not be encrypted: " + ex.diagnostic);
+                    return WalletTransferResult.CommentUnavailable;
+                }
             }
 
             // Bounce is off because a transfer to an address that cannot accept it should leave the
@@ -718,6 +730,33 @@ namespace Telegram.Services.Wallet
                 Logger.Error("wallet fee could not be estimated: " + ex.Message);
                 return null;
             }
+        }
+
+        public async Task<TonWalletTransaction> GetTransactionAsync(string transactionId)
+        {
+            if (string.IsNullOrEmpty(transactionId))
+            {
+                return null;
+            }
+
+            await _mutex.WaitAsync();
+            try
+            {
+                foreach (var item in _activity)
+                {
+                    if (string.Equals(item.Id, transactionId, StringComparison.Ordinal))
+                    {
+                        return item;
+                    }
+                }
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            var response = await _clientService.SendAsync(new GetTonWalletTransaction(transactionId));
+            return response as TonWalletTransaction;
         }
 
         public async Task<string> ResolveDnsAsync(string name)

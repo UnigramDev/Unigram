@@ -1,13 +1,17 @@
-﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletTransactionPopup"
-                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:local="using:Telegram.Views.Wallet.Popups"
-                     xmlns:controls="using:Telegram.Controls"
-                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     mc:Ignorable="d"
-                     Padding="24,0,24,24"
-                     IsDismissButtonVisible="True">
+﻿<local:WalletPopup x:Class="Telegram.Views.Wallet.Popups.WalletTransactionPopup"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:local="using:Telegram.Views.Wallet.Popups"
+                   xmlns:controls="using:Telegram.Controls"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   mc:Ignorable="d"
+                   Padding="24,0,24,24"
+                   IsOptionsButtonVisible="True"
+                   IsDismissButtonVisible="True"
+                   PrimaryButtonClick="OnPrimaryButtonClick"
+                   OptionsRequested="More_ContextRequested"
+                   ButtonsLayout="Vertical">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -19,7 +23,15 @@
         <!-- No picture above the amount: the receipt this follows shows what was bought, and a
              transfer has nothing to show but its own numbers. -->
         <StackPanel HorizontalAlignment="Center"
-                    Margin="24,24,24,0">
+                    Margin="24,0,24,0">
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Gram.tgs"
+                                    IsCachingEnabled="False"
+                                    AutoPlay="True"
+                                    FrameSize="120,120"
+                                    DecodeFrameType="Logical"
+                                    Width="120"
+                                    Height="120" />
+
             <TextBlock x:Name="Amount"
                        Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center" />
@@ -29,16 +41,6 @@
                        TextAlignment="Center"
                        Margin="0,-2,0,0" />
         </StackPanel>
-
-        <!-- Beside the dismiss button the template draws at the card's corner: the content is
-             inset by the popup's 24 of padding and the button it sits next to is 40 wide, so 16
-             of margin is what puts the two side by side. -->
-        <controls:MoreButton x:Name="MoreButton"
-                             Click="More_ContextRequested"
-                             HorizontalAlignment="Right"
-                             VerticalAlignment="Top"
-                             CornerRadius="20"
-                             Margin="0,0,16,0" />
 
         <!-- The comment the transfer carried, in the bubble a message would be in. An encrypted
              one is a link under the spoiler rather than a tap on the bubble: a link is reachable
@@ -167,4 +169,4 @@
                                     Header="[Date]" />
         </controls:TableView>
     </Grid>
-</controls:ModalPopup>
+</local:WalletPopup>
