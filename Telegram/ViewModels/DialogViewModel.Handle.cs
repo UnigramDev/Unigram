@@ -760,7 +760,7 @@ namespace Telegram.ViewModels
                         {
                             if (item != pending)
                             {
-                                RemovePendingMessage(item);
+                                RemovePendingMessage(item, $"message {update.Message.Id} went to draft {pending?.DraftId}");
                             }
                         }
 
@@ -768,7 +768,7 @@ namespace Telegram.ViewModels
                         // the message into and it is inserted like any other.
                         if (pending != null && !Items.ContainsKey(pending.MessageId))
                         {
-                            RemovePendingMessage(pending);
+                            RemovePendingMessage(pending, $"bubble is gone, message {update.Message.Id} is inserted on its own");
                             pending = null;
                         }
 
@@ -777,6 +777,8 @@ namespace Telegram.ViewModels
 
                     if (pending != null)
                     {
+                        Logger.Info($"message: {update.Message.Id} completes draft: {pending.DraftId} in {pending.MessageId}");
+
                         pending.Update(update.Message);
                         UpdateCanStopPendingMessage();
                     }
@@ -814,7 +816,10 @@ namespace Telegram.ViewModels
                         return;
                     }
 
+                    var last = Items.LastId;
                     var message = CreatePendingMessage(user, update);
+
+                    Logger.Info($"draft: {update.DraftId}, message: {message.Id}, last: {last}, date: {message.Date}, canStop: {update.CanStop}, keepOnStop: {update.KeepOnStop}");
 
                     pending = message.Content is MessageText
                         ? new DialogPendingTextMessage(update, message)

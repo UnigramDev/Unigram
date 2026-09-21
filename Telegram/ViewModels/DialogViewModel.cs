@@ -784,6 +784,8 @@ namespace Telegram.ViewModels
             {
                 Items.RemoveAt(direction == PanelScrollingDirection.Backward ? Items.Count - 1 : 0);
             }
+
+            CheckPendingMessages("a trim");
         }
 
         /// <summary>
@@ -1373,6 +1375,8 @@ namespace Telegram.ViewModels
                 }
 
                 Items.ReplaceSlice(messages);
+
+                CheckPendingMessages("a slice load");
 
                 MessagesCount = slice.TotalCount;
                 HasUnreadMessages = slice.IsUnread;

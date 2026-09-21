@@ -82,6 +82,8 @@ namespace Telegram.ViewModels
                     ? new MessageTopicForum(pending.ForumTopicId)
                     : null;
 
+                Logger.Info($"draft: {pending.DraftId}, message: {pending.MessageId}, keepOnStop: {pending.KeepOnStop}");
+
                 ClientService.Send(new StopPendingMessage(chat.Id, topicId, pending.DraftId));
 
                 if (pending.KeepOnStop)
@@ -90,14 +92,14 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    RemovePendingMessage(pending);
+                    RemovePendingMessage(pending, "stopped by the user");
                 }
             }
 
             UpdateCanStopPendingMessage();
         }
 
-        private void RemovePendingMessage(DialogPendingMessage pending)
+        private void RemovePendingMessage(DialogPendingMessage pending, string reason)
         {
             pending.Stop();
             pending.Updated -= PendingMessage_Updated;
@@ -110,14 +112,63 @@ namespace Telegram.ViewModels
                 _pendingMessageIndex = 0;
             }
 
-            if (Items.TryGetValue(pending.MessageId, out MessageViewModel message))
+            var found = Items.TryGetValue(pending.MessageId, out MessageViewModel bubble);
+            if (found)
             {
-                Items.Remove(message);
+                Items.Remove(bubble);
+            }
+
+            Logger.Info($"draft: {pending.DraftId}, message: {pending.MessageId}, bubble: {found}, remaining: {_pendingMessages.Count}, reason: {reason}");
+
+            // A draft that was handed its message and dropped before promoting it takes that
+            // message with it: the bubble stood in for it, so it was never inserted. Whatever
+            // stopped the draft, the message itself is real and belongs in the history.
+            if (pending.CompletedMessage is Message completed)
+            {
+                var message = CreateMessage(completed);
+                message.GeneratedContentUnread = true;
+                message.AnimationState = MessageAnimationState.Added;
+
+                // Under the identifier the bubble was listed with, not as a fresh message: the
+                // drafts still typing were given later identifiers and their own creation dates,
+                // and only OffsetPendingDates - which InsertInOrder runs for a message that has
+                // just been renumbered - pushes them past the date this one landed with. Without
+                // it a draft started while this one was streaming sorts above it.
+                InsertMessage(message, pending.MessageId);
+
+                Logger.Info($"draft: {pending.DraftId} was still holding message {completed.Id}");
+            }
+        }
+
+        /// <summary>
+        /// Logs any draft whose bubble is no longer in <see cref="Items"/>. The collection is
+        /// trimmed and replaced without the drafts knowing, and a draft typing into a bubble that
+        /// is not in the list leaves no other trace: it simply never appears.
+        /// </summary>
+        private void CheckPendingMessages(string reason)
+        {
+            if (_pendingMessages.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var pending in _pendingMessages.Values)
+            {
+                if (!Items.ContainsKey(pending.MessageId) && !pending.Orphaned)
+                {
+                    pending.Orphaned = true;
+                    Logger.Warning($"draft: {pending.DraftId}, message: {pending.MessageId}, bubble dropped by {reason}");
+                }
             }
         }
 
         private void ClearPendingMessages()
         {
+            if (_pendingMessages.Count > 0)
+            {
+                Logger.Info($"dropping {_pendingMessages.Count} draft(s)");
+            }
+
             foreach (var pending in _pendingMessages.Values)
             {
                 pending.Stop();
@@ -137,10 +188,17 @@ namespace Telegram.ViewModels
                 already.Replace(message);
                 Delegate?.UpdateBubbleWithMessageId(sender.MessageId, bubble => bubble.UpdateMessageContent(already));
             }
+            else if (!sender.Orphaned)
+            {
+                sender.Orphaned = true;
+                Logger.Warning($"draft: {sender.DraftId}, message: {sender.MessageId}, bubble is gone, the draft keeps typing into nothing");
+            }
         }
 
         private void PendingMessage_Completed(DialogPendingMessage sender, Message completed)
         {
+            Logger.Info($"draft: {sender.DraftId}, message: {sender.MessageId}, completed: {(completed != null ? completed.Id : 0)}, bubble: {Items.ContainsKey(sender.MessageId)}, newest: {IsNewestSliceLoaded}");
+
             _pendingMessages.Remove(sender.DraftId);
 
             sender.Updated -= PendingMessage_Updated;

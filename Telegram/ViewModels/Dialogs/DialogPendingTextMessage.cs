@@ -116,9 +116,24 @@ namespace Telegram.ViewModels
 
         public bool KeepOnStop { get; private set; }
 
+        /// <summary>
+        /// Set once the bubble this draft types into is no longer in the list, so that the miss is
+        /// logged once rather than on every chunk.
+        /// </summary>
+        public bool Orphaned { get; set; }
+
+        /// <summary>
+        /// The message the draft has already been completed with, while the typewriter catches up
+        /// to it. It is kept out of the history until then - the bubble stands in for it - so a
+        /// draft dropped while holding one still owes it to the list.
+        /// </summary>
+        public Message CompletedMessage => _completed;
+
         private void OnTick(object sender, object e)
         {
             _timer.Stop();
+
+            Logger.Info($"draft: {DraftId}, message: {MessageId}, expired after {_timer.Interval.TotalSeconds}s without an update");
             Completed?.Invoke(this, null);
         }
 
@@ -277,6 +292,8 @@ namespace Telegram.ViewModels
             {
                 _timer.Stop();
                 _typing.Stop();
+
+                Logger.Info($"draft: {DraftId}, message: {MessageId}, content is no longer a text message");
                 RaiseCompleted();
 
                 return;
@@ -359,6 +376,18 @@ namespace Telegram.ViewModels
             if (message.Content is MessageRichMessage messageRich)
             {
                 Update(messageRich.Message.Blocks);
+            }
+            else
+            {
+                // The draft streamed blocks but the message that landed is not one: there is
+                // nothing left to type into it, and no further update is coming - Update(Message)
+                // has already stopped the expiration timer - so the draft completes here or never.
+                // DialogPendingTextMessage reaches the same place through a null caption.
+                _timer.Stop();
+                _typing.Stop();
+
+                Logger.Info($"draft: {DraftId}, message: {MessageId}, content is no longer a rich message");
+                RaiseCompleted();
             }
         }
 
