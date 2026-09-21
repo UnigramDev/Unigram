@@ -67,12 +67,6 @@ namespace Telegram.Controls
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
             Initials = GetTemplateChild(nameof(Initials)) as TextBlock;
 
-            Gradient = new LinearGradientBrush();
-            Gradient.StartPoint = new Windows.Foundation.Point(0, 0);
-            Gradient.EndPoint = new Windows.Foundation.Point(0, 1);
-            Gradient.GradientStops.Add(new GradientStop { Offset = 0 });
-            Gradient.GradientStops.Add(new GradientStop { Offset = 1 });
-
             _templateApplied = true;
             InvalidateShape();
 
@@ -254,8 +248,23 @@ namespace Telegram.Controls
             else if (newValue is ProfilePictureSourceText text)
             {
                 _invalidated = true;
-                Gradient.GradientStops[0].Color = text.TopColor;
-                Gradient.GradientStops[1].Color = text.BottomColor;
+
+                if (Gradient == null)
+                {
+                    Gradient = new LinearGradientBrush
+                    {
+                        StartPoint = new Point(0, 0),
+                        EndPoint = new Point(0, 1)
+                    };
+
+                    Gradient.GradientStops.Add(new GradientStop { Color = text.TopColor, Offset = 0 });
+                    Gradient.GradientStops.Add(new GradientStop { Color = text.BottomColor, Offset = 1 });
+                }
+                else
+                {
+                    Gradient.GradientStops[0].Color = text.TopColor;
+                    Gradient.GradientStops[1].Color = text.BottomColor;
+                }
 
                 LayoutRoot.Background = Gradient;
 
