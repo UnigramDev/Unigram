@@ -15,6 +15,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
@@ -24,6 +25,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -104,6 +106,8 @@ namespace Telegram.Views.Calls
             _call.AudioLevelUpdated += OnAudioLevelUpdated;
             _call.SignalBarsUpdated += OnSignalBarsUpdated;
             _call.MediaStateChanged += OnMediaStateChanged;
+
+            window.ShortcutInvoked += OnShortcutInvoked;
             _call.VideoFailed += OnVideoFailed;
             _call.NeedUpdates();
 
@@ -788,6 +792,41 @@ namespace Telegram.Views.Calls
 
             LocalAudioOff.ShowHide(args.Audio == VoipAudioState.Muted, LocalAudioPanel);
             LocalVideoOff.ShowHide(_call.RemoteVideoState != VoipVideoState.Inactive && args.Video == VoipVideoState.Inactive, LocalVideoPanel);
+
+            AnnounceMediaState(args);
+        }
+
+        private VoipAudioState _announcedAudio = VoipAudioState.Active;
+        private VoipVideoState _announcedVideo = VoipVideoState.Inactive;
+
+        // A shortcut leaves focus where it was, so the button that carries the state says nothing
+        // about having changed, and the label that appears is not read either.
+        private void AnnounceMediaState(VoipCallMediaStateChangedEventArgs args)
+        {
+            if (args.Audio != _announcedAudio)
+            {
+                _announcedAudio = args.Audio;
+
+                Announce(Mute, args.Audio == VoipAudioState.Muted
+                    ? Strings.VoipMyMicrophoneIsOff
+                    : Strings.VoipMyMicrophoneIsOn, "CallAudioState");
+            }
+
+            if (args.Video != _announcedVideo)
+            {
+                _announcedVideo = args.Video;
+
+                Announce(Camera, args.Video == VoipVideoState.Inactive
+                    ? Strings.VoipMyCameraIsOff
+                    : Strings.VoipMyCameraIsOn, "CallVideoState");
+            }
+        }
+
+        private static void Announce(UIElement owner, string text, string activityId)
+        {
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(owner);
+            peer?.RaiseNotificationEvent(AutomationNotificationKind.Other,
+                AutomationNotificationProcessing.MostRecent, text, activityId);
         }
 
         private void OnVideoFailed()
@@ -919,6 +958,8 @@ namespace Telegram.Views.Calls
 
         protected override void OnWindowClosed()
         {
+            Window.ShortcutInvoked -= OnShortcutInvoked;
+
             _call.StateChanged -= OnStateChanged;
             _call.ConnectionStateChanged -= OnConnectionStateChanged;
             _call.RemoteMediaStateChanged -= OnRemoteMediaStateChanged;
@@ -1008,6 +1049,31 @@ namespace Telegram.Views.Calls
         private void Discard_Click(object sender, RoutedEventArgs e)
         {
             _call.Discard();
+        }
+
+        private void OnShortcutInvoked(object sender, ShortcutInvokedEventArgs args)
+        {
+            foreach (var command in args.Shortcut.Commands)
+            {
+                if (command == ShortcutCommand.CallToggleMicrophone)
+                {
+                    Toggle(Mute, Mute_Click);
+                    args.Handled = true;
+                }
+                else if (command == ShortcutCommand.CallToggleCamera)
+                {
+                    Toggle(Camera, Camera_Click);
+                    args.Handled = true;
+                }
+            }
+        }
+
+        // The click handlers read the button, which the framework has already flipped by the time
+        // they run. A shortcut flips nothing, so it has to leave the button as a click would.
+        private static void Toggle(ToggleButton button, RoutedEventHandler click)
+        {
+            button.IsChecked = button.IsChecked != true;
+            click(button, null);
         }
 
         private async void Mute_Click(object sender, RoutedEventArgs e)

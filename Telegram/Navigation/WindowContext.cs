@@ -1493,8 +1493,15 @@ namespace Telegram.Navigation
                 }
             }
 
-            return false;
+            // A window that hosts no navigation service - a call - would see no shortcut at all.
+            ShortcutInvoked?.Invoke(this, args);
+            return args.Handled;
         }
+
+        /// <summary>
+        /// Raised for the window's content once no navigation service has handled the shortcut.
+        /// </summary>
+        public event EventHandler<ShortcutInvokedEventArgs> ShortcutInvoked;
 
         public bool RaiseBackRequested(VirtualKey key = VirtualKey.GoBack)
         {
