@@ -14,7 +14,7 @@ namespace Telegram.Controls
     // Name of the file is FrameworkElementEx.cs because supposedly this code should be
     // added to all classes inheriting FrameworkElement, but this isn't really possible in C#.
 
-    public static class FrameworkElementEx
+    public static class FrameworkElementEx2
     {
         public static bool IsConnected(this FrameworkElement element)
         {
@@ -31,6 +31,52 @@ namespace Telegram.Controls
             catch
             {
                 return null;
+            }
+        }
+    }
+
+    public partial class FrameworkElementEx : FrameworkElement
+    {
+        private bool _loaded;
+        private bool _unloaded;
+
+        public bool IsConnected => _loaded;
+        public bool IsDisconnected => _unloaded;
+
+        public FrameworkElementEx()
+        {
+            Loaded += OnChanged;
+            Unloaded += OnChanged;
+        }
+
+        protected virtual void OnLoaded()
+        {
+
+        }
+
+        protected virtual void OnUnloaded()
+        {
+
+        }
+
+        private void OnChanged(object sender, RoutedEventArgs e)
+        {
+            // TODO: unfortunately FrameworkElement.Parent returns null
+            // whenever the control is a DataTemplate root or similar,
+            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+
+            var parent = this.GetParent();
+            if (parent != null && !_loaded)
+            {
+                _loaded = true;
+                _unloaded = false;
+                OnLoaded();
+            }
+            else if (parent == null && _loaded)
+            {
+                _loaded = false;
+                _unloaded = true;
+                OnUnloaded();
             }
         }
     }

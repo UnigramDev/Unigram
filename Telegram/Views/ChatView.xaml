@@ -1205,7 +1205,6 @@
                                           FontSize="24" />
 
                                 <controls:ProgressBarRing x:Name="ComposerHeaderUpload"
-                                                          Background="Transparent"
                                                           Foreground="{ThemeResource MessageHeaderBorderBrush}" />
 
                                 <controls:GlyphButton x:Name="ComposerHeaderCancel"

@@ -7,7 +7,6 @@
 
 using System;
 using System.Numerics;
-using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -16,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public partial class ProgressBarRing : ControlEx
+    public partial class ProgressBarRing : FrameworkElementEx
     {
         // Every FileButton template carries one of these, so nothing is created until there
         // is an arc to draw: a ring that never sees a download costs no composition objects.
@@ -43,11 +42,23 @@ namespace Telegram.Controls
         private ScalarKeyFrameAnimation _trimStartFromZero;
         private ScalarKeyFrameAnimation _trimEndFromZero;
 
-        public ProgressBarRing()
+        #region Foreground
+
+        public Brush Foreground
         {
-            DefaultStyleKey = typeof(ProgressBarRing);
-            RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
+            get { return (Brush)GetValue(ForegroundProperty); }
+            set { SetValue(ForegroundProperty, value); }
         }
+
+        public static readonly DependencyProperty ForegroundProperty =
+            DependencyProperty.Register(nameof(Foreground), typeof(Brush), typeof(ProgressBarRing), new PropertyMetadata(null, OnForegroundChanged));
+
+        private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ProgressBarRing)d).OnForegroundChanged((Brush)e.NewValue);
+        }
+
+        #endregion
 
         public double Radius { get; set; } = 21;
         public double Center { get; set; } = 24;
@@ -140,9 +151,9 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        private void OnForegroundChanged(Brush newValue)
         {
-            if (Foreground is not SolidColorBrush brush)
+            if (newValue is not SolidColorBrush brush)
             {
                 return;
             }

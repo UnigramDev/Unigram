@@ -3088,7 +3088,6 @@
 
                         <local:ProgressBarRing x:Name="ProgressBar"
                                                Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                                               Background="Transparent"
                                                ShrinkOut="False"
                                                Thickness="1.5"
                                                Radius="9.25"
@@ -3143,7 +3142,6 @@
                              categories strip, which starts at 36, so the two never overlap. -->
                         <local:ProgressBarRing x:Name="ProgressBar"
                                                Foreground="{ThemeResource TextControlButtonForeground}"
-                                               Background="Transparent"
                                                ShrinkOut="False"
                                                Thickness="1.5"
                                                Radius="7"
@@ -6006,24 +6004,12 @@
     </Style>
 
     <Style TargetType="local:ProgressBarRing">
-        <Setter Property="Background"
-                Value="{ThemeResource MessageOverlayBackgroundBrush}" />
         <Setter Property="Foreground"
                 Value="#FFFFFFFF" />
         <Setter Property="Width"
                 Value="48" />
         <Setter Property="Height"
                 Value="48" />
-        <Setter Property="IsTabStop"
-                Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:ProgressBarRing">
-                    <Border Background="{TemplateBinding Background}"
-                            CornerRadius="24" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style TargetType="local:RatingBar">

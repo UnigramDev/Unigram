@@ -209,24 +209,17 @@
                                    AutomationProperties.AccessibilityView="Raw" />
 
                         <controls:ProgressBarRing x:Name="ProgressBar"
+                                                  x:Load="False"
                                                   Radius="7"
                                                   Center="10"
                                                   Width="20"
                                                   Height="20"
-                                                  Background="Transparent"
                                                   Foreground="{ThemeResource MessageMediaForegroundBrush}"
                                                   IsHitTestVisible="False" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <Style x:Key="ImmergiMilanoFileButtonStyle"
-           BasedOn="{StaticResource ImmersiveFileButtonStyle}"
-           TargetType="controls:FileButton">
-        <Setter Property="Foreground"
-                Value="Blue" />
     </Style>
 
 
@@ -360,8 +353,8 @@
                         </Border>
 
                         <controls:ProgressBarRing x:Name="ProgressBar"
-                                                  Background="Transparent"
-                                                  Foreground="White"
+                                                  x:Load="False"
+                                                  Foreground="#FFFFFF"
                                                   IsHitTestVisible="False" />
                     </Grid>
                 </ControlTemplate>
@@ -484,8 +477,8 @@
                                            VerticalAlignment="Center"
                                            AutomationProperties.AccessibilityView="Raw" />
                                 <controls:ProgressBarRing x:Name="ProgressBar"
-                                                          Background="Transparent"
-                                                          Foreground="White"
+                                                          x:Load="False"
+                                                          Foreground="#FFFFFF"
                                                           IsHitTestVisible="False"
                                                           Radius="17"
                                                           Center="20"

@@ -87,8 +87,6 @@ namespace Telegram.Controls
                 RootOverlay?.Visibility = _progressVisibility;
             }
 
-            ProgressBar = GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
-
             ContentPresenter1 = GetTemplateChild(nameof(ContentPresenter1)) as TextBlock;
             ContentPresenter2 = GetTemplateChild(nameof(ContentPresenter2)) as TextBlock;
 
@@ -97,7 +95,11 @@ namespace Telegram.Controls
 
             _label = ContentPresenter1;
 
-            ProgressBar?.Value = _progress;
+            if (_progress != 0)
+            {
+                ProgressBar = GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
+                ProgressBar?.Value = _progress;
+            }
 
             _templateApplied = true;
         }
@@ -147,12 +149,13 @@ namespace Telegram.Controls
                     value = Math.Clamp(value, 0.05, 1);
                 }
 
-                if (_shouldEnqueueProgress || ProgressBar == null || !IsConnected)
+                if (_shouldEnqueueProgress || !_templateApplied || !IsConnected)
                 {
                     _enqueuedProgress = value;
                 }
                 else
                 {
+                    ProgressBar ??= GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
                     ProgressBar.Value = value;
                 }
 
@@ -416,9 +419,11 @@ namespace Telegram.Controls
         {
             try
             {
-                if (_state == MessageContentState.Downloading && ProgressBar != null && IsConnected)
+                if (_state == MessageContentState.Downloading && _templateApplied && IsConnected)
                 {
                     OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
+
+                    ProgressBar ??= GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
                     ProgressBar.Value = _enqueuedProgress;
                 }
 
