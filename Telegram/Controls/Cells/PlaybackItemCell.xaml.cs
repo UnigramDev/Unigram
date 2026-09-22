@@ -12,8 +12,6 @@ using Telegram.Native.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
@@ -23,10 +21,6 @@ namespace Telegram.Controls.Cells
         public PlaybackItem Item => _item;
 
         private long _fileToken;
-        private long _thumbnailToken;
-
-        private ThumbnailController _thumbnailController;
-        private ImageBrush _thumbnailTexture;
 
         public PlaybackItemCell()
         {
@@ -51,31 +45,8 @@ namespace Telegram.Controls.Cells
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
         }
 
-        private bool _hidden;
-
-        public void Hide()
-        {
-            if (_hidden)
-            {
-                return;
-            }
-
-            _hidden = true;
-            ButtonRoot.Opacity = 0;
-            DownloadRoot.Opacity = 0;
-            TextRoot.Opacity = 0;
-        }
-
         public void UpdateItem(PlaybackItem item)
         {
-            if (_hidden)
-            {
-                _hidden = false;
-                ButtonRoot.Opacity = 1;
-                DownloadRoot.Opacity = 1;
-                TextRoot.Opacity = 1;
-            }
-
             _item = item;
 
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
@@ -119,15 +90,7 @@ namespace Telegram.Controls.Cells
                 TitleTrim.Text = string.Empty;
             }
 
-            if (audio.AlbumCoverThumbnail != null)
-            {
-                UpdateManager.Subscribe(this, item.ClientService, audio.AlbumCoverThumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
-                UpdateThumbnail(item, audio.AlbumCoverThumbnail, audio.AlbumCoverThumbnail.File);
-            }
-            else
-            {
-                UpdateThumbnail(item, null, null);
-            }
+            Button.SetThumbnail(item.ClientService, audio.AlbumCoverThumbnail, audio.AlbumCoverMinithumbnail);
 
             UpdateManager.Subscribe(this, item.ClientService, audio.AudioValue, ref _fileToken, UpdateFile);
             UpdateFile(item, audio.AudioValue);
@@ -326,68 +289,6 @@ namespace Telegram.Controls.Cells
             }
 
             Button.Progress = 1;
-        }
-
-        private void UpdateThumbnail(File file)
-        {
-            var audio = GetContent(_item);
-            if (audio == null /*|| !_templateApplied*/)
-            {
-                return;
-            }
-
-            UpdateThumbnail(_item, audio.AlbumCoverThumbnail, file);
-        }
-
-        private void UpdateThumbnail(PlaybackItem item, Thumbnail thumbnail, File file)
-        {
-            // No cover at all, rather than one that has yet to arrive: whatever the cell drew
-            // for the item before this one has to go.
-            if (thumbnail == null)
-            {
-                _thumbnailController?.Recycle();
-                ButtonRoot.ClearValue(Border.BackgroundProperty);
-                Button.Background = null;
-                return;
-            }
-
-            if (thumbnail.File.Id != file.Id)
-            {
-                return;
-            }
-
-            _thumbnailTexture ??= new ImageBrush
-            {
-                Stretch = Stretch.UniformToFill,
-                AlignmentX = AlignmentX.Center,
-                AlignmentY = AlignmentY.Center
-            };
-            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                double ratioX = (double)48 / thumbnail.Width;
-                double ratioY = (double)48 / thumbnail.Height;
-                double ratio = Math.Max(ratioX, ratioY);
-
-                var width = (int)(thumbnail.Width * ratio);
-                var height = (int)(thumbnail.Height * ratio);
-
-                _thumbnailController.Bitmap(file.Local.Path, width, height, item.Document.Id);
-                ButtonRoot.Background = _thumbnailTexture;
-                Button.ClearValue(Control.BackgroundProperty);
-            }
-            else
-            {
-                _thumbnailController.Recycle();
-                ButtonRoot.ClearValue(Border.BackgroundProperty);
-                Button.Background = null;
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    item.ClientService.DownloadFile(file.Id, 1);
-                }
-            }
         }
 
         private Audio GetContent(PlaybackItem item)

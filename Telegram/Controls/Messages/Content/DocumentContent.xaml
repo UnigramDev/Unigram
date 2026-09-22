@@ -8,12 +8,6 @@
                     d:DesignHeight="300"
                     d:DesignWidth="400">
 
-    <Style x:Key="DocumentContentTextureStyle"
-           TargetType="Border">
-        <Setter Property="Background"
-                Value="{ThemeResource MessageMediaBackgroundBrush}" />
-    </Style>
-
     <Style TargetType="local:DocumentContent">
         <Setter Property="MinWidth"
                 Value="220" />
@@ -27,42 +21,43 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Border x:Name="Texture"
-                                Width="48"
-                                Height="48"
-                                CornerRadius="24"
-                                Style="{StaticResource DocumentContentTextureStyle}"
-                                VerticalAlignment="Top">
-                            <controls:FileButton x:Name="Button"
-                                                 Style="{StaticResource ImmersiveFileButtonStyle}" />
-                        </Border>
-                        <StackPanel Margin="8,0,0,2"
-                                    VerticalAlignment="Center"
-                                    Grid.Column="1">
-                            <Grid HorizontalAlignment="Left">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="Title"
-                                           Foreground="{ThemeResource MessageForegroundBrush}"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           Style="{StaticResource BaseTextBlockStyle}" />
-                                <TextBlock x:Name="TitleTrim"
-                                           Foreground="{ThemeResource MessageForegroundBrush}"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           Style="{StaticResource BaseTextBlockStyle}"
-                                           Grid.Column="1" />
-                            </Grid>
-                            <TextBlock x:Name="Subtitle"
-                                       Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <controls:FileButton x:Name="Button"
+                                             VerticalAlignment="Top"
+                                             Grid.RowSpan="2" />
+                        <Grid HorizontalAlignment="Left"
+                              VerticalAlignment="Bottom"
+                              Margin="8,0,0,0"
+                              Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="Title"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Typography.NumeralAlignment="Tabular" />
-                        </StackPanel>
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+                            <TextBlock x:Name="TitleTrim"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       Grid.Column="1" />
+                        </Grid>
+                        <TextBlock x:Name="Subtitle"
+                                   Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Typography.NumeralAlignment="Tabular"
+                                   VerticalAlignment="Top"
+                                   Margin="8,0,0,0"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

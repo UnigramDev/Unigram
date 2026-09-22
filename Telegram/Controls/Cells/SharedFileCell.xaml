@@ -14,53 +14,42 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
     </Grid.ColumnDefinitions>
-    <Border x:Name="ButtonRoot"
-            Width="48"
-            Height="48"
-            CornerRadius="24"
-            VerticalAlignment="Top">
-        <Border.Style>
-            <Style TargetType="Border">
-                <Setter Property="Background"
-                        Value="{ThemeResource MessageMediaBackgroundBrush}" />
-            </Style>
-        </Border.Style>
-        <controls:FileButton x:Name="Button"
-                             Click="Button_Click"
-                             Style="{StaticResource ImmersiveFileButtonStyle}" />
-    </Border>
-    <Grid x:Name="TextRoot"
-          Margin="12,0,0,0"
-          VerticalAlignment="Center"
+    <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+    </Grid.RowDefinitions>
+    <controls:FileButton x:Name="Button"
+                         Click="Button_Click"
+                         VerticalAlignment="Top"
+                         Grid.RowSpan="2" />
+    <Grid HorizontalAlignment="Left"
+          VerticalAlignment="Bottom"
+          Margin="8,0,0,0"
           Grid.Column="1">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid HorizontalAlignment="Left">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Name="Title"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource BaseTextBlockStyle}" />
-            <TextBlock x:Name="TitleTrim"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource BaseTextBlockStyle}"
-                       Grid.Column="1" />
-        </Grid>
-
-        <TextBlock x:Name="Subtitle"
-                   Style="{StaticResource BodyTextBlockStyle}"
-                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                   Typography.NumeralAlignment="Tabular"
-                   TextTrimming="CharacterEllipsis"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Title"
                    TextWrapping="NoWrap"
-                   MaxLines="1"
-                   Grid.ColumnSpan="2"
-                   Grid.Row="1" />
+                   TextTrimming="CharacterEllipsis"
+                   Style="{StaticResource BaseTextBlockStyle}" />
+        <TextBlock x:Name="TitleTrim"
+                   TextWrapping="NoWrap"
+                   TextTrimming="CharacterEllipsis"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Grid.Column="1" />
     </Grid>
+
+    <TextBlock x:Name="Subtitle"
+               Style="{StaticResource BodyTextBlockStyle}"
+               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+               Typography.NumeralAlignment="Tabular"
+               TextTrimming="CharacterEllipsis"
+               TextWrapping="NoWrap"
+               MaxLines="1"
+               VerticalAlignment="Top"
+               Margin="8,0,0,0"
+               Grid.Column="1"
+               Grid.Row="1" />
 </Grid>

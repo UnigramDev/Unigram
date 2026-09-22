@@ -466,6 +466,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="RootOverlay"
+                                  x:Load="False"
                                   Width="40"
                                   Margin="0,0,-4,0">
                                 <TextBlock x:Name="ContentPresenter1"

@@ -9,9 +9,13 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -19,6 +23,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -42,7 +47,7 @@ namespace Telegram.Controls
     public partial class FileButton : HyperlinkButtonEx
     {
         private Grid RootGrid;
-        private Grid RootOverlay;
+        private UIElement RootOverlay;
 
         private ProgressBarRing ProgressBar;
 
@@ -81,9 +86,9 @@ namespace Telegram.Controls
         {
             RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
 
-            if (_progressVisibility == Visibility.Collapsed)
+            if (_progressVisibility == Visibility.Visible)
             {
-                RootOverlay = GetTemplateChild(nameof(RootOverlay)) as Grid;
+                RootOverlay = GetTemplateChild(nameof(RootOverlay)) as UIElement;
                 RootOverlay?.Visibility = _progressVisibility;
             }
 
@@ -115,9 +120,148 @@ namespace Telegram.Controls
             }
         }
 
+        #region Thumbnail
+
+        private long _thumbnailToken;
+
+        private IClientService _clientService;
+        private Thumbnail _thumbnail;
+
+        private ThumbnailController _thumbnailController;
+        private ImageBrush _thumbnailTexture;
+
+        public void SetThumbnail(IClientService clientService, Thumbnail thumbnail, Minithumbnail minithumbnail)
+        {
+            if (_thumbnail == thumbnail || _thumbnail?.File.Id == thumbnail?.File.Id)
+            {
+                return;
+            }
+
+            _thumbnail = thumbnail;
+
+            if (thumbnail != null)
+            {
+                _clientService = clientService;
+
+                UpdateManager.Subscribe(this, clientService, thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
+                UpdateThumbnail(clientService, thumbnail, minithumbnail);
+            }
+            else
+            {
+                _clientService = null;
+
+                UpdateManager.Unsubscribe(this, ref _thumbnailToken);
+                UpdateThumbnail(null, null, null);
+            }
+        }
+
+        private void UpdateThumbnail(File file)
+        {
+            if (_clientService != null && _thumbnail?.File.Id == file.Id)
+            {
+                UpdateThumbnail(_clientService, _thumbnail, null);
+            }
+        }
+
+        private void UpdateThumbnail(IClientService clientService, Thumbnail thumbnail, Minithumbnail minithumbnail)
+        {
+            if (thumbnail == null)
+            {
+                _thumbnailController?.Recycle();
+                UpdateThumbnailState(false);
+                return;
+            }
+
+            var file = thumbnail.File;
+            if (file.Local.IsDownloadingCompleted)
+            {
+                double ratioX = (double)48 / thumbnail.Width;
+                double ratioY = (double)48 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                _thumbnailTexture ??= new ImageBrush
+                {
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+                _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
+
+                _thumbnailController.Bitmap(file.Local.Path, width, height, file.Id /*HashCode.Combine(message.ChatId, message.Id)*/);
+                UpdateThumbnailState(true);
+            }
+            else
+            {
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    clientService.DownloadFile(file.Id, 8);
+                }
+
+                if (minithumbnail != null)
+                {
+                    _thumbnailTexture ??= new ImageBrush
+                    {
+                        Stretch = Stretch.UniformToFill,
+                        AlignmentX = AlignmentX.Center,
+                        AlignmentY = AlignmentY.Center
+                    };
+                    _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
+
+                    _thumbnailController.Bitmap(minithumbnail.Data, minithumbnail.Width, minithumbnail.Height, file.Id);
+                    UpdateThumbnailState(true);
+                }
+                else
+                {
+                    _thumbnailController?.Recycle();
+                    UpdateThumbnailState(false);
+                }
+            }
+        }
+
+        public void RecycleThumbnail()
+        {
+            _thumbnail = null;
+            _clientService = null;
+
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken);
+
+            _thumbnailController?.Recycle();
+            UpdateThumbnailState(false);
+        }
+
+        private bool _thumbnailState;
+
+        private void UpdateThumbnailState(bool state)
+        {
+            if (_thumbnailState == state)
+            {
+                return;
+            }
+
+            _thumbnailState = state;
+
+            if (state)
+            {
+                Background = _thumbnailTexture;
+                Foreground = new SolidColorBrush(Colors.White);
+                ProgressVisibility = Visibility.Visible;
+            }
+            else
+            {
+                ClearValue(BackgroundProperty);
+                ClearValue(ForegroundProperty);
+                ProgressVisibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
+
         #region ProgressVisibility
 
-        private Visibility _progressVisibility = Visibility.Visible;
+        private Visibility _progressVisibility = Visibility.Collapsed;
         public Visibility ProgressVisibility
         {
             get => _progressVisibility;
@@ -127,9 +271,9 @@ namespace Telegram.Controls
                 {
                     _progressVisibility = value;
 
-                    if (RootOverlay != null || (value == Visibility.Collapsed && _templateApplied))
+                    if (RootOverlay != null || (value == Visibility.Visible && _templateApplied))
                     {
-                        RootOverlay = GetTemplateChild(nameof(RootOverlay)) as Grid;
+                        RootOverlay ??= GetTemplateChild(nameof(RootOverlay)) as UIElement;
                         RootOverlay?.Visibility = value;
                     }
                 }

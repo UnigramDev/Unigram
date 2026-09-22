@@ -13,10 +13,7 @@ using Telegram.Native.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
@@ -26,10 +23,6 @@ namespace Telegram.Controls.Cells
         public MessageWithOwner Message => _message;
 
         private long _fileToken;
-        private long _thumbnailToken;
-
-        private ThumbnailController _thumbnailController;
-        private ImageBrush _thumbnailTexture;
 
         public SharedVoiceCell()
         {
@@ -64,8 +57,7 @@ namespace Telegram.Controls.Cells
             }
 
             _hidden = true;
-            ButtonRoot.Opacity = 0;
-            TextRoot.Opacity = 0;
+            Opacity = 0;
         }
 
         public void UpdateMessage(MessageWithOwner message)
@@ -73,8 +65,7 @@ namespace Telegram.Controls.Cells
             if (_hidden)
             {
                 _hidden = false;
-                ButtonRoot.Opacity = 1;
-                TextRoot.Opacity = 1;
+                Opacity = 1;
             }
 
             _message = message;
@@ -108,14 +99,13 @@ namespace Telegram.Controls.Cells
                 Title.Text = string.Empty;
             }
 
-            if (message.Content is MessageVideoNote videoNote && videoNote.VideoNote.Thumbnail != null)
+            if (message.Content is MessageVideoNote videoNote)
             {
-                UpdateManager.Subscribe(this, message, videoNote.VideoNote.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
-                UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Thumbnail.File);
+                Button.SetThumbnail(message.ClientService, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail);
             }
             else
             {
-                UpdateThumbnail(message, null, null);
+                Button.SetThumbnail(message.ClientService, null, null);
             }
 
             UpdateManager.Subscribe(this, message, file, ref _fileToken, UpdateFile);
@@ -219,65 +209,6 @@ namespace Telegram.Controls.Cells
             }
 
             Button.Progress = 1;
-        }
-
-        private void UpdateThumbnail(File file)
-        {
-            if (TryGetVideoNote(_message?.Content, out VideoNote videoNote))
-            {
-                UpdateThumbnail(_message, videoNote.Thumbnail, file);
-            }
-        }
-
-        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
-        {
-            // No thumbnail at all, rather than one that has yet to arrive: whatever the cell
-            // drew for the message before this one has to go.
-            if (thumbnail == null)
-            {
-                _thumbnailController?.Recycle();
-                ButtonRoot.ClearValue(Border.BackgroundProperty);
-                Button.Background = null;
-                return;
-            }
-
-            if (thumbnail.File.Id != file.Id)
-            {
-                return;
-            }
-
-            _thumbnailTexture ??= new ImageBrush
-            {
-                Stretch = Stretch.UniformToFill,
-                AlignmentX = AlignmentX.Center,
-                AlignmentY = AlignmentY.Center
-            };
-            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                double ratioX = (double)48 / thumbnail.Width;
-                double ratioY = (double)48 / thumbnail.Height;
-                double ratio = Math.Max(ratioX, ratioY);
-
-                var width = (int)(thumbnail.Width * ratio);
-                var height = (int)(thumbnail.Height * ratio);
-
-                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
-                ButtonRoot.Background = _thumbnailTexture;
-                Button.ClearValue(Control.BackgroundProperty);
-            }
-            else
-            {
-                _thumbnailController.Recycle();
-                ButtonRoot.ClearValue(Border.BackgroundProperty);
-                Button.Background = null;
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    message.ClientService.DownloadFile(file.Id, 1);
-                }
-            }
         }
 
         private bool TryGetVoiceNote(MessageContent content, out VoiceNote voice)

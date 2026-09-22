@@ -16,21 +16,14 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
     </Grid.ColumnDefinitions>
-    <Border x:Name="ButtonRoot"
-            Width="48"
-            Height="48"
-            CornerRadius="24"
-            VerticalAlignment="Top">
-        <Border.Style>
-            <Style TargetType="Border">
-                <Setter Property="Background"
-                        Value="{ThemeResource MessageMediaBackgroundBrush}" />
-            </Style>
-        </Border.Style>
-        <controls:FileButton x:Name="Button"
-                             Click="Button_Click"
-                             Style="{StaticResource ImmersiveFileButtonStyle}" />
-    </Border>
+    <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+    </Grid.RowDefinitions>
+    <controls:FileButton x:Name="Button"
+                         Click="Button_Click"
+                         VerticalAlignment="Top"
+                         Grid.RowSpan="2" />
     <Grid x:Name="DownloadRoot"
           Width="24"
           Height="24"
@@ -41,39 +34,37 @@
           Background="{ThemeResource MessageMediaBackgroundBrush}"
           HorizontalAlignment="Right"
           VerticalAlignment="Bottom"
-          UseLayoutRounding="False">
+          UseLayoutRounding="False"
+          Grid.RowSpan="2">
         <controls:FileButton x:Name="Download"
                              IsSmall="True"
                              Click="Download_Click"
                              Style="{StaticResource StreamFileButtonStyle}" />
     </Grid>
 
-    <Grid x:Name="TextRoot"
-          Margin="8,0,0,2"
-          VerticalAlignment="Center"
+    <Grid HorizontalAlignment="Left"
+          VerticalAlignment="Bottom"
+          Margin="8,0,0,0"
           Grid.Column="1">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid HorizontalAlignment="Left">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Name="Title"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource BaseTextBlockStyle}" />
-            <TextBlock x:Name="TitleTrim"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource BaseTextBlockStyle}"
-                       Grid.Column="1" />
-        </Grid>
-        <TextBlock x:Name="Subtitle"
-                   Style="{StaticResource DisabledCaptionTextBlockStyle}"
-                   Typography.NumeralAlignment="Tabular"
-                   Grid.Row="1" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Title"
+                   TextWrapping="NoWrap"
+                   TextTrimming="CharacterEllipsis"
+                   Style="{StaticResource BaseTextBlockStyle}" />
+        <TextBlock x:Name="TitleTrim"
+                   TextWrapping="NoWrap"
+                   TextTrimming="CharacterEllipsis"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Grid.Column="1" />
     </Grid>
+    <TextBlock x:Name="Subtitle"
+               Style="{StaticResource DisabledCaptionTextBlockStyle}"
+               Typography.NumeralAlignment="Tabular"
+               VerticalAlignment="Top"
+               Margin="8,0,0,0"
+               Grid.Column="1"
+               Grid.Row="1" />
 </native:GridEx>

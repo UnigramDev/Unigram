@@ -12,7 +12,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -23,10 +22,6 @@ namespace Telegram.Controls.Messages.Content
         public MessageViewModel Message => _message;
 
         private long _fileToken;
-        private long _thumbnailToken;
-
-        private ThumbnailController _thumbnailController;
-        private ImageBrush _thumbnailTexture;
 
         public DocumentContent(MessageViewModel message)
         {
@@ -39,7 +34,6 @@ namespace Telegram.Controls.Messages.Content
 
         private AutomaticDragHelper ButtonDrag;
 
-        private Border Texture;
         private FileButton Button;
         private TextBlock Title;
         private TextBlock TitleTrim;
@@ -48,7 +42,6 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
-            Texture = GetTemplateChild(nameof(Texture)) as Border;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             TitleTrim = GetTemplateChild(nameof(TitleTrim)) as TextBlock;
@@ -92,15 +85,7 @@ namespace Telegram.Controls.Messages.Content
                 TitleTrim.Text = string.Empty;
             }
 
-            if (document.Thumbnail != null)
-            {
-                UpdateManager.Subscribe(this, message, document.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
-                UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.File);
-            }
-            else
-            {
-                UpdateThumbnail(message, null, null);
-            }
+            Button.SetThumbnail(message.ClientService, document.Thumbnail, document.Minithumbnail);
 
             UpdateManager.Subscribe(this, message, document.DocumentValue, ref _fileToken, UpdateFile);
             UpdateFile(message, document.DocumentValue);
@@ -165,79 +150,15 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(File file)
-        {
-            var document = GetContent(_message);
-            if (document == null || !_templateApplied)
-            {
-                return;
-            }
-
-            UpdateThumbnail(_message, document.Thumbnail, file);
-        }
-
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
-        {
-            // No thumbnail at all, rather than one that has yet to arrive: whatever the
-            // control drew for the message before this one has to go.
-            if (thumbnail == null)
-            {
-                _thumbnailController?.Recycle();
-                Texture.ClearValue(Border.BackgroundProperty);
-                Button.Background = null;
-                return;
-            }
-
-            if (thumbnail.File.Id != file.Id)
-            {
-                return;
-            }
-
-            _thumbnailTexture ??= new ImageBrush
-            {
-                Stretch = Stretch.UniformToFill,
-                AlignmentX = AlignmentX.Center,
-                AlignmentY = AlignmentY.Center
-            };
-            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                double ratioX = (double)48 / thumbnail.Width;
-                double ratioY = (double)48 / thumbnail.Height;
-                double ratio = Math.Max(ratioX, ratioY);
-
-                var width = (int)(thumbnail.Width * ratio);
-                var height = (int)(thumbnail.Height * ratio);
-
-                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
-                Texture.Background = _thumbnailTexture;
-                Button.ClearValue(Control.BackgroundProperty);
-            }
-            else
-            {
-                _thumbnailController.Recycle();
-                Texture.ClearValue(Border.BackgroundProperty);
-                Button.Background = null;
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    message.ClientService.DownloadFile(file.Id, 1);
-                }
-            }
-        }
-
         public void Recycle()
         {
             _message = null;
-            _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
-            UpdateManager.Unsubscribe(this, ref _thumbnailToken);
 
             if (_templateApplied)
             {
-                Button.Background = null;
+                Button.RecycleThumbnail();
             }
         }
 
@@ -312,7 +233,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (document.IsPhoto())
             {
-                _message.Delegate.OpenMedia(_message, Texture);
+                _message.Delegate.OpenMedia(_message, Button);
             }
             else
             {

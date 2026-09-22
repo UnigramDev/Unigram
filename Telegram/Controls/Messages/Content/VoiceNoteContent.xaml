@@ -213,15 +213,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Border Width="48"
-                                Height="48"
-                                CornerRadius="24"
-                                Background="{ThemeResource MessageMediaBackgroundBrush}"
-                                VerticalAlignment="Top">
-                            <controls:FileButton x:Name="Button"
-                                                 Background="Transparent"
-                                                 Style="{StaticResource ImmersiveFileButtonStyle}" />
-                        </Border>
+                        <controls:FileButton x:Name="Button"
+                                             VerticalAlignment="Top" />
                         <Border x:Name="ViewOnce"
                                 Width="24"
                                 Height="24"

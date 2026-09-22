@@ -26,10 +26,6 @@ namespace Telegram.Controls.Cells
         private MessageWithOwner _message;
 
         private long _fileToken;
-        private long _thumbnailToken;
-
-        private ThumbnailController _thumbnailController;
-        private ImageBrush _thumbnailTexture;
 
         // Shown whenever the thumbnail isn't: the colored circle picked from the extension.
         private Brush _placeholder;
@@ -59,8 +55,7 @@ namespace Telegram.Controls.Cells
             }
 
             _hidden = true;
-            ButtonRoot.Opacity = 0;
-            TextRoot.Opacity = 0;
+            Opacity = 0;
         }
 
         public void UpdateMessage(MediaTabsViewModelBase viewModel, MessageWithOwner message)
@@ -68,8 +63,7 @@ namespace Telegram.Controls.Cells
             if (_hidden)
             {
                 _hidden = false;
-                ButtonRoot.Opacity = 1;
-                TextRoot.Opacity = 1;
+                Opacity = 1;
             }
 
             _viewModel = viewModel;
@@ -116,15 +110,7 @@ namespace Telegram.Controls.Cells
                 }
             }
 
-            if (data.Thumbnail != null)
-            {
-                UpdateManager.Subscribe(this, message, data.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
-                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File);
-            }
-            else
-            {
-                UpdateThumbnail(message, null, null);
-            }
+            Button.SetThumbnail(message.ClientService, data.Thumbnail, data.Minithumbnail);
 
             UpdateManager.Subscribe(this, message, data.File, ref _fileToken, UpdateFile);
             UpdateFile(message, data.File);
@@ -182,68 +168,6 @@ namespace Telegram.Controls.Cells
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size) + " — " + UpdateTimeLabel(message);
-            }
-        }
-
-        private void UpdateThumbnail(File file)
-        {
-            var message = _message;
-            if (message == null)
-            {
-                return;
-            }
-
-            UpdateThumbnail(message, message.GetFileAndThumbnailAndName().Thumbnail, file);
-        }
-
-        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
-        {
-            // No thumbnail at all, rather than one that has yet to arrive: whatever the cell
-            // drew for the message before this one has to go.
-            if (thumbnail == null)
-            {
-                _thumbnailController?.Recycle();
-                ButtonRoot.Background = _placeholder;
-                Button.Background = null;
-                return;
-            }
-
-            if (thumbnail.File.Id != file.Id)
-            {
-                return;
-            }
-
-            _thumbnailTexture ??= new ImageBrush
-            {
-                Stretch = Stretch.UniformToFill,
-                AlignmentX = AlignmentX.Center,
-                AlignmentY = AlignmentY.Center
-            };
-            _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                double ratioX = (double)48 / thumbnail.Width;
-                double ratioY = (double)48 / thumbnail.Height;
-                double ratio = Math.Max(ratioX, ratioY);
-
-                var width = (int)(thumbnail.Width * ratio);
-                var height = (int)(thumbnail.Height * ratio);
-
-                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
-                ButtonRoot.Background = _thumbnailTexture;
-                Button.ClearValue(Control.BackgroundProperty);
-            }
-            else
-            {
-                _thumbnailController.Recycle();
-                ButtonRoot.Background = _placeholder;
-                Button.Background = null;
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    message.ClientService.DownloadFile(file.Id, 1);
-                }
             }
         }
 
@@ -364,7 +288,7 @@ namespace Telegram.Controls.Cells
 
                 var storageService = _message.ClientService.Session.Resolve<IStorageService>();
                 var viewModel = new ChatGalleryViewModel(_message.ClientService, storageService, _viewModel.Aggregator, _message.ChatId, _viewModel.Topic, _message, properties);
-                _viewModel.NavigationService.ShowGallery(viewModel, ButtonRoot);
+                _viewModel.NavigationService.ShowGallery(viewModel, Button);
             }
             else
             {
