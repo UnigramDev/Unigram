@@ -1748,32 +1748,32 @@ namespace Telegram.Td.Api
             return MessageContentState.None;
         }
 
-        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageWithOwner message)
+        public static (File File, Thumbnail Thumbnail, Minithumbnail Minithumbnail, string FileName) GetFileAndThumbnailAndName(this MessageWithOwner message)
         {
             return GetFileAndThumbnailAndName(message.Content);
         }
 
-        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageContent content)
+        public static (File File, Thumbnail Thumbnail, Minithumbnail Minithumbnail, string FileName) GetFileAndThumbnailAndName(this MessageContent content)
         {
             switch (content)
             {
                 case MessageAnimation animation:
-                    return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName);
+                    return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.Minithumbnail, animation.Animation.FileName);
                 case MessageAudio audio:
-                    return (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName);
+                    return (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.AlbumCoverMinithumbnail, audio.Audio.FileName);
                 case MessageDocument document:
-                    return (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName);
+                    return (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.Minithumbnail, document.Document.FileName);
                 case MessageGame game:
                     if (game.Game.Animation != null)
                     {
-                        return (game.Game.Animation.AnimationValue, game.Game.Animation.Thumbnail, game.Game.Animation.FileName);
+                        return (game.Game.Animation.AnimationValue, game.Game.Animation.Thumbnail, game.Game.Animation.Minithumbnail, game.Game.Animation.FileName);
                     }
                     else if (game.Game.Photo != null)
                     {
                         var big = game.Game.Photo.GetBig();
                         if (big != null)
                         {
-                            return (big.Photo, null, null);
+                            return (big.Photo, null, null, null);
                         }
                     }
                     break;
@@ -1782,115 +1782,115 @@ namespace Telegram.Td.Api
                         var big = photo.Photo.GetBig();
                         if (big != null)
                         {
-                            return (big.Photo, null, null);
+                            return (big.Photo, null, null, null);
                         }
                     }
                     break;
                 case MessageSticker sticker:
-                    return (sticker.Sticker.StickerValue, null, null);
+                    return (sticker.Sticker.StickerValue, null, null, null);
                 case MessageAnimatedEmoji animatedEmoji:
-                    return (animatedEmoji.AnimatedEmoji.Sticker?.StickerValue, null, null);
+                    return (animatedEmoji.AnimatedEmoji.Sticker?.StickerValue, null, null, null);
                 case MessageText text:
                     return text.LinkPreview?.Type switch
                     {
                         LinkPreviewTypeAlbum album => album.Media[0] switch
                         {
-                            LinkPreviewAlbumMediaPhoto albumPhoto => (albumPhoto.Photo.GetBig()?.Photo, null, null),
-                            LinkPreviewAlbumMediaVideo albumVideo => (albumVideo.Video.VideoValue, albumVideo.Video.Thumbnail, albumVideo.Video.FileName),
-                            _ => (null, null, null)
+                            LinkPreviewAlbumMediaPhoto albumPhoto => (albumPhoto.Photo.GetBig()?.Photo, null, null, null),
+                            LinkPreviewAlbumMediaVideo albumVideo => (albumVideo.Video.VideoValue, albumVideo.Video.Thumbnail, albumVideo.Video.Minithumbnail, albumVideo.Video.FileName),
+                            _ => (null, null, null, null)
                         },
-                        LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName),
-                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName),
-                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.FileName),
-                        LinkPreviewTypeDirectMessagesChat directMessagesChat => (directMessagesChat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
-                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null),
-                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null),
-                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail?.GetFile(), null, null),
-                        LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null),
-                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName),
-                        LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null),
-                        LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null),
-                        LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null),
-                        LinkPreviewTypeArticle article => (article.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeChannelBoost channelBoost => (channelBoost.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeChat chat => (chat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeUser user => (user.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeVideoChat videoChat => (videoChat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeWebApp webApp => (webApp.Photo?.GetFile(), null, null),
-                        _ => (null, null, null)
+                        LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.Minithumbnail, animation.Animation.FileName),
+                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.AlbumCoverMinithumbnail, audio.Audio.FileName),
+                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.Minithumbnail, background.Document?.FileName),
+                        LinkPreviewTypeDirectMessagesChat directMessagesChat => (directMessagesChat.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.Minithumbnail, document.Document.FileName),
+                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null, null),
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null, null),
+                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail?.GetFile(), null, null, null),
+                        LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null, null),
+                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.Minithumbnail, video.Video.FileName),
+                        LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, null),
+                        LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null, null),
+                        LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null, null),
+                        LinkPreviewTypeArticle article => (article.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeChannelBoost channelBoost => (channelBoost.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeChat chat => (chat.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeUser user => (user.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeVideoChat videoChat => (videoChat.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeWebApp webApp => (webApp.Photo?.GetFile(), null, null, null),
+                        _ => (null, null, null, null)
                     };
                 case MessageVideo video:
-                    return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName);
+                    return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.Minithumbnail, video.Video.FileName);
                 case MessageVideoNote videoNote:
-                    return (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null);
+                    return (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, null);
                 case MessageVoiceNote voiceNote:
-                    return (voiceNote.VoiceNote.Voice, null, null);
+                    return (voiceNote.VoiceNote.Voice, null, null, null);
                 case MessagePoll poll:
                     return poll.Media.GetFileAndThumbnailAndName();
             }
 
-            return (null, null, null);
+            return (null, null, null, null);
         }
 
-        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this PollMedia content)
+        public static (File File, Thumbnail Thumbnail, Minithumbnail Minithumbail, string FileName) GetFileAndThumbnailAndName(this PollMedia content)
         {
             switch (content)
             {
                 case PollMediaAnimation animation:
-                    return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName);
+                    return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.Minithumbnail, animation.Animation.FileName);
                 case PollMediaAudio audio:
-                    return (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName);
+                    return (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.AlbumCoverMinithumbnail, audio.Audio.FileName);
                 case PollMediaDocument document:
-                    return (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName);
+                    return (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.Minithumbnail, document.Document.FileName);
                 case PollMediaPhoto photo:
                     {
                         var big = photo.Photo.GetBig();
                         if (big != null)
                         {
-                            return (big.Photo, null, null);
+                            return (big.Photo, null, null, null);
                         }
                     }
                     break;
                 case PollMediaSticker sticker:
-                    return (sticker.Sticker.StickerValue, null, null);
+                    return (sticker.Sticker.StickerValue, null, null, null);
                 case PollMediaLink text:
                     return text.LinkPreview?.Type switch
                     {
                         LinkPreviewTypeAlbum album => album.Media[0] switch
                         {
-                            LinkPreviewAlbumMediaPhoto albumPhoto => (albumPhoto.Photo.GetBig()?.Photo, null, null),
-                            LinkPreviewAlbumMediaVideo albumVideo => (albumVideo.Video.VideoValue, albumVideo.Video.Thumbnail, albumVideo.Video.FileName),
-                            _ => (null, null, null)
+                            LinkPreviewAlbumMediaPhoto albumPhoto => (albumPhoto.Photo.GetBig()?.Photo, null, null, null),
+                            LinkPreviewAlbumMediaVideo albumVideo => (albumVideo.Video.VideoValue, albumVideo.Video.Thumbnail, albumVideo.Video.Minithumbnail, albumVideo.Video.FileName),
+                            _ => (null, null, null, null)
                         },
-                        LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName),
-                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName),
-                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.FileName),
-                        LinkPreviewTypeDirectMessagesChat directMessagesChat => (directMessagesChat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
-                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null),
-                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null),
-                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail?.GetFile(), null, null),
-                        LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null),
-                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName),
-                        LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null),
-                        LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null),
-                        LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null),
-                        LinkPreviewTypeArticle article => (article.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeChannelBoost channelBoost => (channelBoost.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeChat chat => (chat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeUser user => (user.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeVideoChat videoChat => (videoChat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeWebApp webApp => (webApp.Photo?.GetFile(), null, null),
-                        _ => (null, null, null)
+                        LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.Minithumbnail, animation.Animation.FileName),
+                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.AlbumCoverMinithumbnail, audio.Audio.FileName),
+                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.Minithumbnail, background.Document?.FileName),
+                        LinkPreviewTypeDirectMessagesChat directMessagesChat => (directMessagesChat.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.Minithumbnail, document.Document.FileName),
+                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null, null),
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null, null),
+                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail?.GetFile(), null, null, null),
+                        LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null, null),
+                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.Minithumbnail, video.Video.FileName),
+                        LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Minithumbnail, null),
+                        LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null, null),
+                        LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null, null),
+                        LinkPreviewTypeArticle article => (article.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeChannelBoost channelBoost => (channelBoost.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeChat chat => (chat.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeUser user => (user.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeVideoChat videoChat => (videoChat.Photo?.GetFile(), null, null, null),
+                        LinkPreviewTypeWebApp webApp => (webApp.Photo?.GetFile(), null, null, null),
+                        _ => (null, null, null, null)
                     };
                 case PollMediaVideo video:
-                    return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName);
+                    return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.Minithumbnail, video.Video.FileName);
             }
 
-            return (null, null, null);
+            return (null, null, null, null);
         }
 
         public static Minithumbnail GetMinithumbnail(this LinkPreview linkPreview)

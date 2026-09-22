@@ -8,99 +8,6 @@
                     d:DesignHeight="300"
                     d:DesignWidth="400">
 
-    <Style x:Key="InlineButtonStyle"
-           TargetType="controls:GlyphHyperlinkButton">
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="Foreground"
-                Value="{ThemeResource MessageMediaForegroundBrush}" />
-        <Setter Property="BorderBrush"
-                Value="{ThemeResource TextFillColorPrimaryBrush}" />
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="Padding"
-                Value="0" />
-        <Setter Property="HorizontalAlignment"
-                Value="Left" />
-        <Setter Property="HorizontalContentAlignment"
-                Value="Center" />
-        <Setter Property="VerticalAlignment"
-                Value="Top" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
-        <Setter Property="FontFamily"
-                Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="FontSize"
-                Value="{StaticResource GlyphLargeFontSize}" />
-        <Setter Property="Height"
-                Value="48" />
-        <Setter Property="Width"
-                Value="48" />
-        <Setter Property="FontWeight"
-                Value="Normal" />
-        <Setter Property="CornerRadius"
-                Value="24" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:GlyphHyperlinkButton">
-                    <Grid x:Name="RootGrid"
-                          Background="{TemplateBinding Background}"
-                          CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                       Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                       Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <TextBlock x:Name="ContentPresenter"
-                                   Margin="{TemplateBinding Padding}"
-                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                   AutomationProperties.AccessibilityView="Raw"
-                                   Text="{TemplateBinding Glyph}" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="local:CallContent">
         <Setter Property="MinWidth"
                 Value="220" />
@@ -125,15 +32,8 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Border Width="48"
-                                Height="48"
-                                CornerRadius="24"
-                                Background="{ThemeResource MessageMediaBackgroundBrush}"
-                                VerticalAlignment="Top">
-                            <controls:GlyphHyperlinkButton x:Name="Button"
-                                                           Glyph="&#xE717;"
-                                                           Style="{StaticResource InlineButtonStyle}" />
-                        </Border>
+                        <controls:FileButton x:Name="Button"
+                                             VerticalAlignment="Top" />
                         <Grid Margin="8,0,0,2"
                               VerticalAlignment="Center"
                               Grid.Column="1">

@@ -30,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private Border Texture;
-        private GlyphHyperlinkButton Button;
+        private FileButton Button;
         private TextBlock TitleLabel;
         private TextBlock IconLabel;
         private TextBlock DateLabel;
@@ -40,7 +40,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Texture = GetTemplateChild(nameof(Texture)) as Border;
-            Button = GetTemplateChild(nameof(Button)) as GlyphHyperlinkButton;
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Tip = GetTemplateChild(nameof(Tip)) as ToolTip;
             IconLabel = GetTemplateChild(nameof(IconLabel)) as TextBlock;
@@ -83,8 +83,7 @@ namespace Telegram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
-            Button.Glyph = call.IsVideo ? Icons.VideoFilled24 : Icons.CallFilled24;
-            //Button.FontSize = call.IsVideo ? 24 : 20;
+            Button.SetGlyph(0, call.IsVideo ? MessageContentState.VideoCall : MessageContentState.VoiceCall);
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             IconLabel.Text = outgoing ? Icons.ArrowUpRightFilled16 : Icons.ArrowDownLeftFilled16;
@@ -105,8 +104,7 @@ namespace Telegram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = groupCall.WasMissed;
 
-            Button.Glyph = groupCall.IsVideo ? Icons.VideoFilled24 : Icons.CallFilled24;
-            //Button.FontSize = call.IsVideo ? 24 : 20;
+            Button.SetGlyph(0, groupCall.IsVideo ? MessageContentState.VideoCall : MessageContentState.VoiceCall);
 
             TitleLabel.Text = groupCall.ToOutcomeText(message.IsOutgoing);
             IconLabel.Text = outgoing ? Icons.ArrowUpRightFilled16 : Icons.ArrowDownLeftFilled16;

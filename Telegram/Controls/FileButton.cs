@@ -42,6 +42,8 @@ namespace Telegram.Controls
         Play,
         Pause,
         Theme,
+        VoiceCall,
+        VideoCall,
     }
 
     public partial class FileButton : HyperlinkButtonEx
@@ -322,7 +324,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (fileId != _fileId)
+            if (fileId != _fileId || fileId == 0)
             {
                 _state = MessageContentState.None;
             }
@@ -371,6 +373,12 @@ namespace Telegram.Controls
                     break;
                 case MessageContentState.Theme:
                     OnGlyphChanged(Icons.ColorFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    break;
+                case MessageContentState.VoiceCall:
+                    OnGlyphChanged(Icons.CallFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.Call);
+                    break;
+                case MessageContentState.VideoCall:
+                    OnGlyphChanged(Icons.VideoFilled24, _glyph, _state != state && _state != MessageContentState.None, Strings.Call);
                     break;
             }
 
