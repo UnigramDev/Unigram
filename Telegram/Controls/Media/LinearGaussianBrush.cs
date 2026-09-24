@@ -32,8 +32,8 @@ namespace Telegram.Controls.Media
             effectBrush.SetSourceParameter("Backdrop", backdrop);
 
             var gradientBrush = compositor.CreateLinearGradientBrush();
-            gradientBrush.StartPoint = new Vector2(0, 0);
-            gradientBrush.EndPoint = new Vector2(0, 1);
+            gradientBrush.StartPoint = StartPoint.ToVector2();
+            gradientBrush.EndPoint = EndPoint.ToVector2();
             gradientBrush.ExtendMode = CompositionGradientExtendMode.Wrap;
 
             gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.Transparent));
@@ -43,7 +43,38 @@ namespace Telegram.Controls.Media
             maskBrush.Source = effectBrush;
             maskBrush.Mask = gradientBrush;
 
+            _brush = gradientBrush;
             return maskBrush;
+        }
+
+        private CompositionLinearGradientBrush _brush;
+
+        private Point _startPoint = new Point(0, 0);
+        public Point StartPoint
+        {
+            get => _startPoint;
+            set
+            {
+                if (_startPoint != value)
+                {
+                    _startPoint = value;
+                    _brush?.StartPoint = value.ToVector2();
+                }
+            }
+        }
+
+        private Point _endPoint = new Point(0, 1);
+        public Point EndPoint
+        {
+            get => _endPoint;
+            set
+            {
+                if (_endPoint != value)
+                {
+                    _endPoint = value;
+                    _brush?.EndPoint = value.ToVector2();
+                }
+            }
         }
     }
 }
