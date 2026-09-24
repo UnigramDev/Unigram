@@ -60,6 +60,9 @@ namespace Telegram.Controls
 
         private HostedPage _titlePage;
 
+        private ListViewBase _scrollingHostList;
+        private ScrollViewer _scrollingHostViewer;
+
         private bool _templateApplied;
 
         public MasterDetailView()
@@ -126,15 +129,7 @@ namespace Telegram.Controls
             DetachBackGestureHost();
 
             WatchTitle(null);
-
-            if (DetailFrame?.Content is HostedPage hosted)
-            {
-                var scrollingHost = hosted.FindName("ScrollingHost");
-                if (scrollingHost is ListViewBase list)
-                {
-                    list.Loaded -= SetScrollingHost;
-                }
-            }
+            ReleaseScrollingHost();
 
             NavigationService = null;
             ViewModel = null;
@@ -520,18 +515,6 @@ namespace Telegram.Controls
             visual.Clip = visual.Compositor.CreateGeometricClip(geometry);
         }
 
-        private void OnNavigating(object sender, NavigatingEventArgs e)
-        {
-            if (e.Content is HostedPage hosted)
-            {
-                var scrollingHost = hosted.FindName("ScrollingHost");
-                if (scrollingHost is ListViewBase list)
-                {
-                    list.Loaded -= SetScrollingHost;
-                }
-            }
-        }
-
         private void OnNavigated(object sender, NavigatedEventArgs e)
         {
             // OnNavigated is then manually invoked in OnApplyTemplate
@@ -539,6 +522,10 @@ namespace Telegram.Controls
             {
                 return;
             }
+
+            // Released here rather than on Navigating: that fires before NavigationService can
+            // cancel the navigation, which would leave the page that stays without its scroller.
+            ReleaseScrollingHost();
 
             if (HasMaster && !NavigationService.CanGoBack && NavigationService.CurrentPageType != BlankPageType)
             {
@@ -715,6 +702,10 @@ namespace Telegram.Controls
 
         private void SetScrollingHost()
         {
+            // Runs again from the animated path's batch, possibly after another navigation, so
+            // whatever an earlier call registered goes first.
+            ReleaseScrollingHost();
+
             var hosted = DetailFrame?.Content as HostedPage;
 
             var scrollingHost = hosted?.FindName("ScrollingHost");
@@ -723,7 +714,8 @@ namespace Telegram.Controls
                 var scrollViewer = listView.GetScrollViewer();
                 if (scrollViewer == null)
                 {
-                    listView.Loaded += SetScrollingHost;
+                    _scrollingHostList = listView;
+                    _scrollingHostList.Loaded += OnScrollingHostLoaded;
                 }
                 else
                 {
@@ -736,16 +728,19 @@ namespace Telegram.Controls
             }
         }
 
-        private void SetScrollingHost(object sender, RoutedEventArgs e)
+        private void OnScrollingHostLoaded(object sender, RoutedEventArgs e)
         {
-            if (sender is ListViewBase list)
+            if (sender != _scrollingHostList)
             {
-                var scroller = list.GetScrollViewer();
-                if (scroller != null)
-                {
-                    SetScrollingHost(scroller);
-                }
+                return;
             }
+
+            _scrollingHostList.Loaded -= OnScrollingHostLoaded;
+
+            var scroller = _scrollingHostList.GetScrollViewer();
+            _scrollingHostList = null;
+
+            SetScrollingHost(scroller);
         }
 
         private void SetScrollingHost(ScrollViewer scroller)
@@ -755,11 +750,30 @@ namespace Telegram.Controls
                 return;
             }
 
+            _scrollingHostViewer = scroller;
+
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
             var animation = _properties.Compositor.CreateExpressionAnimation("scrollViewer.Translation");
             animation.SetReferenceParameter("scrollViewer", properties);
 
             _properties.StartAnimation("Translation", animation);
+        }
+
+        private void ReleaseScrollingHost()
+        {
+            if (_scrollingHostList != null)
+            {
+                _scrollingHostList.Loaded -= OnScrollingHostLoaded;
+                _scrollingHostList = null;
+            }
+
+            if (_scrollingHostViewer != null)
+            {
+                // Stopping holds Translation at its current value, which is what tracking a
+                // scroller that is no longer on screen used to leave behind anyway.
+                _properties?.StopAnimation("Translation");
+                _scrollingHostViewer = null;
+            }
         }
 
         private void WatchTitle(HostedPage hosted)
