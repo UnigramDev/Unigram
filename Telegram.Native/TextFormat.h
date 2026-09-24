@@ -31,7 +31,7 @@ namespace winrt::Telegram::Native::implementation
         float2 ContentEnd(double fontSize, double width);
         float2 ContentWidths(double fontSize, double width, bool rtl);
         winrt::Telegram::Native::MaxLinesMetrics MaxLines(int32_t offset, int32_t length, double fontSize, double width, bool rtl, int32_t maxLines);
-        com_array<Windows::Foundation::Rect> RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap);
+        com_array<Windows::Foundation::Rect> RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap, int32_t maxLines);
         com_array<Windows::Foundation::Rect> LineMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap);
 
     private:
@@ -45,6 +45,7 @@ namespace winrt::Telegram::Native::implementation
         bool m_wrap{ true };
 
         HRESULT Configure(double fontSize, double width, bool rtl, bool wrap);
+        HRESULT TruncateAt(int32_t maxLines, float& truncateHeight, int32_t& truncatePosition);
         HRESULT HitTestRange(int32_t offset, int32_t length, std::vector<Windows::Foundation::Rect>& rects);
         HRESULT ContentEndImpl(double fontSize, double width, float2& offset);
     };

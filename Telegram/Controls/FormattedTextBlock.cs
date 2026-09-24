@@ -2446,8 +2446,19 @@ namespace Telegram.Controls
             var maxX = double.MinValue;
             var maxY = double.MinValue;
 
+            // The two of these are what the inner RichTextBlock was told to do with the text,
+            // and a range off the end of what it shows can only be recognised against them: a
+            // wrapped line ends at the word the control broke at, not at the width, and MaxLines
+            // hides every line past its last one.
+            var wrap = TextWrapping != Windows.UI.Xaml.TextWrapping.NoWrap;
+
             if (_spanForInlines == null)
             {
+                // MaxLines caps the block, not each paragraph in it, so it only converts into a
+                // cut on a single paragraph's range when the block renders one - which is the
+                // only case that sets it, a collapsed expandable quote.
+                var maxLines = _first == _last ? MaxLines : 0;
+
                 // Would be cool to optimize this for contiguous paragraphs
                 foreach (var spoiler in _spoilers)
                 {
@@ -2473,7 +2484,7 @@ namespace Telegram.Controls
                     var layoutWidth = width - paragraph.Margin.Left - paragraph.Margin.Right;
 
                     var format = GetTextFormat(spoiler.ParagraphIndex, partial, entities, size, layoutWidth);
-                    var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, true);
+                    var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, wrap, maxLines);
                     var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                     var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y);
@@ -2515,6 +2526,13 @@ namespace Telegram.Controls
                     relative = paragraph.Inlines[^1].ContentStart.GetCharacterRect(LogicalDirection.Forward);
                 }
 
+                // Everything is laid out as the one flattened paragraph here, so the block's
+                // MaxLines is this layout's. Only its first line is placed right though: the
+                // ones under it start at the left edge of the control rather than at relative.X,
+                // and are offered the full width. Every host of this path caps it at one line -
+                // or never reaches a second, being NoWrap.
+                var maxLines = MaxLines;
+
                 // Would be cool to optimize this for contiguous paragraphs
                 foreach (var spoiler in _spoilers)
                 {
@@ -2533,7 +2551,7 @@ namespace Telegram.Controls
                     var layoutWidth = width - relative.X;
 
                     var format = GetTextFormat(_last - _first + 1, partial, entities, size, layoutWidth);
-                    var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, false);
+                    var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, wrap, maxLines);
                     var point = new Windows.Foundation.Point(relative.X + position.X, relative.Y + position.Y);
 
                     for (int i = 0; i < rectangles?.Length; i++)

@@ -1394,7 +1394,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<TextFormat> textFormat;
         ReturnDefaultIfFailed(result, CreateTextFormatImpl(text, entities, fontSize, width, textFormat));
 
-        return textFormat->RangeMetrics(offset, length, fontSize, width, rtl, wrap);
+        return textFormat->RangeMetrics(offset, length, fontSize, width, rtl, wrap, 0);
     }
 
     Windows::Foundation::Rect Direct2DDevice::LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)

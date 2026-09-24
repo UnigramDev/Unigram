@@ -44,9 +44,13 @@ namespace winrt::Telegram::Native::implementation
 
         if (m_wrap != wrap)
         {
+            // The delimiter has to stay 0: a non-zero one is DirectWrite's path ellipsis, which
+            // keeps the tail after the Nth-from-last occurrence and lays it out at the head of
+            // the line, reported by HitTestTextRange as visible (isTrimmed clear). A range that
+            // is off screen then answers with a rectangle over text that is on it.
             DWRITE_TRIMMING trimming = wrap
                 ? DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_NONE, 0, 0 }
-                : DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0x2E, 3 };
+                : DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0 };
 
             ReturnIfFailed(result, m_textLayout->SetTrimming(&trimming, nullptr));
             ReturnIfFailed(result, m_textLayout->SetWordWrapping(wrap ? DWRITE_WORD_WRAPPING_EMERGENCY_BREAK : DWRITE_WORD_WRAPPING_NO_WRAP));
@@ -112,6 +116,55 @@ namespace winrt::Telegram::Native::implementation
         return float2(minWidth, metrics.width);
     }
 
+    // Where a MaxLines of the given number cuts the text: the height those lines take and the
+    // text length they hold, the trailing whitespace and newline of the last one left out.
+    // Reads the layout as it stands, so the caller configures it first.
+    HRESULT TextFormat::TruncateAt(int32_t maxLines, float& truncateHeight, int32_t& truncatePosition)
+    {
+        HRESULT result;
+
+        truncateHeight = 0;
+        truncatePosition = 0;
+
+        DWRITE_TEXT_METRICS metrics;
+        ReturnIfFailed(result, m_textLayout->GetMetrics(&metrics));
+
+        UINT32 actualLineCount;
+        DWRITE_LINE_METRICS* ranges = new DWRITE_LINE_METRICS[metrics.lineCount];
+        result = m_textLayout->GetLineMetrics(ranges, metrics.lineCount, &actualLineCount);
+
+        if (result == E_NOT_SUFFICIENT_BUFFER)
+        {
+            delete[] ranges;
+
+            ranges = new DWRITE_LINE_METRICS[actualLineCount];
+            result = m_textLayout->GetLineMetrics(ranges, actualLineCount, &actualLineCount);
+        }
+
+        if (FAILED(result))
+        {
+            delete[] ranges;
+            return result;
+        }
+
+        // Calculate position where to truncate
+        for (UINT32 i = 0; i < static_cast<UINT32>(maxLines) && i < actualLineCount; ++i)
+        {
+            truncateHeight += ranges[i].height;
+            truncatePosition += ranges[i].length;
+        }
+
+        // Remove trailing whitespace from last included line
+        if (static_cast<UINT32>(maxLines) <= actualLineCount)
+        {
+            truncatePosition -= ranges[maxLines - 1].trailingWhitespaceLength;
+            truncatePosition -= ranges[maxLines - 1].newlineLength;
+        }
+
+        delete[] ranges;
+        return S_OK;
+    }
+
     winrt::Telegram::Native::MaxLinesMetrics TextFormat::MaxLines(int32_t offset, int32_t length, double fontSize, double width, bool rtl, int32_t maxLines)
     {
         HRESULT result;
@@ -131,43 +184,10 @@ namespace winrt::Telegram::Native::implementation
             return { metrics.left, metrics.top, metrics.width, metrics.height, metrics.height, length };
         }
 
-        UINT32 actualLineCount;
-        DWRITE_LINE_METRICS* ranges = new DWRITE_LINE_METRICS[metrics.lineCount];
-        result = m_textLayout->GetLineMetrics(ranges, metrics.lineCount, &actualLineCount);
+        float truncateHeight;
+        int32_t truncatePosition;
+        ReturnDefaultIfFailed(result, TruncateAt(maxLines, truncateHeight, truncatePosition));
 
-        if (result == E_NOT_SUFFICIENT_BUFFER)
-        {
-            delete[] ranges;
-
-            ranges = new DWRITE_LINE_METRICS[actualLineCount];
-            result = m_textLayout->GetLineMetrics(ranges, actualLineCount, &actualLineCount);
-        }
-
-        if (FAILED(result))
-        {
-            delete[] ranges;
-            return {};
-        }
-
-        float truncateHeight = 0;
-        int32_t truncatePosition = 0;
-
-        // Calculate position where to truncate
-        for (UINT32 i = 0; i < maxLines && i < actualLineCount; ++i)
-        {
-            truncateHeight += ranges[i].height;
-            truncatePosition += ranges[i].length;
-        }
-
-        // Remove trailing whitespace from last included line
-        if (maxLines <= actualLineCount)
-        {
-            //truncateHeight += ranges[maxLines - 1].height;
-            truncatePosition -= ranges[maxLines - 1].trailingWhitespaceLength;
-            truncatePosition -= ranges[maxLines - 1].newlineLength;
-        }
-
-        delete[] ranges;
         return { metrics.left, metrics.top, metrics.width, metrics.height, truncateHeight, truncatePosition };
     }
 
@@ -214,7 +234,11 @@ namespace winrt::Telegram::Native::implementation
         return com_array<Windows::Foundation::Rect>(lines.begin(), lines.end());
     }
 
-    com_array<Windows::Foundation::Rect> TextFormat::RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap)
+    // maxLines is the control's own, 0 for uncapped: past that line the text is not on screen,
+    // so a range there has no geometry to answer with. The cut has to come from the line the
+    // layout wraps at rather than from the width, or it lands mid word where the control broke
+    // between them - and with no wrapping it comes from trimming instead, in HitTestRange.
+    com_array<Windows::Foundation::Rect> TextFormat::RangeMetrics(int32_t offset, int32_t length, double fontSize, double width, bool rtl, bool wrap, int32_t maxLines)
     {
         HRESULT result;
 
@@ -224,6 +248,20 @@ namespace winrt::Telegram::Native::implementation
         }
 
         ReturnDefaultIfFailed(result, Configure(fontSize, width, rtl, wrap));
+
+        if (maxLines > 0)
+        {
+            float truncateHeight;
+            int32_t truncatePosition;
+            ReturnDefaultIfFailed(result, TruncateAt(maxLines, truncateHeight, truncatePosition));
+
+            if (offset >= truncatePosition)
+            {
+                return {};
+            }
+
+            length = std::min(length, truncatePosition - offset);
+        }
 
         std::vector<Windows::Foundation::Rect> rects;
         ReturnDefaultIfFailed(result, HitTestRange(offset, length, rects));
