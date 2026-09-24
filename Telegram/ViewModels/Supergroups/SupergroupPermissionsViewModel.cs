@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Navigation.Services;
@@ -570,22 +571,25 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var index = Members.Source.IndexOf(member);
+            var source = Members.Source;
+            var index = source.IndexOf(member);
             if (index == -1)
             {
                 return;
             }
 
-            Members.Source.Remove(member);
+            source.RemoveAt(index);
 
             ChatMemberStatus status = member.Status is ChatMemberStatusRestricted { IsMember: true }
                 ? new ChatMemberStatusMember()
                 : new ChatMemberStatusLeft();
 
+            // The list can shrink or be replaced by a search while the request is in
+            // flight; a replacement was loaded after the failure and already has the member.
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
-            if (response is Error)
+            if (response is Error && source == Members.Source)
             {
-                Members.Source.Insert(index, member);
+                source.Insert(Math.Min(index, source.Count), member);
             }
         }
 

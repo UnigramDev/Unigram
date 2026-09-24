@@ -170,14 +170,21 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var index = Members.Source.IndexOf(member);
-
-            Members.Source.Remove(member);
-
-            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
-            if (response is Error)
+            // The member may already be gone from the source (removed by an update, or a
+            // search swapping it) while still on screen; the ban is sent regardless.
+            var source = Members.Source;
+            var index = source.IndexOf(member);
+            if (index != -1)
             {
-                Members.Source.Insert(Math.Min(Members.Source.Count, index), member);
+                source.RemoveAt(index);
+            }
+
+            // The list can shrink or be replaced by a search while the request is in
+            // flight; a replacement was loaded after the failure and already has the member.
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
+            if (response is Error && index != -1 && source == Members.Source)
+            {
+                source.Insert(Math.Min(index, source.Count), member);
             }
         }
 
