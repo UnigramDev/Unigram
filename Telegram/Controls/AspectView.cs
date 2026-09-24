@@ -187,7 +187,7 @@ namespace Telegram.Controls
                     }
                     break;
                 case MessageLiveLocation liveLocationMessage:
-                    constraint = liveLocationMessage.Location;
+                    constraint = liveLocationMessage.Location.Location;
                     break;
                 case MessageLocation locationMessage:
                     constraint = locationMessage.Location;

@@ -180,7 +180,7 @@ namespace Telegram.Controls
             }
             else if (constraint is MessageLiveLocation liveLocationMessage)
             {
-                constraint = liveLocationMessage.Location;
+                constraint = liveLocationMessage.Location.Location;
             }
             else if (constraint is MessageLocation locationMessage)
             {
