@@ -356,10 +356,21 @@ namespace Telegram.Controls
 
         #region Source
 
+        // XAML keeps a custom DP's non-DependencyObject value as an unowned pointer, so a GetValue,
+        // or the old/new comparison inside a SetValue, can reach a collected CCW. This field mirrors
+        // the effective value from the change callback and keeps the object alive while XAML holds it.
+        private AnimatedImageSource _source;
+
         public AnimatedImageSource Source
         {
-            get { return (AnimatedImageSource)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => _source;
+            set
+            {
+                if (!ReferenceEquals(_source, value))
+                {
+                    SetValue(SourceProperty, value);
+                }
+            }
         }
 
         public static readonly DependencyProperty SourceProperty =
@@ -525,12 +536,18 @@ namespace Telegram.Controls
 
         private void OnSourceChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (e.OldValue is AnimatedImageSource oldValue)
+            // The old value comes from the field, not e.OldValue, which would unbox it from XAML.
+            var oldValue = _source;
+            var newValue = e.NewValue as AnimatedImageSource;
+
+            _source = newValue;
+
+            if (oldValue != null)
             {
                 oldValue.OutlineChanged -= OnOutlineChanged;
             }
 
-            if (e.NewValue is AnimatedImageSource newValue && IsConnected)
+            if (newValue != null && IsConnected)
             {
                 if (IsOutlineEnabled)
                 {
