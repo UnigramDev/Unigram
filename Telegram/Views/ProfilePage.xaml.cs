@@ -1241,11 +1241,14 @@ namespace Telegram.Views
                     var first = popup.SelectedDates.FirstOrDefault();
                     var offset = first.Date.ToUnixTimeSeconds();
 
+                    // Null when the chosen day is newer than every sampled position, which the
+                    // calendar allows up to today: the newest media is then the closest.
                     var closest = ViewModel.Media.DataSource.GetByDate(offset);
+                    var position = closest?.Position ?? 0;
+
                     var panel = media.ScrollingHost.ItemsPanelRoot as ItemsWrapGrid;
 
-                    int x = closest.Position % panel.MaximumRowsOrColumns;
-                    int y = closest.Position / panel.MaximumRowsOrColumns;
+                    int y = position / panel.MaximumRowsOrColumns;
 
                     _hasBeenScrolled = false;
                     RootGrid.Unsnap();

@@ -307,6 +307,8 @@ namespace Telegram.ViewModels.Profile
 
         private async void DeleteMessages(Chat chat, IList<MessageWithOwner> messages)
         {
+            // A range selected over MediaDataSource includes rows it hasn't fetched yet, which
+            // it reports as null, so only this filtered list is safe to read below.
             var items = messages
                 .Where(x => x != null)
                 .DistinctBy(x => x.Id)
@@ -338,7 +340,7 @@ namespace Telegram.ViewModels.Profile
 
             UnselectMessages();
 
-            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToVector(), popup.Revoke));
+            ClientService.Send(new DeleteMessages(chat.Id, items.Select(x => x.Id).ToVector(), popup.Revoke));
 
             foreach (var sender in popup.DeleteAll)
             {
@@ -354,7 +356,7 @@ namespace Telegram.ViewModels.Profile
             {
                 foreach (var sender in popup.ReportSpam)
                 {
-                    var messageIds = messages
+                    var messageIds = items
                         .Where(x => x.SenderId.AreTheSame(sender))
                         .Select(x => x.Id)
                         .ToVector();

@@ -286,6 +286,7 @@
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton x:Name="EmojiButton"
                                           Click="Emoji_Click"
+                                          IsEnabled="False"
                                           AllowFocusOnInteraction="False"
                                           Width="40"
                                           Height="40"
@@ -311,6 +312,7 @@
                     </controls:GlyphButton>
                     <controls:GlyphToggleButton x:Name="ParagraphButton"
                                                 Click="Paragraph_Click"
+                                                IsEnabled="False"
                                                 AllowFocusOnInteraction="False"
                                                 Width="40"
                                                 Height="40"
@@ -319,6 +321,7 @@
                                                 Grid.Column="1" />
                     <controls:GlyphToggleButton x:Name="QuoteButton"
                                                 Click="Quote_Click"
+                                                IsEnabled="False"
                                                 AllowFocusOnInteraction="False"
                                                 Width="40"
                                                 Height="40"
@@ -327,6 +330,7 @@
                                                 Grid.Column="2" />
                     <controls:GlyphToggleButton x:Name="ListButton"
                                                 Click="List_Click"
+                                                IsEnabled="False"
                                                 AllowFocusOnInteraction="False"
                                                 Width="40"
                                                 Height="40"
@@ -335,6 +339,7 @@
                                                 Grid.Column="3" />
                     <controls:GlyphToggleButton x:Name="TableButton"
                                                 Click="Table_Click"
+                                                IsEnabled="False"
                                                 AllowFocusOnInteraction="False"
                                                 Width="40"
                                                 Height="40"
@@ -343,6 +348,7 @@
                                                 Grid.Column="4" />
                     <controls:GlyphToggleButton x:Name="FormulaButton"
                                                 Click="Formula_Click"
+                                                IsEnabled="False"
                                                 AllowFocusOnInteraction="False"
                                                 Width="40"
                                                 Height="40"
@@ -385,6 +391,7 @@
                         Width="40">
                     <controls:GlyphButton x:Name="SendButton"
                                           Click="Send_Click"
+                                          IsEnabled="False"
                                           Width="40"
                                           Height="40"
                                           Glyph="&#xEB06;"

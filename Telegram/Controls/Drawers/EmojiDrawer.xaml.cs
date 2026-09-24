@@ -80,6 +80,10 @@ namespace Telegram.Controls.Drawers
 
         private readonly EventDebouncer<TextChangedEventArgs> _typing;
 
+        // Its own popup, so closing the host (StickerPanel's flyout) leaves it open. A pick
+        // made after Deactivate would reach InsertEmoji with the view model already gone.
+        private Flyout _skinFlyout;
+
         private readonly Dictionary<StickerViewModel, SelectorItem> _itemIdToSelector = new();
         private long _selectedSetId;
 
@@ -236,6 +240,9 @@ namespace Telegram.Controls.Drawers
 
             _typing.Cancel();
 
+            _skinFlyout?.Hide();
+            _skinFlyout = null;
+
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
             Bindings.StopTracking();
@@ -380,6 +387,7 @@ namespace Telegram.Controls.Drawers
 
                         flyout.Content = new EmojiSkinFlyout(this, flyout, skin);
                         flyout.ShowAt(container as UIElement, FlyoutPlacementMode.Top);
+                        _skinFlyout = flyout;
                         return;
                     }
                 }
@@ -730,6 +738,7 @@ namespace Telegram.Controls.Drawers
 
                 flyout.Content = new EmojiSkinFlyout(this, flyout, emoji);
                 flyout.ShowAt(sender, FlyoutPlacementMode.Top);
+                _skinFlyout = flyout;
             }
         }
 

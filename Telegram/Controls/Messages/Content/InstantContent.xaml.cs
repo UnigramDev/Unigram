@@ -306,6 +306,23 @@ namespace Telegram.Controls.Messages.Content
 
         void IPageBlockContext.TextEntityClick(TextEntityClickEventArgs args)
         {
+            // ChatView's draft preview and TranslatePopup render through UpdateView with no
+            // message, and every entity the bubble handles is answered through one. A link
+            // is all that can still be opened, as InstantPage does.
+            if (_message == null)
+            {
+                if (args.Type is TextEntityTypeTextUrl textUrl)
+                {
+                    ((IPageBlockContext)this).OpenUrl(textUrl.Url);
+                }
+                else if (args.Type is TextEntityTypeUrl && args.Text is string url)
+                {
+                    ((IPageBlockContext)this).OpenUrl(url);
+                }
+
+                return;
+            }
+
             MessageBubble.TextEntityClick(_message, args);
         }
 

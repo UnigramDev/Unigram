@@ -921,6 +921,10 @@ namespace Telegram.Views.Calls
 
         protected override void OnWindowClosed()
         {
+            // Started when the call ends so that the window closes itself; the user may close it
+            // first, and a tick after that finds Window already cleared.
+            _discardedTimer.Stop();
+
             _call.StateChanged -= OnStateChanged;
             _call.ConnectionStateChanged -= OnConnectionStateChanged;
             _call.RemoteMediaStateChanged -= OnRemoteMediaStateChanged;

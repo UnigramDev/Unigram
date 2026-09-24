@@ -299,21 +299,25 @@ namespace Telegram.ViewModels.Chats
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                if (Items == null || SelectedIndex >= Items.TotalCount)
+                var items = Items;
+                if (items == null || SelectedIndex >= items.TotalCount)
                 {
                     return;
                 }
 
-                if (SelectedIndex >= Items.Count - 1)
+                if (SelectedIndex >= items.Count - 1)
                 {
-                    var result = await Items.LoadMoreItemsAsync(100);
-                    if (result.Count < 1)
+                    var result = await items.LoadMoreItemsAsync(100);
+
+                    // Search and Dispose replace Items without taking the lock, so the search
+                    // this step belongs to may have been closed or restarted meanwhile.
+                    if (result.Count < 1 || items != Items)
                     {
                         return;
                     }
                 }
 
-                SelectedItem = Items[SelectedIndex + 1];
+                SelectedItem = items[SelectedIndex + 1];
 
                 if (_selectedItem != null)
                 {

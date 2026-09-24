@@ -337,6 +337,16 @@ namespace Telegram.Views.Host
                     // handler waits on this — and this covers the window already being active.
                     _ready = true;
                     TryFocus();
+
+                    // Disabled in markup: the window is up long before CoreWebView2, and
+                    // _commands does not exist until then.
+                    EmojiButton.IsEnabled = true;
+                    ParagraphButton.IsEnabled = true;
+                    QuoteButton.IsEnabled = true;
+                    ListButton.IsEnabled = true;
+                    TableButton.IsEnabled = true;
+                    FormulaButton.IsEnabled = true;
+                    SendButton.IsEnabled = true;
                 }
                 else if (type == "result")
                 {
