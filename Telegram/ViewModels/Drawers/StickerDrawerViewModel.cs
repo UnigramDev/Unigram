@@ -104,11 +104,15 @@ namespace Telegram.ViewModels.Drawers
             {
                 if (result is Stickers recent)
                 {
-                    recent.StickersValue = recent.StickersValue
-                        .Where(rec => !_favoriteSet.Stickers.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
-                        .ToVector();
+                    // _favoriteSet.Stickers is mutated on the UI thread, so it is only read there.
+                    BeginOnUIThread(() =>
+                    {
+                        recent.StickersValue = recent.StickersValue
+                            .Where(rec => !_favoriteSet.Stickers.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
+                            .ToVector();
 
-                    BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue));
+                        Merge(_recentSet.Stickers, recent.StickersValue);
+                    });
                 }
             });
         }
