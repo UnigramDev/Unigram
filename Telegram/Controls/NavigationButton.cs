@@ -31,6 +31,15 @@ namespace Telegram.Controls
             BackContent = GetTemplateChild(nameof(BackContent)) as AnimatedIcon;
             PaneContent = GetTemplateChild(nameof(PaneContent)) as AnimatedIcon;
 
+            // IsChecked can change before the template exists - MainPage sets it from keyboard
+            // shortcuts while the passcode lock keeps the page out of the tree - and the template's
+            // own default is the hamburger.
+            if (IsChecked == true && BackContent != null && PaneContent != null)
+            {
+                BackContent.Visibility = Visibility.Visible;
+                PaneContent.Visibility = Visibility.Collapsed;
+            }
+
             base.OnApplyTemplate();
         }
 
@@ -41,6 +50,11 @@ namespace Telegram.Controls
 
         private void OnToggle(object sender, RoutedEventArgs e)
         {
+            if (BackContent == null || PaneContent == null)
+            {
+                return;
+            }
+
             var show = IsChecked == true;
 
             var visualShow = ElementComposition.GetElementVisual(show ? BackContent : PaneContent);
