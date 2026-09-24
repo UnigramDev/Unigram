@@ -41,6 +41,7 @@ namespace Telegram.Controls
         private float _speedCoef = 1.0f;
         private bool _started;
         private bool _startedFall;
+        private int _loadedCount;
 
         private readonly Random _random = new();
 
@@ -66,13 +67,21 @@ namespace Telegram.Controls
             Canvas.Loaded += OnLoaded;
             Canvas.Unloaded += OnUnloaded;
             //Canvas.CreateResources += OnCreateResources;
-            Canvas.Draw += OnDraw;
 
             base.OnApplyTemplate();
         }
 
+        // Win2D holds Draw handlers strongly, so Draw is only subscribed while loaded. Not
+        // RemoveFromVisualTree: on a template root it only drops the swap chain panel, and the next
+        // Loaded then leaves the control loaded with no game loop, which ChangedImpl dereferences.
+        // Counted like Win2D's own, as Loaded for a new parent can precede Unloaded for the old one.
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (++_loadedCount == 1)
+            {
+                Canvas.Draw += OnDraw;
+            }
+
             if (_started)
             {
                 Start();
@@ -81,12 +90,11 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Canvas.Loaded -= OnLoaded;
-            Canvas.Unloaded -= OnUnloaded;
-            //Canvas.CreateResources -= OnCreateResources;
-            Canvas.Draw -= OnDraw;
-            Canvas.RemoveFromVisualTree();
-            Canvas = null;
+            if (--_loadedCount == 0)
+            {
+                //Canvas.CreateResources -= OnCreateResources;
+                Canvas.Draw -= OnDraw;
+            }
         }
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
