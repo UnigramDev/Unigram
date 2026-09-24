@@ -86,7 +86,6 @@ namespace Telegram.Controls.Messages
 
         private bool _hasReplyMarkup;
 
-        private LayerVisual _layerVisual;
         private bool _corners;
         private float _topLeft;
         private float _topRight;
@@ -222,14 +221,6 @@ namespace Telegram.Controls.Messages
             // TODO: make sure this is needed
             //ContentPanel.SizeChanged += OnSizeChanged;
             //Message.TextEntityClick += Message_TextEntityClick;
-
-            if (PowerSavingPolicy.AreMaterialsEnabled)
-            {
-                _layerVisual = CompositionDevice.GetElementLayerVisual(ContentPanel);
-            }
-
-            // Forces ParentForTransform with LayerVisual
-            ElementComposition.GetElementVisual(Media);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
@@ -690,41 +681,29 @@ namespace Telegram.Controls.Messages
             }
 
             radius |= bottomLeft != 0 && bottomRight != 0;
-            radius |= _layerVisual == null;
+            radius |= true;
 
             if (radius)
             {
-                if (_layerVisual != null)
+                if (bottomRight == 0 && topRight != 0)
                 {
-                    _layerVisual.Effect = null;
+                    bottomRight = 15;
                 }
-                else
-                {
-                    if (bottomRight == 0 && topRight != 0)
-                    {
-                        bottomRight = 15;
-                    }
 
-                    if (bottomLeft == 0 && topLeft != 0)
-                    {
-                        bottomLeft = 15;
-                    }
+                if (bottomLeft == 0 && topLeft != 0)
+                {
+                    bottomLeft = 15;
                 }
 
                 _corners = true;
                 ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
                 ShadowCaster.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
             }
-            else
+            else if (_corners)
             {
-                _layerVisual.Effect = Direct2D.Current.GetTail(XamlRoot, topLeft, topRight, bottomRight, bottomLeft);
-
-                if (_corners)
-                {
-                    _corners = false;
-                    ContentPanel.CornerRadius = new CornerRadius();
-                    ShadowCaster.CornerRadius = new CornerRadius();
-                }
+                _corners = false;
+                ContentPanel.CornerRadius = new CornerRadius();
+                ShadowCaster.CornerRadius = new CornerRadius();
             }
         }
 
