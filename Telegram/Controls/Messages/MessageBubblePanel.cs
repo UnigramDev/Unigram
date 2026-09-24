@@ -148,6 +148,12 @@ namespace Telegram.Controls.Messages
             var finalWidth = Math.Max(Math.Max(reactionsWidth, _footer.DesiredSize.Width), width);
             var finalHeight = _text.DesiredSize.Height + _media.DesiredSize.Height + reactionsHeight + margin.Height;
 
+            // A single line of text is ~24 pixels, we force it to 26 so that the total bubble height is at least 30 pixels
+            if (finalHeight >= 24)
+            {
+                finalHeight = Math.Max(finalHeight, 26);
+            }
+
             return new Size(finalWidth, finalHeight);
         }
 
@@ -193,7 +199,7 @@ namespace Telegram.Controls.Messages
             var footerWidth = _footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
             var footerHeight = _footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
             _footer.Arrange(new Rect(finalSize.Width - footerWidth,
-                _text.DesiredSize.Height + _media.DesiredSize.Height + reactionsHeight - footerHeight + margin.Height,
+                finalSize.Height - footerHeight,
                 _footer.DesiredSize.Width,
                 _footer.DesiredSize.Height));
 

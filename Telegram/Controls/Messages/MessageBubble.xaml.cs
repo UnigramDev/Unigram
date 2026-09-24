@@ -1373,7 +1373,7 @@ namespace Telegram.Controls.Messages
                 HeaderPanel.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Visible;
 
-                ForwardHeader?.Margin = new Thickness(0, -2, 0, 2);
+                ForwardHeader?.Margin = new Thickness(0, 0, 0, 2);
             }
             else
             {
@@ -1399,7 +1399,7 @@ namespace Telegram.Controls.Messages
 
                 Header.Visibility = (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || forward ? Visibility.Visible : Visibility.Collapsed;
 
-                ForwardHeader?.Margin = new Thickness(0, 0, 0, 2);
+                ForwardHeader?.Margin = new Thickness(0, 2, 0, 2);
             }
         }
 
@@ -1441,8 +1441,6 @@ namespace Telegram.Controls.Messages
                 {
                     HeaderLink.Click += From_Click;
                 }
-
-                UpdateHeaderPanelState();
             }
 
             return HeaderLabel;
@@ -2485,27 +2483,6 @@ namespace Telegram.Controls.Messages
             {
                 _currentState = state;
                 VisualStateManager.GoToState(this, state, false);
-
-                UpdateHeaderPanelState();
-            }
-        }
-
-        // The light states cannot carry this as a setter: HeaderPanel is deferred, and a state
-        // entered before it was realized records no value to revert to when the state is left.
-        private void UpdateHeaderPanelState()
-        {
-            if (HeaderPanel == null)
-            {
-                return;
-            }
-
-            if (_currentState is "LightState" or "LightStateOut")
-            {
-                HeaderPanel.Margin = new Thickness(0, 2, 0, 2);
-            }
-            else
-            {
-                HeaderPanel.Margin = new Thickness(0, 0, 0, 2);
             }
         }
 
