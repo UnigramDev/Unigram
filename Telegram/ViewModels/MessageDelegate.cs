@@ -551,16 +551,18 @@ namespace Telegram.ViewModels
 
             foreach (var block in media)
             {
+                // TDLib documents the file of all three blocks as possibly null, and a block
+                // without one has nothing the gallery could show.
                 GalleryMedia item;
-                if (block is PageBlockPhoto photo)
+                if (block is PageBlockPhoto { Photo: not null } photo)
                 {
                     item = new GalleryMedia(ClientService, photo.Photo, photo.Caption?.ToFormattedText());
                 }
-                else if (block is PageBlockVideo video)
+                else if (block is PageBlockVideo { Video: not null } video)
                 {
                     item = new GalleryMedia(ClientService, video.Video, video.Caption?.ToFormattedText());
                 }
-                else if (block is PageBlockAnimation animation)
+                else if (block is PageBlockAnimation { Animation: not null } animation)
                 {
                     item = new GalleryMedia(ClientService, animation.Animation, animation.Caption?.ToFormattedText());
                 }
