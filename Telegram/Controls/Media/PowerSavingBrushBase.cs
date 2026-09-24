@@ -46,7 +46,7 @@ namespace Telegram.Controls.Media
 
         private void UpdateBrush()
         {
-            if (m_brush is CompositionEffectBrush && !PowerSavingPolicy.AreMaterialsEnabled)
+            if (m_brush is not CompositionColorBrush and not null && !PowerSavingPolicy.AreMaterialsEnabled)
             {
                 m_brush.Dispose();
                 m_brush = null;
