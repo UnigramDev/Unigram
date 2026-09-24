@@ -345,8 +345,6 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private bool _collapsed = true;
-
         private void UpdateTiledBrush(bool show)
         {
             if (Symbol != null)
@@ -373,14 +371,14 @@ namespace Telegram.Controls.Chats
                     CreateTiledBrush();
                 }
             }
-
-            if (_collapsed != show || _tiledBrush == null)
+            else if (_tiledBrush is ChatBackgroundBrush tiledBrush)
             {
-                return;
+                // The new pattern may still be downloading, but its fill is already known.
+                tiledBrush.Pattern = null;
+                tiledBrush.Fill = _backgroundFill;
+                tiledBrush.IsNegative = _negative;
+                tiledBrush.Update();
             }
-
-            _collapsed = !show;
-            _tiledBrush.CrossFade(show);
         }
 
         private void CreateTiledBrush()

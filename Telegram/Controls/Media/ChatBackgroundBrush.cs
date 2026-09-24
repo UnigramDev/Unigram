@@ -7,6 +7,7 @@
 
 using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
@@ -300,6 +301,7 @@ namespace Telegram.Controls.Media
             _connected = true;
             _negative = IsNegative;
             _pattern = Pattern != null;
+            _fill = Fill;
 
             if (_recreate || (_effect == null && (Pattern != null || Fill != null)))
             {
@@ -346,6 +348,11 @@ namespace Telegram.Controls.Media
         {
             _connected = false;
 
+            while (_fading.Count > 0)
+            {
+                ReleaseFade(_fading.Dequeue());
+            }
+
             _effect?.Dispose();
             _effect = null;
 
@@ -365,16 +372,31 @@ namespace Telegram.Controls.Media
         private bool _connected;
         private bool _negative;
         private bool _pattern;
+        private BackgroundFill _fill;
         private bool _recreate;
 
         public void Update()
         {
             if (_connected && (_recreate || _effect != null || _brush != null) && (Pattern != null || Fill != null))
             {
+                if (_negative != IsNegative || (_pattern && Pattern == null) || !(_fill == Fill || _fill.AreTheSame(Fill)))
+                {
+                    FadeOutCurrent();
+                    _recreate = true;
+                }
+
                 if (_recreate || _negative != IsNegative || (_pattern != (Pattern != null)))
                 {
+                    var added = !_pattern && Pattern != null;
+
                     _recreate = true;
                     OnConnected();
+
+                    if (added)
+                    {
+                        FadeInPattern();
+                    }
+
                     return;
                 }
 
@@ -392,11 +414,6 @@ namespace Telegram.Controls.Media
                         //    effectBrush.SetSourceParameter("Model", modelBrush);
                         //}
                     }
-                    else if (_brush != null)
-                    {
-                        _brush = CreateBackdropBrush();
-                        _visual.Brush = _brush;
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -408,18 +425,95 @@ namespace Telegram.Controls.Media
             }
         }
 
+        private readonly Queue<FadingLayer> _fading = new();
+
+        private readonly struct FadingLayer
+        {
+            public readonly SpriteVisual Visual;
+            public readonly CompositionScopedBatch Batch;
+            public readonly CompositionBrush Effect;
+            public readonly CompositionBrush Brush;
+            public readonly FreeformGradientSurface Freeform;
+
+            public FadingLayer(SpriteVisual visual, CompositionScopedBatch batch, CompositionBrush effect, CompositionBrush brush, FreeformGradientSurface freeform)
+            {
+                Visual = visual;
+                Batch = batch;
+                Effect = effect;
+                Brush = brush;
+                Freeform = freeform;
+            }
+        }
+
+        // Hands what is on screen to a sprite above the brush that fades out on its own, so the
+        // caller can rebuild the brush at once. It takes the freeform surface with it, because the
+        // rebuilt brush would otherwise recolour that same surface under the fade.
+        private void FadeOutCurrent()
+        {
+            if (_visual?.Brush is not CompositionBrush current)
+            {
+                return;
+            }
+
+            var compositor = BootStrapper.Current.Compositor;
+
+            var overlay = compositor.CreateSpriteVisual();
+            overlay.RelativeSizeAdjustment = Vector2.One;
+            overlay.Brush = current;
+
+            // At the bottom, so a fade still running from an earlier change keeps covering this one.
+            _visual.Children.InsertAtBottom(overlay);
+            _visual.Brush = null;
+
+            var animation = compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(0, 1);
+            animation.InsertKeyFrame(1, 0);
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            overlay.StartAnimation("Opacity", animation);
+            batch.End();
+            batch.Completed += OnFadeCompleted;
+
+            _fading.Enqueue(new FadingLayer(overlay, batch, _effect, _brush, _freeform));
+
+            _effect = null;
+            _brush = null;
+            _freeform = null;
+        }
+
+        private void OnFadeCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            // Every fade runs for the same duration, so they complete in the order they started.
+            if (_fading.Count > 0)
+            {
+                ReleaseFade(_fading.Dequeue());
+            }
+        }
+
+        private void ReleaseFade(FadingLayer layer)
+        {
+            layer.Batch.Completed -= OnFadeCompleted;
+
+            _visual?.Children.Remove(layer.Visual);
+            layer.Visual.Dispose();
+
+            layer.Effect?.Dispose();
+            layer.Brush?.Dispose();
+            layer.Freeform?.Dispose();
+        }
+
         public void Next()
         {
             _freeform?.Next();
         }
 
-        public void CrossFade(bool show)
+        private void FadeInPattern()
         {
             if (_effect is CompositionEffectBrush effectBrush)
             {
                 var animation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(0, show ? 0 : Intensity);
-                animation.InsertKeyFrame(1, show ? Intensity : 0);
+                animation.InsertKeyFrame(0, 0);
+                animation.InsertKeyFrame(1, Intensity);
 
                 effectBrush.StartAnimation("Intensity.Opacity", animation);
             }
