@@ -737,9 +737,8 @@ namespace Telegram.Controls.Cells
                         SubtitleLabel.Text = LastSeenConverter.GetLabel(user, true);
                     }
                 }
-                else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup super)
+                else if (result.Chat != null && clientService.TryGetSupergroup(result.Chat, out Supergroup supergroup))
                 {
-                    var supergroup = clientService.GetSupergroup(super.SupergroupId);
                     if (supergroup.IsDirectMessagesGroup)
                     {
                         SubtitleLabel.Text = Strings.MonoforumMessages;
@@ -764,9 +763,8 @@ namespace Telegram.Controls.Cells
                         SubtitleLabel.Text = string.Empty;
                     }
                 }
-                else if (result.Chat != null && result.Chat.Type is ChatTypeBasicGroup basic)
+                else if (result.Chat != null && clientService.TryGetBasicGroup(result.Chat, out BasicGroup basicGroup))
                 {
-                    var basicGroup = clientService.GetBasicGroup(basic.BasicGroupId);
                     if (basicGroup.MemberCount > 0)
                     {
                         SubtitleLabel.Text = Locale.Declension(Strings.R.Members, basicGroup.MemberCount);
