@@ -253,7 +253,13 @@ namespace Telegram.Controls
         private Span _spanForInlines;
 
         // Null until the text actually carries one of these, which for most blocks is never.
-        private List<Hyperlink> _links;
+        //
+        // The tooltip text rides along because it cannot be set where the link is built:
+        // CHyperlink registers a tooltip only if it can already reach its RichTextBlock, and the
+        // hyperlink is still unparented there - so the property would be set with nothing
+        // registered, and clearing it later faults in the core. Applied once the paragraphs are
+        // in Blocks.
+        private List<(Hyperlink Link, string ToolTip)> _links;
         private List<IXamlDirectObject> _dates;
 
         // The offset table entry each of _dates was emitted as, so a tick can shift the table
@@ -868,7 +874,7 @@ namespace Telegram.Controls
         {
             if (_links != null)
             {
-                foreach (var link in _links)
+                foreach (var (link, _) in _links)
                 {
                     ToolTipService.SetToolTip(link, null);
                 }
@@ -1773,8 +1779,7 @@ namespace Telegram.Controls
 
                                         if (textUrl.Url.StartsWith("http"))
                                         {
-                                            (_links ??= new List<Hyperlink>()).Add(hyperlink.Element);
-                                            ToolTipService.SetToolTip(hyperlink.Element, textUrl.Url);
+                                            (_links ??= new()).Add((hyperlink.Element, textUrl.Url));
                                         }
                                     }
                                     else
@@ -1800,8 +1805,7 @@ namespace Telegram.Controls
 
                                     if (entity.Type is TextEntityTypeDateTime dateTime)
                                     {
-                                        (_links ??= new List<Hyperlink>()).Add(hyperlink.Element);
-                                        ToolTipService.SetToolTip(hyperlink.Element, Formatter.LongDateAt(dateTime.UnixTime));
+                                        (_links ??= new()).Add((hyperlink.Element, Formatter.LongDateAt(dateTime.UnixTime)));
                                     }
 
                                     MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
@@ -2124,6 +2128,17 @@ namespace Telegram.Controls
                 }
 
                 lastType = type;
+            }
+
+            // Only now can each link reach the RichTextBlock, which is what CHyperlink's tooltip
+            // registration needs - see _links. Setting it earlier leaves ClearEntities undoing a
+            // registration that never happened.
+            if (_links != null)
+            {
+                foreach (var (link, tooltip) in _links)
+                {
+                    ToolTipService.SetToolTip(link, tooltip);
+                }
             }
 
             //Padding = new Thickness(0, firstFormatted ? 4 : 0, 0, 0);
