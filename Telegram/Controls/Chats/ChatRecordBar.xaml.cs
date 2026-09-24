@@ -551,7 +551,7 @@ namespace Telegram.Controls.Chats
             {
                 if (AppSettings.ToolTip.Increment("NotesViewOnce"))
                 {
-                    _viewOnceToast = ToastPopup.Show(ViewOnceRoot, ControlledButton.Mode == ChatRecordMode.Voice ? Strings.VoiceSetOnceHint : Strings.VideoSetOnceHint, ToastPlacementMode.Right, dismissAfter: TimeSpan.FromSeconds(3));
+                    _viewOnceToast = ToastPopup.Show(ViewOnceRoot, ControlledButton.Mode == ChatRecordMode.Voice ? Strings.VoiceSetOnceHint : Strings.VideoSetOnceHint, ToastPlacementMode.Left, dismissAfter: TimeSpan.FromSeconds(3));
                 }
             };
 
