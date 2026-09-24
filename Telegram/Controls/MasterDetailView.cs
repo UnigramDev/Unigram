@@ -58,7 +58,7 @@ namespace Telegram.Controls
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
 
-        private long _titleToken;
+        private HostedPage _titlePage;
 
         private bool _templateApplied;
 
@@ -125,10 +125,10 @@ namespace Telegram.Controls
             DetachBackGesture(null);
             DetachBackGestureHost();
 
+            WatchTitle(null);
+
             if (DetailFrame?.Content is HostedPage hosted)
             {
-                hosted.UnregisterPropertyChangedCallback(HostedPage.TitleProperty, _titleToken);
-
                 var scrollingHost = hosted.FindName("ScrollingHost");
                 if (scrollingHost is ListViewBase list)
                 {
@@ -524,8 +524,6 @@ namespace Telegram.Controls
         {
             if (e.Content is HostedPage hosted)
             {
-                hosted.UnregisterPropertyChangedCallback(HostedPage.TitleProperty, _titleToken);
-
                 var scrollingHost = hosted.FindName("ScrollingHost");
                 if (scrollingHost is ListViewBase list)
                 {
@@ -561,7 +559,7 @@ namespace Telegram.Controls
 
                 if (hosted.ShowHeader)
                 {
-                    _titleToken = hosted.RegisterPropertyChangedCallback(HostedPage.TitleProperty, OnTitleChanged);
+                    WatchTitle(hosted);
 
                     if (string.IsNullOrEmpty(hosted.Title))
                     {
@@ -590,12 +588,16 @@ namespace Telegram.Controls
                 }
                 else
                 {
+                    WatchTitle(null);
+
                     DetailHeaderPresenter.Text = string.Empty;
                     ShowHideDetailHeader(false, false);
                 }
             }
             else
             {
+                WatchTitle(null);
+
                 DetailHeader = null;
                 DetailFooter = null;
 
@@ -760,7 +762,27 @@ namespace Telegram.Controls
             _properties.StartAnimation("Translation", animation);
         }
 
-        private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
+        private void WatchTitle(HostedPage hosted)
+        {
+            if (_titlePage == hosted)
+            {
+                return;
+            }
+
+            if (_titlePage != null)
+            {
+                _titlePage.TitleChanged -= OnTitleChanged;
+            }
+
+            _titlePage = hosted;
+
+            if (hosted != null)
+            {
+                hosted.TitleChanged += OnTitleChanged;
+            }
+        }
+
+        private void OnTitleChanged(object sender, EventArgs e)
         {
             if (sender is HostedPage hosted && !string.IsNullOrEmpty(hosted.Title))
             {

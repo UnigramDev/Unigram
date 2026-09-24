@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -78,8 +79,17 @@ namespace Telegram.Views
             set { SetValue(TitleProperty, value); }
         }
 
+        // Watch this event rather than RegisterPropertyChangedCallback: the framework mutates that
+        // callback list without the lock the GC thread's reference-tracker walk holds while reading it.
+        public event EventHandler TitleChanged;
+
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null));
+            DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null, OnTitleChanged));
+
+        private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((HostedPage)d).TitleChanged?.Invoke(d, EventArgs.Empty);
+        }
 
         public virtual string GetTitle()
         {
