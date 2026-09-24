@@ -526,6 +526,30 @@
                         <controls:ProfilePicture x:Name="Photo"
                                                  Size="36" />
                     </controls:ActiveStoriesSegments>
+                    <Grid x:Name="AutoDeleteBadge"
+                          Background="{ThemeResource MessageServiceBackgroundBrush}"
+                          Width="22"
+                          Height="22"
+                          CornerRadius="12"
+                          Margin="0,0,-2,-2"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Bottom">
+                        <TextBlock Text="&#xEAD5;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="#FFFFFF" />
+                        <TextBlock x:Name="AutoDeleteLabel"
+                                   TextLineBounds="Tight"
+                                   TextAlignment="Center"
+                                   OpticalMarginAlignment="TrimSideBearings"
+                                   FontSize="9"
+                                   FontWeight="SemiBold"
+                                   Padding="4,0,4,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="#FFFFFF" />
+                    </Grid>
 
                     <controls:CustomEmojiIcon x:Name="Icon"
                                               IsHitTestVisible="False"

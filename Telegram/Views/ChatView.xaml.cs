@@ -5735,6 +5735,7 @@ namespace Telegram.Views
             UpdateChatMessageSender(chat, chat.MessageSenderId);
             UpdateChatPendingJoinRequests(chat);
             UpdateChatIsTranslatable(chat, ViewModel.DetectedLanguage);
+            UpdateChatMessageAutoDeleteTime(chat);
             UpdateChatPermissions(chat);
             UpdateChatTheme(chat);
             UpdateChatBusinessBotManageBar(chat, chat.BusinessBotManageBar);
@@ -5866,6 +5867,19 @@ namespace Telegram.Views
 
                 _backgroundControl ??= FindBackgroundControl();
                 _backgroundControl?.Update(current, ActualTheme == ElementTheme.Dark);
+            }
+        }
+
+        public void UpdateChatMessageAutoDeleteTime(Chat chat)
+        {
+            if (chat.MessageAutoDeleteTime > 0)
+            {
+                AutoDeleteBadge.Visibility = Visibility.Visible;
+                AutoDeleteLabel.Text = Locale.FormatAutoDelete(chat.MessageAutoDeleteTime);
+            }
+            else
+            {
+                AutoDeleteBadge.Visibility = Visibility.Collapsed;
             }
         }
 

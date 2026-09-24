@@ -25,6 +25,7 @@ namespace Telegram.ViewModels
         {
             Aggregator.Subscribe<UpdateChatSwitchInlineQuery>(this, Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
+                .Subscribe<UpdateChatMessageAutoDeleteTime>(Handle)
                 .Subscribe<UpdateChatPermissions>(Handle)
                 .Subscribe<UpdateChatReplyMarkup>(Handle)
                 .Subscribe<UpdateChatUnreadMentionCount>(Handle)
@@ -435,6 +436,14 @@ namespace Telegram.ViewModels
             if (update.ActiveStories.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActiveStories(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatMessageAutoDeleteTime update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatMessageAutoDeleteTime(_chat));
             }
         }
 

@@ -22,6 +22,7 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateChatTheme(Chat chat);
         void UpdateChatBackground(Chat chat);
+        void UpdateChatMessageAutoDeleteTime(Chat chat);
         void UpdateChatPermissions(Chat chat);
         void UpdateChatActionBar(Chat chat);
         void UpdateChatHasScheduledMessages(Chat chat);
