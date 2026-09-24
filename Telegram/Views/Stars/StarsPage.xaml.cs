@@ -140,5 +140,13 @@ namespace Telegram.Views.Stars
         {
             ViewModel.NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeCurrentUser());
         }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingHost.ItemsPanelRoot is Panel panel)
+            {
+                panel.MinHeight = e.NewSize.Height - 80 - 24; // Header and footer
+            }
+        }
     }
 }

@@ -110,5 +110,13 @@ namespace Telegram.Views.Grams
             var url = ViewModel.ClientService.Options.GramTopUpUrl;
             MessageHelper.OpenUrl(null, null, string.IsNullOrEmpty(url) ? Strings.TopUpViaFragmentLink : url);
         }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingHost.ItemsPanelRoot is Panel panel)
+            {
+                panel.MinHeight = e.NewSize.Height - 80 - 24; // Header and footer
+            }
+        }
     }
 }

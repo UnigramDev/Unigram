@@ -17,6 +17,7 @@
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
                                 ContainerContentChanging="OnContainerContentChanging"
+                                SizeChanged="OnSizeChanged"
                                 SelectionMode="None"
                                 Padding="0,0,0,16">
             <ListView.Header>
