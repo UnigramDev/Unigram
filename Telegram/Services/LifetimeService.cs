@@ -282,12 +282,19 @@ namespace Telegram.Services
                     window.NavigationServices.RemoveByFrameId($"{item.Id}");
                     window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
 
-                    foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(window.XamlRoot))
+                    // A session whose authorization was revoked while the app was closed reaches
+                    // AuthorizationStateClosed during startup, before the main window has content:
+                    // there is no XamlRoot yet, so no popup can be open, and passing null throws.
+                    var xamlRoot = window.XamlRoot;
+                    if (xamlRoot != null)
                     {
-                        if (popup.Child is ContentPopup toast)
+                        foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
                         {
-                            toast.Tag = null;
-                            toast.Hide();
+                            if (popup.Child is ContentPopup toast)
+                            {
+                                toast.Tag = null;
+                                toast.Hide();
+                            }
                         }
                     }
 
