@@ -1034,6 +1034,10 @@
                         <Grid x:Name="CardRoot"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              MinHeight="{TemplateBinding ContentMinHeight}"
+                              MinWidth="{TemplateBinding ContentMinWidth}"
+                              MaxHeight="{TemplateBinding ContentMaxHeight}"
+                              MaxWidth="{TemplateBinding ContentMaxWidth}"
                               Margin="0,40,0,40">
                             <!-- The shadow is cast from OnApplyTemplate, onto this and never onto
                                  ContentRoot: a ThemeShadow set on an element breaks the hit test of
@@ -1065,10 +1069,6 @@
                                         Background="Transparent"
                                         BorderBrush="Transparent"
                                         BorderThickness="{TemplateBinding BorderThickness}"
-                                        MinHeight="{TemplateBinding ContentMinHeight}"
-                                        MinWidth="{TemplateBinding ContentMinWidth}"
-                                        MaxHeight="{TemplateBinding ContentMaxHeight}"
-                                        MaxWidth="{TemplateBinding ContentMaxWidth}"
                                         TabFocusNavigation="Cycle">
                                     <Grid>
                                         <Grid.RowDefinitions>
