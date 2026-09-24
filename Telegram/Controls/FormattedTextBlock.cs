@@ -1346,6 +1346,10 @@ namespace Telegram.Controls
             _textApplied = false;
             ClearEntities();
 
+            // Bumped here rather than in Recycle: SetText calls Recycle after taking its own
+            // generation, which would orphan the tokenizations it is about to start.
+            _generation++;
+
             if (!_templateApplied || _pools == null || (_fastRun != null && _plain))
             {
                 return;
