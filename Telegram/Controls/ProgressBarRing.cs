@@ -28,6 +28,9 @@ namespace Telegram.Controls
         private float _trimStartValue = float.NaN;
         private float _trimEndValue = float.NaN;
 
+        // Whether the ring should spin, decided by OnValueChanged alone. Unloading pauses the
+        // animation but keeps this set, so loading again resumes it without re-deriving
+        // anything from Value.
         private bool _spinning;
         private ScalarKeyFrameAnimation _foreverAnimation;
 
@@ -173,10 +176,9 @@ namespace Telegram.Controls
 
         protected override void OnLoaded()
         {
-            // Value can't be within the spinning range without a visual behind it.
-            if (_spinning is false && Value is > 0 and < 1 && Spin)
+            if (_spinning)
             {
-                StartSpinning();
+                _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
             }
         }
 
@@ -184,7 +186,7 @@ namespace Telegram.Controls
         {
             if (_spinning)
             {
-                StopSpinning();
+                _visual.StopAnimation("RotationAngleInDegrees");
             }
         }
 
