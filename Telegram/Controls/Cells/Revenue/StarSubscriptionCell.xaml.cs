@@ -62,7 +62,7 @@ namespace Telegram.Controls.Cells.Revenue
                 Subtitle.Text = string.Format(Strings.StarsSubscriptionRenews, Formatter.Date(subscription.ExpirationDate));
                 StarCount.Text = subscription.Pricing.StarCount.ToString("N0");
                 Date.Text = Strings.StarsParticipantSubscriptionPerMonth;
-                Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                Date.ClearValue(TextBlock.ForegroundProperty);
                 Date.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Top;
 
                 Stars.Visibility = Windows.UI.Xaml.Visibility.Visible;
