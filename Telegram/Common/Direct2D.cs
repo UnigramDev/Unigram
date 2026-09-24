@@ -118,10 +118,10 @@ namespace Telegram.Common
 
         private static readonly DisposableMutex _patternSurfaceLock = new();
 
-        public static async Task<ChatBackgroundPattern> LoadPatternBitmapAsync(File file, float intensity, bool negative, double rasterizationScale)
+        public static async Task<ChatBackgroundPattern> LoadPatternBitmapAsync(File file, float intensity, bool negative, double rasterizationScale, float minimumHeight)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
-            return await Shared.DrawSvgAsync(BootStrapper.Current.Compositor, file.Local.Path, 1, false, rasterizationScale);
+            return await Shared.DrawSvgAsync(BootStrapper.Current.Compositor, file.Local.Path, 1, false, rasterizationScale, minimumHeight);
         }
 
         public static async void GetBlurred(SoftwareBitmapSource source, string path, float amount = 3)

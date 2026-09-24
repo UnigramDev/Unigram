@@ -457,7 +457,7 @@ namespace winrt::Telegram::Native::implementation
         return native->EndDraw();
     }
 
-    winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> Direct2DDevice::DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
+    winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> Direct2DDevice::DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight)
     {
         winrt::apartment_context ui_thread;
         co_await winrt::resume_background();
@@ -465,7 +465,7 @@ namespace winrt::Telegram::Native::implementation
         ChatBackgroundPattern pattern{ nullptr };
         try
         {
-            pattern = DrawSvg(compositor, path, intensity, negative, rasterizationScale);
+            pattern = DrawSvg(compositor, path, intensity, negative, rasterizationScale, minimumHeight);
         }
         catch (...)
         {
@@ -582,31 +582,177 @@ namespace winrt::Telegram::Native::implementation
         return decompressed;
     }
 
-    // Returns decompressed SVG bytes for the given file, caching results in a small LRU so repeated
-    // background re-renders don't re-read + gunzip the same file (which churns/fragments the heap).
-    // Must be called while holding m_criticalSection. nsvgParse mutates its input in place, so callers
-    // must copy the returned bytes into a local buffer before parsing.
-    const std::string& Direct2DDevice::GetDecompressedSvg(hstring const& path)
+    HRESULT Direct2DDevice::ParseSvgPattern(hstring const& path, SvgPattern& pattern)
+    {
+        HRESULT result;
+
+        // nsvgParse mutates its input in place, which is fine: nothing else holds these bytes.
+        auto data = DecompressFromFile(path);
+        if (data.empty())
+        {
+            return E_FAIL;
+        }
+
+        auto image = std::unique_ptr<NSVGimage, decltype(&nsvgDelete)>(nsvgParse(data.data(), "px", 96), &nsvgDelete);
+        if (image == nullptr)
+        {
+            return E_FAIL;
+        }
+
+        pattern.Width = image->width;
+        pattern.Height = image->height;
+
+        std::vector<winrt::com_ptr<ID2D1PathGeometry1>> solid;
+
+        for (auto shape = image->shapes; shape != NULL; shape = shape->next)
+        {
+            if (!(shape->flags & NSVG_FLAGS_VISIBLE) || (shape->fill.type == NSVG_PAINT_NONE && shape->stroke.type == NSVG_PAINT_NONE))
+            {
+                continue;
+            }
+
+            if (strcmp(shape->id, "GiftPatterns") == 0)
+            {
+                if (shape->paths && shape->paths->npts == 13)
+                {
+                    auto pts = shape->paths->pts;
+                    pattern.Symbols.push_back(ParseGiftPattern(pts[0], pts[1], pts[6], pts[7], pts[12], pts[13], pts[18], pts[19]));
+                }
+
+                continue;
+            }
+
+            SvgShape prepared;
+            prepared.Opacity = shape->opacity;
+            prepared.Fill = shape->fill.type != NSVG_PAINT_NONE;
+            prepared.StrokeWidth = shape->strokeWidth;
+
+            ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(prepared.Geometry.put()));
+
+            winrt::com_ptr<ID2D1GeometrySink> sink;
+            ReturnIfFailed(result, prepared.Geometry->Open(sink.put()));
+
+            if (prepared.Fill)
+            {
+                sink->SetFillMode(shape->fillRule == NSVG_FILLRULE_EVENODD
+                    ? D2D1_FILL_MODE_ALTERNATE
+                    : D2D1_FILL_MODE_WINDING);
+            }
+
+            for (NSVGpath* path = shape->paths; path != NULL; path = path->next)
+            {
+                sink->BeginFigure({ path->pts[0], path->pts[1] }, D2D1_FIGURE_BEGIN_FILLED);
+
+                for (int i = 0; i < path->npts - 1; i += 3)
+                {
+                    float* p = &path->pts[i * 2];
+                    sink->AddBezier({ { p[2], p[3] }, { p[4], p[5] }, { p[6], p[7] } });
+                }
+
+                sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
+            }
+
+            ReturnIfFailed(result, sink->Close());
+
+            // Solid fills are drawn together, as one group. Outline first: it leaves a shape filling
+            // the same under either rule, its outer figures all wound one way, so a winding group of
+            // outlines fills exactly their union. Order is free, since every shape is the same colour.
+            if (prepared.Fill && prepared.Opacity >= 1)
+            {
+                winrt::com_ptr<ID2D1PathGeometry1> outline;
+                ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(outline.put()));
+
+                winrt::com_ptr<ID2D1GeometrySink> outlineSink;
+                ReturnIfFailed(result, outline->Open(outlineSink.put()));
+                ReturnIfFailed(result, prepared.Geometry->Outline(nullptr, outlineSink.get()));
+                ReturnIfFailed(result, outlineSink->Close());
+
+                solid.push_back(outline);
+                prepared.Fill = false;
+            }
+
+            if (shape->stroke.type != NSVG_PAINT_NONE)
+            {
+                D2D1_STROKE_STYLE_PROPERTIES1 strokeProperties{};
+                strokeProperties.miterLimit = shape->miterLimit;
+
+                switch (shape->strokeLineCap)
+                {
+                case NSVG_CAP_BUTT:
+                    strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_FLAT;
+                    break;
+                case NSVG_CAP_ROUND:
+                    strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_ROUND;
+                    break;
+                case NSVG_CAP_SQUARE:
+                    strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_SQUARE;
+                    break;
+                default:
+                    break;
+                }
+
+                switch (shape->strokeLineJoin)
+                {
+                case NSVG_JOIN_BEVEL:
+                    strokeProperties.lineJoin = D2D1_LINE_JOIN_BEVEL;
+                    break;
+                case NSVG_JOIN_MITER:
+                    strokeProperties.lineJoin = D2D1_LINE_JOIN_MITER;
+                    break;
+                case NSVG_JOIN_ROUND:
+                    strokeProperties.lineJoin = D2D1_LINE_JOIN_ROUND;
+                    break;
+                default:
+                    break;
+                }
+
+                ReturnIfFailed(result, m_d2dFactory->CreateStrokeStyle(strokeProperties, NULL, 0, prepared.StrokeStyle.put()));
+            }
+
+            if (prepared.Fill || prepared.StrokeStyle)
+            {
+                pattern.Shapes.push_back(std::move(prepared));
+            }
+        }
+
+        if (solid.size() > 0)
+        {
+            std::vector<ID2D1Geometry*> geometries;
+            geometries.reserve(solid.size());
+
+            for (auto const& geometry : solid)
+            {
+                geometries.push_back(geometry.get());
+            }
+
+            // The group holds its own references to the members.
+            ReturnIfFailed(result, m_d2dFactory->CreateGeometryGroup(D2D1_FILL_MODE_WINDING, geometries.data(), (UINT32)geometries.size(), pattern.Solid.put()));
+        }
+
+        return S_OK;
+    }
+
+    // Geometries come from the factory, not the device, so they survive a device loss and can be
+    // drawn at any scale; only the surface is redone per render.
+    const Direct2DDevice::SvgPattern* Direct2DDevice::GetSvgPattern(hstring const& path)
     {
         std::wstring key(path.c_str());
 
         auto found = m_svgCacheIndex.find(key);
         if (found != m_svgCacheIndex.end())
         {
-            // Promote to most-recently-used.
             m_svgCacheList.splice(m_svgCacheList.begin(), m_svgCacheList, found->second);
-            return found->second->second;
+            return &found->second->second;
         }
 
-        auto decompressed = DecompressFromFile(path);
-        if (decompressed.empty())
+        SvgPattern pattern;
+        if (FAILED(ParseSvgPattern(path, pattern)))
         {
-            // Don't cache failures (e.g. file not yet downloaded) so a later retry can re-read.
-            static const std::string empty;
-            return empty;
+            // Not cached, so a file that is not downloaded yet is read again next time.
+            return nullptr;
         }
 
-        m_svgCacheList.emplace_front(key, std::move(decompressed));
+        m_svgCacheList.emplace_front(key, std::move(pattern));
         m_svgCacheIndex[key] = m_svgCacheList.begin();
 
         if (m_svgCacheList.size() > kSvgCacheCapacity)
@@ -615,46 +761,50 @@ namespace winrt::Telegram::Native::implementation
             m_svgCacheList.pop_back();
         }
 
-        return m_svgCacheList.front().second;
+        return &m_svgCacheList.front().second;
     }
 
-    ChatBackgroundPattern Direct2DDevice::DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
+    ChatBackgroundPattern Direct2DDevice::DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
+
+        auto pattern = GetSvgPattern(path);
+        if (pattern == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto imageWidth = pattern->Width;
+        auto imageHeight = pattern->Height;
 
         if (rasterizationScale < 1)
         {
             rasterizationScale = 1;
         }
-        else if (rasterizationScale > 4)
+
+        // A pattern shorter than the area is drawn larger rather than stretched, so it stays sharp.
+        // RenderSize is unaffected: it divides the same factor back out.
+        if (imageHeight > 0 && minimumHeight > imageHeight * 0.25f)
+        {
+            rasterizationScale *= minimumHeight / (imageHeight * 0.25f);
+        }
+
+        if (rasterizationScale > 4)
         {
             rasterizationScale = 4;
         }
 
-        auto scale = (int)(rasterizationScale * 100);
-        float rasterScale = (float)rasterizationScale;
-        float dpi = 0.25f * rasterScale;
+        float dpi = 0.25f * (float)rasterizationScale;
 
-        // nsvgParse mutates its input buffer in place, so parse a copy of the cached bytes.
-        std::string data(GetDecompressedSvg(path));
         auto patterns = winrt::single_threaded_vector<ChatBackgroundSymbol>();
 
-        struct NSVGimage* image;
-        image = nsvgParse(data.data(), "px", 96);
-
-        if (image == nullptr)
+        for (auto symbol : pattern->Symbols)
         {
-            return nullptr;
+            symbol.Offset *= dpi;
+            symbol.Size *= dpi;
+            patterns.Append(symbol);
         }
-
-        auto unique = std::shared_ptr<NSVGimage>(image, [](NSVGimage* p)
-            {
-                nsvgDelete(p);
-            });
-
-        auto imageWidth = image->width;
-        auto imageHeight = image->height;
 
         winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
 
@@ -699,120 +849,26 @@ namespace winrt::Telegram::Native::implementation
             CleanupIfFailed(result, d2dContext->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, intensity), blackBrush.put()));
         }
 
-        d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(1 * dpi, 1 * dpi));
+        d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(dpi, dpi));
 
-        for (auto shape = image->shapes; shape != NULL; shape = shape->next)
+        if (pattern->Solid)
         {
-            if (!(shape->flags & NSVG_FLAGS_VISIBLE) || (shape->fill.type == NSVG_PAINT_NONE && shape->stroke.type == NSVG_PAINT_NONE))
+            blackBrush->SetOpacity(1);
+            d2dContext->FillGeometry(pattern->Solid.get(), blackBrush.get());
+        }
+
+        for (auto const& shape : pattern->Shapes)
+        {
+            blackBrush->SetOpacity(shape.Opacity);
+
+            if (shape.Fill)
             {
-                continue;
+                d2dContext->FillGeometry(shape.Geometry.get(), blackBrush.get());
             }
 
-            if (strcmp(shape->id, "GiftPatterns") == 0)
+            if (shape.StrokeStyle)
             {
-                if (shape->paths && shape->paths->npts == 13)
-                {
-                    auto topLeftX = shape->paths->pts[0] * (1 * dpi);
-                    auto topLeftY = shape->paths->pts[1] * (1 * dpi);
-                    auto topRightX = shape->paths->pts[6] * (1 * dpi);
-                    auto topRightY = shape->paths->pts[7] * (1 * dpi);
-                    auto bottomRightX = shape->paths->pts[12] * (1 * dpi);
-                    auto bottomRightY = shape->paths->pts[13] * (1 * dpi);
-                    auto bottomLeftX = shape->paths->pts[18] * (1 * dpi);
-                    auto bottomLeftY = shape->paths->pts[19] * (1 * dpi);
-
-                    patterns.Append(ParseGiftPattern(topLeftX, topLeftY, topRightX, topRightY, bottomRightX, bottomRightY, bottomLeftX, bottomLeftY));
-                }
-
-                continue;
-            }
-
-            blackBrush->SetOpacity(shape->opacity);
-
-            winrt::com_ptr<ID2D1PathGeometry1> geometry;
-            CleanupIfFailed(result, m_d2dFactory->CreatePathGeometry(geometry.put()));
-
-            winrt::com_ptr<ID2D1GeometrySink> sink;
-            CleanupIfFailed(result, geometry->Open(sink.put()));
-
-            if (shape->fill.type != NSVG_PAINT_NONE)
-            {
-                sink->SetFillMode(shape->fillRule == NSVG_FILLRULE_EVENODD
-                    ? D2D1_FILL_MODE_ALTERNATE
-                    : D2D1_FILL_MODE_WINDING);
-            }
-
-            for (NSVGpath* path = shape->paths; path != NULL; path = path->next)
-            {
-                sink->BeginFigure({ path->pts[0], path->pts[1] }, D2D1_FIGURE_BEGIN_FILLED);
-
-                for (int i = 0; i < path->npts - 1; i += 3)
-                {
-                    float* p = &path->pts[i * 2];
-                    sink->AddBezier({ { p[2], p[3] }, { p[4], p[5] }, { p[6], p[7] } });
-                }
-
-                sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
-            }
-
-            CleanupIfFailed(result, sink->Close());
-
-            if (shape->fill.type != NSVG_PAINT_NONE)
-            {
-                winrt::com_ptr<ID2D1PathGeometry1> widenGeometry;
-                CleanupIfFailed(result, m_d2dFactory->CreatePathGeometry(widenGeometry.put()));
-
-                winrt::com_ptr<ID2D1GeometrySink> widenSink;
-                CleanupIfFailed(result, widenGeometry->Open(widenSink.put()));
-
-                geometry->Widen(0.25f * rasterizationScale / dpi, NULL, NULL, widenSink.get());
-                widenSink->Close();
-
-                d2dContext->FillGeometry(widenGeometry.get(), blackBrush.get());
-                d2dContext->FillGeometry(geometry.get(), blackBrush.get());
-            }
-
-            if (shape->stroke.type != NSVG_PAINT_NONE)
-            {
-                D2D1_STROKE_STYLE_PROPERTIES1 strokeProperties{};
-                strokeProperties.miterLimit = shape->miterLimit;
-
-                switch (shape->strokeLineCap)
-                {
-                case NSVG_CAP_BUTT:
-                    strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_FLAT;
-                    break;
-                case NSVG_CAP_ROUND:
-                    strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_ROUND;
-                    break;
-                case NSVG_CAP_SQUARE:
-                    strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_SQUARE;
-                    break;
-                default:
-                    break;
-                }
-
-                switch (shape->strokeLineJoin)
-                {
-                case NSVG_JOIN_BEVEL:
-                    strokeProperties.lineJoin = D2D1_LINE_JOIN_BEVEL;
-                    break;
-                case NSVG_JOIN_MITER:
-                    strokeProperties.lineJoin = D2D1_LINE_JOIN_MITER;
-                    break;
-                case NSVG_JOIN_ROUND:
-                    strokeProperties.lineJoin = D2D1_LINE_JOIN_ROUND;
-                    break;
-                default:
-                    break;
-                }
-
-                winrt::com_ptr<ID2D1StrokeStyle1> strokeStyle;
-                CleanupIfFailed(result, m_d2dFactory->CreateStrokeStyle(strokeProperties, NULL, 0, strokeStyle.put()));
-
-                auto strokeWidth = std::max(1 * rasterScale / dpi, shape->strokeWidth);
-
-                d2dContext->DrawGeometry(geometry.get(), blackBrush.get(), strokeWidth, strokeStyle.get());
+                d2dContext->DrawGeometry(shape.Geometry.get(), blackBrush.get(), shape.StrokeWidth, shape.StrokeStyle.get());
             }
         }
 

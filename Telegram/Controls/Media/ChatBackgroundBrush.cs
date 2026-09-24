@@ -33,6 +33,8 @@ namespace Telegram.Controls.Media
 
         public float Intensity { get; set; } = 1;
 
+        public float Zoom { get; set; } = 1;
+
         private FreeformGradientSurface _freeform;
         private CompositionEffectBrush _effect;
         private CompositionBrush _brush;
@@ -72,6 +74,42 @@ namespace Telegram.Controls.Media
             }
         }
 
+        private CompositionSurfaceBrush _tileBrush;
+        private ContainerVisual _tileVisual;
+        private SpriteVisual _tileContent;
+        private CompositionVisualSurface _tileSurface;
+
+        // Many patterns only tile horizontally, so a tile is never shorter than the area: it grows
+        // to cover the height, and the one row repeats sideways.
+        public void UpdateZoom()
+        {
+            if (Pattern == null)
+            {
+                return;
+            }
+
+            var logical = Pattern.RenderSize;
+            var physical = Pattern.RenderPhysicalSize;
+
+            if (physical.X <= 0 || physical.Y <= 0)
+            {
+                return;
+            }
+
+            if (_tileContent != null)
+            {
+                var size = logical * Zoom;
+
+                _tileVisual.Size = size;
+                _tileContent.Scale = new Vector3(Zoom, Zoom, 1);
+                _tileSurface.SourceSize = size;
+            }
+            else if (_tileBrush != null)
+            {
+                _tileBrush.Scale = logical * Zoom / physical;
+            }
+        }
+
         private CompositionSurfaceBrush CreateSurfaceBrush(out CompositionSurfaceBrush modelBrush)
         {
             var surface = Pattern.Surface;
@@ -90,9 +128,15 @@ namespace Telegram.Controls.Media
                 var compositor = BootStrapper.Current.Compositor;
                 var factor = logical / physical;
 
+                // UpdateZoom scales the content, never the root the visual surface captures, so the
+                // capture does not depend on whether a source visual's own transform is applied.
+                var tile = compositor.CreateContainerVisual();
+
                 var visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
                 visual.Size = logical;
                 visual.Brush = surfaceBrush;
+
+                tile.Children.InsertAtTop(visual);
 
                 var symbolSurfaceBrush = compositor.CreateSurfaceBrush();
                 var symbolSurface = compositor.CreateVisualSurface();
@@ -124,17 +168,19 @@ namespace Telegram.Controls.Media
                     maxWidth = Math.Max(maxWidth, sprite.Size.X);
                 }
 
-                symbolSurface.SourceSize = new Vector2(maxWidth, maxWidth);
-                Symbol.Width = maxWidth;
-                Symbol.Height = maxWidth;
-                Symbol.FrameSize = new Windows.Foundation.Size(maxWidth, maxWidth);
+                // Drawn at the tile's zoom, so the symbols stay as sharp as the pattern around them.
+                var symbolSize = maxWidth * Zoom;
+
+                symbolSurface.SourceSize = new Vector2(symbolSize, symbolSize);
+                Symbol.Width = symbolSize;
+                Symbol.Height = symbolSize;
+                Symbol.FrameSize = new Windows.Foundation.Size(symbolSize, symbolSize);
 
                 var visualSurfaceBrush = compositor.CreateSurfaceBrush();
                 var visualSurface = compositor.CreateVisualSurface();
 
-                visualSurface.SourceVisual = visual;
+                visualSurface.SourceVisual = tile;
                 visualSurface.SourceOffset = new Vector2(0, 0);
-                visualSurface.SourceSize = logical;
                 visualSurfaceBrush.HorizontalAlignmentRatio = 0;
                 visualSurfaceBrush.VerticalAlignmentRatio = 0;
                 visualSurfaceBrush.Surface = visualSurface;
@@ -142,9 +188,21 @@ namespace Telegram.Controls.Media
                 visualSurfaceBrush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
                 visualSurfaceBrush.SnapToPixels = true;
 
+                _tileBrush = null;
+                _tileVisual = tile;
+                _tileContent = visual;
+                _tileSurface = visualSurface;
+                UpdateZoom();
+
                 modelBrush = CreateModelBrush();
                 return visualSurfaceBrush;
             }
+
+            _tileBrush = surfaceBrush;
+            _tileVisual = null;
+            _tileContent = null;
+            _tileSurface = null;
+            UpdateZoom();
 
             modelBrush = null;
             return surfaceBrush;

@@ -50,6 +50,11 @@ namespace Telegram.Controls.Chats
         private long _fileToken;
 
         private double _rasterizationScale;
+        private float _patternHeight;
+        private bool _patternLoading;
+        private int _patternRequest;
+
+        private float _arrangedHeight;
 
         private AnimatedImage Symbol;
         private AnimatedImage Model;
@@ -68,29 +73,77 @@ namespace Telegram.Controls.Chats
             Model.Source = DelayedFileSource.FromSticker(_clientService, _model);
         }
 
-        protected override void OnLoaded()
-        {
-            XamlRoot.Changed += OnRasterizationScaleChanged;
-        }
-
         protected override void OnUnloaded()
         {
-            XamlRoot.Changed -= OnRasterizationScaleChanged;
-
             UpdateManager.Unsubscribe(this, ref _fileToken);
         }
 
-        private void OnRasterizationScaleChanged(XamlRoot sender, XamlRootChangedEventArgs args)
+        // Tall chats need the pattern drawn taller. Heights are rounded up to a step, so a resize
+        // redraws it only when crossing one, and composition shrinks it by at most one step.
+        private const float PatternHeightStep = 128;
+
+        // The default pattern's height (1440x2960 at a quarter). Others come shorter, some far
+        // shorter, and are grown to this so every pattern keeps about the same density.
+        private const float PatternMinimumHeight = 740;
+
+        private float GetPatternHeight()
         {
-            var value = sender.RasterizationScale;
-            if (value != _rasterizationScale && _vector && _background?.Type is BackgroundTypePattern pattern && _background?.Document?.DocumentValue != null)
+            if (_arrangedHeight <= 0)
             {
-                UpdatePattern(pattern, _background.Document.DocumentValue, value, _symbol, _model);
+                return 0;
             }
-            else
+
+            return Math.Max(PatternMinimumHeight, MathF.Ceiling(_arrangedHeight / PatternHeightStep) * PatternHeightStep);
+        }
+
+        // Takes the actual height, not the step. Growing past the render always redraws it, but
+        // shrinking keeps it for a quarter step more, so a height resting on a step boundary does
+        // not flip between the two renders.
+        private bool IsSameResolution(float height)
+        {
+            height = Math.Max(height, PatternMinimumHeight);
+
+            // Up to its own height, or the minimum, a pattern is drawn at that size whatever the
+            // chat's height, so no height there needs a redraw.
+            var natural = Math.Max(_pattern?.RenderSize.Y ?? 0, PatternMinimumHeight);
+            if (height <= natural && _patternHeight <= natural)
             {
-                _rasterizationScale = value;
+                return true;
             }
+
+            return height <= _patternHeight && height > _patternHeight - PatternHeightStep * 1.25f;
+        }
+
+        private float GetZoom(ChatBackgroundPattern pattern)
+        {
+            var height = pattern?.RenderSize.Y ?? 0;
+            return height > 0 ? Math.Max(1, Math.Max(_arrangedHeight, PatternMinimumHeight) / height) : 1;
+        }
+
+        // The one place that notices both a new height and a new scale: a scale change invalidates
+        // the whole layout tree, so it arrives here too. ActualHeight is not updated until after
+        // this pass, hence _arrangedHeight.
+        protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
+        {
+            var size = base.ArrangeOverride(finalSize);
+            _arrangedHeight = (float)finalSize.Height;
+
+            if (_tiledBrush != null)
+            {
+                _tiledBrush.Zoom = GetZoom(_tiledBrush.Pattern);
+                _tiledBrush.UpdateZoom();
+            }
+
+            if (_vector && _background?.Type is BackgroundTypePattern pattern && _background.Document?.DocumentValue is File file && file.Local.IsDownloadingCompleted)
+            {
+                var scale = XamlRoot.RasterizationScale;
+                if (_patternPath != file.Local.Path || _rasterizationScale != scale || !IsSameResolution(_arrangedHeight))
+                {
+                    UpdatePattern(pattern, file, scale);
+                }
+            }
+
+            return size;
         }
 
         private ChatBackgroundBrush _tiledBrush;
@@ -170,14 +223,7 @@ namespace Telegram.Controls.Chats
                     Debug.Assert(XamlRoot != null);
                 }
 
-                if (theme is ChatThemeGift gift)
-                {
-                    UpdatePattern(typePattern, file, WindowContext.Current.RasterizationScale, gift.GiftTheme.Gift.Symbol.Sticker, gift.GiftTheme.Gift.Model.Sticker);
-                }
-                else
-                {
-                    UpdatePattern(typePattern, file, WindowContext.Current.RasterizationScale, null, null);
-                }
+                UpdatePattern(typePattern, file, WindowContext.Current.RasterizationScale);
 
                 if (clientService != null && !file.Local.IsDownloadingCompleted)
                 {
@@ -254,7 +300,8 @@ namespace Telegram.Controls.Chats
                 _tiledBrush.OnDisconnected();
                 _tiledBrush = null;
 
-                ElementCompositionPreview.SetElementChildVisual(this, null);
+                _root.Children.Remove(_tiledVisual);
+                _tiledVisual = null;
             }
 
             if (_wallpaperPath != file.Local.Path || Background == null)
@@ -278,6 +325,20 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        private void UpdatePattern(BackgroundTypePattern pattern, File file, double scale)
+        {
+            if (_theme is ChatThemeGift gift)
+            {
+                UpdatePattern(pattern, file, scale, gift.GiftTheme.Gift.Symbol.Sticker, gift.GiftTheme.Gift.Model.Sticker);
+            }
+            else
+            {
+                UpdatePattern(pattern, file, scale, null, null);
+            }
+        }
+
+        // _patternPath, _rasterizationScale, _patternHeight, _symbol and _model describe the latest
+        // render requested, which may still be drawing while _pattern holds the previous one.
         private async void UpdatePattern(BackgroundTypePattern pattern, File file, double scale, Sticker symbol, Sticker model)
         {
             if (_tiledBrush == null)
@@ -285,37 +346,72 @@ namespace Telegram.Controls.Chats
                 CreateTiledBrush();
             }
 
-            if (_pattern != null && _patternPath == file.Local.Path && _rasterizationScale == scale && _symbol?.Id == symbol?.Id && _model?.Id == model?.Id)
+            if (_vector is false)
             {
-                UpdateTiledBrush(true);
-                return;
+                symbol = null;
+                model = null;
             }
 
-            UpdateTiledBrush(false);
+            var height = _vector ? GetPatternHeight() : 0;
+            var redraw = _patternPath == file.Local.Path && _symbol?.Id == symbol?.Id && _model?.Id == model?.Id;
 
-            if (file.Local.IsDownloadingCompleted)
+            if (redraw && _rasterizationScale == scale && IsSameResolution(_vector ? _arrangedHeight : 0))
             {
+                if (_patternLoading is false && _pattern != null)
+                {
+                    UpdateTiledBrush(true);
+                    return;
+                }
+                else if (_patternLoading)
+                {
+                    return;
+                }
+            }
+
+            // Only the resolution changed: the pattern stays on screen until the sharper one replaces it.
+            if (redraw is false || _pattern == null)
+            {
+                UpdateTiledBrush(false);
+            }
+
+            // Drawn once the control has a height to cover; OnSizeChanged comes back for it.
+            if (file.Local.IsDownloadingCompleted && (height > 0 || _vector is false))
+            {
+                var request = ++_patternRequest;
+
                 _patternPath = file.Local.Path;
                 _rasterizationScale = scale;
+                _patternHeight = height;
+                _patternLoading = true;
+                _symbol = symbol;
+                _model = model;
 
-                if (_vector)
+                var loaded = _vector
+                    ? await Direct2D.LoadPatternBitmapAsync(file, _intensity, _negative, scale, height)
+                    : await Direct2D.LoadBitmapAsync(file);
+
+                // A newer request owns _patternLoading, and will show its own result.
+                if (request != _patternRequest)
                 {
-                    _pattern = await Direct2D.LoadPatternBitmapAsync(file, _intensity, _negative, scale);
-                    _symbol = symbol;
-                    _model = model;
+                    return;
                 }
-                else
+
+                _patternLoading = false;
+
+                if (_backgroundId != file.Id || IsDisconnected)
                 {
-                    _pattern = await Direct2D.LoadBitmapAsync(file);
-                    _symbol = null;
-                    _model = null;
+                    // Otherwise returning to this file would take _pattern, a different one, as its render.
+                    _patternPath = null;
+                    return;
                 }
+
+                _pattern = loaded;
 
                 void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
                 {
                     s.LoadCompleted -= handler;
 
-                    if (_backgroundId == file.Id && !IsDisconnected)
+                    if (_backgroundId == file.Id && request == _patternRequest && !IsDisconnected)
                     {
                         UpdateTiledBrush(true);
                     }
@@ -324,11 +420,6 @@ namespace Telegram.Controls.Chats
                     //{
                     //    s.Dispose();
                     //}
-                }
-
-                if (_backgroundId != file.Id || IsDisconnected)
-                {
-                    return;
                 }
 
                 if (_pattern != null)
@@ -363,6 +454,7 @@ namespace Telegram.Controls.Chats
                     tiledBrush.Model = UpdateModel();
                     tiledBrush.Intensity = _intensity;
                     tiledBrush.IsNegative = _negative;
+                    tiledBrush.Zoom = GetZoom(_pattern);
 
                     tiledBrush.Update();
                 }
@@ -391,9 +483,32 @@ namespace Telegram.Controls.Chats
                 Model = UpdateModel(),
                 Intensity = _intensity,
                 IsNegative = _negative,
+                Zoom = GetZoom(_pattern),
             };
 
-            ElementCompositionPreview.SetElementChildVisual(this, _tiledBrush.Visual);
+            _tiledVisual = _tiledBrush.Visual;
+            Root.Children.InsertAtBottom(_tiledVisual);
+        }
+
+        private ContainerVisual _root;
+        private Visual _tiledVisual;
+
+        // An element hosts a single child visual, so the brush, the gift model and the blur share
+        // this one rather than each setting their own, which detached whichever was there before.
+        private ContainerVisual Root
+        {
+            get
+            {
+                if (_root == null)
+                {
+                    _root = BootStrapper.Current.Compositor.CreateContainerVisual();
+                    _root.RelativeSizeAdjustment = Vector2.One;
+
+                    ElementCompositionPreview.SetElementChildVisual(this, _root);
+                }
+
+                return _root;
+            }
         }
 
         private ContainerVisual _modelVisual;
@@ -411,7 +526,7 @@ namespace Telegram.Controls.Chats
                 _modelVisual = BootStrapper.Current.Compositor.CreateContainerVisual();
                 _modelVisual.RelativeSizeAdjustment = Vector2.One;
 
-                ElementCompositionPreview.SetElementChildVisual(this, _modelVisual);
+                Root.Children.InsertAtTop(_modelVisual);
             }
             else
             {
@@ -420,47 +535,52 @@ namespace Telegram.Controls.Chats
 
             _modelVisual.Opacity = _intensity;
 
-            var width = (int)Math.Ceiling(ActualWidth / _pattern.RenderSize.X);
-            var height = (int)Math.Ceiling(ActualHeight / _pattern.RenderSize.Y);
-
-            var logical = _pattern.RenderSize;
+            var logical = _pattern.RenderSize * GetZoom(_pattern);
             var physical = _pattern.RenderPhysicalSize;
             var factor = logical / physical;
+
+            if (logical.X <= 0)
+            {
+                return default;
+            }
+
+            // The same single row ChatBackgroundBrush draws, starting at the left edge.
+            var columns = (int)MathF.Ceiling(ActualSize.X / logical.X);
 
             var topBound = 48 * 3;
             var bottomBound = ActualSize.Y - 48 * 2;
             var rightBound = ActualSize.X;
 
-            var available = new List<ChatBackgroundSymbol>(_pattern.Symbols.Count * (height * width + width));
+            var available = new List<ChatBackgroundSymbol>(_pattern.Symbols.Count * columns);
 
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < columns; x++)
             {
-                var offsetY = logical.Y * y;
+                var offsetX = logical.X * x;
 
-                for (int x = 0; x < width; x++)
+                for (int i = 0; i < _pattern.Symbols.Count; i++)
                 {
-                    var offsetX = logical.X * x;
+                    var temp = _pattern.Symbols[i];
 
-                    for (int i = 0; i < _pattern.Symbols.Count; i++)
+                    var size = temp.Size * factor;
+                    var offset = new Vector2(offsetX + temp.Offset.X * factor.X, temp.Offset.Y * factor.Y);
+
+                    if (offset.Y < topBound || offset.Y + size.Y > bottomBound || offset.X < 0 || offset.X + size.X > rightBound)
                     {
-                        var temp = _pattern.Symbols[i];
-
-                        var size = temp.Size * factor;
-                        var offset = new Vector2(offsetX + temp.Offset.X * factor.X, offsetY + temp.Offset.Y * factor.Y);
-
-                        if (offset.Y < topBound || offset.Y + size.Y > bottomBound || offset.X + size.X > rightBound)
-                        {
-                            continue;
-                        }
-
-                        available.Add(new ChatBackgroundSymbol
-                        {
-                            Size = size,
-                            Offset = offset,
-                            RotationAngle = temp.RotationAngle
-                        });
+                        continue;
                     }
+
+                    available.Add(new ChatBackgroundSymbol
+                    {
+                        Size = size,
+                        Offset = offset,
+                        RotationAngle = temp.RotationAngle
+                    });
                 }
+            }
+
+            if (available.Count == 0)
+            {
+                return default;
             }
 
             var index = new Random().Next(0, available.Count);
@@ -511,11 +631,11 @@ namespace Telegram.Controls.Chats
                 _blurVisual.RelativeSizeAdjustment = Vector2.One;
                 _blurVisual.Brush = _blurBrush;
 
-                ElementCompositionPreview.SetElementChildVisual(this, _blurVisual);
+                Root.Children.InsertAtTop(_blurVisual);
             }
             else if (_blurVisual != null && !enabled)
             {
-                ElementCompositionPreview.SetElementChildVisual(this, null);
+                Root.Children.Remove(_blurVisual);
 
                 _blurBrush = null;
                 _blurVisual = null;

@@ -11,6 +11,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <SurfaceImage.h>
 #include <TextFormat.h>
@@ -379,8 +380,8 @@ namespace winrt::Telegram::Native::implementation
 
         HRESULT Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation);
 
-        winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale);
-        ChatBackgroundPattern DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale);
+        winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight);
+        ChatBackgroundPattern DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight);
 
         SoftwareBitmap DrawBlurred(hstring fileName, float blurAmount);
         SoftwareBitmap DrawBlurred(array_view<uint8_t const> bytes, float blurAmount);
@@ -416,9 +417,29 @@ namespace winrt::Telegram::Native::implementation
 
         HRESULT CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat);
 
-        // Returns decompressed SVG bytes, caching them in a small LRU. Must be called while holding
-        // m_criticalSection. nsvgParse mutates its input in place, so callers must parse a *copy*.
-        const std::string& GetDecompressedSvg(hstring const& path);
+        struct SvgShape
+        {
+            winrt::com_ptr<ID2D1PathGeometry1> Geometry;
+            winrt::com_ptr<ID2D1StrokeStyle1> StrokeStyle; // null when the shape is not stroked
+            float Opacity;
+            float StrokeWidth;
+            bool Fill;
+        };
+
+        // In SVG units, so one parse serves every scale the pattern is drawn at.
+        struct SvgPattern
+        {
+            float Width;
+            float Height;
+            winrt::com_ptr<ID2D1GeometryGroup> Solid; // every opaque fill, drawn in one call
+            std::vector<SvgShape> Shapes;
+            std::vector<ChatBackgroundSymbol> Symbols;
+        };
+
+        HRESULT ParseSvgPattern(hstring const& path, SvgPattern& pattern);
+
+        // Must be called while holding m_criticalSection. The pointer is valid until the next call.
+        const SvgPattern* GetSvgPattern(hstring const& path);
 
     public:
         Compositor m_compositor;
@@ -459,13 +480,13 @@ namespace winrt::Telegram::Native::implementation
 
         std::unordered_map<void*, NineGridBucket> m_nineGridCache;
 
-        // Bounded LRU cache of decompressed SVG bytes keyed by file path. Switching among a few chats
-        // re-renders their (different) pattern backgrounds repeatedly; without this, each switch
-        // re-reads + gunzips the same file, and those large variable-size temporaries fragment the
-        // segment heap. Capped so at most a handful of patterns stay resident.
+        // Bounded LRU cache of parsed SVG patterns keyed by file path. Switching among a few chats,
+        // and resizing one, re-renders pattern backgrounds repeatedly; without this, each render
+        // re-reads, gunzips and parses the same file, and those large variable-size temporaries
+        // fragment the segment heap. Capped so at most a handful of patterns stay resident.
         static constexpr size_t kSvgCacheCapacity = 6;
-        std::list<std::pair<std::wstring, std::string>> m_svgCacheList; // front = most recently used
-        std::unordered_map<std::wstring, std::list<std::pair<std::wstring, std::string>>::iterator> m_svgCacheIndex;
+        std::list<std::pair<std::wstring, SvgPattern>> m_svgCacheList; // front = most recently used
+        std::unordered_map<std::wstring, std::list<std::pair<std::wstring, SvgPattern>>::iterator> m_svgCacheIndex;
     };
 } // namespace winrt::Telegram::Native::implementation
 
