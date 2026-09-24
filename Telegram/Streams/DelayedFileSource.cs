@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Threading;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -62,7 +63,10 @@ namespace Telegram.Streams
         protected void OnDownloaded()
         {
             _downloaded = true;
-            Downloaded?.Invoke(this, EventArgs.Empty);
+
+            // Raised on the TDLib thread through OnFileUpdated as well as on the UI thread, and
+            // .NET Native reads the field twice for ?.Invoke, so a -= in between would be called.
+            Volatile.Read(ref Downloaded)?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
