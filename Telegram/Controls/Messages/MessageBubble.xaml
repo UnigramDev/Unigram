@@ -197,14 +197,11 @@
                             </Grid.RowDefinitions>
                             <Border x:Load="False"
                                     x:Name="BackgroundPanel"
-                                    Background="{ThemeResource MessageBackgroundBrush}"
+                                    Background="{ThemeResource PageSubHeaderBackgroundSolidBrush}"
                                     Margin="0,-8,0,-4"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="3"
-                                    Grid.RowSpan="3">
-                                <Border x:Name="CrossPanel"
-                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                            </Border>
+                                    Grid.RowSpan="3" />
 
                             <local:MessageBubblePanel x:Name="Panel"
                                                       Grid.Column="1"

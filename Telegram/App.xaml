@@ -29,6 +29,8 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
+                    <SolidColorBrush x:Key="PageSubHeaderBackgroundSolidBrush"
+                                     Color="#2C2C2C" />
                     <!-- TODO: MUX AcrylicBrush doesn't work in XAML Islands
                                but setting TintLuminosityOpacity on WUX corrupts memory -->
                     <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
@@ -76,6 +78,8 @@
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
+                    <SolidColorBrush x:Key="PageSubHeaderBackgroundSolidBrush"
+                                     Color="#F9F9F9" />
                     <media:AcrylicBrush x:Key="PageSubHeaderBackgroundBrush2"
                                         TintColor="#FCFCFC"
                                         TintOpacity="0.0"

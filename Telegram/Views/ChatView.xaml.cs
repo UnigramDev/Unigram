@@ -961,7 +961,8 @@ namespace Telegram.Views
                             return;
                         }
 
-                        Canvas.SetZIndex(TextArea, 0);
+                        Canvas.SetZIndex(LinearCaster, 0);
+                        Canvas.SetZIndex(Footer, 0);
                         Canvas.SetZIndex(InlinePanel, 0);
                         Canvas.SetZIndex(Separator, 0);
 
@@ -972,7 +973,8 @@ namespace Telegram.Views
                     };
 
                     _collectionChanging++;
-                    Canvas.SetZIndex(TextArea, -1);
+                    Canvas.SetZIndex(LinearCaster, -1);
+                    Canvas.SetZIndex(Footer, -1);
                     Canvas.SetZIndex(InlinePanel, -2);
                     Canvas.SetZIndex(Separator, -3);
 
@@ -1029,14 +1031,14 @@ namespace Telegram.Views
                         {
                             MessageBigEmoji => 48 + more,
                             MessageSticker or MessageAnimatedEmoji or MessageDice or MessageStakeDice => 48 + more,
-                            _ => 48 + more - 12f
+                            _ => 48 + more - 10f
                         };
 
                         var yOffset = content switch
                         {
                             MessageBigEmoji => 66,
                             MessageSticker or MessageAnimatedEmoji or MessageDice or MessageStakeDice => 36,
-                            _ => reply ? 29 : 44f
+                            _ => reply ? 36 : 48f
                         };
 
                         float xScale;
@@ -1045,8 +1047,8 @@ namespace Telegram.Views
                         // 432: maxMessageWidth
                         if (TextArea.ActualSize.X - xOffset > 432)
                         {
-                            xScale = 432 / bubble.ActualSize.X;
-                            xTranslate = (TextArea.ActualSize.X - xOffset) - 432;
+                            xScale = 1; // 432 / bubble.ActualSize.X;
+                            xTranslate = (TextArea.ActualSize.X - xOffset) - bubble.ActualSize.X /*- 432*/;
                         }
                         else
                         {

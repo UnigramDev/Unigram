@@ -174,7 +174,6 @@ namespace Telegram.Controls.Messages
         private HyperlinkButton PhotoRoot;
 
         private Border BackgroundPanel;
-        private Border CrossPanel;
 
         private Grid HeaderPanel;
         private TextBlock HeaderLabel;
@@ -2584,16 +2583,10 @@ namespace Telegram.Controls.Messages
 
             var content = _message?.GeneratedContent ?? _message?.Content;
             var panel = ElementComposition.GetElementVisual(ContentPanel);
+            var caster = ElementComposition.GetElementVisual(ShadowCaster);
 
             if (content is MessageText)
             {
-                var crossScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-                crossScale.InsertKeyFrame(0, new Vector3(1, yScale, 1));
-                crossScale.InsertKeyFrame(1, new Vector3(1));
-                crossScale.Duration = TimeSpan.FromMilliseconds(outer);
-                crossScale.DelayTime = TimeSpan.FromMilliseconds(delay);
-                crossScale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-
                 var outOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 outOpacity.InsertKeyFrame(0, 1);
                 outOpacity.InsertKeyFrame(1, 0);
@@ -2601,18 +2594,10 @@ namespace Telegram.Controls.Messages
                 outOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
                 outOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                if (BackgroundPanel == null)
-                {
-                    BackgroundPanel = GetTemplateChild(nameof(BackgroundPanel)) as Border;
-                    CrossPanel = GetTemplateChild(nameof(CrossPanel)) as Border;
-                }
-
-                var cross = ElementComposition.GetElementVisual(CrossPanel);
-                cross.StartAnimation("Opacity", outOpacity);
+                BackgroundPanel ??= GetTemplateChild(nameof(BackgroundPanel)) as Border;
 
                 var background = ElementComposition.GetElementVisual(BackgroundPanel);
-                background.CenterPoint = new Vector3(0, reply ? 0 : ContentPanel.ActualSize.Y / 2, 0);
-                background.StartAnimation("Scale", crossScale);
+                background.StartAnimation("Opacity", outOpacity);
             }
 
             var header = ElementComposition.GetElementVisual(Header);
@@ -2694,16 +2679,16 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageText)
             {
-                textOffsetY = reply ? 16 : 0;
+                textOffsetY = reply ? 10 : 0;
             }
 
-            var headerOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            headerOffset.InsertKeyFrame(0, new Vector3(-(headerOffsetX * (1 / xScale)), headerOffsetY, 0));
-            headerOffset.InsertKeyFrame(1, new Vector3(0));
-            headerOffset.Duration = TimeSpan.FromMilliseconds(headerOffsetY > 0 ? outer : inner);
-            headerOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
-            headerOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            header.StartAnimation("Translation", headerOffset);
+            //var headerOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //headerOffset.InsertKeyFrame(0, new Vector3(-(headerOffsetX * (1 / xScale)), headerOffsetY, 0));
+            //headerOffset.InsertKeyFrame(1, new Vector3(0));
+            //headerOffset.Duration = TimeSpan.FromMilliseconds(headerOffsetY > 0 ? outer : inner);
+            //headerOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
+            //headerOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            //header.StartAnimation("Translation", headerOffset);
 
             var textOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
@@ -2729,10 +2714,16 @@ namespace Telegram.Controls.Messages
             offset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             ElementCompositionPreview.SetIsTranslationEnabled(ContentPanel, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(ShadowCaster, true);
 
             panel.CenterPoint = new Vector3(ContentPanel.ActualSize, 0);
             panel.StartAnimation("Scale", scale);
             panel.StartAnimation("Translation.X", offset);
+
+            caster.CenterPoint = new Vector3(ShadowCaster.ActualSize, 0);
+            caster.StartAnimation("Scale", scale);
+            caster.StartAnimation("Translation.X", offset);
+            caster.StartAnimation("Opacity", inOpacity);
         }
 
         // TODO: this method seems to work in many cases but I'm not sure it's correct
