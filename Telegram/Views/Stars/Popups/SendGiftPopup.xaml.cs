@@ -109,18 +109,6 @@ namespace Telegram.Views.Stars.Popups
                 }
             }
 
-            if (clientService.TryGetChat(gift.PublisherChatId, out Chat publisherChat)
-                && clientService.TryGetSupergroup(publisherChat, out Supergroup publisher)
-                && publisher.HasActiveUsername(out string username))
-            {
-                Publisher.Visibility = Visibility.Visible;
-                TextBlockHelper.SetMarkdown(PublisherLabel, string.Format(Strings.Gift2ActionReleasedBy, $"@{username}"));
-            }
-            else
-            {
-                Publisher.Visibility = Visibility.Collapsed;
-            }
-
             if (gift.OverallLimits != null)
             {
                 LimitedRoot.Visibility = Visibility.Visible;
