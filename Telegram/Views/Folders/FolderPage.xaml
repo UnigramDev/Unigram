@@ -113,7 +113,6 @@
                                         </controls:HeaderedControl>
 
                                         <controls:AnimatedGlyphButton x:Name="IconButton"
-                                                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                                       Glyph="{x:Bind ConvertIcon(ViewModel.Icon), Mode=OneWay}"
                                                                       Click="Icon_Click"
                                                                       Width="60"
@@ -146,7 +145,7 @@
                                                             <Style TargetType="GridViewItem"
                                                                    BasedOn="{StaticResource DefaultGridViewItemStyle}">
                                                                 <Setter Property="FontFamily"
-                                                                        Value="{StaticResource TelegramThemeFontFamily}" />
+                                                                        Value="{StaticResource SymbolThemeFontFamily}" />
                                                                 <Setter Property="FontSize"
                                                                         Value="16" />
                                                                 <Setter Property="MinWidth"

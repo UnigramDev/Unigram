@@ -215,7 +215,7 @@
                         <selectors:StickerSetTemplateSelector.IconTemplate>
                             <DataTemplate>
                                 <Grid Background="Transparent">
-                                    <FontIcon FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.IconTemplate>

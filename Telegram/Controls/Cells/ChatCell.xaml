@@ -198,7 +198,7 @@
                                                        Grid.Column="3" />
                                 <TextBlock x:Name="MutedIcon"
                                            Text="&#xE979;"
-                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
                                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                            VerticalAlignment="Bottom"
                                            FontSize="16"
@@ -277,7 +277,7 @@
                             <TextBlock x:Name="PinnedIcon"
                                        Text="&#xE97B;"
                                        FontSize="16"
-                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Top"

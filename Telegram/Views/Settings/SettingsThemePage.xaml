@@ -41,7 +41,7 @@
                                             Click="{x:Bind ViewModel.EditName}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE104;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>

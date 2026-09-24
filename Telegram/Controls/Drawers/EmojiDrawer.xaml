@@ -292,7 +292,7 @@
                                             ToolTipService.ToolTip="{x:Bind Title}"
                                             Background="Transparent">
                                         <TextBlock Text="{x:Bind Glyph}"
-                                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                    FontSize="20"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
@@ -358,7 +358,7 @@
                         <selectors:StickerSetTemplateSelector.IconTemplate>
                             <DataTemplate>
                                 <Grid Background="Transparent">
-                                    <FontIcon FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.IconTemplate>

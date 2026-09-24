@@ -39,7 +39,7 @@
             <Setter Property="VerticalContentAlignment"
                     Value="Top" />
             <Setter Property="FontFamily"
-                    Value="{StaticResource TelegramThemeFontFamily}" />
+                    Value="{StaticResource SymbolThemeFontFamily}" />
             <Setter Property="Height"
                     Value="Auto" />
             <Setter Property="Width"
@@ -245,7 +245,6 @@
                                                 Tag="{x:Bind}"
                                                 Width="36"
                                                 Height="36"
-                                                FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 FontSize="18"
                                                 CornerRadius="12,4,4,12"
                                                 Margin="0,0,-8,0" />

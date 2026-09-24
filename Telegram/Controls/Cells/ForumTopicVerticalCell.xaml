@@ -84,7 +84,7 @@
                                    Visibility="Collapsed"
                                    Text="&#xEA05;"
                                    FontSize="12"
-                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"

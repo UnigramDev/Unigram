@@ -53,7 +53,7 @@
                                        Grid.ColumnSpan="2" />
                             <TextBlock x:Name="IconLabel"
                                        Foreground="{ThemeResource MessageCallForegroundBrush}"
-                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        Margin="0,1,4,-1"
                                        Grid.Row="1" />
                             <TextBlock x:Name="DateLabel"

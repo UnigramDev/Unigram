@@ -83,7 +83,6 @@
     <x:Double x:Key="TelegramToolBarSmallHeight">44</x:Double>
     <x:Double x:Key="TelegramToolBarHeight">48</x:Double>
 
-    <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
 
 
@@ -116,7 +115,7 @@
         <Setter Property="VerticalContentAlignment"
                 Value="Center" />
         <Setter Property="FontFamily"
-                Value="{StaticResource TelegramThemeFontFamily}" />
+                Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="Height"
                 Value="20" />
         <Setter Property="Width"
@@ -222,7 +221,6 @@
         </Setter>
     </Style>
 
-
     <Style x:Key="ImmersiveFileButtonStyle"
            TargetType="controls:FileButton">
         <Setter Property="Background"
@@ -244,7 +242,7 @@
         <Setter Property="VerticalContentAlignment"
                 Value="Top" />
         <Setter Property="FontFamily"
-                Value="{StaticResource TelegramThemeFontFamily}" />
+                Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Width"
@@ -384,7 +382,7 @@
         <Setter Property="VerticalContentAlignment"
                 Value="Stretch" />
         <Setter Property="FontFamily"
-                Value="{StaticResource TelegramThemeFontFamily}" />
+                Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Width"

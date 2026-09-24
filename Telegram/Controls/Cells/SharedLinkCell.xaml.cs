@@ -247,7 +247,7 @@ namespace Telegram.Controls.Cells
 
                     if (link == webPageLink && webPageCached)
                     {
-                        hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = Navigation.BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                        hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = Navigation.BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily });
                         hyperlink.Inlines.Add(new Run { Text = " \u200D" });
 
                         hyperlink.Click += (s, args) => InstantView_Click(s, link);

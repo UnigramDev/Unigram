@@ -79,7 +79,6 @@
                                             Glyph="&#xE909;"
                                             CheckedGlyph="&#xE909;"
                                             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
                                             AutomationProperties.Name="{CustomResource AccDescrRotate}"
                                             ToolTipService.ToolTip="{CustomResource AccDescrRotate}" />
 
@@ -88,7 +87,6 @@
                                             Glyph="&#xE908;"
                                             CheckedGlyph="&#xE908;"
                                             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
                                             AutomationProperties.Name="{CustomResource AccDescrFlip}"
                                             ToolTipService.ToolTip="{CustomResource AccDescrFlip}"
                                             Grid.Column="1" />
@@ -105,7 +103,6 @@
                                             Glyph="&#xEA89;"
                                             CheckedGlyph="&#xEA89;"
                                             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
                                             AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"
                                             ToolTipService.ToolTip="{CustomResource AccDescrAspectRatio}"
                                             Grid.Column="3" />

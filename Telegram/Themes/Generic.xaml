@@ -2398,7 +2398,7 @@
                         <FontIcon x:Name="Icon"
                                   x:Load="False"
                                   Glyph="&#xE9B5;"
-                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}"
                                   Foreground="{TemplateBinding Foreground}"
                                   VerticalAlignment="Bottom"
                                   FontSize="16"
@@ -7292,7 +7292,7 @@
         <Setter Property="VerticalContentAlignment"
                 Value="Center" />
         <Setter Property="FontFamily"
-                Value="{ThemeResource TelegramThemeFontFamily}" />
+                Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize"
                 Value="20" />
         <Setter Property="FontWeight"

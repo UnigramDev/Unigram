@@ -335,7 +335,6 @@
                                                   Glyph="&#xE9D8;"
                                                   AllowFocusOnInteraction="False"
                                                   VerticalAlignment="Bottom"
-                                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                   FontSize="{StaticResource GlyphLargeFontSize}"
                                                   AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}" />

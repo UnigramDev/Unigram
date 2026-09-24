@@ -63,7 +63,6 @@
                                 Glyph="&#xE8DE;"
                                 CheckedGlyph="&#xE8DE;"
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                FontFamily="{StaticResource TelegramThemeFontFamily}"
                                 IsOneWay="False" />
 
     <controls:GlyphToggleButton x:Name="Quote"

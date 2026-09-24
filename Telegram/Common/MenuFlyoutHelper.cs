@@ -109,7 +109,7 @@ namespace Telegram.Common
             {
                 Glyph = glyph,
                 FontSize = 20,
-                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
             };
         }
 
@@ -242,7 +242,7 @@ namespace Telegram.Common
                     {
                         Glyph = icon,
                         FontSize = 20,
-                        FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                        FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
                     };
                 }
 
@@ -289,7 +289,7 @@ namespace Telegram.Common
                     {
                         Glyph = icon,
                         FontSize = 20,
-                        FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                        FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
                     };
                 }
 
@@ -323,7 +323,7 @@ namespace Telegram.Common
                     {
                         Glyph = icon,
                         FontSize = 20,
-                        FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                        FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
                     };
                 }
 
@@ -368,7 +368,7 @@ namespace Telegram.Common
                 {
                     Glyph = icon,
                     FontSize = 20,
-                    FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                    FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
                 };
             }
 
@@ -408,7 +408,7 @@ namespace Telegram.Common
                 {
                     Glyph = icon,
                     FontSize = 20,
-                    FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                    FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
                 };
             }
 
@@ -453,7 +453,7 @@ namespace Telegram.Common
                 {
                     Glyph = icon,
                     FontSize = 20,
-                    FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                    FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
                 };
             }
 

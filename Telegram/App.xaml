@@ -264,7 +264,6 @@
                         Value="0" />
             </Style>
 
-            <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
             <FontFamily x:Key="SpoilerFontFamily">ms-appx:///Assets/Emoji/spoiler.ttf#Segoe UI Emoji</FontFamily>
 

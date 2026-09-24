@@ -2749,7 +2749,7 @@
         <Setter Property="VerticalContentAlignment"
                 Value="Center" />
         <Setter Property="FontFamily"
-                Value="{ThemeResource TelegramThemeFontFamily}" />
+                Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize"
                 Value="20" />
         <Setter Property="FontWeight"

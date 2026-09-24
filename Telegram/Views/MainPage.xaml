@@ -585,7 +585,7 @@
                                                   Glyph="&#xEA19;"
                                                   Click="Proxy_Click"
                                                   Visibility="Collapsed"
-                                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                  FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                   AutomationProperties.Name="{CustomResource ProxySettings}"
                                                   ToolTipService.ToolTip="{CustomResource ProxySettings}"
                                                   Width="40"

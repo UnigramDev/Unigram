@@ -3144,7 +3144,7 @@ namespace Telegram.Views
             }
             else if (folder == ChatListFolderFlags.ExcludeRead)
             {
-                return Icons.ChatUnreadFilled; //FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                return Icons.ChatUnreadFilled;
             }
             else if (folder == ChatListFolderFlags.ExcludeArchived)
             {
