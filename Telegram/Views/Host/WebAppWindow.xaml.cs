@@ -2373,7 +2373,9 @@ namespace Telegram.Views.Host
         public SecondaryNavigationService(ISession session, INavigationService source, WindowContext window)
             : base(session, window, null, string.Empty)
         {
-            _source = source;
+            // A mini app opened from another one gets that one's service as its source, and that
+            // window can close first: SwitchAsync to its view then fails with ERROR_NOT_FOUND.
+            _source = source is SecondaryNavigationService secondary ? secondary._source : source;
         }
 
         public override bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
