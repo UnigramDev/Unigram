@@ -8,7 +8,6 @@
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Media;
-using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -20,7 +19,6 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -48,9 +46,9 @@ namespace Telegram.Controls.Messages
 
         public string GetAutomationName()
         {
-            if (ForwardLabel != null)
+            if (ForwardText != null)
             {
-                return ForwardLabel.Text;
+                return ForwardText.Text + " " + ForwardLink.Text;
             }
 
             return null;
@@ -67,20 +65,11 @@ namespace Telegram.Controls.Messages
                 var count = 0;
                 var last = default(Rect);
 
-                // A List rather than an array: TextStylePart is a WinRT struct, so an array of them
-                // can only cross as IVector<T> by boxing through IReferenceArray, which AOT cannot
-                // synthesise.
-                var entities = new List<TextStylePart>
+                var rectangles2 = new[]
                 {
-                    new TextStylePart
-                    {
-                        Offset = ForwardText.Text.Length,
-                        Length = ForwardLink.Text.Length,
-                        Type = TextStyle.Bold
-                    }
+                    new Rect(0, 0, ForwardText.ActualWidth, ForwardText.ActualHeight),
+                    new Rect(0, ForwardText.ActualHeight, ForwardLink.ActualWidth, ForwardLink.ActualHeight)
                 };
-
-                var rectangles2 = Direct2D.Current.LineMetrics(ForwardLabel.Text, entities, 12, double.MaxValue, false);
 
                 //var contentEnd = ForwardLabel.ContentEnd.GetCharacterRect(ForwardLabel.ContentEnd.LogicalDirection);
                 //if (contentEnd.Right <= 0)
@@ -138,22 +127,17 @@ namespace Telegram.Controls.Messages
 
         #region InitializeComponent
 
-        private TextBlock ForwardLabel;
         private ProfilePicture ForwardPhoto;
-        private Run ForwardText;
-        private Run ForwardLink;
+        private TextBlock ForwardText;
+        private TextBlock ForwardLink;
 
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
-            ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
             ForwardPhoto = GetTemplateChild(nameof(ForwardPhoto)) as ProfilePicture;
-
-            ForwardText = ForwardLabel.Inlines[0] as Run;
-            ForwardLink = ForwardLabel.Inlines[1] as Run;
-
-            //ForwardLink.Click += FwdFrom_Click;
+            ForwardText = GetTemplateChild(nameof(ForwardText)) as TextBlock;
+            ForwardLink = GetTemplateChild(nameof(ForwardLink)) as TextBlock;
 
             _templateApplied = true;
 
@@ -164,6 +148,8 @@ namespace Telegram.Controls.Messages
         }
 
         #endregion
+
+        private bool _linkCollapsed;
 
         public void UpdateMessage(MessageViewModel message, bool light)
         {
@@ -193,19 +179,21 @@ namespace Telegram.Controls.Messages
 
             if (message.ReceiverId != null)
             {
-                ForwardText.Text = string.Empty;
-
                 // TODO: icon
                 if (message.ReceiverId.IsUser(message.ClientService.Options.MyId))
                 {
-                    ForwardLink.Text = "\uE9A6\u00A0" + Strings.EphemeralMessageVisibleToYou;
+                    ForwardText.Text = "\uE9A6\u00A0" + Strings.EphemeralMessageVisibleToYou;
                 }
                 else
                 {
-                    ForwardLink.Text = "\uE9A6\u00A0" + string.Format(Strings.EphemeralMessageVisibleToOther, message.ClientService.GetTitle(message.ReceiverId));
+                    ForwardText.Text = "\uE9A6\u00A0" + string.Format(Strings.EphemeralMessageVisibleToOther, message.ClientService.GetTitle(message.ReceiverId));
                 }
 
-                ForwardLink.FontWeight = FontWeights.Normal;
+                _linkCollapsed = true;
+                ForwardLink.Visibility = Visibility.Collapsed;
+                ForwardPhoto.Visibility = Visibility.Collapsed;
+
+                ForwardLink.Text = string.Empty;
                 ForwardPhoto.Source = null;
                 Visibility = Visibility.Visible;
             }
@@ -215,16 +203,23 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.ClientService.TryGetSupergroup(storyChat, out Supergroup supergroup) && supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic())
                     {
-                        ForwardText.Text = Strings.PrivateStory + "\n";
+                        ForwardText.Text = Strings.PrivateStory;
                     }
                     else
                     {
-                        ForwardText.Text = string.Format("{0}\u00A0{1}", Icons.ExpiredStory, Strings.ExpiredStory) + "\n";
+                        ForwardText.Text = string.Format("{0}\u00A0{1}", Icons.ExpiredStory, Strings.ExpiredStory);
                     }
                 }
                 else
                 {
-                    ForwardText.Text = Strings.ForwardedStory + "\n";
+                    ForwardText.Text = Strings.ForwardedStory;
+                }
+
+                if (_linkCollapsed)
+                {
+                    _linkCollapsed = false;
+                    ForwardLink.Visibility = Visibility.Visible;
+                    ForwardPhoto.Visibility = Visibility.Visible;
                 }
 
                 ForwardLink.Text = "\uEA4F\u00A0" + storyChat.Title;
@@ -285,7 +280,14 @@ namespace Telegram.Controls.Messages
                     ForwardPhoto.Source = ProfilePictureSourceText.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
                 }
 
-                ForwardText.Text = line1 + "\n";
+                if (_linkCollapsed)
+                {
+                    _linkCollapsed = false;
+                    ForwardLink.Visibility = Visibility.Visible;
+                    ForwardPhoto.Visibility = Visibility.Visible;
+                }
+
+                ForwardText.Text = line1;
                 ForwardLink.Text = "\uEA4F\u00A0" + (line2 ?? string.Empty);
 
                 Visibility = Visibility.Visible;

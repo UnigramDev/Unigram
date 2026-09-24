@@ -36,29 +36,36 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
                         <Rectangle x:Name="BackgroundOverlay"
                                    Fill="{TemplateBinding Foreground}"
                                    Opacity="0"
-                                   Margin="-4,-2" />
+                                   Margin="-4,-2"
+                                   Grid.RowSpan="2" />
 
                         <controls:ProfilePicture x:Name="ForwardPhoto"
                                                  HorizontalAlignment="Left"
                                                  VerticalAlignment="Bottom"
-                                                 Size="16" />
+                                                 Size="16"
+                                                 Grid.Row="1" />
 
-                        <TextBlock x:Name="ForwardLabel"
+                        <TextBlock x:Name="ForwardText"
                                    Foreground="{TemplateBinding Foreground}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                    TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap">
-                            <Run /><Run FontWeight="SemiBold" />
-                        </TextBlock>
+                                   TextWrapping="NoWrap" />
+                        <TextBlock x:Name="ForwardLink"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   FontWeight="SemiBold"
+                                   Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
