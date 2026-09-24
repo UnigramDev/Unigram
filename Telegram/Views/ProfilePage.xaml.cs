@@ -47,6 +47,8 @@ namespace Telegram.Views
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 
+        private readonly ScrollViewerIncrementalLoader _loader;
+
         private readonly DispatcherTimer _dateHeaderTimer;
         private Visual _dateHeaderPanel;
         private bool _dateHeaderCollapsed = true;
@@ -54,6 +56,8 @@ namespace Telegram.Views
         public ProfilePage()
         {
             InitializeComponent();
+
+            _loader = new ScrollViewerIncrementalLoader(ScrollingHost);
 
             _dateHeaderTimer = new DispatcherTimer();
             _dateHeaderTimer.Interval = TimeSpan.FromMilliseconds(2000);
@@ -534,11 +538,7 @@ namespace Telegram.Views
                 tabPage.DataContext = ViewModel.GiftsTab;
             }
 
-            if (tabPage.ScrollingHost.ItemsSource != null)
-            {
-                LoadMore(tabPage.ScrollingHost);
-            }
-
+            _loader.ItemsSource = tabPage.ScrollingHost.ItemsSource;
             tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged, ref _itemsSourceToken);
 
             if (e.Content is not ProfileStoriesTabPage)
@@ -577,7 +577,7 @@ namespace Telegram.Views
             _hasBeenScrolled = false;
             RootGrid.Unsnap();
 
-            LoadMore(scrollingHost);
+            _loader.ItemsSource = scrollingHost.ItemsSource;
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -594,7 +594,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                LoadMore(scrollingHost);
+                _loader.ItemsSource = scrollingHost.ItemsSource;
             }
         }
 
@@ -652,13 +652,6 @@ namespace Telegram.Views
                 _scrollBarThumb = scrollBar.GetChild<Thumb>(x => x.Name == "VerticalThumb");
                 _scrollBarPanningThumb = scrollBar.GetChild<Border>(x => x.Name == "VerticalPanningThumb");
             }
-
-            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
-            {
-                return;
-            }
-
-            LoadMore(scrollingHost);
         }
 
         private bool _scrollBarIndicatorVisible;

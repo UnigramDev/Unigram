@@ -51,6 +51,9 @@ namespace Telegram.Common
         private object _itemsSource;
         private ISupportIncrementalLoading _source;
 
+        // Only read to tell an empty source apart from one that has yet to fill the viewport.
+        private System.Collections.ICollection _collection;
+
         private bool _isMonitoring;
         private CancellationTokenSource _cts;
 
@@ -100,6 +103,7 @@ namespace Telegram.Common
 
                 _itemsSource = value;
                 _source = value as ISupportIncrementalLoading;
+                _collection = value as System.Collections.ICollection;
 
                 // Whatever the source that left had in flight is no longer this view's business,
                 // and the count goes with it: those loads will not report back.
@@ -111,7 +115,7 @@ namespace Telegram.Common
 
                 if (_isMonitoring)
                 {
-                    CheckNonScrollableState();
+                    _ = CheckAfterLayoutAsync(_cts.Token);
                 }
             }
         }
@@ -200,6 +204,27 @@ namespace Telegram.Common
             CheckNonScrollableState();
         }
 
+        /// <summary>
+        /// The first check against a source that has just arrived, once there is a layout to
+        /// read it off.
+        /// </summary>
+        /// <remarks>
+        /// Nothing below the scroll viewer has been measured yet at the point the source is
+        /// handed over, so every offset still describes the source that left: a view scrolled
+        /// near the end of the old content would ask for a page of the new one before it has
+        /// had a chance to fill itself.
+        /// </remarks>
+        private async Task CheckAfterLayoutAsync(CancellationToken cancellationToken)
+        {
+            // Completes rather than throws when cancelled, so the token is checked by hand.
+            await _scrollViewer.UpdateLayoutAsync(cancellationToken);
+
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                CheckNonScrollableState();
+            }
+        }
+
         private void CheckNonScrollableState()
         {
             if (_activeLoadOperations > 0 || _source is not { HasMoreItems: true })
@@ -233,6 +258,18 @@ namespace Telegram.Common
         {
             if (_source is not { HasMoreItems: true })
             {
+                return;
+            }
+
+            // An empty source has nothing to measure a distance from the end against, whatever
+            // else the view holds, so the test below would never ask for the first page.
+            if (_collection is { Count: 0 })
+            {
+                if (_activeLoadOperations == 0)
+                {
+                    LoadItems();
+                }
+
                 return;
             }
 
