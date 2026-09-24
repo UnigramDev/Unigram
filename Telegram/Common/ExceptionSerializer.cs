@@ -890,6 +890,8 @@ namespace Telegram.Common
                 case "應用程式所呼叫了整理給不同執行緒的介面。":
                 case "응용 프로그램이 다른 스레드를 위해 배열된 인터페이스를 호출했습니다.":
                 case "Η εφαρμογή κάλεσε μια διασύνδεση που είχε παραταχθεί για διαφορετικό νήμα.":
+                case "Aplikace zavolala rozhraní, které bylo zařazeno do jiného vlákna.":
+                case "Sovellus kutsui liittymää, joka on järjestelty toiseen säikeeseen.":
                     return "The application called an interface that was marshalled for a different thread.";
 
                 case "Les ressources mémoire disponibles sont insuffisantes pour exécuter cette opération.":
@@ -917,6 +919,7 @@ namespace Telegram.Common
                 case "Сервер RPC недоступен.":
                 case "El servidor RPC no está disponible.":
                 case "RPC sunucusu kullanılamıyor.":
+                case "RPC 服务器不可用。":
                     return "The RPC server is unavailable.";
 
                 case "Zdalne wywołanie procedury nie powiodło się.":
@@ -1032,6 +1035,8 @@ namespace Telegram.Common
                 case "리소스가 잘못된 렌더링 대상에서 실현되었습니다.":
                 case "Az erőforrás nem a megfelelő képalkotási célhoz lett hozzárendelve.":
                 case "Resursen realiserades på fel renderingsmål.":
+                case "O recurso foi realizado no destino de composição errado.":
+                case "Ressursen ble realisert på feil gjengivelsesmål.":
                     return "The resource was realized on the wrong render target.";
 
                 case "Un fichier de polices n’a pas pu être ouvert car le fichier, répertoire, remplacement réseau, lecteur ou autre emplacement de stockage n’existe pas ou n’est pas disponible.":
@@ -1077,11 +1082,13 @@ namespace Telegram.Common
 
                 case "Файл подкачки слишком мал для завершения операции.":
                 case "Le fichier de pagination est insuffisant pour terminer cette opération.":
+                case "Die Auslagerungsdatei ist zu klein, um diesen Vorgang durchzuführen.":
                     return "The paging file is too small for this operation to complete.";
 
                 case "Ressources système insuffisantes pour terminer le service demandé.":
                 case "Não existem recursos de sistema suficientes para concluir o serviço pedido.":
                 case "Недостаточно системных ресурсов для завершения операции.":
+                case "Zasoby systemowe nie wystarczają do ukończenia żądanej usługi.":
                     return "Insufficient system resources exist to complete the requested service.";
 
                 case "Указанная служба не может быть запущена, так как отключена либо она сама, либо все связанные с ней устройства.":
@@ -1112,6 +1119,8 @@ namespace Telegram.Common
                 case "Neznámé rozhraní":
                 case "Taki interfejs nie jest obsługiwany.":
                 case "不支援此種介面":
+                case "Det er ingen støtte for dette grensesnittet":
+                case "不支持此接口":
                     return "No such interface supported";
 
                 case "Интерфейс не зарегистрирован":
