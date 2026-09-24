@@ -595,7 +595,7 @@ namespace Telegram.Controls.Messages
             var block = new FormattedTextBlock
             {
                 AutoFontSize = _autoFontSize,
-                HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                TextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
             };
 

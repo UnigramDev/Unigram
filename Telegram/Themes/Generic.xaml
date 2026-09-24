@@ -3339,7 +3339,6 @@
                                        TextDecorations="{TemplateBinding TextDecorations}"
                                        MaxLines="{TemplateBinding MaxLines}"
                                        OverflowContentTarget="{TemplateBinding OverflowContentTarget}"
-                                       HorizontalTextAlignment="{TemplateBinding HorizontalTextAlignment}"
                                        TextReadingOrder="{TemplateBinding TextReadingOrder}"
                                        OpticalMarginAlignment="None" />
                     </Grid>

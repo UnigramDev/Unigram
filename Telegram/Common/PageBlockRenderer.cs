@@ -1167,7 +1167,7 @@ namespace Telegram.Common
             var block = new FormattedTextBlock
             {
                 AutoFontSize = true,
-                HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                TextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
             };
 
@@ -1587,7 +1587,7 @@ namespace Telegram.Common
                 var block = new FormattedTextBlock
                 {
                     AutoFontSize = true,
-                    HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                    TextAlignment = TextAlignment.DetectFromContent,
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
                     TextSelection = TextSelectionMode.Disabled,
                 };

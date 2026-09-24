@@ -1057,7 +1057,6 @@ namespace Telegram.Controls
         {
             if (_pools != null && _pools.TryTakeParagraph(out var paragraph))
             {
-                direct.ClearProperty(paragraph, XamlPropertyIndex.Block_TextAlignment);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontSize);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily);
 
@@ -1570,7 +1569,6 @@ namespace Telegram.Controls
             TextParagraphType lastType = null;
             TextParagraphType firstType = null;
 
-            var alignment = TextAlignment;
             var offset = 0;
 
             _indexMap = new List<IndexSegment>();
@@ -1649,11 +1647,6 @@ namespace Telegram.Controls
                 //    TextDirectionality.RightToLeft => (uint)TextAlignment.Right,
                 //    _ => (uint)TextAlignment.DetectFromContent
                 //});
-
-                if (alignment == TextAlignment.Center && paragraph != null)
-                {
-                    direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, (uint)alignment);
-                }
 
                 var direction = paragraph == null ? locale : part.Direction switch
                 {
@@ -2233,7 +2226,7 @@ namespace Telegram.Controls
                 var block = new FormattedTextBlock
                 {
                     AutoFontSize = true,
-                    HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                    TextAlignment = TextAlignment.DetectFromContent,
                     TextReadingOrder = TextReadingOrder.UseFlowDirection,
                     TextSelection = TextSelectionMode.Disabled
                 };
@@ -2852,19 +2845,6 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty TextWrappingProperty =
             DependencyProperty.Register("TextWrapping", typeof(TextWrapping), typeof(FormattedTextBlock), new PropertyMetadata(TextWrapping.Wrap));
-
-        #endregion
-
-        #region HorizontalTextAlignment
-
-        public TextAlignment HorizontalTextAlignment
-        {
-            get { return (TextAlignment)GetValue(HorizontalTextAlignmentProperty); }
-            set { SetValue(HorizontalTextAlignmentProperty, value); }
-        }
-
-        public static readonly DependencyProperty HorizontalTextAlignmentProperty =
-            DependencyProperty.Register("HorizontalTextAlignment", typeof(TextAlignment), typeof(FormattedTextBlock), new PropertyMetadata(TextAlignment.Left));
 
         #endregion
 
