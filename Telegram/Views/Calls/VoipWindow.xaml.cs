@@ -919,6 +919,9 @@ namespace Telegram.Views.Calls
 
         protected override void OnWindowClosed()
         {
+            _durationTimer.Stop();
+            _discardedTimer.Stop();
+
             _call.StateChanged -= OnStateChanged;
             _call.ConnectionStateChanged -= OnConnectionStateChanged;
             _call.RemoteMediaStateChanged -= OnRemoteMediaStateChanged;
