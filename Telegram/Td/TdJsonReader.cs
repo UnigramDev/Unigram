@@ -432,8 +432,7 @@ namespace Telegram.Td.Api
                             code = ReadSurrogatePair(code, ref i);
                         }
 
-                        written += Encoding.UTF8.GetBytes(char.ConvertFromUtf32(code), 0,
-                            code > 0xFFFF ? 2 : 1, decoded, written);
+                        written += WriteUtf8(decoded, written, code);
                         break;
                     default:
                         decoded[written++] = _buffer[i]; // \" \\ \/
@@ -447,12 +446,55 @@ namespace Telegram.Td.Api
 
         private int ReadSurrogatePair(int high, ref int i)
         {
-            i += 2; // \u
-            var low = (Hex(_buffer[i]) << 12) | (Hex(_buffer[i + 1]) << 8) |
-                      (Hex(_buffer[i + 2]) << 4) | Hex(_buffer[i + 3]);
-            i += 4;
+            var low = (Hex(_buffer[i + 2]) << 12) | (Hex(_buffer[i + 3]) << 8) |
+                      (Hex(_buffer[i + 4]) << 4) | Hex(_buffer[i + 5]);
 
+            // Not a low surrogate: leave that escape to be decoded on its own, and the lone high
+            // surrogate to become U+FFFD.
+            if (low < 0xDC00 || low > 0xDFFF)
+            {
+                return high;
+            }
+
+            i += 6;
             return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00);
+        }
+
+        private static int WriteUtf8(byte[] dest, int at, int code)
+        {
+            // TDLib never writes a lone surrogate or anything past U+10FFFF, so one here means the
+            // buffer was corrupted.
+            if ((code >= 0xD800 && code <= 0xDFFF) || code > 0x10FFFF)
+            {
+                code = 0xFFFD;
+            }
+
+            if (code < 0x80)
+            {
+                dest[at] = (byte)code;
+                return 1;
+            }
+
+            if (code < 0x800)
+            {
+                dest[at] = (byte)(0xC0 | (code >> 6));
+                dest[at + 1] = (byte)(0x80 | (code & 0x3F));
+                return 2;
+            }
+
+            if (code < 0x10000)
+            {
+                dest[at] = (byte)(0xE0 | (code >> 12));
+                dest[at + 1] = (byte)(0x80 | ((code >> 6) & 0x3F));
+                dest[at + 2] = (byte)(0x80 | (code & 0x3F));
+                return 3;
+            }
+
+            dest[at] = (byte)(0xF0 | (code >> 18));
+            dest[at + 1] = (byte)(0x80 | ((code >> 12) & 0x3F));
+            dest[at + 2] = (byte)(0x80 | ((code >> 6) & 0x3F));
+            dest[at + 3] = (byte)(0x80 | (code & 0x3F));
+            return 4;
         }
 
         private static int Hex(byte c)
