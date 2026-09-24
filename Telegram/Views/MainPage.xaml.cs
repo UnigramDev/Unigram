@@ -2009,7 +2009,9 @@ namespace Telegram.Views
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                visible &= MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
+                // Null once the page has been disposed, which it is while it is still the frame's
+                // content: switching account tears it down before the new frame is swapped in.
+                visible &= MasterDetail.NavigationService?.CurrentPageType == typeof(BlankPage);
             }
 
             Photo.IsChecked = visible;
