@@ -45,7 +45,6 @@
                               Width="36"
                               Height="36"
                               Margin="0,0,8,0"
-                              Background="Transparent"
                               Grid.RowSpan="2" />
 
     <Grid x:Name="TitlePanel"

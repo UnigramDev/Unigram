@@ -355,7 +355,9 @@
                         <controls:ProgressBarRing x:Name="ProgressBar"
                                                   x:Load="False"
                                                   Foreground="#FFFFFF"
-                                                  IsHitTestVisible="False" />
+                                                  IsHitTestVisible="False"
+                                                  Width="48"
+                                                  Height="48" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -466,7 +468,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="RootOverlay"
-                                  x:Load="False"
+                                  Visibility="Collapsed"
                                   Width="40"
                                   Margin="0,0,-4,0">
                                 <TextBlock x:Name="ContentPresenter1"

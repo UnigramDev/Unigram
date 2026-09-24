@@ -6003,15 +6003,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ProgressBarRing">
-        <Setter Property="Foreground"
-                Value="#FFFFFFFF" />
-        <Setter Property="Width"
-                Value="48" />
-        <Setter Property="Height"
-                Value="48" />
-    </Style>
-
     <Style TargetType="local:RatingBar">
         <Setter Property="Background"
                 Value="Transparent" />
@@ -7275,7 +7266,9 @@
                         <local:ProgressBarRing x:Name="ProgressBar"
                                                x:Load="False"
                                                Foreground="{TemplateBinding Foreground}"
-                                               IsHitTestVisible="False" />
+                                               IsHitTestVisible="False"
+                                               Width="48"
+                                               Height="48" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
