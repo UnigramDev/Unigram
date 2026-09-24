@@ -4237,32 +4237,8 @@ namespace Telegram.Views
 
         private bool CanGetMessageEmojis(MessageViewModel message, out Vector<long> customEmojiIds)
         {
-            var caption = message.GetCaption();
-            if (caption?.Entities == null || caption.Entities.Empty())
-            {
-                customEmojiIds = null;
-                return false;
-            }
-
-            HashSet<long> temp = null;
-
-            foreach (var item in caption.Entities)
-            {
-                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
-                {
-                    temp ??= new();
-                    temp.Add(customEmoji.CustomEmojiId);
-                }
-            }
-
-            if (temp != null)
-            {
-                customEmojiIds = temp.ToVector();
-                return true;
-            }
-
-            customEmojiIds = null;
-            return false;
+            customEmojiIds = message.GetCustomEmojiIds();
+            return customEmojiIds.Count > 0;
         }
 
         private async void LoadMessageEmojis(MessageViewModel message, MenuFlyout flyout, Vector<long> customEmojiIds)

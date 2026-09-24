@@ -539,6 +539,7 @@ namespace Telegram.Common
                 case RichTextSubscript b: CollectLinksFromRichText(b.Text, result); return;
                 case RichTextSuperscript b: CollectLinksFromRichText(b.Text, result); return;
                 case RichTextMarked b: CollectLinksFromRichText(b.Text, result); return;
+                case RichTextDiff b: CollectLinksFromRichText(b.Text, result); return;
 
                 // Link-producing wrappers: emit a link, don't recurse into the
                 // display text (a link's children describe its label, not nested
@@ -903,6 +904,179 @@ namespace Telegram.Common
                 case RichTextAnchorLink b: AppendPlainText(b.Text, sb); return;
                 case RichTextDateTime b: AppendPlainText(b.Text, sb); return;
                 case RichTextButton b: AppendPlainText(b.Button.Text, sb); return;
+                case RichTextDiff b: AppendPlainText(b.Text, sb); return;
+            }
+        }
+
+        // =====================================================================
+        // GetCustomEmojiIds
+        // =====================================================================
+
+        /// <summary>
+        /// Collects the id of every custom emoji in the message: in every text-bearing
+        /// block, caption, credit, table cell and button label, and nested under any
+        /// styling or link.
+        /// </summary>
+        public static Vector<long> GetCustomEmojiIds(RichMessage message)
+        {
+            var result = new HashSet<long>();
+            GetCustomEmojiIds(message?.Blocks, result);
+            return result.ToVector();
+        }
+
+        /// <summary>
+        /// Appends every custom emoji id to <paramref name="result"/>, which the
+        /// caller owns; pass a set to deduplicate.
+        /// </summary>
+        public static void GetCustomEmojiIds(Vector<PageBlock> blocks, ICollection<long> result)
+        {
+            if (blocks == null) return;
+            foreach (var b in blocks)
+            {
+                GetCustomEmojiIds(b, result);
+            }
+        }
+
+        private static void GetCustomEmojiIds(PageBlock block, ICollection<long> result)
+        {
+            switch (block)
+            {
+                case PageBlockTitle t: GetCustomEmojiIds(t.Title, result); return;
+                case PageBlockSubtitle st: GetCustomEmojiIds(st.Subtitle, result); return;
+                case PageBlockKicker k: GetCustomEmojiIds(k.Kicker, result); return;
+                case PageBlockAuthorDate ad: GetCustomEmojiIds(ad.Author, result); return;
+                case PageBlockHeader h: GetCustomEmojiIds(h.Header, result); return;
+                case PageBlockSubheader sh: GetCustomEmojiIds(sh.Subheader, result); return;
+                case PageBlockSectionHeading sh2: GetCustomEmojiIds(sh2.Text, result); return;
+                case PageBlockThinking th: GetCustomEmojiIds(th.Text, result); return;
+                case PageBlockFooter f: GetCustomEmojiIds(f.Footer, result); return;
+                case PageBlockParagraph p: GetCustomEmojiIds(p.Text, result); return;
+                case PageBlockPreformatted pre: GetCustomEmojiIds(pre.Text, result); return;
+                case PageBlockPullQuote pq:
+                    GetCustomEmojiIds(pq.Text, result);
+                    GetCustomEmojiIds(pq.Credit, result);
+                    return;
+                case PageBlockExpandableBlockQuote eq:
+                    GetCustomEmojiIds(eq.Text, result);
+                    GetCustomEmojiIds(eq.Credit, result);
+                    return;
+
+                case PageBlockBlockQuote bq:
+                    GetCustomEmojiIds(bq.Blocks, result);
+                    GetCustomEmojiIds(bq.Credit, result);
+                    return;
+                case PageBlockList list:
+                    if (list.Items != null)
+                    {
+                        foreach (var item in list.Items)
+                        {
+                            GetCustomEmojiIds(item.Blocks, result);
+                        }
+                    }
+                    return;
+                case PageBlockDetails details:
+                    GetCustomEmojiIds(details.Header, result);
+                    GetCustomEmojiIds(details.Blocks, result);
+                    return;
+                case PageBlockCover cv:
+                    GetCustomEmojiIds(cv.Cover, result);
+                    return;
+                case PageBlockCollage c:
+                    GetCustomEmojiIds(c.Blocks, result);
+                    GetCustomEmojiIds(c.Caption, result);
+                    return;
+                case PageBlockSlideshow s:
+                    GetCustomEmojiIds(s.Blocks, result);
+                    GetCustomEmojiIds(s.Caption, result);
+                    return;
+
+                case PageBlockTable table:
+                    GetCustomEmojiIds(table.Caption, result);
+                    if (table.Cells != null)
+                    {
+                        foreach (var row in table.Cells)
+                        {
+                            if (row == null) continue;
+                            foreach (var cell in row)
+                            {
+                                if (cell != null) GetCustomEmojiIds(cell.Text, result);
+                            }
+                        }
+                    }
+                    return;
+                case PageBlockRelatedArticles ra:
+                    GetCustomEmojiIds(ra.Header, result);
+                    return;
+
+                case PageBlockPhoto ph: GetCustomEmojiIds(ph.Caption, result); return;
+                case PageBlockVideo v: GetCustomEmojiIds(v.Caption, result); return;
+                case PageBlockAnimation a: GetCustomEmojiIds(a.Caption, result); return;
+                case PageBlockAudio au: GetCustomEmojiIds(au.Caption, result); return;
+                case PageBlockVoiceNote vn: GetCustomEmojiIds(vn.Caption, result); return;
+                case PageBlockDocument doc: GetCustomEmojiIds(doc.Caption, result); return;
+                case PageBlockMap m: GetCustomEmojiIds(m.Caption, result); return;
+                case PageBlockEmbedded em: GetCustomEmojiIds(em.Caption, result); return;
+                case PageBlockEmbeddedPost ep:
+                    GetCustomEmojiIds(ep.Blocks, result);
+                    GetCustomEmojiIds(ep.Caption, result);
+                    return;
+
+                case PageBlockButtonRow br:
+                    if (br.Buttons != null)
+                    {
+                        foreach (var button in br.Buttons)
+                        {
+                            GetCustomEmojiIds(button?.Text, result);
+                        }
+                    }
+                    return;
+            }
+        }
+
+        private static void GetCustomEmojiIds(PageBlockCaption caption, ICollection<long> result)
+        {
+            if (caption == null) return;
+            GetCustomEmojiIds(caption.Text, result);
+            GetCustomEmojiIds(caption.Credit, result);
+        }
+
+        private static void GetCustomEmojiIds(RichText text, ICollection<long> result)
+        {
+            switch (text)
+            {
+                case RichTextCustomEmoji ce:
+                    result.Add(ce.CustomEmojiId);
+                    return;
+                case RichTexts rs:
+                    if (rs.Texts != null)
+                    {
+                        foreach (var t in rs.Texts) GetCustomEmojiIds(t, result);
+                    }
+                    return;
+                case RichTextDiff d: GetCustomEmojiIds(d.Text, result); return;
+                case RichTextButton b: GetCustomEmojiIds(b.Button?.Text, result); return;
+                case RichTextBold b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextItalic b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextUnderline b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextStrikethrough b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextSpoiler b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextFixed b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextSubscript b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextSuperscript b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextMarked b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextUrl b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextEmailAddress b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextPhoneNumber b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextMention b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextMentionName b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextHashtag b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextCashtag b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextBotCommand b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextBankCardNumber b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextReference b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextReferenceLink b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextAnchorLink b: GetCustomEmojiIds(b.Text, result); return;
+                case RichTextDateTime b: GetCustomEmojiIds(b.Text, result); return;
             }
         }
 
@@ -1090,6 +1264,10 @@ namespace Telegram.Common
 
                         return;
                     }
+
+                case RichTextDiff d:
+                    Flatten(d.Text, text, entities);
+                    return;
 
                 case RichTextAnchor _:
                     // Skipped — see ObjectReplacementChar comment above.
@@ -1531,8 +1709,9 @@ namespace Telegram.Common
 
                 default:
                     // richTextIcon / richTextAnchor / richTextReference / richTextReferenceLink /
-                    // richTextAnchorLink / richTextButton (and any unknown) can't be represented
-                    // without loss. A button especially so: a message carries no way to act on it.
+                    // richTextAnchorLink / richTextButton / richTextDiff (and any unknown) can't be
+                    // represented without loss. A button especially so: a message carries no way to
+                    // act on it.
                     return false;
             }
         }
@@ -1914,6 +2093,7 @@ namespace Telegram.Common
                 case (RichTextReference a, RichTextReference b): return string.Equals(a.Name, b.Name) && Compare(a.Text, b.Text);
                 case (RichTextReferenceLink a, RichTextReferenceLink b): return string.Equals(a.ReferenceName, b.ReferenceName) && string.Equals(a.Url, b.Url) && Compare(a.Text, b.Text);
                 case (RichTextAnchorLink a, RichTextAnchorLink b): return string.Equals(a.AnchorName, b.AnchorName) && string.Equals(a.Url, b.Url) && Compare(a.Text, b.Text);
+                case (RichTextDiff a, RichTextDiff b): return Compare(a.Text, b.Text) && Compare(a.OldText, b.OldText);
 
                 default: return false;
             }

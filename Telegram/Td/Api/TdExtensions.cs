@@ -2423,6 +2423,44 @@ namespace Telegram.Td.Api
             return caption;
         }
 
+        public static Vector<long> GetCustomEmojiIds(this MessageWithOwner message)
+        {
+            return message.Content.GetCustomEmojiIds();
+        }
+
+        public static Vector<long> GetCustomEmojiIds(this MessageContent content)
+        {
+            if (content is MessageRichMessage richMessage)
+            {
+                return PageBlockHelper.GetCustomEmojiIds(richMessage.Message);
+            }
+
+            var caption = content.GetCaption();
+            if (caption?.Entities == null || caption.Entities.Empty())
+            {
+                return Array.Empty<long>();
+            }
+
+            HashSet<long> temp = null;
+
+            foreach (var item in caption.Entities)
+            {
+                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
+                {
+                    temp ??= new();
+                    temp.Add(customEmoji.CustomEmojiId);
+                }
+            }
+
+            if (temp != null)
+            {
+                return temp.ToVector();
+            }
+
+            return Array.Empty<long>();
+
+        }
+
         public static FormattedText GetCaption(this MessageWithOwner message)
         {
             return message.Content.GetCaption();

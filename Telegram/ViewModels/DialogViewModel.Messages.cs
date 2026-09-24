@@ -2683,23 +2683,7 @@ namespace Telegram.ViewModels
 
         public async void ShowMessageEmoji(MessageViewModel message)
         {
-            var caption = message.GetCaption();
-            if (caption == null)
-            {
-                return;
-            }
-
-            var emoji = new HashSet<long>();
-
-            foreach (var item in caption.Entities)
-            {
-                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
-                {
-                    emoji.Add(customEmoji.CustomEmojiId);
-                }
-            }
-
-            var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji.ToVector()));
+            var response = await ClientService.SendAsync(new GetCustomEmojiStickers(message.GetCustomEmojiIds()));
             if (response is Stickers stickers)
             {
                 var sets = new HashSet<long>();
