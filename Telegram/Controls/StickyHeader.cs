@@ -56,6 +56,11 @@ namespace Telegram.Controls
             // needs a different order sets Canvas.ZIndex itself: its XAML value is applied after this.
             Canvas.SetZIndex(this, 1);
 
+            // Here and not where the animation starts: Translation does not exist on the visual
+            // until this is called, so starting or stopping one before it throws - and the header
+            // can be attached, and detached again, without ever having started anything.
+            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
+
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
@@ -247,12 +252,19 @@ namespace Telegram.Controls
             if (SeparatorPart != null)
             {
                 ElementComposition.GetElementVisual(SeparatorPart).Opacity = 0;
+
+                // As in the constructor: enabled once, here, so that UpdateSurface may start the
+                // line's Translation whenever the tabs arrive, and StopAnimations may stop it even
+                // if nothing ever did.
+                ElementCompositionPreview.SetIsTranslationEnabled(SeparatorPart, true);
             }
 
             if (TextPart != null)
             {
                 TextPart.Text = Text ?? string.Empty;
                 UpdateTextCenterPoint();
+
+                ElementCompositionPreview.SetIsTranslationEnabled(TextPart, true);
             }
 
             base.OnApplyTemplate();
@@ -392,7 +404,6 @@ namespace Telegram.Controls
 
             _scrollingHost = null;
             _threshold = float.NaN;
-            _running = false;
 
             // The expressions reference the scroll viewer's manipulation property set: left running
             // they would outlive a page sitting in the back stack. Loaded rebuilds them.
@@ -479,8 +490,6 @@ namespace Telegram.Controls
             properties.StartAnimation("Progress", progress);
             properties.StartAnimation("Offset", offset);
 
-            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
-
             var root = ElementComposition.GetElementVisual(this);
             var pin = compositor.CreateExpressionAnimation("header.Offset");
             pin.SetReferenceParameter("header", properties);
@@ -499,8 +508,6 @@ namespace Telegram.Controls
                 var slide = compositor.CreateExpressionAnimation($"-header.Progress * (this.Target.Offset.Y + this.Target.Size.Y * 0.5 - {CollapsedHeight / 2})");
                 slide.SetReferenceParameter("header", properties);
 
-                ElementCompositionPreview.SetIsTranslationEnabled(TextPart, true);
-
                 var text = ElementComposition.GetElementVisual(TextPart);
                 text.StartAnimation("Scale", scale);
                 text.StartAnimation("Translation.Y", slide);
@@ -517,7 +524,6 @@ namespace Telegram.Controls
 
             if (SeparatorPart != null)
             {
-                ElementCompositionPreview.SetIsTranslationEnabled(SeparatorPart, true);
                 ElementComposition.GetElementVisual(SeparatorPart).StartAnimation("Opacity", fade);
             }
 
@@ -526,10 +532,15 @@ namespace Telegram.Controls
 
         private void StopAnimations()
         {
-            if (_properties == null)
+            // Paired with Start, which owns the flag the other way: nothing here may run for a
+            // start that never happened, because a property that was never animated - Translation
+            // most of all - need not exist on the visual at all.
+            if (!_running)
             {
                 return;
             }
+
+            _running = false;
 
             _properties.StopAnimation("Progress");
             _properties.StopAnimation("Offset");

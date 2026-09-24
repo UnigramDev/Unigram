@@ -79,7 +79,7 @@
                                                Header="{x:Bind Header}"
                                                Visibility="{x:Bind ViewModel.HasTransactions, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                HorizontalContentAlignment="Center"
-                                               Margin="0,16,0,2">
+                                               Margin="0,16,0,6">
                         <controls:TopNavView x:Name="Navigation"
                                              SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}"
                                              SelectionChanged="Navigation_SelectionChanged"

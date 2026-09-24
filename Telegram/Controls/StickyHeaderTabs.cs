@@ -32,7 +32,7 @@ namespace Telegram.Controls
         // handover that starts at contact leaves the surface's overshoot nowhere to spend itself
         // but after the strip, and it reads as a lunge. Progress is the short one, left for a strip
         // used without a header, which has only its own surface to fade in.
-        private const float ApproachRange = 96;
+        private const float ApproachRange = 48;
 
         // It comes to rest 8 pixels inside the collapsed header rather than flush under it. Read by
         // StickyHeader, which grows its own surface by the rest of the strip's height.
@@ -57,6 +57,11 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(StickyHeaderTabs);
 
             Canvas.SetZIndex(this, 1);
+
+            // Here and not where the animation starts: Translation does not exist on the visual
+            // until this is called, so starting or stopping one before it throws - and the strip
+            // can be attached, and detached again, without ever having started anything.
+            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -263,7 +268,6 @@ namespace Telegram.Controls
 
             _scrollingHost = null;
             _threshold = float.NaN;
-            _running = false;
 
             StopAnimations();
         }
@@ -348,8 +352,6 @@ namespace Telegram.Controls
             properties.StartAnimation("Approach", approach);
             properties.StartAnimation("Offset", offset);
 
-            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
-
             var pin = compositor.CreateExpressionAnimation("tabs.Offset");
             pin.SetReferenceParameter("tabs", properties);
 
@@ -358,7 +360,7 @@ namespace Telegram.Controls
             // The card dissolves across the approach, on the same long run-up the header's surface
             // reaches out on, so the one gives way exactly as the other arrives. It is gone by the
             // moment the strip lands.
-            var floating = compositor.CreateExpressionAnimation("1 - tabs.Approach");
+            var floating = compositor.CreateExpressionAnimation("clamp(1 - tabs.Approach * 2, 0, 1)");
             floating.SetReferenceParameter("tabs", properties);
 
             if (CardPart != null)
@@ -389,10 +391,15 @@ namespace Telegram.Controls
 
         private void StopAnimations()
         {
-            if (_properties == null)
+            // Paired with Start, which owns the flag the other way: nothing here may run for a
+            // start that never happened, because a property that was never animated - Translation
+            // most of all - need not exist on the visual at all.
+            if (!_running)
             {
                 return;
             }
+
+            _running = false;
 
             _properties.StopAnimation("Progress");
             _properties.StopAnimation("Approach");
