@@ -16,12 +16,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using WalletEngine;
+using Windows.ApplicationModel;
 using Windows.Storage;
 // Both halves define a SendMessage - TDLib's is the function that sends a chat message - and this
 // file is the one place they meet.
 using File = System.IO.File;
 using EngineSendMessage = WalletEngine.SendMessage;
 using TdTonWalletState = Telegram.Td.Api.TonWalletState;
+using TdTonConnectSession = Telegram.Td.Api.TonConnectSession;
+using Telegram.Navigation.Services;
 
 namespace Telegram.Services.Wallet
 {
@@ -85,6 +88,9 @@ namespace Telegram.Services.Wallet
         private const int ArchiveVersion = 1;
         private const int DescriptorVersion = 2;
 
+        private const uint RotationMagic = 0x544F524Du; // "MROT"
+        private const int RotationVersion = 1;
+
         private static IReadOnlyList<string> _recoveryWords;
 
         private readonly IClientService _clientService;
@@ -98,6 +104,12 @@ namespace Telegram.Services.Wallet
 
         private WalletStatuslessHost _transport;
         private WalletDescriptor _descriptor;
+
+        // A key change this device has submitted and the chain has not shown yet. Until it
+        // resolves, the wallet still signs with the old key - the contract has not accepted the
+        // new one - so the descriptor is not switched and nothing else may spend the seqno this
+        // rotation is using.
+        private WalletRotation _rotation;
 
         // The public key the account reported when this device bound, which is the only thing that
         // changes under a rotation - see CanStillSign. Kept beside the descriptor, saved with it and
@@ -196,7 +208,14 @@ namespace Telegram.Services.Wallet
             // keys: reading another account's secret is the one mistake with no recovery.
             _suffix = _clientService.Options.TestMode ? "_test" : string.Empty;
 
-            var secrets = new WalletSecretStore(_path, _suffix);
+            Vault = new WalletVault(_path, _suffix)
+            {
+                // The passcode is one setting for the whole app rather than one per account, which
+                // is why it is the lifetime's and not this session's.
+                Prompt = new WalletVaultPrompt(LifetimeService.Current.Passcode)
+            };
+
+            var secrets = new WalletSecretStore(Vault, _path, _suffix);
             var journal = new WalletJournalStore(Path.Combine(_path, "journal" + _suffix + ".bin"));
 
             _platform = new WalletPlatformHost(secrets, journal);
@@ -208,6 +227,12 @@ namespace Telegram.Services.Wallet
         /// a wallet.
         /// </summary>
         public WalletState State { get; private set; } = WalletState.None;
+
+        /// <summary>
+        /// What guards the secrets. Built by <see cref="EnsureStores"/>, so null until the first
+        /// <see cref="RestoreAsync"/>.
+        /// </summary>
+        public WalletVault Vault { get; private set; }
 
         /// <summary>
         /// The 2048 BIP-39 words the engine validates against.
@@ -246,6 +271,14 @@ namespace Telegram.Services.Wallet
                 {
                     _archiveLoaded = true;
                     LoadArchive();
+                }
+
+                // Before anything reads the descriptor: a rotation that was out when the app
+                // closed decides which key the wallet signs with, and the answer is on the chain
+                // rather than in either file.
+                if (_rotation == null)
+                {
+                    TryLoadRotation(out _rotation);
                 }
 
                 if (_descriptor == null && TryLoadDescriptor(out _descriptor, out _boundKey))
@@ -370,6 +403,12 @@ namespace Telegram.Services.Wallet
 
                 _wallet = wallet;
 
+                // Before the staleness check below, and the order is the whole point: our own
+                // rotation arrives here as a public key that does not match the one this device
+                // bound, which is indistinguishable from someone else replacing the wallet unless
+                // the rotation being waited for is settled first.
+                var rotated = await SettleRotationAsync(wallet);
+
                 // Nothing was seen before the first update, which is not the same as the wallet
                 // having changed - and is the update that builds the client in the first place.
                 var first = previous.Length == 0;
@@ -391,7 +430,10 @@ namespace Telegram.Services.Wallet
                     _boundKey is { Length: > 0 } ? Convert.ToBase64String(_boundKey) : "none",
                     _descriptor != null ? "yes" : "no"));
 
-                if (first || replaced || stale)
+                // A settled rotation belongs here too: the client is built around the key it was
+                // given, and the descriptor underneath it has just been swapped for the one that
+                // holds the new phrase.
+                if (first || replaced || stale || rotated)
                 {
                     await DetachAsync();
 
@@ -446,7 +488,7 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        public async Task<WalletBindResult> BindAsync(IReadOnlyList<string> words)
+        public async Task<WalletBindResult> BindAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null)
         {
             await _mutex.WaitAsync();
             try
@@ -458,6 +500,12 @@ namespace Telegram.Services.Wallet
                 {
                     return new WalletBindResult(WalletBindFailure.NoWallet);
                 }
+
+                // After EnsureStores, which is what builds the vault - and in the window the user
+                // typed the phrase into, because storing it is what makes the engine ask for the
+                // vault, and the engine has no window of its own to ask in. Only when the caller
+                // is not already holding one: binding is often the first half of something larger.
+                using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
 
                 var array = new string[words.Count];
 
@@ -491,15 +539,11 @@ namespace Telegram.Services.Wallet
 
                 await DetachAsync();
 
-                // The baseline comes from the chain, because that is what it will be compared
-                // against: the account keeps reporting the key the wallet was created with, so
-                // recording that one on an already-rotated wallet would make the next check drop the
-                // key that was just bound.
-                //
-                // The account's key stands in when the chain cannot be reached. It is the same value
-                // on a wallet that has never rotated, and on one that has, the first check that does
-                // reach the chain asks for the phrase once more and settles it.
-                var bound = await ChainPublicKeyAsync(wallet.Address) ?? wallet.PublicKey;
+                // What the account reports, which is what every later check compares against.
+                // The server follows key changes on chain itself and rewrites this once one
+                // confirms, so it is current even on a wallet somebody else has already rotated -
+                // which it was not before, and this used to read the chain directly to get it.
+                var bound = wallet.PublicKey;
 
                 SaveDescriptor(descriptor, bound);
 
@@ -533,22 +577,24 @@ namespace Telegram.Services.Wallet
             throw new WalletRequestException(response as Error);
         }
 
-        public async Task<WalletBindResult> BindFromCloudAsync(string password)
+        public async Task<WalletBindResult> BindFromCloudAsync(INavigationService navigation, string password, WalletVault.WalletVaultLease lease = null)
         {
             // Both halves throw what the caller has to tell apart: a wrong password comes out of
             // the export as WalletRequestException, and a phrase that derives another wallet out
             // of the bind.
             var words = await ExportRecoveryPhraseAsync(password);
-            return await BindAsync(words);
+            return await BindAsync(navigation, words, lease);
         }
 
-        public async Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync()
+        public async Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
         {
             var descriptor = _descriptor;
             if (descriptor == null)
             {
                 return null;
             }
+
+            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
 
             try
             {
@@ -581,7 +627,7 @@ namespace Telegram.Services.Wallet
             await _clientService.SendAsync(new DisableTonWalletBackup(password ?? string.Empty));
         }
 
-        public async Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless)
+        public async Task<WalletTransferResult> SendAsync(INavigationService navigation, string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless)
         {
             var client = _client;
             if (client == null || _descriptor == null)
@@ -590,6 +636,18 @@ namespace Telegram.Services.Wallet
                 // caller is the one that can make it and then try again.
                 throw new WalletNotBoundException();
             }
+
+            if (_rotation != null)
+            {
+                // A key change is out under this wallet's current seqno, and the contract accepts
+                // one message per seqno. Sending now would either lose this transfer or the
+                // rotation, and which one is not ours to pick.
+                throw new WalletRotationPendingException();
+            }
+
+            // Covers the encrypted comment as well as the transfer: both sign with this wallet's
+            // key, and the user confirming once is confirming the send they asked for.
+            using var lease = await Vault.LeaseAsync(navigation, comment);
 
             SendMessageBody body;
 
@@ -732,6 +790,225 @@ namespace Telegram.Services.Wallet
             }
         }
 
+        /// <summary>
+        /// Replaces the wallet's signing key, keeping its address, and answers with the phrase
+        /// that now opens it.
+        /// </summary>
+        /// <remarks>
+        /// The order is the whole of the safety here. The replacement phrase is stored **before**
+        /// the message is submitted, because a key change that lands while the phrase behind it is
+        /// nowhere leaves a wallet nobody can sign for. The descriptor is switched **after** the
+        /// chain shows the new key, because until then the old one is still what the contract
+        /// accepts.
+        /// </remarks>
+        public async Task<IReadOnlyList<string>> UpdateRecoveryPhraseAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        {
+            var client = _client;
+            var wallet = _wallet;
+
+            if (client == null || _descriptor == null || wallet is not { Address.Length: > 0 })
+            {
+                throw new WalletNotBoundException();
+            }
+
+            if (_rotation != null)
+            {
+                throw new WalletRotationPendingException();
+            }
+
+            // Only when the caller has not opened it already: being asked to confirm twice for one
+            // operation is the app forgetting what it was in the middle of.
+            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+
+            // The window the old key's signature covers. Long enough for the message to be
+            // included, short enough that a rotation that never landed stops being a question.
+            var validUntil = (ulong)DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
+
+            var prepared = await client.PrepareKeyRotation(
+                new PrepareKeyRotationRequest(validUntil, KeyRotationMessageKind.External));
+
+            var words = Split(prepared.ReplacementRecoveryPhrase.Phrase);
+            var replacement = await _lifecycle.ImportWallet(
+                new ImportWalletRequest(NewRecordId(), DefaultNetwork, words.ToArray()));
+
+            // A rotation preserves the anchor, and the address is derived from it, so this holds by
+            // construction. If it ever did not, what was just stored would be the key to somewhere
+            // else and the wallet would be unreachable.
+            if (!IsSameWallet(replacement, wallet))
+            {
+                LogMismatch(replacement, wallet, words.ToArray());
+
+                await _lifecycle.DeleteWallet(replacement);
+                throw new WalletRotationFailedException("the replacement phrase derives another address");
+            }
+
+            var rotation = new WalletRotation(replacement, prepared.NewPublicKey, prepared.ValidUntil);
+
+            await _mutex.WaitAsync();
+            try
+            {
+                _rotation = rotation;
+                SaveRotation(rotation);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            var response = await _clientService.SendAsync(new SendTonWalletTransfer(
+                Bytes(prepared.SignedBoc), Array.Empty<byte>()));
+
+            if (response is not TonWalletTransferResult)
+            {
+                // Nothing was signed away: the message never reached the chain, the contract still
+                // holds the old key, and the phrase just stored is the one to forget.
+                var error = response as Error;
+                Logger.Error(string.Format("wallet key rotation refused: {0} {1}", error?.Code, error?.Message));
+
+                await DiscardRotationAsync(rotation);
+                throw new WalletRequestException(error);
+            }
+
+            // Nothing to wait for. The account reports the new key once the change confirms and
+            // the update that carries it settles this, so the phrase can go in front of the user
+            // now - which is where it needs to be, being the only copy of it anywhere.
+            return words;
+        }
+
+        /// <summary>
+        /// Settles a submitted key change against what the account reports.
+        /// </summary>
+        /// <remarks>
+        /// Nothing is polled and nothing is read from the chain. The server watches
+        /// <c>change_wallet_key</c> itself, re-reads the key once the transaction confirms, and
+        /// sends the state on - so the account's report is both the answer and the notification,
+        /// and it says the same thing whichever client performed the rotation.
+        ///
+        /// Called with <see cref="_mutex"/> held, from the update that carries the key.
+        /// </remarks>
+        /// <returns>
+        /// Whether the descriptor was swapped, which the caller has to rebuild the client around.
+        /// </returns>
+        private async Task<bool> SettleRotationAsync(TdTonWalletState wallet)
+        {
+            var rotation = _rotation;
+            if (rotation == null)
+            {
+                return false;
+            }
+
+            if (wallet.PublicKey is { Length: > 0 } reported && reported.SequenceEqual(rotation.PublicKey))
+            {
+                var previous = _descriptor;
+
+                _descriptor = rotation.Descriptor;
+                _boundKey = rotation.PublicKey;
+
+                SaveDescriptor(_descriptor, _boundKey);
+
+                _rotation = null;
+                DeleteRotation();
+
+                // Last, and only once what replaces it is on disk: the old phrase is dead weight
+                // the moment the contract stops accepting its key, but deleting it before the new
+                // descriptor is saved would leave a crash with neither.
+                if (previous != null)
+                {
+                    await DeleteQuietlyAsync(previous);
+                }
+
+                return true;
+            }
+
+            if ((ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds() > rotation.ValidUntil)
+            {
+                // The signature the message carried can no longer be included, so the key it would
+                // have set can never arrive. The old phrase is still the wallet's, and nothing was
+                // swapped - so there is nothing to rebuild.
+                _rotation = null;
+                DeleteRotation();
+
+                await DeleteQuietlyAsync(rotation.Descriptor);
+            }
+
+            return false;
+        }
+
+        private async Task DiscardRotationAsync(WalletRotation rotation)
+        {
+            await _mutex.WaitAsync();
+            try
+            {
+                if (_rotation == rotation)
+                {
+                    _rotation = null;
+                    DeleteRotation();
+                }
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            await DeleteQuietlyAsync(rotation.Descriptor);
+        }
+
+        /// <summary>
+        /// Forgets a phrase the engine is holding, for the paths where failing to is not worth
+        /// failing the operation over.
+        /// </summary>
+        private async Task DeleteQuietlyAsync(WalletDescriptor descriptor)
+        {
+            try
+            {
+                await _lifecycle.DeleteWallet(descriptor);
+            }
+            catch (Exception ex)
+            {
+                // A phrase left in protected storage under a record nothing points at. It opens
+                // nothing on its own and the next bind writes over it.
+                Logger.Error("wallet phrase could not be forgotten: " + ex.Message);
+            }
+        }
+
+        public async Task<BigInteger?> EstimateKeyRotationFeeAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        {
+            var client = _client;
+            if (client == null || _descriptor == null)
+            {
+                // Not the same as having no estimate: without a key here there is nothing to
+                // rotate, so the caller has to bind rather than show a cost for something that
+                // cannot happen.
+                throw new WalletNotBoundException();
+            }
+
+            try
+            {
+                // Preparing one reads the phrase - the key-change message is signed by the key it
+                // replaces - so this costs a confirmation, unless the caller is already holding one.
+                using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+
+                // Long enough that the emulation is against a message that would still be valid,
+                // short enough to be meaningless afterwards: nothing here is kept.
+                var validUntil = (ulong)DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
+
+                var prepared = await client.PrepareKeyRotation(
+                    new PrepareKeyRotationRequest(validUntil, KeyRotationMessageKind.External));
+
+                var preview = await client.PreviewSendBoc(new SendBocRequest(
+                    NewRecordId(), false, prepared.SignedBoc, prepared.Seqno, prepared.ValidUntil));
+
+                return BigInteger.Parse(preview.Emulation.WalletFeesNanograms);
+            }
+            catch (Exception ex)
+            {
+                // An estimate nobody can be given is a line that is not shown. The caller decides
+                // what to do without one; it must not read as "free".
+                Logger.Error("wallet key rotation fee could not be estimated: " + ex.Message);
+                return null;
+            }
+        }
+
         public async Task<TonWalletTransaction> GetTransactionAsync(string transactionId)
         {
             if (string.IsNullOrEmpty(transactionId))
@@ -759,13 +1036,454 @@ namespace Telegram.Services.Wallet
             return response as TonWalletTransaction;
         }
 
+        public async Task<TdTonConnectSession> GetSessionAsync(long sessionId)
+        {
+            // Through the pending requests because there is no getter for one session, and this one
+            // reads nothing protected: the session is public state, and only deriving its key is not.
+            var response = await _clientService.SendAsync(new GetTonConnectSessionPendingRequests(sessionId));
+            return response is TonConnectRequests requests ? requests.Session : null;
+        }
+
+        public async Task<WalletRequest> GetRequestAsync(INavigationService navigation, long messageId, MessageTonConnectRequest message, WalletVault.WalletVaultLease lease = null)
+        {
+            // The stores are built on the first restore, so nothing below exists until it has run.
+            // A request can arrive in a chat long before the wallet has been opened in this
+            // session, which is exactly when this is reached.
+            await RestoreAsync();
+
+            var client = _client;
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+
+            if (client == null || lifecycle == null || descriptor == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            // Deriving the session reads the wallet key, so this is behind a confirmation - and
+            // it has to come before the sheet rather than on its Confirm button, because without it
+            // the request cannot be decrypted and there is nothing to show. The sheet keeps the
+            // lease afterwards, so answering does not ask again.
+            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+
+            var response = await _clientService.SendAsync(new GetTonConnectSessionPendingRequests(message.SessionId));
+            if (response is not TonConnectRequests pending)
+            {
+                // Answered by another device, or expired while the chat was open. Either way there
+                // is nothing left to decide.
+                return null;
+            }
+
+            var request = pending.Requests.FirstOrDefault(x => x.MessageId == messageId);
+            if (request == null)
+            {
+                return null;
+            }
+
+            // Derived rather than stored, the same way connecting derives it: the session key comes
+            // from the wallet key, the dApp id and the server nonce, so any device of this account
+            // arrives at it.
+            using var derived = await DeriveAsync(lifecycle, descriptor, pending.Session);
+            if (derived == null)
+            {
+                return null;
+            }
+
+            var now = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var decrypted = derived.DecryptRequest(request.Body, now);
+
+            // signData and signMessage are not supported. They are answered with an error, which
+            // the caller does rather than showing a sheet for something that cannot be done.
+            if (decrypted.Request is not TonConnectIncomingRequest.SendTransaction send)
+            {
+                return null;
+            }
+
+            var preview = await client.PreviewTonConnect(send.Request);
+            var message0 = preview.Messages.FirstOrDefault();
+
+            if (message0 == null)
+            {
+                return null;
+            }
+
+            return new WalletRequest(message.SessionId, messageId, send.Id, message.TraceId)
+            {
+                Name = message.DappName,
+                Domain = Domain(pending.Session),
+                Recipient = message0.Destination,
+                Nanograms = Amount(message0.Amount),
+                Comment = Comment(message0.Body),
+                FeeNanograms = BigInteger.Parse(preview.Emulation.WalletFeesNanograms),
+                Actions = Actions(preview.Emulation, descriptor.Address),
+                ExpirationDate = request.ExpirationDate
+            };
+        }
+
+        /// <summary>
+        /// The emulation, as rows: what each transfer in the trace does, seen from this wallet.
+        /// </summary>
+        /// <remarks>
+        /// Toncenter reports each transfer as an action whose details are a JSON object -
+        /// <c>{source, destination, value, comment, encrypted}</c>, value in nanograms as a string.
+        /// The direction is not among them: it is whether *our* address is the destination, which
+        /// is the one thing only this side knows.
+        ///
+        /// The address each row shows is the other end of that leg - where it came from for a
+        /// deposit, where it goes for a withdrawal. On a transfer that returns change to the same
+        /// wallet both legs name the same address, which is why the two rows can look alike.
+        ///
+        /// Anything that is not a plain transfer is skipped rather than guessed at, and so is a row
+        /// whose JSON does not parse: the preview is a second opinion on the request, and half of
+        /// one is worse than none.
+        /// </remarks>
+        private static IReadOnlyList<WalletRequestAction> Actions(SendEmulation emulation, string ours)
+        {
+            var items = new List<WalletRequestAction>();
+
+            foreach (var action in emulation.Actions)
+            {
+                if (!string.Equals(action.Kind, "ton_transfer", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    using var document = JsonDocument.Parse(action.DetailsJson);
+                    var root = document.RootElement;
+
+                    var source = root.GetProperty("source").GetString();
+                    var destination = root.GetProperty("destination").GetString();
+
+                    if (!BigInteger.TryParse(root.GetProperty("value").GetString(), out var value))
+                    {
+                        continue;
+                    }
+
+                    var deposit = IsSameAddress(destination, ours);
+
+                    items.Add(new WalletRequestAction(
+                        deposit ? source : destination,
+                        deposit ? WalletRequestDirection.Deposit : WalletRequestDirection.Withdraw,
+                        value,
+                        Comment(root)));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("wallet emulation action could not be read: " + ex.Message);
+                }
+            }
+
+            return items;
+        }
+
+        /// <summary>
+        /// What was written on a transfer, where it is there to be read.
+        /// </summary>
+        /// <remarks>
+        /// An encrypted comment is only readable by the two parties, and the emulator is neither -
+        /// it reports the flag and nothing else. Saying so is better than an empty line, which
+        /// would read as no comment at all.
+        /// </remarks>
+        private static string Comment(JsonElement root)
+        {
+            if (root.TryGetProperty("encrypted", out var encrypted) && encrypted.ValueKind == JsonValueKind.True)
+            {
+                return "[encrypted comment]";
+            }
+
+            return root.TryGetProperty("comment", out var comment) && comment.ValueKind == JsonValueKind.String
+                ? comment.GetString()
+                : null;
+        }
+
+        /// <summary>
+        /// The host the dApp's manifest was fetched from, which is the identity that can be judged.
+        /// </summary>
+        private static string Domain(TdTonConnectSession session)
+        {
+            if (session?.Manifest is not TonConnectManifestInfo info)
+            {
+                return string.Empty;
+            }
+
+            return Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url) ? url.Host : info.Url;
+        }
+
+        /// <summary>
+        /// The nanograms an engine send amount stands for, or zero where it names no fixed value.
+        /// </summary>
+        private static BigInteger Amount(SendAmount amount)
+        {
+            return amount is SendAmount.Exact exact && BigInteger.TryParse(exact.Nanograms, out var value)
+                ? value
+                : BigInteger.Zero;
+        }
+
+        /// <summary>
+        /// The comment a request carries, where it carries one in the clear.
+        /// </summary>
+        private static string Comment(SendMessageBody body)
+        {
+            return body is SendMessageBody.Comment comment ? comment.Text : null;
+        }
+
+        public async Task<bool> AnswerRequestAsync(INavigationService navigation, WalletRequest request, bool accept, WalletVault.WalletVaultLease lease = null)
+        {
+            var client = _client;
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+
+            if (client == null || lifecycle == null || descriptor == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            // At the tap rather than when the sheet opened, which is the whole point of it: it is
+            // atomic across devices, and whichever gets here first is the one that answers. The
+            // server then edits the service message so the others show the outcome.
+            var claim = await _clientService.SendAsync(new ClaimTonConnectRequest(
+                request.SessionId, request.MessageId, request.DappRequestId, !accept));
+
+            if (claim is Error error)
+            {
+                // TONCONNECT_REQUEST_ALREADY_CLAIMED, or it expired while the sheet was open.
+                Logger.Error(string.Format("ton connect request could not be claimed: {0} {1}", error.Code, error.Message));
+                return false;
+            }
+
+            using var owned = lease == null ? await Vault.LeaseAsync(navigation, request.Domain) : null;
+
+            // Read again rather than held from the sheet: the session is what encrypts the answer,
+            // and keeping a decrypted request alive across a screen is keeping a spend authorized
+            // for as long as somebody looks at it.
+            var response = await _clientService.SendAsync(new GetTonConnectSessionPendingRequests(request.SessionId));
+            if (response is not TonConnectRequests pending)
+            {
+                return false;
+            }
+
+            var current = pending.Requests.FirstOrDefault(x => x.MessageId == request.MessageId);
+            if (current == null)
+            {
+                return false;
+            }
+
+            using var derived = await DeriveAsync(lifecycle, descriptor, pending.Session);
+            if (derived == null)
+            {
+                return false;
+            }
+
+            var now = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var decrypted = derived.DecryptRequest(current.Body, now);
+
+            byte[] body;
+
+            if (accept && decrypted.Request is TonConnectIncomingRequest.SendTransaction send)
+            {
+                // Prepared here and broadcast by the account, the same way every other transfer in
+                // this app goes out. The engine could submit it itself, but then the account would
+                // never see it: TDLib is what puts a row in the history, and a dApp transfer that
+                // left no trace would be the one spend the user cannot find afterwards.
+                var prepared = await client.PrepareTransfer(new PrepareTransferRequest(NewRecordId(), send.Request.Intent));
+
+                var sent = await _clientService.SendAsync(new SendTonWalletTransfer(
+                    Bytes(prepared.ExternalBoc), Array.Empty<byte>()));
+
+                if (sent is not TonWalletTransferResult)
+                {
+                    // Nothing left, so the dApp is told so rather than handed a message that was
+                    // never broadcast.
+                    var refused = sent as Error;
+                    Logger.Error(string.Format("ton connect transfer refused: {0} {1}", refused?.Code, refused?.Message));
+
+                    body = derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.Unknown, "The transfer could not be sent");
+                }
+                else
+                {
+                    // The dApp is handed the same message the account broadcast: a TON Connect
+                    // answer is the signed BOC, not a receipt for it.
+                    body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
+                }
+            }
+            else
+            {
+                body = derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.UserDeclined, "Declined");
+            }
+
+            var answer = await _clientService.SendAsync(new AnswerTonConnectRequest(
+                request.SessionId, request.MessageId, request.TraceId, body));
+
+            if (answer is Error failed)
+            {
+                // The transfer has already left if this was an acceptance, so this is the dApp not
+                // being told rather than nothing having happened. It will time out and ask again.
+                Logger.Error(string.Format("ton connect request could not be answered: {0} {1}", failed.Code, failed.Message));
+            }
+
+            return true;
+        }
+
+        public async Task<WalletConnectResult> ConnectAsync(INavigationService navigation, TdTonConnectSession session, TonConnectConnectRequest request, string domain, string traceId)
+        {
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+
+            if (lifecycle == null || descriptor == null || session == null)
+            {
+                return new WalletConnectResult(null);
+            }
+
+            if (_rotation != null)
+            {
+                // The engine says so outright on SignTonConnectProof: a proof signed with a key the
+                // contract is about to stop accepting is one the dApp would be told to trust and
+                // the chain would then reject.
+                throw new WalletRotationPendingException();
+            }
+
+            using var lease = await Vault.LeaseAsync(navigation, domain);
+
+            // Derived, not stored: every device of this account arrives at the same key from the
+            // wallet key, the dApp's id and the server's nonce, so any of them can answer for the
+            // session without a key ever being sent anywhere. Reading the wallet key is what makes
+            // this ask for user presence.
+            using var derived = await DeriveAsync(lifecycle, descriptor, session);
+            if (derived == null)
+            {
+                return new WalletConnectResult(null);
+            }
+
+            // Registering W is what earns the challenge, and it is one-way: the server binds the
+            // key to the session and it can never be replaced.
+            var response = await _clientService.SendAsync(new SetTonConnectSessionWalletClientId(session.Id, derived.PublicKeyHex()));
+            if (response is not TonConnectChallenge challenge)
+            {
+                return new WalletConnectResult(response as Error);
+            }
+
+            var account = lifecycle.TonConnectAccount(descriptor);
+            TonConnectProofReply proof = null;
+
+            if (Payload(request) is string payload)
+            {
+                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+                var signature = await SignProofAsync(lifecycle, descriptor, domain, timestamp, payload);
+                if (signature == null)
+                {
+                    // Asked for and not produced. Connecting anyway would look like success and
+                    // leave the dApp unable to sign the user in.
+                    return new WalletConnectResult(null);
+                }
+
+                // The proof carries the key that signed it, which after a rotation is not the
+                // anchor key the address and StateInit are built from - and the reply beside it
+                // has to name the same one.
+                account = account with { PublicKey = signature.PublicKey };
+
+                // The same timestamp, domain and payload that were signed: the dApp rebuilds the
+                // digest from these, and anything that drifts makes the proof fail.
+                proof = new TonConnectProofReply((ulong)timestamp, domain, payload, signature.Signature);
+            }
+
+            if (RequestedNetwork(request) is string network)
+            {
+                account = account with { Network = network };
+            }
+
+            var body = derived.EncryptConnectEvent((ulong)challenge.EventId, account, proof, Device());
+
+            var result = await _clientService.SendAsync(new SendTonConnectSessionConnectResult(
+                session.Id, derived.OpenChallenge(challenge.Challenge), false, body, traceId ?? string.Empty));
+
+            return result is Ok
+                ? WalletConnectResult.Connected
+                : new WalletConnectResult(result as Error);
+        }
+
+        private async Task<TonConnectDerivedSession> DeriveAsync(WalletLifecycle lifecycle, WalletDescriptor descriptor, TdTonConnectSession session)
+        {
+            try
+            {
+                return await lifecycle.DeriveTonConnectSession(new TonConnectDerivedSessionRequest(descriptor, session.DappClientId, session.Nonce));
+            }
+            catch (WalletLifecycleException.ProtectedSecretHost failed) when (failed.kind == ProtectedSecretHostErrorKind.Cancelled)
+            {
+                // The device prompt was dismissed. An answer, not a fault.
+                throw new WalletAccessDeniedException();
+            }
+            catch (Exception ex)
+            {
+                // A wallet key that does not match the one the session was registered with is the
+                // ordinary case here: this device simply does not take part.
+                Logger.Error("ton connect session could not be derived: " + ex.Message);
+                return null;
+            }
+        }
+
+        private static async Task<TonConnectProofSignature> SignProofAsync(WalletLifecycle lifecycle, WalletDescriptor descriptor, string domain, long timestamp, string payload)
+        {
+            try
+            {
+                return await lifecycle.SignTonConnectProof(new TonConnectProofSignRequest(descriptor, domain ?? string.Empty, (ulong)timestamp, payload));
+            }
+            catch (WalletLifecycleException.ProtectedSecretHost failed) when (failed.kind == ProtectedSecretHostErrorKind.Cancelled)
+            {
+                throw new WalletAccessDeniedException();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("ton connect proof could not be signed: " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>The dApp's <c>ton_proof</c> challenge, or null if it did not ask for one.</summary>
+        private static string Payload(TonConnectConnectRequest request)
+        {
+            foreach (var item in request.Items)
+            {
+                if (item is TonConnectConnectItemProof proof)
+                {
+                    return proof.Payload ?? string.Empty;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>The network the dApp asked to be told about, where it named one.</summary>
+        private static string RequestedNetwork(TonConnectConnectRequest request)
+        {
+            foreach (var item in request.Items)
+            {
+                if (item is TonConnectConnectItemAddress address && address.Network.Length > 0)
+                {
+                    return address.Network;
+                }
+            }
+
+            return null;
+        }
+
+        private static TonConnectDevice Device()
+        {
+            var version = Package.Current.Id.Version;
+
+            return new TonConnectDevice(TonConnectDevicePlatform.Windows, "Unigram",
+                string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build));
+        }
+
         public async Task<string> ResolveDnsAsync(string name)
         {
             var client = _client;
             return client != null ? await client.ResolveDns(name) : null;
         }
 
-        public async Task<string> DecryptCommentAsync(TonWalletTransaction transaction, string encryptedBody)
+        public async Task<string> DecryptCommentAsync(INavigationService navigation, TonWalletTransaction transaction, string encryptedBody)
         {
             var client = _client;
             if (client == null || string.IsNullOrEmpty(encryptedBody) || transaction?.Type is not TonWalletTransactionTypeTransfer transfer || !transfer.IsCommentEncrypted)
@@ -777,6 +1495,8 @@ namespace Telegram.Services.Wallet
             {
                 throw new WalletNotBoundException();
             }
+
+            using var lease = await Vault.LeaseAsync(navigation);
 
             // TDLib reports the encrypted payload, the engine takes the message body it belongs to.
             var body = WalletCommentBody.FromPayload(encryptedBody);
@@ -826,11 +1546,10 @@ namespace Telegram.Services.Wallet
         /// one.
         /// </summary>
         /// <remarks>
-        /// The account cannot answer this. Telegram knows the wallet by the key its address is
-        /// derived from, and a rotation is an on-chain operation performed by whichever client did
-        /// it - one whose whole point, when it follows the cloud backup being turned off, is that
-        /// the server no longer holds a key that can spend. So <c>tonWalletState.public_key</c>
-        /// stays as it was and the contract is the only authority left.
+        /// A backstop now rather than the mechanism. The server follows <c>change_wallet_key</c> on
+        /// chain and rewrites <c>tonWalletState.public_key</c> when it confirms, so a rotation done
+        /// anywhere reaches this device as an ordinary state update and is caught where staleness
+        /// is checked. What is left here covers the window before the server has noticed.
         ///
         /// Once per session, and never blocking: a stale key costs nothing until something signs,
         /// and the balance and history are readable without one.
@@ -838,6 +1557,15 @@ namespace Telegram.Services.Wallet
         private async Task VerifySigningKeyAsync()
         {
             var wallet = _wallet;
+
+            // A rotation of our own is the one case where the chain disagreeing with the bound
+            // key is expected rather than a wallet taken over elsewhere. Settling it belongs to the
+            // update that reports the new key, so there is nothing to do here but stay out of the
+            // way until it arrives or expires.
+            if (_rotation != null)
+            {
+                return;
+            }
 
             if (_descriptor == null || wallet == null || wallet.Address.Length == 0 || _boundKey is not { Length: > 0 } bound)
             {
@@ -1120,12 +1848,36 @@ namespace Telegram.Services.Wallet
             return Task.CompletedTask;
         }
 
+        public async Task DeleteWalletAsync(string password)
+        {
+            var response = await _clientService.SendAsync(new DeleteTonWallet(password ?? string.Empty));
+            if (response is Error error)
+            {
+                throw new WalletRequestException(error);
+            }
+
+            // Only once the account has agreed. The new wallet arrives by update, and this device
+            // holds no key for it - which is the same position as a fresh install, and the same
+            // one the account is now in.
+            await ForgetAsync();
+        }
+
         public async Task ForgetAsync()
         {
             await _mutex.WaitAsync();
             try
             {
                 EnsureStores();
+
+                // Before the descriptor check, because both outlive the binding they were made
+                // for: a bind cancelled after the vault was enrolled leaves one behind, and it
+                // would go on asking for Hello on a device that holds nothing.
+                //
+                // The vault exists to encrypt this device's wallet secrets, and after this there
+                // are none. Deleting the secrets below does not read it, so the order is safe.
+                _rotation = null;
+                DeleteRotation();
+                Vault?.Delete();
 
                 var descriptor = _descriptor;
                 if (descriptor == null)
@@ -2394,6 +3146,82 @@ namespace Telegram.Services.Wallet
             }
         }
 
+        private string RotationPath => Path.Combine(_path, "rotation" + _suffix + ".bin");
+
+        private void SaveRotation(WalletRotation rotation)
+        {
+            Directory.CreateDirectory(_path);
+
+            using var stream = File.Create(RotationPath);
+            using var writer = new BinaryWriter(stream, Encoding.UTF8);
+
+            writer.Write(RotationMagic);
+            writer.Write(RotationVersion);
+            writer.Write(rotation.Descriptor.RecordId);
+            writer.Write(rotation.Descriptor.Address);
+            writer.Write(rotation.Descriptor.PublicKey.Length);
+            writer.Write(rotation.Descriptor.PublicKey);
+            writer.Write(rotation.Descriptor.Network == Network.Testnet ? 1 : 0);
+            writer.Write(rotation.Descriptor.SecretRef.Value);
+            writer.Write(rotation.PublicKey.Length);
+            writer.Write(rotation.PublicKey);
+            writer.Write(rotation.ValidUntil);
+        }
+
+        private bool TryLoadRotation(out WalletRotation rotation)
+        {
+            rotation = null;
+
+            try
+            {
+                if (!File.Exists(RotationPath))
+                {
+                    return false;
+                }
+
+                using var stream = File.OpenRead(RotationPath);
+                using var reader = new BinaryReader(stream, Encoding.UTF8);
+
+                if (reader.ReadUInt32() != RotationMagic || reader.ReadInt32() != RotationVersion)
+                {
+                    return false;
+                }
+
+                var recordId = reader.ReadString();
+                var address = reader.ReadString();
+                var publicKey = reader.ReadBytes(reader.ReadInt32());
+                var network = reader.ReadInt32() == 1 ? Network.Testnet : Network.Mainnet;
+                var secretRef = reader.ReadString();
+
+                var descriptor = new WalletDescriptor(recordId, address, publicKey, network, new ProtectedSecretRef(secretRef));
+
+                rotation = new WalletRotation(descriptor, reader.ReadBytes(reader.ReadInt32()), reader.ReadUInt64());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Unreadable is the same as absent: the rotation either landed, in which case the
+                // chain says so on the next check, or it did not and the old phrase still signs.
+                Logger.Error("wallet rotation record could not be read: " + ex.Message);
+                return false;
+            }
+        }
+
+        private void DeleteRotation()
+        {
+            try
+            {
+                if (File.Exists(RotationPath))
+                {
+                    File.Delete(RotationPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet rotation record could not be deleted: " + ex.Message);
+            }
+        }
+
         private void DeleteDescriptor()
         {
             try
@@ -2407,6 +3235,60 @@ namespace Telegram.Services.Wallet
             {
                 Logger.Error("wallet descriptor could not be deleted: " + ex.Message);
             }
+        }
+    }
+
+    /// <summary>
+    /// A submitted key change that the chain has not shown yet.
+    /// </summary>
+    /// <remarks>
+    /// Durable, because the phrase it names is already in protected storage and the message it
+    /// names is already out: forgetting this between runs would leave a wallet whose key is about
+    /// to change and a device that does not know which phrase opens it.
+    /// </remarks>
+    internal sealed class WalletRotation
+    {
+        public WalletRotation(WalletDescriptor descriptor, byte[] publicKey, ulong validUntil)
+        {
+            Descriptor = descriptor;
+            PublicKey = publicKey;
+            ValidUntil = validUntil;
+        }
+
+        /// <summary>The replacement phrase, already stored.</summary>
+        public WalletDescriptor Descriptor { get; }
+
+        /// <summary>The key the contract holds once the change lands, and how it is recognised.</summary>
+        public byte[] PublicKey { get; }
+
+        /// <summary>After this, the signature it was made under can no longer be included.</summary>
+        public ulong ValidUntil { get; }
+    }
+
+    /// <summary>
+    /// Something was asked of the wallet while a key change of its own was still out.
+    /// </summary>
+    /// <remarks>
+    /// The contract accepts one message per sequence number and the rotation is using this one, so
+    /// a transfer sent now would cost either itself or the rotation - and which is not ours to
+    /// pick. It resolves in a block or two, or expires.
+    /// </remarks>
+    public sealed class WalletRotationPendingException : Exception
+    {
+        public WalletRotationPendingException()
+            : base("A key change is already out for this wallet.")
+        {
+        }
+    }
+
+    /// <summary>
+    /// A key change could not be made, and nothing about the wallet was altered.
+    /// </summary>
+    public sealed class WalletRotationFailedException : Exception
+    {
+        public WalletRotationFailedException(string message)
+            : base(message)
+        {
         }
     }
 

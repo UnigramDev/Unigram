@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -12,6 +12,7 @@ using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Wallet;
+using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Wallet.Popups;
 using Windows.UI.Xaml;
@@ -159,34 +160,63 @@ namespace Telegram.Common
         /// So every action that signs, reveals or decrypts calls this first and gives up quietly
         /// if it comes back false: the user has already been told why, or has said no.
         /// </remarks>
-        public static async Task<bool> EnsureBoundAsync(IWalletService wallet, INavigationService navigation)
+        public static async Task<bool> EnsureBoundAsync(IClientService clientService, IWalletService wallet, INavigationService navigation)
+        {
+            var bound = await BindAsync(clientService, wallet, navigation, null);
+            return bound.IsBound;
+        }
+
+        /// <summary>
+        /// The same, for a caller that is binding as one step of something larger.
+        /// </summary>
+        /// <remarks>
+        /// Two things travel that would otherwise be asked for twice. The <paramref name="lease"/>
+        /// goes in, so storing the phrase uses the vault the caller already opened rather than
+        /// opening it again. The account password comes back, because the caller very likely needs
+        /// the same one a moment later - disabling the cloud backup does - and the user should not
+        /// be made to type it twice in one operation.
+        /// </remarks>
+        public static async Task<WalletBindOutcome> BindAsync(IClientService clientService, IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
         {
             var state = await wallet.RestoreAsync();
             if (state.CanSign)
             {
-                return true;
+                return new WalletBindOutcome(true, null);
             }
             else if (!state.HasWallet)
             {
                 // Nothing to bind to. The server creates wallets, so there is also nothing to
                 // offer here.
-                return false;
+                return new WalletBindOutcome(false, null);
             }
 
             if (state.CanExportPhrase)
             {
-                return await BindFromCloudAsync(wallet, navigation);
+                return await BindFromCloudAsync(clientService, wallet, navigation, lease);
             }
 
             // No cloud copy to read, so the phrase has to come from the user. The import popup
             // binds on its own and refuses a phrase that belongs to another wallet.
             await navigation.ShowPopupAsync(new WalletImportPopup(wallet, navigation));
-            return wallet.State.CanSign;
+            return new WalletBindOutcome(wallet.State.CanSign, null);
         }
 
-        private static async Task<bool> BindFromCloudAsync(IWalletService wallet, INavigationService navigation)
+        private static async Task<WalletBindOutcome> BindFromCloudAsync(IClientService clientService, IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
         {
             var xamlRoot = navigation.XamlRoot;
+
+            // An account with no 2-step verification has nothing to ask for, and asking would be
+            // a demand the user cannot satisfy: TDLib takes an empty string for the password in
+            // that case, and the cloud phrase comes back all the same. Asked rather than assumed,
+            // because it can be turned on and off at any time.
+            var password = await clientService.SendAsync(new GetPasswordState());
+            if (password is PasswordState { HasPassword: false })
+            {
+                // Nothing was asked for, so there is nothing to hand back: an account with no
+                // password takes an empty string everywhere it would be wanted.
+                var none = await BindWithPasswordAsync(wallet, navigation, string.Empty, lease);
+                return new WalletBindOutcome(none == BindOutcome.Bound, string.Empty);
+            }
 
             while (true)
             {
@@ -199,41 +229,83 @@ namespace Telegram.Common
 
                 if (result.Result != ContentDialogResult.Primary)
                 {
-                    return false;
+                    return new WalletBindOutcome(false, null);
                 }
 
-                try
+                var outcome = await BindWithPasswordAsync(wallet, navigation, result.Text, lease);
+                if (outcome != BindOutcome.WrongPassword)
                 {
-                    var bound = await wallet.BindFromCloudAsync(result.Text);
-                    if (bound.Failure == null)
-                    {
-                        return true;
-                    }
-
-                    // The cloud's own phrase, refused by the engine or belonging to another wallet:
-                    // the server and the engine disagreeing, which is nothing the user did and
-                    // nothing they can fix by typing the password again.
-                    Logger.Error("wallet binding refused: " + bound.Failure);
-
-                    await ShowMessageAsync(xamlRoot, "[Your wallet could not be set up on this device. Please try again later.]", "[Wallet]");
-                    return false;
+                    // Carried back on success only. A password that did not work is not one the
+                    // caller should go on to use for anything else.
+                    return new WalletBindOutcome(outcome == BindOutcome.Bound,
+                        outcome == BindOutcome.Bound ? result.Text : null);
                 }
-                catch (WalletRequestException ex) when (ex.IsInvalidPassword)
-                {
-                    // The only failure worth asking about again: everything else is about the
-                    // wallet rather than about what they typed.
-                    await ShowMessageAsync(xamlRoot, "[Wrong password. Please try again.]", Strings.TwoStepVerification);
-                }
-                catch (Exception ex)
-                {
-                    // What is left is the phrase not arriving at all: the export failed for a
-                    // reason other than the password.
-                    Logger.Error("wallet binding failed: " + ex.Message);
 
-                    await ShowMessageAsync(xamlRoot, "[Your wallet could not be set up on this device. Please try again later.]", "[Wallet]");
-                    return false;
-                }
+                // The only failure worth asking about again: everything else is about the wallet
+                // rather than about what they typed.
+                await ShowMessageAsync(xamlRoot, "[Wrong password. Please try again.]", Strings.TwoStepVerification);
             }
+        }
+
+        /// <summary>
+        /// Whether the device ended up bound, and the account password that got it there.
+        /// </summary>
+        public readonly struct WalletBindOutcome
+        {
+            public WalletBindOutcome(bool isBound, string password)
+            {
+                IsBound = isBound;
+                Password = password;
+            }
+
+            public bool IsBound { get; }
+
+            /// <summary>
+            /// What the user typed, or an empty string where the account has no password. Null
+            /// when they were not asked - already bound, or never got that far.
+            /// </summary>
+            public string Password { get; }
+        }
+
+        private enum BindOutcome
+        {
+            Bound,
+            WrongPassword,
+            Failed
+        }
+
+        /// <summary>
+        /// One attempt at the cloud phrase, with whatever password the account needs - which is
+        /// none at all when it has no 2-step verification.
+        /// </summary>
+        private static async Task<BindOutcome> BindWithPasswordAsync(IWalletService wallet, INavigationService navigation, string password, WalletVault.WalletVaultLease lease)
+        {
+            try
+            {
+                var bound = await wallet.BindFromCloudAsync(navigation, password, lease);
+                if (bound.Failure == null)
+                {
+                    return BindOutcome.Bound;
+                }
+
+                // The cloud's own phrase, refused by the engine or belonging to another wallet:
+                // the server and the engine disagreeing, which is nothing the user did and
+                // nothing they can fix by typing the password again.
+                Logger.Error("wallet binding refused: " + bound.Failure);
+            }
+            catch (WalletRequestException ex) when (ex.IsInvalidPassword)
+            {
+                return BindOutcome.WrongPassword;
+            }
+            catch (Exception ex)
+            {
+                // What is left is the phrase not arriving at all: the export failed for a reason
+                // other than the password.
+                Logger.Error("wallet binding failed: " + ex.Message);
+            }
+
+            await ShowMessageAsync(navigation.XamlRoot, "[Your wallet could not be set up on this device. Please try again later.]", "[Wallet]");
+            return BindOutcome.Failed;
         }
 
         private static Task<ContentDialogResult> ShowMessageAsync(XamlRoot xamlRoot, string message, string title)
