@@ -13879,4 +13879,21 @@
     <string name="NoStickersFound">No stickers found</string>
     <string name="NoEmojiFound">No emoji found</string>
 
+    <string name="WalletEncryptedBackup">Encrypted Backup</string>
+    <string name="WalletDisableBackup">Disable Backup</string>
+    <string name="WalletEnableBackup">Enable Backup</string>
+    <string name="WalletBackupEnabled">Backup Enabled</string>
+    <string name="WalletBackupEnabledInfo">Your keys are now stored encrypted across Telegram\'s datacenters.</string>
+    <string name="WalletBackupEnabledDescription">Your encrypted key backup is split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
+    <string name="WalletBackupDisabled">Backup Disabled</string>
+    <string name="WalletBackupDisabledInfo">Your recovery phrase is now the only way to restore your wallet</string>
+    <string name="WalletBackupDisabledDescription">Your encrypted key backup will be split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
+    <string name="WalletDisableBackupConfirmInfo">Telegram will delete its encrypted backup, and your recovery key will be updated. This can\'t be undone.</string>
+    <string name="WalletDeleteWallet">Delete Wallet</string>
+    <string name="WalletDeleteWalletTitle">Delete Wallet?</string>
+    <string name="WalletDeleteWalletInfo">You\'ll lose access to your funds unless you\'ve saved your 12-word recovery phrase.</string>
+    <string name="WalletDeleteAnyway">Delete anyway</string>
+    <string name="WalletReplaceWalletTitle">How do you want to replace the old wallet?</string>
+    <string name="WalletImportExisting">Import an Existing Wallet</string>
+    <string name="WalletCreateNew">Create a New Wallet</string>
 </resources>

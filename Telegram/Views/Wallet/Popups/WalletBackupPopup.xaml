@@ -15,23 +15,36 @@
                   VerticalScrollBarVisibility="Auto"
                   VerticalScrollMode="Auto">
         <StackPanel>
-            <controls:HeaderedControl Header="[Recovery Phrase]"
-                                      Footer="[You can transfer your wallet to another device by copying your 24-word recovery phrase.]">
+            <controls:HeaderedControl Header="{CustomResource WalletRecoveryPhraseLearnTitle}"
+                                      Footer="{CustomResource WalletRecoveryPhraseTransferInfo}">
                 <controls:SettingsButton Click="{x:Bind ViewModel.ShowRecoveryPhrase}"
-                                         Content="[Show Recovery Phrase]" />
+                                         Content="{CustomResource WalletRecoveryPhraseLearnButton}" />
             </controls:HeaderedControl>
 
-            <controls:HeaderedControl Header="[Encrypted Backup]"
-                                      Footer="[Telegram stores an encrypted backup of your keys, split across several datacenters. No Telegram employee can access them.]">
-                <controls:SettingsButton Click="{x:Bind ViewModel.DisableBackup}"
-                                         Content="[Disable Backup]"
+            <!-- One of the two buttons at a time: the footer changes tense with it, because the
+                 same description reads as a promise or as a fact depending on which way it goes. -->
+            <controls:HeaderedControl x:Name="BackupRoot"
+                                      Header="{CustomResource WalletEncryptedBackup}">
+                <controls:SettingsButton x:Name="DisableBackupButton"
+                                         Click="{x:Bind ViewModel.DisableBackup}"
+                                         Content="{CustomResource WalletDisableBackup}"
                                          Foreground="{ThemeResource DangerButtonBackground}" />
+                <controls:SettingsButton x:Name="EnableBackupButton"
+                                         Click="{x:Bind ViewModel.EnableBackup}"
+                                         Content="{CustomResource WalletEnableBackup}" />
             </controls:HeaderedControl>
 
             <controls:HeaderedControl>
                 <controls:SettingsButton Click="{x:Bind ViewModel.DeleteWallet}"
-                                         Content="[Delete Wallet]"
+                                         Content="{CustomResource WalletDeleteWallet}"
                                          Foreground="{ThemeResource DangerButtonBackground}" />
+            </controls:HeaderedControl>
+
+            <!-- Debug only: drops this device's key so the bind and enrollment halves of the flow
+                 can be walked again without clearing app data. Remove before shipping. -->
+            <controls:HeaderedControl Footer="[Debug: forgets the key on this device. The account keeps its wallet.]">
+                <controls:SettingsButton Click="{x:Bind ViewModel.UnbindWallet}"
+                                         Content="[Unbind This Device]" />
             </controls:HeaderedControl>
 
             <!-- Filled in code: each row needs the address broken into groups that alternate

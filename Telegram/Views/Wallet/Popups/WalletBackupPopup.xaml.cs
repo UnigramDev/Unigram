@@ -51,6 +51,36 @@ namespace Telegram.Views.Wallet.Popups
         }
 
         /// <summary>
+        /// Which way the encrypted backup can be moved, and what to say about it.
+        /// </summary>
+        /// <remarks>
+        /// The account decides both: it reports whether the backup is on, and separately whether
+        /// it may be turned on - a wallet still being created cannot be, and neither can one the
+        /// server has no phrase for. With neither true there is nothing to offer, so the whole
+        /// section goes rather than showing a button that would be refused.
+        /// </remarks>
+        private void UpdateBackup(WalletState state)
+        {
+            BackupRoot.Visibility = state.IsBackupEnabled || state.CanEnableBackup
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            DisableBackupButton.Visibility = state.IsBackupEnabled
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            EnableBackupButton.Visibility = state.IsBackupEnabled
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            // "is split" against "will be split": the same sentence, told as a fact or as an
+            // offer, which is the only difference the user is being asked to decide on.
+            BackupRoot.Footer = state.IsBackupEnabled
+                ? Strings.WalletBackupEnabledDescription
+                : Strings.WalletBackupDisabledDescription;
+        }
+
+        /// <summary>
         /// Lists the wallets the account has moved on from and this device still has the keys for.
         /// </summary>
         /// <remarks>
@@ -60,6 +90,8 @@ namespace Telegram.Views.Wallet.Popups
         /// </remarks>
         protected override void UpdateWalletState(WalletState state)
         {
+            UpdateBackup(state);
+
             ArchivePanel.Children.Clear();
 
             foreach (var wallet in state.Archive)
