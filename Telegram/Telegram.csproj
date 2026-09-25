@@ -2334,6 +2334,10 @@
     <Compile Include="Views\Wallet\Popups\WalletDisableBackupPopup.xaml.cs">
       <DependentUpon>WalletDisableBackupPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\Wallet\WalletRequest.cs" />
+    <Compile Include="Views\Wallet\Popups\WalletRequestPopup.xaml.cs">
+      <DependentUpon>WalletRequestPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\Wallet\WalletService.cs" />
     <Compile Include="Services\Wallet\WalletState.cs" />
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
@@ -4348,6 +4352,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Wallet\Popups\WalletDisableBackupPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletRequestPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

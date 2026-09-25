@@ -90,6 +90,48 @@ namespace Telegram.Controls
             UpdateBalance(clientService, state);
         }
 
+        /// <summary>
+        /// The same card, showing one transfer instead of the balance: what leaves, and the
+        /// address it leaves for.
+        /// </summary>
+        /// <remarks>
+        /// The card is the wallet, so a request to spend from it belongs on the card rather than
+        /// beside it - and the address engraved is the *recipient*, which is the one thing the
+        /// user has to recognise before agreeing.
+        ///
+        /// No skeleton and no owner name here. Both belong to the card standing for the wallet at
+        /// rest; this one stands for a single act.
+        /// </remarks>
+        public void SetTransfer(IClientService clientService, WalletState state, string recipient, BigInteger nanograms)
+        {
+            UpdateAddress(clientService, recipient);
+
+            CardName.Visibility = Visibility.Collapsed;
+            CardBalanceSkeleton.Visibility = Visibility.Collapsed;
+
+            CardBalanceIcon.Visibility = Visibility.Visible;
+            CardBalanceText.Visibility = Visibility.Visible;
+
+            var amount = Formatter.TonBalance(nanograms);
+
+            // Signed, because the card is the user's own wallet and this is money leaving it. The
+            // minus is part of the number rather than a decoration on it.
+            CardBalance.Text = "−" + amount.Integer;
+            CardBalanceFraction.Text = amount.Fraction;
+
+            if (WalletHelper.TryToCurrency(clientService, state, nanograms, out var converted))
+            {
+                CardBalanceUsd.Text = Formatter.FormatAmountExact(converted, WalletHelper.CurrencyDecimals, state?.Currency ?? "USD");
+                CardBalanceUsd.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                // No rate, so no second line rather than a number in a currency it was never
+                // converted into.
+                CardBalanceUsd.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void UpdateAddress(IClientService clientService, string address)
         {
             if (string.IsNullOrEmpty(address))
@@ -117,6 +159,9 @@ namespace Telegram.Controls
             {
                 CardName.Text = user.FullName().ToUpperInvariant();
             }
+
+            // Shown again for the caller that hid it, so one card can be reused for both.
+            CardName.Visibility = Visibility.Visible;
         }
 
         private void UpdateBalance(IClientService clientService, WalletState state)

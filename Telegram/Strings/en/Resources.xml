@@ -13896,4 +13896,12 @@
     <string name="WalletReplaceWalletTitle">How do you want to replace the old wallet?</string>
     <string name="WalletImportExisting">Import an Existing Wallet</string>
     <string name="WalletCreateNew">Create a New Wallet</string>
+    <string name="WalletConfirmAction">Confirm Action</string>
+    <string name="WalletConfirm">Confirm</string>
+    <string name="WalletCancel">Cancel</string>
+    <string name="WalletTransfer">Transfer</string>
+    <string name="WalletPreview">Preview</string>
+    <string name="WalletTransferTo">to {0}</string>
+    <string name="WalletFeeAmount">Fee: {0}</string>
+    <string name="WalletFeeAmountWithCurrency">Fee: {0} (~{1}).</string>
 </resources>

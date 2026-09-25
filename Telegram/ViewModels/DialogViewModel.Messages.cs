@@ -2541,6 +2541,25 @@ namespace Telegram.ViewModels
             {
                 ShowPopup(new Views.Premium.Popups.PromoPopup(ClientService, giftedPremium));
             }
+            else if (message.Content is MessageTonConnectRequest tonConnectRequest)
+            {
+                // Only while it is still answerable. A request another device has answered, or one
+                // whose moment has passed, would be offering a decision that cannot be made - and
+                // the dApp has stopped waiting for it either way.
+                if (tonConnectRequest.State is not TonConnectRequestStatePending pendingRequest
+                    || pendingRequest.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds())
+                {
+                    return;
+                }
+
+                // Opened on what the service message carries - the dApp's name - and nothing
+                // else. It loads the rest itself, behind its Review button, because reading the
+                // request needs the wallet key and a dApp must not be able to raise that prompt
+                // on its own before the user has been told who is asking.
+                var wallet = Session.Resolve<IWalletService>();
+
+                ShowPopup(new Views.Wallet.Popups.WalletRequestPopup(ClientService, wallet, NavigationService, message.Id, tonConnectRequest));
+            }
             else if (message.Content is MessageTonWalletTransfer tonWalletTransfer)
             {
                 // Through the wallet rather than the account, so that a transfer this device has

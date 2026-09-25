@@ -84,6 +84,7 @@ namespace Telegram.Controls.Messages
                 MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, history),
                 MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, history),
                 MessageTonWalletTransfer tonWalletTransfer => UpdateTonWalletTransfer(message, tonWalletTransfer, history),
+                MessageTonConnectRequest tonConnectRequest => UpdateTonConnectRequest(tonConnectRequest),
                 MessageUpgradedGift upgradedGift => UpdateUpgradedGift(message, upgradedGift, history),
                 MessageUpgradedGiftPurchaseOffer upgradedGiftPurchaseOffer => UpdateUpgradedGiftPurchaseOffer(message, upgradedGiftPurchaseOffer, history),
                 MessageUpgradedGiftPurchaseOfferRejected upgradedGiftPurchaseOfferRejected => UpdateUpgradedGiftPurchaseOfferRejected(message, upgradedGiftPurchaseOfferRejected, history),
@@ -2022,6 +2023,32 @@ namespace Telegram.Controls.Messages
             {
                 return Strings.ActionCreateMega.AsFormattedText();
             }
+        }
+
+        /// <summary>
+        /// What became of a request, or that it is still waiting.
+        /// </summary>
+        /// <remarks>
+        /// Four outcomes, and the message itself carries all of them - which is the whole of what
+        /// it carries. There is no ciphertext in it, so nothing here can say what was asked for
+        /// without fetching and decrypting the request, and a line of chat text must not do that.
+        ///
+        /// Expiry is not a state the server reports: a pending request whose moment has passed
+        /// simply stops being answerable, so it is read off the clock rather than the message.
+        /// Every device works it out the same way, having the same expiration date.
+        /// </remarks>
+        private static FormattedText UpdateTonConnectRequest(MessageTonConnectRequest tonConnectRequest)
+        {
+            var text = tonConnectRequest.State switch
+            {
+                TonConnectRequestStateAccepted => string.Format("[{0}: action confirmed]", tonConnectRequest.DappName),
+                TonConnectRequestStateRejected => string.Format("[{0}: action declined]", tonConnectRequest.DappName),
+                TonConnectRequestStatePending pending when pending.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds()
+                    => string.Format("[{0}: request expired]", tonConnectRequest.DappName),
+                _ => string.Format("[{0} asks to confirm an action. Tap to review.]", tonConnectRequest.DappName)
+            };
+
+            return new FormattedText(text, Array.Empty<TextEntity>());
         }
 
         private static FormattedText UpdateTonWalletTransfer(MessageWithOwner message, MessageTonWalletTransfer tonWalletTransfer, bool history)
