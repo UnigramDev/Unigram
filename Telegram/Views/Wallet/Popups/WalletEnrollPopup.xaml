@@ -1,0 +1,57 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletEnrollPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d">
+
+    <StackPanel>
+        <TextBlock x:Name="SubtitleLabel"
+                   Text="[Choose what Telegram asks you for before spending from your wallet.]"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Margin="0,0,0,16" />
+
+        <RadioButton x:Name="HelloOption"
+                     GroupName="WalletProtection"
+                     Visibility="Collapsed"
+                     Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="[Unlock with Windows Hello]"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="[Confirm all spending with your Windows PIN.]"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </RadioButton>
+
+        <RadioButton x:Name="PasscodeOption"
+                     GroupName="WalletProtection"
+                     Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock x:Name="PasscodeTitle"
+                           Text="[Ask for local passcode]"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           TextWrapping="Wrap" />
+                <TextBlock x:Name="PasscodeSubtitle"
+                           Text="[Confirm all spending with your Telegram passcode.]"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </RadioButton>
+
+        <RadioButton x:Name="NoneOption"
+                     GroupName="WalletProtection">
+            <StackPanel>
+                <TextBlock Text="[Don't ask]"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Foreground="{ThemeResource DangerButtonBackground}"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="[Anyone with access to your Telegram can spend your funds.]"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </RadioButton>
+    </StackPanel>
+</controls:ModalPopup>

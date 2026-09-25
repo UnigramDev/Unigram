@@ -54,7 +54,10 @@ namespace Telegram.Services.Wallet
         {
             try
             {
-                await _secrets.WriteAsync(request.SecretRef.Value, request.Bytes, request.RequireUserPresence);
+                // request.RequireUserPresence is deliberately dropped. It is the engine's default
+                // for this secret, and the user has since been asked directly - through the
+                // wallet's own enrollment - what they want to be asked for. Theirs wins.
+                await _secrets.WriteAsync(request.SecretRef.Value, request.Bytes);
             }
             catch (ProtectedSecretException ex)
             {

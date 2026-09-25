@@ -2322,6 +2322,15 @@
     <Compile Include="Services\Wallet\WalletChainStream.cs" />
     <Compile Include="Services\Wallet\WalletCommentBody.cs" />
     <Compile Include="Services\Wallet\WalletSecretStore.cs" />
+    <Compile Include="Services\Wallet\WalletVault.cs" />
+    <Compile Include="Services\Wallet\WalletVaultPrompt.cs" />
+    <Compile Include="Services\Wallet\WalletPasscodeGuard.cs" />
+    <Compile Include="Views\Wallet\Popups\WalletEnrollPopup.xaml.cs">
+      <DependentUpon>WalletEnrollPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletHelloPopup.xaml.cs">
+      <DependentUpon>WalletHelloPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\Wallet\WalletService.cs" />
     <Compile Include="Services\Wallet\WalletState.cs" />
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
@@ -4324,6 +4333,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Wallet\Popups\WalletPhrasePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletEnrollPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletHelloPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

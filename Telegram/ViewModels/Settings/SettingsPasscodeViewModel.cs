@@ -12,6 +12,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Updates;
+using Telegram.Services.Wallet;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
@@ -21,11 +22,13 @@ namespace Telegram.ViewModels.Settings
     public partial class SettingsPasscodeViewModel : ViewModelBase, IHandle
     {
         private readonly IPasscodeService _passcodeService;
+        private readonly ILifetimeService _lifetimeService;
 
-        public SettingsPasscodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPasscodeService passcodeService)
+        public SettingsPasscodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPasscodeService passcodeService, ILifetimeService lifetimeService)
             : base(clientService, settingsService, aggregator)
         {
             _passcodeService = passcodeService;
+            _lifetimeService = lifetimeService;
         }
 
         public override void Subscribe()
@@ -102,11 +105,22 @@ namespace Telegram.ViewModels.Settings
             if (_passcodeService.IsEnabled)
             {
                 var confirm = await ShowPopupAsync(Strings.DisablePasscodeConfirmMessage, Strings.DisablePasscode, Strings.DisablePasscodeTurnOff, Strings.Cancel, destructive: true);
-                if (confirm == ContentDialogResult.Primary)
+                if (confirm != ContentDialogResult.Primary)
                 {
-                    _passcodeService.Reset();
-                    NavigationService.GoBack();
+                    return false;
                 }
+
+                // A wallet guarded by this passcode has to be given something else to be guarded
+                // by before it goes - and the user may answer that by keeping the passcode, which
+                // is a refusal to disable it rather than a failure.
+                using var guard = await WalletPasscodeGuard.OpenAsync(NavigationService, _lifetimeService);
+                if (guard == null || !await guard.ReleaseAsync(NavigationService))
+                {
+                    return false;
+                }
+
+                _passcodeService.Reset();
+                NavigationService.GoBack();
             }
             else
             {
@@ -132,6 +146,15 @@ namespace Telegram.ViewModels.Settings
         public async void Edit()
         {
             var timeout = _passcodeService.AutolockTimeout + 0;
+
+            // Opened before anything is asked or written, and held until the wallets are on the
+            // new passcode: their key can only be rewrapped while the old one still opens it.
+            using var guard = await WalletPasscodeGuard.OpenAsync(NavigationService, _lifetimeService);
+            if (guard == null)
+            {
+                return;
+            }
+
             var dialog = new SettingsPasscodeInputPopup();
             dialog.IsSimple = _passcodeService.IsSimple;
 
@@ -140,6 +163,12 @@ namespace Telegram.ViewModels.Settings
             {
                 var passcode = dialog.Passcode;
                 var simple = dialog.IsSimple;
+
+                // Before the app's own passcode, so that a vault that cannot be rewrapped stops
+                // the change while everything still agrees. The other order leaves the wallet
+                // asking for a passcode that no longer exists.
+                await guard.RewrapAsync(NavigationService, passcode);
+
                 _passcodeService.Set(passcode, simple, timeout);
 
                 InactivityHelper.Initialize(timeout);

@@ -52,8 +52,8 @@ namespace Telegram.Services.Wallet
         /// Reads the secret stored under <paramref name="key"/>.
         /// </summary>
         /// <param name="prompt">
-        /// Authentication text supplied by the engine, shown only when the entry was written with
-        /// a user-presence requirement.
+        /// Authentication text supplied by the engine, shown when what guards the secrets asks the
+        /// user for something.
         /// </param>
         /// <exception cref="ProtectedSecretException">
         /// The entry is missing, the user declined, or storage is unavailable. Never returns an
@@ -65,11 +65,16 @@ namespace Telegram.Services.Wallet
         /// Writes <paramref name="secret"/> under <paramref name="key"/>, replacing any existing
         /// entry.
         /// </summary>
-        /// <param name="requireUserPresence">
-        /// Whether later reads must verify the user before returning the bytes. The policy is
-        /// recorded with the entry, because only the writer knows it.
-        /// </param>
-        Task WriteAsync(string key, byte[] secret, bool requireUserPresence);
+        /// <remarks>
+        /// There is no per-entry presence policy to pass: what a later read asks the user for is
+        /// what the user chose for the wallet as a whole, and an entry that claimed otherwise could
+        /// only ever contradict them.
+        ///
+        /// Nothing here asks the user anything. Both of these run on the engine's threads, inside
+        /// an operation that has already unlocked the vault in the window it was started from -
+        /// see <see cref="WalletVault.LeaseAsync"/>.
+        /// </remarks>
+        Task WriteAsync(string key, byte[] secret);
 
         /// <summary>
         /// Deletes the entry under <paramref name="key"/>. Succeeds when it is already absent.

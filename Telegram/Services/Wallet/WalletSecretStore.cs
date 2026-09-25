@@ -7,34 +7,32 @@
 
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Security.Credentials.UI;
 using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.DataProtection;
+using Windows.Security.Cryptography.Core;
 
 namespace Telegram.Services.Wallet
 {
     /// <summary>
-    /// Stores wallet secrets with DPAPI, one file per entry.
+    /// Stores wallet secrets under the vault's key, one file per entry.
     /// </summary>
     /// <remarks>
-    /// Each file is a single presence byte followed by the protected blob. The byte is deliberately
-    /// outside the protected region: a read that requires user presence has to verify *before*
-    /// unprotecting, so the policy cannot live behind the thing it guards.
+    /// The whole of the policy lives in <see cref="WalletVault"/>: what the user has to produce to
+    /// read a secret is what they chose on the enrollment screen, and there is nothing recorded
+    /// here to disagree with it. An earlier version wrote a presence byte per entry and verified it
+    /// with <c>UserConsentVerifier</c>, which was both weaker - a consent prompt guards nothing a
+    /// caller cannot skip - and a way to end up with entries a device could no longer satisfy.
     ///
     /// One entry per file rather than one shared blob, so writing a secret never rewrites - and so
     /// never risks losing - another.
     /// </remarks>
     public sealed class WalletSecretStore : IProtectedSecretStore
     {
-        // "LOCAL=user" scopes the key to this Windows user on this machine. The descriptor is only
-        // needed to protect; Unprotect reads it back out of the blob.
-        private const string Descriptor = "LOCAL=user";
-
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+
+        private readonly WalletVault _vault;
         private readonly string _path;
         private readonly string _suffix;
 
@@ -42,8 +40,9 @@ namespace Telegram.Services.Wallet
         /// Distinguishes test-server entries from production ones, which share a folder because
         /// they share a session id. A wallet must never read the wrong network's key.
         /// </param>
-        public WalletSecretStore(string path, string suffix)
+        public WalletSecretStore(WalletVault vault, string path, string suffix)
         {
+            _vault = vault ?? throw new ArgumentNullException(nameof(vault));
             _path = path ?? throw new ArgumentNullException(nameof(path));
             _suffix = suffix ?? string.Empty;
         }
@@ -61,24 +60,21 @@ namespace Telegram.Services.Wallet
                 }
 
                 var stored = File.ReadAllBytes(file);
-                if (stored.Length < 1)
+                var vaultKey = Leased();
+
+                if (!WalletVault.TryDecrypt(stored, vaultKey, out var secret))
                 {
-                    throw new ProtectedSecretException(ProtectedSecretFailure.Other, "stored secret is truncated");
+                    // The vault opened but does not open this: the entry belongs to a key that is
+                    // gone. Nothing here recovers it, and returning anything at all would hand the
+                    // engine bytes that are not the mnemonic - which it would derive a wallet from.
+                    throw new ProtectedSecretException(ProtectedSecretFailure.PolicyViolation, "the stored secret does not belong to this vault");
                 }
 
-                if (stored[0] != 0)
-                {
-                    await VerifyUserAsync(prompt);
-                }
-
-                var protectedBytes = new byte[stored.Length - 1];
-                Buffer.BlockCopy(stored, 1, protectedBytes, 0, protectedBytes.Length);
-
-                var provider = new DataProtectionProvider();
-                var buffer = await provider.UnprotectAsync(CryptographicBuffer.CreateFromByteArray(protectedBytes));
-
-                CryptographicBuffer.CopyToByteArray(buffer, out var plain);
-                return plain;
+                return secret;
+            }
+            catch (WalletVaultException ex)
+            {
+                throw Translate(ex);
             }
             catch (ProtectedSecretException)
             {
@@ -94,19 +90,12 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        public async Task WriteAsync(string key, byte[] secret, bool requireUserPresence)
+        public async Task WriteAsync(string key, byte[] secret)
         {
             await _lock.WaitAsync();
             try
             {
-                var provider = new DataProtectionProvider(Descriptor);
-                var buffer = await provider.ProtectAsync(CryptographicBuffer.CreateFromByteArray(secret));
-
-                CryptographicBuffer.CopyToByteArray(buffer, out var protectedBytes);
-
-                var stored = new byte[protectedBytes.Length + 1];
-                stored[0] = requireUserPresence ? (byte)1 : (byte)0;
-                Buffer.BlockCopy(protectedBytes, 0, stored, 1, protectedBytes.Length);
+                var stored = WalletVault.Encrypt(secret, Leased());
 
                 Directory.CreateDirectory(_path);
 
@@ -117,6 +106,10 @@ namespace Telegram.Services.Wallet
 
                 File.WriteAllBytes(temporary, stored);
                 Replace(temporary, file);
+            }
+            catch (WalletVaultException ex)
+            {
+                throw Translate(ex);
             }
             catch (Exception ex)
             {
@@ -149,35 +142,41 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        private static async Task VerifyUserAsync(string prompt)
+        /// <summary>
+        /// The key of the operation this callback belongs to.
+        /// </summary>
+        /// <remarks>
+        /// Nothing here can ask the user for anything: the engine calls this from its own threads,
+        /// and it is the operation - started in a window, by someone holding that window's
+        /// navigation service - that unlocked the vault before handing the work over. An engine
+        /// callback arriving with no lease open is a wallet operation that forgot to take one, and
+        /// it fails rather than guessing which window to interrupt.
+        /// </remarks>
+        private byte[] Leased()
         {
-            UserConsentVerificationResult result;
+            return _vault.Leased
+                ?? throw new ProtectedSecretException(ProtectedSecretFailure.PolicyViolation, "the vault was not unlocked for this operation");
+        }
 
-            try
+        /// <summary>
+        /// Every way the vault can fail, said in the engine's terms.
+        /// </summary>
+        /// <remarks>
+        /// Everything that is not the user saying no becomes <see cref="ProtectedSecretFailure.PolicyViolation"/>,
+        /// which is what the app treats as "this device is no longer bound" and re-acquires from.
+        /// The alternative - reporting it as unavailable - leaves the wallet stuck on a device it
+        /// could recover on in a couple of seconds.
+        /// </remarks>
+        private static ProtectedSecretException Translate(WalletVaultException ex)
+        {
+            var failure = ex.Failure switch
             {
-                result = await UserConsentVerifier.RequestVerificationAsync(prompt);
-            }
-            catch (Exception ex)
-            {
-                throw new ProtectedSecretException(ProtectedSecretFailure.Unavailable, ex.GetType().Name);
-            }
+                WalletVaultFailure.Cancelled => ProtectedSecretFailure.Cancelled,
+                WalletVaultFailure.Incorrect => ProtectedSecretFailure.AuthenticationFailed,
+                _ => ProtectedSecretFailure.PolicyViolation
+            };
 
-            switch (result)
-            {
-                case UserConsentVerificationResult.Verified:
-                    return;
-                case UserConsentVerificationResult.Canceled:
-                    throw new ProtectedSecretException(ProtectedSecretFailure.Cancelled, "the user dismissed the prompt");
-                case UserConsentVerificationResult.DeviceNotPresent:
-                case UserConsentVerificationResult.NotConfiguredForUser:
-                case UserConsentVerificationResult.DisabledByPolicy:
-                case UserConsentVerificationResult.DeviceBusy:
-                    // The entry was written under a policy this device can no longer satisfy.
-                    // Handing the secret over anyway would silently drop the guarantee.
-                    throw new ProtectedSecretException(ProtectedSecretFailure.PolicyViolation, result.ToString());
-                default:
-                    throw new ProtectedSecretException(ProtectedSecretFailure.AuthenticationFailed, result.ToString());
-            }
+            return new ProtectedSecretException(failure, ex.Message);
         }
 
         private static void Replace(string temporary, string file)
@@ -196,8 +195,10 @@ namespace Telegram.Services.Wallet
         // Hashing keeps the mapping stable and total without having to escape anything.
         private string FileFor(string key)
         {
-            using var sha = SHA256.Create();
-            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(key));
+            var provider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var hashed = provider.HashData(CryptographicBuffer.ConvertStringToBinary(key, BinaryStringEncoding.Utf8));
+
+            CryptographicBuffer.CopyToByteArray(hashed, out var hash);
 
             var builder = new StringBuilder(hash.Length * 2);
             foreach (var value in hash)
