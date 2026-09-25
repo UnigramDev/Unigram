@@ -10,10 +10,12 @@ from iconfont import sources as sourcelib
 from iconfont import svgdoc
 from iconfont.outline import art_to_glyph, art_to_layers, natural_advance
 
-# The three glyphs IcoMoon puts in front of the icons. They carry no artwork but
-# the app has shipped with them mapped for years, so they stay.
-LEADING = [(".notdef", None, 1024), ("uni0000", 0x0000, 0), ("uni0001", 0x0001, 0),
-           ("space", 0x0020, 0)]
+# The glyphs IcoMoon puts in front of the icons. They carry no artwork but the
+# app has shipped with them mapped for years, so they stay. IcoMoon's zero-width
+# space is left out: DirectWrite keeps a space in the font of the icon before it
+# when that font maps U+0020, even behind Segoe UI in the chain, so a space after
+# an icon took no room.
+LEADING = [(".notdef", None, 1024), ("uni0000", 0x0000, 0), ("uni0001", 0x0001, 0)]
 
 # Fixed so that two builds of the same manifest produce the same bytes. The
 # date is arbitrary; only its constancy matters.

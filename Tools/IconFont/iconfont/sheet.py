@@ -37,6 +37,7 @@ HEAD = """<!doctype html>
  .code { color:var(--dim); font:11px ui-monospace,Consolas,monospace; }
  .src { color:var(--dim); font-size:10px; }
  .use { color:var(--dim); font-size:10px; }
+ .name { font:11px ui-monospace,Consolas,monospace; }
  .unused { color:var(--bad); font-size:10px; font-weight:600; }
  .err { color:var(--bad); font-size:10px; }
 </style>
@@ -93,6 +94,7 @@ def write(manifest, path, references=None, only=None):
         if icon.is_remote:
             remote += 1
         where = sorted(set(references.get(icon.code) or []))
+        named = [w for w in where if w.startswith("Icons.")]
         try:
             holder = manifest.resolve(icon)
             art = svgdoc.parse(sourcelib.read(holder, sources), name=holder.src,
@@ -108,9 +110,14 @@ def write(manifest, path, references=None, only=None):
         box = "0 %d %d %d" % (-descent, width, upem)
         key = ("%s %04x %s %s" % (icon.name, icon.code, icon.src,
                                   " ".join(where) or "unused")).lower()
-        usage = ('<br><span class="use">%s</span>'
-                 % _escape(", ".join(where)[:70]) if where
-                 else '<br><span class="unused">unused</span>')
+        # The constant is what a call site types, so it gets its own line rather
+        # than sitting in the file list, which is truncated.
+        usage = "".join('<br><span class="name">%s</span>' % _escape(n) for n in named)
+        rest = [w for w in where if w not in named]
+        if rest:
+            usage += '<br><span class="use">%s</span>' % _escape(", ".join(rest)[:70])
+        elif not named:
+            usage = '<br><span class="unused">unused</span>'
         cells.append(
             '<figure class="%s" data-k="%s">'
             '<svg width="%d" height="40" viewBox="%s"><path d="%s"/></svg>'

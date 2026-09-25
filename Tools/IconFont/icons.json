@@ -679,6 +679,8 @@
     {"name": "ic_fluent_sim_20_regular", "code": "F61B", "src": "fluent:sim_20_regular"},
     {"name": "ic_fluent_eye_12_regular", "code": "F78D", "src": "fluent:eye_12_regular"},
     {"name": "tl_fluent_star_14_regular", "code": "F78E", "src": "icons/tl_fluent_star_14_regular.svg", "color": true},
+    {"name": "ic_fluent_keyboard_20_regular", "code": "F78F", "src": "fluent:keyboard_20_regular"},
+    {"name": "ic_fluent_payment_20_filled", "code": "F790", "src": "fluent:payment_20_filled"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

@@ -172,6 +172,7 @@ namespace Telegram.Controls.Media
         public const string Translate = "\uE97D";
 
         public const string Payment16 = "\uE9AB";
+        public const string PaymentFilled = "\uF790";
         public const string Window16 = "\uE9AA";
         public const string WindowFilled16 = "\uEAC5";
         public const string CopyFilled16 = "\uEA97";
@@ -329,6 +330,7 @@ namespace Telegram.Controls.Media
 
         public const string Key = "\uE192";
         public const string KeyFilled = "\uEB2E";
+        public const string Keyboard = "\uF78F";
         public const string Record = "\uE903";
 
         public const string AppsListDetails = "\uEA67";

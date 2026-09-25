@@ -109,7 +109,7 @@ def cmd_check(args):
 def cmd_sheet(args):
     from iconfont import check, sheet
     manifest = _load(args)
-    refs = check.references(REPO, args.icons_cs) if args.only else {}
+    refs = check.references(REPO, args.icons_cs)
     path = sheet.write(manifest, args.out, refs, args.only)
     _say("wrote %s" % path)
     return 0
