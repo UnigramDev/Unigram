@@ -5,6 +5,13 @@ note records what they mean for *our* code — the mapping onto TDLib, what we h
 one thing that currently blocks it. The documents themselves are the specification; do not restate
 them here.
 
+## Which layer
+
+**All of this is layer 230.** The wallet was briefly split across 230 and 231; on 2026-09-25 it was
+consolidated back into 230 and 231 is empty again, because 230 is not being released on its own.
+Anything below that says 231 means 230 - the constructors did not change, only the layer they
+landed in.
+
 ## The one fact that changes everything
 
 **Our devices never talk to the TON Connect bridge.** The dApp does — to `ton.stel.com/bridge2`,
@@ -41,56 +48,157 @@ table:
 So TDLib's `wallet_client_id` is the document's **W**, and its `tonConnectChallenge` is the
 document's challenge verbatim.
 
-`wallet.tonConnectNextEventId` and `updateWalletTonConnectPendingDisconnect` have **no TDLib
-equivalent in the schema we have**, which means wallet-initiated disconnect and server-initiated
-disconnect cannot be implemented yet. Worth raising.
+Layer 230 closed the two gaps this note used to record: `wallet.tonConnectNextEventId` is
+`getTonConnectSessionNextEventId`, `wallet.tonConnectCloseSession` is `disconnectTonConnectSession`,
+and `updateWalletTonConnectPendingDisconnect` is `updateTonWalletTonConnectSessionDisconnectRequired`.
+Nothing in the protocol is unreachable from TDLib any more.
 
-## What blocks us: the session key
+## The session key — solved 2026-09-25
 
-Every device derives the same X25519 pair from the wallet key, and the scheme is fully specified
-(v1, identical on every platform):
+`desktop-app/patches/wallet-engine.patch` adds the whole MTProto-relayed flow to the engine, and
+layer 230 adds the TDLib half. **Neither a NaCl nor the seed is needed on our side**: the key is
+derived inside Rust and never leaves it. What the earlier version of this note called a blocker was
+right only about the bridge session being the wrong tool.
 
-```
-seed = 32 bytes of the wallet's Ed25519 private key
-prk  = HMAC-SHA512(seed, "tonconnect/session/v1")
-okm  = HMAC-SHA512(prk, hex_decode(A) || nonce)
-sk   = clamp(okm[0..31])          // sk[0] &= 248; sk[31] &= 127; sk[31] |= 64
-W    = X25519_publickey(sk)
-```
+Everything below is reached through `WalletLifecycle` or the `TonConnectDerivedSession` it returns:
 
-and the challenge is `crypto_box_open(box, nonce, ephemeral_pk, sk)` over the 104 bytes
-`ephemeral_pk(32) ‖ nonce(24) ‖ box(48)`, giving the 32-byte answer.
+| | |
+| --- | --- |
+| `DeriveTonConnectSession(descriptor, dappClientId, nonce)` | the `tonconnect/session/v1` derivation |
+| `PublicKeyHex()` | `W`, the key to register |
+| `OpenChallenge(challenge)` | the 32-byte answer |
+| `EncryptConnectEvent` / `EncryptConnectError` | the sealed connect reply |
+| `DecryptRequest(body, now)` | an incoming request |
+| `EncryptSendSuccess` / `EncryptSignDataSuccess` / `EncryptError` | the sealed answers |
+| `EncryptDisconnectEvent` / `EncryptDisconnectSuccess` | both directions of disconnect |
+| `DecodeSignDataCell(schema, cell)` | a `signData` payload, by TL-B schema |
+| `TonConnectAccount(descriptor)` | address, StateInit and key, reading no secret |
+| `SignTonConnectProof(request)` | `ton_proof` |
 
-**We can do none of this today**, for two reasons, and neither is a small job:
-
-1. **No NaCl.** The app has no libsodium, no tweetnacl, nothing. `crypto_box_open` is
-   XSalsa20-Poly1305 over an X25519 shared secret; WinRT's `EccCurveNames.Curve25519` is an ECDH
-   primitive and does not get us there. HMAC-SHA512 we have.
-2. **No seed.** The 32-byte Ed25519 seed lives in the engine's protected storage and is deliberately
-   never handed out - `RevealRecoveryPhrase` returns the mnemonic, and the mnemonic-to-seed mapping
-   is the engine's, with several `MnemonicScheme`s to choose between.
-
-Both point the same way: **this belongs in wallet-engine**, which already has the seed, the
-crypto, and a reason to be the only thing that touches either. What it would need to expose is
-small and shaped by the document rather than by the bridge - roughly `derive_session_key(a, nonce)`
-returning W, `open_challenge(challenge)` returning the answer, and `seal(a, plaintext)` returning
-`nonce(24) ‖ box`. That is a conversation with TON Org, not something to work around here.
-
-The alternative - a NaCl in C# or in `Telegram.Native`, plus prising the seed out of the engine -
-would put the wallet's private key through our own crypto. It should not be chosen by default.
+**The patch is not on any public branch of `i582/wallet-engine`.** Our clone is patched and the
+patch is not committed there, so a fresh clone has to reapply it - and a rebuilt `wallet_engine.dll`
+must be committed together with a regenerated `wallet_engine.cs`, because the bindings assert a
+checksum per function against the library they load.
 
 ## Where the app is now
 
-- `TonConnectLink` parses the `startapp` payload. **Temporary**: TDLib will report these as a link
-  type of its own.
-- `MessageHelper` recognises both link shapes and opens `WalletConnectPopup`.
-- `WalletConnectPopup` calls `createTonConnectSession`, follows `updateTonWalletTonConnectSession`
-  for the manifest, and shows the dApp with the wallet card. Its Connect button is where the
-  derivation would go, and is the `TODO`.
+Done, and reached from a link end to end:
 
-Not started, in the order the document puts them: the request sheet
-(`messageTonConnectRequest` -> `getTonConnectSessionPendingRequests` -> claim -> answer), the
-connected-apps screen (`getTonConnectSessions`), and disconnect in all three directions.
+- `internalLinkTypeTonConnect` in `MessageHelper` - the temporary `startapp` decoder is deleted.
+- `WalletConnectPopup`: creates the session, follows the manifest, shows the dApp and the wallet
+  card, derives the key, registers it, opens the challenge, and sends the sealed `ConnectEvent`.
+- `ton_proof`, including the detail that decides whether a dApp accepts it: after a rotation the
+  proof's key is not the anchor key, and the `ton_addr` reply beside it must carry the proof's.
+
+## What is left
+
+In the order the protocol needs them, not the order they matter to a user.
+
+### 0. What the sheet looks like, and what opens it
+
+**Only `sendTransaction`.** `signData` and `signMessage` are not supported and are answered with an
+error rather than shown - decided 2026-09-25.
+
+`WalletRequestPopup` is built, to the design Fela supplied: two states of one sheet rather than two
+popups, because the header morphs between them - the avatar shrinks 96 to 36, the title and domain
+stay, and the left button turns from dismiss into back. Page one is `WalletCard` in its new
+`SetTransfer` mode, carrying the signed amount with the *recipient* engraved on it and an info
+button over the corner. Page two is the TRANSFER row and the PREVIEW list. The fee line sits under
+both, because it belongs to neither. It is fed by `WalletRequest` (`Services/Wallet/WalletRequest.cs`),
+which is the contract the protocol half has to fill.
+
+**Nothing opens it yet, and that is the next thing to build.** The entry point is a service message
+content, and the chain to copy is `MessageTonWalletTransfer`, which already exists end to end:
+
+| step | file |
+| --- | --- |
+| item type | `Controls/Chats/ChatHistoryViewItem.cs` - add to the enum |
+| content to item type | `Views/ChatView.Bubbles.xaml.cs` (~1701) |
+| item type to template | `Views/ChatView.xaml.cs` (~157), `AddStrategy` |
+| the template | `Views/ChatView.xaml` |
+| the control | `Controls/Messages/Service/MessageTonConnectRequestContent.xaml(.cs)` |
+| the text | `Controls/Messages/MessageServiceText.cs` (~86 and ~2027) |
+
+The control's tap is what opens the sheet, and what it needs first is the request itself:
+`getTonConnectSessionPendingRequests(session_id)` matched on `message_id`, the engine's
+`DecryptRequest(body, now)`, the validation below, then `PreviewTonConnect` for the emulation that
+fills `WalletRequest.Actions`. The one piece with real ambiguity is
+`SendEmulationAction.DetailsJson` - amount, comment and which side our address is on all come out
+of that JSON, and the direction is not in the data.
+
+`messageTonConnectRequest` also carries `state:TonConnectRequestState`, so a message that was
+already answered - by this device or another - must draw as accepted or declined rather than
+offering a sheet.
+
+### 1. The request sheet — the biggest piece, and nothing else works without it
+
+A dApp that is connected can ask for `sendTransaction`, `signData` and `signMessage`. The request
+arrives on every device as a service message from 777000 (`messageTonConnectRequest`), which carries
+no ciphertext - it is a pointer. None of this is written yet:
+
+- handle `MessageTonConnectRequest` as a message content, and open a sheet from it
+- `getTonConnectSessionPendingRequests(session_id)`, matching on `message_id`
+- `DecryptRequest(body, now)`, then the validation the spec requires: `valid_until` in the future,
+  `network` ours, `from` our address, message count within `maxMessages` - any failure is answered
+  with error code 1 rather than shown
+- claim **at the tap**, not at the sheet: `claimTonConnectRequest(session_id, message_id,
+  dapp_request_id, is_rejected)`. It is atomic across devices; the loser gets
+  `TONCONNECT_REQUEST_ALREADY_CLAIMED`, and the server edits the service message so every other
+  device sees `accepted`/`declined` through an ordinary message update
+- sign, then `answerTonConnectRequest(session_id, message_id, trace_id, body)`
+- the expiry: the sheet closes itself when `expiration_date` passes, with no signal from the server
+- a device that has not yet answered a challenge in this session must `setTonConnectSessionWalletClientId`
+  first and pass the answer with its first claim
+
+`dapp_request_id` is a **string**; it was `int64` before layer 230.
+
+### 2. Disconnect, in all three directions
+
+All three methods exist now - they were the gap this note used to record.
+
+- **dApp asks**: arrives as an ordinary request with `topic=disconnect`; claim, answer `{}`, and the
+  session closes. No disconnect event is sent back - the spec forbids it.
+- **We ask**: `getTonConnectSessionNextEventId(session_id)`, then `EncryptDisconnectEvent(eventId)`,
+  then `disconnectTonConnectSession(session_id, body)`. Idempotent.
+- **The server asks**: `updateTonWalletTonConnectSessionDisconnectRequired` carries session ids and
+  the state becomes `Closing`. The first device that can derive the session sends the disconnect.
+  This fires on wallet key rotation, so it is not an edge case - and less of one than it looks,
+  because the server now watches `change_wallet_key` on chain itself and reacts to a rotation
+  performed by *any* client, ours included. Replacing the phrase from the disable-backup flow will
+  close every connected dApp session, which is correct and worth saying on screen somewhere.
+
+### 3. Connected apps
+
+`getTonConnectSessions` for a screen listing them, with disconnect per row. Nothing exists yet;
+`WalletBackupPopup` is the shape to copy.
+
+### 4. The embedded request
+
+`internalLinkTypeTonConnect.rpc_request` is a base64url JSON request meant to be answered **inside
+the same `ConnectEvent`**, so the dApp gets connection and answer in one event. Currently ignored.
+
+### 5. Late requests to a closed session
+
+Delivered for at least 7 days after closing. No sheet: decrypt, claim, and answer
+`error 100 UNKNOWN_APP` with the same id, so the dApp drops its stored state instead of waiting for
+a timeout.
+
+## Wallet, outside TON Connect
+
+- **~98 bracketed placeholder strings** across the wallet views. They are the last thing between
+  this and shippable, and they need real Android strings rather than invented ones.
+- `BadgeControlButtonStyle` is still uncommitted in `Themes/CommonStyles.xaml`, so two popups
+  resolve it to nothing at runtime.
+- `WalletCardSheen.Accent` is unconsumed: `#6DDCFF` is still a literal in `WalletCard.xaml` and
+  `MessageTonWalletTransferContent.xaml`.
+- The deferred set from `notes/wallet-engine-csharp-todo.md`: Hello/TPM tiering for
+  `WalletSecretStore` and its no-Hello fail-closed bug, rotate-on-disable-backup, durable pending
+  rows from the journal, and the dead markup in `WalletSharePopup.xaml`.
+- New in layer 230 and unhandled: `tonWalletTransactionTypeOnRampDeposit` - the receipt and the
+  history cell will fall through to nothing for it.
+- `disableTonWalletBackupWithProof` and `replaceTonWallet` are unreachable as TDLib declares them:
+  both want `private_key:bytes` and wallet-engine emits no private key. See
+  `notes/wallet-encryption.md` for the TL change requested to take a signature instead.
 
 ## Details that will bite
 
