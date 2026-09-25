@@ -659,7 +659,7 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            if (!await WalletHelper.EnsureBoundAsync(_wallet, _navigationService))
+            if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
             {
                 // They were asked for a password or a phrase and said no. The amount they typed is
                 // still here, so the popup is too.
@@ -676,7 +676,7 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 });
+                var result = await _wallet.SendAsync(_navigationService, _address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 });
                 if (result.IsCommentUnavailable)
                 {
                     // Nothing was signed and nothing was spent, and what to do about it is on this

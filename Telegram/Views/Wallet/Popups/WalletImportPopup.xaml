@@ -1,19 +1,16 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Wallet.Popups.WalletImportPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Wallet.Popups"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:common="using:Telegram.Common"
-                       mc:Ignorable="d"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Padding="0">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletImportPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Wallet.Popups"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:common="using:Telegram.Common"
+                     mc:Ignorable="d"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     Padding="0">
 
-    <controls:ContentPopup.Resources>
+    <controls:ModalPopup.Resources>
         <Style TargetType="local:MnemonicTextBox">
             <Setter Property="Foreground"
                     Value="{ThemeResource TextControlForeground}" />
@@ -172,7 +169,7 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
-                                    
+
                                     <VisualState x:Name="Disabled">
 
                                         <Storyboard>
@@ -371,7 +368,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </controls:ContentPopup.Resources>
+    </controls:ModalPopup.Resources>
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
@@ -484,4 +481,4 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

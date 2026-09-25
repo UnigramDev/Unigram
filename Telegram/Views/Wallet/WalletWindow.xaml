@@ -186,7 +186,7 @@
                          one request answered per window. -->
                     <controls:SettingsButton x:Name="WalletBotButton"
                                              Click="WalletBot_Click"
-                                             Content="[You also have funds in Walt]"
+                                             Content="{CustomResource WalletWaltFunds}"
                                              IsChevronVisible="True"
                                              IsGlyphVisible="False"
                                              BorderThickness="1"
@@ -228,14 +228,14 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Button Click="Button_Click"
-                                Content="[Add Funds]"
+                        <Button Click="AddFunds_Click"
+                                Content="{CustomResource WalletAddFunds}"
                                 Style="{StaticResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Height="40"
                                 CornerRadius="20" />
-                        <Button Click="Button_Click_1"
-                                Content="[Send]"
+                        <Button Click="Send_Click"
+                                Content="{CustomResource WalletSend}"
                                 Style="{StaticResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Height="40"
@@ -247,14 +247,14 @@
                          on the way to a wallet that has transactions. -->
                     <StackPanel x:Name="EmptyPanel"
                                 Visibility="Collapsed">
-                        <controls:PopupInfo Title="[Send Money Instantly]"
-                                            Subtitle="[Send Grams in any chat, just like sharing a photo.]"
+                        <controls:PopupInfo Title="{CustomResource WalletSendInstantly}"
+                                            Subtitle="{CustomResource WalletSendInstantlyInfo}"
                                             Glyph="&#xEB2B;" />
-                        <controls:PopupInfo Title="[No Fees]"
-                                            Subtitle="[First 5 transfers each day are free, the rest cost almost nothing.]"
+                        <controls:PopupInfo Title="{CustomResource WalletNoFees}"
+                                            Subtitle="{CustomResource WalletNoFeesInfo}"
                                             Glyph="&#xEA9D;" />
-                        <controls:PopupInfo Title="[Blockchain Verified]"
-                                            Subtitle="[All transactions are recorded and verifiable on a public ledger.]"
+                        <controls:PopupInfo Title="{CustomResource WalletBlockchainVerified}"
+                                            Subtitle="{CustomResource WalletBlockchainVerifiedInfo}"
                                             Glyph="&#xEA8B;" />
                     </StackPanel>
                 </controls:SettingsPanel>

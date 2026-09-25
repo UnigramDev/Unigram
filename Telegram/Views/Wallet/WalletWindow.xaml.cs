@@ -82,7 +82,7 @@ namespace Telegram.Views.Wallet
             ScrollingHost.ItemsSource = viewModel.Items;
 
 
-            StateLabel.Text = "[Wallet]";
+            StateLabel.Text = Strings.WalletTitle;
 
             // The handle, not the whole strip: a drag region takes the pointer away from anything
             // under it, and the window's own close button is drawn over the right of this bar.
@@ -253,7 +253,7 @@ namespace Telegram.Views.Wallet
                 return;
             }
 
-            EarningsButton.Content = CreateAmountContent("[You also have {0} in Grams Earnings]", ViewModel.EarnedGramCount);
+            EarningsButton.Content = CreateAmountContent(Strings.WalletGramEarningsBalance, ViewModel.EarnedGramCount);
             EarningsButton.Visibility = Visibility.Visible;
         }
 
@@ -285,6 +285,7 @@ namespace Telegram.Views.Wallet
                 FontFamily = BootStrapper.Current.Resources["EmojiThemeFontFamilyWithSymbols"] as FontFamily
             };
 
+            TextBlockHelper.SetIsLink(block, true);
             TextBlockHelper.SetMarkdown(block, string.Format(format, $"**{Icons.Ton} {Formatter.TonBalance(nanograms).Join()}**"));
             return block;
         }
@@ -307,7 +308,7 @@ namespace Telegram.Views.Wallet
                 return;
             }
 
-            ArchiveButton.Content = CreateAmountContent("[You also have {0} in old wallets]", archived);
+            ArchiveButton.Content = CreateAmountContent(Strings.WalletOldWalletsBalance, archived);
             ArchiveButton.Visibility = Visibility.Visible;
         }
 
@@ -320,12 +321,14 @@ namespace Telegram.Views.Wallet
         {
             var flyout = new MenuFlyout();
 
-            var currency = flyout.CreateFlyoutItem(MenuItemCurrency, "[Currency]", Icons.Globe);
+            var currency = flyout.CreateFlyoutItem(MenuItemCurrency, Strings.WalletCurrency, Icons.Globe);
             currency.KeyboardAcceleratorTextOverride = ViewModel.Currency;
 
-            flyout.CreateFlyoutItem(MenuItemRecoveryPhrase, "[Keys & Backup]", Icons.Cloud);
+            flyout.CreateFlyoutItem(MenuItemProtection, Strings.Passcode, Icons.LockClosed);
+            flyout.CreateFlyoutItem(MenuItemRecoveryPhrase, Strings.WalletKeysAndBackup, Icons.Cloud);
+
             flyout.CreateFlyoutSeparator();
-            flyout.CreateFlyoutItem(MenuItemAbout, "[How It Works]", Icons.QuestionCircle);
+            flyout.CreateFlyoutItem(MenuItemAbout, Strings.WalletWhatIsWallet, Icons.QuestionCircle);
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
@@ -356,12 +359,40 @@ namespace Telegram.Views.Wallet
             _navigationService.ShowPopup(new WalletBackupPopup(_wallet, _navigationService));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void MenuItemProtection()
         {
-            _navigationService.ShowPopup(new WalletBackupPopup(_wallet, _navigationService));
+            // The vault is built the first time the wallet is restored, and opening this window
+            // does that - but the menu is reachable before the restore has come back.
+            await _wallet.RestoreAsync();
+
+            var vault = _wallet.Vault;
+            if (vault == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await vault.ReenrollAsync(_navigationService);
+            }
+            catch (WalletVaultException ex) when (ex.Failure == WalletVaultFailure.Cancelled)
+            {
+                // They were asked for the current credential and said no, which is the whole
+                // point of asking.
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet protection could not be changed: " + ex.Message);
+                _navigationService.ShowToast("[This could not be changed right now.]", ToastPopupIcon.Error);
+            }
         }
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private void AddFunds_Click(object sender, RoutedEventArgs e)
+        {
+            _navigationService.ShowPopup(new WalletSharePopup(_clientService, _navigationService, _wallet.State.Address));
+        }
+
+        private async void Send_Click(object sender, RoutedEventArgs e)
         {
             // Somewhere to send to, typed. The other way in is the Send pill on a transaction,
             // which already knows who it is sending to; this is the one for everybody else, until

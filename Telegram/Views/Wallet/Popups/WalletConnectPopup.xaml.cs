@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Text.Json;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -15,7 +14,6 @@ using Telegram.Services;
 using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Wallet.Popups
 {
@@ -34,11 +32,12 @@ namespace Telegram.Views.Wallet.Popups
         private readonly INavigationService _navigationService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly TonConnectLink _link;
+        private readonly InternalLinkTypeTonConnect _link;
 
         private TonConnectSession _session;
+        private string _domain;
 
-        public WalletConnectPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, TonConnectLink link)
+        public WalletConnectPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, InternalLinkTypeTonConnect link)
             : base(wallet, navigationService)
         {
             InitializeComponent();
@@ -79,7 +78,7 @@ namespace Telegram.Views.Wallet.Popups
             Card.SetState(_clientService, state);
 
             Subtitle.Text = state.HasWallet
-                ? "[Allow this app to see your wallet address]"
+                ? RequestedText()
                 : "[You need a wallet before an app can connect to one.]";
 
             UpdatePrimaryButton();
@@ -87,14 +86,14 @@ namespace Telegram.Views.Wallet.Popups
 
         private async void CreateAsync()
         {
-            if (!TryGetManifestUrl(_link.Request, out var manifestUrl) || string.IsNullOrEmpty(_link.ClientId))
+            if (string.IsNullOrEmpty(_link.ConnectRequest?.ManifestUrl) || string.IsNullOrEmpty(_link.DappClientId))
             {
                 // A request that names no dApp is one there is nothing to show and nothing to ask.
                 Subtitle.Text = "[This connection request is not valid.]";
                 return;
             }
 
-            var response = await _clientService.SendAsync(new CreateTonConnectSession(_link.ClientId, manifestUrl));
+            var response = await _clientService.SendAsync(new CreateTonConnectSession(_link.DappClientId, _link.ConnectRequest.ManifestUrl));
             if (response is TonConnectSession session)
             {
                 Apply(session);
@@ -124,15 +123,18 @@ namespace Telegram.Views.Wallet.Popups
                 Footer.Text = string.Format("[{0} won't be able to move funds without permission.]", info.Name);
 
                 // The domain rather than the whole URL: it is what the manifest was fetched from,
-                // and the part a user can actually recognise.
-                Domain.Text = Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url)
+                // and the part a user can actually recognise. Kept, because a proof is bound to the
+                // domain and must be bound to the one that was on screen.
+                _domain = Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url)
                     ? url.Host
                     : info.Url;
 
-                if (Uri.TryCreate(info.IconUrl, UriKind.Absolute, out Uri icon))
+                Domain.Text = _domain;
+
+                if (info.Icon?.DocumentValue != null)
                 {
-                    Icon.Source = new BitmapImage(icon);
-                    IconRoot.Visibility = Visibility.Visible;
+                    Photo.Source = new ProfilePictureSourcePhoto(_clientService, session.Id, info.Icon.DocumentValue, info.Icon.Minithumbnail);
+                    Photo.Visibility = Visibility.Visible;
                 }
             }
             else if (session.Manifest is TonConnectManifestFailed or TonConnectManifestInvalid)
@@ -147,48 +149,93 @@ namespace Telegram.Views.Wallet.Popups
             UpdatePrimaryButton();
         }
 
+        /// <summary>
+        /// What the dApp is asking for, which is not always only the address.
+        /// </summary>
+        /// <remarks>
+        /// A proof is a signature, and the one thing a user has to be told apart from the address:
+        /// it signs them in, and it is not a transfer. The wording comes from the spec's own
+        /// guidance rather than from the item name.
+        /// </remarks>
+        private string RequestedText()
+        {
+            foreach (var item in _link.ConnectRequest.Items)
+            {
+                if (item is TonConnectConnectItemProof)
+                {
+                    return "[Allow this app to see your wallet address and sign you in. This is not a transfer.]";
+                }
+            }
+
+            return "[Allow this app to see your wallet address]";
+        }
+
         private void UpdatePrimaryButton()
         {
             IsPrimaryButtonEnabled = State.HasWallet
                 && _session is { Manifest: TonConnectManifestInfo };
         }
 
-        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
-        {
-            // TODO: the wallet's half of the key exchange, which is where this stops being a
-            // question of consent and starts being one of crypto. TDLib wants a wallet_client_id
-            // "calculated from the TON wallet private key and session parameters", and the engine's
-            // own TON Connect session is written against the HTTP bridge rather than against this
-            // transport - so which side derives it is an open question, not a detail.
-        }
-
         /// <summary>
-        /// The dApp's manifest URL, out of the connect request the link carries.
+        /// Hands the request to the wallet, which does everything the protocol asks for.
         /// </summary>
-        private static bool TryGetManifestUrl(string request, out string manifestUrl)
+        /// <remarks>
+        /// The domain goes with it because it is the one that was on screen: a <c>ton_proof</c> is
+        /// bound to the domain the user approved, and computing it again here could differ from
+        /// what they saw.
+        /// </remarks>
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
-            manifestUrl = null;
+            var deferral = args.GetDeferral();
+            var session = _session;
 
-            if (string.IsNullOrEmpty(request))
+            if (session == null)
             {
-                return false;
+                deferral.Complete();
+                return;
             }
+
+            args.Cancel = true;
+            IsPrimaryButtonPending = true;
 
             try
             {
-                using var document = JsonDocument.Parse(request);
-
-                if (document.RootElement.TryGetProperty("manifestUrl", out var value))
+                if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
                 {
-                    manifestUrl = value.GetString();
+                    return;
                 }
+
+                var result = await _wallet.ConnectAsync(_navigationService, session, _link.ConnectRequest, _domain, _link.TraceId);
+                if (result.IsConnected)
+                {
+                    Hide();
+                }
+                else
+                {
+                    ShowError("[This app could not be connected.]");
+                }
+            }
+            catch (WalletAccessDeniedException)
+            {
+                // They were asked for the key and said no. Nothing to tell them that they did not
+                // just say.
             }
             catch (Exception ex)
             {
-                Logger.Error("ton connect request is not valid json: " + ex.Message);
+                Logger.Error("ton connect could not be accepted: " + ex.Message);
+                ShowError("[This app could not be connected.]");
             }
+            finally
+            {
+                IsPrimaryButtonPending = false;
+                deferral.Complete();
+            }
+        }
 
-            return !string.IsNullOrEmpty(manifestUrl);
+        private void ShowError(string message)
+        {
+            Subtitle.Text = message;
+            IsPrimaryButtonEnabled = false;
         }
     }
 }

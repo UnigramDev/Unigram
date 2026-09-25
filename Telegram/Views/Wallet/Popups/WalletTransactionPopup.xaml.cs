@@ -51,10 +51,7 @@ namespace Telegram.Views.Wallet.Popups
             _navigationService = navigationService;
             _transaction = transaction;
 
-            if (standalone)
-            {
-                PrimaryButtonContent = "[Open My Wallet]";
-            }
+            PrimaryButtonText = standalone ? Strings.WalletOpenMyWallet : Strings.OK;
 
             UpdateTransaction(State, transaction);
         }
@@ -98,19 +95,22 @@ namespace Telegram.Views.Wallet.Popups
         private void UpdateTransaction(WalletState state, TonWalletTransaction transaction)
         {
             var transfer = transaction.Type as TonWalletTransactionTypeTransfer;
-            var sent = transfer != null && transfer.Amount < 0;
+            var onRampDeposit = transaction.Type as TonWalletTransactionTypeOnRampDeposit;
 
-            if (transfer != null)
+            var sent = transfer != null && transfer.Amount < 0;
+            var amountValue = transfer?.Amount ?? onRampDeposit?.Amount ?? 0;
+
+            if (amountValue != 0)
             {
-                var amount = Formatter.TonBalance(Math.Abs(transfer.Amount));
+                var amount = Formatter.TonBalance(Math.Abs(amountValue));
 
                 Amount.Text = (sent ? "-" : "+") + amount.Integer + amount.Fraction;
-                Converted.Text = Convert(state, Math.Abs(transfer.Amount));
+                Converted.Text = Convert(state, Math.Abs(amountValue));
             }
             else
             {
                 // A key rotation moves nothing; what it cost is in the fee row below.
-                Amount.Text = "[Key Rotation]";
+                Amount.Text = Strings.WalletKeyUpdate;
                 Converted.Text = string.Empty;
             }
 
@@ -118,7 +118,7 @@ namespace Telegram.Views.Wallet.Popups
             UpdateAddress(transaction.PeerAddress);
             UpdateComment(transfer);
 
-            UpdateFee(state, Fees(transaction, transfer), transfer is { IsGasless: true, Amount: < 0 });
+            UpdateFee(state, Fees(transaction, transfer, onRampDeposit), transfer is { IsGasless: true });
 
             DateRow.Content = Formatter.DateAt(transaction.Date);
         }
@@ -137,7 +137,7 @@ namespace Telegram.Views.Wallet.Popups
                 FeeInfoCommand.Visibility = Visibility.Visible;
 
                 FeeGlyph.Text = Icons.Ton;
-                FeeAmount.Text = " [Free (paid by Telegram)]";
+                FeeAmount.Text = Strings.WalletFeePaidByTelegram;
                 FeeConverted.Text = string.Empty;
                 return;
             }
@@ -179,14 +179,24 @@ namespace Telegram.Views.Wallet.Popups
             // placeholder, which is what the address row below already is.
             if (transaction.PeerUserId == 0 || !_clientService.TryGetUser(transaction.PeerUserId, out User user))
             {
-                PeerRow.Visibility = Visibility.Collapsed;
+                if (string.IsNullOrEmpty(transaction.PeerDomain))
+                {
+                    PeerRow.Visibility = Visibility.Collapsed;
 
-                // The pill goes where the other side still is, which is the address.
-                AddressSendCommand.Visibility = Visibility.Visible;
+                    // The pill goes where the other side still is, which is the address.
+                    AddressSendCommand.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PeerRow.Header = sent ? Strings.WalletRecipient : Strings.WalletSender;
+                    PeerTitle.Text = transaction.PeerDomain;
+                    PeerPhoto.Visibility = Visibility.Collapsed;
+                }
+
                 return;
             }
 
-            PeerRow.Header = sent ? "[Recipient]" : "[Sender]";
+            PeerRow.Header = sent ? Strings.WalletRecipient : Strings.WalletSender;
             PeerTitle.Text = user.FullName();
             PeerPhoto.Source = ProfilePictureSource.User(_clientService, user);
         }
@@ -252,7 +262,7 @@ namespace Telegram.Views.Wallet.Popups
 
             // Decrypting needs the signing key, and this may be the first thing on this device to
             // ask for one.
-            if (!await WalletHelper.EnsureBoundAsync(_wallet, _navigationService))
+            if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
             {
                 return;
             }
@@ -261,7 +271,7 @@ namespace Telegram.Views.Wallet.Popups
             {
                 // The encrypted body is what TDLib puts in comment: is_comment_encrypted says it
                 // has to be decrypted with the user's key rather than shown.
-                var comment = await _wallet.DecryptCommentAsync(_transaction, transfer.Comment);
+                var comment = await _wallet.DecryptCommentAsync(_navigationService, _transaction, transfer.Comment);
                 if (comment != null)
                 {
                     _revealed = true;
@@ -319,13 +329,15 @@ namespace Telegram.Views.Wallet.Popups
                 : string.Empty;
         }
 
-        private static long Fees(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer)
+        private static long Fees(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer, TonWalletTransactionTypeOnRampDeposit onRampDeposit)
         {
             if (transfer != null)
             {
-                // Only what this wallet paid. The fee on an incoming transfer was the sender's, and
-                // is reported here all the same.
-                return transfer.Amount < 0 ? transfer.FeeAmount : 0;
+                return transfer.FeeAmount;
+            }
+            else if (onRampDeposit != null)
+            {
+                return onRampDeposit.FeeAmount;
             }
             else if (transaction.Type is TonWalletTransactionTypeKeyChange change)
             {
@@ -337,14 +349,8 @@ namespace Telegram.Views.Wallet.Popups
 
         private void FeeInfo_Click(object sender, RoutedEventArgs e)
         {
-            var text = new StringBuilder();
+            _ = MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.WalletNetworkFeeInfo, 0), Strings.WalletNetworkFee, Strings.OK);
 
-            text.Append("[Sending Grams costs a fee paid to the TON network, not to Telegram.]");
-            text.AppendLine();
-            text.AppendLine();
-            text.Append("[Telegram covers that fee on a number of transfers each day. This was one of them.]");
-
-            _ = MessagePopup.ShowNestedAsync(XamlRoot, text.ToString(), "[Network Fee]", Strings.OK);
         }
 
         private void Peer_Click(Hyperlink sender, HyperlinkClickEventArgs args)
@@ -353,6 +359,10 @@ namespace Telegram.Views.Wallet.Popups
             {
                 Hide();
                 _navigationService.NavigateToUser(_transaction.PeerUserId);
+            }
+            else
+            {
+                Send_Click(null, null);
             }
         }
 
@@ -373,19 +383,22 @@ namespace Telegram.Views.Wallet.Popups
 
             // Nothing to look up until it has landed: what a pending row is keyed by is the
             // message that was sent, and the explorer knows about transactions.
-            if (_transaction.State is not TonWalletTransactionStatePending)
+            if (_transaction.State is TonWalletTransactionStateSucceeded)
             {
-                flyout.CreateFlyoutItem(MenuItemExplorer, "[View in Explorer]", Icons.Globe);
+                flyout.CreateFlyoutItem(MenuItemExplorer, Strings.WalletViewInExplorer, Icons.Globe);
             }
 
-            flyout.CreateFlyoutItem(MenuItemAbout, "[What is Gram?]", Icons.QuestionCircle);
+            flyout.CreateFlyoutItem(MenuItemAbout, Strings.WalletWhatIsGram, Icons.QuestionCircle);
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void MenuItemExplorer()
         {
-            MessageHelper.OpenUrl(null, null, "https://tonviewer.com/transaction/" + _transaction.Id);
+            if (_transaction.State is TonWalletTransactionStateSucceeded succeeded)
+            {
+                MessageHelper.OpenUrl(null, null, _clientService.Options.TonBlockchainExplorerUrl + "transaction/" + succeeded.TxHash);
+            }
         }
 
         private void MenuItemAbout()

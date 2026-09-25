@@ -75,7 +75,7 @@
                                FontFamily="{StaticResource SymbolThemeFontFamily}"
                                FontSize="20"
                                Margin="0,2,0,-2"/>
-                    <TextBlock Text="[Copy my address]"
+                    <TextBlock Text="{CustomResource WalletCopyAddress}"
                                Grid.Column="1" />
                 </Grid>
             </Button>
@@ -108,14 +108,14 @@
                                FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
                                FontSize="16"
                                TextAlignment="Center" />
-                    <TextBlock Text="Address copied"
+                    <TextBlock Text="{CustomResource WalletAddressCopiedShort}"
                                TextAlignment="Center"
                                Grid.Row="1" />
                 </Grid>
             </Border>
 
             <Button Click="Flip_Click"
-                    Content="[Show my QR]"
+                    Content="{CustomResource WalletShowMyQR}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Grid.Row="1" />
@@ -127,19 +127,12 @@
                                  Radius="24"
                                  Gap="0"
                                  SeparatorWeight="1"
-                                 Text="· UQAL 1DVI V82P 5SLL NYPX JENP JQRF AHRV GKHM HFCR IJYI NQYK · UQAL 1DVI V82P 5SLL NYPX JENP JQRF AHRV GKHM HFCR IJYI NQYK"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Center"
                                  Margin="0,24,0,0"
                                  Opacity="0.3" />
-        <!--FontFamily="Cascadia Mono, Consolas"
-                                 FontSize="13"
-                                 FontWeight="SemiBold"
-                                 Foreground="#66FFFFFF"-->
 
-        <local:RingTextPresenter />
-
-        <TextBlock Text="[Use to receive GRAM on&#x0a;The Open Network (TON) only.]"
+        <TextBlock Text="{CustomResource WalletReceiveInfo}"
                    TextAlignment="Center"
                    Foreground="#FFFFFF"
                    Margin="0,12,0,0"
@@ -150,7 +143,7 @@
                 Margin="24"
                 Grid.Row="2">
 
-            <Button Content="[Buy with cash or crypto]"
+            <Button Content="{CustomResource WalletBuyWithCashOrCrypto}"
                     HorizontalAlignment="Stretch"
                     Height="40" />
         </Border>

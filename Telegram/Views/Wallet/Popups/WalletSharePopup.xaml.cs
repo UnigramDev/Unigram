@@ -78,26 +78,6 @@ namespace Telegram.Views.Wallet.Popups
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var response = await _clientService.SendAsync(new GetOnRampProviders("gram"));
-            if (response is OnRampProviders providers)
-            {
-                if (providers.Providers.Count == 1)
-                {
-                    var provider = providers.Providers[0];
-
-                    response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _clientService.TonWalletState.Address, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, /*_navigationService.Window.ThemeParameters*/ null, string.Empty, string.Empty));
-                    
-                    if (response is OnRampPaymentSession session)
-                    {
-                        response = await _clientService.SendAsync(new GetInternalLinkType(session.Url));
-
-                        if (response is InternalLinkType internalLink)
-                        {
-                            MessageHelper.OpenTelegramUrl(_clientService, _navigationService, internalLink, null);
-                        }
-                    }
-                }
-            }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -183,8 +163,6 @@ namespace Telegram.Views.Wallet.Popups
 
         private void Flip_Click(object sender, RoutedEventArgs e)
         {
-            ContentDialog_PrimaryButtonClick(null, null);
-
             // A second click mid-turn would snap both faces to the start of the new
             // rotation, since the animation below pins its first keyframe.
             if (_flipping)
@@ -260,6 +238,31 @@ namespace Telegram.Views.Wallet.Popups
             rotation.Duration = FlipDuration;
 
             visual.StartAnimation("RotationAngleInDegrees", rotation);
+        }
+
+        private async void Buy_Click(object sender, RoutedEventArgs e)
+        {
+            var response = await _clientService.SendAsync(new GetOnRampProviders("gram"));
+            if (response is OnRampProviders providers)
+            {
+                if (providers.Providers.Count == 1)
+                {
+                    var provider = providers.Providers[0];
+
+                    response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _clientService.TonWalletState.Address, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, /*_navigationService.Window.ThemeParameters*/ null, string.Empty, string.Empty));
+
+                    if (response is OnRampPaymentSession session)
+                    {
+                        response = await _clientService.SendAsync(new GetInternalLinkType(session.Url));
+
+                        if (response is InternalLinkType internalLink)
+                        {
+                            MessageHelper.OpenTelegramUrl(_clientService, _navigationService, internalLink, null);
+                            Hide();
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -12,40 +12,40 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   VerticalScrollMode="Auto">
         <StackPanel>
-            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/WalletAbout.tgs"
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Gram.tgs"
                                     IsCachingEnabled="False"
                                     AutoPlay="True"
                                     FrameSize="120,120"
                                     DecodeFrameType="Logical"
-                                    LoopCount="1"
                                     Width="120"
-                                    Height="120"
-                                    Margin="0,12,0,8" />
+                                    Height="120" />
 
-            <TextBlock Text="[How It Works]"
+            <TextBlock Text="{CustomResource WalletHowItWorks}"
                        Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
                        VerticalAlignment="Top"
                        Margin="12,0,12,4" />
 
-            <TextBlock common:TextBlockHelper.Markdown="[Only you control your funds -&#x0a;no one else has access.]"
+            <TextBlock common:TextBlockHelper.Markdown="{CustomResource WalletHowItWorksInfo}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextAlignment="Center"
                        Grid.Row="2" />
 
-            <controls:PopupInfo Title="[Send Money Instantly]"
-                                Subtitle="[Send Grams in any chat, just like sharing a photo.]"
+            <controls:PopupInfo Title="{CustomResource WalletSendInstantly}"
+                                Subtitle="{CustomResource WalletSendInstantlyInfo}"
                                 Glyph="&#xEB2B;"
                                 Margin="0,12,0,0" />
-            <controls:PopupInfo Title="[No Fees]"
-                                Subtitle="[First 5 transfers each day are free, the rest cost almost nothing.]"
+            <controls:PopupInfo Title="{CustomResource WalletNoFees}"
+                                Subtitle="{CustomResource WalletNoFeesInfo}"
                                 Glyph="&#xEA9D;" />
-            <controls:PopupInfo Title="[Blockchain Verified]"
-                                Subtitle="[All transactions are recorded and verifiable on a public ledger.]"
+            <controls:PopupInfo Title="{CustomResource WalletBlockchainVerified}"
+                                Subtitle="{CustomResource WalletBlockchainVerifiedInfo}"
                                 Glyph="&#xEA8B;" />
 
             <controls:SettingsFooter x:Name="Footer"
                                      Click="Footer_Click"
+                                     IsLink="True"
+                                     Text="{CustomResource Strings.WalletTermsOfService}"
                                      TextAlignment="Center"
                                      Margin="12,8,12,24" />
         </StackPanel>

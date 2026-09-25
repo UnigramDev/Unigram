@@ -1015,6 +1015,38 @@ static class _UniFFILib {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     static _UniFFILib() {
         _UniFFILib.uniffiCheckContractApiVersion();
@@ -1155,6 +1187,17 @@ static class _UniFFILib {
     public static extern
 #endif
      ulong uniffi_wallet_engine_fn_method_walletclient_decrypt_comment(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletclient_resolve_encrypted_comment_recipient(ulong @ptr,RustBuffer @request
     );
 
     #if NET8_0_OR_GREATER
@@ -1660,6 +1703,160 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ulong uniffi_wallet_engine_fn_clone_tonconnectderivedsession(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     void uniffi_wallet_engine_fn_free_tonconnectderivedsession(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_decode_sign_data_cell(ulong @ptr,RustBuffer @schema,RustBuffer @cell,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_decrypt_request(ulong @ptr,RustBuffer @body,ulong @now,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_connect_error(ulong @ptr,ulong @eventId,RustBuffer @code,RustBuffer @message,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_connect_event(ulong @ptr,ulong @eventId,RustBuffer @account,RustBuffer @proof,RustBuffer @device,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_disconnect_event(ulong @ptr,ulong @eventId,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_disconnect_success(ulong @ptr,RustBuffer @requestId,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_error(ulong @ptr,RustBuffer @requestId,RustBuffer @code,RustBuffer @message,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_send_success(ulong @ptr,RustBuffer @requestId,RustBuffer @signedBoc,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_sign_data_success(ulong @ptr,RustBuffer @requestId,RustBuffer @signedData,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_open_challenge(ulong @ptr,RustBuffer @challenge,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_public_key_hex(ulong @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_signing_public_key(ulong @ptr,ref UniffiRustCallStatus _uniffi_out_err
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ulong uniffi_wallet_engine_fn_clone_wallethttphost(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
     );
 
@@ -1825,6 +2022,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ulong uniffi_wallet_engine_fn_method_walletlifecycle_derive_ton_connect_session(ulong @ptr,RustBuffer @request
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ulong uniffi_wallet_engine_fn_method_walletlifecycle_import_wallet(ulong @ptr,RustBuffer @request
     );
 
@@ -1837,6 +2045,17 @@ static class _UniFFILib {
     public static extern
 #endif
      ulong uniffi_wallet_engine_fn_method_walletlifecycle_reveal_recovery_phrase(ulong @ptr,RustBuffer @descriptor
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ulong uniffi_wallet_engine_fn_method_walletlifecycle_sign_ton_connect_data(ulong @ptr,RustBuffer @request
     );
 
     #if NET8_0_OR_GREATER
@@ -2837,6 +3056,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_method_walletclient_resolve_encrypted_comment_recipient(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation(
     );
 
@@ -3277,6 +3507,138 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decode_sign_data_cell(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_error(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_event(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_event(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_success(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_error(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_send_success(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_sign_data_success(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_open_challenge(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_public_key_hex(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_signing_public_key(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_method_wallethttphost_execute_http(
     );
 
@@ -3343,6 +3705,17 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
+     ushort uniffi_wallet_engine_checksum_method_walletlifecycle_derive_ton_connect_session(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
      ushort uniffi_wallet_engine_checksum_method_walletlifecycle_import_wallet(
     );
 
@@ -3355,6 +3728,17 @@ static class _UniFFILib {
     public static extern
 #endif
      ushort uniffi_wallet_engine_checksum_method_walletlifecycle_reveal_recovery_phrase(
+    );
+
+    #if NET8_0_OR_GREATER
+    [LibraryImport("wallet_engine")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static partial
+#else
+    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
+    public static extern
+#endif
+     ushort uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_data(
     );
 
     #if NET8_0_OR_GREATER
@@ -3530,14 +3914,20 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment();
-            if (checksum != 32002) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `32002`, library returned `{checksum}`");
+            if (checksum != 45295) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `45295`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment();
             if (checksum != 19839) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment` checksum `19839`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_resolve_encrypted_comment_recipient();
+            if (checksum != 61038) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_resolve_encrypted_comment_recipient` checksum `61038`, library returned `{checksum}`");
             }
         }
         {
@@ -3781,6 +4171,78 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decode_sign_data_cell();
+            if (checksum != 14430) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decode_sign_data_cell` checksum `14430`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request();
+            if (checksum != 56943) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request` checksum `56943`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_error();
+            if (checksum != 22274) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_error` checksum `22274`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_event();
+            if (checksum != 1164) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_event` checksum `1164`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_event();
+            if (checksum != 32245) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_event` checksum `32245`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_success();
+            if (checksum != 14846) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_success` checksum `14846`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_error();
+            if (checksum != 5179) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_error` checksum `5179`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_send_success();
+            if (checksum != 56975) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_send_success` checksum `56975`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_sign_data_success();
+            if (checksum != 2207) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_sign_data_success` checksum `2207`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_open_challenge();
+            if (checksum != 65045) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_open_challenge` checksum `65045`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_public_key_hex();
+            if (checksum != 18549) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_public_key_hex` checksum `18549`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_signing_public_key();
+            if (checksum != 913) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_signing_public_key` checksum `913`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_wallethttphost_execute_http();
             if (checksum != 43126) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_wallethttphost_execute_http` checksum `43126`, library returned `{checksum}`");
@@ -3817,6 +4279,12 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_derive_ton_connect_session();
+            if (checksum != 1649) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_derive_ton_connect_session` checksum `1649`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_import_wallet();
             if (checksum != 60352) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_import_wallet` checksum `60352`, library returned `{checksum}`");
@@ -3826,6 +4294,12 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_reveal_recovery_phrase();
             if (checksum != 7144) {
                 throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_reveal_recovery_phrase` checksum `7144`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_data();
+            if (checksum != 22331) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_data` checksum `22331`, library returned `{checksum}`");
             }
         }
         {
@@ -3972,6 +4446,32 @@ class FfiConverterUInt64: FfiConverter<ulong, ulong> {
 
 
 
+class FfiConverterInt64: FfiConverter<long, long> {
+    public static FfiConverterInt64 INSTANCE = new FfiConverterInt64();
+
+    public override long Lift(long value) {
+        return value;
+    }
+
+    public override long Read(BigEndianStream stream) {
+        return stream.ReadLong();
+    }
+
+    public override long Lower(long value) {
+        return value;
+    }
+
+    public override int AllocationSize(long value) {
+        return 8;
+    }
+
+    public override void Write(long value, BigEndianStream stream) {
+        stream.WriteLong(value);
+    }
+}
+
+
+
 class FfiConverterBoolean: FfiConverter<bool, sbyte> {
     public static FfiConverterBoolean INSTANCE = new FfiConverterBoolean();
 
@@ -4061,6 +4561,379 @@ class FfiConverterByteArray: FfiConverterRustBuffer<byte[]> {
     public override void Write(byte[] value, BigEndianStream stream) {
         stream.WriteInt(value.Length);
         stream.WriteBytes(value);
+    }
+}
+
+
+
+/// <summary>
+/// One `MTProto`-relayed TON Connect session whose key pair was derived from the wallet key.
+///
+/// The object keeps no replay state and no event counter: the server issues event
+/// identifiers and enforces request ordering. Nothing here is persisted.
+/// </summary>
+internal interface ITonConnectDerivedSession {
+    /// <summary>
+    /// Decodes a `signData` cell by its TL-B schema for display.
+    ///
+    /// Pass the `schema` and `cell` of a `TonConnectSignDataPayload::Cell` exactly as received.
+    /// The result lists the fields of the schema's last declaration (the root constructor, whose
+    /// tag the cell must carry) in cell order, or reports the cell as not decodable when the
+    /// schema uses an unsupported construct or the cell does not match it; it is never a partial
+    /// list. Addresses are TEP-2 friendly, non-bounceable, and test-only on a testnet session.
+    /// Signing does not depend on this result.
+    /// </summary>
+    TonConnectSignDataCellDecoding DecodeSignDataCell(string @schema, string @cell);
+    /// <summary>
+    /// Authenticates and validates one dApp request relayed by the server.
+    ///
+    /// `body` is the raw `nonce(24) || box` bytes from the dApp; `now` is the
+    /// current Unix time used for `valid_until` validation.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    TonConnectDerivedRequest DecryptRequest(byte[] @body, ulong @now);
+    /// <summary>
+    /// Encrypts a failed-connection event for the dApp.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptConnectError(ulong @eventId, TonConnectConnectErrorCode @code, string @message);
+    /// <summary>
+    /// Encrypts a successful connect event for the dApp.
+    ///
+    /// `account` must belong to this session; `proof` is included when the
+    /// dApp requested `ton_proof`. The device advertises `SendTransaction` and
+    /// `SignData` (`text`, `binary`, `cell`).
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptConnectEvent(ulong @eventId, TonConnectAccountInfo @account, TonConnectProofReply? @proof, TonConnectDevice @device);
+    /// <summary>
+    /// Encrypts a wallet-initiated disconnect event.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptDisconnectEvent(ulong @eventId);
+    /// <summary>
+    /// Encrypts the empty-object result of a dApp-initiated disconnect request.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptDisconnectSuccess(string @requestId);
+    /// <summary>
+    /// Encrypts a protocol RPC error response for the selected request.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptError(string @requestId, TonConnectRpcErrorCode @code, string @message);
+    /// <summary>
+    /// Encrypts a successful `sendTransaction` response carrying the signed `BoC`.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptSendSuccess(string @requestId, string @signedBoc);
+    /// <summary>
+    /// Encrypts a successful `signData` response for the signed data.
+    ///
+    /// The response names this session's wallet address and is refused unless
+    /// `signed_data.signature` verifies with `signed_data.public_key` for exactly
+    /// that address, request, domain, and timestamp.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] EncryptSignDataSuccess(string @requestId, TonConnectSignedData @signedData);
+    /// <summary>
+    /// Opens a server challenge and returns its 32-byte answer.
+    ///
+    /// `challenge` is exactly `ephemeral_pk(32) || nonce(24) || box(48)`: a
+    /// 32-byte answer sealed to `W` under an ephemeral key.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    byte[] OpenChallenge(byte[] @challenge);
+    /// <summary>
+    /// Returns the session public key `W` as 64 lowercase hex characters.
+    /// </summary>
+    string PublicKeyHex();
+    /// <summary>
+    /// Returns the 32-byte Ed25519 signing public key the session was derived from.
+    /// </summary>
+    byte[] SigningPublicKey();
+}
+/// <summary>
+/// One `MTProto`-relayed TON Connect session whose key pair was derived from the wallet key.
+///
+/// The object keeps no replay state and no event counter: the server issues event
+/// identifiers and enforces request ordering. Nothing here is persisted.
+/// </summary>
+internal class TonConnectDerivedSession : ITonConnectDerivedSession, IDisposable {
+    protected ulong pointer;
+    private int _wasDestroyed = 0;
+    private long _callCounter = 1;
+
+    public TonConnectDerivedSession(ulong pointer) {
+        this.pointer = pointer;
+    }
+
+    ~TonConnectDerivedSession() {
+        Destroy();
+    }
+
+    protected void FreeRustArcPtr() {
+        _UniffiHelpers.RustCall((ref UniffiRustCallStatus status) => {
+            _UniFFILib.uniffi_wallet_engine_fn_free_tonconnectderivedsession(this.pointer, ref status);
+        });
+    }
+
+    protected ulong CloneRustArcPtr() {
+        return _UniffiHelpers.RustCall((ref UniffiRustCallStatus status) => {
+            return _UniFFILib.uniffi_wallet_engine_fn_clone_tonconnectderivedsession(this.pointer, ref status);
+        });
+    }
+
+    public void Destroy()
+    {
+        // Only allow a single call to this method.
+        if (Interlocked.CompareExchange(ref _wasDestroyed, 1, 0) == 0)
+        {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (Interlocked.Decrement(ref _callCounter) == 0)
+            {
+                FreeRustArcPtr();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        Destroy();
+        GC.SuppressFinalize(this); // Suppress finalization to avoid unnecessary GC overhead.
+    }
+
+    private void IncrementCallCounter() 
+    {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        long count;
+        do
+        {
+            count = Interlocked.Read(ref _callCounter);
+            if (count == 0L) throw new System.ObjectDisposedException(String.Format("'{0}' object has already been destroyed", this.GetType().Name));
+            if (count == long.MaxValue) throw new System.OverflowException(String.Format("'{0}' call counter would overflow", this.GetType().Name));
+
+        } while (Interlocked.CompareExchange(ref _callCounter, count + 1, count) != count);
+    }
+
+    private void DecrementCallCounter() 
+    {
+        // This decrement always matches the increment we performed above.
+        if (Interlocked.Decrement(ref _callCounter) == 0) {
+            FreeRustArcPtr();
+        }
+    }
+
+    internal void CallWithPointer(Action<ulong> action)
+    {
+        IncrementCallCounter();
+        try {
+            action(CloneRustArcPtr());
+        }
+        finally {
+            DecrementCallCounter();
+        }
+    }
+
+    internal T CallWithPointer<T>(Func<ulong, T> func)
+    {   
+        IncrementCallCounter();
+        try {
+            return func(CloneRustArcPtr());
+        }
+        finally {
+            DecrementCallCounter();
+        }
+    }
+
+    
+    /// <summary>
+    /// Decodes a `signData` cell by its TL-B schema for display.
+    ///
+    /// Pass the `schema` and `cell` of a `TonConnectSignDataPayload::Cell` exactly as received.
+    /// The result lists the fields of the schema's last declaration (the root constructor, whose
+    /// tag the cell must carry) in cell order, or reports the cell as not decodable when the
+    /// schema uses an unsupported construct or the cell does not match it; it is never a partial
+    /// list. Addresses are TEP-2 friendly, non-bounceable, and test-only on a testnet session.
+    /// Signing does not depend on this result.
+    /// </summary>
+    public TonConnectSignDataCellDecoding DecodeSignDataCell(string @schema, string @cell) {
+        return CallWithPointer(thisPtr => FfiConverterTypeTonConnectSignDataCellDecoding.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_decode_sign_data_cell(thisPtr, FfiConverterString.INSTANCE.Lower(@schema), FfiConverterString.INSTANCE.Lower(@cell), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Authenticates and validates one dApp request relayed by the server.
+    ///
+    /// `body` is the raw `nonce(24) || box` bytes from the dApp; `now` is the
+    /// current Unix time used for `valid_until` validation.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public TonConnectDerivedRequest DecryptRequest(byte[] @body, ulong @now) {
+        return CallWithPointer(thisPtr => FfiConverterTypeTonConnectDerivedRequest.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_decrypt_request(thisPtr, FfiConverterByteArray.INSTANCE.Lower(@body), FfiConverterUInt64.INSTANCE.Lower(@now), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts a failed-connection event for the dApp.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptConnectError(ulong @eventId, TonConnectConnectErrorCode @code, string @message) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_connect_error(thisPtr, FfiConverterUInt64.INSTANCE.Lower(@eventId), FfiConverterTypeTonConnectConnectErrorCode.INSTANCE.Lower(@code), FfiConverterString.INSTANCE.Lower(@message), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts a successful connect event for the dApp.
+    ///
+    /// `account` must belong to this session; `proof` is included when the
+    /// dApp requested `ton_proof`. The device advertises `SendTransaction` and
+    /// `SignData` (`text`, `binary`, `cell`).
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptConnectEvent(ulong @eventId, TonConnectAccountInfo @account, TonConnectProofReply? @proof, TonConnectDevice @device) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_connect_event(thisPtr, FfiConverterUInt64.INSTANCE.Lower(@eventId), FfiConverterTypeTonConnectAccountInfo.INSTANCE.Lower(@account), FfiConverterOptionalTypeTonConnectProofReply.INSTANCE.Lower(@proof), FfiConverterTypeTonConnectDevice.INSTANCE.Lower(@device), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts a wallet-initiated disconnect event.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptDisconnectEvent(ulong @eventId) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_disconnect_event(thisPtr, FfiConverterUInt64.INSTANCE.Lower(@eventId), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts the empty-object result of a dApp-initiated disconnect request.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptDisconnectSuccess(string @requestId) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_disconnect_success(thisPtr, FfiConverterString.INSTANCE.Lower(@requestId), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts a protocol RPC error response for the selected request.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptError(string @requestId, TonConnectRpcErrorCode @code, string @message) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_error(thisPtr, FfiConverterString.INSTANCE.Lower(@requestId), FfiConverterTypeTonConnectRpcErrorCode.INSTANCE.Lower(@code), FfiConverterString.INSTANCE.Lower(@message), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts a successful `sendTransaction` response carrying the signed `BoC`.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptSendSuccess(string @requestId, string @signedBoc) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_send_success(thisPtr, FfiConverterString.INSTANCE.Lower(@requestId), FfiConverterString.INSTANCE.Lower(@signedBoc), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Encrypts a successful `signData` response for the signed data.
+    ///
+    /// The response names this session's wallet address and is refused unless
+    /// `signed_data.signature` verifies with `signed_data.public_key` for exactly
+    /// that address, request, domain, and timestamp.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] EncryptSignDataSuccess(string @requestId, TonConnectSignedData @signedData) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_encrypt_sign_data_success(thisPtr, FfiConverterString.INSTANCE.Lower(@requestId), FfiConverterTypeTonConnectSignedData.INSTANCE.Lower(@signedData), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Opens a server challenge and returns its 32-byte answer.
+    ///
+    /// `challenge` is exactly `ephemeral_pk(32) || nonce(24) || box(48)`: a
+    /// 32-byte answer sealed to `W` under an ephemeral key.
+    /// </summary>
+    /// <exception cref="TonConnectSessionException"></exception>
+    public byte[] OpenChallenge(byte[] @challenge) {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeTonConnectSessionError.INSTANCE, (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_open_challenge(thisPtr, FfiConverterByteArray.INSTANCE.Lower(@challenge), ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Returns the session public key `W` as 64 lowercase hex characters.
+    /// </summary>
+    public string PublicKeyHex() {
+        return CallWithPointer(thisPtr => FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_public_key_hex(thisPtr,  ref _status)
+)));
+    }
+    
+    
+    /// <summary>
+    /// Returns the 32-byte Ed25519 signing public key the session was derived from.
+    /// </summary>
+    public byte[] SigningPublicKey() {
+        return CallWithPointer(thisPtr => FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
+    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_signing_public_key(thisPtr,  ref _status)
+)));
+    }
+    
+    
+
+    
+}
+class FfiConverterTypeTonConnectDerivedSession: FfiConverter<TonConnectDerivedSession, ulong> {
+    public static FfiConverterTypeTonConnectDerivedSession INSTANCE = new FfiConverterTypeTonConnectDerivedSession();
+
+
+    public override ulong Lower(TonConnectDerivedSession value) {
+        return value.CallWithPointer(thisPtr => thisPtr);
+    }
+
+    public override TonConnectDerivedSession Lift(ulong value) {
+        return new TonConnectDerivedSession(value);
+    }
+
+    public override TonConnectDerivedSession Read(BigEndianStream stream) {
+        return Lift(stream.ReadULong());
+    }
+
+    public override int AllocationSize(TonConnectDerivedSession value) {
+        return 8;
+    }
+
+    public override void Write(TonConnectDerivedSession value, BigEndianStream stream) {
+        stream.WriteULong(Lower(value));
     }
 }
 
@@ -4537,6 +5410,9 @@ internal interface IWalletClient {
     /// A supplied key must locally derive the recipient's address using supported
     /// default wallet parameters. Verification happens before secret authorization.
     /// No secret is requested when the comment is already too large.
+    /// The recipient key is resolved exactly as
+    /// [`Self::resolve_encrypted_comment_recipient`] resolves it, including its
+    /// errors, and before any secret is requested.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task<Boc> CreateEncryptedComment(CreateEncryptedCommentRequest @request);
@@ -4548,6 +5424,25 @@ internal interface IWalletClient {
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task<string> DecryptComment(DecryptCommentRequest @request);
+    /// <summary>
+    /// Resolves the Ed25519 public key an encrypted comment for a recipient uses.
+    ///
+    /// This answers whether [`Self::create_encrypted_comment`] with the same
+    /// recipient and supplied key can encrypt, without a comment and without
+    /// requesting any protected secret, so a client configured without a local
+    /// signing secret can ask it too. A supplied key is verified locally, with
+    /// no HTTP request and without the single-flight slot. Otherwise the engine
+    /// reads the recipient account state and, for an active contract, calls its
+    /// `get_public_key` get-method.
+    ///
+    /// `EncryptedCommentUnavailable` means the recipient cannot receive an
+    /// encrypted comment: the supplied key does not derive its address, its
+    /// wallet is not deployed or is frozen, or its contract did not return a
+    /// public key. `EncryptedCommentLookupFailed` means the provider did not
+    /// answer and nothing is known about the recipient.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    Task<byte[]> ResolveEncryptedCommentRecipient(EncryptedCommentRecipientRequest @request);
     /// <summary>
     /// Generates a new signing half and a signed Wallet rev00 key-change message.
     ///
@@ -4996,6 +5891,9 @@ internal class WalletClient : IWalletClient, IDisposable {
     /// A supplied key must locally derive the recipient's address using supported
     /// default wallet parameters. Verification happens before secret authorization.
     /// No secret is requested when the comment is already too large.
+    /// The recipient key is resolved exactly as
+    /// [`Self::resolve_encrypted_comment_recipient`] resolves it, including its
+    /// errors, and before any secret is requested.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     public async Task<Boc> CreateEncryptedComment(CreateEncryptedCommentRequest @request) {
@@ -5042,6 +5940,45 @@ internal class WalletClient : IWalletClient, IDisposable {
         (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
         // Lift
         (result) => FfiConverterString.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletClientError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Resolves the Ed25519 public key an encrypted comment for a recipient uses.
+    ///
+    /// This answers whether [`Self::create_encrypted_comment`] with the same
+    /// recipient and supplied key can encrypt, without a comment and without
+    /// requesting any protected secret, so a client configured without a local
+    /// signing secret can ask it too. A supplied key is verified locally, with
+    /// no HTTP request and without the single-flight slot. Otherwise the engine
+    /// reads the recipient account state and, for an active contract, calls its
+    /// `get_public_key` get-method.
+    ///
+    /// `EncryptedCommentUnavailable` means the recipient cannot receive an
+    /// encrypted comment: the supplied key does not derive its address, its
+    /// wallet is not deployed or is frozen, or its contract did not return a
+    /// public key. `EncryptedCommentLookupFailed` means the provider did not
+    /// answer and nothing is known about the recipient.
+    /// </summary>
+    /// <exception cref="WalletClientException"></exception>
+    public async Task<byte[]> ResolveEncryptedCommentRecipient(EncryptedCommentRecipientRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletclient_resolve_encrypted_comment_recipient(thisPtr, FfiConverterTypeEncryptedCommentRecipientRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterByteArray.INSTANCE.Lift(result),
         // Error
         FfiConverterTypeWalletClientError.INSTANCE
     );
@@ -6129,6 +7066,17 @@ internal interface IWalletLifecycle {
     /// <exception cref="WalletLifecycleException"></exception>
     Task DeleteWallet(WalletDescriptor @descriptor);
     /// <summary>
+    /// Authorizes the current signing key and derives one `MTProto` TON Connect session.
+    ///
+    /// Scheme v1: the session secret is HMAC-derived from the signing-key seed, the
+    /// dApp client id and the server nonce, so every device of the user derives the
+    /// same key pair. The returned object exposes only the public key `W` and the
+    /// signing public key it was derived from; the engine does not persist it.
+    /// A signing-key rotation changes the derived key of every later derivation.
+    /// </summary>
+    /// <exception cref="WalletLifecycleException"></exception>
+    Task<TonConnectDerivedSession> DeriveTonConnectSession(TonConnectDerivedSessionRequest @request);
+    /// <summary>
     /// Validates and imports an entered mnemonic as a wallet account.
     ///
     /// The host stores the phrase with a user-presence requirement. The result
@@ -6144,6 +7092,17 @@ internal interface IWalletLifecycle {
     /// </summary>
     /// <exception cref="WalletLifecycleException"></exception>
     Task<RecoveryPhrase> RevealRecoveryPhrase(WalletDescriptor @descriptor);
+    /// <summary>
+    /// Authorizes the current signing key and signs one TON Connect `signData` request.
+    ///
+    /// Rust validates the request against this wallet and builds the protocol digest
+    /// for `domain` and `timestamp` before any secret access, so the caller cannot use
+    /// this API as a generic signing oracle. The returned record is what
+    /// `TonConnectDerivedSession::encrypt_sign_data_success` answers with. The host
+    /// must block this operation while a key rotation is unresolved.
+    /// </summary>
+    /// <exception cref="WalletLifecycleException"></exception>
+    Task<TonConnectSignedData> SignTonConnectData(TonConnectSignDataSignRequest @request);
     /// <summary>
     /// Authorizes the current signing key and signs a TON Connect ownership proof.
     ///
@@ -6328,6 +7287,37 @@ internal class WalletLifecycle : IWalletLifecycle, IDisposable {
     }
     
     /// <summary>
+    /// Authorizes the current signing key and derives one `MTProto` TON Connect session.
+    ///
+    /// Scheme v1: the session secret is HMAC-derived from the signing-key seed, the
+    /// dApp client id and the server nonce, so every device of the user derives the
+    /// same key pair. The returned object exposes only the public key `W` and the
+    /// signing public key it was derived from; the engine does not persist it.
+    /// A signing-key rotation changes the derived key of every later derivation.
+    /// </summary>
+    /// <exception cref="WalletLifecycleException"></exception>
+    public async Task<TonConnectDerivedSession> DeriveTonConnectSession(TonConnectDerivedSessionRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletlifecycle_derive_ton_connect_session(thisPtr, FfiConverterTypeTonConnectDerivedSessionRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_u64(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_u64(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_u64(future),
+        // Lift
+        (result) => FfiConverterTypeTonConnectDerivedSession.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletLifecycleError.INSTANCE
+    );
+    }
+    
+    /// <summary>
     /// Validates and imports an entered mnemonic as a wallet account.
     ///
     /// The host stores the phrase with a user-presence requirement. The result
@@ -6378,6 +7368,37 @@ internal class WalletLifecycle : IWalletLifecycle, IDisposable {
         (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
         // Lift
         (result) => FfiConverterTypeRecoveryPhrase.INSTANCE.Lift(result),
+        // Error
+        FfiConverterTypeWalletLifecycleError.INSTANCE
+    );
+    }
+    
+    /// <summary>
+    /// Authorizes the current signing key and signs one TON Connect `signData` request.
+    ///
+    /// Rust validates the request against this wallet and builds the protocol digest
+    /// for `domain` and `timestamp` before any secret access, so the caller cannot use
+    /// this API as a generic signing oracle. The returned record is what
+    /// `TonConnectDerivedSession::encrypt_sign_data_success` answers with. The host
+    /// must block this operation while a key rotation is unresolved.
+    /// </summary>
+    /// <exception cref="WalletLifecycleException"></exception>
+    public async Task<TonConnectSignedData> SignTonConnectData(TonConnectSignDataSignRequest @request) {
+    return await _UniFFIAsync.UniffiRustCallAsync(
+        // Get rust future
+        CallWithPointer(thisPtr => {
+            return _UniFFILib.uniffi_wallet_engine_fn_method_walletlifecycle_sign_ton_connect_data(thisPtr, FfiConverterTypeTonConnectSignDataSignRequest.INSTANCE.Lower(@request));
+        }),
+        // Poll
+        (ulong future, IntPtr continuation, ulong data) => _UniFFILib.ffi_wallet_engine_rust_future_poll_rust_buffer(future, continuation, data),
+        // Complete
+        (ulong future, ref UniffiRustCallStatus status) => {
+            return _UniFFILib.ffi_wallet_engine_rust_future_complete_rust_buffer(future, ref status);
+        },
+        // Free
+        (ulong future) => _UniFFILib.ffi_wallet_engine_rust_future_free_rust_buffer(future),
+        // Lift
+        (result) => FfiConverterTypeTonConnectSignedData.INSTANCE.Lift(result),
         // Error
         FfiConverterTypeWalletLifecycleError.INSTANCE
     );
@@ -8191,6 +9212,61 @@ class FfiConverterTypeDomainError: FfiConverterRustBuffer<DomainError> {
             FfiConverterOptionalUInt16.INSTANCE.Write(value.ProviderStatus, stream);
             FfiConverterOptionalUInt64.INSTANCE.Write(value.RetryAfterMs, stream);
             FfiConverterOptionalTypeHttpHostErrorKind.INSTANCE.Write(value.HostKind, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Asks which public key a TON encrypted comment for a recipient would use.
+///
+/// The fields mean the same as in [`CreateEncryptedCommentRequest`], so the
+/// answer predicts whether that request can encrypt, without a comment and
+/// without any protected-secret access.
+/// </summary>
+/// <param name="Recipient">
+/// Recipient wallet address.
+/// </param>
+/// <param name="RecipientPublicKey">
+/// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+/// 
+/// It is verified against `recipient` exactly as
+/// [`CreateEncryptedCommentRequest::recipient_public_key`] is.
+/// </param>
+internal record EncryptedCommentRecipientRequest (
+    /// <summary>
+    /// Recipient wallet address.
+    /// </summary>
+    TonAddressString Recipient, 
+    /// <summary>
+    /// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+    ///
+    /// It is verified against `recipient` exactly as
+    /// [`CreateEncryptedCommentRequest::recipient_public_key`] is.
+    /// </summary>
+    byte[]? RecipientPublicKey = null
+) {
+}
+
+class FfiConverterTypeEncryptedCommentRecipientRequest: FfiConverterRustBuffer<EncryptedCommentRecipientRequest> {
+    public static FfiConverterTypeEncryptedCommentRecipientRequest INSTANCE = new FfiConverterTypeEncryptedCommentRecipientRequest();
+
+    public override EncryptedCommentRecipientRequest Read(BigEndianStream stream) {
+        return new EncryptedCommentRecipientRequest(
+            Recipient: FfiConverterTypeTonAddressString.INSTANCE.Read(stream),
+            RecipientPublicKey: FfiConverterOptionalByteArray.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(EncryptedCommentRecipientRequest value) {
+        return 0
+            + FfiConverterTypeTonAddressString.INSTANCE.AllocationSize(value.Recipient)
+            + FfiConverterOptionalByteArray.INSTANCE.AllocationSize(value.RecipientPublicKey);
+    }
+
+    public override void Write(EncryptedCommentRecipientRequest value, BigEndianStream stream) {
+            FfiConverterTypeTonAddressString.INSTANCE.Write(value.Recipient, stream);
+            FfiConverterOptionalByteArray.INSTANCE.Write(value.RecipientPublicKey, stream);
     }
 }
 
@@ -11106,6 +12182,116 @@ class FfiConverterTypeTonConnectConnectPrompt: FfiConverterRustBuffer<TonConnect
 
 
 /// <summary>
+/// One authenticated dApp request relayed by the server.
+/// </summary>
+/// <param name="Request">
+/// The validated request. Only a derived session reports `SignData`; the
+/// classic bridge session reports `signData` as `Unsupported`.
+/// </param>
+/// <param name="RequestId">
+/// The request `id` as a signed 64-bit value.
+/// 
+/// `None` when `id` is not a canonical decimal that fits a signed 64-bit
+/// value; `request` is still decoded so the host can answer with the exact
+/// id string.
+/// </param>
+internal record TonConnectDerivedRequest (
+    /// <summary>
+    /// The validated request. Only a derived session reports `SignData`; the
+    /// classic bridge session reports `signData` as `Unsupported`.
+    /// </summary>
+    TonConnectIncomingRequest Request, 
+    /// <summary>
+    /// The request `id` as a signed 64-bit value.
+    ///
+    /// `None` when `id` is not a canonical decimal that fits a signed 64-bit
+    /// value; `request` is still decoded so the host can answer with the exact
+    /// id string.
+    /// </summary>
+    long? RequestId
+) {
+}
+
+class FfiConverterTypeTonConnectDerivedRequest: FfiConverterRustBuffer<TonConnectDerivedRequest> {
+    public static FfiConverterTypeTonConnectDerivedRequest INSTANCE = new FfiConverterTypeTonConnectDerivedRequest();
+
+    public override TonConnectDerivedRequest Read(BigEndianStream stream) {
+        return new TonConnectDerivedRequest(
+            Request: FfiConverterTypeTonConnectIncomingRequest.INSTANCE.Read(stream),
+            RequestId: FfiConverterOptionalInt64.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonConnectDerivedRequest value) {
+        return 0
+            + FfiConverterTypeTonConnectIncomingRequest.INSTANCE.AllocationSize(value.Request)
+            + FfiConverterOptionalInt64.INSTANCE.AllocationSize(value.RequestId);
+    }
+
+    public override void Write(TonConnectDerivedRequest value, BigEndianStream stream) {
+            FfiConverterTypeTonConnectIncomingRequest.INSTANCE.Write(value.Request, stream);
+            FfiConverterOptionalInt64.INSTANCE.Write(value.RequestId, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Inputs of one derived `MTProto` TON Connect session.
+/// </summary>
+/// <param name="Descriptor">
+/// Wallet whose current signing key derives the session key.
+/// </param>
+/// <param name="DappClientId">
+/// The dApp client id `A`: exactly 64 lowercase hex characters.
+/// </param>
+/// <param name="Nonce">
+/// The raw per-session nonce issued by the server. It must not be empty.
+/// </param>
+internal record TonConnectDerivedSessionRequest (
+    /// <summary>
+    /// Wallet whose current signing key derives the session key.
+    /// </summary>
+    WalletDescriptor Descriptor, 
+    /// <summary>
+    /// The dApp client id `A`: exactly 64 lowercase hex characters.
+    /// </summary>
+    string DappClientId, 
+    /// <summary>
+    /// The raw per-session nonce issued by the server. It must not be empty.
+    /// </summary>
+    byte[] Nonce
+) {
+}
+
+class FfiConverterTypeTonConnectDerivedSessionRequest: FfiConverterRustBuffer<TonConnectDerivedSessionRequest> {
+    public static FfiConverterTypeTonConnectDerivedSessionRequest INSTANCE = new FfiConverterTypeTonConnectDerivedSessionRequest();
+
+    public override TonConnectDerivedSessionRequest Read(BigEndianStream stream) {
+        return new TonConnectDerivedSessionRequest(
+            Descriptor: FfiConverterTypeWalletDescriptor.INSTANCE.Read(stream),
+            DappClientId: FfiConverterString.INSTANCE.Read(stream),
+            Nonce: FfiConverterByteArray.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonConnectDerivedSessionRequest value) {
+        return 0
+            + FfiConverterTypeWalletDescriptor.INSTANCE.AllocationSize(value.Descriptor)
+            + FfiConverterString.INSTANCE.AllocationSize(value.DappClientId)
+            + FfiConverterByteArray.INSTANCE.AllocationSize(value.Nonce);
+    }
+
+    public override void Write(TonConnectDerivedSessionRequest value, BigEndianStream stream) {
+            FfiConverterTypeWalletDescriptor.INSTANCE.Write(value.Descriptor, stream);
+            FfiConverterString.INSTANCE.Write(value.DappClientId, stream);
+            FfiConverterByteArray.INSTANCE.Write(value.Nonce, stream);
+    }
+}
+
+
+
+/// <summary>
 /// Host-owned subset of the TypeScript protocol's `DeviceInfo`.
 ///
 /// Rust fills `maxProtocolVersion` and `features` from the methods the engine
@@ -11505,6 +12691,258 @@ class FfiConverterTypeTonConnectSessionConfig: FfiConverterRustBuffer<TonConnect
             FfiConverterString.INSTANCE.Write(value.BridgeUrl, stream);
             FfiConverterUInt64.INSTANCE.Write(value.MaxEventBytes, stream);
             FfiConverterUInt32.INSTANCE.Write(value.MessageTtlSeconds, stream);
+    }
+}
+
+
+
+/// <summary>
+/// One decoded field of a `signData` cell.
+/// </summary>
+/// <param name="Depth">
+/// Nesting level: 0 for the root's fields; entries after a structure entry
+/// with a greater depth are its sub-fields.
+/// </param>
+/// <param name="Name">
+/// The field name exactly as the schema names it (`_` when unnamed).
+/// </param>
+/// <param name="Value">
+/// The display value; for a structure, its constructor name (empty for `_`).
+/// </param>
+internal record TonConnectSignDataCellField (
+    /// <summary>
+    /// Nesting level: 0 for the root's fields; entries after a structure entry
+    /// with a greater depth are its sub-fields.
+    /// </summary>
+    uint Depth, 
+    /// <summary>
+    /// The field name exactly as the schema names it (`_` when unnamed).
+    /// </summary>
+    string Name, 
+    /// <summary>
+    /// The display value; for a structure, its constructor name (empty for `_`).
+    /// </summary>
+    string Value
+) {
+}
+
+class FfiConverterTypeTonConnectSignDataCellField: FfiConverterRustBuffer<TonConnectSignDataCellField> {
+    public static FfiConverterTypeTonConnectSignDataCellField INSTANCE = new FfiConverterTypeTonConnectSignDataCellField();
+
+    public override TonConnectSignDataCellField Read(BigEndianStream stream) {
+        return new TonConnectSignDataCellField(
+            Depth: FfiConverterUInt32.INSTANCE.Read(stream),
+            Name: FfiConverterString.INSTANCE.Read(stream),
+            Value: FfiConverterString.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonConnectSignDataCellField value) {
+        return 0
+            + FfiConverterUInt32.INSTANCE.AllocationSize(value.Depth)
+            + FfiConverterString.INSTANCE.AllocationSize(value.Name)
+            + FfiConverterString.INSTANCE.AllocationSize(value.Value);
+    }
+
+    public override void Write(TonConnectSignDataCellField value, BigEndianStream stream) {
+            FfiConverterUInt32.INSTANCE.Write(value.Depth, stream);
+            FfiConverterString.INSTANCE.Write(value.Name, stream);
+            FfiConverterString.INSTANCE.Write(value.Value, stream);
+    }
+}
+
+
+
+/// <summary>
+/// A `signData` request already validated against the session's wallet.
+/// </summary>
+/// <param name="Payload">
+/// The data to show and sign.
+/// </param>
+/// <param name="Network">
+/// The network global ID the dApp named, exactly as sent; it matches the wallet.
+/// </param>
+/// <param name="From">
+/// The signer address the dApp named, exactly as sent; it is the wallet's address.
+/// </param>
+internal record TonConnectSignDataRequest (
+    /// <summary>
+    /// The data to show and sign.
+    /// </summary>
+    TonConnectSignDataPayload Payload, 
+    /// <summary>
+    /// The network global ID the dApp named, exactly as sent; it matches the wallet.
+    /// </summary>
+    string? Network, 
+    /// <summary>
+    /// The signer address the dApp named, exactly as sent; it is the wallet's address.
+    /// </summary>
+    string? From
+) {
+}
+
+class FfiConverterTypeTonConnectSignDataRequest: FfiConverterRustBuffer<TonConnectSignDataRequest> {
+    public static FfiConverterTypeTonConnectSignDataRequest INSTANCE = new FfiConverterTypeTonConnectSignDataRequest();
+
+    public override TonConnectSignDataRequest Read(BigEndianStream stream) {
+        return new TonConnectSignDataRequest(
+            Payload: FfiConverterTypeTonConnectSignDataPayload.INSTANCE.Read(stream),
+            Network: FfiConverterOptionalString.INSTANCE.Read(stream),
+            From: FfiConverterOptionalString.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonConnectSignDataRequest value) {
+        return 0
+            + FfiConverterTypeTonConnectSignDataPayload.INSTANCE.AllocationSize(value.Payload)
+            + FfiConverterOptionalString.INSTANCE.AllocationSize(value.Network)
+            + FfiConverterOptionalString.INSTANCE.AllocationSize(value.From);
+    }
+
+    public override void Write(TonConnectSignDataRequest value, BigEndianStream stream) {
+            FfiConverterTypeTonConnectSignDataPayload.INSTANCE.Write(value.Payload, stream);
+            FfiConverterOptionalString.INSTANCE.Write(value.Network, stream);
+            FfiConverterOptionalString.INSTANCE.Write(value.From, stream);
+    }
+}
+
+
+
+/// <summary>
+/// Requests a TON Connect `signData` signature with the wallet's current signing key.
+/// </summary>
+/// <param name="Descriptor">
+/// Wallet whose protected key must sign the data.
+/// </param>
+/// <param name="Request">
+/// The decoded request to sign.
+/// </param>
+/// <param name="Domain">
+/// Exact dApp manifest domain shown to and approved by the user.
+/// </param>
+/// <param name="Timestamp">
+/// Unix signing time in seconds.
+/// </param>
+internal record TonConnectSignDataSignRequest (
+    /// <summary>
+    /// Wallet whose protected key must sign the data.
+    /// </summary>
+    WalletDescriptor Descriptor, 
+    /// <summary>
+    /// The decoded request to sign.
+    /// </summary>
+    TonConnectSignDataRequest Request, 
+    /// <summary>
+    /// Exact dApp manifest domain shown to and approved by the user.
+    /// </summary>
+    string Domain, 
+    /// <summary>
+    /// Unix signing time in seconds.
+    /// </summary>
+    ulong Timestamp
+) {
+}
+
+class FfiConverterTypeTonConnectSignDataSignRequest: FfiConverterRustBuffer<TonConnectSignDataSignRequest> {
+    public static FfiConverterTypeTonConnectSignDataSignRequest INSTANCE = new FfiConverterTypeTonConnectSignDataSignRequest();
+
+    public override TonConnectSignDataSignRequest Read(BigEndianStream stream) {
+        return new TonConnectSignDataSignRequest(
+            Descriptor: FfiConverterTypeWalletDescriptor.INSTANCE.Read(stream),
+            Request: FfiConverterTypeTonConnectSignDataRequest.INSTANCE.Read(stream),
+            Domain: FfiConverterString.INSTANCE.Read(stream),
+            Timestamp: FfiConverterUInt64.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonConnectSignDataSignRequest value) {
+        return 0
+            + FfiConverterTypeWalletDescriptor.INSTANCE.AllocationSize(value.Descriptor)
+            + FfiConverterTypeTonConnectSignDataRequest.INSTANCE.AllocationSize(value.Request)
+            + FfiConverterString.INSTANCE.AllocationSize(value.Domain)
+            + FfiConverterUInt64.INSTANCE.AllocationSize(value.Timestamp);
+    }
+
+    public override void Write(TonConnectSignDataSignRequest value, BigEndianStream stream) {
+            FfiConverterTypeWalletDescriptor.INSTANCE.Write(value.Descriptor, stream);
+            FfiConverterTypeTonConnectSignDataRequest.INSTANCE.Write(value.Request, stream);
+            FfiConverterString.INSTANCE.Write(value.Domain, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.Timestamp, stream);
+    }
+}
+
+
+
+/// <summary>
+/// A signed TON Connect `signData` request, ready for the success response.
+/// </summary>
+/// <param name="Request">
+/// The signed request.
+/// </param>
+/// <param name="Domain">
+/// The domain bound into the signature.
+/// </param>
+/// <param name="Timestamp">
+/// The Unix signing time in seconds bound into the signature.
+/// </param>
+/// <param name="Signature">
+/// Exact 64-byte Ed25519 signature.
+/// </param>
+/// <param name="PublicKey">
+/// The current 32-byte Ed25519 signing public key that made the signature.
+/// </param>
+internal record TonConnectSignedData (
+    /// <summary>
+    /// The signed request.
+    /// </summary>
+    TonConnectSignDataRequest Request, 
+    /// <summary>
+    /// The domain bound into the signature.
+    /// </summary>
+    string Domain, 
+    /// <summary>
+    /// The Unix signing time in seconds bound into the signature.
+    /// </summary>
+    ulong Timestamp, 
+    /// <summary>
+    /// Exact 64-byte Ed25519 signature.
+    /// </summary>
+    byte[] Signature, 
+    /// <summary>
+    /// The current 32-byte Ed25519 signing public key that made the signature.
+    /// </summary>
+    byte[] PublicKey
+) {
+}
+
+class FfiConverterTypeTonConnectSignedData: FfiConverterRustBuffer<TonConnectSignedData> {
+    public static FfiConverterTypeTonConnectSignedData INSTANCE = new FfiConverterTypeTonConnectSignedData();
+
+    public override TonConnectSignedData Read(BigEndianStream stream) {
+        return new TonConnectSignedData(
+            Request: FfiConverterTypeTonConnectSignDataRequest.INSTANCE.Read(stream),
+            Domain: FfiConverterString.INSTANCE.Read(stream),
+            Timestamp: FfiConverterUInt64.INSTANCE.Read(stream),
+            Signature: FfiConverterByteArray.INSTANCE.Read(stream),
+            PublicKey: FfiConverterByteArray.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(TonConnectSignedData value) {
+        return 0
+            + FfiConverterTypeTonConnectSignDataRequest.INSTANCE.AllocationSize(value.Request)
+            + FfiConverterString.INSTANCE.AllocationSize(value.Domain)
+            + FfiConverterUInt64.INSTANCE.AllocationSize(value.Timestamp)
+            + FfiConverterByteArray.INSTANCE.AllocationSize(value.Signature)
+            + FfiConverterByteArray.INSTANCE.AllocationSize(value.PublicKey);
+    }
+
+    public override void Write(TonConnectSignedData value, BigEndianStream stream) {
+            FfiConverterTypeTonConnectSignDataRequest.INSTANCE.Write(value.Request, stream);
+            FfiConverterString.INSTANCE.Write(value.Domain, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.Timestamp, stream);
+            FfiConverterByteArray.INSTANCE.Write(value.Signature, stream);
+            FfiConverterByteArray.INSTANCE.Write(value.PublicKey, stream);
     }
 }
 
@@ -13229,7 +14667,15 @@ internal enum SecretAccessReason: int {
     /// <summary>
     /// The user requested the recovery phrase.
     /// </summary>
-    RevealRecoveryPhrase
+    RevealRecoveryPhrase,
+    /// <summary>
+    /// The engine needs the current signing key to derive a TON Connect session key.
+    /// </summary>
+    DeriveTonConnectSessionKey,
+    /// <summary>
+    /// The engine needs the current signing key to sign TON Connect signData.
+    /// </summary>
+    SignTonConnectData
 }
 
 class FfiConverterTypeSecretAccessReason: FfiConverterRustBuffer<SecretAccessReason> {
@@ -13245,6 +14691,8 @@ class FfiConverterTypeSecretAccessReason: FfiConverterRustBuffer<SecretAccessRea
             case 5: return SecretAccessReason.EncryptComment;
             case 6: return SecretAccessReason.DecryptComment;
             case 7: return SecretAccessReason.RevealRecoveryPhrase;
+            case 8: return SecretAccessReason.DeriveTonConnectSessionKey;
+            case 9: return SecretAccessReason.SignTonConnectData;
             default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeSecretAccessReason.Read()", value));
         }
     }
@@ -13262,6 +14710,8 @@ class FfiConverterTypeSecretAccessReason: FfiConverterRustBuffer<SecretAccessRea
             case SecretAccessReason.EncryptComment: stream.WriteInt(5); break;
             case SecretAccessReason.DecryptComment: stream.WriteInt(6); break;
             case SecretAccessReason.RevealRecoveryPhrase: stream.WriteInt(7); break;
+            case SecretAccessReason.DeriveTonConnectSessionKey: stream.WriteInt(8); break;
+            case SecretAccessReason.SignTonConnectData: stream.WriteInt(9); break;
             default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeSecretAccessReason.Write()", value));
         }
     }
@@ -13968,6 +15418,57 @@ class FfiConverterTypeTonAddressFormat : FfiConverterRustBuffer<TonAddressFormat
 
 
 /// <summary>
+/// Connect-event error codes a wallet reports for a failed connection.
+/// </summary>
+internal enum TonConnectConnectErrorCode: int {
+    /// <summary>
+    /// The dApp manifest could not be fetched (protocol code 2).
+    /// </summary>
+    ManifestNotFound,
+    /// <summary>
+    /// The dApp manifest is malformed (protocol code 3).
+    /// </summary>
+    ManifestContent,
+    /// <summary>
+    /// The user declined the connection (protocol code 300).
+    /// </summary>
+    UserDeclined
+}
+
+class FfiConverterTypeTonConnectConnectErrorCode: FfiConverterRustBuffer<TonConnectConnectErrorCode> {
+    public static FfiConverterTypeTonConnectConnectErrorCode INSTANCE = new FfiConverterTypeTonConnectConnectErrorCode();
+
+    public override TonConnectConnectErrorCode Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1: return TonConnectConnectErrorCode.ManifestNotFound;
+            case 2: return TonConnectConnectErrorCode.ManifestContent;
+            case 3: return TonConnectConnectErrorCode.UserDeclined;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectConnectErrorCode.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonConnectConnectErrorCode value) {
+        return 4;
+    }
+
+    public override void Write(TonConnectConnectErrorCode value, BigEndianStream stream) {
+        switch (value) {
+            case TonConnectConnectErrorCode.ManifestNotFound: stream.WriteInt(1); break;
+            case TonConnectConnectErrorCode.ManifestContent: stream.WriteInt(2); break;
+            case TonConnectConnectErrorCode.UserDeclined: stream.WriteInt(3); break;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectConnectErrorCode.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
 /// Runtime platform advertised as the TypeScript protocol's `DeviceInfo.platform`.
 ///
 /// This is deliberately different from wallets-list platforms such as `ios`,
@@ -14087,6 +15588,15 @@ internal record TonConnectIncomingRequest {
         string ErrorMessage
     ) : TonConnectIncomingRequest {}
     
+    /// <summary>
+    /// A validated `signData` request of a derived session; the classic session reports it as `Unsupported`.
+    /// </summary>
+    public record SignData (
+        string Id,
+        string Method,
+        TonConnectSignDataRequest Request
+    ) : TonConnectIncomingRequest {}
+    
 
     
 }
@@ -14121,6 +15631,12 @@ class FfiConverterTypeTonConnectIncomingRequest : FfiConverterRustBuffer<TonConn
                     FfiConverterTypeTonConnectRpcErrorCode.INSTANCE.Read(stream),
                     FfiConverterString.INSTANCE.Read(stream)
                 );
+            case 5:
+                return new TonConnectIncomingRequest.SignData(
+                    FfiConverterString.INSTANCE.Read(stream),
+                    FfiConverterString.INSTANCE.Read(stream),
+                    FfiConverterTypeTonConnectSignDataRequest.INSTANCE.Read(stream)
+                );
             default:
                 throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectIncomingRequest.Read()", value));
         }
@@ -14148,6 +15664,11 @@ class FfiConverterTypeTonConnectIncomingRequest : FfiConverterRustBuffer<TonConn
                     + FfiConverterString.INSTANCE.AllocationSize(variant_value.Method)
                     + FfiConverterTypeTonConnectRpcErrorCode.INSTANCE.AllocationSize(variant_value.ErrorCode)
                     + FfiConverterString.INSTANCE.AllocationSize(variant_value.ErrorMessage);
+            case TonConnectIncomingRequest.SignData variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.Id)
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.Method)
+                    + FfiConverterTypeTonConnectSignDataRequest.INSTANCE.AllocationSize(variant_value.Request);
             default:
                 throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectIncomingRequest.AllocationSize()", value));
         }
@@ -14178,6 +15699,12 @@ class FfiConverterTypeTonConnectIncomingRequest : FfiConverterRustBuffer<TonConn
                 FfiConverterString.INSTANCE.Write(variant_value.Method, stream);
                 FfiConverterTypeTonConnectRpcErrorCode.INSTANCE.Write(variant_value.ErrorCode, stream);
                 FfiConverterString.INSTANCE.Write(variant_value.ErrorMessage, stream);
+                break;
+            case TonConnectIncomingRequest.SignData variant_value:
+                stream.WriteInt(5);
+                FfiConverterString.INSTANCE.Write(variant_value.Id, stream);
+                FfiConverterString.INSTANCE.Write(variant_value.Method, stream);
+                FfiConverterTypeTonConnectSignDataRequest.INSTANCE.Write(variant_value.Request, stream);
                 break;
             default:
                 throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectIncomingRequest.Write()", value));
@@ -14372,6 +15899,267 @@ class FfiConverterTypeTonConnectSessionPhase: FfiConverterRustBuffer<TonConnectS
             case TonConnectSessionPhase.Connected: stream.WriteInt(2); break;
             case TonConnectSessionPhase.Disconnected: stream.WriteInt(3); break;
             default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSessionPhase.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// The result of decoding a `signData` cell by its TL-B schema.
+/// </summary>
+internal record TonConnectSignDataCellDecoding {
+    
+    /// <summary>
+    /// The cell matches the schema exactly.
+    /// </summary>
+    public record Decoded (
+        TonConnectSignDataCellField[] Fields
+    ) : TonConnectSignDataCellDecoding {}
+    
+    /// <summary>
+    /// The cell cannot be shown by its schema; no field is reported.
+    /// </summary>
+    public record NotDecodable (
+        TonConnectSignDataCellFailure Failure,
+        string Detail
+    ) : TonConnectSignDataCellDecoding {}
+    
+
+    
+}
+
+class FfiConverterTypeTonConnectSignDataCellDecoding : FfiConverterRustBuffer<TonConnectSignDataCellDecoding>{
+    public static FfiConverterRustBuffer<TonConnectSignDataCellDecoding> INSTANCE = new FfiConverterTypeTonConnectSignDataCellDecoding();
+
+    public override TonConnectSignDataCellDecoding Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonConnectSignDataCellDecoding.Decoded(
+                    FfiConverterSequenceTypeTonConnectSignDataCellField.INSTANCE.Read(stream)
+                );
+            case 2:
+                return new TonConnectSignDataCellDecoding.NotDecodable(
+                    FfiConverterTypeTonConnectSignDataCellFailure.INSTANCE.Read(stream),
+                    FfiConverterString.INSTANCE.Read(stream)
+                );
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellDecoding.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonConnectSignDataCellDecoding value) {
+        switch (value) {
+            case TonConnectSignDataCellDecoding.Decoded variant_value:
+                return 4
+                    + FfiConverterSequenceTypeTonConnectSignDataCellField.INSTANCE.AllocationSize(variant_value.Fields);
+            case TonConnectSignDataCellDecoding.NotDecodable variant_value:
+                return 4
+                    + FfiConverterTypeTonConnectSignDataCellFailure.INSTANCE.AllocationSize(variant_value.Failure)
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.Detail);
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellDecoding.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonConnectSignDataCellDecoding value, BigEndianStream stream) {
+        switch (value) {
+            case TonConnectSignDataCellDecoding.Decoded variant_value:
+                stream.WriteInt(1);
+                FfiConverterSequenceTypeTonConnectSignDataCellField.INSTANCE.Write(variant_value.Fields, stream);
+                break;
+            case TonConnectSignDataCellDecoding.NotDecodable variant_value:
+                stream.WriteInt(2);
+                FfiConverterTypeTonConnectSignDataCellFailure.INSTANCE.Write(variant_value.Failure, stream);
+                FfiConverterString.INSTANCE.Write(variant_value.Detail, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellDecoding.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// Why a `signData` cell could not be decoded by its schema.
+/// </summary>
+internal enum TonConnectSignDataCellFailure: int {
+    /// <summary>
+    /// The schema is not valid TL-B text.
+    /// </summary>
+    InvalidSchema,
+    /// <summary>
+    /// The schema uses a construct the decoder does not support.
+    /// </summary>
+    UnsupportedSchema,
+    /// <summary>
+    /// The cell is not a valid one-root `BoC` or contains an exotic cell.
+    /// </summary>
+    InvalidCell,
+    /// <summary>
+    /// No constructor tag of a type matches the cell.
+    /// </summary>
+    TagMismatch,
+    /// <summary>
+    /// A `{ … }` constraint or a `#<`/`#<=` bound does not hold.
+    /// </summary>
+    ConstraintViolated,
+    /// <summary>
+    /// Bits or references remain after the schema is fully read.
+    /// </summary>
+    TrailingData,
+    /// <summary>
+    /// The cell ends before the schema is fully read.
+    /// </summary>
+    TruncatedCell,
+    /// <summary>
+    /// A size, nesting, work, or output bound was exceeded.
+    /// </summary>
+    LimitExceeded
+}
+
+class FfiConverterTypeTonConnectSignDataCellFailure: FfiConverterRustBuffer<TonConnectSignDataCellFailure> {
+    public static FfiConverterTypeTonConnectSignDataCellFailure INSTANCE = new FfiConverterTypeTonConnectSignDataCellFailure();
+
+    public override TonConnectSignDataCellFailure Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1: return TonConnectSignDataCellFailure.InvalidSchema;
+            case 2: return TonConnectSignDataCellFailure.UnsupportedSchema;
+            case 3: return TonConnectSignDataCellFailure.InvalidCell;
+            case 4: return TonConnectSignDataCellFailure.TagMismatch;
+            case 5: return TonConnectSignDataCellFailure.ConstraintViolated;
+            case 6: return TonConnectSignDataCellFailure.TrailingData;
+            case 7: return TonConnectSignDataCellFailure.TruncatedCell;
+            case 8: return TonConnectSignDataCellFailure.LimitExceeded;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellFailure.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonConnectSignDataCellFailure value) {
+        return 4;
+    }
+
+    public override void Write(TonConnectSignDataCellFailure value, BigEndianStream stream) {
+        switch (value) {
+            case TonConnectSignDataCellFailure.InvalidSchema: stream.WriteInt(1); break;
+            case TonConnectSignDataCellFailure.UnsupportedSchema: stream.WriteInt(2); break;
+            case TonConnectSignDataCellFailure.InvalidCell: stream.WriteInt(3); break;
+            case TonConnectSignDataCellFailure.TagMismatch: stream.WriteInt(4); break;
+            case TonConnectSignDataCellFailure.ConstraintViolated: stream.WriteInt(5); break;
+            case TonConnectSignDataCellFailure.TrailingData: stream.WriteInt(6); break;
+            case TonConnectSignDataCellFailure.TruncatedCell: stream.WriteInt(7); break;
+            case TonConnectSignDataCellFailure.LimitExceeded: stream.WriteInt(8); break;
+            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellFailure.Write()", value));
+        }
+    }
+}
+
+
+
+
+
+
+
+/// <summary>
+/// The data of one `signData` request, exactly as the dApp sent it.
+/// </summary>
+internal record TonConnectSignDataPayload {
+    
+    /// <summary>
+    /// UTF-8 text shown to the user and signed verbatim.
+    /// </summary>
+    public record Text (
+        string TextValue
+    ) : TonConnectSignDataPayload {}
+    
+    /// <summary>
+    /// Opaque bytes.
+    /// </summary>
+    public record Binary (
+        string Bytes
+    ) : TonConnectSignDataPayload {}
+    
+    /// <summary>
+    /// A TVM cell described by a TL-B schema.
+    /// </summary>
+    public record Cell (
+        string Schema,
+        string CellValue
+    ) : TonConnectSignDataPayload {}
+    
+
+    
+}
+
+class FfiConverterTypeTonConnectSignDataPayload : FfiConverterRustBuffer<TonConnectSignDataPayload>{
+    public static FfiConverterRustBuffer<TonConnectSignDataPayload> INSTANCE = new FfiConverterTypeTonConnectSignDataPayload();
+
+    public override TonConnectSignDataPayload Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new TonConnectSignDataPayload.Text(
+                    FfiConverterString.INSTANCE.Read(stream)
+                );
+            case 2:
+                return new TonConnectSignDataPayload.Binary(
+                    FfiConverterString.INSTANCE.Read(stream)
+                );
+            case 3:
+                return new TonConnectSignDataPayload.Cell(
+                    FfiConverterString.INSTANCE.Read(stream),
+                    FfiConverterString.INSTANCE.Read(stream)
+                );
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataPayload.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(TonConnectSignDataPayload value) {
+        switch (value) {
+            case TonConnectSignDataPayload.Text variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.TextValue);
+            case TonConnectSignDataPayload.Binary variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.Bytes);
+            case TonConnectSignDataPayload.Cell variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.Schema)
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.CellValue);
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataPayload.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(TonConnectSignDataPayload value, BigEndianStream stream) {
+        switch (value) {
+            case TonConnectSignDataPayload.Text variant_value:
+                stream.WriteInt(1);
+                FfiConverterString.INSTANCE.Write(variant_value.TextValue, stream);
+                break;
+            case TonConnectSignDataPayload.Binary variant_value:
+                stream.WriteInt(2);
+                FfiConverterString.INSTANCE.Write(variant_value.Bytes, stream);
+                break;
+            case TonConnectSignDataPayload.Cell variant_value:
+                stream.WriteInt(3);
+                FfiConverterString.INSTANCE.Write(variant_value.Schema, stream);
+                FfiConverterString.INSTANCE.Write(variant_value.CellValue, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataPayload.Write()", value));
         }
     }
 }
@@ -15206,6 +16994,28 @@ internal class WalletClientException: UniffiException {
     }
     
     
+    /// <summary>
+    /// The recipient's encrypted-comment public key could not be read now.
+    ///
+    /// The provider failed, limited, or cancelled the lookup, so nothing is
+    /// known about the recipient and the same request can be retried. It is
+    /// never returned when the recipient is known to be unable to receive an
+    /// encrypted comment; that is [`Self::EncryptedCommentUnavailable`].
+    /// </summary>
+    
+    public class EncryptedCommentLookupFailed : WalletClientException {
+        // Members
+        public string @diagnostic;
+
+        // Constructor
+        public EncryptedCommentLookupFailed(
+                string @diagnostic) : base(
+                "@diagnostic" + "=" + @diagnostic) {
+
+            this.@diagnostic = @diagnostic;
+        }
+    }
+    
 
     
     public override string ToString() {
@@ -15299,6 +17109,9 @@ class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientExc
                 return new WalletClientException.SendCancellationTooLate();
             case 29:
                 return new WalletClientException.Shutdown();
+            case 30:
+                return new WalletClientException.EncryptedCommentLookupFailed(
+                    FfiConverterString.INSTANCE.Read(stream));
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletClientError.Read()", value));
         }
@@ -15412,6 +17225,10 @@ class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientExc
 
             case WalletClientException.Shutdown variant_value:
                 return 4;
+
+            case WalletClientException.EncryptedCommentLookupFailed variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletClientError.AllocationSize()", value));
         }
@@ -15525,6 +17342,10 @@ class FfiConverterTypeWalletClientError : FfiConverterRustBuffer<WalletClientExc
             case WalletClientException.Shutdown variant_value:
                 stream.WriteInt(29);
                 break;
+            case WalletClientException.EncryptedCommentLookupFailed variant_value:
+                stream.WriteInt(30);
+                FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
+                break;
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletClientError.Write()", value));
         }
@@ -15610,6 +17431,14 @@ internal class WalletLifecycleException: UniffiException {
         }
     }
     
+    /// <summary>
+    /// The dApp client id is not 64 lowercase hex characters or the session nonce is empty.
+    /// </summary>
+    public class InvalidTonConnectSessionInput : WalletLifecycleException {
+        public InvalidTonConnectSessionInput() : base() {}
+    }
+    
+    
 
     
     public override string ToString() {
@@ -15640,6 +17469,8 @@ class FfiConverterTypeWalletLifecycleError : FfiConverterRustBuffer<WalletLifecy
                 return new WalletLifecycleException.ProtectedSecretHost(
                     FfiConverterTypeProtectedSecretHostErrorKind.INSTANCE.Read(stream),
                     FfiConverterString.INSTANCE.Read(stream));
+            case 7:
+                return new WalletLifecycleException.InvalidTonConnectSessionInput();
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletLifecycleError.Read()", value));
         }
@@ -15667,6 +17498,9 @@ class FfiConverterTypeWalletLifecycleError : FfiConverterRustBuffer<WalletLifecy
                 return 4
                     + FfiConverterTypeProtectedSecretHostErrorKind.INSTANCE.AllocationSize(variant_value.@kind)
                     + FfiConverterString.INSTANCE.AllocationSize(variant_value.@diagnostic);
+
+            case WalletLifecycleException.InvalidTonConnectSessionInput variant_value:
+                return 4;
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletLifecycleError.AllocationSize()", value));
         }
@@ -15693,6 +17527,9 @@ class FfiConverterTypeWalletLifecycleError : FfiConverterRustBuffer<WalletLifecy
                 stream.WriteInt(6);
                 FfiConverterTypeProtectedSecretHostErrorKind.INSTANCE.Write(variant_value.@kind, stream);
                 FfiConverterString.INSTANCE.Write(variant_value.@diagnostic, stream);
+                break;
+            case WalletLifecycleException.InvalidTonConnectSessionInput variant_value:
+                stream.WriteInt(7);
                 break;
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeWalletLifecycleError.Write()", value));
@@ -15858,6 +17695,37 @@ class FfiConverterOptionalUInt64: FfiConverterRustBuffer<ulong?> {
         } else {
             stream.WriteByte(1);
             FfiConverterUInt64.INSTANCE.Write((ulong)value, stream);
+        }
+    }
+}
+
+
+
+
+class FfiConverterOptionalInt64: FfiConverterRustBuffer<long?> {
+    public static FfiConverterOptionalInt64 INSTANCE = new FfiConverterOptionalInt64();
+
+    public override long? Read(BigEndianStream stream) {
+        if (stream.ReadByte() == 0) {
+            return null;
+        }
+        return FfiConverterInt64.INSTANCE.Read(stream);
+    }
+
+    public override int AllocationSize(long? value) {
+        if (value == null) {
+            return 1;
+        } else {
+            return 1 + FfiConverterInt64.INSTANCE.AllocationSize((long)value);
+        }
+    }
+
+    public override void Write(long? value, BigEndianStream stream) {
+        if (value == null) {
+            stream.WriteByte(0);
+        } else {
+            stream.WriteByte(1);
+            FfiConverterInt64.INSTANCE.Write((long)value, stream);
         }
     }
 }
@@ -16800,6 +18668,52 @@ class FfiConverterSequenceTypeSendMessage: FfiConverterRustBuffer<SendMessage[]>
 
         stream.WriteInt(value.Length);
         var writerFn = FfiConverterTypeSendMessage.INSTANCE.Write;
+        value.ForEach(item => writerFn(item, stream));
+    }
+}
+
+
+
+
+class FfiConverterSequenceTypeTonConnectSignDataCellField: FfiConverterRustBuffer<TonConnectSignDataCellField[]> {
+    public static FfiConverterSequenceTypeTonConnectSignDataCellField INSTANCE = new FfiConverterSequenceTypeTonConnectSignDataCellField();
+
+    public override TonConnectSignDataCellField[]  Read(BigEndianStream stream) {
+        var length = stream.ReadInt();
+        if (length == 0) {
+            return [];
+        }
+
+        var result = new TonConnectSignDataCellField[length];
+        var readFn = FfiConverterTypeTonConnectSignDataCellField.INSTANCE.Read;
+        for (int i = 0; i < length; i++) {
+            result[i] = readFn(stream);
+        }
+        return result;
+    }
+
+    public override int AllocationSize(TonConnectSignDataCellField[]  value) {
+        var sizeForLength = 4;
+
+        // details/1-empty-list-as-default-method-parameter.md
+        if (value == null) {
+            return sizeForLength;
+        }
+
+        var allocationSizeFn = FfiConverterTypeTonConnectSignDataCellField.INSTANCE.AllocationSize;
+        var sizeForItems = value.Sum(item => allocationSizeFn(item));
+        return sizeForLength + sizeForItems;
+    }
+
+    public override void Write(TonConnectSignDataCellField[] value, BigEndianStream stream) {
+        // details/1-empty-list-as-default-method-parameter.md
+        if (value == null) {
+            stream.WriteInt(0);
+            return;
+        }
+
+        stream.WriteInt(value.Length);
+        var writerFn = FfiConverterTypeTonConnectSignDataCellField.INSTANCE.Write;
         value.ForEach(item => writerFn(item, stream));
     }
 }

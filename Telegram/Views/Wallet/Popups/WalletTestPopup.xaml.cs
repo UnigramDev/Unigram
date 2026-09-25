@@ -42,7 +42,7 @@ namespace Telegram.Views.Wallet.Popups
         private async void InitializeWords()
         {
             _mnemonicWordList = WalletService.RecoveryWords;
-            _mnemonic = await _wallet.RevealRecoveryPhraseAsync();
+            _mnemonic = await _wallet.RevealRecoveryPhraseAsync(_navigationService);
 
             var random = new Random();
 

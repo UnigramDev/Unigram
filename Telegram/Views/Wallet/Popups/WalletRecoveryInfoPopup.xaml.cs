@@ -15,7 +15,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             InitializeComponent();
 
-            PrimaryButtonText = "[Show Recovery Phrase]";
+            PrimaryButtonText = Strings.WalletRecoveryPhraseLearnButton;
             ButtonsLayout = ContentPopupButtonsLayout.Vertical;
         }
     }

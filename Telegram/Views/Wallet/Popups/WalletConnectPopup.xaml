@@ -13,19 +13,13 @@
     <StackPanel>
         <!-- The dApp's own icon, and nothing standing in for it while it is coming: an icon that
              changes under the name is worse than one that arrives late. -->
-        <Border x:Name="IconRoot"
-                Width="84"
-                Height="84"
-                CornerRadius="42"
-                HorizontalAlignment="Center"
-                Visibility="Collapsed"
-                Margin="0,8,0,0">
-            <Image x:Name="Icon"
-                   Stretch="UniformToFill" />
-        </Border>
+        <controls:ProfilePicture x:Name="Photo"
+                                 Size="96"
+                                 Visibility="Collapsed"
+                                 Margin="0,8,0,0" />
 
         <TextBlock x:Name="Title"
-                   Style="{StaticResource TitleTextBlockStyle}"
+                   Style="{StaticResource PopupTextBlockStyle}"
                    TextAlignment="Center"
                    TextWrapping="Wrap"
                    Margin="0,16,0,0" />

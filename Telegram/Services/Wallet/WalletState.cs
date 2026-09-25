@@ -264,6 +264,31 @@ namespace Telegram.Services.Wallet
     /// <summary>
     /// What binding a phrase came to: the state it left the wallet in, or why it changed nothing.
     /// </summary>
+    /// <summary>
+    /// What became of a dApp's request to connect.
+    /// </summary>
+    public sealed class WalletConnectResult
+    {
+        public static readonly WalletConnectResult Connected = new WalletConnectResult();
+
+        private WalletConnectResult()
+        {
+        }
+
+        public WalletConnectResult(Error error)
+        {
+            Error = error;
+        }
+
+        /// <summary>
+        /// Why the account refused, or null - which does not on its own mean connected, because
+        /// the parts of this that fail before the account is asked have no error to report.
+        /// </summary>
+        public Error Error { get; }
+
+        public bool IsConnected => ReferenceEquals(this, Connected);
+    }
+
     public sealed class WalletBindResult
     {
         public WalletBindResult(WalletState state)

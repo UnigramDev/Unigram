@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Wallet.Popups
 {
-    public sealed partial class WalletImportPopup : ContentPopup
+    public sealed partial class WalletImportPopup : ModalPopup
     {
         private readonly IWalletService _wallet;
         private readonly INavigationService _navigationService;
@@ -191,7 +191,7 @@ namespace Telegram.Views.Wallet.Popups
         private bool _submitted;
         private bool _completed;
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             args.Cancel = _submitted;
 
@@ -205,7 +205,7 @@ namespace Telegram.Views.Wallet.Popups
 
             var deferral = args.GetDeferral();
 
-            var result = await _wallet.BindAsync(_words);
+            var result = await _wallet.BindAsync(_navigationService, _words);
 
             _submitted = false;
             IsPrimaryButtonPending = false;
@@ -239,10 +239,6 @@ namespace Telegram.Views.Wallet.Popups
                 WalletBindFailure.NoWallet => "[This account doesn't have a wallet yet.]",
                 _ => "[That's not a valid recovery phrase. Check the words and their order.]"
             };
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)

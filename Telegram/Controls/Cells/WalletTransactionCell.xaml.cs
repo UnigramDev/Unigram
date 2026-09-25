@@ -42,50 +42,64 @@ namespace Telegram.Controls.Cells
         public void UpdateInfo(IClientService clientService, TonWalletTransaction transaction)
         {
             var transfer = transaction.Type as TonWalletTransactionTypeTransfer;
+            var onRampDeposit = transaction.Type as TonWalletTransactionTypeOnRampDeposit;
 
-            UpdatePeer(clientService, transaction, transfer);
-            UpdateAmount(transfer);
+            UpdatePeer(clientService, transaction);
+
+            if (transfer != null)
+            {
+                UpdateAmount(transfer.Amount);
+            }
+            else if (onRampDeposit != null)
+            {
+                UpdateAmount(onRampDeposit.Amount);
+            }
 
             if (transaction.State is TonWalletTransactionStatePending)
             {
                 // Also ahead of the direction: nothing has been sent until the chain says so.
-                Subtitle.Text = "[Pending]";
-                Subtitle.Visibility = Visibility.Visible;
+                Subtitle.Text = Strings.WalletProcessing;
             }
             else if (transaction.State is TonWalletTransactionStateFailed)
             {
                 // It supersedes the direction: a transfer that never landed was neither sent nor
                 // received.
-                Subtitle.Text = "[Failed]";
-                Subtitle.Visibility = Visibility.Visible;
+                Subtitle.Text = Strings.WalletFailedTransfer;
             }
             else if (transfer != null)
             {
-                Subtitle.Text = transfer.Amount < 0 ? "[Sent]" : "[Received]";
-                Subtitle.Visibility = Visibility.Visible;
+                Subtitle.Text = transfer.Amount < 0 ? Strings.WalletOutgoingTransfer : Strings.WalletIncomingTransfer;
+            }
+            else if (onRampDeposit != null)
+            {
+                Subtitle.Text = onRampDeposit.ProviderName;
             }
             else
             {
-                // A key rotation has nothing to say here that the title has not said already.
-                Subtitle.Visibility = Visibility.Collapsed;
+                Subtitle.Text = Shorten(transaction.PeerAddress);
             }
 
             Date.Text = Formatter.DateAt(transaction.Date);
         }
 
-        private void UpdatePeer(IClientService clientService, TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer)
+        private void UpdatePeer(IClientService clientService, TonWalletTransaction transaction)
         {
-            if (transfer == null)
+            if (transaction.Type is TonWalletTransactionTypeKeyChange)
             {
-                Title.Text = "[Key Rotation]";
+                Title.Text = Strings.WalletKeyUpdate;
                 Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.KeyFilled, long.MinValue);
+            }
+            else if (transaction.Type is TonWalletTransactionTypeOnRampDeposit)
+            {
+                Title.Text = Strings.WalletTransactionTopUp;
+                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.PaymentFilled);
             }
             else if (transaction.PeerUserId != 0 && clientService.TryGetUser(transaction.PeerUserId, out User user))
             {
                 Title.Text = user.FullName();
                 Photo.Source = ProfilePictureSource.User(clientService, user);
             }
-            else
+            else if (transaction.Type is TonWalletTransactionTypeTransfer transfer)
             {
                 // Nobody the account knows: a domain if the address has one, the address otherwise,
                 // and the chain's own mark instead of a photo.
@@ -97,9 +111,9 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateAmount(TonWalletTransactionTypeTransfer transfer)
+        private void UpdateAmount(long value)
         {
-            if (transfer == null)
+            if (value == 0)
             {
                 // A key rotation moves nothing, and an amount of zero would read as a transfer
                 // that failed.
@@ -109,8 +123,8 @@ namespace Telegram.Controls.Cells
             }
 
             // TDLib signs the amount rather than naming a direction: negative is outgoing.
-            var sent = transfer.Amount < 0;
-            var amount = Formatter.TonBalance(Math.Abs(transfer.Amount));
+            var sent = value < 0;
+            var amount = Formatter.TonBalance(Math.Abs(value));
 
             AmountInteger.Text = (sent ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;

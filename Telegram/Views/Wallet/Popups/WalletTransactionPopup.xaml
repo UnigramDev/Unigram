@@ -87,7 +87,7 @@
 
                     <Button x:Name="SendCommand"
                             Click="Send_Click"
-                            Content="[Send]"
+                            Content="{CustomResource WalletSend}"
                             Style="{StaticResource BadgeControlButtonStyle}"
                             VerticalAlignment="Center"
                             Margin="4"
@@ -96,7 +96,7 @@
             </controls:TableViewItem>
 
             <controls:TableViewItem x:Name="AddressRow"
-                                    Header="[Address]"
+                                    Header="{CustomResource WalletAddress}"
                                     HorizontalContentAlignment="Stretch"
                                     Padding="0">
                 <Grid>
@@ -124,7 +124,7 @@
                     <!-- Where the Send pill lands when there is no Telegram user to put it beside. -->
                     <Button x:Name="AddressSendCommand"
                             Click="Send_Click"
-                            Content="[Send]"
+                            Content="{CustomResource WalletSend}"
                             Style="{StaticResource BadgeControlButtonStyle}"
                             VerticalAlignment="Top"
                             Visibility="Collapsed"
@@ -134,7 +134,7 @@
             </controls:TableViewItem>
 
             <controls:TableViewItem x:Name="FeeRow"
-                                    Header="[Fee]"
+                                    Header="{CustomResource WalletFee}"
                                     HorizontalContentAlignment="Stretch"
                                     Padding="0">
                 <Grid>
@@ -147,10 +147,12 @@
                          only fills in the text. -->
                     <TextBlock Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Center"
-                               Margin="8,5,4,6"><Run x:Name="FeeGlyph"
-                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                     Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run x:Name="FeeAmount" /><Run x:Name="FeeConverted"
-                                                                                                                                                 Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /></TextBlock>
+                               Margin="8,5,4,6">
+                        <Run x:Name="FeeGlyph"
+                             FontFamily="{StaticResource SymbolThemeFontFamily}"
+                             Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+                        <Run x:Name="FeeAmount" /><Run x:Name="FeeConverted"
+                                                       Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /></TextBlock>
 
                     <!-- Only beside the line that needs explaining, which is the free one: a fee
                          the user paid is a number, and a fee they did not is a claim. -->
@@ -166,7 +168,7 @@
             </controls:TableViewItem>
 
             <controls:TableViewItem x:Name="DateRow"
-                                    Header="[Date]" />
+                                    Header="{CustomResource WalletDate}" />
         </controls:TableView>
     </Grid>
 </local:WalletPopup>
