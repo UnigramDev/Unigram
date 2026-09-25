@@ -9,7 +9,7 @@ ships and the only ones the projects configure.
 
 ## Regenerating
 
-Built from the `main` branch, currently `4b940c7`.
+Built from the `main` branch, currently `92df98d` (v1.0.6).
 
 The build is `no_std`, and that is what lets it use the tier-1
 `*-pc-windows-msvc` targets on the stable toolchain: `std` reaches
