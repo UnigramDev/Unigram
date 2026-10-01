@@ -140,6 +140,24 @@ namespace Telegram.Common
             }
         }
 
+        /// <summary>
+        /// The plural form for a count, unformatted, where the caller substitutes the number
+        /// itself because it is not a whole one.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="hasFraction"/> forces the plural, and it has to: the rules count in
+        /// whole numbers, so 1.5 grams asks them about 1 and is told the singular. CLDR agrees -
+        /// a number written with decimals takes the plural in every language that separates the
+        /// two - so this is the rule rather than a patch over it.
+        /// </remarks>
+        public static string Plural(string key, long count, bool hasFraction)
+        {
+            _currentRules ??= _allRules["en"];
+
+            return LocaleService.Current.GetString(key,
+                hasFraction ? QUANTITY_OTHER : _currentRules.QuantityForNumber(count));
+        }
+
         public static string Declension(string key, long count, params object[] args)
         {
             _currentRules ??= _allRules["en"];

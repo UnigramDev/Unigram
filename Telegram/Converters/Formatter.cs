@@ -76,6 +76,32 @@ namespace Telegram.Converters
         }
 
         /// <summary>
+        /// An amount of grams with its unit, pluralised: "1 Gram", "2 Grams", "1.5 Grams".
+        /// </summary>
+        public static string Grams(BigInteger nanograms, int decimals = 2, bool capital = false)
+        {
+            return Grams(TonBalance(nanograms, decimals), nanograms, capital);
+        }
+
+        /// <summary>
+        /// The same, for a caller that already split the amount - a card drawing the two halves at
+        /// two sizes still needs one unit for the whole of it.
+        /// </summary>
+        /// <remarks>
+        /// The unit agrees with the amount **as written**, not with the nanograms behind it: an
+        /// amount shown to two decimals as "1.00" is plural, and one that rounds down to "1" is
+        /// singular, because the unit is read next to the digits and has to match them.
+        /// </remarks>
+        public static string Grams((string Integer, string Fraction) amount, BigInteger nanograms, bool capital = false)
+        {
+            var whole = BigInteger.Abs(nanograms) / OneTon;
+
+            return string.Format(
+                Locale.Plural(capital ? Strings.R.GramCapital : Strings.R.Grams, (long)BigInteger.Min(whole, long.MaxValue), amount.Fraction.Length > 0),
+                amount.Join());
+        }
+
+        /// <summary>
         /// Splits an amount into the part before the decimal separator and the part
         /// from the separator onwards, both in the app's language — "1,344" + ".02"
         /// in en, "1.344" + ",02" in it. Kept apart so the two can be drawn at
