@@ -2315,7 +2315,6 @@
     <Compile Include="Services\Wallet\WalletPlatformHost.cs" />
     <Compile Include="Services\Wallet\IWalletService.cs" />
     <Compile Include="Services\Wallet\WalletJournalStore.cs" />
-    <Compile Include="Services\Wallet\TonConnectLink.cs" />
     <Compile Include="Services\Wallet\WalletChainStream.cs" />
     <Compile Include="Services\Wallet\WalletCommentBody.cs" />
     <Compile Include="Services\Wallet\WalletSecretStore.cs" />
