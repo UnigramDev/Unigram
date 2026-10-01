@@ -40,7 +40,7 @@
 
         <CheckBox x:Name="Check"
                   x:Load="False"
-                  Margin="0,8,0,0" />
+                  Margin="0,8,0,-4" />
 
         <TextBlock x:Name="FooterText"
                    Margin="0,8,0,4"

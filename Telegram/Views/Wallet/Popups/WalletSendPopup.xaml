@@ -6,7 +6,7 @@
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    mc:Ignorable="d"
-                   Padding="24,0,24,24"
+                   Padding="12,24,12,24"
                    IsDismissButtonVisible="True"
                    IsOptionsButtonVisible="True"
                    OptionsRequested="More_ContextRequested"
@@ -15,44 +15,107 @@
 
     <Grid MinHeight="320">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid x:Name="RecipientRoot"
+              Background="{ThemeResource ContentDialogBackground}"
+              CornerRadius="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <controls:ProfilePicture x:Name="Photo"
+                                     Size="36"
+                                     VerticalAlignment="Top"
+                                     Margin="8,8,0,0"
+                                     Grid.RowSpan="2" />
+            <TextBlock x:Name="NameText"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Margin="8,8,0,0"
+                       Grid.Column="1" />
+            <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
+                       FontSize="12"
+                       LineHeight="18"
+                       Margin="8,0,8,6"
+                       Grid.Column="1"
+                       Grid.Row="1"><Run x:Name="AddressGroup0" /><Run Text=" " /><Run x:Name="AddressGroup1"
+                                                                                       Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup2" /><Run Text=" " /><Run x:Name="AddressGroup3"
+                                                                                                                                                                                                                                 Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup4"
+                                                                                                                                                                                                                                                                                                                             Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup5" /><LineBreak /><Run x:Name="AddressGroup6"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup7" /><Run Text=" " /><Run x:Name="AddressGroup8" /><Run Text=" " /><Run x:Name="AddressGroup9"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup10" /><Run Text=" " /><Run x:Name="AddressGroup11"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /></TextBlock>
+        </Grid>
 
         <StackPanel VerticalAlignment="Center"
-                    Margin="0,48,0,0">
-            <!-- The amount sizes itself to what is typed: a horizontal StackPanel measures its
-                 children against infinity, so the field asks for the width of its text and the
-                 three parts stay centred together as it grows. -->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <TextBlock x:Name="Prefix"
-                           Text="&#xEA7E;"
-                           Foreground="{ThemeResource SystemColorControlAccentBrush}"
-                           FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
-                           FontSize="32"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0" />
-                <!-- Not a TextBox: see AmountTextBlock for why an amount is better drawn than
-                     edited. The fraction is two thirds of the whole part, which is the same ratio
-                     the card's balance uses. -->
-                <controls:AmountTextBlock x:Name="Amount"
-                                          TextChanged="Amount_TextChanged"
-                                          Placeholder="0"
-                                          FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                          FontWeight="SemiBold"
-                                          FontSize="32"
-                                          FractionFontSize="21"
-                                          VerticalAlignment="Center" />
+                    Margin="0,48,0,0"
+                    Grid.Row="1">
+            <!-- Not a TextBox: see AmountTextBlock for why an amount is better drawn than
+                 edited. The fraction is two thirds of the whole part, which is the same ratio
+                 the card's balance uses.
 
-                <TextBlock x:Name="Suffix"
-                           Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"
-                           FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                           FontWeight="SemiBold"
-                           FontSize="32"
-                           VerticalAlignment="Center"
-                           Margin="6,0,0,0" />
-            </StackPanel>
+                 The symbol and the unit belong to the field rather than to a panel around it.
+                 The number takes its final width the moment a digit lands, and what keeps that
+                 from being a jump is the field gliding all three of them into place. -->
+            <controls:AmountTextBlock x:Name="Amount"
+                                      TextChanged="Amount_TextChanged"
+                                      FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                      FontWeight="SemiBold"
+                                      FontSize="40"
+                                      FractionFontSize="26"
+                                      VerticalAlignment="Center">
+                <controls:AmountTextBlock.Prefix>
+                    <Grid x:Name="Prefix"
+                          HorizontalAlignment="Left"
+                          Margin="0,0,6,0">
+                        <Border x:Name="PrefixGram"
+                                HorizontalAlignment="Right"
+                                Width="40"
+                                Height="40">
+                            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Gram.tgs"
+                                                    IsCachingEnabled="False"
+                                                    AutoPlay="True"
+                                                    FrameSize="52,52"
+                                                    DecodeFrameType="Logical"
+                                                    Width="52"
+                                                    Height="52"
+                                                    Margin="-6,-14,-6,-6" />
+                        </Border>
+                        <TextBlock x:Name="PrefixCurrency"
+                                   Text="&#xEA7E;"
+                                   Foreground="{ThemeResource SuccessButtonBackground}"
+                                   FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
+                                   FontSize="40"
+                                   HorizontalAlignment="Right"
+                                   Visibility="Collapsed" />
+                    </Grid>
+                </controls:AmountTextBlock.Prefix>
+                <controls:AmountTextBlock.Suffix>
+                    <Grid x:Name="Suffix"
+                          HorizontalAlignment="Right"
+                          Margin="6,0,0,-8">
+                        <TextBlock x:Name="SuffixGram"
+                                   Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                                   FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                   FontWeight="SemiBold"
+                                   FontSize="26"
+                                   HorizontalAlignment="Left" />
+                        <TextBlock x:Name="SuffixCurrency"
+                                   Foreground="{ThemeResource SuccessButtonBackground}"
+                                   FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                   FontWeight="SemiBold"
+                                   FontSize="26"
+                                   HorizontalAlignment="Left"
+                                   Visibility="Collapsed" />
+                    </Grid>
+                </controls:AmountTextBlock.Suffix>
+            </controls:AmountTextBlock>
 
             <Button x:Name="SwapButton"
                     Click="Swap_Click"
@@ -96,14 +159,14 @@
                     Margin="0,12,0,0">
                 <TextBlock x:Name="Comment"
                            Style="{StaticResource BodyTextBlockStyle}"
-                           TextAlignment="Center"
                            TextWrapping="Wrap"
                            MaxLines="3"
                            TextTrimming="CharacterEllipsis" />
             </Border>
         </StackPanel>
 
-        <StackPanel Grid.Row="1">
+        <StackPanel Margin="0,0,0,-12"
+                    Grid.Row="2">
             <TextBlock x:Name="BalanceLabel"
                        Style="{StaticResource InfoBodyTextBlockStyle}"
                        TextAlignment="Center" />

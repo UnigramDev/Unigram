@@ -80,6 +80,9 @@ namespace Telegram.Views.Popups
         public string Text { get; set; } = string.Empty;
         public long Value { get; set; }
 
+        public TextWrapping TextWrapping { get; set; } = TextWrapping.NoWrap;
+        public bool AcceptsReturn { get; set; } = false;
+
         public string PlaceholderText { get; set; } = string.Empty;
 
         /// <summary>
@@ -89,6 +92,12 @@ namespace Telegram.Views.Popups
         public string CheckBoxText { get; set; }
 
         public bool IsChecked { get; set; }
+
+        /// <summary>
+        /// Whether the option can be changed. Off leaves it visible and legible, which is the
+        /// point: a choice that has already been made for the user still has to be shown.
+        /// </summary>
+        public bool IsCheckBoxEnabled { get; set; } = true;
 
         public int MaxLength { get; set; } = int.MaxValue;
         public int MinLength { get; set; } = 1;
@@ -253,11 +262,14 @@ namespace Telegram.Views.Popups
 
                 Check.Content = CheckBoxText;
                 Check.IsChecked = IsChecked;
+                Check.IsEnabled = IsCheckBoxEnabled;
             }
 
             if (Label != null)
             {
                 Label.PlaceholderText = PlaceholderText;
+                Label.TextWrapping = TextWrapping;
+                Label.AcceptsReturn = AcceptsReturn;
 
                 var scope = new InputScope();
                 var name = new InputScopeName();
