@@ -205,6 +205,12 @@ namespace Telegram.Services
         bool CanUseTextEntitiesInStoryCaption { get; }
 
         /// <summary>
+        /// TBD
+        /// </summary>
+        /// <value>can_use_ton_wallet</value>
+        bool CanUseTonWallet { get; }
+
+        /// <summary>
         /// Since TDLib 1.8.28. If true, then revenue from sponsored messages in chats can be withdrawn
         /// </summary>
         /// <value>can_withdraw_chat_revenue</value>
@@ -1257,6 +1263,9 @@ namespace Telegram.Services
                 case "can_use_text_entities_in_story_caption":
                     _canUseTextEntitiesInStoryCaption = GetValue<bool>(value);
                     break;
+                case "can_use_ton_wallet":
+                    _canUseTonWallet = GetValue<bool>(value);
+                    break;
                 case "can_withdraw_chat_revenue":
                     _canWithdrawChatRevenue = GetValue<bool>(value);
                     break;
@@ -1918,6 +1927,9 @@ namespace Telegram.Services
 
         private bool _canUseTextEntitiesInStoryCaption;
         public bool CanUseTextEntitiesInStoryCaption => _canUseTextEntitiesInStoryCaption;
+
+        private bool _canUseTonWallet;
+        public bool CanUseTonWallet => _canUseTonWallet;
 
         private bool _canWithdrawChatRevenue;
         public bool CanWithdrawChatRevenue => _canWithdrawChatRevenue;
@@ -2678,6 +2690,7 @@ namespace Telegram.Services
             public const string CanSetNewChatPrivacySettings = "can_set_new_chat_privacy_settings";
             public const string CanUseLoginPasskey = "can_use_login_passkey";
             public const string CanUseTextEntitiesInStoryCaption = "can_use_text_entities_in_story_caption";
+            public const string CanUseTonWallet = "can_use_ton_wallet";
             public const string CanWithdrawChatRevenue = "can_withdraw_chat_revenue";
             public const string ChannelBotUserId = "channel_bot_user_id";
             public const string ChatAvailableReactionCountMax = "chat_available_reaction_count_max";

@@ -54,6 +54,7 @@ namespace Telegram.Views.Host
 
         private long _menuSessions;
         private long _menuBots;
+        private bool _menuWallet = true;
 
         public RootWindow(WindowContext context, NavigationService service)
             : base(context, false)
@@ -337,9 +338,11 @@ namespace Telegram.Views.Host
         {
             var items = _lifetime.GetItemsForMenu(show, out long sessionsHash);
             var bots = clientService.GetBotsForMenu(out long botsHash);
+            var wallet = clientService.Options.CanUseTonWallet;
 
             var itemsChanged = _menuSessions != sessionsHash;
             var botsChanged = _menuBots != botsHash;
+            var walletChanged = _menuWallet != wallet;
 
             var index = 1;
 
@@ -378,6 +381,16 @@ namespace Telegram.Views.Host
                     }
 
                     i--;
+                }
+                else if (walletChanged && _navigationViewItems[i] is RootDestination.Wallet && !wallet)
+                {
+                    _navigationViewItems.RemoveAt(i);
+                    i--;
+                }
+                else if (walletChanged && _navigationViewItems[i] is RootDestination.Settings && wallet)
+                {
+                    _navigationViewItems.Insert(i, RootDestination.Wallet);
+                    i++;
                 }
             }
 
@@ -454,6 +467,7 @@ namespace Telegram.Views.Host
 
             _menuSessions = sessionsHash;
             _menuBots = botsHash;
+            _menuWallet = wallet;
         }
 
         #region Recycling
@@ -650,7 +664,7 @@ namespace Telegram.Views.Host
                         content.Glyph = Icons.Call;
                         break;
                     case RootDestination.Wallet:
-                        content.Text = "[Wallet]";
+                        content.Text = Strings.WalletAttachMoney;
                         content.Glyph = Icons.Gram;
                         break;
                     case RootDestination.Settings:
