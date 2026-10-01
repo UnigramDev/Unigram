@@ -22,6 +22,31 @@ namespace Telegram.Common
 {
     public static class WalletHelper
     {
+        public static bool TryToCurrency(IClientService clientService, WalletState state, BigInteger nanograms, out BigInteger units, out string currency)
+        {
+            units = BigInteger.Zero;
+
+            if (!TryGetRate(clientService, state, out var rate))
+            {
+                if (TryToUsd(clientService, nanograms, out units))
+                {
+                    currency = "USD";
+                    return true;
+                }
+
+                currency = null;
+                return false;
+            }
+
+            // nanograms * usd / 1e15 gives dollars; the rest carries it into the chosen currency
+            // and into CurrencyDecimals. One division, at the end, so nothing is truncated twice.
+            units = nanograms * rate.Usd * rate.Scaled * CurrencyScale
+                / (NanogramsPerMillionGram * RateScale);
+
+            currency = state.Currency;
+            return true;
+        }
+
         /// <summary>
         /// What an amount of grams is worth in the currency the user chose.
         /// </summary>

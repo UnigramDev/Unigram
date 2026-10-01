@@ -8,12 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -2025,46 +2025,41 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        /// <summary>
-        /// What became of a request, or that it is still waiting.
-        /// </summary>
-        /// <remarks>
-        /// Four outcomes, and the message itself carries all of them - which is the whole of what
-        /// it carries. There is no ciphertext in it, so nothing here can say what was asked for
-        /// without fetching and decrypting the request, and a line of chat text must not do that.
-        ///
-        /// Expiry is not a state the server reports: a pending request whose moment has passed
-        /// simply stops being answerable, so it is read off the clock rather than the message.
-        /// Every device works it out the same way, having the same expiration date.
-        /// </remarks>
+        private static FormattedText UpdateTonWalletTransfer(MessageWithOwner message, MessageTonWalletTransfer tonWalletTransfer, bool history)
+        {
+            var amount = Formatter.Grams(tonWalletTransfer.Amount);
+            if (history)
+            {
+                var state = message.ClientService.Session.Resolve<IWalletService>().State;
+                if (state != null && WalletHelper.TryToCurrency(message.ClientService, state, tonWalletTransfer.Amount, out var units, out var currency))
+                {
+                    var worth = Formatter.FormatAmountExact(units, WalletHelper.CurrencyDecimals, currency);
+                    amount = string.Format(Strings.WalletTransferWorth, amount, worth);
+                }
+            }
+
+            if (message.IsOutgoing)
+            {
+                return ReplaceWithLink(string.Format(Strings.WalletActionSentGrams, amount), message.ClientService.GetUser(message.Chat));
+            }
+            else
+            {
+                return ReplaceWithLink(string.Format(Strings.WalletActionReceivedGrams, amount), message.GetSender());
+            }
+        }
+
         private static FormattedText UpdateTonConnectRequest(MessageTonConnectRequest tonConnectRequest)
         {
             var text = tonConnectRequest.State switch
             {
-                TonConnectRequestStateAccepted => string.Format("[{0}: action confirmed]", tonConnectRequest.DappName),
-                TonConnectRequestStateRejected => string.Format("[{0}: action declined]", tonConnectRequest.DappName),
+                TonConnectRequestStateAccepted => string.Format(Strings.WalletTonConnectRequestAppProcessed, tonConnectRequest.DappName),
+                TonConnectRequestStateRejected => string.Format(Strings.WalletTonConnectRequestAppDeclined, tonConnectRequest.DappName),
                 TonConnectRequestStatePending pending when pending.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds()
-                    => string.Format("[{0}: request expired]", tonConnectRequest.DappName),
-                _ => string.Format("[{0} asks to confirm an action. Tap to review.]", tonConnectRequest.DappName)
+                    => string.Format(Strings.WalletTonConnectRequestAppExpired, tonConnectRequest.DappName),
+                _ => string.Format(Strings.WalletTonConnectRequestAppPending, tonConnectRequest.DappName)
             };
 
             return new FormattedText(text, Array.Empty<TextEntity>());
-        }
-
-        private static FormattedText UpdateTonWalletTransfer(MessageWithOwner message, MessageTonWalletTransfer tonWalletTransfer, bool history)
-        {
-            if (message.IsOutgoing)
-            {
-                var dollars = WalletHelper.TryToUsd(message.ClientService, tonWalletTransfer.Amount, out var units)
-                    ? Formatter.FormatAmountExact(units, WalletHelper.CurrencyDecimals, "USD")
-                    : string.Empty;
-
-                return ReplaceWithLink(string.Format("[You sent un1 {0} Grams ({1})]", Formatter.TonBalance(tonWalletTransfer.Amount).Join(), dollars), message.ClientService.GetUser(message.Chat));
-            }
-            else
-            {
-                return ReplaceWithLink("[un1 sent you {0} Grams ({1})]", message.GetSender());
-            }
         }
 
         private static FormattedText UpdateUpgradedGift(MessageWithOwner message, MessageUpgradedGift upgradedGift, bool history)
