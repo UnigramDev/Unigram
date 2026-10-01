@@ -30,13 +30,20 @@ namespace winrt::Telegram::Native::Media::implementation
         constexpr size_t CategoryCount = 4;
 
         // One engine per AUDIO_STREAM_CATEGORY: the category is a property of the mastering
-        // voice, and the two the app needs behave differently. Communications is what makes
-        // Windows duck other applications while the phone rings and route to the endpoint the
-        // user picked for calls; alerts are ducked by it in turn.
+        // voice, and it decides both the endpoint Windows routes to and whether opening the
+        // stream attenuates every other application on the machine.
+        //
+        // Neither category here is one that attenuates. Notification sounds are SoundEffects,
+        // documented as mixing with what is already playing, and explicitly not Alerts - the
+        // category for sounds meant to decrease existing audio, under which a message blip
+        // turned the rest of the machine down by 80% for as long as it played. Call sounds are
+        // Other to match webrtc's render stream (audio_device_core_win.cc tags only capture as
+        // Communications), so that a ringtone comes out of the device the call itself will use;
+        // if that ever changes in the fork, this has to change with it.
         enum class Endpoint
         {
-            Alerts,
-            Communications
+            Effects,
+            Calls
         };
 
         constexpr size_t EndpointCount = 2;
@@ -45,8 +52,8 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             return category == static_cast<size_t>(SoundCategory::Call)
                 || category == static_cast<size_t>(SoundCategory::VideoChat)
-                ? Endpoint::Communications
-                : Endpoint::Alerts;
+                ? Endpoint::Calls
+                : Endpoint::Effects;
         }
 
         // A chat can go hours without making a sound, so the worker gives the engines up
@@ -583,9 +590,9 @@ namespace winrt::Telegram::Native::Media::implementation
             auto endpoint = EndpointOf(category);
             auto& engine = _engines[static_cast<size_t>(endpoint)];
 
-            if (!Ensure(engine, endpoint == Endpoint::Communications
-                ? AudioCategory_Communications
-                : AudioCategory_Alerts))
+            if (!Ensure(engine, endpoint == Endpoint::Calls
+                ? AudioCategory_Other
+                : AudioCategory_SoundEffects))
             {
                 return;
             }
