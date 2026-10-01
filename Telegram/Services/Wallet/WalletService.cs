@@ -810,13 +810,11 @@ namespace Telegram.Services.Wallet
                 }
             }
 
-            // Bounce is off because a transfer to an address that cannot accept it should leave the
-            // funds there rather than return them minus the fees, which is what wallets do.
             var message = new EngineSendMessage(
                 recipient,
                 new SendAmount.Exact(amountNanograms.ToString()),
                 body,
-                false,
+                Bounceable(recipient),
                 null);
 
             var intent = new SendIntent(new SendExpiration.EngineDefault(), new[] { message });
@@ -902,7 +900,7 @@ namespace Telegram.Services.Wallet
                     recipient,
                     new SendAmount.Exact(amountNanograms.ToString()),
                     body,
-                    false,
+                    Bounceable(recipient),
                     null);
 
                 var intent = new SendIntent(new SendExpiration.EngineDefault(), new[] { message });
@@ -2919,6 +2917,39 @@ namespace Telegram.Services.Wallet
             {
                 Logger.Error("wallet address could not be compared: " + ex.Message);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Whether a transfer to this address should bounce back when the destination rejects it.
+        /// </summary>
+        /// <remarks>
+        /// **The address carries the answer, and honouring it is what stops people losing money.**
+        /// TEP-2 gives a user-friendly address a bounceable flag, and the two prefixes are how it
+        /// reads on screen: `EQ...` is bounceable and `UQ...` is not. Wallets hand out `UQ`,
+        /// contracts - NFTs, tokens, exchanges - hand out `EQ`, precisely so that a call they
+        /// cannot honour returns the value instead of swallowing it.
+        ///
+        /// So this follows the address rather than the account behind it. In particular an `EQ`
+        /// address stays bounceable **even when the destination is not deployed yet**: that is the
+        /// case the flag exists for, and sending to it unbounced is how the funds are lost.
+        ///
+        /// A raw `workchain:hex` address carries no flag, and bounceable is the safe reading of
+        /// silence - a bounce costs the fees, not the transfer.
+        /// </remarks>
+        private static bool Bounceable(string address)
+        {
+            try
+            {
+                return WalletEngineMethods.ParseTonAddress(address).Format is not TonAddressFormat.UserFriendly friendly
+                    || friendly.Bounceable;
+            }
+            catch (Exception ex)
+            {
+                // Unparseable here means the transfer is about to fail anyway, and the engine is
+                // the one that should say so.
+                Logger.Error("wallet address could not be read for its bounce flag: " + ex.Message);
+                return true;
             }
         }
 
