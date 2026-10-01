@@ -7,14 +7,12 @@
 
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Wallet;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Wallet.Popups
 {

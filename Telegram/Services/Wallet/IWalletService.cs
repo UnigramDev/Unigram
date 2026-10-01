@@ -105,13 +105,18 @@ namespace Telegram.Services.Wallet
         /// <summary>
         /// Stores the recovery phrase in the Telegram cloud, behind the account password.
         /// </summary>
-        Task EnableBackupAsync(string password, IReadOnlyList<string> words);
+        Task EnableBackupAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null);
 
         /// <summary>
         /// Removes the cloud copy of the recovery phrase, leaving the phrase itself as the only way
         /// back into the wallet.
         /// </summary>
-        Task DisableBackupAsync(string password);
+        Task DisableBackupAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null);
+
+        /// <summary>
+        /// Replaces the account's wallet with one the user already has, from its recovery phrase.
+        /// </summary>
+        Task ReplaceWalletAsync(INavigationService navigation, string password, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null);
 
         /// <summary>
         /// Signs a transfer here and has TDLib broadcast it. Throws

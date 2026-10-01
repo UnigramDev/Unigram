@@ -610,14 +610,152 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        public async Task EnableBackupAsync(string password, IReadOnlyList<string> words)
+        /// <summary>
+        /// Proves to the account that this device holds the wallet's key.
+        /// </summary>
+        /// <remarks>
+        /// This is what replaced the private key the backup and replacement methods used to ask
+        /// for: the account hands out a challenge, the key signs it here, and only the answer
+        /// travels. The challenge is a `ton_proof` in all but name - payload and domain in, public
+        /// key, timestamp and signature out - so the engine signs it with the same call TON Connect
+        /// uses rather than with one of its own.
+        ///
+        /// The key in the answer is the **current signing** key, which differs from the
+        /// descriptor's anchor after a rotation. That is why `replaceTonWallet` takes the anchor
+        /// separately: the two are not interchangeable and the account needs both.
+        ///
+        /// Which wallet signs is the caller's to say. Enabling and disabling a backup are proved
+        /// by the wallet they are about; a replacement is proved by the wallet being imported,
+        /// which is not the current one and is not bound to anything yet.
+        /// </remarks>
+        private async Task<TonWalletOwnershipProof> ProveOwnershipAsync(WalletDescriptor descriptor, INavigationService navigation, WalletVault.WalletVaultLease lease = null)
         {
-            await _clientService.SendAsync(new EnableTonWalletBackup(password ?? string.Empty, string.Join(" ", words)));
+            var lifecycle = _lifecycle;
+
+            if (lifecycle == null || descriptor == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            var response = await _clientService.SendAsync(new GetTonWalletOwnershipProofChallenge());
+            if (response is not TonWalletOwnershipProofChallenge challenge)
+            {
+                throw new WalletRequestException(response as Error);
+            }
+
+            // Signing reads the wallet key, so it is behind the vault like everything else that
+            // does. The caller usually holds the lease already: proving ownership is never the
+            // whole of an operation, only the part of it the account asks for.
+            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            var signature = await lifecycle.SignTonConnectProof(
+                new TonConnectProofSignRequest(descriptor, challenge.Domain, (ulong)timestamp, challenge.Payload));
+
+            return new TonWalletOwnershipProof(signature.PublicKey, (int)timestamp, signature.Signature);
         }
 
-        public async Task DisableBackupAsync(string password)
+        /// <summary>
+        /// Puts the recovery phrase back in the Telegram cloud.
+        /// </summary>
+        /// <remarks>
+        /// No account password any more: the proof is what the account now takes, and it is worth
+        /// noticing that this is one prompt fewer rather than one more.
+        /// </remarks>
+        public async Task EnableBackupAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null)
         {
-            await _clientService.SendAsync(new DisableTonWalletBackup(password ?? string.Empty));
+            var proof = await ProveOwnershipAsync(_descriptor, navigation, lease);
+
+            await _clientService.SendAsync(new EnableTonWalletBackup(string.Join(" ", words), proof));
+        }
+
+        /// <summary>
+        /// Takes the recovery phrase out of the Telegram cloud.
+        /// </summary>
+        /// <remarks>
+        /// Proved rather than passworded. `disableTonWalletBackup` still exists and still takes the
+        /// account password, but it is the weaker of the two: the password says who is asking and
+        /// the proof says they hold the key, which is the thing actually at stake in giving up the
+        /// only other copy of it.
+        /// </remarks>
+        public async Task DisableBackupAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        {
+            var proof = await ProveOwnershipAsync(_descriptor, navigation, lease);
+
+            await _clientService.SendAsync(new DisableTonWalletBackupWithProof(proof));
+        }
+
+        /// <summary>
+        /// Replaces the account's wallet with one the user already has, from its recovery phrase.
+        /// </summary>
+        /// <remarks>
+        /// The proof is signed by the **incoming** wallet rather than the current one - the account
+        /// is being shown that whoever is asking holds the key to the wallet they are asking it to
+        /// adopt. The anchor key goes alongside it because the address is derived from the anchor
+        /// and the proof carries the signing key, which are the same only until the first rotation.
+        ///
+        /// The import is undone when the account refuses. A descriptor left behind is a phrase left
+        /// in protected storage for a wallet this device does not have, which is the kind of thing
+        /// that is only ever found much later.
+        /// </remarks>
+        public async Task ReplaceWalletAsync(INavigationService navigation, string password, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null)
+        {
+            var lifecycle = _lifecycle;
+            if (lifecycle == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            var imported = await lifecycle.ImportWallet(
+                new ImportWalletRequest(NewRecordId(), DefaultNetwork, words.ToArray()));
+
+            try
+            {
+                var proof = await ProveOwnershipAsync(imported, navigation, lease);
+
+                var response = await _clientService.SendAsync(
+                    new ReplaceTonWallet(password ?? string.Empty, imported.PublicKey, proof));
+
+                if (response is Error error)
+                {
+                    throw new WalletRequestException(error);
+                }
+            }
+            catch
+            {
+                await lifecycle.DeleteWallet(imported);
+                throw;
+            }
+
+            // The account's wallet is the imported one from here on, so the descriptor this device
+            // signs with has to follow it. Everything else - the balance, the history, the state -
+            // arrives from the account as an update, the same way it does after any other change.
+            WalletDescriptor previous;
+
+            await _mutex.WaitAsync();
+            try
+            {
+                previous = _descriptor;
+
+                _descriptor = imported;
+                _boundKey = imported.PublicKey;
+
+                SaveDescriptor(_descriptor, _boundKey);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            // Last, and only once what replaces it is on disk - the same order a rotation uses,
+            // and for the same reason: a crash between the two would leave neither phrase.
+            if (previous != null)
+            {
+                await DeleteQuietlyAsync(previous);
+            }
+
+            Raise();
         }
 
         public async Task<WalletTransferResult> SendAsync(INavigationService navigation, string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless)

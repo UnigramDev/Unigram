@@ -104,9 +104,9 @@ namespace Telegram.ViewModels.Wallet
         /// </summary>
         /// <remarks>
         /// The phrase has to come from this device, because the server is being asked to store one
-        /// it does not have - so this needs the key here, which is the one thing disabling the
-        /// backup does not. Everything it asks for is collected once and shared: one lease over
-        /// the bind and the read, and the account password the bind already produced.
+        /// it does not have. One lease covers the bind, the read and the proof - and the account
+        /// password is no longer part of it, since the account now takes a signature over its own
+        /// challenge instead.
         /// </remarks>
         public async void EnableBackup()
         {
@@ -141,15 +141,9 @@ namespace Telegram.ViewModels.Wallet
                 return;
             }
 
-            var password = bound.Password ?? await RequestPasswordAsync();
-            if (password == null)
-            {
-                return;
-            }
-
             try
             {
-                await _wallet.EnableBackupAsync(password, words);
+                await _wallet.EnableBackupAsync(NavigationService, words, lease);
                 NavigationService.ShowToast(Toast(Strings.WalletBackupEnabled, Strings.WalletBackupEnabledInfo), ToastPopupIcon.Success);
             }
             catch (Exception ex)
@@ -169,10 +163,10 @@ namespace Telegram.ViewModels.Wallet
 
         public async void DisableBackup()
         {
-            // One confirmation and one password for the whole operation, both collected before
-            // the popup. Binding this device, pricing a phrase update and performing it all read
-            // the phrase, and disabling the backup wants the same account password that bought the
-            // phrase from the cloud - so each is asked for once and carried through.
+            // One confirmation for the whole operation, collected before the popup. Binding this
+            // device, pricing a phrase update and performing it all read the phrase, so the lease
+            // is taken once and carried through. Disabling itself asks for nothing further: the
+            // account takes a signature over its own challenge rather than the password.
             //
             // The vault is opened first, deliberately: binding writes the phrase into it, so a
             // lease taken afterwards would be a second prompt rather than the only one.
@@ -207,17 +201,9 @@ namespace Telegram.ViewModels.Wallet
                 return;
             }
 
-            // Already in hand whenever binding had to ask for it, which is the only case where
-            // it would otherwise be typed twice in one operation.
-            var password = bound.Password ?? await RequestPasswordAsync();
-            if (password == null)
-            {
-                return;
-            }
-
             try
             {
-                await _wallet.DisableBackupAsync(password);
+                await _wallet.DisableBackupAsync(NavigationService, lease);
             }
             catch (Exception ex)
             {
@@ -404,20 +390,20 @@ namespace Telegram.ViewModels.Wallet
                 return;
             }
 
-            if (action == ContentDialogResult.Secondary)
-            {
-                // replaceTonWallet wants the private key of the wallet being adopted, as proof the
-                // user owns it, and wallet-engine states outright that no private-key bytes cross
-                // its API boundary - so there is nothing here that can answer it. The same gap is
-                // why disableTonWalletBackupWithProof goes unused and the backup is turned off
-                // with the account password instead.
-                NavigationService.ShowToast("[Importing an existing wallet is not available yet.]", ToastPopupIcon.Info);
-                return;
-            }
-
             var password = await RequestPasswordAsync();
             if (password == null)
             {
+                return;
+            }
+
+            if (action == ContentDialogResult.Secondary)
+            {
+                // Replacing rather than deleting: the account keeps a wallet throughout, and which
+                // one it is changes when the imported phrase proves itself. Nothing is deleted
+                // first, so a refused replacement leaves the user where they were.
+                HidePopup(typeof(WalletBackupPopup));
+
+                await ShowPopupAsync(WalletImportPopup.ForReplacement(_wallet, NavigationService, password));
                 return;
             }
 

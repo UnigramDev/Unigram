@@ -8,12 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services.Wallet;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -27,10 +29,32 @@ namespace Telegram.Views.Wallet.Popups
         private IReadOnlyList<string> _mnemonicWordList;
         private string[] _words;
 
+        // What the words are for. Binding adopts the account's own wallet onto this device and
+        // refuses a phrase that derives anywhere else; replacing is the opposite - a different
+        // wallet is the whole point - and it needs the account password the replacement is
+        // authorised with.
+        private readonly string _replacementPassword;
+        private readonly bool _isReplacing;
+
         public WalletImportPopup(IWalletService wallet, INavigationService navigationService)
+            : this(wallet, navigationService, null, false)
+        {
+        }
+
+        /// <summary>
+        /// The same screen, used to swap the account's wallet for another one the user already has.
+        /// </summary>
+        public static WalletImportPopup ForReplacement(IWalletService wallet, INavigationService navigationService, string password)
+        {
+            return new WalletImportPopup(wallet, navigationService, password, true);
+        }
+
+        private WalletImportPopup(IWalletService wallet, INavigationService navigationService, string password, bool isReplacing)
         {
             _wallet = wallet;
             _navigationService = navigationService;
+            _replacementPassword = password;
+            _isReplacing = isReplacing;
 
             InitializeComponent();
             InitializeKit();
@@ -205,6 +229,12 @@ namespace Telegram.Views.Wallet.Popups
 
             var deferral = args.GetDeferral();
 
+            if (_isReplacing)
+            {
+                await ReplaceAsync(args, deferral);
+                return;
+            }
+
             var result = await _wallet.BindAsync(_navigationService, _words);
 
             _submitted = false;
@@ -225,6 +255,45 @@ namespace Telegram.Views.Wallet.Popups
 
             _navigationService.NavigateToWallet();
             _navigationService.ShowToast("[**Wallet Imported**\nYour wallet was restored from your recovery phrase.]", ToastPopupIcon.Success);
+        }
+
+        /// <summary>
+        /// Swaps the account's wallet for the one these words derive.
+        /// </summary>
+        /// <remarks>
+        /// Unlike binding, the phrase is meant to belong to another wallet, so there is nothing to
+        /// check it against here - the account decides, and it decides on a signature the imported
+        /// key produces rather than on the words.
+        /// </remarks>
+        private async Task ReplaceAsync(ModalPopupButtonClickEventArgs args, Deferral deferral)
+        {
+            try
+            {
+                await _wallet.ReplaceWalletAsync(_navigationService, _replacementPassword, _words);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet could not be replaced: " + ex.Message);
+
+                _submitted = false;
+                IsPrimaryButtonPending = false;
+
+                // The words stay on screen: a phrase the account refused is one the user may have
+                // mistyped, and retyping it is the only thing they can do about it.
+                args.Cancel = true;
+                deferral.Complete();
+
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, "[That wallet could not be used. Check the words and their order.]", "[Import Wallet]", Strings.OK);
+                return;
+            }
+
+            _submitted = false;
+            IsPrimaryButtonPending = false;
+
+            deferral.Complete();
+
+            _navigationService.NavigateToWallet();
+            _navigationService.ShowToast("[**Wallet Replaced**\nYour account now uses the wallet you imported.]", ToastPopupIcon.Success);
         }
 
         /// <summary>
