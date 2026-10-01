@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <TextBlock>
             <Run Text="&#xEA7E;"
-                 Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                 Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                  FontFamily="{StaticResource SymbolThemeFontFamily}" />
             <Run x:Name="CryptocurrencyAmountLabel"
                  FontWeight="SemiBold" /><Run x:Name="CryptocurrencyDecimalLabel"

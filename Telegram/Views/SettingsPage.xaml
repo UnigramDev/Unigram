@@ -70,7 +70,7 @@
 
                     <controls:GlyphButton Content="&#xEACA;"
                                           Click="{x:Bind ViewModel.ShareUsername}"
-                                          Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                          Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                           AutomationProperties.Name="{CustomResource QrCode}"
                                           VerticalAlignment="Center"
                                           Margin="0,0,0,0"

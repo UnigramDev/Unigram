@@ -27,7 +27,7 @@
         <!-- The domain, which is the one thing that actually identifies who is asking: a name can
              be anything, and this is what the manifest was fetched from. -->
         <TextBlock x:Name="Domain"
-                   Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                   Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                    Style="{StaticResource BodyTextBlockStyle}"
                    TextAlignment="Center"
                    TextWrapping="Wrap"

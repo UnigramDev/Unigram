@@ -60,7 +60,7 @@
                                              Style="{StaticResource ChatListRadioButtonStyle}">
                                     <Grid CornerRadius="8">
                                         <controls:AnimatedImage x:Name="TabsAnimated"
-                                                                ReplacementColor="{ThemeResource SystemColorControlAccentBrush}"
+                                                                ReplacementColor="{ThemeResource AccentFillColorDefaultBrush}"
                                                                 Source="ms-appx:///Assets/Animations/SupergroupTopicsTabs.tgs"
                                                                 AutoPlay="True"
                                                                 LoopCount="1"
@@ -85,7 +85,7 @@
                                              Style="{StaticResource ChatListRadioButtonStyle}">
                                     <Grid CornerRadius="8">
                                         <controls:AnimatedImage x:Name="ListAnimated"
-                                                                ReplacementColor="{ThemeResource SystemColorControlAccentBrush}"
+                                                                ReplacementColor="{ThemeResource AccentFillColorDefaultBrush}"
                                                                 Source="ms-appx:///Assets/Animations/SupergroupTopicsList.tgs"
                                                                 AutoPlay="True"
                                                                 LoopCount="1"

@@ -77,7 +77,7 @@
                                 CornerRadius="4"
                                 Grid.RowSpan="2">
                             <TextBlock x:Name="Icon"
-                                       Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                       Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"

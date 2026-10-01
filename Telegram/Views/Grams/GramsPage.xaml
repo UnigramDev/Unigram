@@ -54,7 +54,7 @@
                                            FontSize="28">
                                         <Run Text="&#xEA7E;"
                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                             Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                             Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                              FontWeight="Normal" />
                                         <Run x:Name="Balance" /><Run x:Name="BalanceFraction"
                                                                      FontSize="24" />

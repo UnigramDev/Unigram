@@ -150,7 +150,7 @@
                                Margin="8,5,4,6">
                         <Run x:Name="FeeGlyph"
                              FontFamily="{StaticResource SymbolThemeFontFamily}"
-                             Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+                             Foreground="{ThemeResource AccentFillColorDefaultBrush}" />
                         <Run x:Name="FeeAmount" /><Run x:Name="FeeConverted"
                                                        Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /></TextBlock>
 

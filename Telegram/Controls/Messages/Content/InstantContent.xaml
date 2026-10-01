@@ -217,7 +217,7 @@
              
              <Button Content="JOIN"
              Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}"
-             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+             Foreground="{ThemeResource AccentFillColorDefaultBrush}"
              Background="Transparent"
              Padding="12,8"
              Grid.Column="1"/>

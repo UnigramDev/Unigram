@@ -537,7 +537,7 @@
                                               Margin="-4,0,0,0">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="collections:ISearchChatsFilter">
-                                            <StackPanel Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                            <StackPanel Background="{ThemeResource AccentFillColorDefaultBrush}"
                                                         Orientation="Horizontal"
                                                         RequestedTheme="Dark"
                                                         Margin="8,4,-4,4"

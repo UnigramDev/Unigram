@@ -478,7 +478,7 @@
                     <controls:SettingsButton.Badge>
                         <controls:GlyphButton Content="&#xEACA;"
                                               Click="{x:Bind ViewModel.ShareUsername}"
-                                              Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                              Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                               AutomationProperties.Name="{CustomResource QrCode}"
                                               VerticalAlignment="Center"
                                               Margin="0,0,-12,0" />
@@ -643,7 +643,7 @@
                                 <TextBlock Text="&#xEA7E;"
                                            FontSize="16"
                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                           Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                           Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                            VerticalAlignment="Center"
                                            Margin="0,0,4,0" />
                                 <TextBlock Text="{x:Bind ConvertCryptoCount(ViewModel.CryptoCount), Mode=OneWay}"

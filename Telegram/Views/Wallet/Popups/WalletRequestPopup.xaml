@@ -55,7 +55,7 @@
                            TextAlignment="Center" />
 
                 <TextBlock x:Name="Domain"
-                           Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                           Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextAlignment="Center"
                            TextWrapping="Wrap"

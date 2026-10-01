@@ -42,7 +42,7 @@
         <Run x:Name="AmountInteger" /><Run x:Name="AmountFraction"
                                            FontSize="12" />
         <Run Text="&#xEA7E;"
-             Foreground="{ThemeResource SystemColorControlAccentBrush}"
+             Foreground="{ThemeResource AccentFillColorDefaultBrush}"
              FontFamily="{StaticResource SymbolThemeFontFamily}"
              FontWeight="Normal" />
     </TextBlock>

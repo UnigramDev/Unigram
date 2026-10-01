@@ -20,7 +20,7 @@
             <Setter Property="BackgroundSizing"
                     Value="OuterBorderEdge" />
             <Setter Property="Foreground"
-                    Value="{ThemeResource SystemColorControlAccentBrush}" />
+                    Value="{ThemeResource AccentFillColorDefaultBrush}" />
             <Setter Property="BorderBrush"
                     Value="{ThemeResource ToggleButtonBorderBrushChecked}" />
             <Setter Property="Padding"
@@ -124,7 +124,7 @@
                 Visibility="Collapsed"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                 Style="{StaticResource ReactionsMenuButtonStyle}"
                 Width="32"
                 Height="24"

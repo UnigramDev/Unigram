@@ -136,7 +136,7 @@
                             <TextBlock TextAlignment="Center"
                                        Margin="0,8,0,8">
                                 <Run Text="&#xEA7E;"
-                                     Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                     Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                      FontFamily="{StaticResource SymbolThemeFontFamily}"
                                      FontSize="28" />
                                 <Run x:Name="CryptocurrencyAmountLabel"
