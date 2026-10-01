@@ -340,7 +340,7 @@ namespace Telegram.Views.Wallet
 
         private async void MenuItemCurrency()
         {
-            var popup = new WalletCurrencyPopup(_wallet);
+            var popup = new WalletCurrencyPopup(_clientService);
 
             var confirm = await _navigationService.ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItem != null)

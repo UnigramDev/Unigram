@@ -305,6 +305,9 @@ namespace Telegram.Services
         void AddRecentlyOpenedChat(long chatId);
         int RecentlyOpenedChatsCount { get; }
         IList<Chat> GetRecentlyOpenedChats();
+
+        double ExchangeRate(string currency);
+        Task<IReadOnlyList<CurrencyExchangeRate>> GetExchangeRatesAsync();
     }
 
     public partial class ClientService : IClientService, ClientResultHandler
@@ -361,6 +364,9 @@ namespace Telegram.Services
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
         private readonly ReaderWriterDictionary<long, MessageAlbumLastMessageService> _lastMessageAlbums = new();
+
+        private List<CurrencyExchangeRate> _exchangeRates;
+        private Task _exchangeRatesLoading;
 
         // Files are currently accessed only from TDLib thread
         private readonly Dictionary<int, File> _files = new();
@@ -1000,6 +1006,9 @@ namespace Telegram.Services
             {
                 _recentChats.Clear();
             }
+
+            _exchangeRates = null;
+            _exchangeRatesLoading = null;
 
             _greetingStickers = null;
             _nextGreetingSticker = null;
@@ -3116,6 +3125,70 @@ namespace Telegram.Services
             }
         }
 
+        private void UpdateCurrencyExchangeRates()
+        {
+            // Not awaited: an amount is shown in grams the moment the state arrives, and the price
+            // beside it follows when the rates do.
+            _ = LoadCurrencyExchangeRatesAsync();
+        }
+
+        public async Task<IReadOnlyList<CurrencyExchangeRate>> GetExchangeRatesAsync()
+        {
+            await LoadCurrencyExchangeRatesAsync();
+            return _exchangeRates;
+        }
+
+        private Task LoadCurrencyExchangeRatesAsync()
+        {
+            return _exchangeRatesLoading ??= LoadCurrencyExchangeRatesImplAsync();
+        }
+
+        private async Task LoadCurrencyExchangeRatesImplAsync()
+        {
+            var response = await SendAsync(new GetCurrencyExchangeRates());
+            if (response is CurrencyExchangeRates rates)
+            {
+                _exchangeRates = rates.Rates.ToList();
+
+                // Republished rather than raised as something of its own: a rate is only ever read
+                // beside a wallet amount, and everything that draws one already listens for this.
+                _aggregator.Publish(new UpdateTonWalletState(_tonWalletState));
+            }
+            else
+            {
+                // Left clear so the next update tries again. A rate that never arrived is not the
+                // same as one that is one to one.
+                _exchangeRatesLoading = null;
+            }
+        }
+
+        public double ExchangeRate(string currency)
+        {
+            if (string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase))
+            {
+                return 1;
+            }
+
+            var rates = _exchangeRates;
+            if (rates == null)
+            {
+                UpdateCurrencyExchangeRates();
+                return 0;
+            }
+
+            foreach (var rate in rates)
+            {
+                if (string.Equals(rate.Currency, currency, StringComparison.OrdinalIgnoreCase) && rate.Rate > 0)
+                {
+                    return rate.Rate;
+                }
+            }
+
+            // They arrived and this currency is not among them, which the picker cannot produce -
+            // it offers what the rates offer. Dollars are the honest fallback.
+            return 1;
+        }
+
         /// <summary>
         /// The instance a parsed file has to be read into. Files arrive by the hundred on every
         /// history page, nearly always for an id already held, and the whole point of parsing them
@@ -4433,9 +4506,11 @@ namespace Telegram.Services
                     break;
                 case UpdateTonWalletState updateTonWalletState:
                     _tonWalletState = updateTonWalletState.State;
+                    UpdateCurrencyExchangeRates();
                     break;
                 case UpdateTonWalletGaslessTransfersInfo updateTonWalletGaslessTransfersInfo:
                     _tonWalletGaslessTransfersInfo = updateTonWalletGaslessTransfersInfo.Info;
+                    UpdateCurrencyExchangeRates();
                     break;
                 case UpdateOwnedGramCount updateOwnedGramCount:
                     _ownedGramCount = updateOwnedGramCount.GramAmount;

@@ -142,9 +142,6 @@ namespace Telegram.Services.Wallet
 
         private TdTonWalletState _wallet;
 
-        // Fetched once and kept: the rates move slowly, the list is every currency there is, and
-        // the card asks for one of them on every balance change.
-        private IReadOnlyList<CurrencyExchangeRate> _rates;
         // What the account reports, in its order, and what this device has sent and is still
         // waiting on. Kept apart because only one of them is the server's to replace: a refresh
         // rebuilds the confirmed half and must leave a transfer in flight alone.
@@ -320,10 +317,6 @@ namespace Telegram.Services.Wallet
             {
                 await ApplyAsync(reported);
             }
-
-            // Not awaited: the card shows grams the moment the state arrives, and the price beside
-            // them follows when the rates do.
-            _ = LoadRatesAsync();
 
             // Nor this one, and for the same reason: what is left on a wallet the account no longer
             // points at is the chain's answer, and nothing else waits on it.
@@ -2723,8 +2716,6 @@ namespace Telegram.Services.Wallet
                 return;
             }
 
-            await LoadRatesAsync();
-
             AppSettings.WalletCurrency = currency;
 
             await _mutex.WaitAsync();
@@ -2741,44 +2732,6 @@ namespace Telegram.Services.Wallet
         }
 
         /// <summary>
-        /// Every currency TDLib quotes, and what each is worth in USD.
-        /// </summary>
-        public async Task<IReadOnlyList<CurrencyExchangeRate>> GetCurrencyRatesAsync()
-        {
-            await LoadRatesAsync();
-            return _rates;
-        }
-
-        private async Task LoadRatesAsync()
-        {
-            if (_rates != null)
-            {
-                return;
-            }
-
-            var response = await _clientService.SendAsync(new GetCurrencyExchangeRates());
-            if (response is CurrencyExchangeRates rates)
-            {
-                _rates = rates.Rates;
-
-                // The state was projected before these arrived, so it carries the rate that stands
-                // in for a missing one - which is 1, and reads as dollars wearing another currency's
-                // name. Everything showing a converted amount has to be told they are here.
-                await _mutex.WaitAsync();
-                try
-                {
-                    SetState(Project());
-                }
-                finally
-                {
-                    _mutex.Release();
-                }
-
-                Raise();
-            }
-        }
-
-        /// <summary>
         /// How many of the chosen currency one dollar buys. One for USD, and zero while the rates
         /// have not arrived - which is not a rate of one, and the difference is the whole point:
         /// dollars wearing another currency's name is a wrong number, and a view that knows it has
@@ -2786,28 +2739,7 @@ namespace Telegram.Services.Wallet
         /// </summary>
         private double CurrencyRate(string currency)
         {
-            if (string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase))
-            {
-                return 1;
-            }
-
-            var rates = _rates;
-            if (rates == null)
-            {
-                return 0;
-            }
-
-            foreach (var rate in rates)
-            {
-                if (string.Equals(rate.Currency, currency, StringComparison.OrdinalIgnoreCase) && rate.Rate > 0)
-                {
-                    return rate.Rate;
-                }
-            }
-
-            // They arrived and this currency is not among them, which the picker cannot produce -
-            // it offers what the rates offer. Dollars are the honest fallback.
-            return 1;
+            return _clientService.ExchangeRate(currency);
         }
 
         /// <summary>

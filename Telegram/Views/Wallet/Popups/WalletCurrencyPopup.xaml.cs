@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Controls;
-using Telegram.Services.Wallet;
+using Telegram.Services;
 using Telegram.Td;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,14 +42,15 @@ namespace Telegram.Views.Wallet.Popups
     /// </summary>
     /// <remarks>
     /// The list is whatever TDLib quotes a rate for, so a currency that cannot be converted is
-    /// never offered.
+    /// never offered. It comes from the account rather than from the wallet: the rates are an
+    /// account resource, and this screen needs no wallet to show them.
     /// </remarks>
     public sealed partial class WalletCurrencyPopup : ModalPopup
     {
         private readonly List<WalletCurrency> _currencies = new();
         private readonly DiffObservableCollection<WalletCurrency> _diff;
 
-        public WalletCurrencyPopup(IWalletService wallet)
+        public WalletCurrencyPopup(IClientService clientService)
         {
             InitializeComponent();
 
@@ -64,12 +65,12 @@ namespace Telegram.Views.Wallet.Popups
             _diff = new DiffObservableCollection<WalletCurrency>(_currencies, handler);
             ScrollingHost.ItemsSource = _diff;
 
-            InitializeCurrencies(wallet);
+            InitializeCurrencies(clientService);
         }
 
-        private async void InitializeCurrencies(IWalletService wallet)
+        private async void InitializeCurrencies(IClientService clientService)
         {
-            var rates = await wallet.GetCurrencyRatesAsync();
+            var rates = await clientService.GetExchangeRatesAsync();
             if (rates == null)
             {
                 return;

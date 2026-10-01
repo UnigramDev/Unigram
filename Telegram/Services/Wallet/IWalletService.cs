@@ -290,11 +290,6 @@ namespace Telegram.Services.Wallet
         Task SetCurrencyAsync(string currency);
 
         /// <summary>
-        /// Every currency TDLib quotes, with what each is worth in USD. For the picker.
-        /// </summary>
-        Task<IReadOnlyList<CurrencyExchangeRate>> GetCurrencyRatesAsync();
-
-        /// <summary>
         /// Reloads state and the first page of history.
         /// </summary>
         Task RefreshAsync();
