@@ -13951,6 +13951,40 @@
     <string name="ShortcutCommandCallReject">Decline Call</string>
     <string name="ShortcutCommandCallToggleMicrophone">Toggle Microphone</string>
     <string name="ShortcutCommandCallToggleCamera">Toggle Camera</string>
+    <string name="WalletAttachMoney">Money</string>
+    <string name="WalletTitle">Wallet</string>
+    <string name="WalletWaltFunds">You also have funds in Walt</string>
+    <string name="WalletGramEarningsBalance">You also have {0} in Gram Earnings</string>
+    <string name="WalletOldWalletsBalance">You also have {0} in old wallets</string>
+    <string name="WalletAddFunds">Add Funds</string>
+    <string name="WalletSend">Send</string>
+    <string name="WalletSendInstantly">Send Money Instantly</string>
+    <string name="WalletSendInstantlyInfo">Send Grams in any chat, just like sharing a photo.</string>
+    <string name="WalletNoFees">No Fees</string>
+    <string name="WalletNoFeesInfo">First 5 transfers each day are free, the rest cost almost nothing.</string>
+    <string name="WalletBlockchainVerified">Blockchain Verified</string>
+    <string name="WalletBlockchainVerifiedInfo">All transactions are recorded and verifiable on a public ledger.</string>
+    <string name="WalletCurrency">Currency</string>
+    <string name="WalletKeysAndBackup">Keys &amp; Backup</string>
+    <string name="WalletWhatIsWallet">What is Wallet?</string>
+    <string name="WalletOutgoingTransfer">Outgoing transfer</string>
+    <string name="WalletIncomingTransfer">Incoming transfer</string>
+    <string name="WalletFailedTransfer">Failed transfer</string>
+    <string name="WalletProcessing">Processing…</string>
+    <string name="WalletKeyUpdate">Key Update</string>
+    <string name="WalletTransactionTopUp">Card Top-up</string>
+
+    <string name="WalletHowItWorks">How It Works</string>
+    <string name="WalletHowItWorksInfo">Only you control your funds —\nno one else has access.</string>
+    <string name="WalletGotIt">Got it</string>
+    <string name="WalletTermsOfService">By using Wallet you agree to **Terms of Service**.</string>
+
+    <string name="WalletCopyAddress">Copy address</string>
+    <string name="WalletAddressCopiedShort">Address copied</string>
+    <string name="WalletShowMyQR">Show my QR</string>
+    <string name="WalletReceiveInfo">Share your address or this\nQR code to receive GRAM.</string>
+    <string name="WalletBuyWithCashOrCrypto">Buy with cash or crypto</string>
+
     <string name="WalletDeleteWallet">Delete Wallet</string>
     <string name="WalletDeleteWalletTitle">Delete Wallet?</string>
     <string name="WalletDeleteWalletInfo">You\'ll lose access to your funds unless you\'ve saved your 12-word recovery phrase.</string>
@@ -13966,4 +14000,79 @@
     <string name="WalletTransferTo">to {0}</string>
     <string name="WalletFeeAmount">Fee: {0}</string>
     <string name="WalletFeeAmountWithCurrency">Fee: {0} (~{1}).</string>
+    <string name="WalletDisableBackup">Disable Backup</string>
+    <string name="WalletEncryptedBackup">Encrypted Backup</string>
+    <string name="WalletEnableBackup">Enable Backup</string>
+    <string name="WalletBackupEnabled">Backup Enabled</string>
+    <string name="WalletBackupEnabledInfo">Your keys are now stored encrypted across Telegram\'s datacenters.</string>
+    <string name="WalletBackupEnabledDescription">Your encrypted key backup is split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
+    <string name="WalletBackupDisabled">Backup Disabled</string>
+    <string name="WalletBackupDisabledInfo">Your recovery phrase is now the only way to restore your wallet</string>
+    <string name="WalletBackupDisabledDescription">Your encrypted key backup will be split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
+    <string name="WalletDisableBackupConfirmInfo">Telegram will delete its encrypted backup, and your recovery key will be updated. This can\'t be undone.</string>
+    <string name="WalletDisableBackupTitle">Disable Backup?</string>
+    <string name="WalletDisableBackupInfo">The only way to recover your funds will be to manually enter your recovery phrase.</string>
+    <string name="WalletUpdateSecretPhrase">Update Secret Phrase</string>
+    <string name="WalletUpdateSecretPhraseInfo">You\'ll get a new phrase to write down. Address and balance stay the same.</string>
+    <string name="WalletUpdateSecretPhraseInfoWithFee">You\'ll get a new phrase to write down. Address and balance stay the same.\n\nNetwork fee: {0} (~{1}).</string>
+    <string name="WalletUpdateSecretPhraseInsufficientFunds">You need {0} (~{1}) to update your recovery phrase.</string>
+    <string name="WalletDisable">Disable</string>
+
+    <string name="WalletRecoveryPhraseLearnTitle">Recovery Phrase</string>
+    <string name="WalletRecoveryPhraseLearnInfo">Your Secret Recovery Phrase is the key to back up your wallet. Keep it secret and secure at all times.</string>
+    <string name="WalletRecoveryPhraseNeverShare">**Never share **your secret Recovery Phrase with anyone.</string>
+    <string name="WalletRecoveryPhraseFundsWarning">If someone has your Recovery Phrase they **can steal your funds**.</string>
+    <string name="WalletRecoveryPhraseSupportWarning">Telegram Support **will never ask you** for your Recovery Phrase.</string>
+    <string name="WalletRecoveryPhraseLearnButton">Show Recovery Phrase</string>
+    <string name="WalletRecoveryPhraseTransferInfo">You can transfer your wallet to another device by copying your 12-word recovery phrase.</string>
+
+    <string name="WalletViewInExplorer">View in Explorer</string>
+    <string name="WalletWhatIsGram">What is Gram?</string>
+    <string name="WalletAddress">Address</string>
+    <string name="WalletFee">Fee</string>
+    <string name="WalletDate">Date</string>
+    <string name="WalletSender">Sender</string>
+    <string name="WalletRecipient">Recipient</string>
+    <string name="WalletFeePaidByTelegram">Free (paid by Telegram)</string>
+    <string name="WalletNetworkFee">Network fee</string>
+    <string name="WalletNetworkFeeInfo">Every transfer costs a small network fee (~{0}).\n\nTelegram covers your first 5 transfers each day.</string>
+    <string name="WalletOpenMyWallet">Open My Wallet</string>
+
+    <string name="WalletSendMoney">Send Money</string>
+    <string name="WalletActionReceivedGrams">un1 sent you **{0}**</string>
+    <string name="WalletActions">Actions</string>
+    <string name="WalletActionSentGrams">You sent un1 **{0}**</string>
+    <string name="WalletTransferWorth">{0} ({1})</string>
+
+    <string name="WalletSendMoneyTo">Send Money to</string>
+    <string name="WalletGramWalletAddress">Gram Wallet</string>
+    <string name="WalletDepositFunds">Deposit funds</string>
+    <string name="WalletAddComment">Add comment</string>
+    <string name="WalletCommentOptionalMessage">Optional message</string>
+    <string name="WalletMakeCommentPublic">Make comment public</string>
+    <string name="WalletMinimumAmount">Min Amount: {0}</string>
+    <string name="WalletInsufficientFunds">Insufficient Funds.</string>
+    <string name="WalletBalanceAmount">Balance: {0}</string>
+    <string name="WalletNetworkFeeAmount">Network fee: {0}</string>
+    <string name="WalletSendGrams">Send Grams</string>
+    <string name="WalletSendAmount">Send {0}</string>
+
+    <string name="WalletTonConnectRequestAppDeclined">{0}\'s transaction request declined</string>
+    <string name="WalletTonConnectRequestAppExpired">{0}\'s transaction request expired</string>
+    <string name="WalletTonConnectRequestAppPending">{0} requests a transaction. Tap to review.</string>
+    <string name="WalletTonConnectRequestAppProcessed">{0}\'s transaction request processed</string>
+
+    <string name="Grams_few">{0} Grams</string>
+    <string name="Grams_many">{0} Grams</string>
+    <string name="Grams_one">{0} Gram</string>
+    <string name="Grams_other">{0} Grams</string>
+    <string name="Grams_two">{0} Grams</string>
+    <string name="Grams_zero">{0} Grams</string>
+    <string name="GramCapital_few">{0} GRAM</string>
+    <string name="GramCapital_many">{0} GRAM</string>
+    <string name="GramCapital_one">{0} GRAM</string>
+    <string name="GramCapital_other">{0} GRAM</string>
+    <string name="GramCapital_two">{0} GRAM</string>
+    <string name="GramCapital_zero">{0} GRAM</string>
+
 </resources>
