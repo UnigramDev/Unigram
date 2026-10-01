@@ -458,6 +458,7 @@ namespace Telegram.Common
                 && !url.StartsWith("https://")
                 && !url.StartsWith("tg:")
                 && !url.StartsWith("tonsite:")
+                && !url.StartsWith("tc:")
                 && !url.StartsWith("ftp:")
                 && !url.StartsWith("mailto:"))
             {
@@ -488,7 +489,8 @@ namespace Telegram.Common
 
         public static bool IsTelegramScheme(Uri uri)
         {
-            return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uri.Scheme, "tc", StringComparison.OrdinalIgnoreCase);
         }
 
         public static async void OpenTelegramUrl(IClientService clientService, INavigationService navigation, Uri uri, OpenUrlSource source = null)
@@ -497,17 +499,6 @@ namespace Telegram.Common
             if (url.Contains("telegra.ph"))
             {
                 navigation.NavigateToInstant(url);
-                return;
-            }
-
-            // TEMPORARY, with TonConnectLink: TDLib reads one of these as
-            // internalLinkTypeTonWalletTransfer - the wallet's own link, which it is - and that type
-            // carries a receiver and an amount and nowhere to put a start parameter. So the request
-            // is gone by the time there is a link type to switch on, and this has to happen here,
-            // on the URL, while it is still there.
-            if (TryGetStartApp(url, out var startApp) && TonConnectLink.Parse(startApp) is TonConnectLink connect)
-            {
-                NavigateToTonConnect(clientService, navigation, connect);
                 return;
             }
 
@@ -651,6 +642,9 @@ namespace Telegram.Common
                     break;
                 case InternalLinkTypeLiveStory liveStory:
                     NavigateToLiveStory(clientService, navigation, liveStory.StoryPosterUsername);
+                    break;
+                case InternalLinkTypeTonConnect tonConnect:
+                    NavigateToTonConnect(clientService, navigation, tonConnect);
                     break;
                 case InternalLinkTypeTonWalletTransfer tonWalletTransfer:
                     NavigateToTonWalletTransfer(clientService, navigation, tonWalletTransfer);
@@ -1642,42 +1636,11 @@ namespace Telegram.Common
         /// the popup say what is being asked for and by whom, so that the two shapes of link -
         /// and the one TDLib will eventually report - all arrive at the same place.
         /// </remarks>
-        private static void NavigateToTonConnect(IClientService clientService, INavigationService navigation, TonConnectLink link)
+        private static void NavigateToTonConnect(IClientService clientService, INavigationService navigation, InternalLinkTypeTonConnect link)
         {
             var wallet = clientService.Session.Resolve<IWalletService>();
 
             navigation.ShowPopup(new WalletConnectPopup(clientService, wallet, navigation, link));
-        }
-
-        /// <summary>
-        /// The <c>startapp</c> parameter of a tg: link, which TDLib hands over whole because it
-        /// does not recognise the host.
-        /// </summary>
-        /// <remarks>
-        /// TEMPORARY. Goes with <see cref="TonConnectLink"/> once TDLib parses these itself.
-        /// </remarks>
-        private static bool TryGetStartApp(string url, out string startApp)
-        {
-            startApp = null;
-
-            if (string.IsNullOrEmpty(url) || !Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
-            {
-                return false;
-            }
-
-            foreach (var parameter in uri.Query.TrimStart('?').Split('&'))
-            {
-                var separator = parameter.IndexOf('=');
-                if (separator > 0 && string.Equals(parameter.Substring(0, separator), "startapp", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Not unescaped: the folding this carries is not percent escaping, and what
-                    // reads it does the unescaping itself, in the right order.
-                    startApp = parameter.Substring(separator + 1);
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static async void NavigateToUnknownDeepLink(IClientService clientService, INavigationService navigation, string url)
@@ -2466,6 +2429,15 @@ namespace Telegram.Common
 
                 CreateProfileFlyoutItem(flyout, service.ClientService, navigation, new SearchPublicChat(info.Text));
             }
+            else if (info.Type is TextEntityTypeTonAddress)
+            {
+                flyout.CreateFlyoutItem(() => WalletSendMoney(navigation, info.Text), Strings.WalletSendMoney, Icons.Gram);
+                flyout.CreateFlyoutItem(() => CopyText(navigation.XamlRoot, info.Text), Strings.WalletCopyAddress, Icons.Copy);
+                flyout.CreateFlyoutItem(() => WalletViewInExplorer(navigation, info.Text), Strings.WalletViewInExplorer, Icons.Globe);
+                flyout.CreateFlyoutSeparator();
+
+                CreateProfileFlyoutItem(flyout, service.ClientService, navigation, new GetAddressTonWallet(info.Text));
+            }
             else if (info.Type is TextEntityTypeDateTime dateTime)
             {
                 flyout.Items.Add(new MenuFlyoutLabel
@@ -2491,6 +2463,21 @@ namespace Telegram.Common
 
                 flyout.CreateFlyoutItem(() => CopyText(navigation.XamlRoot, info.Text), text, Icons.Copy);
             }
+        }
+
+        private static void WalletSendMoney(INavigationService navigation, string text)
+        {
+            var wallet = navigation.Session.Resolve<IWalletService>();
+            var clientService = navigation.Session.Resolve<IClientService>();
+
+            // TODO: UserId loaded by CreateProfileFlyoutItem should somehow reach here
+            navigation.ShowPopup(new WalletSendPopup(clientService, wallet, navigation, 0, text));
+        }
+
+        private static void WalletViewInExplorer(INavigationService navigation, string text)
+        {
+            var clientService = navigation.Session.Resolve<IClientService>();
+            OpenUrl(clientService, navigation, clientService.Options.TonBlockchainExplorerUrl + text);
         }
 
         public static void Hyperlink_ContextRequested(MenuFlyout flyout, INavigationService navigation, ITranslateService service, DirectTextBlock text, Point point, MessageViewModel message)
@@ -2569,6 +2556,11 @@ namespace Telegram.Common
             flyout.Items.Add(content);
 
             var response = await clientService.SendAsync(function);
+            if (response is UserTonWalletAddress userTonWalletAddress && clientService.TryGetUser(userTonWalletAddress.UserId, out User tonWalletUser))
+            {
+                response = tonWalletUser;
+            }
+
             if (response is User user)
             {
                 button.IsEnabled = true;
