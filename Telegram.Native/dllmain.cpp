@@ -20,7 +20,7 @@ LONG WINAPI Filter(EXCEPTION_POINTERS* exceptionInfo)
     // but there are great chances to make a big mess.
     //if (exceptionInfo->ExceptionRecord->ExceptionFlags & EXCEPTION_NONCONTINUABLE)
     //{
-    return EXCEPTION_EXECUTE_HANDLER;
+    return EXCEPTION_CONTINUE_SEARCH;
     //}
 
     //return EXCEPTION_CONTINUE_EXECUTION;
