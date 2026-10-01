@@ -13,8 +13,8 @@ namespace winrt::Telegram::Native::Media::implementation
         AsyncMediaPlayerMode Mode() const;
         void Mode(AsyncMediaPlayerMode value);
 
-        bool Debug() const;
-        void Debug(bool value);
+        AsyncMediaPlayerLogLevel LogLevel() const;
+        void LogLevel(AsyncMediaPlayerLogLevel value);
 
         bool CreateSwapChain() const;
         void CreateSwapChain(bool value);
@@ -32,7 +32,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
     private:
         AsyncMediaPlayerMode m_mode;
-        bool m_debug;
+        AsyncMediaPlayerLogLevel m_logLevel;
         bool m_createSwapChain;
         bool m_mute;
         double m_volume;

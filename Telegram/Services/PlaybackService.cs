@@ -1891,7 +1891,13 @@ namespace Telegram.Services
                         CreateSwapChain = true,
                         Mute = false, //AppSettings.VolumeMuted,
                         Volume = AppSettings.VolumeLevel,
-                        Debug = AppSettings.VerbosityLevel >= 4,
+                        LogLevel = AppSettings.VerbosityLevel >= 4
+                            ? AsyncMediaPlayerLogLevel.Debug
+                            : AppSettings.VerbosityLevel >= 3
+                            ? AsyncMediaPlayerLogLevel.Notice
+                            : AppSettings.VerbosityLevel >= 2
+                            ? AsyncMediaPlayerLogLevel.Warning
+                            : AsyncMediaPlayerLogLevel.Error,
                     };
 
                     _player = new AsyncMediaPlayer(options);

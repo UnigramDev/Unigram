@@ -1516,7 +1516,13 @@ namespace Telegram.Controls.Stories
                 CreateSwapChain = true,
                 Mute = AppSettings.VolumeMuted,
                 Volume = 1,
-                Debug = AppSettings.VerbosityLevel >= 4,
+                LogLevel = AppSettings.VerbosityLevel >= 4
+                    ? AsyncMediaPlayerLogLevel.Debug
+                    : AppSettings.VerbosityLevel >= 3
+                    ? AsyncMediaPlayerLogLevel.Notice
+                    : AppSettings.VerbosityLevel >= 2
+                    ? AsyncMediaPlayerLogLevel.Warning
+                    : AsyncMediaPlayerLogLevel.Error,
             };
 
             try

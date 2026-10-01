@@ -8,7 +8,7 @@ namespace winrt::Telegram::Native::Media::implementation
 {
     AsyncMediaPlayerOptions::AsyncMediaPlayerOptions()
         : m_mode(AsyncMediaPlayerMode::Audio | AsyncMediaPlayerMode::Video)
-        , m_debug(false)
+        , m_logLevel(AsyncMediaPlayerLogLevel::Warning)
         , m_createSwapChain(false)
         , m_mute(false)
         , m_volume(1)
@@ -28,14 +28,14 @@ namespace winrt::Telegram::Native::Media::implementation
         m_mode = value;
     }
 
-    bool AsyncMediaPlayerOptions::Debug() const
+    AsyncMediaPlayerLogLevel AsyncMediaPlayerOptions::LogLevel() const
     {
-        return m_debug;
+        return m_logLevel;
     }
 
-    void AsyncMediaPlayerOptions::Debug(bool value)
+    void AsyncMediaPlayerOptions::LogLevel(AsyncMediaPlayerLogLevel value)
     {
-        m_debug = value;
+        m_logLevel = value;
     }
 
     bool AsyncMediaPlayerOptions::CreateSwapChain() const

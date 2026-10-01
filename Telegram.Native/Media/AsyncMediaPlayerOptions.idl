@@ -1,4 +1,5 @@
 import "Media/AsyncMediaPlayerSwapChain.idl";
+import "Media/AsyncMediaPlayerLogEventArgs.idl";
 
 namespace Telegram.Native.Media
 {
@@ -15,7 +16,7 @@ namespace Telegram.Native.Media
     {
         AsyncMediaPlayerOptions();
         AsyncMediaPlayerMode Mode;
-        Boolean Debug;
+        AsyncMediaPlayerLogLevel LogLevel;
         Boolean CreateSwapChain;
         Boolean Mute;
         Double Volume;

@@ -44,7 +44,13 @@ namespace Telegram.Controls
                     Mute = AppSettings.VolumeMuted,
                     Volume = AppSettings.VolumeLevel,
                     Rate = AppSettings.Playback.VideoSpeed,
-                    Debug = AppSettings.VerbosityLevel >= 4,
+                    LogLevel = AppSettings.VerbosityLevel >= 4
+                        ? AsyncMediaPlayerLogLevel.Debug
+                        : AppSettings.VerbosityLevel >= 3
+                        ? AsyncMediaPlayerLogLevel.Notice
+                        : AppSettings.VerbosityLevel >= 2
+                        ? AsyncMediaPlayerLogLevel.Warning
+                        : AsyncMediaPlayerLogLevel.Error,
                 };
 
                 try

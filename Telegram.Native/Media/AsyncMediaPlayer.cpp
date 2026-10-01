@@ -67,7 +67,7 @@ namespace winrt::Telegram::Native::Media::implementation
         // 2.3s on the first libvlc_new. Skip the directory walk and trust the cache instead.
         argsStorage.push_back("--no-plugins-scan");
 
-        if (options.Debug())
+        if (options.LogLevel() == AsyncMediaPlayerLogLevel::Debug)
         {
             argsStorage.push_back("--verbose=3");
         }
@@ -681,8 +681,8 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         // Formatting costs two vsnprintf passes and an allocation, and libvlc is talkative at
         // notice level and below, so decide whether the message is wanted before paying for it.
-        const bool debug = m_options.Debug();
-        if (level < LIBVLC_WARNING && !debug)
+        const int logLevel = (int)m_options.LogLevel();
+        if (level < logLevel)
             return;
 
         int byteLength = vsnprintf(nullptr, 0, fmt, args) + 1;
@@ -706,27 +706,30 @@ namespace winrt::Telegram::Native::Media::implementation
 
         // Warnings and errors go to the app log so they survive into a crash report; the event
         // is only for a debug session, where nothing may be listening at all.
-        if (level >= LIBVLC_WARNING)
-        {
-            // std::format needs wide arguments to match the wide format string that hstring
-            // requires; module and message are both narrow coming out of libvlc.
-            const std::wstring wmodule = winrt::to_hstring(module ? module : "?").c_str();
-            const std::wstring wmessage = winrt::to_hstring(message).c_str();
 
-            if (level >= LIBVLC_ERROR)
-            {
-                LOGGER_ERROR(L"vlc[{}] {}", wmodule, wmessage);
-            }
-            else
-            {
-                LOGGER_WARNING(L"vlc[{}] {}", wmodule, wmessage);
-            }
+        // std::format needs wide arguments to match the wide format string that hstring
+        // requires; module and message are both narrow coming out of libvlc.
+        const std::wstring wmodule = winrt::to_hstring(module ? module : "?").c_str();
+        const std::wstring wmessage = winrt::to_hstring(message).c_str();
+
+        if (level >= LIBVLC_ERROR)
+        {
+            LOGGER_ERROR(L"vlc[{}] {}", wmodule, wmessage);
+        }
+        else if (level >= LIBVLC_WARNING)
+        {
+            LOGGER_WARNING(L"vlc[{}] {}", wmodule, wmessage);
+        }
+        else if (level >= LIBVLC_NOTICE)
+        {
+            LOGGER_INFO(L"vlc[{}] {}", wmodule, wmessage);
+        }
+        else
+        {
+            LOGGER_DEBUG(L"vlc[{}] {}", wmodule, wmessage);
         }
 
-        if (debug)
-        {
-            m_log(*this, AsyncMediaPlayerLogEventArgs((AsyncMediaPlayerLogLevel)level, winrt::to_hstring(message), winrt::to_hstring(module), winrt::to_hstring(file), line));
-        }
+        m_log(*this, AsyncMediaPlayerLogEventArgs((AsyncMediaPlayerLogLevel)level, winrt::to_hstring(message), winrt::to_hstring(module), winrt::to_hstring(file), line));
     }
 
     void AsyncMediaPlayer::EventContext::HandleEvent(const libvlc_event_t* event)
