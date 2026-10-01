@@ -15,6 +15,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Services.Keyboard;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -1484,7 +1485,116 @@ namespace Telegram.Navigation
                 }
             }
 
+            foreach (var command in shortcut.Commands)
+            {
+                ProcessWindowCommands(command, args);
+
+                if (args.Handled)
+                {
+                    return true;
+                }
+            }
+
             return false;
+        }
+
+        /// <summary>
+        /// Answers the commands that mean the same thing in every window.
+        /// </summary>
+        /// <remarks>
+        /// A fallback, not a competitor: the pages above get first refusal, and anything
+        /// context-sensitive - Search, the chat and folder commands - stays with them. This exists
+        /// because a window with no navigation service has no page to answer these at all, so a
+        /// call window used to drop Ctrl+Q entirely, and because two pages were otherwise carrying
+        /// the same arms.
+        /// </remarks>
+        private void ProcessWindowCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
+        {
+            switch (command)
+            {
+                // Neither of these marks the args handled, the same as before they moved here:
+                // the window is going away and nothing is left to route the key to.
+                case ShortcutCommand.Quit:
+                    _ = QuitAsync();
+                    break;
+                case ShortcutCommand.Close:
+                    _ = ConsolidateAsync();
+                    break;
+
+                case ShortcutCommand.Lock:
+                    LifetimeService.Current.Passcode.Lock(false);
+                    args.Handled = true;
+                    break;
+
+                case ShortcutCommand.MediaPlayPause:
+                case ShortcutCommand.MediaPrevious:
+                case ShortcutCommand.MediaNext:
+                    args.Handled = ProcessPlaybackCommand(command);
+                    break;
+                case ShortcutCommand.MediaStop:
+                    LifetimeService.Current.Playback.Clear();
+                    args.Handled = true;
+                    break;
+
+                // The coordinator is app-wide rather than per session, so a call ringing on an
+                // account other than the one on screen is answered too.
+                case ShortcutCommand.CallAccept:
+                    if (LifetimeService.Current.Voip.ActiveCall is VoipCall accept)
+                    {
+                        accept.Accept(false);
+                        args.Handled = true;
+                    }
+                    break;
+                case ShortcutCommand.CallReject:
+                    if (LifetimeService.Current.Voip.ActiveCall is VoipCall reject)
+                    {
+                        reject.Discard();
+                        args.Handled = true;
+                    }
+                    break;
+            }
+        }
+
+        private static async Task QuitAsync()
+        {
+            await SystemTray.HideAsync();
+            await BootStrapper.ConsolidateAsync();
+        }
+
+        /// <summary>
+        /// Runs a playback command, and reports whether there was anything to run it on.
+        /// </summary>
+        /// <remarks>
+        /// With nothing loaded the chord is left unhandled rather than swallowed: these arrive on
+        /// ordinary letter chords, not media keys, so something else may still want them.
+        /// </remarks>
+        private static bool ProcessPlaybackCommand(ShortcutCommand command)
+        {
+            var playback = LifetimeService.Current.Playback;
+
+            if (playback.CurrentItem == null)
+            {
+                return false;
+            }
+
+            if (command == ShortcutCommand.MediaNext)
+            {
+                playback.MoveNext();
+            }
+            else if (command == ShortcutCommand.MediaPrevious)
+            {
+                playback.MovePrevious();
+            }
+            else if (playback.PlaybackState == PlaybackState.Playing)
+            {
+                playback.Pause();
+            }
+            else
+            {
+                playback.Play();
+            }
+
+            return true;
         }
 
         public bool RaiseBackRequested(VirtualKey key = VirtualKey.GoBack)

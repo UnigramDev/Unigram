@@ -150,7 +150,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private async void ProcessAppCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
+        private void ProcessAppCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
         {
             if (command == ShortcutCommand.Search)
             {
@@ -161,15 +161,9 @@ namespace Telegram.Views.Host
 
                 args.Handled = true;
             }
-            else if (command == ShortcutCommand.Close)
-            {
-                await _navigationService.Window.ConsolidateAsync();
-            }
-            else if (command == ShortcutCommand.MediaStop)
-            {
-                LifetimeService.Current.Playback.Clear();
-                args.Handled = true;
-            }
+
+            // Close, the media commands and the call ones are answered by WindowContext once this
+            // declines them.
         }
 
         private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)

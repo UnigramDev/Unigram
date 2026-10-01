@@ -403,6 +403,7 @@ namespace Telegram.Services
                     new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.AutoStart),
                     new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.AutoStartMinized)
                 }),
+                new SettingsSearchPage(typeof(SettingsShortcutsPage), Strings.ShortcutsTitle),
                 new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.VersionAndUpdates),
                 new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.InstallBetaUpdates),
                 new SettingsSearchPage(typeof(SettingsAdvancedPage), Strings.ExperimentalSettings),

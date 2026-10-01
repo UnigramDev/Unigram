@@ -353,6 +353,8 @@ namespace Telegram.Controls.Media
         public const string ArrowExit = "\uE999";
         public const string ArrowExitFilled = "\uEA56";
         public const string ArrowEnter = "\uE99B";
+        public const string ArrowExport = "\uF793";
+        public const string ArrowImport = "\uF794";
         public const string ArrowEnterFilled = "\uEA57";
 
         public const string ShareScreenStart = "\uE92F";

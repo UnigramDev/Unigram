@@ -2054,9 +2054,6 @@
     <Compile Include="Views\Popups\EditMediaPopup.xaml.cs">
       <DependentUpon>EditMediaPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\EditShortcutPopup.xaml.cs">
-      <DependentUpon>EditShortcutPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
     </Compile>
@@ -4494,10 +4491,6 @@
     <Page Include="Views\Popups\EditMediaPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\EditShortcutPopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\JoinChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -366,12 +366,12 @@ namespace Telegram.Services
                 case WM.SystemMediaTransportControlsButton.Pause:
                     Pause();
                     break;
-                //case WM.SystemMediaTransportControlsButton.Rewind:
-                //    Execute(player => player.StepBackwardOneFrame());
-                //    break;
-                //case WM.SystemMediaTransportControlsButton.FastForward:
-                //    Execute(player => player.StepForwardOneFrame());
-                //    break;
+                case WM.SystemMediaTransportControlsButton.Rewind:
+                    SeekRelative(-SeekStep);
+                    break;
+                case WM.SystemMediaTransportControlsButton.FastForward:
+                    SeekRelative(SeekStep);
+                    break;
                 case WM.SystemMediaTransportControlsButton.Previous:
                     if (Position.TotalSeconds > 5)
                     {
@@ -490,6 +490,8 @@ namespace Telegram.Services
                 transport.IsPauseEnabled = true;
                 transport.IsPreviousEnabled = true;
                 transport.IsNextEnabled = items.Count > 1;
+                transport.IsRewindEnabled = true;
+                transport.IsFastForwardEnabled = true;
 
                 // ClearAll also drops the thumbnail of the previous track, so the cover has to
                 // be re-applied after it -- UpdateAlbumCover does that once the file is there.
@@ -763,6 +765,30 @@ namespace Telegram.Services
                     action(_player, arg);
                 }
             }
+        }
+
+        // Rewind and FastForward arrive as a single press with no release, so there is no hold
+        // to scan against: they step by a fixed amount, like the gallery skip buttons.
+        private static readonly TimeSpan SeekStep = TimeSpan.FromSeconds(10);
+
+        private void SeekRelative(TimeSpan delta)
+        {
+            var position = Position + delta;
+
+            // Duration is zero until the player reports it, and clamping to that would turn a
+            // forward step into a seek back to the start.
+            var duration = Duration;
+
+            if (position < TimeSpan.Zero)
+            {
+                position = TimeSpan.Zero;
+            }
+            else if (duration > TimeSpan.Zero && position > duration)
+            {
+                position = duration;
+            }
+
+            Seek(position);
         }
 
         public void Seek(TimeSpan span)

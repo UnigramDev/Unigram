@@ -83,6 +83,12 @@ namespace Telegram.Services.Keyboard
 
         private bool OnAcceleratorKeyActivated(VirtualKey key)
         {
+            // See the UWP twin: while recording, every key belongs to the capture surface.
+            if (LifetimeService.Current.Shortcuts.IsRecording)
+            {
+                return false;
+            }
+
             if (key is VirtualKey.GoBack
                     or VirtualKey.NavigationLeft
                     or VirtualKey.GamepadLeftShoulder

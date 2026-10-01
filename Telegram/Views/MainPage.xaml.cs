@@ -26,7 +26,6 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Services.Calls;
 using Telegram.Services.Updates;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -1425,6 +1424,7 @@ namespace Telegram.Views
                     //    : GCLatencyMode.Interactive;
 
                     CollectAndAnalyze();
+                    args.Handled = true;
                     return;
                 }
 
@@ -1461,7 +1461,7 @@ namespace Telegram.Views
         }
 #endif
 
-        private async void ProcessAppCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
+        private void ProcessAppCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
         {
             if (command is ShortcutCommand.SetStatus)
             {
@@ -1489,40 +1489,15 @@ namespace Telegram.Views
 
                 args.Handled = true;
             }
-            else if (command is ShortcutCommand.Quit)
-            {
-                await SystemTray.HideAsync();
-                await BootStrapper.ConsolidateAsync();
-            }
-            else if (command is ShortcutCommand.Close)
-            {
-                await ViewModel.Window.ConsolidateAsync();
-            }
-            else if (command is ShortcutCommand.Lock)
-            {
-                Lock_Click(null, null);
-                args.Handled = true;
-            }
             else if (command is ShortcutCommand.Downloads)
             {
                 Downloads_Click(null, null);
                 args.Handled = true;
             }
-            else if (command is ShortcutCommand.MediaStop)
-            {
-                LifetimeService.Current.Playback.Clear();
-                args.Handled = true;
-            }
-            else if (command is ShortcutCommand.CallAccept && ViewModel.VoipService.ActiveCall is VoipCall acceptCall)
-            {
-                acceptCall.Accept(false);
-                args.Handled = true;
-            }
-            else if (command is ShortcutCommand.CallReject && ViewModel.VoipService.ActiveCall is VoipCall rejectCall)
-            {
-                rejectCall.Discard();
-                args.Handled = true;
-            }
+
+            // Quit, Close, Lock, the media commands and the two call ones are answered by
+            // WindowContext once this declines them, so that a window without a page still has
+            // them.
         }
 
         private void ProcessFolderCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)

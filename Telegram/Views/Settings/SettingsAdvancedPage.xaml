@@ -14,11 +14,11 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
-                <!--<controls:HeaderedControl>
-                    <controls:BadgeButton
-                        Content="Shortcuts"
-                        Click="Shortcuts_Click"/>
-                </controls:HeaderedControl>-->
+                <controls:HeaderedControl>
+                    <controls:SettingsButton Content="{CustomResource ShortcutsTitle}"
+                                             Click="Shortcuts_Click"
+                                             Glyph="&#xF78F;" />
+                </controls:HeaderedControl>
 
                 <controls:StartupSwitch />
 

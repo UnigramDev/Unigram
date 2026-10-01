@@ -36,6 +36,14 @@ namespace Telegram.Services.Keyboard
                 return;
             }
 
+            // A chord is being recorded, so the whole global layer stands down and every key
+            // routes on to whatever has focus. That includes Escape and Alt+Left, which are how
+            // the capture is cancelled - handling them here would navigate instead.
+            if (LifetimeService.Current.Shortcuts.IsRecording)
+            {
+                return;
+            }
+
             if (args.VirtualKey is VirtualKey.GoBack
                                 or VirtualKey.NavigationLeft
                                 or VirtualKey.GamepadLeftShoulder

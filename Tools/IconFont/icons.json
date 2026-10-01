@@ -681,6 +681,10 @@
     {"name": "tl_fluent_star_14_regular", "code": "F78E", "src": "icons/tl_fluent_star_14_regular.svg", "color": true},
     {"name": "ic_fluent_keyboard_20_regular", "code": "F78F", "src": "fluent:keyboard_20_regular"},
     {"name": "ic_fluent_payment_20_filled", "code": "F790", "src": "fluent:payment_20_filled"},
+    {"name": "ic_fluent_arrow_rotate_clockwise_20_filled", "code": "F791", "src": "fluent:arrow_rotate_clockwise_20_filled"},
+    {"name": "ic_fluent_play_20_filled", "code": "F792", "src": "fluent:play_20_filled"},
+    {"name": "ic_fluent_arrow_export_20_regular", "code": "F793", "src": "fluent:arrow_export_20_regular"},
+    {"name": "ic_fluent_arrow_import_20_regular", "code": "F794", "src": "fluent:arrow_import_20_regular"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }
