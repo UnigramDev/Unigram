@@ -416,16 +416,11 @@
                                          Visibility="Collapsed"
                                          ContextRequested="Description_ContextRequested"
                                          Glyph="&#xE946;">
-                    <RichTextBlock x:Name="DescriptionLabel"
-                                   ContextRequested="About_ContextRequested"
-                                   ContextMenuOpening="About_ContextMenuOpening"
-                                   Style="{StaticResource BodyRichTextBlockStyle}"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                   Grid.Column="1">
-                        <Paragraph>
-                            <Span x:Name="DescriptionSpan" />
-                        </Paragraph>
-                    </RichTextBlock>
+                    <controls:FormattedTextBlock x:Name="DescriptionLabel"
+                                                 ContextRequested="About_ContextRequested"
+                                                 TextEntityClick="About_TextEntityClick"
+                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                 AutoFontSize="False" />
                 </controls:SettingsButton>
 
                 <controls:SettingsButton x:Name="UserPhone"

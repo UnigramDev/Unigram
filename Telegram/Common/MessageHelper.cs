@@ -2299,20 +2299,20 @@ namespace Telegram.Common
 
         #region Entity
 
-        public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, ContextRequestedEventArgs args, MessageViewModel message)
+        public static void Hyperlink_ContextRequested(INavigationService navigation, ITranslateService service, UIElement sender, ContextRequestedEventArgs args, MessageViewModel message)
         {
             var flyout = new MenuFlyout();
-            var text = sender as RichTextBlock;
+            var text = sender.GetChildOrSelf<RichTextBlock>();
 
-            if (args.TryGetPosition(sender, out Point point))
+            if (args.TryGetPosition(text ?? sender, out Point point))
             {
                 if (text != null)
                 {
-                    Hyperlink_ContextRequested(flyout, service, text, point, message);
+                    Hyperlink_ContextRequested(flyout, navigation, service, text, point, message);
                 }
                 else if (sender is DirectTextBlock direct)
                 {
-                    Hyperlink_ContextRequested(flyout, service, direct, point, message);
+                    Hyperlink_ContextRequested(flyout, navigation, service, direct, point, message);
                 }
             }
             else if (text != null)
@@ -2320,7 +2320,7 @@ namespace Telegram.Common
                 // A keyboard request carries no position, so the menu comes from the selection or
                 // from the link that holds focus. DirectTextBlock has no counterpart: a link there
                 // is a range of a layout, and focus never reaches one.
-                Hyperlink_ContextRequested(flyout, service, text, args, message);
+                Hyperlink_ContextRequested(flyout, navigation, service, text, args, message);
             }
 
             // Transient: we don't want to unfocus the text are when the context menu gets opened.
@@ -2334,7 +2334,7 @@ namespace Telegram.Common
         /// takes from under the pointer, this takes from the selection, or from the link that holds
         /// focus.
         /// </summary>
-        private static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, RichTextBlock text, ContextRequestedEventArgs args, MessageViewModel message)
+        private static void Hyperlink_ContextRequested(MenuFlyout flyout, INavigationService navigation, ITranslateService service, RichTextBlock text, ContextRequestedEventArgs args, MessageViewModel message)
         {
             if (text.SelectedText.Length > 0)
             {
@@ -2349,15 +2349,15 @@ namespace Telegram.Common
 
             if (hyperlink != null)
             {
-                Hyperlink_ContextRequested(flyout, service, hyperlink, message);
+                Hyperlink_ContextRequested(flyout, navigation, service, hyperlink, message);
             }
         }
 
-        public static void Hyperlink_ContextRequested(ITranslateService service, Hyperlink sender, ContextRequestedEventArgs args, MessageViewModel message)
+        public static void Hyperlink_ContextRequested(INavigationService navigation, ITranslateService service, Hyperlink sender, ContextRequestedEventArgs args, MessageViewModel message)
         {
             var flyout = new MenuFlyout();
 
-            Hyperlink_ContextRequested(flyout, service, sender, message);
+            Hyperlink_ContextRequested(flyout, navigation, service, sender, message);
 
             // A link is a range, so the menu hangs off the block that drew it.
             args.Handled = flyout.ShowAt(sender.ElementStart.VisualParent, args, FlyoutShowMode.Transient);
@@ -2380,7 +2380,7 @@ namespace Telegram.Common
             var length = text.Length;
             if (length > 0)
             {
-                flyout.CreateFlyoutItem(() => LinkCopy_Click(xamlRoot, text), Strings.Copy, Icons.Copy);
+                flyout.CreateFlyoutItem(() => CopyText(xamlRoot, text), Strings.Copy, Icons.Copy);
 
                 if (service != null && service.CanTranslateText(text))
                 {
@@ -2401,7 +2401,7 @@ namespace Telegram.Common
             }
         }
 
-        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, RichTextBlock text, Point point, MessageViewModel message)
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, INavigationService navigation, ITranslateService service, RichTextBlock text, Point point, MessageViewModel message)
         {
             if (point.X < 0 || point.Y < 0)
             {
@@ -2417,20 +2417,27 @@ namespace Telegram.Common
                 var hyperlink = text.GetHyperlinkFromPoint(point);
                 if (hyperlink != null)
                 {
-                    Hyperlink_ContextRequested(flyout, service, hyperlink, message);
+                    Hyperlink_ContextRequested(flyout, navigation, service, hyperlink, message);
                 }
             }
         }
 
-        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, Hyperlink hyperlink, MessageViewModel message)
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, INavigationService navigation, ITranslateService service, Hyperlink hyperlink, MessageViewModel message)
         {
-            var info = GetHyperlinkInfo(hyperlink);
+            TextEntityClickEventArgs info = null;
+
+            var formattedTextBlock = hyperlink.GetParent<FormattedTextBlock>();
+            if (formattedTextBlock != null)
+            {
+                info = formattedTextBlock.GetEntityFromHyperlink(hyperlink);
+            }
+
             if (info == null)
             {
                 return;
             }
 
-            Hyperlink_ContextRequested(flyout, service, hyperlink.XamlRoot, info, GetEntityAction(hyperlink), message);
+            Hyperlink_ContextRequested(flyout, navigation, service, info, message);
         }
 
         /// <summary>
@@ -2438,34 +2445,26 @@ namespace Telegram.Common
         /// that drew it: a link is a Hyperlink on the inline path and a range of a layout on the
         /// direct one, and neither is anything this needs to know about.
         /// </summary>
-        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, XamlRoot xamlRoot, TextEntityClickEventArgs info, Action action, MessageViewModel message)
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, INavigationService navigation, ITranslateService service, TextEntityClickEventArgs info, MessageViewModel message)
         {
             if (info.Type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
             {
-                if (action != null)
-                {
-                    flyout.CreateFlyoutItem(action, Strings.Open, Icons.OpenIn);
-                }
-                else
-                {
-                    flyout.CreateFlyoutItem(() => LinkOpen_Click(xamlRoot, info.Text), Strings.Open, Icons.OpenIn);
-                }
-
-                flyout.CreateFlyoutItem(() => LinkCopy_Click(xamlRoot, info.Text), Strings.CopyLink, Icons.Copy);
+                flyout.CreateFlyoutItem(() => OpenLink(navigation, info.Text), Strings.Open, Icons.OpenIn);
+                flyout.CreateFlyoutItem(() => CopyLink(navigation.XamlRoot, info.Text), Strings.CopyLink, Icons.Copy);
             }
             else if (info.Type is TextEntityTypePhoneNumber)
             {
-                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), Strings.CopyNumber, Icons.Copy);
+                flyout.CreateFlyoutItem(() => CopyText(navigation.XamlRoot, info.Text), Strings.CopyNumber, Icons.Copy);
                 flyout.CreateFlyoutSeparator();
 
-                CreateProfileFlyoutItem(flyout, service.ClientService, xamlRoot, new SearchUserByPhoneNumber(info.Text, false));
+                CreateProfileFlyoutItem(flyout, service.ClientService, navigation, new SearchUserByPhoneNumber(info.Text, false));
             }
             else if (info.Type is TextEntityTypeMention)
             {
-                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), Strings.CopyUsername, Icons.Copy);
+                flyout.CreateFlyoutItem(() => CopyText(navigation.XamlRoot, info.Text), Strings.CopyUsername, Icons.Copy);
                 flyout.CreateFlyoutSeparator();
 
-                CreateProfileFlyoutItem(flyout, service.ClientService, xamlRoot, new SearchPublicChat(info.Text));
+                CreateProfileFlyoutItem(flyout, service.ClientService, navigation, new SearchPublicChat(info.Text));
             }
             else if (info.Type is TextEntityTypeDateTime dateTime)
             {
@@ -2477,9 +2476,9 @@ namespace Telegram.Common
                 });
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), Strings.RelativeDateMenuCopy, Icons.Copy);
+                flyout.CreateFlyoutItem(() => CopyText(navigation.XamlRoot, info.Text), Strings.RelativeDateMenuCopy, Icons.Copy);
                 //flyout.CreateFlyoutItem(() => AddToCalendar_Click(xamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuAddToACalendar, Icons.Calendar);
-                flyout.CreateFlyoutItem(() => SetAReminder_Click(xamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuSetAReminder, Icons.Alert);
+                flyout.CreateFlyoutItem(() => SetAReminder_Click(navigation.XamlRoot, dateTime.UnixTime, message), Strings.RelativeDateMenuSetAReminder, Icons.Alert);
             }
             else
             {
@@ -2490,18 +2489,18 @@ namespace Telegram.Common
                     _ => Strings.Copy
                 };
 
-                flyout.CreateFlyoutItem(() => TextCopy_Click(xamlRoot, info.Text), text, Icons.Copy);
+                flyout.CreateFlyoutItem(() => CopyText(navigation.XamlRoot, info.Text), text, Icons.Copy);
             }
         }
 
-        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, DirectTextBlock text, Point point, MessageViewModel message)
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, INavigationService navigation, ITranslateService service, DirectTextBlock text, Point point, MessageViewModel message)
         {
             // Only the link under the pointer: a selection has a menu of its own, which
             // TextSelectionManager puts on the root it is attached to.
             var info = text.GetEntityFromPoint(point);
             if (info != null)
             {
-                Hyperlink_ContextRequested(flyout, service, text.XamlRoot, info, null, message);
+                Hyperlink_ContextRequested(flyout, navigation, service, info, message);
             }
         }
 
@@ -2540,7 +2539,7 @@ namespace Telegram.Common
             }
         }
 
-        private static async void CreateProfileFlyoutItem(MenuFlyout flyout, IClientService clientService, XamlRoot xamlRoot, Function function)
+        private static async void CreateProfileFlyoutItem(MenuFlyout flyout, IClientService clientService, INavigationService navigation, Function function)
         {
             var profile = new ProfileCell();
             var button = new Button
@@ -2576,7 +2575,7 @@ namespace Telegram.Common
                 button.Click += (s, args) =>
                 {
                     flyout.Hide();
-                    WindowContext.GetNavigationService(xamlRoot).NavigateToUser(user.Id);
+                    navigation.NavigateToUser(user.Id);
                 };
 
                 profile.Loaded -= handler;
@@ -2584,13 +2583,13 @@ namespace Telegram.Common
                 profile.UpdateUser(clientService, user, 36, true);
                 profile.Subtitle = Strings.ViewProfile;
             }
-            if (response is Chat chat)
+            else if (response is Chat chat)
             {
                 button.IsEnabled = true;
                 button.Click += (s, args) =>
                 {
                     flyout.Hide();
-                    WindowContext.GetNavigationService(xamlRoot).Navigate(typeof(ProfilePage), chat.Id);
+                    navigation.Navigate(typeof(ProfilePage), chat.Id);
                 };
 
                 profile.Loaded -= handler;
@@ -2614,82 +2613,21 @@ namespace Telegram.Common
             }
         }
 
-        public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
+        public static void Hyperlink_ContextRequested(UIElement sender, INavigationService navigation, string link, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(() => LinkOpen_Click(sender.XamlRoot, link), Strings.Open, Icons.OpenIn);
-            flyout.CreateFlyoutItem(() => LinkCopy_Click(sender.XamlRoot, link), Strings.Copy, Icons.Copy);
+            flyout.CreateFlyoutItem(() => OpenLink(navigation, link), Strings.Open, Icons.OpenIn);
+            flyout.CreateFlyoutItem(() => CopyLink(navigation.XamlRoot, link), Strings.Copy, Icons.Copy);
 
             // We don't want to unfocus the text are when the context menu gets opened
             args.Handled = flyout.ShowAt(sender, args, FlyoutShowMode.Transient);
         }
 
-        private static async void LinkOpen_Click(XamlRoot xamlRoot, string link)
+        private static async void OpenLink(INavigationService navigation, string link)
         {
-            if (TryCreateUri(link, out Uri uri))
-            {
-                try
-                {
-                    await Launcher.LaunchUriAsync(uri);
-                }
-                catch
-                {
-                    Logger.Error();
-                }
-            }
+            var clientService = navigation.Session.Resolve<IClientService>();
+            OpenUrl(clientService, navigation, link);
         }
-
-        private static void LinkCopy_Click(XamlRoot xamlRoot, string link)
-        {
-            CopyLink(xamlRoot, link);
-        }
-
-        private static void TextCopy_Click(XamlRoot xamlRoot, string link)
-        {
-            CopyText(xamlRoot, link);
-        }
-
-
-
-        public static Action GetEntityAction(DependencyObject obj)
-        {
-            return (Action)obj.GetValue(EntityActionProperty);
-        }
-
-        public static void SetEntityAction(DependencyObject obj, Action value)
-        {
-            obj.SetValue(EntityActionProperty, value);
-        }
-
-        public static readonly DependencyProperty EntityActionProperty =
-            DependencyProperty.RegisterAttached("EntityAction", typeof(Action), typeof(MessageHelper), new PropertyMetadata(null));
-
-
-
-
-
-        public static TextEntityClickEventArgs GetHyperlinkInfo(DependencyObject obj)
-        {
-            return (TextEntityClickEventArgs)obj.GetValue(HyperlinkInfoProperty);
-        }
-
-        public static void SetHyperlinkInfo(DependencyObject obj, TextEntityClickEventArgs value)
-        {
-            obj.SetValue(HyperlinkInfoProperty, value);
-        }
-
-        // TODO: FormattedTextBlock should not need this. The write measured ~3.6us per link,
-        // which is a third of what building one costs, and the block can already map a point to a
-        // rendered index and on to the entity that covers it (FormattedTextBlock.Selectable.cs) -
-        // so the click could resolve its entity by offset and store nothing per link at all.
-        //
-        // Two things stand in the way. Hyperlink_ContextRequested above reads this from a hit test
-        // for a link the caller found on its own, so that path has to ask the block instead. And a
-        // ConditionalWeakTable is not a substitute: this lives on the native DependencyObject,
-        // while a table keyed on the projection dies with the wrapper - which nothing keeps alive
-        // for a Hyperlink no managed code holds, as SharedLinkCell and ProfileHeader build.
-        public static readonly DependencyProperty HyperlinkInfoProperty =
-            DependencyProperty.RegisterAttached("HyperlinkInfo", typeof(TextEntityClickEventArgs), typeof(MessageHelper), new PropertyMetadata(null));
 
         #endregion
     }

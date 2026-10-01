@@ -62,6 +62,8 @@ namespace Telegram.Controls
         public readonly IXamlDirectObject Native;
         public readonly IXamlDirectObject Inlines;
 
+        public TextEntityClickEventArgs Args { get; set; }
+
         public ProjectedHyperlink(XamlDirect direct, Hyperlink element)
         {
             Element = element;
@@ -138,6 +140,8 @@ namespace Telegram.Controls
 
         public void PutHyperlink(ProjectedHyperlink hyperlink)
         {
+            hyperlink.Args = null;
+
             if (_hyperlinks.Count < Capacity)
             {
                 _hyperlinks.Enqueue(hyperlink);
@@ -1076,8 +1080,8 @@ namespace Telegram.Controls
 
         private static void OnEntityClick(Hyperlink sender, HyperlinkClickEventArgs e)
         {
-            var args = MessageHelper.GetHyperlinkInfo(sender);
             var owner = sender.GetParent<FormattedTextBlock>();
+            var args = owner.GetEntityFromHyperlink(sender);
 
             if (args != null && owner != null)
             {
@@ -1111,6 +1115,43 @@ namespace Telegram.Controls
             direct.SetObjectProperty(hyperlink.Native, XamlPropertyIndex.TextElement_Foreground, foreground);
             direct.SetObjectProperty(hyperlink.Native, XamlPropertyIndex.TextElement_FontWeight, weight);
             direct.SetEnumProperty(hyperlink.Native, XamlPropertyIndex.Hyperlink_UnderlineStyle, (uint)underline);
+        }
+
+        public TextEntityClickEventArgs GetEntityFromHyperlink(Hyperlink hyperlink)
+        {
+            foreach (var item in _activeHyperlinks)
+            {
+                if (item.Element == hyperlink)
+                {
+                    return item.Args;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The link at a point relative to this control, as a click would report it, or null where
+        /// there is none. The counterpart of <see cref="DirectTextBlock.GetEntityFromPoint"/>.
+        /// </summary>
+        public TextEntityClickEventArgs GetEntityFromPoint(Point point)
+        {
+            // A block rendering into another control's Span has no RichTextBlock of its own to ask.
+            if (_activeHyperlinks.Count == 0 || _spanForInlines != null || TextBlock == null)
+            {
+                return null;
+            }
+
+            point = TransformToVisual(TextBlock).TransformPoint(point);
+
+            // The same clamp the RichTextBlock path in MessageHelper applies before asking.
+            if (point.X < 0 || point.Y < 0)
+            {
+                point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+            }
+
+            var hyperlink = TextBlock.GetHyperlinkFromPoint(point);
+            return hyperlink != null ? GetEntityFromHyperlink(hyperlink) : null;
         }
 
         // A pooled Span is reset here rather than at the sites that build one, on the rule
@@ -1696,7 +1737,7 @@ namespace Telegram.Controls
                                 var hyperlink = GetOrCreateHyperlink(direct);
                                 ApplyHyperlinkProperties(direct, hyperlink, CodeForeground, UnderlineStyle.None, FontWeights.Normal);
 
-                                MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
+                                hyperlink.Args = new TextEntityClickEventArgs(entity.Type, data);
 
                                 OpenInline(true);
                                 GetOrCreateRun(direct, hyperlink.Inlines, data, direction, Native.TextStyle.None, Theme.MonospaceFontFamily, partFontSize);
@@ -1767,7 +1808,7 @@ namespace Telegram.Controls
                                     var hyperlink = GetOrCreateHyperlink(direct);
                                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                                     {
-                                        MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, textUrl.Url));
+                                        hyperlink.Args = new TextEntityClickEventArgs(entity.Type, textUrl.Url);
 
                                         if (textUrl.Url.StartsWith("http"))
                                         {
@@ -1777,7 +1818,7 @@ namespace Telegram.Controls
                                     }
                                     else
                                     {
-                                        MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type));
+                                        hyperlink.Args = new TextEntityClickEventArgs(entity.Type);
                                     }
 
                                     ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground, UnderlineStyle.None, HyperlinkFontWeight);
@@ -1802,7 +1843,7 @@ namespace Telegram.Controls
                                         ToolTipService.SetToolTip(hyperlink.Element, Formatter.LongDateAt(dateTime.UnixTime));
                                     }
 
-                                    MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
+                                    hyperlink.Args = new TextEntityClickEventArgs(entity.Type, data);
 
                                     parentLink = true;
                                     parent = hyperlink.Native;

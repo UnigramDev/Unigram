@@ -5,14 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Linq;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
@@ -33,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
 
         private DashPath AccentDash;
         private TextBlock TitleLabel;
-        private Span Span;
+        private FormattedTextBlock DescriptionLabel;
         private Border Media;
         private bool _templateApplied;
 
@@ -41,7 +38,7 @@ namespace Telegram.Controls.Messages.Content
         {
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
-            Span = GetTemplateChild(nameof(Span)) as Span;
+            DescriptionLabel = GetTemplateChild(nameof(DescriptionLabel)) as FormattedTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
 
             Click += Button_Click;
@@ -70,13 +67,11 @@ namespace Telegram.Controls.Messages.Content
 
             if (game.Game.Text == null || string.IsNullOrEmpty(game.Game.Text.Text))
             {
-                Span.Inlines.Clear();
-                Span.Inlines.Add(new Run { Text = game.Game.Description });
+                DescriptionLabel.SetText(message.ClientService, game.Game.Description.AsFormattedText());
             }
             else
             {
-                Span.Inlines.Clear();
-                ReplaceEntities(Span, game.Game.Text);
+                DescriptionLabel.SetText(message.ClientService, game.Game.Text);
             }
 
             UpdateContent(message, game.Game);
@@ -190,94 +185,6 @@ namespace Telegram.Controls.Messages.Content
 
             return null;
         }
-
-        #region Entities
-
-        private void ReplaceEntities(Span span, FormattedText text)
-        {
-            ReplaceEntities(span, text.Text, text.Entities);
-        }
-
-        private void ReplaceEntities(Span span, string text, Vector<TextEntity> entities)
-        {
-            var previous = 0;
-
-            foreach (var entity in entities.OrderBy(x => x.Offset))
-            {
-                if (entity.Offset > previous)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
-                }
-
-                if (entity.Length + entity.Offset > text.Length)
-                {
-                    previous = entity.Offset + entity.Length;
-                    continue;
-                }
-
-                if (entity.Type is TextEntityTypeBold)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
-                }
-                else if (entity.Type is TextEntityTypeItalic)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
-                }
-                else if (entity.Type is TextEntityTypeCode)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
-                }
-                else if (entity.Type is TextEntityTypePreCode)
-                {
-                    // TODO any additional
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
-                }
-                else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
-                {
-                    var hyperlink = new Hyperlink();
-                    var data = text.Substring(entity.Offset, entity.Length);
-
-                    //hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                    hyperlink.Inlines.Add(new Run { Text = data });
-                    //hyperlink.Foreground = foreground;
-                    span.Inlines.Add(hyperlink);
-
-                    if (entity.Type is TextEntityTypeUrl)
-                    {
-                        MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, data));
-                    }
-                }
-                else if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeMentionName)
-                {
-                    var hyperlink = new Hyperlink();
-                    object data;
-                    if (entity.Type is TextEntityTypeTextUrl textUrl)
-                    {
-                        data = textUrl.Url;
-                        MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, textUrl.Url));
-                        Extensions.SetToolTip(hyperlink, textUrl.Url);
-                    }
-                    else if (entity.Type is TextEntityTypeMentionName mentionName)
-                    {
-                        data = mentionName.UserId;
-                    }
-
-                    //hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
-                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    //hyperlink.Foreground = foreground;
-                    span.Inlines.Add(hyperlink);
-                }
-
-                previous = entity.Offset + entity.Length;
-            }
-
-            if (text.Length > previous)
-            {
-                span.Inlines.Add(new Run { Text = text.Substring(previous) });
-            }
-        }
-
-        #endregion
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

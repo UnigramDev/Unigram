@@ -45,6 +45,12 @@
                    Foreground="{ThemeResource MessageForegroundBrush}"
                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    Style="{StaticResource BodyTextBlockStyle}" />
-        <Grid x:Name="LinksPanel" />
+        <controls:FormattedTextBlock x:Name="LinksLabel"
+                                     ContextRequested="OnContextRequested"
+                                     TextEntityClick="OnTextEntityClick"
+                                     IsTextSelectionEnabled="False"
+                                     AutoFontSize="False"
+                                     TextWrapping="NoWrap"
+                                     TextTrimming="CharacterEllipsis" />
     </StackPanel>
 </Grid>

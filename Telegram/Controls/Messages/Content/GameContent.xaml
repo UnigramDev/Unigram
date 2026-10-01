@@ -58,13 +58,11 @@
                                            FontWeight="SemiBold"
                                            Foreground="{TemplateBinding HeaderBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}" />
-                                <RichTextBlock IsTextSelectionEnabled="False"
-                                               Foreground="{ThemeResource MessageForegroundBrush}"
-                                               Style="{StaticResource CaptionRichTextBlockStyle}">
-                                    <Paragraph>
-                                        <Span x:Name="Span" />
-                                    </Paragraph>
-                                </RichTextBlock>
+                                <controls:FormattedTextBlock x:Name="DescriptionLabel"
+                                                             IsTextSelectionEnabled="False"
+                                                             AutoFontSize="False"
+                                                             Foreground="{ThemeResource MessageForegroundBrush}"
+                                                             Style="{StaticResource CaptionFormattedTextBlockStyle}" />
                             </StackPanel>
 
                             <Grid HorizontalAlignment="Left"

@@ -3205,7 +3205,7 @@ namespace Telegram.Views
 
                     if (selectionEnd - selectionStart <= 0)
                     {
-                        MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, textBlock, args, message);
+                        MessageHelper.Hyperlink_ContextRequested(ViewModel.NavigationService, ViewModel.TranslateService, textBlock, args, message);
 
                         if (args.Handled)
                         {
@@ -3215,7 +3215,7 @@ namespace Telegram.Views
                 }
                 else if (textBlock != null)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, textBlock, args, message);
+                    MessageHelper.Hyperlink_ContextRequested(ViewModel.NavigationService, ViewModel.TranslateService, textBlock, args, message);
 
                     if (args.Handled)
                     {
@@ -3229,7 +3229,7 @@ namespace Telegram.Views
                 var directBlock = children.FirstOrDefault(x => x is DirectTextBlock) as DirectTextBlock;
                 if (directBlock != null)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, directBlock, args, message);
+                    MessageHelper.Hyperlink_ContextRequested(ViewModel.NavigationService, ViewModel.TranslateService, directBlock, args, message);
 
                     if (args.Handled)
                     {
@@ -3240,7 +3240,7 @@ namespace Telegram.Views
                 var button = children.FirstOrDefault(x => x is Button inline && inline.Tag is InlineKeyboardButton) as Button;
                 if (button != null && button.Tag is InlineKeyboardButton inlineButton && inlineButton.Type is InlineKeyboardButtonTypeUrl url)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(button, url.Url, args);
+                    MessageHelper.Hyperlink_ContextRequested(button, ViewModel.NavigationService, url.Url, args);
 
                     if (args.Handled)
                     {
@@ -3299,7 +3299,7 @@ namespace Telegram.Views
 
                 if (selectionEnd - selectionStart <= 0)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, originalBlock, args, message);
+                    MessageHelper.Hyperlink_ContextRequested(ViewModel.NavigationService, ViewModel.TranslateService, originalBlock, args, message);
 
                     if (args.Handled)
                     {
@@ -3309,7 +3309,7 @@ namespace Telegram.Views
             }
             else if (args.OriginalSource is Hyperlink originalHyperlink)
             {
-                MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, originalHyperlink, args, message);
+                MessageHelper.Hyperlink_ContextRequested(ViewModel.NavigationService, ViewModel.TranslateService, originalHyperlink, args, message);
 
                 if (args.Handled)
                 {

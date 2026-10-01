@@ -7,15 +7,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
@@ -23,6 +22,8 @@ namespace Telegram.Controls.Cells
     {
         private MessageWithOwner _message;
         private INavigationService _navigationService;
+
+        private string _instantViewLink;
 
         public SharedLinkCell()
         {
@@ -224,15 +225,20 @@ namespace Telegram.Controls.Cells
                 Description2Label.Visibility = Visibility.Collapsed;
             }
 
-            LinksPanel.Children.Clear();
-            LinksPanel.RowDefinitions.Clear();
-
             Photo.Source = null;
 
             if (webPageThumbnail != null)
             {
                 Photo.Source = new ProfilePictureSourcePhoto(message.ClientService, message.Id, webPageThumbnail.File, webPageMinithumbnail);
             }
+
+            if (webPageLink != null && webPageCached)
+            {
+                _instantViewLink = webPageLink;
+            }
+
+            var builder = new StringBuilder();
+            var entities = new List<TextEntity>();
 
             for (int i = 0; i < links.Count; i++)
             {
@@ -241,52 +247,44 @@ namespace Telegram.Controls.Cells
                 {
                     Photo.Source ??= ProfilePictureSourceText.GetNameForChat(uri.Host, uri.GetHashCode());
 
-                    var textBlock = new RichTextBlock { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, IsTextSelectionEnabled = false };
-                    var paragraph = new Paragraph();
-                    var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                    if (builder.Length > 0)
+                    {
+                        builder.Append('\n');
+                    }
 
                     if (link == webPageLink && webPageCached)
                     {
-                        hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = Navigation.BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily });
-                        hyperlink.Inlines.Add(new Run { Text = " \u200D" });
-
-                        hyperlink.Click += (s, args) => InstantView_Click(s, link);
-                    }
-                    else
-                    {
-                        hyperlink.Click += (s, args) => Hyperlink_Click(s, uri);
+                        entities.Add(new TextEntity(builder.Length, link.Length, new TextEntityTypeCached()));
                     }
 
-                    hyperlink.Inlines.Add(new Run { Text = link });
-                    paragraph.Inlines.Add(hyperlink);
-                    paragraph.Inlines.Add(new Run { Text = " " });
-                    textBlock.Blocks.Add(paragraph);
-                    textBlock.ContextRequested += Paragraph_ContextRequested;
-
-                    MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, link));
-
-                    Extensions.SetToolTip(hyperlink, link);
-                    SetRow(textBlock, i);
-
-                    LinksPanel.RowDefinitions.Add(1, GridUnitType.Auto);
-                    LinksPanel.Children.Add(textBlock);
+                    entities.Add(new TextEntity(builder.Length, link.Length, new TextEntityTypeTextUrl(link)));
+                    builder.Append(link);
                 }
             }
+
+            LinksLabel.SetText(message.ClientService, builder.ToString(), entities.ToVector());
         }
 
-        private void Paragraph_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(null, sender, args, null);
+            MessageHelper.Hyperlink_ContextRequested(_navigationService, null, sender, args, null);
         }
 
-        private void InstantView_Click(Hyperlink sender, string link)
+        private void OnTextEntityClick(object sender, TextEntityClickEventArgs e)
         {
-            _navigationService.NavigateToInstant(link);
-        }
+            if (e.Type is not TextEntityTypeTextUrl textUrl)
+            {
+                return;
+            }
 
-        private void Hyperlink_Click(Hyperlink sender, Uri uri)
-        {
-            MessageHelper.OpenUrl(_message.ClientService, _navigationService, uri.ToString());
+            if (textUrl.Url == _instantViewLink)
+            {
+                _navigationService.NavigateToInstant(textUrl.Url);
+            }
+            else
+            {
+                MessageHelper.OpenUrl(_message.ClientService, _navigationService, textUrl.Url);
+            }
         }
 
         private void Thumbnail_Click(object sender, RoutedEventArgs e)

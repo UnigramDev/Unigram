@@ -1421,12 +1421,7 @@ namespace Telegram.Controls
 
         private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, sender, args, null);
-        }
-
-        private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-        {
-            e.Handled = true;
+            MessageHelper.Hyperlink_ContextRequested(ViewModel.NavigationService, ViewModel.TranslateService, sender, args, null);
         }
 
         private void Description_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -1678,133 +1673,49 @@ namespace Telegram.Controls
 
         private void GetEntities(string text)
         {
-            DescriptionSpan.Inlines.Clear();
+            DescriptionLabel.SetText(ViewModel.ClientService, text, ClientEx.GetTextEntities(text));
             Description.BadgeLabel = text;
-
-            ReplaceEntities(DescriptionSpan, text, ClientEx.GetTextEntities(text));
         }
 
         private void ReplaceEntities(FormattedText text)
         {
-            DescriptionSpan.Inlines.Clear();
+            DescriptionLabel.SetText(ViewModel.ClientService, text);
             Description.BadgeLabel = text.Text;
-
-            ReplaceEntities(DescriptionSpan, text.Text, text.Entities);
         }
 
-        private void ReplaceEntities(Span span, string text, Vector<TextEntity> entities)
+        private void About_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
-            var previous = 0;
-
-            foreach (var entity in entities.OrderBy(x => x.Offset))
-            {
-                if (entity.Offset > previous)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
-                }
-
-                if (entity.Length + entity.Offset > text.Length)
-                {
-                    previous = entity.Offset + entity.Length;
-                    continue;
-                }
-
-                if (entity.Type is TextEntityTypeBold)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
-                }
-                else if (entity.Type is TextEntityTypeItalic)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
-                }
-                else if (entity.Type is TextEntityTypeCode)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
-                }
-                else if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
-                {
-                    // TODO any additional
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
-                }
-                else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
-                {
-                    var hyperlink = new Hyperlink();
-                    var data = text.Substring(entity.Offset, entity.Length);
-
-                    hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
-                    hyperlink.Inlines.Add(new Run { Text = data });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-
-                    span.Inlines.Add(hyperlink);
-
-                    if (entity.Type is TextEntityTypeUrl)
-                    {
-                        MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, data));
-                    }
-                }
-                else if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeMentionName)
-                {
-                    var hyperlink = new Hyperlink();
-                    object data;
-                    if (entity.Type is TextEntityTypeTextUrl textUrl)
-                    {
-                        data = textUrl.Url;
-                        MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, textUrl.Url));
-                        Extensions.SetToolTip(hyperlink, textUrl.Url);
-                    }
-                    else if (entity.Type is TextEntityTypeMentionName mentionName)
-                    {
-                        data = mentionName.UserId;
-                    }
-
-                    hyperlink.Click += (s, args) => Entity_Click(entity.Type, null);
-                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    span.Inlines.Add(hyperlink);
-                }
-
-                previous = entity.Offset + entity.Length;
-            }
-
-            if (text.Length > previous)
-            {
-                span.Inlines.Add(new Run { Text = text.Substring(previous) });
-            }
-        }
-
-        private void Entity_Click(TextEntityType type, string data)
-        {
-            if (type is TextEntityTypeBotCommand)
+            if (e.Type is TextEntityTypeBotCommand)
             {
 
             }
-            else if (type is TextEntityTypeEmailAddress)
+            else if (e.Type is TextEntityTypeEmailAddress)
             {
-                ViewModel.OpenUrl("mailto:" + data, false);
+                ViewModel.OpenUrl("mailto:" + e.Text, false);
             }
-            else if (type is TextEntityTypePhoneNumber)
+            else if (e.Type is TextEntityTypePhoneNumber)
             {
-                ViewModel.OpenUrl("tel:" + data, false);
+                ViewModel.OpenUrl("tel:" + e.Text, false);
             }
-            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
+            else if (e.Type is TextEntityTypeHashtag or TextEntityTypeCashtag)
             {
-                ViewModel.OpenSearch(data);
+                ViewModel.OpenSearch(e.Text);
             }
-            else if (type is TextEntityTypeMention)
+            else if (e.Type is TextEntityTypeMention)
             {
-                ViewModel.OpenUsername(data);
+                ViewModel.OpenUsername(e.Text);
             }
-            else if (type is TextEntityTypeMentionName mentionName)
+            else if (e.Type is TextEntityTypeMentionName mentionName)
             {
                 ViewModel.OpenUser(mentionName.UserId);
             }
-            else if (type is TextEntityTypeTextUrl textUrl)
+            else if (e.Type is TextEntityTypeTextUrl textUrl)
             {
                 ViewModel.OpenUrl(textUrl.Url, true);
             }
-            else if (type is TextEntityTypeUrl)
+            else if (e.Type is TextEntityTypeUrl)
             {
-                ViewModel.OpenUrl(data, false);
+                ViewModel.OpenUrl(e.Text, false);
             }
         }
 
