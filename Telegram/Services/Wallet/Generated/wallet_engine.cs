@@ -1045,8 +1045,6 @@ static class _UniFFILib {
     
     
     
-    
-    
 
     static _UniFFILib() {
         _UniFFILib.uniffiCheckContractApiVersion();
@@ -1715,17 +1713,6 @@ static class _UniFFILib {
     public static extern
 #endif
      void uniffi_wallet_engine_fn_free_tonconnectderivedsession(ulong @handle,ref UniffiRustCallStatus _uniffi_out_err
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
-     RustBuffer uniffi_wallet_engine_fn_method_tonconnectderivedsession_decode_sign_data_cell(ulong @ptr,RustBuffer @schema,RustBuffer @cell,ref UniffiRustCallStatus _uniffi_out_err
     );
 
     #if NET8_0_OR_GREATER
@@ -3507,17 +3494,6 @@ static class _UniFFILib {
     [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
     public static extern
 #endif
-     ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decode_sign_data_cell(
-    );
-
-    #if NET8_0_OR_GREATER
-    [LibraryImport("wallet_engine")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static partial
-#else
-    [DllImport("wallet_engine", CallingConvention = CallingConvention.Cdecl)]
-    public static extern
-#endif
      ushort uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request(
     );
 
@@ -3914,14 +3890,14 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment();
-            if (checksum != 45295) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `45295`, library returned `{checksum}`");
+            if (checksum != 26436) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `26436`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment();
-            if (checksum != 19839) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment` checksum `19839`, library returned `{checksum}`");
+            if (checksum != 56301) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_decrypt_comment` checksum `56301`, library returned `{checksum}`");
             }
         }
         {
@@ -3932,8 +3908,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation();
-            if (checksum != 59543) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation` checksum `59543`, library returned `{checksum}`");
+            if (checksum != 48426) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_prepare_key_rotation` checksum `48426`, library returned `{checksum}`");
             }
         }
         {
@@ -4171,75 +4147,69 @@ static class _UniFFILib {
             }
         }
         {
-            var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decode_sign_data_cell();
-            if (checksum != 14430) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decode_sign_data_cell` checksum `14430`, library returned `{checksum}`");
-            }
-        }
-        {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request();
-            if (checksum != 56943) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request` checksum `56943`, library returned `{checksum}`");
+            if (checksum != 40213) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_decrypt_request` checksum `40213`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_error();
-            if (checksum != 22274) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_error` checksum `22274`, library returned `{checksum}`");
+            if (checksum != 3125) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_error` checksum `3125`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_event();
-            if (checksum != 1164) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_event` checksum `1164`, library returned `{checksum}`");
+            if (checksum != 12874) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_connect_event` checksum `12874`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_event();
-            if (checksum != 32245) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_event` checksum `32245`, library returned `{checksum}`");
+            if (checksum != 15862) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_event` checksum `15862`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_success();
-            if (checksum != 14846) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_success` checksum `14846`, library returned `{checksum}`");
+            if (checksum != 11931) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_disconnect_success` checksum `11931`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_error();
-            if (checksum != 5179) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_error` checksum `5179`, library returned `{checksum}`");
+            if (checksum != 24657) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_error` checksum `24657`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_send_success();
-            if (checksum != 56975) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_send_success` checksum `56975`, library returned `{checksum}`");
+            if (checksum != 2099) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_send_success` checksum `2099`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_sign_data_success();
-            if (checksum != 2207) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_sign_data_success` checksum `2207`, library returned `{checksum}`");
+            if (checksum != 48287) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_encrypt_sign_data_success` checksum `48287`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_open_challenge();
-            if (checksum != 65045) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_open_challenge` checksum `65045`, library returned `{checksum}`");
+            if (checksum != 24298) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_open_challenge` checksum `24298`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_public_key_hex();
-            if (checksum != 18549) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_public_key_hex` checksum `18549`, library returned `{checksum}`");
+            if (checksum != 32021) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_public_key_hex` checksum `32021`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_tonconnectderivedsession_signing_public_key();
-            if (checksum != 913) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_signing_public_key` checksum `913`, library returned `{checksum}`");
+            if (checksum != 11397) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_tonconnectderivedsession_signing_public_key` checksum `11397`, library returned `{checksum}`");
             }
         }
         {
@@ -4280,8 +4250,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_derive_ton_connect_session();
-            if (checksum != 1649) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_derive_ton_connect_session` checksum `1649`, library returned `{checksum}`");
+            if (checksum != 2602) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_derive_ton_connect_session` checksum `2602`, library returned `{checksum}`");
             }
         }
         {
@@ -4298,8 +4268,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_data();
-            if (checksum != 22331) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_data` checksum `22331`, library returned `{checksum}`");
+            if (checksum != 38868) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletlifecycle_sign_ton_connect_data` checksum `38868`, library returned `{checksum}`");
             }
         }
         {
@@ -4574,17 +4544,6 @@ class FfiConverterByteArray: FfiConverterRustBuffer<byte[]> {
 /// </summary>
 internal interface ITonConnectDerivedSession {
     /// <summary>
-    /// Decodes a `signData` cell by its TL-B schema for display.
-    ///
-    /// Pass the `schema` and `cell` of a `TonConnectSignDataPayload::Cell` exactly as received.
-    /// The result lists the fields of the schema's last declaration (the root constructor, whose
-    /// tag the cell must carry) in cell order, or reports the cell as not decodable when the
-    /// schema uses an unsupported construct or the cell does not match it; it is never a partial
-    /// list. Addresses are TEP-2 friendly, non-bounceable, and test-only on a testnet session.
-    /// Signing does not depend on this result.
-    /// </summary>
-    TonConnectSignDataCellDecoding DecodeSignDataCell(string @schema, string @cell);
-    /// <summary>
     /// Authenticates and validates one dApp request relayed by the server.
     ///
     /// `body` is the raw `nonce(24) || box` bytes from the dApp; `now` is the
@@ -4629,9 +4588,10 @@ internal interface ITonConnectDerivedSession {
     /// <summary>
     /// Encrypts a successful `signData` response for the signed data.
     ///
-    /// The response names this session's wallet address and is refused unless
-    /// `signed_data.signature` verifies with `signed_data.public_key` for exactly
-    /// that address, request, domain, and timestamp.
+    /// The response names this session's wallet address. It is refused unless
+    /// the request still matches this session's network and wallet and
+    /// `signed_data.signature` verifies with this session's signing public key
+    /// for exactly that address, request, domain, and timestamp.
     /// </summary>
     /// <exception cref="TonConnectSessionException"></exception>
     byte[] EncryptSignDataSuccess(string @requestId, TonConnectSignedData @signedData);
@@ -4748,24 +4708,6 @@ internal class TonConnectDerivedSession : ITonConnectDerivedSession, IDisposable
 
     
     /// <summary>
-    /// Decodes a `signData` cell by its TL-B schema for display.
-    ///
-    /// Pass the `schema` and `cell` of a `TonConnectSignDataPayload::Cell` exactly as received.
-    /// The result lists the fields of the schema's last declaration (the root constructor, whose
-    /// tag the cell must carry) in cell order, or reports the cell as not decodable when the
-    /// schema uses an unsupported construct or the cell does not match it; it is never a partial
-    /// list. Addresses are TEP-2 friendly, non-bounceable, and test-only on a testnet session.
-    /// Signing does not depend on this result.
-    /// </summary>
-    public TonConnectSignDataCellDecoding DecodeSignDataCell(string @schema, string @cell) {
-        return CallWithPointer(thisPtr => FfiConverterTypeTonConnectSignDataCellDecoding.INSTANCE.Lift(
-    _UniffiHelpers.RustCall( (ref UniffiRustCallStatus _status) =>
-    _UniFFILib.uniffi_wallet_engine_fn_method_tonconnectderivedsession_decode_sign_data_cell(thisPtr, FfiConverterString.INSTANCE.Lower(@schema), FfiConverterString.INSTANCE.Lower(@cell), ref _status)
-)));
-    }
-    
-    
-    /// <summary>
     /// Authenticates and validates one dApp request relayed by the server.
     ///
     /// `body` is the raw `nonce(24) || box` bytes from the dApp; `now` is the
@@ -4859,9 +4801,10 @@ internal class TonConnectDerivedSession : ITonConnectDerivedSession, IDisposable
     /// <summary>
     /// Encrypts a successful `signData` response for the signed data.
     ///
-    /// The response names this session's wallet address and is refused unless
-    /// `signed_data.signature` verifies with `signed_data.public_key` for exactly
-    /// that address, request, domain, and timestamp.
+    /// The response names this session's wallet address. It is refused unless
+    /// the request still matches this session's network and wallet and
+    /// `signed_data.signature` verifies with this session's signing public key
+    /// for exactly that address, request, domain, and timestamp.
     /// </summary>
     /// <exception cref="TonConnectSessionException"></exception>
     public byte[] EncryptSignDataSuccess(string @requestId, TonConnectSignedData @signedData) {
@@ -5406,7 +5349,8 @@ internal interface IWalletClient {
     ///
     /// The engine uses the supplied recipient public key or calls the recipient
     /// wallet's `get_public_key` get-method, then asks the platform host to
-    /// authorize this wallet's protected mnemonic.
+    /// authorize this wallet's protected mnemonic. The sender key is this
+    /// wallet's current signing key.
     /// A supplied key must locally derive the recipient's address using supported
     /// default wallet parameters. Verification happens before secret authorization.
     /// No secret is requested when the comment is already too large.
@@ -5421,6 +5365,22 @@ internal interface IWalletClient {
     ///
     /// The caller supplies the sender address because TON uses its bounceable,
     /// URL-safe, non-test-only representation as authenticated salt.
+    ///
+    /// The body may use any signing key this wallet ever had. The engine first
+    /// tries the current signing key and the anchor key, which the recovery
+    /// phrase holds, without any HTTP request. When neither matches and the
+    /// wallet has rotated its key, the engine reads the wallet's
+    /// `change_wallet_key` actions from Toncenter v3, recovers each earlier
+    /// signing key from the encrypted old key its rotation published, and tries
+    /// those. The secret is read once per call and recovered keys never leave
+    /// it. The history holds no secret; later calls reuse it while it still
+    /// contains the rotation that installed the current signing key.
+    ///
+    /// `EncryptedCommentLookupFailed` means the provider did not answer or did
+    /// not return a history that reaches the current signing key yet; a retry
+    /// can succeed.
+    /// `EncryptedCommentUnavailable` means no key of this wallet decrypts the
+    /// body or the body is malformed.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task<string> DecryptComment(DecryptCommentRequest @request);
@@ -5448,9 +5408,21 @@ internal interface IWalletClient {
     ///
     /// The client first fetches fresh account state through its configured
     /// provider. Active wallets use the on-chain `seqno` getter, while an
-    /// account without deployed contract code uses sequence number zero. The
-    /// client then asks the host to unlock the protected phrase. It does not
-    /// update protected storage and does not submit the returned BOC.
+    /// account without deployed contract code uses sequence number zero and
+    /// attaches anchor-based `StateInit`; only the initial 12-word phrase can
+    /// sign such a deploying request, so a post-rotation phrase then fails with
+    /// `KeyRotationUnavailable`. The client then asks the host to unlock the
+    /// protected phrase. It does not update protected storage and does not
+    /// submit the returned BOC.
+    ///
+    /// The request, signed with the current signing key, carries the new key's
+    /// wallet-address proof signature and the current signing key encrypted
+    /// with the new one as
+    /// `sha256(new_private_key ‖ "keyChangeSaltV1") XOR old_private_key`.
+    /// The contract revision with bytecode hash
+    /// `e30911420bef1191c09dce58b9df2b4ca4c2d9c383cc3b6a91170349ffa70e2c`
+    /// publishes that value in its key-changed log, which lets
+    /// [`WalletClient::decrypt_comment`] recover the replaced key later.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     Task<PreparedKeyRotation> PrepareKeyRotation(PrepareKeyRotationRequest @request);
@@ -5887,7 +5859,8 @@ internal class WalletClient : IWalletClient, IDisposable {
     ///
     /// The engine uses the supplied recipient public key or calls the recipient
     /// wallet's `get_public_key` get-method, then asks the platform host to
-    /// authorize this wallet's protected mnemonic.
+    /// authorize this wallet's protected mnemonic. The sender key is this
+    /// wallet's current signing key.
     /// A supplied key must locally derive the recipient's address using supported
     /// default wallet parameters. Verification happens before secret authorization.
     /// No secret is requested when the comment is already too large.
@@ -5922,6 +5895,22 @@ internal class WalletClient : IWalletClient, IDisposable {
     ///
     /// The caller supplies the sender address because TON uses its bounceable,
     /// URL-safe, non-test-only representation as authenticated salt.
+    ///
+    /// The body may use any signing key this wallet ever had. The engine first
+    /// tries the current signing key and the anchor key, which the recovery
+    /// phrase holds, without any HTTP request. When neither matches and the
+    /// wallet has rotated its key, the engine reads the wallet's
+    /// `change_wallet_key` actions from Toncenter v3, recovers each earlier
+    /// signing key from the encrypted old key its rotation published, and tries
+    /// those. The secret is read once per call and recovered keys never leave
+    /// it. The history holds no secret; later calls reuse it while it still
+    /// contains the rotation that installed the current signing key.
+    ///
+    /// `EncryptedCommentLookupFailed` means the provider did not answer or did
+    /// not return a history that reaches the current signing key yet; a retry
+    /// can succeed.
+    /// `EncryptedCommentUnavailable` means no key of this wallet decrypts the
+    /// body or the body is malformed.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     public async Task<string> DecryptComment(DecryptCommentRequest @request) {
@@ -5989,9 +5978,21 @@ internal class WalletClient : IWalletClient, IDisposable {
     ///
     /// The client first fetches fresh account state through its configured
     /// provider. Active wallets use the on-chain `seqno` getter, while an
-    /// account without deployed contract code uses sequence number zero. The
-    /// client then asks the host to unlock the protected phrase. It does not
-    /// update protected storage and does not submit the returned BOC.
+    /// account without deployed contract code uses sequence number zero and
+    /// attaches anchor-based `StateInit`; only the initial 12-word phrase can
+    /// sign such a deploying request, so a post-rotation phrase then fails with
+    /// `KeyRotationUnavailable`. The client then asks the host to unlock the
+    /// protected phrase. It does not update protected storage and does not
+    /// submit the returned BOC.
+    ///
+    /// The request, signed with the current signing key, carries the new key's
+    /// wallet-address proof signature and the current signing key encrypted
+    /// with the new one as
+    /// `sha256(new_private_key ‖ "keyChangeSaltV1") XOR old_private_key`.
+    /// The contract revision with bytecode hash
+    /// `e30911420bef1191c09dce58b9df2b4ca4c2d9c383cc3b6a91170349ffa70e2c`
+    /// publishes that value in its key-changed log, which lets
+    /// [`WalletClient::decrypt_comment`] recover the replaced key later.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
     public async Task<PreparedKeyRotation> PrepareKeyRotation(PrepareKeyRotationRequest @request) {
@@ -8731,6 +8732,11 @@ class FfiConverterTypeActivityCursor: FfiConverterRustBuffer<ActivityCursor> {
 /// <param name="EncryptedComment">
 /// An opaque encrypted-comment body that can be passed to
 /// [`crate::WalletClient::decrypt_comment`].
+/// 
+/// A sender encrypts to the signing key this wallet had at that time.
+/// Decryption tries the current signing key and the anchor key first, then
+/// signing keys that earlier rotations replaced, which it recovers from the
+/// wallet's public key-change history.
 /// </param>
 /// <param name="Counterparty">
 /// The source or destination address, if the provider supplies it.
@@ -8778,6 +8784,11 @@ internal record ActivityItem (
     /// <summary>
     /// An opaque encrypted-comment body that can be passed to
     /// [`crate::WalletClient::decrypt_comment`].
+    ///
+    /// A sender encrypts to the signing key this wallet had at that time.
+    /// Decryption tries the current signing key and the anchor key first, then
+    /// signing keys that earlier rotations replaced, which it recovers from the
+    /// wallet's public key-change history.
     /// </summary>
     Boc? EncryptedComment, 
     /// <summary>
@@ -9065,13 +9076,20 @@ class FfiConverterTypeCreatedWallet: FfiConverterRustBuffer<CreatedWallet> {
 
 /// <summary>
 /// Requests explicit decryption of one encrypted-comment message body.
+///
+/// [`crate::WalletClient::decrypt_comment`] reads the protected mnemonic once
+/// and tries the current signing key, then the anchor key, without any HTTP
+/// request. When neither matches and the wallet has rotated its key, it reads
+/// the wallet's `change_wallet_key` history from Toncenter v3, recovers each
+/// earlier signing key from the encrypted old key its rotation published, and
+/// tries those keys. Recovered keys never leave the call.
 /// </summary>
 /// <param name="Sender">
 /// Address that sent the encrypted comment.
 /// 
 /// TON binds this bounceable, URL-safe, non-test-only address to the
 /// authentication tag. For an incoming activity item this is its
-/// `counterparty`.
+/// `counterparty`; for an outgoing item it is this wallet's address.
 /// </param>
 /// <param name="Body">
 /// Complete message-body cell encoded as a Base64 BOC.
@@ -9082,7 +9100,7 @@ internal record DecryptCommentRequest (
     ///
     /// TON binds this bounceable, URL-safe, non-test-only address to the
     /// authentication tag. For an incoming activity item this is its
-    /// `counterparty`.
+    /// `counterparty`; for an outgoing item it is this wallet's address.
     /// </summary>
     TonAddressString Sender, 
     /// <summary>
@@ -10472,6 +10490,14 @@ class FfiConverterTypePrepareTransferRequest: FfiConverterRustBuffer<PrepareTran
 /// storage. It must store `signed_boc` as a pending durable record. Words 13-24
 /// are the new signing half. Until chain state resolves the request, the host
 /// must block ordinary signing.
+///
+/// The signed request also carries `encryptedOldPrivateKey`, computed over
+/// 32-byte Ed25519 seeds as
+/// `sha256(new_private_key ‖ "keyChangeSaltV1") XOR old_private_key`, where the
+/// old key is the signing key being replaced. Only the new key opens it. The
+/// contract publishes it in its key-changed log, so
+/// [`crate::WalletClient::decrypt_comment`] can later recover the replaced key.
+/// The engine adds it to `signed_boc`; the host handles nothing extra.
 /// </summary>
 /// <param name="ReplacementRecoveryPhrase">
 /// Full 24-word phrase that preserves the anchor and contains the new signing half.
@@ -10481,6 +10507,9 @@ class FfiConverterTypePrepareTransferRequest: FfiConverterRustBuffer<PrepareTran
 /// </param>
 /// <param name="SignedBoc">
 /// Complete external or relaxed internal signed message as a validated BOC.
+/// 
+/// Its `ChangePublicKey` request holds two references: the new key's
+/// wallet-address proof signature and the encrypted old private key.
 /// </param>
 /// <param name="Seqno">
 /// Sequence number covered by the signed request.
@@ -10502,6 +10531,9 @@ internal record PreparedKeyRotation (
     byte[] NewPublicKey, 
     /// <summary>
     /// Complete external or relaxed internal signed message as a validated BOC.
+    ///
+    /// Its `ChangePublicKey` request holds two references: the new key's
+    /// wallet-address proof signature and the encrypted old private key.
     /// </summary>
     Boc SignedBoc, 
     /// <summary>
@@ -12691,63 +12723,6 @@ class FfiConverterTypeTonConnectSessionConfig: FfiConverterRustBuffer<TonConnect
             FfiConverterString.INSTANCE.Write(value.BridgeUrl, stream);
             FfiConverterUInt64.INSTANCE.Write(value.MaxEventBytes, stream);
             FfiConverterUInt32.INSTANCE.Write(value.MessageTtlSeconds, stream);
-    }
-}
-
-
-
-/// <summary>
-/// One decoded field of a `signData` cell.
-/// </summary>
-/// <param name="Depth">
-/// Nesting level: 0 for the root's fields; entries after a structure entry
-/// with a greater depth are its sub-fields.
-/// </param>
-/// <param name="Name">
-/// The field name exactly as the schema names it (`_` when unnamed).
-/// </param>
-/// <param name="Value">
-/// The display value; for a structure, its constructor name (empty for `_`).
-/// </param>
-internal record TonConnectSignDataCellField (
-    /// <summary>
-    /// Nesting level: 0 for the root's fields; entries after a structure entry
-    /// with a greater depth are its sub-fields.
-    /// </summary>
-    uint Depth, 
-    /// <summary>
-    /// The field name exactly as the schema names it (`_` when unnamed).
-    /// </summary>
-    string Name, 
-    /// <summary>
-    /// The display value; for a structure, its constructor name (empty for `_`).
-    /// </summary>
-    string Value
-) {
-}
-
-class FfiConverterTypeTonConnectSignDataCellField: FfiConverterRustBuffer<TonConnectSignDataCellField> {
-    public static FfiConverterTypeTonConnectSignDataCellField INSTANCE = new FfiConverterTypeTonConnectSignDataCellField();
-
-    public override TonConnectSignDataCellField Read(BigEndianStream stream) {
-        return new TonConnectSignDataCellField(
-            Depth: FfiConverterUInt32.INSTANCE.Read(stream),
-            Name: FfiConverterString.INSTANCE.Read(stream),
-            Value: FfiConverterString.INSTANCE.Read(stream)
-        );
-    }
-
-    public override int AllocationSize(TonConnectSignDataCellField value) {
-        return 0
-            + FfiConverterUInt32.INSTANCE.AllocationSize(value.Depth)
-            + FfiConverterString.INSTANCE.AllocationSize(value.Name)
-            + FfiConverterString.INSTANCE.AllocationSize(value.Value);
-    }
-
-    public override void Write(TonConnectSignDataCellField value, BigEndianStream stream) {
-            FfiConverterUInt32.INSTANCE.Write(value.Depth, stream);
-            FfiConverterString.INSTANCE.Write(value.Name, stream);
-            FfiConverterString.INSTANCE.Write(value.Value, stream);
     }
 }
 
@@ -15910,168 +15885,6 @@ class FfiConverterTypeTonConnectSessionPhase: FfiConverterRustBuffer<TonConnectS
 
 
 /// <summary>
-/// The result of decoding a `signData` cell by its TL-B schema.
-/// </summary>
-internal record TonConnectSignDataCellDecoding {
-    
-    /// <summary>
-    /// The cell matches the schema exactly.
-    /// </summary>
-    public record Decoded (
-        TonConnectSignDataCellField[] Fields
-    ) : TonConnectSignDataCellDecoding {}
-    
-    /// <summary>
-    /// The cell cannot be shown by its schema; no field is reported.
-    /// </summary>
-    public record NotDecodable (
-        TonConnectSignDataCellFailure Failure,
-        string Detail
-    ) : TonConnectSignDataCellDecoding {}
-    
-
-    
-}
-
-class FfiConverterTypeTonConnectSignDataCellDecoding : FfiConverterRustBuffer<TonConnectSignDataCellDecoding>{
-    public static FfiConverterRustBuffer<TonConnectSignDataCellDecoding> INSTANCE = new FfiConverterTypeTonConnectSignDataCellDecoding();
-
-    public override TonConnectSignDataCellDecoding Read(BigEndianStream stream) {
-        var value = stream.ReadInt();
-        switch (value) {
-            case 1:
-                return new TonConnectSignDataCellDecoding.Decoded(
-                    FfiConverterSequenceTypeTonConnectSignDataCellField.INSTANCE.Read(stream)
-                );
-            case 2:
-                return new TonConnectSignDataCellDecoding.NotDecodable(
-                    FfiConverterTypeTonConnectSignDataCellFailure.INSTANCE.Read(stream),
-                    FfiConverterString.INSTANCE.Read(stream)
-                );
-            default:
-                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellDecoding.Read()", value));
-        }
-    }
-
-    public override int AllocationSize(TonConnectSignDataCellDecoding value) {
-        switch (value) {
-            case TonConnectSignDataCellDecoding.Decoded variant_value:
-                return 4
-                    + FfiConverterSequenceTypeTonConnectSignDataCellField.INSTANCE.AllocationSize(variant_value.Fields);
-            case TonConnectSignDataCellDecoding.NotDecodable variant_value:
-                return 4
-                    + FfiConverterTypeTonConnectSignDataCellFailure.INSTANCE.AllocationSize(variant_value.Failure)
-                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.Detail);
-            default:
-                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellDecoding.AllocationSize()", value));
-        }
-    }
-
-    public override void Write(TonConnectSignDataCellDecoding value, BigEndianStream stream) {
-        switch (value) {
-            case TonConnectSignDataCellDecoding.Decoded variant_value:
-                stream.WriteInt(1);
-                FfiConverterSequenceTypeTonConnectSignDataCellField.INSTANCE.Write(variant_value.Fields, stream);
-                break;
-            case TonConnectSignDataCellDecoding.NotDecodable variant_value:
-                stream.WriteInt(2);
-                FfiConverterTypeTonConnectSignDataCellFailure.INSTANCE.Write(variant_value.Failure, stream);
-                FfiConverterString.INSTANCE.Write(variant_value.Detail, stream);
-                break;
-            default:
-                throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellDecoding.Write()", value));
-        }
-    }
-}
-
-
-
-
-
-
-
-/// <summary>
-/// Why a `signData` cell could not be decoded by its schema.
-/// </summary>
-internal enum TonConnectSignDataCellFailure: int {
-    /// <summary>
-    /// The schema is not valid TL-B text.
-    /// </summary>
-    InvalidSchema,
-    /// <summary>
-    /// The schema uses a construct the decoder does not support.
-    /// </summary>
-    UnsupportedSchema,
-    /// <summary>
-    /// The cell is not a valid one-root `BoC` or contains an exotic cell.
-    /// </summary>
-    InvalidCell,
-    /// <summary>
-    /// No constructor tag of a type matches the cell.
-    /// </summary>
-    TagMismatch,
-    /// <summary>
-    /// A `{ … }` constraint or a `#<`/`#<=` bound does not hold.
-    /// </summary>
-    ConstraintViolated,
-    /// <summary>
-    /// Bits or references remain after the schema is fully read.
-    /// </summary>
-    TrailingData,
-    /// <summary>
-    /// The cell ends before the schema is fully read.
-    /// </summary>
-    TruncatedCell,
-    /// <summary>
-    /// A size, nesting, work, or output bound was exceeded.
-    /// </summary>
-    LimitExceeded
-}
-
-class FfiConverterTypeTonConnectSignDataCellFailure: FfiConverterRustBuffer<TonConnectSignDataCellFailure> {
-    public static FfiConverterTypeTonConnectSignDataCellFailure INSTANCE = new FfiConverterTypeTonConnectSignDataCellFailure();
-
-    public override TonConnectSignDataCellFailure Read(BigEndianStream stream) {
-        var value = stream.ReadInt();
-        switch (value) {
-            case 1: return TonConnectSignDataCellFailure.InvalidSchema;
-            case 2: return TonConnectSignDataCellFailure.UnsupportedSchema;
-            case 3: return TonConnectSignDataCellFailure.InvalidCell;
-            case 4: return TonConnectSignDataCellFailure.TagMismatch;
-            case 5: return TonConnectSignDataCellFailure.ConstraintViolated;
-            case 6: return TonConnectSignDataCellFailure.TrailingData;
-            case 7: return TonConnectSignDataCellFailure.TruncatedCell;
-            case 8: return TonConnectSignDataCellFailure.LimitExceeded;
-            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellFailure.Read()", value));
-        }
-    }
-
-    public override int AllocationSize(TonConnectSignDataCellFailure value) {
-        return 4;
-    }
-
-    public override void Write(TonConnectSignDataCellFailure value, BigEndianStream stream) {
-        switch (value) {
-            case TonConnectSignDataCellFailure.InvalidSchema: stream.WriteInt(1); break;
-            case TonConnectSignDataCellFailure.UnsupportedSchema: stream.WriteInt(2); break;
-            case TonConnectSignDataCellFailure.InvalidCell: stream.WriteInt(3); break;
-            case TonConnectSignDataCellFailure.TagMismatch: stream.WriteInt(4); break;
-            case TonConnectSignDataCellFailure.ConstraintViolated: stream.WriteInt(5); break;
-            case TonConnectSignDataCellFailure.TrailingData: stream.WriteInt(6); break;
-            case TonConnectSignDataCellFailure.TruncatedCell: stream.WriteInt(7); break;
-            case TonConnectSignDataCellFailure.LimitExceeded: stream.WriteInt(8); break;
-            default: throw new InternalException(String.Format("invalid enum value '{0}' in FfiConverterTypeTonConnectSignDataCellFailure.Write()", value));
-        }
-    }
-}
-
-
-
-
-
-
-
-/// <summary>
 /// The data of one `signData` request, exactly as the dApp sent it.
 /// </summary>
 internal record TonConnectSignDataPayload {
@@ -16091,7 +15904,7 @@ internal record TonConnectSignDataPayload {
     ) : TonConnectSignDataPayload {}
     
     /// <summary>
-    /// A TVM cell described by a TL-B schema.
+    /// A TVM cell described by a TL-B schema; the engine does not decode it.
     /// </summary>
     public record Cell (
         string Schema,
@@ -16995,12 +16808,17 @@ internal class WalletClientException: UniffiException {
     
     
     /// <summary>
-    /// The recipient's encrypted-comment public key could not be read now.
+    /// Provider data an encrypted-comment operation needs could not be read now.
     ///
-    /// The provider failed, limited, or cancelled the lookup, so nothing is
-    /// known about the recipient and the same request can be retried. It is
-    /// never returned when the recipient is known to be unable to receive an
-    /// encrypted comment; that is [`Self::EncryptedCommentUnavailable`].
+    /// For encryption, the recipient's public key lookup failed, was limited,
+    /// or was cancelled, so nothing is known about the recipient. For
+    /// decryption, the wallet's key-change history could not be read or does
+    /// not reach the current signing key yet, so earlier signing keys could
+    /// not be tried. The same request can be retried. It is never returned
+    /// when the recipient is known to be unable to receive an encrypted
+    /// comment or when every key of this wallet was tried; that is
+    /// [`Self::EncryptedCommentUnavailable`]. The display text keeps its
+    /// original "recipient lookup" wording for compatibility.
     /// </summary>
     
     public class EncryptedCommentLookupFailed : WalletClientException {
@@ -18668,52 +18486,6 @@ class FfiConverterSequenceTypeSendMessage: FfiConverterRustBuffer<SendMessage[]>
 
         stream.WriteInt(value.Length);
         var writerFn = FfiConverterTypeSendMessage.INSTANCE.Write;
-        value.ForEach(item => writerFn(item, stream));
-    }
-}
-
-
-
-
-class FfiConverterSequenceTypeTonConnectSignDataCellField: FfiConverterRustBuffer<TonConnectSignDataCellField[]> {
-    public static FfiConverterSequenceTypeTonConnectSignDataCellField INSTANCE = new FfiConverterSequenceTypeTonConnectSignDataCellField();
-
-    public override TonConnectSignDataCellField[]  Read(BigEndianStream stream) {
-        var length = stream.ReadInt();
-        if (length == 0) {
-            return [];
-        }
-
-        var result = new TonConnectSignDataCellField[length];
-        var readFn = FfiConverterTypeTonConnectSignDataCellField.INSTANCE.Read;
-        for (int i = 0; i < length; i++) {
-            result[i] = readFn(stream);
-        }
-        return result;
-    }
-
-    public override int AllocationSize(TonConnectSignDataCellField[]  value) {
-        var sizeForLength = 4;
-
-        // details/1-empty-list-as-default-method-parameter.md
-        if (value == null) {
-            return sizeForLength;
-        }
-
-        var allocationSizeFn = FfiConverterTypeTonConnectSignDataCellField.INSTANCE.AllocationSize;
-        var sizeForItems = value.Sum(item => allocationSizeFn(item));
-        return sizeForLength + sizeForItems;
-    }
-
-    public override void Write(TonConnectSignDataCellField[] value, BigEndianStream stream) {
-        // details/1-empty-list-as-default-method-parameter.md
-        if (value == null) {
-            stream.WriteInt(0);
-            return;
-        }
-
-        stream.WriteInt(value.Length);
-        var writerFn = FfiConverterTypeTonConnectSignDataCellField.INSTANCE.Write;
         value.ForEach(item => writerFn(item, stream));
     }
 }
