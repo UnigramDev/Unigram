@@ -3890,8 +3890,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment();
-            if (checksum != 26436) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `26436`, library returned `{checksum}`");
+            if (checksum != 45205) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_create_encrypted_comment` checksum `45205`, library returned `{checksum}`");
             }
         }
         {
@@ -3902,8 +3902,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_wallet_engine_checksum_method_walletclient_resolve_encrypted_comment_recipient();
-            if (checksum != 61038) {
-                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_resolve_encrypted_comment_recipient` checksum `61038`, library returned `{checksum}`");
+            if (checksum != 48846) {
+                throw new UniffiContractChecksumException($"WalletEngine: uniffi bindings expected function `uniffi_wallet_engine_checksum_method_walletclient_resolve_encrypted_comment_recipient` checksum `48846`, library returned `{checksum}`");
             }
         }
         {
@@ -5347,12 +5347,9 @@ internal interface IWalletClient {
     /// <summary>
     /// Creates a TON encrypted-comment body ready for `SendMessageBody::RawPayload`.
     ///
-    /// The engine uses the supplied recipient public key or calls the recipient
-    /// wallet's `get_public_key` get-method, then asks the platform host to
-    /// authorize this wallet's protected mnemonic. The sender key is this
-    /// wallet's current signing key.
-    /// A supplied key must locally derive the recipient's address using supported
-    /// default wallet parameters. Verification happens before secret authorization.
+    /// The engine resolves the recipient public key, then asks the platform
+    /// host to authorize this wallet's protected mnemonic. The sender key is
+    /// this wallet's current signing key.
     /// No secret is requested when the comment is already too large.
     /// The recipient key is resolved exactly as
     /// [`Self::resolve_encrypted_comment_recipient`] resolves it, including its
@@ -5390,15 +5387,17 @@ internal interface IWalletClient {
     /// This answers whether [`Self::create_encrypted_comment`] with the same
     /// recipient and supplied key can encrypt, without a comment and without
     /// requesting any protected secret, so a client configured without a local
-    /// signing secret can ask it too. A supplied key is verified locally, with
-    /// no HTTP request and without the single-flight slot. Otherwise the engine
-    /// reads the recipient account state and, for an active contract, calls its
-    /// `get_public_key` get-method.
+    /// signing secret can ask it too. The engine reads the recipient account
+    /// state. For an active contract it calls the `get_public_key` get-method
+    /// and ignores any supplied key, because the contract reports its current
+    /// key. For an undeployed wallet it uses the supplied key after verifying
+    /// that the key derives the recipient address with supported default wallet
+    /// parameters.
     ///
     /// `EncryptedCommentUnavailable` means the recipient cannot receive an
-    /// encrypted comment: the supplied key does not derive its address, its
-    /// wallet is not deployed or is frozen, or its contract did not return a
-    /// public key. `EncryptedCommentLookupFailed` means the provider did not
+    /// encrypted comment: its wallet is frozen, its contract did not return a
+    /// public key, or its wallet is not deployed and no supplied key derives
+    /// its address. `EncryptedCommentLookupFailed` means the provider did not
     /// answer and nothing is known about the recipient.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
@@ -5857,12 +5856,9 @@ internal class WalletClient : IWalletClient, IDisposable {
     /// <summary>
     /// Creates a TON encrypted-comment body ready for `SendMessageBody::RawPayload`.
     ///
-    /// The engine uses the supplied recipient public key or calls the recipient
-    /// wallet's `get_public_key` get-method, then asks the platform host to
-    /// authorize this wallet's protected mnemonic. The sender key is this
-    /// wallet's current signing key.
-    /// A supplied key must locally derive the recipient's address using supported
-    /// default wallet parameters. Verification happens before secret authorization.
+    /// The engine resolves the recipient public key, then asks the platform
+    /// host to authorize this wallet's protected mnemonic. The sender key is
+    /// this wallet's current signing key.
     /// No secret is requested when the comment is already too large.
     /// The recipient key is resolved exactly as
     /// [`Self::resolve_encrypted_comment_recipient`] resolves it, including its
@@ -5940,15 +5936,17 @@ internal class WalletClient : IWalletClient, IDisposable {
     /// This answers whether [`Self::create_encrypted_comment`] with the same
     /// recipient and supplied key can encrypt, without a comment and without
     /// requesting any protected secret, so a client configured without a local
-    /// signing secret can ask it too. A supplied key is verified locally, with
-    /// no HTTP request and without the single-flight slot. Otherwise the engine
-    /// reads the recipient account state and, for an active contract, calls its
-    /// `get_public_key` get-method.
+    /// signing secret can ask it too. The engine reads the recipient account
+    /// state. For an active contract it calls the `get_public_key` get-method
+    /// and ignores any supplied key, because the contract reports its current
+    /// key. For an undeployed wallet it uses the supplied key after verifying
+    /// that the key derives the recipient address with supported default wallet
+    /// parameters.
     ///
     /// `EncryptedCommentUnavailable` means the recipient cannot receive an
-    /// encrypted comment: the supplied key does not derive its address, its
-    /// wallet is not deployed or is frozen, or its contract did not return a
-    /// public key. `EncryptedCommentLookupFailed` means the provider did not
+    /// encrypted comment: its wallet is frozen, its contract did not return a
+    /// public key, or its wallet is not deployed and no supplied key derives
+    /// its address. `EncryptedCommentLookupFailed` means the provider did not
     /// answer and nothing is known about the recipient.
     /// </summary>
     /// <exception cref="WalletClientException"></exception>
@@ -8917,26 +8915,29 @@ class FfiConverterTypeActivityList: FfiConverterRustBuffer<ActivityList> {
 /// <summary>
 /// Requests a ready-to-send TON encrypted-comment body.
 ///
-/// The engine uses the supplied recipient public key or loads it from chain
-/// state, then asks the platform host to authorize access to this wallet's
-/// protected mnemonic.
+/// The engine loads the recipient public key from chain state, or uses the
+/// supplied key for an undeployed recipient, then asks the platform host to
+/// authorize access to this wallet's protected mnemonic.
 /// </summary>
 /// <param name="Recipient">
-/// Recipient wallet address. Must expose `get_public_key` when no key is supplied.
+/// Recipient wallet address. An active wallet must expose `get_public_key`.
 /// </param>
 /// <param name="Comment">
 /// UTF-8 comment to encrypt. Its encoded form must not exceed 960 bytes.
 /// </param>
 /// <param name="RecipientPublicKey">
-/// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+/// Optional 32-byte Ed25519 public key of an undeployed recipient.
 /// 
-/// The engine verifies this key against `recipient` by deriving supported
-/// wallet addresses with default parameters. A mismatch or unsupported
-/// wallet configuration is rejected before authorizing the sender's secret.
+/// The engine always reads the recipient account state first. An active
+/// wallet's `get_public_key` answer is used and this key is ignored. For a
+/// nonexistent or uninitialized account, this key is used after the engine
+/// verifies that it derives `recipient` with supported default wallet
+/// parameters. A mismatch or unsupported wallet configuration is rejected
+/// before authorizing the sender's secret.
 /// </param>
 internal record CreateEncryptedCommentRequest (
     /// <summary>
-    /// Recipient wallet address. Must expose `get_public_key` when no key is supplied.
+    /// Recipient wallet address. An active wallet must expose `get_public_key`.
     /// </summary>
     TonAddressString Recipient, 
     /// <summary>
@@ -8944,11 +8945,14 @@ internal record CreateEncryptedCommentRequest (
     /// </summary>
     string Comment, 
     /// <summary>
-    /// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+    /// Optional 32-byte Ed25519 public key of an undeployed recipient.
     ///
-    /// The engine verifies this key against `recipient` by deriving supported
-    /// wallet addresses with default parameters. A mismatch or unsupported
-    /// wallet configuration is rejected before authorizing the sender's secret.
+    /// The engine always reads the recipient account state first. An active
+    /// wallet's `get_public_key` answer is used and this key is ignored. For a
+    /// nonexistent or uninitialized account, this key is used after the engine
+    /// verifies that it derives `recipient` with supported default wallet
+    /// parameters. A mismatch or unsupported wallet configuration is rejected
+    /// before authorizing the sender's secret.
     /// </summary>
     byte[]? RecipientPublicKey = null
 ) {
@@ -9246,9 +9250,9 @@ class FfiConverterTypeDomainError: FfiConverterRustBuffer<DomainError> {
 /// Recipient wallet address.
 /// </param>
 /// <param name="RecipientPublicKey">
-/// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+/// Optional 32-byte Ed25519 public key of an undeployed recipient.
 /// 
-/// It is verified against `recipient` exactly as
+/// It is used and verified against `recipient` exactly as
 /// [`CreateEncryptedCommentRequest::recipient_public_key`] is.
 /// </param>
 internal record EncryptedCommentRecipientRequest (
@@ -9257,9 +9261,9 @@ internal record EncryptedCommentRecipientRequest (
     /// </summary>
     TonAddressString Recipient, 
     /// <summary>
-    /// Optional 32-byte Ed25519 public key used instead of an on-chain lookup.
+    /// Optional 32-byte Ed25519 public key of an undeployed recipient.
     ///
-    /// It is verified against `recipient` exactly as
+    /// It is used and verified against `recipient` exactly as
     /// [`CreateEncryptedCommentRequest::recipient_public_key`] is.
     /// </summary>
     byte[]? RecipientPublicKey = null
