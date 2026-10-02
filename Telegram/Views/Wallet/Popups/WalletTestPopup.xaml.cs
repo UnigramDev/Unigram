@@ -7,79 +7,75 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Navigation.Services;
-using Telegram.Services;
-using Telegram.Services.Wallet;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Wallet.Popups
 {
-    public sealed partial class WalletTestPopup : ContentPopup
+    /// <summary>
+    /// Asks for three words of the phrase, to show it was written down.
+    /// </summary>
+    /// <remarks>
+    /// Takes the words rather than the service: the caller has just shown them, so it has them.
+    /// </remarks>
+    public sealed partial class WalletTestPopup : ModalPopup
     {
-        private readonly IWalletService _wallet;
-        private readonly INavigationService _navigationService;
+        private const int Count = 3;
 
-        private IReadOnlyList<string> _mnemonicWordList;
-        private IReadOnlyList<string> _mnemonic;
-        private int[] _indexes;
-        private string[] _words;
+        private readonly IReadOnlyList<string> _mnemonic;
+        private readonly int[] _indexes = new int[Count];
+        private readonly string[] _words = new string[Count];
 
-        public WalletTestPopup(IWalletService wallet, INavigationService navigationService)
+        public WalletTestPopup(IReadOnlyList<string> mnemonic)
         {
-            _wallet = wallet;
-            _navigationService = navigationService;
+            _mnemonic = mnemonic;
 
             InitializeComponent();
             InitializeWords();
 
-            PrimaryButtonText = Strings.Import;
+            PrimaryButtonText = Strings.WalletContinue;
             SecondaryButtonText = Strings.Cancel;
         }
 
-        private async void InitializeWords()
+        private void InitializeWords()
         {
-            _mnemonicWordList = WalletService.RecoveryWords;
-            _mnemonic = await _wallet.RevealRecoveryPhraseAsync(_navigationService);
-
+            // Distinct, and in the order they appear in the phrase, so the user reads down their
+            // copy once instead of jumping back and forth.
             var random = new Random();
+            var picked = new SortedSet<int>();
 
-            _indexes = new int[3];
-            _words = new string[3];
-            Words.Children.Clear();
-
-            for (int i = 0; i < 3; i++)
+            while (picked.Count < Count)
             {
-                _indexes[i] = random.Next(0, _mnemonic.Count);
+                picked.Add(random.Next(0, _mnemonic.Count));
+            }
 
-                var local = _indexes[i];
+            picked.CopyTo(_indexes);
+
+            TextBlockHelper.SetMarkdown(Description, string.Format(Strings.WalletTestPhraseInfo, _indexes[0] + 1, _indexes[1] + 1, _indexes[2] + 1));
+
+            for (int i = 0; i < Count; i++)
+            {
+                _words[i] = string.Empty;
+
                 var textBox = new MnemonicTextBox
                 {
                     Index = i,
                     Padding = new Thickness(32, 5, 6, 6),
                 };
 
-                textBox.TextChanged += (s, args) =>
-                {
-                    _words[i] = textBox.Text;
-                    //textBox.ItemsSource = _mnemonicWordList.Where(x => x.StartsWith(textBox.Text, StringComparison.OrdinalIgnoreCase)).ToList();
-                };
-
                 textBox.TextChanged += TextBox_TextChanged;
 
-                _words[i] = string.Empty;
-
-                var content = new Grid();
                 var position = new TextBlock
                 {
-                    Text = $"{local + 1}.",
+                    Text = $"{_indexes[i] + 1}.",
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(10, 5, 6, 6)
                 };
 
+                var content = new Grid();
                 content.Children.Add(textBox);
                 content.Children.Add(position);
 
@@ -92,24 +88,34 @@ namespace Telegram.Views.Wallet.Popups
             if (sender is MnemonicTextBox textBox)
             {
                 _words[textBox.Index] = textBox.Text;
-                textBox.HasError = !_mnemonicWordList.Contains(textBox.Text);
             }
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
-            for (int i = 0; i < 3; i++)
+            MnemonicTextBox first = null;
+
+            for (int i = 0; i < Count; i++)
             {
-                if (_words[i] != _mnemonic[_indexes[i]])
+                if (string.Equals(_words[i].Trim(), _mnemonic[_indexes[i]], StringComparison.OrdinalIgnoreCase))
                 {
-                    args.Cancel = true;
-                    return;
+                    continue;
+                }
+
+                if (Words.Children[i] is Grid content && content.Children[0] is MnemonicTextBox textBox)
+                {
+                    textBox.Reject();
+                    first ??= textBox;
                 }
             }
-        }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
+            if (first != null)
+            {
+                args.Cancel = true;
+                first.Focus(FocusState.Keyboard);
+
+                ToastPopup.Show(XamlRoot, Strings.WalletWrongSecretPhraseInfo, ToastPopupIcon.Error);
+            }
         }
     }
 }

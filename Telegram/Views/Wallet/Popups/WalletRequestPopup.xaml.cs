@@ -93,10 +93,11 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                if (await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
+                _lease ??= _wallet.CreateLease(_navigationService);
+
+                if (await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService, _lease))
                 {
-                    _lease = await _wallet.Vault.LeaseAsync(_navigationService);
-                    _request = await _wallet.GetRequestAsync(_navigationService, _messageId, _message, _lease);
+                    _request = await _wallet.GetRequestAsync(_messageId, _message, _lease);
                 }
             }
             catch (WalletNotBoundException)
@@ -279,7 +280,7 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                await _wallet.AnswerRequestAsync(_navigationService, _request, accept, _lease);
+                await _wallet.AnswerRequestAsync(_request, accept, _lease);
             }
             catch (WalletAccessDeniedException)
             {

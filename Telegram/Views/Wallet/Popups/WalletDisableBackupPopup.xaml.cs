@@ -5,8 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -31,28 +33,21 @@ namespace Telegram.Views.Wallet.Popups
     {
         private readonly IClientService _clientService;
 
-        // Worked out before this opened, because working it out asks the user for things. Null
-        // when it could not be, and then there is nothing to offer.
-        private readonly BigInteger? _fee;
+        // The operation's, and disposed by it.
+        private readonly WalletVault.WalletVaultLease _lease;
 
-        /// <param name="fee">
-        /// What a phrase update would cost. The caller obtains it first: pricing one means binding
-        /// this device and signing an emulated message, and asking for either from inside a popup
-        /// the user opened to make one decision reads as the app changing the subject.
-        /// </param>
-        public WalletDisableBackupPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, BigInteger? fee)
+        // Priced only once the box is ticked: pricing signs an emulated message, so it costs a
+        // confirmation that disabling on its own would not ask for here.
+        private BigInteger? _fee;
+        private bool _pricing;
+
+        public WalletDisableBackupPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease)
             : base(wallet, navigationService)
         {
             InitializeComponent();
 
             _clientService = clientService;
-            _fee = fee;
-
-            // An update that cannot be priced cannot be offered: the alternative is a tick box
-            // that says nothing about what it costs and may not be affordable at all.
-            UpdatePhrase.Visibility = fee.HasValue
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            _lease = lease;
 
             Title = Strings.WalletDisableBackupTitle;
             PrimaryButtonText = Strings.WalletDisable;
@@ -74,11 +69,70 @@ namespace Telegram.Views.Wallet.Popups
 
         private void UpdatePhrase_Toggled(object sender, RoutedEventArgs e)
         {
-            PhraseInfo.Visibility = UpdatePhrase.IsChecked == true
+            var isChecked = UpdatePhrase.IsChecked == true;
+
+            PhraseInfo.Visibility = isChecked
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
+            if (isChecked && _fee == null && !_pricing)
+            {
+                RequestFee();
+            }
+
+            IsPrimaryButtonPending = isChecked && _pricing;
             UpdatePhraseInfo();
+        }
+
+        private async void RequestFee()
+        {
+            _pricing = true;
+            IsPrimaryButtonPending = true;
+
+            var declined = false;
+
+            try
+            {
+                _fee = await _wallet.EstimateKeyRotationFeeAsync(_lease);
+            }
+            catch (WalletAccessDeniedException)
+            {
+                declined = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet key rotation fee could not be estimated: " + ex.Message);
+            }
+
+            _pricing = false;
+            IsPrimaryButtonPending = false;
+
+            if (_fee == null)
+            {
+                // Declined: the box clears, and ticking it again asks again. Not priced: an update
+                // that cannot be priced cannot be offered - the alternative is a tick box that says
+                // nothing about what it costs and may not be affordable at all.
+                UpdatePhrase.IsChecked = false;
+
+                if (!declined)
+                {
+                    UpdatePhrase.IsEnabled = false;
+                }
+
+                return;
+            }
+
+            UpdatePhraseInfo();
+        }
+
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            // An update not yet priced may turn out not to be affordable, and Disable would then
+            // either fail afterwards or quietly drop the half they asked for.
+            if (UpdatePhrase.IsChecked == true && _pricing)
+            {
+                args.Cancel = true;
+            }
         }
 
         /// <summary>
@@ -96,12 +150,9 @@ namespace Telegram.Views.Wallet.Popups
 
             if (_fee is not BigInteger fee || fee <= BigInteger.Zero)
             {
-                // Nothing to say about a cost. A key change is an external message and the chain
-                // charges for one, so this should not happen - but "Network fee: 0" would be a
-                // stranger thing to show than saying nothing about the fee at all.
-                //
-                // The unpriced case is a guard rather than a state: an update that could not be
-                // priced is not offered, so the box that leads here is not there to tick.
+                // Still being priced, or nothing to say about a cost. A key change is an external
+                // message and the chain charges for one, so a zero fee should not happen - but
+                // "Network fee: 0" would be a stranger thing to show than saying nothing at all.
                 PhraseInfoLabel.Text = Strings.WalletUpdateSecretPhraseInfo;
                 IsPrimaryButtonEnabled = true;
                 return;

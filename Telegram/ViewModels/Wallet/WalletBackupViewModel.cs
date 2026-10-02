@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -66,7 +65,9 @@ namespace Telegram.ViewModels.Wallet
                 return;
             }
 
-            var words = await RequestRecoveryPhraseAsync();
+            using var lease = _wallet.CreateLease(NavigationService);
+
+            var words = await RequestRecoveryPhraseAsync(lease);
             if (words != null)
             {
                 await ShowPopupAsync(new WalletPhrasePopup(words));
@@ -81,16 +82,16 @@ namespace Telegram.ViewModels.Wallet
         /// back afterwards is the device's own prompt. Null when either was refused, or when there
         /// is no way to get the key onto this device - all of which say so for themselves.
         /// </remarks>
-        private async Task<IReadOnlyList<string>> RequestRecoveryPhraseAsync()
+        private async Task<IReadOnlyList<string>> RequestRecoveryPhraseAsync(WalletVault.WalletVaultLease lease)
         {
-            if (!await WalletHelper.EnsureBoundAsync(ClientService, _wallet, NavigationService))
+            if (!await WalletHelper.EnsureBoundAsync(ClientService, _wallet, NavigationService, lease))
             {
                 return null;
             }
 
             try
             {
-                return await _wallet.RevealRecoveryPhraseAsync(NavigationService);
+                return await _wallet.RevealRecoveryPhraseAsync(lease);
             }
             catch (WalletAccessDeniedException)
             {
@@ -110,14 +111,9 @@ namespace Telegram.ViewModels.Wallet
         /// </remarks>
         public async void EnableBackup()
         {
-            using var lease = await RequestLeaseAsync();
-            if (lease == null)
-            {
-                return;
-            }
+            using var lease = _wallet.CreateLease(NavigationService);
 
-            var bound = await WalletHelper.BindAsync(ClientService, _wallet, NavigationService, lease);
-            if (!bound.IsBound)
+            if (!await WalletHelper.EnsureBoundAsync(ClientService, _wallet, NavigationService, lease))
             {
                 return;
             }
@@ -126,7 +122,7 @@ namespace Telegram.ViewModels.Wallet
 
             try
             {
-                words = await _wallet.RevealRecoveryPhraseAsync(NavigationService, lease);
+                words = await _wallet.RevealRecoveryPhraseAsync(lease);
             }
             catch (WalletAccessDeniedException)
             {
@@ -143,7 +139,7 @@ namespace Telegram.ViewModels.Wallet
 
             try
             {
-                await _wallet.EnableBackupAsync(NavigationService, words, lease);
+                await _wallet.EnableBackupAsync(words, lease);
                 NavigationService.ShowToast(Toast(Strings.WalletBackupEnabled, Strings.WalletBackupEnabledInfo), ToastPopupIcon.Success);
             }
             catch (Exception ex)
@@ -163,37 +159,18 @@ namespace Telegram.ViewModels.Wallet
 
         public async void DisableBackup()
         {
-            // One confirmation for the whole operation, collected before the popup. Binding this
-            // device, pricing a phrase update and performing it all read the phrase, so the lease
-            // is taken once and carried through. Disabling itself asks for nothing further: the
-            // account takes a signature over its own challenge rather than the password.
-            //
-            // The vault is opened first, deliberately: binding writes the phrase into it, so a
-            // lease taken afterwards would be a second prompt rather than the only one.
-            using var lease = await RequestLeaseAsync();
-            if (lease == null)
+            // One confirmation for the whole operation, given at whichever step first needs the
+            // key: binding this device, pricing the phrase update in the popup, or what follows it.
+            using var lease = _wallet.CreateLease(NavigationService);
+
+            if (!await WalletHelper.EnsureBoundAsync(ClientService, _wallet, NavigationService, lease))
             {
-                // Asked to confirm and said no - or the vault would not open. Either way, saying
-                // no has to stop the thing that was said no to: carrying on to the popup reads as
-                // the cancel having done nothing.
+                // The account password was dismissed, the vault prompt declined, or there is no
+                // wallet to bind to. Saying no has to stop the thing that was said no to.
                 return;
             }
 
-            // With the vault already open, so the bind stores the phrase into it rather than
-            // opening a second one and asking again.
-            var bound = await WalletHelper.BindAsync(ClientService, _wallet, NavigationService, lease);
-            if (!bound.IsBound)
-            {
-                // The account password was dismissed, or there is no wallet to bind to. Same
-                // reasoning: nothing further should appear.
-                return;
-            }
-
-            // Unlike the two above, a fee that cannot be worked out is not a refusal. The backup
-            // can still be turned off; only the offer to replace the phrase goes away.
-            var fee = await RequestRotationFeeAsync(lease);
-
-            var popup = new WalletDisableBackupPopup(ClientService, _wallet, NavigationService, fee);
+            var popup = new WalletDisableBackupPopup(ClientService, _wallet, NavigationService, lease);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
@@ -201,81 +178,111 @@ namespace Telegram.ViewModels.Wallet
                 return;
             }
 
+            // Either way the phrase the user ends up with is the only copy once the backup is gone,
+            // so nothing changes until they have shown they wrote it down.
+            if (popup.IsPhraseUpdateRequested)
+            {
+                var update = await PrepareRecoveryPhraseUpdateAsync(lease);
+                if (update == null || !await ConfirmRecoveryPhraseAsync(update.Words, true))
+                {
+                    return;
+                }
+
+                // The backup is what would let them recover with the old phrase, so it stays on
+                // unless the new phrase can still replace it.
+                if (update.IsExpired)
+                {
+                    NavigationService.ShowToast("[The new recovery phrase expired before it was confirmed. Nothing was changed.]", ToastPopupIcon.Error);
+                    return;
+                }
+
+                if (await TryDisableBackupAsync(lease))
+                {
+                    await CommitRecoveryPhraseUpdateAsync(update, lease);
+                }
+
+                return;
+            }
+
+            var words = await RevealRecoveryPhraseAsync(lease);
+            if (words != null && await ConfirmRecoveryPhraseAsync(words, false) && await TryDisableBackupAsync(lease))
+            {
+                NavigationService.ShowToast(Toast(Strings.WalletBackupDisabled, Strings.WalletBackupDisabledInfo), ToastPopupIcon.Success);
+            }
+        }
+
+        private async Task<bool> TryDisableBackupAsync(WalletVault.WalletVaultLease lease)
+        {
             try
             {
-                await _wallet.DisableBackupAsync(NavigationService, lease);
+                await _wallet.DisableBackupAsync(lease);
+                return true;
             }
             catch (Exception ex)
             {
                 Logger.Error("wallet backup could not be disabled: " + ex.Message);
                 NavigationService.ShowToast("[The backup could not be disabled.]", ToastPopupIcon.Error);
-                return;
-            }
-
-            if (!popup.IsPhraseUpdateRequested)
-            {
-                NavigationService.ShowToast(Toast(Strings.WalletBackupDisabled, Strings.WalletBackupDisabledInfo), ToastPopupIcon.Success);
-                return;
-            }
-
-            await UpdateRecoveryPhraseAsync(lease);
-        }
-
-        /// <summary>
-        /// Opens the vault for the whole of this operation, or answers null if it cannot be.
-        /// </summary>
-        /// <remarks>
-        /// Null is not a failure: the phrase update is what needs a key, and everything else here -
-        /// turning the backup off - works without one. It just will not be offered.
-        /// </remarks>
-        private async Task<WalletVault.WalletVaultLease> RequestLeaseAsync()
-        {
-            try
-            {
-                // The stores are built on the first restore, and the vault with them, so there is
-                // nothing to open until this has run.
-                await _wallet.RestoreAsync();
-
-                var vault = _wallet.Vault;
-                if (vault == null)
-                {
-                    return null;
-                }
-
-                return await vault.LeaseAsync(NavigationService);
-            }
-            catch (WalletVaultException)
-            {
-                // Declined, or nothing on this device satisfies what guards it any more.
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("wallet could not be opened: " + ex.Message);
-                return null;
+                return false;
             }
         }
 
+        private async Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync(WalletVault.WalletVaultLease lease)
+        {
+            IReadOnlyList<string> words;
+
+            try
+            {
+                words = await _wallet.RevealRecoveryPhraseAsync(lease);
+            }
+            catch (WalletAccessDeniedException)
+            {
+                return null;
+            }
+
+            if (words == null)
+            {
+                NavigationService.ShowToast("[The backup could not be disabled.]", ToastPopupIcon.Error);
+            }
+
+            return words;
+        }
+
         /// <summary>
-        /// Replaces the phrase, and puts the new one in front of the user.
+        /// Shows the phrase and tests it, until the user passes the test or abandons the operation.
         /// </summary>
         /// <remarks>
-        /// After the backup is off, never before. Rotating first would leave the server holding a
-        /// phrase that no longer signs - a backup that looks like one and restores a wallet nobody
-        /// can spend from - for as long as the disable took to go through, or forever if it failed.
-        ///
-        /// The words are shown whatever happens next, because at this point they are the only copy
-        /// in existence: the server has none and the chain is about to stop accepting the old key.
+        /// Backing out of the test goes back to the phrase rather than out of the flow: someone
+        /// who could not answer needs to look at the words again, not to start over.
         /// </remarks>
-        private async Task UpdateRecoveryPhraseAsync(WalletVault.WalletVaultLease lease)
+        private async Task<bool> ConfirmRecoveryPhraseAsync(IReadOnlyList<string> words, bool isNew)
+        {
+            while (true)
+            {
+                var phrase = isNew
+                    ? WalletPhrasePopup.ForNewPhrase(words)
+                    : WalletPhrasePopup.ForDisableBackup(words);
+
+                if (await ShowPopupAsync(phrase) != ContentDialogResult.Primary)
+                {
+                    return false;
+                }
+
+                if (await ShowPopupAsync(new WalletTestPopup(words)) == ContentDialogResult.Primary)
+                {
+                    return true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The phrase that would replace the current one, or null when it cannot be offered -
+        /// which has already been said.
+        /// </summary>
+        private async Task<WalletPhraseUpdate> PrepareRecoveryPhraseUpdateAsync(WalletVault.WalletVaultLease lease)
         {
             try
             {
-                var words = await _wallet.UpdateRecoveryPhraseAsync(NavigationService, lease);
-                if (words != null)
-                {
-                    await ShowPopupAsync(new WalletPhrasePopup(words));
-                }
+                return await _wallet.PrepareRecoveryPhraseUpdateAsync(lease);
             }
             catch (WalletRotationPendingException)
             {
@@ -283,52 +290,38 @@ namespace Telegram.ViewModels.Wallet
             }
             catch (WalletAccessDeniedException)
             {
-                // Asked to confirm the change and declined. The backup is off either way, and the
-                // phrase they already have is still the wallet's.
+                // Asked to confirm and declined.
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet recovery phrase update could not be prepared: " + ex.Message);
+                NavigationService.ShowToast("[Your recovery phrase could not be updated.]", ToastPopupIcon.Error);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Makes the new phrase the wallet's.
+        /// </summary>
+        /// <remarks>
+        /// After the backup is off, never before. Rotating first would leave the server holding a
+        /// phrase that no longer signs - a backup that looks like one and restores a wallet nobody
+        /// can spend from - for as long as the disable took to go through, or forever if it failed.
+        /// </remarks>
+        private async Task CommitRecoveryPhraseUpdateAsync(WalletPhraseUpdate update, WalletVault.WalletVaultLease lease)
+        {
+            try
+            {
+                await _wallet.CommitRecoveryPhraseUpdateAsync(update, lease);
                 NavigationService.ShowToast(Toast(Strings.WalletBackupDisabled, Strings.WalletBackupDisabledInfo), ToastPopupIcon.Success);
             }
             catch (Exception ex)
             {
-                // The backup is off and the phrase did not change, which is a state they can be
-                // told plainly - and the phrase they wrote down before is still the right one.
+                // The words they just wrote down open nothing, and they have to be told so: the
+                // phrase they had before is still the wallet's.
                 Logger.Error("wallet recovery phrase could not be updated: " + ex.Message);
-                NavigationService.ShowToast("[The backup was disabled, but your recovery phrase could not be updated.]", ToastPopupIcon.Error);
-            }
-        }
-
-        /// <summary>
-        /// What a phrase update would cost, or null if it cannot be offered at all.
-        /// </summary>
-        /// <remarks>
-        /// Null covers every reason the offer cannot stand: no key on this device and the user
-        /// unwilling to put one there, a refused confirmation, or an estimate that did not come
-        /// back. None of them is a reason to stop them disabling the backup, which is what they
-        /// actually asked for.
-        /// </remarks>
-        private async Task<BigInteger?> RequestRotationFeeAsync(WalletVault.WalletVaultLease lease)
-        {
-            if (lease == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                return await _wallet.EstimateKeyRotationFeeAsync(NavigationService, lease);
-            }
-            catch (WalletNotBoundException)
-            {
-                return null;
-            }
-            catch (WalletAccessDeniedException)
-            {
-                // They were asked to confirm, to sign a message that is never sent, and declined.
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("wallet key rotation fee could not be estimated: " + ex.Message);
-                return null;
+                NavigationService.ShowToast("[The backup was disabled, but your recovery phrase could not be updated. Your previous phrase still opens your wallet.]", ToastPopupIcon.Error);
             }
         }
 
@@ -403,7 +396,9 @@ namespace Telegram.ViewModels.Wallet
                 // first, so a refused replacement leaves the user where they were.
                 HidePopup(typeof(WalletBackupPopup));
 
-                await ShowPopupAsync(WalletImportPopup.ForReplacement(_wallet, NavigationService, password));
+                using var lease = _wallet.CreateLease(NavigationService);
+
+                await ShowPopupAsync(WalletImportPopup.ForReplacement(_wallet, NavigationService, lease, password));
                 return;
             }
 

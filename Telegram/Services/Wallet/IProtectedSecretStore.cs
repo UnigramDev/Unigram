@@ -72,7 +72,7 @@ namespace Telegram.Services.Wallet
         ///
         /// Nothing here asks the user anything. Both of these run on the engine's threads, inside
         /// an operation that has already unlocked the vault in the window it was started from -
-        /// see <see cref="WalletVault.LeaseAsync"/>.
+        /// see <see cref="WalletVault.WalletVaultLease"/>.
         /// </remarks>
         Task WriteAsync(string key, byte[] secret);
 

@@ -262,7 +262,9 @@ namespace Telegram.Views.Wallet.Popups
 
             // Decrypting needs the signing key, and this may be the first thing on this device to
             // ask for one.
-            if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
+            using var lease = _wallet.CreateLease(_navigationService);
+
+            if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService, lease))
             {
                 return;
             }
@@ -271,7 +273,7 @@ namespace Telegram.Views.Wallet.Popups
             {
                 // The encrypted body is what TDLib puts in comment: is_comment_encrypted says it
                 // has to be decrypted with the user's key rather than shown.
-                var comment = await _wallet.DecryptCommentAsync(_navigationService, _transaction, transfer.Comment);
+                var comment = await _wallet.DecryptCommentAsync(_transaction, transfer.Comment, lease);
                 if (comment != null)
                 {
                     _revealed = true;

@@ -1060,7 +1060,10 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
+            // The comment is what the prompt shows, so the user sees which spend they confirm.
+            using var lease = _wallet.CreateLease(_navigationService, _comment);
+
+            if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService, lease))
             {
                 // They were asked for a password or a phrase and said no. The amount they typed is
                 // still here, so the popup is too.
@@ -1077,7 +1080,7 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                var result = await _wallet.SendAsync(_navigationService, _address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 });
+                var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, lease);
                 if (result.IsCommentUnavailable)
                 {
                     // Nothing was signed and nothing was spent, and what to do about it is on this

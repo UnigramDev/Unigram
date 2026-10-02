@@ -38,6 +38,18 @@ namespace Telegram.Services.Wallet
         WalletVault Vault { get; }
 
         /// <summary>
+        /// A lease for one operation, to pass to every method of it that needs the key and to
+        /// dispose when the operation ends. Asks nothing until one of them does.
+        /// </summary>
+        /// <remarks>
+        /// Every method here that signs, reveals or stores a phrase takes one and none takes its
+        /// own, so an operation is asked once however many steps it has.
+        /// </remarks>
+        /// <param name="navigation">The window the operation was started from, where it asks.</param>
+        /// <param name="reason">What the operation is, as the prompt should describe it.</param>
+        WalletVault.WalletVaultLease CreateLease(INavigationService navigation, string reason = null);
+
+        /// <summary>
         /// Begins tracking the account's wallet, and picks up a signing key if one was stored
         /// earlier. Safe to call more than once.
         /// </summary>
@@ -63,18 +75,14 @@ namespace Telegram.Services.Wallet
         /// Answers with the state it left the wallet in, or with the reason it left it alone: a
         /// phrase that is not one, or one that belongs to another wallet.
         /// </remarks>
-        /// <param name="lease">
-        /// An open vault, where the caller has one. Storing the phrase needs the key that encrypts
-        /// it, and a caller that is binding as part of something larger has already opened it.
-        /// </param>
-        Task<WalletBindResult> BindAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null);
+        Task<WalletBindResult> BindAsync(IReadOnlyList<string> words, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Binds using the phrase held in the Telegram cloud, which needs only the account
         /// password. Throws <see cref="WalletNotBoundException"/> when the phrase cannot be read
         /// back, and the user has to type it instead.
         /// </summary>
-        Task<WalletBindResult> BindFromCloudAsync(INavigationService navigation, string password, WalletVault.WalletVaultLease lease = null);
+        Task<WalletBindResult> BindFromCloudAsync(string password, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Returns the recovery phrase from the Telegram cloud backup. Requires the account
@@ -100,23 +108,23 @@ namespace Telegram.Services.Wallet
         /// <see cref="WalletAccessDeniedException"/>: the user was asked and said no, and asking
         /// them for their account password instead would be answering a refusal with a demand.
         /// </remarks>
-        Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null);
+        Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync(WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Stores the recovery phrase in the Telegram cloud, behind the account password.
         /// </summary>
-        Task EnableBackupAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null);
+        Task EnableBackupAsync(IReadOnlyList<string> words, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Removes the cloud copy of the recovery phrase, leaving the phrase itself as the only way
         /// back into the wallet.
         /// </summary>
-        Task DisableBackupAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null);
+        Task DisableBackupAsync(WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Replaces the account's wallet with one the user already has, from its recovery phrase.
         /// </summary>
-        Task ReplaceWalletAsync(INavigationService navigation, string password, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null);
+        Task ReplaceWalletAsync(string password, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Signs a transfer here and has TDLib broadcast it. Throws
@@ -138,7 +146,7 @@ namespace Telegram.Services.Wallet
         /// wallet's, so only the two of them can read it - and only a wallet contract that exposes
         /// its key can be sent one.
         /// </param>
-        Task<WalletTransferResult> SendAsync(INavigationService navigation, string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless);
+        Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// What the network would charge for a transfer, in nanograms, or null when it cannot be
@@ -163,27 +171,33 @@ namespace Telegram.Services.Wallet
         /// Throws <see cref="WalletNotBoundException"/> when this device holds no key. Null is
         /// only ever "the estimate did not come back", never "there is nothing to estimate".
         /// </remarks>
-        /// <param name="lease">
-        /// An open vault, where the caller has one. Pricing a rotation and performing it are two
-        /// halves of one thing the user asked for, so they share a confirmation rather than
-        /// collecting one each, either side of a popup.
-        /// </param>
-        Task<BigInteger?> EstimateKeyRotationFeeAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null);
+        Task<BigInteger?> EstimateKeyRotationFeeAsync(WalletVault.WalletVaultLease lease);
 
         /// <summary>
-        /// Replaces the wallet's signing key, keeping its address, and answers with the phrase
-        /// that opens it from now on.
+        /// Generates a phrase to replace the wallet's current one, keeping its address, without
+        /// changing anything yet.
         /// </summary>
         /// <remarks>
         /// The point of it is a phrase the server has never held, so it goes with turning the
-        /// cloud backup off - and the words it returns are the only copy anywhere. Show them.
+        /// cloud backup off. Show the words, have them tested, then pass the result to
+        /// <see cref="CommitRecoveryPhraseUpdateAsync"/>; dropping it instead abandons the update.
         ///
+        /// Throws <see cref="WalletRotationPendingException"/> when one is already out and
+        /// <see cref="WalletNotBoundException"/> when this device holds no key.
+        /// </remarks>
+        Task<WalletPhraseUpdate> PrepareRecoveryPhraseUpdateAsync(WalletVault.WalletVaultLease lease);
+
+        /// <summary>
+        /// Makes a prepared phrase the wallet's.
+        /// </summary>
+        /// <remarks>
         /// Throws <see cref="WalletRotationPendingException"/> when one is already out,
+        /// <see cref="WalletRotationFailedException"/> when the preparation has expired,
         /// <see cref="WalletRequestException"/> when the message was refused, and
         /// <see cref="WalletNotBoundException"/> when this device holds no key. In every failure
         /// the wallet is left exactly as it was.
         /// </remarks>
-        Task<IReadOnlyList<string>> UpdateRecoveryPhraseAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null);
+        Task CommitRecoveryPhraseUpdateAsync(WalletPhraseUpdate update, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Resolves a <c>.ton</c> name to an address, or null when it resolves to nothing. Needs no
@@ -223,10 +237,10 @@ namespace Telegram.Services.Wallet
         /// the session and decrypted here. Only <c>sendTransaction</c> answers; anything else comes
         /// back null and is answered with an error rather than shown.
         /// </remarks>
-        /// <param name="navigation">
-        /// The window to ask in. Reading the request needs the wallet key - the session it is
-        /// encrypted to is derived from it - so this costs a confirmation before anything can be
-        /// shown, and there is no way round that: the request cannot be read without it.
+        /// <param name="lease">
+        /// Inflated here. Reading the request needs the wallet key - the session it is encrypted
+        /// to is derived from it - so this costs a confirmation before anything can be shown, and
+        /// there is no way round that: the request cannot be read without it.
         /// </param>
         /// <summary>
         /// The session a request belongs to, for the dApp's identity.
@@ -239,7 +253,7 @@ namespace Telegram.Services.Wallet
         /// </remarks>
         Task<TonConnectSession> GetSessionAsync(long sessionId);
 
-        Task<WalletRequest> GetRequestAsync(INavigationService navigation, long messageId, MessageTonConnectRequest message, WalletVault.WalletVaultLease lease = null);
+        Task<WalletRequest> GetRequestAsync(long messageId, MessageTonConnectRequest message, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Answers a request, either way, and tells the dApp.
@@ -249,13 +263,9 @@ namespace Telegram.Services.Wallet
         /// same request and the server lets exactly one of them through. Losing the race is not a
         /// failure - another device answered - and comes back false.
         /// </remarks>
-        /// <param name="lease">
-        /// The vault the sheet opened to read the request with. Reading it and answering it are
-        /// one act from the user's side, so they share the one confirmation.
-        /// </param>
-        Task<bool> AnswerRequestAsync(INavigationService navigation, WalletRequest request, bool accept, WalletVault.WalletVaultLease lease = null);
+        Task<bool> AnswerRequestAsync(WalletRequest request, bool accept, WalletVault.WalletVaultLease lease);
 
-        Task<WalletConnectResult> ConnectAsync(INavigationService navigation, TonConnectSession session, TonConnectConnectRequest request, string domain, string traceId);
+        Task<WalletConnectResult> ConnectAsync(TonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Decrypts the comment of a history entry that carries one. Needs the signing key.
@@ -265,7 +275,7 @@ namespace Telegram.Services.Wallet
         /// <c>is_comment_encrypted</c> is set. The engine decrypts the message body it belongs to,
         /// so it is wrapped back into one by <see cref="WalletCommentBody"/> on the way.
         /// </param>
-        Task<string> DecryptCommentAsync(INavigationService navigation, TonWalletTransaction transaction, string encryptedBody);
+        Task<string> DecryptCommentAsync(TonWalletTransaction transaction, string encryptedBody, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// Forgets the signing key on this device. The wallet itself, and its cloud backup, are

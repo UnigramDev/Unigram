@@ -815,6 +815,7 @@
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Controls\MenuFlyoutSlider.cs" />
     <Compile Include="Controls\SuggestTextBox.cs" />
+    <Compile Include="Controls\MnemonicTextBox.cs" />
     <Compile Include="Controls\Views\SearchChatsView.xaml.cs">
       <DependentUpon>SearchChatsView.xaml</DependentUpon>
     </Compile>

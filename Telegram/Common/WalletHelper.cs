@@ -182,25 +182,19 @@ namespace Telegram.Common
         /// phrase goes into protected storage, and nothing asks for that password again - the
         /// device has the key from then on, and the prompts after this are its own.
         ///
-        /// So every action that signs, reveals or decrypts calls this first and gives up quietly
-        /// if it comes back false: the user has already been told why, or has said no.
+        /// So every action that signs, reveals or decrypts calls this first, with its own lease,
+        /// and gives up quietly if it comes back false: the user has already been told why, or has
+        /// said no. A device that is already bound asks nothing and leaves the lease as it was.
         /// </remarks>
-        public static async Task<bool> EnsureBoundAsync(IClientService clientService, IWalletService wallet, INavigationService navigation)
+        public static async Task<bool> EnsureBoundAsync(IClientService clientService, IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
         {
-            var bound = await BindAsync(clientService, wallet, navigation, null);
+            var bound = await BindAsync(clientService, wallet, navigation, lease);
             return bound.IsBound;
         }
 
         /// <summary>
-        /// The same, for a caller that is binding as one step of something larger.
+        /// The same, answering with the outcome rather than whether it is bound.
         /// </summary>
-        /// <remarks>
-        /// Two things travel that would otherwise be asked for twice. The <paramref name="lease"/>
-        /// goes in, so storing the phrase uses the vault the caller already opened rather than
-        /// opening it again. The account password comes back, because the caller very likely needs
-        /// the same one a moment later - disabling the cloud backup does - and the user should not
-        /// be made to type it twice in one operation.
-        /// </remarks>
         public static async Task<WalletBindOutcome> BindAsync(IClientService clientService, IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
         {
             var state = await wallet.RestoreAsync();
@@ -222,7 +216,7 @@ namespace Telegram.Common
 
             // No cloud copy to read, so the phrase has to come from the user. The import popup
             // binds on its own and refuses a phrase that belongs to another wallet.
-            await navigation.ShowPopupAsync(new WalletImportPopup(wallet, navigation));
+            await navigation.ShowPopupAsync(new WalletImportPopup(wallet, navigation, lease));
             return new WalletBindOutcome(wallet.State.CanSign, null);
         }
 
@@ -307,7 +301,7 @@ namespace Telegram.Common
         {
             try
             {
-                var bound = await wallet.BindFromCloudAsync(navigation, password, lease);
+                var bound = await wallet.BindFromCloudAsync(password, lease);
                 if (bound.Failure == null)
                 {
                     return BindOutcome.Bound;
@@ -321,6 +315,11 @@ namespace Telegram.Common
             catch (WalletRequestException ex) when (ex.IsInvalidPassword)
             {
                 return BindOutcome.WrongPassword;
+            }
+            catch (WalletAccessDeniedException)
+            {
+                // Storing the phrase asked for the vault and they declined: an answer, not a fault.
+                return BindOutcome.Failed;
             }
             catch (Exception ex)
             {

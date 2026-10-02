@@ -149,7 +149,7 @@ namespace Telegram.Services.Wallet
         /// Nothing here can ask the user for anything: the engine calls this from its own threads,
         /// and it is the operation - started in a window, by someone holding that window's
         /// navigation service - that unlocked the vault before handing the work over. An engine
-        /// callback arriving with no lease open is a wallet operation that forgot to take one, and
+        /// callback arriving with no lease inflated is a wallet operation that forgot to, and
         /// it fails rather than guessing which window to interrupt.
         /// </remarks>
         private byte[] Leased()

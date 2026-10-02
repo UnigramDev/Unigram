@@ -212,38 +212,48 @@ namespace Telegram.Services.Wallet
         internal byte[] Leased { get; private set; }
 
         /// <summary>
-        /// Asks the user for whatever guards the key, and holds it for as long as the lease lives.
+        /// A lease for one operation, which asks nothing until <see cref="WalletVaultLease.EnsureAsync"/>.
         /// </summary>
         /// <param name="navigation">
         /// The window to ask in - the one the user started this from. Always a parameter, because
         /// the wallet is reachable from every window in the app and there is no such thing as the
         /// current one.
         /// </param>
-        /// <remarks>
-        /// One lease per operation, and a prompt per lease: the engine reads a secret when it is
-        /// about to sign, so an operation is a spend, and "confirm all spending" only means
-        /// something if each one asks. Nothing is cached between leases.
-        ///
-        /// Taken before the work is handed to the engine, on the thread that started it, so that
-        /// no prompt ever has to be raised from an engine thread with no window in mind.
-        ///
-        /// **Leases are serialized.** A second operation waits for the first to finish and then
-        /// asks on its own account - it never rides on a confirmation the user gave for something
-        /// else. Waiting before asking rather than after is also what keeps two prompts from
-        /// stacking up on the user.
-        ///
-        /// It follows that an operation must not take a lease while holding one: it would wait for
-        /// itself. Nothing does, and nothing should - a lease covers the whole operation, the parts
-        /// the engine runs included.
-        /// </remarks>
+        /// <param name="reason">
+        /// What the operation is, as the prompt should describe it.
+        /// </param>
+        public WalletVaultLease CreateLease(INavigationService navigation, string reason = null)
+        {
+            return new WalletVaultLease(() => Task.FromResult(this), navigation, reason);
+        }
+
+        /// <summary>
+        /// A lease that has already asked, for the operations that must have the key before they
+        /// do anything else.
+        /// </summary>
         public async Task<WalletVaultLease> LeaseAsync(INavigationService navigation, string reason = null)
+        {
+            var lease = CreateLease(navigation, reason);
+
+            try
+            {
+                await lease.EnsureAsync();
+                return lease;
+            }
+            catch
+            {
+                lease.Dispose();
+                throw;
+            }
+        }
+
+        private async Task AcquireAsync(INavigationService navigation, string reason)
         {
             await _mutex.WaitAsync();
 
             try
             {
                 Leased = await ResolveAsync(navigation, reason);
-                return new WalletVaultLease(this);
             }
             catch
             {
@@ -261,37 +271,121 @@ namespace Telegram.Services.Wallet
         }
 
         /// <summary>
-        /// One operation's hold on the key. Dropping it puts the vault back to asking, and lets
-        /// the next operation through.
+        /// One operation's hold on the key, taken the first time something in it needs the key.
+        /// Disposing it puts the vault back to asking, and lets the next operation through.
         /// </summary>
+        /// <remarks>
+        /// One lease per operation, and a prompt per lease: the engine reads a secret when it is
+        /// about to sign, so an operation is a spend, and "confirm all spending" only means
+        /// something if each one asks. Nothing is cached between leases. The operation creates it,
+        /// passes it to everything it calls, and disposes it - nothing it calls takes a lease of
+        /// its own, which is what makes waiting on itself impossible.
+        ///
+        /// Inflated before the work is handed to the engine, on the thread that started it, so
+        /// that no prompt ever has to be raised from an engine thread with no window in mind.
+        ///
+        /// **Inflated leases are serialized.** A second operation waits in
+        /// <see cref="EnsureAsync"/> for the first to finish and then asks on its own account - it
+        /// never rides on a confirmation the user gave for something else. Whatever the operation
+        /// checked before inflating may have changed while it waited, so state checks belong after.
+        ///
+        /// A refusal leaves the lease as it was. What a "no" means is the operation's to decide -
+        /// declining an optional extra is not declining the whole - and a later
+        /// <see cref="EnsureAsync"/> asks again.
+        /// </remarks>
         public sealed class WalletVaultLease : IDisposable
         {
-            private readonly WalletVault _vault;
+            private readonly Func<Task<WalletVault>> _resolve;
+            private readonly INavigationService _navigation;
+            private readonly string _reason;
 
-            private bool _released;
+            private WalletVault _vault;
+            private Task _inflating;
+            private bool _disposed;
 
-            internal WalletVaultLease(WalletVault vault)
+            internal WalletVaultLease(Func<Task<WalletVault>> resolve, INavigationService navigation, string reason)
             {
-                _vault = vault;
+                _resolve = resolve;
+                _navigation = navigation;
+                _reason = reason;
             }
+
+            public bool IsInflated => _vault != null;
 
             /// <summary>
             /// The key itself, for the callers that work with it directly rather than through the
             /// engine - changing what guards it, or reading the phrase back.
             /// </summary>
-            public byte[] Key => _vault.Leased;
+            public byte[] Key => _vault?.Leased ?? throw new InvalidOperationException("The lease has not been inflated.");
+
+            /// <summary>
+            /// Asks for the key if this operation has not yet, and returns at once if it has.
+            /// </summary>
+            /// <remarks>
+            /// Throws <see cref="WalletVaultException"/> when the user declines or the vault cannot
+            /// be opened.
+            /// </remarks>
+            public Task EnsureAsync()
+            {
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(nameof(WalletVaultLease));
+                }
+
+                if (_vault != null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                // A second inflation in flight would wait on the gate this one is about to take,
+                // and nothing would ever release it.
+                var inflating = _inflating;
+                if (inflating == null || inflating.IsFaulted || inflating.IsCanceled)
+                {
+                    _inflating = inflating = InflateAsync();
+                }
+
+                return inflating;
+            }
+
+            private async Task InflateAsync()
+            {
+                var vault = await _resolve();
+                if (vault == null)
+                {
+                    throw new WalletVaultException(WalletVaultFailure.Empty, "no vault");
+                }
+
+                await vault.AcquireAsync(_navigation, _reason);
+
+                if (_disposed)
+                {
+                    // Disposed while the prompt was up: the operation is gone, so the gate must not
+                    // stay with it.
+                    vault.Release();
+                    throw new ObjectDisposedException(nameof(WalletVaultLease));
+                }
+
+                _vault = vault;
+            }
 
             public void Dispose()
             {
-                // Releasing twice would hand the gate to two operations at once, and each would
-                // believe the user had confirmed it.
-                if (_released)
+                if (_disposed)
                 {
                     return;
                 }
 
-                _released = true;
-                _vault.Release();
+                _disposed = true;
+
+                // Releasing twice would hand the gate to two operations at once, and each would
+                // believe the user had confirmed it.
+                var vault = _vault;
+                if (vault != null)
+                {
+                    _vault = null;
+                    vault.Release();
+                }
             }
         }
 
@@ -525,6 +619,7 @@ namespace Telegram.Services.Wallet
                 return current;
             }
 
+            await lease.EnsureAsync();
             await ChangeAsync(navigation, lease.Key, choice.Method, choice.Passcode);
             return choice.Method;
         }

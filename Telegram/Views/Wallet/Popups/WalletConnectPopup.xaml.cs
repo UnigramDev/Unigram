@@ -200,12 +200,14 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService))
+                using var lease = _wallet.CreateLease(_navigationService, _domain);
+
+                if (!await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService, lease))
                 {
                     return;
                 }
 
-                var result = await _wallet.ConnectAsync(_navigationService, session, _link.ConnectRequest, _domain, _link.TraceId);
+                var result = await _wallet.ConnectAsync(session, _link.ConnectRequest, _domain, _link.TraceId, lease);
                 if (result.IsConnected)
                 {
                     Hide();

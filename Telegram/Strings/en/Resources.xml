@@ -14082,6 +14082,15 @@
 
     <string name="WalletYourRecoveryPhrase">Your Recovery Phrase</string>
     <string name="WalletDone">Done</string>
+    <string name="WalletContinue">Continue</string>
+    <string name="WalletTestPhrase">Test Time</string>
+    <string name="WalletTestPhraseInfo">Make sure you wrote your recovery phrase down correctly. Enter words **{0}**, **{1}** and **{2}**.</string>
+    <string name="WalletWrongSecretPhraseInfo">The words you entered don\'t match the wallet.</string>
+    <string name="WalletCancelDisableBackupTitle">Cancel Disabling Backup?</string>
+    <string name="WalletCancelDisableBackupInfo">Your secret phrase will not be updated.</string>
+    <string name="WalletCancelDisabling">Cancel Disabling</string>
+    <string name="WalletNewSecretPhrase">New Secret Phrase</string>
+    <string name="WalletNewSecretPhraseInfo">A new recovery phrase for your wallet has been generated. Write it down and keep it secret.</string>
 
     <string name="Grams_few">{0} Grams</string>
     <string name="Grams_many">{0} Grams</string>

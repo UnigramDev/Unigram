@@ -26,7 +26,9 @@ namespace Telegram.Views.Wallet.Popups
         private readonly IWalletService _wallet;
         private readonly INavigationService _navigationService;
 
-        private IReadOnlyList<string> _mnemonicWordList;
+        // The opener's, and disposed by it: importing is one step of whatever it is doing.
+        private readonly WalletVault.WalletVaultLease _lease;
+
         private string[] _words;
 
         // What the words are for. Binding adopts the account's own wallet onto this device and
@@ -36,39 +38,34 @@ namespace Telegram.Views.Wallet.Popups
         private readonly string _replacementPassword;
         private readonly bool _isReplacing;
 
-        public WalletImportPopup(IWalletService wallet, INavigationService navigationService)
-            : this(wallet, navigationService, null, false)
+        public WalletImportPopup(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease)
+            : this(wallet, navigationService, lease, null, false)
         {
         }
 
         /// <summary>
         /// The same screen, used to swap the account's wallet for another one the user already has.
         /// </summary>
-        public static WalletImportPopup ForReplacement(IWalletService wallet, INavigationService navigationService, string password)
+        public static WalletImportPopup ForReplacement(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease, string password)
         {
-            return new WalletImportPopup(wallet, navigationService, password, true);
+            return new WalletImportPopup(wallet, navigationService, lease, password, true);
         }
 
-        private WalletImportPopup(IWalletService wallet, INavigationService navigationService, string password, bool isReplacing)
+        private WalletImportPopup(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease, string password, bool isReplacing)
         {
             _wallet = wallet;
             _navigationService = navigationService;
+            _lease = lease;
             _replacementPassword = password;
             _isReplacing = isReplacing;
 
             InitializeComponent();
-            InitializeKit();
             InitializeWords(12);
 
             Navigation.SelectionChanged += Navigation_SelectionChanged;
 
             PrimaryButtonText = Strings.Import;
             SecondaryButtonText = Strings.Cancel;
-        }
-
-        private void InitializeKit()
-        {
-            _mnemonicWordList ??= WalletService.RecoveryWords;
         }
 
         private void InitializeWords(int count)
@@ -80,17 +77,10 @@ namespace Telegram.Views.Wallet.Popups
 
             for (int i = 0; i < count; i++)
             {
-                var local = i;
                 var textBox = new MnemonicTextBox
                 {
                     Index = i,
                     Padding = new Thickness(32, 5, 6, 6),
-                };
-
-                textBox.TextChanged += (s, args) =>
-                {
-                    _words[local] = textBox.Text;
-                    //textBox.ItemsSource = _mnemonicWordList.Where(x => x.StartsWith(textBox.Text, StringComparison.OrdinalIgnoreCase)).ToList();
                 };
 
                 textBox.TextChanged += TextBox_TextChanged;
@@ -143,7 +133,6 @@ namespace Telegram.Views.Wallet.Popups
             if (sender is MnemonicTextBox textBox)
             {
                 _words[textBox.Index] = textBox.Text;
-                textBox.HasError = !_mnemonicWordList.Contains(textBox.Text);
             }
         }
 
@@ -235,7 +224,22 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            var result = await _wallet.BindAsync(_navigationService, _words);
+            WalletBindResult result;
+
+            try
+            {
+                result = await _wallet.BindAsync(_words, _lease);
+            }
+            catch (WalletAccessDeniedException)
+            {
+                // Declined the vault prompt. The words stay, so confirming again asks again.
+                _submitted = false;
+                IsPrimaryButtonPending = false;
+
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
 
             _submitted = false;
             IsPrimaryButtonPending = false;
@@ -269,7 +273,16 @@ namespace Telegram.Views.Wallet.Popups
         {
             try
             {
-                await _wallet.ReplaceWalletAsync(_navigationService, _replacementPassword, _words);
+                await _wallet.ReplaceWalletAsync(_replacementPassword, _words, _lease);
+            }
+            catch (WalletAccessDeniedException)
+            {
+                _submitted = false;
+                IsPrimaryButtonPending = false;
+
+                args.Cancel = true;
+                deferral.Complete();
+                return;
             }
             catch (Exception ex)
             {
@@ -313,63 +326,6 @@ namespace Telegram.Views.Wallet.Popups
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             InitializeWords(Navigation.SelectedIndex == 0 ? 12 : 24);
-        }
-    }
-
-    public class MnemonicTextBox : TextBox
-    {
-        public MnemonicTextBox()
-        {
-            DefaultStyleKey = typeof(MnemonicTextBox);
-        }
-
-        #region Index
-
-        public int Index
-        {
-            get { return (int)GetValue(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
-        }
-
-        public static readonly DependencyProperty IndexProperty =
-            DependencyProperty.Register(nameof(Index), typeof(int), typeof(MnemonicTextBox), new PropertyMetadata(0));
-
-        #endregion
-
-        #region HasError
-
-        public bool HasError
-        {
-            get { return (bool)GetValue(HasErrorProperty); }
-            set { SetValue(HasErrorProperty, value); }
-        }
-
-        public static readonly DependencyProperty HasErrorProperty =
-            DependencyProperty.Register(nameof(HasError), typeof(bool), typeof(MnemonicTextBox), new PropertyMetadata(false, OnHasErrorChanged));
-
-        private static void OnHasErrorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            VisualStateManager.GoToState(d as Control, (bool)e.NewValue ? "Invalid" : "Normal", false);
-        }
-
-        #endregion
-
-        protected override bool GoToElementStateCore(string stateName, bool useTransitions)
-        {
-            return base.GoToElementStateCore(stateName, useTransitions);
-        }
-    }
-
-    public class MnemonicTextBoxVisualStateManager : VisualStateManager
-    {
-        protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
-        {
-            if (group.States.Count > 2 && stateName != "Focused" && control is MnemonicTextBox { HasError: true })
-            {
-                return base.GoToStateCore(control, templateRoot, "Invalid", group, state, false);
-            }
-
-            return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
         }
     }
 }

@@ -61,6 +61,50 @@ namespace Telegram.Views.Wallet.Popups
             InitializeWords();
         }
 
+        /// <summary>
+        /// The phrase as a step of disabling the backup, where it is about to become the only copy:
+        /// it leads on to the test, and leaving it abandons the whole operation, so that is asked.
+        /// </summary>
+        public static WalletPhrasePopup ForDisableBackup(IReadOnlyList<string> words)
+        {
+            var popup = new WalletPhrasePopup(words);
+            popup.PrimaryButtonContent = Strings.WalletContinue;
+            popup.Closing += popup.OnDisableBackupClosing;
+
+            return popup;
+        }
+
+        /// <summary>
+        /// The same, for a phrase that replaces the current one as part of disabling the backup.
+        /// </summary>
+        public static WalletPhrasePopup ForNewPhrase(IReadOnlyList<string> words)
+        {
+            var popup = ForDisableBackup(words);
+            popup.Heading.Text = Strings.WalletNewSecretPhrase;
+
+            TextBlockHelper.SetMarkdown(popup.Info, Strings.WalletNewSecretPhraseInfo);
+
+            return popup;
+        }
+
+        private async void OnDisableBackupClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
+        {
+            if (args.Result == ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var deferral = args.GetDeferral();
+
+            var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.WalletCancelDisableBackupInfo, Strings.WalletCancelDisableBackupTitle, Strings.WalletCancelDisabling, Strings.WalletContinue);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                args.Cancel = true;
+            }
+
+            deferral.Complete();
+        }
+
         private void InitializeWords()
         {
             // Half down the first column and half down the second, so 1 sits beside 13 in a

@@ -231,16 +231,43 @@ namespace Telegram.Services.Wallet
         /// </summary>
         public WalletVault Vault { get; private set; }
 
+        public WalletVault.WalletVaultLease CreateLease(INavigationService navigation, string reason = null)
+        {
+            return new WalletVault.WalletVaultLease(ResolveVaultAsync, navigation, reason);
+        }
+
+        // The vault is built with the stores, which may not exist yet when the operation that
+        // will need it begins.
+        private async Task<WalletVault> ResolveVaultAsync()
+        {
+            await _mutex.WaitAsync();
+            try
+            {
+                EnsureStores();
+                return Vault;
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+        }
+
         /// <summary>
-        /// Opens the vault for one operation, reporting a dismissed prompt the way every method
-        /// here does: as <see cref="WalletAccessDeniedException"/>, which callers already treat as
-        /// an answer rather than a fault.
+        /// Inflates the operation's lease, reporting a dismissed prompt the way every method here
+        /// does: as <see cref="WalletAccessDeniedException"/>, which callers already treat as an
+        /// answer rather than a fault.
         /// </summary>
-        private async Task<WalletVault.WalletVaultLease> LeaseAsync(INavigationService navigation, string reason = null)
+        /// <remarks>
+        /// **Never with <see cref="_mutex"/> held.** Inflating takes the vault gate, and an
+        /// operation already holding the gate may be waiting for the mutex - so the two would wait
+        /// on each other. Resolving the vault takes the mutex too, so on a lease not yet inflated
+        /// the mistake hangs every time rather than occasionally.
+        /// </remarks>
+        private static async Task EnsureLeaseAsync(WalletVault.WalletVaultLease lease)
         {
             try
             {
-                return await Vault.LeaseAsync(navigation, reason);
+                await lease.EnsureAsync();
             }
             catch (WalletVaultException ex) when (ex.Failure == WalletVaultFailure.Cancelled)
             {
@@ -498,8 +525,18 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        public async Task<WalletBindResult> BindAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null)
+        public async Task<WalletBindResult> BindAsync(IReadOnlyList<string> words, WalletVault.WalletVaultLease lease)
         {
+            // Read again under the mutex; this only spares a prompt for a wallet that is not there.
+            if (_wallet is not { Address.Length: > 0 })
+            {
+                return new WalletBindResult(WalletBindFailure.NoWallet);
+            }
+
+            // Storing the phrase is what makes the engine ask for the vault, and the engine has no
+            // window of its own to ask in. Before the mutex, see EnsureLeaseAsync.
+            await EnsureLeaseAsync(lease);
+
             await _mutex.WaitAsync();
             try
             {
@@ -510,12 +547,6 @@ namespace Telegram.Services.Wallet
                 {
                     return new WalletBindResult(WalletBindFailure.NoWallet);
                 }
-
-                // After EnsureStores, which is what builds the vault - and in the window the user
-                // typed the phrase into, because storing it is what makes the engine ask for the
-                // vault, and the engine has no window of its own to ask in. Only when the caller
-                // is not already holding one: binding is often the first half of something larger.
-                using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
                 var array = new string[words.Count];
 
@@ -587,24 +618,29 @@ namespace Telegram.Services.Wallet
             throw new WalletRequestException(response as Error);
         }
 
-        public async Task<WalletBindResult> BindFromCloudAsync(INavigationService navigation, string password, WalletVault.WalletVaultLease lease = null)
+        public async Task<WalletBindResult> BindFromCloudAsync(string password, WalletVault.WalletVaultLease lease)
         {
             // Both halves throw what the caller has to tell apart: a wrong password comes out of
             // the export as WalletRequestException, and a phrase that derives another wallet out
             // of the bind.
             var words = await ExportRecoveryPhraseAsync(password);
-            return await BindAsync(navigation, words, lease);
+            return await BindAsync(words, lease);
         }
 
-        public async Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        public async Task<IReadOnlyList<string>> RevealRecoveryPhraseAsync(WalletVault.WalletVaultLease lease)
         {
+            if (_descriptor == null)
+            {
+                return null;
+            }
+
+            await EnsureLeaseAsync(lease);
+
             var descriptor = _descriptor;
             if (descriptor == null)
             {
                 return null;
             }
-
-            using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
             try
             {
@@ -645,7 +681,7 @@ namespace Telegram.Services.Wallet
         /// by the wallet they are about; a replacement is proved by the wallet being imported,
         /// which is not the current one and is not bound to anything yet.
         /// </remarks>
-        private async Task<TonWalletOwnershipProof> ProveOwnershipAsync(WalletDescriptor descriptor, INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        private async Task<TonWalletOwnershipProof> ProveOwnershipAsync(WalletDescriptor descriptor, WalletVault.WalletVaultLease lease)
         {
             var lifecycle = _lifecycle;
 
@@ -654,16 +690,15 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
+            // Signing reads the wallet key. Before the challenge, which the prompt could otherwise
+            // outlive.
+            await EnsureLeaseAsync(lease);
+
             var response = await _clientService.SendAsync(new GetTonWalletOwnershipProofChallenge());
             if (response is not TonWalletOwnershipProofChallenge challenge)
             {
                 throw new WalletRequestException(response as Error);
             }
-
-            // Signing reads the wallet key, so it is behind the vault like everything else that
-            // does. The caller usually holds the lease already: proving ownership is never the
-            // whole of an operation, only the part of it the account asks for.
-            using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -680,9 +715,9 @@ namespace Telegram.Services.Wallet
         /// No account password any more: the proof is what the account now takes, and it is worth
         /// noticing that this is one prompt fewer rather than one more.
         /// </remarks>
-        public async Task EnableBackupAsync(INavigationService navigation, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null)
+        public async Task EnableBackupAsync(IReadOnlyList<string> words, WalletVault.WalletVaultLease lease)
         {
-            var proof = await ProveOwnershipAsync(_descriptor, navigation, lease);
+            var proof = await ProveOwnershipAsync(_descriptor, lease);
 
             await _clientService.SendAsync(new EnableTonWalletBackup(string.Join(" ", words), proof));
         }
@@ -696,9 +731,9 @@ namespace Telegram.Services.Wallet
         /// the proof says they hold the key, which is the thing actually at stake in giving up the
         /// only other copy of it.
         /// </remarks>
-        public async Task DisableBackupAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        public async Task DisableBackupAsync(WalletVault.WalletVaultLease lease)
         {
-            var proof = await ProveOwnershipAsync(_descriptor, navigation, lease);
+            var proof = await ProveOwnershipAsync(_descriptor, lease);
 
             await _clientService.SendAsync(new DisableTonWalletBackupWithProof(proof));
         }
@@ -716,7 +751,7 @@ namespace Telegram.Services.Wallet
         /// in protected storage for a wallet this device does not have, which is the kind of thing
         /// that is only ever found much later.
         /// </remarks>
-        public async Task ReplaceWalletAsync(INavigationService navigation, string password, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease = null)
+        public async Task ReplaceWalletAsync(string password, IReadOnlyList<string> words, WalletVault.WalletVaultLease lease)
         {
             var lifecycle = _lifecycle;
             if (lifecycle == null)
@@ -724,12 +759,15 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
+            // Importing stores the phrase under the vault key.
+            await EnsureLeaseAsync(lease);
+
             var imported = await lifecycle.ImportWallet(
                 new ImportWalletRequest(NewRecordId(), DefaultNetwork, words.ToArray()));
 
             try
             {
-                var proof = await ProveOwnershipAsync(imported, navigation, lease);
+                var proof = await ProveOwnershipAsync(imported, lease);
 
                 var response = await _clientService.SendAsync(
                     new ReplaceTonWallet(password ?? string.Empty, imported.PublicKey, proof));
@@ -775,7 +813,7 @@ namespace Telegram.Services.Wallet
             Raise();
         }
 
-        public async Task<WalletTransferResult> SendAsync(INavigationService navigation, string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless)
+        public async Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, WalletVault.WalletVaultLease lease)
         {
             var client = _client;
             if (client == null || _descriptor == null)
@@ -785,6 +823,10 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
+            // Covers the encrypted comment as well as the transfer: both sign with this wallet's
+            // key, and the user confirming once is confirming the send they asked for.
+            await EnsureLeaseAsync(lease);
+
             if (_rotation != null)
             {
                 // A key change is out under this wallet's current seqno, and the contract accepts
@@ -792,10 +834,6 @@ namespace Telegram.Services.Wallet
                 // rotation, and which one is not ours to pick.
                 throw new WalletRotationPendingException();
             }
-
-            // Covers the encrypted comment as well as the transfer: both sign with this wallet's
-            // key, and the user confirming once is confirming the send they asked for.
-            using var lease = await LeaseAsync(navigation, comment);
 
             SendMessageBody body;
 
@@ -936,9 +974,48 @@ namespace Telegram.Services.Wallet
             }
         }
 
+        // How long a prepared phrase update stays submittable. The user writes the phrase down and
+        // passes the test between preparing and committing, so this has to outlast that; it is
+        // also how long a submitted change that never lands blocks the wallet before it expires.
+        private static readonly TimeSpan PhraseUpdateWindow = TimeSpan.FromMinutes(30);
+
         /// <summary>
-        /// Replaces the wallet's signing key, keeping its address, and answers with the phrase
-        /// that now opens it.
+        /// Generates the phrase that will replace the current one, and signs the key change that
+        /// makes it so - without submitting anything or storing the phrase.
+        /// </summary>
+        /// <remarks>
+        /// Split from <see cref="CommitRecoveryPhraseUpdateAsync"/> so the phrase can be shown and
+        /// tested first: until it is committed the wallet is untouched, and a user who walks away
+        /// leaves nothing behind. The engine generates the phrase and signs the message in one
+        /// call, so the signature has to be made now, valid for <see cref="PhraseUpdateWindow"/>.
+        /// </remarks>
+        public async Task<WalletPhraseUpdate> PrepareRecoveryPhraseUpdateAsync(WalletVault.WalletVaultLease lease)
+        {
+            var client = _client;
+
+            if (client == null || _descriptor == null || _wallet is not { Address.Length: > 0 })
+            {
+                throw new WalletNotBoundException();
+            }
+
+            // The message is signed by the key it replaces.
+            await EnsureLeaseAsync(lease);
+
+            if (_rotation != null)
+            {
+                throw new WalletRotationPendingException();
+            }
+
+            var validUntil = (ulong)DateTimeOffset.UtcNow.Add(PhraseUpdateWindow).ToUnixTimeSeconds();
+
+            var prepared = await client.PrepareKeyRotation(
+                new PrepareKeyRotationRequest(validUntil, KeyRotationMessageKind.External));
+
+            return new WalletPhraseUpdate(Split(prepared.ReplacementRecoveryPhrase.Phrase), prepared);
+        }
+
+        /// <summary>
+        /// Submits a phrase update prepared by <see cref="PrepareRecoveryPhraseUpdateAsync"/>.
         /// </summary>
         /// <remarks>
         /// The order is the whole of the safety here. The replacement phrase is stored **before**
@@ -947,42 +1024,41 @@ namespace Telegram.Services.Wallet
         /// chain shows the new key, because until then the old one is still what the contract
         /// accepts.
         /// </remarks>
-        public async Task<IReadOnlyList<string>> UpdateRecoveryPhraseAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        public async Task CommitRecoveryPhraseUpdateAsync(WalletPhraseUpdate update, WalletVault.WalletVaultLease lease)
         {
-            var client = _client;
             var wallet = _wallet;
 
-            if (client == null || _descriptor == null || wallet is not { Address.Length: > 0 })
+            if (_client == null || _descriptor == null || wallet is not { Address.Length: > 0 })
             {
                 throw new WalletNotBoundException();
             }
+
+            // Storing the phrase writes it under the vault key.
+            await EnsureLeaseAsync(lease);
 
             if (_rotation != null)
             {
                 throw new WalletRotationPendingException();
             }
 
-            // Only when the caller has not opened it already: being asked to confirm twice for one
-            // operation is the app forgetting what it was in the middle of.
-            using var owned = lease == null ? await LeaseAsync(navigation) : null;
+            var prepared = update.Prepared;
 
-            // The window the old key's signature covers. Long enough for the message to be
-            // included, short enough that a rotation that never landed stops being a question.
-            var validUntil = (ulong)DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
+            // Refused here rather than by the chain: an expired message would be stored as a
+            // pending rotation and block the wallet until the update that never comes.
+            if (update.IsExpired)
+            {
+                throw new WalletRotationFailedException("the prepared key change has expired");
+            }
 
-            var prepared = await client.PrepareKeyRotation(
-                new PrepareKeyRotationRequest(validUntil, KeyRotationMessageKind.External));
-
-            var words = Split(prepared.ReplacementRecoveryPhrase.Phrase);
             var replacement = await _lifecycle.ImportWallet(
-                new ImportWalletRequest(NewRecordId(), DefaultNetwork, words.ToArray()));
+                new ImportWalletRequest(NewRecordId(), DefaultNetwork, update.Words.ToArray()));
 
             // A rotation preserves the anchor, and the address is derived from it, so this holds by
             // construction. If it ever did not, what was just stored would be the key to somewhere
             // else and the wallet would be unreachable.
             if (!IsSameWallet(replacement, wallet))
             {
-                LogMismatch(replacement, wallet, words.ToArray());
+                LogMismatch(replacement, wallet, update.Words.ToArray());
 
                 await _lifecycle.DeleteWallet(replacement);
                 throw new WalletRotationFailedException("the replacement phrase derives another address");
@@ -1015,10 +1091,8 @@ namespace Telegram.Services.Wallet
                 throw new WalletRequestException(error);
             }
 
-            // Nothing to wait for. The account reports the new key once the change confirms and
-            // the update that carries it settles this, so the phrase can go in front of the user
-            // now - which is where it needs to be, being the only copy of it anywhere.
-            return words;
+            // Nothing to wait for. The account reports the new key once the change confirms, and
+            // the update that carries it settles this.
         }
 
         /// <summary>
@@ -1117,7 +1191,7 @@ namespace Telegram.Services.Wallet
             }
         }
 
-        public async Task<BigInteger?> EstimateKeyRotationFeeAsync(INavigationService navigation, WalletVault.WalletVaultLease lease = null)
+        public async Task<BigInteger?> EstimateKeyRotationFeeAsync(WalletVault.WalletVaultLease lease)
         {
             var client = _client;
             if (client == null || _descriptor == null)
@@ -1128,12 +1202,13 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
+            // Preparing one reads the phrase - the key-change message is signed by the key it
+            // replaces - so this costs a confirmation, unless the operation already gave one.
+            // Outside the catch below: a refusal is the caller's answer, not a missing estimate.
+            await EnsureLeaseAsync(lease);
+
             try
             {
-                // Preparing one reads the phrase - the key-change message is signed by the key it
-                // replaces - so this costs a confirmation, unless the caller is already holding one.
-                using var owned = lease == null ? await LeaseAsync(navigation) : null;
-
                 // Long enough that the emulation is against a message that would still be valid,
                 // short enough to be meaningless afterwards: nothing here is kept.
                 var validUntil = (ulong)DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
@@ -1190,7 +1265,7 @@ namespace Telegram.Services.Wallet
             return response is TonConnectRequests requests ? requests.Session : null;
         }
 
-        public async Task<WalletRequest> GetRequestAsync(INavigationService navigation, long messageId, MessageTonConnectRequest message, WalletVault.WalletVaultLease lease = null)
+        public async Task<WalletRequest> GetRequestAsync(long messageId, MessageTonConnectRequest message, WalletVault.WalletVaultLease lease)
         {
             // The stores are built on the first restore, so nothing below exists until it has run.
             // A request can arrive in a chat long before the wallet has been opened in this
@@ -1210,7 +1285,7 @@ namespace Telegram.Services.Wallet
             // it has to come before the sheet rather than on its Confirm button, because without it
             // the request cannot be decrypted and there is nothing to show. The sheet keeps the
             // lease afterwards, so answering does not ask again.
-            using var owned = lease == null ? await LeaseAsync(navigation) : null;
+            await EnsureLeaseAsync(lease);
 
             var response = await _clientService.SendAsync(new GetTonConnectSessionPendingRequests(message.SessionId));
             if (response is not TonConnectRequests pending)
@@ -1375,7 +1450,7 @@ namespace Telegram.Services.Wallet
             return body is SendMessageBody.Comment comment ? comment.Text : null;
         }
 
-        public async Task<bool> AnswerRequestAsync(INavigationService navigation, WalletRequest request, bool accept, WalletVault.WalletVaultLease lease = null)
+        public async Task<bool> AnswerRequestAsync(WalletRequest request, bool accept, WalletVault.WalletVaultLease lease)
         {
             var client = _client;
             var lifecycle = _lifecycle;
@@ -1399,7 +1474,7 @@ namespace Telegram.Services.Wallet
                 return false;
             }
 
-            using var owned = lease == null ? await LeaseAsync(navigation, request.Domain) : null;
+            await EnsureLeaseAsync(lease);
 
             // Read again rather than held from the sheet: the session is what encrypts the answer,
             // and keeping a decrypted request alive across a screen is keeping a spend authorized
@@ -1472,7 +1547,7 @@ namespace Telegram.Services.Wallet
             return true;
         }
 
-        public async Task<WalletConnectResult> ConnectAsync(INavigationService navigation, TdTonConnectSession session, TonConnectConnectRequest request, string domain, string traceId)
+        public async Task<WalletConnectResult> ConnectAsync(TdTonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease)
         {
             var lifecycle = _lifecycle;
             var descriptor = _descriptor;
@@ -1482,6 +1557,8 @@ namespace Telegram.Services.Wallet
                 return new WalletConnectResult(null);
             }
 
+            await EnsureLeaseAsync(lease);
+
             if (_rotation != null)
             {
                 // The engine says so outright on SignTonConnectProof: a proof signed with a key the
@@ -1489,8 +1566,6 @@ namespace Telegram.Services.Wallet
                 // the chain would then reject.
                 throw new WalletRotationPendingException();
             }
-
-            using var lease = await LeaseAsync(navigation, domain);
 
             // Derived, not stored: every device of this account arrives at the same key from the
             // wallet key, the dApp's id and the server's nonce, so any of them can answer for the
@@ -1629,7 +1704,7 @@ namespace Telegram.Services.Wallet
             return client != null ? await client.ResolveDns(name) : null;
         }
 
-        public async Task<string> DecryptCommentAsync(INavigationService navigation, TonWalletTransaction transaction, string encryptedBody)
+        public async Task<string> DecryptCommentAsync(TonWalletTransaction transaction, string encryptedBody, WalletVault.WalletVaultLease lease)
         {
             var client = _client;
             if (client == null || string.IsNullOrEmpty(encryptedBody) || transaction?.Type is not TonWalletTransactionTypeTransfer transfer || !transfer.IsCommentEncrypted)
@@ -1642,7 +1717,7 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
-            using var lease = await LeaseAsync(navigation);
+            await EnsureLeaseAsync(lease);
 
             // TDLib reports the encrypted payload, the engine takes the message body it belongs to.
             var body = WalletCommentBody.FromPayload(encryptedBody);
@@ -3381,6 +3456,33 @@ namespace Telegram.Services.Wallet
 
         /// <summary>After this, the signature it was made under can no longer be included.</summary>
         public ulong ValidUntil { get; }
+    }
+
+    /// <summary>
+    /// A phrase update that has been prepared but not submitted: the words to show, and the signed
+    /// message that makes them the wallet's. Dropping it abandons the update.
+    /// </summary>
+    public sealed class WalletPhraseUpdate
+    {
+        internal WalletPhraseUpdate(IReadOnlyList<string> words, PreparedKeyRotation prepared)
+        {
+            Words = words;
+            Prepared = prepared;
+        }
+
+        // Room for what still has to happen before the message reaches the chain - disabling the
+        // backup, storing the phrase - so that a check passed now still holds at submission.
+        private static readonly TimeSpan Margin = TimeSpan.FromMinutes(1);
+
+        public IReadOnlyList<string> Words { get; }
+
+        internal PreparedKeyRotation Prepared { get; }
+
+        /// <summary>
+        /// Whether the signed message can no longer be relied on to be accepted. Once it is, the
+        /// words open nothing and must not be committed, nor anything done on their account.
+        /// </summary>
+        public bool IsExpired => (ulong)DateTimeOffset.UtcNow.Add(Margin).ToUnixTimeSeconds() >= Prepared.ValidUntil;
     }
 
     /// <summary>
