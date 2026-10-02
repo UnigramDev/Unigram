@@ -43,8 +43,10 @@ namespace Telegram.Views.Wallet.Popups
             _unlock = unlock;
 
             Subtitle.Text = string.IsNullOrEmpty(reason)
-                ? "[Confirm it is you in the Windows Hello window.]"
+                ? Strings.WalletHelloConfirmText
                 : reason;
+
+            SecondaryButtonText = Strings.Cancel;
         }
 
         /// <summary>
@@ -114,14 +116,14 @@ namespace Telegram.Views.Wallet.Popups
                         Hide();
                         break;
                     default:
-                        ShowError("[Windows Hello could not confirm it was you.]");
+                        ShowError(Strings.WalletHelloErrorGeneric);
                         break;
                 }
             }
             catch (Exception ex)
             {
                 _failure = ex;
-                ShowError("[Windows Hello is not available right now.]");
+                ShowError(Strings.WalletHelloNotAvailable);
             }
             finally
             {
@@ -134,7 +136,7 @@ namespace Telegram.Views.Wallet.Popups
             ErrorLabel.Text = message;
             ErrorLabel.Visibility = Visibility.Visible;
 
-            PrimaryButtonText = "[Try Again]";
+            PrimaryButtonText = Strings.WalletHelloTryAgain;
         }
     }
 }

@@ -8,7 +8,7 @@
 
     <StackPanel>
         <TextBlock x:Name="SubtitleLabel"
-                   Text="[Choose what Telegram asks you for before spending from your wallet.]"
+                   Text="{CustomResource WalletProtectInfo}"
                    Style="{StaticResource BodyTextBlockStyle}"
                    Margin="0,0,0,16" />
 
@@ -17,10 +17,10 @@
                      Visibility="Collapsed"
                      Margin="0,0,0,8">
             <StackPanel>
-                <TextBlock Text="[Unlock with Windows Hello]"
+                <TextBlock Text="{CustomResource WalletProtectWindowsHello}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            TextWrapping="Wrap" />
-                <TextBlock Text="[Confirm all spending with your Windows PIN.]"
+                <TextBlock Text="{CustomResource WalletProtectWindowsHelloInfo}"
                            Style="{StaticResource InfoBodyTextBlockStyle}"
                            TextWrapping="Wrap" />
             </StackPanel>
@@ -31,11 +31,11 @@
                      Margin="0,0,0,8">
             <StackPanel>
                 <TextBlock x:Name="PasscodeTitle"
-                           Text="[Ask for local passcode]"
+                           Text="{CustomResource WalletProtectPasscodeLock}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            TextWrapping="Wrap" />
                 <TextBlock x:Name="PasscodeSubtitle"
-                           Text="[Confirm all spending with your Telegram passcode.]"
+                           Text="{CustomResource WalletProtectPasscodeLockInfo}"
                            Style="{StaticResource InfoBodyTextBlockStyle}"
                            TextWrapping="Wrap" />
             </StackPanel>
@@ -44,11 +44,11 @@
         <RadioButton x:Name="NoneOption"
                      GroupName="WalletProtection">
             <StackPanel>
-                <TextBlock Text="[Don't ask]"
+                <TextBlock Text="{CustomResource WalletProtectDontAsk}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            Foreground="{ThemeResource DangerButtonBackground}"
                            TextWrapping="Wrap" />
-                <TextBlock Text="[Anyone with access to your Telegram can spend your funds.]"
+                <TextBlock Text="{CustomResource WalletProtectDontAskInfo}"
                            Style="{StaticResource InfoBodyTextBlockStyle}"
                            TextWrapping="Wrap" />
             </StackPanel>

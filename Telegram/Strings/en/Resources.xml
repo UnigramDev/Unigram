@@ -14062,6 +14062,24 @@
     <string name="WalletTonConnectRequestAppPending">{0} requests a transaction. Tap to review.</string>
     <string name="WalletTonConnectRequestAppProcessed">{0}\'s transaction request processed</string>
 
+    <string name="WalletProtectTitle">Protect Your Wallet</string>
+    <string name="WalletProtectInfo">Choose waht Telegram asks you for before spending from your wallet.</string>
+    <string name="WalletProtectWindowsHello">Unlock with Windows Hello</string>
+    <string name="WalletProtectWindowsHelloInfo">Confirm all spending with your Windows PIN.</string>
+    <string name="WalletProtectPasscodeLock">Ask for local passcode</string>
+    <string name="WalletProtectPasscodeLockInfo">Confirm all spending with your Telegram passcode.</string>
+    <string name="WalletProtectDontAsk">Don't ask</string>
+    <string name="WalletProtectDontAskInfo">Anyone with access to your Telegram can spend your funds.</string>
+    <string name="WalletProtectOffTitle">Passcode Is Being Turned Off</string>
+    <string name="WalletProtectOffInfo">Your wallet is protected by this passcode. Choose what should protect it instead.</string>
+    <string name="WalletProtectOffPasscodeLock">Keep asking for this passcode</string>
+    <string name="WalletProtectOffPasscodeLockInfo">The passcode stays on, and keeps confirming your spending.</string>
+    <string name="WalletHelloConfirm">Windows Hello</string>
+    <string name="WalletHelloConfirmText">Confirm it is you in the Windows Hello window.</string>
+    <string name="WalletHelloErrorGeneric">Windows Hello could not confirm it was you.</string>
+    <string name="WalletHelloNotAvailable">Windows Hello is not available right now.</string>
+    <string name="WalletHelloTryAgain">Try Again</string>
+
     <string name="WalletYourRecoveryPhrase">Your Recovery Phrase</string>
     <string name="WalletDone">Done</string>
 

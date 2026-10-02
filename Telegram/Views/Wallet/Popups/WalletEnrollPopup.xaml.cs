@@ -38,17 +38,17 @@ namespace Telegram.Views.Wallet.Popups
 
             if (reason == WalletEnrollReason.PasscodeDisabled)
             {
-                Title = "[Passcode Is Being Turned Off]";
-                SubtitleLabel.Text = "[Your wallet is protected by this passcode. Choose what should protect it instead.]";
+                Title = Strings.WalletProtectOffTitle;
+                SubtitleLabel.Text = Strings.WalletProtectOffInfo;
 
                 // Not "start asking for it" but "leave it on": the passcode is on its way out, and
                 // this option is what stops it going.
-                PasscodeTitle.Text = "[Keep asking for this passcode]";
-                PasscodeSubtitle.Text = "[The passcode stays on, and keeps confirming your spending.]";
+                PasscodeTitle.Text = Strings.WalletProtectOffPasscodeLock;
+                PasscodeSubtitle.Text = Strings.WalletProtectOffPasscodeLockInfo;
             }
             else
             {
-                Title = "[Protect Your Wallet]";
+                Title = Strings.WalletProtectTitle;
             }
 
             PrimaryButtonText = Strings.Save;
