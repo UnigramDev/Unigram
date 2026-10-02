@@ -14062,6 +14062,9 @@
     <string name="WalletTonConnectRequestAppPending">{0} requests a transaction. Tap to review.</string>
     <string name="WalletTonConnectRequestAppProcessed">{0}\'s transaction request processed</string>
 
+    <string name="WalletYourRecoveryPhrase">Your Recovery Phrase</string>
+    <string name="WalletDone">Done</string>
+
     <string name="Grams_few">{0} Grams</string>
     <string name="Grams_many">{0} Grams</string>
     <string name="Grams_one">{0} Gram</string>

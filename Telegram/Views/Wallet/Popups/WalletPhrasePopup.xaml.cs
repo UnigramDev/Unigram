@@ -56,11 +56,7 @@ namespace Telegram.Views.Wallet.Popups
 
             _words = words;
 
-            Title = "[Recovery Phrase]";
-            PrimaryButtonContent = "[Copy]";
-            CloseButtonContent = "[I've Written It Down]";
-
-            PrimaryButtonClick += OnPrimaryButtonClick;
+            PrimaryButtonContent = Strings.WalletDone;
 
             InitializeWords();
         }
@@ -76,28 +72,37 @@ namespace Telegram.Views.Wallet.Popups
 
             for (int i = 0; i < _words.Count; i++)
             {
-                var word = new WalletPhraseWord(string.Format("{0}. ", i + 1), _words[i]);
+                var number = new TextBlock
+                {
+                    Text = string.Format("{0}. ", i + 1),
+                    Style = BootStrapper.Current.Resources["InfoBodyTextBlockStyle"] as Style,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 0, 4, 0)
+                };
+
+                var word = new TextBlock
+                {
+                    Text = _words[i],
+                    Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
+                };
+
+                Grid.SetRow(number, i % rows);
+                Grid.SetRow(word, i % rows);
+                Grid.SetColumn(word, 1);
 
                 if (i < rows)
                 {
-                    first.Add(word);
+                    FirstColumn.RowDefinitions.Add(1, GridUnitType.Auto);
+                    FirstColumn.Children.Add(number);
+                    FirstColumn.Children.Add(word);
                 }
                 else
                 {
-                    second.Add(word);
+                    SecondColumn.RowDefinitions.Add(1, GridUnitType.Auto);
+                    SecondColumn.Children.Add(number);
+                    SecondColumn.Children.Add(word);
                 }
             }
-
-            FirstColumn.ItemsSource = first;
-            SecondColumn.ItemsSource = second;
-        }
-
-        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
-        {
-            // The popup stays open: copying is not the end of this, writing them down is.
-            args.Cancel = true;
-
-            MessageHelper.CopyText(XamlRoot, string.Join(" ", _words));
         }
     }
 }

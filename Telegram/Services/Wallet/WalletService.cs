@@ -232,6 +232,23 @@ namespace Telegram.Services.Wallet
         public WalletVault Vault { get; private set; }
 
         /// <summary>
+        /// Opens the vault for one operation, reporting a dismissed prompt the way every method
+        /// here does: as <see cref="WalletAccessDeniedException"/>, which callers already treat as
+        /// an answer rather than a fault.
+        /// </summary>
+        private async Task<WalletVault.WalletVaultLease> LeaseAsync(INavigationService navigation, string reason = null)
+        {
+            try
+            {
+                return await Vault.LeaseAsync(navigation, reason);
+            }
+            catch (WalletVaultException ex) when (ex.Failure == WalletVaultFailure.Cancelled)
+            {
+                throw new WalletAccessDeniedException();
+            }
+        }
+
+        /// <summary>
         /// The 2048 BIP-39 words the engine validates against.
         /// </summary>
         /// <remarks>
@@ -498,7 +515,7 @@ namespace Telegram.Services.Wallet
                 // typed the phrase into, because storing it is what makes the engine ask for the
                 // vault, and the engine has no window of its own to ask in. Only when the caller
                 // is not already holding one: binding is often the first half of something larger.
-                using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+                using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
                 var array = new string[words.Count];
 
@@ -587,7 +604,7 @@ namespace Telegram.Services.Wallet
                 return null;
             }
 
-            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+            using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
             try
             {
@@ -646,7 +663,7 @@ namespace Telegram.Services.Wallet
             // Signing reads the wallet key, so it is behind the vault like everything else that
             // does. The caller usually holds the lease already: proving ownership is never the
             // whole of an operation, only the part of it the account asks for.
-            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+            using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -778,7 +795,7 @@ namespace Telegram.Services.Wallet
 
             // Covers the encrypted comment as well as the transfer: both sign with this wallet's
             // key, and the user confirming once is confirming the send they asked for.
-            using var lease = await Vault.LeaseAsync(navigation, comment);
+            using var lease = await LeaseAsync(navigation, comment);
 
             SendMessageBody body;
 
@@ -947,7 +964,7 @@ namespace Telegram.Services.Wallet
 
             // Only when the caller has not opened it already: being asked to confirm twice for one
             // operation is the app forgetting what it was in the middle of.
-            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+            using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
             // The window the old key's signature covers. Long enough for the message to be
             // included, short enough that a rotation that never landed stops being a question.
@@ -1115,7 +1132,7 @@ namespace Telegram.Services.Wallet
             {
                 // Preparing one reads the phrase - the key-change message is signed by the key it
                 // replaces - so this costs a confirmation, unless the caller is already holding one.
-                using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+                using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
                 // Long enough that the emulation is against a message that would still be valid,
                 // short enough to be meaningless afterwards: nothing here is kept.
@@ -1193,7 +1210,7 @@ namespace Telegram.Services.Wallet
             // it has to come before the sheet rather than on its Confirm button, because without it
             // the request cannot be decrypted and there is nothing to show. The sheet keeps the
             // lease afterwards, so answering does not ask again.
-            using var owned = lease == null ? await Vault.LeaseAsync(navigation) : null;
+            using var owned = lease == null ? await LeaseAsync(navigation) : null;
 
             var response = await _clientService.SendAsync(new GetTonConnectSessionPendingRequests(message.SessionId));
             if (response is not TonConnectRequests pending)
@@ -1382,7 +1399,7 @@ namespace Telegram.Services.Wallet
                 return false;
             }
 
-            using var owned = lease == null ? await Vault.LeaseAsync(navigation, request.Domain) : null;
+            using var owned = lease == null ? await LeaseAsync(navigation, request.Domain) : null;
 
             // Read again rather than held from the sheet: the session is what encrypts the answer,
             // and keeping a decrypted request alive across a screen is keeping a spend authorized
@@ -1473,7 +1490,7 @@ namespace Telegram.Services.Wallet
                 throw new WalletRotationPendingException();
             }
 
-            using var lease = await Vault.LeaseAsync(navigation, domain);
+            using var lease = await LeaseAsync(navigation, domain);
 
             // Derived, not stored: every device of this account arrives at the same key from the
             // wallet key, the dApp's id and the server's nonce, so any of them can answer for the
@@ -1625,7 +1642,7 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
-            using var lease = await Vault.LeaseAsync(navigation);
+            using var lease = await LeaseAsync(navigation);
 
             // TDLib reports the encrypted payload, the engine takes the message body it belongs to.
             var body = WalletCommentBody.FromPayload(encryptedBody);

@@ -31,17 +31,19 @@
             <TextBlock common:TextBlockHelper.Markdown="{CustomResource WalletRecoveryPhraseLearnInfo}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextAlignment="Center"
+                       Margin="12,0"
                        Grid.Row="2" />
 
             <controls:PopupInfo Title="{CustomResource WalletRecoveryPhraseNeverShare}"
+                                SubtitleVisibility="Collapsed"
                                 Glyph="&#xE9A6;"
-                                Margin="12,12,12,0" />
+                                Margin="0,12,0,0" />
             <controls:PopupInfo Title="{CustomResource WalletRecoveryPhraseFundsWarning}"
-                                Glyph="&#xEA22;"
-                                Margin="12,0,12,0" />
+                                SubtitleVisibility="Collapsed"
+                                Glyph="&#xEA22;" />
             <controls:PopupInfo Title="{CustomResource WalletRecoveryPhraseSupportWarning}"
-                                Glyph="&#xE9F9;"
-                                Margin="12,0,12,0" />
+                                SubtitleVisibility="Collapsed"
+                                Glyph="&#xE9F9;" />
         </StackPanel>
     </ScrollViewer>
 </controls:ModalPopup>

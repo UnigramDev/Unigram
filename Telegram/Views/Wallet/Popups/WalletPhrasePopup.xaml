@@ -3,44 +3,56 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:local="using:Telegram.Views.Wallet.Popups"
                      xmlns:controls="using:Telegram.Controls"
+                     xmlns:common="using:Telegram.Common"
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      mc:Ignorable="d">
 
-    <controls:ModalPopup.Resources>
-        <!-- A template rather than a loop: the number is drawn in the theme's own brush, and a run
-             built in code can only be handed a brush - which then stops following the theme. -->
-        <DataTemplate x:Key="WordTemplate"
-                      x:DataType="local:WalletPhraseWord">
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                       Margin="0,2"><Run Text="{x:Bind Number}"
-                                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" /><Run Text="{x:Bind Word}" /></TextBlock>
-        </DataTemplate>
-    </controls:ModalPopup.Resources>
-
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   VerticalScrollMode="Auto">
         <StackPanel>
-            <TextBlock Text="[Write these 24 words down in order and keep them somewhere safe. Anyone who has them can spend your funds.]"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       TextWrapping="Wrap"
-                       Margin="0,0,0,16" />
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/WalletImport.tgs"
+                                    IsCachingEnabled="False"
+                                    AutoPlay="True"
+                                    FrameSize="120,120"
+                                    DecodeFrameType="Logical"
+                                    LoopCount="1"
+                                    Width="120"
+                                    Height="120"
+                                    Margin="0,12,0,12" />
 
-            <!-- Two columns, numbered down the first and on down the second, which is the order the
-                 words have to be written in and the order every other client shows them in. A
-                 phrase is 12 or 24 words, so how far down each column runs depends on the phrase. -->
+            <TextBlock Text="{CustomResource WalletYourRecoveryPhrase}"
+                       Style="{StaticResource PopupTextBlockStyle}"
+                       TextAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="12,0,12,8" />
+
+            <TextBlock common:TextBlockHelper.Markdown="{CustomResource WalletRecoveryPhraseLearnInfo}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Margin="12,0,12,24"
+                       Grid.Row="2" />
+
             <Grid ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <ItemsControl x:Name="FirstColumn"
-                              ItemTemplate="{StaticResource WordTemplate}" />
+                <Grid x:Name="FirstColumn">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                </Grid>
 
-                <ItemsControl x:Name="SecondColumn"
-                              ItemTemplate="{StaticResource WordTemplate}"
-                              Grid.Column="1" />
+                <Grid x:Name="SecondColumn"
+                      Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                </Grid>
             </Grid>
         </StackPanel>
     </ScrollViewer>
