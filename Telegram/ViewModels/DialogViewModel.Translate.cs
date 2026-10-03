@@ -155,7 +155,7 @@ namespace Telegram.ViewModels
 
             if (changed != (message.SummarizedText == null))
             {
-                Delegate?.UpdateBubbleWithMessageId(message.Id, bubble =>
+                Delegate?.UpdateBubbleWithMessageId(message.Key, bubble =>
                 {
                     bubble.UpdateMessageTextLayout(message);
                     Delegate?.UpdateMessageSummary(message);
@@ -186,11 +186,11 @@ namespace Telegram.ViewModels
                 {
                     if (reply)
                     {
-                        Delegate?.UpdateBubbleWithReplyToMessageId(message.Id, (bubble, reply) => bubble.UpdateMessageReply(reply));
+                        Delegate?.UpdateBubbleWithReplyToMessageId(message.Key, (bubble, reply) => bubble.UpdateMessageReply(reply));
                     }
                     else
                     {
-                        Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => bubble.UpdateMessageText(message));
+                        Delegate?.UpdateBubbleWithMessageId(message.Key, bubble => bubble.UpdateMessageText(message));
                     }
                 }
             }

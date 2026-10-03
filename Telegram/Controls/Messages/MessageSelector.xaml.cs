@@ -424,7 +424,7 @@ namespace Telegram.Controls.Messages
         {
             if (_message is MessageViewModel message && _templateApplied)
             {
-                var selected = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
+                var selected = value && message.Delegate.SelectedItems.ContainsKey(message.Key);
                 if (selected == _selected && value == _selectionEnabled)
                 {
                     return;
@@ -531,11 +531,11 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.Content is MessageAlbum album)
                     {
-                        selected = album.Messages.All(x => message.Delegate.SelectedItems.ContainsKey(x.Id));
+                        selected = album.Messages.All(x => message.Delegate.SelectedItems.ContainsKey(x.Key));
                     }
                     else
                     {
-                        selected = message.Delegate.SelectedItems.ContainsKey(message.Id);
+                        selected = message.Delegate.SelectedItems.ContainsKey(message.Key);
                     }
                 }
                 else

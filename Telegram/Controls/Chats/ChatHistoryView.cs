@@ -596,16 +596,16 @@ namespace Telegram.Controls.Chats
 
             await ScrollIntoViewAsync(item, direction, true);
 
-            var selectorItem = handler.ContainerFromItem(item.Id);
+            var selectorItem = handler.ContainerFromItem(item.Key);
             if (selectorItem == null)
             {
                 // TODO: experimental
-                if (ViewModel.Items.ContainsKey(item.Id))
+                if (ViewModel.Items.ContainsKey(item.Key))
                 {
                     Logger.Debug("selectorItem == null, but item is known, retry");
 
                     await ScrollIntoViewAsync(item, direction, false);
-                    selectorItem = handler.ContainerFromItem(item.Id);
+                    selectorItem = handler.ContainerFromItem(item.Key);
                 }
 
                 if (selectorItem == null)
@@ -976,13 +976,13 @@ namespace Telegram.Controls.Chats
             if (_firstItem == null)
             {
                 _firstItem = _lastItem = message;
-                _operation = !ViewModel.SelectedItems.ContainsKey(message.Id);
+                _operation = !ViewModel.SelectedItems.ContainsKey(message.Key);
 
                 _position = point.Position;
             }
             else if (_firstItem == message)
             {
-                var contains = ViewModel.SelectedItems.ContainsKey(message.Id);
+                var contains = ViewModel.SelectedItems.ContainsKey(message.Key);
 
                 var delta = Math.Abs(point.Position.Y - _position.Y);
                 if (delta > 10)
@@ -1019,7 +1019,7 @@ namespace Telegram.Controls.Chats
         internal void OnPointerReleased(MessageSelector item, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(XamlRoot.Content);
-            var handled = _firstItem != null && ViewModel.SelectedItems.ContainsKey(_firstItem.Id) == _operation;
+            var handled = _firstItem != null && ViewModel.SelectedItems.ContainsKey(_firstItem.Key) == _operation;
 
             _firstItem = null;
             _lastItem = null;

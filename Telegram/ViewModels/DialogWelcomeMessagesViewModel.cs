@@ -96,7 +96,7 @@ namespace Telegram.ViewModels
 
                         UpdateItem(oldValue, diff.NewValue);
 
-                        Delegate?.UpdateBubbleWithMessageId(oldValue.Id, bubble => bubble.UpdateMessage(oldValue));
+                        Delegate?.UpdateBubbleWithMessageId(oldValue.Key, bubble => bubble.UpdateMessage(oldValue));
                     }
                 }
 

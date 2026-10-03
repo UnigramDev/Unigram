@@ -781,7 +781,7 @@ namespace Telegram.ViewModels
 
         public void CopySelectedMessages()
         {
-            var messages = SelectedItems.Values.OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.Values.OrderBy(x => x.Key).ToList();
             if (messages.Count > 0)
             {
                 var builder = new StringBuilder();

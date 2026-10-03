@@ -533,7 +533,7 @@ namespace Telegram.Views
                 return false;
             }
 
-            if (!_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector)
+            if (!_messageIdToSelector.TryGetValue(message.Key, out ChatHistoryViewItem selector)
                 || selector.ContentTemplateRoot is not MessageSelector { Content: MessageBubble bubble })
             {
                 return false;
@@ -629,7 +629,7 @@ namespace Telegram.Views
                 var message = items[0] as MessageViewModel;
 
                 var translated = _messagesShift.Translate(index);
-                if (translated >= panel.FirstVisibleIndex && translated <= panel.LastVisibleIndex && _messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector))
+                if (translated >= panel.FirstVisibleIndex && translated <= panel.LastVisibleIndex && _messageIdToSelector.TryGetValue(message.Key, out ChatHistoryViewItem selector))
                 {
                     // Not the direction: the row is gone by the time the shift is animated, so what
                     // is stored is whether it sat at the edge, and the direction is derived then.
@@ -1104,7 +1104,7 @@ namespace Telegram.Views
 
         private void OnAttachChanged(MessageViewModel message)
         {
-            if (message == null || !_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem container))
+            if (message == null || !_messageIdToSelector.TryGetValue(message.Key, out ChatHistoryViewItem container))
             {
                 return;
             }
@@ -3373,7 +3373,7 @@ namespace Telegram.Views
             var selected = ViewModel.SelectedItems;
             if (selected.Count > 0)
             {
-                if (selected.ContainsKey(message.Id))
+                if (selected.ContainsKey(message.Key))
                 {
                     var props = await ViewModel.ClientService.GetMessagePropertiesAsync(selected.Select(x => new MessageId(x.Value)));
 
@@ -7528,7 +7528,7 @@ namespace Telegram.Views
 
         public void UpdateDeleteMessages(MessageViewModel message)
         {
-            if (_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector))
+            if (_messageIdToSelector.TryGetValue(message.Key, out ChatHistoryViewItem selector))
             {
                 var first = message.Delegate.IsSavedMessagesTab ? message.IsLast : message.IsFirst;
 

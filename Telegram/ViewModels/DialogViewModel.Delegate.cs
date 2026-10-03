@@ -311,7 +311,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    Delegate?.UpdateBubbleWithMessageId(message.Id, bubble =>
+                    Delegate?.UpdateBubbleWithMessageId(message.Key, bubble =>
                     {
                         if (bubble.MediaTemplateRoot is PollContent pollContent)
                         {
@@ -640,7 +640,7 @@ namespace Telegram.ViewModels
                 {
                     foreach (var child in album.Messages)
                     {
-                        _selectedItems[child.Id] = child;
+                        _selectedItems[child.Key] = child;
                         Delegate?.UpdateMessageSelection(child);
                     }
 
@@ -648,14 +648,14 @@ namespace Telegram.ViewModels
                 }
                 else if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
                 {
-                    _selectedItems[message.Id] = message;
+                    _selectedItems[message.Key] = message;
                     Delegate?.UpdateMessageSelection(message);
                     Delegate?.UpdateMessageSelection(group);
                 }
             }
             else
             {
-                _selectedItems[message.Id] = message;
+                _selectedItems[message.Key] = message;
                 Delegate?.UpdateMessageSelection(message);
             }
 
@@ -670,7 +670,7 @@ namespace Telegram.ViewModels
                 {
                     foreach (var child in album.Messages)
                     {
-                        _selectedItems.TryRemove(child.Id, out _);
+                        _selectedItems.TryRemove(child.Key, out _);
                         Delegate?.UpdateMessageSelection(child);
                     }
 
@@ -678,14 +678,14 @@ namespace Telegram.ViewModels
                 }
                 else if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
                 {
-                    _selectedItems.TryRemove(message.Id, out _);
+                    _selectedItems.TryRemove(message.Key, out _);
                     Delegate?.UpdateMessageSelection(message);
                     Delegate?.UpdateMessageSelection(group);
                 }
             }
             else
             {
-                _selectedItems.TryRemove(message.Id, out _);
+                _selectedItems.TryRemove(message.Key, out _);
                 Delegate?.UpdateMessageSelection(message);
             }
 

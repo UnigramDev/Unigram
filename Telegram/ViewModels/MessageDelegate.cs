@@ -662,7 +662,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual IDictionary<long, MessageViewModel> SelectedItems { get; }
+        public virtual IDictionary<MessageKey, MessageViewModel> SelectedItems { get; }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -795,7 +795,7 @@ namespace Telegram.ViewModels
 
         public override bool IsSelectionEnabled => _viewModel.IsSelectionEnabled;
 
-        public override IDictionary<long, MessageViewModel> SelectedItems => _viewModel.SelectedItems;
+        public override IDictionary<MessageKey, MessageViewModel> SelectedItems => _viewModel.SelectedItems;
 
         public override void Select(MessageViewModel message) => _viewModel.Select(message);
 

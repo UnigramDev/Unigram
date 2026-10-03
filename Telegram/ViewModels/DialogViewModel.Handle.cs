@@ -814,7 +814,7 @@ namespace Telegram.ViewModels
 
                         // The bubble can be gone already, in which case there is nothing to type
                         // the message into and it is inserted like any other.
-                        if (pending != null && !Items.ContainsKey(pending.MessageId))
+                        if (pending != null && !Items.ContainsKey(GetKey(ChatId, pending.MessageId)))
                         {
                             RemovePendingMessage(pending, $"bubble is gone, message {update.Message.Id} is inserted on its own");
                             pending = null;
@@ -864,7 +864,7 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    var last = Items.LastId;
+                    var last = Items.LastKey;
                     var message = CreatePendingMessage(user, update);
 
                     Logger.Info($"draft: {update.DraftId}, message: {message.Id}, last: {last}, date: {message.Date}, canStop: {update.CanStop}, keepOnStop: {update.KeepOnStop}");
@@ -1012,7 +1012,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     if (update.NewContent is not MessageAlbum and not MessageStory)
                     {
@@ -1055,7 +1055,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     // TODO: this makes no sense
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
@@ -1083,7 +1083,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.Reset();
                     message.EphemeralContent = update.EphemeralContent;
@@ -1120,7 +1120,7 @@ namespace Telegram.ViewModels
             {
                 Mentions.RemoveMessage(update.MessageId);
 
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.ContainsUnreadMention = false;
                     return false;
@@ -1143,7 +1143,7 @@ namespace Telegram.ViewModels
                     PollVotes.RemoveMessage(update.MessageId);
                 }
 
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.ContainsUnreadPollVotes = update.ContainsUnreadPollVotes;
                     return false;
@@ -1159,7 +1159,7 @@ namespace Telegram.ViewModels
             {
                 Reactions.RemoveMessage(update.MessageId);
 
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.UnreadReactions = update.UnreadReactions;
                     return true;
@@ -1177,7 +1177,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.EditDate = update.EditDate;
                     message.ReplyMarkup = update.ReplyMarkup;
@@ -1191,7 +1191,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.InteractionInfo = update.InteractionInfo;
                     return true;
@@ -1232,7 +1232,7 @@ namespace Telegram.ViewModels
                         }
                     });
 
-                    Handle(update.MessageId, message =>
+                    Handle(update.ChatId, update.MessageId, message =>
                     {
                         message.IsPinned = update.IsPinned;
                         return true;
@@ -1246,7 +1246,7 @@ namespace Telegram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id)
             {
-                Handle(update.OldMessageId, message =>
+                Handle(update.Message.ChatId, update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
                     message.AnimationState = MessageAnimationState.None;
@@ -1282,7 +1282,7 @@ namespace Telegram.ViewModels
             }
             else if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
-                Handle(update.OldMessageId, message =>
+                Handle(update.Message.ChatId, update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
                     message.AnimationState = MessageAnimationState.None;
@@ -1328,7 +1328,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.TranslatedText = update.TranslatedText;
                 },
@@ -1350,7 +1350,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.SummarizedText = update.SummarizedText;
                 },
@@ -1373,7 +1373,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var messageId in hashSet)
                 {
-                    Handle(messageId, message =>
+                    Handle(ChatId, messageId, message =>
                     {
                         message.Effect = update.Effect;
                         return true;
@@ -1391,7 +1391,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.SuggestedPostInfo = update.SuggestedPostInfo;
                     message.ReplyMarkup = update.SuggestedPostInfo.ToReplyMarkup(message.IsOutgoing);
@@ -1406,7 +1406,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, message =>
+                Handle(update.ChatId, update.MessageId, message =>
                 {
                     message.FactCheck = update.FactCheck;
                     return true;
@@ -1421,11 +1421,11 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                Handle(update.MessageId, null, (bubble, message) =>
+                Handle(update.ChatId, update.MessageId, null, (bubble, message) =>
                 {
                     // The update reaches every realized row, but the sticker is only to be played
                     // if the message is on screen, and the action only sent if it was played.
-                    if (bubble.MediaTemplateRoot is not StickerContent content || Delegate?.IsItemVisible(message.Id) != true)
+                    if (bubble.MediaTemplateRoot is not StickerContent content || Delegate?.IsItemVisible(message.Key) != true)
                     {
                         return;
                     }
@@ -1445,11 +1445,13 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action1 = null, Action<MessageService, MessageViewModel> action2 = null, long? newMessageId = null)
+        private void Handle(long chatId, long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action1 = null, Action<MessageService, MessageViewModel> action2 = null, long? newMessageId = null)
         {
             BeginOnUIThread(() =>
             {
-                if (Items.TryGetValue(messageId, out var message))
+                var key = GetKey(chatId, messageId);
+
+                if (Items.TryGetValue(key, out var message))
                 {
                     if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel albumMessage))
                     {
@@ -1480,7 +1482,7 @@ namespace Telegram.ViewModels
                         // if this is coming from UpdateMessageSendSucceded,
                         // but we already have a message with the new ID there was a race condition:
                         // in this case we just delete the temporary message and that's it.
-                        if (newMessageId.HasValue && newMessageId != messageId && Items.TryGetValue(newMessageId.Value, out MessageViewModel duplicate))
+                        if (newMessageId.HasValue && newMessageId != messageId && Items.TryGetValue(GetKey(chatId, newMessageId.Value), out MessageViewModel duplicate))
                         {
                             Items.Remove(duplicate);
                         }
@@ -1490,7 +1492,7 @@ namespace Telegram.ViewModels
                             // UpdateMessageSendSucceeded changes the message id
                             if (action1 != null)
                             {
-                                Delegate?.UpdateContainerWithMessageId(messageId, container =>
+                                Delegate?.UpdateContainerWithMessageId(key, container =>
                                 {
                                     if (action1 != null && container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                                     {
@@ -1519,11 +1521,13 @@ namespace Telegram.ViewModels
             });
         }
 
-        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action1, Action<MessageService, MessageViewModel> action2)
+        private void Handle(long chatId, long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action1, Action<MessageService, MessageViewModel> action2)
         {
             BeginOnUIThread(() =>
             {
-                if (Items.TryGetValue(messageId, out var message))
+                var key = GetKey(chatId, messageId);
+
+                if (Items.TryGetValue(key, out var message))
                 {
                     if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel albumMessage))
                     {
@@ -1540,7 +1544,7 @@ namespace Telegram.ViewModels
                     else
                     {
                         update(message);
-                        Delegate?.UpdateContainerWithMessageId(message.Id, container =>
+                        Delegate?.UpdateContainerWithMessageId(message.Key, container =>
                         {
                             if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                             {
@@ -1554,7 +1558,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                Delegate?.UpdateBubbleWithReplyToMessageId(messageId, (bubble, reply) =>
+                Delegate?.UpdateBubbleWithReplyToMessageId(key, (bubble, reply) =>
                 {
                     update(reply.ReplyToItem as MessageViewModel);
                     action1(bubble, reply, true);
@@ -1564,7 +1568,7 @@ namespace Telegram.ViewModels
 
         private void Handle(MessageViewModel message, Action<MessageBubble> action1, Action<MessageService> action2)
         {
-            Delegate?.UpdateContainerWithMessageId(message.Id, container =>
+            Delegate?.UpdateContainerWithMessageId(message.Key, container =>
             {
                 if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                 {

@@ -106,13 +106,21 @@ namespace Telegram.ViewModels
 
     public partial class DialogViewModel : ComposeViewModel, IDelegable<IDialogDelegate>
     {
-        private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new();
-        public IDictionary<long, MessageViewModel> SelectedItems => _selectedItems;
+        private readonly ConcurrentDictionary<MessageKey, MessageViewModel> _selectedItems = new();
+        public IDictionary<MessageKey, MessageViewModel> SelectedItems => _selectedItems;
 
         public int SelectedCount => SelectedItems.Count;
 
         protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new();
         protected readonly ConcurrentDictionary<long, HashSet<long>> _messageEffects = new();
+
+        // The basic group the chat was upgraded from, whose history the chat's continues into.
+        protected long _upgradedFromChatId;
+
+        public MessageKey GetKey(long chatId, long messageId)
+        {
+            return MessageKey.From(messageId, _upgradedFromChatId != 0 && chatId == _upgradedFromChatId);
+        }
 
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
@@ -844,29 +852,31 @@ namespace Telegram.ViewModels
             Logger.Info($"{direction}, items: {Items.Count}, following: {HistoryField?.IsFollowingEnd}");
 
             MessageViewModel fromMessage;
-            long fromMessageId;
+            MessageViewModel anchor;
             int offset;
 
             if (direction == PanelScrollingDirection.Backward)
             {
                 fromMessage = Items.Count > 0 ? Items[0] : null;
-                fromMessageId = Items.FirstId;
+                anchor = Items.First;
                 offset = 0;
             }
             else
             {
                 fromMessage = null;
-                fromMessageId = Items.LastId;
+                anchor = Items.Last;
                 offset = -Constants.HistoryLimit;
             }
 
-            if (fromMessageId == long.MaxValue || fromMessageId == long.MinValue)
+            if (anchor == null)
             {
                 _loadingSlice = false;
                 IsLoading = false;
 
                 return;
             }
+
+            var fromMessageId = anchor.Id;
 
             // Trimmed here rather than once the slice has landed, because the two touch opposite
             // ends of the list: applied in one run of mutations they reach the panel with no layout
@@ -929,7 +939,7 @@ namespace Telegram.ViewModels
                         messages.MessagesValue = await AddHeaderAsync(messages.MessagesValue, fromMessage?.Get());
                     }
 
-                    tsc.SetResult(new MessageCollection(this, Items.Ids, messages.MessagesValue, endReached, Type));
+                    tsc.SetResult(new MessageCollection(this, Items.Keys, messages.MessagesValue, endReached, Type));
                 }
                 else
                 {
@@ -1262,7 +1272,7 @@ namespace Telegram.ViewModels
                 pixel = int.MaxValue;
             }
 
-            if (onlyRemote is false && Items.TryGetValue(fromMessageId, out MessageViewModel already))
+            if (onlyRemote is false && Items.TryGetValue(GetKey(chat.Id, fromMessageId), out MessageViewModel already))
             {
                 if (alignment == VerticalAlignment.Center && false)
                 {
@@ -1391,7 +1401,7 @@ namespace Telegram.ViewModels
                 IsOldestSliceLoaded = null;
                 IsNewestSliceLoaded = endReached;
 
-                if (Items.TryGetValue(fromMessageId, out already))
+                if (Items.TryGetValue(GetKey(chat.Id, fromMessageId), out already))
                 {
                     HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(fromMessageId, highlight, checklistTaskId, pollOptionId) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
 
@@ -1924,7 +1934,11 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            var model = new MessageViewModel(ClientService, _messageDelegateWeak, _chat, _forumTopic, _directMessagesChatTopic, message, true);
+            var upgradedFrom = _upgradedFromChatId != 0 && message.ChatId == _upgradedFromChatId;
+
+            // A message of the upgraded-from group belongs to that chat, not to this one.
+            var model = new MessageViewModel(ClientService, _messageDelegateWeak, upgradedFrom ? null : _chat, _forumTopic, _directMessagesChatTopic, message, true);
+            model.IsUpgradedFrom = upgradedFrom;
 
             if (forLanguageStatistics)
             {

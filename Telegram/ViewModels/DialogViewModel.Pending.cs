@@ -30,7 +30,9 @@ namespace Telegram.ViewModels
 
         private long NextPendingMessageId()
         {
-            var last = Items.LastId;
+            // The band sits above the chat's own newest message: the upgraded-from group's ids say
+            // nothing about this chat's.
+            var last = Items.Last is { IsUpgradedFrom: false } newest ? newest.Id : 0;
             var band = last > 0
                 ? (last | MessageTypeMask) + 1
                 : FirstServerMessageId;
@@ -112,7 +114,7 @@ namespace Telegram.ViewModels
                 _pendingMessageIndex = 0;
             }
 
-            var found = Items.TryGetValue(pending.MessageId, out MessageViewModel bubble);
+            var found = Items.TryGetValue(GetKey(ChatId, pending.MessageId), out MessageViewModel bubble);
             if (found)
             {
                 Items.Remove(bubble);
@@ -154,7 +156,7 @@ namespace Telegram.ViewModels
 
             foreach (var pending in _pendingMessages.Values)
             {
-                if (!Items.ContainsKey(pending.MessageId) && !pending.Orphaned)
+                if (!Items.ContainsKey(GetKey(ChatId, pending.MessageId)) && !pending.Orphaned)
                 {
                     pending.Orphaned = true;
                     Logger.Warning($"draft: {pending.DraftId}, message: {pending.MessageId}, bubble dropped by {reason}");
@@ -183,10 +185,10 @@ namespace Telegram.ViewModels
 
         private void PendingMessage_Updated(DialogPendingMessage sender, MessageViewModel message)
         {
-            if (Items.TryGetValue(sender.MessageId, out MessageViewModel already))
+            if (Items.TryGetValue(GetKey(ChatId, sender.MessageId), out MessageViewModel already))
             {
                 already.Replace(message);
-                Delegate?.UpdateBubbleWithMessageId(sender.MessageId, bubble => bubble.UpdateMessageContent(already));
+                Delegate?.UpdateBubbleWithMessageId(already.Key, bubble => bubble.UpdateMessageContent(already));
             }
             else if (!sender.Orphaned)
             {
@@ -197,7 +199,7 @@ namespace Telegram.ViewModels
 
         private void PendingMessage_Completed(DialogPendingMessage sender, Message completed)
         {
-            Logger.Info($"draft: {sender.DraftId}, message: {sender.MessageId}, completed: {(completed != null ? completed.Id : 0)}, bubble: {Items.ContainsKey(sender.MessageId)}, newest: {IsNewestSliceLoaded}");
+            Logger.Info($"draft: {sender.DraftId}, message: {sender.MessageId}, completed: {(completed != null ? completed.Id : 0)}, bubble: {Items.ContainsKey(GetKey(ChatId, sender.MessageId))}, newest: {IsNewestSliceLoaded}");
 
             _pendingMessages.Remove(sender.DraftId);
 
@@ -213,7 +215,7 @@ namespace Telegram.ViewModels
 
             if (completed != null)
             {
-                Handle(sender.MessageId, message =>
+                Handle(ChatId, sender.MessageId, message =>
                 {
                     message.Replace(completed);
                     message.AnimationState = MessageAnimationState.None;
@@ -240,7 +242,7 @@ namespace Telegram.ViewModels
                     Delegate?.ViewVisibleMessages();
                 }, newMessageId: completed.Id);
             }
-            else if (Items.TryGetValue(sender.MessageId, out MessageViewModel already))
+            else if (Items.TryGetValue(GetKey(ChatId, sender.MessageId), out MessageViewModel already))
             {
                 Items.Remove(already);
             }

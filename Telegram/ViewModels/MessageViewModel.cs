@@ -171,6 +171,10 @@ namespace Telegram.ViewModels
         /// </summary>
         public bool IsSynthetic { get; set; }
 
+        public bool IsUpgradedFrom { get; set; }
+
+        public MessageKey Key => MessageKey.From(Id, IsUpgradedFrom);
+
         public override bool CanBeAddedToDownloads => CanBeSaved && !Chat.HasProtectedContent && Content is MessageAudio or MessageDocument or MessageVideo;
 
         public bool IsVisuallyOutgoing => (IsOutgoing && !IsChannelPost) || (IsSaved && ForwardInfo?.Source is { IsOutgoing: true });

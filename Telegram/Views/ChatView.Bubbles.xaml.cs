@@ -983,7 +983,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    if (_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem container))
+                    if (_messageIdToSelector.TryGetValue(message.Key, out ChatHistoryViewItem container))
                     {
                         Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                     }
@@ -1161,8 +1161,8 @@ namespace Telegram.Views
         private readonly MessageContentRecyclePool _contentRecyclePool = new();
 
         private readonly Dictionary<long, ChatHistoryViewItem> _albumIdToSelector = new();
-        private readonly Dictionary<long, ChatHistoryViewItem> _messageIdToSelector = new();
-        private readonly MultiValueDictionary<long, long> _messageIdToMessageIds = new();
+        private readonly Dictionary<MessageKey, ChatHistoryViewItem> _messageIdToSelector = new();
+        private readonly MultiValueDictionary<MessageKey, MessageKey> _messageIdToMessageIds = new();
 
         private readonly MultiValueDictionary<int, ChatHistoryViewItem> _messageTopicToSelectors = new();
 
@@ -1583,7 +1583,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var container = ContainerFromItem(message.Id);
+            var container = ContainerFromItem(message.Key);
             if (container == null)
             {
                 return;
@@ -1717,9 +1717,9 @@ namespace Telegram.Views
             return ChatHistoryViewItemType.Incoming;
         }
 
-        public bool IsItemVisible(long id)
+        public bool IsItemVisible(MessageKey key)
         {
-            if (Messages.ItemsPanelRoot is ItemsStackPanel panel && _messageIdToSelector.TryGetValue(id, out var container))
+            if (Messages.ItemsPanelRoot is ItemsStackPanel panel && _messageIdToSelector.TryGetValue(key, out var container))
             {
                 var index = Messages.IndexFromContainer(container);
                 return index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex;
@@ -1728,14 +1728,14 @@ namespace Telegram.Views
             return false;
         }
 
-        public bool HasContainerForItem(long id)
+        public bool HasContainerForItem(MessageKey key)
         {
-            return _messageIdToSelector.ContainsKey(id);
+            return _messageIdToSelector.ContainsKey(key);
         }
 
-        public SelectorItem ContainerFromItem(long id)
+        public SelectorItem ContainerFromItem(MessageKey key)
         {
-            if (_messageIdToSelector.TryGetValue(id, out var container))
+            if (_messageIdToSelector.TryGetValue(key, out var container))
             {
                 return container;
             }
@@ -1743,17 +1743,17 @@ namespace Telegram.Views
             return null;
         }
 
-        public void UpdateContainerWithMessageId(long id, Action<SelectorItem> action)
+        public void UpdateContainerWithMessageId(MessageKey key, Action<SelectorItem> action)
         {
-            if (_messageIdToSelector.TryGetValue(id, out var container))
+            if (_messageIdToSelector.TryGetValue(key, out var container))
             {
                 action(container);
             }
         }
 
-        public void UpdateBubbleWithMessageId(long id, Action<MessageBubble> action)
+        public void UpdateBubbleWithMessageId(MessageKey key, Action<MessageBubble> action)
         {
-            if (_messageIdToSelector.TryGetValue(id, out var container))
+            if (_messageIdToSelector.TryGetValue(key, out var container))
             {
                 if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                 {
@@ -1773,15 +1773,15 @@ namespace Telegram.Views
             }
         }
 
-        public void UpdateBubbleWithReplyToMessageId(long id, Action<MessageBubble, MessageViewModel> action)
+        public void UpdateBubbleWithReplyToMessageId(MessageKey key, Action<MessageBubble, MessageViewModel> action)
         {
-            if (_messageIdToMessageIds.TryGetValue(id, out var ids))
+            if (_messageIdToMessageIds.TryGetValue(key, out var keys))
             {
-                foreach (var messageId in ids)
+                foreach (var replyKey in keys)
                 {
-                    if (_viewModel.Items.TryGetValue(messageId, out MessageViewModel message))
+                    if (_viewModel.Items.TryGetValue(replyKey, out MessageViewModel message))
                     {
-                        if (message.ReplyToItem is MessageViewModel && _messageIdToSelector.TryGetValue(messageId, out var container))
+                        if (message.ReplyToItem is MessageViewModel && _messageIdToSelector.TryGetValue(replyKey, out var container))
                         {
                             if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                             {
@@ -1840,16 +1840,18 @@ namespace Telegram.Views
 
         public void UpdateMessageSendSucceeded(long oldMessageId, MessageViewModel message)
         {
-            if (_messageIdToSelector.TryGetValue(oldMessageId, out ChatHistoryViewItem container))
+            var oldKey = _viewModel.GetKey(message.ChatId, oldMessageId);
+
+            if (_messageIdToSelector.TryGetValue(oldKey, out ChatHistoryViewItem container))
             {
-                _messageIdToSelector[message.Id] = container;
-                _messageIdToSelector.Remove(oldMessageId);
+                _messageIdToSelector[message.Key] = container;
+                _messageIdToSelector.Remove(oldKey);
             }
 
-            if (message.ReplyTo is MessageReplyToMessage replyToMessage && _messageIdToMessageIds.TryGetValue(replyToMessage.MessageId, out var ids))
+            if (message.ReplyTo is MessageReplyToMessage replyToMessage && _messageIdToMessageIds.TryGetValue(_viewModel.GetKey(replyToMessage.ChatId, replyToMessage.MessageId), out var keys))
             {
-                ids.Add(message.Id);
-                ids.Remove(oldMessageId);
+                keys.Add(message.Key);
+                keys.Remove(oldKey);
             }
         }
 
@@ -1868,7 +1870,7 @@ namespace Telegram.Views
             // Album sub-messages aren't list items (not in _messageIdToSelector); they're reached
             // through their album container via MediaAlbumId. The hosting MessageSelector then
             // refreshes the album-level state and the specific child (see MessageSelector.UpdateSelection).
-            if (_messageIdToSelector.TryGetValue(message.Id, out var container)
+            if (_messageIdToSelector.TryGetValue(message.Key, out var container)
                 || (message.MediaAlbumId != 0 && _albumIdToSelector.TryGetValue(message.MediaAlbumId, out container)))
             {
                 (container.ContentTemplateRoot as MessageSelector)?.UpdateSelection(message.Id);
@@ -1883,10 +1885,10 @@ namespace Telegram.Views
                     _albumIdToSelector.Remove(message.MediaAlbumId);
 
                 if (message.Id != 0)
-                    _messageIdToSelector.Remove(message.Id);
+                    _messageIdToSelector.Remove(message.Key);
 
                 if (message.ReplyTo is MessageReplyToMessage replyToMessage)
-                    _messageIdToMessageIds.Remove(replyToMessage.MessageId, message.Id);
+                    _messageIdToMessageIds.Remove(_viewModel.GetKey(replyToMessage.ChatId, replyToMessage.MessageId), message.Key);
 
                 if (message.Content is MessageHeaderMessageTopic && message.TopicId is MessageTopicForum messageTopicForum)
                     _messageTopicToSelectors.Remove(messageTopicForum.ForumTopicId, container);
@@ -1897,10 +1899,10 @@ namespace Telegram.Views
                     _albumIdToSelector[message.MediaAlbumId] = container;
 
                 if (message.Id != 0)
-                    _messageIdToSelector[message.Id] = container;
+                    _messageIdToSelector[message.Key] = container;
 
                 if (message.ReplyTo is MessageReplyToMessage replyToMessage)
-                    _messageIdToMessageIds.Add(replyToMessage.MessageId, message.Id);
+                    _messageIdToMessageIds.Add(_viewModel.GetKey(replyToMessage.ChatId, replyToMessage.MessageId), message.Key);
 
                 if (message.Content is MessageHeaderMessageTopic && message.TopicId is MessageTopicForum messageTopicForum)
                     _messageTopicToSelectors.Add(messageTopicForum.ForumTopicId, container);

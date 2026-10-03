@@ -30,7 +30,7 @@ namespace Telegram.ViewModels.Delegates
 
         IEventAggregator Aggregator { get; }
 
-        IDictionary<long, MessageViewModel> SelectedItems { get; }
+        IDictionary<MessageKey, MessageViewModel> SelectedItems { get; }
 
         bool IsSelectionEnabled { get; }
 

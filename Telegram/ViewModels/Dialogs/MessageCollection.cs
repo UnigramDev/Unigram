@@ -14,10 +14,47 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
+    /// <summary>
+    /// Identifies and orders a message in a chat's history, which can continue into the basic
+    /// group the chat was upgraded from. That group's message ids overlap the supergroup's and
+    /// are often larger, so its messages are keyed below every one of them: TDLib ids are int53,
+    /// which leaves the room. A distinct type so that a message id can't stand in for one.
+    /// </summary>
+    public readonly struct MessageKey : IEquatable<MessageKey>, IComparable<MessageKey>
+    {
+        private const long UpgradedFromOffset = 1L << 53;
+
+        private readonly long _value;
+
+        private MessageKey(long value)
+        {
+            _value = value;
+        }
+
+        public static MessageKey From(long messageId, bool upgradedFrom)
+        {
+            return new MessageKey(upgradedFrom ? messageId - UpgradedFromOffset : messageId);
+        }
+
+        public static readonly MessageKey MinValue = new(long.MinValue);
+        public static readonly MessageKey MaxValue = new(long.MaxValue);
+
+        public bool Equals(MessageKey other) => _value == other._value;
+        public override bool Equals(object obj) => obj is MessageKey other && _value == other._value;
+        public override int GetHashCode() => _value.GetHashCode();
+        public int CompareTo(MessageKey other) => _value.CompareTo(other._value);
+        public override string ToString() => _value.ToString();
+
+        public static bool operator ==(MessageKey left, MessageKey right) => left._value == right._value;
+        public static bool operator !=(MessageKey left, MessageKey right) => left._value != right._value;
+        public static bool operator <(MessageKey left, MessageKey right) => left._value < right._value;
+        public static bool operator >(MessageKey left, MessageKey right) => left._value > right._value;
+    }
+
     public partial class MessageCollection : SuppressObservableCollection<MessageViewModel>
     {
         private readonly DialogViewModel _viewModel;
-        private readonly Dictionary<long, MessageViewModel> _messages = new();
+        private readonly Dictionary<MessageKey, MessageViewModel> _messages = new();
 
         /// <summary>
         /// Which neighbours of an inserted item still need their attach state and separators
@@ -34,9 +71,9 @@ namespace Telegram.ViewModels
 
         private AttachMode _attachMode = AttachMode.Both;
 
-        public ICollection<long> Ids => _messages.Keys;
+        public ICollection<MessageKey> Keys => _messages.Keys;
 
-        public long FirstId
+        public MessageViewModel First
         {
             get
             {
@@ -45,15 +82,15 @@ namespace Telegram.ViewModels
                     var item = this[i];
                     if (item.Id != 0 && !item.IsSynthetic)
                     {
-                        return item.Id;
+                        return item;
                     }
                 }
 
-                return long.MaxValue;
+                return null;
             }
         }
 
-        public long LastId
+        public MessageViewModel Last
         {
             get
             {
@@ -62,13 +99,17 @@ namespace Telegram.ViewModels
                     var item = this[i];
                     if (item.Id != 0 && !item.IsSynthetic)
                     {
-                        return item.Id;
+                        return item;
                     }
                 }
 
-                return long.MinValue;
+                return null;
             }
         }
+
+        public MessageKey FirstKey => First?.Key ?? MessageKey.MaxValue;
+
+        public MessageKey LastKey => Last?.Key ?? MessageKey.MinValue;
 
         public Action<MessageViewModel, MessageViewModel> AttachChanged;
 
@@ -81,7 +122,7 @@ namespace Telegram.ViewModels
             _messages = new();
         }
 
-        public MessageCollection(DialogViewModel viewModel, ICollection<long> exclude, IEnumerable<Message> source, bool endReached, DialogType type)
+        public MessageCollection(DialogViewModel viewModel, ICollection<MessageKey> exclude, IEnumerable<Message> source, bool endReached, DialogType type)
         {
             _viewModel = viewModel;
 
@@ -89,7 +130,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var item in source)
                 {
-                    if (item.Id != 0 && exclude != null && exclude.Contains(item.Id))
+                    if (item.Id != 0 && exclude != null && exclude.Contains(viewModel.GetKey(item.ChatId, item.Id)))
                     {
                         continue;
                     }
@@ -117,26 +158,26 @@ namespace Telegram.ViewModels
             base.ClearItems();
         }
 
-        public bool ContainsKey(long id)
+        public bool ContainsKey(MessageKey key)
         {
-            return _messages.ContainsKey(id);
+            return _messages.ContainsKey(key);
         }
 
-        public bool TryGetValue(long id, out MessageViewModel value)
+        public bool TryGetValue(MessageKey key, out MessageViewModel value)
         {
-            return _messages.TryGetValue(id, out value);
+            return _messages.TryGetValue(key, out value);
         }
 
         public void UpdateMessageSendSucceeded(long oldMessageId, MessageViewModel message)
         {
-            _messages.Remove(oldMessageId);
-            _messages[message.Id] = message;
+            _messages.Remove(MessageKey.From(oldMessageId, message.IsUpgradedFrom));
+            _messages[message.Key] = message;
         }
 
         public void UpdateMessageSendSucceeded(long oldMessageId, long newMessageId, MessageViewModel message)
         {
-            _messages.Remove(oldMessageId);
-            _messages[newMessageId] = message;
+            _messages.Remove(MessageKey.From(oldMessageId, message.IsUpgradedFrom));
+            _messages[MessageKey.From(newMessageId, message.IsUpgradedFrom)] = message;
         }
 
         /// <summary>
@@ -226,7 +267,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return item.Id < message.Id;
+            return item.Key < message.Key;
         }
 
         /// <summary>
@@ -284,7 +325,7 @@ namespace Telegram.ViewModels
             // An album is listed under its first child's id alone, so a later child of one
             // answers the lookup and is then matched nowhere below. Deliberate: it leaves the
             // album where it is rather than dragging it around by one of its children.
-            var oldIndexNeeded = _messages.ContainsKey(oldMessageId != 0 ? oldMessageId : message.Id);
+            var oldIndexNeeded = _messages.ContainsKey(oldMessageId != 0 ? MessageKey.From(oldMessageId, message.IsUpgradedFrom) : message.Key);
             var newIndexNeeded = true;
 
             for (int i = Count - 1; i >= 0; i--)
@@ -313,7 +354,7 @@ namespace Telegram.ViewModels
                     newIndexNeeded = false;
                 }
 
-                if (item.Id == message.Id && oldIndexNeeded)
+                if (item.Key == message.Key && oldIndexNeeded)
                 {
                     oldIndex = i;
                     oldIndexNeeded = false;
@@ -368,7 +409,7 @@ namespace Telegram.ViewModels
         {
             empty = true;
 
-            var lastId = LastId;
+            var lastKey = LastKey;
 
             try
             {
@@ -378,7 +419,7 @@ namespace Telegram.ViewModels
 
                     if (filter && message.Id != 0)
                     {
-                        if (message.Id < lastId || _messages.ContainsKey(message.Id))
+                        if (message.Key < lastKey || _messages.ContainsKey(message.Key))
                         {
                             continue;
                         }
@@ -403,7 +444,7 @@ namespace Telegram.ViewModels
         {
             empty = true;
 
-            var firstId = FirstId;
+            var firstKey = FirstKey;
 
             try
             {
@@ -413,7 +454,7 @@ namespace Telegram.ViewModels
 
                     if (filter && message.Id != 0)
                     {
-                        if (message.Id > firstId || _messages.ContainsKey(message.Id))
+                        if (message.Key > firstKey || _messages.ContainsKey(message.Key))
                         {
                             continue;
                         }
@@ -496,13 +537,13 @@ namespace Telegram.ViewModels
             {
                 foreach (var child in album.Messages)
                 {
-                    _messages[child.Id] = item;
+                    _messages[child.Key] = item;
                 }
             }
 
             if (item.Id != 0)
             {
-                _messages[item.Id] = item;
+                _messages[item.Key] = item;
             }
 
             var mode = _attachMode;
@@ -608,23 +649,23 @@ namespace Telegram.ViewModels
             {
                 foreach (var child in previousAlbum.Messages)
                 {
-                    _messages.Remove(child.Id);
+                    _messages.Remove(child.Key);
                 }
             }
 
-            _messages.Remove(previous.Id);
+            _messages.Remove(previous.Key);
 
             if (item.Content is MessageAlbum album)
             {
                 foreach (var child in album.Messages)
                 {
-                    _messages[child.Id] = item;
+                    _messages[child.Key] = item;
                 }
             }
 
             if (item.Id != 0)
             {
-                _messages[item.Id] = item;
+                _messages[item.Key] = item;
             }
 
             base.SetItem(index, item);
@@ -637,11 +678,11 @@ namespace Telegram.ViewModels
             {
                 foreach (var child in album.Messages)
                 {
-                    _messages.Remove(child.Id);
+                    _messages.Remove(child.Key);
                 }
             }
 
-            _messages.Remove(item.Id);
+            _messages.Remove(item.Key);
 
             if (_attachMode == AttachMode.None || item.Content is MessageHeaderNewThread or MessageSponsored)
             {

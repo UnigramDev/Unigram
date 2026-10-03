@@ -75,21 +75,21 @@ namespace Telegram.ViewModels.Delegates
         void UpdateMessageSummary(MessageViewModel message);
         void UpdateMessageSelection(MessageViewModel message);
 
-        void UpdateContainerWithMessageId(long messageId, Action<SelectorItem> action);
+        void UpdateContainerWithMessageId(MessageKey key, Action<SelectorItem> action);
 
-        void UpdateBubbleWithMessageId(long messageId, Action<MessageBubble> action);
+        void UpdateBubbleWithMessageId(MessageKey key, Action<MessageBubble> action);
         void UpdateBubbleWithMediaAlbumId(long mediaAlbumId, Action<MessageBubble> action);
 
-        void UpdateBubbleWithReplyToMessageId(long messageId, Action<MessageBubble, MessageViewModel> action);
+        void UpdateBubbleWithReplyToMessageId(MessageKey key, Action<MessageBubble, MessageViewModel> action);
 
         void UpdateServiceWithForumTopic(int forumTopicId);
 
         void ForEach(Action<MessageBubble, MessageViewModel> action);
         void ForEach(Action<MessageBubble> action);
 
-        bool IsItemVisible(long id);
-        bool HasContainerForItem(long id);
-        SelectorItem ContainerFromItem(long id);
+        bool IsItemVisible(MessageKey key);
+        bool HasContainerForItem(MessageKey key);
+        SelectorItem ContainerFromItem(MessageKey key);
 
         float AnimatedHeight { get; }
         bool HasMessagesPadding { get; }
