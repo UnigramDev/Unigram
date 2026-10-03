@@ -105,7 +105,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -126,7 +126,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -168,7 +168,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -312,6 +312,13 @@
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="Composition\DirectRectangleClip2.h" />
+    <ClInclude Include="Graphics\DiamondScene.h" />
+    <ClInclude Include="Graphics\Scene3D.h" />
+    <ClInclude Include="Graphics\Scene3DDevice.h" />
+    <ClInclude Include="Graphics\Scene3DPanel.h">
+      <DependentUpon>Graphics\Scene3DPanel.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Graphics\Scene3DRenderer.h" />
     <ClInclude Include="Composition\DwmThumbnail.h" />
     <ClInclude Include="Composition\WindowVisual.h" />
     <ClInclude Include="Controls\ControlEx.h">
@@ -1242,6 +1249,13 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Composition\DirectRectangleClip2.cpp" />
+    <ClCompile Include="Graphics\DiamondScene.cpp" />
+    <ClCompile Include="Graphics\Scene3DDevice.cpp" />
+    <ClCompile Include="Graphics\Scene3DPanel.cpp">
+      <DependentUpon>Graphics\Scene3DPanel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Graphics\Scene3DRenderer.cpp" />
     <ClCompile Include="Composition\WindowVisual.cpp" />
     <ClCompile Include="Controls\ControlEx.cpp">
       <DependentUpon>Controls\ControlEx.idl</DependentUpon>
@@ -1415,6 +1429,67 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <!--
+      Only a header comes out of these: the bytecode is compiled into the binary, so there is no
+      .cso to ship. The empty ObjectFileOutput is what says so, and it has to stay empty rather
+      than point somewhere tidy - MakeDirsForFxc marks that output DeploymentContent and gives it
+      a package path of MakeRelative($(TargetDir), ...), so any value outside the output
+      directory becomes a layout entry that climbs out of the package with ".." and makepri
+      fails the build with PRI175.
+    -->
+    <FxCompile Include="Graphics\Shaders\DiamondVertex.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>VS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)DiamondVertex.h</HeaderFileOutput>
+      <VariableName>g_DiamondVertex</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\DiamondPixel.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>PS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)DiamondPixel.h</HeaderFileOutput>
+      <VariableName>g_DiamondPixel</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\SparkleVertex.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>VS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)SparkleVertex.h</HeaderFileOutput>
+      <VariableName>g_SparkleVertex</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\SparklePixel.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>PS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)SparklePixel.h</HeaderFileOutput>
+      <VariableName>g_SparklePixel</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\CompositeVertex.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>VS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)CompositeVertex.h</HeaderFileOutput>
+      <VariableName>g_CompositeVertex</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\CompositePixel.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>PS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)CompositePixel.h</HeaderFileOutput>
+      <VariableName>g_CompositePixel</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <None Include="Graphics\Shaders\Diamond.hlsl" />
+    <None Include="Graphics\Shaders\Sparkle.hlsl" />
+    <None Include="Graphics\Shaders\Composite.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
     <None Include="Telegram.Native.def" />
   </ItemGroup>
@@ -1483,6 +1558,7 @@
     <Midl Include="MessageBubbleNineGrid.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="Graphics\Scene3DPanel.idl" />
     <Midl Include="NativeUtils.idl" />
     <Midl Include="TextHost.idl" />
     <Midl Include="AI\TextRecognizer.idl" />

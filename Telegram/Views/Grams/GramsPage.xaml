@@ -7,6 +7,7 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:graphics="using:Telegram.Native.Graphics"
                   mc:Ignorable="d"
                   ShowHeader="False"
                   NavigationMode="Root">
@@ -24,14 +25,16 @@
                 <StackPanel>
                     <controls:SettingsPanel IsHeader="True"
                                             HasTopPadding="False">
-                        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/WalletAbout.tgs"
-                                                AutoPlay="True"
-                                                IsCachingEnabled="False"
-                                                DecodeFrameType="Logical"
-                                                FrameSize="140,140"
-                                                Width="140"
-                                                Height="140"
-                                                Margin="0,16,0,0"/>
+                        <graphics:Scene3DPanel Model="Diamond"
+                                               PressScale="1"
+                                               IsSpinning="True"
+                                               IsInteractive="True"
+                                               FallbackText="&#xEA7E;"
+                                               FallbackFontSize="120"
+                                               FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               FallbackForeground="{ThemeResource AccentFillColorDefaultBrush}"
+                                               Width="156"
+                                               Height="156" />
                         <controls:StickyHeader x:Name="Header"
                                                Text="{CustomResource TONBalanceTitle}"
                                                HorizontalContentAlignment="Center"

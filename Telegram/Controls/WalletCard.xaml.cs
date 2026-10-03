@@ -218,7 +218,7 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            LayoutRoot.CornerRadius = new CornerRadius(e.NewSize.Width * (3.18 / 85.60));
+            SheenRoot.CornerRadius = new CornerRadius(e.NewSize.Width * (3.18 / 85.60));
 
             // A new surface only when the size actually moved, and the card settles at one size
             // and is measured again at that size on every reflow.

@@ -2662,6 +2662,15 @@
     <Content Include="Assets\Animations\WalletAbout.tgs" />
     <Content Include="Assets\Animations\Gram.tgs" />
     <Content Include="Assets\Animations\GramCard.tgs" />
+    <Content Include="Assets\Models\Diamond\anchors.bin" />
+    <Content Include="Assets\Models\Diamond\camera.bin" />
+    <Content Include="Assets\Models\Diamond\facetProjection.bin" />
+    <Content Include="Assets\Models\Diamond\frames.bin" />
+    <Content Include="Assets\Models\Diamond\main.bin" />
+    <Content Include="Assets\Models\Diamond\planes.bin" />
+    <Content Include="Assets\Models\Diamond\small.bin" />
+    <Content Include="Assets\Models\Diamond\vertices.bin" />
+    <Content Include="Assets\Models\Diamond\widths.bin" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />

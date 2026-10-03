@@ -1,0 +1,89 @@
+namespace Telegram.Native.Graphics
+{
+    enum Scene3DModel
+    {
+        Diamond
+    };
+
+    // The looks a scene is authored in. Both names are the source's own: the beta calls palette 2
+    // the "Cool diamond", and the shader builds palette 1 around a colour it names ice.
+    enum Scene3DPalette
+    {
+        Default,
+        Ice,
+        Cool
+    };
+
+    [default_interface]
+    unsealed runtimeclass Scene3DPanel : Windows.UI.Xaml.Controls.SwapChainPanel
+    {
+        Scene3DPanel();
+
+        Boolean IsConnected{ get; };
+        Boolean IsDisconnected{ get; };
+
+        overridable void OnLoaded();
+        overridable void OnUnloaded();
+
+        // Which scene to build. Read once, when the panel is first shown, because a scene owns
+        // its shaders and its buffers and swapping those is a reload rather than a property set.
+        Scene3DModel Model;
+
+        // Whether it turns on its own. Scenes whose highlights are authored for square-on say no
+        // by default, and the one in the app being matched does.
+        Boolean IsSpinning;
+
+        // Whether dragging turns it. Off makes the panel inert to the pointer, which is what a
+        // scene used as an ornament wants.
+        Boolean IsInteractive;
+
+        // Which of the scene's looks to wear. Every live diamond in the beta is Default; Cool is
+        // what its transaction bubbles show, through a path that renders off screen into a bitmap
+        // rather than onto a surface of its own.
+        Scene3DPalette Palette;
+
+        // How much a press grows it, springing back when it is let go. One for not at all.
+        //
+        // Three, which is what the beta springs its own view to.
+        Double PressScale;
+
+        // Where that growth is centred, in units of the panel's own size: 0.5, 0.5 is its middle
+        // and anything outside 0 to 1 is a point beyond its edges. The same convention
+        // RenderTransformOrigin uses, and the reason it is a property at all - the beta centres
+        // the send screen's diamond on itself and the transaction card's on the card, which is
+        // below the panel's own bottom edge.
+        Windows.Foundation.Point PressScaleOrigin;
+
+        // Nudges the spin. Positive hurries it along the way it already turns and negative sends
+        // it back for a moment before it reasserts itself; the amount is an angular velocity in
+        // degrees per second, and repeated kicks add up.
+        //
+        // The idle spin is about 34 degrees a second, so a couple of hundred is a firm shove.
+        // Typing a digit kicks forwards and deleting one kicks back, which is what the beta's
+        // send screen does as an amount is entered.
+        void Kick(Double degreesPerSecond);
+
+        // Stops the render loop and gives the device back, without unloading the panel.
+        //
+        // Needed because nothing in XAML reports a collapsed ancestor: Visibility is a local
+        // property and the effective viewport only moves for scrolling, so a host that hides this
+        // by collapsing something above it is the only thing that knows. A host that removes it
+        // from the tree instead - a popup closing - needs none of this.
+        Boolean IsPaused;
+
+        // What the panel shows instead when it cannot draw the scene: no capable GPU, an asset
+        // that would not load, a device that could not be recovered. Meant for a glyph from an
+        // icon font, centred in the panel. Nothing is created unless it is needed.
+        //
+        // Plain properties, which take {StaticResource} but not {ThemeResource} or {Binding}.
+        // Only the brush has to follow a theme change, so only it is a dependency property - and
+        // being a DependencyObject, it is also the one kind of value XAML stores with a reference
+        // of its own. A custom DP holding a boxed string or double keeps an unowned pointer.
+        String FallbackText;
+        Double FallbackFontSize;
+        Windows.UI.Xaml.Media.FontFamily FallbackFontFamily;
+
+        Windows.UI.Xaml.Media.Brush FallbackForeground;
+        static Windows.UI.Xaml.DependencyProperty FallbackForegroundProperty{ get; };
+    }
+}

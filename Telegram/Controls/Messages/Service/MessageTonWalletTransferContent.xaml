@@ -6,6 +6,7 @@
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:messages="using:Telegram.Controls.Messages"
                          xmlns:controls="using:Telegram.Controls"
+                         xmlns:graphics="using:Telegram.Native.Graphics"
                          Click="Service_Click"
                          mc:Ignorable="d"
                          d:DesignHeight="300"
@@ -91,13 +92,19 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <controls:AnimatedImage Source="ms-appx:///Assets/Animations/GramCard.tgs"
-                                        IsCachingEnabled="False"
-                                        AutoPlay="True"
-                                        FrameSize="36,36"
-                                        DecodeFrameType="Logical"
-                                        Width="36"
-                                        Height="36" />
+                <graphics:Scene3DPanel Model="Diamond"
+                                       Palette="Cool"
+                                       PressScale="3"
+                                       PressScaleOrigin="0.5,0.1"
+                                       IsSpinning="True"
+                                       IsInteractive="True"
+                                       FallbackText="&#xEA7E;"
+                                       FallbackFontSize="24"
+                                       FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FallbackForeground="#FFFFFF"
+                                       Width="36"
+                                       Height="36"
+                                       Canvas.ZIndex="1" />
 
                 <TextBlock x:Name="Amount"
                            TextWrapping="NoWrap"

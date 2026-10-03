@@ -5,6 +5,7 @@
                    xmlns:controls="using:Telegram.Controls"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:graphics="using:Telegram.Native.Graphics"
                    mc:Ignorable="d"
                    Padding="12,24,12,24"
                    IsDismissButtonVisible="True"
@@ -69,7 +70,8 @@
                                       FontWeight="SemiBold"
                                       FontSize="40"
                                       FractionFontSize="26"
-                                      VerticalAlignment="Center">
+                                      VerticalAlignment="Center"
+                                      Canvas.ZIndex="1">
                 <controls:AmountTextBlock.Prefix>
                     <Grid x:Name="Prefix"
                           HorizontalAlignment="Left"
@@ -78,14 +80,18 @@
                                 HorizontalAlignment="Right"
                                 Width="40"
                                 Height="40">
-                            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Gram.tgs"
-                                                    IsCachingEnabled="False"
-                                                    AutoPlay="True"
-                                                    FrameSize="52,52"
-                                                    DecodeFrameType="Logical"
-                                                    Width="52"
-                                                    Height="52"
-                                                    Margin="-6,-14,-6,-6" />
+                            <graphics:Scene3DPanel x:Name="Diamond"
+                                                   Model="Diamond"
+                                                   PressScale="3"
+                                                   IsSpinning="True"
+                                                   IsInteractive="True"
+                                                   FallbackText="&#xEA7E;"
+                                                   FallbackFontSize="36"
+                                                   FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                   FallbackForeground="{ThemeResource AccentFillColorDefaultBrush}"
+                                                   Width="52"
+                                                   Height="52"
+                                                   Margin="-6,-14,-6,-6" />
                         </Border>
                         <TextBlock x:Name="PrefixCurrency"
                                    Text="&#xEA7E;"

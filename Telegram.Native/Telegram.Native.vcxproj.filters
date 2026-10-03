@@ -10,6 +10,12 @@
     <Filter Include="SVG">
       <UniqueIdentifier>{20f48c9c-22c5-4b5f-9ac3-113a8c4eaa06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{f7d07f51-a21c-528c-81d2-ded44454a9d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Shaders">
+      <UniqueIdentifier>{ea0c0fc8-39c3-5c3f-af8a-0355fdf48f42}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Composition">
       <UniqueIdentifier>{721dff3e-daaf-45ba-955e-038df064ed5c}</UniqueIdentifier>
     </Filter>
@@ -635,6 +641,18 @@
     </ClCompile>
     <ClCompile Include="Composition\DirectRectangleClip2.cpp">
       <Filter>Composition</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\DiamondScene.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Scene3DDevice.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Scene3DPanel.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Scene3DRenderer.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\creatwth.cpp">
       <Filter>Detours</Filter>
@@ -1312,6 +1330,21 @@
     <ClInclude Include="Composition\DirectRectangleClip2.h">
       <Filter>Composition</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\DiamondScene.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Scene3D.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Scene3DDevice.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Scene3DPanel.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Scene3DRenderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.h">
       <Filter>Detours</Filter>
     </ClInclude>
@@ -1580,6 +1613,9 @@
     <Midl Include="Composition\DirectRectangleClip2.idl">
       <Filter>Composition</Filter>
     </Midl>
+    <Midl Include="Graphics\Scene3DPanel.idl">
+      <Filter>Graphics</Filter>
+    </Midl>
     <Midl Include="Composition\WindowVisual.idl">
       <Filter>Composition</Filter>
     </Midl>
@@ -1645,5 +1681,34 @@
     <Midl Include="RichMathSurface.idl" />
     <Midl Include="TextHost.idl" />
     <Midl Include="DirectTextLayout.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Graphics\Shaders\CompositePixel.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\CompositeVertex.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\DiamondPixel.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\DiamondVertex.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\SparklePixel.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\SparkleVertex.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <None Include="Graphics\Shaders\Composite.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </None>
+    <None Include="Graphics\Shaders\Diamond.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </None>
+    <None Include="Graphics\Shaders\Sparkle.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
