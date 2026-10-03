@@ -338,6 +338,10 @@ namespace Telegram.Common
             }
         }
 
+        // The span is untrusted and every unit of it becomes a ColumnDefinition and a slot in the
+        // occupancy array, so it is capped where HTML caps it.
+        private static int ClampColspan(int colspan) => Math.Clamp(colspan, 1, 1000);
+
         private FrameworkElement ProcessTable(IClientService clientService, PageBlockTable table, bool test = false)
         {
             // A table can arrive with no rows at all, and Max has nothing to reduce over. There is
@@ -357,7 +361,18 @@ namespace Telegram.Common
                 ? new Thickness(4, 2, 4, 2)
                 : new Thickness(8, 4, 8, 4);
 
-            var columns = table.Cells.Max(row => row.Sum(int (cell) => cell.Colspan));
+            var columns = 0;
+            foreach (var line in table.Cells)
+            {
+                var width = 0;
+                foreach (var cell in line)
+                {
+                    width += ClampColspan(cell.Colspan);
+                }
+
+                columns = Math.Max(columns, width);
+            }
+
             var rows = table.Cells.Count;
 
             for (int i = 0; i < columns; i++)
@@ -400,7 +415,7 @@ namespace Telegram.Common
                         break;
                     }
 
-                    var colspan = Math.Min(Math.Max(1, cell.Colspan), columns - column);
+                    var colspan = Math.Min(ClampColspan(cell.Colspan), columns - column);
                     var rowspan = Math.Min(Math.Max(1, cell.Rowspan), rows - row);
 
                     var lastColumn = column + colspan - 1;
