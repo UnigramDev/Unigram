@@ -3824,9 +3824,9 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.AddToContacts, message, Strings.AddContactTitle, Icons.Person);
                 //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.SaveToDownloads);
 
-                if (CanGetMessageEmojis(message, out var customEmojiIds))
+                if (properties.CustomEmojiIds.Count > 0)
                 {
-                    LoadMessageEmojis(message, flyout, customEmojiIds);
+                    LoadMessageEmojis(message, flyout, properties.CustomEmojiIds);
                 }
 
                 if (AppSettings.Diagnostics.DeleteFilesDebug)
@@ -4233,12 +4233,6 @@ namespace Telegram.Views
                 placeholder.Text = Strings.NobodyViewed;
                 placeholder.IsEnabled = false;
             }
-        }
-
-        private bool CanGetMessageEmojis(MessageViewModel message, out Vector<long> customEmojiIds)
-        {
-            customEmojiIds = message.GetCustomEmojiIds();
-            return customEmojiIds.Count > 0;
         }
 
         private async void LoadMessageEmojis(MessageViewModel message, MenuFlyout flyout, Vector<long> customEmojiIds)
