@@ -131,6 +131,14 @@ namespace Telegram.Views.Popups
 
         private void Date_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
         {
+            // Tapping the selected day in the flyout deselects it, leaving Date null.
+            // Restoring it raises DateChanged again, which updates the button text.
+            if (args.NewDate == null && args.OldDate != null)
+            {
+                sender.Date = args.OldDate;
+                return;
+            }
+
             UpdatePrimaryButtonText();
         }
 
