@@ -413,20 +413,7 @@ namespace Telegram.Navigation
                 content = contentControl.Content as UIElement;
             }
 
-            if (content is RootWindow rootPage && rootPage.NavigationService != null)
-            {
-                return rootPage.NavigationService;
-            }
-            else if (content is StandaloneWindow standalonePage && standalonePage.NavigationService != null)
-            {
-                return standalonePage.NavigationService;
-            }
-            else if (content is Page { DataContext: ViewModelBase viewModel })
-            {
-                return viewModel.NavigationService;
-            }
-
-            return null;
+            return ResolveNavigationService(content);
         }
 
         #region Helper methods
@@ -883,7 +870,7 @@ namespace Telegram.Navigation
             //{
             //    handled = (NavigationService?.CanGoBack == false);
             //}
-            var navigationService = NavigationServices.FirstOrDefault();
+            var navigationService = RootNavigationService;
             var handled = navigationService?.CanGoBack == false;
 
             RaiseBackRequested(VirtualKey.GoBack, ref handled);

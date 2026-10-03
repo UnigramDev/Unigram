@@ -21,12 +21,14 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Host
 {
-    public sealed partial class ShareWindow : WindowContent
+    public sealed partial class ShareWindow : WindowContent, INavigationHost
     {
-        public ShareWindow(WindowContext window, ISession session)
+        public ShareWindow(WindowContext window, ISession session, INavigationService navigationService)
             : base(window)
         {
             InitializeComponent();
+
+            NavigationService = navigationService;
 
             Background.Update(session.Resolve<IClientService>());
 
@@ -34,6 +36,8 @@ namespace Telegram.Views.Host
                 ? Strings.AppDisplayName
                 : Strings.AppName;
         }
+
+        public INavigationService NavigationService { get; }
 
         public async void Activate(ShareTargetActivatedEventArgs args, INavigationService navigationService, AuthorizationState state)
         {

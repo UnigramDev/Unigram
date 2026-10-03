@@ -292,8 +292,10 @@ namespace Telegram.Services
             {
                 WindowContext.ForEach(window =>
                 {
-                    var root = window.NavigationServices.FirstOrDefault(x => x.Session == this && x.FrameFacade.FrameId == $"{Id}") as TLRootNavigationService;
-                    root?.Handle(update);
+                    if (window.RootNavigationService is TLRootNavigationService root && root.Session == this)
+                    {
+                        root.Handle(update);
+                    }
                 });
             }
         }

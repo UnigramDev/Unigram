@@ -74,22 +74,6 @@ namespace Telegram.Controls
 
         #region Initialize
 
-        public void Initialize(string key, Frame parent, ViewModelBase viewModel)
-        {
-            var service = viewModel.Window.NavigationServices.GetByFrameId(key + viewModel.Session.Id) as NavigationService;
-            if (service == null)
-            {
-                service = BootStrapper.Current.NavigationServiceFactory(viewModel.Session, viewModel.NavigationService.Window, BootStrapper.BackButton.Ignore, key + viewModel.Session.Id, false) as NavigationService;
-                service.Frame.DataContext = new object();
-                service.Frame.CacheSize = 5;
-                service.FrameFacade.BackRequested += OnBackRequested;
-                service.BackStackChanged += OnBackStackChanged;
-                service.Navigated += OnNavigated;
-            }
-
-            Initialize(service, parent, viewModel, true);
-        }
-
         public void Initialize(NavigationService service, Frame parent, ViewModelBase viewModel, bool hasMaster)
         {
             NavigationService = service;
@@ -98,6 +82,14 @@ namespace Telegram.Controls
             ParentFrame = parent;
 
             HasMaster = hasMaster;
+
+            // The handlers read ParentFrame, which only a master provides.
+            if (hasMaster)
+            {
+                service.FrameFacade.BackRequested += OnBackRequested;
+                service.BackStackChanged += OnBackStackChanged;
+                service.Navigated += OnNavigated;
+            }
         }
 
         public bool HasMaster { get; private set; }
@@ -382,10 +374,9 @@ namespace Telegram.Controls
 
             if (DetailFrame != null)
             {
-                var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
-                if (parent != null && parent != DetailPresenter)
+                if (VisualTreeHelper.GetParent(DetailFrame) is Panel parent && parent != DetailPresenter)
                 {
-                    VisualTreeHelper.DisconnectChildrenRecursive(parent);
+                    parent.Children.Remove(DetailFrame);
                 }
 
                 //Grid.SetRow(DetailFrame, 1);

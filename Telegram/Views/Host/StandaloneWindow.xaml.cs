@@ -25,7 +25,7 @@ namespace Telegram.Views.Host
         }
     }
 
-    public sealed partial class StandaloneWindow : WindowContent
+    public sealed partial class StandaloneWindow : WindowContent, INavigationHost
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;

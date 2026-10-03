@@ -169,7 +169,7 @@ namespace Telegram
             }
 
             var activeSession = LifetimeService.Current.ActiveItem;
-            var navigation = window.NavigationServices.GetByFrameId($"{activeSession.Id}");
+            var navigation = window.RootNavigationService;
 
             var update = activeSession.Resolve<ICloudUpdateService>();
             var service = activeSession.Resolve<IClientService>();
@@ -211,7 +211,7 @@ namespace Telegram
 
             if (args is ShareTargetActivatedEventArgs)
             {
-                return new ShareWindow(window, activeSession)
+                return new ShareWindow(window, activeSession, navigationService)
                 {
                     FlowDirection = LocaleService.Current.FlowDirection
                 };

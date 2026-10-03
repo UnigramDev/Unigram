@@ -401,11 +401,8 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// Creates a new NavigationService from the gived Frame to the 
-        /// WindowWrapper collection. In addition, it optionally will setup the 
-        /// shell back button to react to the nav of the Frame.
-        /// A developer should call this when creating a new/secondary frame.
-        /// The shell back button should only be setup one time.
+        /// Creates a NavigationService for the given Frame. The caller owns it: the window reaches
+        /// it only through the INavigationHost that shows the frame.
         /// </summary>
         public INavigationService NavigationServiceFactory(ISession session, WindowContext window, BackButton backButton, Frame frame, string id, bool root)
         {
@@ -413,18 +410,8 @@ namespace Telegram.Navigation
 
             frame.Content = null;
 
-            // if the service already exists for this frame, use the existing one.
-            foreach (var nav in WindowContext.All.SelectMany(x => x.NavigationServices))
-            {
-                if (nav.FrameFacade.Frame.Equals(frame))
-                {
-                    return nav;
-                }
-            }
-
             var navigationService = CreateNavigationService(session, window, frame, id, root);
             navigationService.FrameFacade.BackButtonHandling = backButton;
-            window.NavigationServices.Add(navigationService);
 
             return navigationService;
         }
@@ -536,30 +523,17 @@ namespace Telegram.Navigation
             try
             {
                 OnResuming(sender, e, AppExecutionState.Suspended);
-
-                //var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
-                //foreach (INavigationService nav in services)
-                //{
-                //    try
-                //    {
-                //        // call view model suspend (OnNavigatedfrom)
-                //        // date the cache (which marks the date/time it was suspended)
-                //        DebugWrite($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                //        await (nav as INavigationService).GetDispatcherWrapper().DispatchAsync(() => nav.Resuming());
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        DebugWrite($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}", caller: nameof(Resuming));
-                //    }
-                //}
             }
             catch { }
+
+            WindowContext.ResumeMain();
         }
 
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             Logger.Info();
             SoundEffects.Suspend();
+            WindowContext.SuspendMain();
 
             var deferral = e.SuspendingOperation.GetDeferral();
             try

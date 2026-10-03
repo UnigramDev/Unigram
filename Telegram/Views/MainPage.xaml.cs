@@ -51,7 +51,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {
-    public sealed partial class MainPage : CorePage, IRootContentPage, INavigatingPage, IChatListDelegate
+    public sealed partial class MainPage : CorePage, IRootContentPage, INavigatingPage, IChatListDelegate, INavigationHost
     {
         private MainViewModel _viewModel;
         public MainViewModel ViewModel => _viewModel ??= DataContext as MainViewModel;
@@ -329,6 +329,9 @@ namespace Telegram.Views
                 LifetimeService.Current.Playback.SourceChanged -= OnPlaybackSourceChanged;
 
                 MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
+                MasterDetail.NavigationService.Suspend();
+                MasterDetail.NavigationService.ClearCache();
+
                 MasterDetail.Dispose();
                 SettingsView?.Dispose();
 
@@ -1722,8 +1725,12 @@ namespace Telegram.Views
 
             if (MasterDetail.NavigationService == null)
             {
-                MasterDetail.Initialize("Main", Frame, ViewModel);
-                MasterDetail.NavigationService.FrameFacade.Navigated += OnNavigated;
+                var service = BootStrapper.Current.NavigationServiceFactory(ViewModel.Session, ViewModel.NavigationService.Window, BootStrapper.BackButton.Ignore, $"Main{ViewModel.Session.Id}", false) as NavigationService;
+                service.Frame.DataContext = new object();
+                service.Frame.CacheSize = 5;
+                service.FrameFacade.Navigated += OnNavigated;
+
+                MasterDetail.Initialize(service, Frame, ViewModel, true);
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;

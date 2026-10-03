@@ -171,13 +171,9 @@ namespace Telegram.Services
                     return;
                 }
 
-                foreach (var service in window.NavigationServices)
+                if (parameter is long chatId && window.RootNavigationService is { } service && service.IsChatOpen(chatId, true))
                 {
-                    if (parameter is long chatId && service.IsChatOpen(chatId, true))
-                    {
-                        oldWindow = window;
-                        return;
-                    }
+                    oldWindow = window;
                 }
             });
 

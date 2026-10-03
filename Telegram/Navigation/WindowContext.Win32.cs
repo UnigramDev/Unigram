@@ -194,7 +194,7 @@ namespace Telegram.Navigation
 
         public INavigationService GetNavigationService()
         {
-            return GetNavigationService(_content?.Content as UIElement);
+            return ResolveNavigationService(_content?.Content as UIElement);
         }
 
         #region Helper methods

@@ -150,7 +150,7 @@ namespace Telegram.Services
 
             dispatcher?.Dispatch(() =>
             {
-                var navigationService = window.NavigationServices?.GetByFrameId($"Main{_clientService.SessionId}");
+                var navigationService = window.GetNavigationService();
                 if (navigationService == null)
                 {
                     return;
@@ -539,7 +539,7 @@ namespace Telegram.Services
                 return;
             }
 
-            if (UpdateAsync(chat, message))
+            UpdateAsync(chat, message, async () =>
             {
                 var caption = GetCaption(chat, silent);
                 var content = GetContent(chat, message);
@@ -590,44 +590,49 @@ namespace Telegram.Services
                 }
 
                 UpdateToast(caption, content, $"{_sessionService.Id}", silent, silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
-            }
+            });
         }
 
-        private bool UpdateAsync(Chat chat, Message message)
+        private void UpdateAsync(Chat chat, Message message, Action action)
         {
             try
             {
                 var active = WindowContext.Active;
                 if (active == null)
                 {
-                    return true;
+                    action();
+                    return;
                 }
 
-                var service = active.NavigationServices?.GetByFrameId($"Main{_clientService.SessionId}");
-                if (service == null)
+                active.Dispatcher.Dispatch(() =>
                 {
-                    return true;
-                }
-
-                if (chat.ViewAsTopics && service.CurrentPageType == typeof(ChatPage) && service.CurrentPageParam is ChatMessageTopic args)
-                {
-                    if (args.ChatId == chat.Id && args.MessageTopic.AreTheSame(message.TopicId))
+                    var service = active.GetNavigationService();
+                    if (service == null)
                     {
-                        Logger.Info("Topic is open");
-                        return false;
+                        action();
+                        return;
                     }
-                }
-                else if (service.IsChatOpen(chat.Id, true))
-                {
-                    Logger.Info("Chat is open");
-                    return false;
-                }
 
-                return true;
+                    if (chat.ViewAsTopics && service.CurrentPageType == typeof(ChatPage) && service.CurrentPageParam is ChatMessageTopic args)
+                    {
+                        if (args.ChatId == chat.Id && args.MessageTopic.AreTheSame(message.TopicId))
+                        {
+                            Logger.Info("Topic is open");
+                            return;
+                        }
+                    }
+                    else if (service.IsChatOpen(chat.Id, true))
+                    {
+                        Logger.Info("Chat is open");
+                        return;
+                    }
+
+                    action();
+                });
             }
             catch
             {
-                return true;
+                action();
             }
         }
 

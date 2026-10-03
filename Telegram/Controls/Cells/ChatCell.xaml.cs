@@ -2146,7 +2146,7 @@ namespace Telegram.Controls.Cells
             }
 
             var context = WindowContext.ForXamlRoot(this);
-            var service = context.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
+            var service = context.GetNavigationService();
 
             var grid = new Grid();
             var chatView = new ChatView
@@ -2160,7 +2160,7 @@ namespace Telegram.Controls.Cells
             viewModel.NavigationService = service;
             viewModel.Dispatcher = service.Dispatcher;
             chatView.Activate(viewModel);
-            _ = viewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, new Telegram.Navigation.Services.NavigationState());
+            _ = viewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, new NavigationState());
 
             // Unloaded doesn't fire for a view hosted in a flyout, so the flyout's own Closed
             // is what tears the preview down; Unloaded stays subscribed in case it does arrive

@@ -279,9 +279,6 @@ namespace Telegram.Services
                         root.Switch(replace);
                     }
 
-                    window.NavigationServices.RemoveByFrameId($"{item.Id}");
-                    window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
-
                     // A session whose authorization was revoked while the app was closed reaches
                     // AuthorizationStateClosed during startup, before the main window has content:
                     // there is no XamlRoot yet, so no popup can be open, and passing null throws.
@@ -302,7 +299,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    return WindowContext.Current.ConsolidateAsync();
+                    return window.ConsolidateAsync();
                 }
             });
 

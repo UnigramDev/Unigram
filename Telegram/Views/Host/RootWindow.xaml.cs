@@ -43,7 +43,7 @@ namespace Telegram.Views.Host
         void PopupClosed();
     }
 
-    public sealed partial class RootWindow : WindowContent
+    public sealed partial class RootWindow : WindowContent, INavigationHost
     {
         private readonly ILifetimeService _lifetime;
 
@@ -115,6 +115,10 @@ namespace Telegram.Views.Host
             }
         }
 
+        // The root frame's own service, for the window to walk; NavigationService above is
+        // where navigation should go instead.
+        INavigationService INavigationHost.NavigationService => _navigationService;
+
         protected override void OnPopupOpened()
         {
             if (_navigationService.Frame.Content is IRootContentPage content)
@@ -178,6 +182,8 @@ namespace Telegram.Views.Host
 
         public void Switch(ISession session)
         {
+            Logger.Info(session.Id);
+
             _lifetime.ActiveItem = session;
 
             if (_lifetime.ActiveItem != session)
@@ -193,59 +199,51 @@ namespace Telegram.Views.Host
 
             Navigation.IsPaneOpen = false;
 
-            var service = Window.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
-            if (service == null)
+            var service = BootStrapper.Current.NavigationServiceFactory(session, Window, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, $"{session.Id}", true) as NavigationService;
+            service.Frame.Navigating += OnNavigating;
+            service.Frame.Navigated += OnNavigated;
+            service.FrameFacade.ShortcutInvoked += OnShortcutInvoked;
+
+            switch (session.ClientService.AuthorizationState)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(session, Window, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, $"{session.Id}", true) as NavigationService;
-                service.Frame.Navigating += OnNavigating;
-                service.Frame.Navigated += OnNavigated;
-                service.FrameFacade.ShortcutInvoked += OnShortcutInvoked;
-
-                switch (session.ClientService.AuthorizationState)
-                {
-                    case AuthorizationStateReady:
-                        service.Navigate(typeof(MainPage));
-                        break;
-                    case AuthorizationStateWaitPhoneNumber:
-                    case AuthorizationStateWaitOtherDeviceConfirmation:
-                        service.Navigate(typeof(AuthorizationPage));
-                        service.AddToBackStack(typeof(BlankPage));
-                        break;
-                    case AuthorizationStateWaitCode:
-                        service.Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
-                        break;
-                    case AuthorizationStateWaitEmailAddress:
-                        service.Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
-                        break;
-                    case AuthorizationStateWaitEmailCode:
-                        service.Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
-                        break;
-                    case AuthorizationStateWaitRegistration:
-                        service.Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
-                        break;
-                    case AuthorizationStateWaitPassword:
-                        service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
-                        break;
-                }
-
-                //if (service is TLRootNavigationService rootService)
-                //{
-                //    rootService.Handle(session.ClientService.GetAuthorizationState());
-                //}
-
-                var counters = session.ClientService.GetUnreadCount(new ChatListMain());
-                if (counters != null)
-                {
-                    session.Aggregator.Publish(counters.UnreadChatCount);
-                    session.Aggregator.Publish(counters.UnreadMessageCount);
-                }
-
-                session.Aggregator.Publish(new UpdateConnectionState(session.ClientService.ConnectionState));
+                case AuthorizationStateReady:
+                    service.Navigate(typeof(MainPage));
+                    break;
+                case AuthorizationStateWaitPhoneNumber:
+                case AuthorizationStateWaitOtherDeviceConfirmation:
+                    service.Navigate(typeof(AuthorizationPage));
+                    service.AddToBackStack(typeof(BlankPage));
+                    break;
+                case AuthorizationStateWaitCode:
+                    service.Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
+                    break;
+                case AuthorizationStateWaitEmailAddress:
+                    service.Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
+                    break;
+                case AuthorizationStateWaitEmailCode:
+                    service.Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
+                    break;
+                case AuthorizationStateWaitRegistration:
+                    service.Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
+                    break;
+                case AuthorizationStateWaitPassword:
+                    service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
+                    break;
             }
-            else
+
+            //if (service is TLRootNavigationService rootService)
+            //{
+            //    rootService.Handle(session.ClientService.GetAuthorizationState());
+            //}
+
+            var counters = session.ClientService.GetUnreadCount(new ChatListMain());
+            if (counters != null)
             {
-                // TODO: This should actually __never__ happen.
+                session.Aggregator.Publish(counters.UnreadChatCount);
+                session.Aggregator.Publish(counters.UnreadMessageCount);
             }
+
+            session.Aggregator.Publish(new UpdateConnectionState(session.ClientService.ConnectionState));
 
             _navigationService = service;
             Navigation.Content = service.Frame;
@@ -253,26 +251,18 @@ namespace Telegram.Views.Host
 
         private void Destroy(NavigationService master)
         {
+            Logger.Info(master.Session.Id);
+
             if (master.Frame.Content is IRootContentPage content)
             {
                 content.Root = null;
                 content.Dispose();
             }
 
-            var detail = Window.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
-            if (detail != null)
-            {
-                detail.Suspend();
-                detail.ClearCache();
-            }
-
             master.Frame.Navigating -= OnNavigating;
             master.Frame.Navigated -= OnNavigated;
             master.FrameFacade.ShortcutInvoked -= OnShortcutInvoked;
             master.Suspend();
-
-            Window.NavigationServices.Remove(master);
-            Window.NavigationServices.Remove(detail);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)

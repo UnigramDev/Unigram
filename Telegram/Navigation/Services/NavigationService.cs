@@ -29,9 +29,6 @@ namespace Telegram.Navigation.Services
 {
     public interface INavigationService
     {
-        void Connect();
-        void Disconnect();
-
         void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null);
         void GoBackAt(int index, bool back = true);
         void GoForward();
@@ -56,6 +53,7 @@ namespace Telegram.Navigation.Services
         void Refresh();
 
         void Suspend();
+        void Resume();
 
         void Block();
 
@@ -238,40 +236,6 @@ namespace Telegram.Navigation.Services
             FrameFacade.Navigated += OnNavigated;
         }
 
-        private bool _connected;
-
-        public void Connect()
-        {
-            if (_connected)
-            {
-                return;
-            }
-
-            _connected = true;
-            Application.Current.Resuming += OnResuming;
-            Application.Current.Suspending += OnSuspending;
-        }
-
-        public void Disconnect()
-        {
-            if (_connected)
-            {
-                _connected = false;
-                Application.Current.Resuming -= OnResuming;
-                Application.Current.Suspending -= OnSuspending;
-            }
-        }
-
-        private void OnResuming(object sender, object e)
-        {
-            Dispatcher.Dispatch(Resume);
-        }
-
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            Dispatcher.Dispatch(Suspend);
-        }
-
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {
             if (e.Suspending)
@@ -380,8 +344,8 @@ namespace Telegram.Navigation.Services
                 var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
-                    dataContext.NavigationService = this;
-                    dataContext.Dispatcher = Dispatcher;
+                    dataContext.NavigationService ??= this;
+                    dataContext.Dispatcher ??= Dispatcher;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: CurrentPageParam).Values;
                     await dataContext.NavigatedToAsync(CurrentPageParam, NavigationMode.New, pageState);
                 }
@@ -402,7 +366,7 @@ namespace Telegram.Navigation.Services
 
                 if (page is IActivablePage cleanup)
                 {
-                    cleanup.Deactivate(true);
+                    cleanup.Deactivate(false);
                 }
             }
         }
@@ -434,8 +398,8 @@ namespace Telegram.Navigation.Services
         {
             Logger.Info($"Suspending: {suspending}");
 
-            dataContext.NavigationService = this;
-            dataContext.Dispatcher = Dispatcher;
+            dataContext.NavigationService ??= this;
+            dataContext.Dispatcher ??= Dispatcher;
 
             var args = new NavigatingEventArgs
             {
@@ -455,8 +419,8 @@ namespace Telegram.Navigation.Services
         {
             Logger.Info($"Suspending: {suspending}");
 
-            dataContext.NavigationService = this;
-            dataContext.Dispatcher = Dispatcher;
+            dataContext.NavigationService ??= this;
+            dataContext.Dispatcher ??= Dispatcher;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
             dataContext.NavigatedFrom(pageState, suspending);
@@ -498,9 +462,10 @@ namespace Telegram.Navigation.Services
                 var dataContext = ViewModelForPage(page, true);
                 if (dataContext != null)
                 {
-                    // prepare for state load
-                    dataContext.NavigationService = this;
-                    dataContext.Dispatcher = Dispatcher;
+                    // prepare for state load. A view model that already has a service keeps it: MainPage
+                    // hands its children the detail one, and the root frame must not take it over.
+                    dataContext.NavigationService ??= this;
+                    dataContext.Dispatcher ??= Dispatcher;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: parameter).Values;
                     await dataContext.NavigatedToAsync(parameter, mode, pageState);
                 }

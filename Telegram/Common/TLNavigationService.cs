@@ -370,7 +370,7 @@ namespace Telegram.Common
                     var nav = BootStrapper.Current.NavigationServiceFactory(Session, window, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm, content));
 
-                    return nav.Frame;
+                    return new NavigationHost(nav);
 
                 }
             };
@@ -405,7 +405,7 @@ namespace Telegram.Common
                     var nav = BootStrapper.Current.NavigationServiceFactory(Session, window, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), paymentReceipt);
 
-                    return nav.Frame;
+                    return new NavigationHost(nav);
 
                 }
             };

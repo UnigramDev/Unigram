@@ -2216,8 +2216,6 @@ namespace Telegram.Views
 
             if (FromPreview)
             {
-                service = ViewModel.Window.NavigationServices.GetByFrameId($"Main{ViewModel.ClientService.SessionId}") as NavigationService;
-
                 var presenter = this.GetParent<MenuFlyoutPresenter>();
                 if (presenter?.Parent is Popup popup)
                 {

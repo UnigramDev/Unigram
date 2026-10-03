@@ -990,8 +990,10 @@ namespace Telegram.Navigation
                 ActiveTime.Visible.Set(false);
             }
 
-            NavigationServices.ForEach(x => x.Suspend());
-            NavigationServices.Clear();
+            foreach (var service in GetNavigationServices())
+            {
+                service.Suspend();
+            }
 
             _content = null;
         }
@@ -1147,7 +1149,75 @@ namespace Telegram.Navigation
         }
 
         public IDispatcherContext Dispatcher { get; }
-        public NavigationServiceList NavigationServices { get; } = new NavigationServiceList();
+
+        /// <summary>
+        /// The service the window's content owns. Not the one GetNavigationService returns: that
+        /// is where navigation should go, which in the main window is MainPage's detail frame.
+        /// </summary>
+        public INavigationService RootNavigationService => (Content as INavigationHost)?.NavigationService;
+
+        /// <summary>
+        /// Outermost first: the service the content owns, then the one owned by the page that
+        /// service shows, and so on down.
+        /// </summary>
+        private List<INavigationService> GetNavigationServices()
+        {
+            var services = new List<INavigationService>(2);
+            var service = RootNavigationService;
+
+            while (service != null && !services.Contains(service))
+            {
+                services.Add(service);
+                service = (service.Frame?.Content as INavigationHost)?.NavigationService;
+            }
+
+            return services;
+        }
+
+        private static INavigationService ResolveNavigationService(UIElement content)
+        {
+            if (content is RootWindow rootPage && rootPage.NavigationService != null)
+            {
+                return rootPage.NavigationService;
+            }
+            else if (content is StandaloneWindow standalonePage && standalonePage.NavigationService != null)
+            {
+                return standalonePage.NavigationService;
+            }
+            else if (content is Page { DataContext: ViewModelBase viewModel })
+            {
+                return viewModel.NavigationService;
+            }
+
+            return null;
+        }
+
+        // Only the main window takes part. A secondary window cannot be dispatched into while the
+        // app suspends, and on Win32, where every window shares one thread, HasThreadAccess alone
+        // would let them all through.
+        public static void SuspendMain()
+        {
+            var window = Main;
+            if (window != null && window.Dispatcher.HasThreadAccess)
+            {
+                foreach (var service in window.GetNavigationServices())
+                {
+                    service.Suspend();
+                }
+            }
+        }
+
+        public static void ResumeMain()
+        {
+            var window = Main;
+            if (window != null && window.Dispatcher.HasThreadAccess)
+            {
+                foreach (var service in window.GetNavigationServices())
+                {
+                    service.Resume();
+                }
+            }
+        }
 
         public static INavigationService GetNavigationService(UIElement element)
         {
@@ -1310,7 +1380,7 @@ namespace Telegram.Navigation
 
         private void Activate(IActivatedEventArgs args, INavigationService service)
         {
-            service ??= Current.NavigationServices.FirstOrDefault();
+            service ??= Current.RootNavigationService;
 
             if (service == null || args == null)
             {
@@ -1474,10 +1544,11 @@ namespace Telegram.Navigation
         public bool RaiseShortcutInvoked(InvokedShortcut shortcut, VirtualKeyModifiers modifiers)
         {
             var args = new ShortcutInvokedEventArgs(shortcut, modifiers);
+            var services = GetNavigationServices();
 
-            foreach (var frame in NavigationServices.Select(x => x.FrameFacade).Reverse())
+            for (int i = services.Count - 1; i >= 0; i--)
             {
-                frame.RaiseShortcutInvoked(args);
+                services[i].FrameFacade.RaiseShortcutInvoked(args);
 
                 if (args.Handled)
                 {
@@ -1662,9 +1733,11 @@ namespace Telegram.Navigation
                 }
             }
 
-            foreach (var frame in NavigationServices.Select(x => x.FrameFacade).Reverse())
+            var services = GetNavigationServices();
+
+            for (int i = services.Count - 1; i >= 0; i--)
             {
-                frame.RaiseBackRequested(args);
+                services[i].FrameFacade.RaiseBackRequested(args);
 
                 if (handled = args.Handled)
                 {
@@ -1672,7 +1745,7 @@ namespace Telegram.Navigation
                 }
             }
 
-            var navigationService = NavigationServices.FirstOrDefault();
+            var navigationService = services.Count > 0 ? services[0] : null;
             if (navigationService?.CanGoBack ?? false)
             {
                 navigationService?.GoBack();
@@ -1686,16 +1759,18 @@ namespace Telegram.Navigation
 
             var args = new HandledEventArgs();
 
-            foreach (var frame in NavigationServices.Select(x => x.FrameFacade))
+            var services = GetNavigationServices();
+
+            foreach (var service in services)
             {
-                frame.RaiseForwardRequested(args);
+                service.FrameFacade.RaiseForwardRequested(args);
                 if (args.Handled)
                 {
                     return true;
                 }
             }
 
-            var navigationService = NavigationServices.FirstOrDefault();
+            var navigationService = services.Count > 0 ? services[0] : null;
             if (navigationService?.CanGoForward ?? false)
             {
                 navigationService?.GoForward();
