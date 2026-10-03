@@ -534,12 +534,12 @@ namespace Telegram.ViewModels
                 if (prevForumTopic != null)
                 {
                     UpdateAttach(null, prev);
-                    UpdateAttach(prevForumTopic, item);
+                    UpdateAttach(item, prevForumTopic);
                 }
                 else if (prevSeparator != null)
                 {
                     UpdateAttach(null, prev);
-                    UpdateAttach(prevSeparator, item);
+                    UpdateAttach(item, prevSeparator);
                 }
                 else
                 {
@@ -552,12 +552,12 @@ namespace Telegram.ViewModels
                 if (nextForumTopic != null)
                 {
                     UpdateAttach(next, null);
-                    UpdateAttach(item, nextForumTopic);
+                    UpdateAttach(nextForumTopic, item);
                 }
                 else if (nextSeparator != null)
                 {
                     UpdateAttach(next, null);
-                    UpdateAttach(item, nextSeparator);
+                    UpdateAttach(nextSeparator, item);
                 }
                 else
                 {
