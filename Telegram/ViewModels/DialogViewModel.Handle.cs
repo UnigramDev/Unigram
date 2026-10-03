@@ -37,6 +37,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatReadOutbox>(Handle)
                 .Subscribe<UpdateForumTopicReadOutbox>(Handle)
                 .Subscribe<UpdateChatReadInbox>(Handle)
+                .Subscribe<UpdateForumTopicReadInbox>(Handle)
                 .Subscribe<UpdateChatDraftMessage>(Handle)
                 .Subscribe<UpdateForumTopicDraftMessage>(Handle)
                 .Subscribe<UpdateDirectMessagesChatDraftMessage>(Handle)
@@ -510,7 +511,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateForumTopicUnreadMentionCount update)
         {
-            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
+            if (update.ChatId == _chat?.Id && update.ForumTopicId == _forumTopic?.Info.ForumTopicId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
             }
@@ -526,7 +527,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateForumTopicUnreadReactionCount update)
         {
-            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
+            if (update.ChatId == _chat?.Id && update.ForumTopicId == _forumTopic?.Info.ForumTopicId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadReactionCount(_chat, update.UnreadReactionCount));
             }
@@ -542,7 +543,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateForumTopicUnreadPollVoteCount update)
         {
-            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
+            if (update.ChatId == _chat?.Id && update.ForumTopicId == _forumTopic?.Info.ForumTopicId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadPollVoteCount(_chat, update.UnreadPollVoteCount));
             }
@@ -572,6 +573,17 @@ namespace Telegram.ViewModels
         public void Handle(UpdateChatReadInbox update)
         {
             if (update.ChatId == _chat?.Id && Type == DialogType.History)
+            {
+                BeginOnUIThread(() =>
+                {
+                    RaisePropertyChanged(nameof(UnreadCount));
+                });
+            }
+        }
+
+        public void Handle(UpdateForumTopicReadInbox update)
+        {
+            if (update.ChatId == _chat?.Id && update.ForumTopicId == _forumTopic?.Info.ForumTopicId)
             {
                 BeginOnUIThread(() =>
                 {

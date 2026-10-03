@@ -550,7 +550,7 @@ namespace Telegram.ViewModels
             {
                 if (Type != DialogType.History || IsDirectMessagesGroup)
                 {
-                    return 0;
+                    return _forumTopic?.UnreadCount ?? 0;
                 }
 
                 return _chat?.UnreadCount ?? 0;
