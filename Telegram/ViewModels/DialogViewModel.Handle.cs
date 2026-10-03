@@ -903,7 +903,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateDeleteMessages update)
         {
-            if (update.ChatId == _chat?.Id && !update.FromCache)
+            if (IsHistoryChat(update.ChatId) && !update.FromCache)
             {
                 var table = update.MessageIds.ToHashSet();
 
@@ -914,7 +914,7 @@ namespace Telegram.ViewModels
                     for (int i = 0; i < Items.Count; i++)
                     {
                         var message = Items[i];
-                        if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
+                        if (message.ChatId == update.ChatId && message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
                         {
                             var found = false;
                             var invalidated = true;
@@ -959,14 +959,14 @@ namespace Telegram.ViewModels
                             }
                         }
 
-                        if (table.Contains(message.Id))
+                        if (message.ChatId == update.ChatId && table.Contains(message.Id))
                         {
                             message.AnimationState = MessageAnimationState.Removed;
 
                             toBeDeleted ??= new();
                             toBeDeleted.Add(message);
                         }
-                        else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
+                        else if (message.ReplyTo is MessageReplyToMessage replyToMessage && replyToMessage.ChatId == update.ChatId && table.Contains(replyToMessage.MessageId))
                         {
                             message.ReplyToItem = null;
                             message.ReplyToState = MessageReplyToState.Deleted;
@@ -996,7 +996,8 @@ namespace Telegram.ViewModels
 
                     foreach (var id in update.MessageIds)
                     {
-                        if (_composerHeader != null && _composerHeader.Matches(id))
+                        // The composer only ever replies within the chat itself.
+                        if (_composerHeader != null && update.ChatId == _chat?.Id && _composerHeader.Matches(id))
                         {
                             ClearReply();
                             break;
@@ -1010,7 +1011,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageContent update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1047,13 +1048,16 @@ namespace Telegram.ViewModels
                     service.UpdateMessage(message);
                 });
 
-                PinnedMessages.UpdateMessageContent(update.MessageId, update.NewContent);
+                if (update.ChatId == _chat?.Id)
+                {
+                    PinnedMessages.UpdateMessageContent(update.MessageId, update.NewContent);
+                }
             }
         }
 
         public void Handle(UpdateMessageContentOpened update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1081,7 +1085,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageEphemeralContent update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1110,15 +1114,22 @@ namespace Telegram.ViewModels
                     service.UpdateMessage(message);
                 });
 
-                PinnedMessages.UpdateMessageEphemeralContent(update.MessageId, update.EphemeralContent);
+                if (update.ChatId == _chat?.Id)
+                {
+                    PinnedMessages.UpdateMessageEphemeralContent(update.MessageId, update.EphemeralContent);
+                }
             }
         }
 
         public void Handle(UpdateMessageMentionRead update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
-                Mentions.RemoveMessage(update.MessageId);
+                var own = update.ChatId == _chat?.Id;
+                if (own)
+                {
+                    Mentions.RemoveMessage(update.MessageId);
+                }
 
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1126,19 +1137,23 @@ namespace Telegram.ViewModels
                     return false;
                 });
 
-                BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
+                if (own)
+                {
+                    BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
+                }
             }
         }
 
         public void Handle(UpdateMessageContainsUnreadPollVotes update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
-                if (update.ContainsUnreadPollVotes)
+                var own = update.ChatId == _chat?.Id;
+                if (own && update.ContainsUnreadPollVotes)
                 {
                     PollVotes.AddMessage(update.MessageId);
                 }
-                else
+                else if (own)
                 {
                     PollVotes.RemoveMessage(update.MessageId);
                 }
@@ -1149,15 +1164,22 @@ namespace Telegram.ViewModels
                     return false;
                 });
 
-                BeginOnUIThread(() => Delegate?.UpdateChatUnreadPollVoteCount(_chat, update.UnreadPollVoteCount));
+                if (own)
+                {
+                    BeginOnUIThread(() => Delegate?.UpdateChatUnreadPollVoteCount(_chat, update.UnreadPollVoteCount));
+                }
             }
         }
 
         public void Handle(UpdateMessageUnreadReactions update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
-                Reactions.RemoveMessage(update.MessageId);
+                var own = update.ChatId == _chat?.Id;
+                if (own)
+                {
+                    Reactions.RemoveMessage(update.MessageId);
+                }
 
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1169,13 +1191,16 @@ namespace Telegram.ViewModels
                     Delegate?.ViewVisibleMessages();
                 });
 
-                BeginOnUIThread(() => Delegate?.UpdateChatUnreadReactionCount(_chat, update.UnreadReactionCount));
+                if (own)
+                {
+                    BeginOnUIThread(() => Delegate?.UpdateChatUnreadReactionCount(_chat, update.UnreadReactionCount));
+                }
             }
         }
 
         public void Handle(UpdateMessageEdited update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1189,7 +1214,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageInteractionInfo update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1203,7 +1228,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageIsPinned update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 if (Type == DialogType.Pinned)
                 {
@@ -1224,13 +1249,16 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    BeginOnUIThread(() =>
+                    if (update.ChatId == _chat?.Id)
                     {
-                        if (TryGetFirstVisibleMessageId(out long firstVisibleId))
+                        BeginOnUIThread(() =>
                         {
-                            PinnedMessages.LoadSlice(firstVisibleId);
-                        }
-                    });
+                            if (TryGetFirstVisibleMessageId(out long firstVisibleId))
+                            {
+                                PinnedMessages.LoadSlice(firstVisibleId);
+                            }
+                        });
+                    }
 
                     Handle(update.ChatId, update.MessageId, message =>
                     {
@@ -1326,7 +1354,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageTranslatedText update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1348,7 +1376,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageSummarizedText update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1389,7 +1417,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageSuggestedPostInfo update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {
@@ -1404,7 +1432,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageFactCheck update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (IsHistoryChat(update.ChatId))
             {
                 Handle(update.ChatId, update.MessageId, message =>
                 {

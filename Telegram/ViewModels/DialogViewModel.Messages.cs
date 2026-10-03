@@ -488,7 +488,7 @@ namespace Telegram.ViewModels
             }
 
             var items = messages
-                .DistinctBy(x => x.Id)
+                .DistinctBy(x => (x.ChatId, x.Id))
                 .ToList<MessageWithOwner>();
 
             IDictionary<MessageId, MessageProperties> properties;
@@ -539,7 +539,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToVector(), popup.Revoke));
+            // The supergroup's copy promises deletion for everyone, which has to hold for the
+            // upgraded-from group's messages it covers too.
+            var revoke = popup.Revoke || chat.Type is ChatTypeSupergroup;
+
+            foreach (var group in messages.GroupBy(x => x.ChatId))
+            {
+                ClientService.Send(new DeleteMessages(group.Key, group.Select(x => x.Id).ToVector(), revoke));
+            }
 
             foreach (var sender in popup.DeleteAll)
             {
@@ -556,7 +563,7 @@ namespace Telegram.ViewModels
                 foreach (var sender in popup.ReportSpam)
                 {
                     var messageIds = messages
-                        .Where(x => x.SenderId.AreTheSame(sender))
+                        .Where(x => x.ChatId == chat.Id && x.SenderId.AreTheSame(sender))
                         .Select(x => x.Id)
                         .ToVector();
 
@@ -686,7 +693,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var chat = first.Chat;
+            // A selection that reaches into the upgraded-from group is confirmed against the chat
+            // itself, where its senders can be banned and reported.
+            var chat = messages.Any(x => x.IsUpgradedFrom != first.IsUpgradedFrom) ? _chat : first.Chat;
             if (chat == null)
             {
                 return;
@@ -709,7 +718,7 @@ namespace Telegram.ViewModels
         public void ForwardSelectedMessages()
         {
             var selectedItems = SelectedItems.Values
-                .DistinctBy(x => x.Id)
+                .DistinctBy(x => (x.ChatId, x.Id))
                 .ToDictionary(x => new MessageId(x));
 
             IsSelectionEnabled = false;
@@ -720,7 +729,7 @@ namespace Telegram.ViewModels
         {
             var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => x.Key));
 
-            var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key.Id).ToList();
+            var messages = properties.Where(x => x.Value.CanBeForwarded && selectedItems.ContainsKey(x.Key)).OrderBy(x => selectedItems[x.Key].Key).ToList();
             if (messages.Count > 0)
             {
                 var messagesToShare = new List<MessageToShare>(messages.Count);
@@ -994,8 +1003,9 @@ namespace Telegram.ViewModels
             }
 
             var myId = ClientService.Options.MyId;
+            // Reported in the chat itself, which the upgraded-from group's ids say nothing about.
             var messages = SelectedItems.Values
-                .Where(x => x.SenderId is MessageSenderChat || (x.SenderId is MessageSenderUser senderUser && senderUser.UserId != myId))
+                .Where(x => x.ChatId == chat.Id && (x.SenderId is MessageSenderChat || (x.SenderId is MessageSenderUser senderUser && senderUser.UserId != myId)))
                 .OrderBy(x => x.Id).Select(x => x.Id).ToVector();
             if (messages.Count < 1)
             {

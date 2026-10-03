@@ -129,6 +129,13 @@ namespace Telegram.ViewModels
             return _upgradedFromChatId != 0 && chatId == _upgradedFromChatId;
         }
 
+        // Whether a message of chatId can be in the history: the chat's own, or one of the group it
+        // was upgraded from.
+        private bool IsHistoryChat(long chatId)
+        {
+            return chatId == _chat?.Id || IsUpgradedFromChat(chatId);
+        }
+
         // A topic or a thread never has migrated history.
         public bool CanContinueIntoUpgradedFrom => Type == DialogType.History && TopicId == null && Thread == null && _chat?.Type is ChatTypeSupergroup { IsChannel: false };
 
@@ -2062,7 +2069,7 @@ namespace Telegram.ViewModels
 
         protected void ProcessMessages(Chat chat, IList<MessageViewModel> messages, bool returnAlbumRoot = false)
         {
-            ProcessAlbums(chat, messages, returnAlbumRoot);
+            ProcessAlbums(messages, returnAlbumRoot);
 
             // Removing from a MessageCollection also drops the date or topic separator that
             // the removal orphans, and that one can sit above the item, so an index taken
@@ -2178,7 +2185,7 @@ namespace Telegram.ViewModels
                 }
 
                 ProcessEmoji(message);
-                ProcessReplies(chat, message);
+                ProcessReplies(message);
             }
 
             if (discard != null)
@@ -2219,7 +2226,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void ProcessAlbums(Chat chat, IList<MessageViewModel> slice, bool returnAlbumRoot)
+        private void ProcessAlbums(IList<MessageViewModel> slice, bool returnAlbumRoot)
         {
             Dictionary<long, Tuple<MessageViewModel, long>> groups = null;
             Dictionary<long, long> newGroups = null;
@@ -2245,6 +2252,7 @@ namespace Telegram.ViewModels
                     var media = new MessageAlbum(message.Content is MessagePhoto or MessageVideo);
 
                     var groupBase = new Message();
+                    groupBase.ChatId = message.ChatId;
                     groupBase.Content = media;
                     groupBase.Date = message.Date;
                     groupBase.SenderId = message.SenderId;
@@ -2306,15 +2314,15 @@ namespace Telegram.ViewModels
                         continue;
                     }
 
-                    Handle(new UpdateMessageContent(chat.Id, group.Item2, group.Item1.Content));
-                    Handle(new UpdateMessageEdited(chat.Id, group.Item2, group.Item1.EditDate, group.Item1.ReplyMarkup));
-                    Handle(new UpdateMessageInteractionInfo(chat.Id, group.Item2, group.Item1.InteractionInfo));
+                    Handle(new UpdateMessageContent(group.Item1.ChatId, group.Item2, group.Item1.Content));
+                    Handle(new UpdateMessageEdited(group.Item1.ChatId, group.Item2, group.Item1.EditDate, group.Item1.ReplyMarkup));
+                    Handle(new UpdateMessageInteractionInfo(group.Item1.ChatId, group.Item2, group.Item1.InteractionInfo));
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ProcessReplies(Chat chat, MessageViewModel message)
+        private void ProcessReplies(MessageViewModel message)
         {
             if (message.ReplyTo is MessageReplyToMessage replyToMessage)
             {
