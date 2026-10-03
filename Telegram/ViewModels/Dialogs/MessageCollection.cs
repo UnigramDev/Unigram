@@ -138,6 +138,12 @@ namespace Telegram.ViewModels
                     {
                         continue;
                     }
+                    // Here rather than with the rest of the filtering, so that a slice holding only
+                    // the marker reads as the end of the chat and paging carries on past it.
+                    else if (item.Content is MessageChatUpgradeFrom && viewModel.CanContinueIntoUpgradedFrom || item.Content is MessageChatUpgradeTo && viewModel.IsUpgradedFromChat(item.ChatId))
+                    {
+                        continue;
+                    }
 
                     Insert(0, viewModel.CreateMessage(item, true));
                 }

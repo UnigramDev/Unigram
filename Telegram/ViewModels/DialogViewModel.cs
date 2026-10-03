@@ -115,11 +115,98 @@ namespace Telegram.ViewModels
         protected readonly ConcurrentDictionary<long, HashSet<long>> _messageEffects = new();
 
         // The basic group the chat was upgraded from, whose history the chat's continues into.
+        // Looked up only once paging first reaches the chat's oldest message.
         protected long _upgradedFromChatId;
+        private bool _upgradedFromResolved;
 
         public MessageKey GetKey(long chatId, long messageId)
         {
-            return MessageKey.From(messageId, _upgradedFromChatId != 0 && chatId == _upgradedFromChatId);
+            return MessageKey.From(messageId, IsUpgradedFromChat(chatId));
+        }
+
+        public bool IsUpgradedFromChat(long chatId)
+        {
+            return _upgradedFromChatId != 0 && chatId == _upgradedFromChatId;
+        }
+
+        // A topic or a thread never has migrated history.
+        public bool CanContinueIntoUpgradedFrom => Type == DialogType.History && TopicId == null && Thread == null && _chat?.Type is ChatTypeSupergroup { IsChannel: false };
+
+        private async Task<long> GetUpgradedFromChatIdAsync(Chat chat)
+        {
+            if (_upgradedFromResolved || chat.Type is not ChatTypeSupergroup supergroup)
+            {
+                return _upgradedFromChatId;
+            }
+
+            if (!ClientService.TryGetSupergroupFull(supergroup.SupergroupId, out SupergroupFullInfo fullInfo))
+            {
+                fullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId)) as SupergroupFullInfo;
+            }
+
+            if (fullInfo == null)
+            {
+                return 0;
+            }
+
+            // Only the basic group is cached, not its chat.
+            if (fullInfo.UpgradedFromBasicGroupId != 0 && await ClientService.SendAsync(new CreateBasicGroupChat(fullInfo.UpgradedFromBasicGroupId, false)) is Chat upgradedFrom)
+            {
+                _upgradedFromChatId = upgradedFrom.Id;
+            }
+
+            _upgradedFromResolved = true;
+            return _upgradedFromChatId;
+        }
+
+        // Above the chat's oldest message, the upgraded-from group's newest; below that group's
+        // newest, the chat's oldest.
+        private async Task<MessageCollection> LoadAcrossUpgradeAsync(Chat chat, PanelScrollingDirection direction, MessageViewModel fromMessage)
+        {
+            if (direction == PanelScrollingDirection.Forward)
+            {
+                // From the chat's first message, server id 1.
+                var response = await ClientService.SendAsync(new GetChatHistory(chat.Id, 1L << 20, -Constants.HistoryLimit + 1, Constants.HistoryLimit, false));
+                if (response is Messages messages)
+                {
+                    return new MessageCollection(this, Items.Keys, messages.MessagesValue, messages.MessagesValue.Empty(), Type);
+                }
+
+                return null;
+            }
+
+            var upgradedFromChatId = await GetUpgradedFromChatIdAsync(chat);
+            if (upgradedFromChatId != 0)
+            {
+                var fromMessageId = 0L;
+
+                // The first request for a history TDLib has not loaded yet usually answers with
+                // the last message alone, and here that is the upgrade marker, which the slice
+                // drops. An empty slice reads as the end of the history, so go on from it instead.
+                for (int i = 0; i < 3; i++)
+                {
+                    if (await ClientService.SendAsync(new GetChatHistory(upgradedFromChatId, fromMessageId, 0, Constants.HistoryLimit, false)) is not Messages messages)
+                    {
+                        return null;
+                    }
+
+                    if (messages.MessagesValue.Empty())
+                    {
+                        break;
+                    }
+
+                    var slice = new MessageCollection(this, Items.Keys, messages.MessagesValue, false, Type);
+                    if (slice.Count > 0)
+                    {
+                        return slice;
+                    }
+
+                    fromMessageId = messages.MessagesValue[^1].Id;
+                }
+            }
+
+            var header = await AddHeaderAsync(Vector<Message>.Empty, fromMessage?.Get());
+            return new MessageCollection(this, Items.Keys, header, true, Type);
         }
 
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
@@ -697,7 +784,7 @@ namespace Telegram.ViewModels
                 return true;
             }
 
-            return lastMessage.Id == last.Id;
+            return lastMessage.Id == last.Id && lastMessage.ChatId == last.ChatId;
         }
 
         private bool _isChatEmpty;
@@ -915,8 +1002,12 @@ namespace Telegram.ViewModels
             }
             else
             {
-                func = new GetChatHistory(chat.Id, fromMessageId, offset, Constants.HistoryLimit, false);
+                func = new GetChatHistory(anchor.ChatId, fromMessageId, offset, Constants.HistoryLimit, false);
             }
+
+            // Past the chat's oldest message the history may go on in the group it was upgraded
+            // from, so the header waits until that is known not to be the case.
+            var crossesUpgrade = CanContinueIntoUpgradedFrom && (direction == PanelScrollingDirection.Backward) != anchor.IsUpgradedFrom;
 
             var tsc = new TaskCompletionSource<MessageCollection>();
             async void handler(Object result)
@@ -934,7 +1025,7 @@ namespace Telegram.ViewModels
                     }
 
                     var endReached = messages.MessagesValue.Empty();
-                    if (endReached && direction == PanelScrollingDirection.Backward)
+                    if (endReached && direction == PanelScrollingDirection.Backward && !crossesUpgrade)
                     {
                         messages.MessagesValue = await AddHeaderAsync(messages.MessagesValue, fromMessage?.Get());
                     }
@@ -950,6 +1041,11 @@ namespace Telegram.ViewModels
             ClientService.Send(func, handler);
 
             var response = await tsc.Task;
+            if (response is { Count: 0 } && crossesUpgrade)
+            {
+                response = await LoadAcrossUpgradeAsync(chat, direction, fromMessage) ?? response;
+            }
+
             if (response is MessageCollection replied)
             {
                 if (replied.Count > 0)
@@ -991,7 +1087,11 @@ namespace Telegram.ViewModels
             IsLoading = false;
             MessagesLoaded?.Invoke(this, new MessagesLoadedEventArgs(direction));
 
-            PinnedMessages.LoadSlice(fromMessageId, direction);
+            // Pinned messages are the chat's own, and an upgraded-from id would name the wrong one.
+            if (!anchor.IsUpgradedFrom)
+            {
+                PinnedMessages.LoadSlice(fromMessageId, direction);
+            }
         }
 
         protected async Task<Vector<Message>> AddHeaderAsync(Vector<Message> messages, Message previous)
@@ -1176,10 +1276,12 @@ namespace Telegram.ViewModels
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
                 if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count && Items.Count > 0)
                 {
+                    // The chat's own messages only: these ids are compared with and stored next to
+                    // the chat's, where an upgraded-from one would name a different message.
                     for (int i = panel.LastVisibleIndex; i >= panel.FirstVisibleIndex; i--)
                     {
                         var item = Items[i];
-                        if (!item.IsSynthetic)
+                        if (!item.IsSynthetic && !item.IsUpgradedFrom)
                         {
                             if (item.Content is MessageAlbum album)
                             {
@@ -1210,7 +1312,7 @@ namespace Telegram.ViewModels
                     for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
                     {
                         var item = Items[i];
-                        if (item.Id == 0)
+                        if (item.Id == 0 || item.IsUpgradedFrom)
                         {
                             continue;
                         }
@@ -1934,7 +2036,7 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            var upgradedFrom = _upgradedFromChatId != 0 && message.ChatId == _upgradedFromChatId;
+            var upgradedFrom = IsUpgradedFromChat(message.ChatId);
 
             // A message of the upgraded-from group belongs to that chat, not to this one.
             var model = new MessageViewModel(ClientService, _messageDelegateWeak, upgradedFrom ? null : _chat, _forumTopic, _directMessagesChatTopic, message, true);
@@ -2417,6 +2519,9 @@ namespace Telegram.ViewModels
             {
                 return;
             }
+
+            _upgradedFromChatId = 0;
+            _upgradedFromResolved = false;
 
             Chat = chat;
             IsForum = Type == DialogType.History && ClientService.IsForum(chat);

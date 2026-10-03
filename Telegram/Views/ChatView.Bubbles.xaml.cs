@@ -253,11 +253,15 @@ namespace Telegram.Views
                     continue;
                 }
 
-                if (firstVisibleId == 0)
+                // The pinned bar and the read state below go by the chat's own message ids, which
+                // an upgraded-from message's id would collide with.
+                var tracked = !message.IsUpgradedFrom;
+
+                if (firstVisibleId == 0 && tracked)
                 {
                     firstVisibleId = message.Id;
                 }
-                if (message.Id != 0)
+                if (message.Id != 0 && tracked)
                 {
                     lastVisibleId = message.Id;
                 }
@@ -574,19 +578,22 @@ namespace Telegram.Views
                     continue;
                 }
 
-                if (message.ContainsUnreadPollVotes)
+                if (message.ContainsUnreadPollVotes && tracked)
                 {
                     ViewModel.PollVotes.SetLastViewedMessage(message.Id);
                 }
 
-                if (message.ContainsUnreadMention)
+                if (message.ContainsUnreadMention && tracked)
                 {
                     ViewModel.Mentions.SetLastViewedMessage(message.Id);
                 }
 
                 if (message.UnreadReactions?.Count > 0)
                 {
-                    ViewModel.Reactions.SetLastViewedMessage(message.Id);
+                    if (tracked)
+                    {
+                        ViewModel.Reactions.SetLastViewedMessage(message.Id);
+                    }
 
                     var root = container.ContentTemplateRoot as FrameworkElement;
                     if (root is MessageSelector selector && selector.Content is MessageBubble bubble)
@@ -601,7 +608,7 @@ namespace Telegram.Views
 
                 // This is a workaround for a bug in messages.readDiscussion that causes sent messages
                 // to be marked as read and consequently blocks following updateReadChannelDiscussionOutbox
-                if ((i < panel.LastVisibleIndex || lastVisibleIsLastMessage) && (ViewModel.ForumTopic == null || !message.IsOutgoing || (message.IsOutgoing && message.UnreadReactions?.Count > 0)))
+                if (tracked && (i < panel.LastVisibleIndex || lastVisibleIsLastMessage) && (ViewModel.ForumTopic == null || !message.IsOutgoing || (message.IsOutgoing && message.UnreadReactions?.Count > 0)))
                 {
                     if (message.Content is MessageAlbum album)
                     {
@@ -626,7 +633,7 @@ namespace Telegram.Views
                     }
                 }
 
-                while (ViewModel.RepliesStack.TryPeek(out long reply) && reply == message.Id)
+                while (tracked && ViewModel.RepliesStack.TryPeek(out long reply) && reply == message.Id)
                 {
                     ViewModel.RepliesStack.Pop();
                 }
