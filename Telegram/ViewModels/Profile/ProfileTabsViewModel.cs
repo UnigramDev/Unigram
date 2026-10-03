@@ -15,6 +15,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Profile;
 using Windows.UI.Xaml.Navigation;
@@ -463,6 +464,16 @@ namespace Telegram.ViewModels.Profile
         }
 
         public long ChatId => Chat?.Id ?? 0;
+
+        public override ChatGalleryViewModel CreateGallery(MessageWithOwner message, MessageProperties properties, bool mirrored = false, SearchMessagesFilter filter = null)
+        {
+            if (_upgradedFromChatId == 0)
+            {
+                return base.CreateGallery(message, properties, mirrored, filter);
+            }
+
+            return new ChatGalleryViewModel(ClientService, StorageService, Aggregator, ChatId, Topic, message, properties, mirrored, filter, _upgradedFromChatId);
+        }
 
         public override MediaCollection SetSearch(object sender, string query)
         {

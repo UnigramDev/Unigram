@@ -26,7 +26,12 @@ namespace Telegram.ViewModels.Chats
         private const int LoadLimit = 21;
 
         private readonly long _chatId;
+        private readonly long _upgradedFromChatId;
         private readonly MessageTopic _topic;
+
+        // The match count of each chat, last as reported by a search in it.
+        private int _chatTotal;
+        private int _upgradedFromTotal;
 
         private readonly SearchMessagesFilter _filter;
 
@@ -34,7 +39,7 @@ namespace Telegram.ViewModels.Chats
 
         private readonly RangeObservableCollection<GalleryMedia> _group;
 
-        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, MessageTopic topic, MessageWithOwner selected, MessageProperties properties, bool mirrored = false, SearchMessagesFilter filter = null)
+        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, MessageTopic topic, MessageWithOwner selected, MessageProperties properties, bool mirrored = false, SearchMessagesFilter filter = null, long upgradedFromChatId = 0)
             : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
@@ -42,6 +47,7 @@ namespace Telegram.ViewModels.Chats
             _group = new RangeObservableCollection<GalleryMedia>();
 
             _chatId = chatId;
+            _upgradedFromChatId = upgradedFromChatId;
             _topic = topic;
 
             if (filter != null)
@@ -69,12 +75,12 @@ namespace Telegram.ViewModels.Chats
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            Initialize(selected.Id);
+            Initialize(selected.ChatId, selected.Id);
         }
 
         #region Paging
 
-        private async void Initialize(long fromMessageId)
+        private async void Initialize(long chatId, long fromMessageId)
         {
             IsLoading = true;
 
@@ -82,18 +88,36 @@ namespace Telegram.ViewModels.Chats
             {
                 const int limit = 20;
 
-                var messages = await SearchAsync(fromMessageId, -limit / 2, limit);
+                var messages = await SearchAsync(chatId, fromMessageId, -limit / 2, limit);
                 if (messages == null)
                 {
                     return;
                 }
 
+                if (_upgradedFromChatId != 0)
+                {
+                    var otherChatId = chatId == _upgradedFromChatId ? _chatId : _upgradedFromChatId;
+                    if (await ClientService.SendAsync(new GetChatMessageCount(otherChatId, _topic, _filter, false)) is Count count)
+                    {
+                        SetTotal(otherChatId, count.CountValue);
+                    }
+                }
+
                 var properties = await GetPropertiesAsync(messages);
 
-                TotalItems = messages.TotalCount;
+                SetTotal(chatId, messages.TotalCount);
 
                 Merge(messages, properties, fromMessageId, true);
                 Merge(messages, properties, fromMessageId, false);
+
+                // Nothing pages until the selection moves, so a message opened at the edge of its
+                // chat would show none of the other chat's media until then. The offset below is
+                // taken from the opened message's index, so it counts whatever this prepends.
+                if (_upgradedFromChatId != 0 && !HasMessagesBeyond(messages, fromMessageId, chatId == _upgradedFromChatId))
+                {
+                    var ascending = chatId == _upgradedFromChatId;
+                    await LoadOtherChatAsync(ascending, ascending == _isMirrored);
+                }
 
                 if (_firstItem is GalleryMessage first)
                 {
@@ -102,6 +126,12 @@ namespace Telegram.ViewModels.Chats
                     var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, _topic, _filter, first.Id));
                     var position = response is Count count ? count.CountValue - 1 : 0;
                     var index = Items.IndexOf(first);
+
+                    // The basic group's media follows all of the chat's.
+                    if (first.ChatId == _upgradedFromChatId)
+                    {
+                        position += _chatTotal;
+                    }
 
                     _offset = _isMirrored
                         ? position - index
@@ -139,7 +169,48 @@ namespace Telegram.ViewModels.Chats
             // only what the newer side needs.
             var ascending = prepend == _isMirrored;
 
-            var messages = await SearchAsync(anchor.Id, ascending ? -LoadLimit + 1 : 0, LoadLimit);
+            var messages = await SearchAsync(anchor.ChatId, anchor.Id, ascending ? -LoadLimit + 1 : 0, LoadLimit);
+            if (messages == null)
+            {
+                return new IncrementalLoadResult(0, false);
+            }
+
+            // Only a message past the anchor on this side means more to come. The count can't say:
+            // the newer side's request fills the rest of its limit with older messages, and the
+            // older side's leaves the anchor out. NextFromMessageId only answers for the older side.
+            var hasMoreItems = HasMessagesBeyond(messages, anchor.Id, ascending);
+
+            IncrementalLoadResult result;
+
+            if (!hasMoreItems && _upgradedFromChatId != 0 && (ascending ? anchor.ChatId == _upgradedFromChatId : anchor.ChatId == _chatId))
+            {
+                result = await LoadOtherChatAsync(ascending, prepend);
+            }
+            else
+            {
+                var properties = await GetPropertiesAsync(messages);
+
+                SetTotal(anchor.ChatId, messages.TotalCount);
+
+                var count = Merge(messages, properties, anchor.Id, prepend);
+                result = new IncrementalLoadResult((uint)count, hasMoreItems);
+            }
+
+            OnSelectedItemChanged(_selectedItem);
+
+            return result;
+        }
+
+        // Older past the chat's oldest message, newer past the basic group's newest.
+        private async Task<IncrementalLoadResult> LoadOtherChatAsync(bool ascending, bool prepend)
+        {
+            var chatId = ascending ? _chatId : _upgradedFromChatId;
+
+            // The newer side starts from the chat's first message, server id 1.
+            var messages = ascending
+                ? await SearchAsync(chatId, 1L << 20, -LoadLimit + 1, LoadLimit)
+                : await SearchAsync(chatId, 0, 0, LoadLimit);
+
             if (messages == null)
             {
                 return new IncrementalLoadResult(0, false);
@@ -147,21 +218,45 @@ namespace Telegram.ViewModels.Chats
 
             var properties = await GetPropertiesAsync(messages);
 
-            TotalItems = messages.TotalCount;
+            SetTotal(chatId, messages.TotalCount);
 
-            var count = Merge(messages, properties, anchor.Id, prepend);
+            // Every message of the other chat lies on this side, so Merge keeps them all.
+            var count = Merge(messages, properties, ascending ? 0 : long.MaxValue, prepend);
 
-            OnSelectedItemChanged(_selectedItem);
-
-            // The anchor comes back with every response, so anything past it means more to come.
-            // NextFromMessageId would only answer for the older side, and either side is asked here.
-            return new IncrementalLoadResult((uint)count, messages.Messages.Count > 1);
+            return new IncrementalLoadResult((uint)count, messages.Messages.Count > 0);
         }
 
-        private async Task<FoundChatMessages> SearchAsync(long fromMessageId, int offset, int limit)
+        private static bool HasMessagesBeyond(FoundChatMessages messages, long fromMessageId, bool ascending)
         {
-            var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, _topic, string.Empty, null, fromMessageId, offset, limit, _filter));
+            foreach (var message in messages.Messages)
+            {
+                if (message != null && (ascending ? message.Id > fromMessageId : message.Id < fromMessageId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private async Task<FoundChatMessages> SearchAsync(long chatId, long fromMessageId, int offset, int limit)
+        {
+            var response = await ClientService.SendAsync(new SearchChatMessages(chatId, _topic, string.Empty, null, fromMessageId, offset, limit, _filter));
             return response as FoundChatMessages;
+        }
+
+        private void SetTotal(long chatId, int totalCount)
+        {
+            if (chatId == _upgradedFromChatId)
+            {
+                _upgradedFromTotal = totalCount;
+            }
+            else
+            {
+                _chatTotal = totalCount;
+            }
+
+            TotalItems = _chatTotal + _upgradedFromTotal;
         }
 
         private Task<IDictionary<MessageId, MessageProperties>> GetPropertiesAsync(FoundChatMessages messages)

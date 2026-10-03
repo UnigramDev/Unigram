@@ -286,8 +286,7 @@ namespace Telegram.Controls.Cells
                     return;
                 }
 
-                var storageService = _message.ClientService.Session.Resolve<IStorageService>();
-                var viewModel = new ChatGalleryViewModel(_message.ClientService, storageService, _viewModel.Aggregator, _message.ChatId, _viewModel.Topic, _message, properties);
+                var viewModel = _viewModel.CreateGallery(_message, properties);
                 _viewModel.NavigationService.ShowGallery(viewModel, Button);
             }
             else

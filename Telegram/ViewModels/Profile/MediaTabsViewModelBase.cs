@@ -14,6 +14,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
@@ -224,6 +225,11 @@ namespace Telegram.ViewModels.Profile
         }
 
         #region View
+
+        public virtual ChatGalleryViewModel CreateGallery(MessageWithOwner message, MessageProperties properties, bool mirrored = false, SearchMessagesFilter filter = null)
+        {
+            return new ChatGalleryViewModel(ClientService, StorageService, Aggregator, message.ChatId, Topic, message, properties, mirrored, filter);
+        }
 
         public void ViewMessage(MessageWithOwner message)
         {

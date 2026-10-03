@@ -85,7 +85,7 @@ namespace Telegram.Views.Profile
 
                 var element = ScrollingHost.ContainerFromItem(e.ClickedItem);
 
-                var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.Topic, message, properties, true, ViewModel.Media.Filter);
+                var viewModel = ViewModel.CreateGallery(message, properties, true, ViewModel.Media.Filter);
                 ViewModel.NavigationService.ShowGallery(viewModel, element as SelectorItem);
             }
         }
