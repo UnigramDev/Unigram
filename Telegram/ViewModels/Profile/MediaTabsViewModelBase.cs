@@ -187,12 +187,12 @@ namespace Telegram.ViewModels.Profile
 
                 BeginOnUIThread(() =>
                 {
-                    UpdateDeleteMessages(Media.Items.Source, table);
-                    UpdateDeleteMessages(Files.Items.Source, table);
-                    UpdateDeleteMessages(Links.Items.Source, table);
-                    UpdateDeleteMessages(Music.Items.Source, table);
-                    UpdateDeleteMessages(Voice.Items.Source, table);
-                    UpdateDeleteMessages(Animations.Items.Source, table);
+                    UpdateDeleteMessages(Media.Items.Source, update.ChatId, table);
+                    UpdateDeleteMessages(Files.Items.Source, update.ChatId, table);
+                    UpdateDeleteMessages(Links.Items.Source, update.ChatId, table);
+                    UpdateDeleteMessages(Music.Items.Source, update.ChatId, table);
+                    UpdateDeleteMessages(Voice.Items.Source, update.ChatId, table);
+                    UpdateDeleteMessages(Animations.Items.Source, update.ChatId, table);
 
                     Media.DataSource?.Delete(update.ChatId, table);
                     Files.DataSource?.Delete(update.ChatId, table);
@@ -208,19 +208,17 @@ namespace Telegram.ViewModels.Profile
             return true;
         }
 
-        private void UpdateDeleteMessages(MediaCollection target, HashSet<long> table)
+        private void UpdateDeleteMessages(MediaCollection target, long chatId, HashSet<long> table)
         {
             //target.Cancel();
 
             for (int i = 0; i < target.Count; i++)
             {
                 var message = target[i];
-                if (table.Contains(message.Id))
+                if (message.ChatId == chatId && table.Contains(message.Id))
                 {
                     target.RemoveAt(i);
                     i--;
-
-                    break;
                 }
             }
         }
@@ -315,7 +313,7 @@ namespace Telegram.ViewModels.Profile
         {
             var items = messages
                 .Where(x => x != null)
-                .DistinctBy(x => x.Id)
+                .DistinctBy(x => (x.ChatId, x.Id))
                 .ToList();
 
             if (items.Empty())
@@ -344,7 +342,14 @@ namespace Telegram.ViewModels.Profile
 
             UnselectMessages();
 
-            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToVector(), popup.Revoke));
+            // The supergroup copy promises deletion for everyone, and has no checkbox to say
+            // otherwise; that has to hold for the upgraded group's messages it covers too.
+            var revoke = popup.Revoke || chat.Type is ChatTypeSupergroup;
+
+            foreach (var group in messages.GroupBy(x => x.ChatId))
+            {
+                ClientService.Send(new DeleteMessages(group.Key, group.Select(x => x.Id).ToVector(), revoke));
+            }
 
             foreach (var sender in popup.DeleteAll)
             {
@@ -361,7 +366,7 @@ namespace Telegram.ViewModels.Profile
                 foreach (var sender in popup.ReportSpam)
                 {
                     var messageIds = messages
-                        .Where(x => x.SenderId.AreTheSame(sender))
+                        .Where(x => x.ChatId == chat.Id && x.SenderId.AreTheSame(sender))
                         .Select(x => x.Id)
                         .ToVector();
 
@@ -397,6 +402,14 @@ namespace Telegram.ViewModels.Profile
             }
 
             var chat = ClientService.GetChat(first.ChatId);
+
+            // A selection spanning an upgraded group is confirmed against the supergroup,
+            // which is where its senders can be banned and reported.
+            if (chat?.Type is ChatTypeBasicGroup && messages.FirstOrDefault(x => x.ChatId != first.ChatId) is MessageWithOwner other)
+            {
+                chat = ClientService.GetChat(other.ChatId);
+            }
+
             if (chat == null)
             {
                 return;
@@ -420,7 +433,7 @@ namespace Telegram.ViewModels.Profile
         {
             var selectedItems = SelectedItems
                 .Where(x => x != null)
-                .DistinctBy(x => x.Id)
+                .DistinctBy(x => (x.ChatId, x.Id))
                 .ToDictionary(x => new MessageId(x));
 
             UnselectMessages();
@@ -431,7 +444,12 @@ namespace Telegram.ViewModels.Profile
         {
             var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => x.Key));
 
-            var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key.Id).ToList();
+            // Ids only order messages within one chat, and a merged history spans two.
+            var messages = properties
+                .Where(x => x.Value.CanBeForwarded && selectedItems.ContainsKey(x.Key))
+                .OrderBy(x => selectedItems[x.Key].Date)
+                .ThenBy(x => x.Key.Id)
+                .ToList();
             if (messages.Count > 0)
             {
                 var messagesToShare = new List<MessageToShare>(messages.Count);

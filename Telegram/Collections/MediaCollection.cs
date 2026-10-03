@@ -16,19 +16,22 @@ namespace Telegram.Collections
     {
         private readonly IClientService _clientService;
         private readonly SearchMessagesFilter _filter;
-        private readonly long _chatId;
         private readonly MessageTopic _topic;
         private readonly string _query;
+
+        private long _chatId;
+        private long _upgradedFromChatId;
 
         private string _nextOffset;
         private long _nextFromMessageId;
 
         public SearchMessagesFilter Filter => _filter;
 
-        public MediaCollection(IClientService clientService, long chatId, MessageTopic topic, SearchMessagesFilter filter, string query = null)
+        public MediaCollection(IClientService clientService, long chatId, MessageTopic topic, SearchMessagesFilter filter, string query = null, long upgradedFromChatId = 0)
         {
             _clientService = clientService;
             _chatId = chatId;
+            _upgradedFromChatId = upgradedFromChatId;
             _topic = topic;
             _filter = filter;
             _query = query ?? string.Empty;
@@ -63,6 +66,20 @@ namespace Telegram.Collections
                 {
                     _nextFromMessageId = foundChatMessages.NextFromMessageId;
                     hasMoreItems = foundChatMessages.NextFromMessageId != 0;
+                }
+                else if (_upgradedFromChatId != 0)
+                {
+                    _chatId = _upgradedFromChatId;
+                    _upgradedFromChatId = 0;
+                    _nextFromMessageId = 0;
+
+                    // An empty page would read as the end of the list.
+                    if (foundChatMessages.Messages.Count == 0)
+                    {
+                        return await OnLoadMoreItemsAsync(count);
+                    }
+
+                    hasMoreItems = true;
                 }
 
                 foreach (var message in foundChatMessages.Messages)

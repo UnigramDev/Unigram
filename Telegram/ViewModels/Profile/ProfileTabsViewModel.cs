@@ -255,6 +255,10 @@ namespace Telegram.ViewModels.Profile
 
         public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            // Read here because ProfileViewModel hands OnNavigatedToAsync the bare chat id, and
+            // sets Topic only for the topics it finds cached.
+            _hasTopic = parameter is ChatMessageTopic { MessageTopic: not null };
+
             if (parameter is long chatId)
             {
                 MyProfile = chatId == ClientService.Options.MyId;
@@ -276,6 +280,8 @@ namespace Telegram.ViewModels.Profile
 
             var chatId = (long)parameter;
             Chat = ClientService.GetChat(chatId);
+
+            _upgradedFromChatId = await GetUpgradedFromChatIdAsync(Chat);
 
             Media.UpdateQuery(string.Empty);
             Files.UpdateQuery(string.Empty);
@@ -299,6 +305,36 @@ namespace Telegram.ViewModels.Profile
 
         protected abstract Task UpdateTabsAsync(Chat chat);
 
+        private long _upgradedFromChatId;
+        private bool _hasTopic;
+
+        private async Task<long> GetUpgradedFromChatIdAsync(Chat chat)
+        {
+            // A topic never has migrated history.
+            if (_hasTopic || chat?.Type is not ChatTypeSupergroup supergroup)
+            {
+                return 0;
+            }
+
+            if (!ClientService.TryGetSupergroupFull(supergroup.SupergroupId, out SupergroupFullInfo fullInfo))
+            {
+                fullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId)) as SupergroupFullInfo;
+            }
+
+            if (fullInfo == null || fullInfo.UpgradedFromBasicGroupId == 0)
+            {
+                return 0;
+            }
+
+            // Only the basic group is cached, not its chat.
+            if (await ClientService.SendAsync(new CreateBasicGroupChat(fullInfo.UpgradedFromBasicGroupId, false)) is Chat upgradedFrom)
+            {
+                return upgradedFrom.Id;
+            }
+
+            return 0;
+        }
+
         protected async Task UpdateSharedCountAsync(Chat chat, IList<ProfileTabItem> tabs)
         {
             var filters = new SearchMessagesFilter[]
@@ -321,6 +357,22 @@ namespace Telegram.ViewModels.Profile
                 savedMessagesTopicId = savedMessagesTopic.SavedMessagesTopicId;
             }
 
+            async Task<Count> GetMessageCountAsync(SearchMessagesFilter filter)
+            {
+                var count = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, Topic, filter, false)) as Count;
+
+                // Polls open in their own chat history, which does not merge.
+                if (count != null && _upgradedFromChatId != 0 && filter is not SearchMessagesFilterPoll)
+                {
+                    if (await ClientService.SendAsync(new GetChatMessageCount(_upgradedFromChatId, null, filter, false)) is Count upgradedFrom)
+                    {
+                        return new Count(count.CountValue + upgradedFrom.CountValue);
+                    }
+                }
+
+                return count;
+            }
+
             async Task<Count> GetCountAsync(SearchMessagesFilter filter)
             {
                 if (filter is SearchMessagesFilterEmpty)
@@ -341,7 +393,7 @@ namespace Telegram.ViewModels.Profile
 
                 if (sparseMessagesAvailable && filter is SearchMessagesFilterPhotoAndVideo or SearchMessagesFilterDocument or SearchMessagesFilterAudio or SearchMessagesFilterPoll or SearchMessagesFilterVoiceAndVideoNote or SearchMessagesFilterAnimation)
                 {
-                    var source = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, Topic, filter, false)) as Count;
+                    var source = await GetMessageCountAsync(filter);
                     if (source?.CountValue > 50)
                     {
                         switch (filter)
@@ -349,19 +401,19 @@ namespace Telegram.ViewModels.Profile
                             case SearchMessagesFilterPhotoAndVideo:
                             case SearchMessagesFilterPhoto:
                             case SearchMessagesFilterVideo:
-                                Media.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter);
+                                Media.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
                                 break;
                             case SearchMessagesFilterDocument:
-                                Files.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter);
+                                Files.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
                                 break;
                             case SearchMessagesFilterAudio:
-                                Music.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter);
+                                Music.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
                                 break;
                             case SearchMessagesFilterVoiceAndVideoNote:
-                                Voice.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter);
+                                Voice.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
                                 break;
                             case SearchMessagesFilterAnimation:
-                                Animations.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter);
+                                Animations.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
                                 break;
                         }
                     }
@@ -369,7 +421,7 @@ namespace Telegram.ViewModels.Profile
                     return source;
                 }
 
-                return await ClientService.SendAsync(new GetChatMessageCount(chat.Id, Topic, filter, false)) as Count;
+                return await GetMessageCountAsync(filter);
             }
 
             for (int i = 0; i < filters.Length; i++)
@@ -400,7 +452,7 @@ namespace Telegram.ViewModels.Profile
 
         protected override bool ShouldHandleDeleteMessages(UpdateDeleteMessages update)
         {
-            return update.ChatId == _chat?.Id;
+            return update.ChatId == _chat?.Id || (update.ChatId == _upgradedFromChatId && _upgradedFromChatId != 0);
         }
 
         protected Chat _chat;
@@ -430,7 +482,7 @@ namespace Telegram.ViewModels.Profile
             {
                 target?.UseDataSource = false;
 
-                return new MediaCollection(ClientService, Chat.Id, Topic, filter, query);
+                return new MediaCollection(ClientService, Chat.Id, Topic, filter, query, _upgradedFromChatId);
             }
 
             target?.UseDataSource = true;

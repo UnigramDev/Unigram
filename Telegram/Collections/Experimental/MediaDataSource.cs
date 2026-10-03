@@ -57,9 +57,6 @@ namespace Telegram.Collections
             /// </summary>
             public SortedList<int, MessagePosition> Positions;
 
-            /// <summary>
-            /// The position of each message in <see cref="Positions"/>, by id.
-            /// </summary>
             public Dictionary<long, int> Indexes;
 
             public void Reset(int capacity)
@@ -263,13 +260,6 @@ namespace Telegram.Collections
             }
         }
 
-        /// <summary>
-        /// The date of the closest known message at or before <paramref name="offset"/>, a
-        /// fraction of the list, or -1.
-        /// </summary>
-        /// <remarks>
-        /// Asked on every scroll step while the date indicator shows, hence the binary search.
-        /// </remarks>
         public int GetDateByOffset(double offset)
         {
             var target = (int)(Math.Clamp(offset, 0, 1) * _count);
@@ -311,9 +301,6 @@ namespace Telegram.Collections
             return -1;
         }
 
-        /// <summary>
-        /// The index of the oldest known message sent at or after <paramref name="date"/>, or -1.
-        /// </summary>
         public int GetIndexByDate(int date)
         {
             for (int i = _segments.Length - 1; i >= 0; i--)
@@ -399,10 +386,6 @@ namespace Telegram.Collections
             }
         }
 
-        /// <summary>
-        /// Works out the searchChatMessages request that covers <paramref name="length"/> messages
-        /// from <paramref name="firstIndex"/>, both within <paramref name="segment"/>.
-        /// </summary>
         private async Task<MessagePositionRange> GetPositionAsync(Segment segment, int firstIndex, int length, bool retry)
         {
             var position = GetByIndex(segment.Positions, firstIndex, out int index);
@@ -701,10 +684,7 @@ namespace Telegram.Collections
             return new ItemCacheRange<MessageWithOwner>(segment.Offset + position.FirstIndex, 0, Array.Empty<MessageWithOwner>());
         }
 
-        /// <summary>
-        /// Whether TDLib indexes <paramref name="message"/> under <paramref name="filter"/>, so
-        /// that a search with it would have returned the message.
-        /// </summary>
+        // Mirrors the index mask TDLib searches by.
         private static bool Matches(SearchMessagesFilter filter, Message message)
         {
             if (message.SelfDestructType != null)
