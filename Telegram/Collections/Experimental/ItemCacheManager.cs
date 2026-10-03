@@ -216,16 +216,30 @@ namespace Telegram.Collections
             return false;
         }
 
+        /// <summary>
+        /// An index no request spans: a block reaching past it is cut short there, and the rest
+        /// stays pending for the next one. 0 when there is none.
+        /// </summary>
+        public int Seam { get; set; }
+
         // Gets the first block of items that we don't have values for
         public ItemIndexRange GetFirstRequestBlock(int maxsize = 50)
         {
             if (_requests.Count > 0)
             {
                 var range = _requests[0];
-                if (range.Length > maxsize)
+
+                var length = Math.Min((int)range.Length, maxsize);
+                if (Seam > range.FirstIndex && Seam < range.FirstIndex + length)
                 {
-                    range = new ItemIndexRange(range.FirstIndex, (uint)maxsize);
+                    length = Seam - range.FirstIndex;
                 }
+
+                if (length < range.Length)
+                {
+                    range = new ItemIndexRange(range.FirstIndex, (uint)length);
+                }
+
                 return range;
             }
             return null;
@@ -319,6 +333,20 @@ namespace Telegram.Collections
                             T oldItem = this[cacheIndex];
                             T newItem = data.Items[i];
 
+                            // An empty entry is an index the source settled as unfillable. It
+                            // goes into a block like any item, because pending requests are
+                            // rebuilt from the blocks and it would otherwise be asked for again on
+                            // every range change. It never replaces an item already there.
+                            if (newItem == null)
+                            {
+                                if (!IsCached(cacheIndex))
+                                {
+                                    this[cacheIndex] = default;
+                                }
+
+                                continue;
+                            }
+
                             if (!newItem.Equals(oldItem))
                             {
                                 this[cacheIndex] = newItem;
@@ -331,10 +359,18 @@ namespace Telegram.Collections
                             }
                         }
 
-                        // Retire the whole block that was asked for, not only what came back:
-                        // a failed or short response covers less than the request, and leaving
-                        // the remainder pending makes the retry below ask for it again forever.
-                        _requests.Subtract(nextRequest);
+                        // A short response leaves the rest of the block pending, and the retry
+                        // below asks for it from a closer anchor. One that covered none of the
+                        // block retires all of it, or a failure would be asked for again forever.
+                        var covered = data.Items.Count > 0
+                            && data.Range.FirstIndex <= nextRequest.LastIndex
+                            && data.Range.LastIndex >= nextRequest.FirstIndex;
+
+                        if (!covered)
+                        {
+                            _requests.Subtract(nextRequest);
+                        }
+
                         _requests.Subtract(data.Range);
                     }
                 }
@@ -382,6 +418,35 @@ namespace Telegram.Collections
             return results.ToArray();
         }
 
+
+        public bool IsCached(int index)
+        {
+            foreach (CacheEntryBlock block in _cacheBlocks)
+            {
+                if (index >= block.FirstIndex && index <= block.LastIndex)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public int FindIndex(Func<T, bool> predicate)
+        {
+            foreach (CacheEntryBlock entry in _cacheBlocks)
+            {
+                for (int i = 0; i < entry.Items.Length; i++)
+                {
+                    if (entry.Items[i] != null && predicate(entry.Items[i]))
+                    {
+                        return entry.FirstIndex + i;
+                    }
+                }
+            }
+
+            return -1;
+        }
 
         // Sees if the value is in our cache if so it returns the index
         public int IndexOf(T value)

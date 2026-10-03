@@ -193,6 +193,12 @@ namespace Telegram.ViewModels.Profile
                     UpdateDeleteMessages(Music.Items.Source, table);
                     UpdateDeleteMessages(Voice.Items.Source, table);
                     UpdateDeleteMessages(Animations.Items.Source, table);
+
+                    Media.DataSource?.Delete(update.ChatId, table);
+                    Files.DataSource?.Delete(update.ChatId, table);
+                    Music.DataSource?.Delete(update.ChatId, table);
+                    Voice.DataSource?.Delete(update.ChatId, table);
+                    Animations.DataSource?.Delete(update.ChatId, table);
                 });
             }
         }

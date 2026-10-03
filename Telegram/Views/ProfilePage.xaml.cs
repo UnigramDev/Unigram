@@ -888,11 +888,7 @@ namespace Telegram.Views
                     var offset = diff / ScrollingHost.ScrollableHeight;
                     if (offset >= 0)
                     {
-                        var position = dataSource.GetByOffset(offset);
-                        if (position != null)
-                        {
-                            date = position.Date;
-                        }
+                        date = dataSource.GetDateByOffset(offset);
                     }
                 }
 
@@ -1234,11 +1230,14 @@ namespace Telegram.Views
                     var first = popup.SelectedDates.FirstOrDefault();
                     var offset = first.Date.ToUnixTimeSeconds();
 
-                    var closest = ViewModel.Media.DataSource.GetByDate(offset);
-                    var panel = media.ScrollingHost.ItemsPanelRoot as ItemsWrapGrid;
+                    var closest = ViewModel.Media.DataSource.GetIndexByDate(offset);
+                    if (closest < 0 || media.ScrollingHost.ItemsPanelRoot is not ItemsWrapGrid panel)
+                    {
+                        return;
+                    }
 
-                    int x = closest.Position % panel.MaximumRowsOrColumns;
-                    int y = closest.Position / panel.MaximumRowsOrColumns;
+                    int x = closest % panel.MaximumRowsOrColumns;
+                    int y = closest / panel.MaximumRowsOrColumns;
 
                     _hasBeenScrolled = false;
                     RootGrid.Unsnap();
