@@ -103,11 +103,9 @@ namespace Telegram.ViewModels.Drawers
             {
                 if (result is Stickers recent)
                 {
-                    recent.StickersValue = recent.StickersValue
+                    BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue
                         .Where(rec => !_favoriteSet.Stickers.Any(fav => fav.StickerValue.Id == rec.StickerValue.Id))
-                        .ToVector();
-
-                    BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue));
+                        .ToVector()));
                 }
             });
         }
