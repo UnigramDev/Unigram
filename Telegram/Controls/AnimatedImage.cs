@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +22,6 @@ using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.Graphics;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -77,18 +75,6 @@ namespace Telegram.Controls
 
         protected bool _clean = false;
 
-        // The geometry of the frames the presenter is rendering, handed over rather than read
-        // back off the brush: ImageBrush.ImageSource resolves the bitmap's framework peer, and
-        // nothing managed roots that peer - PixelBuffer holds the WriteableBitmap as a plain COM
-        // reference from C++, which keeps it alive but not reachable, so the reference tracker
-        // collects it and the getter then fails with E_FAIL. The brush outlives the presenter
-        // whenever CleanOnSourceChanged is false, so there is no root that lives long enough to
-        // fix it the other way round. Numbers rather than the buffer: they are fixed for the
-        // presentation, and the buffers are recycled between threads.
-        private int _frameWidth;
-        private int _frameHeight;
-        private int _frameRotation;
-
         public AnimatedImage()
         {
             DefaultStyleKey = typeof(AnimatedImage);
@@ -127,15 +113,37 @@ namespace Telegram.Controls
             {
                 Load();
             }
-
-            if (_frameRotation != 0)
-            {
-                UpdateRotation(LayoutRoot.Background as ImageBrush);
-            }
         }
 
         public event EventHandler Ready;
-        public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged;
+
+        // The presenter reports the position for every frame it shows, and with frames drawn off
+        // the UI thread each report is a dispatcher item. Forwarded only while something listens
+        // here, which almost no image has.
+        private EventHandler<AnimatedImagePositionChangedEventArgs> _positionChanged;
+
+        public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged
+        {
+            add
+            {
+                if (_positionChanged == null && _presenter != null)
+                {
+                    _presenter.PositionChanged += OnPositionChanged;
+                }
+
+                _positionChanged += value;
+            }
+            remove
+            {
+                _positionChanged -= value;
+
+                if (_positionChanged == null && _presenter != null)
+                {
+                    _presenter.PositionChanged -= OnPositionChanged;
+                }
+            }
+        }
+
         public event EventHandler<AnimatedImageLoopCompletedEventArgs> LoopCompleted;
         public event EventHandler Paused;
 
@@ -586,8 +594,13 @@ namespace Telegram.Controls
                     if (_presenter != null)
                     {
                         _presenter.LoopCompleted += OnLoopCompleted;
-                        _presenter.PositionChanged += OnPositionChanged;
                         _presenter.Paused += OnPaused;
+
+                        if (_positionChanged != null)
+                        {
+                            _presenter.PositionChanged += OnPositionChanged;
+                        }
+
                         _presenter.Load(this);
 
                         if (_delayedPlay)
@@ -649,6 +662,7 @@ namespace Telegram.Controls
                 _presenter = null;
 
                 LayoutRoot.Background = null;
+                Show(null);
             }
         }
 
@@ -659,7 +673,7 @@ namespace Telegram.Controls
 
         private void OnPositionChanged(object sender, AnimatedImagePositionChangedEventArgs e)
         {
-            PositionChanged?.Invoke(this, e);
+            _positionChanged?.Invoke(this, e);
         }
 
         private void OnPaused(object sender, EventArgs e)
@@ -670,64 +684,96 @@ namespace Telegram.Controls
             Paused?.Invoke(this, e);
         }
 
-        public virtual void Invalidate(ImageBrush source, WriteableBitmap bitmap, int pixelWidth, int pixelHeight, int rotation)
+        // The frame comes from a composition surface the presenter draws into off the UI thread,
+        // painted as this element's background - no child visual, so no composition node of its own.
+        // TODO: share these on the presenter, keyed by stretch and tint, as the ImageBrush was before
+        // the tint moved into the brush: a XamlCompositionBrushBase can back any number of elements.
+        private AnimatedImageSurfaceBrush _surfaceBrush;
+        private AnimatedImageSurface _shown;
+
+        // A null surface is the presenter letting go of this image.
+        internal void Invalidate(AnimatedImageSurface surface, IBuffer frame, int pixelWidth, int pixelHeight)
         {
             if (IsDisconnected)
             {
                 return;
             }
 
-            _frameWidth = pixelWidth;
-            _frameHeight = pixelHeight;
-            _frameRotation = rotation;
-
-            if (source != null || CleanOnSourceChanged)
+            if (surface == null)
             {
-                LayoutRoot.Background = source;
+                if (CleanOnSourceChanged)
+                {
+                    LayoutRoot.Background = null;
+                    Show(null);
+                }
+
+                return;
             }
 
-            if (_clean && source != null)
+            if (!Show(surface))
+            {
+                return;
+            }
+
+            _surfaceBrush ??= new AnimatedImageSurfaceBrush();
+            _surfaceBrush.Update(surface.Surface, Stretch);
+            _surfaceBrush.TintColor = GetTintColor();
+
+            LayoutRoot.Background = _surfaceBrush;
+
+            if (_clean)
             {
                 _clean = false;
-
-                if (DominantColor is SolidColorBrush dominantColor)
-                {
-                    dominantColor.Color = GetDominantColor(bitmap);
-                }
-
-                if (UpdateRotation(source))
-                {
-                    source.Stretch = Stretch.None;
-                }
-                else
-                {
-                    source.Stretch = Stretch;
-                }
 
                 _shimmer = null;
                 ElementCompositionPreview.SetElementChildVisual(LayoutRoot, null);
 
-                Ready?.Invoke(this, EventArgs.Empty);
-
-                if (ReplacementColor != null)
+                if (DominantColor is SolidColorBrush dominantColor)
                 {
-                    ReplacementColorChanged(true);
+                    dominantColor.Color = GetDominantColor(frame, pixelWidth, pixelHeight);
                 }
+
+                Ready?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        private unsafe Color GetDominantColor(WriteableBitmap bitmap)
+        // Holds a reference on the surface on screen, so that it outlives its presenter for as long
+        // as this keeps showing it: with CleanOnSourceChanged off, until the next source draws.
+        private bool Show(AnimatedImageSurface surface)
         {
-            if (bitmap == null)
+            if (_shown == surface)
+            {
+                return true;
+            }
+
+            if (surface != null && !surface.TryAddRef())
+            {
+                return false;
+            }
+
+            _shown?.Release();
+            _shown = surface;
+            return true;
+        }
+
+        private Color? GetTintColor()
+        {
+            return ReplacementColor is SolidColorBrush tint && _presenter?.Presentation.Source.NeedsRepainting is true
+                ? tint.Color
+                : null;
+        }
+
+        private unsafe Color GetDominantColor(IBuffer frame, int width, int height)
+        {
+            if (frame == null || width <= 0 || height <= 0 || frame.Length < width * height * 4)
             {
                 return Color.FromArgb(0x55, 0, 0, 0);
             }
 
-            float stepH = (bitmap.PixelHeight - 1) / 10f;
-            float stepW = (bitmap.PixelWidth - 1) / 10f;
+            float stepH = (height - 1) / 10f;
+            float stepW = (width - 1) / 10f;
 
-            int width = bitmap.PixelWidth;
-            bitmap.Buffer(out byte* imageBytes);
+            frame.Buffer(out byte* imageBytes);
 
             int r = 0, g = 0, b = 0;
             int amount = 0;
@@ -755,40 +801,6 @@ namespace Telegram.Controls
             }
 
             return Color.FromArgb(255, (byte)(r / amount), (byte)(g / amount), (byte)(b / amount));
-        }
-
-        private bool UpdateRotation(ImageBrush source)
-        {
-            if (_frameWidth == 0 || _frameHeight == 0 || source?.Transform is not CompositeTransform composite)
-            {
-                return false;
-            }
-
-            double pixelWidth;
-            double pixelHeight;
-
-            if (_frameRotation is 90 or 270)
-            {
-                pixelWidth = _frameHeight;
-                pixelHeight = _frameWidth;
-            }
-            else
-            {
-                pixelWidth = _frameWidth;
-                pixelHeight = _frameHeight;
-            }
-
-            var scaleX = ActualWidth / pixelWidth;
-            var scaleY = ActualHeight / pixelHeight;
-            var scale = Math.Max(scaleX, scaleY);
-
-            composite.ScaleX = scale;
-            composite.ScaleY = scale;
-
-            composite.CenterX = ActualWidth / 2;
-            composite.CenterY = ActualHeight / 2;
-
-            return true;
         }
 
         public bool CleanOnSourceChanged { get; set; } = true;
@@ -831,9 +843,7 @@ namespace Telegram.Controls
         #region ReplacementColor
 
         private bool _needsBrushUpdate;
-        private Color _replacementColor;
         private long _replacementColorToken;
-        private CompositionEffectBrush _effectBrush;
 
         // Implemented as Brush so that we can receive Color changed updates
         public Brush ReplacementColor
@@ -868,7 +878,7 @@ namespace Telegram.Controls
 
         protected void ReplacementColorChanged(bool fast = false)
         {
-            if (_needsBrushUpdate || (_presenter?.Presentation.Source.NeedsRepainting is not true && _effectBrush == null))
+            if (_needsBrushUpdate || (_presenter?.Presentation.Source.NeedsRepainting is not true && _surfaceBrush?.TintColor == null))
             {
                 return;
             }
@@ -886,100 +896,9 @@ namespace Telegram.Controls
         {
             _needsBrushUpdate = false;
 
-            if (LayoutRoot == null)
+            if (_surfaceBrush != null)
             {
-                return;
-            }
-
-            if (ReplacementColor is not SolidColorBrush replacement || _presenter?.Presentation.Source.NeedsRepainting is not true)
-            {
-                if (_effectBrush != null)
-                {
-                    LayoutRoot.Opacity = 1;
-                    ElementCompositionPreview.SetElementChildVisual(this, null);
-                }
-
-                _effectBrush = null;
-                return;
-            }
-
-            // This code mostly comes from MonochromaticOverlayPresenter
-
-            _replacementColor = replacement.Color;
-
-            if (_effectBrush != null)
-            {
-                try
-                {
-                    _effectBrush.Properties.InsertColor("Tint.Color", replacement.Color);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    // If it throws, let's rebuild the brush
-                    Logger.Exception(ex);
-                }
-            }
-
-            try
-            {
-                var compositor = BootStrapper.Current.Compositor;
-
-                // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
-                // the ReplacementColor's RGB.
-                var colorMatrixEffect = new ColorMatrixEffect();
-                colorMatrixEffect.Source = new CompositionEffectSourceParameter("Source");
-                var colorMatrix = new Matrix5x4();
-
-                // If the ReplacementColor is not transparent then use the RGB values as the new color. Otherwise
-                // just show the target by using an Identity colorMatrix.
-                if (_replacementColor.A != 0)
-                {
-                    colorMatrix.M51 = colorMatrix.M52 = colorMatrix.M53 = colorMatrix.M44 = 1;
-                }
-                else
-                {
-                    colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
-                }
-
-                colorMatrixEffect.ColorMatrix = colorMatrix;
-
-                var tintEffect = new TintEffect();
-                tintEffect.Name = "Tint";
-                tintEffect.Source = colorMatrixEffect;
-                tintEffect.Color = _replacementColor;
-
-                var effectFactory = compositor.CreateEffectFactory(tintEffect, new[] { "Tint.Color" });
-
-                var actualSize = FrameSize.ToVector2();
-                var offset = Vector2.Zero;
-
-                // Create a VisualSurface positioned at the same location as this control and feed that
-                // through the color effect.
-                var surfaceBrush = compositor.CreateSurfaceBrush();
-                surfaceBrush.Stretch = CompositionStretch.None;
-                var surface = compositor.CreateVisualSurface();
-
-                // Select the source visual and the offset/size of this control in that element's space.
-                surface.SourceVisual = ElementComposition.GetElementVisual(LayoutRoot);
-                surface.SourceOffset = offset;
-                surface.SourceSize = actualSize;
-                surfaceBrush.Surface = surface;
-                surfaceBrush.Stretch = CompositionStretch.None;
-
-                _effectBrush = effectFactory.CreateBrush();
-                _effectBrush.SetSourceParameter("Source", surfaceBrush);
-
-                var visual = compositor.CreateSpriteVisual();
-                visual.Size = actualSize;
-                visual.Brush = _effectBrush;
-
-                LayoutRoot.Opacity = 0;
-                ElementCompositionPreview.SetElementChildVisual(this, visual);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
+                _surfaceBrush.TintColor = GetTintColor();
             }
         }
 
@@ -1026,12 +945,10 @@ namespace Telegram.Controls
         private volatile int _loopCount;
 
         private int _timerSubscribed;
-        private bool _renderingSubscribed;
 
         private AnimatedImageTask _task;
         private bool _requested;
 
-        private volatile bool _rendering;
         private volatile bool _ticking;
         private volatile bool _disposing;
         private volatile bool _disposed;
@@ -1123,13 +1040,13 @@ namespace Telegram.Controls
             LoadImpl();
 
             // The buffer is read only to sample the dominant colour from it, never held: it is
-            // recycled between this thread and the worker queue, which is why Dispose swaps it.
+            // recycled between the flusher and the worker queue, which is why Dispose swaps it.
             var task = Volatile.Read(ref _task);
-            var frame = Volatile.Read(ref _foregroundPrev);
+            var surface = Volatile.Read(ref _surface);
 
-            if (_dirty && task != null)
+            if (_dirty && task != null && surface != null)
             {
-                canvas.Invalidate(_imageBrush, frame?.Source, task.PixelWidth, task.PixelHeight, task.Rotation);
+                canvas.Invalidate(surface, Volatile.Read(ref _foregroundPrev), task.PixelWidth, task.PixelHeight);
             }
         }
 
@@ -1138,7 +1055,7 @@ namespace Telegram.Controls
             _images.Remove(canvas);
             UnloadImpl(playing);
 
-            canvas.Invalidate(null, null, 0, 0, 0);
+            canvas.Invalidate(null, null, 0, 0);
         }
 
         private void LoadImpl()
@@ -1237,13 +1154,13 @@ namespace Telegram.Controls
             PlayImpl();
 
             // The buffer is read only to sample the dominant colour from it, never held: it is
-            // recycled between this thread and the worker queue, which is why Dispose swaps it.
+            // recycled between the flusher and the worker queue, which is why Dispose swaps it.
             var task = Volatile.Read(ref _task);
-            var frame = Volatile.Read(ref _foregroundPrev);
+            var surface = Volatile.Read(ref _surface);
 
-            if (_dirty && task != null)
+            if (_dirty && task != null && surface != null)
             {
-                canvas.Invalidate(_imageBrush, frame?.Source, task.PixelWidth, task.PixelHeight, task.Rotation);
+                canvas.Invalidate(surface, Volatile.Read(ref _foregroundPrev), task.PixelWidth, task.PixelHeight);
             }
         }
 
@@ -1289,9 +1206,6 @@ namespace Telegram.Controls
                     task.Seek(_nextMarker);
                     _nextMarker = null;
                 }
-
-                _rendering = true;
-                RegisterRendering();
 
                 _ticking = _activated;
 
@@ -1356,8 +1270,6 @@ namespace Telegram.Controls
                 Volatile.Write(ref _task, task);
                 FrameRate = task.FrameRate;
 
-                _rendering = true;
-
                 CreateResources();
 
                 _ticking = (_idle && _presentation.AutoPlay) || (_playing > 0 && (_activated || _presentation.LoopCount > 0));
@@ -1400,20 +1312,167 @@ namespace Telegram.Controls
 
         #region Resources
 
-        //private IBuffer _foregroundPrev;
-        //private IBuffer _foregroundNext;
-        //private IBuffer _backgroundNext;
+        private IBuffer _foregroundPrev;
+        private IBuffer _foregroundNext;
+        private IBuffer _backgroundNext;
 
-        //private SurfaceImage _surface;
+        // The pair the three above pass around, held apart so that both go back to the pool
+        // whichever of them each one happens to be in.
+        private IBuffer _buffer1;
+        private IBuffer _buffer2;
 
-        private PixelBuffer _foregroundPrev;
-        private PixelBuffer _foregroundNext;
-        private PixelBuffer _backgroundNext;
+        private AnimatedImageSurface _surface;
+        private volatile bool _surfaceShown;
+        private int _surfaceUpdatePending;
+        private int _surfaceCreatePending;
+        private int _redraw;
 
-        private WriteableBitmap _bitmap1;
-        private WriteableBitmap _bitmap2;
+        // On the flusher's thread, never concurrently with another presenter of the same window:
+        // the composition device takes one drawing session at a time, and a second BeginDraw while
+        // one is open fails - which lost the only frame a still sticker ever draws.
+        // Returns false when the frame has to be drawn again later.
+        internal bool FlushFrame()
+        {
+            var surface = Volatile.Read(ref _surface);
+            var next = Interlocked.Exchange(ref _foregroundNext, null);
 
-        private ImageBrush _imageBrush;
+            if (next == null)
+            {
+                // A replaced device takes the surface's contents with it, and a still has no next
+                // frame that would put them back.
+                if (Interlocked.Exchange(ref _redraw, 0) == 1 && surface != null && _foregroundPrev != null && !_disposed)
+                {
+                    if (!surface.Frame.Draw(_foregroundPrev))
+                    {
+                        Volatile.Write(ref _redraw, 1);
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            Volatile.Write(ref _redraw, 0);
+
+            if (_disposed)
+            {
+                Interlocked.Exchange(ref _backgroundNext, next);
+                return true;
+            }
+
+            if (surface == null)
+            {
+                // Creating it failed, which it does while the device is being replaced. The frame
+                // waits for one, unless the worker has already published a newer one.
+                if (Interlocked.CompareExchange(ref _foregroundNext, next, null) != null)
+                {
+                    Interlocked.Exchange(ref _backgroundNext, next);
+                }
+
+                if (Interlocked.Exchange(ref _surfaceCreatePending, 1) == 0)
+                {
+                    _dispatcherQueue.TryEnqueue(CreateSurface);
+                }
+
+                return true;
+            }
+
+            if (!surface.Frame.Draw(next))
+            {
+                if (_disposed || Volatile.Read(ref _surface) == null)
+                {
+                    return true;
+                }
+
+                // Put back unless the worker has already published a newer one.
+                if (Interlocked.CompareExchange(ref _foregroundNext, next, null) != null)
+                {
+                    Interlocked.Exchange(ref _backgroundNext, next);
+                }
+
+                return false;
+            }
+
+            if (_foregroundPrev != null)
+            {
+                Interlocked.Exchange(ref _backgroundNext, _foregroundPrev);
+            }
+
+            _foregroundPrev = next;
+
+            if (!_surfaceShown || PositionChanged != null)
+            {
+                RequestSurfaceUpdate();
+            }
+
+            return true;
+        }
+
+        // From the loader, on whichever thread the device was replaced.
+        internal void Redraw()
+        {
+            Volatile.Write(ref _redraw, 1);
+            _loader.Flusher.Request(this);
+        }
+
+        private void CreateSurface()
+        {
+            Volatile.Write(ref _surfaceCreatePending, 0);
+
+            var task = Volatile.Read(ref _task);
+            if (task == null || _disposed || _surface != null)
+            {
+                return;
+            }
+
+            var frame = _loader.Device.CreateFrameSurface(task.PixelWidth, task.PixelHeight, task.Rotation);
+            if (frame != null)
+            {
+                Volatile.Write(ref _surface, new AnimatedImageSurface(frame));
+                _loader.Flusher.Request(this);
+            }
+        }
+
+        private void RequestSurfaceUpdate()
+        {
+            if (Interlocked.Exchange(ref _surfaceUpdatePending, 1) == 0)
+            {
+                _dispatcherQueue.TryEnqueue(SurfaceUpdated);
+            }
+        }
+
+        private void SurfaceUpdated()
+        {
+            Volatile.Write(ref _surfaceUpdatePending, 0);
+
+            var surface = Volatile.Read(ref _surface);
+            if (surface == null || _disposed)
+            {
+                return;
+            }
+
+            if (_dirty is false)
+            {
+                var task = Volatile.Read(ref _task);
+                var frame = Volatile.Read(ref _foregroundPrev);
+
+                foreach (var image in _images)
+                {
+                    image.Invalidate(surface, frame, task?.PixelWidth ?? 0, task?.PixelHeight ?? 0);
+                }
+
+                _dirty = true;
+                _surfaceShown = true;
+            }
+
+            if (_prevPosition?.Position != _nextPosition && PositionChanged != null)
+            {
+                _prevPosition ??= new AnimatedImagePositionChangedEventArgs();
+                _prevPosition.Position = _nextPosition;
+
+                PositionChanged.Invoke(this, _prevPosition);
+            }
+        }
 
         private readonly SemaphoreSlim _pausedLock = new(0, 1);
 
@@ -1428,11 +1487,20 @@ namespace Telegram.Controls
             var width = task.PixelWidth;
             var height = task.PixelHeight;
 
-            _bitmap1 = _loader.Bitmaps.Rent(width, height);
-            _bitmap2 = _loader.Bitmaps.Rent(width, height);
+            _buffer1 = _loader.Buffers.Rent(width, height);
+            _buffer2 = _loader.Buffers.Rent(width, height);
 
-            _foregroundPrev = new PixelBuffer(_bitmap1);
-            _backgroundNext = new PixelBuffer(_bitmap2);
+            _foregroundPrev = _buffer1;
+            _backgroundNext = _buffer2;
+
+            if (_surface == null)
+            {
+                var frame = _loader.Device.CreateFrameSurface(width, height, task.Rotation);
+                if (frame != null)
+                {
+                    Volatile.Write(ref _surface, new AnimatedImageSurface(frame));
+                }
+            }
 
             _activated = _loader.Window.IsActive;
 
@@ -1443,8 +1511,6 @@ namespace Telegram.Controls
                 _loader.Activated += OnActivated;
                 _loader.PopupActivated += OnActivated;
             }
-
-            RegisterRendering();
         }
 
         private void InvokePaused()
@@ -1490,11 +1556,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var subscribe = Activated(activated);
-            if (subscribe)
-            {
-                RegisterRendering();
-            }
+            Activated(activated);
         }
 
         public bool Activated(bool active)
@@ -1509,9 +1571,6 @@ namespace Telegram.Controls
                 }
                 else if (Volatile.Read(ref _task) != null && _playing > 0 && !_ticking && _loopCount >= 0 && active)
                 {
-                    //_dispatcherQueue.TryEnqueue(RegisterRendering);
-
-                    _rendering = true;
                     _ticking = true;
 
                     if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
@@ -1524,18 +1583,6 @@ namespace Telegram.Controls
             }
 
             return false;
-        }
-
-        private void RegisterRendering()
-        {
-            if (!_renderingSubscribed)
-            {
-                _renderingSubscribed = true;
-
-                // This presenter's own loader, not the [ThreadStatic] Current, which would be a
-                // different loader if this ever ran on another view's thread.
-                _loader.Rendering(this);
-            }
         }
 
         #endregion
@@ -1556,8 +1603,6 @@ namespace Telegram.Controls
                 {
                     _scheduler.Unsubscribe(this);
                 }
-
-                _rendering = false;
 
                 if (_disposing)
                 {
@@ -1580,6 +1625,8 @@ namespace Telegram.Controls
                     {
                         Interlocked.Exchange(ref _backgroundNext, dropped);
                     }
+
+                    _loader.Flusher.Request(this);
                 }
                 else
                 {
@@ -1729,133 +1776,84 @@ namespace Telegram.Controls
         /// <summary>
         /// The half of teardown that belongs to the UI thread. Dispose runs on either thread - the
         /// scheduler one whenever UnloadImpl deferred while ticking, which is most of the time - and
-        /// this used to be skipped outright in that case, dropping both bitmaps instead of pooling
-        /// them. Posting is the difference between a pool and a leak.
+        /// the pool lives on the UI thread, so the buffers are posted back to it.
         /// </summary>
         private void ReleaseVisual()
         {
-            var brush = Interlocked.Exchange(ref _imageBrush, null);
-            var first = Interlocked.Exchange(ref _bitmap1, null);
-            var second = Interlocked.Exchange(ref _bitmap2, null);
+            var first = Interlocked.Exchange(ref _buffer1, null);
+            var second = Interlocked.Exchange(ref _buffer2, null);
 
-            if (brush == null && first == null && second == null)
+            Interlocked.Exchange(ref _surface, null)?.Release();
+            _surfaceShown = false;
+
+            if (first == null && second == null)
             {
                 return;
             }
 
-            var pool = _loader.Bitmaps;
+            var pool = _loader.Buffers;
 
             if (_dispatcherQueue.HasThreadAccess)
             {
-                ReleaseVisualCore(pool, brush, first, second);
+                ReleaseBuffers(pool, first, second);
             }
             else
             {
                 // A failed enqueue means the dispatcher is going away, and the pool lives on it -
                 // there is nothing left to return them to.
-                _dispatcherQueue.TryEnqueue(() => ReleaseVisualCore(pool, brush, first, second));
+                _dispatcherQueue.TryEnqueue(() => ReleaseBuffers(pool, first, second));
             }
         }
 
-        private static void ReleaseVisualCore(AnimatedImageLoader.BitmapRecyclePool pool, ImageBrush brush, WriteableBitmap first, WriteableBitmap second)
+        private static void ReleaseBuffers(AnimatedImageLoader.BufferRecyclePool pool, IBuffer first, IBuffer second)
         {
-            // Before Return, and not after: the pool releases the native handle on eviction, which
-            // is only safe once XAML has let go of the bitmap.
-            if (brush != null)
-            {
-                brush.ImageSource = null;
-            }
-
             pool.Return(first);
             pool.Return(second);
         }
+    }
 
-        //private double _targetIntervalTicks;
-        //private long _lastTick;
+    /// <summary>
+    /// The surface a presenter draws into, shared with the images showing it. The last of them to
+    /// let go closes it, so an image that keeps its frame across a source change does not go blank
+    /// while the next source loads, and nothing waits for the collector to free it.
+    /// </summary>
+    public sealed partial class AnimatedImageSurface
+    {
+        private int _references = 1;
 
-        public bool Invalidate()
+        public AnimatedImageSurface(FrameSurface frame)
         {
-            if (_images.Count > 0)
-            {
-                DrawFrame();
-
-                //long now = Stopwatch.GetTimestamp();
-
-                //if (_lastTick == 0 || now - _lastTick >= _targetIntervalTicks || !_rendering)
-                //{
-                //    _lastTick = now;
-                //    DrawFrame();
-                //}
-            }
-
-            if (!_rendering && _renderingSubscribed)
-            {
-                _renderingSubscribed = false;
-                return true;
-            }
-
-            return false;
+            Frame = frame;
+            Surface = frame.Surface;
         }
 
-        private void DrawFrame()
+        public FrameSurface Frame { get; }
+
+        public CompositionDrawingSurface Surface { get; }
+
+        public bool TryAddRef()
         {
-            // TODO: there is a chance that, if the animation has a single frame this will
-            // pick the empty frame instead of the drawn one and thus the control will be blank
-            var next = Interlocked.Exchange(ref _foregroundNext, null);
-            if (next != null)
+            int references;
+
+            do
             {
-                if (_foregroundPrev != null)
+                references = Volatile.Read(ref _references);
+
+                if (references == 0)
                 {
-                    Interlocked.Exchange(ref _backgroundNext, _foregroundPrev);
+                    return false;
                 }
+            }
+            while (Interlocked.CompareExchange(ref _references, references + 1, references) != references);
 
-                //_surface ??= Direct2D.Current.Create(_task.PixelWidth, _task.PixelHeight);
-                //Direct2D.Current.Invalidate(_surface, next);
+            return true;
+        }
 
-                next.Source.Invalidate();
-
-                // Dispose clears _task from the worker queue after this frame was taken, so the
-                // read can come back null; a missing task only means no rotation to apply.
-                var task = Volatile.Read(ref _task);
-
-                if (_imageBrush == null)
-                {
-                    _imageBrush = new ImageBrush
-                    {
-                        Stretch = Stretch.Uniform,
-                        AlignmentX = AlignmentX.Center,
-                        AlignmentY = AlignmentY.Center,
-                    };
-
-                    if (task is { Rotation: not 0 })
-                    {
-                        _imageBrush.Transform = new CompositeTransform
-                        {
-                            Rotation = task.Rotation
-                        };
-                    }
-                }
-
-                _imageBrush.ImageSource = next.Source;
-
-                if (_dirty is false)
-                {
-                    foreach (var image in _images)
-                    {
-                        image.Invalidate(_imageBrush, next.Source, task?.PixelWidth ?? 0, task?.PixelHeight ?? 0, task?.Rotation ?? 0);
-                    }
-                }
-
-                _dirty = true;
-                _foregroundPrev = next;
-
-                if (_prevPosition?.Position != _nextPosition && PositionChanged != null)
-                {
-                    _prevPosition ??= new AnimatedImagePositionChangedEventArgs();
-                    _prevPosition.Position = _nextPosition;
-
-                    PositionChanged.Invoke(this, _prevPosition);
-                }
+        public void Release()
+        {
+            if (Interlocked.Decrement(ref _references) == 0)
+            {
+                Frame.Dispose();
             }
         }
     }
@@ -2403,21 +2401,297 @@ namespace Telegram.Controls
 
     public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled, AnimatedImageResizeMode ResizeMode, bool IsPopup);
 
+    /// <summary>
+    /// Paints a presenter's composition surface as a XAML brush, optionally recoloured. The tint is
+    /// an effect over the surface itself: a colour matrix that keeps only the alpha, then a tint.
+    /// </summary>
+    public sealed partial class AnimatedImageSurfaceBrush : XamlCompositionBrushBase
+    {
+        private CompositionDrawingSurface _surface;
+        private CompositionStretch _stretch = CompositionStretch.Uniform;
+        private Color? _tintColor;
+
+        private CompositionSurfaceBrush _surfaceBrush;
+        private CompositionEffectBrush _effectBrush;
+        private bool _effectOpaque;
+
+        // Per view thread, like the compositor they belong to.
+        [ThreadStatic]
+        private static CompositionEffectFactory _opaqueFactory;
+        [ThreadStatic]
+        private static CompositionEffectFactory _identityFactory;
+
+        public void Update(CompositionDrawingSurface surface, Stretch stretch)
+        {
+            _surface = surface;
+            _stretch = stretch switch
+            {
+                Stretch.None => CompositionStretch.None,
+                Stretch.Fill => CompositionStretch.Fill,
+                Stretch.UniformToFill => CompositionStretch.UniformToFill,
+                _ => CompositionStretch.Uniform
+            };
+
+            if (_surfaceBrush != null)
+            {
+                _surfaceBrush.Surface = surface;
+                _surfaceBrush.Stretch = _stretch;
+            }
+        }
+
+        public Color? TintColor
+        {
+            get => _tintColor;
+            set
+            {
+                if (_tintColor == value)
+                {
+                    return;
+                }
+
+                _tintColor = value;
+
+                if (_surfaceBrush != null)
+                {
+                    Rebuild();
+                }
+            }
+        }
+
+        protected override void OnConnected()
+        {
+            Rebuild();
+        }
+
+        protected override void OnDisconnected()
+        {
+            CompositionBrush = null;
+
+            _effectBrush?.Dispose();
+            _effectBrush = null;
+
+            _surfaceBrush?.Dispose();
+            _surfaceBrush = null;
+        }
+
+        private void Rebuild()
+        {
+            if (_surface == null)
+            {
+                return;
+            }
+
+            var compositor = _surface.Compositor;
+
+            if (_surfaceBrush == null)
+            {
+                _surfaceBrush = compositor.CreateSurfaceBrush(_surface);
+                _surfaceBrush.Stretch = _stretch;
+            }
+
+            if (_tintColor is not Color tint)
+            {
+                _effectBrush?.Dispose();
+                _effectBrush = null;
+
+                CompositionBrush = _surfaceBrush;
+                return;
+            }
+
+            // A transparent replacement keeps the original colours, as in UpdateBrush.
+            var opaque = tint.A != 0;
+
+            if (_effectBrush == null || _effectOpaque != opaque)
+            {
+                _effectBrush?.Dispose();
+                _effectBrush = GetFactory(compositor, opaque).CreateBrush();
+                _effectBrush.SetSourceParameter("Source", _surfaceBrush);
+                _effectOpaque = opaque;
+            }
+
+            _effectBrush.Properties.InsertColor("Tint.Color", tint);
+            CompositionBrush = _effectBrush;
+        }
+
+        private static CompositionEffectFactory GetFactory(Compositor compositor, bool opaque)
+        {
+            var factory = opaque ? _opaqueFactory : _identityFactory;
+
+            if (factory == null)
+            {
+                var colorMatrix = new Matrix5x4();
+
+                if (opaque)
+                {
+                    colorMatrix.M51 = colorMatrix.M52 = colorMatrix.M53 = colorMatrix.M44 = 1;
+                }
+                else
+                {
+                    colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
+                }
+
+                var effect = new TintEffect
+                {
+                    Name = "Tint",
+                    Source = new ColorMatrixEffect
+                    {
+                        Source = new CompositionEffectSourceParameter("Source"),
+                        ColorMatrix = colorMatrix
+                    }
+                };
+
+                factory = compositor.CreateEffectFactory(effect, new[] { "Tint.Color" });
+
+                if (opaque)
+                {
+                    _opaqueFactory = factory;
+                }
+                else
+                {
+                    _identityFactory = factory;
+                }
+            }
+
+            return factory;
+        }
+    }
+
     public partial class AnimatedImageLoader
     {
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly WindowContext _window;
-
-        private bool _closed;
+        private readonly CompositionGraphicsDevice _graphicsDevice;
 
         public WindowContext Window => _window;
+
+        public Direct2DDevice Device { get; }
 
         private AnimatedImageLoader(WindowContext window)
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _window = window;
 
+            // Taken here because Direct2D.Current is per view thread, and frames are drawn on the
+            // flusher's, which has none.
+            Device = Direct2D.Current;
+            Flusher = new FrameFlusher(Device);
+
+            _graphicsDevice = Device.Device;
+            _graphicsDevice.RenderingDeviceReplaced += OnRenderingDeviceReplaced;
+
             Debug.Assert(_dispatcherQueue != null);
+        }
+
+        public FrameFlusher Flusher { get; }
+
+        private void OnRenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
+        {
+            // Rare enough that a copy is the simplest way not to call out under the lock.
+            AnimatedImagePresenter[] presenters;
+
+            lock (_presentersLock)
+            {
+                presenters = _presenters.Values.ToArray();
+            }
+
+            foreach (var presenter in presenters)
+            {
+                presenter.Redraw();
+            }
+        }
+
+        /// <summary>
+        /// Draws every presenter's pending frame into its surface, one after another, on one thread
+        /// per window. The composition device allows a single drawing session at a time, so workers
+        /// drawing their own frames failed whenever two overlapped, and queued on the device lock
+        /// ahead of XAML's own commit when they did not.
+        /// </summary>
+        public sealed class FrameFlusher
+        {
+            private readonly object _lock = new();
+            private readonly HashSet<AnimatedImagePresenter> _pending = new();
+            private readonly AutoResetEvent _signal = new(false);
+            private readonly Direct2DDevice _device;
+            private Thread _thread;
+            private volatile bool _closed;
+
+            public FrameFlusher(Direct2DDevice device)
+            {
+                _device = device;
+            }
+
+            public void Request(AnimatedImagePresenter presenter)
+            {
+                lock (_lock)
+                {
+                    if (_closed || !_pending.Add(presenter))
+                    {
+                        return;
+                    }
+
+                    if (_thread == null)
+                    {
+                        _thread = new Thread(Run) { IsBackground = true, Name = "AnimatedImage flush" };
+                        _thread.Start();
+                    }
+                }
+
+                _signal.Set();
+            }
+
+            public void Close()
+            {
+                _closed = true;
+                _signal.Set();
+            }
+
+            private void Run()
+            {
+                var batch = new List<AnimatedImagePresenter>();
+                var retry = new List<AnimatedImagePresenter>();
+
+                while (!_closed)
+                {
+                    _signal.WaitOne();
+
+                    // One pass per compositor frame: every pass is a commit, and every commit a XAML
+                    // frame on the UI thread, so frames decoded meanwhile have to share it.
+                    _device.WaitForCompositorClock();
+
+                    lock (_lock)
+                    {
+                        batch.AddRange(_pending);
+                        _pending.Clear();
+                    }
+
+                    foreach (var presenter in batch)
+                    {
+                        if (!presenter.FlushFrame())
+                        {
+                            retry.Add(presenter);
+                        }
+                    }
+
+                    batch.Clear();
+
+                    if (retry.Count > 0)
+                    {
+                        // A draw fails while the device is being replaced; give it a frame's time.
+                        Thread.Sleep(16);
+
+                        lock (_lock)
+                        {
+                            foreach (var presenter in retry)
+                            {
+                                _pending.Add(presenter);
+                            }
+                        }
+
+                        retry.Clear();
+                        _signal.Set();
+                    }
+                }
+            }
         }
 
         public static void Release(XamlRoot xamlRoot)
@@ -2430,98 +2704,93 @@ namespace Telegram.Controls
 
         private void ReleaseImpl(XamlRoot xamlRoot)
         {
-            if (_rendering.Count > 0)
-            {
-                _closed = true;
-            }
-            else if (_window.XamlRoot != null)
+            Flusher.Close();
+            _graphicsDevice.RenderingDeviceReplaced -= OnRenderingDeviceReplaced;
+
+            if (_window.XamlRoot != null)
             {
                 _loaders.Remove(_window.XamlRoot);
             }
 
-            Bitmaps.Clear();
+            Buffers.Clear();
         }
 
-        /// <summary>The frame bitmaps this window's presenters render into.</summary>
-        public BitmapRecyclePool Bitmaps { get; } = new();
+        /// <summary>The frame buffers this window's presenters render into.</summary>
+        public BufferRecyclePool Buffers { get; } = new();
 
         /// <summary>
-        /// Recycles the pair of bitmaps every presenter renders into, so a panel scroll reuses a
-        /// bounded set instead of allocating two per sticker and leaving them to the collector.
+        /// Recycles the pair of buffers every presenter renders into, so a panel scroll reuses a
+        /// bounded set instead of allocating two per sticker.
         /// </summary>
         /// <remarks>
-        /// One per <see cref="XamlRoot"/>, because it lives on the loader, and that is not an
-        /// arrangement of convenience: a WriteableBitmap belongs to the thread that created it, so
-        /// a pool shared between windows would hand one window's bitmap to another. It also makes
-        /// every member single-threaded - Rent comes from ReadyImpl and Return from
+        /// One per <see cref="XamlRoot"/>, because it lives on the loader. That makes every member
+        /// single-threaded - Rent comes from ReadyImpl and Return from
         /// AnimatedImagePresenter.ReleaseVisual, both on this loader's dispatcher - which is why
         /// nothing here locks. Anything that starts calling it from elsewhere has to revisit that.
         /// </remarks>
-        public sealed class BitmapRecyclePool
+        public sealed class BufferRecyclePool
         {
             // Long enough to survive a scroll that turns straight back, short enough that a panel
-            // the user has left does not sit on its bitmaps.
+            // the user has left does not sit on its buffers.
             private const ulong Expiration = 5000;
 
-            private readonly Dictionary<SizeInt32, List<Entry>> _bitmaps = new();
+            // A frame only needs its own bytes from the start of the buffer, so any buffer at
+            // least that long will do - but the presenter keeps it for as long as it lives, and a
+            // panel sticker's would otherwise end up behind every custom emoji after it.
+            private const uint MaxWaste = 2;
 
-            // Reused by the sweep so a tick allocates nothing.
-            private readonly List<SizeInt32> _emptied = new();
+            // Few enough, a panel's worth at most, that a scan is cheaper than keeping them sorted.
+            private readonly List<Entry> _buffers = new();
 
             private DispatcherTimer _timer;
-            private int _count;
 
             private bool _closed;
 
-            private readonly record struct Entry(WriteableBitmap Bitmap, ulong Expires);
+            private readonly record struct Entry(IBuffer Buffer, uint Length, ulong Expires);
 
-            public WriteableBitmap Rent(int width, int height)
+            public IBuffer Rent(int width, int height)
             {
-                var size = new SizeInt32 { Width = width, Height = height };
+                var size = (uint)(width * height * 4);
+                var best = -1;
 
-                if (_bitmaps.TryGetValue(size, out var value) && value.Count > 0)
+                // From the end and keeping the first of equals: the newest is the one most likely
+                // still in cache.
+                for (int i = _buffers.Count - 1; i >= 0; i--)
                 {
-                    // From the end: the newest is the one most likely still in cache, and it saves
-                    // shuffling the rest down.
-                    var last = value.Count - 1;
-                    var bitmap = value[last].Bitmap;
+                    var length = _buffers[i].Length;
 
-                    value.RemoveAt(last);
-                    _count--;
-
-                    if (value.Count == 0)
+                    if (length >= size && length / MaxWaste <= size && (best == -1 || length < _buffers[best].Length))
                     {
-                        _bitmaps.Remove(size);
+                        best = i;
+
+                        if (length == size)
+                        {
+                            break;
+                        }
                     }
+                }
+
+                if (best != -1)
+                {
+                    var buffer = _buffers[best].Buffer;
+                    _buffers.RemoveAt(best);
 
                     // Not cleared: the caller renders a whole frame into it before it is shown, so
                     // clearing would be a memset per realization for nothing.
-                    return bitmap;
+                    return buffer;
                 }
 
-                return new WriteableBitmap(width, height);
+                return BufferSurface.Create(size);
             }
 
-            public void Return(WriteableBitmap bitmap)
+            public void Return(IBuffer buffer)
             {
-                if (bitmap == null || _closed)
+                if (buffer == null || _closed)
                 {
                     return;
                 }
 
-                var size = new SizeInt32 { Width = bitmap.PixelWidth, Height = bitmap.PixelHeight };
-                var entry = new Entry(bitmap, Logger.TickCount + Expiration);
-
-                if (_bitmaps.TryGetValue(size, out var value))
-                {
-                    value.Add(entry);
-                }
-                else
-                {
-                    _bitmaps[size] = [entry];
-                }
-
-                _count++;
+                _buffers.Add(new Entry(buffer, buffer.Length, Logger.TickCount + Expiration));
 
                 _timer ??= CreateTimer();
 
@@ -2534,17 +2803,7 @@ namespace Telegram.Controls
             /// <summary>Drops everything at once, for a window that is going away.</summary>
             public void Clear()
             {
-                //foreach (var value in _bitmaps.Values)
-                //{
-                //    for (int i = 0; i < value.Count; i++)
-                //    {
-                //        Release(value[i].Bitmap);
-                //    }
-                //}
-
-                _bitmaps.Clear();
-                _count = 0;
-
+                _buffers.Clear();
                 _timer?.Stop();
             }
 
@@ -2563,65 +2822,19 @@ namespace Telegram.Controls
             {
                 var now = Logger.TickCount;
 
-                _emptied.Clear();
-
-                foreach (var pair in _bitmaps)
+                for (int i = _buffers.Count - 1; i >= 0; i--)
                 {
-                    var value = pair.Value;
-
-                    for (int i = value.Count - 1; i >= 0; i--)
+                    if (now > _buffers[i].Expires)
                     {
-                        if (now > value[i].Expires)
-                        {
-                            Release(value[i].Bitmap);
-
-                            value.RemoveAt(i);
-                            _count--;
-                        }
-                    }
-
-                    if (value.Count == 0)
-                    {
-                        _emptied.Add(pair.Key);
+                        _buffers.RemoveAt(i);
                     }
                 }
 
-                // A size the panel has stopped using should not keep an empty list forever. The
-                // churn is a List per size per idle period, which is nothing next to the bitmaps.
-                for (int i = 0; i < _emptied.Count; i++)
-                {
-                    _bitmaps.Remove(_emptied[i]);
-                }
-
-                _emptied.Clear();
-
-                if (_count == 0)
+                if (_buffers.Count == 0)
                 {
                     _timer.Stop();
                 }
             }
-
-            private static void Release(WriteableBitmap bitmap)
-            {
-#if NET9_0_OR_GREATER
-                // Deterministic rather than whenever the collector notices. Only safe here because
-                // ImageBrush.ImageSource is cleared before a bitmap is ever returned, so XAML has
-                // already let go - anything that returns a bitmap still on screen breaks this.
-                Utils.ReleaseHandle(bitmap);
-#endif
-            }
-        }
-
-        private readonly List<AnimatedImagePresenter> _rendering = new();
-
-        public void Rendering(AnimatedImagePresenter presenter)
-        {
-            if (_rendering.Count == 0)
-            {
-                CompositionTarget.Rendering += OnRendering;
-            }
-
-            _rendering.Add(presenter);
         }
 
         public event EventHandler<WindowActivatedEventArgs> Activated
@@ -2634,28 +2847,6 @@ namespace Telegram.Controls
         {
             add => _window.PopupActivated += value;
             remove => _window.PopupActivated -= value;
-        }
-
-        private void OnRendering(object sender, object e)
-        {
-            for (int i = 0; i < _rendering.Count; i++)
-            {
-                if (_rendering[i].Invalidate())
-                {
-                    _rendering.RemoveAt(i--);
-                }
-            }
-
-            if (_rendering.Count == 0)
-            {
-                CompositionTarget.Rendering -= OnRendering;
-
-                if (_closed)
-                {
-                    _loaders.Remove(_window.XamlRoot);
-                    Bitmaps.Clear();
-                }
-            }
         }
 
         private readonly ParallelActionWorker _workQueue = new(Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
@@ -2738,8 +2929,8 @@ namespace Telegram.Controls
                         worst = Math.Max(worst, count);
                     }
 
-                    report += string.Format("  AnimatedImageLoader: presenters={0}, queued={1}, rendering={2}, handlers={3} (worst {4})\n",
-                        loader._presenters.Count, loader._delegates.Count, loader._rendering.Count, handlers, worst);
+                    report += string.Format("  AnimatedImageLoader: presenters={0}, queued={1}, handlers={2} (worst {3})\n",
+                        loader._presenters.Count, loader._delegates.Count, handlers, worst);
                 }
             }
 

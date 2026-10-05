@@ -347,6 +347,10 @@
       <DependentUpon>Controls\DirectTextBlockBase.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="FrameSurface.h">
+      <DependentUpon>FrameSurface.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FreeformGradientSurface.h">
       <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -421,9 +425,6 @@
     <ClInclude Include="ParticlesAnimation.h">
       <DependentUpon>ParticlesAnimation.idl</DependentUpon>
       <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="PixelBuffer.h">
-      <DependentUpon>PixelBuffer.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="Direct2DDevice.h">
       <DependentUpon>Direct2DDevice.idl</DependentUpon>
@@ -1281,6 +1282,10 @@
       <DependentUpon>Controls\DirectTextBlockBase.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="FrameSurface.cpp">
+      <DependentUpon>FrameSurface.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FreeformGradientSurface.cpp">
       <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1398,9 +1403,6 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="PixelBuffer.cpp">
-      <DependentUpon>PixelBuffer.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="Direct2DDevice.cpp">
       <DependentUpon>Direct2DDevice.idl</DependentUpon>
@@ -1528,6 +1530,9 @@
     <Midl Include="Controls\DirectTextBlockBase.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="FrameSurface.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="FreeformGradientSurface.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -1571,7 +1576,6 @@
     <Midl Include="ParticlesAnimation.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="PixelBuffer.idl" />
     <Midl Include="Direct2DDevice.idl" />
     <Midl Include="QrBuffer.idl">
       <SubType>Designer</SubType>

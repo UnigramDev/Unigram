@@ -8,6 +8,7 @@
 #include "StringUtils.h"
 #include "Helpers\COMHelper.h"
 #include "RichMathSurface.h"
+#include "FrameSurface.h"
 #include "Helpers\BlurHelper.h"
 
 #include <zlib.h>
@@ -410,6 +411,55 @@ namespace winrt::Telegram::Native::implementation
 
         free(buffer);
         return true;
+    }
+
+    winrt::Telegram::Native::FrameSurface Direct2DDevice::CreateFrameSurface(int32_t pixelWidth, int32_t pixelHeight, int32_t rotation)
+    {
+        auto turned = rotation == 90 || rotation == 270;
+        auto surface = CreateDrawingSurface({ turned ? pixelHeight : pixelWidth, turned ? pixelWidth : pixelHeight });
+        if (surface)
+        {
+            return winrt::make<FrameSurface>(surface, m_d2dFactory, pixelWidth, pixelHeight, rotation);
+        }
+
+        return nullptr;
+    }
+
+    void Direct2DDevice::WaitForCompositorClock()
+    {
+        using PFN_DCompositionWaitForCompositorClock = DWORD(WINAPI*)(UINT, const HANDLE*, DWORD);
+
+        // dcomp.dll is loaded by the time anything draws, since XAML renders through it.
+        static auto s_wait = []() -> PFN_DCompositionWaitForCompositorClock
+        {
+            if (HMODULE dcomp = GetModuleHandle(L"dcomp.dll"))
+            {
+                return reinterpret_cast<PFN_DCompositionWaitForCompositorClock>(GetProcAddress(dcomp, "DCompositionWaitForCompositorClock"));
+            }
+
+            return nullptr;
+        }();
+
+        if (s_wait)
+        {
+            s_wait(0, nullptr, 100);
+            return;
+        }
+
+        // Sleep rounds up to the system timer's 15.6 ms, which would make every other frame late.
+        thread_local winrt::handle s_timer{ CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS) };
+
+        LARGE_INTEGER due;
+        due.QuadPart = -10'000'000LL / 60;
+
+        if (s_timer && SetWaitableTimer(s_timer.get(), &due, 0, nullptr, nullptr, FALSE))
+        {
+            WaitForSingleObject(s_timer.get(), INFINITE);
+        }
+        else
+        {
+            Sleep(16);
+        }
     }
 
     winrt::Telegram::Native::SurfaceImage Direct2DDevice::Create(int32_t pixelWidth, int32_t pixelHeight)

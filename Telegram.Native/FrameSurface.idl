@@ -1,0 +1,10 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass FrameSurface : Windows.Foundation.IClosable
+    {
+        Windows.UI.Composition.CompositionDrawingSurface Surface{ get; };
+
+        Boolean Draw(Windows.Storage.Streams.IBuffer buffer);
+    }
+}

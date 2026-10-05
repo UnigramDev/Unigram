@@ -140,6 +140,13 @@ namespace winrt::Telegram::Native::implementation
             return false;
         }
 
+        // The request is the size on screen, and a frame turned by a quarter fills it on its side.
+        auto rotation = animation->Rotation();
+        if (rotation == 90 || rotation == 270)
+        {
+            std::swap(width, height);
+        }
+
         if (width > 0 && height > 0)
         {
             double ratioX = (double)width / pixelWidth;

@@ -386,6 +386,10 @@ namespace winrt::Telegram::Native::implementation
         SoftwareBitmap DrawBlurred(hstring fileName, float blurAmount);
         SoftwareBitmap DrawBlurred(array_view<uint8_t const> bytes, float blurAmount);
 
+        winrt::Telegram::Native::FrameSurface CreateFrameSurface(int32_t pixelWidth, int32_t pixelHeight, int32_t rotation);
+
+        void WaitForCompositorClock();
+
         winrt::Telegram::Native::SurfaceImage Create(int32_t pixelWidth, int32_t pixelHeight);
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
 

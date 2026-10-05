@@ -1,4 +1,5 @@
 import "SurfaceImage.idl";
+import "FrameSurface.idl";
 import "TextFormat.idl";
 import "DirectTextLayout.idl";
 import "RichMathSurface.idl";
@@ -41,6 +42,12 @@ namespace Telegram.Native
         [default_overload]
         Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(String fileName, Single blurAmount);
         Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(byte[] bytes, Single blurAmount);
+
+        // Rotation is clockwise, in degrees: 0, 90, 180 or 270.
+        FrameSurface CreateFrameSurface(Int32 pixelWidth, Int32 pixelHeight, Int32 rotation);
+
+        // Until the compositor's next frame, or a 60th of a second before Windows 11.
+        void WaitForCompositorClock();
 
         SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
         void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
