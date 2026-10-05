@@ -800,6 +800,7 @@ namespace Telegram.Common
         // fallback Outgoing brushes are reset to when a theme carries no override.
         public static readonly Dictionary<string, Color> DefaultLight = new()
         {
+            { "MessageAccentBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF) },
@@ -823,6 +824,7 @@ namespace Telegram.Common
 
         public static readonly Dictionary<string, Color> DefaultDark = new()
         {
+            { "MessageAccentBrush", Color.FromArgb(0xFF, 0x25, 0x8D, 0xE5) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0x2B, 0x52, 0x78) },
@@ -852,6 +854,7 @@ namespace Telegram.Common
         // fallback Incoming brushes are reset to when a theme carries no override.
         public static readonly Dictionary<string, Color> DefaultLight = new()
         {
+            { "MessageAccentBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
@@ -875,6 +878,7 @@ namespace Telegram.Common
 
         public static readonly Dictionary<string, Color> DefaultDark = new()
         {
+            { "MessageAccentBrush", Color.FromArgb(0xFF, 0x25, 0x8D, 0xE5) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0x18, 0x25, 0x33) },

@@ -86,7 +86,7 @@
                 <controls:ProgressVoice.Style>
                     <Style TargetType="controls:ProgressVoice">
                         <Setter Property="Foreground"
-                                Value="{ThemeResource MessageHeaderBorderBrush}" />
+                                Value="{ThemeResource MessageAccentBrush}" />
                         <Setter Property="Background"
                                 Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
                         <Setter Property="BorderThickness"

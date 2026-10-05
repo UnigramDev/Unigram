@@ -2735,7 +2735,7 @@
         <Setter Property="Background"
                 Value="Transparent" />
         <Setter Property="Foreground"
-                Value="{ThemeResource MessageHeaderBorderBrush}" />
+                Value="{ThemeResource MessageAccentBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
@@ -2828,7 +2828,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Ellipse x:Name="ContentBackground"
-                                 Fill="{ThemeResource MessageHeaderBorderBrush}"
+                                 Fill="{ThemeResource MessageAccentBrush}"
                                  Width="32"
                                  Height="32" />
 

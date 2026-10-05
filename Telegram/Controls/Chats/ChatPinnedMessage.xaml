@@ -83,7 +83,7 @@
                 Grid.ColumnSpan="4" />
 
         <chats:ChatPinnedMessageLine x:Name="Line"
-                                     Stroke="{ThemeResource MessageHeaderBorderBrush}"
+                                     Stroke="{ThemeResource MessageAccentBrush}"
                                      Fill="{ThemeResource PinnedMessageBorderBrush}"
                                      IsTabStop="False"
                                      Width="4"

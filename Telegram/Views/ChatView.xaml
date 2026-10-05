@@ -1223,20 +1223,20 @@
                                                            Padding="0,0,40,0" />
                                 </Border>
                                 <FontIcon x:Name="ComposerHeaderGlyph"
-                                          Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                          Foreground="{ThemeResource MessageAccentBrush}"
                                           Style="{StaticResource DefaultFontIconStyle}"
                                           Margin="0,0,0,-4"
                                           FontSize="24" />
 
                                 <controls:ProgressBarRing x:Name="ComposerHeaderUpload"
-                                                          Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                                          Foreground="{ThemeResource MessageAccentBrush}"
                                                           Width="48"
                                                           Height="48" />
 
                                 <controls:GlyphButton x:Name="ComposerHeaderCancel"
                                                       Click="{x:Bind ViewModel.ClearReply}"
                                                       FontSize="{StaticResource GlyphLargeFontSize}"
-                                                      Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                                      Foreground="{ThemeResource MessageAccentBrush}"
                                                       AllowFocusOnInteraction="False"
                                                       Glyph="&#xE711;"
                                                       Margin="0,0,0,-4"

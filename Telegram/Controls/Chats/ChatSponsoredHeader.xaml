@@ -93,7 +93,7 @@
                        Margin="16,0,0,0"
                        VerticalAlignment="Bottom">
                 <Run Text="{CustomResource SponsoredMessageAd}"
-                     Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+                     Foreground="{ThemeResource MessageAccentBrush}" />
                 <Run x:Name="TitleText" />
             </TextBlock>
 
