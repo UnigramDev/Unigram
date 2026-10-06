@@ -14066,6 +14066,10 @@
     <string name="WalletTonConnectRequestAppExpired">{0}\'s transaction request expired</string>
     <string name="WalletTonConnectRequestAppPending">{0} requests a transaction. Tap to review.</string>
     <string name="WalletTonConnectRequestAppProcessed">{0}\'s transaction request processed</string>
+    <string name="WalletTonConnectRequestDeclined">App transaction request declined</string>
+    <string name="WalletTonConnectRequestExpired">App transaction request expired</string>
+    <string name="WalletTonConnectRequestPending">Connected app requests a transaction. Tap to review.</string>
+    <string name="WalletTonConnectRequestProcessed">App transaction request processed</string>
 
     <string name="WalletProtectTitle">Protect Your Wallet</string>
     <string name="WalletProtectInfo">Choose waht Telegram asks you for before spending from your wallet.</string>

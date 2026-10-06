@@ -2050,14 +2050,29 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateTonConnectRequest(MessageTonConnectRequest tonConnectRequest)
         {
-            var text = tonConnectRequest.State switch
+            string text;
+            if (string.IsNullOrEmpty(tonConnectRequest.DappName))
             {
-                TonConnectRequestStateAccepted => string.Format(Strings.WalletTonConnectRequestAppProcessed, tonConnectRequest.DappName),
-                TonConnectRequestStateRejected => string.Format(Strings.WalletTonConnectRequestAppDeclined, tonConnectRequest.DappName),
-                TonConnectRequestStatePending pending when pending.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds()
-                    => string.Format(Strings.WalletTonConnectRequestAppExpired, tonConnectRequest.DappName),
-                _ => string.Format(Strings.WalletTonConnectRequestAppPending, tonConnectRequest.DappName)
-            };
+                text = tonConnectRequest.State switch
+                {
+                    TonConnectRequestStateAccepted => Strings.WalletTonConnectRequestProcessed,
+                    TonConnectRequestStateRejected => Strings.WalletTonConnectRequestDeclined,
+                    TonConnectRequestStatePending pending when pending.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds()
+                        => Strings.WalletTonConnectRequestExpired,
+                    _ => Strings.WalletTonConnectRequestPending
+                };
+            }
+            else
+            {
+                text = tonConnectRequest.State switch
+                {
+                    TonConnectRequestStateAccepted => string.Format(Strings.WalletTonConnectRequestAppProcessed, tonConnectRequest.DappName),
+                    TonConnectRequestStateRejected => string.Format(Strings.WalletTonConnectRequestAppDeclined, tonConnectRequest.DappName),
+                    TonConnectRequestStatePending pending when pending.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds()
+                        => string.Format(Strings.WalletTonConnectRequestAppExpired, tonConnectRequest.DappName),
+                    _ => string.Format(Strings.WalletTonConnectRequestAppPending, tonConnectRequest.DappName)
+                };
+            }
 
             return new FormattedText(text, Array.Empty<TextEntity>());
         }
