@@ -367,6 +367,11 @@ namespace winrt::Telegram::Native::Graphics::implementation
             }
 
             m_renderer->SetSpinSpeed(static_cast<float>(m_spinSpeed));
+
+            // SizeChanged reaches a panel before Loaded does, while there is no renderer to tell,
+            // and nothing raises it again for a size that has not changed: without this a new
+            // renderer has no size, and draws nothing until something - a press - resizes it.
+            UpdateSize();
         }
 
         m_renderer->Start();
