@@ -180,12 +180,6 @@ namespace Telegram.Controls.Cells
             Segments.Click += Segments_Click;
             BotOpen.Click += BotOpen_Click;
 
-            _selectionPhoto = ElementComposition.GetElementVisual(Segments);
-            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
-            _selectionPhoto.CenterPoint = new Vector3(24);
-            _selectionOutline.CenterPoint = new Vector3(24);
-            _selectionOutline.Opacity = 0;
-
             _templateApplied = true;
 
             if (_chat != null)
@@ -2398,6 +2392,14 @@ namespace Telegram.Controls.Cells
 
             _polygon = polygon;
             _visual = visual;
+
+            _selectionPhoto = ElementComposition.GetElementVisual(Segments);
+            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
+            _selectionPhoto.CenterPoint = new Vector3(24);
+            _selectionOutline.CenterPoint = new Vector3(24);
+            _selectionOutline.Opacity = 0;
+
+            SelectionOutline.Visibility = Visibility.Visible;
         }
 
         public void UpdateState(bool selected, bool animate, bool multiple)
