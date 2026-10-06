@@ -479,7 +479,7 @@
     {"name": "ic_fluent_hand_wave_20_filled", "code": "EA7B", "src": "fluent:hand_wave_20_filled"},
     {"name": "tl_fluent_arrow_reply_20_filled", "code": "EA7C", "src": "icons/tl_fluent_arrow_reply_20_filled.svg"},
     {"name": "tl_fluent_chat_snooze_20_filled", "code": "EA7D", "src": "icons/tl_fluent_chat_snooze_20_filled.svg"},
-    {"name": "tl_fluent_gram_14_regular", "code": "EA7E", "src": "icons/tl_fluent_gram_14_regular.svg"},
+    {"name": "tl_fluent_gram_14_colored", "code": "EA7E", "src": "icons/tl_fluent_gram_14_colored.svg", "color": true},
     {"name": "tl_fluent_fifty_fifty_20_regular", "code": "EA7F", "src": "icons/tl_fluent_fifty_fifty_20_regular.svg"},
     {"name": "ic_fluent_lightbulb_20_regular", "code": "EA80", "src": "fluent:lightbulb_20_regular"},
     {"name": "tl_fluent_ton_coin_20_regular", "code": "EA81", "src": "icons/tl_fluent_ton_coin_20_regular.svg"},
@@ -685,6 +685,7 @@
     {"name": "ic_fluent_play_20_filled", "code": "F792", "src": "fluent:play_20_filled"},
     {"name": "ic_fluent_arrow_export_20_regular", "code": "F793", "src": "fluent:arrow_export_20_regular"},
     {"name": "ic_fluent_arrow_import_20_regular", "code": "F794", "src": "fluent:arrow_import_20_regular"},
+    {"name": "tl_fluent_gift_14_regular", "code": "F795", "src": "icons/tl_fluent_gift_14_regular.svg"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

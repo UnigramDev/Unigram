@@ -210,6 +210,7 @@ namespace Telegram.Controls.Media
         public const string Wallet = "\uEA38";
 
         public const string GiftPremium = "\uE9D4";
+        public const string Gift14 = "\uF795";
 
         public const string HandRight = "\uE98B";
         public const string PlayCircle = "\uE9FC";

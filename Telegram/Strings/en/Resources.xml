@@ -13968,11 +13968,14 @@
     <string name="WalletKeysAndBackup">Keys &amp; Backup</string>
     <string name="WalletWhatIsWallet">What is Wallet?</string>
     <string name="WalletOutgoingTransfer">Outgoing transfer</string>
+    <string name="WalletOutgoingTransferNft">Outgoing collectible</string>
     <string name="WalletIncomingTransfer">Incoming transfer</string>
+    <string name="WalletIncomingTransferNft">Incoming collectible</string>
     <string name="WalletFailedTransfer">Failed transfer</string>
-    <string name="WalletProcessing">Processing…</string>
+    <string name="WalletSending">Sending…</string>
     <string name="WalletKeyUpdate">Key Update</string>
     <string name="WalletTransactionTopUp">Card Top-up</string>
+    <string name="WalletCollectibleGift">Collectible Gift</string>
 
     <string name="WalletHowItWorks">How It Works</string>
     <string name="WalletHowItWorksInfo">Only you control your funds —\nno one else has access.</string>

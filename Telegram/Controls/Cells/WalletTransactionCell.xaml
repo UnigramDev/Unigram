@@ -18,6 +18,7 @@
         <RowDefinition />
         <RowDefinition />
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
@@ -54,16 +55,52 @@
          whitespace between them in the markup would be a space in the number. -->
     <TextBlock x:Name="Amount"
                TextWrapping="NoWrap"
-               VerticalAlignment="Center"
+               VerticalAlignment="Top"
                Style="{StaticResource BaseTextBlockStyle}"
+               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                Margin="8,0,0,0"
+               Grid.RowSpan="4"
                Grid.Column="2"
-               Grid.RowSpan="3">
+               Grid.Row="0">
         <Run x:Name="AmountInteger" /><Run x:Name="AmountFraction"
                                            FontSize="12" />
-                <Run Text="&#xEA7E;"
+                <Run x:Name="AmountGlyph"
+                     Text="&#xEA7E;"
                      Foreground="{ThemeResource AccentFillColorDefaultBrush}"
-                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                      FontWeight="Normal" />
     </TextBlock>
+
+    <Grid x:Name="CollectibleRoot"
+          Background="{ThemeResource SubtleFillColorTertiaryBrush}"
+          HorizontalAlignment="Left"
+          CornerRadius="12"
+          Margin="0,4,0,0"
+          Padding="4,4,8,4"
+          Visibility="Collapsed"
+          Grid.Column="1"
+          Grid.ColumnSpan="3"
+          Grid.Row="3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ProfilePicture x:Name="CollectiblePhoto"
+                                 Size="36"
+                                 Margin="0,0,8,0"
+                                 Grid.RowSpan="2" />
+
+        <TextBlock x:Name="CollectibleName"
+                   Style="{StaticResource BaseCaptionTextBlockStyle}"
+                   VerticalAlignment="Bottom"
+                   Grid.Column="1" />
+        <TextBlock x:Name="CollectibleInfo"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   VerticalAlignment="Top"
+                   Grid.Column="1"
+                   Grid.Row="1" />
+    </Grid>
 </Grid>

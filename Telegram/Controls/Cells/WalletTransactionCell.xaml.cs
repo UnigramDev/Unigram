@@ -6,6 +6,7 @@
 //
 
 using System;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
@@ -24,9 +25,6 @@ namespace Telegram.Controls.Cells
     /// </summary>
     public sealed partial class WalletTransactionCell : Grid
     {
-        // TON blue, for the rows that have no Telegram user to show a photo of.
-        private static readonly Color TonColor = Color.FromArgb(0xFF, 0x00, 0x79, 0xFF);
-
         private readonly Brush _received;
 
         public WalletTransactionCell()
@@ -43,8 +41,10 @@ namespace Telegram.Controls.Cells
         {
             var transfer = transaction.Type as TonWalletTransactionTypeTransfer;
             var onRampDeposit = transaction.Type as TonWalletTransactionTypeOnRampDeposit;
+            var nftTransfer = transaction.Type as TonWalletTransactionTypeNftTransfer;
 
             UpdatePeer(clientService, transaction);
+            UpdateNft(clientService, nftTransfer);
 
             if (transfer != null)
             {
@@ -58,7 +58,7 @@ namespace Telegram.Controls.Cells
             if (transaction.State is TonWalletTransactionStatePending)
             {
                 // Also ahead of the direction: nothing has been sent until the chain says so.
-                Subtitle.Text = Strings.WalletProcessing;
+                Subtitle.Text = Strings.WalletSending;
             }
             else if (transaction.State is TonWalletTransactionStateFailed)
             {
@@ -73,6 +73,10 @@ namespace Telegram.Controls.Cells
             else if (onRampDeposit != null)
             {
                 Subtitle.Text = onRampDeposit.ProviderName;
+            }
+            else if (nftTransfer != null)
+            {
+                Subtitle.Text = nftTransfer.IsOutgoing ? Strings.WalletOutgoingTransferNft : Strings.WalletIncomingTransferNft;
             }
             else
             {
@@ -99,7 +103,7 @@ namespace Telegram.Controls.Cells
                 Title.Text = user.FullName();
                 Photo.Source = ProfilePictureSource.User(clientService, user);
             }
-            else if (transaction.Type is TonWalletTransactionTypeTransfer transfer)
+            else
             {
                 // Nobody the account knows: a domain if the address has one, the address otherwise,
                 // and the chain's own mark instead of a photo.
@@ -107,7 +111,14 @@ namespace Telegram.Controls.Cells
                     ? transaction.PeerDomain
                     : Shorten(transaction.PeerAddress);
 
-                Photo.Source = ProfilePictureSourceText.GetGlyph(transfer.Amount < 0 ? Icons.ArrowCircleUpFilled : Icons.ArrowCircleDownFilled, 3);
+                if (transaction.Type is TonWalletTransactionTypeTransfer transfer)
+                {
+                    Photo.Source = ProfilePictureSourceText.GetGlyph(transfer.Amount < 0 ? Icons.ArrowCircleUpFilled : Icons.ArrowCircleDownFilled, transfer.Amount < 0 ? 5 : 3);
+                }
+                else if (transaction.Type is TonWalletTransactionTypeNftTransfer nftTransfer)
+                {
+                    Photo.Source = ProfilePictureSourceText.GetGlyph(nftTransfer.IsOutgoing ? Icons.ArrowCircleUpFilled : Icons.ArrowCircleDownFilled, nftTransfer.IsOutgoing ? 5 : 3);
+                }
             }
         }
 
@@ -123,13 +134,56 @@ namespace Telegram.Controls.Cells
             }
 
             // TDLib signs the amount rather than naming a direction: negative is outgoing.
-            var sent = value < 0;
+            var outgoing = value < 0;
             var amount = Formatter.TonBalance(Math.Abs(value));
 
-            AmountInteger.Text = (sent ? "-" : "+") + amount.Integer;
+            AmountInteger.Text = (outgoing ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;
+            AmountGlyph.Text = Icons.Ton;
 
-            if (sent || _received == null)
+            if (outgoing || _received == null)
+            {
+                // Back to the colour the style gives it. Only a local value is cleared, so the
+                // amount must never be given a Foreground in the markup - that is a local value
+                // too, and this would take it away for good.
+                Amount.ClearValue(TextBlock.ForegroundProperty);
+            }
+            else
+            {
+                Amount.Foreground = _received;
+            }
+        }
+
+        private void UpdateNft(IClientService clientService, TonWalletTransactionTypeNftTransfer transfer)
+        {
+            if (transfer == null)
+            {
+                CollectibleRoot.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            if (transfer.Nft.Image != null)
+            {
+                CollectiblePhoto.Source = new ProfilePictureSourcePhoto(clientService, transfer.Nft.Image.Photo.Id, transfer.Nft.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
+                CollectiblePhoto.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CollectiblePhoto.Source = null;
+                CollectiblePhoto.Visibility = Visibility.Collapsed;
+            }
+
+            CollectibleName.Text = transfer.Nft.Name;
+            CollectibleInfo.Text = Strings.WalletCollectibleGift;
+            CollectibleRoot.Visibility = Visibility.Visible;
+
+            var outgoing = transfer.IsOutgoing;
+
+            AmountInteger.Text = string.Format("{0}{1} {2}", outgoing ? "-" : "+", Locale.Declension(Strings.R.items, 1), Icons.Gift14);
+            AmountFraction.Text = string.Empty;
+            AmountGlyph.Text = string.Empty;
+
+            if (outgoing || _received == null)
             {
                 // Back to the colour the style gives it. Only a local value is cleared, so the
                 // amount must never be given a Foreground in the markup - that is a local value
