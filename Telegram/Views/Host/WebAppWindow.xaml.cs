@@ -626,13 +626,13 @@ namespace Telegram.Views.Host
             {
                 if (_botUser == null) return;
                 if (_secureStorage == null) _secureStorage = new WebAppStorage(_clientService, _botUser.Id, true);
-                ClearStorageKey(_secureStorage, eventData, "secure_storage_cleared", "secure_storage_cleared");
+                ClearStorageKey(_secureStorage, eventData, "secure_storage_cleared", "secure_storage_failed");
             }
             else if (eventName == "web_app_secure_storage_restore_key")
             {
                 if (_botUser == null) return;
                 if (_secureStorage == null) _secureStorage = new WebAppStorage(_clientService, _botUser.Id, true);
-                RestoreStorageKey(_secureStorage, eventData, "secure_storage_key_restored", "secure_storage_cleared");
+                RestoreStorageKey(_secureStorage, eventData, "secure_storage_key_restored", "secure_storage_failed");
             }
             // Games
             else if (eventName == "share_game")
@@ -818,6 +818,7 @@ namespace Telegram.Views.Host
             if (confirm != ContentDialogResult.Primary || popup.SelectedItem == null)
             {
                 PostEvent(eventFail, "req_id", req_id, "error", "RESTORE_CANCELLED");
+                return;
             }
 
             (String Value, bool) restoredValue;

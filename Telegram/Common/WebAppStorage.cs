@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Services;
 using Windows.Security.Cryptography;
@@ -27,6 +28,10 @@ namespace Telegram.Common
         private const string KEY_ALIAS = "MiniAppsKey";
         private const int MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB
         private const int MAX_SECURED_KEYS = 10;
+
+        // Every instance shares the config file, and windows for the same bot share data files,
+        // so all read-modify-write cycles go through one lock.
+        private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         private readonly IClientService _clientService;
 
@@ -57,19 +62,21 @@ namespace Telegram.Common
             }
         }
 
-        private async Task<StorageFile> GetFileAsync(string storageId = null)
+        private string GetFileName(string storageId)
+        {
+            return Secured
+                ? $"{storageId}_{BotId}_s"
+                : $"{UserId}_{BotId}";
+        }
+
+        private async Task<StorageFile> GetFileAsync(string storageId)
         {
             var folder = await GetStorageFolderAsync();
             if (folder == null) return null;
 
-            var actualStorageId = storageId ?? StorageId;
-            var fileName = Secured
-                ? $"{actualStorageId}_{BotId}_s"
-                : $"{UserId}_{BotId}";
-
             try
             {
-                return await folder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
+                return await folder.CreateFileAsync(GetFileName(storageId), CreationCollisionOption.OpenIfExists);
             }
             catch
             {
@@ -77,7 +84,23 @@ namespace Telegram.Common
             }
         }
 
-        public async Task<StorageFile> GetFileAsync()
+        // Scanning other storages must not create a file for every one of them.
+        private async Task<StorageFile> TryGetFileAsync(string storageId)
+        {
+            var folder = await GetStorageFolderAsync();
+            if (folder == null) return null;
+
+            try
+            {
+                return await folder.TryGetItemAsync(GetFileName(storageId)) as StorageFile;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private async Task<StorageFile> GetFileAsync()
         {
             if (Secured && string.IsNullOrEmpty(StorageId))
             {
@@ -134,9 +157,10 @@ namespace Telegram.Common
                 {
                     credential = vault.Retrieve("TelegramBotStorage", KEY_ALIAS);
                 }
-                catch
+                // Only a missing key may be replaced: overwriting one that failed to load for any
+                // other reason makes every secure storage undecryptable, and decryption failure wipes them.
+                catch (Exception ex) when (ex.HResult == unchecked((int)0x80070490))
                 {
-                    // Key doesn't exist, create new one
                     var keyMaterial = CryptographicBuffer.GenerateRandom(32); // 256-bit key
                     var keyString = CryptographicBuffer.EncodeToBase64String(keyMaterial);
                     credential = new Windows.Security.Credentials.PasswordCredential("TelegramBotStorage", KEY_ALIAS, keyString);
@@ -166,7 +190,7 @@ namespace Telegram.Common
 
                 if (Secured)
                 {
-                    return await DecryptDataAsync(bytes);
+                    return await DecryptDataAsync(file, bytes);
                 }
 
                 return bytes;
@@ -237,11 +261,18 @@ namespace Telegram.Common
             }
         }
 
-        private async Task<byte[]> DecryptDataAsync(byte[] encryptedData)
+        private async Task<byte[]> DecryptDataAsync(StorageFile file, byte[] encryptedData)
         {
+            if (encryptedData.Length == 0)
+            {
+                return encryptedData;
+            }
+
+            // Outside the try: failing to load the key says nothing about the file, so it must not reset it.
+            var key = GetSecretKey();
+
             try
             {
-                var key = GetSecretKey();
                 var algorithm = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesGcm);
                 var cryptoKey = algorithm.CreateSymmetricKey(key);
 
@@ -273,12 +304,7 @@ namespace Telegram.Common
             }
             catch
             {
-                // Reset if decryption fails
-                var file = await GetFileAsync();
-                if (file != null)
-                {
-                    await SetBytesAsync(file, Encoding.UTF8.GetBytes("{}"));
-                }
+                await SetBytesAsync(file, Encoding.UTF8.GetBytes("{}"));
                 throw new InvalidOperationException("UNKNOWN_ERROR");
             }
         }
@@ -338,6 +364,20 @@ namespace Telegram.Common
 
         public async Task SetKeyAsync(string key, string value)
         {
+            await _lock.WaitAsync();
+
+            try
+            {
+                await SetKeyImplAsync(key, value);
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
+        private async Task SetKeyImplAsync(string key, string value)
+        {
             if (key.Length + (value?.Length ?? 0) > MAX_STORAGE_SIZE)
                 throw new InvalidOperationException("QUOTA_EXCEEDED");
 
@@ -374,61 +414,73 @@ namespace Telegram.Common
 
         public async Task<(string Value, bool CanRestore)> GetKeyAsync(string key)
         {
-            var thisJson = await GetJsonAsync();
-            var canRestore = false;
+            await _lock.WaitAsync();
 
-            thisJson.TryGetValue(key, out string value);
-
-            if (Secured && value == null && thisJson.Count == 0)
+            try
             {
-                var activeUsers = GetActiveUsers();
-                var config = await ReadConfigAsync();
-                var lostConfigs = config.Values.Where(c => !activeUsers.Contains(c.UserId)).ToList();
+                var thisJson = await GetJsonAsync();
+                var canRestore = false;
 
-                foreach (var c in lostConfigs)
+                thisJson.TryGetValue(key, out string value);
+
+                if (Secured && value == null && thisJson.Count == 0)
                 {
-                    try
-                    {
-                        var file = await GetFileAsync(c.StorageId);
-                        if (file != null)
-                        {
-                            var json = await GetJsonFromFileAsync(file);
-                            if (json != null && json.ContainsKey(key))
-                            {
-                                canRestore = true;
-                                break;
-                            }
-                        }
-                    }
-                    catch { }
+                    canRestore = (await FindLostStoragesWithKeyAsync(key, true)).Count > 0;
                 }
-            }
 
-            return (value, canRestore);
+                return (value, canRestore);
+            }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         public async Task<List<WebAppStorageConfig>> GetStoragesWithKeyAsync(string key)
         {
-            var thisJson = await GetJsonAsync();
-            if (thisJson.Count > 0)
-                throw new InvalidOperationException("STORAGE_NOT_EMPTY");
+            await _lock.WaitAsync();
 
+            try
+            {
+                var thisJson = await GetJsonAsync();
+                if (thisJson.Count > 0)
+                    throw new InvalidOperationException("STORAGE_NOT_EMPTY");
+
+                return await FindLostStoragesWithKeyAsync(key, false);
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
+        private async Task<List<WebAppStorageConfig>> FindLostStoragesWithKeyAsync(string key, bool firstOnly)
+        {
             var result = new List<WebAppStorageConfig>();
             var activeUsers = GetActiveUsers();
             var config = await ReadConfigAsync();
-            var lostConfigs = config.Values.Where(c => !activeUsers.Contains(c.UserId)).ToList();
 
-            foreach (var c in lostConfigs)
+            foreach (var c in config.Values)
             {
+                if (activeUsers.Contains(c.UserId))
+                {
+                    continue;
+                }
+
                 try
                 {
-                    var file = await GetFileAsync(c.StorageId);
+                    var file = await TryGetFileAsync(c.StorageId);
                     if (file != null)
                     {
                         var json = await GetJsonFromFileAsync(file);
                         if (json != null && json.ContainsKey(key))
                         {
                             result.Add(c);
+
+                            if (firstOnly)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -440,25 +492,54 @@ namespace Telegram.Common
 
         public async Task RestoreFromAsync(string id)
         {
-            var thisJson = await GetJsonAsync();
-            if (thisJson.Count > 0)
-                throw new InvalidOperationException("STORAGE_NOT_EMPTY");
+            await _lock.WaitAsync();
 
-            var config = await ReadConfigAsync();
-            if (!config.TryGetValue(id, out var storageConfig))
-                throw new InvalidOperationException("STORAGE_NOT_FOUND");
+            try
+            {
+                var thisJson = await GetJsonAsync();
+                if (thisJson.Count > 0)
+                    throw new InvalidOperationException("STORAGE_NOT_EMPTY");
 
-            storageConfig.UserId = UserId;
-            storageConfig.UserName = _clientService.GetTitle(_clientService.MyId);
-            storageConfig.EditedAt = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                var config = await ReadConfigAsync();
+                if (!config.TryGetValue(id, out var storageConfig))
+                    throw new InvalidOperationException("STORAGE_NOT_FOUND");
 
-            await SaveConfigAsync(config);
-            StorageId = storageConfig.StorageId;
+                // GetFileAsync takes the first storage it finds for the user, so the one being replaced
+                // must stop being theirs. It is detached rather than deleted: it may still hold data for
+                // other bots, which stays restorable this way.
+                foreach (var c in config.Values)
+                {
+                    if (c.UserId == UserId && c.StorageId != id)
+                    {
+                        c.UserId = 0;
+                    }
+                }
+
+                storageConfig.UserId = UserId;
+                storageConfig.UserName = _clientService.GetTitle(_clientService.MyId);
+                storageConfig.EditedAt = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+                await SaveConfigAsync(config);
+                StorageId = storageConfig.StorageId;
+            }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         public async Task ClearAsync()
         {
-            await SetJsonAsync(new Dictionary<string, string>());
+            await _lock.WaitAsync();
+
+            try
+            {
+                await SetJsonAsync(new Dictionary<string, string>());
+            }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         private async Task<Dictionary<string, string>> GetJsonFromFileAsync(StorageFile file)
@@ -501,8 +582,18 @@ namespace Telegram.Common
                 var bytes = await GetRawBytesAsync(file);
                 var json = Encoding.UTF8.GetString(bytes);
                 var obj = JsonSerializer.Deserialize(json, WebAppStorageConfigJsonContext.Default.DictionaryStringWebAppStorageConfig);
-
-                config = obj;
+                if (obj != null)
+                {
+                    foreach (var entry in obj)
+                    {
+                        if (entry.Value != null)
+                        {
+                            // The id is the key, not a field of the entry.
+                            entry.Value.StorageId = entry.Key;
+                            config[entry.Key] = entry.Value;
+                        }
+                    }
+                }
             }
             catch { }
 
