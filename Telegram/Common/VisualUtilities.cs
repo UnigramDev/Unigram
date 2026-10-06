@@ -11,12 +11,14 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Common
@@ -25,7 +27,19 @@ namespace Telegram.Common
     {
         public static bool IsInPopupTree(UIElement element)
         {
-            return null != element.GetParent<ContentDialog>();
+            DependencyObject current = element;
+
+            while (current != null)
+            {
+                if (current is ContentPopup or ModalPopup)
+                {
+                    return true;
+                }
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return false;
         }
 
         /// <param name="color">
