@@ -14038,7 +14038,7 @@
     <string name="WalletRecipient">Recipient</string>
     <string name="WalletFeePaidByTelegram">Free (paid by Telegram)</string>
     <string name="WalletNetworkFee">Network fee</string>
-    <string name="WalletNetworkFeeInfo">Every transfer costs a small network fee (~{0}).\n\nTelegram covers your first 5 transfers each day.</string>
+    <string name="WalletNetworkFeeInfo">Every transfer costs a small network fee (**~{0}**). Telegram covers your first **5** transfers each day.</string>
     <string name="WalletOpenMyWallet">Open My Wallet</string>
 
     <string name="WalletSendMoney">Send Money</string>

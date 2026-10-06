@@ -8,6 +8,7 @@
 using System;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -37,6 +38,9 @@ namespace Telegram.Views.Wallet.Popups
 
         // Not readonly: the row this was opened with is replaced when it settles - see Handle.
         private TonWalletTransaction _transaction;
+
+        private Task<BigInteger?> _fee;
+        private bool _feeInfoPending;
 
         /// <param name="standalone">
         /// Whether the wallet is not already on screen behind this - opened from a chat rather than
@@ -118,7 +122,7 @@ namespace Telegram.Views.Wallet.Popups
             UpdateAddress(transaction.PeerAddress);
             UpdateComment(transfer);
 
-            UpdateFee(state, Fees(transaction, transfer, onRampDeposit), transfer is { IsGasless: true });
+            UpdateFee(state, transaction.FeeAmount, transfer is { IsGasless: true });
 
             DateRow.Content = Formatter.DateAt(transaction.Date);
         }
@@ -331,28 +335,34 @@ namespace Telegram.Views.Wallet.Popups
                 : string.Empty;
         }
 
-        private static long Fees(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer, TonWalletTransactionTypeOnRampDeposit onRampDeposit)
+        private async void FeeInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (transfer != null)
+            if (_transaction.Type is not TonWalletTransactionTypeTransfer transfer || _feeInfoPending)
             {
-                return transfer.FeeAmount;
-            }
-            else if (onRampDeposit != null)
-            {
-                return onRampDeposit.FeeAmount;
-            }
-            else if (transaction.Type is TonWalletTransactionTypeKeyChange change)
-            {
-                return change.FeeAmount;
+                return;
             }
 
-            return 0;
-        }
+            // A click while the estimate is out would put up a second explanation beside the first.
+            _feeInfoPending = true;
 
-        private void FeeInfo_Click(object sender, RoutedEventArgs e)
-        {
-            _ = MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.WalletNetworkFeeInfo, 0), Strings.WalletNetworkFee, Strings.OK);
+            // What this transfer would have cost had Telegram not paid for it. Emulated, so nothing
+            // is signed and nothing asks for the key.
+            _fee ??= _wallet.EstimateFeeAsync(_transaction.PeerAddress, BigInteger.Abs(transfer.Amount), transfer.Comment);
 
+            var fee = await _fee;
+            if (fee == null)
+            {
+                // Not kept: the next click should be another try.
+                _fee = null;
+            }
+
+            _feeInfoPending = false;
+
+            var text = fee != null
+                ? Formatter.Grams(fee.Value)
+                : "[unavailable]";
+
+            _ = MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.WalletNetworkFeeInfo, text), Strings.WalletNetworkFee, Strings.OK);
         }
 
         private void Peer_Click(Hyperlink sender, HyperlinkClickEventArgs args)
