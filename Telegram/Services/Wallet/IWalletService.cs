@@ -130,6 +130,11 @@ namespace Telegram.Services.Wallet
         /// Signs a transfer here and has TDLib broadcast it. Throws
         /// <see cref="WalletNotBoundException"/> when this device holds no key.
         /// </summary>
+        /// <remarks>
+        /// Returns once the transfer has left, without waiting for the account to answer: the
+        /// account holds the request until the transfer is final, and settles the history row,
+        /// as a transaction or a failure, when it does.
+        /// </remarks>
         /// <param name="recipient">A raw or user-facing address. Names are resolved by
         /// <see cref="ResolveDnsAsync"/> first, deliberately not here.</param>
         /// <param name="peerUserId">The Telegram user on the other side, or zero where the address
@@ -139,7 +144,7 @@ namespace Telegram.Services.Wallet
         /// <param name="peerDomain">The <c>.ton</c> name the address was reached through, if it
         /// was. Same reason.</param>
         /// <param name="allowGasless">Whether a relayer may pay the gas. The server decides whether
-        /// one does; the result says what happened.</param>
+        /// one does; the history row says what happened once it answers.</param>
         /// <param name="isCommentPublic">
         /// Whether the comment travels in the clear. Encrypted is the default and costs a little
         /// more: the engine reads the recipient's key off the chain and signs the body with this
@@ -192,8 +197,8 @@ namespace Telegram.Services.Wallet
         /// </summary>
         /// <remarks>
         /// Throws <see cref="WalletRotationPendingException"/> when one is already out,
-        /// <see cref="WalletRotationFailedException"/> when the preparation has expired,
-        /// <see cref="WalletRequestException"/> when the message was refused, and
+        /// <see cref="WalletRotationFailedException"/> when the preparation has expired or the
+        /// message was refused, and
         /// <see cref="WalletNotBoundException"/> when this device holds no key. In every failure
         /// the wallet is left exactly as it was.
         /// </remarks>
@@ -322,6 +327,23 @@ namespace Telegram.Services.Wallet
         void StartWatching();
 
         void StopWatching();
+
+        /// <summary>
+        /// The pending row a transaction took the place of, or null if it did not take one's place.
+        /// </summary>
+        /// <remarks>
+        /// The two have different ids - a pending row is known by the engine's operation id until
+        /// the account names the transaction - so a list keyed by id would see one row leave and
+        /// another arrive. Keyed by this instead, it sees one row change.
+        /// </remarks>
+        string PredecessorOf(string transactionId);
+
+        /// <summary>
+        /// Whether a pending row has just stopped being pending - landed or failed - under this id,
+        /// for a view to play that once. True only the first time it is asked, and only shortly
+        /// after: a row scrolled back to minutes later has nothing left to show.
+        /// </summary>
+        bool TryTakeSettled(string id);
 
         /// <summary>
         /// Loads the next older page of history. A no-op while another page load is in flight, or

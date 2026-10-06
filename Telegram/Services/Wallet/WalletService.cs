@@ -877,40 +877,112 @@ namespace Telegram.Services.Wallet
 
             // Both messages cover the same seqno and expiry, so offering both is offering the server
             // a choice, not two transfers: whichever it broadcasts, the other can never also land.
-            var response = await _clientService.SendAsync(new SendTonWalletTransfer(
-                Bytes(prepared.ExternalBoc),
-                allowGasless ? Bytes(prepared.InternalBoc) : Array.Empty<byte>()));
+            var external = Bytes(prepared.ExternalBoc);
+            var gasless = allowGasless ? Bytes(prepared.InternalBoc) : Array.Empty<byte>();
 
-            if (response is not TonWalletTransferResult result)
+#if DEBUG
+            if (DebugSpoilTransfers)
             {
-                // Handed back rather than thrown: a refusal is an answer, not a fault, and the
-                // caller is the one that knows how to say it.
-                var error = response as Error;
-
-                Logger.Error(string.Format("wallet transfer refused: {0} {1}", error?.Code, error?.Message));
-                return new WalletTransferResult(error);
+                external = Spoil(external);
+                gasless = Spoil(gasless);
             }
+#endif
 
-            // Everything past this point is bookkeeping over a transfer that has already left. It
-            // must not be able to fail the send: a caller told that this failed would send it again,
-            // and the money is already gone.
+            // At the top of the history before the request leaves, because the account holds it
+            // open until the transfer is final and the caller is not made to wait for that. TDLib
+            // reports transactions, and this is not one yet.
+            await _mutex.WaitAsync();
             try
             {
-                // At the top of the history before the caller is told anything, because the account
-                // has no idea any of this happened: TDLib reports transactions, and this is not one.
+                AddPending(recipient, peerUserId, peerDomain, amountNanograms, comment, allowGasless, prepared.OperationId, prepared.ValidUntil);
+                SetState(Project());
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            Raise();
+
+            _ = CompleteTransferAsync(prepared.OperationId, _clientService.SendAsync(new SendTonWalletTransfer(peerUserId, recipient, (long)amountNanograms, comment, !isCommentPublic, 0, external, gasless)));
+
+            return WalletTransferResult.Sent;
+        }
+
+        /// <summary>
+        /// Settles the row SendAsync added, once the account answers the transfer.
+        /// </summary>
+        /// <remarks>
+        /// The row is looked up rather than held: the resolver can settle it first - the engine may
+        /// see the transfer on the chain, or its expiry pass, while the account is still holding
+        /// the request - and a replaced wallet drops it altogether. Nothing awaits this, so nothing
+        /// may escape it.
+        /// </remarks>
+        private async Task CompleteTransferAsync(string operationId, Task<Object> request)
+        {
+            try
+            {
+                if (DebugSpoilTransfers)
+                {
+                    await Task.Delay(2000);
+                }
+
+                var response = await request;
+
                 await _mutex.WaitAsync();
                 try
                 {
-                    if (result.Transaction != null)
+                    var index = _pending.FindIndex(x => x.Id == operationId);
+                    if (index < 0)
                     {
-                        // The account held the request open until the transfer was included and
-                        // answered with the transaction itself - the same row the history returns -
-                        // so there is nothing to settle and nothing to poll for.
+                        return;
+                    }
+
+                    var pending = _pending[index];
+                    var items = new List<TonWalletTransaction>(_pending);
+
+                    if (response is TonWalletTransferResult result && result.Transaction != null)
+                    {
+                        // The same row the history returns, so there is nothing left to poll for.
+                        items.RemoveAt(index);
+                        _pending = items;
+
+                        Succeed(pending.Id, result.Transaction);
                         AddConfirmed(result.Transaction);
+                    }
+                    else if (response is TonWalletTransferResult accepted)
+                    {
+                        // Accepted but not yet final when the account stopped waiting. A row the
+                        // resolver already failed on expiry stays failed: it can no longer land.
+                        if (pending.State is not TonWalletTransactionStatePending state)
+                        {
+                            return;
+                        }
+
+                        var type = pending.Type is TonWalletTransactionTypeTransfer transfer
+                            ? new TonWalletTransactionTypeTransfer(transfer.Amount, accepted.IsGasless, transfer.Comment, transfer.IsCommentEncrypted)
+                            : pending.Type;
+
+                        items[index] = With(pending, new TonWalletTransactionStatePending(state.OperationId, MessageHash(accepted.MsgHash), state.ExpirationDate), type);
+                        _pending = items;
+
+                        RebuildActivity();
+                        EnsureResolver();
                     }
                     else
                     {
-                        AddPending(recipient, peerUserId, peerDomain, amountNanograms, comment, result.IsGasless, prepared.OperationId, result.MsgHash, prepared.ValidUntil);
+                        var error = response as Error;
+                        Logger.Error(string.Format("wallet transfer refused: {0} {1}", error?.Code, error?.Message));
+
+                        if (pending.State is TonWalletTransactionStatePending)
+                        {
+                            Settle(pending.Id);
+                        }
+
+                        items[index] = With(pending, new TonWalletTransactionStateFailed(), pending.Type);
+                        _pending = items;
+
+                        RebuildActivity();
                     }
 
                     SetState(Project());
@@ -926,11 +998,19 @@ namespace Telegram.Services.Wallet
             {
                 Logger.Error("wallet transfer sent but not recorded: " + ex.Message);
             }
+        }
 
-            return new WalletTransferResult(
-                MessageHash(result.MsgHash),
-                result.IsGasless,
-                result.Transaction);
+        private static TonWalletTransaction With(TonWalletTransaction transaction, TonWalletTransactionState state, TonWalletTransactionType type)
+        {
+            return new TonWalletTransaction(
+                transaction.Id,
+                transaction.PeerAddress,
+                transaction.PeerUserId,
+                transaction.PeerDomain,
+                transaction.Date,
+                transaction.FeeAmount,
+                state,
+                type);
         }
 
         public async Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment)
@@ -1026,9 +1106,10 @@ namespace Telegram.Services.Wallet
         /// </remarks>
         public async Task CommitRecoveryPhraseUpdateAsync(WalletPhraseUpdate update, WalletVault.WalletVaultLease lease)
         {
+            var client = _client;
             var wallet = _wallet;
 
-            if (_client == null || _descriptor == null || wallet is not { Address.Length: > 0 })
+            if (client == null || _descriptor == null || wallet is not { Address.Length: > 0 })
             {
                 throw new WalletNotBoundException();
             }
@@ -1077,18 +1158,25 @@ namespace Telegram.Services.Wallet
                 _mutex.Release();
             }
 
-            var response = await _clientService.SendAsync(new SendTonWalletTransfer(
-                Bytes(prepared.SignedBoc), Array.Empty<byte>()));
-
-            if (response is not TonWalletTransferResult)
+            try
+            {
+                await client.SendBoc(new SendBocRequest(
+                    NewRecordId(), false, prepared.SignedBoc, prepared.Seqno, prepared.ValidUntil));
+            }
+            catch (WalletClientException.SubmissionUnknown ex)
+            {
+                // The change may still land, so the phrase behind it has to stay: the account's
+                // update settles it if it does, the expiry if it does not.
+                Logger.Error("wallet key rotation submission unknown: " + ex.diagnostic);
+            }
+            catch (WalletClientException ex)
             {
                 // Nothing was signed away: the message never reached the chain, the contract still
                 // holds the old key, and the phrase just stored is the one to forget.
-                var error = response as Error;
-                Logger.Error(string.Format("wallet key rotation refused: {0} {1}", error?.Code, error?.Message));
+                Logger.Error("wallet key rotation refused: " + ex.Message);
 
                 await DiscardRotationAsync(rotation);
-                throw new WalletRequestException(error);
+                throw new WalletRotationFailedException(ex.Message);
             }
 
             // Nothing to wait for. The account reports the new key once the change confirms, and
@@ -1504,29 +1592,32 @@ namespace Telegram.Services.Wallet
 
             if (accept && decrypted.Request is TonConnectIncomingRequest.SendTransaction send)
             {
-                // Prepared here and broadcast by the account, the same way every other transfer in
-                // this app goes out. The engine could submit it itself, but then the account would
-                // never see it: TDLib is what puts a row in the history, and a dApp transfer that
-                // left no trace would be the one spend the user cannot find afterwards.
+                // Submitted by the engine rather than the account: sendTonWalletTransfer describes
+                // one transfer to one peer, and a dApp intent can carry several messages.
+                // Prepared first rather than sent in one call so the BOC is in hand even when the
+                // submission's outcome is unknown.
                 var prepared = await client.PrepareTransfer(new PrepareTransferRequest(NewRecordId(), send.Request.Intent));
 
-                var sent = await _clientService.SendAsync(new SendTonWalletTransfer(
-                    Bytes(prepared.ExternalBoc), Array.Empty<byte>()));
+                try
+                {
+                    await client.SendBoc(new SendBocRequest(
+                        prepared.OperationId, false, prepared.ExternalBoc, prepared.Seqno, prepared.ValidUntil));
 
-                if (sent is not TonWalletTransferResult)
+                    // A TON Connect answer is the signed BOC, not a receipt for it.
+                    body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
+                }
+                catch (WalletClientException.SubmissionUnknown ex)
+                {
+                    // It may land, and telling the dApp it failed would invite a second spend.
+                    Logger.Error("ton connect transfer submission unknown: " + ex.diagnostic);
+                    body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
+                }
+                catch (WalletClientException ex)
                 {
                     // Nothing left, so the dApp is told so rather than handed a message that was
                     // never broadcast.
-                    var refused = sent as Error;
-                    Logger.Error(string.Format("ton connect transfer refused: {0} {1}", refused?.Code, refused?.Message));
-
+                    Logger.Error("ton connect transfer refused: " + ex.Message);
                     body = derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.Unknown, "The transfer could not be sent");
-                }
-                else
-                {
-                    // The dApp is handed the same message the account broadcast: a TON Connect
-                    // answer is the signed BOC, not a receipt for it.
-                    body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
                 }
             }
             else
@@ -2135,6 +2226,49 @@ namespace Telegram.Services.Wallet
             _stream.Start();
         }
 
+        // Read from the UI thread and written under _mutex from wherever the service resumes, so
+        // each has a lock of its own rather than borrowing that one.
+        private readonly Dictionary<string, string> _predecessors = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, DateTime> _settled = new(StringComparer.Ordinal);
+
+        private static readonly TimeSpan SettledFor = TimeSpan.FromSeconds(2);
+
+        public string PredecessorOf(string transactionId)
+        {
+            lock (_predecessors)
+            {
+                return _predecessors.TryGetValue(transactionId, out var id) ? id : null;
+            }
+        }
+
+        public bool TryTakeSettled(string id)
+        {
+            lock (_settled)
+            {
+                return _settled.Remove(id, out var at) && DateTime.UtcNow - at < SettledFor;
+            }
+        }
+
+        // Kept for the session: the list keys a transaction by its predecessor for as long as it
+        // holds it, and a pending row is rare enough that this never grows to matter.
+        private void Succeed(string pendingId, TonWalletTransaction transaction)
+        {
+            lock (_predecessors)
+            {
+                _predecessors[transaction.Id] = pendingId;
+            }
+
+            Settle(transaction.Id);
+        }
+
+        private void Settle(string id)
+        {
+            lock (_settled)
+            {
+                _settled[id] = DateTime.UtcNow;
+            }
+        }
+
         public void StopWatching()
         {
             _stream?.Stop();
@@ -2193,23 +2327,22 @@ namespace Telegram.Services.Wallet
         /// the chain settles it.
         /// </summary>
         /// <remarks>
-        /// The message hash is its identity for as long as it has none: a transaction id only
-        /// exists once there is a transaction, and there is not one yet.
+        /// The engine's operation id is its identity for as long as it has none: a transaction id
+        /// only exists once there is a transaction, and the message hash only once the account has
+        /// answered - which is why the row starts without one, and the resolver skips it until then.
         /// </remarks>
-        private void AddPending(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isGasless, string operationId, byte[] msgHash, ulong validUntil)
+        private void AddPending(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isGasless, string operationId, ulong validUntil)
         {
-            var hash = MessageHash(msgHash);
-
             var pending = new TonWalletTransaction(
-                hash,
+                operationId,
                 recipient,
                 peerUserId,
                 peerDomain ?? string.Empty,
                 (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                new TonWalletTransactionStatePending(operationId, hash, (int)validUntil),
+                0,
+                new TonWalletTransactionStatePending(operationId, string.Empty, (int)validUntil),
                 new TonWalletTransactionTypeTransfer(
                     -(long)amountNanograms,
-                    0,
                     isGasless,
                     comment ?? string.Empty,
                     false));
@@ -2457,8 +2590,9 @@ namespace Telegram.Services.Wallet
                 // was holding and RebuildActivity reads both lists.
                 _pending = items;
 
-                foreach (var (_, transaction) in landed)
+                foreach (var (id, transaction) in landed)
                 {
+                    Succeed(id, transaction);
                     AddConfirmed(transaction);
                 }
 
@@ -2541,6 +2675,8 @@ namespace Telegram.Services.Wallet
                     {
                         Logger.Error(string.Format("wallet transfer failed: {0} {1}", snapshot?.Phase, snapshot?.ErrorMessage));
 
+                        Settle(pending.Id);
+
                         // The row stays, saying so: it is this device's record of something the
                         // account never heard about.
                         items[index] = new TonWalletTransaction(
@@ -2549,6 +2685,7 @@ namespace Telegram.Services.Wallet
                             pending.PeerUserId,
                             pending.PeerDomain,
                             pending.Date,
+                            pending.FeeAmount,
                             new TonWalletTransactionStateFailed(),
                             pending.Type);
 
@@ -3131,6 +3268,21 @@ namespace Telegram.Services.Wallet
         {
             return Convert.FromBase64String(boc);
         }
+
+#if DEBUG
+        // Lets SendAsync be exercised end to end without spending: the account still receives
+        // the request and answers it, but with a refusal.
+        private static readonly bool DebugSpoilTransfers = true;
+
+        // One byte short of the length the header declares, so no bag-of-cells deserializer will
+        // read it, the account's or a node's. A flipped byte in the body is not as safe: one
+        // that landed in the destination address or the state init is outside what the wallet
+        // signs.
+        private static byte[] Spoil(byte[] boc)
+        {
+            return boc.Length > 0 ? boc.AsSpan(0, boc.Length - 1).ToArray() : boc;
+        }
+#endif
 
         // Split on any whitespace: the words are what callers show, check and compare, never the
         // sentence.
