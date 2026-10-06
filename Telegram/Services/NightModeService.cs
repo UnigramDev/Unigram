@@ -174,20 +174,6 @@ namespace Telegram.Services
                     }
                 }
             });
-
-            if (updateBackground)
-            {
-                var aggregator = LifetimeService.Current.ActiveItem.Resolve<IEventAggregator>();
-                var clientService = LifetimeService.Current.ActiveItem.Resolve<IClientService>();
-
-                if (aggregator != null && clientService != null)
-                {
-                    var dark = theme == ElementTheme.Dark;
-                    var background = clientService.GetDefaultBackground(dark);
-
-                    aggregator.Publish(new UpdateDefaultBackground(dark, background));
-                }
-            }
         }
 
         public bool? CheckNightModeConditions()

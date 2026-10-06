@@ -28,15 +28,37 @@ namespace Telegram.Controls.Chats
         private IClientService _clientService;
         private IEventAggregator _aggregator;
 
-        private ChatTheme _oldTheme;
-        private Background _oldBackground = new();
-        private bool? _oldDark;
-        private int? _oldDimming;
+        /// <summary>
+        /// A wallpaper resolved for one of the two themes.
+        /// </summary>
+        private readonly struct Variant
+        {
+            public Variant(ChatTheme theme, Background background, int dimming)
+            {
+                Theme = theme;
+                Background = background;
+                Dimming = dimming;
+            }
+
+            public readonly ChatTheme Theme;
+            public readonly Background Background;
+            public readonly int Dimming;
+        }
+
+        // Both are kept, and nothing below chooses between them. Every caller reaches this control
+        // before OnApplyTemplate, and until then ActualTheme is still the App.RequestedTheme XAML
+        // stamped on the control when it was created - which a runtime theme switch leaves stale,
+        // because App.RequestedTheme cannot be written after InitializeComponent. Deciding at
+        // ingest therefore picks the wrong wallpaper and then caches it.
+        private Variant _light;
+        private Variant _dark;
+
+        private bool? _appliedDark;
+        private Variant _applied;
 
         private ChatBackgroundPresenter Presenter;
 
         private bool _templateApplied;
-        private bool _initialized;
 
         private readonly Compositor _compositor;
 
@@ -56,10 +78,7 @@ namespace Telegram.Controls.Chats
 
             _templateApplied = true;
 
-            if (_oldDark != null && _oldDimming != null)
-            {
-                UpdateBackground(_oldTheme, _oldBackground, _oldDark.Value, _oldDimming.Value);
-            }
+            Apply();
 
             base.OnApplyTemplate();
         }
@@ -67,59 +86,62 @@ namespace Telegram.Controls.Chats
         protected override void OnLoaded()
         {
             _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
+            ActualThemeChanged += OnActualThemeChanged;
         }
 
         protected override void OnUnloaded()
         {
             _aggregator?.Unsubscribe(this);
+            ActualThemeChanged -= OnActualThemeChanged;
         }
 
-        private bool IsDarkTheme
+        // NightModeService writes the window's RequestedTheme and publishes UpdateDefaultBackground
+        // separately, so the two arrive in no fixed order and neither alone is enough: this is the
+        // half that fires for a popup carrying its own RequestedTheme, which gets no update at all.
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            get
-            {
-                if (ApiInfo.IsPackagedRelease)
-                {
-                    Debug.Assert(WindowContext.Current.ActualTheme == ActualTheme);
-                }
-
-                return ActualTheme == ElementTheme.Dark;
-            }
+            Apply();
         }
 
         public void Handle(UpdateDefaultBackground update)
         {
-            this.BeginOnUIThread(() =>
-            {
-                if (update.ForDarkTheme == IsDarkTheme)
-                {
-                    var background = update.Background;
-
-                    SyncBackgroundWithChatTheme(ref background, update.ForDarkTheme, out ChatTheme theme, out int dimming);
-                    UpdateBackground(theme, background, update.ForDarkTheme, dimming);
-                }
-            });
+            // ForDarkTheme names the slot the wallpaper belongs to, never the theme in force.
+            this.BeginOnUIThread(() => Update(update.Background, update.ForDarkTheme));
         }
 
-        public void Update(IClientService clientService, IEventAggregator aggregator = null)
+        public void Update(IClientService clientService, IEventAggregator aggregator = null, bool load = true)
         {
             _clientService = clientService;
             _aggregator = aggregator;
             _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
 
-            var background = clientService.GetDefaultBackground(IsDarkTheme);
-
-            SyncBackgroundWithChatTheme(ref background, IsDarkTheme, out ChatTheme theme, out int dimming);
-            UpdateBackground(theme, background, IsDarkTheme, dimming);
+            Update(clientService.GetDefaultBackground(false), clientService.GetDefaultBackground(true));
         }
 
         public void Update(Background background, bool forDarkTheme)
         {
-            if (forDarkTheme == IsDarkTheme)
+            var window = _localFields ? null : WindowContext.ForXamlRoot(this);
+
+            if (forDarkTheme)
             {
-                SyncBackgroundWithChatTheme(ref background, forDarkTheme, out ChatTheme theme, out int dimming);
-                UpdateBackground(theme, background, forDarkTheme, dimming);
+                _dark = Resolve(background, true, window);
             }
+            else
+            {
+                _light = Resolve(background, false, window);
+            }
+
+            Apply();
+        }
+
+        public void Update(Background light, Background dark)
+        {
+            var window = _localFields ? null : WindowContext.ForXamlRoot(this);
+
+            _light = Resolve(light, false, window);
+            _dark = Resolve(dark, true, window);
+
+            Apply();
         }
 
         private ThemeSettings _lightSettings;
@@ -152,16 +174,17 @@ namespace Telegram.Controls.Chats
             _chatTheme = theme;
             _localFields = background != null || theme != null;
 
-            Update(_oldBackground, IsDarkTheme);
+            Update(_light.Background, _dark.Background);
         }
 
-        private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme, out ChatTheme theme, out int dimming)
+        private Variant Resolve(Background background, bool forDarkTheme, WindowContext window)
         {
-            var window = _localFields ? null : WindowContext.ForXamlRoot(this);
-
             var chatBackground = _localFields ? _chatBackground : window?.ChatBackground;
             var (lightSettings, darkSettings) = _localFields ? (_lightSettings, _darkSettings) : (window?.LightSettings, window?.DarkSettings);
             var chatTheme = _localFields ? _chatTheme : window?.ChatTheme;
+
+            ChatTheme theme;
+            int dimming;
 
             // I'm not a big fan of this, but this is the easiest way to keep background in sync
             if (chatBackground != null)
@@ -185,55 +208,58 @@ namespace Telegram.Controls.Chats
                 theme = null;
                 dimming = 0;
             }
+
+            return new Variant(theme, background ?? CreateDefaultBackground(forDarkTheme), dimming);
+        }
+
+        private static Background CreateDefaultBackground(bool dark)
+        {
+            var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+            return new Background(0, true, dark, string.Empty,
+                new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
+                new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
         }
 
         public void UpdateBackground()
         {
-            if (_oldBackground?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient)
+            if (_applied.Background?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient)
             {
                 Presenter.Next();
             }
-            else if (_oldBackground?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient)
+            else if (_applied.Background?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient)
             {
                 Presenter.Next();
             }
         }
 
-        private void UpdateBackground(ChatTheme theme, Background background, bool dark, int dimming)
+        private void Apply()
         {
             if (!_templateApplied)
             {
-                _oldTheme = theme;
-                _oldBackground = background;
-                _oldDark = dark;
-                _oldDimming = dimming;
                 return;
             }
 
-            if (background == null)
-            {
-                var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
-                background = new Background(0, true, dark, string.Empty,
-                    new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
-                    new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
-            }
+            var dark = ActualTheme == ElementTheme.Dark;
+            var variant = dark ? _dark : _light;
 
-            if (_initialized && _oldDark == dark && _oldDimming == dimming && _oldBackground.AreTheSame(background))
+            if (variant.Background == null)
             {
                 return;
             }
 
-            _oldTheme = theme;
-            _oldBackground = background;
-            _oldDark = dark;
-            _oldDimming = dimming;
-            _initialized = true;
-
-            Presenter.UpdateSource(_clientService, background, false, theme);
-
-            if (dark && dimming != 0)
+            if (_appliedDark == dark && _applied.Dimming == variant.Dimming && _applied.Background.AreTheSame(variant.Background))
             {
-                Presenter.Opacity = 1 - (dimming / 100d);
+                return;
+            }
+
+            _appliedDark = dark;
+            _applied = variant;
+
+            Presenter.UpdateSource(_clientService, variant.Background, false, variant.Theme);
+
+            if (dark && variant.Dimming != 0)
+            {
+                Presenter.Opacity = 1 - (variant.Dimming / 100d);
                 Background = new SolidColorBrush(Colors.Black);
             }
             else

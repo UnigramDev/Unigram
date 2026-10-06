@@ -40,9 +40,8 @@ namespace Telegram.Views.Settings
         {
             if (ViewModel.Window.UpdateChatTheme(ActualTheme, null, null, null, null))
             {
-                var forDarkTheme = Frame.ActualTheme == ElementTheme.Dark;
-                var background = ViewModel.ClientService.GetDefaultBackground(forDarkTheme);
-                ViewModel.Aggregator.Publish(new UpdateDefaultBackground(forDarkTheme, background));
+                ViewModel.Aggregator.Publish(new UpdateDefaultBackground(false, ViewModel.ClientService.GetDefaultBackground(false)));
+                ViewModel.Aggregator.Publish(new UpdateDefaultBackground(true, ViewModel.ClientService.GetDefaultBackground(true)));
             }
 
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
@@ -110,14 +109,7 @@ namespace Telegram.Views.Settings
             if (List.SelectedItem is ChatThemeViewModel chatTheme && ViewModel.SelectionChanged)
             {
                 // Speed up background preview by manually applying it
-                if (ActualTheme == ElementTheme.Light)
-                {
-                    BackgroundControl.Update(chatTheme.LightSettings.Background, false);
-                }
-                else
-                {
-                    BackgroundControl.Update(chatTheme.DarkSettings.Background, true);
-                }
+                BackgroundControl.Update(chatTheme.LightSettings?.Background, chatTheme.DarkSettings?.Background);
             }
         }
 

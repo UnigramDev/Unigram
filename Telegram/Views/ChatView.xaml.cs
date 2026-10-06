@@ -5854,11 +5854,12 @@ namespace Telegram.Views
                     darkSettings = emoji.DarkSettings;
                 }
 
-                current ??= ActualTheme == ElementTheme.Light ? lightSettings?.Background : darkSettings?.Background;
-                current ??= ViewModel.ClientService.GetDefaultBackground(ActualTheme == ElementTheme.Dark);
+                // A chat background applies to both themes; only the fallbacks are per theme.
+                var light = current ?? lightSettings?.Background ?? ViewModel.ClientService.GetDefaultBackground(false);
+                var dark = current ?? darkSettings?.Background ?? ViewModel.ClientService.GetDefaultBackground(true);
 
                 _backgroundControl ??= FindBackgroundControl();
-                _backgroundControl?.Update(current, ActualTheme == ElementTheme.Dark);
+                _backgroundControl?.Update(light, dark);
             }
         }
 

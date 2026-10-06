@@ -9,7 +9,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Authorization;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -49,9 +48,8 @@ namespace Telegram.Views
                     return;
                 }
 
-                var forDarkTheme = Frame.ActualTheme == ElementTheme.Dark;
-                var background = _clientService.GetDefaultBackground(forDarkTheme);
-                _aggregator.Publish(new UpdateDefaultBackground(forDarkTheme, background));
+                _aggregator.Publish(new UpdateDefaultBackground(false, _clientService.GetDefaultBackground(false)));
+                _aggregator.Publish(new UpdateDefaultBackground(true, _clientService.GetDefaultBackground(true)));
             }
         }
     }
