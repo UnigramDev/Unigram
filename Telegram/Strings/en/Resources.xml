@@ -13958,6 +13958,8 @@
     <string name="WalletOldWalletsBalance">You also have {0} in old wallets</string>
     <string name="WalletAddFunds">Add Funds</string>
     <string name="WalletSend">Send</string>
+    <string name="WalletTransactions">Transactions</string>
+    <string name="WalletCollectibles">Collectibles</string>
     <string name="WalletSendInstantly">Send Money Instantly</string>
     <string name="WalletSendInstantlyInfo">Send Grams in any chat, just like sharing a photo.</string>
     <string name="WalletNoFees">No Fees</string>

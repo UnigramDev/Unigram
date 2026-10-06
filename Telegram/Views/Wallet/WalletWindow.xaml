@@ -15,14 +15,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Margin="0,0,0,-24"
+        <!--<Border Margin="0,0,0,-24"
                 IsHitTestVisible="False"
                 Canvas.ZIndex="1">
             <Border.Background>
                 <media:LinearGaussianBrush StartPoint="0,1"
                                            EndPoint="0,0" />
             </Border.Background>
-        </Border>
+        </Border>-->
         <!--
             The title bar of the other windows - logo, title, drag handle - with the mini apps'
             menu button beside it. The last column is not decoration: the window draws its own
@@ -168,20 +168,40 @@
         </Grid>
 
         <controls:TableListView x:Name="ScrollingHost"
+                                Loaded="OnLoaded"
+                                SizeChanged="OnSizeChanged"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ScrollViewer.CanContentRenderOutsideBounds="True"
                                 Padding="0,0,0,24"
-                                Grid.Row="1">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <cells:WalletTransactionCell />
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                                Margin="0,-8,0,0"
+                                Grid.Row="0"
+                                Grid.RowSpan="2">
+            <ListView.ItemTemplateSelector>
+                <local:WalletItemTemplateSelector>
+                    <local:WalletItemTemplateSelector.TransactionTemplate>
+                        <DataTemplate>
+                            <cells:WalletTransactionCell />
+                        </DataTemplate>
+                    </local:WalletItemTemplateSelector.TransactionTemplate>
+                    <local:WalletItemTemplateSelector.CollectibleTemplate>
+                        <DataTemplate>
+                            <cells:WalletCollectibleCell />
+                        </DataTemplate>
+                    </local:WalletItemTemplateSelector.CollectibleTemplate>
+                </local:WalletItemTemplateSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
             <ListView.Header>
-                <controls:SettingsPanel IsFooter="True">
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
+                    <controls:StickyHeader x:Name="Header"
+                                           Margin="0,0,0,-26" />
+
                     <!-- Shown only once the account says there is something there, which is
                          one request answered per window. -->
                     <controls:SettingsButton x:Name="WalletBotButton"
@@ -192,7 +212,7 @@
                                              BorderThickness="1"
                                              CornerRadius="4"
                                              Visibility="Collapsed"
-                                             Margin="24,8,24,0" />
+                                             Margin="24,0,24,0" />
 
                     <!-- Same terms as the My Grams entry in settings, and the content is built
                          in code because the amount carries the gram glyph in the icon font. -->
@@ -203,7 +223,7 @@
                                              BorderThickness="1"
                                              CornerRadius="4"
                                              Visibility="Collapsed"
-                                             Margin="24,8,24,0" />
+                                             Margin="24,0,24,0" />
 
                     <!-- Only when there is something on them, and the content is built in code
                          because the amount carries the gram glyph in the icon font. -->
@@ -214,16 +234,14 @@
                                              BorderThickness="1"
                                              CornerRadius="4"
                                              Visibility="Collapsed"
-                                             Margin="24,8,24,0" />
-
-
+                                             Margin="24,0,24,0" />
 
                     <controls:WalletCard x:Name="Card"
                                          Margin="24,0"
                                          MaxWidth="360" />
                     <Grid MaxWidth="360"
                           ColumnSpacing="8"
-                          Margin="24,-8,24,0">
+                          Margin="24,-8,24,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -242,6 +260,31 @@
                                 CornerRadius="20"
                                 Grid.Column="1" />
                     </Grid>
+
+                    <controls:StickyHeaderTabs x:Name="HeaderTabs"
+                                               x:Load="{x:Bind ViewModel.HasCollectibles, Mode=OneWay}"
+                                               Header="{x:Bind Header}"
+                                               SizeChanged="HeaderTabs_SizeChanged"
+                                               HorizontalContentAlignment="Center"
+                                               Margin="0,0,0,6">
+                        <controls:TopNavView x:Name="Navigation"
+                                             SelectedIndex="0"
+                                             SelectionChanged="Navigation_SelectionChanged"
+                                             Height="48"
+                                             Padding="8,0,8,4"
+                                             Margin="-4">
+                            <controls:TopNavView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center"
+                                                Margin="0,0,8,0" />
+                                </ItemsPanelTemplate>
+                            </controls:TopNavView.ItemsPanel>
+                            <controls:TopNavViewItem Content="Transactions" />
+                            <controls:TopNavViewItem Content="Collectibles" />
+                        </controls:TopNavView>
+                    </controls:StickyHeaderTabs>
+
                     <!-- The empty state: what the header shows instead of history, until there
                          is any. Collapsed until the first page comes back, so it does not flash
                          on the way to a wallet that has transactions. -->

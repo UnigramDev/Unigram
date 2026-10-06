@@ -59,6 +59,9 @@ namespace Telegram.Services.Wallet
         // TDLib caps this at 100.
         private const int ActivityPageSize = 50;
 
+        // TDLib caps this at 20.
+        private const int CollectiblesPageSize = 20;
+
         // How long to wait before asking the account about a transfer that has just left, and the
         // longest that wait grows to. A transfer settles in seconds, and the message it was sent as
         // expires in minutes, so the range is bounded on both ends by the thing being waited for.
@@ -164,7 +167,29 @@ namespace Telegram.Services.Wallet
 
         // The chain, watched directly, for as long as somebody is looking at the wallet.
         private WalletChainStream _stream;
+
+        // The account's indexer trails the stream: a refresh run on the event itself can still
+        // answer without the transaction. So an event is asked about again until the history
+        // grows, which _activityGrowth counts, or these run out.
+        private static readonly TimeSpan[] ChainEventFollowUps =
+        {
+            TimeSpan.FromSeconds(2),
+            TimeSpan.FromSeconds(4),
+            TimeSpan.FromSeconds(8),
+            TimeSpan.FromSeconds(16),
+            TimeSpan.FromSeconds(30)
+        };
+
+        private CancellationTokenSource _chainEventCancellation;
+        private int _activityGrowth;
         private bool _activityLoading;
+
+        private IReadOnlyList<TonNft> _collectibles = Array.Empty<TonNft>();
+        private WalletResource _collectiblesResource = WalletResource.Idle;
+        private string _collectiblesOffset = string.Empty;
+        private int _collectiblesGeneration;
+        private bool _collectiblesLoading;
+        private bool _collectiblesQueued;
 
         public WalletService(IClientService clientService, IEventAggregator aggregator)
         {
@@ -487,6 +512,11 @@ namespace Telegram.Services.Wallet
                         _activityOffset = string.Empty;
                         _activityGeneration++;
 
+                        _collectibles = Array.Empty<TonNft>();
+                        _collectiblesResource = WalletResource.Idle;
+                        _collectiblesOffset = string.Empty;
+                        _collectiblesGeneration++;
+
                         RebuildActivity();
                     }
 
@@ -521,7 +551,9 @@ namespace Telegram.Services.Wallet
 
             if (reload)
             {
-                await LoadActivityAsync(true);
+                // The collectibles too: sending an NFT costs gas, and receiving one can carry a
+                // forwarded amount.
+                await Task.WhenAll(LoadActivityAsync(true), RefreshCollectiblesIfLoadedAsync());
             }
         }
 
@@ -2222,8 +2254,14 @@ namespace Telegram.Services.Wallet
 
         public void StartWatching()
         {
-            _stream ??= new WalletChainStream(_clientService, () => State.Address, OnChainChanged);
-            _stream.Start();
+            _stream ??= new WalletChainStream(_clientService, () => State.Address, OnChainChanged, OnChainEvent);
+
+            // Nothing was watching, so nothing saw what happened in the meantime. Not left to the
+            // stream's own first event, which never comes if the socket cannot connect.
+            if (_stream.Start())
+            {
+                OnChainChanged();
+            }
         }
 
         // Read from the UI thread and written under _mutex from wherever the service resumes, so
@@ -2272,6 +2310,7 @@ namespace Telegram.Services.Wallet
         public void StopWatching()
         {
             _stream?.Stop();
+            Interlocked.Exchange(ref _chainEventCancellation, null)?.Cancel();
         }
 
         /// <summary>
@@ -2285,17 +2324,71 @@ namespace Telegram.Services.Wallet
         private void OnChainChanged()
         {
             _ = LoadActivityAsync(true);
+            _ = RefreshCollectiblesIfLoadedAsync();
+        }
+
+        /// <remarks>
+        /// A newer event restarts the follow-ups rather than adding its own beside them.
+        /// </remarks>
+        private void OnChainEvent()
+        {
+            var source = new CancellationTokenSource();
+            Interlocked.Exchange(ref _chainEventCancellation, source)?.Cancel();
+
+            _ = FollowChainEventAsync(source.Token);
+        }
+
+        private async Task FollowChainEventAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var growth = Volatile.Read(ref _activityGrowth);
+
+                await Task.WhenAll(LoadActivityAsync(true), RefreshCollectiblesIfLoadedAsync());
+
+                foreach (var delay in ChainEventFollowUps)
+                {
+                    if (Volatile.Read(ref _activityGrowth) != growth)
+                    {
+                        return;
+                    }
+
+                    await Task.Delay(delay, cancellationToken);
+                    await Task.WhenAll(LoadActivityAsync(true), RefreshCollectiblesIfLoadedAsync());
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet chain event could not be followed: " + ex.Message);
+            }
         }
 
         public async Task RefreshAsync()
         {
             _clientService.Send(new LoadTonWalletState());
-            await LoadActivityAsync(true);
+
+            await Task.WhenAll(LoadActivityAsync(true), RefreshCollectiblesIfLoadedAsync());
         }
 
         public Task LoadMoreActivityAsync()
         {
             return LoadActivityAsync(false);
+        }
+
+        public Task LoadMoreCollectiblesAsync()
+        {
+            return LoadCollectiblesAsync(false);
+        }
+
+        // Not before their first page: this runs on every chain event.
+        private Task RefreshCollectiblesIfLoadedAsync()
+        {
+            return _collectiblesResource.Phase == WalletResourcePhase.Idle && _collectibles.Count == 0
+                ? Task.CompletedTask
+                : LoadCollectiblesAsync(true);
         }
 
         /// <summary>
@@ -2805,10 +2898,23 @@ namespace Telegram.Services.Wallet
 
             Raise();
 
+            if (error == null && known.Count == 0)
+            {
+                // The first page of history, so the collectibles' first page follows it.
+                _ = LoadFirstCollectiblesAsync();
+            }
+
             if (queued)
             {
                 await LoadActivityAsync(true);
             }
+        }
+
+        private Task LoadFirstCollectiblesAsync()
+        {
+            return _collectiblesResource.Phase == WalletResourcePhase.Idle && _collectibles.Count == 0
+                ? LoadCollectiblesAsync(false)
+                : Task.CompletedTask;
         }
 
         /// <summary>
@@ -2894,6 +3000,11 @@ namespace Telegram.Services.Wallet
                 }
             }
 
+            if (fetched.Count > 0)
+            {
+                Interlocked.Increment(ref _activityGrowth);
+            }
+
             if (joined)
             {
                 var items = new List<TonWalletTransaction>(fetched.Count + _confirmed.Count);
@@ -2919,6 +3030,165 @@ namespace Telegram.Services.Wallet
 
             RebuildActivity();
             return null;
+        }
+
+        /// <remarks>
+        /// Unlike the history, NFTs do not only arrive at the top - one sent away leaves from
+        /// wherever it was - so a refresh compares against the first page instead of stitching.
+        /// </remarks>
+        private async Task LoadCollectiblesAsync(bool reset)
+        {
+            string offset;
+            int generation;
+
+            await _mutex.WaitAsync();
+            try
+            {
+                if (_wallet == null || _wallet.Address.Length == 0)
+                {
+                    return;
+                }
+
+                if (_collectiblesLoading)
+                {
+                    _collectiblesQueued |= reset;
+                    return;
+                }
+
+                if (!reset && _collectiblesOffset.Length == 0 && _collectibles.Count > 0)
+                {
+                    return;
+                }
+
+                offset = reset ? string.Empty : _collectiblesOffset;
+                generation = _collectiblesGeneration;
+
+                _collectiblesLoading = true;
+                _collectiblesResource = WalletResource.Loading;
+                SetState(Project());
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            Raise();
+
+            var response = await _clientService.SendAsync(new GetTonWalletNfts(offset, CollectiblesPageSize));
+
+            bool queued;
+
+            await _mutex.WaitAsync();
+            try
+            {
+                _collectiblesLoading = false;
+
+                if (generation != _collectiblesGeneration)
+                {
+                    // A page for the wallet before the switch.
+                }
+                else if (response is TonNfts page)
+                {
+                    if (reset)
+                    {
+                        ApplyFirstCollectiblesPage(page);
+                    }
+                    else
+                    {
+                        AppendCollectibles(page);
+                    }
+
+                    _collectiblesResource = WalletResource.Ready;
+                }
+                else
+                {
+                    _collectiblesResource = new WalletResource(WalletResourcePhase.Failed, (response as Error)?.Message, true);
+                }
+
+                queued = _collectiblesQueued;
+                _collectiblesQueued = false;
+
+                SetState(Project());
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+
+            Raise();
+
+            if (queued)
+            {
+                await LoadCollectiblesAsync(true);
+            }
+        }
+
+        /// <summary>
+        /// Always called with <see cref="_mutex"/> held.
+        /// </summary>
+        private void AppendCollectibles(TonNfts page)
+        {
+            var items = new List<TonNft>(_collectibles.Count + page.Nfts.Count);
+            var known = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var item in _collectibles)
+            {
+                items.Add(item);
+                known.Add(item.Address);
+            }
+
+            foreach (var item in page.Nfts)
+            {
+                if (known.Add(item.Address))
+                {
+                    items.Add(item);
+                }
+            }
+
+            _collectibles = items;
+            _collectiblesOffset = page.NextOffset;
+        }
+
+        /// <summary>
+        /// Always called with <see cref="_mutex"/> held.
+        /// </summary>
+        private void ApplyFirstCollectiblesPage(TonNfts page)
+        {
+            var held = _collectibles;
+            var fresh = page.Nfts;
+
+            // Over the overlap only: a held list shorter than a page was the whole collection.
+            var overlap = Math.Min(held.Count, fresh.Count);
+            var same = true;
+
+            for (int i = 0; same && i < overlap; i++)
+            {
+                same = string.Equals(held[i].Address, fresh[i].Address, StringComparison.Ordinal);
+            }
+
+            // Keep the pages read beyond the first only if there is still something after it.
+            if (same && held.Count > fresh.Count && page.NextOffset.Length > 0)
+            {
+                var items = new List<TonNft>(held.Count);
+
+                items.AddRange(fresh);
+
+                for (int i = fresh.Count; i < held.Count; i++)
+                {
+                    items.Add(held[i]);
+                }
+
+                _collectibles = items;
+                return;
+            }
+
+            _collectibles = Array.Empty<TonNft>();
+            AppendCollectibles(page);
+
+            if (!same)
+            {
+                _collectiblesGeneration++;
+            }
         }
 
         public async Task ShutdownAsync()
@@ -3036,6 +3306,10 @@ namespace Telegram.Services.Wallet
                 _activityResource,
                 _activityOffset.Length > 0,
                 _activityGeneration,
+                _collectibles,
+                _collectiblesResource,
+                _collectiblesOffset.Length > 0,
+                _collectiblesGeneration,
                 _clientService.TonWalletGaslessTransfersInfo,
                 ProjectArchive());
         }

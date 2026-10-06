@@ -310,7 +310,7 @@ namespace Telegram.Services.Wallet
         Task SetCurrencyAsync(string currency);
 
         /// <summary>
-        /// Reloads state and the first page of history.
+        /// Reloads state, the first page of history, and the NFTs once they have been loaded.
         /// </summary>
         Task RefreshAsync();
 
@@ -350,6 +350,12 @@ namespace Telegram.Services.Wallet
         /// when there is nothing older.
         /// </summary>
         Task LoadMoreActivityAsync();
+
+        /// <summary>
+        /// Loads the next page of NFTs. The first one loads on its own after the history's first
+        /// page. A no-op while another page load is in flight, or when there is nothing further.
+        /// </summary>
+        Task LoadMoreCollectiblesAsync();
 
         /// <summary>
         /// Stops tracking and releases the engine's client.

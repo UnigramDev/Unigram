@@ -47,26 +47,21 @@ namespace Telegram.Services.Wallet
         // control replies are read, and those are two fields long.
         private const int FrameBuffer = 4096;
 
-        // What the service asks to hear about. Transactions alone: everything else this shows -
-        // the balance, the peer, the fee - comes from the account afterwards.
-        //
-        // Confirmed rather than the default finalized, which waits for a masterchain block, or
-        // pending, which fires before the account could possibly have the transaction.
-
         private const string Ping = "{\"operation\":\"ping\",\"id\":\"1\"}";
 
         // The documented keepalive. A connection is an hour long in production and five minutes on
         // test, so without this the server is entitled to decide nobody is there.
         private static readonly TimeSpan PingInterval = TimeSpan.FromSeconds(15);
 
-        // How many frames of each connection are written to the log. The protocol is not one we
-        // have documentation for, and the first few frames are how it becomes known; after that
+        // How many frames of each connection are written to the log. The documentation leaves out
+        // which events reach which address, and the first few frames are how that becomes known; after that
         // they are noise.
         private const int LoggedFrames = 3;
 
         private readonly IClientService _clientService;
         private readonly Func<string> _address;
         private readonly Action _changed;
+        private readonly Action _happened;
 
         private CancellationTokenSource _cancellation;
         private Task _loop;
@@ -76,11 +71,14 @@ namespace Telegram.Services.Wallet
         /// <param name="address">
         /// Read at every connection rather than held: a wallet can be replaced between two of them.
         /// </param>
-        public WalletChainStream(IClientService clientService, Func<string> address, Action changed)
+        /// <param name="changed">Each connection, for whatever happened while there was none.</param>
+        /// <param name="happened">Each event the stream delivers.</param>
+        public WalletChainStream(IClientService clientService, Func<string> address, Action changed, Action happened)
         {
             _clientService = clientService;
             _address = address;
             _changed = changed;
+            _happened = happened;
         }
 
         /// <summary>
@@ -88,15 +86,17 @@ namespace Telegram.Services.Wallet
         /// the wallet and stops when nothing is: it is a socket held open, and a wallet nobody has
         /// on screen has nothing to tell.
         /// </summary>
-        public void Start()
+        /// <returns>Whether this started the stream, rather than joined one already running.</returns>
+        public bool Start()
         {
             if (Interlocked.Increment(ref _watchers) > 1)
             {
-                return;
+                return false;
             }
 
             _cancellation = new CancellationTokenSource();
             _loop = RunAsync(_cancellation.Token);
+            return true;
         }
 
         public void Stop()
@@ -203,6 +203,10 @@ namespace Telegram.Services.Wallet
 
             await SendAsync(socket, sending, Subscribe(address), expiry.Token);
 
+            // Whatever happened while nobody was subscribed - the window closed, or the connection
+            // down - produced no event, so the first one is assumed.
+            _changed();
+
             var ping = PingAsync(socket, sending, expiry.Token);
 
             try
@@ -228,10 +232,17 @@ namespace Telegram.Services.Wallet
         }
 
         /// <summary>
-        /// What the stream asks to hear about: transactions for this wallet alone. Everything else
-        /// shown - the balance, the peer, the fee - comes from the account afterwards.
+        /// What the stream asks to hear about. Everything shown - the balance, the peer, the fee -
+        /// comes from the account afterwards.
         /// </summary>
         /// <remarks>
+        /// Actions beside transactions for an NFT sent to this wallet without a forwarded amount,
+        /// which runs no transaction here at all. Whether the server matches an action against
+        /// every account it names, the new owner included, is not documented
+        /// (docs.ton.org/api/streaming/reference); if it does not, this adds only duplicates of
+        /// the transaction events, which the refresh collapses. Unfiltered by action type, because
+        /// the type names are not documented either and an unknown one could fail the subscription.
+        ///
         /// Confirmed rather than the default finalized, which waits for a masterchain block, or
         /// pending, which fires before the account could possibly have the transaction.
         ///
@@ -240,7 +251,7 @@ namespace Telegram.Services.Wallet
         /// </remarks>
         private static string Subscribe(string address)
         {
-            return "{\"operation\":\"subscribe\",\"types\":[\"transactions\"],\"addresses\":[\""
+            return "{\"operation\":\"subscribe\",\"types\":[\"transactions\",\"actions\"],\"addresses\":[\""
                 + address
                 + "\"],\"min_finality\":\"confirmed\",\"id\":\"1\"}";
         }
@@ -337,7 +348,7 @@ namespace Telegram.Services.Wallet
                 // this same socket and would otherwise be four refreshes a minute, forever.
                 if (result.EndOfMessage && IsEvent(text))
                 {
-                    _changed();
+                    _happened();
                 }
             }
         }

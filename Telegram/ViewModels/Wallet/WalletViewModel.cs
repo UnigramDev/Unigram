@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -18,34 +19,29 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Wallet
 {
-    // IHandle, or Subscribe is never called: ViewModelBase only wires an aggregator subscription
-    // for view models that carry the marker, and without it the wallet never updates itself.
     public class WalletViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private readonly IWalletService _wallet;
 
-        /// <summary>
-        /// Which of the service's histories <see cref="Items"/> is following.
-        /// </summary>
         private int _generation;
+        private int _collectiblesGeneration;
 
         public WalletViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IWalletService wallet)
             : base(clientService, settingsService, aggregator)
         {
             _wallet = wallet;
 
-            Items = new IncrementalCollection<TonWalletTransaction>(this);
+            Transactions = new IncrementalCollection<TonWalletTransaction>(this);
+            Collectibles = new IncrementalCollection<TonNft>(new CollectiblesLoader(this));
+
+            Items = new IncrementalCollectionView(Transactions);
         }
 
-        /// <summary>
-        /// The history, as the list sees it.
-        /// </summary>
-        /// <remarks>
-        /// A mirror, not a second copy of the truth: the service owns the history and this follows
-        /// it, row for row. The list asking for more is what drives the paging, through
-        /// <see cref="LoadMoreItemsAsync"/>.
-        /// </remarks>
-        public IncrementalCollection<TonWalletTransaction> Items { get; }
+        public IncrementalCollection<TonWalletTransaction> Transactions { get; }
+
+        public IncrementalCollection<TonNft> Collectibles { get; }
+
+        public IncrementalCollectionView Items { get; }
 
         public override void Subscribe()
         {
@@ -55,12 +51,6 @@ namespace Telegram.ViewModels.Wallet
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            // No refresh here. Attaching already starts one, and a second refresh supersedes the
-            // first and cancels its requests - so refreshing on navigation would throw away the
-            // load that is already in flight. A deliberate refresh gesture can call RefreshAsync.
-            //
-            // Apply what is already known before waiting on anything: a wallet that was restored
-            // earlier in the session has its balance in hand, and the page should not blank out.
             Apply(_wallet.State);
             Apply(await _wallet.RestoreAsync());
 
@@ -72,8 +62,6 @@ namespace Telegram.ViewModels.Wallet
             _wallet.StopWatching();
         }
 
-        // Published from the service, which is not on any one window's thread, so the hop happens
-        // here, where there is a dispatcher to hop to.
         public void Handle(UpdateWalletState update)
         {
             BeginOnUIThread(() => Apply(update.State));
@@ -88,27 +76,53 @@ namespace Telegram.ViewModels.Wallet
             });
         }
 
-        /// <summary>
-        /// The Grams the account has earned, which is a different balance from this wallet's and
-        /// lives on its own page. Shown on the same terms the settings entry is: reading it is what
-        /// asks the account for it, and the answer arrives as an update.
-        /// </summary>
         public long EarnedGramCount => ClientService.OwnedGramCount;
 
         public bool HasEarnedGrams => ClientService.OwnedGramCount > 0 || ClientService.HasGramTransactions;
 
         public async Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
         {
-            var before = Items.Count;
+            var before = Transactions.Count;
 
             await _wallet.LoadMoreActivityAsync();
 
-            // Mirrored here rather than waited for: the service announces the new page through the
-            // aggregator, which arrives after this returns, and a load that reported adding nothing
-            // three times running is one the collection stops believing.
+            // Not left to the update, which arrives after this returns: the collection stops
+            // paging after three loads that report nothing added.
             Mirror(_wallet.State);
 
-            return new IncrementalLoadResult((uint)(Items.Count - before), _wallet.State.HasMoreActivity);
+            return new IncrementalLoadResult((uint)(Transactions.Count - before), _wallet.State.HasMoreActivity);
+        }
+
+        private async Task<IncrementalLoadResult> LoadMoreCollectiblesAsync()
+        {
+            var before = Collectibles.Count;
+
+            await _wallet.LoadMoreCollectiblesAsync();
+            Mirror(_wallet.State);
+
+            return new IncrementalLoadResult((uint)(Collectibles.Count - before), _wallet.State.HasMoreCollectibles);
+        }
+
+        // A failed first page leaves the collection believing there is nothing more to load.
+        public void RetryCollectibles()
+        {
+            Collectibles.Restart();
+        }
+
+        // This view model is already the owner of Items.
+        private sealed class CollectiblesLoader : IIncrementalCollectionOwner
+        {
+            private readonly WalletViewModel _owner;
+
+            public CollectiblesLoader(WalletViewModel owner)
+            {
+                _owner = owner;
+            }
+
+            public Task<IncrementalLoadResult> LoadMoreItemsAsync(uint count)
+            {
+                return _owner.LoadMoreCollectiblesAsync();
+            }
         }
 
         private void Apply(WalletState state)
@@ -123,88 +137,98 @@ namespace Telegram.ViewModels.Wallet
 
             Mirror(state);
 
-            // Only once the history is in: an empty list that is still loading is not an empty
-            // wallet, and the empty state would flash on the way to the first page.
+            // Not while loading, or the empty state flashes on the way to the first page.
             IsEmpty = state.HasWallet
                 && state.Activity.Count == 0
-                && state.ActivityResource.Phase == WalletResourcePhase.Ready;
+                && state.ActivityResource.Phase is WalletResourcePhase.Ready or WalletResourcePhase.Failed;
+
+            HasCollectibles = state.HasWallet
+                && state.Collectibles.Count > 0;
         }
 
-        /// <summary>
-        /// Brings <see cref="Items"/> in line with the service's history.
-        /// </summary>
-        /// <remarks>
-        /// Aligned by id rather than followed by count. The service puts a transfer this device
-        /// sent at the top before the account has heard of it, and swaps it for the transaction it
-        /// becomes; a mirror that appended by index would answer either of those by starting over,
-        /// which takes the user's place in the list with it and re-pages what it already had.
-        /// </remarks>
         private void Mirror(WalletState state)
         {
-            var activity = state.Activity;
-
-            // A different history, not a longer one: the wallet changed, or a refresh could not
-            // reach what it held. Restart rather than Clear, so the list also believes there is
-            // something to page again.
+            // Restart rather than Clear, so the collection believes there is something to page again.
             if (_generation != state.ActivityGeneration)
             {
                 _generation = state.ActivityGeneration;
-                Items.Restart();
+                Transactions.Restart();
             }
 
-            for (int i = 0; i < activity.Count; i++)
-            {
-                var item = activity[i];
+            Mirror(Transactions, state.Activity, _activityKey ??= ActivityKey);
 
-                if (i >= Items.Count)
+            if (_collectiblesGeneration != state.CollectiblesGeneration)
+            {
+                _collectiblesGeneration = state.CollectiblesGeneration;
+                Collectibles.Restart();
+            }
+
+            Mirror(Collectibles, state.Collectibles, static item => item.Address);
+        }
+
+        // By key rather than by count: pending transfers are inserted at the top and later
+        // replaced, and following by count would restart the list each time.
+        private static void Mirror<T>(IncrementalCollection<T> items, IReadOnlyList<T> source, Func<T, string> key)
+        {
+            for (int i = 0; i < source.Count; i++)
+            {
+                var item = source[i];
+
+                if (i >= items.Count)
                 {
-                    Items.Add(item);
+                    items.Add(item);
                     continue;
                 }
 
-                if (string.Equals(Items[i].Id, item.Id, StringComparison.Ordinal))
+                if (string.Equals(key(items[i]), key(item), StringComparison.Ordinal))
                 {
-                    // The same row carrying something new - a transfer that settled, or one that
-                    // ran out of time.
-                    if (!ReferenceEquals(Items[i], item))
+                    if (!ReferenceEquals(items[i], item))
                     {
-                        Items[i] = item;
+                        items[i] = item;
                     }
 
                     continue;
                 }
 
-                var found = IndexOf(item.Id, i + 1);
+                var found = IndexOf(items, key(item), key, i + 1);
                 if (found < 0)
                 {
-                    Items.Insert(i, item);
+                    items.Insert(i, item);
                     continue;
                 }
 
-                // It is further down, so everything between here and there is gone.
                 for (int j = found - 1; j >= i; j--)
                 {
-                    Items.RemoveAt(j);
+                    items.RemoveAt(j);
                 }
 
-                if (!ReferenceEquals(Items[i], item))
+                if (!ReferenceEquals(items[i], item))
                 {
-                    Items[i] = item;
+                    items[i] = item;
                 }
             }
 
-            for (int i = Items.Count - 1; i >= activity.Count; i--)
+            for (int i = items.Count - 1; i >= source.Count; i--)
             {
-                Items.RemoveAt(i);
+                items.RemoveAt(i);
             }
-
         }
 
-        private int IndexOf(string id, int start)
+        // A transaction that took a pending row's place is keyed as that row, so the list replaces
+        // the item in place - which is what lets the row settle - rather than removing one row and
+        // adding another. Cached: Mirror runs on every state change.
+        private Func<TonWalletTransaction, string> _activityKey;
+
+        private string ActivityKey(TonWalletTransaction item)
         {
-            for (int i = start; i < Items.Count; i++)
+            return _wallet.PredecessorOf(item.Id) ?? item.Id;
+        }
+
+        private static int IndexOf<T>(IncrementalCollection<T> items, string id, Func<T, string> key, int start)
+        {
+            for (int i = start; i < items.Count; i++)
             {
-                if (string.Equals(Items[i].Id, id, StringComparison.Ordinal))
+                if (string.Equals(key(items[i]), id, StringComparison.Ordinal))
                 {
                     return i;
                 }
@@ -220,15 +244,18 @@ namespace Telegram.ViewModels.Wallet
             set => Set(ref _hasWallet, value);
         }
 
-        /// <summary>
-        /// The account has a wallet and it has never been used. What the view shows instead of the
-        /// history.
-        /// </summary>
         private bool _isEmpty;
         public bool IsEmpty
         {
             get => _isEmpty;
             set => Set(ref _isEmpty, value);
+        }
+
+        private bool _hasCollectibles;
+        public bool HasCollectibles
+        {
+            get => _hasCollectibles;
+            set => Set(ref _hasCollectibles, value);
         }
 
         private string _address;
@@ -238,10 +265,6 @@ namespace Telegram.ViewModels.Wallet
             set => Set(ref _address, value);
         }
 
-        /// <summary>
-        /// The balance in nanograms. See <see cref="WalletState.BalanceNanograms"/> for why this is
-        /// not a <see cref="long"/>.
-        /// </summary>
         private BigInteger _balance;
         public BigInteger Balance
         {
@@ -249,10 +272,6 @@ namespace Telegram.ViewModels.Wallet
             set => Set(ref _balance, value);
         }
 
-        /// <summary>
-        /// What is left across the wallets the account has moved on from, which is zero in every
-        /// ordinary case - there is no archive, or the chain has not answered for it yet.
-        /// </summary>
         private BigInteger _archivedBalance;
         public BigInteger ArchivedBalance
         {
@@ -260,11 +279,6 @@ namespace Telegram.ViewModels.Wallet
             set => Set(ref _archivedBalance, value);
         }
 
-        /// <summary>
-        /// The currency the balance is priced in beside the grams, and what one of it is worth in
-        /// USD. Both come from the state so that a change of currency reaches the card the same
-        /// way a change of balance does.
-        /// </summary>
         private string _currency;
         public string Currency
         {
@@ -279,9 +293,7 @@ namespace Telegram.ViewModels.Wallet
             set => Set(ref _currencyRate, value);
         }
 
-        /// <summary>
-        /// False means the balance is not known yet, which the view must not render as zero.
-        /// </summary>
+        // False is not zero: the balance is not known yet.
         private bool _isSynchronized;
         public bool IsSynchronized
         {

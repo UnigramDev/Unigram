@@ -74,6 +74,7 @@ namespace Telegram.Services.Wallet
     public sealed class WalletState
     {
         private static readonly TonWalletTransaction[] NoActivity = new TonWalletTransaction[0];
+        private static readonly TonNft[] NoCollectibles = new TonNft[0];
 
         /// <summary>
         /// The account has no wallet. The starting state, and where deletion returns to.
@@ -86,6 +87,8 @@ namespace Telegram.Services.Wallet
             CurrencyRate = 1;
             Activity = NoActivity;
             ActivityResource = WalletResource.Idle;
+            Collectibles = NoCollectibles;
+            CollectiblesResource = WalletResource.Idle;
             Archive = NoArchive;
         }
 
@@ -104,6 +107,10 @@ namespace Telegram.Services.Wallet
             WalletResource activityResource,
             bool hasMoreActivity,
             int activityGeneration,
+            IReadOnlyList<TonNft> collectibles,
+            WalletResource collectiblesResource,
+            bool hasMoreCollectibles,
+            int collectiblesGeneration,
             TonWalletGaslessTransfersInfo gasless,
             IReadOnlyList<WalletArchivedWallet> archive)
         {
@@ -121,6 +128,10 @@ namespace Telegram.Services.Wallet
             ActivityResource = activityResource ?? WalletResource.Idle;
             HasMoreActivity = hasMoreActivity;
             ActivityGeneration = activityGeneration;
+            Collectibles = collectibles ?? NoCollectibles;
+            CollectiblesResource = collectiblesResource ?? WalletResource.Idle;
+            HasMoreCollectibles = hasMoreCollectibles;
+            CollectiblesGeneration = collectiblesGeneration;
             Gasless = gasless;
             Archive = archive ?? NoArchive;
             HasWallet = address.Length > 0;
@@ -232,6 +243,20 @@ namespace Telegram.Services.Wallet
         /// Whether an older page exists. Loading it is <c>LoadMoreActivityAsync</c>.
         /// </summary>
         public bool HasMoreActivity { get; }
+
+        /// <summary>
+        /// Empty until the first page, which loads after the history's first page.
+        /// </summary>
+        public IReadOnlyList<TonNft> Collectibles { get; }
+
+        public WalletResource CollectiblesResource { get; }
+
+        public bool HasMoreCollectibles { get; }
+
+        /// <summary>
+        /// As <see cref="ActivityGeneration"/>, for <see cref="Collectibles"/>.
+        /// </summary>
+        public int CollectiblesGeneration { get; }
     }
 
     /// <summary>
@@ -338,24 +363,22 @@ namespace Telegram.Services.Wallet
         public int LastUsedDate { get; }
     }
 
+    /// <remarks>
+    /// Says only whether the transfer left. The account holds the request open until the transfer
+    /// is final, so what became of it - including a refusal - arrives later, as the pending row in
+    /// the history turning into a transaction or a failure.
+    /// </remarks>
     public sealed class WalletTransferResult
     {
-        public WalletTransferResult(string messageHash, bool isGasless, TonWalletTransaction transaction)
-        {
-            MessageHash = messageHash;
-            IsGasless = isGasless;
-            Transaction = transaction;
-        }
-
-        public WalletTransferResult(Error error)
-        {
-            Error = error;
-        }
-
         private WalletTransferResult(bool commentUnavailable)
         {
             IsCommentUnavailable = commentUnavailable;
         }
+
+        /// <summary>
+        /// Signed and handed to the account, and at the top of the history as pending.
+        /// </summary>
+        public static readonly WalletTransferResult Sent = new WalletTransferResult(false);
 
         /// <summary>
         /// The comment could not be encrypted, so nothing was sent.
@@ -366,41 +389,9 @@ namespace Telegram.Services.Wallet
         /// Whether this is <see cref="CommentUnavailable"/>.
         /// </summary>
         /// <remarks>
-        /// Its own answer rather than an <see cref="Error"/>, because the account never heard about
-        /// this one: the engine refused before anything was signed, so there is no server message to
-        /// show and nothing was spent. Note that <see cref="Error"/> is null here too, so a caller
-        /// reading only that would take it for a transfer that went through.
+        /// The engine refused before anything was signed, so the account never heard about it and
+        /// nothing was spent.
         /// </remarks>
         public bool IsCommentUnavailable { get; }
-
-        /// <summary>
-        /// Why the server refused the transfer, or null when it did not. The same shape every other
-        /// request in the app answers with, so the caller decides what to say about it.
-        /// </summary>
-        public Error Error { get; }
-
-        /// <summary>
-        /// The hash the transaction can be found by once it lands, with
-        /// <c>getTonWalletTransactionByMsgHash</c>.
-        /// </summary>
-        public string MessageHash { get; }
-
-        /// <summary>
-        /// The transfer as it settled, or null if it had not by the time the account answered.
-        /// </summary>
-        /// <remarks>
-        /// The server holds the request open while it waits for the transfer to be included -
-        /// around twenty seconds, thirty for a gasless one - so in the ordinary case the finished
-        /// transaction comes back with the reply and there is nothing to poll for. Null is a
-        /// normal outcome and not a failure: it means the wait ran out, and
-        /// <see cref="MessageHash"/> is how to ask again.
-        /// </remarks>
-        public TonWalletTransaction Transaction { get; }
-
-        /// <summary>
-        /// Whether a relayer paid the gas, which is decided by the server and not by the caller.
-        /// </summary>
-        public bool IsGasless { get; }
-
     }
 }

@@ -27,6 +27,7 @@ using Telegram.Views.Wallet.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -187,9 +188,14 @@ namespace Telegram.Views.Wallet
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is WalletTransactionCell cell && args.Item is TonWalletTransaction transaction)
+            else if (args.ItemContainer.ContentTemplateRoot is WalletTransactionCell transactionCell && args.Item is TonWalletTransaction transaction)
             {
-                cell.UpdateInfo(_clientService, transaction);
+                transactionCell.UpdateInfo(_clientService, transaction);
+                args.Handled = true;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is WalletCollectibleCell collectibleCell && args.Item is TonNft collectible)
+            {
+                collectibleCell.UpdateInfo(_clientService, collectible);
                 args.Handled = true;
             }
         }
@@ -431,6 +437,90 @@ namespace Telegram.Views.Wallet
             // The name is kept, not just what it resolved to: it is what the user typed and what
             // the history should say the transfer went to.
             await SendAsync(0, recipient, domain);
+        }
+
+        private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel == null)
+            {
+                return;
+            }
+
+            if (Navigation.SelectedIndex == 1)
+            {
+                ViewModel.Items.SetSource(ViewModel.Collectibles);
+            }
+            else
+            {
+                ViewModel.Items.SetSource(ViewModel.Transactions);
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var scrollViewer = ScrollingHost.GetScrollViewer();
+            scrollViewer.SetVerticalPadding(48, 0);
+        }
+
+        private void HeaderTabs_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.PreviousSize.Height != 0 || ScrollingHost.ItemsPanelRoot is not Panel panel)
+            {
+                return;
+            }
+
+            var margin = 16 + 6;
+            var visual = ElementComposition.GetElementVisual(panel);
+            ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
+
+            panel.Margin = new Thickness(24, -HeaderTabs.ActualSize.Y - margin, 24, 0);
+            Canvas.SetZIndex(panel, 2);
+
+            var translation = visual.Compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(0, -HeaderTabs.ActualSize.Y - margin);
+            translation.InsertKeyFrame(0, 0);
+            translation.InsertKeyFrame(1, HeaderTabs.ActualSize.Y + margin);
+
+            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Properties.InsertVector3("Translation", Vector3.Zero);
+
+                panel.Margin = new Thickness(24, 0, 24, 0);
+                Canvas.SetZIndex(panel, 0);
+            };
+
+            visual.StartAnimation("Translation.Y", translation);
+            batch.End();
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingHost.ItemsPanelRoot is Panel panel)
+            {
+                panel.MinHeight = e.NewSize.Height - 80 - 24 - 8; // Header and footer + outer
+            }
+        }
+    }
+
+    public partial class WalletItemTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate TransactionTemplate { get; set; }
+
+        public DataTemplate CollectibleTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        {
+            if (item is TonWalletTransaction)
+            {
+                return TransactionTemplate;
+            }
+            else if (item is TonNft)
+            {
+                return CollectibleTemplate;
+            }
+
+            return base.SelectTemplateCore(item, container);
         }
     }
 }
