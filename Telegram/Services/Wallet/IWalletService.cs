@@ -151,7 +151,9 @@ namespace Telegram.Services.Wallet
         /// wallet's, so only the two of them can read it - and only a wallet contract that exposes
         /// its key can be sent one.
         /// </param>
-        Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, WalletVault.WalletVaultLease lease);
+        /// <param name="sendingId">Echoed back by the message TDLib adds to the chat with the peer,
+        /// as its pending sending state, so the caller can find it. Zero for none.</param>
+        Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, int sendingId, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// What the network would charge for a transfer, in nanograms, or null when it cannot be

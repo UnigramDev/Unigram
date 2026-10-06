@@ -53,22 +53,8 @@ namespace Telegram.Views.Wallet
         // of its own, or the row is gone before it was seen.
         private static readonly TimeSpan MinimumRaised = WalletTransferFlight.Slow(TimeSpan.FromSeconds(1));
 
-        private static readonly TimeSpan MinuteTurn = WalletTransferFlight.Slow(TimeSpan.FromSeconds(1));
-        private static readonly TimeSpan HourTurn = WalletTransferFlight.Slow(TimeSpan.FromSeconds(6));
-
-        // The prototype's springs: Spring.StiffnessMediumLow, the press's damping ratio and the
-        // amount's. The press goes down for PressDown before it is let go.
-        private const float MediumLow = 400;
-        private const float PressDamping = 0.3f;
-        private const float ArriveDamping = 0.5f;
-
-        // The prototype's own. They read as a shake only while the list's add transition was still
-        // moving the row under the stone, which is why the list has none.
-        private static readonly TimeSpan PressDown = TimeSpan.FromMilliseconds(90);
-        private const float PressStiffness = MediumLow;
-
-        // The prototype's TgButton, and the cyan its light band peaks at.
-        private static readonly Color Blue = Color.FromArgb(0xFF, 0x22, 0x9A, 0xF0);
+        // The cyan the light band peaks at, from the prototype's TgButton blue.
+        private static readonly Color Blue = WalletTransferVisuals.Blue;
         private static readonly Color Cyan = Color.FromArgb(0xFF, 0x8F, 0xE6, 0xFF);
 
         private readonly WalletTransactionCell _cell;
@@ -211,20 +197,7 @@ namespace Telegram.Views.Wallet
         private void Impact(TimeSpan delay)
         {
             Arrive(delay);
-
-            // Down on a short ease, then back on the prototype's spring(0.3, MediumLow), which
-            // overshoots into a stretch and wobbles out over most of a second.
-            var down = (float)PressDown.TotalSeconds;
-            var back = SpringSettleTime(PressDamping, PressStiffness);
-            var total = down + back;
-
-            var press = _compositor.CreateScalarKeyFrameAnimation();
-            press.InsertKeyFrame(down / total, 1, Standard());
-            InsertSpring(press, 1, 0, PressDamping, PressStiffness, down, total);
-            press.Duration = WalletTransferFlight.Slow(TimeSpan.FromSeconds(total));
-            press.DelayTime = delay;
-
-            _props.StartAnimation("Press", press);
+            _props.StartAnimation("Press", WalletTransferVisuals.CreatePress(_compositor, delay));
         }
 
         /// <summary>
@@ -276,60 +249,9 @@ namespace Telegram.Views.Wallet
             _props.InsertScalar("Arrived", 0);
         }
 
-        // The prototype's spring(0.5, MediumLow), from wherever it is to one.
         private void Arrive(TimeSpan delay)
         {
-            var time = SpringSettleTime(ArriveDamping, MediumLow);
-
-            var arrived = _compositor.CreateScalarKeyFrameAnimation();
-            InsertSpring(arrived, 0, 1, ArriveDamping, MediumLow, 0, time);
-            arrived.Duration = WalletTransferFlight.Slow(TimeSpan.FromSeconds(time));
-            arrived.DelayTime = delay;
-
-            _props.StartAnimation("Arrived", arrived);
-        }
-
-        /// <summary>
-        /// A spring from rest at <paramref name="from"/> to <paramref name="to"/>, sampled into
-        /// keyframes starting at <paramref name="start"/> seconds of an animation
-        /// <paramref name="total"/> seconds long.
-        /// </summary>
-        /// <remarks>
-        /// The prototype's springs are Compose's, which have an exact answer: unit mass, the
-        /// stiffness the square of the natural frequency, and done once within a hundredth of the
-        /// target. So they are reproduced rather than approximated - a Composition spring is set
-        /// by a Period that no stiffness converts to, and the one picked by eye buzzed where the
-        /// prototype wobbles.
-        /// </remarks>
-        private void InsertSpring(ScalarKeyFrameAnimation animation, float from, float to, float damping, float stiffness, float start, float total)
-        {
-            const int Samples = 40;
-
-            var natural = MathF.Sqrt(stiffness);
-            var decay = damping * natural;
-            var damped = natural * MathF.Sqrt(1 - damping * damping);
-            var time = SpringSettleTime(damping, stiffness);
-
-            // Linear between samples: a dozen of them to each oscillation is smooth at any speed
-            // this runs at.
-            var linear = _compositor.CreateLinearEasingFunction();
-
-            for (int i = 1; i <= Samples; i++)
-            {
-                var t = time * i / Samples;
-
-                // Underdamped, released from rest: the displacement left, as a fraction of the
-                // distance to go. Exactly the target at the end, where Compose snaps to it.
-                var left = i == Samples ? 0 : MathF.Exp(-decay * t) * (MathF.Cos(damped * t) + decay / damped * MathF.Sin(damped * t));
-
-                animation.InsertKeyFrame((start + t) / total, to + (from - to) * left, linear);
-            }
-        }
-
-        // When the envelope of an underdamped spring released from rest drops below a hundredth.
-        private static float SpringSettleTime(float damping, float stiffness)
-        {
-            return MathF.Log(100 / MathF.Sqrt(1 - damping * damping)) / (damping * MathF.Sqrt(stiffness));
+            _props.StartAnimation("Arrived", WalletTransferVisuals.CreateArrive(_compositor, delay));
         }
 
         /// <summary>
@@ -533,86 +455,27 @@ namespace Telegram.Views.Wallet
         {
             // Size rather than ActualWidth: the row is bound before it is laid out.
             var k = _cell.PhotoElement.Size / 46f;
-            var line = 1.6f * k;
-
-            // A shape visual clips to its size and a stroke is centred on its outline, so the
-            // visual is sized for the badge's whole extent - the cut, or the ring and half its
-            // stroke - rather than for the avatar, which the badge hangs over the corner of.
-            var extent = 10 * k + line;
-            var centre = new Vector2(extent);
-
-            var visual = _compositor.CreateShapeVisual();
-            visual.Size = new Vector2(extent * 2);
-            visual.CenterPoint = new Vector3(centre, 0);
-
-            // Hosted by the cell rather than the avatar, which may clip what it hosts, and kept on
-            // the avatar's corner wherever layout puts it.
-            var offset = _compositor.CreateExpressionAnimation("Vector3(photo.Offset.X + d, photo.Offset.Y + d, 0)");
-            offset.SetReferenceParameter("photo", ElementCompositionPreview.GetElementVisual(_cell.PhotoElement));
-            offset.SetScalarParameter("d", (46 - 7) * k - extent);
-            visual.StartAnimation("Offset", offset);
 
             // The cut is the row's own background, which is what it is cut out of. Read off the
             // container rather than looked up, and left out where it is not a plain colour.
-            if (_container.Background is SolidColorBrush background && background.Color.A == 0xFF)
-            {
-                visual.Shapes.Add(Disc(centre, 10 * k, background.Color));
-            }
+            Color? cut = _container.Background is SolidColorBrush background && background.Color.A == 0xFF
+                ? background.Color
+                : null;
 
-            visual.Shapes.Add(Disc(centre, 8 * k, Colors.White));
+            var visual = WalletTransferVisuals.CreateClock(_compositor, k, Blue, Colors.White, cut, out var centre);
 
-            var rim = _compositor.CreateEllipseGeometry();
-            rim.Center = centre;
-            rim.Radius = new Vector2(7 * k);
-
-            var ring = _compositor.CreateSpriteShape(rim);
-            ring.StrokeBrush = _compositor.CreateColorBrush(Blue);
-            ring.StrokeThickness = line;
-            visual.Shapes.Add(ring);
-
-            visual.Shapes.Add(Hand(centre, 4.6f * k, line, 0, MinuteTurn));
-            visual.Shapes.Add(Hand(centre, 3.2f * k, line, 120, HourTurn));
+            // Hosted by the cell rather than the avatar, which may clip what it hosts, and kept on
+            // the avatar's corner wherever layout puts it - the badge hangs over that corner.
+            var offset = _compositor.CreateExpressionAnimation("Vector3(photo.Offset.X + d, photo.Offset.Y + d, 0)");
+            offset.SetReferenceParameter("photo", ElementCompositionPreview.GetElementVisual(_cell.PhotoElement));
+            offset.SetScalarParameter("d", (46 - 7) * k - centre.X);
+            visual.StartAnimation("Offset", offset);
 
             var scale = _compositor.CreateExpressionAnimation("Vector3(p.Lift, p.Lift, 1)");
             scale.SetReferenceParameter("p", _props);
             visual.StartAnimation("Scale", scale);
 
             return visual;
-        }
-
-        private CompositionSpriteShape Disc(Vector2 centre, float radius, Color color)
-        {
-            var geometry = _compositor.CreateEllipseGeometry();
-            geometry.Center = centre;
-            geometry.Radius = new Vector2(radius);
-
-            var shape = _compositor.CreateSpriteShape(geometry);
-            shape.FillBrush = _compositor.CreateColorBrush(color);
-
-            return shape;
-        }
-
-        private CompositionSpriteShape Hand(Vector2 centre, float length, float thickness, float from, TimeSpan turn)
-        {
-            var geometry = _compositor.CreateLineGeometry();
-            geometry.Start = centre;
-            geometry.End = centre - new Vector2(0, length);
-
-            var shape = _compositor.CreateSpriteShape(geometry);
-            shape.StrokeBrush = _compositor.CreateColorBrush(Blue);
-            shape.StrokeThickness = thickness;
-            shape.StrokeStartCap = CompositionStrokeCap.Round;
-            shape.StrokeEndCap = CompositionStrokeCap.Round;
-            shape.CenterPoint = centre;
-
-            var rotation = _compositor.CreateScalarKeyFrameAnimation();
-            rotation.InsertKeyFrame(0, from);
-            rotation.InsertKeyFrame(1, from + 360, _compositor.CreateLinearEasingFunction());
-            rotation.Duration = turn;
-            rotation.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            shape.StartAnimation("RotationAngleInDegrees", rotation);
-            return shape;
         }
 
         /// <summary>
@@ -691,7 +554,7 @@ namespace Telegram.Views.Wallet
             ReleaseStone();
 
             var lift = _compositor.CreateScalarKeyFrameAnimation();
-            lift.InsertKeyFrame(1, 0, Standard());
+            lift.InsertKeyFrame(1, 0, WalletTransferVisuals.Standard(_compositor));
             lift.Duration = SettleDuration;
 
             var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -715,12 +578,6 @@ namespace Telegram.Views.Wallet
             {
                 Reset();
             }
-        }
-
-        private CubicBezierEasingFunction Standard()
-        {
-            // FastOutSlowIn.
-            return _compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0), new Vector2(0.2f, 1));
         }
 
         private void ReleaseStone()

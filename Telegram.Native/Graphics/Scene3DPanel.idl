@@ -73,8 +73,9 @@ namespace Telegram.Native.Graphics
         // from rest, faded out and held still.
         //
         // This one stays blank until it next leaves the tree. A target not yet in the tree holds
-        // the scene stopped until it is loaded. False when there was nothing to move or the models
-        // differ.
+        // the scene stopped until it is loaded, and a paused one is unpaused - pausing is how a
+        // panel stays blank while a scene is on its way to it. False when there was nothing to
+        // move or the models differ.
         Boolean TransferTo(Scene3DPanel target);
 
         // Stops the render loop and gives the device back, without unloading the panel.

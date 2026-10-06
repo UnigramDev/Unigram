@@ -206,6 +206,10 @@ namespace winrt::Telegram::Native::Graphics::implementation
         other->m_renderer = std::move(renderer);
         other->m_given = false;
         other->m_failed = false;
+
+        // A panel kept paused so that it showed nothing while a scene was on its way to it: being
+        // handed one is being asked to show it, and a paused panel would release it at once.
+        other->m_paused = false;
         other->UpdateFallback();
 
         // The target's own settings win where it has any; otherwise the scene goes on as it was.

@@ -845,7 +845,7 @@ namespace Telegram.Services.Wallet
             Raise();
         }
 
-        public async Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, WalletVault.WalletVaultLease lease)
+        public async Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, int sendingId, WalletVault.WalletVaultLease lease)
         {
             var client = _client;
             if (client == null || _descriptor == null)
@@ -936,7 +936,7 @@ namespace Telegram.Services.Wallet
 
             Raise();
 
-            _ = CompleteTransferAsync(prepared.OperationId, _clientService.SendAsync(new SendTonWalletTransfer(peerUserId, recipient, (long)amountNanograms, comment, !isCommentPublic, 0, external, gasless)));
+            _ = CompleteTransferAsync(prepared.OperationId, _clientService.SendAsync(new SendTonWalletTransfer(peerUserId, recipient, (long)amountNanograms, comment, !isCommentPublic, sendingId, external, gasless)));
 
             return WalletTransferResult.Sent;
         }

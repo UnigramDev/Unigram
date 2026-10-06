@@ -48,7 +48,8 @@
                                          Padding="0,0,0,4" />
         </messages:MessageService>
 
-        <Grid Width="202">
+        <Grid x:Name="Card"
+              Width="202">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
@@ -92,7 +93,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <graphics:Scene3DPanel Model="Diamond"
+                <graphics:Scene3DPanel x:Name="Diamond"
+                                       Model="Diamond"
                                        Palette="Cool"
                                        PressScale="3"
                                        PressScaleOrigin="0.5,0.1"
@@ -156,6 +158,17 @@
                     </LinearGradientBrush>
                 </controls:Ribbon.Background>
             </controls:Ribbon>
+
+            <!-- Where the clock is drawn while the transfer is being sent: over the ribbon, which
+                 it turns into once it has been. Its own element because the ribbon's child visual
+                 is its text. -->
+            <Border x:Name="ClockHost"
+                    Width="64"
+                    Height="64"
+                    IsHitTestVisible="False"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,6,2,0" />
         </Grid>
     </StackPanel>
 </messages:MessageService>

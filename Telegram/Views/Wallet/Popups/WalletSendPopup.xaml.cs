@@ -1126,7 +1126,7 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, lease);
+                var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, flight.SendingId, lease);
                 if (result.IsCommentUnavailable)
                 {
                     flight.Cancel();

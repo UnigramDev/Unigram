@@ -12,6 +12,7 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Native.Graphics;
 using Telegram.Td.Api;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -59,7 +60,7 @@ namespace Telegram.Views.Wallet
         private const float Rise = 150;
 
         // Degrees per second while thrown, against an idle turn of about 34.
-        private const double FlightSpinSpeed = 540 / DebugSlowMotion;
+        internal const double FlightSpinSpeed = 540 / DebugSlowMotion;
 
         // How long a launched stone waits for somewhere to land. A send from a chat has no row on
         // screen to go to, and the stone goes out where it is instead.
@@ -92,6 +93,25 @@ namespace Telegram.Views.Wallet
         private const float LandingSize = 1.2f;
         private static readonly Vector2 LandingNudge = new(0, 6);
 
+        /// <summary>
+        /// Where the stone's panel goes to sit over a glyph of the TON mark, in window coordinates.
+        /// </summary>
+        /// <remarks>
+        /// The send screen's panel stands in for a glyph of SourceGlyphSize, offset from it by its
+        /// own margin, so the same proportions put the stone over another glyph: scaled to its font
+        /// size, and centred on its line.
+        /// </remarks>
+        internal static Rect OverGlyph(Rect glyph, double fontSize, Size stone)
+        {
+            var scale = fontSize / SourceGlyphSize * LandingSize;
+
+            return new Rect(
+                glyph.X + (glyph.Width - SourceGlyphSize * scale) / 2 + SourceOffset.X * scale + LandingNudge.X,
+                glyph.Y + (glyph.Height - SourceGlyphSize * scale) / 2 + SourceOffset.Y * scale + LandingNudge.Y,
+                stone.Width * scale,
+                stone.Height * scale);
+        }
+
         // One UI thread per window, hence the lock.
         private static readonly object _flightsLock = new();
         private static readonly List<WalletTransferFlight> _flights = new();
@@ -109,7 +129,7 @@ namespace Telegram.Views.Wallet
         private Vector3 _at;
         private float _scale = 1;
 
-        private WalletTransactionCell _site;
+        private IWalletTransferSite _site;
 
         // The list key of the row it found, which it follows from then on.
         private string _rowKey;
@@ -121,12 +141,24 @@ namespace Telegram.Views.Wallet
         private bool _flying;
         private bool _landed;
 
+        // Nothing else in the app sets one - messages leave theirs at zero - so a counter from one
+        // cannot collide.
+        private static int _lastSendingId;
+
         private WalletTransferFlight(XamlRoot xamlRoot, string address, long nanograms)
         {
             _xamlRoot = xamlRoot;
             _address = address;
             _nanograms = nanograms;
+
+            SendingId = System.Threading.Interlocked.Increment(ref _lastSendingId);
         }
+
+        /// <summary>
+        /// What the transfer is sent with, and what the message TDLib adds to the chat for it
+        /// reports as its pending sending state - which is how a chat finds the stone's row.
+        /// </summary>
+        public int SendingId { get; }
 
         /// <summary>
         /// Says a transfer is about to be sent from this window, before it is, so that the row it
@@ -170,7 +202,7 @@ namespace Telegram.Views.Wallet
             {
                 foreach (var flight in _flights)
                 {
-                    if (target == null && transaction != null && ReferenceEquals(flight._xamlRoot, xamlRoot) && flight.Matches(site, transaction, key, pending, nanograms))
+                    if (target == null && transaction != null && flight.IsIn(xamlRoot) && flight.Matches(site, transaction, key, pending, nanograms))
                     {
                         target = flight;
                     }
@@ -192,6 +224,60 @@ namespace Telegram.Views.Wallet
 
             target?.Arrive(site, key);
             return target != null;
+        }
+
+        /// <summary>
+        /// Called for every transfer message bound or recycled in a chat: makes it the destination
+        /// of the flight it was sent with, if one is on its way, and stops it being any other's.
+        /// </summary>
+        /// <param name="sendingId">The message's pending sending id, for an outgoing message TDLib
+        /// is still sending; zero for any other, and when it is recycled.</param>
+        /// <returns>Whether a stone is on its way to this message.</returns>
+        /// <remarks>
+        /// By the sending id alone, which the transfer was sent with: TDLib adds the message as soon
+        /// as it is asked to send, before the transfer has an id of its own.
+        /// </remarks>
+        public static bool BindMessage(IWalletTransferSite site, int sendingId)
+        {
+            WalletTransferFlight target = null;
+            List<WalletTransferFlight> left = null;
+
+            var xamlRoot = site.XamlRoot;
+
+            lock (_flightsLock)
+            {
+                foreach (var flight in _flights)
+                {
+                    if (target == null && sendingId != 0 && !flight._landed && flight.SendingId == sendingId && flight.IsIn(xamlRoot))
+                    {
+                        target = flight;
+                    }
+                    else if (flight._site == site)
+                    {
+                        left ??= new List<WalletTransferFlight>();
+                        left.Add(flight);
+                    }
+                }
+            }
+
+            if (left != null)
+            {
+                foreach (var flight in left)
+                {
+                    flight.Leave(site);
+                }
+            }
+
+            target?.Arrive(site, null);
+            return target != null;
+        }
+
+        // The same window, which only a XamlRoot says. Never a match without one: a site bound
+        // before it is in a window, against a flight that has none either, would otherwise be
+        // taken for a destination in any window - and wait for a stone that is not coming to it.
+        private bool IsIn(XamlRoot xamlRoot)
+        {
+            return xamlRoot != null && ReferenceEquals(_xamlRoot, xamlRoot);
         }
 
         private bool Matches(WalletTransactionCell site, TonWalletTransaction transaction, string key, bool pending, long nanograms)
@@ -281,7 +367,7 @@ namespace Telegram.Views.Wallet
             TryFly();
         }
 
-        private void Arrive(WalletTransactionCell site, string key)
+        private void Arrive(IWalletTransferSite site, string key)
         {
             _rowKey = key;
 
@@ -301,7 +387,7 @@ namespace Telegram.Views.Wallet
             _site.Anchor.LayoutUpdated += Anchor_LayoutUpdated;
         }
 
-        private void Leave(WalletTransactionCell site, bool landed = false)
+        private void Leave(IWalletTransferSite site, bool landed = false)
         {
             if (site == null || _site != site)
             {
@@ -312,7 +398,7 @@ namespace Telegram.Views.Wallet
 
             if (!landed)
             {
-                _site.PendingRow?.ForgetStone();
+                _site.ForgetStone();
             }
 
             _site = null;
@@ -368,16 +454,15 @@ namespace Telegram.Views.Wallet
             _flying = true;
             StopTimeout();
 
-            // The send screen's panel stands in for a glyph of SourceGlyphSize, offset from it by
-            // its own margin, so the same proportions put the stone over the row's glyph: scaled
-            // to its font size, and centred on its line.
-            var glyph = _site.GlyphBounds(out var fontSize);
-            var scale = (float)(fontSize / SourceGlyphSize) * LandingSize;
+            var bounds = _site.LandingBounds(new Size(_stone.Width, _stone.Height));
+            var scale = (float)(bounds.Width / _stone.Width);
+            var target = new Vector3((float)bounds.X, (float)bounds.Y, 0);
 
-            var target = new Vector3(
-                (float)(glyph.X + (glyph.Width - SourceGlyphSize * scale) / 2 + SourceOffset.X * scale) + LandingNudge.X,
-                (float)(glyph.Y + (glyph.Height - SourceGlyphSize * scale) / 2 + SourceOffset.Y * scale) + LandingNudge.Y,
-                0);
+            // The list it lands in can move while it is in the air - a chat scrolls to show the
+            // message - and the overlay does not move with it. Measured from here, so the curve
+            // takes it in by the time it lands, and Hold carries on from the same reading.
+            _scroller = _site.Anchor.GetParent<ScrollViewer>();
+            _scrolled = _scroller?.VerticalOffset ?? 0;
 
             // The control point: a little way across, and well above whichever end is higher.
             var control = new Vector3(_from.X + (target.X - _from.X) * 0.35f, Math.Min(_from.Y, target.Y) - Rise, 0);
@@ -396,29 +481,38 @@ namespace Telegram.Views.Wallet
             props.InsertVector3("C", control);
             props.InsertScalar("S", scale);
 
-            // The row's press, which the impact starts on this animation's last frame: the stone
-            // squashes about its foot as the row is pushed down, with the same arithmetic Hold
+            // The site's press, which the impact starts on this animation's last frame: the stone
+            // squashes about its foot as the site is pushed down, with the same arithmetic Hold
             // takes over with. A scale about the foot is the corner's plus a translation, folded in
             // here because the curve is measured at the corner.
-            var row = _site.PendingRow?.Properties;
+            var row = _site.Impact;
             if (row == null)
             {
                 row = compositor.CreatePropertySet();
                 row.InsertScalar("Press", 0);
             }
 
-            const string Size = "(1 + (p.S - 1) * p.Progress)";
+            const string Grown = "(1 + (p.S - 1) * p.Progress)";
             const string SquashX = "(1 + 0.12 * r.Press)";
             const string SquashY = "(1 - 0.18 * r.Press)";
 
-            var translation = compositor.CreateExpressionAnimation(
-                "(1 - p.Progress) * (1 - p.Progress) * p.A + 2 * (1 - p.Progress) * p.Progress * p.C + p.Progress * p.Progress * p.B"
-                + $" + Vector3({Size} * f.X * (1 - {SquashX}), {Size} * f.Y * (1 - {SquashY}) + 4 * r.Press, 0)");
+            var curve = "(1 - p.Progress) * (1 - p.Progress) * p.A + 2 * (1 - p.Progress) * p.Progress * p.C + p.Progress * p.Progress * p.B"
+                + $" + Vector3({Grown} * f.X * (1 - {SquashX}), {Grown} * f.Y * (1 - {SquashY}) + 4 * r.Press, 0)";
+
+            var translation = compositor.CreateExpressionAnimation(_scroller != null
+                ? curve + " + p.Progress * Vector3(0, m.Translation.Y + y, 0)"
+                : curve);
             translation.SetReferenceParameter("p", props);
             translation.SetReferenceParameter("r", row);
             translation.SetVector2Parameter("f", Foot);
 
-            var size = compositor.CreateExpressionAnimation($"Vector3({Size} * {SquashX}, {Size} * {SquashY}, 1)");
+            if (_scroller != null)
+            {
+                translation.SetReferenceParameter("m", ElementCompositionPreview.GetScrollViewerManipulationPropertySet(_scroller));
+                translation.SetScalarParameter("y", (float)_scrolled);
+            }
+
+            var size = compositor.CreateExpressionAnimation($"Vector3({Grown} * {SquashX}, {Grown} * {SquashY}, 1)");
             size.SetReferenceParameter("p", props);
             size.SetReferenceParameter("r", row);
 
@@ -435,9 +529,9 @@ namespace Telegram.Views.Wallet
 
             batch.Completed += Flight_Completed;
 
-            // On the compositor's clock, so the row is pushed down on the frame the stone arrives
+            // On the compositor's clock, so the site is pushed down on the frame the stone arrives
             // rather than when the UI thread hears that it has.
-            _site.PendingRow?.ScheduleImpact(FlightDuration);
+            _site.ScheduleImpact(FlightDuration);
 
             // The property set has to outlive the expressions reading it, and nothing else holds it.
             _progress = props;
@@ -471,13 +565,18 @@ namespace Telegram.Views.Wallet
             var site = _site;
             Leave(site, landed: true);
 
-            if (site?.PendingRow != null && site.PendingRow.Land(this))
+            switch (site?.Land(this, _stone) ?? WalletTransferLanding.Refused)
             {
-                Hold(site);
-            }
-            else
-            {
-                Disappear(PopScale, PopDuration);
+                case WalletTransferLanding.Held:
+                    Hold(site);
+                    break;
+                case WalletTransferLanding.Taken:
+                    // Gone into the site's own panel, which leaves this one blank.
+                    Close();
+                    break;
+                default:
+                    Disappear(PopScale, PopDuration);
+                    break;
             }
         }
 
@@ -490,7 +589,7 @@ namespace Telegram.Views.Wallet
         /// send screen. Which is why it has to be told about scrolling: the overlay does not move
         /// with the list.
         /// </remarks>
-        private void Hold(WalletTransactionCell site)
+        private void Hold(IWalletTransferSite site)
         {
             _stone.SpinSpeed = RowSpinSpeed;
 
@@ -506,16 +605,14 @@ namespace Telegram.Views.Wallet
             var centre = new Vector3(Foot, 0);
             visual.CenterPoint = centre;
 
-            var press = site.PendingRow.Properties;
+            var press = site.Impact;
 
             var scale = compositor.CreateExpressionAnimation("Vector3(s * (1 + 0.12 * r.Press), s * (1 - 0.18 * r.Press), 1)");
             scale.SetReferenceParameter("r", press);
             scale.SetScalarParameter("s", _scale);
 
-            // The row is pushed down by its press as well, and the list moves under the overlay.
-            _scroller = site.GetParent<ScrollViewer>();
-            _scrolled = _scroller?.VerticalOffset ?? 0;
-
+            // The row is pushed down by its press as well, and the list moves under the overlay -
+            // measured from the same reading the flight was, so nothing jumps between the two.
             ExpressionAnimation translation;
 
             if (_scroller != null)

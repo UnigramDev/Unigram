@@ -26,7 +26,7 @@ namespace Telegram.Controls.Cells
     /// <c>ContainerContentChanging</c> like the other cells, so a recycled row costs a few property
     /// writes and no bindings.
     /// </summary>
-    public sealed partial class WalletTransactionCell : Grid
+    public sealed partial class WalletTransactionCell : Grid, IWalletTransferSite
     {
         private readonly Brush _received;
 
@@ -127,7 +127,33 @@ namespace Telegram.Controls.Cells
 
         // Where the send screen's stone lands. GlyphBounds only means something once a layout pass
         // has finished after the row was bound.
-        internal FrameworkElement Anchor => Amount;
+        public FrameworkElement Anchor => Amount;
+
+        // The rest of being a landing site belongs to the raised row, which has none until the
+        // row shows a pending transfer.
+        public Rect LandingBounds(Size stone)
+        {
+            return WalletTransferFlight.OverGlyph(GlyphBounds(out var fontSize), fontSize, stone);
+        }
+
+        public Windows.UI.Composition.CompositionPropertySet Impact => PendingRow?.Properties;
+
+        public void ScheduleImpact(TimeSpan delay)
+        {
+            PendingRow?.ScheduleImpact(delay);
+        }
+
+        public WalletTransferLanding Land(WalletTransferFlight flight, Telegram.Native.Graphics.Scene3DPanel stone)
+        {
+            return PendingRow != null && PendingRow.Land(flight)
+                ? WalletTransferLanding.Held
+                : WalletTransferLanding.Refused;
+        }
+
+        public void ForgetStone()
+        {
+            PendingRow?.ForgetStone();
+        }
 
         internal TextBlock AmountText => Amount;
 
