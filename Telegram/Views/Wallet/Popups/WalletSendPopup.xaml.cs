@@ -1121,11 +1121,16 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
+            // Before the transfer, because the row it becomes can be bound before this resumes.
+            var flight = WalletTransferFlight.Expect(XamlRoot, _address, (long)nanograms);
+
             try
             {
                 var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, lease);
                 if (result.IsCommentUnavailable)
                 {
+                    flight.Cancel();
+
                     // Nothing was signed and nothing was spent, and what to do about it is on this
                     // screen: the comment can be made public, or taken off. So the popup stays, with
                     // the amount still in it and the button armed again.
@@ -1142,6 +1147,8 @@ namespace Telegram.Views.Wallet.Popups
 
                 Result = result;
 
+                flight.Launch(Diamond);
+
                 // Completing the deferral is what closes the popup: the button click it belongs to
                 // has been waiting for this. What becomes of the transfer is the history's to show.
                 deferral.Complete();
@@ -1149,6 +1156,8 @@ namespace Telegram.Views.Wallet.Popups
             }
             catch (WalletAccessDeniedException)
             {
+                flight.Cancel();
+
                 // Asked to authorize the spend and declined, before anything was signed. That is an
                 // answer, so it gets no message, and the popup stays armed like the refusal above.
                 _sending = false;
@@ -1161,6 +1170,8 @@ namespace Telegram.Views.Wallet.Popups
             }
             catch (Exception ex)
             {
+                flight.Cancel();
+
                 // The engine's own failures still arrive this way: nothing was signed, so nothing
                 // was sent, and there is no message from the server to show.
                 Logger.Error("wallet transfer failed: " + ex.Message);

@@ -47,6 +47,9 @@ namespace winrt::Telegram::Native::Graphics::implementation
         bool IsSpinning() const noexcept { return m_spinning; }
         void IsSpinning(bool value);
 
+        double SpinSpeed() const noexcept { return m_spinSpeed; }
+        void SpinSpeed(double value);
+
         bool IsInteractive() const noexcept { return m_interactive; }
         void IsInteractive(bool value);
 
@@ -63,6 +66,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
         void IsPaused(bool value);
 
         void Kick(double degreesPerSecond);
+
+        bool TransferTo(Graphics::Scene3DPanel const& target);
 
         hstring FallbackText() const noexcept { return m_fallbackText; }
         void FallbackText(hstring const& value);
@@ -124,6 +129,11 @@ namespace winrt::Telegram::Native::Graphics::implementation
         // again every time the panel is shown.
         bool m_failed = false;
 
+        // Set once the scene has been handed to another panel, and cleared when this one leaves
+        // the tree. Without it the next viewport change would build a fresh scene here, fading in
+        // a second stone while the first is on its way somewhere else.
+        bool m_given = false;
+
         hstring m_fallbackText;
         double m_fallbackFontSize = 0;
         winrt::Windows::UI::Xaml::Media::FontFamily m_fallbackFontFamily{ nullptr };
@@ -132,6 +142,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
         Graphics::Scene3DModel m_model{ Graphics::Scene3DModel::Diamond };
         Graphics::Scene3DPalette m_palette{ Graphics::Scene3DPalette::Default };
         bool m_spinning = false;
+        double m_spinSpeed = 0;
         bool m_interactive = true;
         bool m_paused = false;
 

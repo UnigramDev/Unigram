@@ -50,6 +50,12 @@ namespace Graphics3D
             std::function<void()> notify);
         void Detach();
 
+        // UI thread. Moves the swap chain to another panel and sends notifications to its owner
+        // from now on; the scene, the pose and the clock carry on untouched. False if the new
+        // panel refused the swap chain, which leaves the renderer to be detached from it.
+        bool Rebind(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& panel,
+            std::function<void()> notify);
+
         // Any thread.
         bool HasFailed() const noexcept { return m_failed; }
         bool WasReplaced() const noexcept { return m_replaced; }
@@ -74,6 +80,9 @@ namespace Graphics3D
 
         void SetSpinning(bool value);
         bool IsSpinning() const noexcept { return m_spinning; }
+
+        // UI thread. Degrees per second, or zero for the scene's own rate.
+        void SetSpinSpeed(float degreesPerSecond) noexcept { m_spinSpeed = degreesPerSecond; }
 
         // Which look the scene should wear, for one authored with more than one.
         void SetVariant(int variant);
@@ -177,5 +186,6 @@ namespace Graphics3D
 
         std::atomic<bool> m_dragging{ false };
         std::atomic<bool> m_spinning{ false };
+        std::atomic<float> m_spinSpeed{ 0 };
     };
 }

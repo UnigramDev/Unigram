@@ -241,6 +241,54 @@ namespace Graphics3D
         Release();
     }
 
+    bool Scene3DRenderer::Rebind(SwapChainPanel const& panel, std::function<void()> notify)
+    {
+        if (m_device == nullptr || m_panel == nullptr)
+        {
+            return false;
+        }
+
+        winrt::com_ptr<IDXGISwapChain2> swapChain;
+
+        {
+            // Under the lock because the render thread calls m_notify under it.
+            std::scoped_lock lock(m_device->Lock());
+
+            m_notify = std::move(notify);
+            swapChain = m_swapChain;
+        }
+
+        try
+        {
+            // Released by the old panel before the new one takes it.
+            m_panel.as<ISwapChainPanelNative>()->SetSwapChain(nullptr);
+        }
+        catch (...)
+        {
+            // The old panel may already be gone with its view.
+        }
+
+        m_panel = panel;
+
+        if (swapChain == nullptr)
+        {
+            // Attached while the device was lost: there is no swap chain to move, and the
+            // replacement the new owner is about to be told of will bring one.
+            return true;
+        }
+
+        try
+        {
+            winrt::check_hresult(panel.as<ISwapChainPanelNative>()->SetSwapChain(swapChain.get()));
+            return true;
+        }
+        catch (...)
+        {
+            LogException(L"Scene3D: SetSwapChain on rebind");
+            return false;
+        }
+    }
+
     void Scene3DRenderer::Release()
     {
         if (m_device == nullptr)
@@ -574,7 +622,8 @@ namespace Graphics3D
             // d + 360. It turns the scene left to right because beta 11 stopped negating the
             // yaw in its model matrix; under beta 8's convention the same sign went the other
             // way, which is why this needed a hand-held minus before the re-port.
-            turned += (360.0f / m_motion.secondsPerTurn) * step;
+            const float speed = m_spinSpeed;
+            turned += (speed > 0 ? speed : 360.0f / m_motion.secondsPerTurn) * step;
         }
 
         turned += m_dragYaw;

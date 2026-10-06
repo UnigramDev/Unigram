@@ -1815,6 +1815,8 @@
     <Compile Include="Views\Wallet\Popups\WalletBackupPopup.xaml.cs">
       <DependentUpon>WalletBackupPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Wallet\WalletPendingRow.cs" />
+    <Compile Include="Views\Wallet\WalletTransferFlight.cs" />
     <Compile Include="Views\Wallet\WalletWindow.xaml.cs">
       <DependentUpon>WalletWindow.xaml</DependentUpon>
     </Compile>

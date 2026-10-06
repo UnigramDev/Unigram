@@ -186,12 +186,26 @@ namespace Telegram.Views.Wallet
         {
             if (args.InRecycleQueue)
             {
+                if (args.ItemContainer.ContentTemplateRoot is WalletTransactionCell recycled)
+                {
+                    WalletTransferFlight.Bind(recycled, null, null);
+                    WalletPendingRow.Update(args.ItemContainer, recycled, null, null, false, _wallet);
+                }
+
                 return;
             }
             else if (args.ItemContainer.ContentTemplateRoot is WalletTransactionCell transactionCell && args.Item is TonWalletTransaction transaction)
             {
                 transactionCell.UpdateInfo(_clientService, transaction);
                 args.Handled = true;
+
+                // The key the list holds the row under, which a transaction that replaced a pending
+                // row shares with it - so the stone and the raised pose follow the row across.
+                var key = _wallet.PredecessorOf(transaction.Id) ?? transaction.Id;
+
+                // The flight first: whether a stone is on its way decides whether the row may settle.
+                var incoming = WalletTransferFlight.Bind(transactionCell, transaction, key);
+                WalletPendingRow.Update(args.ItemContainer, transactionCell, transaction, key, incoming, _wallet);
             }
             else if (args.ItemContainer.ContentTemplateRoot is WalletCollectibleCell collectibleCell && args.Item is TonNft collectible)
             {

@@ -33,6 +33,10 @@ namespace Telegram.Native.Graphics
         // by default, and the one in the app being matched does.
         Boolean IsSpinning;
 
+        // How fast it turns while spinning, in degrees per second. Zero for the scene's own rate,
+        // which for the diamond is a turn every ten and a half seconds.
+        Double SpinSpeed;
+
         // Whether dragging turns it. Off makes the panel inert to the pointer, which is what a
         // scene used as an ornament wants.
         Boolean IsInteractive;
@@ -62,6 +66,16 @@ namespace Telegram.Native.Graphics
         // Typing a digit kicks forwards and deleting one kicks back, which is what the beta's
         // send screen does as an amount is entered.
         void Kick(Double degreesPerSecond);
+
+        // Moves what this panel is drawing to another panel showing the same model - the swap
+        // chain, the pose and the clock - so the scene carries on there exactly as it was, with no
+        // load and no entry fade. A second panel cannot be made to match instead: it would start
+        // from rest, faded out and held still.
+        //
+        // This one stays blank until it next leaves the tree. A target not yet in the tree holds
+        // the scene stopped until it is loaded. False when there was nothing to move or the models
+        // differ.
+        Boolean TransferTo(Scene3DPanel target);
 
         // Stops the render loop and gives the device back, without unloading the panel.
         //

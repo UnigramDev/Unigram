@@ -89,6 +89,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
 
         // A different scene may well load where the last one did not.
         m_failed = false;
+        m_given = false;
         UpdateFallback();
 
         UpdateRunning();
@@ -102,6 +103,16 @@ namespace winrt::Telegram::Native::Graphics::implementation
         if (m_renderer != nullptr)
         {
             m_renderer->SetSpinning(value);
+        }
+    }
+
+    void Scene3DPanel::SpinSpeed(double value)
+    {
+        m_spinSpeed = value;
+
+        if (m_renderer != nullptr)
+        {
+            m_renderer->SetSpinSpeed(static_cast<float>(value));
         }
     }
 
@@ -158,6 +169,81 @@ namespace winrt::Telegram::Native::Graphics::implementation
         }
     }
 
+    bool Scene3DPanel::TransferTo(Graphics::Scene3DPanel const& target)
+    {
+        if (target == nullptr || m_renderer == nullptr)
+        {
+            return false;
+        }
+
+        const auto other = winrt::get_self<Scene3DPanel>(target);
+
+        if (other == this || other->m_model != m_model)
+        {
+            return false;
+        }
+
+        EndDrag();
+
+        if (other->m_renderer != nullptr)
+        {
+            // A target already in the tree has built a scene of its own, which this replaces.
+            other->EndDrag();
+            other->m_renderer->Detach();
+            other->m_renderer.reset();
+        }
+
+        auto renderer = std::move(m_renderer);
+        m_given = true;
+
+        if (!renderer->Rebind(target, other->NotifyHandler()))
+        {
+            renderer->Detach();
+            other->UpdateRunning();
+            return false;
+        }
+
+        other->m_renderer = std::move(renderer);
+        other->m_given = false;
+        other->m_failed = false;
+        other->UpdateFallback();
+
+        // The target's own settings win where it has any; otherwise the scene goes on as it was.
+        if (other->m_spinningSet)
+        {
+            other->m_renderer->SetSpinning(other->m_spinning);
+        }
+        else
+        {
+            other->m_spinning = other->m_renderer->IsSpinning();
+        }
+
+        other->m_renderer->SetVariant(static_cast<int>(other->m_palette));
+        other->m_renderer->SetSpinSpeed(static_cast<float>(other->m_spinSpeed));
+        other->UpdateSize();
+
+        if (other->IsConnected())
+        {
+            other->UpdateRunning();
+        }
+        else
+        {
+            // Not through UpdateRunning, which would release it as a panel that has gone. Stopped
+            // rather than left running into a panel nobody can see, and its OnLoaded starts it -
+            // Start restarts the clock, so the wait is not counted as time on screen.
+            other->m_renderer->Stop();
+        }
+
+        // Anything the renderer reported while the notification still went here was dropped by
+        // OnRendererNotified, which finds no renderer to act on.
+        if (other->m_renderer != nullptr && (other->m_renderer->HasFailed() || other->m_renderer->WasReplaced()))
+        {
+            other->OnRendererNotified();
+        }
+
+        return true;
+    }
+
     void Scene3DPanel::OnLoaded()
     {
         if (!m_viewportToken)
@@ -181,6 +267,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
 
         // Nothing has measured the next placement yet, so the next show starts out drawing.
         m_visible = true;
+        m_given = false;
 
         UpdateRunning();
     }
@@ -240,7 +327,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
 
         if (m_renderer == nullptr)
         {
-            if (m_failed)
+            if (m_failed || m_given)
             {
                 return;
             }
@@ -278,6 +365,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
             {
                 m_renderer->SetVariant(static_cast<int>(m_palette));
             }
+
+            m_renderer->SetSpinSpeed(static_cast<float>(m_spinSpeed));
         }
 
         m_renderer->Start();

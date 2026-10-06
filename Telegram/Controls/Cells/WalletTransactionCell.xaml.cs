@@ -11,9 +11,12 @@ using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Wallet;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
@@ -120,6 +123,56 @@ namespace Telegram.Controls.Cells
                     Photo.Source = ProfilePictureSourceText.GetGlyph(nftTransfer.IsOutgoing ? Icons.ArrowCircleUpFilled : Icons.ArrowCircleDownFilled, nftTransfer.IsOutgoing ? 5 : 3);
                 }
             }
+        }
+
+        // Where the send screen's stone lands. GlyphBounds only means something once a layout pass
+        // has finished after the row was bound.
+        internal FrameworkElement Anchor => Amount;
+
+        internal TextBlock AmountText => Amount;
+
+        internal ProfilePicture PhotoElement => Photo;
+
+        // How the row looks while its transfer is under way. Made the first time it shows one.
+        internal WalletPendingRow PendingRow { get; set; }
+
+        // The glyph's own brush while the send screen's stone covers it. A Run has no opacity, so
+        // hiding it means swapping its brush, and the markup's is put back rather than cleared -
+        // clearing would leave it inheriting the amount's.
+        private Brush _glyphForeground;
+        private Brush _glyphHidden;
+
+        internal void HideGlyph(bool hidden)
+        {
+            if (hidden && _glyphForeground == null)
+            {
+                _glyphForeground = AmountGlyph.Foreground;
+                AmountGlyph.Foreground = _glyphHidden ??= new SolidColorBrush(Windows.UI.Colors.Transparent);
+            }
+            else if (!hidden && _glyphForeground != null)
+            {
+                AmountGlyph.Foreground = _glyphForeground;
+                _glyphForeground = null;
+            }
+        }
+
+        /// <summary>
+        /// The TON glyph beside the amount, in window coordinates and as it is drawn - a raised
+        /// row draws its amount larger than layout puts it.
+        /// </summary>
+        internal Rect GlyphBounds(out double fontSize)
+        {
+            var start = AmountGlyph.ContentStart.GetCharacterRect(LogicalDirection.Forward);
+            var end = AmountGlyph.ContentEnd.GetCharacterRect(LogicalDirection.Backward);
+
+            // Through the transform rather than offset from the origin: a raised row's scales are
+            // RenderTransforms, and they apply to the glyph's own position as much as to the
+            // amount's.
+            var local = new Rect(start.X, start.Y, Math.Max(0, end.X - start.X), start.Height);
+            var bounds = Amount.TransformToVisual(null).TransformBounds(local);
+            fontSize = Amount.FontSize;
+
+            return PendingRow?.Project(bounds, ref fontSize) ?? bounds;
         }
 
         private void UpdateAmount(long value)
