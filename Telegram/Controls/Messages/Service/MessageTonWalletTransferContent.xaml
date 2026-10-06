@@ -145,7 +145,17 @@
             <controls:Ribbon x:Name="Ribbon"
                              HorizontalAlignment="Right"
                              VerticalAlignment="Top"
-                             Margin="0,6,2,0" />
+                             Margin="0,6,2,0">
+                <controls:Ribbon.Background>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="1,1">
+                        <GradientStop x:Name="RibbonTop"
+                                      Offset="0" />
+                        <GradientStop x:Name="RibbonBottom"
+                                      Offset="1" />
+                    </LinearGradientBrush>
+                </controls:Ribbon.Background>
+            </controls:Ribbon>
         </Grid>
     </StackPanel>
 </messages:MessageService>

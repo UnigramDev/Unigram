@@ -38,6 +38,15 @@ namespace Telegram.Controls.Messages.Service
                 target: AddressShadow, color: Colors.White, offset: new Vector3(1, 0, 0));
         }
 
+        private readonly Color _ribbonFailedTop = Color.FromArgb(0xFF, 0xFF, 0x5B, 0x54);
+        private readonly Color _ribbonFailedBottom = Color.FromArgb(0xFF, 0xED, 0x1D, 0x27);
+
+        private readonly Color _ribbonSentTop = Color.FromArgb(0xFF, 0x0A, 0xCC, 0x0A);
+        private readonly Color _ribbonSentBottom = Color.FromArgb(0xFF, 0x00, 0xBF, 0x00);
+
+        private readonly Color _ribbonReceivedTop = Color.FromArgb(0xFF, 0x49, 0xBC, 0xFF);
+        private readonly Color _ribbonReceivedBottom = Color.FromArgb(0xFF, 0x32, 0xAD, 0xFF);
+
         protected override void UpdateContent(MessageViewModel message)
         {
             if (message.Content is not MessageTonWalletTransfer transfer)
@@ -74,11 +83,22 @@ namespace Telegram.Controls.Messages.Service
             Address.Text = builder.ToString();
             Domain.Text = user.FullName().ToUpper();
 
-            Ribbon.Text = message.SendingState is not null
-                ? "sending"
-                : sent
-                ? "sent"
-                : "received";
+            Ribbon.Text = message.SendingState switch
+            {
+                MessageSendingStatePending => Strings.WalletTransferStatusSending,
+                MessageSendingStateFailed => Strings.WalletTransferStatusFailed,
+                _ => message.IsOutgoing
+                    ? Strings.WalletTransferStatusSent
+                    : Strings.WalletTransferStatusReceived
+            };
+
+            (RibbonTop.Color, RibbonBottom.Color) = message.SendingState switch
+            {
+                MessageSendingStateFailed => (_ribbonFailedTop, _ribbonFailedBottom),
+                _ => message.IsOutgoing
+                    ? (_ribbonSentTop, _ribbonSentBottom)
+                    : (_ribbonReceivedTop, _ribbonReceivedBottom)
+            };
 
             if (transfer == null || (transfer.Comment.Length == 0 && !transfer.IsCommentEncrypted))
             {

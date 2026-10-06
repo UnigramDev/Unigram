@@ -14101,6 +14101,11 @@
     <string name="WalletNewSecretPhrase">New Secret Phrase</string>
     <string name="WalletNewSecretPhraseInfo">A new recovery phrase for your wallet has been generated. Write it down and keep it secret.</string>
 
+    <string name="WalletTransferStatusFailed">failed</string>
+    <string name="WalletTransferStatusReceived">received</string>
+    <string name="WalletTransferStatusSending">sending</string>
+    <string name="WalletTransferStatusSent">sent</string>
+
     <string name="Grams_few">{0} Grams</string>
     <string name="Grams_many">{0} Grams</string>
     <string name="Grams_one">{0} Gram</string>
