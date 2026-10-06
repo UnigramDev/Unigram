@@ -34,8 +34,9 @@ namespace Telegram.Views.Wallet.Popups
     /// Sends grams to one recipient.
     /// </summary>
     /// <remarks>
-    /// The recipient is settled before this opens - a Telegram user, an address, or both - so
-    /// everything here is about how much, and about the comment that travels with it.
+    /// The recipient is chosen before this opens - a Telegram user, an address, or both - and
+    /// looked up as it opens, so everything else here is about how much, and about the comment
+    /// that travels with it.
     /// </remarks>
     public sealed partial class WalletSendPopup : WalletPopup
     {
@@ -49,9 +50,13 @@ namespace Telegram.Views.Wallet.Popups
         private readonly long _userId;
         private readonly string _domain;
 
-        // Where the grams are going. Known from the start when the caller had it, and otherwise
-        // settled at the moment of sending - see ResolveRecipientAsync for why not before.
+        // Where the grams are going. Known from the start when the caller had it, otherwise read
+        // by the lookup, and for a user with no wallet yet settled at the moment of sending - see
+        // ResolveRecipientAsync for why not before.
         private string _address;
+
+        // The lookup started on open, kept so that sending waits for it instead of asking again.
+        private Task<Object> _lookup;
 
         private TonWalletGaslessTransfersInfo _gasless;
 
@@ -84,10 +89,10 @@ namespace Telegram.Views.Wallet.Popups
         private bool _sending;
 
         /// <summary>
-        /// Sends to a Telegram user, whose address is looked up when the transfer is confirmed.
+        /// Sends to a Telegram user, whose address is looked up when the popup opens.
         /// </summary>
         public WalletSendPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long userId)
-            : this(clientService, wallet, navigationService, userId, Address(clientService, userId))
+            : this(clientService, wallet, navigationService, userId, null)
         {
         }
 
@@ -95,7 +100,7 @@ namespace Telegram.Views.Wallet.Popups
         /// From a transfer link, which may have settled the amount as well as the recipient.
         /// </summary>
         public WalletSendPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long userId, long nanograms)
-            : this(clientService, wallet, navigationService, userId, Address(clientService, userId))
+            : this(clientService, wallet, navigationService, userId, null)
         {
             Prefill(nanograms);
         }
@@ -131,20 +136,6 @@ namespace Telegram.Views.Wallet.Popups
             UpdateAmount();
         }
 
-        /// <summary>
-        /// The address the account already knows for a user, if it happens to have it.
-        /// </summary>
-        /// <remarks>
-        /// Full info is a cache, so this is free when it is there and nothing when it is not:
-        /// asking for it would be a request, and there is a better request to make later.
-        /// </remarks>
-        private static string Address(IClientService clientService, long userId)
-        {
-            return clientService.TryGetUserFull(userId, out UserFullInfo full)
-                ? full.WalletAddress
-                : null;
-        }
-
         public WalletSendPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long userId, string address, string domain = null)
             : base(wallet, navigationService)
         {
@@ -165,7 +156,7 @@ namespace Telegram.Views.Wallet.Popups
             }
             else
             {
-                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.Gram);
+                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.Ton);
                 NameText.Text = Strings.WalletGramWalletAddress;
             }
 
@@ -203,63 +194,91 @@ namespace Telegram.Views.Wallet.Popups
             // content that focused itself only holds if this succeeded first.
             Amount.Focus(FocusState.Programmatic);
 
-            UpdateCommentPrivacyAsync();
+            // OnLoaded can run more than once, and the answer does not change while this is up.
+            _lookup ??= LookupRecipientAsync();
         }
 
         /// <summary>
-        /// Finds out whether a private comment is possible for this recipient, and settles the
-        /// option if it is not.
+        /// Reads the recipient's wallet: its address when the caller only had a user, and whether
+        /// a private comment is possible for it.
         /// </summary>
         /// <remarks>
         /// A private comment is encrypted to the recipient's public key, and the account only has
         /// that key once their wallet is deployed - a wallet that has never sent anything has no
-        /// `get_public_key` to read, so there is nothing to encrypt to. That is why this turns on
-        /// for some recipients and not others, and it is settled here rather than at the moment of
-        /// sending so the option is never offered and then refused.
+        /// `get_public_key` to read, so there is nothing to encrypt to. That is why the option
+        /// turns on for some recipients and not others, and it is settled here rather than at the
+        /// moment of sending so it is never offered and then refused.
         ///
         /// Both calls are reads. Creating a wallet for a user who has none is a side effect and
-        /// stays where it was, in ResolveRecipientAsync, at the moment of sending - a recipient
-        /// with no wallet yet gets a fresh undeployed one, which has no key either, so forcing the
-        /// comment public is the right answer for them too.
+        /// stays in ResolveRecipientAsync, at the moment of sending - a recipient with no wallet
+        /// yet gets a fresh undeployed one, which has no key either, so forcing the comment public
+        /// is the right answer for them too.
         /// </remarks>
-        private async void UpdateCommentPrivacyAsync()
+        private async Task<Object> LookupRecipientAsync()
         {
-            // OnLoaded can run more than once, and the answer does not change while this is up.
-            if (_canEncryptComment != null)
+            Object response;
+
+            UpdateRecipientPending(true);
+
+            if (!string.IsNullOrEmpty(_address))
             {
-                return;
+                response = await _clientService.SendAsync(new GetAddressTonWallet(_address));
+            }
+            else if (_userId != 0)
+            {
+                response = await _clientService.SendAsync(new GetUserTonWalletAddresses(new[] { _userId }));
+            }
+            else
+            {
+                response = null;
             }
 
-            var response = string.IsNullOrEmpty(_address)
-                ? await _clientService.SendAsync(new GetUserTonWalletAddresses(new[] { _userId }))
-                : await _clientService.SendAsync(new GetAddressTonWallet(_address));
-
-            var key = response switch
+            var wallet = response switch
             {
-                UserTonWalletAddress single => single.PublicKey,
-                UserTonWalletAddresses many => Key(many, _userId),
+                UserTonWalletAddress single => single,
+                UserTonWalletAddresses many => First(many),
                 _ => null
             };
 
-            _canEncryptComment = HasPublicKey(key);
+            if (wallet != null && string.IsNullOrEmpty(_address))
+            {
+                _address = wallet.WalletAddress;
+
+                UpdateAddress(_address);
+                UpdateFeeAsync();
+            }
+
+            _canEncryptComment = HasPublicKey(wallet?.PublicKey);
 
             if (_canEncryptComment == false)
             {
                 _isCommentPublic = true;
             }
+
+            UpdateRecipientPending(false);
+            return response;
         }
 
-        private static byte[] Key(UserTonWalletAddresses addresses, long userId)
+        /// <remarks>
+        /// Not matched against the user id: the request names one user, and the account may answer
+        /// with user_id 0, which means unknown rather than somebody else.
+        /// </remarks>
+        private static UserTonWalletAddress First(UserTonWalletAddresses addresses)
         {
             foreach (var address in addresses.Addresses)
             {
-                if (address.UserId == userId)
+                if (address.WalletAddress.Length > 0)
                 {
-                    return address.PublicKey;
+                    return address;
                 }
             }
 
             return null;
+        }
+
+        private void UpdateRecipientPending(bool pending)
+        {
+            // TODO: play the lookup animation in RecipientRoot.
         }
 
         /// <summary>
@@ -312,8 +331,8 @@ namespace Telegram.Views.Wallet.Popups
         /// </summary>
         /// <remarks>
         /// Empty when there is none. Opened from a chat the popup holds a user id, and the address
-        /// behind it is only read when the transfer commits - so the card shows who it is going to
-        /// and says nothing it does not know yet.
+        /// behind it arrives with the lookup, or for a user with no wallet only when the transfer
+        /// commits - so the card shows who it is going to and says nothing it does not know yet.
         /// </remarks>
         private void UpdateAddress(string address)
         {
@@ -386,7 +405,7 @@ namespace Telegram.Views.Wallet.Popups
                     var formatter = Locale.GetCurrencyFormatter(Currency);
                     if (formatter.Symbol != Currency)
                     {
-                        return formatter.Symbol;
+                        return formatter.Symbol ?? string.Empty;
                     }
 
                     return string.Empty;
@@ -489,7 +508,10 @@ namespace Telegram.Views.Wallet.Popups
 
         private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            args.Handled = Amount.TryAppend(args.Character);
+            if (args.Handled = Amount.TryAppend(args.Character))
+            {
+                Diamond.Kick(args.Character == '\b' ? -360 : 250);
+            }
         }
 
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
@@ -506,7 +528,10 @@ namespace Telegram.Views.Wallet.Popups
             }
             else if (e.Key == VirtualKey.Z)
             {
-                e.Handled = Amount.TryUndo();
+                if (e.Handled = Amount.TryUndo())
+                {
+                    Diamond.Kick(-360);
+                }
             }
         }
 
@@ -697,6 +722,7 @@ namespace Telegram.Views.Wallet.Popups
 
         private bool _currencyCollapsed = true;
         private bool _currencySwapped;
+        private int _currencyGeneration;
 
         private async void ShowHideCurrency(bool show)
         {
@@ -704,6 +730,8 @@ namespace Telegram.Views.Wallet.Popups
             {
                 return;
             }
+
+            var generation = ++_currencyGeneration;
 
             _currencyCollapsed = !show;
             PrefixGram.Visibility = Visibility.Visible;
@@ -721,6 +749,11 @@ namespace Telegram.Views.Wallet.Popups
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
+                if (generation != _currencyGeneration)
+                {
+                    return;
+                }
+
                 PrefixCurrency.Margin = new Thickness(0);
                 SuffixCurrency.Margin = new Thickness(0);
 
@@ -794,6 +827,12 @@ namespace Telegram.Views.Wallet.Popups
             {
                 prev.Margin = new Thickness(next.ActualSize.X - prev.ActualSize.X, 0, 0, 0);
             }
+            else
+            {
+                prev.Margin = new Thickness();
+            }
+
+            next.Margin = new Thickness();
         }
 
         private void ShowHideCurrencySuffix(bool show)
@@ -838,6 +877,12 @@ namespace Telegram.Views.Wallet.Popups
             {
                 prev.Margin = new Thickness(0, 0, next.ActualSize.X - prev.ActualSize.X, 0);
             }
+            else
+            {
+                prev.Margin = new Thickness();
+            }
+
+            next.Margin = new Thickness();
         }
 
         #endregion
@@ -1076,8 +1121,6 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            Error error;
-
             try
             {
                 var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, lease);
@@ -1097,24 +1140,30 @@ namespace Telegram.Views.Wallet.Popups
                     return;
                 }
 
-                if (result.Error == null)
-                {
-                    Result = result;
+                Result = result;
 
-                    // Completing the deferral is what closes the popup: the button click it belongs
-                    // to has been waiting for this.
-                    deferral.Complete();
-                    return;
-                }
+                // Completing the deferral is what closes the popup: the button click it belongs to
+                // has been waiting for this. What becomes of the transfer is the history's to show.
+                deferral.Complete();
+                return;
+            }
+            catch (WalletAccessDeniedException)
+            {
+                // Asked to authorize the spend and declined, before anything was signed. That is an
+                // answer, so it gets no message, and the popup stays armed like the refusal above.
+                _sending = false;
 
-                error = result.Error;
+                IsPrimaryButtonPending = false;
+                args.Cancel = true;
+
+                deferral.Complete();
+                return;
             }
             catch (Exception ex)
             {
                 // The engine's own failures still arrive this way: nothing was signed, so nothing
                 // was sent, and there is no message from the server to show.
                 Logger.Error("wallet transfer failed: " + ex.Message);
-                error = null;
             }
 
             // Still closed, and still only sendable once: retrying means opening the popup again,
@@ -1123,9 +1172,7 @@ namespace Telegram.Views.Wallet.Popups
             IsPrimaryButtonPending = false;
             deferral.Complete();
 
-            _ = MessagePopup.ShowNestedAsync(XamlRoot, error != null
-                ? "[The transfer could not be sent.]" + Environment.NewLine + Environment.NewLine + error.Message
-                : "[The transfer could not be sent.]", "[Send Grams]", Strings.OK);
+            _ = MessagePopup.ShowNestedAsync(XamlRoot, "[The transfer could not be sent.]", "[Send Grams]", Strings.OK);
         }
 
         /// <summary>
@@ -1145,24 +1192,19 @@ namespace Telegram.Views.Wallet.Popups
                 return null;
             }
 
-            var addresses = await _clientService.SendAsync(new GetUserTonWalletAddresses(new[] { _userId }));
+            var addresses = await (_lookup ??= LookupRecipientAsync());
             if (addresses is Error error)
             {
+                // Dropped so that the next press asks again rather than failing on the same answer.
+                _lookup = null;
                 return error;
             }
 
             // A user with no wallet is left out of the answer rather than reported, so an empty
             // list is the question being answered, not a failure.
-            if (addresses is UserTonWalletAddresses known)
+            if (!string.IsNullOrEmpty(_address) || _userId == 0)
             {
-                foreach (var address in known.Addresses)
-                {
-                    if (address.UserId == _userId && address.WalletAddress.Length > 0)
-                    {
-                        _address = address.WalletAddress;
-                        return null;
-                    }
-                }
+                return null;
             }
 
             var created = await _clientService.SendAsync(new CreateUserTonWallet(_userId));
