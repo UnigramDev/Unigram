@@ -270,7 +270,7 @@
 
                     <controls:SettingsButton Click="Grams_Click"
                                              Badge="{x:Bind ViewModel.OwnedGramCount, Mode=OneWay}"
-                                             Content="{CustomResource MyTON}"
+                                             Content="{CustomResource GramEarnings}"
                                              Style="{StaticResource IconBadgeButtonStyle}"
                                              Visibility="{x:Bind ViewModel.IsGramsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <controls:SettingsButton.IconSource>

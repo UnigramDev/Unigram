@@ -14105,4 +14105,9 @@
     <string name="GramCapital_two">{0} GRAM</string>
     <string name="GramCapital_zero">{0} GRAM</string>
 
+    <string name="GramEarnings">Gram Earnings</string>
+    <string name="GramEarningsHint">You can withdraw your Grams using Fragment.</string>
+    <string name="GramEarningsText">Your Gram from gifts,\nads and Fragment</string>
+    <string name="GramEarningsTitle">Gram Earnings</string>
+
 </resources>

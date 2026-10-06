@@ -26,7 +26,7 @@ namespace Telegram.Views.Grams
         public GramsPage()
         {
             InitializeComponent();
-            Title = Strings.TONBalanceTitle;
+            Title = Strings.GramEarningsTitle;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

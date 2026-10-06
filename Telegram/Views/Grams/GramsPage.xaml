@@ -36,10 +36,10 @@
                                                Width="156"
                                                Height="156" />
                         <controls:StickyHeader x:Name="Header"
-                                               Text="{CustomResource TONBalanceTitle}"
+                                               Text="{CustomResource GramEarningsTitle}"
                                                HorizontalContentAlignment="Center"
                                                Margin="0,-36,0,0" />
-                        <TextBlock common:TextBlockHelper.Markdown="{CustomResource TONBalanceText}"
+                        <TextBlock common:TextBlockHelper.Markdown="{CustomResource GramEarningsText}"
                                    Style="{StaticResource InfoBodyTextBlockStyle}"
                                    TextAlignment="Center"
                                    Margin="12,-16,12,0"
@@ -75,7 +75,7 @@
                             </StackPanel>
                         </controls:HeaderedControl>
 
-                        <controls:SettingsFooter Text="{CustomResource TopUpViaFragmentInfo}" />
+                        <controls:SettingsFooter Text="{CustomResource GramEarningsHint}" />
                     </controls:SettingsPanel>
 
                     <controls:StickyHeaderTabs x:Name="HeaderTabs"
