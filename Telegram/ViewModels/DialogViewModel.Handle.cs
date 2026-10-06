@@ -1293,6 +1293,11 @@ namespace Telegram.ViewModels
                 {
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages();
+                },
+                (service, message) =>
+                {
+                    // Service messages can be sent too - a wallet transfer is one - and show it.
+                    service.UpdateMessage(message);
                 }, newMessageId: update.Message.Id);
             }
         }
@@ -1334,6 +1339,10 @@ namespace Telegram.ViewModels
 
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages();
+                },
+                (service, message) =>
+                {
+                    service.UpdateMessage(message);
                 }, newMessageId: update.Message.Id);
             }
         }
