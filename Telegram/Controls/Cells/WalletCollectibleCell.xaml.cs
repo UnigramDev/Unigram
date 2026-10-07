@@ -6,21 +6,14 @@
 //
 
 using System;
-using Telegram.Controls.Media;
-using Telegram.Converters;
+using System.Linq;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    /// <summary>
-    /// One row of wallet history: who, what, when, and how much. Filled from
-    /// <c>ContainerContentChanging</c> like the other cells, so a recycled row costs a few property
-    /// writes and no bindings.
-    /// </summary>
     public sealed partial class WalletCollectibleCell : Grid
     {
         public WalletCollectibleCell()
@@ -30,6 +23,37 @@ namespace Telegram.Controls.Cells
 
         public void UpdateInfo(IClientService clientService, TonNft collectible)
         {
+            if (collectible.Image != null)
+            {
+                Photo.Source = new ProfilePictureSourcePhoto(clientService, collectible.Image.Photo.Id, collectible.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
+                Photo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Photo.Source = null;
+                Photo.Visibility = Visibility.Collapsed;
+            }
+
+            if (string.IsNullOrEmpty(collectible.Name))
+            {
+                Title.Text = Strings.WalletCollectible;
+            }
+            else
+            {
+                Title.Text = collectible.Name;
+            }
+
+            var model = collectible.Attributes.FirstOrDefault(x => string.Equals(x.TraitType, "Model", StringComparison.OrdinalIgnoreCase));
+            var backdrop = collectible.Attributes.FirstOrDefault(x => string.Equals(x.TraitType, "Backdrop", StringComparison.OrdinalIgnoreCase));
+
+            if (string.IsNullOrEmpty(model?.Value) || string.IsNullOrEmpty(backdrop?.Value))
+            {
+                Subtitle.Text = collectible.Description;
+            }
+            else
+            {
+                Subtitle.Text = string.Format(Strings.WalletCollectibleModelBackdrop, model.Value, backdrop.Value);
+            }
         }
     }
 }

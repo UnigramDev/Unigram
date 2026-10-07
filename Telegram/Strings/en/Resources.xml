@@ -14100,6 +14100,8 @@
     <string name="WalletCancelDisabling">Cancel Disabling</string>
     <string name="WalletNewSecretPhrase">New Secret Phrase</string>
     <string name="WalletNewSecretPhraseInfo">A new recovery phrase for your wallet has been generated. Write it down and keep it secret.</string>
+    <string name="WalletCollectible">Collectible</string>
+    <string name="WalletCollectibleModelBackdrop">{0} on {1}</string>
 
     <string name="WalletTransferStatusFailed">failed</string>
     <string name="WalletTransferStatusReceived">received</string>
