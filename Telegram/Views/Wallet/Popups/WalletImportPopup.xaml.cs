@@ -33,30 +33,28 @@ namespace Telegram.Views.Wallet.Popups
 
         // What the words are for. Binding adopts the account's own wallet onto this device and
         // refuses a phrase that derives anywhere else; replacing is the opposite - a different
-        // wallet is the whole point - and it needs the account password the replacement is
-        // authorised with.
-        private readonly string _replacementPassword;
+        // wallet is the whole point - and it may need the account password, asked once the words
+        // are in.
         private readonly bool _isReplacing;
 
         public WalletImportPopup(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease)
-            : this(wallet, navigationService, lease, null, false)
+            : this(wallet, navigationService, lease, false)
         {
         }
 
         /// <summary>
         /// The same screen, used to swap the account's wallet for another one the user already has.
         /// </summary>
-        public static WalletImportPopup ForReplacement(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease, string password)
+        public static WalletImportPopup ForReplacement(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease)
         {
-            return new WalletImportPopup(wallet, navigationService, lease, password, true);
+            return new WalletImportPopup(wallet, navigationService, lease, true);
         }
 
-        private WalletImportPopup(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease, string password, bool isReplacing)
+        private WalletImportPopup(IWalletService wallet, INavigationService navigationService, WalletVault.WalletVaultLease lease, bool isReplacing)
         {
             _wallet = wallet;
             _navigationService = navigationService;
             _lease = lease;
-            _replacementPassword = password;
             _isReplacing = isReplacing;
 
             InitializeComponent();
@@ -298,7 +296,15 @@ namespace Telegram.Views.Wallet.Popups
         {
             try
             {
-                await _wallet.ReplaceWalletAsync(_replacementPassword, _words, _lease);
+                if (!await WalletHelper.RunWithPasswordAsync(XamlRoot, ReplaceWithPasswordAsync))
+                {
+                    _submitted = false;
+                    IsPrimaryButtonPending = false;
+
+                    args.Cancel = true;
+                    deferral.Complete();
+                    return;
+                }
             }
             catch (WalletAccessDeniedException)
             {
@@ -332,6 +338,11 @@ namespace Telegram.Views.Wallet.Popups
 
             _navigationService.NavigateToWallet();
             _navigationService.ShowToast("[**Wallet Replaced**\nYour account now uses the wallet you imported.]", ToastPopupIcon.Success);
+        }
+
+        private Task ReplaceWithPasswordAsync(string password)
+        {
+            return _wallet.ReplaceWalletAsync(password, _words, _lease);
         }
 
         /// <summary>

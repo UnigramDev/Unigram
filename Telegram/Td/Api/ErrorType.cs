@@ -56,6 +56,7 @@ namespace Telegram.Td.Api
         SCHEDULE_TOO_MUCH,
 
         PASSWORD_HASH_INVALID,  // 400
+        PASSWORD_MISSING,       // 400
         NEW_PASSWORD_BAD,       // 400
         NEW_SALT_INVALID,       // 400
         EMAIL_INVALID,          // 400

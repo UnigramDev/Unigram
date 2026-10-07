@@ -645,8 +645,8 @@ namespace Telegram.Services.Wallet
 
         public async Task<IReadOnlyList<string>> ExportRecoveryPhraseAsync(string password)
         {
-            // An empty password is what TDLib asks for when the account has none, so it is passed
-            // through rather than refused here.
+            // An empty password is TDLib's first attempt, answered with PASSWORD_MISSING when one
+            // is needed, so it is passed through rather than refused here.
             var response = await _clientService.SendAsync(new GetTonWalletSecretPhrase(password ?? string.Empty));
             if (response is Text phrase)
             {
@@ -3946,6 +3946,8 @@ namespace Telegram.Services.Wallet
         public Error Error { get; }
 
         public bool IsInvalidPassword => Error != null && Error.MessageEquals(ErrorType.PASSWORD_HASH_INVALID);
+
+        public bool IsPasswordMissing => Error != null && Error.MessageEquals(ErrorType.PASSWORD_MISSING);
     }
 
     /// <summary>

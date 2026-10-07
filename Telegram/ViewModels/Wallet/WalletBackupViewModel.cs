@@ -326,26 +326,6 @@ namespace Telegram.ViewModels.Wallet
         }
 
         /// <summary>
-        /// The account password, or an empty string where the account has none.
-        /// </summary>
-        /// <remarks>
-        /// Asked of TDLib rather than assumed: 2-step verification can be turned on and off at any
-        /// time, and asking an account that has none for a password is a demand it cannot satisfy.
-        /// Null when the user dismissed the prompt.
-        /// </remarks>
-        private async Task<string> RequestPasswordAsync()
-        {
-            var state = await ClientService.SendAsync(new GetPasswordState());
-            if (state is PasswordState { HasPassword: false })
-            {
-                return string.Empty;
-            }
-
-            var result = await ShowInputAsync(InputPopupType.Password, Strings.PleaseEnterCurrentPasswordWithdraw, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel);
-            return result.Result == ContentDialogResult.Primary ? result.Text : null;
-        }
-
-        /// <summary>
         /// Forgets the key on this device, so the binding half of the flow can be walked again.
         /// </summary>
         /// <remarks>
@@ -383,12 +363,6 @@ namespace Telegram.ViewModels.Wallet
                 return;
             }
 
-            var password = await RequestPasswordAsync();
-            if (password == null)
-            {
-                return;
-            }
-
             if (action == ContentDialogResult.Secondary)
             {
                 // Replacing rather than deleting: the account keeps a wallet throughout, and which
@@ -398,14 +372,16 @@ namespace Telegram.ViewModels.Wallet
 
                 using var lease = _wallet.CreateLease(NavigationService);
 
-                await ShowPopupAsync(WalletImportPopup.ForReplacement(_wallet, NavigationService, lease, password));
+                await ShowPopupAsync(WalletImportPopup.ForReplacement(_wallet, NavigationService, lease));
                 return;
             }
 
             try
             {
-                await _wallet.DeleteWalletAsync(password);
-                HidePopup(typeof(WalletBackupPopup));
+                if (await WalletHelper.RunWithPasswordAsync(NavigationService.XamlRoot, _wallet.DeleteWalletAsync))
+                {
+                    HidePopup(typeof(WalletBackupPopup));
+                }
             }
             catch (Exception ex)
             {

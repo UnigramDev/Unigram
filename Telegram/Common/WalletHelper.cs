@@ -211,7 +211,7 @@ namespace Telegram.Common
 
             if (state.CanExportPhrase)
             {
-                return await BindFromCloudAsync(clientService, wallet, navigation, lease);
+                return await BindFromCloudAsync(wallet, navigation, lease);
             }
 
             // No cloud copy to read, so the phrase has to come from the user. The import popup
@@ -220,50 +220,84 @@ namespace Telegram.Common
             return new WalletBindOutcome(wallet.State.CanSign, null);
         }
 
-        private static async Task<WalletBindOutcome> BindFromCloudAsync(IClientService clientService, IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
+        private static async Task<WalletBindOutcome> BindFromCloudAsync(IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
         {
             var xamlRoot = navigation.XamlRoot;
-
-            // An account with no 2-step verification has nothing to ask for, and asking would be
-            // a demand the user cannot satisfy: TDLib takes an empty string for the password in
-            // that case, and the cloud phrase comes back all the same. Asked rather than assumed,
-            // because it can be turned on and off at any time.
-            var password = await clientService.SendAsync(new GetPasswordState());
-            if (password is PasswordState { HasPassword: false })
-            {
-                // Nothing was asked for, so there is nothing to hand back: an account with no
-                // password takes an empty string everywhere it would be wanted.
-                var none = await BindWithPasswordAsync(wallet, navigation, string.Empty, lease);
-                return new WalletBindOutcome(none == BindOutcome.Bound, string.Empty);
-            }
+            var password = string.Empty;
 
             while (true)
             {
-                // Nested where something modal is already up - the wallet's own screens are
-                // popups - which is the test ViewModelBase makes for the same reason.
-                var nested = ContentPopup.IsAnyPopupOpen(xamlRoot);
-                var result = nested
-                    ? await InputPopup.ShowNestedAsync(xamlRoot, InputPopupType.Password, Strings.PleaseEnterCurrentPasswordWithdraw, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel)
-                    : await InputPopup.ShowAsync(xamlRoot, InputPopupType.Password, Strings.PleaseEnterCurrentPasswordWithdraw, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel);
-
-                if (result.Result != ContentDialogResult.Primary)
+                var outcome = await BindWithPasswordAsync(wallet, navigation, password, lease);
+                if (outcome == BindOutcome.Bound)
+                {
+                    return new WalletBindOutcome(true, password);
+                }
+                else if (outcome == BindOutcome.Failed)
                 {
                     return new WalletBindOutcome(false, null);
                 }
 
-                var outcome = await BindWithPasswordAsync(wallet, navigation, result.Text, lease);
-                if (outcome != BindOutcome.WrongPassword)
+                password = await RequestPasswordAsync(xamlRoot, outcome == BindOutcome.WrongPassword && password.Length > 0);
+                if (password == null)
                 {
-                    // Carried back on success only. A password that did not work is not one the
-                    // caller should go on to use for anything else.
-                    return new WalletBindOutcome(outcome == BindOutcome.Bound,
-                        outcome == BindOutcome.Bound ? result.Text : null);
+                    return new WalletBindOutcome(false, null);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs a wallet request that takes the account password, returning false when the user
+        /// dismissed the prompt. Every other failure is thrown.
+        /// </summary>
+        /// <remarks>
+        /// TDLib's contract, documented on <c>getTonWalletSecretPhrase</c>: an empty password
+        /// first, and the user's only once the server answers <c>PASSWORD_MISSING</c>. The server
+        /// decides whether a request needs one, so an account with 2-step verification can still
+        /// go through without being asked.
+        /// </remarks>
+        public static async Task<bool> RunWithPasswordAsync(XamlRoot xamlRoot, Func<string, Task> request)
+        {
+            var password = string.Empty;
+
+            while (true)
+            {
+                bool wrong;
+
+                try
+                {
+                    await request(password);
+                    return true;
+                }
+                catch (WalletRequestException ex) when (ex.IsPasswordMissing || ex.IsInvalidPassword)
+                {
+                    wrong = ex.IsInvalidPassword && password.Length > 0;
                 }
 
-                // The only failure worth asking about again: everything else is about the wallet
-                // rather than about what they typed.
+                password = await RequestPasswordAsync(xamlRoot, wrong);
+                if (password == null)
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// What the user typed, or null when they dismissed the prompt.
+        /// </summary>
+        private static async Task<string> RequestPasswordAsync(XamlRoot xamlRoot, bool wrong)
+        {
+            if (wrong)
+            {
                 await ShowMessageAsync(xamlRoot, "[Wrong password. Please try again.]", Strings.TwoStepVerification);
             }
+
+            // Nested where something modal is already up - the wallet's own screens are popups -
+            // which is the test ViewModelBase makes for the same reason.
+            var result = ContentPopup.IsAnyPopupOpen(xamlRoot)
+                ? await InputPopup.ShowNestedAsync(xamlRoot, InputPopupType.Password, Strings.PleaseEnterCurrentPasswordWithdraw, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel)
+                : await InputPopup.ShowAsync(xamlRoot, InputPopupType.Password, Strings.PleaseEnterCurrentPasswordWithdraw, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel);
+
+            return result.Result == ContentDialogResult.Primary ? result.Text : null;
         }
 
         /// <summary>
@@ -280,8 +314,8 @@ namespace Telegram.Common
             public bool IsBound { get; }
 
             /// <summary>
-            /// What the user typed, or an empty string where the account has no password. Null
-            /// when they were not asked - already bound, or never got that far.
+            /// What the user typed, or an empty string where the server did not ask for one. Null
+            /// when no password was used - already bound, or never got that far.
             /// </summary>
             public string Password { get; }
         }
@@ -289,13 +323,14 @@ namespace Telegram.Common
         private enum BindOutcome
         {
             Bound,
+            PasswordMissing,
             WrongPassword,
             Failed
         }
 
         /// <summary>
-        /// One attempt at the cloud phrase, with whatever password the account needs - which is
-        /// none at all when it has no 2-step verification.
+        /// One attempt at the cloud phrase, with the password typed so far - an empty one until
+        /// the server asks for it.
         /// </summary>
         private static async Task<BindOutcome> BindWithPasswordAsync(IWalletService wallet, INavigationService navigation, string password, WalletVault.WalletVaultLease lease)
         {
@@ -311,6 +346,10 @@ namespace Telegram.Common
                 // the server and the engine disagreeing, which is nothing the user did and
                 // nothing they can fix by typing the password again.
                 Logger.Error("wallet binding refused: " + bound.Failure);
+            }
+            catch (WalletRequestException ex) when (ex.IsPasswordMissing)
+            {
+                return BindOutcome.PasswordMissing;
             }
             catch (WalletRequestException ex) when (ex.IsInvalidPassword)
             {
