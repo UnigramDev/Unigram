@@ -805,9 +805,11 @@ namespace Telegram.Services.Wallet
             var imported = await lifecycle.ImportWallet(
                 new ImportWalletRequest(NewRecordId(), DefaultNetwork, words.ToArray()));
 
+            TonWalletOwnershipProof proof;
+
             try
             {
-                var proof = await ProveOwnershipAsync(imported, lease);
+                proof = await ProveOwnershipAsync(imported, lease);
 
                 var response = await _clientService.SendAsync(
                     new ReplaceTonWallet(password ?? string.Empty, imported.PublicKey, proof));
@@ -833,8 +835,10 @@ namespace Telegram.Services.Wallet
             {
                 previous = _descriptor;
 
+                // The key the proof was signed with, not the descriptor's: for a phrase that has
+                // been rotated the descriptor carries the anchor, and the contract holds the other.
                 _descriptor = imported;
-                _boundKey = imported.PublicKey;
+                _boundKey = proof.PublicKey;
 
                 SaveDescriptor(_descriptor, _boundKey);
             }
@@ -1934,7 +1938,15 @@ namespace Telegram.Services.Wallet
                 return;
             }
 
-            if (_descriptor == null || wallet == null || wallet.Address.Length == 0 || _boundKey is not { Length: > 0 } bound)
+            var descriptor = _descriptor;
+            if (descriptor == null || wallet == null || wallet.Address.Length == 0 || _boundKey is not { Length: > 0 } bound)
+            {
+                return;
+            }
+
+            // ReplaceTonWallet answers before the update that moves the account to the new address,
+            // and until then the chain would be asked for the key of the wallet that was replaced.
+            if (!IsSameWallet(descriptor, wallet))
             {
                 return;
             }
@@ -1952,9 +1964,9 @@ namespace Telegram.Services.Wallet
             await _mutex.WaitAsync();
             try
             {
-                // The wallet may have been rebound, or forgotten, while the request was out. Only
-                // the key this answer is about is dropped.
-                if (_boundKey == null || !_boundKey.SequenceEqual(bound))
+                // The wallet may have been rebound, replaced, or forgotten while the request was
+                // out. Only the key this answer is about is dropped.
+                if (_descriptor != descriptor || _boundKey == null || !_boundKey.SequenceEqual(bound))
                 {
                     return;
                 }
