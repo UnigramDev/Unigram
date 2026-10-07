@@ -341,13 +341,6 @@ namespace Telegram.Services.Wallet
         string PredecessorOf(string transactionId);
 
         /// <summary>
-        /// Whether a pending row has just stopped being pending - landed or failed - under this id,
-        /// for a view to play that once. True only the first time it is asked, and only shortly
-        /// after: a row scrolled back to minutes later has nothing left to show.
-        /// </summary>
-        bool TryTakeSettled(string id);
-
-        /// <summary>
         /// Loads the next older page of history. A no-op while another page load is in flight, or
         /// when there is nothing older.
         /// </summary>

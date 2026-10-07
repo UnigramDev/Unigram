@@ -96,7 +96,7 @@ namespace Telegram.Views.Wallet
         /// <param name="key">The row's key in the list - the pending row's id, which the
         /// transaction that replaces it shares.</param>
         /// <param name="incoming">Whether the send screen's stone is on its way to this row.</param>
-        public static void Update(SelectorItem container, WalletTransactionCell cell, TonWalletTransaction transaction, string key, bool incoming, IWalletService wallet)
+        public static void Update(SelectorItem container, WalletTransactionCell cell, TonWalletTransaction transaction, string key, bool incoming)
         {
             var row = cell.PendingRow;
 
@@ -107,23 +107,16 @@ namespace Telegram.Views.Wallet
             }
 
             var final = transaction.State is not TonWalletTransactionStatePending;
+
+            // A row stays raised through its final state, which reaches the same cell as a new
+            // version of the row, and settles from there. One bound already final - scrolled back
+            // to - is an ordinary row.
             var raised = row?._props != null && row._key == key;
 
-            // Taken whenever it is there, so a row scrolled back to shortly after does not settle a
-            // second time once this one has finished.
-            var settled = final && wallet.TryTakeSettled(transaction.Id);
-
-            if (!final || incoming || raised || settled)
+            if (!final || incoming || raised)
             {
-                // From the raised pose whether or not this container was the one showing it: the
-                // list may have rebound the row to another, and the pose is the same everywhere.
                 row ??= cell.PendingRow = new WalletPendingRow(cell);
-
-                if (row.Lift(container, key) && final && !incoming)
-                {
-                    // Only now raised, for a transfer already over: nothing was watching it wait.
-                    row._raisedAt = DateTime.MinValue;
-                }
+                row.Lift(container, key);
 
                 if (incoming)
                 {
@@ -279,12 +272,11 @@ namespace Telegram.Views.Wallet
             return new Rect(glyph.X, glyph.Y + shift, glyph.Width, glyph.Height);
         }
 
-        // Whether this raised the row, rather than found it raised already.
-        private bool Lift(SelectorItem container, string key)
+        private void Lift(SelectorItem container, string key)
         {
             if (_key == key && _container == container)
             {
-                return false;
+                return;
             }
 
             Reset();
@@ -313,8 +305,6 @@ namespace Telegram.Views.Wallet
 
             _clock = CreateClock();
             ElementCompositionPreview.SetElementChildVisual(_cell, _clock);
-
-            return true;
         }
 
         private void LiftContainer(Visual visual)

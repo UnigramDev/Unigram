@@ -15,13 +15,16 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Wallet;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Wallet
 {
-    public class WalletViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
+    public class WalletViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle, IDelegable<IWalletDelegate>
     {
         private readonly IWalletService _wallet;
+
+        public IWalletDelegate Delegate { get; set; }
 
         private int _generation;
         private int _collectiblesGeneration;
@@ -155,7 +158,7 @@ namespace Telegram.ViewModels.Wallet
                 Transactions.Restart();
             }
 
-            Mirror(Transactions, state.Activity, _activityKey ??= ActivityKey);
+            Mirror(Transactions, state.Activity, _activityKey ??= ActivityKey, Update, _transactionUpdated ??= TransactionUpdated);
 
             if (_collectiblesGeneration != state.CollectiblesGeneration)
             {
@@ -163,12 +166,16 @@ namespace Telegram.ViewModels.Wallet
                 Collectibles.Restart();
             }
 
-            Mirror(Collectibles, state.Collectibles, static item => item.Address);
+            Mirror(Collectibles, state.Collectibles, static item => item.Address, Update, _collectibleUpdated ??= CollectibleUpdated);
         }
 
         // By key rather than by count: pending transfers are inserted at the top and later
         // replaced, and following by count would restart the list each time.
-        private static void Mirror<T>(IncrementalCollection<T> items, IReadOnlyList<T> source, Func<T, string> key)
+        //
+        // A new version of an item already shown is copied onto the one the list holds, rather than
+        // put in its place: a replaced item gets a new container, and a pending row is in the middle
+        // of its own animation when its transfer settles. The view updates the container it has.
+        private static void Mirror<T>(IncrementalCollection<T> items, IReadOnlyList<T> source, Func<T, string> key, Func<T, T, bool> update, Action<T> updated)
         {
             for (int i = 0; i < source.Count; i++)
             {
@@ -184,7 +191,10 @@ namespace Telegram.ViewModels.Wallet
                 {
                     if (!ReferenceEquals(items[i], item))
                     {
-                        items[i] = item;
+                        if (update(items[i], item))
+                        {
+                            updated(items[i]);
+                        }
                     }
 
                     continue;
@@ -204,7 +214,10 @@ namespace Telegram.ViewModels.Wallet
 
                 if (!ReferenceEquals(items[i], item))
                 {
-                    items[i] = item;
+                    if (update(items[i], item))
+                    {
+                        updated(items[i]);
+                    }
                 }
             }
 
@@ -214,14 +227,85 @@ namespace Telegram.ViewModels.Wallet
             }
         }
 
-        // A transaction that took a pending row's place is keyed as that row, so the list replaces
-        // the item in place - which is what lets the row settle - rather than removing one row and
-        // adding another. Cached: Mirror runs on every state change.
+        // A transaction that took a pending row's place is keyed as that row, so it reaches the view
+        // as a new version of the row - which is what lets the row settle where it is - rather than
+        // as one row removed and another added. Cached: Mirror runs on every state change.
         private Func<TonWalletTransaction, string> _activityKey;
 
         private string ActivityKey(TonWalletTransaction item)
         {
             return _wallet.PredecessorOf(item.Id) ?? item.Id;
+        }
+
+        private Action<TonWalletTransaction> _transactionUpdated;
+        private Action<TonNft> _collectibleUpdated;
+
+        private void TransactionUpdated(TonWalletTransaction transaction)
+        {
+            Delegate?.UpdateTransaction(transaction);
+        }
+
+        private void CollectibleUpdated(TonNft collectible)
+        {
+            Delegate?.UpdateCollectible(collectible);
+        }
+
+        // Copies a new version onto the one shown, and says whether anything changed. The nested
+        // objects by reference: the service hands over the same ones again until it has new ones.
+        private static bool Update(TonWalletTransaction shown, TonWalletTransaction item)
+        {
+            if (shown.Id == item.Id
+                && shown.PeerAddress == item.PeerAddress
+                && shown.PeerUserId == item.PeerUserId
+                && shown.PeerDomain == item.PeerDomain
+                && shown.Date == item.Date
+                && shown.FeeAmount == item.FeeAmount
+                && ReferenceEquals(shown.State, item.State)
+                && ReferenceEquals(shown.Type, item.Type))
+            {
+                return false;
+            }
+
+            shown.Id = item.Id;
+            shown.PeerAddress = item.PeerAddress;
+            shown.PeerUserId = item.PeerUserId;
+            shown.PeerDomain = item.PeerDomain;
+            shown.Date = item.Date;
+            shown.FeeAmount = item.FeeAmount;
+            shown.State = item.State;
+            shown.Type = item.Type;
+            return true;
+        }
+
+        private static bool Update(TonNft shown, TonNft item)
+        {
+            if (shown.CollectionAddress == item.CollectionAddress
+                && shown.OwnerAddress == item.OwnerAddress
+                && shown.Index == item.Index
+                && shown.Name == item.Name
+                && shown.Description == item.Description
+                && ReferenceEquals(shown.Image, item.Image)
+                && ReferenceEquals(shown.Thumbnail, item.Thumbnail)
+                && ReferenceEquals(shown.Content, item.Content)
+                && ReferenceEquals(shown.Sticker, item.Sticker)
+                && ReferenceEquals(shown.Attributes, item.Attributes)
+                && ReferenceEquals(shown.Extra, item.Extra))
+            {
+                return false;
+            }
+
+            shown.CollectionAddress = item.CollectionAddress;
+            shown.OwnerAddress = item.OwnerAddress;
+            shown.Index = item.Index;
+            shown.Name = item.Name;
+            shown.Description = item.Description;
+            shown.Image = item.Image;
+            shown.Thumbnail = item.Thumbnail;
+            shown.Content = item.Content;
+            shown.Sticker = item.Sticker;
+            shown.Attributes = item.Attributes;
+            shown.Extra = item.Extra;
+            return true;
         }
 
         private static int IndexOf<T>(IncrementalCollection<T> items, string id, Func<T, string> key, int start)

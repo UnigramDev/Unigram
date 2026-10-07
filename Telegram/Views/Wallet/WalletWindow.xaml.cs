@@ -19,6 +19,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Wallet;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Wallet;
 using Telegram.Views.Grams;
 using Telegram.Views.Host;
@@ -46,7 +47,7 @@ namespace Telegram.Views.Wallet
     /// a popup opens over the wallet and a page navigation lands in the main window, which is what
     /// the mini apps do.
     /// </remarks>
-    public sealed partial class WalletWindow : WindowContent
+    public sealed partial class WalletWindow : WindowContent, IWalletDelegate
     {
         private readonly IClientService _clientService;
         private readonly IWalletService _wallet;
@@ -75,6 +76,7 @@ namespace Telegram.Views.Wallet
             var viewModel = clientService.Session.Resolve<WalletViewModel>();
             viewModel.NavigationService = _navigationService;
             viewModel.Dispatcher = context.Dispatcher;
+            viewModel.Delegate = this;
 
             DataContext = viewModel;
 
@@ -122,6 +124,11 @@ namespace Telegram.Views.Wallet
             // window keeps this whole view alive, and this is the signal that the view is going:
             // the window is closed, which is what consolidation follows.
             ViewModel?.NavigatedFrom(null, false);
+
+            if (ViewModel != null)
+            {
+                ViewModel.Delegate = null;
+            }
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -189,28 +196,52 @@ namespace Telegram.Views.Wallet
                 if (args.ItemContainer.ContentTemplateRoot is WalletTransactionCell recycled)
                 {
                     WalletTransferFlight.Bind(recycled, null, null);
-                    WalletPendingRow.Update(args.ItemContainer, recycled, null, null, false, _wallet);
+                    WalletPendingRow.Update(args.ItemContainer, recycled, null, null, false);
                 }
 
                 return;
             }
             else if (args.ItemContainer.ContentTemplateRoot is WalletTransactionCell transactionCell && args.Item is TonWalletTransaction transaction)
             {
-                transactionCell.UpdateInfo(_clientService, transaction);
+                UpdateTransaction(args.ItemContainer, transactionCell, transaction);
                 args.Handled = true;
-
-                // The key the list holds the row under, which a transaction that replaced a pending
-                // row shares with it - so the stone and the raised pose follow the row across.
-                var key = _wallet.PredecessorOf(transaction.Id) ?? transaction.Id;
-
-                // The flight first: whether a stone is on its way decides whether the row may settle.
-                var incoming = WalletTransferFlight.Bind(transactionCell, transaction, key);
-                WalletPendingRow.Update(args.ItemContainer, transactionCell, transaction, key, incoming, _wallet);
             }
             else if (args.ItemContainer.ContentTemplateRoot is WalletCollectibleCell collectibleCell && args.Item is TonNft collectible)
             {
                 collectibleCell.UpdateInfo(_clientService, collectible);
                 args.Handled = true;
+            }
+        }
+
+        // A bind, and a new version of a row already shown, which the view model hands over rather
+        // than replacing in the list - a replaced item gets a new container, and a pending row is
+        // in the middle of its own animation when its transfer settles.
+        private void UpdateTransaction(SelectorItem container, WalletTransactionCell cell, TonWalletTransaction transaction)
+        {
+            cell.UpdateInfo(_clientService, transaction);
+
+            // The key the list holds the row under, which a transaction that replaced a pending
+            // row shares with it.
+            var key = _wallet.PredecessorOf(transaction.Id) ?? transaction.Id;
+
+            // The flight first: whether a stone is on its way decides whether the row may settle.
+            var incoming = WalletTransferFlight.Bind(cell, transaction, key);
+            WalletPendingRow.Update(container, cell, transaction, key, incoming);
+        }
+
+        public void UpdateTransaction(TonWalletTransaction transaction)
+        {
+            if (ScrollingHost.ContainerFromItem(transaction) is SelectorItem container && container.ContentTemplateRoot is WalletTransactionCell cell)
+            {
+                UpdateTransaction(container, cell, transaction);
+            }
+        }
+
+        public void UpdateCollectible(TonNft collectible)
+        {
+            if (ScrollingHost.ContainerFromItem(collectible) is SelectorItem container && container.ContentTemplateRoot is WalletCollectibleCell cell)
+            {
+                cell.UpdateInfo(_clientService, collectible);
             }
         }
 

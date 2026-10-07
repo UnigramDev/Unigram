@@ -1026,11 +1026,6 @@ namespace Telegram.Services.Wallet
                         var error = response as Error;
                         Logger.Error(string.Format("wallet transfer refused: {0} {1}", error?.Code, error?.Message));
 
-                        if (pending.State is TonWalletTransactionStatePending)
-                        {
-                            Settle(pending.Id);
-                        }
-
                         items[index] = With(pending, new TonWalletTransactionStateFailed(), pending.Type);
                         _pending = items;
 
@@ -2285,25 +2280,14 @@ namespace Telegram.Services.Wallet
         }
 
         // Read from the UI thread and written under _mutex from wherever the service resumes, so
-        // each has a lock of its own rather than borrowing that one.
+        // it has a lock of its own rather than borrowing that one.
         private readonly Dictionary<string, string> _predecessors = new(StringComparer.Ordinal);
-        private readonly Dictionary<string, DateTime> _settled = new(StringComparer.Ordinal);
-
-        private static readonly TimeSpan SettledFor = TimeSpan.FromSeconds(2);
 
         public string PredecessorOf(string transactionId)
         {
             lock (_predecessors)
             {
                 return _predecessors.TryGetValue(transactionId, out var id) ? id : null;
-            }
-        }
-
-        public bool TryTakeSettled(string id)
-        {
-            lock (_settled)
-            {
-                return _settled.Remove(id, out var at) && DateTime.UtcNow - at < SettledFor;
             }
         }
 
@@ -2314,16 +2298,6 @@ namespace Telegram.Services.Wallet
             lock (_predecessors)
             {
                 _predecessors[transaction.Id] = pendingId;
-            }
-
-            Settle(transaction.Id);
-        }
-
-        private void Settle(string id)
-        {
-            lock (_settled)
-            {
-                _settled[id] = DateTime.UtcNow;
             }
         }
 
@@ -2787,8 +2761,6 @@ namespace Telegram.Services.Wallet
                     else if (resolved || state.ExpirationDate <= now)
                     {
                         Logger.Error(string.Format("wallet transfer failed: {0} {1}", snapshot?.Phase, snapshot?.ErrorMessage));
-
-                        Settle(pending.Id);
 
                         // The row stays, saying so: it is this device's record of something the
                         // account never heard about.

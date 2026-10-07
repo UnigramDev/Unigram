@@ -1949,6 +1949,7 @@
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IWalletDelegate.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
