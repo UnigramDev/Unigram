@@ -5,7 +5,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:controls="using:Telegram.Controls"
       mc:Ignorable="d"
-      Padding="12,8,8,8">
+      Padding="12,6,8,8">
 
     <Grid.Resources>
         <!-- Here rather than looked up from the app: a ThemeResource on the colour keeps it
@@ -27,15 +27,16 @@
     </Grid.ColumnDefinitions>
 
     <controls:ProfilePicture x:Name="Photo"
+                             IsCachingEnabled="True"
                              VerticalAlignment="Top"
                              Size="36"
-                             Margin="0,0,8,0"
+                             Margin="0,0,10,0"
                              Grid.RowSpan="3" />
 
     <TextBlock x:Name="Title"
                TextWrapping="NoWrap"
                TextTrimming="CharacterEllipsis"
-               VerticalAlignment="Top"
+               VerticalAlignment="Bottom"
                Style="{StaticResource BaseTextBlockStyle}"
                Grid.Column="1" />
 
@@ -43,6 +44,7 @@
                TextWrapping="NoWrap"
                TextTrimming="CharacterEllipsis"
                VerticalAlignment="Top"
+               Style="{StaticResource CaptionTextBlockStyle}"
                Grid.Column="1"
                Grid.Row="1" />
 

@@ -13,7 +13,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Wallet;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -237,6 +236,7 @@ namespace Telegram.Controls.Cells
         {
             if (transfer == null)
             {
+                CollectiblePhoto.Source = null;
                 CollectibleRoot.Visibility = Visibility.Collapsed;
                 return;
             }
