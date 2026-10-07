@@ -1817,6 +1817,7 @@
     </Compile>
     <Compile Include="Views\Wallet\IWalletTransferSite.cs" />
     <Compile Include="Views\Wallet\WalletPendingRow.cs" />
+    <Compile Include="Views\Wallet\WalletSparks.cs" />
     <Compile Include="Views\Wallet\WalletTransferFlight.cs" />
     <Compile Include="Views\Wallet\WalletTransferVisuals.cs" />
     <Compile Include="Views\Wallet\WalletWindow.xaml.cs">

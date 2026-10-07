@@ -186,6 +186,9 @@ namespace Telegram.Controls.Messages.Service
         private MessageViewModel _awaited;
 
         private bool _ribbonRequested;
+
+        // How the sending ended, which decides whether the ribbon comes with the stars.
+        private bool _failed;
         private DispatcherTimer _ribbonTimer;
         private DateTime _landedAt = DateTime.MinValue;
 
@@ -200,6 +203,7 @@ namespace Telegram.Controls.Messages.Service
         private void UpdateSending(MessageViewModel message)
         {
             var pending = message.SendingState as MessageSendingStatePending;
+            _failed = message.SendingState is MessageSendingStateFailed;
 
             if (_awaited != null && ReferenceEquals(message, _awaited))
             {
@@ -309,6 +313,13 @@ namespace Telegram.Controls.Messages.Service
         /// </summary>
         private void ClockToRibbon()
         {
+            if (!_failed || WalletSparks.DebugCelebrateFailures)
+            {
+                // From the stone, all the way round: it sits in the middle of the card.
+                var centre = Diamond.TransformToVector2(null) + new Vector2((float)Diamond.ActualWidth, (float)Diamond.ActualHeight) / 2;
+                WalletSparks.Burst(XamlRoot, centre, WalletSparks.Spread.Around);
+            }
+
             var ribbon = ElementCompositionPreview.GetElementVisual(Ribbon);
             var compositor = ribbon.Compositor;
             var easing = WalletTransferVisuals.Standard(compositor);

@@ -559,7 +559,7 @@ namespace Telegram.Views.Wallet
 
             _landed = true;
 
-            // Nothing is matched against it any more: the row it landed on holds it from here.
+            // Nothing is matched against it any more: the site it landed on has it from here.
             Unregister();
 
             var site = _site;
@@ -637,7 +637,9 @@ namespace Telegram.Views.Wallet
         /// The transfer is over: the stone gives way to the row's glyph, which comes back as it
         /// goes.
         /// </summary>
-        public void Release()
+        /// <param name="celebrate">Whether the transfer went through, which throws the stars from
+        /// where the stone was.</param>
+        public void Release(bool celebrate)
         {
             if (_stone == null)
             {
@@ -649,6 +651,12 @@ namespace Telegram.Views.Wallet
                 // Where the scroll left it, which the expression carried it to.
                 _at.Y += (float)(_scrolled - _scroller.VerticalOffset);
                 _scroller = null;
+            }
+
+            if (celebrate)
+            {
+                var centre = new Vector2(_at.X, _at.Y) + new Vector2((float)_stone.Width, (float)_stone.Height) * (_scale / 2);
+                WalletSparks.Burst(_xamlRoot, centre, WalletSparks.Spread.AlongRow);
             }
 
             // Whirls as it goes. Not the prototype's, which only shrinks it away; the kick runs

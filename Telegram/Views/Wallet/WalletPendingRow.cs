@@ -76,6 +76,9 @@ namespace Telegram.Views.Wallet
         private bool _impactScheduled;
         private bool _settleRequested;
         private bool _settling;
+
+        // How the transfer ended, which decides whether it settles with the stars.
+        private bool _succeeded;
         private DateTime _raisedAt;
 
         private CompositionScopedBatch _settleBatch;
@@ -125,6 +128,7 @@ namespace Telegram.Views.Wallet
 
                 if (final)
                 {
+                    row._succeeded = transaction.State is TonWalletTransactionStateSucceeded;
                     row.Settle();
                 }
             }
@@ -540,8 +544,8 @@ namespace Telegram.Views.Wallet
             _settling = true;
 
             // The stone goes on the same ease as everything else, and the glyph it was covering
-            // comes back underneath it.
-            ReleaseStone();
+            // comes back underneath it - with the stars, for a transfer that went through.
+            ReleaseStone(_succeeded || WalletSparks.DebugCelebrateFailures);
 
             var lift = _compositor.CreateScalarKeyFrameAnimation();
             lift.InsertKeyFrame(1, 0, WalletTransferVisuals.Standard(_compositor));
@@ -570,13 +574,13 @@ namespace Telegram.Views.Wallet
             }
         }
 
-        private void ReleaseStone()
+        private void ReleaseStone(bool celebrate)
         {
             _cell.HideGlyph(false);
 
             var stone = _stone;
             _stone = null;
-            stone?.Release();
+            stone?.Release(celebrate);
         }
 
         /// <summary>
@@ -591,7 +595,7 @@ namespace Telegram.Views.Wallet
 
             // The stone was this row's to keep, and nothing else will let it go.
             StopSettleTimer();
-            ReleaseStone();
+            ReleaseStone(false);
 
             var container = ElementCompositionPreview.GetElementVisual(_container);
             container.StopAnimation("CenterPoint");
@@ -636,6 +640,7 @@ namespace Telegram.Views.Wallet
             _container = null;
             _key = null;
             _settling = false;
+            _succeeded = false;
             _settleRequested = false;
             _awaitingStone = false;
             _impactScheduled = false;
