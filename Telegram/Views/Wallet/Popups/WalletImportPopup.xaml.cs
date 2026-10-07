@@ -157,11 +157,9 @@ namespace Telegram.Views.Wallet.Popups
             if (clipboard.Contains(StandardDataFormats.Text))
             {
                 var text = await clipboard.GetTextAsync();
-                // A pasted phrase can arrive with any whitespace between the words, and with
-                // trailing newlines from whatever it was copied out of.
-                var pasted = text.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                var pasted = SplitWords(text);
 
-                if (pasted.Length == 24 && atIndex == 0)
+                if (pasted.Count == 24 && atIndex == 0)
                 {
                     Navigation.SelectedIndex = 1;
                 }
@@ -178,6 +176,33 @@ namespace Telegram.Views.Wallet.Popups
                     }
                 }
             }
+        }
+
+        // Mnemonic words are letters only, so anything else separates them. That covers a phrase
+        // copied with any whitespace, commas, or the numbering other apps put in front of each
+        // word ("1. kitten", "1) kitten", "1.kitten").
+        private static List<string> SplitWords(string text)
+        {
+            var words = new List<string>(24);
+            var start = -1;
+
+            for (int i = 0; i <= text.Length; i++)
+            {
+                if (i < text.Length && char.IsLetter(text[i]))
+                {
+                    if (start < 0)
+                    {
+                        start = i;
+                    }
+                }
+                else if (start >= 0)
+                {
+                    words.Add(text.Substring(start, i - start).ToLowerInvariant());
+                    start = -1;
+                }
+            }
+
+            return words;
         }
 
         private string[] ApplyMnemonicPaste(IReadOnlyList<string> currentWords, int atIndex, IReadOnlyList<string> pastedWords)
