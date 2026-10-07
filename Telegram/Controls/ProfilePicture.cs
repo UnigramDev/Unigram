@@ -69,6 +69,7 @@ namespace Telegram.Controls
 
             _templateApplied = true;
             InvalidateShape();
+            Load();
 
             base.OnApplyTemplate();
         }
@@ -100,7 +101,7 @@ namespace Telegram.Controls
         private void Load()
         {
             var source = Source;
-            if (source != null && IsConnected)
+            if (source != null && _templateApplied && IsConnected)
             {
                 if (source is ProfilePictureSourceText or ProfilePictureSourceBitmap)
                 {
