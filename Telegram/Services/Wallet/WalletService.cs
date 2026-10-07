@@ -74,11 +74,6 @@ namespace Telegram.Services.Wallet
         // has not read anyway.
         private const int RefreshPageLimit = 5;
 
-        // Set when a refresh is asked for while one is already running, and honoured when that one
-        // finishes. Dropping it would lose exactly the update that asked - a transfer landing while
-        // the list was being read.
-        private bool _activityQueued;
-
         // Mainnet, whatever the account is: the wallet of a test-server account is a mainnet
         // wallet like any other. Following Options.TestMode here derived a different address
         // altogether - the engine takes WALLET_SUBWALLET_ID_DEFAULT_TESTNET for testnet, so the
@@ -182,19 +177,28 @@ namespace Telegram.Services.Wallet
 
         private CancellationTokenSource _chainEventCancellation;
         private int _activityGrowth;
-        private bool _activityLoading;
+
+        // Whether a list has been read to its end, which only an empty next_offset says: nothing
+        // read yet is not the end, and reporting it as one stops the list asking for a first page.
+        private bool _activityEnd;
+        private bool _collectiblesEnd;
+
+        // The loads of each list, one at a time - see WalletPager.
+        private readonly WalletPager _activityPager;
+        private readonly WalletPager _collectiblesPager;
 
         private IReadOnlyList<TonNft> _collectibles = Array.Empty<TonNft>();
         private WalletResource _collectiblesResource = WalletResource.Idle;
         private string _collectiblesOffset = string.Empty;
         private int _collectiblesGeneration;
-        private bool _collectiblesLoading;
-        private bool _collectiblesQueued;
 
         public WalletService(IClientService clientService, IEventAggregator aggregator)
         {
             _clientService = clientService;
             _aggregator = aggregator;
+
+            _activityPager = new WalletPager(LoadActivityCoreAsync);
+            _collectiblesPager = new WalletPager(LoadCollectiblesCoreAsync);
 
             _aggregator.Subscribe<UpdateTonWalletState>(this, Handle)
                 .Subscribe<UpdateTonWalletGaslessTransfersInfo>(Handle);
@@ -510,12 +514,16 @@ namespace Telegram.Services.Wallet
                         StopResolver();
                         _activityResource = WalletResource.Idle;
                         _activityOffset = string.Empty;
+                        _activityEnd = false;
                         _activityGeneration++;
+                        _activityPager.Reset();
 
                         _collectibles = Array.Empty<TonNft>();
                         _collectiblesResource = WalletResource.Idle;
                         _collectiblesOffset = string.Empty;
+                        _collectiblesEnd = false;
                         _collectiblesGeneration++;
+                        _collectiblesPager.Reset();
 
                         RebuildActivity();
                     }
@@ -2312,13 +2320,18 @@ namespace Telegram.Services.Wallet
         /// thing that knows who was on the other side.
         /// </summary>
         /// <remarks>
-        /// Not awaited, and not guarded here: a refresh already running takes this as a second one
-        /// to do when it finishes, and a burst of frames collapses into that single repeat.
+        /// A catch-up rather than a refresh of its own: it is called when the window opens and when
+        /// the stream connects, which is when nothing is known to have happened, so a refresh
+        /// already running or just done answers it. Events go through OnChainEvent.
         /// </remarks>
         private void OnChainChanged()
         {
-            _ = LoadActivityAsync(true);
-            _ = RefreshCollectiblesIfLoadedAsync();
+            _ = _activityPager.CatchUpAsync();
+
+            if (_collectiblesResource.Phase != WalletResourcePhase.Idle || _collectibles.Count > 0)
+            {
+                _ = _collectiblesPager.CatchUpAsync();
+            }
         }
 
         /// <remarks>
@@ -2816,7 +2829,12 @@ namespace Telegram.Services.Wallet
                 or SendPhase.Cancelled;
         }
 
-        private async Task LoadActivityAsync(bool reset)
+        private Task LoadActivityAsync(bool reset)
+        {
+            return reset ? _activityPager.RefreshAsync() : _activityPager.LoadMoreAsync();
+        }
+
+        private async Task LoadActivityCoreAsync(bool reset)
         {
             string offset;
             HashSet<string> known;
@@ -2829,23 +2847,17 @@ namespace Telegram.Services.Wallet
                     return;
                 }
 
-                if (_activityLoading)
+                if (!reset && _activityEnd)
                 {
-                    _activityQueued |= reset;
-                    return;
-                }
-
-                if (!reset && _activityOffset.Length == 0 && _confirmed.Count > 0)
-                {
-                    // An empty next_offset is TDLib saying there is nothing older.
+                    // An empty next_offset was TDLib saying there is nothing older.
                     return;
                 }
 
                 offset = reset ? string.Empty : _activityOffset;
 
                 // Taken here, under the lock, and carried into the request: nothing else adds to
-                // the confirmed half, and the loading flag keeps a second load out until this one
-                // has written its pages back.
+                // the confirmed half, and the pager keeps a second load out until this one has
+                // written its pages back.
                 known = new HashSet<string>(_confirmed.Count, StringComparer.Ordinal);
 
                 foreach (var item in _confirmed)
@@ -2853,7 +2865,6 @@ namespace Telegram.Services.Wallet
                     known.Add(item.Id);
                 }
 
-                _activityLoading = true;
                 _activityResource = WalletResource.Loading;
                 SetState(Project());
             }
@@ -2868,18 +2879,12 @@ namespace Telegram.Services.Wallet
                 ? await RefreshActivityAsync(known)
                 : await AppendActivityAsync(offset, known);
 
-            bool queued;
-
             await _mutex.WaitAsync();
             try
             {
-                _activityLoading = false;
                 _activityResource = error == null
                     ? WalletResource.Ready
                     : new WalletResource(WalletResourcePhase.Failed, error.Message, true);
-
-                queued = _activityQueued;
-                _activityQueued = false;
 
                 SetState(Project());
             }
@@ -2894,11 +2899,6 @@ namespace Telegram.Services.Wallet
             {
                 // The first page of history, so the collectibles' first page follows it.
                 _ = LoadFirstCollectiblesAsync();
-            }
-
-            if (queued)
-            {
-                await LoadActivityAsync(true);
             }
         }
 
@@ -2933,6 +2933,7 @@ namespace Telegram.Services.Wallet
 
             _confirmed = items;
             _activityOffset = transactions.NextOffset;
+            _activityEnd = transactions.NextOffset.Length == 0;
 
             RebuildActivity();
             return null;
@@ -3011,12 +3012,14 @@ namespace Telegram.Services.Wallet
                 if (known.Count == 0)
                 {
                     _activityOffset = tail;
+                    _activityEnd = tail.Length == 0;
                 }
             }
             else
             {
                 _confirmed = fetched;
                 _activityOffset = tail;
+                _activityEnd = tail.Length == 0;
                 _activityGeneration++;
             }
 
@@ -3028,7 +3031,12 @@ namespace Telegram.Services.Wallet
         /// Unlike the history, NFTs do not only arrive at the top - one sent away leaves from
         /// wherever it was - so a refresh compares against the first page instead of stitching.
         /// </remarks>
-        private async Task LoadCollectiblesAsync(bool reset)
+        private Task LoadCollectiblesAsync(bool reset)
+        {
+            return reset ? _collectiblesPager.RefreshAsync() : _collectiblesPager.LoadMoreAsync();
+        }
+
+        private async Task LoadCollectiblesCoreAsync(bool reset)
         {
             string offset;
             int generation;
@@ -3041,13 +3049,7 @@ namespace Telegram.Services.Wallet
                     return;
                 }
 
-                if (_collectiblesLoading)
-                {
-                    _collectiblesQueued |= reset;
-                    return;
-                }
-
-                if (!reset && _collectiblesOffset.Length == 0 && _collectibles.Count > 0)
+                if (!reset && _collectiblesEnd)
                 {
                     return;
                 }
@@ -3055,7 +3057,6 @@ namespace Telegram.Services.Wallet
                 offset = reset ? string.Empty : _collectiblesOffset;
                 generation = _collectiblesGeneration;
 
-                _collectiblesLoading = true;
                 _collectiblesResource = WalletResource.Loading;
                 SetState(Project());
             }
@@ -3068,13 +3069,9 @@ namespace Telegram.Services.Wallet
 
             var response = await _clientService.SendAsync(new GetTonWalletNfts(offset, CollectiblesPageSize));
 
-            bool queued;
-
             await _mutex.WaitAsync();
             try
             {
-                _collectiblesLoading = false;
-
                 if (generation != _collectiblesGeneration)
                 {
                     // A page for the wallet before the switch.
@@ -3097,9 +3094,6 @@ namespace Telegram.Services.Wallet
                     _collectiblesResource = new WalletResource(WalletResourcePhase.Failed, (response as Error)?.Message, true);
                 }
 
-                queued = _collectiblesQueued;
-                _collectiblesQueued = false;
-
                 SetState(Project());
             }
             finally
@@ -3108,11 +3102,6 @@ namespace Telegram.Services.Wallet
             }
 
             Raise();
-
-            if (queued)
-            {
-                await LoadCollectiblesAsync(true);
-            }
         }
 
         /// <summary>
@@ -3139,6 +3128,7 @@ namespace Telegram.Services.Wallet
 
             _collectibles = items;
             _collectiblesOffset = page.NextOffset;
+            _collectiblesEnd = page.NextOffset.Length == 0;
         }
 
         /// <summary>
@@ -3296,11 +3286,11 @@ namespace Telegram.Services.Wallet
                 CurrencyRate(AppSettings.WalletCurrency),
                 _activity,
                 _activityResource,
-                _activityOffset.Length > 0,
+                !_activityEnd,
                 _activityGeneration,
                 _collectibles,
                 _collectiblesResource,
-                _collectiblesOffset.Length > 0,
+                !_collectiblesEnd,
                 _collectiblesGeneration,
                 _clientService.TonWalletGaslessTransfersInfo,
                 ProjectArchive());

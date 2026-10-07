@@ -2327,6 +2327,7 @@
     <Compile Include="Services\Wallet\WalletJournalStore.cs" />
     <Compile Include="Services\Wallet\WalletChainStream.cs" />
     <Compile Include="Services\Wallet\WalletCommentBody.cs" />
+    <Compile Include="Services\Wallet\WalletPager.cs" />
     <Compile Include="Services\Wallet\WalletSecretStore.cs" />
     <Compile Include="Services\Wallet\WalletVault.cs" />
     <Compile Include="Services\Wallet\WalletVaultPrompt.cs" />
