@@ -72,6 +72,167 @@ namespace Telegram.Services.Wallet
             return Serialize(bytes);
         }
 
+        /// <summary>
+        /// The payload TDLib wants for an encrypted comment, from the message body the engine
+        /// encrypted it into; null if the body is not one.
+        /// </summary>
+        /// <remarks>
+        /// The inverse of <see cref="FromPayload"/>: the payload is the root cell's data after the
+        /// opcode, followed by the data of each cell in the chain hanging off it. Read with any
+        /// chunking, not only the engine's, and with or without the BOC's optional index and
+        /// checksum.
+        /// </remarks>
+        public static string ToPayload(string boc)
+        {
+            if (string.IsNullOrEmpty(boc))
+            {
+                return null;
+            }
+
+            try
+            {
+                var bytes = Convert.FromBase64String(boc);
+                var cells = Deserialize(bytes, out int root);
+
+                if (cells == null || root < 0 || root >= cells.Count)
+                {
+                    return null;
+                }
+
+                var first = cells[root].Data;
+                if (first.Length < 4
+                    || first[0] != (byte)(EncryptedCommentOpcode >> 24)
+                    || first[1] != (byte)((EncryptedCommentOpcode >> 16) & 0xFF)
+                    || first[2] != (byte)((EncryptedCommentOpcode >> 8) & 0xFF)
+                    || first[3] != (byte)(EncryptedCommentOpcode & 0xFF))
+                {
+                    return null;
+                }
+
+                var payload = new List<byte>(MaximumPayloadBytes);
+                payload.AddRange(new ArraySegment<byte>(first, 4, first.Length - 4));
+
+                // Down the chain, each cell its one reference's parent. Bounded by the cell count,
+                // so a malformed cycle ends rather than looping.
+                var cell = cells[root];
+                for (int i = 0; i < cells.Count && cell.References.Length > 0; i++)
+                {
+                    var next = cell.References[0];
+                    if (next < 0 || next >= cells.Count)
+                    {
+                        return null;
+                    }
+
+                    cell = cells[next];
+                    payload.AddRange(cell.Data);
+                }
+
+                if (payload.Count < MinimumPayloadBytes || payload.Count > MaximumPayloadBytes)
+                {
+                    return null;
+                }
+
+                return Convert.ToBase64String(payload.ToArray());
+            }
+            catch (Exception ex) when (ex is FormatException or IndexOutOfRangeException or ArgumentException)
+            {
+                return null;
+            }
+        }
+
+        private readonly struct Cell
+        {
+            public Cell(byte[] data, int[] references)
+            {
+                Data = data;
+                References = references;
+            }
+
+            public byte[] Data { get; }
+
+            public int[] References { get; }
+        }
+
+        // A bag of cells, as far as an encrypted comment needs it: ordinary cells of whole bytes.
+        private static List<Cell> Deserialize(byte[] bytes, out int root)
+        {
+            root = -1;
+
+            if (bytes.Length < 6 || bytes[0] != 0xB5 || bytes[1] != 0xEE || bytes[2] != 0x9C || bytes[3] != 0x72)
+            {
+                return null;
+            }
+
+            var flags = bytes[4];
+            var hasIndex = (flags & 0x80) != 0;
+            var size = flags & 0x07;
+            var offsetBytes = bytes[5];
+
+            if (size < 1 || size > 4 || offsetBytes < 1 || offsetBytes > 8)
+            {
+                return null;
+            }
+
+            var index = 6;
+
+            long Read(int width)
+            {
+                long value = 0;
+                for (int i = 0; i < width; i++)
+                {
+                    value = (value << 8) | bytes[index++];
+                }
+
+                return value;
+            }
+
+            var count = (int)Read(size);
+            var roots = (int)Read(size);
+            Read(size);
+            Read(offsetBytes);
+
+            if (count < 1 || count > 1024 || roots < 1)
+            {
+                return null;
+            }
+
+            root = (int)Read(size);
+            index += (roots - 1) * size;
+
+            if (hasIndex)
+            {
+                index += count * offsetBytes;
+            }
+
+            var cells = new List<Cell>(count);
+
+            for (int i = 0; i < count; i++)
+            {
+                var d1 = bytes[index++];
+                var d2 = bytes[index++];
+
+                // Exotic cells, or data that ends part way through a byte, are no comment.
+                if ((d1 & 0x08) != 0 || (d2 & 1) != 0)
+                {
+                    return null;
+                }
+
+                var data = new byte[d2 / 2];
+                Buffer.BlockCopy(bytes, index, data, 0, data.Length);
+                index += data.Length;
+
+                var references = new int[d1 & 0x07];
+                for (int j = 0; j < references.Length; j++)
+                {
+                    references[j] = (int)Read(size);
+                }
+
+                cells.Add(new Cell(data, references));
+            }
+
+            return cells;
+        }
+
         private static string Serialize(byte[] payload)
         {
             var cells = new List<byte[]>();

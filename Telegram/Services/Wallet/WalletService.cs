@@ -869,6 +869,12 @@ namespace Telegram.Services.Wallet
 
             SendMessageBody body;
 
+            // What the account and the history are told the comment is: the text itself, or for an
+            // encrypted one the payload TDLib reports such comments as - never the plaintext, which
+            // would go out as an encrypted comment that does not decrypt.
+            var sentComment = comment ?? string.Empty;
+            var isCommentEncrypted = false;
+
             if (string.IsNullOrEmpty(comment))
             {
                 body = new SendMessageBody.Empty();
@@ -884,7 +890,21 @@ namespace Telegram.Services.Wallet
                 // and the body it hands back is a cell rather than text.
                 try
                 {
-                    body = new SendMessageBody.RawPayload(await client.CreateEncryptedComment(new CreateEncryptedCommentRequest(recipient, comment)));
+                    var encrypted = await client.CreateEncryptedComment(new CreateEncryptedCommentRequest(recipient, comment));
+                    body = new SendMessageBody.RawPayload(encrypted);
+
+                    var payload = WalletCommentBody.ToPayload(encrypted);
+                    if (payload != null)
+                    {
+                        sentComment = payload;
+                        isCommentEncrypted = true;
+                    }
+                    else
+                    {
+                        // The chain still carries it; only the account's copy goes without.
+                        Logger.Error("wallet comment body could not be read back");
+                        sentComment = string.Empty;
+                    }
                 }
                 catch (WalletClientException.EncryptedCommentUnavailable ex)
                 {
@@ -926,7 +946,7 @@ namespace Telegram.Services.Wallet
             await _mutex.WaitAsync();
             try
             {
-                AddPending(recipient, peerUserId, peerDomain, amountNanograms, comment, allowGasless, prepared.OperationId, prepared.ValidUntil);
+                AddPending(recipient, peerUserId, peerDomain, amountNanograms, sentComment, isCommentEncrypted, allowGasless, prepared.OperationId, prepared.ValidUntil);
                 SetState(Project());
             }
             finally
@@ -936,7 +956,7 @@ namespace Telegram.Services.Wallet
 
             Raise();
 
-            _ = CompleteTransferAsync(prepared.OperationId, _clientService.SendAsync(new SendTonWalletTransfer(peerUserId, recipient, (long)amountNanograms, comment, !isCommentPublic, sendingId, external, gasless)));
+            _ = CompleteTransferAsync(prepared.OperationId, _clientService.SendAsync(new SendTonWalletTransfer(peerUserId, recipient, (long)amountNanograms, sentComment, isCommentEncrypted, sendingId, external, gasless)));
 
             return WalletTransferResult.Sent;
         }
@@ -2424,7 +2444,7 @@ namespace Telegram.Services.Wallet
         /// only exists once there is a transaction, and the message hash only once the account has
         /// answered - which is why the row starts without one, and the resolver skips it until then.
         /// </remarks>
-        private void AddPending(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isGasless, string operationId, ulong validUntil)
+        private void AddPending(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentEncrypted, bool isGasless, string operationId, ulong validUntil)
         {
             var pending = new TonWalletTransaction(
                 operationId,
@@ -2438,7 +2458,7 @@ namespace Telegram.Services.Wallet
                     -(long)amountNanograms,
                     isGasless,
                     comment ?? string.Empty,
-                    false));
+                    isCommentEncrypted));
 
             var items = new List<TonWalletTransaction>(_pending.Count + 1) { pending };
             items.AddRange(_pending);
