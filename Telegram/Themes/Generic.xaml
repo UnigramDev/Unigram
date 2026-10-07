@@ -7764,7 +7764,10 @@
                                           VerticalAlignment="Center"
                                           Grid.Column="0"
                                           Canvas.ZIndex="1" />
+                        <!-- Transparent so it is hit testable: the number is drawn into it, and the
+                             text cursor shows over the number alone. -->
                         <Grid x:Name="AmountHost"
+                              Background="Transparent"
                               VerticalAlignment="Center"
                               Grid.Column="1" />
                         <ContentPresenter x:Name="SuffixPresenter"

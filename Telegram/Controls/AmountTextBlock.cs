@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI;
@@ -112,6 +113,11 @@ namespace Telegram.Controls
 
                 AmountHost.SizeChanged -= OnAmountSizeChanged;
                 AmountHost.SizeChanged += OnAmountSizeChanged;
+
+                AmountHost.PointerEntered -= AmountHost_PointerEntered;
+                AmountHost.PointerEntered += AmountHost_PointerEntered;
+                AmountHost.PointerExited -= AmountHost_PointerExited;
+                AmountHost.PointerExited += AmountHost_PointerExited;
             }
 
             if (SuffixPresenter != null)
@@ -1189,6 +1195,18 @@ namespace Telegram.Controls
             // The number is the field, so pressing it is what focuses it - there is no box to
             // click into.
             Focus(FocusState.Pointer);
+        }
+
+        // The text cursor a text box would show, over the number only: the prefix and the suffix
+        // are not what is typed into.
+        private void AmountHost_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            WindowContext.SetPointerCursor(PointerCursorType.IBeam);
+        }
+
+        private void AmountHost_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         #endregion
