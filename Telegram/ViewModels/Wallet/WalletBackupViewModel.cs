@@ -133,7 +133,7 @@ namespace Telegram.ViewModels.Wallet
             {
                 // Bound a moment ago, so this is storage refusing rather than a device that never
                 // had the phrase. Nothing to upload and nothing useful to say about why.
-                NavigationService.ShowToast("[The backup could not be enabled.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletBackupEnableFailed, ToastPopupIcon.Error);
                 return;
             }
 
@@ -145,7 +145,7 @@ namespace Telegram.ViewModels.Wallet
             catch (Exception ex)
             {
                 Logger.Error("wallet backup could not be enabled: " + ex.Message);
-                NavigationService.ShowToast("[The backup could not be enabled.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletBackupEnableFailed, ToastPopupIcon.Error);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Telegram.ViewModels.Wallet
                 // unless the new phrase can still replace it.
                 if (update.IsExpired)
                 {
-                    NavigationService.ShowToast("[The new recovery phrase expired before it was confirmed. Nothing was changed.]", ToastPopupIcon.Error);
+                    NavigationService.ShowToast(Strings.WalletSecretPhraseExpired, ToastPopupIcon.Error);
                     return;
                 }
 
@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Wallet
             catch (Exception ex)
             {
                 Logger.Error("wallet backup could not be disabled: " + ex.Message);
-                NavigationService.ShowToast("[The backup could not be disabled.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletBackupDisableFailed, ToastPopupIcon.Error);
                 return false;
             }
         }
@@ -241,7 +241,7 @@ namespace Telegram.ViewModels.Wallet
 
             if (words == null)
             {
-                NavigationService.ShowToast("[The backup could not be disabled.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletBackupDisableFailed, ToastPopupIcon.Error);
             }
 
             return words;
@@ -286,7 +286,7 @@ namespace Telegram.ViewModels.Wallet
             }
             catch (WalletRotationPendingException)
             {
-                NavigationService.ShowToast("[Your recovery phrase is already being updated.]", ToastPopupIcon.Info);
+                NavigationService.ShowToast(Strings.WalletSecretPhraseUpdating, ToastPopupIcon.Info);
             }
             catch (WalletAccessDeniedException)
             {
@@ -295,7 +295,7 @@ namespace Telegram.ViewModels.Wallet
             catch (Exception ex)
             {
                 Logger.Error("wallet recovery phrase update could not be prepared: " + ex.Message);
-                NavigationService.ShowToast("[Your recovery phrase could not be updated.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletSecretPhraseUpdateFailed, ToastPopupIcon.Error);
             }
 
             return null;
@@ -321,22 +321,8 @@ namespace Telegram.ViewModels.Wallet
                 // The words they just wrote down open nothing, and they have to be told so: the
                 // phrase they had before is still the wallet's.
                 Logger.Error("wallet recovery phrase could not be updated: " + ex.Message);
-                NavigationService.ShowToast("[The backup was disabled, but your recovery phrase could not be updated. Your previous phrase still opens your wallet.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletSecretPhraseUpdatePartial, ToastPopupIcon.Error);
             }
-        }
-
-        /// <summary>
-        /// Forgets the key on this device, so the binding half of the flow can be walked again.
-        /// </summary>
-        /// <remarks>
-        /// **Debug only, and it has to go before this ships.** It leaves the account's wallet
-        /// alone and only drops what this device holds, which is otherwise reachable only by
-        /// clearing app data.
-        /// </remarks>
-        public async void UnbindWallet()
-        {
-            await _wallet.ForgetAsync();
-            NavigationService.ShowToast("[This device no longer holds the key.]", ToastPopupIcon.Info);
         }
 
         public async void DeleteWallet()
@@ -386,7 +372,7 @@ namespace Telegram.ViewModels.Wallet
             catch (Exception ex)
             {
                 Logger.Error("wallet could not be deleted: " + ex.Message);
-                NavigationService.ShowToast("[The wallet could not be deleted.]", ToastPopupIcon.Error);
+                NavigationService.ShowToast(Strings.WalletDeleteFailed, ToastPopupIcon.Error);
             }
         }
     }

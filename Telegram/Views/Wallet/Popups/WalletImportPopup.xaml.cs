@@ -344,7 +344,7 @@ namespace Telegram.Views.Wallet.Popups
             deferral.Complete();
 
             _navigationService.NavigateToWallet();
-            _navigationService.ShowToast("[**Wallet Replaced**\nYour account now uses the wallet you imported.]", ToastPopupIcon.Success);
+            _navigationService.ShowToast(string.Format("**{0}**\n{1}", Strings.WalletReplaced, Strings.WalletReplacedInfo), ToastPopupIcon.Success);
         }
 
         private Task ReplaceWithPasswordAsync(string password)
@@ -360,8 +360,9 @@ namespace Telegram.Views.Wallet.Popups
         {
             return failure switch
             {
-                WalletBindFailure.OtherWallet => (Strings.WalletWrongSecretPhrase, "[That recovery phrase belongs to a different wallet.]"),
-                WalletBindFailure.NoWallet => (Strings.WalletImport, "[This account doesn't have a wallet yet.]"),
+                WalletBindFailure.OtherWallet => (Strings.WalletWrongSecretPhrase, Strings.WalletWrongSecretPhraseInfo),
+                // Not reachable from the screen: it only opens once the account reports a wallet.
+                WalletBindFailure.NoWallet => (Strings.WalletImport, Strings.ErrorOccurred),
                 _ => (Strings.WalletInvalidRecoveryPhrase, Strings.WalletInvalidRecoveryPhraseInfo)
             };
         }

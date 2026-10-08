@@ -440,7 +440,7 @@ namespace Telegram.Views.Wallet
             catch (Exception ex)
             {
                 Logger.Error("wallet protection could not be changed: " + ex.Message);
-                _navigationService.ShowToast("[This could not be changed right now.]", ToastPopupIcon.Error);
+                _navigationService.ShowToast(Strings.ErrorOccurred, ToastPopupIcon.Error);
             }
         }
 
@@ -457,7 +457,6 @@ namespace Telegram.Views.Wallet
             var popup = new InputPopup
             {
                 Title = Strings.WalletSendGrams,
-                Header = "[Enter a wallet address or a .ton name.]",
                 PlaceholderText = Strings.WalletAddressOrName,
                 PrimaryButtonText = Strings.Next,
                 SecondaryButtonText = Strings.Cancel,

@@ -214,12 +214,12 @@
                                                VerticalAlignment="Top"
                                                Grid.Column="2" />
 
-                                    <TextBlock Text="[Deposit]"
+                                    <TextBlock Text="{CustomResource WalletIncomingTransfer}"
                                                Style="{StaticResource InfoBodyTextBlockStyle}"
                                                Visibility="{x:Bind IsDeposit}"
                                                Grid.Column="1"
                                                Grid.Row="1" />
-                                    <TextBlock Text="[Withdraw]"
+                                    <TextBlock Text="{CustomResource WalletOutgoingTransfer}"
                                                Style="{StaticResource InfoBodyTextBlockStyle}"
                                                Visibility="{x:Bind IsWithdraw}"
                                                Grid.Column="1"

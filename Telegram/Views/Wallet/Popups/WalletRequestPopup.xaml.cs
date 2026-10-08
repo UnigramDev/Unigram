@@ -219,7 +219,7 @@ namespace Telegram.Views.Wallet.Popups
 
             // Review until there is something to confirm. The same button, because it is the same
             // question asked twice: first whether to look, then whether to agree.
-            PrimaryButtonText = loaded ? Strings.WalletConfirm : "[Review]";
+            PrimaryButtonText = loaded ? Strings.WalletConfirm : Strings.WalletReview;
 
             // The identity shrinks out of the way on the second page: it has said what it has to
             // say, and what matters there is the list under it.

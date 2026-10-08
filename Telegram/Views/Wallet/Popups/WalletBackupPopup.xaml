@@ -40,13 +40,6 @@
                                          Foreground="{ThemeResource DangerButtonBackground}" />
             </controls:HeaderedControl>
 
-            <!-- Debug only: drops this device's key so the bind and enrollment halves of the flow
-                 can be walked again without clearing app data. Remove before shipping. -->
-            <controls:HeaderedControl Footer="[Debug: forgets the key on this device. The account keeps its wallet.]">
-                <controls:SettingsButton Click="{x:Bind ViewModel.UnbindWallet}"
-                                         Content="[Unbind This Device]" />
-            </controls:HeaderedControl>
-
             <!-- Filled in code: each row needs the address broken into groups that alternate
                  colour, which no template can do from a single string. -->
             <controls:HeaderedControl x:Name="ArchiveRoot"

@@ -288,7 +288,7 @@ namespace Telegram.Common
         {
             if (wrong)
             {
-                await ShowMessageAsync(xamlRoot, "[Wrong password. Please try again.]", Strings.TwoStepVerification);
+                await ShowMessageAsync(xamlRoot, Strings.CheckPasswordWrong, Strings.TwoStepVerification);
             }
 
             // Nested where something modal is already up - the wallet's own screens are popups -
@@ -367,7 +367,7 @@ namespace Telegram.Common
                 Logger.Error("wallet binding failed: " + ex.Message);
             }
 
-            await ShowMessageAsync(navigation.XamlRoot, "[Your wallet could not be set up on this device. Please try again later.]", Strings.WalletTitle);
+            await ShowMessageAsync(navigation.XamlRoot, Strings.WalletSetupFailed, Strings.WalletTitle);
             return BindOutcome.Failed;
         }
 

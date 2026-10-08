@@ -79,7 +79,7 @@ namespace Telegram.Views.Wallet.Popups
 
             Subtitle.Text = state.HasWallet
                 ? RequestedText()
-                : "[You need a wallet before an app can connect to one.]";
+                : Strings.WalletConnectNoWallet;
 
             UpdatePrimaryButton();
         }
@@ -89,7 +89,7 @@ namespace Telegram.Views.Wallet.Popups
             if (string.IsNullOrEmpty(_link.ConnectRequest?.ManifestUrl) || string.IsNullOrEmpty(_link.DappClientId))
             {
                 // A request that names no dApp is one there is nothing to show and nothing to ask.
-                Subtitle.Text = "[This connection request is not valid.]";
+                Subtitle.Text = Strings.WalletTonConnectRequestUnavailable;
                 return;
             }
 
@@ -142,7 +142,9 @@ namespace Telegram.Views.Wallet.Popups
                 // Named by a manifest that cannot be read, so there is nothing to tell the user
                 // about who is asking - which is the one thing they have to judge.
                 Title.Text = Strings.WalletConnectToDApp;
-                Subtitle.Text = "[This app could not be identified, so connecting to it is not safe.]";
+                Subtitle.Text = string.Format(Strings.WalletTonConnectManifestLoadFailed, Uri.TryCreate(_link.ConnectRequest.ManifestUrl, UriKind.Absolute, out Uri manifest)
+                    ? manifest.Host
+                    : _link.ConnectRequest.ManifestUrl);
                 Footer.Text = string.Empty;
             }
 
@@ -214,7 +216,7 @@ namespace Telegram.Views.Wallet.Popups
                 }
                 else
                 {
-                    ShowError("[This app could not be connected.]");
+                    ShowError(Strings.WalletConnectFailed);
                 }
             }
             catch (WalletAccessDeniedException)
@@ -225,7 +227,7 @@ namespace Telegram.Views.Wallet.Popups
             catch (Exception ex)
             {
                 Logger.Error("ton connect could not be accepted: " + ex.Message);
-                ShowError("[This app could not be connected.]");
+                ShowError(Strings.WalletConnectFailed);
             }
             finally
             {
