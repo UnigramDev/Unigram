@@ -275,6 +275,21 @@ namespace Telegram.Services.Wallet
         Task<WalletConnectResult> ConnectAsync(TonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease);
 
         /// <summary>
+        /// The dApps this wallet is connected to. Sessions still being set up, or already closing,
+        /// are left out.
+        /// </summary>
+        Task<IReadOnlyList<TonConnectSession>> GetConnectedAppsAsync();
+
+        /// <summary>
+        /// Disconnects a dApp, telling it so. False when the session could not be closed.
+        /// </summary>
+        /// <remarks>
+        /// The dApp is told through an event encrypted with the session key, and deriving that key
+        /// reads the wallet key - so this asks for the device prompt like any other use of it.
+        /// </remarks>
+        Task<bool> DisconnectAppAsync(TonConnectSession session, WalletVault.WalletVaultLease lease);
+
+        /// <summary>
         /// Decrypts the comment of a history entry that carries one. Needs the signing key.
         /// </summary>
         /// <param name="encryptedBody">

@@ -1775,6 +1775,65 @@ namespace Telegram.Services.Wallet
                 : new WalletConnectResult(result as Error);
         }
 
+        public async Task<IReadOnlyList<TdTonConnectSession>> GetConnectedAppsAsync()
+        {
+            var response = await _clientService.SendAsync(new GetTonConnectSessions());
+            if (response is not TonConnectSessions sessions)
+            {
+                return Array.Empty<TdTonConnectSession>();
+            }
+
+            var connected = new List<TdTonConnectSession>(sessions.Sessions.Count);
+
+            foreach (var session in sessions.Sessions)
+            {
+                if (session.State is TonConnectSessionStateReady)
+                {
+                    connected.Add(session);
+                }
+            }
+
+            return connected;
+        }
+
+        public async Task<bool> DisconnectAppAsync(TdTonConnectSession session, WalletVault.WalletVaultLease lease)
+        {
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+
+            if (lifecycle == null || descriptor == null || session == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            await EnsureLeaseAsync(lease);
+
+            var next = await _clientService.SendAsync(new GetTonConnectSessionNextEventId(session.Id));
+            if (next is not TonConnectSessionEventId eventId)
+            {
+                Logger.Error("ton connect disconnect event could not be numbered: " + (next as Error)?.Message);
+                return false;
+            }
+
+            using var derived = await DeriveAsync(lifecycle, descriptor, session);
+            if (derived == null)
+            {
+                // Registered with another key, so this device cannot speak for the session.
+                return false;
+            }
+
+            var body = derived.EncryptDisconnectEvent((ulong)eventId.EventId);
+
+            var response = await _clientService.SendAsync(new DisconnectTonConnectSession(session.Id, body));
+            if (response is Error error)
+            {
+                Logger.Error(string.Format("ton connect session could not be disconnected: {0} {1}", error.Code, error.Message));
+                return false;
+            }
+
+            return true;
+        }
+
         private async Task<TonConnectDerivedSession> DeriveAsync(WalletLifecycle lifecycle, WalletDescriptor descriptor, TdTonConnectSession session)
         {
             try

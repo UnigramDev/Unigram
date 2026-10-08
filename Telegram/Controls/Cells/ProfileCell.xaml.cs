@@ -436,6 +436,40 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateTonConnectSession(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            var session = args.Item as TonConnectSession;
+            var info = session.Manifest as TonConnectManifestInfo;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = info?.Name ?? Strings.WalletUnknown;
+            }
+            else if (args.Phase == 1)
+            {
+                // The host the manifest was fetched from: the part of the identity a user can judge.
+                SubtitleLabel.Text = info == null
+                    ? string.Empty
+                    : Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url) ? url.Host : info.Url;
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.Source = info?.Icon?.DocumentValue != null
+                    ? new ProfilePictureSourcePhoto(clientService, session.Id, info.Icon.DocumentValue, info.Icon.Minithumbnail)
+                    : ProfilePictureSourceText.GetNameForChat(info?.Name ?? string.Empty);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateSupergroupMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             args.ItemContainer.Tag = args.Item;

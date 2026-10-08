@@ -377,6 +377,7 @@ namespace Telegram.Views.Wallet
 
             flyout.CreateFlyoutItem(MenuItemProtection, Strings.Passcode, Icons.LockClosed);
             flyout.CreateFlyoutItem(MenuItemRecoveryPhrase, Strings.WalletKeysAndBackup, Icons.Cloud);
+            flyout.CreateFlyoutItem(MenuItemConnectedApps, Strings.WalletConnectedApps, Icons.Apps);
 
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(MenuItemAbout, Strings.WalletWhatIsWallet, Icons.QuestionCircle);
@@ -408,6 +409,11 @@ namespace Telegram.Views.Wallet
         private void MenuItemRecoveryPhrase()
         {
             _navigationService.ShowPopup(new WalletBackupPopup(_wallet, _navigationService));
+        }
+
+        private void MenuItemConnectedApps()
+        {
+            _navigationService.ShowPopup(new WalletConnectedAppsPopup(_clientService, _wallet, _navigationService));
         }
 
         private async void MenuItemProtection()

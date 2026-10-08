@@ -14126,6 +14126,12 @@
     <string name="WalletConnectProofInfo">The app will be able to view your TON address, balance and activity, and request a signature to sign you in. This is not a transfer.</string>
     <string name="WalletConnectPermissionInfo">The app won’t be able to move\nfunds without permission.</string>
     <string name="WalletTonConnectRequestUnavailable">This TON Connect request is unavailable or has already been answered</string>
+    <string name="WalletConnectedApps">Connected Apps</string>
+    <string name="WalletActiveConnections">Active connections</string>
+    <string name="WalletConnectedAppsInfo">Connected apps can see your wallet address, balance and activity. They can\'t move funds without your approval.</string>
+    <string name="WalletDisconnect">Disconnect</string>
+    <string name="WalletDisconnectConfirm">Are you sure you want to disconnect **{0}**?</string>
+    <string name="WalletDisconnectFailed">Could not disconnect this app.</string>
     <string name="WalletAppRequestsTransfer">{0} requests a transfer</string>
     <string name="WalletImported">Wallet Imported</string>
     <string name="WalletImportedInfo">Your wallet was restored from your secret phrase.</string>
