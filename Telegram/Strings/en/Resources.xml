@@ -7495,7 +7495,7 @@
 
 
     <string name="BirthdaySetupTitle">Add your birthday! &#127874;</string>
-    <string name="BirthdaySetupMessage">Let your contacts know when you’re celebrating</string>
+    <string name="BirthdaySetupMessage">Let your contacts know when to celebrate.</string>
     <string name="BirthdaySetupLater">You can always set your birthday in profile settings.</string>
 
 
@@ -13963,7 +13963,7 @@
     <string name="WalletSendInstantly">Send Money Instantly</string>
     <string name="WalletSendInstantlyInfo">Send Grams in any chat, just like sharing a photo.</string>
     <string name="WalletNoFees">No Fees</string>
-    <string name="WalletNoFeesInfo">First 5 transfers each day are free, the rest cost almost nothing.</string>
+    <string name="WalletNoFeesInfo">The first 5 transfers each day are free. The&#160;rest cost almost nothing.</string>
     <string name="WalletBlockchainVerified">Blockchain Verified</string>
     <string name="WalletBlockchainVerifiedInfo">All transactions are recorded and verifiable on a public ledger.</string>
     <string name="WalletCurrency">Currency</string>
@@ -13992,7 +13992,7 @@
 
     <string name="WalletDeleteWallet">Delete Wallet</string>
     <string name="WalletDeleteWalletTitle">Delete Wallet?</string>
-    <string name="WalletDeleteWalletInfo">You\'ll lose access to your funds unless you\'ve saved your 12-word recovery phrase.</string>
+    <string name="WalletDeleteWalletInfo">You\'ll lose access to your funds unless you\'ve saved your 12-word secret phrase.</string>
     <string name="WalletDeleteAnyway">Delete anyway</string>
     <string name="WalletReplaceWalletTitle">How do you want to replace the old wallet?</string>
     <string name="WalletImportExisting">Import an Existing Wallet</string>
@@ -14016,7 +14016,7 @@
     <string name="WalletBackupDisabledDescription">Your encrypted key backup will be split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
     <string name="WalletDisableBackupConfirmInfo">Telegram will delete its encrypted backup, and your recovery key will be updated. This can\'t be undone.</string>
     <string name="WalletDisableBackupTitle">Disable Backup?</string>
-    <string name="WalletDisableBackupInfo">The only way to recover your funds will be to manually enter your recovery phrase.</string>
+    <string name="WalletDisableBackupInfo">The only way to recover your funds will be to manually enter your secret phrase.</string>
     <string name="WalletUpdateSecretPhrase">Update Secret Phrase</string>
     <string name="WalletUpdateSecretPhraseInfo">You\'ll get a new phrase to write down. Address and balance stay the same.</string>
     <string name="WalletUpdateSecretPhraseInfoWithFee">You\'ll get a new phrase to write down. Address and balance stay the same.\n\nNetwork fee: {0} (~{1}).</string>
@@ -14024,12 +14024,12 @@
     <string name="WalletDisable">Disable</string>
 
     <string name="WalletRecoveryPhraseLearnTitle">Recovery Phrase</string>
-    <string name="WalletRecoveryPhraseLearnInfo">Your Secret Recovery Phrase is the key to back up your wallet. Keep it secret and secure at all times.</string>
-    <string name="WalletRecoveryPhraseNeverShare">**Never share **your secret Recovery Phrase with anyone.</string>
-    <string name="WalletRecoveryPhraseFundsWarning">If someone has your Recovery Phrase they **can steal your funds**.</string>
-    <string name="WalletRecoveryPhraseSupportWarning">Telegram Support **will never ask you** for your Recovery Phrase.</string>
+    <string name="WalletRecoveryPhraseLearnInfo">Your Secret Phrase is the key to&#160;back up your wallet. Keep it secret and&#160;secure at all times.</string>
+    <string name="WalletRecoveryPhraseNeverShare">**Never share **your Secret Phrase with anyone.</string>
+    <string name="WalletRecoveryPhraseFundsWarning">If someone has your Secret Phrase they **can steal your funds**.</string>
+    <string name="WalletRecoveryPhraseSupportWarning">Telegram Support **will never ask you** for your Secret Phrase.</string>
     <string name="WalletRecoveryPhraseLearnButton">Show Recovery Phrase</string>
-    <string name="WalletRecoveryPhraseTransferInfo">You can transfer your wallet to another device by copying your 12-word recovery phrase.</string>
+    <string name="WalletRecoveryPhraseTransferInfo">You can transfer your wallet to another device by copying your 12-word secret phrase.</string>
 
     <string name="WalletViewInExplorer">View in Explorer</string>
     <string name="WalletWhatIsGram">What is Gram?</string>
@@ -14089,7 +14089,7 @@
     <string name="WalletHelloNotAvailable">Windows Hello is not available right now.</string>
     <string name="WalletHelloTryAgain">Try Again</string>
 
-    <string name="WalletYourRecoveryPhrase">Your Recovery Phrase</string>
+    <string name="WalletYourRecoveryPhrase">Your Secret Phrase</string>
     <string name="WalletDone">Done</string>
     <string name="WalletContinue">Continue</string>
     <string name="WalletTestPhrase">Test Time</string>
