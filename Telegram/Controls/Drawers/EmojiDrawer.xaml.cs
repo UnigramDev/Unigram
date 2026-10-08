@@ -636,7 +636,7 @@ namespace Telegram.Controls.Drawers
 
                     foreach (var sticker in group.Stickers)
                     {
-                        if (sticker.StickerValue != null && _itemIdToSelector.TryGetValue(sticker, out SelectorItem selector) && selector.Content is Grid content)
+                        if (sticker.StickerValue != null && _itemIdToSelector.TryGetValue(sticker, out SelectorItem selector) && selector.ContentTemplateRoot is Grid content)
                         {
                             var animation = content.Children[0] as AnimatedImage;
                             animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
