@@ -279,14 +279,16 @@ namespace Telegram.Views.Wallet.Popups
                 args.Cancel = true;
                 deferral.Complete();
 
-                _ = MessagePopup.ShowNestedAsync(XamlRoot, Explain(failure), Strings.WalletImport, Strings.OK);
+                var (title, message) = Explain(failure);
+
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, message, title, Strings.OK);
                 return;
             }
 
             deferral.Complete();
 
             _navigationService.NavigateToWallet();
-            _navigationService.ShowToast("[**Wallet Imported**\nYour wallet was restored from your recovery phrase.]", ToastPopupIcon.Success);
+            _navigationService.ShowToast(string.Format("**{0}**\n{1}", Strings.WalletImported, Strings.WalletImportedInfo), ToastPopupIcon.Success);
         }
 
         /// <summary>
@@ -332,7 +334,7 @@ namespace Telegram.Views.Wallet.Popups
                 args.Cancel = true;
                 deferral.Complete();
 
-                _ = MessagePopup.ShowNestedAsync(XamlRoot, "[That wallet could not be used. Check the words and their order.]", "[Import Wallet]", Strings.OK);
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Strings.WalletInvalidRecoveryPhraseInfo, Strings.WalletInvalidRecoveryPhrase, Strings.OK);
                 return;
             }
 
@@ -354,13 +356,13 @@ namespace Telegram.Views.Wallet.Popups
         /// What to say about a phrase that did not bind. The service reports which of the three it
         /// was; the words are the view's.
         /// </summary>
-        private static string Explain(WalletBindFailure failure)
+        private static (string Title, string Message) Explain(WalletBindFailure failure)
         {
             return failure switch
             {
-                WalletBindFailure.OtherWallet => "[That recovery phrase belongs to a different wallet.]",
-                WalletBindFailure.NoWallet => "[This account doesn't have a wallet yet.]",
-                _ => "[That's not a valid recovery phrase. Check the words and their order.]"
+                WalletBindFailure.OtherWallet => (Strings.WalletWrongSecretPhrase, "[That recovery phrase belongs to a different wallet.]"),
+                WalletBindFailure.NoWallet => (Strings.WalletImport, "[This account doesn't have a wallet yet.]"),
+                _ => (Strings.WalletInvalidRecoveryPhrase, Strings.WalletInvalidRecoveryPhraseInfo)
             };
         }
 

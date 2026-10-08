@@ -1101,7 +1101,7 @@ namespace Telegram.Views.Wallet.Popups
 
                 _ = MessagePopup.ShowNestedAsync(XamlRoot, recipient != null
                     ? "[This transfer can't be sent yet.]" + Environment.NewLine + Environment.NewLine + recipient.Message
-                    : "[This transfer can't be sent yet.]", "[Send Grams]", Strings.OK);
+                    : "[This transfer can't be sent yet.]", Strings.WalletSendGrams, Strings.OK);
                 return;
             }
 
@@ -1141,7 +1141,7 @@ namespace Telegram.Views.Wallet.Popups
 
                     deferral.Complete();
 
-                    _ = MessagePopup.ShowNestedAsync(XamlRoot, "[This recipient can't receive a private comment. Make the comment public or remove it, then try again.]", "[Send Grams]", Strings.OK);
+                    _ = MessagePopup.ShowNestedAsync(XamlRoot, "[This recipient can't receive a private comment. Make the comment public or remove it, then try again.]", Strings.WalletSendGrams, Strings.OK);
                     return;
                 }
 
@@ -1183,7 +1183,7 @@ namespace Telegram.Views.Wallet.Popups
             IsPrimaryButtonPending = false;
             deferral.Complete();
 
-            _ = MessagePopup.ShowNestedAsync(XamlRoot, "[The transfer could not be sent.]", "[Send Grams]", Strings.OK);
+            _ = MessagePopup.ShowNestedAsync(XamlRoot, "[The transfer could not be sent.]", Strings.WalletSendGrams, Strings.OK);
         }
 
         /// <summary>

@@ -115,9 +115,10 @@ namespace Telegram.Views.Wallet.Popups
 
             // The amount and when it last moved, which together are what tells the user whether
             // this is a wallet worth going back for.
+            var balance = Formatter.Grams(wallet.BalanceNanograms);
             var caption = wallet.LastUsedDate > 0
-                ? string.Format("[{0} Grams - last used {1}]", Formatter.TonBalance(wallet.BalanceNanograms).Join(), Formatter.DateAt(wallet.LastUsedDate))
-                : string.Format("[{0} Grams]", Formatter.TonBalance(wallet.BalanceNanograms).Join());
+                ? string.Format(Strings.WalletPreviousWalletLastUsed, balance, Formatter.DateAt(wallet.LastUsedDate))
+                : balance;
 
             panel.Children.Add(new TextBlock
             {

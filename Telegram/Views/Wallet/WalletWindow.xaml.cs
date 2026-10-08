@@ -450,10 +450,10 @@ namespace Telegram.Views.Wallet
             // there is a picker.
             var popup = new InputPopup
             {
-                Title = "[Send Grams]",
+                Title = Strings.WalletSendGrams,
                 Header = "[Enter a wallet address or a .ton name.]",
-                PlaceholderText = "[Address]",
-                PrimaryButtonText = "[Next]",
+                PlaceholderText = Strings.WalletAddressOrName,
+                PrimaryButtonText = Strings.Next,
                 SecondaryButtonText = Strings.Cancel,
                 MinLength = 1
             };
@@ -474,7 +474,7 @@ namespace Telegram.Views.Wallet
 
                 if (string.IsNullOrEmpty(recipient))
                 {
-                    _navigationService.ShowToast("[That name does not point at a wallet.]", ToastPopupIcon.Error);
+                    _navigationService.ShowToast(string.Format(Strings.WalletSearchNoResults, domain), ToastPopupIcon.Error);
                     return;
                 }
             }

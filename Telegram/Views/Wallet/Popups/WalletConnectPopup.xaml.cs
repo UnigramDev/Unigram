@@ -48,7 +48,7 @@ namespace Telegram.Views.Wallet.Popups
 
             _aggregator = navigationService.Session.Resolve<IEventAggregator>();
 
-            PrimaryButtonContent = "[Connect]";
+            PrimaryButtonContent = Strings.WalletConnect;
             SecondaryButtonContent = Strings.Cancel;
 
             IsPrimaryButtonEnabled = false;
@@ -100,7 +100,7 @@ namespace Telegram.Views.Wallet.Popups
             }
             else
             {
-                Subtitle.Text = "[This connection request could not be opened.]";
+                Subtitle.Text = Strings.WalletTonConnectRequestUnavailable;
             }
         }
 
@@ -119,8 +119,8 @@ namespace Telegram.Views.Wallet.Popups
 
             if (session.Manifest is TonConnectManifestInfo info)
             {
-                Title.Text = string.Format("[Connect to {0}]", info.Name);
-                Footer.Text = string.Format("[{0} won't be able to move funds without permission.]", info.Name);
+                Title.Text = string.Format(Strings.WalletConnectToApp, info.Name);
+                Footer.Text = Strings.WalletConnectPermissionInfo;
 
                 // The domain rather than the whole URL: it is what the manifest was fetched from,
                 // and the part a user can actually recognise. Kept, because a proof is bound to the
@@ -141,7 +141,7 @@ namespace Telegram.Views.Wallet.Popups
             {
                 // Named by a manifest that cannot be read, so there is nothing to tell the user
                 // about who is asking - which is the one thing they have to judge.
-                Title.Text = "[Unknown app]";
+                Title.Text = Strings.WalletConnectToDApp;
                 Subtitle.Text = "[This app could not be identified, so connecting to it is not safe.]";
                 Footer.Text = string.Empty;
             }
@@ -163,11 +163,11 @@ namespace Telegram.Views.Wallet.Popups
             {
                 if (item is TonConnectConnectItemProof)
                 {
-                    return "[Allow this app to see your wallet address and sign you in. This is not a transfer.]";
+                    return Strings.WalletConnectProofInfo;
                 }
             }
 
-            return "[Allow this app to see your wallet address]";
+            return Strings.WalletConnectInfo;
         }
 
         private void UpdatePrimaryButton()

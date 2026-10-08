@@ -14112,6 +14112,30 @@
     <string name="WalletImportPhraseInfo">Enter the {0}-word recovery phrase from another wallet you own.</string>
     <string name="WalletPhraseWords_one">{0} word</string>
     <string name="WalletPhraseWords_other">{0} words</string>
+    <string name="WalletPhraseWords_few">{0} words</string>
+    <string name="WalletPhraseWords_many">{0} words</string>
+    <string name="WalletPhraseWords_two">{0} words</string>
+    <string name="WalletPhraseWords_zero">{0} words</string>
+
+    <string name="WalletAddressOrName">Address or name</string>
+    <string name="WalletSearchNoResults">There were no results for \"{0}\".\nTry another name or address.</string>
+    <string name="WalletConnect">Connect</string>
+    <string name="WalletConnectToApp">Connect wallet to {0}</string>
+    <string name="WalletConnectToDApp">Connect wallet to dApp</string>
+    <string name="WalletConnectInfo">The app will be able to view your\nTON address, balance and activity.</string>
+    <string name="WalletConnectProofInfo">The app will be able to view your TON address, balance and activity, and request a signature to sign you in. This is not a transfer.</string>
+    <string name="WalletConnectPermissionInfo">The app won’t be able to move\nfunds without permission.</string>
+    <string name="WalletTonConnectRequestUnavailable">This TON Connect request is unavailable or has already been answered</string>
+    <string name="WalletAppRequestsTransfer">{0} requests a transfer</string>
+    <string name="WalletImported">Wallet Imported</string>
+    <string name="WalletImportedInfo">Your wallet was restored from your secret phrase.</string>
+    <string name="WalletInvalidRecoveryPhrase">Invalid Recovery Phrase</string>
+    <string name="WalletInvalidRecoveryPhraseInfo">Check the word order.\n\nOnly a secret phrase created in Telegram can be imported here.</string>
+    <string name="WalletWrongSecretPhrase">Wrong Secret Phrase</string>
+    <string name="WalletPreviousWallets">Previous wallets</string>
+    <string name="WalletPreviousWalletsInfo">Wallets you used before on this device. Save their secret phrases — they\'ll be removed if you log out or reinstall the app.</string>
+    <string name="WalletPreviousWalletLastUsed">{0} — last used {1}</string>
+    <string name="WalletUnknown">Unknown</string>
 
     <string name="Grams_few">{0} Grams</string>
     <string name="Grams_many">{0} Grams</string>

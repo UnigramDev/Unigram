@@ -388,7 +388,7 @@ namespace Telegram.Views.Wallet.Popups
 
             var text = fee != null
                 ? Formatter.Grams(fee.Value)
-                : "[unavailable]";
+                : Strings.WalletUnknown;
 
             _ = MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.WalletNetworkFeeInfo, text), Strings.WalletNetworkFee, Strings.OK);
         }

@@ -367,7 +367,7 @@ namespace Telegram.Common
                 Logger.Error("wallet binding failed: " + ex.Message);
             }
 
-            await ShowMessageAsync(navigation.XamlRoot, "[Your wallet could not be set up on this device. Please try again later.]", "[Wallet]");
+            await ShowMessageAsync(navigation.XamlRoot, "[Your wallet could not be set up on this device. Please try again later.]", Strings.WalletTitle);
             return BindOutcome.Failed;
         }
 

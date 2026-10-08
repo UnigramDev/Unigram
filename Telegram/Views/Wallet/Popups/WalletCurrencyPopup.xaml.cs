@@ -54,7 +54,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             InitializeComponent();
 
-            Title = "[Currency]";
+            Title = Strings.WalletCurrency;
             SecondaryButtonContent = Strings.Cancel;
 
             var handler = new DiffHandler<WalletCurrency>((x, y) =>

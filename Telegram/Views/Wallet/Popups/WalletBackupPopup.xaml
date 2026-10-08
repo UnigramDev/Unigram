@@ -50,8 +50,8 @@
             <!-- Filled in code: each row needs the address broken into groups that alternate
                  colour, which no template can do from a single string. -->
             <controls:HeaderedControl x:Name="ArchiveRoot"
-                                      Header="[Old Wallets]"
-                                      Footer="[These wallets are no longer used by your account, but this device still holds their recovery phrases.]"
+                                      Header="{CustomResource WalletPreviousWallets}"
+                                      Footer="{CustomResource WalletPreviousWalletsInfo}"
                                       Visibility="Collapsed">
                 <StackPanel x:Name="ArchivePanel" />
             </controls:HeaderedControl>

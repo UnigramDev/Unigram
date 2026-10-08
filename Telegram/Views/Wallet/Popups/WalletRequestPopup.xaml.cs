@@ -65,7 +65,7 @@ namespace Telegram.Views.Wallet.Popups
             Photo.Source = ProfilePictureSourceText.GetNameForChat(message.DappName);
             Domain.Text = message.DappName ?? string.Empty;
 
-            ReviewLabel.Text = string.Format("[{0} wants you to confirm an action. Reviewing it will unlock your wallet.]", message.DappName);
+            ReviewLabel.Text = string.Format(Strings.WalletAppRequestsTransfer, message.DappName);
 
             UpdateDetails();
         }
@@ -162,7 +162,7 @@ namespace Telegram.Views.Wallet.Popups
                 : info.Url;
 
             Domain.Text = _domain;
-            ReviewLabel.Text = string.Format("[{0} wants you to confirm an action. Reviewing it will unlock your wallet.]", info.Name);
+            ReviewLabel.Text = string.Format(Strings.WalletAppRequestsTransfer, info.Name);
 
             if (info.Icon?.DocumentValue != null)
             {
@@ -182,7 +182,7 @@ namespace Telegram.Views.Wallet.Popups
             // the wallet's, and a rate arriving after this opened is what fills in the second line.
             Card.SetTransfer(_clientService, state, _request.Recipient, _request.Nanograms);
 
-            TransferAmount.Text = string.Format("[{0} Grams]", Formatter.TonBalance(_request.Nanograms).Join());
+            TransferAmount.Text = Formatter.Grams(_request.Nanograms);
 
             UpdateFee(state);
         }
