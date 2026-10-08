@@ -15,11 +15,11 @@
             <controls:AnimatedImage Source="ms-appx:///Assets/Animations/WalletImport.tgs"
                                     IsCachingEnabled="False"
                                     AutoPlay="True"
-                                    FrameSize="120,120"
+                                    FrameSize="96,96"
                                     DecodeFrameType="Logical"
                                     LoopCount="1"
-                                    Width="120"
-                                    Height="120"
+                                    Width="96"
+                                    Height="96"
                                     Margin="0,12,0,12" />
 
             <TextBlock Text="{CustomResource WalletRecoveryPhraseLearnTitle}"

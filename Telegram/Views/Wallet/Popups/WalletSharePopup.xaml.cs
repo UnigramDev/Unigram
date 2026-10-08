@@ -14,6 +14,7 @@ using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -30,12 +31,16 @@ namespace Telegram.Views.Wallet.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
+        private readonly string _address;
+
         public WalletSharePopup(IClientService clientService, INavigationService navigationService, string address)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _navigationService = navigationService;
+
+            _address = address;
 
             var geometry = QrCode.CreateGeometry("ton://transfer/" + address, 3, 4, true, 148);
             var visual = ElementComposition.GetElementVisual(Code);
@@ -172,6 +177,13 @@ namespace Telegram.Views.Wallet.Popups
 
             _flipping = true;
 
+            if (!_flipped)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(_address);
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+
             // Where the front face is and where this click sends it. Going to the back
             // it turns one way; returning it unwinds along the same path rather than
             // continuing round, giving right to left then left to right.
@@ -248,8 +260,9 @@ namespace Telegram.Views.Wallet.Popups
                 if (providers.Providers.Count == 1)
                 {
                     var provider = providers.Providers[0];
+                    var theme = NightModeService.Current.GetCalculatedApplicationTheme();
 
-                    response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _clientService.TonWalletState.Address, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, /*_navigationService.Window.ThemeParameters*/ null, string.Empty, string.Empty));
+                    response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _clientService.TonWalletState.Address, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, theme == ApplicationTheme.Light ? "light" : "dark", string.Empty, string.Empty));
 
                     if (response is OnRampPaymentSession session)
                     {

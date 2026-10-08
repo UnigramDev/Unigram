@@ -142,8 +142,8 @@
                 CornerRadius="4"
                 Margin="24"
                 Grid.Row="2">
-
             <Button Content="{CustomResource WalletBuyWithCashOrCrypto}"
+                    Click="Buy_Click"
                     HorizontalAlignment="Stretch"
                     Height="40" />
         </Border>

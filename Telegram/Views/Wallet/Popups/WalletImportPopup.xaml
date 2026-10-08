@@ -14,7 +14,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <Grid Padding="24">
+            <Grid Padding="24,0,24,24">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -26,22 +26,23 @@
                                         IsCachingEnabled="False"
                                         AutoPlay="True"
                                         LoopCount="1"
-                                        FrameSize="140,140"
+                                        FrameSize="96,96"
                                         DecodeFrameType="Logical"
-                                        Width="140"
-                                        Height="140"
-                                        Margin="0,0,0,12" />
+                                        Width="96"
+                                        Height="96"
+                                        Margin="0,12,0,12" />
 
-                <TextBlock Text="[Import Wallet]"
+                <TextBlock Text="{CustomResource WalletImport}"
                            Style="{StaticResource PopupTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Top"
                            Margin="0,0,0,8"
                            Grid.Row="1" />
 
-                <TextBlock common:TextBlockHelper.Markdown="[Enter the 24-word recovery phrase from another wallet app you own.]"
+                <TextBlock x:Name="Subtitle"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextAlignment="Center"
+                           Margin="0,0,0,12"
                            Grid.Row="2" />
 
                 <controls:TopNavView x:Name="Navigation"
@@ -111,8 +112,8 @@
                             </Setter>
                         </Style>
                     </controls:TopNavView.ItemContainerStyle>
-                    <controls:TopNavViewItem Content="[12 words]" />
-                    <controls:TopNavViewItem Content="[24 words]" />
+                    <controls:TopNavViewItem x:Name="Words12" />
+                    <controls:TopNavViewItem x:Name="Words24" />
                 </controls:TopNavView>
 
                 <StackPanel x:Name="Words"

@@ -47,7 +47,7 @@ namespace Telegram.Views.Wallet.Popups
 
             InitializeComponent();
 
-            Title = "[Keys & Backup]";
+            Title = Strings.WalletKeysAndBackup;
         }
 
         /// <summary>

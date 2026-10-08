@@ -11,8 +11,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Wallet.Popups
 {
@@ -57,6 +55,7 @@ namespace Telegram.Views.Wallet.Popups
             _words = words;
 
             PrimaryButtonContent = Strings.WalletDone;
+            ButtonsLayout = ContentPopupButtonsLayout.Vertical;
 
             InitializeWords();
         }
@@ -69,6 +68,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             var popup = new WalletPhrasePopup(words);
             popup.PrimaryButtonContent = Strings.WalletContinue;
+            popup.SecondaryButtonText = Strings.Cancel;
             popup.Closing += popup.OnDisableBackupClosing;
 
             return popup;

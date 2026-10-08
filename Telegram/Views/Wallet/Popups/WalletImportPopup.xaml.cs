@@ -60,6 +60,9 @@ namespace Telegram.Views.Wallet.Popups
             InitializeComponent();
             InitializeWords(12);
 
+            Words12.Content = Locale.Declension(Strings.R.WalletPhraseWords, 12);
+            Words24.Content = Locale.Declension(Strings.R.WalletPhraseWords, 24);
+
             Navigation.SelectionChanged += Navigation_SelectionChanged;
 
             PrimaryButtonText = Strings.Import;
@@ -68,6 +71,8 @@ namespace Telegram.Views.Wallet.Popups
 
         private void InitializeWords(int count)
         {
+            TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.WalletImportPhraseInfo, count));
+
             var backup = _words;
 
             _words = new string[count];
@@ -274,7 +279,7 @@ namespace Telegram.Views.Wallet.Popups
                 args.Cancel = true;
                 deferral.Complete();
 
-                _ = MessagePopup.ShowNestedAsync(XamlRoot, Explain(failure), "[Import Wallet]", Strings.OK);
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Explain(failure), Strings.WalletImport, Strings.OK);
                 return;
             }
 

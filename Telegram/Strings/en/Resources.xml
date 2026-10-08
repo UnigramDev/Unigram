@@ -14108,6 +14108,11 @@
     <string name="WalletTransferStatusSending">sending</string>
     <string name="WalletTransferStatusSent">sent</string>
 
+    <string name="WalletImport">Import Wallet</string>
+    <string name="WalletImportPhraseInfo">Enter the {0}-word recovery phrase from another wallet you own.</string>
+    <string name="WalletPhraseWords_one">{0} word</string>
+    <string name="WalletPhraseWords_other">{0} words</string>
+
     <string name="Grams_few">{0} Grams</string>
     <string name="Grams_many">{0} Grams</string>
     <string name="Grams_one">{0} Gram</string>
