@@ -686,6 +686,7 @@
     {"name": "ic_fluent_arrow_export_20_regular", "code": "F793", "src": "fluent:arrow_export_20_regular"},
     {"name": "ic_fluent_arrow_import_20_regular", "code": "F794", "src": "fluent:arrow_import_20_regular"},
     {"name": "tl_fluent_gift_14_regular", "code": "F795", "src": "icons/tl_fluent_gift_14_regular.svg"},
+    {"name": "ic_fluent_apps_20_regular", "code": "F796", "src": "fluent:apps_20_regular"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

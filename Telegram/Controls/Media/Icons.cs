@@ -473,6 +473,7 @@ namespace Telegram.Controls.Media
         public const string EmojiHand = "\uE901";
 
         public const string AppFolder = "\uF122";
+        public const string Apps = "\uF796";
 
         public const string BotMarkup24 = "\uE9D5";
 
