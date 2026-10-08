@@ -17,7 +17,7 @@
                               IsSourceGrouped="True"
                               ItemsPath="Stickers" />
 
-        <DataTemplate x:Key="EmojiTemplate"
+        <DataTemplate x:Name="EmojiTemplate"
                       x:DataType="common:EmojiData">
             <TextBlock x:Phase="0"
                        Text="{x:Bind Value, Mode=OneTime}"
@@ -27,7 +27,7 @@
                        FontFamily="{ThemeResource EmojiThemeFontFamily}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="EmojiSkinTemplate"
+        <DataTemplate x:Name="EmojiSkinTemplate"
                       x:DataType="common:EmojiSkinData">
             <TextBlock x:Phase="0"
                        Text="{x:Bind Value, Mode=OneWay}"
@@ -37,7 +37,7 @@
                        FontFamily="{ThemeResource EmojiThemeFontFamily}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="ItemTemplate">
+        <DataTemplate x:Name="ItemTemplate">
             <Grid Background="Transparent">
                 <controls:AnimatedImage x:Name="Player"
                                         AutoPlay="False"
@@ -51,7 +51,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="MoreTemplate">
+        <DataTemplate x:Name="MoreTemplate">
             <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}"
                   CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                   HorizontalAlignment="Center"

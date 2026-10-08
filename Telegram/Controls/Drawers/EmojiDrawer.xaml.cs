@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
@@ -105,10 +104,10 @@ namespace Telegram.Controls.Drawers
             _zoomer.Opening += Zoomer_Opening;
             _zoomer.Closing += Zoomer_Closing;
 
-            _typeToItemHashSetMapping.Add("EmojiSkinTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("EmojiTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("MoreTemplate", new HashSet<SelectorItem>());
+            _typeToStrategy.Add("EmojiSkinTemplate", new ChoosingItemStrategy(EmojiSkinTemplate));
+            _typeToStrategy.Add("EmojiTemplate", new ChoosingItemStrategy(EmojiTemplate));
+            _typeToStrategy.Add("ItemTemplate", new ChoosingItemStrategy(ItemTemplate));
+            _typeToStrategy.Add("MoreTemplate", new ChoosingItemStrategy(MoreTemplate));
 
             _mode = mode;
 
@@ -552,7 +551,33 @@ namespace Telegram.Controls.Drawers
 
         #region Recycle
 
-        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new();
+        private readonly Dictionary<string, ChoosingItemStrategy> _typeToStrategy = new();
+
+        record ChoosingItemStrategy
+        {
+            public ChoosingItemStrategy(DataTemplate itemTemplate)
+            {
+                Queue = new();
+                ItemTemplate = itemTemplate;
+            }
+
+            public DataTemplate ItemTemplate { get; }
+
+            public HashSet<SelectorItem> Queue { get; }
+
+            public int TotalCount { get; set; }
+
+            // Where this type's containers came from, which is what says whether a type is being
+            // served by recycling or is paying for a tree of its own every time. The app-wide
+            // totals in TextThroughput cannot: the cost is in which pair of types mismatches.
+            public int Matched { get; set; }
+
+            public int Pooled { get; set; }
+
+            public int Retyped { get; set; }
+
+            public int Made { get; set; }
+        }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
@@ -562,24 +587,65 @@ namespace Telegram.Controls.Drawers
                     ? "ItemTemplate"
                     : args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
 
-            var relevantHashSet = _typeToItemHashSetMapping[typeName];
+            var relevantHashSet = _typeToStrategy[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
             // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
             // recycled ItemContainer available to be reused.
-            if (args.ItemContainer is EmojiGridViewItem container)
+            if (args.ItemContainer is EmojiGridViewItem selector)
             {
-                if (container.TypeName.Equals(typeName))
+                if (selector.TypeName.Equals(typeName))
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
-                    relevantHashSet.Remove(args.ItemContainer);
+                    relevantHashSet.Matched++;
+                    relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
                 {
-                    // The ItemContainer's datatemplate does not match the needed
-                    // datatemplate.
-                    // Don't remove it from the recycle queue, since XAML will resuggest it later
-                    args.ItemContainer = null;
+                    // TODO: threshold could be made dynamic...
+                    // By example if we are in a channel and typeName is UserMessageTemplate, we can just override
+                    // Same thing should probably apply to all service messages.
+
+                    // A suggestion is refused by handing back a different container: null alone
+                    // is consent, and XAML then uses the one it suggested as-is. The refused one
+                    // is marked and pushed onto the recycle queue, which is popped from the back,
+                    // so it is the very next suggestion - refusing is bounded only because each
+                    // refusal spends a container from our own queue, and the branch below
+                    // re-templates as soon as that runs dry.
+                    //
+                    // Refusing past that point is microsoft-ui-xaml#9307: the mark is cleared
+                    // only when a container is recycled again, so refused ones stay refused,
+                    // FindRecyclingCandidate stops finding candidates, and the panel realizes
+                    // everything it is asked for instead of recycling. Measured in a spike, 5000
+                    // items: 104 containers with this guard, 1970 without it.
+                    //
+                    // Re-templating throws away the tree below it - bubble, text block, layout,
+                    // surface. It is not a choice made on cost: it is the only way out, because
+                    // the panel goes on suggesting the container it has already been told is
+                    // unusable until something consumes it.
+                    if (relevantHashSet.Queue.Count > 0)
+                    {
+                        // The ItemContainer's datatemplate does not match the needed
+                        // datatemplate.
+                        // Don't remove it from the recycle queue: XAML suggests it again on the
+                        // very next call, and taking it then is what drains the pool safely
+                        args.ItemContainer = null;
+                    }
+                    else
+                    {
+                        var recycledHashSet = _typeToStrategy[selector.TypeName];
+
+                        // Suggested container doesn't match what we want, but ICG2 is stuck in a loop.
+                        relevantHashSet.Retyped++;
+                        relevantHashSet.TotalCount++;
+
+                        selector.TypeName = typeName;
+                        selector.ContentTemplate = relevantHashSet.ItemTemplate;
+
+                        // Remove the container from the old queue and update the counter.
+                        recycledHashSet.Queue.Remove(args.ItemContainer);
+                        recycledHashSet.TotalCount--;
+                    }
                 }
             }
 
@@ -588,23 +654,34 @@ namespace Telegram.Controls.Drawers
             if (args.ItemContainer == null)
             {
                 // See if we can fetch from the correct list.
-                if (relevantHashSet.Count > 0)
+                if (relevantHashSet.Queue.Count > 0)
                 {
-                    // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
-                    // item from a hashset without knowing the item. Queue isn't usable for this scenario
-                    // because you can't remove a specific element (which is needed in the block above).
-                    args.ItemContainer = relevantHashSet.First();
-                    relevantHashSet.Remove(args.ItemContainer);
+                    // A HashSet because the block above removes a specific container, which a
+                    // Queue cannot do. Taking an arbitrary one out is then a matter of stopping
+                    // at the first: First() cannot fast path a set and boxes its struct
+                    // enumerator, once for every container realized.
+                    foreach (var container in relevantHashSet.Queue)
+                    {
+                        args.ItemContainer = container;
+                        break;
+                    }
+
+                    relevantHashSet.Pooled++;
+                    relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
                 {
+                    relevantHashSet.Made++;
+                    relevantHashSet.TotalCount++;
+
                     // There aren't any (recycled) ItemContainers available. So a new one
                     // needs to be created.
-                    var item = new EmojiGridViewItem(typeName);
-                    item.ContentTemplate = Resources[typeName] as DataTemplate;
-                    item.Style = List.ItemContainerStyle;
-                    item.ContextRequested += OnContextRequested;
-                    args.ItemContainer = item;
+                    selector = new EmojiGridViewItem(typeName);
+                    selector.ContentTemplate = relevantHashSet.ItemTemplate;
+                    selector.Style = sender.ItemContainerStyle;
+                    selector.ContextRequested += OnContextRequested;
+
+                    args.ItemContainer = selector;
 
                     _zoomer.ElementPrepared(args.ItemContainer);
                 }
@@ -661,8 +738,7 @@ namespace Telegram.Controls.Drawers
                 if (args.ItemContainer is EmojiGridViewItem container)
                 {
                     // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
-                    var tag = container.TypeName;
-                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+                    _typeToStrategy[container.TypeName].Queue.Add(args.ItemContainer);
                 }
 
                 return;
@@ -802,13 +878,11 @@ namespace Telegram.Controls.Drawers
 
     public partial class EmojiGridViewItem : GridViewItem
     {
-        private readonly string _typeName;
-
         public EmojiGridViewItem(string typeName)
         {
-            _typeName = typeName;
+            TypeName = typeName;
         }
 
-        public string TypeName => _typeName;
+        public string TypeName{ get; set; }
     }
 }
