@@ -22,9 +22,15 @@
 
         <!-- No picture above the amount: the receipt this follows shows what was bought, and a
              transfer has nothing to show but its own numbers. -->
-        <StackPanel HorizontalAlignment="Center"
+        <StackPanel x:Name="TransferHeader"
+                    HorizontalAlignment="Center"
                     Margin="24,0,24,0">
-            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Gram.tgs"
+            <controls:ProfilePicture x:Name="HeaderPhoto"
+                                     Size="96"
+                                     Margin="0,16,0,8"/>
+
+            <controls:AnimatedImage x:Name="HeaderAnimated"
+                                    Source="ms-appx:///Assets/Animations/Gram.tgs"
                                     IsCachingEnabled="False"
                                     AutoPlay="True"
                                     FrameSize="120,120"

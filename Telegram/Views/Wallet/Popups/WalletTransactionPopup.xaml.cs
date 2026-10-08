@@ -100,16 +100,22 @@ namespace Telegram.Views.Wallet.Popups
         {
             var transfer = transaction.Type as TonWalletTransactionTypeTransfer;
             var onRampDeposit = transaction.Type as TonWalletTransactionTypeOnRampDeposit;
+            var nftTransfer = transaction.Type as TonWalletTransactionTypeNftTransfer;
 
-            var sent = transfer != null && transfer.Amount < 0;
+            var outgoing = (transfer != null && transfer.Amount < 0) || (nftTransfer != null && nftTransfer.IsOutgoing);
             var amountValue = transfer?.Amount ?? onRampDeposit?.Amount ?? 0;
 
             if (amountValue != 0)
             {
                 var amount = Formatter.TonBalance(Math.Abs(amountValue));
 
-                Amount.Text = (sent ? "-" : "+") + amount.Integer + amount.Fraction;
+                Amount.Text = (outgoing ? "-" : "+") + amount.Integer + amount.Fraction;
                 Converted.Text = Convert(state, Math.Abs(amountValue));
+            }
+            else if (nftTransfer != null)
+            {
+                Amount.Text = nftTransfer.Nft.Name;
+                Converted.Text = string.Empty;
             }
             else
             {
@@ -118,7 +124,29 @@ namespace Telegram.Views.Wallet.Popups
                 Converted.Text = string.Empty;
             }
 
-            UpdatePeer(transaction, transfer, sent);
+            if (nftTransfer?.Nft.Image != null)
+            {
+                HeaderPhoto.Source = new ProfilePictureSourcePhoto(_clientService, nftTransfer.Nft.Image.Photo.Id, nftTransfer.Nft.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
+                HeaderPhoto.Visibility = Visibility.Visible;
+
+                HeaderAnimated.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is TonWalletTransactionTypeKeyChange)
+            {
+                HeaderPhoto.Source = ProfilePictureSourceText.GetGlyph(Icons.KeyFilled, long.MinValue);
+                HeaderPhoto.Visibility = Visibility.Visible;
+
+                HeaderAnimated.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                HeaderPhoto.Source = null;
+                HeaderPhoto.Visibility = Visibility.Collapsed;
+
+                HeaderAnimated.Visibility = Visibility.Visible;
+            }
+
+            UpdatePeer(transaction, transfer, nftTransfer, outgoing);
             UpdateAddress(transaction.PeerAddress);
             UpdateComment(transfer);
 
@@ -169,9 +197,9 @@ namespace Telegram.Views.Wallet.Popups
                 : string.Empty;
         }
 
-        private void UpdatePeer(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer, bool sent)
+        private void UpdatePeer(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer, TonWalletTransactionTypeNftTransfer nftTransfer, bool sent)
         {
-            if (transfer == null)
+            if (transfer == null && nftTransfer == null)
             {
                 // A key rotation has no other side, and nothing to send to.
                 PeerRow.Visibility = Visibility.Collapsed;
