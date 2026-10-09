@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Stars.Popups
 {
-    public sealed partial class SendGiftPopup : ContentPopup
+    public sealed partial class SendGiftPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -240,7 +240,7 @@ namespace Telegram.Views.Stars.Popups
         private bool _submitted;
         private bool _completed;
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             args.Cancel = !_completed;
 

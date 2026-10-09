@@ -107,25 +107,5 @@ namespace Telegram.Views.Popups
             SecondaryButtonContent = Strings.Cancel;
 
         }
-
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, ReceivedGift gift, Chat chat, bool resale)
-        {
-            var popup = new TransferGiftPopup(clientService, gift, chat, resale)
-            {
-                IsLightDismissEnabled = true,
-            };
-
-            return popup.ShowAsync(xamlRoot);
-        }
-
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, IClientService clientService, GiftForResale gift, Chat chat)
-        {
-            var popup = new TransferGiftPopup(clientService, gift, chat)
-            {
-                IsLightDismissEnabled = true,
-            };
-
-            return popup.ShowAsync(xamlRoot);
-        }
     }
 }

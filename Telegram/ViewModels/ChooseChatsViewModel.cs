@@ -874,7 +874,7 @@ namespace Telegram.ViewModels
             }
             else if (_configuration is ChooseChatsConfigurationTransferGift transferGift)
             {
-                var confirm = await TransferGiftPopup.ShowAsync(XamlRoot, ClientService, transferGift.Gift, chats[0], false);
+                var confirm = await NavigationService.ShowPopupAsync(new TransferGiftPopup(ClientService, transferGift.Gift, chats[0], false));
                 if (confirm == ContentDialogResult.Primary)
                 {
                     NavigationService.HidePopup(typeof(ChooseChatsPopup));

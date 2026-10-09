@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Stars.Popups
 {
-    public sealed partial class ReceivedGiftPopup : ContentPopup
+    public sealed partial class ReceivedGiftPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -513,7 +513,7 @@ namespace Telegram.Views.Stars.Popups
             PrimaryButtonText = Strings.OK;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_submitted)
             {
@@ -1090,7 +1090,7 @@ namespace Telegram.Views.Stars.Popups
 
             var chat = await _clientService.GetChatFromMessageSenderAsync(_sendGiftTo);
 
-            var confirm = await TransferGiftPopup.ShowAsync(XamlRoot, _clientService, _gift, chat, true);
+            var confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, _gift, chat, true));
             if (confirm == ContentDialogResult.Primary)
             {
                 // TODO: text, isPrivate

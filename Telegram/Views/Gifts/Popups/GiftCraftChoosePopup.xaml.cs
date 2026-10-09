@@ -212,7 +212,7 @@ namespace Telegram.Views.Gifts.Popups
             {
                 var chat = await _clientService.GetChatFromMessageSenderAsync(null);
 
-                var confirm = await TransferGiftPopup.ShowAsync(XamlRoot, _clientService, giftForResale, chat);
+                var confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, giftForResale, chat));
                 if (confirm == ContentDialogResult.Primary)
                 {
                     GiftResalePrice price;

@@ -53,7 +53,7 @@ namespace Telegram.Views.Premium.Popups
         public object ItemsSource { get; }
     }
 
-    public sealed partial class GiftPopup : ContentPopup
+    public sealed partial class GiftPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -294,7 +294,7 @@ namespace Telegram.Views.Premium.Popups
             }
             else if (e.ClickedItem is ReceivedGift receivedGift)
             {
-                confirm = await TransferGiftPopup.ShowAsync(XamlRoot, _clientService, receivedGift, _chat, false);
+                confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, receivedGift, _chat, false));
 
                 if (confirm == ContentDialogResult.Primary)
                 {
@@ -313,8 +313,6 @@ namespace Telegram.Views.Premium.Popups
 
                 return;
             }
-
-            Hide();
 
             if (e.ClickedItem is AvailableGift availableGift)
             {
@@ -346,9 +344,9 @@ namespace Telegram.Views.Premium.Popups
                 confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, option, user.UserId));
             }
 
-            if (confirm != ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary)
             {
-                await this.ShowQueuedAsync(XamlRoot);
+                Hide();
             }
         }
 

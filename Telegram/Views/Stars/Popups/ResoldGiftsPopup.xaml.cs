@@ -411,7 +411,7 @@ namespace Telegram.Views.Stars.Popups
         public GiftForResaleOrder Order => _order;
     }
 
-    public sealed partial class ResoldGiftsPopup : ContentPopup, IResoldGiftsPopup
+    public sealed partial class ResoldGiftsPopup : ModalPopup, IResoldGiftsPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -492,7 +492,7 @@ namespace Telegram.Views.Stars.Popups
             Opened += OnOpened;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             ShowHideSkeleton();
         }

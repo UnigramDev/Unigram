@@ -1,19 +1,20 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Stars.Popups.SendGiftPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Business.Popups"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:chats="using:Telegram.Controls.Chats"
-                       xmlns:messages="using:Telegram.Controls.Messages"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:drawers="using:Telegram.Controls.Drawers"
-                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-                       mc:Ignorable="d"
-                       IsDismissButtonVisible="True"
-                       Padding="0,24,0,0"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       ButtonsLayout="Vertical">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Stars.Popups.SendGiftPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Business.Popups"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:chats="using:Telegram.Controls.Chats"
+                     xmlns:messages="using:Telegram.Controls.Messages"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:drawers="using:Telegram.Controls.Drawers"
+                     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                     xmlns:service="using:Telegram.Controls.Messages.Service"
+                     mc:Ignorable="d"
+                     IsDismissButtonVisible="True"
+                     Padding="0,24,0,0"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     ButtonsLayout="Vertical">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -167,4 +168,4 @@
                                     Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     BottomInset="0" />
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Settings
 
             if (SelectedItemView is GiftForResale giftForResale)
             {
-                var confirm = await TransferGiftPopup.ShowAsync(XamlRoot, ClientService, giftForResale, null);
+                var confirm = await NavigationService.ShowPopupAsync(new TransferGiftPopup(ClientService, giftForResale, null));
                 if (confirm == ContentDialogResult.Primary)
                 {
                     // TODO: text, isPrivate
