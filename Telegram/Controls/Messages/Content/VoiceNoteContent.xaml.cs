@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Media;
 namespace Telegram.Controls.Messages.Content
 {
     // TODO: turn the whole control into a Button
-    public sealed partial class VoiceNoteContent : ControlEx, IContentWithFile
+    public sealed partial class VoiceNoteContent : FileButton, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -48,6 +48,8 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnLoaded()
         {
+            base.OnLoaded();
+
             var voiceNote = GetContent(_message);
             if (voiceNote == null || !_templateApplied)
             {
@@ -66,6 +68,8 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnUnloaded()
         {
+            base.OnUnloaded();
+
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
@@ -75,9 +79,8 @@ namespace Telegram.Controls.Messages.Content
 
         private AutomaticDragHelper ButtonDrag;
 
-        private FileButton Button;
-        private Border ViewOnce;
-        private ProgressVoice Progress;
+        private FileButton Button => this;
+        private ProgressVoice Scrubber;
         private TextBlock Subtitle;
         private ToggleButton Recognize;
         private RichTextBlock RecognizedText;
@@ -85,18 +88,21 @@ namespace Telegram.Controls.Messages.Content
         private Border RecognizedIcon;
         private bool _templateApplied;
 
+        // Lazy loaded
+        private Border ViewOnce;
+
         protected override void OnApplyTemplate()
         {
-            Button = GetTemplateChild(nameof(Button)) as FileButton;
-            ViewOnce = GetTemplateChild(nameof(ViewOnce)) as Border;
-            Progress = GetTemplateChild(nameof(Progress)) as ProgressVoice;
+            base.OnApplyTemplate();
+
+            Scrubber = GetTemplateChild(nameof(Scrubber)) as ProgressVoice;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
 
             ButtonDrag = new AutomaticDragHelper(Button, true);
             ButtonDrag.StartDetectingDrag();
 
-            Progress.PositionChanged += Progress_PositionChanged;
+            Scrubber.PositionChanged += Progress_PositionChanged;
 
             Button.Click += Button_Click;
             Button.DragStarting += Button_DragStarting;
@@ -132,10 +138,17 @@ namespace Telegram.Controls.Messages.Content
                 LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
             }
 
-            Progress.UpdateWaveform(voiceNote.Waveform, voiceNote.Duration);
-            ViewOnce.Visibility = message.SelfDestructType is MessageSelfDestructTypeImmediately
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            Scrubber.UpdateWaveform(voiceNote.Waveform, voiceNote.Duration);
+
+            if (message.SelfDestructType is MessageSelfDestructTypeImmediately)
+            {
+                ViewOnce ??= GetTemplateChild(nameof(ViewOnce)) as Border;
+                ViewOnce.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ViewOnce?.Visibility = Visibility.Collapsed;
+            }
 
             if (message.ClientService.IsPremium && message.SchedulingState == null && message.SelfDestructType == null)
             {
@@ -271,8 +284,8 @@ namespace Telegram.Controls.Messages.Content
 
         public void Mockup(MessageVoiceNote voiceNote)
         {
-            Progress.UpdateWaveform(voiceNote.VoiceNote.Waveform, voiceNote.VoiceNote.Duration);
-            Progress.UpdateValue(0.3, 1, false);
+            Scrubber.UpdateWaveform(voiceNote.VoiceNote.Waveform, voiceNote.VoiceNote.Duration);
+            Scrubber.UpdateValue(0.3, 1, false);
 
             Subtitle.Text = FormatTime(TimeSpan.FromSeconds(1), 0) + " / " + FormatTime(TimeSpan.FromSeconds(3), 0);
 
@@ -323,19 +336,19 @@ namespace Telegram.Controls.Messages.Content
             if (message.Content is MessageVoiceNote voiceNoteMessage)
             {
                 Subtitle.Text = voiceNote.GetDuration() + (voiceNoteMessage.IsListened ? string.Empty : " ●");
-                Progress.UpdateValue(message.IsOutgoing || voiceNoteMessage.IsListened ? 0 : voiceNote.Duration, voiceNote.Duration, false);
+                Scrubber.UpdateValue(message.IsOutgoing || voiceNoteMessage.IsListened ? 0 : voiceNote.Duration, voiceNote.Duration, false);
             }
             else
             {
                 Subtitle.Text = voiceNote.GetDuration();
-                Progress.UpdateValue(0, voiceNote.Duration, false);
+                Scrubber.UpdateValue(0, voiceNote.Duration, false);
             }
         }
 
         private void UpdatePosition(TimeSpan position, TimeSpan duration, bool playing, double speed)
         {
             var message = _message;
-            if (message == null || Progress.IsScrubbing)
+            if (message == null || Scrubber.IsScrubbing)
             {
                 return;
             }
@@ -348,7 +361,7 @@ namespace Telegram.Controls.Messages.Content
                 }
 
                 Subtitle.Text = FormatTime(duration - position, duration.TotalHours);
-                Progress.UpdateValue(position, duration, playing, speed);
+                Scrubber.UpdateValue(position, duration, playing, speed);
             }
         }
 
@@ -413,7 +426,7 @@ namespace Telegram.Controls.Messages.Content
                 }
 
                 Button.Progress = 1;
-                Progress.IsEnabled = true;
+                Scrubber.IsEnabled = true;
             }
             else
             {
@@ -449,7 +462,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.Progress = 1;
                 }
 
-                Progress.IsEnabled = false;
+                Scrubber.IsEnabled = false;
             }
         }
 

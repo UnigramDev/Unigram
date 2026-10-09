@@ -384,7 +384,10 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (linkPreview.Type is LinkPreviewTypeVoiceNote)
             {
-                Media.Child = new VoiceNoteContent(message);
+                Media.Child = new VoiceNoteContent(message)
+                {
+                    Padding = new Thickness(0)
+                };
             }
             else if (linkPreview.Type is LinkPreviewTypeUpgradedGift upgradedGift)
             {
