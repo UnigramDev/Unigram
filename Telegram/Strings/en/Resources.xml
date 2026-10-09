@@ -13964,6 +13964,7 @@
     <string name="WalletSend">Send</string>
     <string name="WalletTransactions">Transactions</string>
     <string name="WalletCollectibles">Collectibles</string>
+    <string name="GramCurrency">GRAM</string>
     <string name="WalletSendInstantly">Send Money Instantly</string>
     <string name="WalletSendInstantlyInfo">Send Grams in any chat, just like sharing a photo.</string>
     <string name="WalletNoFees">No Fees</string>

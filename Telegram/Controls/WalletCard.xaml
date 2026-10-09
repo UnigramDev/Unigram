@@ -189,7 +189,7 @@
                             <Run x:Name="CardBalance" /><Run x:Name="CardBalanceFraction"
                                                              FontSize="18" />
                             <Run x:Name="CardBalanceGram"
-                                 Text="GRAM"
+                                 Text="{CustomResource GramCurrency}"
                                  Foreground="#6DDCFF" />
                         </TextBlock>
                         <TextBlock x:Name="CardBalanceUsd"
