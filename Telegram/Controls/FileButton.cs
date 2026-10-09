@@ -105,7 +105,7 @@ namespace Telegram.Controls
             if (_progress != 0)
             {
                 ProgressBar = GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
-                ProgressBar?.Value = _progress;
+                ProgressBar.Value = _progress;
             }
 
             _templateApplied = true;
@@ -120,6 +120,12 @@ namespace Telegram.Controls
                 _disconnectedFileId = 0;
                 _disconnectedState = MessageContentState.None;
             }
+        }
+
+        protected override void OnUnloaded()
+        {
+            _fileId = 0;
+            _state = MessageContentState.None;
         }
 
         #region Thumbnail
@@ -295,7 +301,7 @@ namespace Telegram.Controls
                     value = Math.Clamp(value, 0.05, 1);
                 }
 
-                if (_shouldEnqueueProgress || !_templateApplied || !IsConnected)
+                if (_shouldEnqueueProgress || !_templateApplied || IsDisconnected)
                 {
                     _enqueuedProgress = value;
                 }
@@ -324,7 +330,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (fileId != _fileId || fileId == 0)
+            if (_fileId != fileId || fileId == 0)
             {
                 _state = MessageContentState.None;
             }
