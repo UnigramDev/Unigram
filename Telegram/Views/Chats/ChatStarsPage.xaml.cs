@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Telegram.Charts;
-using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Cells.Revenue;
 using Telegram.Td.Api;

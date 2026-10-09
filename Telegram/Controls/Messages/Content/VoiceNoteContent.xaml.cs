@@ -9,7 +9,6 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Assets.Icons;
 using Telegram.Common;
-using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;

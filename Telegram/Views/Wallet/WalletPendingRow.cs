@@ -7,9 +7,7 @@
 
 using System;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Controls.Cells;
-using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;

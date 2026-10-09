@@ -883,6 +883,6 @@ namespace Telegram.Controls.Drawers
             TypeName = typeName;
         }
 
-        public string TypeName{ get; set; }
+        public string TypeName { get; set; }
     }
 }

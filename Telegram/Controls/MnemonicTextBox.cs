@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Services.Wallet;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;

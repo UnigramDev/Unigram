@@ -210,7 +210,7 @@ namespace Telegram.ViewModels
             }
             else if (fill is BackgroundFillFreeformGradient freeformGradient)
             {
-                BackgroundColors = [..freeformGradient.Colors.Select(x => x.ToColor())];
+                BackgroundColors = [.. freeformGradient.Colors.Select(x => x.ToColor())];
                 Rotation = 0;
             }
 
@@ -235,7 +235,7 @@ namespace Telegram.ViewModels
                 }
                 else if (settings.OutgoingMessageFill is BackgroundFillFreeformGradient outgoingFreeformGradient)
                 {
-                    MessageColors = [..outgoingFreeformGradient.Colors.Select(x => x.ToColor())];
+                    MessageColors = [.. outgoingFreeformGradient.Colors.Select(x => x.ToColor())];
                 }
             }
 
@@ -258,7 +258,7 @@ namespace Telegram.ViewModels
                                                                }))
                                                                .Select(x => new PatternInfo(x.Id, x.Document));
 
-                    Patterns.ReplaceWith([empty, ..patterns]);
+                    Patterns.ReplaceWith([empty, .. patterns]);
 
                     _selectedPattern = Patterns.FirstOrDefault(x => x?.Document?.DocumentValue.Id == background.Document?.DocumentValue.Id);
                     RaisePropertyChanged(nameof(SelectedPattern));

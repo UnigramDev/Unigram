@@ -29,7 +29,6 @@ using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;

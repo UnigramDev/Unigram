@@ -94,7 +94,7 @@ namespace Telegram.Views
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Navigation.SelectedItem is RevenueTabItem page &&page.Type != MediaFrame.Content?.GetType())
+            if (Navigation.SelectedItem is RevenueTabItem page && page.Type != MediaFrame.Content?.GetType())
             {
                 Logger.Info(page.Type);
 

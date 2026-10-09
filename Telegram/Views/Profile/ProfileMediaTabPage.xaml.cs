@@ -13,7 +13,6 @@ using Telegram.Controls.Cells;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;

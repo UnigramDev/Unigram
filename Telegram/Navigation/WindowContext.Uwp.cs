@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -165,7 +164,6 @@ namespace Telegram.Navigation
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            Logger.Debug(sender.VisibleBounds);
             VisibleBoundsChanged?.Invoke(this, args);
         }
 

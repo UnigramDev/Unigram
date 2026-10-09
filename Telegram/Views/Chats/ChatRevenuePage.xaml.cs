@@ -6,8 +6,6 @@
 //
 
 using System.Globalization;
-using Telegram.Charts;
-using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Cells.Revenue;
 using Telegram.Controls.Media;

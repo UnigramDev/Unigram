@@ -7,7 +7,6 @@
 
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Wallet;

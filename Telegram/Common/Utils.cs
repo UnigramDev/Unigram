@@ -7,7 +7,6 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 

@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;

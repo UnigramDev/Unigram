@@ -28,7 +28,7 @@ namespace Telegram.Controls.Media
         private Color _color;
         public Color Color
         {
-            get => _color; 
+            get => _color;
             set => Create(_color = value);
         }
 

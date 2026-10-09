@@ -6,7 +6,6 @@
 //
 
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;

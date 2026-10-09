@@ -6,9 +6,7 @@
 //
 
 using System;
-using System.Linq;
 using System.Text;
-using Telegram.Charts;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;

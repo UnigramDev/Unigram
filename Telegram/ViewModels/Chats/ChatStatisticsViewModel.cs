@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Charts.Data;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;

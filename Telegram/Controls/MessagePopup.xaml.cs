@@ -24,7 +24,7 @@ namespace Telegram.Controls
         public MessagePopup(bool destructive)
         {
             InitializeComponent();
-            
+
             if (destructive)
             {
                 Theme.AddCheckBoxPalette(this, Windows.UI.Color.FromArgb(0xFF, 0xD1, 0x34, 0x38));
@@ -117,7 +117,7 @@ namespace Telegram.Controls
             return popup.ShowAsync(xamlRoot);
         }
 
-        public static MessagePopup Create (string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static MessagePopup Create(string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup(destructive)
             {

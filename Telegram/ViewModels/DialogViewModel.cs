@@ -2626,7 +2626,7 @@ namespace Telegram.ViewModels
                         var a = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.ReadInboxMaxId, out long readInboxMaxId);
                         var b = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.Index, out lastVisibleId);
                         var c = Settings.Chats.TryGet(chat.Id, details.TopicId, ChatSetting.LastMessageId, out long lastMessageId);
-                        
+
                         if (!a || !b)
                         {
                             return false;

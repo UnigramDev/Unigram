@@ -17,7 +17,6 @@ using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
-using Telegram.Native.Composition;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -40,7 +39,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {

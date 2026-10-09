@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Controls;

@@ -13,8 +13,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Wallet;
-using Telegram.Td.Api;
-using Telegram.Views.Popups;
 using Telegram.Views.Wallet.Popups;
 using Windows.UI.Xaml.Controls;
 

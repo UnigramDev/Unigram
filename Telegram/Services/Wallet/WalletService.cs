@@ -15,17 +15,17 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using WalletEngine;
 using Windows.ApplicationModel;
 using Windows.Storage;
+using EngineSendMessage = WalletEngine.SendMessage;
 // Both halves define a SendMessage - TDLib's is the function that sends a chat message - and this
 // file is the one place they meet.
 using File = System.IO.File;
-using EngineSendMessage = WalletEngine.SendMessage;
-using TdTonWalletState = Telegram.Td.Api.TonWalletState;
 using TdTonConnectSession = Telegram.Td.Api.TonConnectSession;
-using Telegram.Navigation.Services;
+using TdTonWalletState = Telegram.Td.Api.TonWalletState;
 
 namespace Telegram.Services.Wallet
 {

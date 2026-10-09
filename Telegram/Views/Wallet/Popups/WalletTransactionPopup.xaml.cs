@@ -7,7 +7,6 @@
 
 using System;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;

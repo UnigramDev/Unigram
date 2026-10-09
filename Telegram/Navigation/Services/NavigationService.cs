@@ -17,7 +17,6 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

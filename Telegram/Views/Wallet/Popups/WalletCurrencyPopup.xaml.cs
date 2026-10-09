@@ -17,7 +17,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.System;
 
 namespace Telegram.Views.Wallet.Popups
 {

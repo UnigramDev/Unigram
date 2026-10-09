@@ -7,8 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
 using System.Text;
 using Telegram.Common;
@@ -17,7 +15,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;

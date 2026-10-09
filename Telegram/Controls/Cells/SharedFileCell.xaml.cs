@@ -12,7 +12,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
