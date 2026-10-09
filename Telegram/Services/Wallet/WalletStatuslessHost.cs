@@ -26,8 +26,9 @@ namespace Telegram.Services.Wallet
     /// exactly the claim this trait makes, and it is why the engine's HTTP host - which has to
     /// report an observed URL for the redirect guard to compare - could not be used here.
     ///
-    /// Nothing in the wallet opens a socket of its own as a result: the wallet's traffic goes where
-    /// the rest of the app's traffic goes, including through whatever proxy the account is using.
+    /// Nothing the engine asks for opens a socket of its own as a result: it goes where the rest of
+    /// the app's traffic goes, including through whatever proxy the account is using. The chain
+    /// stream is the exception, see <see cref="WalletChainStream"/>.
     /// </remarks>
     internal sealed class WalletStatuslessHost : IWalletStatuslessHost
     {
@@ -57,15 +58,31 @@ namespace Telegram.Services.Wallet
                     throw Failed(StatuslessHostErrorKind.Cancelled, "cancelled before dispatch");
                 }
 
-                var response = await _clientService.SendAsync(new SendTonCenterApiRequest(Endpoint(request), Type(request)));
+                var call = _clientService.SendAsync(new SendTonCenterApiRequest(Endpoint(request), Type(request)));
 
-                // TDLib cannot be told to abandon a request in flight, so a cancellation that
-                // arrives while one is running is honoured by discarding the answer rather than by
-                // stopping the work. The engine only requires that the call end in Cancelled.
-                if (source.IsCancellationRequested)
+                // TDLib cannot be told to abandon a request in flight, and holds one indefinitely
+                // while offline. So the deadline and a cancellation are both honoured by no longer
+                // waiting, rather than by stopping the work; the engine only requires that the call
+                // end in Timeout or Cancelled when they pass.
+                using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(source.Token))
                 {
-                    throw Failed(StatuslessHostErrorKind.Cancelled, "cancelled while in flight");
+                    var timeout = TimeSpan.FromMilliseconds(Math.Min(request.TimeoutMs, int.MaxValue));
+                    var finished = await Task.WhenAny(call, Task.Delay(timeout, deadline.Token));
+
+                    // Stops the timer when the answer won.
+                    deadline.Cancel();
+
+                    if (source.IsCancellationRequested)
+                    {
+                        throw Failed(StatuslessHostErrorKind.Cancelled, "cancelled while in flight");
+                    }
+                    else if (finished != call)
+                    {
+                        throw Failed(StatuslessHostErrorKind.Timeout, "no answer within " + request.TimeoutMs + " ms");
+                    }
                 }
+
+                var response = await call;
 
                 if (response is Text text)
                 {
