@@ -283,7 +283,10 @@ namespace Telegram.Controls.Messages.Content
                 Overlay.Progress = 1;
                 Overlay.ProgressVisibility = Visibility.Collapsed;
 
-                Subtitle.Text = video.GetDuration();
+                if (_subtitleSeconds < 0)
+                {
+                    Subtitle.Text = video.GetDuration();
+                }
             }
             else
             {
@@ -372,7 +375,10 @@ namespace Telegram.Controls.Messages.Content
                     Overlay.Progress = 1;
                     Overlay.ProgressVisibility = Visibility.Collapsed;
 
-                    Subtitle.Text = video.GetDuration();
+                    if (_subtitleSeconds < 0)
+                    {
+                        Subtitle.Text = video.GetDuration();
+                    }
                 }
             }
 
