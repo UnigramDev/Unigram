@@ -101,15 +101,6 @@ namespace Telegram.Controls.Messages.Content
                 flip = premium && premiumAnimation && (message.IsChannelPost || !message.IsOutgoing);
             }
 
-            if (message.Content is MessageSticker)
-            {
-                Margin = new Thickness(0, 0, 0, 12);
-            }
-            else
-            {
-                ClearValue(MarginProperty);
-            }
-
             MaxWidth = maxSize;
             MaxHeight = maxSize;
 
