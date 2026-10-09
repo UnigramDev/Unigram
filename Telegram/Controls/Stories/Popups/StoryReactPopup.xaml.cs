@@ -162,7 +162,7 @@ namespace Telegram.Controls.Stories.Popups
         private void Buy_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
             Hide();
-            _navigationService.ShowPopup(new BuyPopup());
+            _navigationService.ShowPopup(new BuyPopup(), BuyStarsArgs.ForPurposeChat(_story.PosterChatId));
         }
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)

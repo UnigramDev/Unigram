@@ -143,7 +143,11 @@ namespace Telegram.Views.Stars.Popups
 
             if (result == PayResult.StarsNeeded && ViewModel.PaymentForm?.Type is PaymentFormTypeStars stars)
             {
-                await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
+                var purposeChatId = ViewModel.Media?.Count > 0 && ViewModel.ChatId != 0
+                    ? ViewModel.ChatId
+                    : ViewModel.PaymentForm.SellerBotUserId;
+
+                await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId, purposeChatId));
             }
         }
 

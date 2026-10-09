@@ -7676,7 +7676,7 @@ namespace Telegram.Views
             }
             else if (ViewModel.ClientService.TryGetSupergroup(ViewModel.Chat, out Supergroup supergroup))
             {
-                ViewModel.NavigationService.ShowPopup(new Views.Stars.Popups.BuyPopup(), BuyStarsArgs.ForChannel(supergroup.PaidMessageStarCount, 0));
+                ViewModel.NavigationService.ShowPopup(new Views.Stars.Popups.BuyPopup(), BuyStarsArgs.ForPurposeChat(ViewModel.Chat.Id, supergroup.PaidMessageStarCount));
             }
         }
 

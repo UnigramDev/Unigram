@@ -31,6 +31,13 @@ namespace Telegram.Views.Stars.Popups
 
         public long ReceiverUserId { get; set; }
 
+        /// <summary>
+        /// The chat_id of telegramPaymentPurposeStars: the chat the stars are bought to be spent
+        /// in, which the server records as the top-up's spend_purpose_peer. ChatId only picks the
+        /// popup's text.
+        /// </summary>
+        public long PurposeChatId { get; set; }
+
         public static BuyStarsArgs ForReceiverUser(long receiverUserId)
         {
             return new BuyStarsArgs
@@ -39,12 +46,13 @@ namespace Telegram.Views.Stars.Popups
             };
         }
 
-        public static BuyStarsArgs ForSellerBotUser(long starCount, long sellerBotUserId)
+        public static BuyStarsArgs ForSellerBotUser(long starCount, long sellerBotUserId, long purposeChatId)
         {
             return new BuyStarsArgs
             {
                 StarCount = starCount,
                 SellerBotUserId = sellerBotUserId,
+                PurposeChatId = purposeChatId
             };
         }
 
@@ -53,7 +61,17 @@ namespace Telegram.Views.Stars.Popups
             return new BuyStarsArgs
             {
                 StarCount = starCount,
-                ChatId = chatId
+                ChatId = chatId,
+                PurposeChatId = chatId
+            };
+        }
+
+        public static BuyStarsArgs ForPurposeChat(long purposeChatId, long starCount = 0)
+        {
+            return new BuyStarsArgs
+            {
+                StarCount = starCount,
+                PurposeChatId = purposeChatId
             };
         }
     }
@@ -103,8 +121,8 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else
                 {
-                    // TODO: chatId
-                    ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeStars(option.Currency, option.Amount, option.StarCount, 0)));
+                    var purposeChatId = ViewModel.Arguments?.PurposeChatId ?? 0;
+                    ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeStars(option.Currency, option.Amount, option.StarCount, purposeChatId)));
                 }
             }
         }
