@@ -77,6 +77,10 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             argsStorage.push_back("--no-audio");
         }
+        else
+        {
+            argsStorage.push_back("--stereo-mode=1");
+        }
 
         if ((mode & AsyncMediaPlayerMode::Video) == AsyncMediaPlayerMode::None || !video)
         {
