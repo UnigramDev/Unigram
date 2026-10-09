@@ -123,6 +123,7 @@
     <Compile Include="Assets\Icons\GifToEmoji.cs" />
     <Compile Include="Assets\Icons\GifToSticker.cs" />
     <Compile Include="Assets\Icons\Fragment.cs" />
+    <Compile Include="Assets\Icons\GramEarnings.cs" />
     <Compile Include="Assets\Icons\Info.cs" />
     <Compile Include="Assets\Icons\Language.cs" />
     <Compile Include="Assets\Icons\Location.cs" />

@@ -56,9 +56,15 @@ namespace Telegram.ViewModels
             ? Formatter.TonBalance(ClientService.OwnedGramCount).Join()
             : string.Empty;
 
+        public string WalletGramCount => ClientService.TonWalletState?.GramAmount > 0
+            ? Formatter.TonBalance(ClientService.TonWalletState.GramAmount).Join()
+            : string.Empty;
+
         // Reading OwnedGramCount is what asks TDLib for the balance in the first place, and
         // the answer arrives as an update that re-evaluates this.
         public bool IsGramsAvailable => ClientService.OwnedGramCount > 0 || ClientService.HasGramTransactions;
+
+        public bool IsWalletAvailable => ClientService.Options.CanUseTonWallet;
 
         public RangeObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
@@ -81,6 +87,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUserFullInfo>(Handle)
                 .Subscribe<UpdateOwnedStarCount>(Handle)
                 .Subscribe<UpdateOwnedGramCount>(Handle)
+                .Subscribe<UpdateTonWalletState>(Handle)
                 .Subscribe<UpdateOption>(Handle);
         }
 
@@ -122,11 +129,24 @@ namespace Telegram.ViewModels
             });
         }
 
+        private void Handle(UpdateTonWalletState update)
+        {
+            BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(nameof(WalletGramCount));
+                RaisePropertyChanged(nameof(IsWalletAvailable));
+            });
+        }
+
         public void Handle(UpdateOption update)
         {
             if (update.Name == OptionsService.R.IsPremium || update.Name == OptionsService.R.IsPremiumAvailable)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IsPremiumAvailable)));
+            }
+            else if (update.Name == OptionsService.R.CanUseTonWallet)
+            {
+                BeginOnUIThread(() => RaisePropertyChanged(nameof(IsWalletAvailable)));
             }
         }
 

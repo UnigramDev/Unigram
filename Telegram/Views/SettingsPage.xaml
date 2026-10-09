@@ -245,6 +245,22 @@
                     </controls:SettingsButton>
                 </controls:TopNavView>
 
+                <StackPanel x:Name="WalletRoot"
+                            x:Load="{x:Bind ViewModel.IsWalletAvailable}">
+                    <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                               Margin="12,2"
+                               Height="1" />
+                    
+                    <controls:SettingsButton Click="Wallet_Click"
+                                             Badge="{x:Bind ViewModel.WalletGramCount, Mode=OneWay}"
+                                             Content="{CustomResource WalletAttachMoney}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
+                            <icons:MyGrams />
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                </StackPanel>
+                
                 <StackPanel x:Name="PremiumRoot"
                             x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}">
                     <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
@@ -274,7 +290,7 @@
                                              Style="{StaticResource IconBadgeButtonStyle}"
                                              Visibility="{x:Bind ViewModel.IsGramsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <controls:SettingsButton.IconSource>
-                            <icons:MyGrams />
+                            <icons:GramEarnings />
                         </controls:SettingsButton.IconSource>
                     </controls:SettingsButton>
 
