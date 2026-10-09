@@ -1461,8 +1461,6 @@
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom"
                                           Margin="8,4">
-                                        <Border Background="{ThemeResource SystemColorControlAccentBrush}"
-                                                Opacity="0" />
                                         <TextBlock x:Name="SendEffectText"
                                                    FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                    FontSize="16"
