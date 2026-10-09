@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed partial class PhotoContent : Control, IContentWithFile
+    public sealed partial class PhotoContent : FileButton, IContentWithFile
     {
         private readonly bool _album;
 
@@ -56,25 +56,22 @@ namespace Telegram.Controls.Messages.Content
         private AspectView LayoutRoot;
         private ImageBrush ThumbnailTexture;
         private ImageBrush Texture;
-        private AnimatedImage Player;
+        private FileButton Button => this;
+        private bool _templateApplied;
+
+        // Lazy loaded
         private AnimatedImage Particles;
         private Border Overlay;
         private TextBlock Subtitle;
-        private FileButton Button;
         private SelfDestructTimer Timer;
-        private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
+            base.OnApplyTemplate();
+
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             ThumbnailTexture = LayoutRoot.Background as ImageBrush;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
-            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
-            Particles = GetTemplateChild(nameof(Particles)) as AnimatedImage;
-            Overlay = GetTemplateChild(nameof(Overlay)) as Border;
-            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
-            Button = GetTemplateChild(nameof(Button)) as FileButton;
-            Timer = GetTemplateChild(nameof(Timer)) as SelfDestructTimer;
 
             ButtonDrag = new AutomaticDragHelper(Button, true);
             ButtonDrag.StartDetectingDrag();
@@ -156,14 +153,16 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot.Background = null;
             Texture.ImageSource = new BitmapImage(new Uri(big.Photo.Local.Path));
 
-            Overlay.Opacity = 0;
-            Button.Opacity = 0;
+            Overlay?.Opacity = 0;
+            Button.ProgressVisibility = Visibility.Collapsed;
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
             if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer && _templateApplied)
             {
+                Timer ??= GetTemplateChild(nameof(Timer)) as SelfDestructTimer;
+
                 Timer.Maximum = selfDestructTypeTimer.SelfDestructTime;
                 Timer.Value = DateTime.Now.AddSeconds(message.SelfDestructIn);
             }
@@ -188,27 +187,38 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            string subtitle;
             if (isGame)
             {
-                Subtitle.Text = Strings.AttachGame;
-                Overlay.Opacity = 1;
+                subtitle = Strings.AttachGame;
             }
             else if (isSecret)
             {
                 if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer)
                 {
-                    Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A" + Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
+                    subtitle = Icons.PlayFilled12 + "\u2004\u200A" + Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
                 }
                 else
                 {
-                    Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
+                    subtitle = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
                 }
+            }
+            else
+            {
+                subtitle = null;
+            }
 
+            if (subtitle != null)
+            {
+                Overlay ??= GetTemplateChild(nameof(Overlay)) as Border;
+                Subtitle ??= GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+                Subtitle.Text = subtitle;
                 Overlay.Opacity = 1;
             }
             else
             {
-                Overlay.Opacity = 0;
+                Overlay?.Opacity = 0;
             }
 
             var size = Math.Max(file.Size, file.ExpectedSize);
@@ -219,7 +229,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
-                Button.Opacity = 1;
+                Button.ProgressVisibility = Visibility.Visible;
 
                 UpdateTexture(message, null, null);
             }
@@ -228,7 +238,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
-                Button.Opacity = 1;
+                Button.ProgressVisibility = Visibility.Visible;
 
                 if (isSecret || string.IsNullOrEmpty(file.Local.Path))
                 {
@@ -244,7 +254,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
-                Button.Opacity = 1;
+                Button.ProgressVisibility = Visibility.Visible;
 
                 UpdateTexture(message, null, null);
             }
@@ -255,7 +265,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    Button.Opacity = 1;
+                    Button.ProgressVisibility = Visibility.Visible;
 
                     UpdateTexture(message, null, null);
                 }
@@ -266,12 +276,12 @@ namespace Telegram.Controls.Messages.Content
                     if (message.Content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeEmbeddedVideoPlayer || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
                     {
                         Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
-                        Button.Opacity = 1;
+                        Button.ProgressVisibility = Visibility.Visible;
                     }
                     else
                     {
                         Button.SetGlyph(file.Id, MessageContentState.Photo);
-                        Button.Opacity = 0;
+                        Button.ProgressVisibility = Visibility.Collapsed;
                     }
 
                     if (hasSpoiler && _hidden)
@@ -384,9 +394,15 @@ namespace Telegram.Controls.Messages.Content
                 _thumbnailController.Recycle();
             }
 
-            Particles.Source = isSecret || (hasSpoiler && _hidden)
+            var source = isSecret || (hasSpoiler && _hidden)
                 ? new ParticlesImageSource()
                 : null;
+
+            if (source != null || Particles != null)
+            {
+                Particles ??= GetTemplateChild(nameof(Particles)) as AnimatedImage;
+                Particles.Source = source;
+            }
         }
 
         public void Recycle()
