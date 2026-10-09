@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Windows.Graphics.Imaging;
@@ -151,8 +152,7 @@ namespace Telegram.Common
                 bitmapSource.DecodePixelWidth = width;
                 bitmapSource.DecodePixelHeight = height;
 
-                var file = await StorageFile.GetFileFromPathAsync(path);
-                using (var stream = await file.OpenReadAsync())
+                using (var stream = await OpenReadAsync(path))
                 {
                     if (_generation != generation)
                     {
@@ -212,6 +212,36 @@ namespace Telegram.Common
         public void Recycle()
         {
             Recycle(++_generation, 0);
+        }
+
+        private static string _localFolder;
+
+        // StorageFile goes through the broker, and its awaits come back to the UI thread: about
+        // 3 ms of UI time per thumbnail before decoding starts. TDLib's downloads live in the
+        // app's own folder, which plain file IO can open; anything else - a file sent from
+        // elsewhere keeps its original path - still needs the broker.
+        private static Task<IRandomAccessStream> OpenReadAsync(string path)
+        {
+            _localFolder ??= ApplicationData.Current.LocalFolder.Path + "\\";
+
+            // Opened on the pool: even the direct open costs a few milliseconds, and nothing
+            // about it needs the UI thread.
+            return Task.Run(() => OpenRead(path));
+        }
+
+        private static async Task<IRandomAccessStream> OpenRead(string path)
+        {
+            if (path.StartsWith(_localFolder, StringComparison.OrdinalIgnoreCase))
+            {
+                // Copied into a native stream: SetSourceAsync reads a managed stream adapter on
+                // the UI thread, which cost more than the open it replaced.
+                var stream = new InMemoryRandomAccessStream();
+                Direct2DDevice.WriteBytes(File.ReadAllBytes(path), stream);
+                return stream;
+            }
+
+            var file = await StorageFile.GetFileFromPathAsync(path);
+            return await file.OpenReadAsync();
         }
 
         private void Recycle(int generation, long hashCode)
