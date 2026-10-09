@@ -15,8 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
-    // TODO: turn the whole control into a Button
-    public sealed partial class DocumentContent : Control, IContent
+    public sealed partial class DocumentContent : FileButton, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -34,7 +33,7 @@ namespace Telegram.Controls.Messages.Content
 
         private AutomaticDragHelper ButtonDrag;
 
-        private FileButton Button;
+        private FileButton Button => this;
         private TextBlock Title;
         private TextBlock TitleTrim;
         private TextBlock Subtitle;
@@ -42,7 +41,8 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
-            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            base.OnApplyTemplate();
+
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             TitleTrim = GetTemplateChild(nameof(TitleTrim)) as TextBlock;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;

@@ -1950,6 +1950,24 @@ namespace Telegram.Controls.Messages
                 //Grid.SetRow(Message, 2);
                 //Panel.Placeholder = false;
             }
+            else if (content is MessageDocument)
+            {
+                var caption = content.HasCaption();
+                if (content is MessageCall)
+                {
+                    FooterToHidden();
+                }
+                else
+                {
+                    FooterToNormal();
+                }
+
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(0, -4, 0, 0);
+                Grid.SetRow(Footer, factCheck + (caption ? 4 : 3));
+                Grid.SetRow(Message, caption ? 4 : 5);
+                Panel.Placeholder = caption;
+            }
             else
             {
                 var caption = content.HasCaption();

@@ -359,7 +359,10 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (linkPreview.Type is LinkPreviewTypeDocument)
             {
-                Media.Child = new DocumentContent(message);
+                Media.Child = new DocumentContent(message)
+                {
+                    Padding = new Thickness(0)
+                };
             }
             else if (linkPreview.Type is LinkPreviewTypeSticker)
             {
