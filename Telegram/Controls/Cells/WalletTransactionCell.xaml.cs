@@ -57,15 +57,8 @@ namespace Telegram.Controls.Cells
                 UpdateAmount(onRampDeposit.Amount);
             }
 
-            if (transaction.State is TonWalletTransactionStatePending)
+            if (transaction.State is TonWalletTransactionStateFailed)
             {
-                // Also ahead of the direction: nothing has been sent until the chain says so.
-                Subtitle.Text = Strings.WalletSending;
-            }
-            else if (transaction.State is TonWalletTransactionStateFailed)
-            {
-                // It supersedes the direction: a transfer that never landed was neither sent nor
-                // received.
                 Subtitle.Text = Strings.WalletFailedTransfer;
             }
             else if (transfer != null)
@@ -85,7 +78,14 @@ namespace Telegram.Controls.Cells
                 Subtitle.Text = Shorten(transaction.PeerAddress);
             }
 
-            Date.Text = Formatter.DateAt(transaction.Date);
+            if (transaction.State is TonWalletTransactionStatePending)
+            {
+                Date.Text = Strings.WalletSending;
+            }
+            else
+            {
+                Date.Text = Formatter.DateAt(transaction.Date);
+            }
         }
 
         private void UpdatePeer(IClientService clientService, TonWalletTransaction transaction)
