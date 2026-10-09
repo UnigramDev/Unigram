@@ -441,7 +441,7 @@ namespace Telegram.Controls.Messages
         {
             if (AccentDash == null)
             {
-                if (stripe1 == default && stripe2 == default)
+                if (!_templateApplied || (stripe1 == default && stripe2 == default))
                 {
                     return;
                 }
@@ -457,7 +457,7 @@ namespace Telegram.Controls.Messages
         {
             if (Pattern == null)
             {
-                if (source == 0 && model == 0)
+                if (!_templateApplied || (source == 0 && model == 0))
                 {
                     return;
                 }
