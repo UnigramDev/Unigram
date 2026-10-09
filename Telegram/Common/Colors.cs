@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Windows.UI;
 
@@ -422,6 +423,192 @@ namespace Telegram.Common
         {
             return GetAverageColor(color1.ToColor(), color2);
         }
+
+        /// <summary>
+        /// Rec. 709 luminance, 0 to 1 - Android's computePerceivedBrightness.
+        /// </summary>
+        public static double PerceivedBrightness(int color)
+        {
+            return (((color >> 16) & 0xFF) * 0.2126
+                + ((color >> 8) & 0xFF) * 0.7152
+                + (color & 0xFF) * 0.0722) / 255;
+        }
+
+        public static double PerceivedBrightness(Color color)
+        {
+            return (color.R * 0.2126 + color.G * 0.7152 + color.B * 0.0722) / 255;
+        }
+
+        /// <summary>
+        /// Android's getColorDistance: red-weighted rather than Euclidean, so it tracks how
+        /// different two colours look rather than how far apart they sit in the cube.
+        /// </summary>
+        public static int GetColorDistance(int color1, int color2)
+        {
+            int r1 = (color1 >> 16) & 0xFF, g1 = (color1 >> 8) & 0xFF, b1 = color1 & 0xFF;
+            int r2 = (color2 >> 16) & 0xFF, g2 = (color2 >> 8) & 0xFF, b2 = color2 & 0xFF;
+
+            var mean = (r1 + r2) / 2;
+            int r = r1 - r2, g = g1 - g2, b = b1 - b2;
+
+            return (((512 + mean) * r * r) >> 8) + 4 * g * g + (((767 - mean) * b * b) >> 8);
+        }
+
+        /// <summary>
+        /// Whether a fill's colours are close enough to read as one colour. The threshold is
+        /// Android's, which uses it to decide a gradient is not worth treating as one.
+        /// </summary>
+        public static bool AreNear(IReadOnlyList<int> colors, int threshold = 35000)
+        {
+            for (int i = 0; i < colors.Count; i++)
+            {
+                for (int j = i + 1; j < colors.Count; j++)
+                {
+                    if (GetColorDistance(colors[i], colors[j]) > threshold)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// WCAG relative luminance, which is gamma corrected - unlike
+        /// <see cref="PerceivedBrightness"/>, whose linear weighting is only a rough stand-in.
+        /// </summary>
+        public static double RelativeLuminance(int color)
+        {
+            static double Channel(int value)
+            {
+                var part = value / 255d;
+                return part <= 0.03928 ? part / 12.92 : Math.Pow((part + 0.055) / 1.055, 2.4);
+            }
+
+            return 0.2126 * Channel((color >> 16) & 0xFF)
+                + 0.7152 * Channel((color >> 8) & 0xFF)
+                + 0.0722 * Channel(color & 0xFF);
+        }
+
+        public static double GetContrast(int color1, int color2)
+        {
+            var first = RelativeLuminance(color1);
+            var second = RelativeLuminance(color2);
+
+            return first > second
+                ? (first + 0.05) / (second + 0.05)
+                : (second + 0.05) / (first + 0.05);
+        }
+
+        /// <summary>
+        /// The worst contrast a text colour has anywhere in a fill - the binding constraint, since
+        /// the text sits over all of it rather than over its average.
+        /// </summary>
+        public static double GetTextContrast(IReadOnlyList<int> colors, bool black)
+        {
+            var text = black ? TextBlack : TextWhite;
+            var worst = double.MaxValue;
+
+            for (int i = 0; i < colors.Count; i++)
+            {
+                worst = Math.Min(worst, GetContrast(text, colors[i]));
+            }
+
+            return worst;
+        }
+
+        /// <summary>
+        /// The same for an arbitrary text colour, which unlike black and white can carry alpha and
+        /// so has to be flattened onto each colour before it is measured.
+        /// </summary>
+        public static double GetTextContrast(IReadOnlyList<int> colors, Color text)
+        {
+            var worst = double.MaxValue;
+
+            for (int i = 0; i < colors.Count; i++)
+            {
+                worst = Math.Min(worst, GetContrast(Composite(text, colors[i]), colors[i]));
+            }
+
+            return worst;
+        }
+
+        /// <summary>
+        /// <paramref name="over"/> flattened onto an opaque <paramref name="under"/>, so a colour
+        /// carrying alpha is measured as it is seen rather than as it is written.
+        /// </summary>
+        public static int Composite(Color over, int under)
+        {
+            if (over.A == 0xFF)
+            {
+                return (over.R << 16) | (over.G << 8) | over.B;
+            }
+
+            static int Blend(byte over, int under, byte alpha)
+            {
+                return (over * alpha + (under & 0xFF) * (0xFF - alpha)) / 0xFF;
+            }
+
+            return (Blend(over.R, under >> 16, over.A) << 16)
+                | (Blend(over.G, under >> 8, over.A) << 8)
+                | Blend(over.B, under, over.A);
+        }
+
+        /// <summary>
+        /// Whether text over a gradient of these colours reads better in black than in white, and
+        /// how well the winner reads at its worst.
+        /// </summary>
+        /// <remarks>
+        /// Android decides this from the perceived brightness of a chained average, which weights
+        /// the last colour by a half: [white, white, white, red] averages to #FE7F7F, scores 0.604
+        /// and takes white, over a bubble that is three quarters white. Comparing the worst case of
+        /// each candidate asks the question the reader actually has.
+        /// </remarks>
+        public static bool UseBlackText(IReadOnlyList<int> colors, out double contrast)
+        {
+            if (colors.Count == 0)
+            {
+                contrast = 0;
+                return false;
+            }
+
+            var white = GetTextContrast(colors, false);
+            var black = GetTextContrast(colors, true);
+
+            // On contrast alone white only wins below a background luminance of 0.212, which would
+            // put black on most coloured bubbles: a mid-toned fill scores the two within rounding
+            // of each other - one chat theme's four greens give 3.64 and 3.65 - and no client
+            // paints those black. So white holds until it actually fails somewhere on the fill.
+            if (white >= WhiteTextFloor)
+            {
+                contrast = white;
+                return false;
+            }
+
+            contrast = Math.Max(white, black);
+            return black > white;
+        }
+
+        /// <summary>
+        /// WCAG AA for large text. The 4.5 it asks of body text is out of reach over a mid
+        /// luminance fill, where neither white nor black clears 3.7.
+        /// </summary>
+        public const double ReadableContrast = 3;
+
+        /// <summary>
+        /// Where Android gives up on white, as a contrast ratio: it switches at a perceived
+        /// brightness of 0.705, a relative luminance of 0.457, over which white still reads at 2.07.
+        /// </summary>
+        private const double WhiteTextFloor = 2.1;
+
+        public static bool UseBlackText(IReadOnlyList<int> colors)
+        {
+            return UseBlackText(colors, out _);
+        }
+
+        public const int TextBlack = 0x212121;
+        public const int TextWhite = 0xFFFFFF;
 
         public static bool IsDark(int color1, int color2, int color3, int color4)
         {

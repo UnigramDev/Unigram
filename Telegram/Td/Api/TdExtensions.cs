@@ -1167,6 +1167,70 @@ namespace Telegram.Td.Api
             return Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);
         }
 
+        public static Color GetOutgoingMessageAccentColor(this ThemeSettings settings)
+        {
+            if (settings.HasOutgoingMessageAccentColor || settings.OutgoingMessageFill == null)
+            {
+                return settings.OutgoingMessageAccentColor.ToColor();
+            }
+
+            //return settings.OutgoingMessageFill switch
+            //{
+            //    BackgroundFillSolid solid => solid.Color.ToColor(),
+            //    BackgroundFillGradient gradient => gradient.BottomColor.ToColor(),
+            //    BackgroundFillFreeformGradient freeform => freeform.GetAccentColor(), // freeform.Colors[0].ToColor(),
+            //    _ => default
+            //};
+
+            return settings.OutgoingMessageFill.GetAccentColor();
+        }
+
+        public static Vector<int> GetColors(this BackgroundFill fill)
+        {
+            if (fill is BackgroundFillSolid solid)
+            {
+                return [solid.Color];
+            }
+            else if (fill is BackgroundFillGradient gradient)
+            {
+                return [gradient.TopColor, gradient.BottomColor];
+            }
+            else if (fill is BackgroundFillFreeformGradient freeform)
+            {
+                return freeform.Colors;
+            }
+
+            return Vector<int>.Empty;
+        }
+
+        public static Color GetAccentColor(this BackgroundFill fill)
+        {
+            if (fill is BackgroundFillSolid solid)
+            {
+                return solid.Color.ToColor();
+            }
+            else if (fill is BackgroundFillGradient gradient)
+            {
+                return ColorEx.GetAverageColor(gradient.TopColor, gradient.BottomColor);
+            }
+            else if (fill is BackgroundFillFreeformGradient freeform)
+            {
+                int r = 0, g = 0, b = 0;
+                for (int i = 0; i < freeform.Colors.Count; i++)
+                {
+                    var color = freeform.Colors[i].ToColor();
+                    r += color.R;
+                    g += color.G;
+                    b += color.B;
+                }
+
+                var count = freeform.Colors.Count;
+                return Color.FromArgb(0xFF, (byte)(r / count), (byte)(g / count), (byte)(b / count));
+            }
+
+            return default;
+        }
+
         public static Brush ToBrush(this BackgroundTypeFill fill, int offset = 0)
         {
             return fill.Fill.ToBrush(offset);
@@ -4778,10 +4842,147 @@ namespace Telegram.Td.Api
             return null;
         }
 
+        /// <summary>
+        /// The t.me link for a background, as TDLib's <c>LinkManager::get_background_url</c> builds
+        /// it. Null for a chat theme background, which has none.
+        /// </summary>
+        /// <param name="name">
+        /// The background's name. Only the types backed by a document use it; a fill is entirely
+        /// described by its own link.
+        /// </param>
+        public static string GetBackgroundUrl(string name, BackgroundType type, string baseUrl = "https://t.me/")
+        {
+            var link = GetBackgroundLink(name, type);
+            return link != null ? string.Concat(baseUrl, "bg/", link) : null;
+        }
+
+        /// <summary>
+        /// Everything after <c>t.me/bg/</c>, which is the part worth storing and the exact input
+        /// <see cref="FromLink"/> takes back.
+        /// </summary>
+        public static string GetBackgroundLink(string name, BackgroundType type)
+        {
+            var link = GetLink(type, true);
+            if (link == null)
+            {
+                return null;
+            }
+
+            if (type is BackgroundTypeWallpaper or BackgroundTypePattern)
+            {
+                return link.Length > 0 ? string.Concat(name, "?", link) : name;
+            }
+
+            return link;
+        }
+
+        private static string GetLink(BackgroundType type, bool first)
+        {
+            if (type is BackgroundTypeWallpaper wallpaper)
+            {
+                var mode = GetMode(wallpaper.IsBlurred, wallpaper.IsMoving);
+                return mode.Length > 0 ? "mode=" + mode : string.Empty;
+            }
+            else if (type is BackgroundTypePattern pattern)
+            {
+                // The sign carries inversion: td_api keeps it in its own flag, the link has no
+                // room for one, so a negative intensity is what an inverted pattern looks like.
+                var intensity = pattern.IsInverted
+                    ? -Math.Max(pattern.Intensity, 1)
+                    : pattern.Intensity;
+
+                var link = string.Concat("intensity=", intensity.ToString(CultureInfo.InvariantCulture),
+                    "&bg_color=", GetLink(pattern.Fill, false));
+
+                // A pattern is never blurred - the type does not carry the flag.
+                var mode = GetMode(false, pattern.IsMoving);
+                return mode.Length > 0 ? string.Concat(link, "&mode=", mode) : link;
+            }
+            else if (type is BackgroundTypeFill fill)
+            {
+                return GetLink(fill.Fill, first);
+            }
+
+            // BackgroundTypeChatTheme, and whatever is added next: no link.
+            return null;
+        }
+
+        private static string GetMode(bool blurred, bool moving)
+        {
+            if (blurred)
+            {
+                return moving ? "blur+motion" : "blur";
+            }
+
+            return moving ? "motion" : string.Empty;
+        }
+
+        /// <summary>
+        /// Lowercase and without a separator, unlike <see cref="ToString(BackgroundFill)"/>: this
+        /// one has to match what the server parses back out of a t.me link.
+        /// </summary>
+        private static string GetLink(BackgroundFill fill, bool first)
+        {
+            if (fill is BackgroundFillSolid solid)
+            {
+                return ToHex(solid.Color);
+            }
+            else if (fill is BackgroundFillGradient gradient)
+            {
+                return string.Concat(ToHex(gradient.TopColor), "-", ToHex(gradient.BottomColor),
+                    first ? "?" : "&", "rotation=", gradient.RotationAngle.ToString(CultureInfo.InvariantCulture));
+            }
+            else if (fill is BackgroundFillFreeformGradient freeform)
+            {
+                var builder = new StringBuilder();
+
+                for (int i = 0; i < freeform.Colors.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        builder.Append('~');
+                    }
+
+                    builder.Append(ToHex(freeform.Colors[i]));
+                }
+
+                return builder.ToString();
+            }
+
+            return string.Empty;
+        }
+
+        private static string ToHex(int color)
+        {
+            return (color & 0xFFFFFF).ToString("x6", CultureInfo.InvariantCulture);
+        }
+
         public static BackgroundType FromUri(Uri uri)
         {
-            var slug = uri.Segments.Last();
-            var query = uri.Query.ParseQueryString();
+            return FromLink(uri.Segments.Last() + uri.Query, out _);
+        }
+
+        /// <summary>
+        /// The inverse of <see cref="GetBackgroundUrl"/>, over what follows <c>t.me/bg/</c> - which
+        /// is all that is worth storing, since the rest is constant.
+        /// </summary>
+        /// <param name="name">
+        /// The document's name, or null for a fill. A fill carries everything it needs in the link
+        /// itself, so there is nothing to look up and nothing to keep.
+        /// </param>
+        public static BackgroundType FromLink(string link, out string name)
+        {
+            if (string.IsNullOrEmpty(link))
+            {
+                name = null;
+                return null;
+            }
+
+            var separator = link.IndexOf('?');
+            var slug = separator < 0 ? link : link.Substring(0, separator);
+            var query = (separator < 0 ? string.Empty : link.Substring(separator)).ParseQueryString();
+
+            name = null;
 
             if (TryGetColors(slug, '-', 1, 2, out int[] linear))
             {
@@ -4826,11 +5027,15 @@ namespace Telegram.Td.Api
                     fill = new BackgroundFillFreeformGradient(patternFreeform);
                 }
 
+                name = slug;
+
                 if (fill != null)
                 {
                     query.TryGetValue("intensity", out string intensityKey);
                     int.TryParse(intensityKey, out int intensity);
 
+                    // Math.Abs, because the sign is the inversion flag rather than part of the
+                    // value - GetBackgroundUrl writes it back the same way.
                     return new BackgroundTypePattern(fill, Math.Abs(intensity), intensity < 0, modeSplit.Contains("motion"));
                 }
                 else
@@ -4864,6 +5069,92 @@ namespace Telegram.Td.Api
 
             colors = null;
             return false;
+        }
+
+        /// <summary>
+        /// The colours of an outgoing message fill written into <paramref name="sorted"/>, darkest
+        /// first; returns how many were written.
+        /// </summary>
+        /// <remarks>
+        /// Ours, not a compatibility measure - Desktop does not sort, it simply receives different
+        /// colours than we do. Only for a fill authored to be animated: those arrays are ordered
+        /// for a mesh, where position carries no ramp, so laying them along one axis folds back on
+        /// itself. A fill that is not animated was authored as a ramp and its order is deliberate.
+        /// Darkest first because that is the order the stock dark gradient already arrives in, so
+        /// only a theme that would have folded moves.
+        /// </remarks>
+        public static int SortByLuminance(Vector<int> colors, Span<int> sorted)
+        {
+            // td_api documents 3 or 4. The cap keeps a longer vector inside the caller's buffer;
+            // it is not a promise about the data.
+            var count = Math.Min(colors.Count, sorted.Length);
+
+            for (int i = 0; i < count; i++)
+            {
+                var value = colors[i];
+                int j = i - 1;
+
+                while (j >= 0 && Luminance(sorted[j]) > Luminance(value))
+                {
+                    sorted[j + 1] = sorted[j];
+                    j--;
+                }
+
+                sorted[j + 1] = value;
+            }
+
+            return count;
+        }
+
+        private static double Luminance(int color)
+        {
+            return ((color >> 16) & 0xFF) * 0.2126
+                + ((color >> 8) & 0xFF) * 0.7152
+                + (color & 0xFF) * 0.0722;
+        }
+
+        public static LinearGradientBrush GetGradient(Vector<int> colors, bool animated)
+        {
+            var brush = new LinearGradientBrush();
+            brush.StartPoint = new Windows.Foundation.Point(0, 0);
+            brush.EndPoint = new Windows.Foundation.Point(0, 1);
+
+            Span<int> sorted = stackalloc int[4];
+            var count = animated
+                ? SortByLuminance(colors, sorted)
+                : Reverse(colors, sorted);
+
+            var offset = 0d;
+            var step = 1d / (count - 1);
+
+            for (int i = 0; i < count; i++)
+            {
+                brush.GradientStops.Add(new GradientStop
+                {
+                    Color = sorted[i].ToColor(),
+                    Offset = offset
+                });
+
+                offset += step;
+            }
+
+            return brush;
+        }
+
+        /// <summary>
+        /// The colours as the server sent them, last first - which is how Android lays out a fill
+        /// it does not mesh, and which agrees with td_api naming colors[0] the bottom one.
+        /// </summary>
+        public static int Reverse(Vector<int> colors, Span<int> sorted)
+        {
+            var count = Math.Min(colors.Count, sorted.Length);
+
+            for (int i = 0; i < count; i++)
+            {
+                sorted[i] = colors[count - 1 - i];
+            }
+
+            return count;
         }
 
         public static LinearGradientBrush GetGradient(int topColor, int bottomColor, int angle)
