@@ -6,8 +6,6 @@
 //
 
 using Microsoft.Graphics.Canvas.Geometry;
-using System.Diagnostics;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -26,9 +24,21 @@ namespace Telegram.Controls
         private int _accentColorId;
         private int _profileAccentColorId;
 
+        private bool _templateApplied;
+
         public ProfileColorBadge()
         {
             InitializeComponent();
+        }
+
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            _templateApplied = true;
+
+            if (_clientService != null)
+            {
+                SetColors(_clientService, _accentColorId, _profileAccentColorId);
+            }
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
@@ -55,9 +65,9 @@ namespace Telegram.Controls
             _accentColorId = nameId;
             _profileAccentColorId = profileId;
 
-            if (ApiInfo.IsPackagedRelease)
+            if (!_templateApplied)
             {
-                Debug.Assert(WindowContext.Current.ActualTheme == ActualTheme);
+                return;
             }
 
             if (clientService.TryGetProfileColor(profileId, out ProfileColor profile))
