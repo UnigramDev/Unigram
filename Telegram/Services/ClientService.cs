@@ -391,12 +391,12 @@ namespace Telegram.Services
 
         private Vector<GroupCallMessageLevel> _groupCallMessageLevels;
 
-        private Vector<int> _savedAnimations;
-        private Vector<int> _recentStickers;
-        private Vector<int> _favoriteStickers;
-        private Vector<long> _installedStickerSets;
-        private Vector<long> _installedMaskSets;
-        private Vector<long> _installedEmojiSets;
+        private HashSet<int> _savedAnimations;
+        private HashSet<int> _recentStickers;
+        private HashSet<int> _favoriteStickers;
+        private HashSet<long> _installedStickerSets;
+        private HashSet<long> _installedMaskSets;
+        private HashSet<long> _installedEmojiSets;
         private Vector<TextCompositionStyle> _textCompositionStyles;
 
         private ReactionType _defaultReaction;
@@ -4182,7 +4182,7 @@ namespace Telegram.Services
                     _diceEmojis = updateDiceEmojis.Emojis.ToArray();
                     break;
                 case UpdateFavoriteStickers updateFavoriteStickers:
-                    _favoriteStickers = updateFavoriteStickers.StickerIds;
+                    _favoriteStickers = updateFavoriteStickers.StickerIds.ToHashSet();
                     break;
                 case UpdateForumTopic updateForumTopic:
                     UpdateForumTopic(updateForumTopic.ChatId, true, manager => manager.UpdateForumTopic(updateForumTopic));
@@ -4209,13 +4209,13 @@ namespace Telegram.Services
                     switch (updateInstalledStickerSets.StickerType)
                     {
                         case StickerTypeRegular:
-                            _installedStickerSets = updateInstalledStickerSets.StickerSetIds;
+                            _installedStickerSets = updateInstalledStickerSets.StickerSetIds.ToHashSet();
                             break;
                         case StickerTypeMask:
-                            _installedMaskSets = updateInstalledStickerSets.StickerSetIds;
+                            _installedMaskSets = updateInstalledStickerSets.StickerSetIds.ToHashSet();
                             break;
                         case StickerTypeCustomEmoji:
-                            _installedEmojiSets = updateInstalledStickerSets.StickerSetIds;
+                            _installedEmojiSets = updateInstalledStickerSets.StickerSetIds.ToHashSet();
                             break;
                     }
                     break;
@@ -4279,11 +4279,11 @@ namespace Telegram.Services
                     }
                     else
                     {
-                        _recentStickers = updateRecentStickers.StickerIds;
+                        _recentStickers = updateRecentStickers.StickerIds.ToHashSet();
                     }
                     break;
                 case UpdateSavedAnimations updateSavedAnimations:
-                    _savedAnimations = updateSavedAnimations.AnimationIds;
+                    _savedAnimations = updateSavedAnimations.AnimationIds.ToHashSet();
                     break;
                 case UpdateTextCompositionStyles updateTextCompositionStyles:
                     _textCompositionStyles = updateTextCompositionStyles.Styles;
