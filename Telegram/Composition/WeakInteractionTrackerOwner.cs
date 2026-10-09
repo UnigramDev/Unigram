@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Windows.Foundation;
 using Windows.UI.Composition.Interactions;
 
@@ -20,27 +21,62 @@ namespace Telegram.Composition
 
         void IInteractionTrackerOwner.IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
-            IdleStateEntered?.Invoke(sender, args);
+            try
+            {
+                IdleStateEntered?.Invoke(sender, args);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         void IInteractionTrackerOwner.InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
-            InertiaStateEntered?.Invoke(sender, args);
+            try
+            {
+                InertiaStateEntered?.Invoke(sender, args);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         void IInteractionTrackerOwner.InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
-            InteractingStateEntered?.Invoke(sender, args);
+            try
+            {
+                InteractingStateEntered?.Invoke(sender, args);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         void IInteractionTrackerOwner.ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
         {
-            ValuesChanged?.Invoke(sender, args);
+            try
+            {
+                ValuesChanged?.Invoke(sender, args);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         void IInteractionTrackerOwner.CustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
         {
-            CustomAnimationStateEntered?.Invoke(sender, args);
+            try
+            {
+                CustomAnimationStateEntered?.Invoke(sender, args);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
