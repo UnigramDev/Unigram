@@ -1513,6 +1513,7 @@ namespace Telegram.Services
         private bool _requestedGramCount;
         private bool _requestedWalletState;
         private bool _requestedGaslessTransfersInfo;
+        private bool _hasGramTransactions;
 
         public StarAmount OwnedStarCount
         {

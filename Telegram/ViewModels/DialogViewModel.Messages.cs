@@ -2499,7 +2499,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        await ShowPopupAsync(new BackgroundPopup(), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
+                        await ShowPopupAsync(new BackgroundPopup(NavigationService), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
                     }
                 }
             }

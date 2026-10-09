@@ -215,7 +215,13 @@ namespace Telegram.Views.Popups
             {
                 CreateSwapChain = true,
                 Mute = mask == ImageCropperMask.Ellipse,
-                Debug = AppSettings.VerbosityLevel >= 4,
+                LogLevel = AppSettings.VerbosityLevel >= 4
+                    ? AsyncMediaPlayerLogLevel.Debug
+                    : AppSettings.VerbosityLevel >= 3
+                    ? AsyncMediaPlayerLogLevel.Notice
+                    : AppSettings.VerbosityLevel >= 2
+                    ? AsyncMediaPlayerLogLevel.Warning
+                    : AsyncMediaPlayerLogLevel.Error,
             };
 
             try
@@ -296,14 +302,21 @@ namespace Telegram.Views.Popups
 
                 for (int i = 0; i < count; i++)
                 {
-                    var bitmap = new WriteableBitmap(rasterWidth, rasterHeight);
-                    var buffer = new PixelBuffer(bitmap);
+                    var buffer = BufferSurface.Create((uint)(rasterWidth * rasterHeight * 4));
 
-                    await Task.Run(() =>
+                    var rendered = await Task.Run(() =>
                     {
                         animation.SeekToMilliseconds((long)(animation.Duration / count * i), false);
-                        animation.RenderSync(buffer, rasterWidth, rasterHeight, true, out _);
+                        return animation.RenderSync(buffer, rasterWidth, rasterHeight, true, out _);
                     });
+
+                    var bitmap = new WriteableBitmap(rasterWidth, rasterHeight);
+
+                    // Otherwise the buffer holds uninitialised memory.
+                    if (rendered)
+                    {
+                        BufferSurface.Copy(buffer, bitmap.PixelBuffer);
+                    }
 
                     var image = new Border();
                     image.Height = height;

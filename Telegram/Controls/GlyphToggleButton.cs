@@ -41,7 +41,17 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty GlyphProperty =
-            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphToggleButton), new PropertyMetadata(null));
+            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphToggleButton), new PropertyMetadata(null, OnGlyphChanged));
+
+        private static void OnGlyphChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((GlyphToggleButton)d).OnGlyphChanged((string)e.NewValue, (string)e.OldValue);
+        }
+
+        protected virtual void OnGlyphChanged(string newValue, string oldValue)
+        {
+
+        }
 
         #endregion
 

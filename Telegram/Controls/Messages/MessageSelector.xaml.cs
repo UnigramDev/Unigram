@@ -125,25 +125,44 @@ namespace Telegram.Controls.Messages
         {
             EnsureTextSelectionManager();
 
-            if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (AppSettings.SwipeToReply || AppSettings.SwipeToShare || AppSettings.SwipeToGoBack))
+            if (_trackerOwner != null)
             {
-                _compositor = BootStrapper.Current.Compositor;
-                _container ??= _compositor.CreateContainerVisual();
+                _trackerOwner.ValuesChanged += OnValuesChanged;
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+            }
+        }
 
-                if (_requiresArrange)
-                {
-                    _container.Size = ActualSize;
-                }
-                else
-                {
-                    _container.RelativeSizeAdjustment = Vector2.One;
-                }
-
-                ElementCompositionPreview.SetElementChildVisual(this, _container);
-                ConfigureInteractionTracker();
+        // The swipe gesture needs this element and the presenter to own composition nodes, and a
+        // node per message is what XAML walks on every frame while the list scrolls. Built when a
+        // pointer first reaches the message instead: touch and pen enter before they press, and a
+        // touchpad pan starts under a cursor that has already entered.
+        private void EnsureTracker()
+        {
+            if (_trackerOwner != null || RootGrid == null || IsAlbumChild || !IsTrackerEnabled || !(AppSettings.SwipeToReply || AppSettings.SwipeToShare || AppSettings.SwipeToGoBack))
+            {
+                return;
             }
 
-            if (_trackerOwner != null)
+            _compositor = BootStrapper.Current.Compositor;
+            _container ??= _compositor.CreateContainerVisual();
+
+            if (_requiresArrange)
+            {
+                _container.Size = ActualSize;
+            }
+            else
+            {
+                _container.RelativeSizeAdjustment = Vector2.One;
+            }
+
+            ElementCompositionPreview.SetElementChildVisual(this, _container);
+
+            _hitTest ??= ElementComposition.GetElementVisual(this);
+            ConfigureInteractionTracker();
+
+            if (IsConnected)
             {
                 _trackerOwner.ValuesChanged += OnValuesChanged;
                 _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
@@ -243,18 +262,29 @@ namespace Telegram.Controls.Messages
             base.OnApplyTemplate();
 
             RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
-            ElementCompositionPreview.SetIsTranslationEnabled(RootGrid, true);
-
             Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
-            ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
 
-            _hitTest = ElementComposition.GetElementVisual(this);
-            _visual = ElementComposition.GetElementVisual(Presenter);
             _templateApplied = true;
 
             if (_message?.Delegate != null)
             {
                 UpdateMessage(_message, _owner, _message.Delegate.IsSelectionEnabled);
+            }
+        }
+
+        // Translation comes with the visual: the swipe animates it, and ChatView's sticky photo and
+        // summary expressions read child.Translation, which fails to resolve when it is off.
+        public Visual ContentTemplateVisual
+        {
+            get
+            {
+                if (_visual == null)
+                {
+                    ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
+                    _visual = ElementComposition.GetElementVisual(Presenter);
+                }
+
+                return _visual;
             }
         }
 
@@ -282,9 +312,11 @@ namespace Telegram.Controls.Messages
         {
             if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
             {
+                EnsureTracker();
+
                 try
                 {
-                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
+                    _interactionSource?.TryRedirectForManipulation(e.GetCurrentPoint(this));
                 }
                 catch (Exception)
                 {
@@ -309,6 +341,7 @@ namespace Telegram.Controls.Messages
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
+            EnsureTracker();
             _owner?.OnPointerEntered(this, e);
 
             try
@@ -639,7 +672,7 @@ namespace Telegram.Controls.Messages
 
         #region Moved from ChatHistoryViewItem
 
-        public Visual ContentVisual => _visual;
+        public Visual ContentVisual => ContentTemplateVisual;
 
         private Visual _hitTest;
         private Visual _visual;
@@ -705,7 +738,7 @@ namespace Telegram.Controls.Messages
             if (_interacting)
             {
                 _interacting = false;
-                _visual.Properties.InsertVector3("Translation", Vector3.Zero);
+                ContentTemplateVisual.Properties.InsertVector3("Translation", Vector3.Zero);
             }
         }
 
@@ -993,14 +1026,14 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                ConfigureAnimations(_visual);
+                ConfigureAnimations(ContentTemplateVisual);
             }
         }
 
         private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
             _interacting = true;
-            ConfigureAnimations(_visual);
+            ConfigureAnimations(ContentTemplateVisual);
 
             // The chip belongs to the MasterDetailView, which cannot win this manipulation for
             // itself: our source claims the contact first, and chaining is off. So we hand it the

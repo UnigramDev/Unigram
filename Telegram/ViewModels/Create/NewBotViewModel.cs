@@ -111,7 +111,7 @@ namespace Telegram.ViewModels.Create
 
         public async void CheckAvailability(string text)
         {
-            var response = await ClientService.SendAsync(new CheckBotUsername(ComputedUsername));
+            var response = await ClientService.SendAsync(new CheckBotUsername(ComputedUsername, false));
             if (response is CheckChatUsernameResultOk)
             {
                 IsLoading = false;

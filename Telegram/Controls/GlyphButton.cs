@@ -19,6 +19,7 @@ namespace Telegram.Controls
         }
 
         #region Glyph
+
         public string Glyph
         {
             get => (string)GetValue(GlyphProperty);
@@ -26,7 +27,18 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty GlyphProperty =
-            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphButton), new PropertyMetadata(null));
+            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphButton), new PropertyMetadata(null, OnGlyphChanged));
+
+        private static void OnGlyphChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((GlyphButton)d).OnGlyphChanged((string)e.NewValue, (string)e.OldValue);
+        }
+
+        protected virtual void OnGlyphChanged(string newValue, string oldValue)
+        {
+
+        }
+
         #endregion
     }
 
@@ -38,6 +50,7 @@ namespace Telegram.Controls
         }
 
         #region Glyph
+
         public string Glyph
         {
             get => (string)GetValue(GlyphProperty);
@@ -45,8 +58,18 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty GlyphProperty =
-            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphHyperlinkButton), new PropertyMetadata(null));
+            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphHyperlinkButton), new PropertyMetadata(null, OnGlyphChanged));
+
+        private static void OnGlyphChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((GlyphHyperlinkButton)d).OnGlyphChanged((string)e.NewValue, (string)e.OldValue);
+        }
+
+        protected virtual void OnGlyphChanged(string newValue, string oldValue)
+        {
+
+        }
+
         #endregion
     }
-
 }
