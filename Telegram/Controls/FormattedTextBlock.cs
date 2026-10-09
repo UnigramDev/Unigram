@@ -2284,7 +2284,7 @@ namespace Telegram.Controls
             var wrapper = new Border
             {
                 Child = element,
-                Margin = new Thickness(0, 0, 0, -4)
+                Margin = new Thickness(0, 4, 0, -4)
             };
 
             // A disabled control takes no pointer input, so the pointer falls through to the
