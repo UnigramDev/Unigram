@@ -333,7 +333,9 @@
                         </controls:TextListView>
                     </Border>
 
-                    <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}"
+                    <TextBlock x:Name="SelectedItemLabel"
+                               SizeChanged="SelectedItemLabel_SizeChanged"
+                               Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                HorizontalAlignment="Right"

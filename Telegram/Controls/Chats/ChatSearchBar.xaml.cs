@@ -543,5 +543,10 @@ namespace Telegram.Controls.Chats
         private double AutocompleteRowHeight => ListAutocomplete.ItemsSource is UsernameCollection
             ? 44
             : 64;
+
+        private void SelectedItemLabel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Field.Padding = new Thickness(0, 3, 6 + e.NewSize.Width, 6);
+        }
     }
 }
