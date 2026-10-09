@@ -351,18 +351,28 @@ namespace Telegram.Controls.Stories
 
             if (width > 0 && height > 0)
             {
-                var bitmap = new WriteableBitmap(width, height);
-                var buffer = new PixelBuffer(bitmap);
+                var buffer = BufferSurface.Create((uint)(width * height * 4));
 
-                await Task.Run(() =>
+                var rendered = await Task.Run(() =>
                 {
                     var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
                     if (animation != null)
                     {
                         animation.RenderSync(buffer, frame);
                         animation.Dispose();
+                        return true;
                     }
+
+                    return false;
                 });
+
+                var bitmap = new WriteableBitmap(width, height);
+
+                // Otherwise the buffer holds uninitialised memory.
+                if (rendered)
+                {
+                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
+                }
 
                 return bitmap;
             }
