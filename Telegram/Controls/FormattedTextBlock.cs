@@ -2743,9 +2743,6 @@ namespace Telegram.Controls
 
         private void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IList<Token> tokens)
         {
-            // Recursive: a new FontFamily here was one per node of the token tree.
-            var fontFamily = Theme.MonospaceFontFamily;
-
             foreach (var token in tokens)
             {
                 if (token is SyntaxToken syntax)
@@ -2758,8 +2755,6 @@ namespace Telegram.Controls
 
                     var span = GetOrCreateSpan(direct);
                     var collection = direct.GetXamlDirectObjectProperty(span, XamlPropertyIndex.Span_Inlines);
-
-                    direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
 
                     if (color != null)
                     {
@@ -2783,7 +2778,7 @@ namespace Telegram.Controls
                 }
                 else if (token is TextToken text)
                 {
-                    GetOrCreateRun(direct, inlines, text.Value, FlowDirection.LeftToRight, Native.TextStyle.None, fontFamily, 0);
+                    GetOrCreateRun(direct, inlines, text.Value, FlowDirection.LeftToRight, Native.TextStyle.None, null, 0);
                 }
             }
         }
