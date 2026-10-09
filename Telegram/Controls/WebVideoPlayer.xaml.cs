@@ -267,7 +267,7 @@ namespace Telegram.Controls
                 // requests still in flight, and completing the deferral of a closed
                 // CoreWebView2 raises in the browser, which unwinds into a P/Invoke frame
                 // as a fail-fast rather than an exception anything here could catch.
-                if (_core == sender)
+                if (_core != null)
                 {
                     deferral.Complete();
                 }
