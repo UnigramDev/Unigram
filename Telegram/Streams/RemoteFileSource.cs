@@ -17,7 +17,11 @@ namespace Telegram.Streams
 {
     public partial class RemoteFileSource : AnimatedImageSource, IAsyncMediaPlayerSource
     {
-        private readonly ManualResetEvent _event;
+        // Slim, because UpdateFile can run after the handle of a ManualResetEvent was finalized:
+        // a source dropped without Close stays in UpdateManager's ConditionalWeakTable until the
+        // GC after the one that finalized it. Only ReadCallbackAsync materializes a kernel handle,
+        // and its caller always closes.
+        private readonly ManualResetEventSlim _event;
         private readonly object _stateLock = new();
 
         private readonly IClientService _clientService;
@@ -52,7 +56,7 @@ namespace Telegram.Streams
         /// </param>
         public RemoteFileSource(IClientService clientService, File file, double duration, bool streaming = true)
         {
-            _event = new ManualResetEvent(false);
+            _event = new ManualResetEventSlim(false);
 
             _clientService = clientService;
             _file = file;
@@ -76,7 +80,7 @@ namespace Telegram.Streams
 
         public RemoteFileSource(IClientService clientService, File file/*, int priority = 32*/)
         {
-            _event = new ManualResetEvent(false);
+            _event = new ManualResetEventSlim(false);
 
             _clientService = clientService;
             _file = file;
@@ -152,7 +156,7 @@ namespace Telegram.Streams
                 if (MustWait(count, PrefetchWindow(buffer)))
                 {
                     var blocked = Logger.TickCount;
-                    _event.WaitOne(ReadRetryInterval);
+                    _event.Wait(ReadRetryInterval);
                     waited += Logger.TickCount - blocked;
                 }
 
@@ -202,7 +206,7 @@ namespace Telegram.Streams
             {
                 if (MustWait(count, PrefetchWindow(buffer)))
                 {
-                    await _event.WaitOneAsync();
+                    await _event.WaitHandle.WaitOneAsync();
                 }
 
                 var bytesRead = DownloadedBytes;
@@ -332,7 +336,7 @@ namespace Telegram.Streams
             lock (_stateLock)
             {
                 // No need to process the update if no one is waiting
-                if (_event.WaitOne(0))
+                if (_event.IsSet)
                 {
                     return;
                 }
