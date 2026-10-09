@@ -434,6 +434,37 @@ namespace winrt::Telegram::Native::implementation
         return root;
     }
 
+    // A stack overflow arrives here with a few KB of stack left, and the report - managed code,
+    // formatting, file writes - overflowed it a second time and was lost. Below this much it runs
+    // on a thread of its own instead.
+    static constexpr ULONG_PTR c_reportStackReserve = 128 * 1024;
+
+    // Bounds the wait for that thread: the failing one may hold a lock the report needs, which is
+    // reentrant on-thread but a deadlock from anywhere else.
+    static constexpr DWORD c_reportThreadTimeout = 10000;
+
+    static void InvokeFatalErrorCallback(winrt::Telegram::Native::FatalError const& error)
+    {
+        try
+        {
+            NativeUtils::Callback(error);
+        }
+        catch (...)
+        {
+            // The process is failing fast either way; losing the report is the only thing left
+            // to lose, and throwing from here would take the original crash's identity with it.
+        }
+    }
+
+    static DWORD WINAPI ReportFailFastThread(LPVOID parameter)
+    {
+        winrt::Telegram::Native::FatalError error{ nullptr };
+        winrt::attach_abi(error, parameter);
+
+        InvokeFatalErrorCallback(error);
+        return 0;
+    }
+
     void NativeUtils::ReportFailFast(winrt::Telegram::Native::FatalError error)
     {
         if (error == nullptr || Callback == nullptr || s_failFasting.exchange(true))
@@ -441,15 +472,25 @@ namespace winrt::Telegram::Native::implementation
             return;
         }
 
-        try
+        ULONG_PTR low, high;
+        GetCurrentThreadStackLimits(&low, &high);
+
+        if (reinterpret_cast<ULONG_PTR>(&low) - low < c_reportStackReserve)
         {
-            Callback(error);
+            // The thread owns a reference of its own: on a timeout it outlives this frame.
+            auto owned = error;
+            auto thread = CreateThread(nullptr, 0, ReportFailFastThread, winrt::detach_abi(owned), 0, nullptr);
+
+            if (thread != nullptr)
+            {
+                WaitForSingleObject(thread, c_reportThreadTimeout);
+                CloseHandle(thread);
+            }
+
+            return;
         }
-        catch (...)
-        {
-            // The process is failing fast either way; losing the report is the only thing left
-            // to lose, and throwing from here would take the original crash's identity with it.
-        }
+
+        InvokeFatalErrorCallback(error);
     }
 
     winrt::Telegram::Native::FatalError NativeUtils::GetStowedException()
