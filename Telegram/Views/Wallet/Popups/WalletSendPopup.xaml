@@ -38,6 +38,8 @@
                                      Grid.RowSpan="2" />
             <TextBlock x:Name="NameText"
                        Style="{StaticResource BaseTextBlockStyle}"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
                        Margin="8,8,0,0"
                        Grid.Column="1" />
             <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
