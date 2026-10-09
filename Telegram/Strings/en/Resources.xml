@@ -14045,6 +14045,8 @@
 
     <string name="WalletSendMoney">Send Money</string>
     <string name="WalletActionReceivedGrams">un1 sent you **{0}**</string>
+    <string name="WalletActionReceivedGramsSomeone">Someone sent you **{0}**</string>
+    <string name="WalletUnknownUser">UNKNOWN USER</string>
     <string name="WalletActions">Actions</string>
     <string name="WalletActionSentGrams">You sent un1 **{0}**</string>
     <string name="WalletTransferWorth">{0} ({1})</string>

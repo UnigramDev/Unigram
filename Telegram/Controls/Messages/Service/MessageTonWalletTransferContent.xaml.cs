@@ -61,19 +61,11 @@ namespace Telegram.Controls.Messages.Service
 
             UpdateSending(message);
 
-            var user = message.ClientService.GetUser(message.Chat);
-            var self = message.ClientService.GetUser(message.ClientService.Options.MyId);
-
             var sent = message.IsOutgoing;
             var amount = Formatter.TonBalance(Math.Abs(transfer.Amount));
 
             AmountInteger.Text = (sent ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;
-
-            if (user == null || self == null)
-            {
-                return;
-            }
 
             var builder = new StringBuilder();
 
@@ -88,7 +80,15 @@ namespace Telegram.Controls.Messages.Service
             }
 
             Address.Text = builder.ToString();
-            Domain.Text = user.FullName().ToUpper();
+
+            if (message.ClientService.TryGetUser(transfer.SenderUserId, out User user))
+            {
+                Domain.Text = user.FullName().ToUpper();
+            }
+            else
+            {
+                Domain.Text = Strings.WalletUnknownUser.ToUpper();
+            }
 
             Ribbon.Text = message.SendingState switch
             {

@@ -2042,9 +2042,13 @@ namespace Telegram.Controls.Messages
             {
                 return ReplaceWithLink(string.Format(Strings.WalletActionSentGrams, amount), message.ClientService.GetUser(message.Chat));
             }
+            else if (message.ClientService.TryGetUser(tonWalletTransfer.SenderUserId, out User user))
+            {
+                return ReplaceWithLink(string.Format(Strings.WalletActionReceivedGrams, amount), user);
+            }
             else
             {
-                return ReplaceWithLink(string.Format(Strings.WalletActionReceivedGrams, amount), message.GetSender());
+                return ReplaceWithLink(string.Format(Strings.WalletActionReceivedGramsSomeone, amount), user);
             }
         }
 
