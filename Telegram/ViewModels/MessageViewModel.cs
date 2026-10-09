@@ -583,10 +583,12 @@ namespace Telegram.ViewModels
         public MessageImportInfo ImportInfo { get; protected set; }
         public Vector<UnreadReaction> UnreadReactions { get; set; }
         public int EditDate { get; set; }
+
+        private int _date;
         public int Date
         {
-            get => field;
-            protected set => OrderDate = field = value;
+            get => _date;
+            protected set => OrderDate = _date = value;
         }
 
         /// <summary>
