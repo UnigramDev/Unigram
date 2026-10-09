@@ -63,37 +63,18 @@ namespace Telegram.Services
 
         public Task<WindowContext> OpenAsync(ViewServiceOptions options)
         {
-            if (ApiInfo.HasMultipleViews)
+            try
             {
-                try
-                {
-                    return OpenAsyncInternal(options);
-                }
-                catch (Exception ex)
-                {
-                    // This can happen, but it's unclear when
-                    Logger.Exception(ex);
-
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                    return Task.FromResult<WindowContext>(null);
-                }
+                return OpenAsyncInternal(options);
             }
-            else
+            catch (Exception ex)
             {
-                return FacadeAsync(options);
+                // This can happen, but it's unclear when
+                Logger.Exception(ex);
+
+                // All the remote procedure calls must be wrapped in a try-catch block
+                return Task.FromResult<WindowContext>(null);
             }
-        }
-
-        private async Task<WindowContext> FacadeAsync(ViewServiceOptions options)
-        {
-            var tsc = new TaskCompletionSource<WindowContext>();
-
-            await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                tsc.SetResult(WindowContext.Current);
-            });
-
-            return await tsc.Task;
         }
 
         private async Task<WindowContext> OpenAsyncInternal(ViewServiceOptions options)

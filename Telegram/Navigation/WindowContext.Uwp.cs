@@ -651,17 +651,6 @@ namespace Telegram.Navigation
             return modifiers == compare;
         }
 
-        public static async void Activate(string persistedId)
-        {
-            var oldViewId = WindowContext.Current.Id;
-
-            var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == persistedId);
-            if (already != null)
-            {
-                await already.Dispatcher.DispatchAsync(() => ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId).AsTask());
-            }
-        }
-
         private ViewLifetimeControl _lifetime;
 
         /// <summary>
@@ -807,19 +796,7 @@ namespace Telegram.Navigation
         /// </summary>
         [ThreadStatic]
         private static WindowContext _current;
-
-        public static WindowContext Current
-        {
-            get
-            {
-                if (_current == null)
-                {
-                    Logger.Info(Environment.StackTrace);
-                }
-
-                return _current;
-            }
-        }
+        public static WindowContext Current => _current;
 
         partial void SetBackdropMaterial(WindowPresenter content)
         {
