@@ -9,7 +9,6 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Common;
@@ -1612,6 +1611,8 @@ namespace Telegram.Controls
 
             var offset = 0;
 
+            var forceUnderline = HyperlinkForeground is SolidColorBrush newBrush && Foreground is SolidColorBrush foreground && newBrush.Color == foreground.Color && HyperlinkFontWeight.Weight == 400;
+
             _indexMap = new List<IndexSegment>();
 
             // Records one rendered<->styled segment for the index map; call BEFORE the
@@ -1821,7 +1822,7 @@ namespace Telegram.Controls
                                         hyperlink.Args = new TextEntityClickEventArgs(entity.Type);
                                     }
 
-                                    ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground, UnderlineStyle.None, HyperlinkFontWeight);
+                                    ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground, forceUnderline ? UnderlineStyle.Single : UnderlineStyle.None, HyperlinkFontWeight);
 
                                     parentLink = true;
                                     parent = hyperlink.Native;
@@ -1834,7 +1835,7 @@ namespace Telegram.Controls
                                     var data = text.Substring(entity.Offset, entity.Length);
 
                                     ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground,
-                                        entity.Type is TextEntityTypeUrl ? UnderlineStyle.Single : UnderlineStyle.None,
+                                        entity.Type is TextEntityTypeUrl || forceUnderline ? UnderlineStyle.Single : UnderlineStyle.None,
                                         HyperlinkFontWeight);
 
                                     if (entity.Type is TextEntityTypeDateTime dateTime)
@@ -2954,11 +2955,14 @@ namespace Telegram.Controls
         // two properties were ever set to the same Brush instance, one change would move both.
         private void RecolorHyperlinks(Brush newValue, Brush oldValue)
         {
+            var forceUnderline = newValue is SolidColorBrush newBrush && Foreground is SolidColorBrush foreground && newBrush.Color == foreground.Color && HyperlinkFontWeight.Weight == 400;
+
             foreach (var child in _activeHyperlinks)
             {
                 if (child.Element.Foreground == oldValue)
                 {
                     child.Element.Foreground = newValue;
+                    child.Element.UnderlineStyle = child.Args.Type is TextEntityTypeUrl || (forceUnderline && child.Args.Type is not TextEntityTypeCode) ? UnderlineStyle.Single : UnderlineStyle.None;
                 }
             }
         }
