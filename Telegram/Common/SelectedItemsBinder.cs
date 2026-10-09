@@ -72,7 +72,7 @@ namespace Telegram.Common
         {
             if (oldValue != null)
             {
-                oldValue.CollectionChanged += Context_CollectionChanged;
+                oldValue.CollectionChanged -= Context_CollectionChanged;
             }
 
             if (_listView.IsLoaded)
