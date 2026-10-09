@@ -37,6 +37,9 @@ namespace Telegram.Views.Wallet.Popups
         private TonConnectSession _session;
         private string _domain;
 
+        // Whether the dApp has had its answer. Closing without one, however it closes, is a no.
+        private bool _answered;
+
         public WalletConnectPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, InternalLinkTypeTonConnect link)
             : base(wallet, navigationService)
         {
@@ -67,7 +70,24 @@ namespace Telegram.Views.Wallet.Popups
         {
             _aggregator.Unsubscribe(this);
 
+            if (!_answered && _session != null)
+            {
+                _answered = true;
+                _ = _wallet.DeclineConnectAsync(_session, Refusal(), _link.TraceId);
+            }
+
             base.OnUnloaded();
+        }
+
+        private WalletConnectRefusal Refusal()
+        {
+            return _session.Manifest switch
+            {
+                TonConnectManifestFailed => WalletConnectRefusal.ManifestNotFound,
+                TonConnectManifestInvalid => WalletConnectRefusal.ManifestContent,
+                TonConnectManifestInfo when _domain == null => WalletConnectRefusal.ManifestContent,
+                _ => WalletConnectRefusal.Declined
+            };
         }
 
         protected override void UpdateWalletState(WalletState state)
@@ -117,17 +137,17 @@ namespace Telegram.Views.Wallet.Popups
         {
             _session = session;
 
-            if (session.Manifest is TonConnectManifestInfo info)
+            // The url inside the manifest is whatever the manifest says, so on its own it proves
+            // nothing: it counts only when it names the host the manifest was fetched from. That
+            // host is what is shown and what a proof is bound to.
+            var host = WalletHelper.TonConnectHost(_link.ConnectRequest.ManifestUrl);
+
+            if (session.Manifest is TonConnectManifestInfo info && host != null && host == WalletHelper.TonConnectHost(info.Url))
             {
-                Title.Text = string.Format(Strings.WalletConnectToApp, info.Name);
+                Title.Text = string.Format(Strings.WalletConnectToApp, WalletHelper.DappName(info.Name, host));
                 Footer.Text = Strings.WalletConnectPermissionInfo;
 
-                // The domain rather than the whole URL: it is what the manifest was fetched from,
-                // and the part a user can actually recognise. Kept, because a proof is bound to the
-                // domain and must be bound to the one that was on screen.
-                _domain = Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url)
-                    ? url.Host
-                    : info.Url;
+                _domain = host;
 
                 Domain.Text = _domain;
 
@@ -137,8 +157,10 @@ namespace Telegram.Views.Wallet.Popups
                     Photo.Visibility = Visibility.Visible;
                 }
             }
-            else if (session.Manifest is TonConnectManifestFailed or TonConnectManifestInvalid)
+            else if (session.Manifest is TonConnectManifestInfo or TonConnectManifestFailed or TonConnectManifestInvalid)
             {
+                _domain = null;
+
                 // Named by a manifest that cannot be read, so there is nothing to tell the user
                 // about who is asking - which is the one thing they have to judge.
                 Title.Text = Strings.WalletConnectToDApp;
@@ -175,7 +197,8 @@ namespace Telegram.Views.Wallet.Popups
         private void UpdatePrimaryButton()
         {
             IsPrimaryButtonEnabled = State.HasWallet
-                && _session is { Manifest: TonConnectManifestInfo };
+                && _session is { Manifest: TonConnectManifestInfo }
+                && _domain != null;
         }
 
         /// <summary>
@@ -212,6 +235,8 @@ namespace Telegram.Views.Wallet.Popups
                 var result = await _wallet.ConnectAsync(session, _link.ConnectRequest, _domain, _link.TraceId, lease);
                 if (result.IsConnected)
                 {
+                    // Before the hide: Unloaded comes after it, and would refuse what was accepted.
+                    _answered = true;
                     Hide();
                 }
                 else

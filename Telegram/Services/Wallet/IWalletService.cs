@@ -269,13 +269,25 @@ namespace Telegram.Services.Wallet
         /// Answers a request, either way, and tells the dApp.
         /// </summary>
         /// <remarks>
-        /// Claimed first, because the claim is what decides it: every device of the account has the
-        /// same request and the server lets exactly one of them through. Losing the race is not a
-        /// failure - another device answered - and comes back false.
+        /// The claim decides it: every device of the account has the same request and the server
+        /// lets exactly one of them through. It comes after everything that can still stop this
+        /// device - the prompt, the signing - so a claim is always followed by an answer. Losing the
+        /// race is not a failure - another device answered - and comes back false.
         /// </remarks>
         Task<bool> AnswerRequestAsync(WalletRequest request, bool accept, WalletVault.WalletVaultLease lease);
 
         Task<WalletConnectResult> ConnectAsync(TonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease);
+
+        /// <summary>
+        /// Tells the dApp the connection was refused, if that can be done without asking anything.
+        /// </summary>
+        /// <remarks>
+        /// The answer is encrypted with the session key, which comes from the wallet key, so it
+        /// needs the vault open. Only a vault that opens without a prompt is used - one guarded by
+        /// nothing, or just enrolled: raising Windows Hello to say no would be a prompt for
+        /// nothing. Otherwise the dApp is left to its own timeout. Answers whether it was told.
+        /// </remarks>
+        Task<bool> DeclineConnectAsync(TonConnectSession session, WalletConnectRefusal refusal, string traceId);
 
         /// <summary>
         /// The dApps this wallet is connected to. Sessions still being set up, or already closing,

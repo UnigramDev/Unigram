@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -118,6 +119,9 @@ namespace Telegram.Services.Wallet
         // rotation - see ArchiveDescriptorAsync for why.
         private readonly List<WalletArchiveRecord> _archive = new();
         private bool _archiveLoaded;
+
+        // The ownership challenge's domain, normalized. See IsProofDomainAllowedAsync.
+        private string _ownershipDomain;
 
         /// <summary>
         /// One past wallet, as stored. The balance and date are not stored: they are the chain's
@@ -770,6 +774,8 @@ namespace Telegram.Services.Wallet
             {
                 throw new WalletRequestException(response as Error);
             }
+
+            _ownershipDomain = NormalizeDomain(challenge.Domain);
 
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -1552,10 +1558,12 @@ namespace Telegram.Services.Wallet
             var now = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var decrypted = derived.DecryptRequest(request.Body, now);
 
-            // signData and signMessage are not supported. They are answered with an error, which
-            // the caller does rather than showing a sheet for something that cannot be done.
+            // Answered here rather than shown: there is nothing for the user to decide, and a
+            // request nobody answers leaves the dApp waiting until its own timeout.
             if (decrypted.Request is not TonConnectIncomingRequest.SendTransaction send)
             {
+                var (rejected, body) = UnsupportedAnswer(derived, decrypted.Request);
+                await ClaimAndAnswerAsync(message.SessionId, messageId, RequestId(decrypted.Request), message.TraceId, rejected, body);
                 return null;
             }
 
@@ -1564,7 +1572,27 @@ namespace Telegram.Services.Wallet
 
             if (message0 == null)
             {
+                await ClaimAndAnswerAsync(message.SessionId, messageId, send.Id, message.TraceId, true,
+                    derived.EncryptError(send.Id, TonConnectRpcErrorCode.BadRequest, "No messages"));
                 return null;
+            }
+
+            var messages = new List<WalletRequestMessage>(preview.Messages.Length);
+            var total = BigInteger.Zero;
+
+            foreach (var item in preview.Messages)
+            {
+                var amount = Amount(item.Amount);
+                total += amount;
+
+                // A raw body that reads as a plain comment is shown as one, the way the chain
+                // will show it; anything else is shown as the payload it is.
+                var raw = (item.Body as SendMessageBody.RawPayload)?.Boc;
+                var comment = item.Body is SendMessageBody.Comment text
+                    ? text.Text
+                    : WalletCommentBody.TextFromBoc(raw);
+
+                messages.Add(new WalletRequestMessage(item.Destination, amount, comment, comment == null ? raw : null, item.StateInit != null));
             }
 
             return new WalletRequest(message.SessionId, messageId, send.Id, message.TraceId)
@@ -1572,30 +1600,33 @@ namespace Telegram.Services.Wallet
                 Name = message.DappName,
                 Domain = Domain(pending.Session),
                 Recipient = message0.Destination,
-                Nanograms = Amount(message0.Amount),
-                Comment = Comment(message0.Body),
+                Nanograms = total,
+                Messages = messages,
                 FeeNanograms = BigInteger.Parse(preview.Emulation.WalletFeesNanograms),
                 Actions = Actions(preview.Emulation, descriptor.Address),
                 ExpirationDate = request.ExpirationDate
             };
         }
 
+        // The opcode of a contract handing back what a message left over.
+        private const uint ExcessOpcode = 0xD53276DB;
+
         /// <summary>
-        /// The emulation, as rows: what each transfer in the trace does, seen from this wallet.
+        /// The emulation, as rows: what each action in the trace does, seen from this wallet.
         /// </summary>
         /// <remarks>
-        /// Toncenter reports each transfer as an action whose details are a JSON object -
-        /// <c>{source, destination, value, comment, encrypted}</c>, value in nanograms as a string.
-        /// The direction is not among them: it is whether *our* address is the destination, which
-        /// is the one thing only this side knows.
+        /// Toncenter reports each action with its details as a JSON object -
+        /// <c>{source, destination, value, comment, encrypted}</c> for a transfer, value in
+        /// nanograms as a string. The direction is not among them: it is whether *our* address is
+        /// the destination, which is the one thing only this side knows.
         ///
         /// The address each row shows is the other end of that leg - where it came from for a
         /// deposit, where it goes for a withdrawal. On a transfer that returns change to the same
         /// wallet both legs name the same address, which is why the two rows can look alike.
         ///
-        /// Anything that is not a plain transfer is skipped rather than guessed at, and so is a row
-        /// whose JSON does not parse: the preview is a second opinion on the request, and half of
-        /// one is worse than none.
+        /// Every kind gets a row: a contract call or an operation Toncenter could not name is
+        /// exactly what the user most needs to see before signing. Only Toncenter's own "unknown"
+        /// is left out, which says nothing a row could.
         /// </remarks>
         private static IReadOnlyList<WalletRequestAction> Actions(SendEmulation emulation, string ours)
         {
@@ -1603,7 +1634,7 @@ namespace Telegram.Services.Wallet
 
             foreach (var action in emulation.Actions)
             {
-                if (!string.Equals(action.Kind, "ton_transfer", StringComparison.Ordinal))
+                if (string.Equals(action.Kind, "unknown", StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -1613,21 +1644,45 @@ namespace Telegram.Services.Wallet
                     using var document = JsonDocument.Parse(action.DetailsJson);
                     var root = document.RootElement;
 
-                    var source = root.GetProperty("source").GetString();
-                    var destination = root.GetProperty("destination").GetString();
-
-                    if (!BigInteger.TryParse(root.GetProperty("value").GetString(), out var value))
-                    {
-                        continue;
-                    }
+                    var source = Text(root, "source");
+                    var destination = Text(root, "destination");
 
                     var deposit = IsSameAddress(destination, ours);
+                    var direction = deposit ? WalletRequestDirection.Deposit : WalletRequestDirection.Withdraw;
+
+                    BigInteger.TryParse(Text(root, "value"), out var value);
+
+                    string label;
+
+                    switch (action.Kind)
+                    {
+                        case "ton_transfer":
+                            label = deposit ? Strings.WalletIncomingTransfer : Strings.WalletOutgoingTransfer;
+                            break;
+                        case "call_contract":
+                            label = Opcode(root) == ExcessOpcode ? Strings.WalletExcess : Strings.WalletContractCall;
+                            break;
+                        case "contract_deploy":
+                            // Moves nothing of its own; the address is the contract being made.
+                            label = Strings.WalletContractDeploy;
+                            direction = WalletRequestDirection.Withdraw;
+                            value = BigInteger.Zero;
+                            destination ??= action.Accounts.FirstOrDefault();
+                            break;
+                        default:
+                            // An extra currency or a token: whatever the value is, it is not in
+                            // nanograms, so it is not shown as grams.
+                            label = Strings.WalletUnknownOperation;
+                            value = BigInteger.Zero;
+                            break;
+                    }
 
                     items.Add(new WalletRequestAction(
-                        deposit ? source : destination,
-                        deposit ? WalletRequestDirection.Deposit : WalletRequestDirection.Withdraw,
+                        direction == WalletRequestDirection.Deposit ? source : destination,
+                        direction,
                         value,
-                        Comment(root)));
+                        Comment(root),
+                        label));
                 }
                 catch (Exception ex)
                 {
@@ -1636,6 +1691,49 @@ namespace Telegram.Services.Wallet
             }
 
             return items;
+        }
+
+        private static string Text(JsonElement root, string name)
+        {
+            return root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String
+                ? value.GetString()
+                : null;
+        }
+
+        /// <summary>
+        /// The opcode of a contract call, which Toncenter gives as a "0x" hex string or a number.
+        /// </summary>
+        private static uint? Opcode(JsonElement root)
+        {
+            if (!root.TryGetProperty("opcode", out var value))
+            {
+                return null;
+            }
+
+            if (value.ValueKind == JsonValueKind.String)
+            {
+                var text = value.GetString();
+                return text != null
+                    && text.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+                    && uint.TryParse(text.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hex)
+                    ? hex
+                    : null;
+            }
+
+            if (value.ValueKind == JsonValueKind.Number)
+            {
+                if (value.TryGetUInt32(out var number))
+                {
+                    return number;
+                }
+
+                if (value.TryGetInt32(out var signed))
+                {
+                    return unchecked((uint)signed);
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -1659,7 +1757,8 @@ namespace Telegram.Services.Wallet
         }
 
         /// <summary>
-        /// The host the dApp's manifest was fetched from, which is the identity that can be judged.
+        /// The host the dApp's manifest names, which connecting required to be the one it was
+        /// fetched from.
         /// </summary>
         private static string Domain(TdTonConnectSession session)
         {
@@ -1668,7 +1767,7 @@ namespace Telegram.Services.Wallet
                 return string.Empty;
             }
 
-            return Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url) ? url.Host : info.Url;
+            return Common.WalletHelper.TonConnectHost(info.Url) ?? string.Empty;
         }
 
         /// <summary>
@@ -1679,14 +1778,6 @@ namespace Telegram.Services.Wallet
             return amount is SendAmount.Exact exact && BigInteger.TryParse(exact.Nanograms, out var value)
                 ? value
                 : BigInteger.Zero;
-        }
-
-        /// <summary>
-        /// The comment a request carries, where it carries one in the clear.
-        /// </summary>
-        private static string Comment(SendMessageBody body)
-        {
-            return body is SendMessageBody.Comment comment ? comment.Text : null;
         }
 
         public async Task<bool> AnswerRequestAsync(WalletRequest request, bool accept, WalletVault.WalletVaultLease lease)
@@ -1700,19 +1791,9 @@ namespace Telegram.Services.Wallet
                 throw new WalletNotBoundException();
             }
 
-            // At the tap rather than when the sheet opened, which is the whole point of it: it is
-            // atomic across devices, and whichever gets here first is the one that answers. The
-            // server then edits the service message so the others show the outcome.
-            var claim = await _clientService.SendAsync(new ClaimTonConnectRequest(
-                request.SessionId, request.MessageId, request.DappRequestId, !accept));
-
-            if (claim is Error error)
-            {
-                // TONCONNECT_REQUEST_ALREADY_CLAIMED, or it expired while the sheet was open.
-                Logger.Error(string.Format("ton connect request could not be claimed: {0} {1}", error.Code, error.Message));
-                return false;
-            }
-
+            // Before the claim, like everything else that can stop this: a claim this device then
+            // fails to follow with an answer locks the other devices out and leaves the dApp
+            // waiting.
             await EnsureLeaseAsync(lease);
 
             // Read again rather than held from the sheet: the session is what encrypts the answer,
@@ -1739,54 +1820,142 @@ namespace Telegram.Services.Wallet
             var now = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var decrypted = derived.DecryptRequest(current.Body, now);
 
+            if (decrypted.Request is not TonConnectIncomingRequest.SendTransaction send)
+            {
+                // Expired since the sheet opened, which the engine reports as unsupported.
+                var (rejected, error) = UnsupportedAnswer(derived, decrypted.Request);
+                return await ClaimAndAnswerAsync(request.SessionId, request.MessageId, request.DappRequestId, request.TraceId, rejected, error);
+            }
+
+            if (!accept)
+            {
+                return await ClaimAndAnswerAsync(request.SessionId, request.MessageId, request.DappRequestId, request.TraceId, true,
+                    derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.UserDeclined, "Declined"));
+            }
+
+            // Both leave the request unclaimed and the sheet up: they pass on their own.
+            if (_rotation != null)
+            {
+                throw new WalletRotationPendingException();
+            }
+
+            if (HasUnsettledTransfer())
+            {
+                throw new WalletTransferInProgressException();
+            }
+
+            // Submitted by the engine rather than the account: sendTonWalletTransfer describes one
+            // transfer to one peer, and a dApp intent can carry several messages. Prepared - signed -
+            // before the claim, so a refusal here can still be answered as one.
+            PreparedTransfer prepared;
+
+            try
+            {
+                prepared = await client.PrepareTransfer(new PrepareTransferRequest(NewRecordId(), send.Request.Intent));
+            }
+            catch (Exception ex) when (ex is not WalletAccessDeniedException)
+            {
+                Logger.Error("ton connect transfer could not be prepared: " + ex.Message);
+                return await ClaimAndAnswerAsync(request.SessionId, request.MessageId, request.DappRequestId, request.TraceId, true,
+                    derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.Unknown, "The transfer could not be sent"));
+            }
+
+            // At the tap rather than when the sheet opened: it is atomic across devices, and
+            // whichever gets here first is the one that answers. The server then edits the service
+            // message so the others show the outcome. Losing it discards the signed message unsent.
+            if (!await ClaimAsync(request.SessionId, request.MessageId, request.DappRequestId, false))
+            {
+                return false;
+            }
+
             byte[] body;
 
-            if (accept && decrypted.Request is TonConnectIncomingRequest.SendTransaction send)
+            try
             {
-                // Submitted by the engine rather than the account: sendTonWalletTransfer describes
-                // one transfer to one peer, and a dApp intent can carry several messages.
-                // Prepared first rather than sent in one call so the BOC is in hand even when the
-                // submission's outcome is unknown.
-                var prepared = await client.PrepareTransfer(new PrepareTransferRequest(NewRecordId(), send.Request.Intent));
+                await client.SendBoc(new SendBocRequest(
+                    prepared.OperationId, false, prepared.ExternalBoc, prepared.Seqno, prepared.ValidUntil));
 
-                try
-                {
-                    await client.SendBoc(new SendBocRequest(
-                        prepared.OperationId, false, prepared.ExternalBoc, prepared.Seqno, prepared.ValidUntil));
-
-                    // A TON Connect answer is the signed BOC, not a receipt for it.
-                    body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
-                }
-                catch (WalletClientException.SubmissionUnknown ex)
-                {
-                    // It may land, and telling the dApp it failed would invite a second spend.
-                    Logger.Error("ton connect transfer submission unknown: " + ex.diagnostic);
-                    body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
-                }
-                catch (WalletClientException ex)
-                {
-                    // Nothing left, so the dApp is told so rather than handed a message that was
-                    // never broadcast.
-                    Logger.Error("ton connect transfer refused: " + ex.Message);
-                    body = derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.Unknown, "The transfer could not be sent");
-                }
+                // A TON Connect answer is the signed BOC, not a receipt for it.
+                body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
             }
-            else
+            catch (WalletClientException.SubmissionUnknown ex)
             {
-                body = derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.UserDeclined, "Declined");
+                // It may land, and telling the dApp it failed would invite a second spend.
+                Logger.Error("ton connect transfer submission unknown: " + ex.diagnostic);
+                body = derived.EncryptSendSuccess(request.DappRequestId, prepared.ExternalBoc);
+            }
+            catch (WalletClientException ex)
+            {
+                // Nothing left, so the dApp is told so rather than handed a message that was
+                // never broadcast.
+                Logger.Error("ton connect transfer refused: " + ex.Message);
+                body = derived.EncryptError(request.DappRequestId, TonConnectRpcErrorCode.Unknown, "The transfer could not be sent");
             }
 
-            var answer = await _clientService.SendAsync(new AnswerTonConnectRequest(
-                request.SessionId, request.MessageId, request.TraceId, body));
+            // The transfer has already left by now, so a failure here is the dApp not being told
+            // rather than nothing having happened.
+            await SendAnswerAsync(request.SessionId, request.MessageId, request.TraceId, body);
+            return true;
+        }
 
-            if (answer is Error failed)
+        private async Task<bool> ClaimAsync(long sessionId, long messageId, string dappRequestId, bool rejected)
+        {
+            var claim = await _clientService.SendAsync(new ClaimTonConnectRequest(sessionId, messageId, dappRequestId, rejected));
+            if (claim is Error error)
             {
-                // The transfer has already left if this was an acceptance, so this is the dApp not
-                // being told rather than nothing having happened. It will time out and ask again.
-                Logger.Error(string.Format("ton connect request could not be answered: {0} {1}", failed.Code, failed.Message));
+                // TONCONNECT_REQUEST_ALREADY_CLAIMED, or it expired while the sheet was open.
+                Logger.Error(string.Format("ton connect request could not be claimed: {0} {1}", error.Code, error.Message));
+                return false;
             }
 
             return true;
+        }
+
+        private async Task SendAnswerAsync(long sessionId, long messageId, string traceId, byte[] body)
+        {
+            var answer = await _clientService.SendAsync(new AnswerTonConnectRequest(sessionId, messageId, traceId, body));
+            if (answer is Error failed)
+            {
+                Logger.Error(string.Format("ton connect request could not be answered: {0} {1}", failed.Code, failed.Message));
+            }
+        }
+
+        private async Task<bool> ClaimAndAnswerAsync(long sessionId, long messageId, string dappRequestId, string traceId, bool rejected, byte[] body)
+        {
+            if (!await ClaimAsync(sessionId, messageId, dappRequestId, rejected))
+            {
+                return false;
+            }
+
+            await SendAnswerAsync(sessionId, messageId, traceId, body);
+            return true;
+        }
+
+        /// <summary>
+        /// The answer to a request no sheet is shown for: a dApp disconnecting is acknowledged,
+        /// anything else is refused with the reason the protocol has for it.
+        /// </summary>
+        private static (bool Rejected, byte[] Body) UnsupportedAnswer(TonConnectDerivedSession derived, TonConnectIncomingRequest request)
+        {
+            return request switch
+            {
+                TonConnectIncomingRequest.Disconnect disconnect => (false, derived.EncryptDisconnectSuccess(disconnect.Id)),
+                TonConnectIncomingRequest.Unsupported unsupported => (true, derived.EncryptError(unsupported.Id, unsupported.ErrorCode, unsupported.ErrorMessage)),
+                _ => (true, derived.EncryptError(RequestId(request), TonConnectRpcErrorCode.MethodNotSupported, "Method not supported"))
+            };
+        }
+
+        private static string RequestId(TonConnectIncomingRequest request)
+        {
+            return request switch
+            {
+                TonConnectIncomingRequest.SendTransaction x => x.Id,
+                TonConnectIncomingRequest.SignMessage x => x.Id,
+                TonConnectIncomingRequest.Disconnect x => x.Id,
+                TonConnectIncomingRequest.Unsupported x => x.Id,
+                TonConnectIncomingRequest.SignData x => x.Id,
+                _ => string.Empty
+            };
         }
 
         public async Task<WalletConnectResult> ConnectAsync(TdTonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease)
@@ -1807,6 +1976,13 @@ namespace Telegram.Services.Wallet
                 // contract is about to stop accepting is one the dApp would be told to trust and
                 // the chain would then reject.
                 throw new WalletRotationPendingException();
+            }
+
+            if (Payload(request) != null && !await IsProofDomainAllowedAsync(domain))
+            {
+                // Before anything is registered: binding the session key is one-way.
+                Logger.Error("ton connect proof refused for domain " + domain);
+                return new WalletConnectResult(null);
             }
 
             // Derived, not stored: every device of this account arrives at the same key from the
@@ -1865,6 +2041,100 @@ namespace Telegram.Services.Wallet
             return result is Ok
                 ? WalletConnectResult.Connected
                 : new WalletConnectResult(result as Error);
+        }
+
+        /// <summary>
+        /// Whether a dApp may have a <c>ton_proof</c> signed for this domain.
+        /// </summary>
+        /// <remarks>
+        /// A proof for the ownership challenge's domain is byte for byte the proof the account
+        /// takes for its wallet operations; only the domain tells the two apart, so a dApp that
+        /// names it - or telegram.org - is refused. Fails closed when the domain cannot be learned.
+        /// </remarks>
+        private async Task<bool> IsProofDomainAllowedAsync(string domain)
+        {
+            var normalized = NormalizeDomain(domain);
+            if (normalized.Length == 0 || normalized == "telegram.org")
+            {
+                return false;
+            }
+
+            if (_ownershipDomain == null)
+            {
+                var response = await _clientService.SendAsync(new GetTonWalletOwnershipProofChallenge());
+                if (response is not TonWalletOwnershipProofChallenge challenge)
+                {
+                    return false;
+                }
+
+                _ownershipDomain = NormalizeDomain(challenge.Domain);
+            }
+
+            return normalized != _ownershipDomain;
+        }
+
+        private static string NormalizeDomain(string domain)
+        {
+            return (domain ?? string.Empty).TrimEnd('.').ToLowerInvariant();
+        }
+
+        public async Task<bool> DeclineConnectAsync(TdTonConnectSession session, WalletConnectRefusal refusal, string traceId)
+        {
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+            var vault = Vault;
+
+            if (lifecycle == null || descriptor == null || vault == null || session == null)
+            {
+                return false;
+            }
+
+            // No window, so the vault opens only where it would not have asked anyway.
+            using var lease = vault.CreateLease(null);
+
+            try
+            {
+                await lease.EnsureAsync();
+            }
+            catch (WalletVaultException)
+            {
+                return false;
+            }
+
+            try
+            {
+                using var derived = await DeriveAsync(lifecycle, descriptor, session);
+                if (derived == null)
+                {
+                    return false;
+                }
+
+                var response = await _clientService.SendAsync(new SetTonConnectSessionWalletClientId(session.Id, derived.PublicKeyHex()));
+                if (response is not TonConnectChallenge challenge)
+                {
+                    return false;
+                }
+
+                var code = refusal switch
+                {
+                    WalletConnectRefusal.ManifestNotFound => TonConnectConnectErrorCode.ManifestNotFound,
+                    WalletConnectRefusal.ManifestContent => TonConnectConnectErrorCode.ManifestContent,
+                    _ => TonConnectConnectErrorCode.UserDeclined
+                };
+
+                var body = derived.EncryptConnectError((ulong)challenge.EventId, code, code == TonConnectConnectErrorCode.UserDeclined ? "Declined" : "Manifest unusable");
+
+                var result = await _clientService.SendAsync(new SendTonConnectSessionConnectResult(
+                    session.Id, derived.OpenChallenge(challenge.Challenge), true, body, traceId ?? string.Empty));
+
+                return result is Ok;
+            }
+            catch (Exception ex)
+            {
+                // Nothing awaits a refusal, so nothing may escape it.
+                Logger.Error("ton connect refusal could not be sent: " + ex.Message);
+                return false;
+            }
         }
 
         public async Task<IReadOnlyList<TdTonConnectSession>> GetConnectedAppsAsync()

@@ -140,6 +140,63 @@ namespace Telegram.Services.Wallet
             }
         }
 
+        /// <summary>
+        /// The text of a plain comment body - opcode zero, then UTF-8 down a chain of cells - or
+        /// null if the BOC is anything else.
+        /// </summary>
+        public static string TextFromBoc(string boc)
+        {
+            if (string.IsNullOrEmpty(boc))
+            {
+                return null;
+            }
+
+            try
+            {
+                var cells = Deserialize(Convert.FromBase64String(boc), out int root);
+
+                if (cells == null || root < 0 || root >= cells.Count)
+                {
+                    return null;
+                }
+
+                var first = cells[root].Data;
+                if (first.Length < 4 || first[0] != 0 || first[1] != 0 || first[2] != 0 || first[3] != 0)
+                {
+                    return null;
+                }
+
+                var text = new List<byte>(first.Length);
+                text.AddRange(new ArraySegment<byte>(first, 4, first.Length - 4));
+
+                var cell = cells[root];
+                for (int i = 0; cell.References.Length > 0; i++)
+                {
+                    // A second reference is a structure, not text; the bound ends a cycle.
+                    if (cell.References.Length > 1 || i >= cells.Count)
+                    {
+                        return null;
+                    }
+
+                    var next = cell.References[0];
+                    if (next < 0 || next >= cells.Count)
+                    {
+                        return null;
+                    }
+
+                    cell = cells[next];
+                    text.AddRange(cell.Data);
+                }
+
+                // Strict, so a payload that merely starts with a zero opcode is shown as a payload.
+                return new System.Text.UTF8Encoding(false, true).GetString(text.ToArray());
+            }
+            catch (Exception ex) when (ex is FormatException or IndexOutOfRangeException or ArgumentException)
+            {
+                return null;
+            }
+        }
+
         private readonly struct Cell
         {
             public Cell(byte[] data, int[] references)

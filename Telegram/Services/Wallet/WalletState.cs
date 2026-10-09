@@ -293,6 +293,20 @@ namespace Telegram.Services.Wallet
     }
 
     /// <summary>
+    /// Why a connection was refused, in the terms the protocol tells a dApp.
+    /// </summary>
+    public enum WalletConnectRefusal
+    {
+        Declined,
+
+        /// <summary>The manifest could not be fetched.</summary>
+        ManifestNotFound,
+
+        /// <summary>The manifest was fetched and is not usable, or names a host it did not come from.</summary>
+        ManifestContent
+    }
+
+    /// <summary>
     /// What binding a phrase came to: the state it left the wallet in, or why it changed nothing.
     /// </summary>
     /// <summary>

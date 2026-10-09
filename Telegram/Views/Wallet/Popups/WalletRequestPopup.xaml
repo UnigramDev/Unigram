@@ -108,35 +108,85 @@
                            Style="{StaticResource InfoBodyTextBlockStyle}"
                            Margin="12,0,0,4" />
 
+                <!-- Every message the request carries: it is signed whole, so one left off is one
+                     agreed to unseen. -->
                 <Border Background="{ThemeResource ContentDialogBackground}"
                         CornerRadius="10"
-                        Padding="12,10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                        Padding="12,4">
+                    <ItemsControl x:Name="MessagesPanel">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="wallet:WalletRequestMessage">
+                                <Grid Padding="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
 
-                        <Border Background="{ThemeResource PageHeaderHighlightBrush}"
-                                Width="36"
-                                Height="36"
-                                CornerRadius="18"
-                                VerticalAlignment="Center"
-                                Margin="0,0,12,0"
-                                Grid.RowSpan="2" />
+                                    <Border Background="{ThemeResource PageHeaderHighlightBrush}"
+                                            Width="36"
+                                            Height="36"
+                                            CornerRadius="18"
+                                            VerticalAlignment="Top"
+                                            Margin="0,0,12,0"
+                                            Grid.RowSpan="2" />
 
-                        <TextBlock x:Name="TransferAmount"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   Grid.Column="1" />
-                        <TextBlock x:Name="TransferRecipient"
-                                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                                   Grid.Column="1"
-                                   Grid.Row="1" />
-                    </Grid>
+                                    <TextBlock Text="{x:Bind AmountText}"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               Grid.Column="1" />
+                                    <TextBlock Text="{x:Bind RecipientText}"
+                                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                                               Grid.Column="1"
+                                               Grid.Row="1" />
+
+                                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            Visibility="{x:Bind HasComment}"
+                                            CornerRadius="10"
+                                            Padding="10,4,10,6"
+                                            HorizontalAlignment="Left"
+                                            Margin="0,6,0,0"
+                                            Grid.Column="1"
+                                            Grid.Row="2">
+                                        <TextBlock Text="{x:Bind Comment}"
+                                                   TextWrapping="Wrap" />
+                                    </Border>
+
+                                    <TextBlock Text="{CustomResource WalletPayload}"
+                                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                                               Visibility="{x:Bind HasPayload}"
+                                               Margin="0,6,0,4"
+                                               Grid.Column="1"
+                                               Grid.Row="3" />
+                                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            Visibility="{x:Bind HasPayload}"
+                                            CornerRadius="10"
+                                            Padding="10,4,10,6"
+                                            Grid.Column="1"
+                                            Grid.Row="4">
+                                        <TextBlock Text="{x:Bind PayloadText}"
+                                                   FontFamily="Consolas"
+                                                   TextWrapping="Wrap"
+                                                   IsTextSelectionEnabled="True" />
+                                    </Border>
+
+                                    <TextBlock Text="{CustomResource WalletDeploysContract}"
+                                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                                               Visibility="{x:Bind Deploys}"
+                                               TextWrapping="Wrap"
+                                               Margin="0,6,0,0"
+                                               Grid.Column="1"
+                                               Grid.Row="5" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </Border>
 
                 <TextBlock x:Name="PreviewHeader"
@@ -205,23 +255,17 @@
                                     <TextBlock Text="{x:Bind AmountText}"
                                                Style="{StaticResource BaseTextBlockStyle}"
                                                Foreground="{StaticResource AmountReceivedBrush}"
-                                               Visibility="{x:Bind IsDeposit}"
+                                               Visibility="{x:Bind IsDepositAmount}"
                                                VerticalAlignment="Top"
                                                Grid.Column="2" />
                                     <TextBlock Text="{x:Bind AmountText}"
                                                Style="{StaticResource BaseTextBlockStyle}"
-                                               Visibility="{x:Bind IsWithdraw}"
+                                               Visibility="{x:Bind IsWithdrawAmount}"
                                                VerticalAlignment="Top"
                                                Grid.Column="2" />
 
-                                    <TextBlock Text="{CustomResource WalletIncomingTransfer}"
+                                    <TextBlock Text="{x:Bind Label}"
                                                Style="{StaticResource InfoBodyTextBlockStyle}"
-                                               Visibility="{x:Bind IsDeposit}"
-                                               Grid.Column="1"
-                                               Grid.Row="1" />
-                                    <TextBlock Text="{CustomResource WalletOutgoingTransfer}"
-                                               Style="{StaticResource InfoBodyTextBlockStyle}"
-                                               Visibility="{x:Bind IsWithdraw}"
                                                Grid.Column="1"
                                                Grid.Row="1" />
 

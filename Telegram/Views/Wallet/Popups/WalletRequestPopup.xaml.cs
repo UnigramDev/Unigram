@@ -62,10 +62,15 @@ namespace Telegram.Views.Wallet.Popups
 
             SecondaryButtonText = Strings.WalletCancel;
 
-            Photo.Source = ProfilePictureSourceText.GetNameForChat(message.DappName);
-            Domain.Text = message.DappName ?? string.Empty;
+            var name = WalletHelper.DappName(message.DappName, Strings.WalletUnknown);
 
-            ReviewLabel.Text = string.Format(Strings.WalletAppRequestsTransfer, message.DappName);
+            Photo.Source = ProfilePictureSourceText.GetNameForChat(name);
+
+            // Not the name: the domain line is for the domain, and the name is the dApp's to
+            // choose - one called "fragment.com" would sit where the real domain goes.
+            Domain.Text = string.Empty;
+
+            ReviewLabel.Text = string.Format(Strings.WalletAppRequestsTransfer, name);
 
             UpdateDetails();
         }
@@ -122,7 +127,7 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            TransferRecipient.Text = string.Format(Strings.WalletTransferTo, _request.ShortRecipient);
+            MessagesPanel.ItemsSource = _request.Messages;
 
             UpdateDetails();
             UpdatePreview();
@@ -157,12 +162,10 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            _domain = Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url)
-                ? url.Host
-                : info.Url;
+            _domain = WalletHelper.TonConnectHost(info.Url) ?? string.Empty;
 
             Domain.Text = _domain;
-            ReviewLabel.Text = string.Format(Strings.WalletAppRequestsTransfer, info.Name);
+            ReviewLabel.Text = string.Format(Strings.WalletAppRequestsTransfer, WalletHelper.DappName(info.Name, _domain));
 
             if (info.Icon?.DocumentValue != null)
             {
@@ -181,8 +184,6 @@ namespace Telegram.Views.Wallet.Popups
             // The card is drawn from both: the amount is the request's, the currency and rate are
             // the wallet's, and a rate arriving after this opened is what fills in the second line.
             Card.SetTransfer(_clientService, state, _request.Recipient, _request.Nanograms);
-
-            TransferAmount.Text = Formatter.Grams(_request.Nanograms);
 
             UpdateFee(state);
         }
@@ -226,7 +227,7 @@ namespace Telegram.Views.Wallet.Popups
             Photo.Size = _details ? 36 : 96;
             Photo.Margin = new Thickness(0, _details ? 0 : 4, 0, _details ? 0 : 12);
 
-            Domain.Text = loaded ? _request.Domain : _message.DappName;
+            Domain.Text = loaded ? _request.Domain : _domain ?? string.Empty;
 
             // Back on the second page, dismiss on the first. The same button, because they are the
             // same gesture: undo the last thing that happened.
@@ -278,15 +279,25 @@ namespace Telegram.Views.Wallet.Popups
             args.Cancel = true;
             IsPrimaryButtonPending = true;
 
+            string refusal = null;
+            var declined = false;
+
             try
             {
                 await _wallet.AnswerRequestAsync(_request, accept, _lease);
             }
             catch (WalletAccessDeniedException)
             {
-                // Asked to authorize the spend and declined. The request is claimed by now, so it
-                // cannot be offered again - but nothing was signed and nothing left.
-                Logger.Warning("ton connect request was claimed and then not authorized");
+                // Declined before anything was claimed, so the request is still open to answer.
+                declined = true;
+            }
+            catch (WalletRotationPendingException)
+            {
+                refusal = Strings.WalletSecretPhraseUpdating;
+            }
+            catch (WalletTransferInProgressException)
+            {
+                refusal = Strings.WalletTransferInProgress;
             }
             catch (Exception ex)
             {
@@ -296,6 +307,18 @@ namespace Telegram.Views.Wallet.Popups
             {
                 IsPrimaryButtonPending = false;
                 deferral.Complete();
+            }
+
+            if (declined)
+            {
+                return;
+            }
+            else if (refusal != null)
+            {
+                // Unclaimed, and it passes on its own: the sheet stays so the user can try again
+                // or decline.
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, refusal, primary: Strings.OK);
+                return;
             }
 
             Hide();

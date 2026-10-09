@@ -2055,7 +2055,9 @@ namespace Telegram.Controls.Messages
         private static FormattedText UpdateTonConnectRequest(MessageTonConnectRequest tonConnectRequest)
         {
             string text;
-            if (string.IsNullOrEmpty(tonConnectRequest.DappName))
+
+            var name = WalletHelper.DappName(tonConnectRequest.DappName, null);
+            if (name == null)
             {
                 text = tonConnectRequest.State switch
                 {
@@ -2070,11 +2072,11 @@ namespace Telegram.Controls.Messages
             {
                 text = tonConnectRequest.State switch
                 {
-                    TonConnectRequestStateAccepted => string.Format(Strings.WalletTonConnectRequestAppProcessed, tonConnectRequest.DappName),
-                    TonConnectRequestStateRejected => string.Format(Strings.WalletTonConnectRequestAppDeclined, tonConnectRequest.DappName),
+                    TonConnectRequestStateAccepted => string.Format(Strings.WalletTonConnectRequestAppProcessed, name),
+                    TonConnectRequestStateRejected => string.Format(Strings.WalletTonConnectRequestAppDeclined, name),
                     TonConnectRequestStatePending pending when pending.ExpirationDate <= DateTime.Now.ToUnixTimeSeconds()
-                        => string.Format(Strings.WalletTonConnectRequestAppExpired, tonConnectRequest.DappName),
-                    _ => string.Format(Strings.WalletTonConnectRequestAppPending, tonConnectRequest.DappName)
+                        => string.Format(Strings.WalletTonConnectRequestAppExpired, name),
+                    _ => string.Format(Strings.WalletTonConnectRequestAppPending, name)
                 };
             }
 

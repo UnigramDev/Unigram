@@ -446,14 +446,12 @@ namespace Telegram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = info?.Name ?? Strings.WalletUnknown;
+                TitleLabel.Text = WalletHelper.DappName(info?.Name, Strings.WalletUnknown);
             }
             else if (args.Phase == 1)
             {
                 // The host the manifest was fetched from: the part of the identity a user can judge.
-                SubtitleLabel.Text = info == null
-                    ? string.Empty
-                    : Uri.TryCreate(info.Url, UriKind.Absolute, out Uri url) ? url.Host : info.Url;
+                SubtitleLabel.Text = WalletHelper.TonConnectHost(info?.Url) ?? string.Empty;
             }
             else if (args.Phase == 2)
             {

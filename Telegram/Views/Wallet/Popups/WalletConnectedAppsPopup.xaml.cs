@@ -163,7 +163,7 @@ namespace Telegram.Views.Wallet.Popups
         private async void Disconnect(TonConnectSession session)
         {
             var name = session.Manifest is TonConnectManifestInfo info
-                ? info.Name
+                ? WalletHelper.DappName(info.Name, Strings.WalletUnknown)
                 : Strings.WalletUnknown;
 
             var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.WalletDisconnectConfirm, name), Strings.WalletDisconnect, Strings.WalletDisconnect, Strings.Cancel, destructive: true);

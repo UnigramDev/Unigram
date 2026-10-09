@@ -7,6 +7,7 @@
 
 using System;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
@@ -22,6 +23,51 @@ namespace Telegram.Common
 {
     public static class WalletHelper
     {
+        private const int DappNameLimit = 64;
+
+        /// <summary>
+        /// A dApp's name as it is safe to show: one line, no bidi controls, at most
+        /// <see cref="DappNameLimit"/> characters - or <paramref name="fallback"/> when nothing is
+        /// left.
+        /// </summary>
+        /// <remarks>
+        /// The name is whatever the dApp wrote. A bidi override could turn the sentence it sits in
+        /// around, and a long or multi-line one push the domain - the part that can be judged -
+        /// off the screen.
+        /// </remarks>
+        public static string DappName(string name, string fallback)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return fallback;
+            }
+
+            var builder = new StringBuilder(Math.Min(name.Length, DappNameLimit));
+
+            foreach (var character in name)
+            {
+                if (builder.Length >= DappNameLimit)
+                {
+                    break;
+                }
+
+                if (character is >= '\u200E' and <= '\u200F' or >= '\u202A' and <= '\u202E' or >= '\u2066' and <= '\u2069')
+                {
+                    continue;
+                }
+
+                builder.Append(char.IsControl(character) || character is '\u2028' or '\u2029' ? ' ' : character);
+            }
+
+            if (builder.Length > 0 && char.IsHighSurrogate(builder[builder.Length - 1]))
+            {
+                builder.Length--;
+            }
+
+            var result = builder.ToString().Trim();
+            return result.Length > 0 ? result : fallback;
+        }
+
         public static bool IsValidAddress(string address)
         {
             try
@@ -95,6 +141,25 @@ namespace Telegram.Common
             }
 
             return (ushort)crc;
+        }
+
+        /// <summary>
+        /// The host a TON Connect URL names, in the form a domain is compared and signed in -
+        /// punycode, lower case, no trailing dot - or null when it names none.
+        /// </summary>
+        /// <remarks>
+        /// Punycode so that a look-alike in another script cannot pass for the name it imitates,
+        /// either on screen or in a comparison.
+        /// </remarks>
+        public static string TonConnectHost(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uri) || (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp))
+            {
+                return null;
+            }
+
+            var host = uri.IdnHost.TrimEnd('.').ToLowerInvariant();
+            return host.Length > 0 ? host : null;
         }
 
         public static bool TryToCurrency(IClientService clientService, WalletState state, BigInteger nanograms, out BigInteger units, out string currency)
