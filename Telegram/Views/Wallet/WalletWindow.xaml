@@ -280,8 +280,8 @@
                                                 Margin="0,0,8,0" />
                                 </ItemsPanelTemplate>
                             </controls:TopNavView.ItemsPanel>
-                            <controls:TopNavViewItem Content="Transactions" />
-                            <controls:TopNavViewItem Content="Collectibles" />
+                            <controls:TopNavViewItem Content="{CustomResource WalletTransactions}" />
+                            <controls:TopNavViewItem Content="{CustomResource WalletCollectibles}" />
                         </controls:TopNavView>
                     </controls:StickyHeaderTabs>
 
