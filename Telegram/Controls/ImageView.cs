@@ -502,7 +502,7 @@ namespace Telegram.Controls
                 scaledHeight = (int)scaledSize.Height;
             }
 
-            var response = await clientService.SendAsync(new GetMapThumbnailFile(location, 15, scaledWidth, scaledHeight, 1, chatId));
+            var response = await clientService.SendAsync(new GetMapThumbnailFile(location, 16, scaledWidth, scaledHeight, 1, chatId));
             if (response is File file && _latitude == location.Latitude && _longitude == location.Longitude)
             {
                 SetSource(clientService, file, width, height, clear: false);
