@@ -857,7 +857,7 @@ namespace Telegram.Services.Wallet
             Raise();
         }
 
-        public async Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, int sendingId, WalletVault.WalletVaultLease lease)
+        public async Task<WalletTransferResult> SendAsync(string recipient, byte[] recipientPublicKey, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, int sendingId, WalletVault.WalletVaultLease lease)
         {
             var client = _client;
             if (client == null || _descriptor == null)
@@ -897,12 +897,13 @@ namespace Telegram.Services.Wallet
             }
             else
             {
-                // The engine reads the recipient's key off their contract and asks for this
-                // wallet's phrase, so an encrypted comment is a signing operation of its own -
-                // and the body it hands back is a cell rather than text.
+                // The engine reads the recipient's key off their contract, or takes the account's
+                // for a wallet with no contract yet, and asks for this wallet's phrase - so an
+                // encrypted comment is a signing operation of its own, and the body it hands back
+                // is a cell rather than text.
                 try
                 {
-                    var encrypted = await client.CreateEncryptedComment(new CreateEncryptedCommentRequest(recipient, comment));
+                    var encrypted = await client.CreateEncryptedComment(new CreateEncryptedCommentRequest(recipient, comment, recipientPublicKey));
                     body = new SendMessageBody.RawPayload(encrypted);
 
                     var payload = WalletCommentBody.ToPayload(encrypted);
@@ -920,10 +921,11 @@ namespace Telegram.Services.Wallet
                 }
                 catch (WalletClientException.EncryptedCommentUnavailable ex)
                 {
-                    // There is no key to encrypt to: a wallet that has never sent anything has not
-                    // published one, and some contracts never will. Nothing was signed and nothing
-                    // was spent, so this is an answer rather than a fault - and the caller can do
-                    // something about it, because the same comment can go publicly instead.
+                    // There is no key to encrypt to: a frozen wallet, a contract that does not
+                    // expose one, or an undeployed wallet whose key the account did not report.
+                    // Nothing was signed and nothing was spent, so this is an answer rather than a
+                    // fault - and the caller can do something about it, because the same comment
+                    // can go publicly instead.
                     Logger.Error("wallet comment could not be encrypted: " + ex.diagnostic);
                     return WalletTransferResult.CommentUnavailable;
                 }
@@ -986,10 +988,12 @@ namespace Telegram.Services.Wallet
         {
             try
             {
+#if DEBUG
                 if (DebugSpoilTransfers)
                 {
                     await Task.Delay(2000);
                 }
+#endif
 
                 var response = await request;
 

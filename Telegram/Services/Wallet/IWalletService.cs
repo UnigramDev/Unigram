@@ -147,13 +147,16 @@ namespace Telegram.Services.Wallet
         /// one does; the history row says what happened once it answers.</param>
         /// <param name="isCommentPublic">
         /// Whether the comment travels in the clear. Encrypted is the default and costs a little
-        /// more: the engine reads the recipient's key off the chain and signs the body with this
-        /// wallet's, so only the two of them can read it - and only a wallet contract that exposes
-        /// its key can be sent one.
+        /// more: the body is encrypted to the recipient's key and signed with this wallet's, so
+        /// only the two of them can read it.
         /// </param>
+        /// <param name="recipientPublicKey">The recipient's key as the account reports it, or null.
+        /// The engine reads a deployed wallet's key off its contract and ignores this; an
+        /// undeployed one has no contract to ask, so without it no encrypted comment can be
+        /// sent to a wallet that has never sent anything.</param>
         /// <param name="sendingId">Echoed back by the message TDLib adds to the chat with the peer,
         /// as its pending sending state, so the caller can find it. Zero for none.</param>
-        Task<WalletTransferResult> SendAsync(string recipient, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, int sendingId, WalletVault.WalletVaultLease lease);
+        Task<WalletTransferResult> SendAsync(string recipient, byte[] recipientPublicKey, long peerUserId, string peerDomain, BigInteger amountNanograms, string comment, bool isCommentPublic, bool allowGasless, int sendingId, WalletVault.WalletVaultLease lease);
 
         /// <summary>
         /// What the network would charge for a transfer, in nanograms, or null when it cannot be

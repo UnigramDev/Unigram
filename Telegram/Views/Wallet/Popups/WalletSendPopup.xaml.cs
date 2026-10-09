@@ -72,6 +72,11 @@ namespace Telegram.Views.Wallet.Popups
         // the account does not have cannot be sent one - see UpdateCommentPrivacyAsync.
         private bool? _canEncryptComment;
 
+        // The key a private comment is encrypted to. Passed on rather than left to the engine,
+        // which can only read it off a deployed contract - and a wallet that has never sent
+        // anything has none, while the account still knows its key.
+        private byte[] _publicKey;
+
         // Set while the code writes the field, so that a swap is not mistaken for typing.
         private bool _updating;
 
@@ -203,11 +208,10 @@ namespace Telegram.Views.Wallet.Popups
         /// a private comment is possible for it.
         /// </summary>
         /// <remarks>
-        /// A private comment is encrypted to the recipient's public key, and the account only has
-        /// that key once their wallet is deployed - a wallet that has never sent anything has no
-        /// `get_public_key` to read, so there is nothing to encrypt to. That is why the option
-        /// turns on for some recipients and not others, and it is settled here rather than at the
-        /// moment of sending so it is never offered and then refused.
+        /// A private comment is encrypted to the recipient's public key, which the account reports
+        /// alongside the address when it has one. That is why the option turns on for some
+        /// recipients and not others, and it is settled here rather than at the moment of sending
+        /// so it is never offered and then refused.
         ///
         /// Both calls are reads. Creating a wallet for a user who has none is a side effect and
         /// stays in ResolveRecipientAsync, at the moment of sending - a recipient with no wallet
@@ -249,6 +253,7 @@ namespace Telegram.Views.Wallet.Popups
             }
 
             _canEncryptComment = HasPublicKey(wallet?.PublicKey);
+            _publicKey = _canEncryptComment == true ? wallet.PublicKey : null;
 
             if (_canEncryptComment == false)
             {
@@ -1129,7 +1134,7 @@ namespace Telegram.Views.Wallet.Popups
 
             try
             {
-                var result = await _wallet.SendAsync(_address, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, flight.SendingId, lease);
+                var result = await _wallet.SendAsync(_address, _publicKey, _userId, _domain, nanograms, _comment, _isCommentPublic, _gasless is { LeftCount: > 0 }, flight.SendingId, lease);
                 if (result.IsCommentUnavailable)
                 {
                     flight.Cancel();
