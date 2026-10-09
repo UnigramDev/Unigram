@@ -375,7 +375,7 @@
                                          Foreground="{ThemeResource DangerButtonBackground}">
                     <TextBlock x:Name="UnofficialText"
                                Foreground="{ThemeResource ButtonForeground}"
-                               TextWrapping="Wrap"/>
+                               TextWrapping="Wrap" />
                 </controls:SettingsButton>
             </controls:HeaderedControl>
 

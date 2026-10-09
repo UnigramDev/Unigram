@@ -4,9 +4,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:local="using:Telegram.Controls.Messages.Content"
-                    mc:Ignorable="d"
-                    d:DesignHeight="300"
-                    d:DesignWidth="400">
+                    mc:Ignorable="d">
 
     <Style TargetType="local:ContactContent">
         <Setter Property="MinWidth"
