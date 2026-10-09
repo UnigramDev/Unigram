@@ -142,6 +142,10 @@ namespace Telegram.ViewModels.Wallet
                 await _wallet.EnableBackupAsync(words, lease);
                 NavigationService.ShowToast(Toast(Strings.WalletBackupEnabled, Strings.WalletBackupEnabledInfo), ToastPopupIcon.Success);
             }
+            catch (WalletRotationPendingException)
+            {
+                NavigationService.ShowToast(Strings.WalletSecretPhraseUpdating, ToastPopupIcon.Info);
+            }
             catch (Exception ex)
             {
                 Logger.Error("wallet backup could not be enabled: " + ex.Message);

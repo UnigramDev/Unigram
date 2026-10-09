@@ -361,6 +361,7 @@ namespace Telegram.Views.Wallet.Popups
             return failure switch
             {
                 WalletBindFailure.OtherWallet => (Strings.WalletWrongSecretPhrase, Strings.WalletWrongSecretPhraseInfo),
+                WalletBindFailure.OutdatedPhrase => (Strings.WalletWrongSecretPhrase, Strings.WalletOutdatedSecretPhraseInfo),
                 // Not reachable from the screen: it only opens once the account reports a wallet.
                 WalletBindFailure.NoWallet => (Strings.WalletImport, Strings.ErrorOccurred),
                 _ => (Strings.WalletInvalidRecoveryPhrase, Strings.WalletInvalidRecoveryPhraseInfo)

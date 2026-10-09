@@ -641,6 +641,14 @@ namespace Telegram.Services.Wallet
                     return new WalletBindResult(WalletBindFailure.OtherWallet);
                 }
 
+                if (wallet.PublicKey is { Length: > 0 } reported && reported.Any(x => x != 0) && PhraseSigningKey(array) is byte[] signing && !signing.SequenceEqual(reported))
+                {
+                    // The anchor matches - it never changes - but the contract signs with another
+                    // key now, so this device would sign messages the wallet refuses.
+                    await _lifecycle.DeleteWallet(descriptor);
+                    return new WalletBindResult(WalletBindFailure.OutdatedPhrase);
+                }
+
                 await DetachAsync();
 
                 // What the account reports, which is what every later check compares against.
@@ -780,9 +788,20 @@ namespace Telegram.Services.Wallet
         /// </remarks>
         public async Task EnableBackupAsync(IReadOnlyList<string> words, WalletVault.WalletVaultLease lease)
         {
+            if (_rotation != null)
+            {
+                // The phrase in hand stops signing once the rotation lands, so uploading it would
+                // back up a wallet nobody can spend from.
+                throw new WalletRotationPendingException();
+            }
+
             var proof = await ProveOwnershipAsync(_descriptor, lease);
 
-            await _clientService.SendAsync(new EnableTonWalletBackup(string.Join(" ", words), proof));
+            var response = await _clientService.SendAsync(new EnableTonWalletBackup(string.Join(" ", words), proof));
+            if (response is Error error)
+            {
+                throw new WalletRequestException(error);
+            }
         }
 
         /// <summary>
@@ -798,7 +817,11 @@ namespace Telegram.Services.Wallet
         {
             var proof = await ProveOwnershipAsync(_descriptor, lease);
 
-            await _clientService.SendAsync(new DisableTonWalletBackupWithProof(proof));
+            var response = await _clientService.SendAsync(new DisableTonWalletBackupWithProof(proof));
+            if (response is Error error)
+            {
+                throw new WalletRequestException(error);
+            }
         }
 
         /// <summary>
@@ -851,12 +874,18 @@ namespace Telegram.Services.Wallet
             // The account's wallet is the imported one from here on, so the descriptor this device
             // signs with has to follow it. Everything else - the balance, the history, the state -
             // arrives from the account as an update, the same way it does after any other change.
-            WalletDescriptor previous;
-
             await _mutex.WaitAsync();
             try
             {
-                previous = _descriptor;
+                // The update announcing the new wallet can land before this answer or after it.
+                // Either way the old wallet is archived rather than deleted, so both orders end in
+                // the same place - and whatever is still on it stays reachable from its phrase.
+                await ArchiveDescriptorAsync();
+
+                if (_wallet is { Address.Length: > 0 } wallet && !IsSameWallet(imported, wallet))
+                {
+                    Logger.Error(string.Format("wallet replaced, but the account reports {0} rather than {1}", wallet.Address, imported.Address));
+                }
 
                 // The key the proof was signed with, not the descriptor's: for a phrase that has
                 // been rotated the descriptor carries the anchor, and the contract holds the other.
@@ -864,17 +893,16 @@ namespace Telegram.Services.Wallet
                 _boundKey = proof.PublicKey;
 
                 SaveDescriptor(_descriptor, _boundKey);
+
+                // Attached afresh, because the client in place - if the update came first - was
+                // attached watch-only, with no key to sign with.
+                await DetachAsync();
+                Attach();
+                SetState(Project());
             }
             finally
             {
                 _mutex.Release();
-            }
-
-            // Last, and only once what replaces it is on disk - the same order a rotation uses,
-            // and for the same reason: a crash between the two would leave neither phrase.
-            if (previous != null)
-            {
-                await DeleteQuietlyAsync(previous);
             }
 
             Raise();
@@ -2952,6 +2980,7 @@ namespace Telegram.Services.Wallet
         private async Task LoadActivityCoreAsync(bool reset)
         {
             string offset;
+            string address;
             HashSet<string> known;
 
             await _mutex.WaitAsync();
@@ -2962,6 +2991,8 @@ namespace Telegram.Services.Wallet
                     return;
                 }
 
+                address = _wallet.Address;
+
                 if (!reset && _activityEnd)
                 {
                     // An empty next_offset was TDLib saying there is nothing older.
@@ -2970,9 +3001,9 @@ namespace Telegram.Services.Wallet
 
                 offset = reset ? string.Empty : _activityOffset;
 
-                // Taken here, under the lock, and carried into the request: nothing else adds to
-                // the confirmed half, and the pager keeps a second load out until this one has
-                // written its pages back.
+                // Where the refresh stops reading. The pager keeps a second load out, but a send
+                // settling can still add to the confirmed half meanwhile, so the write-back checks
+                // against the list as it is then rather than this.
                 known = new HashSet<string>(_confirmed.Count, StringComparer.Ordinal);
 
                 foreach (var item in _confirmed)
@@ -2991,8 +3022,8 @@ namespace Telegram.Services.Wallet
             Raise();
 
             var error = reset
-                ? await RefreshActivityAsync(known)
-                : await AppendActivityAsync(offset, known);
+                ? await RefreshActivityAsync(address, known)
+                : await AppendActivityAsync(address, offset);
 
             await _mutex.WaitAsync();
             try
@@ -3027,7 +3058,7 @@ namespace Telegram.Services.Wallet
         /// <summary>
         /// Reads one page of older transactions onto the end of the history.
         /// </summary>
-        private async Task<Error> AppendActivityAsync(string offset, HashSet<string> known)
+        private async Task<Error> AppendActivityAsync(string address, string offset)
         {
             var response = await _clientService.SendAsync(new GetTonWalletTransactions(null, offset, ActivityPageSize));
             if (response is not TonWalletTransactions transactions)
@@ -3035,23 +3066,59 @@ namespace Telegram.Services.Wallet
                 return response as Error;
             }
 
-            var items = new List<TonWalletTransaction>(_confirmed);
-
-            // By id, because a page repeats the transaction its offset was taken at.
-            foreach (var item in transactions.Transactions)
+            await _mutex.WaitAsync();
+            try
             {
-                if (known.Add(item.Id))
+                if (!IsCurrentWallet(address))
                 {
-                    items.Add(item);
+                    return null;
                 }
+
+                var items = new List<TonWalletTransaction>(_confirmed);
+                var held = HeldIds();
+
+                // By id, because a page repeats the transaction its offset was taken at.
+                foreach (var item in transactions.Transactions)
+                {
+                    if (held.Add(item.Id))
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                _confirmed = items;
+                _activityOffset = transactions.NextOffset;
+                _activityEnd = transactions.NextOffset.Length == 0;
+
+                RebuildActivity();
+            }
+            finally
+            {
+                _mutex.Release();
             }
 
-            _confirmed = items;
-            _activityOffset = transactions.NextOffset;
-            _activityEnd = transactions.NextOffset.Length == 0;
-
-            RebuildActivity();
             return null;
+        }
+
+        /// <summary>
+        /// Whether the wallet a load started for is still the account's, so its pages may be
+        /// written back. Called under the lock.
+        /// </summary>
+        private bool IsCurrentWallet(string address)
+        {
+            return string.Equals(_wallet?.Address, address, StringComparison.Ordinal);
+        }
+
+        private HashSet<string> HeldIds()
+        {
+            var held = new HashSet<string>(_confirmed.Count, StringComparer.Ordinal);
+
+            foreach (var item in _confirmed)
+            {
+                held.Add(item.Id);
+            }
+
+            return held;
         }
 
         /// <summary>
@@ -3068,7 +3135,7 @@ namespace Telegram.Services.Wallet
         /// the history start over: keeping both halves would leave a hole in the middle with
         /// nothing to mark it.
         /// </remarks>
-        private async Task<Error> RefreshActivityAsync(HashSet<string> known)
+        private async Task<Error> RefreshActivityAsync(string address, HashSet<string> known)
         {
             var fetched = new List<TonWalletTransaction>();
             var offset = string.Empty;
@@ -3108,37 +3175,61 @@ namespace Telegram.Services.Wallet
                 }
             }
 
-            if (fetched.Count > 0)
+            await _mutex.WaitAsync();
+            try
             {
-                Interlocked.Increment(ref _activityGrowth);
-            }
-
-            if (joined)
-            {
-                var items = new List<TonWalletTransaction>(fetched.Count + _confirmed.Count);
-
-                items.AddRange(fetched);
-                items.AddRange(_confirmed);
-
-                _confirmed = items;
-
-                // The page just read is also the end of what has been read only on a first load.
-                // Otherwise the end is where it already was.
-                if (known.Count == 0)
+                if (!IsCurrentWallet(address))
                 {
+                    // Replaced while the pages were out: they belong to the wallet before.
+                    return null;
+                }
+
+                if (fetched.Count > 0)
+                {
+                    Interlocked.Increment(ref _activityGrowth);
+                }
+
+                if (joined)
+                {
+                    var held = HeldIds();
+                    var items = new List<TonWalletTransaction>(fetched.Count + _confirmed.Count);
+
+                    // A send that settled while the pages were out is already held, at the top.
+                    foreach (var item in fetched)
+                    {
+                        if (!held.Contains(item.Id))
+                        {
+                            items.Add(item);
+                        }
+                    }
+
+                    items.AddRange(_confirmed);
+
+                    _confirmed = items;
+
+                    // The page just read is also the end of what has been read only on a first
+                    // load. Otherwise the end is where it already was.
+                    if (known.Count == 0)
+                    {
+                        _activityOffset = tail;
+                        _activityEnd = tail.Length == 0;
+                    }
+                }
+                else
+                {
+                    _confirmed = fetched;
                     _activityOffset = tail;
                     _activityEnd = tail.Length == 0;
+                    _activityGeneration++;
                 }
+
+                RebuildActivity();
             }
-            else
+            finally
             {
-                _confirmed = fetched;
-                _activityOffset = tail;
-                _activityEnd = tail.Length == 0;
-                _activityGeneration++;
+                _mutex.Release();
             }
 
-            RebuildActivity();
             return null;
         }
 
@@ -3588,6 +3679,28 @@ namespace Telegram.Services.Wallet
             }
 
             return bound.SequenceEqual(reported);
+        }
+
+        /// <summary>
+        /// The key a phrase signs with, or null when the engine cannot say.
+        /// </summary>
+        /// <remarks>
+        /// The engine exports only the anchor. A 12-word phrase signs with its anchor; each half of
+        /// a 24-word one is a valid 12-word phrase of its own, and the second half's anchor is the
+        /// 24-word phrase's signing key.
+        /// </remarks>
+        private static byte[] PhraseSigningKey(string[] words)
+        {
+            try
+            {
+                var half = words.Length == 24 ? words.Skip(12) : words;
+                return WalletEngineMethods.RotationMnemonicPublicKey(string.Join(" ", half));
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("wallet phrase signing key could not be derived: " + ex.GetType().Name);
+                return null;
+            }
         }
 
         /// <summary>

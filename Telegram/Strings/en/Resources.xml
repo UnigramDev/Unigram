@@ -14097,6 +14097,7 @@
     <string name="WalletTestPhrase">Test Time</string>
     <string name="WalletTestPhraseInfo">Make sure you wrote your recovery phrase down correctly. Enter words **{0}**, **{1}** and **{2}**.</string>
     <string name="WalletWrongSecretPhraseInfo">The words you entered don\'t match the wallet.</string>
+    <string name="WalletOutdatedSecretPhraseInfo">These words are an old secret phrase for this wallet.\n\nPlease enter the new phrase you got when you last disabled the backup.</string>
     <string name="WalletCancelDisableBackupTitle">Cancel Disabling Backup?</string>
     <string name="WalletCancelDisableBackupInfo">Your secret phrase will not be updated.</string>
     <string name="WalletCancelDisabling">Cancel Disabling</string>

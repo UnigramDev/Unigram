@@ -283,7 +283,13 @@ namespace Telegram.Services.Wallet
         /// A valid phrase, for a different wallet. Refused rather than kept: it would sign
         /// messages the account's wallet cannot accept, and the mistake would surface much later.
         /// </summary>
-        OtherWallet
+        OtherWallet,
+
+        /// <summary>
+        /// This wallet's phrase from before a key rotation. The address still matches, because the
+        /// anchor never changes, but the contract no longer accepts the key it signs with.
+        /// </summary>
+        OutdatedPhrase
     }
 
     /// <summary>
