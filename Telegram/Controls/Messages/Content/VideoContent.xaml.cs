@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
@@ -268,11 +269,7 @@ namespace Telegram.Controls.Messages.Content
                 if (!hasSpoiler && message.Delegate.CanBeDownloaded(video, file))
                 {
                     _message.ClientService.DownloadFile(file.Id, 32);
-
-                    if (lowQuality != null)
-                    {
-                        _message.ClientService.DownloadFile(lowQuality.HlsFile.Id, 32);
-                    }
+                    _message.ClientService.DownloadFile(lowQuality.HlsFile.Id, 32);
 
                     UpdateSource(message, file);
                 }
@@ -589,7 +586,7 @@ namespace Telegram.Controls.Messages.Content
                 case MessageVideo video:
                     if (video.AlternativeVideos.Count > 0)
                     {
-                        lowQuality = video.AlternativeVideos[0];
+                        lowQuality = video.AlternativeVideos.FirstOrDefault(x => x.Codec == "h264");
                     }
 
                     cover = video.Cover;

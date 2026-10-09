@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -217,9 +218,12 @@ namespace Telegram.Controls.Gallery
 
             if (item.AlternativeVideos.Count > 0)
             {
-                var video = item.AlternativeVideos[0];
-                window.ClientService.DownloadFile(video.HlsFile.Id, 30);
-                window.ClientService.DownloadFile(video.Video.Id, 29, 0, (int)((double)video.Video.Size / item.Duration));
+                var video = item.AlternativeVideos.FirstOrDefault(x => x.Codec == "h264");
+                if (video != null)
+                {
+                    window.ClientService.DownloadFile(video.HlsFile.Id, 30);
+                    window.ClientService.DownloadFile(video.Video.Id, 29, 0, (int)((double)video.Video.Size / item.Duration));
+                }
             }
 
             IsTextSelectionEnabled = false;
