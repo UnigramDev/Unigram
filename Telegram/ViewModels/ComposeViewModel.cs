@@ -22,7 +22,6 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Wallet.Popups;
-using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
@@ -827,22 +826,6 @@ namespace Telegram.ViewModels
             var input = new InputMessageVoiceNote(new InputVoiceNote(await GenerationService.PrepareAsync(file, conversion), (int)Math.Round(duration.TotalSeconds), waveform), caption, selfDestructType);
 
             await SendMessageAsync(plan, input);
-        }
-
-        public async void SendCamera()
-        {
-            var capture = new CameraCaptureUI();
-            capture.PhotoSettings.AllowCropping = false;
-            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
-            capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
-            capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.HighestAvailable;
-
-            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.PhotoOrVideo);
-            if (file != null)
-            {
-                SendFileExecute(new[] { file });
-            }
         }
 
         public async void SendMedia()

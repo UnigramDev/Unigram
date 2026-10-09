@@ -704,7 +704,6 @@ namespace Telegram.Controls.Stories
             if (photoRights || videoRights)
             {
                 flyout.CreateFlyoutItem(viewModel.SendMedia, Strings.PhotoOrVideo, Icons.Image);
-                flyout.CreateFlyoutItem(viewModel.SendCamera, Strings.ChatCamera, Icons.Camera);
             }
 
             if (documentRights)
