@@ -303,7 +303,8 @@ namespace Telegram.Common
             {
                 // WindowContext.Content here, not the shell the walk starts from: MainPage and
                 // WebAppWindow name the thread, WindowContent does not.
-                var name = (window.Content ?? window.XamlRoot?.Content)?.GetType().Name ?? "no content";
+                var content = window.Content ?? window.XamlRoot?.Content;
+                var name = content != null ? NameOf(content) : "no content";
 
                 registry.Windows = registry.Windows == null ? name : registry.Windows + ", " + name;
                 registry.IsMain |= window.IsInMainView;
@@ -737,7 +738,7 @@ namespace Telegram.Common
 
                 foreach (var instance in registry.Live)
                 {
-                    var name = instance.GetType().Name;
+                    var name = NameOf(instance);
 
                     if (!byType.TryGetValue(name, out var counts))
                     {
@@ -749,7 +750,7 @@ namespace Telegram.Common
 
                 foreach (var orphan in registry.Orphans)
                 {
-                    byType[orphan.GetType().Name][1]++;
+                    byType[NameOf(orphan)][1]++;
                 }
 
                 foreach (var pair in byType)
@@ -784,7 +785,7 @@ namespace Telegram.Common
         private static void AppendTree(System.Text.StringBuilder sb, object node, Dictionary<object, List<object>> children, int depth)
         {
             sb.Append(' ', depth * 2);
-            sb.Append(node.GetType().Name);
+            sb.Append(NameOf(node));
             sb.Append(' ');
             sb.AppendLine(AddressOf(node).ToString("x16"));
 
@@ -794,6 +795,22 @@ namespace Telegram.Common
                 {
                     AppendTree(sb, child, children, depth + 1);
                 }
+            }
+        }
+
+        // .NET Native keeps a type's metadata only when something reflects on it, and without it
+        // Type.Name throws MissingMetadataException. ToString answers with the type handle instead.
+        private static string NameOf(object instance)
+        {
+            var type = instance.GetType();
+
+            try
+            {
+                return type.Name;
+            }
+            catch
+            {
+                return type.ToString();
             }
         }
 
