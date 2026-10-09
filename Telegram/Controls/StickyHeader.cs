@@ -433,10 +433,14 @@ namespace Telegram.Controls
         /// </summary>
         public void UpdateThreshold()
         {
-            if (_scrollingHost == null || _layout == null)
+            if (_scrollingHost == null)
             {
                 return;
             }
+
+            // Creates _layout, which nothing else may have done yet: only a follower reads Properties
+            // before the animations start.
+            _ = Properties;
 
             // Nothing to measure against until the header has been arranged.
             if (ActualHeight == 0)

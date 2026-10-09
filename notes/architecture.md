@@ -376,6 +376,13 @@ switches on `message.GeneratedContent ?? message.Content` to build the right `Co
 bounded because Activator-based construction would break the AOT build. `MessageBubblePanel` assumes a
 fixed Children ordering (`[factCheck?] text media [reactions?] footer`); reordering the template breaks
 layout silently.
+Nothing in a message forces a composition node until it is needed: each one is updated on every XAML
+frame, for every realized message. `MessageSelector` builds its swipe tracker, hit-test visual and
+child visual in `EnsureTracker`, on the first `PointerEntered` (or press, for touch and pen), and
+`MessageBubble.AnimateSendout` enables Translation itself. `MessageSelector.ContentTemplateVisual` must
+keep enabling Translation on the presenter before handing out its visual: ChatView's sticky photo and
+summary expressions read `child.Translation`, and fail to resolve - every frame, into WatchDog - when
+it is off.
 
 ## Message content implementations — Telegram/Controls/Messages/Content/ (52 files)
 <!-- map: verified=95560d9f7 paths=Telegram/Controls/Messages/Content -->
@@ -435,7 +442,13 @@ and pinned marks, read receipts, sized by `MessageBubblePanel` for the overlap l
 paid/tag variants.
 **Entry points:** owned by `MessageBubble`/`MessageService`, both of which implement `IReactionsDelegate`.
 **Traps:** `ReactionsPanel` keeps a `Dictionary<ReactionType, ReactionButton>` and does diffed updates
-rather than rebuilding, so reaction identity must stay stable across updates. `MessageBubblePanel`
+rather than rebuilding, so reaction identity must stay stable across updates. When a panel moves to
+another message its buttons go to a spare list shared by every panel in the window (keyed on
+`XamlRoot`, since an island host puts several windows on one thread; capped at 64), after
+`Children.Clear()` - a pooled button may be inserted into another panel next - and `TakeSpare` prefers
+one of the same type showing the same reaction. `ReactionButton.Recycle` drops the message on the way
+in, or the pool keeps the chat it came from alive, and bumps a generation that `Animate` checks after
+its awaits. `MessageBubblePanel`
 compares `reactions.Footer` against `footer.DesiredSize` to conditionally `InvalidateMeasure()`, so
 `ReactionsPanel.Footer` must be set every measure pass before `Reactions.Measure`.
 

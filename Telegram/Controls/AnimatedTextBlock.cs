@@ -62,18 +62,35 @@ namespace Telegram.Controls
             }
         }
 
+        // Requesting a part's visual gives it a composition node for good, and XAML updates every
+        // node on every frame it renders. The centre only matters to the scale animation, so the
+        // visuals are taken when the first one runs, and only kept centred from then on.
+        private bool _partVisuals;
+
         private void Part_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var visual = ElementComposition.GetElementVisual(sender as UIElement);
-            var point = e.NewSize.ToVector2();
-
-            if (sender == PrevPart)
+            if (_partVisuals)
             {
-                visual.CenterPoint = new Vector3(point.X / 2, -4, 0);
+                UpdateCenterPoint(sender as TextBlock, e.NewSize.ToVector2());
             }
-            else if (sender == NextPart)
+        }
+
+        private void UpdateCenterPoint(TextBlock part, Vector2 size)
+        {
+            if (part == null)
             {
-                visual.CenterPoint = new Vector3(point.X / 2, point.Y + 4, 0);
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(part);
+
+            if (part == PrevPart)
+            {
+                visual.CenterPoint = new Vector3(size.X / 2, -4, 0);
+            }
+            else if (part == NextPart)
+            {
+                visual.CenterPoint = new Vector3(size.X / 2, size.Y + 4, 0);
             }
         }
 
@@ -234,6 +251,13 @@ namespace Telegram.Controls
 
                 ChangePartText(ref PrevPart, prevValue, true, true);
                 ChangePartText(ref NextPart, nextValue, true);
+
+                if (!_partVisuals)
+                {
+                    _partVisuals = true;
+                    UpdateCenterPoint(PrevPart, PrevPart.ActualSize);
+                    UpdateCenterPoint(NextPart, NextPart.ActualSize);
+                }
 
                 var prevVisual = ElementComposition.GetElementVisual(PrevPart);
                 var nextVisual = ElementComposition.GetElementVisual(NextPart);

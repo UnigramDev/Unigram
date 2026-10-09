@@ -99,7 +99,31 @@ namespace Telegram.Controls.Messages
 
         private UnreadReaction _unread;
 
+        // Bumped on Recycle, so that an Animate still awaiting TDLib can tell it no longer belongs
+        // to the message it started for: the button may be connected again by then, elsewhere.
+        private int _generation;
+
         public MessageReaction Reaction => _reaction;
+
+        /// <summary>
+        /// Lets go of the message before the button goes back to <see cref="ReactionsPanel"/>'s pool,
+        /// which would otherwise keep the chat it came from alive. The icon stays, it is what the
+        /// pool is for.
+        /// </summary>
+        internal void Recycle()
+        {
+            _generation++;
+
+            _message = null;
+            _reaction = null;
+            _unread = null;
+
+            if (Overlay != null)
+            {
+                Overlay.IsOpen = false;
+                Overlay.Child = null;
+            }
+        }
 
         public void SetUnread(UnreadReaction unread)
         {
@@ -206,6 +230,11 @@ namespace Telegram.Controls.Messages
 
         private void RecentChoosers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
+            if (_message == null)
+            {
+                return;
+            }
+
             photo.Source = ProfilePictureSource.MessageSender(_message.ClientService, sender);
         }
 
@@ -476,13 +505,21 @@ namespace Telegram.Controls.Messages
 
         protected async void Animate()
         {
+            var clientService = _message?.ClientService;
+            if (clientService == null)
+            {
+                return;
+            }
+
+            var generation = _generation;
+
             if (_reactionType is ReactionTypeEmoji emoji)
             {
-                var response = await _message.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
+                var response = await clientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
                 if (response is EmojiReaction reaction && reaction.AroundAnimation != null)
                 {
-                    var around = await _message.ClientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && IsConnected)
+                    var around = await clientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
+                    if (around.Local.IsDownloadingCompleted && IsConnected && generation == _generation)
                     {
                         this.BeginOnUIThread(() => Animate(around, true));
                     }
@@ -490,14 +527,14 @@ namespace Telegram.Controls.Messages
             }
             else if (_reactionType is ReactionTypeCustomEmoji customEmoji)
             {
-                var response = await _message.ClientService.SendAsync(new GetCustomEmojiReactionAnimations());
+                var response = await clientService.SendAsync(new GetCustomEmojiReactionAnimations());
                 if (response is Stickers stickers)
                 {
                     var random = new Random();
                     var next = random.Next(0, stickers.StickersValue.Count);
 
-                    var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && IsConnected)
+                    var around = await clientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
+                    if (around.Local.IsDownloadingCompleted && IsConnected && generation == _generation)
                     {
                         this.BeginOnUIThread(() => Animate(around, true));
                     }

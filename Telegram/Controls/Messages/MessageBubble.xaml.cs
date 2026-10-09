@@ -224,10 +224,6 @@ namespace Telegram.Controls.Messages
             //ContentPanel.SizeChanged += OnSizeChanged;
             //Message.TextEntityClick += Message_TextEntityClick;
 
-            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
-
             _templateApplied = true;
             TemplateApplied?.Invoke(this, EventArgs.Empty);
 
@@ -2712,12 +2708,16 @@ namespace Telegram.Controls.Messages
             textOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
             textOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
+            // Enabled here rather than with the template: Translation gives the element its own
+            // composition node, and every bubble paid for it while scrolling.
             if (content is MessageSticker or MessageAnimatedEmoji or MessageDice or MessageStakeDice)
             {
+                ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
                 media.StartAnimation("Translation", textOffset);
             }
             else
             {
+                ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
                 text.StartAnimation("Translation", textOffset);
             }
 

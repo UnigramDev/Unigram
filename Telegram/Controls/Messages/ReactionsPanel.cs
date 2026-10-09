@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Telegram.Collections;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -24,28 +25,61 @@ namespace Telegram.Controls.Messages
     {
         private readonly Dictionary<ReactionType, ReactionButton> _cache = new(new ReactionTypeEqualityComparer());
 
+        // A container moves to another message on every recycle, and inflating a button's template
+        // was most of what this panel cost while a chat opened. Shared by every panel in the window,
+        // because opening a chat realizes panels that never had a message with reactions: a pool per
+        // panel left those building every button from its template.
+        //
+        // Keyed on the window and not on the thread: a XAML island host puts more than one window on
+        // a thread, and an element cannot move between them.
+        private static readonly ConditionalWeakTable<XamlRoot, List<ReactionButton>> _spare = new();
+        private static readonly ConditionalWeakTable<XamlRoot, List<ReactionButton>>.CreateValueCallback _createSpare = _ => new List<ReactionButton>();
+
+        private const int SpareLimit = 64;
+
         private long _chatId;
         private long _messageId;
 
         private MessageReaction[] _prevValue;
         private bool _prevAsTags;
 
+        // XAML keeps where an element last was across a change of parent, in window coordinates, so
+        // a pooled button would slide in from the message it was last shown in. Off while the panel
+        // is bound to another message: its first arrange stores where the buttons are now, whether
+        // or not there is a transition to play, and the next change to the same message animates
+        // from there.
+        private readonly TransitionCollection _transitions;
+        private bool _transitionsSuspended;
+        private bool _arrangedSinceSuspend;
+
         public ReactionsPanel()
         {
             TabFocusNavigation = KeyboardNavigationMode.Once;
 
-            ChildrenTransitions = new TransitionCollection
+            ChildrenTransitions = _transitions = new TransitionCollection
             {
                 new RepositionThemeTransition()
             };
-
-            ElementComposition.GetElementVisual(this);
         }
 
 #if INSTRUMENTATION
         // The cache outlives the Children it was built for, so a button that is only in here is in
         // no tree at all.
-        internal IEnumerable<object> DebugDetached() => _cache.Values;
+        internal IEnumerable<object> DebugDetached()
+        {
+            foreach (var button in _cache.Values)
+            {
+                yield return button;
+            }
+
+            if (XamlRoot is XamlRoot xamlRoot && _spare.TryGetValue(xamlRoot, out var spare))
+            {
+                foreach (var button in spare)
+                {
+                    yield return button;
+                }
+            }
+        }
 #endif
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -62,8 +96,32 @@ namespace Telegram.Controls.Messages
             {
                 _prevValue = null;
 
-                _cache.Clear();
+                if (!_transitionsSuspended)
+                {
+                    _transitionsSuspended = true;
+                    ChildrenTransitions = null;
+                }
+
+                _arrangedSinceSuspend = false;
+
+                // Off the tree first: a pooled button may be inserted into another panel next.
                 Children.Clear();
+
+                // Out of the tree, a panel has no window to pool for, and its buttons are dropped.
+                var spare = _cache.Count > 0 && XamlRoot is XamlRoot xamlRoot
+                    ? _spare.GetValue(xamlRoot, _createSpare)
+                    : null;
+
+                foreach (var button in _cache.Values)
+                {
+                    if (spare?.Count < SpareLimit)
+                    {
+                        button.Recycle();
+                        spare.Add(button);
+                    }
+                }
+
+                _cache.Clear();
             }
 
             if (reactions?.Reactions.Count > 0)
@@ -120,6 +178,12 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
+                    if (_transitionsSuspended && _arrangedSinceSuspend)
+                    {
+                        _transitionsSuspended = false;
+                        ChildrenTransitions = _transitions;
+                    }
+
                     // PERF: run diff asynchronously?
                     var prev = _prevValue ?? Array.Empty<MessageReaction>();
                     var diff = DiffCalculator.Create(prev, reactions.Reactions, this);
@@ -177,14 +241,57 @@ namespace Telegram.Controls.Messages
                 return button;
             }
 
-            button = isTag
+            button = TakeSpare(key, isTag) ?? (isTag
                 ? new ReactionAsTagButton()
                 : key is ReactionTypePaid
                 ? new ReactionAsPaidButton()
-                : new ReactionButton();
+                : new ReactionButton());
 
             _cache[key] = button;
             Children.Insert(Math.Min(index, Children.Count), button);
+
+            return button;
+        }
+
+        private ReactionButton TakeSpare(ReactionType key, bool isTag)
+        {
+            var type = isTag
+                ? typeof(ReactionAsTagButton)
+                : key is ReactionTypePaid
+                ? typeof(ReactionAsPaidButton)
+                : typeof(ReactionButton);
+
+            if (XamlRoot is not XamlRoot xamlRoot || !_spare.TryGetValue(xamlRoot, out var spare))
+            {
+                return null;
+            }
+
+            // One showing the same reaction keeps its icon, so it is worth looking for first.
+            var match = -1;
+
+            for (int i = 0; i < spare.Count; i++)
+            {
+                if (spare[i].GetType() != type)
+                {
+                    continue;
+                }
+
+                match = i;
+
+                if (key.AreTheSame(spare[i].Reaction?.Type))
+                {
+                    break;
+                }
+            }
+
+            if (match < 0)
+            {
+                return null;
+            }
+
+            var button = spare[match];
+            spare[match] = spare[^1];
+            spare.RemoveAt(spare.Count - 1);
 
             return button;
         }
@@ -349,6 +456,7 @@ namespace Telegram.Controls.Messages
 
             ArrangeRow(rowStart, count, rowTop, position.Width - Spacing);
 
+            _arrangedSinceSuspend = true;
             return finalSize;
         }
     }
