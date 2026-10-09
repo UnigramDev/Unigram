@@ -475,9 +475,12 @@ namespace Telegram
                     _channel.Writer.TryWrite(reportPath);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Cleanup(reportPath);
+                if (ex is not HttpRequestException)
+                {
+                    Cleanup(reportPath);
+                }
             }
 
             static void Cleanup(string path)
