@@ -588,6 +588,7 @@ namespace Telegram.Controls.Messages.Content
                 TitleLabel.Text = Strings.AppName;
                 SubtitleLabel.Text = Strings.ChatBackground;
                 ContentLabel.SetText(clientService, string.Empty.AsFormattedText());
+                ContentLabel.Visibility = Visibility.Collapsed;
             }
             else if (linkPreview.Type is LinkPreviewTypeUpgradedGift upgradedGift)
             {
@@ -595,6 +596,7 @@ namespace Telegram.Controls.Messages.Content
                 TitleLabel.Text = Strings.AppName;
                 SubtitleLabel.Text = upgradedGift.Gift.ToName();
                 ContentLabel.SetText(clientService, string.Empty.AsFormattedText());
+                ContentLabel.Visibility = Visibility.Collapsed;
             }
             else
             {

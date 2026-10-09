@@ -129,6 +129,7 @@
                                                              IsTextSelectionEnabled="False"
                                                              MaxLines="1"
                                                              TextTrimming="CharacterEllipsis"
+                                                             Foreground="{ThemeResource MessageForegroundBrush}"
                                                              Style="{StaticResource CaptionFormattedTextBlockStyle}"
                                                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                              AutoFontSize="False"
