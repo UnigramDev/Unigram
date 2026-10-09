@@ -2171,7 +2171,10 @@ namespace Telegram.Services
             }
             else if (TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                return supergroup.PaidMessageStarCount > 0;
+                if (supergroup.Status is not ChatMemberStatusAdministrator and not ChatMemberStatusCreator && !supergroup.IsAdministeredDirectMessagesGroup)
+                {
+                    return supergroup.PaidMessageStarCount > 0;
+                }
             }
 
             return false;

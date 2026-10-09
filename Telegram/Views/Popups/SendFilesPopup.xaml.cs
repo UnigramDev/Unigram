@@ -336,7 +336,10 @@ namespace Telegram.Views.Popups
             }
             else if (viewModel.ClientService.TryGetSupergroup(viewModel.Chat, out Supergroup supergroup))
             {
-                PaidMessageStarCount = supergroup.PaidMessageStarCount;
+                if (supergroup.Status is not ChatMemberStatusAdministrator and not ChatMemberStatusCreator && !supergroup.IsAdministeredDirectMessagesGroup)
+                {
+                    PaidMessageStarCount = supergroup.PaidMessageStarCount;
+                }
             }
 
             if (PaidMessageStarCount > 0)
