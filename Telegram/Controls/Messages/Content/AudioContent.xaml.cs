@@ -8,7 +8,6 @@
 using System;
 using Telegram.Common;
 using Telegram.Converters;
-using Telegram.Native.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -18,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Controls.Messages.Content
 {
     // TODO: turn the whole control into a Button
-    public sealed partial class AudioContent : ControlEx, IContent
+    public sealed partial class AudioContent : FileButton, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -41,7 +40,7 @@ namespace Telegram.Controls.Messages.Content
 
         private AutomaticDragHelper ButtonDrag;
 
-        private FileButton Button;
+        private FileButton Button => this;
         private Grid DownloadPanel;
         private FileButton Download;
         private TextBlock Title;
@@ -51,7 +50,8 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
-            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            base.OnApplyTemplate();
+
             DownloadPanel = GetTemplateChild(nameof(DownloadPanel)) as Grid;
             Download = GetTemplateChild(nameof(Download)) as FileButton;
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
@@ -78,6 +78,8 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnLoaded()
         {
+            base.OnLoaded();
+
             var audio = GetContent(_message);
             if (audio == null || !_templateApplied)
             {
@@ -97,6 +99,8 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnUnloaded()
         {
+            base.OnUnloaded();
+
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;

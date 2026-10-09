@@ -1950,7 +1950,7 @@ namespace Telegram.Controls.Messages
                 //Grid.SetRow(Message, 2);
                 //Panel.Placeholder = false;
             }
-            else if (content is MessageDocument)
+            else if (content is MessageAudio or MessageDocument)
             {
                 var caption = content.HasCaption();
                 if (content is MessageCall)

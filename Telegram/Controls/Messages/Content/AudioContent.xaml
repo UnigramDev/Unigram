@@ -4,19 +4,63 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    mc:Ignorable="d"
-                    d:DesignHeight="300"
-                    d:DesignWidth="400">
+                    mc:Ignorable="d">
 
     <Style TargetType="local:AudioContent">
         <Setter Property="MinWidth"
                 Value="220" />
-        <Setter Property="IsTabStop"
-                Value="False" />
+        <Setter Property="Background"
+                Value="{ThemeResource MessageMediaBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageMediaForegroundBrush}" />
+        <Setter Property="Padding"
+                Value="10,8,10,8" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="FontFamily"
+                Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="FontSize"
+                Value="24" />
+        <Setter Property="CornerRadius"
+                Value="24" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Grid>
+                    <Grid Background="Transparent"
+                          Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background"
+                                                Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background"
+                                                Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter1.Foreground"
+                                                Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                        <Setter Target="ContentPresenter2.Foreground"
+                                                Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -25,9 +69,37 @@
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <controls:FileButton x:Name="Button"
-                                             VerticalAlignment="Top"
-                                             Grid.RowSpan="2" />
+                        <Grid Control.IsTemplateFocusTarget="True"
+                              Background="{TemplateBinding Background}"
+                              CornerRadius="24"
+                              Width="48"
+                              Height="48"
+                              VerticalAlignment="Top"
+                              Grid.RowSpan="2">
+                            <Rectangle x:Name="RootOverlay"
+                                       x:Load="False"
+                                       Fill="#54000000" />
+                            <Grid x:Name="RootGrid"
+                                  Background="Transparent">
+                                <TextBlock x:Name="ContentPresenter1"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                                <TextBlock x:Name="ContentPresenter2"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                            </Grid>
+
+                            <controls:ProgressBarRing x:Name="ProgressBar"
+                                                      x:Load="False"
+                                                      Foreground="{TemplateBinding Foreground}"
+                                                      IsHitTestVisible="False"
+                                                      Width="48"
+                                                      Height="48" />
+                        </Grid>
                         <Grid x:Name="DownloadPanel"
                               Width="24"
                               Height="24"

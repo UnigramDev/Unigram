@@ -355,7 +355,10 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (linkPreview.Type is LinkPreviewTypeAudio)
             {
-                Media.Child = new AudioContent(message);
+                Media.Child = new AudioContent(message)
+                {
+                    Padding = new Thickness(0)
+                };
             }
             else if (linkPreview.Type is LinkPreviewTypeDocument)
             {
