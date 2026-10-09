@@ -640,6 +640,7 @@
     <string name="EditAdminTransferAlertTitle">Security Check</string>
     <string name="EditAdminTransferAlertText">You can transfer this group to **{0}** only if you:</string>
     <string name="EditChannelAdminTransferAlertText">You can transfer this channel to **{0}** only if you have:</string>
+    <string name="WithdrawChannelAlertText">You can withdraw only if you have:</string>
 
     <string name="EditAdminTransferAlertText1">Enabled **Two-Step Verification** more than **7 days** ago.</string>
     <string name="EditAdminTransferAlertText2">Logged in on this device more than **24 hours** ago.</string>
@@ -7426,6 +7427,7 @@
     <string name="MonetizationTransactionDetailRefund">Refunded back</string>
     <string name="MonetizationGraphImpressions">Ad impressions</string>
     <string name="MonetizationGraphRevenue">Ad rewards</string>
+    <string name="MonetizationSelfWithdraw">Withdraw via Fragment</string>
     <string name="ChartInTON">{0} in TON</string>
     <string name="ChartInXTR">{0} in Stars</string>
     <string name="ChartInUSD">{0} in USD</string>

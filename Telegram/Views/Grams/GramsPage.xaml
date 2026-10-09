@@ -72,6 +72,12 @@
                                         Content="{CustomResource TopUpViaFragment}"
                                         Style="{StaticResource AccentButtonStyle}"
                                         HorizontalAlignment="Stretch" />
+
+                                <Button Click="{x:Bind ViewModel.Withdraw}"
+                                        Visibility="{x:Bind ViewModel.CanWithdraw, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        Content="{CustomResource MonetizationSelfWithdraw}"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,8,0,0" />
                             </StackPanel>
                         </controls:HeaderedControl>
 
