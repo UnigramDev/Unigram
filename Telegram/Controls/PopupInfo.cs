@@ -70,5 +70,18 @@ namespace Telegram.Controls
             DependencyProperty.Register(nameof(Subtitle), typeof(string), typeof(PopupInfo), new PropertyMetadata(string.Empty));
 
         #endregion
+
+        #region SubtitleVisibility
+
+        public Visibility SubtitleVisibility
+        {
+            get { return (Visibility)GetValue(SubtitleVisibilityProperty); }
+            set { SetValue(SubtitleVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty SubtitleVisibilityProperty =
+            DependencyProperty.Register(nameof(SubtitleVisibility), typeof(Visibility), typeof(PopupInfo), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
     }
 }
