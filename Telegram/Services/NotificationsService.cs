@@ -709,8 +709,9 @@ namespace Telegram.Services
                 }
 
                 var ticks = Logger.TickCount;
+                var suppress = suppressPopup || ticks - _lastShownToast <= 7000;
 
-                notification.SuppressPopup = suppressPopup || ticks - _lastShownToast <= 7000;
+                notification.SuppressPopup = suppress;
                 notifier.Show(notification);
 
                 if (ticks - _lastShownToast <= 7000)
@@ -718,7 +719,7 @@ namespace Telegram.Services
                     Logger.Info("Suppress popup");
                 }
 
-                if (soundFile != null && notifier.Setting == NotificationSetting.Enabled)
+                if (soundFile != null && !suppress && notifier.Setting == NotificationSetting.Enabled)
                 {
                     SoundEffects.Play(soundFile);
                 }
