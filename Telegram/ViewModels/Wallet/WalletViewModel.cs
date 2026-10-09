@@ -29,6 +29,11 @@ namespace Telegram.ViewModels.Wallet
         private int _generation;
         private int _collectiblesGeneration;
 
+        // Whether the page is shown, and whether it started the stream: navigating away while the
+        // restore is out would otherwise stop a stream that is then started with nobody to stop it.
+        private bool _shown;
+        private bool _watching;
+
         public WalletViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IWalletService wallet)
             : base(clientService, settingsService, aggregator)
         {
@@ -54,15 +59,27 @@ namespace Telegram.ViewModels.Wallet
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            _shown = true;
+
             Apply(_wallet.State);
             Apply(await _wallet.RestoreAsync());
 
-            _wallet.StartWatching();
+            if (_shown && !_watching)
+            {
+                _watching = true;
+                _wallet.StartWatching();
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
-            _wallet.StopWatching();
+            _shown = false;
+
+            if (_watching)
+            {
+                _watching = false;
+                _wallet.StopWatching();
+            }
         }
 
         public void Handle(UpdateWalletState update)

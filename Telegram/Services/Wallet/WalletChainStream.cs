@@ -23,9 +23,11 @@ namespace Telegram.Services.Wallet
     /// streaming API and that the host owns the stream, its reconnect policy, and what to do with
     /// an event - which here is a refresh, since nothing in the payload is parsed.
     ///
-    /// This is the one piece of wallet traffic that does not go through TDLib, so it does not
-    /// follow the account's proxy either. Everything the engine asks for is carried over
-    /// <c>sendTonCenterApiRequest</c>; this opens a socket of its own.
+    /// This is the one piece of wallet traffic that does not go through TDLib, so it cannot follow
+    /// the account's proxy: an MTProto or SOCKS proxy has no way to carry it. It is not opened at
+    /// all while one is in use - connecting directly would hand the wallet address to Toncenter
+    /// from the address the proxy is there to hide. The balance still arrives by update.
+    /// Everything the engine asks for is carried over <c>sendTonCenterApiRequest</c>.
     ///
     /// <see cref="ClientWebSocket"/> rather than <c>MessageWebSocket</c>: the WinRT one goes
     /// through WinINet, which answered a perfectly resolvable host with
@@ -42,6 +44,14 @@ namespace Telegram.Services.Wallet
         // How long before the URL expires to go and get another. The server issues one per
         // request, so reconnecting early costs a request and reconnecting late costs the gap.
         private static readonly TimeSpan ExpiryMargin = TimeSpan.FromSeconds(30);
+
+        // How long a connection has to last to count as working. One the server accepts and then
+        // drops - a refused subscription, a rate limit - otherwise reconnects at once, forever.
+        private static readonly TimeSpan StableConnection = TimeSpan.FromSeconds(60);
+
+        // Three pings without a frame back. A connection that went away without a close leaves the
+        // receive waiting until the URL expires, which can be an hour.
+        private static readonly TimeSpan StallTimeout = TimeSpan.FromSeconds(45);
 
         // Frames are small, and one that is not is one this does not need in full: only the
         // control replies are read, and those are two fields long.
@@ -101,7 +111,14 @@ namespace Telegram.Services.Wallet
 
         public void Stop()
         {
-            if (Interlocked.Decrement(ref _watchers) > 0)
+            var watchers = Interlocked.Decrement(ref _watchers);
+            if (watchers < 0)
+            {
+                // A stop with no start to match. Below zero, the next start would not start.
+                Interlocked.Increment(ref _watchers);
+                return;
+            }
+            else if (watchers > 0)
             {
                 return;
             }
@@ -117,11 +134,11 @@ namespace Telegram.Services.Wallet
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                var connected = false;
+                TimeSpan? lived = null;
 
                 try
                 {
-                    connected = await ConnectAsync(cancellationToken);
+                    lived = await ConnectAsync(cancellationToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -137,10 +154,10 @@ namespace Telegram.Services.Wallet
                     return;
                 }
 
-                if (connected)
+                if (lived >= StableConnection)
                 {
                     // It ran and ended, which is what an expiring URL does. The next one is asked
-                    // for immediately; only a failure backs off.
+                    // for immediately; only a failure, or a connection that did not hold, backs off.
                     delay = ReconnectFirstDelay;
                     continue;
                 }
@@ -161,24 +178,36 @@ namespace Telegram.Services.Wallet
         }
 
         /// <summary>
-        /// Holds one connection for as long as its URL is good. Returns whether it was established
-        /// at all, which is what tells a lost connection from a refused one.
+        /// Holds one connection for as long as its URL is good. Returns how long it was held, or
+        /// null when it was not established at all.
         /// </summary>
-        private async Task<bool> ConnectAsync(CancellationToken cancellationToken)
+        private async Task<TimeSpan?> ConnectAsync(CancellationToken cancellationToken)
         {
             var address = _address();
             if (string.IsNullOrEmpty(address) || address.IndexOf('"') >= 0)
             {
                 // No wallet yet, or an address that cannot be put in a JSON string. Neither is
                 // worth a socket.
-                return false;
+                return null;
+            }
+
+            // The system proxy is the one exception: the socket follows it as TDLib does.
+            if (_clientService.Options.EnabledProxyId != 0 && AppSettings.EnabledProxyId != -1)
+            {
+                return null;
             }
 
             var response = await _clientService.SendAsync(new GetTonCenterStreamingApiUrl());
             if (response is not TonCenterStreamingApiUrl streaming || !Uri.TryCreate(streaming.Url, UriKind.Absolute, out var uri))
             {
                 Logger.Error("wallet stream url refused: " + (response as Error)?.Message);
-                return false;
+                return null;
+            }
+
+            if (uri.Scheme != "wss")
+            {
+                Logger.Error("wallet stream url is not wss: " + uri.Scheme);
+                return null;
             }
 
             // The URL carries its own lifetime, so the connection is given up before the server has
@@ -197,6 +226,8 @@ namespace Telegram.Services.Wallet
             await socket.ConnectAsync(uri, expiry.Token);
             Logger.Info("wallet stream open");
 
+            var opened = DateTime.UtcNow;
+
             // One at a time: two sends on one socket at once is not allowed, and the keepalive
             // below runs beside the subscription and the reading.
             using var sending = new SemaphoreSlim(1, 1);
@@ -209,9 +240,12 @@ namespace Telegram.Services.Wallet
 
             var ping = PingAsync(socket, sending, expiry.Token);
 
+            using var stall = CancellationTokenSource.CreateLinkedTokenSource(expiry.Token);
+            stall.CancelAfter(StallTimeout);
+
             try
             {
-                await ReceiveAsync(socket, expiry.Token);
+                await ReceiveAsync(socket, stall);
             }
             finally
             {
@@ -228,7 +262,7 @@ namespace Telegram.Services.Wallet
                 }
             }
 
-            return true;
+            return DateTime.UtcNow - opened;
         }
 
         /// <summary>
@@ -306,8 +340,10 @@ namespace Telegram.Services.Wallet
         /// the first few: that something arrived is the whole message, and the account is then
         /// asked what actually changed.
         /// </summary>
-        private async Task ReceiveAsync(ClientWebSocket socket, CancellationToken cancellationToken)
+        private async Task ReceiveAsync(ClientWebSocket socket, CancellationTokenSource stall)
         {
+            var cancellationToken = stall.Token;
+
             var buffer = new ArraySegment<byte>(new byte[FrameBuffer]);
             var logged = 0;
 
@@ -323,6 +359,9 @@ namespace Telegram.Services.Wallet
                 {
                     return;
                 }
+
+                // Any frame, a pong included, is the connection still being there.
+                stall.CancelAfter(StallTimeout);
 
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
