@@ -102,6 +102,8 @@ namespace Telegram.Controls.Messages.Content
             var nextId = message?.Id;
 
             _message = message;
+            _subtitleSeconds = -1;
+            _indicatorPosition = -1;
 
             var video = GetContent(message, out Photo cover, out AlternativeVideo lowQuality, out bool hasSpoiler, out bool isSecret);
             if (video == null || !_templateApplied)
@@ -138,6 +140,10 @@ namespace Telegram.Controls.Messages.Content
 
         private bool _indicatorCollapsed = true;
 
+        private long _subtitleSeconds = -1;
+        private double _indicatorDuration;
+        private double _indicatorPosition = -1;
+
         private void UpdatePosition(double position, double duration)
         {
             if (duration >= 30)
@@ -148,8 +154,15 @@ namespace Telegram.Controls.Messages.Content
                     Indicator.Visibility = Visibility.Visible;
                 }
 
-                Indicator.Maximum = duration;
-                Indicator.Value = position;
+                var pixel = Indicator.ActualWidth > 0 ? duration / Indicator.ActualWidth : 0;
+                if (duration != _indicatorDuration || Math.Abs(position - _indicatorPosition) >= pixel)
+                {
+                    _indicatorDuration = duration;
+                    _indicatorPosition = position;
+
+                    Indicator.Maximum = duration;
+                    Indicator.Value = position;
+                }
             }
             else if (!_indicatorCollapsed)
             {
@@ -373,12 +386,7 @@ namespace Telegram.Controls.Messages.Content
 
         private string GetDuration(Video video)
         {
-            if (video.Duration > 0)
-            {
-                return video.GetDuration() + "\n";
-            }
-
-            return string.Empty;
+            return video.GetDuration() + "\n";
         }
 
         private void UpdateThumbnail(File file)
@@ -483,14 +491,22 @@ namespace Telegram.Controls.Messages.Content
 
             try
             {
-                var position = TimeSpan.FromSeconds(video.Duration - Math.Truncate(e.Position));
-                if (position.TotalHours >= 1)
+                // Raised for every frame, and each change to the tree costs a full render pass:
+                // the label moves once a second, the bar once a pixel.
+                var remaining = (long)(video.Duration - Math.Truncate(e.Position));
+                if (remaining != _subtitleSeconds)
                 {
-                    Subtitle.Text = position.ToString("h\\:mm\\:ss");
-                }
-                else
-                {
-                    Subtitle.Text = position.ToString("mm\\:ss");
+                    _subtitleSeconds = remaining;
+
+                    var position = TimeSpan.FromSeconds(remaining);
+                    if (position.TotalHours >= 1)
+                    {
+                        Subtitle.Text = position.ToString("h\\:mm\\:ss");
+                    }
+                    else
+                    {
+                        Subtitle.Text = position.ToString("mm\\:ss");
+                    }
                 }
 
                 UpdatePosition(e.Position, Player.IsPlaying ? video.Duration : 0);
@@ -505,6 +521,8 @@ namespace Telegram.Controls.Messages.Content
         public void Recycle()
         {
             _message = null;
+            _subtitleSeconds = -1;
+            _indicatorPosition = -1;
             _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
