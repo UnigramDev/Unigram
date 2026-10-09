@@ -129,10 +129,9 @@ namespace Telegram.Services.Wallet
                 return;
             }
 
-            _loaded = true;
-
             if (!File.Exists(_path))
             {
+                _loaded = true;
                 return;
             }
 
@@ -155,6 +154,10 @@ namespace Telegram.Services.Wallet
 
                     _entries[key] = new WalletJournalEntry(version, payload);
                 }
+
+                // Only once it parsed: a journal that failed to load keeps failing, rather than
+                // reading as empty on the next call and being overwritten by it.
+                _loaded = true;
             }
             catch (WalletJournalException)
             {
