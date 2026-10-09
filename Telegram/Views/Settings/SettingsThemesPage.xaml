@@ -184,9 +184,15 @@
                                                              Height="36"
                                                              Margin="12,0,12,12"
                                                              Style="{StaticResource EmptyHyperlinkButtonStyle}"
-                                                             HorizontalContentAlignment="Center"
-                                                             VerticalContentAlignment="Center"
                                                              Background="Transparent">
+                                                <HyperlinkButton.Template>
+                                                    <ControlTemplate TargetType="HyperlinkButton">
+                                                        <ContentPresenter Background="{TemplateBinding Background}"
+                                                                          CornerRadius="{TemplateBinding CornerRadius}"
+                                                                          HorizontalContentAlignment="Center"
+                                                                          VerticalContentAlignment="Center" />
+                                                    </ControlTemplate>
+                                                </HyperlinkButton.Template>
                                                 <Grid>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="Auto" />
