@@ -2201,7 +2201,7 @@ namespace Telegram.Controls.Messages
                 _ => message.Text
             };
 
-            if (styledText != null && message.Content is not MessageAnimatedEmoji and not MessageRichMessage)
+            if (styledText != null && styledText != StyledText.Empty && message.Content is not MessageAnimatedEmoji and not MessageRichMessage)
             {
                 var fontSize = 0d;
 
@@ -2258,45 +2258,6 @@ namespace Telegram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             switch (content)
             {
-                case MessageText text:
-                    result = ReplaceEntities(message, text.Text);
-                    break;
-                case MessageAlbum album:
-                    result = ReplaceEntities(message, album.Caption);
-                    break;
-                case MessagePaidAlbum paidAlbum:
-                    result = ReplaceEntities(message, paidAlbum.Caption);
-                    break;
-                case MessageAnimation animation:
-                    result = ReplaceEntities(message, animation.Caption);
-                    break;
-                case MessageAudio audio:
-                    result = ReplaceEntities(message, audio.Caption);
-                    break;
-                case MessageDocument document:
-                    result = ReplaceEntities(message, document.Caption);
-                    break;
-                case MessageInvoice invoice:
-                    result = ReplaceEntities(message, invoice.PaidMediaCaption);
-                    break;
-                case MessagePhoto photo:
-                    result = ReplaceEntities(message, photo.Caption);
-                    break;
-                case MessageVideo video:
-                    result = ReplaceEntities(message, video.Caption);
-                    break;
-                case MessageVoiceNote voiceNote:
-                    result = ReplaceEntities(message, voiceNote.Caption);
-                    break;
-                case MessageUnsupported:
-                    {
-                        var usupported = Strings.UnsupportedMessage;
-                        var entity = new TextEntity(0, Strings.UnsupportedMessage.Length, new TextEntityTypeItalic());
-
-                        result = ReplaceEntities(message, new FormattedText(usupported, new[] { entity }));
-                        break;
-                    }
-
                 case MessageVenue venue:
                     {
                         var venueText = $"{venue.Venue.Title}\n{venue.Venue.Address}";
@@ -2308,15 +2269,6 @@ namespace Telegram.Controls.Messages
                         result = ReplaceEntities(message, venueText, venueEntities);
                         break;
                     }
-
-                case MessageBigEmoji bigEmoji:
-                    //var paragraph = new Paragraph();
-                    //paragraph.Inlines.Add(new Run { Text = bigEmoji.Text.Text, FontSize = 32 });
-
-                    //Message.Blocks.Clear();
-                    //Message.Blocks.Add(paragraph);
-                    result = ReplaceEntities(message, bigEmoji.Text, 32);
-                    break;
             }
 
             ContentPanel.MaxWidth = Message.HasCodeBlocks ? double.PositiveInfinity : 432;
@@ -2324,30 +2276,6 @@ namespace Telegram.Controls.Messages
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
             Summary?.Visibility = Visibility.Collapsed;
-        }
-
-        private bool GetEntities(MessageViewModel message, string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                //Message.Visibility = Visibility.Collapsed;
-                return false;
-            }
-            else
-            {
-                //Message.Visibility = Visibility.Visible;
-                return ReplaceEntities(message, text, ClientEx.GetTextEntities(text));
-            }
-        }
-
-        private bool ReplaceEntities(MessageViewModel message, FormattedText text, double fontSize = 0)
-        {
-            if (text == null)
-            {
-                return false;
-            }
-
-            return ReplaceEntities(message, text.Text, text.Entities, fontSize);
         }
 
         private bool ReplaceEntities(MessageViewModel message, string text, Vector<TextEntity> entities, double fontSize = 0)
