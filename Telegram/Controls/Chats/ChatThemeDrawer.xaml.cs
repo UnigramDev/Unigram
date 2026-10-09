@@ -138,6 +138,18 @@ namespace Telegram.Controls.Chats
             return new IncrementalLoadResult(totalCount, hasMoreItems);
         }
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new MultipleListViewItem(sender, false);
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.ItemContainer.ContentTemplateRoot is not ChatThemeCell content)
@@ -147,12 +159,11 @@ namespace Telegram.Controls.Chats
 
             if (args.InRecycleQueue)
             {
-                content.Recycle();
                 return;
             }
             else if (args.Item is ChatThemeViewModel theme)
             {
-                content.Update(args.ItemContainer, theme, _viewModel.ChatId);
+                content.Update(theme, _viewModel.ChatId);
                 args.Handled = true;
             }
         }

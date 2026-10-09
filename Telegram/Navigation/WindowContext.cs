@@ -634,8 +634,7 @@ namespace Telegram.Navigation
         /// </summary>
         public void ReapplyChatTheme()
         {
-            UpdateMessages(_lastLightSettings ?? Theme.GetAppChatSettings(TelegramTheme.Light),
-                _lastDarkSettings ?? Theme.GetAppChatSettings(TelegramTheme.Dark));
+            UpdateMessages(_lastLightSettings, _lastDarkSettings);
         }
 
         public bool UpdateChatTheme(ElementTheme elementTheme, ChatTheme theme, ThemeSettings lightSettings, ThemeSettings darkSettings, ChatBackground background)
@@ -677,16 +676,20 @@ namespace Telegram.Navigation
             Apply(TelegramTheme.Light, lightSettings);
             Apply(TelegramTheme.Dark, darkSettings);
 
+            ChatThemeChanged?.Invoke(this, null);
+
             void Apply(TelegramTheme requested, ThemeSettings settings)
             {
-                // Parent, not requested: a chat theme is tinted by the appearance, and that can
-                // resolve a light request to the dark family.
+                // Parent, not requested: the base theme comes from the settings, so a light slot
+                // can resolve into the dark family.
                 var info = Theme.Resolve(requested, settings);
 
                 Outgoing.Update(info?.Parent ?? requested, info?.Values);
                 Incoming.Update(info?.Parent ?? requested, info?.Values);
             }
         }
+
+        public event EventHandler ChatThemeChanged;
 
         #endregion
 
@@ -1003,7 +1006,14 @@ namespace Telegram.Navigation
         public ElementTheme RequestedTheme
         {
             get => _content?.RequestedTheme ?? ElementTheme.Default;
-            set => _content?.RequestedTheme = value;
+            set
+            {
+                if (_content?.RequestedTheme != value)
+                {
+                    _content?.RequestedTheme = value;
+                    ChatThemeChanged?.Invoke(this, null);
+                }
+            }
         }
 
         public double RasterizationScale => _content?.XamlRoot?.RasterizationScale ?? 1;
@@ -1378,7 +1388,7 @@ namespace Telegram.Navigation
             catch { }
         }
 
-        private void Activate(IActivatedEventArgs args, INavigationService service)
+        private async void Activate(IActivatedEventArgs args, INavigationService service)
         {
             service ??= Current.RootNavigationService;
 
@@ -1416,8 +1426,12 @@ namespace Telegram.Navigation
                 {
                     // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
                     // As well, Content may be null too.
-
-                    _ = new ThemePreviewPopup(item).ShowQueuedAsync(XamlRoot);
+                    var clientService = service.Session.Resolve<IClientService>();
+                    var theme = await ThemeCustomInfo.FromFileAsync(clientService, item);
+                    if (theme != null)
+                    {
+                        _ = new ThemePreviewPopup(clientService, item, theme).ShowQueuedAsync(XamlRoot);
+                    }
                 }
             }
             else if (args is CommandLineActivatedEventArgs commandLine)

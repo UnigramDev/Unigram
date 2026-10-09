@@ -107,6 +107,42 @@ namespace Telegram.Services
             Update(false);
         }
 
+        /// <summary>
+        /// Switches the app to <paramref name="requested"/> by hand, as the title-bar toggle does:
+        /// automatic night mode would undo the choice, so it is turned off, and the toast says so.
+        /// </summary>
+        public void Switch(TelegramTheme requested, XamlRoot xamlRoot, bool updateBackground = true)
+        {
+            if (AppSettings.Appearance.NightMode != NightMode.Disabled)
+            {
+                AppSettings.Appearance.NightMode = NightMode.Disabled;
+                UpdateTimer();
+
+                ToastPopup.Show(xamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
+            }
+
+            AppSettings.Appearance.ForceNightMode = requested == TelegramTheme.Dark;
+            AppSettings.Appearance.RequestedTheme = requested;
+
+            Update(updateBackground: updateBackground);
+        }
+
+        /// <summary>
+        /// Shows a change just made to the theme of <paramref name="requested"/>: on screen if that
+        /// base already is, otherwise by switching to it.
+        /// </summary>
+        public void Show(TelegramTheme requested, XamlRoot xamlRoot)
+        {
+            if (GetCalculatedTelegramTheme() == requested)
+            {
+                Update(updateBackground: false);
+            }
+            else
+            {
+                Switch(requested, xamlRoot, false);
+            }
+        }
+
         public async void Update(bool? force = false, bool updateBackground = true, bool updateEmojiSet = false)
         {
             // Same theme:
@@ -221,7 +257,7 @@ namespace Telegram.Services
             return theme;
         }
 
-        public ElementTheme GetActualTheme()
+        private ElementTheme GetActualTheme()
         {
             var theme = AppSettings.Appearance.RequestedTheme;
             return theme == TelegramTheme.Dark
@@ -251,12 +287,24 @@ namespace Telegram.Services
             return theme;
         }
 
-        public ApplicationTheme GetApplicationTheme()
+        private ApplicationTheme GetApplicationTheme()
         {
             var theme = AppSettings.Appearance.RequestedTheme;
             return theme == TelegramTheme.Dark
                 ? ApplicationTheme.Dark
                 : ApplicationTheme.Light;
+        }
+
+        public TelegramTheme GetCalculatedTelegramTheme()
+        {
+            var conditions = CheckNightModeConditions();
+            var theme = conditions == null
+                ? AppSettings.Appearance.RequestedTheme
+                : conditions == true
+                ? TelegramTheme.Dark
+                : TelegramTheme.Light;
+
+            return theme;
         }
     }
 }

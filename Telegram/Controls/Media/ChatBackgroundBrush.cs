@@ -257,10 +257,24 @@ namespace Telegram.Controls.Media
                     ExtendY = Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Wrap
                 };
 
+                // Composition blends in sRGB, so light lines on black lose their anti-aliased edges
+                // and read far thinner than the same pattern darkening a light fill. The coverage is
+                // scaled rather than gamma-lifted: a power curve raises the faintest fringe the most,
+                // which blurs the stroke, while a slope leaves it near zero and keeps the edge crisp.
+                var gammaEffect = new GammaTransferEffect
+                {
+                    Source = borderEffect,
+                    AlphaAmplitude = 1.6f,
+                    ClampOutput = true,
+                    RedDisable = true,
+                    GreenDisable = true,
+                    BlueDisable = true
+                };
+
                 var opacityEffect = new OpacityEffect
                 {
                     Name = "Intensity",
-                    Source = borderEffect,
+                    Source = gammaEffect,
                     Opacity = Intensity
                 };
 
@@ -481,6 +495,43 @@ namespace Telegram.Controls.Media
                     OnConnected();
                 }
             }
+        }
+
+        // Recolours the layers on screen in place: no fade, and neither the effect nor the pattern
+        // is rebuilt. Fails, leaving everything as it was, when the change needs Update.
+        public bool TryUpdateFill()
+        {
+            if (!_connected || _recreate || _negative != IsNegative || _pattern != (Pattern != null) || (_effect == null && _brush == null))
+            {
+                return false;
+            }
+
+            if (IsNegative && Pattern == null)
+            {
+                // The backdrop is plain black, whatever the fill.
+            }
+            else if (Fill is BackgroundFillFreeformGradient freeform && _freeform != null)
+            {
+                _freeform.Colors = freeform.Colors;
+            }
+            else if (Fill is BackgroundFillGradient gradient && _fill is BackgroundFillGradient previous && gradient.RotationAngle == previous.RotationAngle && _brush is CompositionLinearGradientBrush linear)
+            {
+                linear.ColorStops[0].Color = gradient.TopColor.ToColor();
+                linear.ColorStops[1].Color = gradient.BottomColor.ToColor();
+            }
+            else if (Fill is BackgroundFillSolid solid && _brush is CompositionColorBrush color)
+            {
+                color.Color = solid.Color.ToColor();
+            }
+            else
+            {
+                return false;
+            }
+
+            _effect?.Properties.InsertScalar("Intensity.Opacity", Intensity);
+            _fill = Fill;
+
+            return true;
         }
 
         private readonly Queue<FadingLayer> _fading = new();

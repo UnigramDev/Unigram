@@ -142,21 +142,25 @@ namespace Telegram.Views.Settings
             radio.Click -= Switch_Click;
             radio.Click += Switch_Click;
 
-            if (theme is ThemeCustomInfo custom)
-            {
-                radio.IsChecked = AppSettings.Appearance[theme.Parent].Type == TelegramThemeType.Custom && string.Equals(AppSettings.Appearance[theme.Parent].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
-            }
-            else if (theme is ThemeAccentInfo accent)
-            {
-                radio.IsChecked = AppSettings.Appearance[theme.Parent].Type == accent.Type && AppSettings.Appearance.Accents[accent.Type] == accent.AccentColor;
-            }
-            else
-            {
-                radio.IsChecked = string.IsNullOrEmpty(AppSettings.Appearance[theme.Parent].Custom) && AppSettings.Appearance.RequestedTheme == theme.Parent;
-            }
+            radio.IsChecked = IsWorn(theme);
         }
 
         #endregion
+
+        // A built-in is worn whichever of its variants is on; a theme file only as itself.
+        private static bool IsWorn(ThemeInfoBase theme)
+        {
+            if (theme is ThemeCustomInfo custom)
+            {
+                return AppSettings.Appearance.GetWorn(theme.Parent) == ThemeIdentity.File(AppearanceSettings.GetThemeFileId(custom.Path));
+            }
+            else if (theme is ThemeAccentInfo accent)
+            {
+                return AppSettings.Appearance.GetBuiltIn(theme.Parent) == accent.Type;
+            }
+
+            return AppSettings.Appearance.GetBuiltIn(theme.Parent) == (theme.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night);
+        }
 
         #region Binding
 

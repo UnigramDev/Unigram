@@ -17,6 +17,9 @@ namespace Telegram.Common
         private double _hueThreshold = 0;
         private double _lightnessMin = 0;
         private double _lightnessMax = 1;
+        private double _valueMax = 1;
+
+        private bool _isDark;
 
         private HSV _was;
         private HSV _now;
@@ -91,7 +94,39 @@ namespace Telegram.Common
                 return color;
             }
 
-            return result.Value.ToRGB(color.A);
+            return KeepBrightness(color, result.Value.ToRGB(color.A));
+        }
+
+        /// <summary>
+        /// Android's changeColorAccent guard: a light theme must not make a colour brighter than
+        /// it was, nor a dark theme darker, or a foreground drifts into the background it sits on.
+        /// The correction is deliberately partial - 0.6 of the new brightness is kept.
+        /// </summary>
+        private Color KeepBrightness(Color original, Color colorized)
+        {
+            var before = PerceivedBrightness(original);
+            var after = PerceivedBrightness(colorized);
+
+            if (after == 0 || (_isDark ? before <= after : before >= after))
+            {
+                return colorized;
+            }
+
+            var amount = 0.4 * before / after + 0.6;
+            return Color.FromArgb(colorized.A,
+                ToByte(colorized.R * amount),
+                ToByte(colorized.G * amount),
+                ToByte(colorized.B * amount));
+        }
+
+        private static double PerceivedBrightness(Color color)
+        {
+            return (color.R * 0.2126 + color.G * 0.7152 + color.B * 0.0722) / 255;
+        }
+
+        private static byte ToByte(double value)
+        {
+            return value < 0 ? (byte)0 : value > 255 ? (byte)255 : (byte)value;
         }
 
         //void Colorize(string name, ref byte r, ref byte g, ref byte b)
@@ -141,12 +176,30 @@ namespace Telegram.Common
             var result = new ThemeColorizer();
             //result.ignoreKeys = kColorizeIgnoredKeys;
             result._hueThreshold = 15;
+            result._isDark = type is not TelegramThemeType.Day and not TelegramThemeType.Classic;
             result._was = accent.ToHSV();
             result._now = color.ToHSV();
             switch (type)
             {
+                case TelegramThemeType.Classic:
+                    result._lightnessMax = 160d / 255d;
+
+                    // The lightness clamp below limits HSL lightness, but Colorize's value math
+                    // keys off HSV value: a clamped near-white accent still has V = 1, and
+                    // multiplies every colour toward white until a bubble and the label on it
+                    // are the same shade. Day only - the dark base accent sits low enough that
+                    // capping there would dull every ordinary accent.
+                    result._valueMax = result._was.V;
+                    break;
                 case TelegramThemeType.Day:
                     result._lightnessMax = 160d / 255d;
+
+                    // The lightness clamp below limits HSL lightness, but Colorize's value math
+                    // keys off HSV value: a clamped near-white accent still has V = 1, and
+                    // multiplies every colour toward white until a bubble and the label on it
+                    // are the same shade. Day only - the dark base accent sits low enough that
+                    // capping there would dull every ordinary accent.
+                    result._valueMax = result._was.V;
                     break;
                 case TelegramThemeType.Night:
                     //                  result.keepContrast = base::flat_map<QLatin1String, Pair>{
@@ -194,6 +247,11 @@ namespace Telegram.Common
                 var temp3 = temp2.ToRGB();
 
                 result._now = temp3.ToHSV();
+            }
+
+            if (result._now.V > result._valueMax)
+            {
+                result._now.V = result._valueMax;
             }
 
             return result;

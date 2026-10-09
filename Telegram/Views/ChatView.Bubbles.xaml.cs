@@ -1167,6 +1167,8 @@ namespace Telegram.Views
 
         private readonly MessageContentRecyclePool _contentRecyclePool = new();
 
+        private MessageBubbleBackgroundCoordinator _bubbleBackground;
+
         private readonly Dictionary<long, ChatHistoryViewItem> _albumIdToSelector = new();
         private readonly Dictionary<MessageKey, ChatHistoryViewItem> _messageIdToSelector = new();
         private readonly MultiValueDictionary<MessageKey, MessageKey> _messageIdToMessageIds = new();
@@ -1477,6 +1479,9 @@ namespace Telegram.Views
 
                     if (checkbox.Content is MessageBubble bubble)
                     {
+                        _bubbleBackground ??= new MessageBubbleBackgroundCoordinator(Messages, ViewModel.NavigationService.Window);
+                        _bubbleBackground.Attach(bubble, container);
+
                         bubble.UpdateContentRecyclePool(AppSettings.Diagnostics.BubbleContentRecyclingDebug ? _contentRecyclePool : null);
 
                         bubble.UpdateQuery(ViewModel.Search?.Query, false);

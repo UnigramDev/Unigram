@@ -4299,6 +4299,10 @@ namespace Telegram.Services
                     {
                         _selectedBackground = updateDefaultBackground.Background;
                     }
+
+                    // TDLib keeps one per account; the theme it belongs to is app-wide, so the
+                    // settings decide whether this session's copy is the one to keep.
+                    AppSettings.Appearance.UpdateDefaultBackground(SessionId, updateDefaultBackground.ForDarkTheme, updateDefaultBackground.Background);
                     break;
                 case UpdateSpeechRecognitionTrial updateSpeechRecognitionTrial:
                     _speechRecognitionTrial = updateSpeechRecognitionTrial;

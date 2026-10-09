@@ -8,7 +8,9 @@
 using System;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Services;
@@ -36,6 +38,11 @@ namespace Telegram.Views.Settings
             Preview.CreateInsetClip();
         }
 
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            ViewModel.UpdateActualTheme(true);
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (ViewModel.Window.UpdateChatTheme(ActualTheme, null, null, null, null))
@@ -45,6 +52,9 @@ namespace Telegram.Views.Settings
             }
 
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
+
+            _background ??= new MessageBubbleBackgroundCoordinator(Bubbles, ViewModel.Window);
+            _background.Attach(Message2);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
             ViewModel.Aggregator.Subscribe<UpdateDefaultReactionType>(this, Handle);
@@ -66,6 +76,8 @@ namespace Telegram.Views.Settings
                 Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
             }
         }
+
+        private MessageBubbleBackgroundCoordinator _background;
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
@@ -106,10 +118,20 @@ namespace Telegram.Views.Settings
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            VisualUtilities.QueueCallbackForCompositionRendered(OnSelectionChanged);
+
             if (List.SelectedItem is ChatThemeViewModel chatTheme && ViewModel.SelectionChanged)
             {
                 // Speed up background preview by manually applying it
                 BackgroundControl.Update(chatTheme.LightSettings?.Background, chatTheme.DarkSettings?.Background);
+            }
+        }
+
+        private void OnSelectionChanged()
+        {
+            if (List.SelectedItem != null)
+            {
+                List.ScrollIntoView(List.SelectedItem);
             }
         }
 
@@ -141,7 +163,7 @@ namespace Telegram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new GridViewItem();
+                args.ItemContainer = new MultipleListViewItem(sender, false);
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Theme_ContextRequested;
@@ -159,12 +181,11 @@ namespace Telegram.Views.Settings
 
             if (args.InRecycleQueue)
             {
-                content.Recycle();
                 return;
             }
             else if (args.Item is ChatThemeViewModel theme)
             {
-                content.Update(args.ItemContainer, theme);
+                content.Update(theme);
                 args.Handled = true;
             }
         }

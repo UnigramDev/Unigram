@@ -1661,7 +1661,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new SearchBackground(slug));
             if (response is Background background)
             {
-                navigation.ShowPopup(new BackgroundPopup(), new BackgroundParameters(background));
+                navigation.ShowPopup(new BackgroundPopup(navigation), new BackgroundParameters(background));
             }
         }
 

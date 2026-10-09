@@ -20,6 +20,7 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
+using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
@@ -168,7 +169,16 @@ namespace Telegram.ViewModels
         {
             if (file.Local.Path.EndsWith(".unigram-theme", StringComparison.OrdinalIgnoreCase))
             {
-
+                var storageFile = await ClientService.GetPermanentFileAsync(file);
+                if (storageFile != null)
+                {
+                    var theme = await ThemeCustomInfo.FromFileAsync(ClientService, storageFile);
+                    if (theme != null)
+                    {
+                        _viewModel.NavigationService.ShowPopup(new ThemePreviewPopup(ClientService, storageFile, theme));
+                        return;
+                    }
+                }
             }
             else if (file.Local.Path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
             {

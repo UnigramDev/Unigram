@@ -15,6 +15,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services.Settings;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Settings;
 using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
@@ -29,12 +30,12 @@ namespace Telegram.Services
         Task<IList<ThemeInfoBase>> GetCustomThemesAsync();
 
         Task SerializeAsync(StorageFile file, ThemeCustomInfo theme);
-        Task<ThemeCustomInfo> DeserializeAsync(StorageFile file);
 
-        Task InstallThemeAsync(StorageFile file);
-        void SetTheme(ThemeInfoBase info, bool apply);
+        Task InstallThemeAsync(StorageFile file, XamlRoot xamlRoot);
+        void SetTheme(ThemeInfoBase info, bool apply, XamlRoot xamlRoot);
+        void SendDefaultBackground(TelegramTheme requested);
 
-        Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme);
+        Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme, ThemeSettings settings = null);
     }
 
     public partial class ThemeService : IThemeService
@@ -62,11 +63,13 @@ namespace Telegram.Services
 
         public IList<ThemeInfoBase> GetThemes()
         {
-            var result = new List<ThemeInfoBase>();
-            result.Add(new ThemeBundledInfo { Name = Strings.ThemeClassic, Parent = TelegramTheme.Light });
-            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Day, AppSettings.Appearance.Accents[TelegramThemeType.Day]));
-            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Tinted, AppSettings.Appearance.Accents[TelegramThemeType.Tinted]));
-            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Night, AppSettings.Appearance.Accents[TelegramThemeType.Night]));
+            var result = new List<ThemeInfoBase>
+            {
+                new ThemeBundledInfo { Name = Strings.ThemeClassic, Parent = TelegramTheme.Light },
+                ThemeAccentInfo.FromSettings(TelegramTheme.Light, AppearanceSettings.GetHouse(TelegramThemeType.Day)),
+                ThemeAccentInfo.FromSettings(TelegramTheme.Dark, AppearanceSettings.GetHouse(TelegramThemeType.Tinted)),
+                ThemeAccentInfo.FromSettings(TelegramTheme.Dark, AppearanceSettings.GetHouse(TelegramThemeType.Night))
+            };
 
             return result;
         }
@@ -82,11 +85,11 @@ namespace Telegram.Services
 
                 foreach (var file in files)
                 {
-                    try
+                    // A file that is not a theme is skipped, not listed as one.
+                    if (await ThemeCustomInfo.FromFileAsync(_clientService, file) is ThemeCustomInfo theme)
                     {
-                        result.Add(await DeserializeAsync(file));
+                        result.Add(theme);
                     }
-                    catch { }
                 }
             }
             catch
@@ -104,10 +107,58 @@ namespace Telegram.Services
             lines.AppendLine($"name: {theme.Name}");
             lines.AppendLine($"parent: {(int)theme.Parent}");
 
+            Dictionary<string, Color> colorized = null;
+
+            if (theme.Settings is ThemeSettings settings)
+            {
+                var type = ThemeSettingsStore.ToThemeType(settings.BaseTheme, theme.Parent);
+
+                lines.AppendLine($"base: {type.ToString().ToLowerInvariant()}");
+                lines.AppendLine($"accent: #FF{settings.AccentColor:X6}");
+
+                if (settings.HasOutgoingMessageAccentColor)
+                {
+                    lines.AppendLine($"outgoing: #FF{settings.OutgoingMessageAccentColor:X6}");
+                }
+
+                if (settings.OutgoingMessageFill != null)
+                {
+                    lines.AppendLine($"fill: {TdBackground.ToString(settings.OutgoingMessageFill)}");
+                }
+
+                if (settings.AnimateOutgoingMessageFill)
+                {
+                    lines.AppendLine("animate: 1");
+                }
+
+                if (settings.Background != null && !ThemeSettingsStore.IsBundledBackground(settings.Background))
+                {
+                    var link = TdBackground.GetBackgroundLink(settings.Background.Name, settings.Background.Type);
+                    if (link != null)
+                    {
+                        lines.AppendLine($"background: {link}");
+                    }
+                }
+
+                // Values holds what the theme looks like; the file keeps only what the header does
+                // not already produce, so a later change to the colorizer still reaches the rest.
+                colorized = ThemeAccentInfo.FromSettings(theme.Parent, settings).Values;
+            }
+            else if (theme.AccentColor != default)
+            {
+                var accent = (theme.AccentColor.A << 24) + (theme.AccentColor.R << 16) + (theme.AccentColor.G << 8) + theme.AccentColor.B;
+                lines.AppendLine(string.Format("accent: #{0:X8}", accent));
+            }
+
             var lastbrush = false;
 
             foreach (var item in theme.Values)
             {
+                if (colorized != null && colorized.TryGetValue(item.Key, out Color produced) && produced == item.Value)
+                {
+                    continue;
+                }
+
                 if (item.Value is Color color)
                 {
                     if (!lastbrush)
@@ -125,19 +176,11 @@ namespace Telegram.Services
             await FileIO.WriteTextAsync(file, lines.ToString());
         }
 
-        public async Task<ThemeCustomInfo> DeserializeAsync(StorageFile file)
+
+
+        public async Task InstallThemeAsync(StorageFile file, XamlRoot xamlRoot)
         {
-            var lines = await FileIO.ReadLinesAsync(file);
-            var theme = ThemeCustomInfo.FromFile(file.Path, lines);
-
-            return theme;
-        }
-
-
-
-        public async Task InstallThemeAsync(StorageFile file)
-        {
-            var info = await DeserializeAsync(file);
+            var info = await ThemeCustomInfo.FromFileAsync(_clientService, file);
             if (info == null)
             {
                 return;
@@ -148,54 +191,73 @@ namespace Telegram.Services
             var equals = installed.FirstOrDefault(x => x is ThemeCustomInfo custom && ThemeCustomInfo.Equals(custom, info));
             if (equals != null)
             {
-                SetTheme(equals, true);
+                SetTheme(equals, true, xamlRoot);
                 return;
             }
 
             var folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("themes");
             var result = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
 
-            var theme = await DeserializeAsync(result);
+            var theme = await ThemeCustomInfo.FromFileAsync(_clientService, result);
             if (theme != null)
             {
-                SetTheme(theme, true);
+                SetTheme(theme, true, xamlRoot);
             }
         }
 
-        public void SetTheme(ThemeInfoBase info, bool apply)
+        /// <summary>
+        /// Wears a theme file or a built-in. With <paramref name="apply"/> the app switches to its
+        /// base if that is not the one on screen; without, as on the night mode page, the base is
+        /// only configured.
+        /// </summary>
+        public void SetTheme(ThemeInfoBase info, bool apply, XamlRoot xamlRoot)
         {
-            if (apply)
-            {
-                AppSettings.Appearance.RequestedTheme = info.Parent;
-            }
-
             if (info is ThemeCustomInfo custom)
             {
-                AppSettings.Appearance[info.Parent].Type = TelegramThemeType.Custom;
-                AppSettings.Appearance[info.Parent].Custom = custom.Path;
+                // A theme without a background keeps the wallpaper on screen, which is also what
+                // its preview showed, instead of resetting it to the bundled one.
+                AppSettings.Appearance.WearThemeFile(info.Parent, custom.Path, apply, _clientService.GetDefaultBackground(info.Parent == TelegramTheme.Dark));
             }
             else if (info is ThemeAccentInfo accent)
             {
-                AppSettings.Appearance[info.Parent].Type = accent.Type;
-                AppSettings.Appearance.Accents[accent.Type] = accent.AccentColor;
+                AppSettings.Appearance.WearBuiltIn(accent.Type, apply);
             }
             else
             {
-                AppSettings.Appearance[info.Parent].Type = info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
+                AppSettings.Appearance.WearBuiltIn(info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night, apply);
             }
 
-            var flags = NightModeService.Current.GetCalculatedElementTheme();
-            var theme = flags == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
-
-            if (theme != info.Parent && !apply)
+            if (apply)
             {
-                return;
+                NightModeService.Current.Show(info.Parent, xamlRoot);
+            }
+            else if (NightModeService.Current.GetCalculatedTelegramTheme() == info.Parent)
+            {
+                NightModeService.Current.Update();
             }
 
-            NightModeService.Current.Update();
+            SendDefaultBackground(info.Parent);
         }
 
-        public async Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme)
+        // The worn theme's own background, resolved first: a stored one is only a link, and TDLib
+        // takes a pattern or a wallpaper by id.
+        public async void SendDefaultBackground(TelegramTheme requested)
+        {
+            var identity = AppSettings.Appearance.GetWorn(requested);
+            AppSettings.Appearance.TryGetBackground(requested, identity, out Background background);
+
+            var house = AppearanceSettings.GetHouse(requested);
+            var resolved = await ThemeData.LoadThemeSettings(_clientService, house.BaseTheme, identity.Id, ThemeSettingsStore.WithBackground(house, background), null);
+
+            ThemeData.SendDefaultBackground(_clientService, resolved.Background, requested == TelegramTheme.Dark);
+        }
+
+        /// <summary>
+        /// Writes a new theme file from <paramref name="theme"/>, and opens the editor on it. With
+        /// <paramref name="settings"/> - or a v2 file to copy - it is a v2 file: those settings as
+        /// its header and nothing else, so it loses nothing of the theme it came from.
+        /// </summary>
+        public async Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme, ThemeSettings settings = null)
         {
             var confirm = await navigation.ShowPopupAsync(Strings.CreateNewThemeAlert, Strings.NewTheme, Strings.CreateTheme, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -221,28 +283,59 @@ namespace Telegram.Services
             var preparing = new ThemeCustomInfo(theme.Parent, theme.AccentColor, input.Text);
             var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
 
-            var lookup = GetLookup(theme.Parent);
+            settings ??= (theme as ThemeCustomInfo)?.Settings;
 
-            foreach (var value in lookup)
+            if (settings != null)
             {
-                if (value.Value.Kind == ThemeValueKind.Color)
-                {
-                    preparing.Values[value.Key] = value.Value.Color;
-                }
-            }
+                // Plain settings: a CustomThemeSettings would carry the old file's path along.
+                preparing.Settings = new ThemeSettings(settings.BaseTheme, settings.AccentColor, settings.Background, settings.OutgoingMessageFill, settings.AnimateOutgoingMessageFill, settings.HasOutgoingMessageAccentColor, settings.OutgoingMessageAccentColor);
 
-            if (theme is ThemeCustomInfo custom)
-            {
-                foreach (var item in custom.Values)
+                // What the editor opens on and the window shows; only the overrides reach the file.
+                var colorized = ThemeAccentInfo.FromSettings(theme.Parent, preparing.Settings);
+
+                foreach (var item in colorized.Values)
                 {
                     preparing.Values[item.Key] = item.Value;
                 }
-            }
-            else if (theme is ThemeAccentInfo accent)
-            {
-                foreach (var item in accent.Values)
+
+                foreach (var item in colorized.Shades)
                 {
-                    preparing.Values[item.Key] = item.Value;
+                    preparing.Shades[item.Key] = item.Value;
+                }
+
+                if (theme is ThemeCustomInfo source)
+                {
+                    foreach (var item in source.Values)
+                    {
+                        preparing.Values[item.Key] = item.Value;
+                    }
+                }
+            }
+            else
+            {
+                var lookup = GetLookup(theme.Parent);
+
+                foreach (var value in lookup)
+                {
+                    if (value.Value.Kind == ThemeValueKind.Color)
+                    {
+                        preparing.Values[value.Key] = value.Value.Color;
+                    }
+                }
+
+                if (theme is ThemeCustomInfo custom)
+                {
+                    foreach (var item in custom.Values)
+                    {
+                        preparing.Values[item.Key] = item.Value;
+                    }
+                }
+                else if (theme is ThemeAccentInfo accent)
+                {
+                    foreach (var item in accent.Values)
+                    {
+                        preparing.Values[item.Key] = item.Value;
+                    }
                 }
             }
 
@@ -251,7 +344,7 @@ namespace Telegram.Services
 
             preparing.Path = file.Path;
 
-            SetTheme(preparing, true);
+            SetTheme(preparing, true, navigation.XamlRoot);
 
             if (navigation.XamlRoot.Content is WindowPresenter { Content: Views.Host.RootWindow root })
             {

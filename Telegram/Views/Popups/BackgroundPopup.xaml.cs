@@ -6,14 +6,19 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
+using Telegram.Navigation.Services;
+using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -26,21 +31,71 @@ namespace Telegram.Views.Popups
         private readonly TaskCompletionSource<object> _task;
         private bool _ignoreClosing;
 
-        public BackgroundPopup(TaskCompletionSource<object> task)
-            : this()
+        public BackgroundPopup(INavigationService navigationService, TaskCompletionSource<object> task)
+            : this(navigationService)
         {
             _task = task;
         }
 
-        public BackgroundPopup()
+        private readonly MessageBubbleBackgroundCoordinator _background;
+
+        public BackgroundPopup(INavigationService navigationService, bool forThemeSettings = false)
         {
             InitializeComponent();
 
-            Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
+            if (forThemeSettings)
+            {
+                FindName(nameof(Message3));
+                FindName(nameof(Message4));
+                FindName(nameof(Message5));
+                FindName(nameof(Message6));
+
+                Message1.Resources = Incoming.CreateDictionary();
+                Message2.Resources = Outgoing.CreateDictionary();
+                Message3.Resources = Outgoing.CreateDictionary();
+                Message4.Resources = Incoming.CreateDictionary();
+                Message5.Resources = Incoming.CreateDictionary();
+                Message6.Resources = Outgoing.CreateDictionary();
+
+                // No window: the fill always comes from the settings being edited.
+                _background = new MessageBubbleBackgroundCoordinator(ScrollingHost, null);
+                _background.Attach(Message2);
+                _background.Attach(Message3);
+                _background.Attach(Message6);
+
+                Message1.Mockup(Strings.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
+                Message2.Mockup(Strings.ThemePreviewLine1, true, DateTime.Now, true, false);
+                //Message3.Mockup(Strings.FontSizePreviewLine1, Strings.FontSizePreviewName, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+                Message3.Mockup(new MessageVoiceNote(new VoiceNote(3, new byte[]
+                {
+                    0, 0, 163, 198, 43, 17, 250, 248, 127, 155, 85, 58, 159, 230, 164, 212, 185, 247, 73, 42,
+                    173, 66, 165, 69, 41, 251, 255, 242, 127, 223, 113, 133, 237, 148, 243, 30, 127, 184, 206, 183, 234,
+                    108, 175, 168, 250, 207, 114, 229, 233, 154, 35, 254, 21, 66, 99, 134, 141, 92, 159, 2
+                }, "audio/ogg", null, null), new FormattedText(), true), true, DateTime.Now.AddSeconds(-25), false, true);
+                Message4.Mockup(Strings.ThemePreviewLine3, Strings.ThemePreviewLine3Reply, Strings.ThemePreviewLine1, false, DateTime.Now.AddSeconds(-25), true, false);
+                Message5.Mockup(new MessageAudio(new Audio(4 * 60 + 3, Strings.ThemePreviewSongTitle, Strings.ThemePreviewSongPerformer, "preview.mp3", "audio/mp3", null, null, null, null), new FormattedText()), false, DateTime.Now, false, true);
+                Message6.Mockup(Strings.ThemePreviewLine2, Strings.ThemePreviewLine3Reply, Strings.ThemePreviewLine3, true, DateTime.Now, true, true);
+
+                ThemeSettingsNavigation.Visibility = Visibility.Visible;
+                CloseButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Message2.IsOutgoing = true;
+
+                _background = new MessageBubbleBackgroundCoordinator(ScrollingHost, navigationService.Window);
+                _background.Attach(Message2);
+
+                Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
+            }
 
             ContentPanel.CreateInsetClip();
         }
+
+        public MessageBrushes Outgoing { get; } = new("Outgoing", ThemeOutgoing.DefaultLight, ThemeOutgoing.DefaultDark);
+
+        public MessageBrushes Incoming { get; } = new("Incoming", ThemeIncoming.DefaultLight, ThemeIncoming.DefaultDark);
 
         private void Color_Click(object sender, RoutedEventArgs e)
         {
@@ -51,7 +106,7 @@ namespace Telegram.Views.Popups
                 PatternRadio.IsChecked = false;
             }
 
-            RadioColor_Toggled(null, null);
+            ColorPanel.SelectAll();
         }
 
         private void Pattern_Click(object sender, RoutedEventArgs e)
@@ -129,25 +184,68 @@ namespace Telegram.Views.Popups
 
             //Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
 
-            if (wallpaper.Type is BackgroundTypeWallpaper)
+            if (ViewModel.ThemeSettings == null)
             {
-                Blur.Visibility = Visibility.Visible;
-
-                Message1.Mockup(line1 ?? Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
-                Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
-            }
-            else
-            {
-                Blur.Visibility = Visibility.Collapsed;
-
-                if (wallpaper.Type is BackgroundTypeFill or BackgroundTypePattern)
+                if (wallpaper.Type is BackgroundTypeWallpaper)
                 {
-                    Pattern.Visibility = Visibility.Visible;
-                    Color.Visibility = Visibility.Visible;
+                    Message1.Mockup(line1 ?? Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                    Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
                 }
+                else
+                {
+                    Message1.Mockup(line1 ?? Strings.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                    Message2.Mockup(Strings.BackgroundColorSinglePreviewLine2, true, DateTime.Now);
+                }
+            }
 
-                Message1.Mockup(line1 ?? Strings.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
-                Message2.Mockup(Strings.BackgroundColorSinglePreviewLine2, true, DateTime.Now);
+            ShowBackgroundSettings();
+
+            if (ViewModel.ThemeSettings != null)
+            {
+                ColorRadio.IsChecked = true;
+            }
+        }
+
+        public void UpdateBackgroundColors(IList<Color> colors)
+        {
+            if (!_colorsChanging && Navigation.SelectedIndex == 0)
+            {
+                ColorPanel.Colors = colors;
+            }
+
+            ChangeRotation.Visibility = colors.Count == 2
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            Play.Visibility = colors.Count > 2
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public void UpdateThemeSettings(ThemeSettings settings)
+        {
+            var requested = settings.BaseTheme is BuiltInThemeClassic or BuiltInThemeDay ? TelegramTheme.Light : TelegramTheme.Dark;
+            var info = ThemeAccentInfo.FromSettings(requested, settings);
+
+            Outgoing.Update(info?.Parent ?? requested, info?.Values);
+            Incoming.Update(info?.Parent ?? requested, info?.Values);
+
+            _background?.Settings = settings;
+        }
+
+        public void UpdateAccentColors(IList<Color> colors)
+        {
+            if (!_colorsChanging && Navigation.SelectedIndex == 1)
+            {
+                ColorPanel.Colors = colors;
+            }
+        }
+
+        public void UpdateMessageColors(IList<Color> colors)
+        {
+            if (!_colorsChanging && Navigation.SelectedIndex == 2)
+            {
+                ColorPanel.Colors = colors;
             }
         }
 
@@ -157,46 +255,51 @@ namespace Telegram.Views.Popups
 
         private BackgroundFill ConvertBackground(Background background)
         {
-            if (background != null)
+            if (_updatePending || background == null)
             {
-                Preview.XamlRoot ??= XamlRoot;
-                Preview.UpdateSource(ViewModel.ClientService, background, false);
-
-                PatternList.ForEach<Document>((container, document) =>
-                {
-                    var content = container.ContentTemplateRoot as ChatBackgroundPresenter;
-                    var background = ViewModel.GetPattern(document);
-
-                    content.UpdateSource(ViewModel.ClientService, background, true);
-                });
+                return null;
             }
+            else if (_needsUpdate)
+            {
+                UpdateBackground();
+                return null;
+            }
+
+            _updatePending = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(UpdateBackground);
 
             return null;
         }
 
-        private string ConvertColor2Glyph(BackgroundColor color)
-        {
-            return color.IsEmpty ? Icons.Add : Icons.Dismiss;
-        }
+        private bool _needsUpdate = true;
+        private bool _updatePending;
 
-        private Visibility ConvertColor2Visibility(BackgroundColor color)
+        private void UpdateBackground()
         {
-            return color.IsEmpty ? Visibility.Collapsed : Visibility.Visible;
-        }
+            _needsUpdate = false;
+            _updatePending = false;
 
-        private Visibility ConvertColor2Visibility(BackgroundColor color2, BackgroundColor color3)
-        {
-            return !color2.IsEmpty && color3.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private Visibility ConvertColor2Visibility(BackgroundColor color2, BackgroundColor color3, BackgroundColor color4)
-        {
-            if (!color2.IsEmpty && color3.IsEmpty)
+            var background = ViewModel.Item;
+            if (background != null)
             {
-                return Visibility.Visible;
-            }
+                Preview.XamlRoot ??= XamlRoot;
 
-            return !color3.IsEmpty && color4.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+                if (Preview.TryUpdateFill(background) is false)
+                {
+                    Preview.UpdateSource(ViewModel.ClientService, background, false);
+                }
+
+                PatternList.ForEach<PatternInfo>((container, pattern) =>
+                {
+                    var content = container.ContentTemplateRoot as ChatBackgroundPresenter;
+                    var background = ViewModel.GetPattern(pattern?.Document);
+
+                    if (content.TryUpdateFill(background) is false)
+                    {
+                        content.UpdateSource(ViewModel.ClientService, background, true);
+                    }
+                });
+            }
         }
 
         private double ConvertMinimumIntensity(ElementTheme theme)
@@ -206,7 +309,9 @@ namespace Telegram.Views.Popups
 
         #endregion
 
-        private void RadioColor_Toggled(object sender, RoutedEventArgs e)
+        private bool _colorsChanging;
+
+        private void PickerColor_ColorsChanged(Controls.ColorsPicker sender, Controls.ColorsChangedEventArgs args)
         {
             var row = Grid.GetRow(ColorPanel);
             if (row != 2)
@@ -214,52 +319,20 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            if (RadioColor1.IsChecked == true)
+            _colorsChanging = true;
+            if (Navigation.SelectedIndex == 1)
             {
-                PickerColor.Color = ViewModel.Color1;
+                ViewModel.AccentColors = args.NewColors;
             }
-            else if (RadioColor2.IsChecked == true)
+            else if (Navigation.SelectedIndex == 2)
             {
-                PickerColor.Color = ViewModel.Color2;
+                ViewModel.MessageColors = args.NewColors;
             }
-            else if (RadioColor3.IsChecked == true)
+            else
             {
-                PickerColor.Color = ViewModel.Color3;
+                ViewModel.BackgroundColors = args.NewColors;
             }
-            else if (RadioColor4.IsChecked == true)
-            {
-                PickerColor.Color = ViewModel.Color4;
-            }
-
-            TextColor1.SelectAll();
-        }
-
-        private void PickerColor_ColorChanged(Controls.ColorPicker sender, Controls.ColorChangedEventArgs args)
-        {
-            var row = Grid.GetRow(ColorPanel);
-            if (row != 2)
-            {
-                return;
-            }
-
-            TextColor1.Color = args.NewColor;
-
-            if (RadioColor1.IsChecked == true)
-            {
-                ViewModel.Color1 = args.NewColor;
-            }
-            else if (RadioColor2.IsChecked == true)
-            {
-                ViewModel.Color2 = args.NewColor;
-            }
-            else if (RadioColor3.IsChecked == true)
-            {
-                ViewModel.Color3 = args.NewColor;
-            }
-            else if (RadioColor4.IsChecked == true)
-            {
-                ViewModel.Color4 = args.NewColor;
-            }
+            _colorsChanging = false;
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -274,60 +347,6 @@ namespace Telegram.Views.Popups
 
                 content.UpdateSource(ViewModel.ClientService, background, true);
                 args.Handled = true;
-            }
-        }
-
-        private void TextColor_ColorChanged(ColorTextBox sender, Controls.ColorChangedEventArgs args)
-        {
-            if (sender.FocusState == FocusState.Unfocused)
-            {
-                return;
-            }
-
-            PickerColor.Color = args.NewColor;
-        }
-
-        private void RemoveColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (RadioColor1.IsChecked == true)
-            {
-                ViewModel.RemoveColor(0);
-            }
-            else if (RadioColor2.IsChecked == true)
-            {
-                ViewModel.RemoveColor(1);
-            }
-            else if (RadioColor3.IsChecked == true)
-            {
-                ViewModel.RemoveColor(2);
-            }
-            else if (RadioColor4.IsChecked == true)
-            {
-                ViewModel.RemoveColor(3);
-            }
-        }
-
-        private void AddRemoveColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.Color2.IsEmpty || ViewModel.Color3.IsEmpty || ViewModel.Color4.IsEmpty)
-            {
-                ViewModel.AddColor();
-            }
-            else if (RadioColor1.IsChecked == true)
-            {
-                ViewModel.RemoveColor(0);
-            }
-            else if (RadioColor2.IsChecked == true)
-            {
-                ViewModel.RemoveColor(1);
-            }
-            else if (RadioColor3.IsChecked == true)
-            {
-                ViewModel.RemoveColor(2);
-            }
-            else if (RadioColor4.IsChecked == true)
-            {
-                ViewModel.RemoveColor(3);
             }
         }
 
@@ -382,6 +401,81 @@ namespace Telegram.Views.Popups
             }
 
             _task?.TrySetResult(false);
+        }
+
+        private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ColorPanel == null)
+            {
+                return;
+            }
+
+            if (Navigation.SelectedIndex == 1)
+            {
+                ColorPanel.Maximum = 2;
+                ColorPanel.Colors = ViewModel.AccentColors;
+
+                HideBackgrondSettings();
+            }
+            else if (Navigation.SelectedIndex == 2)
+            {
+                ColorPanel.Maximum = 4;
+                ColorPanel.Colors = ViewModel.MessageColors;
+
+                HideBackgrondSettings();
+            }
+            else
+            {
+                ColorPanel.Maximum = 4;
+                ColorPanel.Colors = ViewModel.BackgroundColors;
+
+                ShowBackgroundSettings();
+            }
+
+            ColorRadio.IsChecked = true;
+            ColorPanel.SelectAll();
+        }
+
+        private void HideBackgrondSettings()
+        {
+            Pattern.Visibility = Visibility.Collapsed;
+            Blur.Visibility = Visibility.Collapsed;
+            ChangeRotation.Visibility = Visibility.Collapsed;
+            Play.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowBackgroundSettings()
+        {
+            if (ViewModel.Item.Type is BackgroundTypeWallpaper)
+            {
+                Blur.Visibility = Visibility.Visible;
+                Pattern.Visibility = Visibility.Collapsed;
+                ChangeRotation.Visibility = Visibility.Collapsed;
+                Play.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Blur.Visibility = Visibility.Collapsed;
+
+                if (ViewModel.Item.Type is BackgroundTypeFill or BackgroundTypePattern)
+                {
+                    Pattern.Visibility = Visibility.Visible;
+                    Color.Visibility = Visibility.Visible;
+                }
+
+                ChangeRotation.Visibility = ViewModel.BackgroundColors?.Count == 2
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                Play.Visibility = ViewModel.BackgroundColors?.Count > 2
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        private void ScrollingHost_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null, true);
         }
     }
 }

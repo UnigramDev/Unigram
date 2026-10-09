@@ -11,7 +11,9 @@
              d:DesignWidth="400"
              ActualThemeChanged="OnActualThemeChanged">
 
-    <Grid Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+    <Grid x:Name="RootGrid"
+          Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+          CornerRadius="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -21,6 +23,7 @@
                                        Grid.RowSpan="3" />
 
         <chats:ChatBackgroundPreview x:Name="Outgoing"
+                                     IsBubbleBackground="True"
                                      HorizontalAlignment="Stretch"
                                      Margin="20,8,8,4"
                                      Height="24"
@@ -63,7 +66,7 @@
                    Margin="2,8"
                    Grid.RowSpan="2" />
 
-        <TextBlock x:Name="Name"
+        <TextBlock x:Name="NameText"
                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    FontSize="16"
                    TextAlignment="Center"

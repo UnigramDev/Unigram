@@ -56,6 +56,11 @@ namespace Telegram.Controls.Chats
 
         private float _arrangedHeight;
 
+        // UpdateSource was called before the template was applied, or while unloaded, and the
+        // source is applied once both hold.
+        private bool _pending;
+        private bool _templateApplied;
+
         private AnimatedImage Symbol;
         private AnimatedImage Model;
 
@@ -69,13 +74,56 @@ namespace Telegram.Controls.Chats
             Symbol = GetTemplateChild(nameof(Symbol)) as AnimatedImage;
             Model = GetTemplateChild(nameof(Model)) as AnimatedImage;
 
-            Symbol.Source = DelayedFileSource.FromSticker(_clientService, _symbol);
-            Model.Source = DelayedFileSource.FromSticker(_clientService, _model);
+            _templateApplied = true;
+
+            if (_pending && IsDisconnected is false)
+            {
+                UpdateSource(_clientService, _background, _thumbnail, _theme);
+            }
+        }
+
+        protected override void OnLoaded()
+        {
+            if (_pending && _templateApplied)
+            {
+                UpdateSource(_clientService, _background, _thumbnail, _theme);
+            }
         }
 
         protected override void OnUnloaded()
         {
             UpdateManager.Unsubscribe(this, ref _fileToken);
+
+            // Drops a pattern still drawing, and makes the reload draw it again.
+            _patternRequest++;
+            _patternLoading = false;
+            _pattern = null;
+            _patternPath = null;
+            _wallpaperPath = null;
+            _symbol = null;
+            _model = null;
+
+            if (_tiledBrush != null)
+            {
+                _tiledBrush.OnDisconnected();
+                _tiledBrush = null;
+
+                _root.Children.Remove(_tiledVisual);
+                _tiledVisual = null;
+            }
+
+            _modelVisual?.Children.RemoveAll();
+            UpdateBlurred(false);
+
+            if (Symbol != null)
+            {
+                Symbol.Source = null;
+                Model.Source = null;
+            }
+
+            Background = null;
+
+            _pending = _background != null;
         }
 
         // Tall chats need the pattern drawn taller. Heights are rounded up to a step, so a resize
@@ -117,7 +165,8 @@ namespace Telegram.Controls.Chats
         private float GetZoom(ChatBackgroundPattern pattern)
         {
             var height = pattern?.RenderSize.Y ?? 0;
-            return height > 0 ? Math.Max(1, Math.Max(_arrangedHeight, PatternMinimumHeight) / height) : 1;
+            var minimumHeight = _thumbnail ? 0 : PatternMinimumHeight;
+            return height > 0 ? Math.Max(1, Math.Max(_arrangedHeight, minimumHeight) / height) : 1;
         }
 
         // The one place that notices both a new height and a new scale: a scale change invalidates
@@ -134,7 +183,8 @@ namespace Telegram.Controls.Chats
                 _tiledBrush.UpdateZoom();
             }
 
-            if (_vector && _background?.Type is BackgroundTypePattern pattern && _background.Document?.DocumentValue is File file && file.Local.IsDownloadingCompleted)
+            // Layout runs before Loaded, and OnLoaded draws a pending source itself.
+            if (_vector && _pending is false && _background?.Type is BackgroundTypePattern pattern && _background.Document?.DocumentValue is File file && file.Local.IsDownloadingCompleted)
             {
                 var scale = XamlRoot.RasterizationScale;
                 if (_patternPath != file.Local.Path || _rasterizationScale != scale || !IsSameResolution(_arrangedHeight))
@@ -160,11 +210,19 @@ namespace Telegram.Controls.Chats
         {
             UpdateManager.Unsubscribe(this, ref _fileToken);
 
-            var clear = _background == null;
-
-            _clientService = clientService;
+            // UpdateFile passes no client service, and the reload needs one to resume a download.
+            _clientService = clientService ?? _clientService;
             _background = background;
             _theme = theme;
+
+            if (!_templateApplied || IsDisconnected)
+            {
+                _thumbnail = thumbnail;
+                _pending = true;
+                return;
+            }
+
+            _pending = false;
 
             if (background.Type is BackgroundTypeFill typeFill)
             {
@@ -291,6 +349,62 @@ namespace Telegram.Controls.Chats
                     return;
                 }
             }
+        }
+
+        // For a colour picker, which changes the fill many times a second: recolours what is on
+        // screen with no transition and no pattern reload. Fails, changing nothing that
+        // UpdateSource would not set again, when anything but the fill or intensity differs.
+        public bool TryUpdateFill(Background background)
+        {
+            if (_tiledBrush == null || _background == null || _patternLoading)
+            {
+                return false;
+            }
+
+            BackgroundFill fill;
+            float intensity;
+            bool negative;
+
+            if (background.Type is BackgroundTypeFill typeFill && _background.Type is BackgroundTypeFill)
+            {
+                fill = typeFill.Fill;
+                intensity = 1;
+                negative = false;
+            }
+            else if (background.Type is BackgroundTypePattern typePattern && _background.Type is BackgroundTypePattern && _pattern != null && background.Document?.DocumentValue.Id == _background.Document?.DocumentValue.Id)
+            {
+                fill = typePattern.Fill;
+                intensity = typePattern.Intensity / 100f;
+                negative = typePattern.IsInverted;
+            }
+            else
+            {
+                return false;
+            }
+
+            if (negative != _negative)
+            {
+                return false;
+            }
+
+            _tiledBrush.Fill = fill;
+            _tiledBrush.Intensity = intensity;
+
+            if (_tiledBrush.TryUpdateFill() is false)
+            {
+                return false;
+            }
+
+            _background = background;
+            _backgroundFill = fill;
+            _intensity = intensity;
+
+            if (_modelVisual != null)
+            {
+                _modelVisual.Opacity = intensity;
+            }
+
+            return true;
         }
 
         private void UpdateWallpaper(File file)

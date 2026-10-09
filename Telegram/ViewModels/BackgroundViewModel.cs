@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
@@ -28,7 +30,6 @@ namespace Telegram.ViewModels
         public InputBackground Background { get; set; }
         public BackgroundType Type { get; set; }
         public bool ForDarkTheme { get; set; }
-        int DarkWhatever { get; set; }
 
         public BackgroundInfo(InputBackground background, BackgroundType type, bool forDarkTheme)
         {
@@ -43,6 +44,19 @@ namespace Telegram.ViewModels
         public string Slug { get; }
 
         public Background Background { get; }
+
+        public ThemeSettings Settings { get; }
+
+        /// <summary>
+        /// The built-in whose variant is edited; null outside the themes page.
+        /// </summary>
+        public TelegramThemeType? ThemeType { get; }
+
+        /// <summary>
+        /// The variant edited, or null for a new one made with "+", which only exists once saved.
+        /// </summary>
+
+        public string Variant { get; }
 
         public long? ChatId { get; }
 
@@ -59,6 +73,13 @@ namespace Telegram.ViewModels
             Background = background;
             ChatId = chatId;
             MessageId = messageId;
+        }
+
+        public BackgroundParameters(TelegramThemeType type, string variant, ThemeSettings settings)
+        {
+            ThemeType = type;
+            Variant = variant;
+            Settings = settings;
         }
     }
 
@@ -81,6 +102,9 @@ namespace Telegram.ViewModels
 
         private Background _background;
 
+        private TelegramThemeType? _themeType;
+        private string _variant;
+
         private long? _chatId;
         private long? _messageId;
 
@@ -96,6 +120,7 @@ namespace Telegram.ViewModels
         {
             BackgroundParameters data = parameter as BackgroundParameters;
             Background background = data?.Background;
+            ThemeSettings settings = data?.Settings;
 
             if (data?.Slug != null)
             {
@@ -134,14 +159,19 @@ namespace Telegram.ViewModels
                 }
             }
 
+            background ??= settings?.Background;
+
             if (background == null)
             {
                 return;
             }
 
             Item = background;
+            ThemeSettings = settings;
 
             _background = background;
+            _themeType = data?.ThemeType;
+            _variant = data?.Variant;
 
             _chatId = data?.ChatId;
             _messageId = data?.MessageId;
@@ -170,25 +200,42 @@ namespace Telegram.ViewModels
 
             if (fill is BackgroundFillSolid fillSolid)
             {
-                Color1 = fillSolid.Color.ToColor();
-                Color2 = BackgroundColor.Empty;
+                BackgroundColors = [fillSolid.Color.ToColor()];
                 Rotation = 0;
             }
             else if (fill is BackgroundFillGradient fillGradient)
             {
-                Color1 = fillGradient.TopColor.ToColor();
-                Color2 = fillGradient.BottomColor.ToColor();
+                BackgroundColors = [fillGradient.TopColor.ToColor(), fillGradient.BottomColor.ToColor()];
                 Rotation = fillGradient.RotationAngle;
             }
             else if (fill is BackgroundFillFreeformGradient freeformGradient)
             {
-                Color1 = freeformGradient.Colors[0].ToColor();
-                Color2 = freeformGradient.Colors[1].ToColor();
-                Color3 = freeformGradient.Colors[2].ToColor();
+                BackgroundColors = [..freeformGradient.Colors.Select(x => x.ToColor())];
+                Rotation = 0;
+            }
 
-                if (freeformGradient.Colors.Count > 3)
+            if (settings != null)
+            {
+                if (settings.HasOutgoingMessageAccentColor)
                 {
-                    Color4 = freeformGradient.Colors[3].ToColor();
+                    AccentColors = [settings.AccentColor.ToColor(), settings.OutgoingMessageAccentColor.ToColor()];
+                }
+                else
+                {
+                    AccentColors = [settings.AccentColor.ToColor()];
+                }
+
+                if (settings.OutgoingMessageFill is BackgroundFillSolid outgoingFillSolid)
+                {
+                    MessageColors = [outgoingFillSolid.Color.ToColor()];
+                }
+                else if (settings.OutgoingMessageFill is BackgroundFillGradient outgoingFillGradient)
+                {
+                    MessageColors = [outgoingFillGradient.TopColor.ToColor(), outgoingFillGradient.BottomColor.ToColor()];
+                }
+                else if (settings.OutgoingMessageFill is BackgroundFillFreeformGradient outgoingFreeformGradient)
+                {
+                    MessageColors = [..outgoingFreeformGradient.Colors.Select(x => x.ToColor())];
                 }
             }
 
@@ -197,9 +244,10 @@ namespace Telegram.ViewModels
 
             if (_item.Type is BackgroundTypePattern or BackgroundTypeFill)
             {
-                var response = await ClientService.SendAsync(new GetInstalledBackgrounds(false));
+                var response = await ClientService.SendAsync(new GetInstalledBackgrounds(background.IsDark));
                 if (response is Backgrounds backgrounds)
                 {
+                    var empty = new PatternInfo(0, null);
                     var patterns = backgrounds.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern)
                                                                .Distinct(new EqualityComparerDelegate<Background>((x, y) =>
                                                                {
@@ -210,9 +258,9 @@ namespace Telegram.ViewModels
                                                                }))
                                                                .Select(x => new PatternInfo(x.Id, x.Document));
 
-                    Patterns.ReplaceWith(new PatternInfo[] { null }.Union(patterns));
+                    Patterns.ReplaceWith([empty, ..patterns]);
 
-                    _selectedPattern = Patterns.FirstOrDefault(x => x?.Document.DocumentValue.Id == background.Document?.DocumentValue.Id);
+                    _selectedPattern = Patterns.FirstOrDefault(x => x?.Document?.DocumentValue.Id == background.Document?.DocumentValue.Id);
                     RaisePropertyChanged(nameof(SelectedPattern));
                 }
             }
@@ -229,6 +277,13 @@ namespace Telegram.ViewModels
             set => Set(ref _item, value);
         }
 
+        private ThemeSettings _themeSettings;
+        public ThemeSettings ThemeSettings
+        {
+            get => _themeSettings;
+            set => Set(ref _themeSettings, value);
+        }
+
         private bool _isBlurEnabled;
         public bool IsBlurEnabled
         {
@@ -236,40 +291,50 @@ namespace Telegram.ViewModels
             set => SetComponent(ref _isBlurEnabled, value);
         }
 
-        private BackgroundColor _color1 = BackgroundColor.Empty;
-        public BackgroundColor Color1
+        private IList<Color> _backgroundColors;
+        public IList<Color> BackgroundColors
         {
-            get => _color1;
-            set => SetComponent(ref _color1, value);
+            get => _backgroundColors;
+            set
+            {
+                if (SetComponent(ref _backgroundColors, value))
+                {
+                    Delegate?.UpdateBackgroundColors(value);
+                }
+            }
         }
 
-        private BackgroundColor _color2 = BackgroundColor.Empty;
-        public BackgroundColor Color2
+        private IList<Color> _accentColors;
+        public IList<Color> AccentColors
         {
-            get => _color2;
-            set => SetComponent(ref _color2, value);
+            get => _accentColors;
+            set
+            {
+                if (SetThemeSetting(ref _accentColors, value))
+                {
+                    Delegate?.UpdateAccentColors(value);
+                }
+            }
         }
 
-        private BackgroundColor _color3 = BackgroundColor.Empty;
-        public BackgroundColor Color3
+        private IList<Color> _messageColors;
+        public IList<Color> MessageColors
         {
-            get => _color3;
-            set => SetComponent(ref _color3, value);
+            get => _messageColors;
+            set
+            {
+                if (SetThemeSetting(ref _messageColors, value))
+                {
+                    Delegate?.UpdateMessageColors(value);
+                }
+            }
         }
 
-        private BackgroundColor _color4 = BackgroundColor.Empty;
-        public BackgroundColor Color4
-        {
-            get => _color4;
-            set => SetComponent(ref _color4, value);
-        }
-
-        private void SetComponent<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        private bool SetComponent<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (_batchUpdate)
             {
-                Set(ref storage, value, propertyName);
-                return;
+                return Set(ref storage, value, propertyName);
             }
 
             if (Set(ref storage, value, propertyName))
@@ -281,85 +346,68 @@ namespace Telegram.ViewModels
                     BackgroundTypeWallpaper => new BackgroundTypeWallpaper(_isBlurEnabled, false),
                     _ => null
                 });
+
+                ThemeSettings?.Background = Item;
+                return true;
             }
+
+            return false;
+        }
+
+        private bool SetThemeSetting<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (Set(ref storage, value, propertyName))
+            {
+                ThemeSettings = BuildThemeSettings();
+                Delegate?.UpdateThemeSettings(ThemeSettings);
+                return true;
+            }
+
+            return false;
+        }
+
+        private ThemeSettings BuildThemeSettings()
+        {
+            if (_themeSettings == null)
+            {
+                return null;
+            }
+
+            var accentColor = AccentColors[0].ToValue();
+            var outgoingMessageFill = GetFill(MessageColors);
+            var hasOutgoingMessageAccentColor = AccentColors.Count > 1;
+            var outgoingMessageAccentColor = AccentColors[^1].ToValue();
+
+            return new ThemeSettings(_themeSettings.BaseTheme, accentColor, Item, outgoingMessageFill, false, hasOutgoingMessageAccentColor, outgoingMessageAccentColor);
         }
 
         public BackgroundFill GetFill()
         {
-            if (!_color1.IsEmpty && !_color2.IsEmpty)
+            return GetFill(_backgroundColors);
+        }
+
+        public BackgroundFill GetFill(IList<Color> colors)
+        {
+            if (colors == null)
             {
-                if (!_color3.IsEmpty && !_color4.IsEmpty)
+                return null;
+            }
+
+            if (colors.Count >= 2)
+            {
+                if (colors.Count >= 3)
                 {
-                    return new BackgroundFillFreeformGradient(new[] { _color1.Value, _color2.Value, _color3.Value, _color4.Value });
-                }
-                else if (!_color3.IsEmpty)
-                {
-                    return new BackgroundFillFreeformGradient(new[] { _color1.Value, _color2.Value, _color3.Value });
+                    return new BackgroundFillFreeformGradient(colors.Select(x => x.ToValue()).ToVector());
                 }
 
-                return new BackgroundFillGradient(_color1.Value, _color2.Value, _rotation);
+                return new BackgroundFillGradient(colors[0].ToValue(), colors[1].ToValue(), _rotation);
             }
-            else if (!_color1.IsEmpty)
+            else if (colors.Count > 0)
             {
-                return new BackgroundFillSolid(_color1.Value);
-            }
-            else if (!_color2.IsEmpty)
-            {
-                return new BackgroundFillSolid(_color2.Value);
+                return new BackgroundFillSolid(colors[0].ToValue());
             }
 
             return null;
-        }
-
-        public Color GetPatternForeground()
-        {
-            if (_intensity < 0)
-            {
-                return Colors.Black;
-            }
-
-            if (!_color1.IsEmpty && !_color2.IsEmpty)
-            {
-                return ColorEx.GetPatternColor(ColorEx.GetAverageColor(_color1, _color2));
-            }
-            else if (!_color1.IsEmpty)
-            {
-                return ColorEx.GetPatternColor(_color1);
-            }
-            else if (!_color2.IsEmpty)
-            {
-                return ColorEx.GetPatternColor(_color2);
-            }
-
-            return Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);
-        }
-
-        private bool _isColor1Checked = true;
-        public bool IsColor1Checked
-        {
-            get => _isColor1Checked;
-            set => Set(ref _isColor1Checked, value);
-        }
-
-        private bool _isColor2Checked;
-        public bool IsColor2Checked
-        {
-            get => _isColor2Checked;
-            set => Set(ref _isColor2Checked, value);
-        }
-
-        private bool _isColor3Checked;
-        public bool IsColor3Checked
-        {
-            get => _isColor3Checked;
-            set => Set(ref _isColor3Checked, value);
-        }
-
-        private bool _isColor4Checked;
-        public bool IsColor4Checked
-        {
-            get => _isColor4Checked;
-            set => Set(ref _isColor4Checked, value);
         }
 
         private int _rotation;
@@ -395,6 +443,8 @@ namespace Telegram.ViewModels
                         Item = new Background(value.BackgroundId, false, Item.IsDark, Item.Name, value.Document, new BackgroundTypePattern(GetFill(), _intensity < 0 ? 100 + _intensity : _intensity, _intensity < 0, false));
                     }
 
+                    // As SetComponent does: a variant being edited saves ThemeSettings, not Item.
+                    ThemeSettings?.Background = Item;
                     Delegate?.UpdateBackground(Item);
                 }
             }
@@ -408,50 +458,6 @@ namespace Telegram.ViewModels
             }
 
             return new Background(Item.Id, false, Item.IsDark, Item.Name, value, new BackgroundTypePattern(GetFill(), 50, _intensity < 0, false));
-        }
-
-        public void RemoveColor(int index)
-        {
-            if (index <= 0)
-            {
-                Color1 = Color2;
-            }
-
-            if (index <= 1)
-            {
-                Color2 = Color3;
-            }
-
-            if (index <= 2)
-            {
-                Color3 = Color4;
-            }
-
-            if (index <= 3)
-            {
-                Color4 = BackgroundColor.Empty;
-            }
-
-            IsColor1Checked = true;
-        }
-
-        public void AddColor()
-        {
-            if (Color2.IsEmpty)
-            {
-                Color2 = Color1;
-                IsColor2Checked = true;
-            }
-            else if (Color3.IsEmpty)
-            {
-                Color3 = Color2;
-                IsColor3Checked = true;
-            }
-            else if (Color4.IsEmpty)
-            {
-                Color4 = Color3;
-                IsColor4Checked = true;
-            }
         }
 
         public void ChangeRotation()
@@ -479,6 +485,21 @@ namespace Telegram.ViewModels
             var background = await GetBackgroundAsync();
             if (background != null)
             {
+                // Worn before the marker below is written: the marker names what the slot wears,
+                // and that is where the update is stored when it arrives.
+                if (_themeType is TelegramThemeType themeType && ThemeSettings != null)
+                {
+                    // Created here and not when the popup opened, so cancelling leaves nothing.
+                    var variant = _variant ?? AppSettings.Appearance.CreateVariant(themeType, ThemeSettings);
+                    if (_variant != null)
+                    {
+                        AppSettings.Appearance.SaveVariant(themeType, variant, ThemeSettings);
+                    }
+
+                    AppSettings.Appearance.WearVariant(themeType, variant, null, true);
+                    NightModeService.Current.Show(AppearanceSettings.GetBase(themeType), XamlRoot);
+                }
+
                 if (_chatId is long chatId)
                 {
                     if (_messageId is long messageId && background.Type.GetType() == _background?.Type.GetType())
@@ -492,10 +513,12 @@ namespace Telegram.ViewModels
                 }
                 else if (background.Background == null && background.Type == null)
                 {
+                    AppSettings.Appearance.DeleteDefaultBackground(Session.Id, background.ForDarkTheme);
                     ClientService.Send(new DeleteDefaultBackground(background.ForDarkTheme));
                 }
                 else
                 {
+                    AppSettings.Appearance.SetDefaultBackground(Session.Id, background.ForDarkTheme);
                     ClientService.Send(new SetDefaultBackground(background.Background, background.Type, background.ForDarkTheme));
                 }
             }

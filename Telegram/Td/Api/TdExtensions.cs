@@ -607,19 +607,30 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static bool AreTheSame(this ChatThemeViewModel x, EmojiChatTheme y)
+        public static bool AreTheSame(this ChatThemeViewModel x, string name)
+        {
+            if (x == null || name == null)
+            {
+                return x == null && name == null;
+            }
+
+            return x.Type is ChatThemeEmoji emoji && emoji.Name == name;
+        }
+
+        public static bool AreTheSame(this ThemeSettings x, ThemeSettings y)
         {
             if (x == null || y == null)
             {
                 return x == null && y == null;
             }
 
-            if (x.Type is ChatThemeEmoji xEmoji)
-            {
-                return xEmoji.Name == y.Name;
-            }
-
-            return false;
+            return x.BaseTheme.GetType() == y.BaseTheme.GetType()
+                && x.AccentColor == y.AccentColor
+                && x.OutgoingMessageAccentColor == y.OutgoingMessageAccentColor
+                && x.HasOutgoingMessageAccentColor == y.HasOutgoingMessageAccentColor
+                && x.AnimateOutgoingMessageFill == y.AnimateOutgoingMessageFill
+                && x.OutgoingMessageFill.AreTheSame(y.OutgoingMessageFill)
+                && x.Background.AreTheSame(y.Background);
         }
 
         public static bool AreTheSame(this Background prev, Background next)
@@ -655,6 +666,11 @@ namespace Telegram.Td.Api
 
         public static bool AreTheSame(this BackgroundFill prev, BackgroundFill next)
         {
+            if (prev == null || next == null)
+            {
+                return prev == next;
+            }
+
             if (prev is BackgroundFillSolid prevSolid && next is BackgroundFillSolid nextSolid)
             {
                 return prevSolid.Color == nextSolid.Color;

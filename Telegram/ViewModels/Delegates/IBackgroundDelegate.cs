@@ -5,12 +5,19 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
 using Telegram.Td.Api;
+using Windows.UI;
 
 namespace Telegram.ViewModels.Delegates
 {
     public interface IBackgroundDelegate : IViewModelDelegate
     {
         void UpdateBackground(Background wallpaper);
+        void UpdateBackgroundColors(IList<Color> colors);
+
+        void UpdateThemeSettings(ThemeSettings settings);
+        void UpdateAccentColors(IList<Color> colors);
+        void UpdateMessageColors(IList<Color> colors);
     }
 }

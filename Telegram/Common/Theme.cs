@@ -201,75 +201,36 @@ namespace Telegram.Common
         public MessageBrushes Incoming { get; } = new("Incoming", ThemeIncoming.DefaultLight, ThemeIncoming.DefaultDark);
 
         /// <summary>
-        /// The colours for one base theme, resolved from the layers that apply to it: a chat
-        /// theme when one is active, otherwise the user's appearance - a custom theme file, an
-        /// accent, or neither. Null is the plain theme, which carries no values of its own.
+        /// The colours a slot resolves to. Settings are the window's own chat theme override when
+        /// it has one, and the app-wide selection otherwise; null all the way down is the plain
+        /// theme, which carries no values of its own.
         /// </summary>
-        /// <summary>
-        /// The settings of the app-wide chat theme, the one SettingsAppearanceViewModel sets.
-        /// Null when there is none, which leaves the appearance to decide.
-        /// </summary>
-        internal static ThemeSettings GetAppChatSettings(TelegramTheme requested)
+        internal static ThemeAccentInfo Resolve(TelegramTheme requested, ThemeSettings settings)
         {
-            var chatTheme = AppSettings.Appearance.ChatTheme;
-            if (chatTheme == null)
+            settings ??= AppSettings.Appearance.GetSettings(requested);
+
+            if (settings == null)
             {
                 return null;
             }
 
-            return requested == TelegramTheme.Light ? chatTheme.LightSettings : chatTheme.DarkSettings;
-        }
-
-        internal static ThemeAccentInfo Resolve(TelegramTheme requested, ThemeSettings chat)
-        {
-            if (chat != null)
+            if (settings is CustomThemeSettings custom)
             {
-                // A chat theme supplies the accent but still tints to the appearance the user
-                // picked, so the app layer decides the shade even here.
-                var tint = AppSettings.Appearance[requested].Type;
-                if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
-                {
-                    tint = TelegramThemeType.Day;
-                }
-                else if (tint == TelegramThemeType.Custom)
-                {
-                    tint = TelegramThemeType.Tinted;
-                }
-
-                //var outgoing = chat.OutgoingMessageFill switch
-                //{
-                //    //BackgroundFillSolid solid => solid.Color.ToColor(),
-                //    BackgroundFillGradient gradient => gradient.TopColor.ToColor(),
-                //    BackgroundFillFreeformGradient freeform => freeform.Colors[0].ToColor(),
-                //    _ => chat.OutgoingMessageAccentColor.ToColor()
-                //};
-
-                return ThemeAccentInfo.FromAccent(tint, chat.AccentColor.ToColor(), chat.OutgoingMessageAccentColor.ToColor());
+                return ThemeCustomInfo.FromFile(custom.Path);
             }
 
-            var options = AppSettings.Appearance;
-            if (options[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(options[requested].Custom))
-            {
-                return ThemeCustomInfo.FromFile(options[requested].Custom);
-            }
-            else if (ThemeAccentInfo.IsAccent(options[requested].Type))
-            {
-                return ThemeAccentInfo.FromAccent(options[requested].Type, options.Accents[options[requested].Type]);
-            }
-
-            return null;
+            return ThemeAccentInfo.FromSettings(requested, settings);
         }
 
         #region Global
 
         private void Update(ApplicationTheme theme)
         {
-            var settings = AppSettings.Appearance;
             var requested = theme == ApplicationTheme.Light
                 ? TelegramTheme.Light
                 : TelegramTheme.Dark;
 
-            var info = Resolve(requested, GetAppChatSettings(requested));
+            var info = Resolve(requested, null);
             if (info != null)
             {
                 Update(info.Parent, info.Values, info.Shades);
@@ -282,7 +243,10 @@ namespace Telegram.Common
 
         public void Update(string path)
         {
-            Update(ThemeCustomInfo.FromFile(path));
+            if (ThemeCustomInfo.FromFile(path) is ThemeCustomInfo info)
+            {
+                Update(info);
+            }
         }
 
         public void Update(ThemeAccentInfo info)

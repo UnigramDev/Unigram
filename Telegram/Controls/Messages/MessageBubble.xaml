@@ -39,8 +39,8 @@
                                                 Value="White" />
                                         <Setter Target="Footer.Stroke"
                                                 Value="White" />
-                                        <Setter Target="ContentPanel.Background"
-                                                Value="{x:Null}" />
+                                        <!--<Setter Target="ContentPanel.Background"
+                                                Value="{x:Null}" />-->
                                         <Setter Target="Header.Background"
                                                 Value="{ThemeResource MessageServiceBackgroundBrush}" />
                                         <Setter Target="Header.VerticalAlignment"
@@ -87,8 +87,8 @@
                                                 Value="White" />
                                         <Setter Target="Footer.Stroke"
                                                 Value="White" />
-                                        <Setter Target="ContentPanel.Background"
-                                                Value="{x:Null}" />
+                                        <!--<Setter Target="ContentPanel.Background"
+                                                Value="{x:Null}" />-->
                                         <Setter Target="Header.Background"
                                                 Value="{ThemeResource MessageServiceBackgroundBrush}" />
                                         <Setter Target="Header.VerticalAlignment"
@@ -178,11 +178,16 @@
                                 Grid.Column="1" />
 
                         <Grid x:Name="ContentPanel"
-                              Background="{ThemeResource MessageBackgroundBrush}"
                               MaxWidth="{StaticResource MessageMaxWidth}"
                               MinHeight="30"
                               Padding="0,4,0,0"
                               Grid.Column="1">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background"
+                                            Value="{ThemeResource MessageBackgroundBrush}" />
+                                </Style>
+                            </Grid.Style>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="Column0"
                                                   Width="Auto" />
@@ -209,7 +214,14 @@
                                 <local:MessageTextBlock x:Name="Message"
                                                         Margin="10,0,10,6"
                                                         Grid.Column="1"
-                                                        Grid.Row="2" />
+                                                        Grid.Row="2">
+                                    <local:MessageTextBlock.Resources>
+                                        <Style TargetType="controls:FormattedTextBlock">
+                                            <Setter Property="Foreground"
+                                                    Value="{ThemeResource MessageForegroundBrush}" />
+                                        </Style>
+                                    </local:MessageTextBlock.Resources>
+                                </local:MessageTextBlock>
 
                                 <Border x:Name="Media"
                                         Grid.Column="1"

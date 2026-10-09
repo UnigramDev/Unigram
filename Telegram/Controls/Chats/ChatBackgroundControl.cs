@@ -281,11 +281,21 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_fill is BackgroundFillFreeformGradient freeform)
+            // Matching the Fill setter: a bubble never gets the ImageBrush, so without this the
+            // cast below silently yields null on every resize.
+            if (_fill is BackgroundFillFreeformGradient freeform && !IsBubbleBackground)
             {
                 _background.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);
             }
         }
+
+        public bool IsBubbleBackground { get; set; }
+
+        /// <summary>
+        /// Whether the fill was authored to be animated. Set before <see cref="Fill"/>; it decides
+        /// the order of the stops, nothing else.
+        /// </summary>
+        public bool IsAnimated { get; set; }
 
         private BackgroundFill _fill;
         public BackgroundFill Fill
@@ -295,14 +305,22 @@ namespace Telegram.Controls.Chats
             {
                 _fill = value;
 
-                if (value is BackgroundFillFreeformGradient freeform)
+                if (value is BackgroundFillFreeformGradient freeform && !IsBubbleBackground)
                 {
                     Background = new ImageBrush { AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     _background.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform);
                 }
-                else
+                else if (value is BackgroundFillSolid solid)
                 {
-                    Background = value?.ToBrush();
+                    Background = new SolidColorBrush(solid.Color.ToColor());
+                }
+                else if (value is BackgroundFillGradient gradient)
+                {
+                    Background = TdBackground.GetGradient(gradient.TopColor, gradient.BottomColor, gradient.RotationAngle);
+                }
+                else if (value is BackgroundFillFreeformGradient freeformGradient)
+                {
+                    Background = TdBackground.GetGradient(freeformGradient.Colors, IsAnimated);
                 }
             }
         }

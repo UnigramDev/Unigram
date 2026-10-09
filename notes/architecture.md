@@ -120,7 +120,7 @@ updates do not go through it at all — `ClientService.UpdateFile` hands them to
 is their own bus (see *Common helpers*).
 
 ## Settings, theme and updates — Telegram/Services/{AppSettings.cs,SettingsService.cs,Settings/,Theme/,Updates/} (26 files)
-<!-- map: verified=95560d9f7 paths=Telegram/Services/AppSettings.cs,Telegram/Services/SettingsService.cs,Telegram/Services/SettingsLegacyService.cs,Telegram/Services/SettingsSearchService.cs,Telegram/Services/Settings,Telegram/Services/Theme,Telegram/Services/ThemeService.cs,Telegram/Services/Updates,Telegram/Services/CloudUpdateService.cs -->
+<!-- map: verified=66c83ab5d paths=Telegram/Services/AppSettings.cs,Telegram/Services/SettingsService.cs,Telegram/Services/SettingsLegacyService.cs,Telegram/Services/SettingsSearchService.cs,Telegram/Services/Settings,Telegram/Services/Theme,Telegram/Services/ThemeService.cs,Telegram/Services/Updates,Telegram/Services/CloudUpdateService.cs -->
 A two-tier split: a static, process-wide `AppSettings`, and a per-account `SettingsService` over an
 `ISettingsStore` seam. Plus theme resolution and the sideload updater.
 **Key types:** `AppSettings` (Telegram/Services/AppSettings.cs) — static global config, no DI;
@@ -132,6 +132,19 @@ Telegram/Services/Settings/; `ThemeService`/`ThemeLookup`/`ThemeAccentInfo`; `Cl
 constructed — `LifetimeService` discovers sessions from those folders before any `SettingsService`
 exists, and `ClientService` reads `UseTestDC` while being constructed. `ISettingsStore` is the single
 seam for swapping backends. `settings.dat` is locked while the package is registered.
+**Appearance:** each base (light, dark) stores one *worn* `ThemeSettings` plus a `ThemeIdentity`
+(preset emoji, variant id, or theme file name) in `WornLight`/`WornDark`; the built-in is derived
+from `BaseTheme`, never stored. `GetSettings(requested)` is all rendering reads. The two houses (🏠)
+are built in code by `AppearanceSettings.GetHouse` and never stored. Presets keep only their
+background (`Presets`), variants everything (`Variants`), theme files their background
+(`ThemeFiles`). Every write goes through the `Wear*`/`*Variant`/`DeleteThemeFile` API, and switching
+to the other base goes through `NightModeService.Show`/`Switch`. Trap: the default background is
+never stored (`ThemeSettingsStore.Storable`), because a theme with no background is what adopts the
+next `updateDefaultBackground`. A `.unigram-theme` with a `base:` line is v2: a `ThemeSettings`
+header (`ThemeCustomInfo.Settings`) colorized like a variant, then only the keys that differ from it.
+Without one it is v1 - plain lookup of `parent` plus its keys - and must never be upgraded in place,
+because colorizing it would change every key it does not set. `ThemeCustomInfo.Values` is always the
+effective colours; `ThemeService.SerializeAsync` is where the diff is taken.
 
 ## Session and account multiplexing — Telegram/Services/LifetimeService.cs, Session.cs, Session.Registrations.cs
 <!-- map: verified=95560d9f7 paths=Telegram/Services/LifetimeService.cs,Telegram/Services/Session.cs,Telegram/Services/Session.Registrations.cs -->

@@ -215,6 +215,8 @@ namespace Telegram.Controls.Messages
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
 
+            UpdateContentPanelState();
+
             //ContentPanel.CanDrag = true;
             //ContentPanel.DragStarting += OnDragStarting;
 
@@ -267,6 +269,15 @@ namespace Telegram.Controls.Messages
             //UnloadObject(ref MediaReactions);
 
             UnregisterEvents();
+        }
+
+        private MessageBubbleBackgroundBrush _brush;
+        public MessageBubbleBackgroundBrush Brush => _brush;
+
+        public void UpdateContainer(MessageBubbleBackgroundBrush container)
+        {
+            _brush = container;
+            UpdateContentPanelState();
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -2462,6 +2473,24 @@ namespace Telegram.Controls.Messages
             {
                 _currentState = state;
                 VisualStateManager.GoToState(this, state, false);
+
+                UpdateContentPanelState();
+            }
+        }
+
+        private void UpdateContentPanelState()
+        {
+            if (_currentState is "LightState" or "LightStateOut")
+            {
+                ContentPanel?.Background = null;
+            }
+            else if (_brush != null)
+            {
+                ContentPanel?.Background = _brush;
+            }
+            else
+            {
+                ContentPanel?.ClearValue(Grid.BackgroundProperty);
             }
         }
 

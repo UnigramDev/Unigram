@@ -35,20 +35,24 @@ namespace Telegram.Controls
 
         public bool IsSingle => !_multi;
 
-        public void UpdateState(bool selected)
+        public bool UpdateState(bool selected, bool animate)
         {
             var enabled = _owner.SelectionMode == ListViewSelectionMode.Multiple;
             if (enabled == _enabled && _selected == selected)
             {
-                return;
+                return ContentTemplateRoot is IMultipleElement;
             }
 
             if (ContentTemplateRoot is IMultipleElement test)
             {
                 _selected = selected;
                 _enabled = enabled;
-                test.UpdateState(selected, true, enabled);
+                test.UpdateState(selected, animate, enabled);
+
+                return true;
             }
+
+            return false;
         }
     }
 
@@ -60,6 +64,14 @@ namespace Telegram.Controls
     public partial class MultipleVisualStateManager : VisualStateManager
     {
         private bool _multi;
+        private State _state;
+
+        enum State
+        {
+            None,
+            Unselected,
+            Selected
+        }
 
         protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
         {
@@ -72,7 +84,11 @@ namespace Telegram.Controls
             if (group.Name == "MultiSelectStates")
             {
                 _multi = stateName == "MultiSelectEnabled";
-                selector.UpdateState((_multi || selector.IsSingle) && selector.IsSelected);
+
+                if (selector.UpdateState((_multi || selector.IsSingle) && selector.IsSelected, _state != State.None))
+                {
+                    _state = selector.IsSelected ? State.Selected : State.Unselected;
+                }
             }
             else if ((_multi || selector.IsSingle) && stateName.EndsWith("Selected"))
             {

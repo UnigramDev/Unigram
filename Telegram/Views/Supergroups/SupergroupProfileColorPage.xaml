@@ -137,60 +137,68 @@
 
                 <controls:HeaderedControl x:Name="WallpaperRoot"
                                           Footer="{CustomResource ChannelWallpaper2Info}">
-                    <Grid x:Name="WallpaperPreview"
-                          x:Load="False"
-                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                          CornerRadius="4">
-                        <chats:ChatBackgroundControl x:Name="BackgroundControl"
-                                                     CornerRadius="4" />
-                        <StackPanel Padding="0,10">
-                            <messages:MessageBubble x:Name="Message1"
-                                                    HorizontalAlignment="Left" />
-                            <messages:MessageBubble x:Name="Message2"
-                                                    HorizontalAlignment="Right"
-                                                    IsOutgoing="True" />
-                        </StackPanel>
-                    </Grid>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="WallpaperPreview"
+                              x:Load="False"
+                              CornerRadius="4,4,0,0">
+                            <chats:ChatBackgroundControl x:Name="BackgroundControl"
+                                                         CornerRadius="4" />
+                            <StackPanel Padding="0,4,0,12">
+                                <messages:MessageBubble x:Name="Message1"
+                                                        HorizontalAlignment="Left" />
+                                <messages:MessageBubble x:Name="Message2"
+                                                        HorizontalAlignment="Right"
+                                                        IsOutgoing="True" />
+                            </StackPanel>
+                        </Grid>
 
-                    <GridView x:Name="List"
-                              Background="{ThemeResource SettingsItemBackground}"
-                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                              ItemsSource="{x:Bind ViewModel.ChatThemes}"
-                              SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
-                              SelectionMode="Single"
-                              SingleSelectionFollowsFocus="False"
-                              SelectionChanged="OnSelectionChanged"
-                              ChoosingItemContainer="OnChoosingItemContainer"
-                              ContainerContentChanging="OnContainerContentChanging"
-                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              ScrollViewer.HorizontalScrollMode="Auto"
-                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.VerticalScrollMode="Disabled"
-                              Padding="12,16,0,12">
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:ChatThemeCell Width="87" />
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem"
-                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection />
-                        </GridView.ItemContainerTransitions>
-                        <GridView.Footer>
-                            <Border Width="12" />
-                        </GridView.Footer>
-                    </GridView>
+                        <ListView x:Name="List"
+                                  ItemsSource="{x:Bind ViewModel.ChatThemes}"
+                                  SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
+                                  SelectionMode="Single"
+                                  SingleSelectionFollowsFocus="False"
+                                  SelectionChanged="OnSelectionChanged"
+                                  ChoosingItemContainer="OnChoosingItemContainer"
+                                  ContainerContentChanging="OnContainerContentChanging"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                  ScrollViewer.HorizontalScrollMode="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollMode="Disabled"
+                                  Padding="12,12,0,8"
+                                  Grid.Row="1">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <cells:ChatThemeCell Width="87" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="controls:MultipleListViewItem">
+                                    <Setter Property="Padding"
+                                            Value="0" />
+                                    <Setter Property="CornerRadius"
+                                            Value="4" />
+                                    <Setter Property="Margin"
+                                            Value="0,0,4,4" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection />
+                            </ListView.ItemContainerTransitions>
+                            <ListView.Footer>
+                                <Border Width="8" />
+                            </ListView.Footer>
+                        </ListView>
+                    </Grid>
 
                     <controls:SettingsButton Glyph="&#xE9E7;"
                                              IsChevronVisible="True">

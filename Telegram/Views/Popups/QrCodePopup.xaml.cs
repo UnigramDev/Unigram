@@ -18,6 +18,7 @@ using Telegram.Controls.Cells;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.ApplicationModel.DataTransfer;
@@ -143,12 +144,15 @@ namespace Telegram.Views.Popups
                 Background = GetDefaultBackground(true)
             };
 
-            var defaultTheme = new ChatThemeViewModel(clientService, "\U0001F3E0", defaultLight, defaultDark, false);
+            var defaultTheme = new ChatThemeViewModel(clientService, ThemeData.DefaultThemeId, defaultLight, defaultDark, false);
             var themes = clientService.ChatThemes.Select(x => new ChatThemeViewModel(clientService, x, false));
 
             var items = new[] { defaultTheme }.Union(themes).ToList();
 
-            _selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(AppSettings.Appearance.ChatTheme)) ?? defaultTheme;
+            var worn = AppSettings.Appearance.GetWorn(NightModeService.Current.GetCalculatedTelegramTheme());
+            _selectedTheme = worn.Kind == ThemeKind.Preset
+                ? themes.FirstOrDefault(x => x.AreTheSame(worn.Id)) ?? defaultTheme
+                : defaultTheme;
 
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = _selectedTheme;
@@ -219,12 +223,11 @@ namespace Telegram.Views.Popups
 
             if (args.InRecycleQueue)
             {
-                content.Recycle();
                 return;
             }
             else if (args.Item is ChatThemeViewModel theme)
             {
-                content.Update(args.ItemContainer, theme);
+                content.Update(theme);
                 args.Handled = true;
 
                 if (Code.Background == null)

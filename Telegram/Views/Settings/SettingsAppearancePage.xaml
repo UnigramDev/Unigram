@@ -12,7 +12,8 @@
                   xmlns:local="using:Telegram.Views"
                   xmlns:viewModels="using:Telegram.ViewModels.Settings"
                   mc:Ignorable="d"
-                  NavigationMode="Root">
+                  NavigationMode="Root"
+                  ActualThemeChanged="OnActualThemeChanged">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <contract7Present:Grid.BackgroundTransition>
@@ -33,7 +34,8 @@
                               CornerRadius="4,4,0,0">
                             <chats:ChatBackgroundControl x:Name="BackgroundControl"
                                                          CornerRadius="4,4,0,0" />
-                            <StackPanel Padding="0,10">
+                            <StackPanel x:Name="Bubbles"
+                                        Padding="0,4,0,12">
                                 <messages:MessageBubble x:Name="Message1"
                                                         HorizontalAlignment="Left" />
                                 <messages:MessageBubble x:Name="Message2"
@@ -42,7 +44,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <GridView x:Name="List"
+                        <ListView x:Name="List"
                                   ItemsSource="{x:Bind ViewModel.ChatThemes}"
                                   SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
                                   SelectionMode="Single"
@@ -54,32 +56,35 @@
                                   ScrollViewer.HorizontalScrollMode="Auto"
                                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                   ScrollViewer.VerticalScrollMode="Disabled"
-                                  Padding="12,16,0,12"
+                                  Padding="12,12,0,8"
                                   Grid.Row="1">
-                            <GridView.ItemTemplate>
+                            <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <cells:ChatThemeCell Width="87" />
                                 </DataTemplate>
-                            </GridView.ItemTemplate>
-                            <GridView.ItemContainerStyle>
-                                <Style TargetType="GridViewItem"
-                                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                                    <Setter Property="HorizontalContentAlignment"
-                                            Value="Stretch" />
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="controls:MultipleListViewItem">
+                                    <Setter Property="Padding"
+                                            Value="0" />
+                                    <Setter Property="CornerRadius"
+                                            Value="4" />
+                                    <Setter Property="Margin"
+                                            Value="0,0,4,4" />
                                 </Style>
-                            </GridView.ItemContainerStyle>
-                            <GridView.ItemsPanel>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <ItemsStackPanel Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
-                            </GridView.ItemsPanel>
-                            <GridView.ItemContainerTransitions>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemContainerTransitions>
                                 <TransitionCollection />
-                            </GridView.ItemContainerTransitions>
-                            <GridView.Footer>
-                                <Border Width="12" />
-                            </GridView.Footer>
-                        </GridView>
+                            </ListView.ItemContainerTransitions>
+                            <ListView.Footer>
+                                <Border Width="8" />
+                            </ListView.Footer>
+                        </ListView>
                     </Grid>
 
                     <controls:SettingsButton Content="{CustomResource ChatThemes}"

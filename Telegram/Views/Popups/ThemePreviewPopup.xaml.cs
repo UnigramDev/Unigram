@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Controls;
+using Telegram.Controls.Chats;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Settings;
@@ -19,23 +20,47 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class ThemePreviewPopup : ContentPopup
     {
-        private StorageFile _file;
+        private readonly IClientService _clientService;
+        private readonly StorageFile _file;
+        private readonly ThemeCustomInfo _theme;
 
-        public ThemePreviewPopup(StorageFile file)
+        private readonly MessageBubbleBackgroundCoordinator _background;
+
+        public ThemePreviewPopup(IClientService clientService, StorageFile file, ThemeCustomInfo theme)
         {
             InitializeComponent();
-            Initialize(file);
+
+            _clientService = clientService;
+            _file = file;
+            _theme = theme;
+
+            _background = new MessageBubbleBackgroundCoordinator(Bubbles, null);
+            _background.Attach(Message2);
+            _background.Attach(Message3);
+            _background.Attach(Message6);
+
+            Message1.Resources = ThemePreview.Incoming.CreateDictionary();
+            Message2.Resources = ThemePreview.Outgoing.CreateDictionary();
+            Message3.Resources = ThemePreview.Outgoing.CreateDictionary();
+            Message4.Resources = ThemePreview.Incoming.CreateDictionary();
+            Message5.Resources = ThemePreview.Incoming.CreateDictionary();
+            Message6.Resources = ThemePreview.Outgoing.CreateDictionary();
+
+            Initialize(clientService, theme);
         }
 
-        private async void Initialize(StorageFile file)
+        private void Initialize(IClientService clientService, ThemeCustomInfo theme)
         {
-            _file = file;
-            var theme = await ThemeCustomInfo.FromFileAsync(file);
-
+            _background.Settings = theme.Settings;
             ThemePreview.Update(theme);
+            BackgroundControl.Update(clientService);
 
-            TitleLabel.Text = theme.Name;
-            LayoutRoot.RequestedTheme = theme.Parent == TelegramTheme.Light
+            if (theme.Settings?.Background != null)
+            {
+                BackgroundControl.Update(theme.Settings.Background, theme.Parent == TelegramTheme.Dark);
+            }
+
+            RequestedTheme = theme.Parent == TelegramTheme.Light
                 ? ElementTheme.Light
                 : ElementTheme.Dark;
 
@@ -47,8 +72,8 @@ namespace Telegram.Views.Popups
             Chat6.Mockup(new ChatTypePrivate(), 5, "Max Bright", string.Empty, "How about some coffee?", true, 0, false, false, DateTime.Now.AddHours(-5));
             Chat7.Mockup(new ChatTypePrivate(), 6, "Natalie Parker", string.Empty, "OK, great)", true, 0, false, false, DateTime.Now.AddHours(-6));
 
-            Photo.Source = ProfilePictureSourceText.GetNameForUser(Strings.ThemePreviewTitle);
-            Title.Text = Strings.ThemePreviewTitle;
+            Photo.Source = ProfilePictureSourceText.GetNameForUser(theme.Name);
+            Title.Text = theme.Name;
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.LastSeen, Strings.TodayAt, Formatter.Time(DateTime.Now.AddHours(-1)));
 
             Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", TdExtensions.GetLocalFile("Assets\\Mockup\\theme_preview_image.jpg"), 500, 302, Array.Empty<int>()) }), null, new FormattedText(), false, false, false), Strings.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
@@ -72,7 +97,7 @@ namespace Telegram.Views.Popups
         {
             try
             {
-                await LifetimeService.Current.ActiveItem.Resolve<IThemeService>().InstallThemeAsync(_file);
+                await LifetimeService.Current.ActiveItem.Resolve<IThemeService>().InstallThemeAsync(_file, XamlRoot);
             }
             catch { }
         }

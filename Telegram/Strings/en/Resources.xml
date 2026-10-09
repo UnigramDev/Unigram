@@ -2019,7 +2019,9 @@
 
     <string name="ThemeClassic">Classic</string>
 
+    <string name="DeleteThemeTitle">Delete theme</string>
     <string name="DeleteThemeAlert">Are you sure you want to delete this theme?</string>
+    <string name="ResetThemeAlert">Are you sure you want to reset this theme to its defaults?</string>
 
 
     <string name="EnterThemeName">Enter theme name</string>

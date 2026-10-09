@@ -10,7 +10,7 @@
                        xmlns:messages="using:Telegram.Controls.Messages"
                        mc:Ignorable="d"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       Padding="0,6,0,24">
+                       Padding="0">
 
     <ContentDialog.Resources>
         <common:Theme x:Name="ThemePreview" />
@@ -23,104 +23,82 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Border Height="32"
-                Background="{ThemeResource PageHeaderBackgroundBrush}"
-                Grid.ColumnSpan="2">
-            <TextBlock Text="{CustomResource ThemePreview}"
-                       VerticalAlignment="Center"
-                       TextLineBounds="TrimToCapHeight"
-                       Margin="12,0,0,0"
-                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                       Style="{StaticResource CaptionTextBlockStyle}"
-                       Grid.Column="1" />
-        </Border>
-
-
-        <FlipView Grid.Row="1">
+        <FlipView CornerRadius="0"
+                  Grid.Row="1">
             <FlipViewItem>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <controls:ContentPageHeader Grid.Column="1"
-                                                Grid.Row="1">
-                        <Grid x:Name="InfoPanel">
+                    <Grid x:Name="InfoPanel"
+                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                          Canvas.ZIndex="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Button Style="{StaticResource EmptyButtonStyle}"
-                                    Padding="0,0,48,0"
-                                    Grid.ColumnSpan="3">
-                                <Button.Content>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <controls:ProfilePicture x:Name="Photo"
-                                                                 Size="36"
-                                                                 Margin="12,0" />
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Size="36"
+                                                     Margin="12,0" />
 
-                                        <StackPanel Orientation="Vertical"
-                                                    VerticalAlignment="Center"
-                                                    Margin="0,-2,0,2"
-                                                    Grid.Column="1">
-                                            <TextBlock x:Name="Title"
-                                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                                       Style="{StaticResource BaseTextBlockStyle}"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       MaxLines="1" />
-                                            <TextBlock x:Name="Subtitle"
-                                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis" />
-                                        </StackPanel>
+                            <StackPanel Orientation="Vertical"
+                                        VerticalAlignment="Center"
+                                        Margin="0,-2,0,2"
+                                        Grid.Column="1">
+                                <TextBlock x:Name="Title"
+                                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           MaxLines="1" />
+                                <TextBlock x:Name="Subtitle"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
 
-                                        <Border x:Name="CallPlaceholder"
-                                                Visibility="Collapsed"
-                                                Width="48"
-                                                Grid.Column="2" />
-                                    </Grid>
-                                </Button.Content>
-                            </Button>
-
-                            <controls:GlyphButton Glyph="&#xE717;"
-                                                  AutomationProperties.Name="{CustomResource Call}"
-                                                  ToolTipService.ToolTip="{CustomResource Call}"
-                                                  Grid.Column="1" />
-
-                            <controls:MoreButton Grid.Column="2" />
+                            <Border x:Name="CallPlaceholder"
+                                    Visibility="Collapsed"
+                                    Width="48"
+                                    Grid.Column="2" />
                         </Grid>
-                    </controls:ContentPageHeader>
+
+                        <controls:GlyphButton Glyph="&#xE717;"
+                                              AutomationProperties.Name="{CustomResource Call}"
+                                              ToolTipService.ToolTip="{CustomResource Call}"
+                                              Margin="0,0,-4,0"
+                                              Grid.Column="1" />
+
+                        <controls:MoreButton Grid.Column="2" />
+                    </Grid>
                     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                          Grid.Column="1"
-                          Grid.Row="2">
+                          Grid.RowSpan="2">
                         <chats:ChatBackgroundControl x:Name="BackgroundControl" />
-                        <StackPanel Padding="0,2,0,2"
+                        <StackPanel x:Name="Bubbles"
+                                    Padding="0,2,0,8"
                                     VerticalAlignment="Bottom">
                             <messages:MessageBubble x:Name="Message1"
                                                     HorizontalAlignment="Left" />
                             <messages:MessageBubble x:Name="Message2"
-                                                    HorizontalAlignment="Right"
-                                                    IsOutgoing="True" />
+                                                    HorizontalAlignment="Right" />
                             <messages:MessageBubble x:Name="Message3"
-                                                    HorizontalAlignment="Right"
-                                                    IsOutgoing="True" />
+                                                    HorizontalAlignment="Right" />
                             <messages:MessageBubble x:Name="Message4"
                                                     HorizontalAlignment="Left" />
                             <messages:MessageBubble x:Name="Message5"
                                                     HorizontalAlignment="Left" />
                             <messages:MessageBubble x:Name="Message6"
-                                                    HorizontalAlignment="Right"
-                                                    IsOutgoing="True" />
+                                                    HorizontalAlignment="Right" />
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -129,42 +107,29 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <controls:ContentPageHeader Grid.Row="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <controls:GlyphButton Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                                  Height="{ThemeResource AppBarThemeCompactHeight}"
-                                                  AutomationProperties.LandmarkType="Navigation"
-                                                  AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                                  ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
-
-                            <TextBlock x:Name="TitleLabel"
-                                       Text="{CustomResource AppName}"
-                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                       Style="{StaticResource BaseTextBlockStyle}"
-                                       VerticalAlignment="Center"
-                                       Margin="6,0"
-                                       Grid.Column="1" />
-
-                            <controls:GlyphButton Glyph="&#xE721;"
-                                                  AutomationProperties.LandmarkType="Search"
-                                                  AutomationProperties.Name="{CustomResource Search}"
-                                                  ToolTipService.ToolTip="{CustomResource Search}"
-                                                  Grid.Column="2" />
-                        </Grid>
-                    </controls:ContentPageHeader>
+                    <Grid>
+                        <TextBox x:Name="TitleLabel"
+                                 PlaceholderText="{CustomResource ThemePreview}"
+                                 BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                 Style="{StaticResource NoDeleteTextBoxStyle}"
+                                 IsReadOnly="True"
+                                 Margin="12,8" />
+                        <controls:GlyphButton x:Name="ComposeButton"
+                                              Glyph="&#xE996;"
+                                              FontSize="16"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Right"
+                                              Margin="0,0,12,0"
+                                              Width="36"
+                                              Height="32" />
+                    </Grid>
                     <ListView x:Name="ChatList"
                               ScrollViewer.VerticalScrollMode="Disabled"
                               ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              Grid.Row="2">
+                              Grid.Row="1">
                         <ListViewItem HorizontalContentAlignment="Stretch"
                                       Padding="0">
                             <cells:ChatCell x:Name="Chat1"

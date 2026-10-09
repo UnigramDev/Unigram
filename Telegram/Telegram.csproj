@@ -202,8 +202,14 @@
     <Compile Include="Common\ArrayPoolBufferWriter.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Controls\Cells\BaseThemeCell.xaml.cs">
+      <DependentUpon>BaseThemeCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\WalletCollectibleCell.xaml.cs">
       <DependentUpon>WalletCollectibleCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ColorsPicker.xaml.cs">
+      <DependentUpon>ColorsPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Media\CheckBoxResources.cs" />
     <Compile Include="Common\ConnectedAnimationServiceEx.cs" />
@@ -2960,9 +2966,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\BaseThemeCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\WalletCollectibleCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ColorsPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WalletCard.xaml">
       <SubType>Designer</SubType>

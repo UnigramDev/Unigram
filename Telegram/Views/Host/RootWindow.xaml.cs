@@ -972,20 +972,7 @@ namespace Telegram.Views.Host
                 batch.End();
             }
 
-            if (AppSettings.Appearance.NightMode != NightMode.Disabled)
-            {
-                AppSettings.Appearance.NightMode = NightMode.Disabled;
-                NightModeService.Current.UpdateTimer();
-
-                ToastPopup.Show(XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
-            }
-
-            AppSettings.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;
-            AppSettings.Appearance.RequestedTheme = ActualTheme != ElementTheme.Dark
-                ? TelegramTheme.Dark
-                : TelegramTheme.Light;
-
-            NightModeService.Current.Update();
+            NightModeService.Current.Switch(ActualTheme != ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light, XamlRoot);
         }
 
         private void Theme_ActualThemeChanged(FrameworkElement sender, object args)

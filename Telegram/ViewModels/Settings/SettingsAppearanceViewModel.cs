@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native;
@@ -20,6 +21,7 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
+using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -40,7 +42,7 @@ namespace Telegram.ViewModels.Settings
             FontFamilyOptions = new List<SettingsOptionFontFamily>(fonts);
             FontFamilyOptions.Insert(0, new SettingsOptionFontFamily(string.Empty, Strings.Default, Windows.UI.Xaml.Media.FontFamily.XamlAutoFontFamily.Source));
 
-            ChatThemes = new ObservableCollection<ChatThemeViewModel>();
+            ChatThemes = new RangeObservableCollection<ChatThemeViewModel>();
 
             var stored = AppSettings.Appearance.Scaling;
 
@@ -52,50 +54,181 @@ namespace Telegram.ViewModels.Settings
             _scaling = stored;
         }
 
-        public ObservableCollection<ChatThemeViewModel> ChatThemes { get; }
+        public RangeObservableCollection<ChatThemeViewModel> ChatThemes { get; }
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            static Background GetDefaultBackground(bool dark)
-            {
-                var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
-                return new Background(0, true, dark, string.Empty,
-                    new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
-                    new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
-            }
+            ChatThemes.SwitchTo(await GetAppThemes());
 
-            var defaultLight = new ThemeSettings
-            {
-                AccentColor = 0x158DCD,
-                OutgoingMessageAccentColor = 0xF0FDDF,
-                OutgoingMessageFill = new BackgroundFillSolid(0xF0FDDF),
-                Background = GetDefaultBackground(false)
-            };
-
-            var defaultDark = new ThemeSettings
-            {
-                AccentColor = 0x71BAFA,
-                OutgoingMessageAccentColor = 0x2B5278,
-                OutgoingMessageFill = new BackgroundFillSolid(0x2B5278),
-                Background = GetDefaultBackground(true)
-            };
-
-            var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark, false);
-            var themes = ClientService.ChatThemes.Select(x => new ChatThemeViewModel(ClientService, x, false));
-
-            var selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(AppSettings.Appearance.ChatTheme)) ?? defaultTheme;
-            if (selectedTheme != null)
-            {
-                selectedTheme.LightSettings.Background = ClientService.GetDefaultBackground(false) ?? defaultLight.Background;
-                selectedTheme.DarkSettings.Background = ClientService.GetDefaultBackground(true) ?? defaultDark.Background;
-            }
-
-            ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
-
-            _selectedChatTheme = selectedTheme;
+            _selectedChatTheme = GetSelectedTheme();
             RaisePropertyChanged(nameof(SelectedChatTheme));
+        }
 
-            return Task.CompletedTask;
+        private ChatThemeViewModel _defaultTheme;
+        private ChatThemeViewModel _customTheme;
+
+        // Each base keeps its own 🎨 pointer, so a light/dark flip can add the card or take it away.
+        private void ApplyCustomTheme(IList<ChatThemeViewModel> themes)
+        {
+            var target = NightModeService.Current.IsLightTheme()
+                ? _customTheme.LightSettings
+                : _customTheme.DarkSettings;
+
+            if (target != null)
+            {
+                if (themes.Contains(_customTheme))
+                {
+                    return;
+                }
+
+                themes.Add(_customTheme);
+            }
+            else
+            {
+                themes.Remove(_customTheme);
+            }
+        }
+
+        public void UpdateActualTheme(bool refresh)
+        {
+            if (ChatThemes.Empty())
+            {
+                return;
+            }
+
+            ApplyCustomTheme(ChatThemes);
+
+            _selectedChatTheme = GetSelectedTheme();
+            SelectionChanged = refresh;
+            RaisePropertyChanged(nameof(SelectedChatTheme));
+        }
+
+        private ChatThemeViewModel GetSelectedTheme()
+        {
+            var requested = NightModeService.Current.IsDarkTheme() ? TelegramTheme.Dark : TelegramTheme.Light;
+            var worn = AppSettings.Appearance.GetWorn(requested);
+
+            // A variant or a theme file is what the 🎨 card points at: wearing one moves it there.
+            if (worn.Kind != ThemeKind.Preset)
+            {
+                return ChatThemes.Contains(_customTheme) ? _customTheme : _defaultTheme;
+            }
+
+            return ChatThemes.FirstOrDefault(x => x.AreTheSame(worn.Id)) ?? _defaultTheme;
+        }
+
+        private async Task<List<ChatThemeViewModel>> GetAppThemes()
+        {
+            var defaultLight = await LoadPresetAsync(TelegramTheme.Light, ThemeData.DefaultThemeId, AppearanceSettings.GetHouse(TelegramTheme.Light));
+            var defaultDark = await LoadPresetAsync(TelegramTheme.Dark, ThemeData.DefaultThemeId, AppearanceSettings.GetHouse(TelegramTheme.Dark));
+
+            _defaultTheme = new ChatThemeViewModel(ClientService, ThemeData.DefaultThemeId, defaultLight, defaultDark, false);
+
+            var customLight = await LoadRecentAsync(TelegramTheme.Light);
+            var customDark = await LoadRecentAsync(TelegramTheme.Dark);
+
+            _customTheme = new ChatThemeViewModel(ClientService, ThemeData.CustomThemeId, customLight, customDark, false);
+
+            var themes = new List<ChatThemeViewModel>
+            {
+                _defaultTheme
+            };
+
+            foreach (var theme in ClientService.ChatThemes)
+            {
+                var lightSettings = await LoadPresetAsync(TelegramTheme.Light, theme.Name, theme.LightSettings);
+                var darkSettings = await LoadPresetAsync(TelegramTheme.Dark, theme.Name, theme.DarkSettings);
+
+                themes.Add(new ChatThemeViewModel(ClientService, theme.Name, lightSettings, darkSettings, false));
+            }
+
+            ApplyCustomTheme(themes);
+
+            return themes;
+        }
+
+        /// <summary>
+        /// A preset as <see cref="AppearanceSettings.WearPreset"/> would wear it: these colours, with
+        /// the background it remembers, or the one it comes with if it was never worn.
+        /// </summary>
+        private async Task<ThemeSettings> LoadPresetAsync(TelegramTheme requested, string emoji, ThemeSettings colors)
+        {
+            if (colors == null)
+            {
+                return null;
+            }
+
+            var source = AppSettings.Appearance.TryGetBackground(requested, ThemeIdentity.Preset(emoji), out Background background)
+                ? ThemeSettingsStore.WithBackground(colors, background)
+                : null;
+
+            return await ThemeData.LoadThemeSettings(ClientService, colors.BaseTheme, emoji, source, colors);
+        }
+
+        /// <summary>
+        /// What the 🎨 card shows for one base: the variant it points at, or a theme file through the
+        /// settings of its header - the cell can only colorize.
+        /// </summary>
+        private async Task<ThemeSettings> LoadRecentAsync(TelegramTheme requested)
+        {
+            if (!AppSettings.Appearance.TryGetRecent(requested, out ThemeIdentity identity))
+            {
+                return null;
+            }
+
+            ThemeSettings settings;
+
+            if (identity.Kind == ThemeKind.Variant)
+            {
+                settings = AppSettings.Appearance.Variants.Get(identity.Type, identity.Id);
+
+                if (settings == null)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                ThemeCustomInfo info;
+
+                try
+                {
+                    var file = await StorageFile.GetFileFromPathAsync(AppearanceSettings.GetThemeFilePath(identity.Id));
+                    info = await ThemeCustomInfo.FromFileAsync(ClientService, file);
+                }
+                catch
+                {
+                    // Deleted behind our back: no card is the honest answer.
+                    return null;
+                }
+
+                if (info == null)
+                {
+                    return null;
+                }
+
+                AppSettings.Appearance.TryGetBackground(requested, identity, out Background background);
+
+                if (info.Settings != null)
+                {
+                    settings = ThemeSettingsStore.WithBackground(info.Settings, background);
+                }
+                else
+                {
+                    // A v1 file has no settings to colorize from, so its accent over the base's
+                    // built-in is the closest the cell can draw.
+                    var accent = info.AccentColor.ToValue();
+                    settings = new ThemeSettings
+                    {
+                        BaseTheme = AppearanceSettings.GetHouse(requested).BaseTheme,
+                        AccentColor = accent,
+                        OutgoingMessageAccentColor = accent,
+                        Background = background
+                    };
+                }
+            }
+
+            return await ThemeData.LoadThemeSettings(ClientService, settings.BaseTheme, ThemeData.CustomThemeId, settings, null);
         }
 
         private ChatThemeViewModel _selectedChatTheme;
@@ -114,27 +247,25 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            void SetBackground(Background background, bool forDarkTheme)
+            var dark = NightModeService.Current.IsDarkTheme();
+            var requested = dark ? TelegramTheme.Dark : TelegramTheme.Light;
+
+            if (chatTheme == _customTheme)
             {
-                if (chatTheme.Type is not ChatThemeEmoji emoji)
+                if (!AppSettings.Appearance.WearRecent(requested))
                 {
                     return;
                 }
-
-                if (background != null && emoji.Name != "\U0001F3E0")
-                {
-                    ClientService.Send(new SetDefaultBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
-                }
-                else
-                {
-                    ClientService.Send(new DeleteDefaultBackground(forDarkTheme));
-                }
+            }
+            else if (!AppSettings.Appearance.WearPreset(requested, (chatTheme.Type as ChatThemeEmoji)?.Name, dark ? chatTheme.DarkSettings : chatTheme.LightSettings))
+            {
+                return;
             }
 
-            SetBackground(chatTheme.LightSettings?.Background, false);
-            SetBackground(chatTheme.DarkSettings?.Background, true);
+            // After the theme is worn: a theme with no background yet adopts the update this
+            // produces, and it must be adopted by this theme rather than the previous one.
+            ThemeData.SendDefaultBackground(ClientService, dark ? chatTheme.DarkSettings?.Background : chatTheme.LightSettings?.Background, dark);
 
-            AppSettings.Appearance.ChatTheme = chatTheme.ToEmoji();
             NightModeService.Current.Update(updateBackground: false);
 
             _selectedChatTheme = chatTheme;
@@ -444,20 +575,21 @@ namespace Telegram.ViewModels.Settings
             var dark = NightModeService.Current.IsDarkTheme();
             var settings = dark ? theme.DarkSettings : theme.LightSettings;
 
-            var tint = AppSettings.Appearance[dark ? TelegramTheme.Dark : TelegramTheme.Light].Type;
-            if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && !dark))
+            if (settings == null)
             {
-                tint = TelegramThemeType.Day;
-            }
-            else if (tint == TelegramThemeType.Custom)
-            {
-                tint = TelegramThemeType.Tinted;
+                return;
             }
 
-            var accent = settings.AccentColor.ToColor();
-            var outgoing = settings.OutgoingMessageAccentColor.ToColor();
+            // The light house is the bundled theme: it has nothing to colorize from, so it stays a
+            // v1 file of the plain lookup.
+            if (!dark && theme.AreTheSame(ThemeData.DefaultThemeId))
+            {
+                await _themeService.CreateThemeAsync(NavigationService, new ThemeBundledInfo { Name = Strings.ThemeClassic, Parent = TelegramTheme.Light });
+                return;
+            }
 
-            await _themeService.CreateThemeAsync(NavigationService, ThemeAccentInfo.FromAccent(tint, accent, outgoing));
+            var requested = dark ? TelegramTheme.Dark : TelegramTheme.Light;
+            await _themeService.CreateThemeAsync(NavigationService, ThemeAccentInfo.FromSettings(requested, settings), settings);
         }
 
         public void OpenWallpaper()
@@ -501,9 +633,9 @@ namespace Telegram.ViewModels.Settings
     {
         public IClientService ClientService { get; }
 
-        public ThemeSettings DarkSettings { get; }
+        public ThemeSettings DarkSettings { get; set; }
 
-        public ThemeSettings LightSettings { get; }
+        public ThemeSettings LightSettings { get; set; }
 
         public ChatTheme Type { get; }
 
@@ -533,7 +665,7 @@ namespace Telegram.ViewModels.Settings
                 return null;
             }
 
-            return new ThemeSettings(x.BaseTheme, x.AccentColor, x.Background, x.OutgoingMessageFill, x.AnimateOutgoingMessageFill, x.OutgoingMessageAccentColor);
+            return new ThemeSettings(x.BaseTheme, x.AccentColor, x.Background, x.OutgoingMessageFill, x.AnimateOutgoingMessageFill, x.HasOutgoingMessageAccentColor, x.OutgoingMessageAccentColor);
         }
 
         public ChatThemeViewModel(IClientService clientService, string name, ThemeSettings lightSettings, ThemeSettings darkSettings, bool isChannel)

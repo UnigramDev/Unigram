@@ -172,7 +172,7 @@ namespace Telegram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new GridViewItem();
+                args.ItemContainer = new MultipleListViewItem(sender, false);
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
@@ -189,12 +189,11 @@ namespace Telegram.Views.Supergroups
 
             if (args.InRecycleQueue)
             {
-                content.Recycle();
                 return;
             }
             else if (args.Item is ChatThemeViewModel theme)
             {
-                content.Update(args.ItemContainer, theme);
+                content.Update(theme);
                 args.Handled = true;
             }
         }

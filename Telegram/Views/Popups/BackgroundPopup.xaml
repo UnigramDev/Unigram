@@ -7,9 +7,11 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:chats="using:Telegram.Controls.Chats"
                        xmlns:messages="using:Telegram.Controls.Messages"
+                       xmlns:media="using:Telegram.Controls.Media"
                        mc:Ignorable="d"
                        VerticalContentAlignment="Stretch"
-                       Padding="0,24,0,0"
+                       Padding="0"
+                       ContentMaxHeight="640"
                        Closing="OnClosing">
 
     <ContentDialog.Resources>
@@ -610,210 +612,171 @@
                 <RowDefinition Height="0" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="1">
-                <StackPanel Padding="0,2"
-                            VerticalAlignment="Bottom">
-                    <messages:MessageService Margin="0,8,0,4">
-                        <TextBlock x:Name="Service1"
-                                   Text="{CustomResource MessageScheduleToday}"
-                                   Foreground="White"
-                                   TextAlignment="Center"
-                                   Style="{StaticResource CaptionTextBlockStyle}" />
-                    </messages:MessageService>
+            <ScrollViewer x:Name="ScrollingHost"
+                          SizeChanged="ScrollingHost_SizeChanged"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Auto"
+                          Grid.Row="1">
+                <Grid>
+                    <StackPanel Padding="0,40,0,2"
+                                VerticalAlignment="Bottom">
+                        <messages:MessageService Margin="0,8,0,4">
+                            <TextBlock x:Name="Service1"
+                                       Text="{CustomResource MessageScheduleToday}"
+                                       Foreground="White"
+                                       TextAlignment="Center"
+                                       Style="{StaticResource CaptionTextBlockStyle}" />
+                        </messages:MessageService>
 
-                    <messages:MessageBubble x:Name="Message1"
-                                            HorizontalAlignment="Left" />
-                    <messages:MessageBubble x:Name="Message2"
-                                            HorizontalAlignment="Right"
-                                            IsOutgoing="True" />
-                    <Grid HorizontalAlignment="Center"
-                          Margin="12,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Border x:Name="Pattern"
-                                Visibility="Collapsed"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Padding="6,0,12,0"
-                                CornerRadius="16"
-                                Margin="4,12,4,8">
-                            <CheckBox x:Name="PatternRadio"
-                                      Content="{CustomResource BackgroundPattern}"
-                                      RequestedTheme="Dark"
-                                      Checked="Pattern_Click"
-                                      Unchecked="Pattern_Click" />
-                        </Border>
-                        <Border x:Name="Blur"
-                                Visibility="Collapsed"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                VerticalAlignment="Bottom"
-                                Padding="6,0,12,0"
-                                Margin="4,12,4,8"
-                                CornerRadius="16"
-                                Grid.Column="1">
-                            <CheckBox x:Name="BlurToggle"
-                                      IsChecked="{x:Bind ViewModel.IsBlurEnabled, Mode=TwoWay}"
-                                      Content="{CustomResource BackgroundBlurred}"
-                                      RequestedTheme="Dark" />
-                        </Border>
-                        <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2, ViewModel.Color3), Mode=OneWay}"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                Margin="4,8,4,4"
-                                CornerRadius="20"
-                                Grid.Column="1">
-                            <controls:GlyphButton Click="{x:Bind ViewModel.ChangeRotation}"
-                                                  Glyph="&#xE72C;"
-                                                  RenderTransformOrigin="0.5,0.5"
-                                                  CornerRadius="20"
-                                                  Margin="-4"
-                                                  RequestedTheme="Dark"
-                                                  Grid.Column="1">
-                                <controls:GlyphButton.RenderTransform>
-                                    <RotateTransform Angle="{x:Bind ViewModel.Rotation, Mode=OneWay}" />
-                                </controls:GlyphButton.RenderTransform>
-                            </controls:GlyphButton>
-                        </Border>
-                        <Border Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color3), Mode=OneWay}"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                Margin="4,8,4,4"
-                                CornerRadius="20"
-                                Grid.Column="1">
-                            <controls:GlyphButton Click="Play_Click"
-                                                  Glyph="&#xE768;"
-                                                  RenderTransformOrigin="0.5,0.5"
-                                                  CornerRadius="20"
-                                                  Margin="-4"
-                                                  RequestedTheme="Dark"
-                                                  Grid.Column="1" />
-                        </Border>
-                        <Border x:Name="Color"
-                                Visibility="Collapsed"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Bottom"
-                                Padding="6,0,12,0"
-                                CornerRadius="16"
-                                Margin="4,12,4,8"
-                                Grid.Column="2">
-                            <CheckBox x:Name="ColorRadio"
-                                      Content="{CustomResource BackgroundColor}"
-                                      RequestedTheme="Dark"
-                                      Checked="Color_Click"
-                                      Unchecked="Color_Click" />
-                        </Border>
-                    </Grid>
-                </StackPanel>
+                        <messages:MessageBubble x:Name="Message1"
+                                                HorizontalAlignment="Left" />
+                        <messages:MessageBubble x:Name="Message2"
+                                                HorizontalAlignment="Right" />
+                        <messages:MessageBubble x:Name="Message3"
+                                                x:Load="False"
+                                                HorizontalAlignment="Right" />
+                        <messages:MessageBubble x:Name="Message4"
+                                                x:Load="False"
+                                                HorizontalAlignment="Left" />
+                        <messages:MessageBubble x:Name="Message5"
+                                                x:Load="False"
+                                                HorizontalAlignment="Left" />
+                        <messages:MessageBubble x:Name="Message6"
+                                                x:Load="False"
+                                                HorizontalAlignment="Right" />
+
+                        <Grid HorizontalAlignment="Center"
+                              Margin="12,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="Pattern"
+                                    Visibility="Collapsed"
+                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Padding="6,0,12,0"
+                                    CornerRadius="16"
+                                    Margin="4,8,4,8">
+                                <CheckBox x:Name="PatternRadio"
+                                          Content="{CustomResource BackgroundPattern}"
+                                          RequestedTheme="Dark"
+                                          Checked="Pattern_Click"
+                                          Unchecked="Pattern_Click" />
+                            </Border>
+                            <Border x:Name="Blur"
+                                    Visibility="Collapsed"
+                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    VerticalAlignment="Bottom"
+                                    Padding="6,0,12,0"
+                                    Margin="4,8,4,8"
+                                    CornerRadius="16"
+                                    Grid.Column="1">
+                                <CheckBox x:Name="BlurToggle"
+                                          IsChecked="{x:Bind ViewModel.IsBlurEnabled, Mode=TwoWay}"
+                                          Content="{CustomResource BackgroundBlurred}"
+                                          RequestedTheme="Dark" />
+                            </Border>
+                            <Border x:Name="ChangeRotation"
+                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    Margin="4,4,4,4"
+                                    CornerRadius="20"
+                                    Grid.Column="1">
+                                <controls:GlyphButton Click="{x:Bind ViewModel.ChangeRotation}"
+                                                      Glyph="&#xF791;"
+                                                      RenderTransformOrigin="0.5,0.5"
+                                                      CornerRadius="20"
+                                                      Margin="-4"
+                                                      RequestedTheme="Dark"
+                                                      Grid.Column="1">
+                                    <controls:GlyphButton.RenderTransform>
+                                        <RotateTransform Angle="{x:Bind ViewModel.Rotation, Mode=OneWay}" />
+                                    </controls:GlyphButton.RenderTransform>
+                                </controls:GlyphButton>
+                            </Border>
+                            <Border x:Name="Play"
+                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    Margin="4,4,4,4"
+                                    CornerRadius="20"
+                                    Grid.Column="1">
+                                <controls:GlyphButton Click="Play_Click"
+                                                      Glyph="&#xF792;"
+                                                      RenderTransformOrigin="0.5,0.5"
+                                                      CornerRadius="20"
+                                                      Margin="-4"
+                                                      RequestedTheme="Dark"
+                                                      Grid.Column="1" />
+                            </Border>
+                            <Border x:Name="Color"
+                                    Visibility="Collapsed"
+                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Padding="6,0,12,0"
+                                    CornerRadius="16"
+                                    Margin="4,8,4,8"
+                                    Grid.Column="2">
+                                <CheckBox x:Name="ColorRadio"
+                                          Content="{CustomResource BackgroundColor}"
+                                          RequestedTheme="Dark"
+                                          Checked="Color_Click"
+                                          Unchecked="Color_Click" />
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <Grid x:Name="ThemeSettingsNavigation"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Center"
+                  Margin="0,8,0,0"
+                  Visibility="Collapsed"
+                  Grid.Row="1">
+                <Border Background="{ThemeResource PopupAcrylicBackground}"
+                        BackgroundSizing="OuterBorderEdge"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="16" />
+
+                <controls:TopNavView x:Name="Navigation"
+                                     SelectedIndex="0"
+                                     SelectionChanged="Navigation_SelectionChanged"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Top"
+                                     Height="32"
+                                     Padding="4,0,8,4">
+                    <controls:TopNavView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,0,4,0" />
+                        </ItemsPanelTemplate>
+                    </controls:TopNavView.ItemsPanel>
+                    <controls:TopNavView.ItemContainerStyle>
+                        <Style TargetType="controls:TopNavViewItem">
+                            <Setter Property="Padding"
+                                    Value="8,1,8,0" />
+                            <Setter Property="BorderThickness"
+                                    Value="0,4,0,0" />
+                        </Style>
+                    </controls:TopNavView.ItemContainerStyle>
+                    <controls:TopNavViewItem Content="Wallpaper" />
+                    <controls:TopNavViewItem Content="Accent Color" />
+                    <controls:TopNavViewItem Content="My Messages" />
+                </controls:TopNavView>
             </Grid>
 
-            <Grid x:Name="ColorPanel"
-                  Background="{ThemeResource PopupAcrylicBackground}"
-                  Margin="0,0,0,-88"
-                  Padding="0,0,0,88"
-                  CornerRadius="0,0,8,8"
-                  Height="308"
-                  Grid.Row="6">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="48" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <controls:ColorTextBox x:Name="TextColor1"
-                                       ColorChanged="TextColor_ColorChanged"
-                                       HorizontalAlignment="Stretch"
-                                       Margin="12,8,0,8" />
-
-                <RadioButton x:Name="RadioColor1"
-                             Style="{StaticResource AccentRadioButtonStyle}"
-                             IsChecked="{x:Bind ViewModel.IsColor1Checked, Mode=TwoWay}"
-                             Checked="RadioColor_Toggled"
-                             Unchecked="RadioColor_Toggled"
-                             HorizontalContentAlignment="Stretch"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="12,0,0,0"
-                             Grid.Column="1">
-                    <RadioButton.Background>
-                        <SolidColorBrush Color="{x:Bind ViewModel.Color1, Mode=OneWay}" />
-                    </RadioButton.Background>
-                </RadioButton>
-
-                <RadioButton x:Name="RadioColor2"
-                             Style="{StaticResource AccentRadioButtonStyle}"
-                             IsChecked="{x:Bind ViewModel.IsColor2Checked, Mode=TwoWay}"
-                             Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2), Mode=OneWay}"
-                             Checked="RadioColor_Toggled"
-                             Unchecked="RadioColor_Toggled"
-                             HorizontalContentAlignment="Stretch"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="12,0,0,0"
-                             Grid.Column="2">
-                    <RadioButton.Background>
-                        <SolidColorBrush Color="{x:Bind ViewModel.Color2, Mode=OneWay}" />
-                    </RadioButton.Background>
-                </RadioButton>
-
-                <RadioButton x:Name="RadioColor3"
-                             Style="{StaticResource AccentRadioButtonStyle}"
-                             IsChecked="{x:Bind ViewModel.IsColor3Checked, Mode=TwoWay}"
-                             Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color3), Mode=OneWay}"
-                             Checked="RadioColor_Toggled"
-                             Unchecked="RadioColor_Toggled"
-                             HorizontalContentAlignment="Stretch"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="12,0,0,0"
-                             Grid.Column="3">
-                    <RadioButton.Background>
-                        <SolidColorBrush Color="{x:Bind ViewModel.Color3, Mode=OneWay}" />
-                    </RadioButton.Background>
-                </RadioButton>
-
-                <RadioButton x:Name="RadioColor4"
-                             Style="{StaticResource AccentRadioButtonStyle}"
-                             IsChecked="{x:Bind ViewModel.IsColor4Checked, Mode=TwoWay}"
-                             Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color4), Mode=OneWay}"
-                             Checked="RadioColor_Toggled"
-                             Unchecked="RadioColor_Toggled"
-                             HorizontalContentAlignment="Stretch"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="12,0,0,0"
-                             Grid.Column="4">
-                    <RadioButton.Background>
-                        <SolidColorBrush Color="{x:Bind ViewModel.Color4, Mode=OneWay}" />
-                    </RadioButton.Background>
-                </RadioButton>
-
-                <controls:GlyphButton Click="RemoveColor_Click"
-                                      Glyph="&#xE711;"
-                                      Visibility="{x:Bind ConvertColor2Visibility(ViewModel.Color2, ViewModel.Color3, ViewModel.Color4), Mode=OneWay}"
-                                      Margin="0,0,-18,0"
-                                      Grid.Column="4" />
-
-                <controls:AnimatedGlyphButton x:Name="AddRemoveColor"
-                                              Click="AddRemoveColor_Click"
-                                              Glyph="{x:Bind ConvertColor2Glyph(ViewModel.Color4), Mode=OneWay}"
-                                              Margin="8,0,0,0"
-                                              Grid.Column="5" />
-
-                <controls:ColorPicker x:Name="PickerColor"
-                                      ColorChanged="PickerColor_ColorChanged"
-                                      HorizontalAlignment="Stretch"
-                                      Grid.Row="1"
-                                      Grid.ColumnSpan="6" />
-            </Grid>
+            <controls:ColorsPicker x:Name="ColorPanel"
+                                   ColorsChanged="PickerColor_ColorsChanged"
+                                   Background="{ThemeResource PopupAcrylicBackground}"
+                                   Margin="0,0,0,-88"
+                                   Padding="0,0,0,88"
+                                   CornerRadius="0,0,8,8"
+                                   Height="308"
+                                   Grid.Row="6" />
 
             <Grid x:Name="PatternPanel"
                   Background="{ThemeResource PopupAcrylicBackground}"
@@ -899,14 +862,15 @@
 
         </Grid>
 
-        <messages:MessageService Content="{CustomResource Cancel}"
+        <messages:MessageService x:Name="CloseButton"
+                                 Content="{CustomResource Cancel}"
                                  Click="Cancel_Click"
                                  Foreground="#FFFFFF"
                                  FontSize="12"
                                  HorizontalAlignment="Right"
                                  HorizontalContentAlignment="Center"
                                  VerticalAlignment="Top"
-                                 Margin="24,-12,16,0"
+                                 Margin="24,12,12,0"
                                  Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>
