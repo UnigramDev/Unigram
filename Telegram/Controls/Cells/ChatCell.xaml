@@ -233,6 +233,7 @@
                                                          IsTextSelectionEnabled="False"
                                                          TextTrimming="CharacterEllipsis"
                                                          TextWrapping="Wrap"
+                                                         TextAlignment="Left"
                                                          VerticalAlignment="Top"
                                                          AutoFontSize="False"
                                                          MaxLines="1">

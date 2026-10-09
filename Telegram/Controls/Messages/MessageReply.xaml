@@ -175,6 +175,7 @@
                                                      IsTextSelectionEnabled="False"
                                                      TextTrimming="CharacterEllipsis"
                                                      TextWrapping="Wrap"
+                                                     TextAlignment="Left"
                                                      Foreground="{TemplateBinding Foreground}"
                                                      IconForeground="{TemplateBinding SubtleBrush}"
                                                      FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"

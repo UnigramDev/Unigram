@@ -134,6 +134,7 @@
                                              Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
                                              TextTrimming="CharacterEllipsis"
                                              TextWrapping="Wrap"
+                                             TextAlignment="Left"
                                              AutoFontSize="False">
                     <Paragraph>
                         <Run x:Name="ServiceLabel1"
@@ -149,6 +150,7 @@
                                              Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
                                              TextTrimming="CharacterEllipsis"
                                              TextWrapping="Wrap"
+                                             TextAlignment="Left"
                                              AutoFontSize="False">
                     <Paragraph>
                         <Run x:Name="ServiceLabel2"
