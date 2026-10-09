@@ -15,7 +15,7 @@
               BorderBrush="{ThemeResource SettingsItemBorderBrush}">
             <chats:ChatBackgroundControl x:Name="BackgroundControl"
                                          CornerRadius="4" />
-            <StackPanel Padding="0,10">
+            <StackPanel Padding="0,4,0,12">
                 <messages:MessageBubble x:Name="Message1"
                                         HorizontalAlignment="Left"
                                         Margin="8,0,12,0" />

@@ -3758,7 +3758,7 @@ namespace Telegram.Controls.Messages
 
             if (margin)
             {
-                Margin = new Thickness(outgoing ? 50 : 12, first ? 2 : 1, outgoing ? 12 : 50, last ? 2 : 1);
+                Margin = new Thickness(outgoing ? 50 : 12, first ? 8 : 2, outgoing ? 12 : 50, 0);
             }
 
             Message.SetFontSize(AppSettings.Appearance.MessageFontSize);
