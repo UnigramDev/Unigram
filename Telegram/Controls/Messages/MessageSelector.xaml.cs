@@ -223,7 +223,7 @@ namespace Telegram.Controls.Messages
                 {
                     Icon.VerticalAlignment = VerticalAlignment.Bottom;
                     Icon.HorizontalAlignment = HorizontalAlignment.Left;
-                    Icon.Margin = new Thickness(28, 0, 0, 0);
+                    Icon.Margin = new Thickness(38, 0, 0, 4);
                 }
 
                 Grid.SetColumn(Icon, 1);
