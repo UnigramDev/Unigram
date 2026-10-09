@@ -891,6 +891,8 @@ namespace Telegram.Controls.Messages
                 quote,
                 manual,
                 white);
+
+            UpdateThumbnail(message, audio.Audio.AlbumCoverThumbnail, audio.Audio.AlbumCoverMinithumbnail);
         }
 
         private void SetPollTemplate(MessageViewModel message, MessageSender sender, MessagePoll poll, string pollOptionId, string title, bool outgoing, bool white)
