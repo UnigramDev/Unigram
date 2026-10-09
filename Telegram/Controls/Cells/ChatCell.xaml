@@ -312,7 +312,7 @@
                                                    Grid.Column="2" />
                             <Button x:Name="BotOpen"
                                     Content="{CustomResource BotOpen}"
-                                    Style="{StaticResource SmallPillButtonStyle}"
+                                    Style="{StaticResource BadgeControlButtonStyle}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Margin="4,0,0,0"
