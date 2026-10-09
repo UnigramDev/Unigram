@@ -851,6 +851,8 @@ namespace Telegram.Views
 
             this.BeginOnUIThread(() =>
             {
+                var oldVisible = _activeCallVisible || _playbackVisible;
+
                 var call = ViewModel.VoipService.ActiveCall;
                 if (call != null)
                 {
@@ -869,6 +871,15 @@ namespace Telegram.Views
                     CallBanner?.Update(null, null);
 
                     _activeCallVisible = false;
+                }
+
+                var newVisible = _activeCallVisible || _playbackVisible;
+                if (newVisible && oldVisible && !_activeCallVisible)
+                {
+                    OnBannerCollapsed(null, null);
+                }
+                else
+                {
                     MasterDetail.ShowHideBanner(_activeCallVisible || _playbackVisible);
                 }
             });
