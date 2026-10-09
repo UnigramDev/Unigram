@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Updates;
@@ -167,7 +168,17 @@ namespace Telegram.ViewModels.Settings
                 // Before the app's own passcode, so that a vault that cannot be rewrapped stops
                 // the change while everything still agrees. The other order leaves the wallet
                 // asking for a passcode that no longer exists.
-                await guard.RewrapAsync(NavigationService, passcode);
+                try
+                {
+                    await guard.RewrapAsync(passcode);
+                }
+                catch (Exception ex)
+                {
+                    // Nothing was committed, so the old passcode still opens everything.
+                    Logger.Error("wallet vaults could not be rewrapped: " + ex.Message);
+                    NavigationService.ShowToast(Strings.ErrorOccurred, ToastPopupIcon.Error);
+                    return;
+                }
 
                 _passcodeService.Set(passcode, simple, timeout);
 

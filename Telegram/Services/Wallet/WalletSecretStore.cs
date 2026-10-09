@@ -104,7 +104,7 @@ namespace Telegram.Services.Wallet
                 var file = FileFor(key);
                 var temporary = file + ".tmp";
 
-                File.WriteAllBytes(temporary, stored);
+                WalletVault.WriteDurably(temporary, stored);
                 Replace(temporary, file);
             }
             catch (WalletVaultException ex)

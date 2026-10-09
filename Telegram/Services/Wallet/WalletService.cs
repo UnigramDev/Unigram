@@ -234,7 +234,7 @@ namespace Telegram.Services.Wallet
             // keys: reading another account's secret is the one mistake with no recovery.
             _suffix = _clientService.Options.TestMode ? "_test" : string.Empty;
 
-            Vault = new WalletVault(_path, _suffix)
+            Vault = new WalletVault(_path, _clientService.SessionId.ToString(), _suffix)
             {
                 // The passcode is one setting for the whole app rather than one per account, which
                 // is why it is the lifetime's and not this session's.
@@ -292,7 +292,7 @@ namespace Telegram.Services.Wallet
         /// on each other. Resolving the vault takes the mutex too, so on a lease not yet inflated
         /// the mistake hangs every time rather than occasionally.
         /// </remarks>
-        private static async Task EnsureLeaseAsync(WalletVault.WalletVaultLease lease)
+        private async Task EnsureLeaseAsync(WalletVault.WalletVaultLease lease)
         {
             try
             {
@@ -302,6 +302,29 @@ namespace Telegram.Services.Wallet
             {
                 throw new WalletAccessDeniedException();
             }
+            catch (WalletVaultException ex) when (ex.Failure == WalletVaultFailure.Unenrolled)
+            {
+                // This operation still fails, but the next one binds again rather than meeting the
+                // same dead key forever.
+                await RecoverVaultAsync();
+                throw;
+            }
+        }
+
+        public async Task<bool> RecoverVaultAsync()
+        {
+            var vault = Vault;
+            if (vault == null || await vault.IsUsableAsync())
+            {
+                return false;
+            }
+
+            Logger.Error("wallet vault can no longer be opened; dropping this device's copy");
+
+            // The local copy is never the only one - the cloud backup or the written-down phrase
+            // is - so giving it up is how the wallet gets back to a state it can bind from.
+            await ForgetAsync(true);
+            return true;
         }
 
         /// <summary>
@@ -2304,38 +2327,55 @@ namespace Telegram.Services.Wallet
             await ForgetAsync();
         }
 
-        public async Task ForgetAsync()
+        public Task ForgetAsync()
+        {
+            return ForgetAsync(false);
+        }
+
+        private async Task ForgetAsync(bool vaultLost)
         {
             await _mutex.WaitAsync();
             try
             {
                 EnsureStores();
 
-                // Before the descriptor check, because both outlive the binding they were made
-                // for: a bind cancelled after the vault was enrolled leaves one behind, and it
-                // would go on asking for Hello on a device that holds nothing.
-                //
-                // The vault exists to encrypt this device's wallet secrets, and after this there
-                // are none. Deleting the secrets below does not read it, so the order is safe.
+                if (!_archiveLoaded)
+                {
+                    _archiveLoaded = true;
+                    LoadArchive();
+                }
+
                 _rotation = null;
                 DeleteRotation();
-                Vault?.Delete();
 
                 var descriptor = _descriptor;
+                if (descriptor != null)
+                {
+                    await DetachAsync();
+                    await _lifecycle.DeleteWallet(descriptor);
+
+                    // Only after the secret is gone, so a failure above leaves a wallet that can
+                    // still be opened rather than an orphaned secret with nothing pointing at it.
+                    DeleteDescriptor();
+
+                    _descriptor = null;
+                    _boundKey = null;
+                }
+
+                // Whether or not there was a descriptor: a bind cancelled after the vault was
+                // enrolled leaves one behind, and it would go on asking for Hello on a device that
+                // holds nothing. Kept while the archive has entries, whose phrases are encrypted
+                // under it and are the only way to the funds left on those wallets - unless it can
+                // no longer be opened, in which case nothing it encrypts is coming back.
+                if (vaultLost || _archive.Count == 0)
+                {
+                    Vault?.Delete();
+                }
+
                 if (descriptor == null)
                 {
                     return;
                 }
-
-                await DetachAsync();
-                await _lifecycle.DeleteWallet(descriptor);
-
-                // Only after the secret is gone, so a failure above leaves a wallet that can still
-                // be opened rather than an orphaned secret with nothing pointing at it.
-                DeleteDescriptor();
-
-                _descriptor = null;
-                _boundKey = null;
 
                 // Back to watching it. The wallet is still the account's, and everything but signing
                 // still works.

@@ -90,11 +90,33 @@ namespace Telegram.Services.Wallet
         /// rewrapped stops the change while everything still agrees, where the other order would
         /// leave the wallet asking for a passcode that no longer exists.
         /// </remarks>
-        public async Task RewrapAsync(INavigationService navigation, string passcode)
+        public async Task RewrapAsync(string passcode)
         {
-            foreach (var held in _held)
+            var staged = new List<(WalletVault Vault, string Path)>(_held.Count);
+
+            // Every vault written aside first, and only then moved into place: a failure part way
+            // through would otherwise leave some on the new passcode and the rest on the old, with
+            // the app's own passcode unchanged - a wallet asking for a code nothing accepts.
+            try
             {
-                await held.Vault.ChangeAsync(navigation, held.Lease.Key, WalletVaultMethod.Passcode, passcode);
+                foreach (var held in _held)
+                {
+                    staged.Add((held.Vault, await held.Vault.StagePasscodeAsync(held.Lease.Key, passcode)));
+                }
+            }
+            catch
+            {
+                foreach (var item in staged)
+                {
+                    WalletVault.DiscardStaged(item.Path);
+                }
+
+                throw;
+            }
+
+            foreach (var item in staged)
+            {
+                item.Vault.CommitStaged(item.Path);
             }
         }
 

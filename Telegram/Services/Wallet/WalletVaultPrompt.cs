@@ -40,6 +40,8 @@ namespace Telegram.Services.Wallet
             return navigation.Dispatcher.DispatchAsync(() => EnrollAsync(navigation, current, reason));
         }
 
+        public bool CanAskPasscode => _passcodeService.IsEnabled;
+
         public Task<string> RequestPasscodeAsync(INavigationService navigation, string reason)
         {
             return navigation.Dispatcher.DispatchAsync(() => ConfirmPasscodeAsync(navigation));

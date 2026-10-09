@@ -198,6 +198,11 @@ namespace Telegram.Common
         public static async Task<WalletBindOutcome> BindAsync(IClientService clientService, IWalletService wallet, INavigationService navigation, WalletVault.WalletVaultLease lease)
         {
             var state = await wallet.RestoreAsync();
+            if (await wallet.RecoverVaultAsync())
+            {
+                state = wallet.State;
+            }
+
             if (state.CanSign)
             {
                 return new WalletBindOutcome(true, null);

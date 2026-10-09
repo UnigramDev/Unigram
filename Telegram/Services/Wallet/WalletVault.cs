@@ -123,6 +123,12 @@ namespace Telegram.Services.Wallet
         Task<string> RequestPasscodeAsync(INavigationService navigation, string reason);
 
         /// <summary>
+        /// Whether the app has a passcode to ask for. The confirmation checks against the app's
+        /// own, so with none set a vault guarded by one can never be opened.
+        /// </summary>
+        bool CanAskPasscode { get; }
+
+        /// <summary>
         /// Windows Hello, inside the app's own popup.
         /// </summary>
         /// <remarks>
@@ -169,8 +175,9 @@ namespace Telegram.Services.Wallet
         // to be felt on the machines this runs on.
         private const int Iterations = 210_000;
 
-        // The name the TPM key is filed under. One per account suffix, so two accounts on one
-        // machine do not share a key.
+        // The name the TPM key is filed under, followed by the account and the suffix. Hello keys
+        // are per app rather than per account, so anything less would let one account's delete
+        // take every other account's key with it.
         private const string HelloKeyPrefix = "Telegram.Wallet.";
 
         // One lease at a time. See LeaseAsync.
@@ -185,11 +192,13 @@ namespace Telegram.Services.Wallet
         private DateTime _provenUntil;
 
         private readonly string _path;
+        private readonly string _account;
         private readonly string _suffix;
 
-        public WalletVault(string path, string suffix)
+        public WalletVault(string path, string account, string suffix)
         {
             _path = path;
+            _account = account;
             _suffix = suffix ?? string.Empty;
         }
 
@@ -391,7 +400,7 @@ namespace Telegram.Services.Wallet
 
         private string File => Path.Combine(_path, "vault" + _suffix + ".bin");
 
-        private string HelloKeyName => HelloKeyPrefix + _suffix;
+        private string HelloKeyName => HelloKeyPrefix + _account + _suffix;
 
         /// <summary>
         /// What the user would be asked for, without asking them.
@@ -412,6 +421,69 @@ namespace Telegram.Services.Wallet
         }
 
         public bool IsEnrolled => Method != null;
+
+        /// <summary>
+        /// Whether the vault can still be opened at all, asking nothing.
+        /// </summary>
+        /// <remarks>
+        /// Only definite answers count as no: a file that does not parse, DPAPI refusing it, or a
+        /// Hello key Windows no longer has. A locked file or a TPM in lockout may pass, and calling
+        /// either unusable would throw away this device's copy of the phrase.
+        /// </remarks>
+        public async Task<bool> IsUsableAsync()
+        {
+            WalletVaultMethod method;
+            byte[] wrapped;
+
+            try
+            {
+                if (!System.IO.File.Exists(File))
+                {
+                    return true;
+                }
+
+                if (!TryRead(out method, out _, out wrapped, out _))
+                {
+                    return false;
+                }
+            }
+            catch (WalletVaultException)
+            {
+                return false;
+            }
+            catch
+            {
+                return true;
+            }
+
+            try
+            {
+                await UnprotectAsync(wrapped);
+            }
+            catch (WalletVaultException)
+            {
+                return false;
+            }
+
+            if (method == WalletVaultMethod.Passcode)
+            {
+                return Prompt == null || Prompt.CanAskPasscode;
+            }
+            else if (method == WalletVaultMethod.Hello)
+            {
+                try
+                {
+                    var result = await KeyCredentialManager.OpenAsync(HelloKeyName);
+                    return result.Status != KeyCredentialStatus.NotFound;
+                }
+                catch
+                {
+                    return true;
+                }
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Opens the vault, asking for whatever the enrolled method requires.
@@ -517,6 +589,11 @@ namespace Telegram.Services.Wallet
             if (method == WalletVaultMethod.Hello)
             {
                 return await ThroughHelloAsync(navigation, reason, () => OpenAsync());
+            }
+
+            if (!Prompt.CanAskPasscode)
+            {
+                throw new WalletVaultException(WalletVaultFailure.Unenrolled, "no app passcode");
             }
 
             var passcode = await Prompt.RequestPasscodeAsync(navigation, reason);
@@ -697,6 +774,50 @@ namespace Telegram.Services.Wallet
 
         private async Task StoreAsync(byte[] key, WalletVaultMethod method, string passcode)
         {
+            // Written aside and moved into place: a half-written vault is a wallet that has to be
+            // bound again, and the move is what makes that impossible.
+            var temporary = File + ".tmp";
+
+            await WriteAsync(temporary, key, method, passcode);
+            Replace(temporary, File);
+        }
+
+        /// <summary>
+        /// Writes the key under a new passcode beside the vault, leaving the vault itself alone
+        /// until <see cref="CommitStaged"/>.
+        /// </summary>
+        /// <remarks>
+        /// For changing the app passcode, which reaches every account's vault: all of them are
+        /// staged before any is committed, so a failure part way leaves none on the new passcode
+        /// rather than some on each.
+        /// </remarks>
+        internal async Task<string> StagePasscodeAsync(byte[] key, string passcode)
+        {
+            var staged = File + ".staged";
+
+            await WriteAsync(staged, key, WalletVaultMethod.Passcode, passcode);
+            return staged;
+        }
+
+        internal void CommitStaged(string staged)
+        {
+            Replace(staged, File);
+        }
+
+        internal static void DiscardStaged(string staged)
+        {
+            try
+            {
+                System.IO.File.Delete(staged);
+            }
+            catch
+            {
+                // Never read: only a commit moves it into place.
+            }
+        }
+
+        private async Task WriteAsync(string path, byte[] key, WalletVaultMethod method, string passcode)
+        {
             CryptographicBuffer.CopyToByteArray(CryptographicBuffer.GenerateRandom(SaltLength), out var salt);
 
             var wrapped = method switch
@@ -722,12 +843,22 @@ namespace Telegram.Services.Wallet
 
             Directory.CreateDirectory(_path);
 
-            // Written aside and moved into place: a half-written vault is a wallet that has to be
-            // bound again, and the move is what makes that impossible.
-            var temporary = File + ".tmp";
+            WriteDurably(path, stream.ToArray());
+        }
 
-            System.IO.File.WriteAllBytes(temporary, stream.ToArray());
-            Replace(temporary, File);
+        /// <summary>
+        /// Writes and flushes to the disk, not only to the cache.
+        /// </summary>
+        /// <remarks>
+        /// The file is moved into place right after, and without the flush a power cut can commit
+        /// the move before the data - leaving the new name over zeros.
+        /// </remarks>
+        internal static void WriteDurably(string path, byte[] bytes)
+        {
+            using var file = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            file.Write(bytes, 0, bytes.Length);
+            file.Flush(true);
         }
 
         private bool TryRead(out WalletVaultMethod method, out byte[] salt, out byte[] wrapped, out int version)
@@ -745,14 +876,29 @@ namespace Telegram.Services.Wallet
             using var stream = System.IO.File.OpenRead(File);
             using var reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
 
-            if (reader.ReadUInt32() != Magic)
+            // A file that is there and does not read is damaged, not absent. Answering "not
+            // enrolled" would have the next lease enroll a new key over it and orphan every
+            // secret the old one encrypts; this way it goes through the recovery instead.
+            try
             {
-                return false;
+                if (reader.ReadUInt32() != Magic)
+                {
+                    throw new WalletVaultException(WalletVaultFailure.Unenrolled, "unrecognized vault");
+                }
+
+                method = (WalletVaultMethod)reader.ReadInt32();
+                salt = reader.ReadBytes(reader.ReadInt32());
+                wrapped = reader.ReadBytes(reader.ReadInt32());
+            }
+            catch (Exception ex) when (ex is EndOfStreamException or ArgumentOutOfRangeException)
+            {
+                throw new WalletVaultException(WalletVaultFailure.Unenrolled, "truncated vault");
             }
 
-            method = (WalletVaultMethod)reader.ReadInt32();
-            salt = reader.ReadBytes(reader.ReadInt32());
-            wrapped = reader.ReadBytes(reader.ReadInt32());
+            if (salt.Length != SaltLength || wrapped.Length == 0 || stream.Position != stream.Length)
+            {
+                throw new WalletVaultException(WalletVaultFailure.Unenrolled, "truncated vault");
+            }
 
             return true;
         }

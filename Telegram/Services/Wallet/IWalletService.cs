@@ -324,6 +324,13 @@ namespace Telegram.Services.Wallet
         Task ForgetAsync();
 
         /// <summary>
+        /// Drops this device's copy of the wallet when the vault guarding it can no longer be
+        /// opened - the Hello key reset, the file damaged - so the next bind can start over.
+        /// Answers whether it did. Asks the user nothing.
+        /// </summary>
+        Task<bool> RecoverVaultAsync();
+
+        /// <summary>
         /// Shows amounts in another currency from now on, and remembers it. The choice is the
         /// app's rather than the account's, so it follows the user across their sessions here.
         /// </summary>
