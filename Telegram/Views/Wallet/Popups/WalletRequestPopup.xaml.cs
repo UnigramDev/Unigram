@@ -195,7 +195,7 @@ namespace Telegram.Views.Wallet.Popups
         /// </remarks>
         private void UpdateFee(WalletState state)
         {
-            var grams = Formatter.TonBalance(_request.FeeNanograms).Join();
+            var grams = Formatter.GramExact(_request.FeeNanograms).Join();
 
             FeeLabel.Text = WalletHelper.TryToCurrency(_clientService, state, _request.FeeNanograms, out var converted)
                 ? string.Format(Strings.WalletFeeAmountWithCurrency, grams, Formatter.FormatAmountExact(converted, WalletHelper.CurrencyDecimals, state?.Currency ?? "USD"))

@@ -68,7 +68,7 @@ namespace Telegram.Controls.Cells.Revenue
         {
             // TDLib signs the amount rather than naming a direction: negative is outgoing.
             var sent = gramAmount < 0;
-            var amount = Formatter.TonBalance(Math.Abs(gramAmount));
+            var amount = Formatter.GramSummary(Math.Abs(gramAmount), true);
 
             AmountInteger.Text = (sent ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;

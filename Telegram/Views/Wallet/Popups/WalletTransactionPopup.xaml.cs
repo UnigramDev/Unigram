@@ -106,7 +106,7 @@ namespace Telegram.Views.Wallet.Popups
 
             if (amountValue != 0)
             {
-                var amount = Formatter.TonBalance(Math.Abs(amountValue));
+                var amount = Formatter.GramExact(Math.Abs(amountValue));
 
                 Amount.Text = (outgoing ? "-" : "+") + amount.Integer + amount.Fraction;
                 Converted.Text = Convert(state, Math.Abs(amountValue));
@@ -183,7 +183,7 @@ namespace Telegram.Views.Wallet.Popups
 
             // Under one TON the formatter shows every digit, so a fee of a few thousandths comes
             // out as itself rather than as a zero.
-            var fee = Formatter.TonBalance(fees);
+            var fee = Formatter.GramExact(fees);
 
             FeeGlyph.Text = Icons.Ton;
             FeeAmount.Text = string.Format(" {0}{1}", fee.Integer, fee.Fraction);

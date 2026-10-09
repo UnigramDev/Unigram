@@ -112,7 +112,7 @@ namespace Telegram.Controls
             CardBalanceIcon.Visibility = Visibility.Visible;
             CardBalanceText.Visibility = Visibility.Visible;
 
-            var amount = Formatter.TonBalance(nanograms);
+            var amount = Formatter.GramExact(nanograms);
 
             // Signed, because the card is the user's own wallet and this is money leaving it. The
             // minus is part of the number rather than a decoration on it.
@@ -181,7 +181,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var amount = Formatter.TonBalance(state.BalanceNanograms);
+            var amount = Formatter.GramSummary(state.BalanceNanograms);
             CardBalance.Text = amount.Integer;
             CardBalanceFraction.Text = amount.Fraction;
 

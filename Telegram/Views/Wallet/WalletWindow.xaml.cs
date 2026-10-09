@@ -337,7 +337,7 @@ namespace Telegram.Views.Wallet
             };
 
             TextBlockHelper.SetIsLink(block, true);
-            TextBlockHelper.SetMarkdown(block, string.Format(format, $"**{Icons.Ton} {Formatter.TonBalance(nanograms).Join()}**"));
+            TextBlockHelper.SetMarkdown(block, string.Format(format, $"**{Icons.Ton} {Formatter.GramSummary(nanograms).Join()}**"));
             return block;
         }
 

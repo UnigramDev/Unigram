@@ -691,7 +691,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             if (_inCurrency)
             {
-                Converted.Text = string.Format("{0} {1}", Formatter.TonBalance(nanograms).Join(), GramSuffix);
+                Converted.Text = string.Format("{0} {1}", Formatter.GramExact(nanograms).Join(), GramSuffix);
             }
             else if (WalletHelper.TryToCurrency(_clientService, State, nanograms, out var amount))
             {

@@ -213,7 +213,7 @@ namespace Telegram.Controls.Cells
 
             // TDLib signs the amount rather than naming a direction: negative is outgoing.
             var outgoing = value < 0;
-            var amount = Formatter.TonBalance(Math.Abs(value));
+            var amount = Formatter.GramSummary(Math.Abs(value), true);
 
             AmountInteger.Text = (outgoing ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;

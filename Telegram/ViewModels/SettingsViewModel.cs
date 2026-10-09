@@ -53,11 +53,11 @@ namespace Telegram.ViewModels
             : string.Empty;
 
         public string OwnedGramCount => ClientService.OwnedGramCount > 0
-            ? Formatter.TonBalance(ClientService.OwnedGramCount).Join()
+            ? Formatter.GramSummary(ClientService.OwnedGramCount).Join()
             : string.Empty;
 
         public string WalletGramCount => ClientService.TonWalletState?.GramAmount > 0
-            ? Formatter.TonBalance(ClientService.TonWalletState.GramAmount).Join()
+            ? Formatter.GramSummary(ClientService.TonWalletState.GramAmount).Join()
             : string.Empty;
 
         // Reading OwnedGramCount is what asks TDLib for the balance in the first place, and

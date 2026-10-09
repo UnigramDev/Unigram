@@ -37,34 +37,66 @@ namespace Telegram.Converters
 
         private static readonly BigInteger OneTon = BigInteger.Pow(10, TonDecimals);
 
-        // How far under one TON an amount is still spelled out. Nanotons go nine deep, but the
-        // last four are dust nobody reads, and every other wallet stops here.
-        private const int TonSubDecimals = 5;
-
         /// <summary>
-        /// A TON balance, in nanotons. Two decimals where there is a whole part, and
-        /// five where there is not: under one TON every digit that matters is in the
-        /// fraction, and a fee of 0.00027 rounds away to nothing at two. Trailing
-        /// zeros come off either way, so the extra precision only shows where it says
-        /// something.
-        ///
-        /// Five, unless five would be five zeros - then as deep as the first digit
-        /// that is not one. An amount too small to show is still not the same amount
-        /// as none.
+        /// A gram amount as a wallet summarises it - a balance, a row of history: two decimals,
+        /// truncated. Under a hundredth those would read as nothing, so there it is one significant
+        /// digit, rounded: 0.000444 is "0.0004".
         /// </summary>
-        public static (string Integer, string Fraction) TonBalance(BigInteger nanograms, int decimals = 2)
+        /// <param name="padWhole">
+        /// Whether a whole amount still shows ".00": a list row lines up with the rows around it, a
+        /// balance on its own does not need to.
+        /// </param>
+        public static (string Integer, string Fraction) GramSummary(BigInteger nanograms, bool padWhole = false)
         {
-            var fraction = BigInteger.Abs(nanograms);
+            var (integer, _) = SplitAmount(nanograms, TonDecimals, 0);
+            var separator = LocaleService.Current.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
-            if (fraction < OneTon && !fraction.IsZero)
+            var units = BigInteger.Abs(nanograms);
+            var rest = units % OneTon;
+
+            if (rest.IsZero && !padWhole)
             {
-                // Nine digits make one TON, so a value of n digits has its first significant one
-                // at the (9 - n + 1)-th decimal place.
-                var length = fraction.ToString(CultureInfo.InvariantCulture).Length;
-                decimals = Math.Max(TonSubDecimals, TonDecimals - length + 1);
+                return (integer, string.Empty);
             }
 
-            return SplitAmount(nanograms, TonDecimals, decimals);
+            var hundredth = OneTon / 100;
+            if (!units.IsZero && units < hundredth)
+            {
+                var position = 3;
+                var step = hundredth / 10;
+
+                while (units < step)
+                {
+                    position++;
+                    step /= 10;
+                }
+
+                var digit = (int)(units / step);
+                if ((units % step) * 2 >= step)
+                {
+                    digit++;
+                }
+
+                if (digit == 10)
+                {
+                    digit = 1;
+                    position--;
+                }
+
+                return (integer, separator + new string('0', position - 1) + (char)('0' + digit));
+            }
+
+            var cents = (int)(rest / hundredth);
+            return (integer, separator + cents.ToString("00", CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// A gram amount to the last nanogram that is not zero: what a fee, a transfer or a request
+        /// is exactly, where a rounded figure would be a different amount.
+        /// </summary>
+        public static (string Integer, string Fraction) GramExact(BigInteger nanograms)
+        {
+            return SplitAmount(nanograms, TonDecimals, TonDecimals);
         }
 
         /// <summary>
@@ -76,11 +108,11 @@ namespace Telegram.Converters
         }
 
         /// <summary>
-        /// An amount of grams with its unit, pluralised: "1 Gram", "2 Grams", "1.5 Grams".
+        /// An exact amount of grams with its unit, pluralised: "1 Gram", "2 Grams", "1.5 Grams".
         /// </summary>
-        public static string Grams(BigInteger nanograms, int decimals = 2, bool capital = false)
+        public static string Grams(BigInteger nanograms, bool capital = false)
         {
-            return Grams(TonBalance(nanograms, decimals), nanograms, capital);
+            return Grams(GramExact(nanograms), nanograms, capital);
         }
 
         /// <summary>

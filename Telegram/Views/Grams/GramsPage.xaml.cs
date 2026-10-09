@@ -51,7 +51,7 @@ namespace Telegram.Views.Grams
 
         private void UpdateOwnedGramCount(long gramAmount)
         {
-            (Balance.Text, BalanceFraction.Text) = Formatter.TonBalance(Math.Abs(gramAmount));
+            (Balance.Text, BalanceFraction.Text) = Formatter.GramSummary(Math.Abs(gramAmount));
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)

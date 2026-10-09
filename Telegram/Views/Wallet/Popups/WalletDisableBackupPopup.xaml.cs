@@ -162,7 +162,7 @@ namespace Telegram.Views.Wallet.Popups
 
             PhraseInfoLabel.Text = string.Format(
                 affordable ? Strings.WalletUpdateSecretPhraseInfoWithFee : Strings.WalletUpdateSecretPhraseInsufficientFunds,
-                Formatter.TonBalance(fee).Join(),
+                Formatter.GramExact(fee).Join(),
                 Fiat(fee));
 
             // Nothing can be signed that cannot be paid for, and letting them press Disable would

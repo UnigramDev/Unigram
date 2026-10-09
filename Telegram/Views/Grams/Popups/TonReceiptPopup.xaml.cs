@@ -67,7 +67,7 @@ namespace Telegram.Views.Grams.Popups
             Identifier.Text = transaction.Id;
             Date.Content = Formatter.DateAt(transaction.Date);
 
-            var (integer, fraction) = Formatter.TonBalance(transaction.GramAmount);
+            var (integer, fraction) = Formatter.GramExact(transaction.GramAmount);
 
             Symbol.Text = transaction.GramAmount < 0 ? string.Empty : "+";
             Amount.Text = integer;
@@ -170,7 +170,7 @@ namespace Telegram.Views.Grams.Popups
                 return;
             }
 
-            SetRow(FullPrice, Formatter.TonBalance(Math.Abs(amount) + Math.Abs(commission)).Join());
+            SetRow(FullPrice, Formatter.GramExact(Math.Abs(amount) + Math.Abs(commission)).Join());
         }
 
         private void Purchase_Click(object sender, RoutedEventArgs e)

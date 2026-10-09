@@ -53,7 +53,7 @@ namespace Telegram.Services.Wallet
         public string ShortAddress => WalletRequest.Shorten(Address);
 
         /// <summary>Signed, because which way it went is the point of the row.</summary>
-        public string AmountText => (IsDeposit ? "+" : "\u2212") + Formatter.TonBalance(Nanograms).Join();
+        public string AmountText => (IsDeposit ? "+" : "\u2212") + Formatter.GramExact(Nanograms).Join();
     }
 
     /// <summary>

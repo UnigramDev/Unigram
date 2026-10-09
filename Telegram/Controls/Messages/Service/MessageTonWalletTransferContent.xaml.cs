@@ -62,7 +62,7 @@ namespace Telegram.Controls.Messages.Service
             UpdateSending(message);
 
             var sent = message.IsOutgoing;
-            var amount = Formatter.TonBalance(Math.Abs(transfer.Amount));
+            var amount = Formatter.GramExact(Math.Abs(transfer.Amount));
 
             AmountInteger.Text = (sent ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;
