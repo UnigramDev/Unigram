@@ -475,13 +475,28 @@ namespace Telegram.Views.Wallet
             if (recipient.EndsWith(".ton", StringComparison.OrdinalIgnoreCase))
             {
                 domain = recipient;
-                recipient = await _wallet.ResolveDnsAsync(recipient);
+
+                try
+                {
+                    recipient = await _wallet.ResolveDnsAsync(recipient);
+                }
+                catch (Exception ex)
+                {
+                    // An unknown name is one of the ways this fails, so it is said the same way.
+                    Logger.Error("wallet name could not be resolved: " + ex.Message);
+                    recipient = null;
+                }
 
                 if (string.IsNullOrEmpty(recipient))
                 {
                     _navigationService.ShowToast(string.Format(Strings.WalletSearchNoResults, domain), ToastPopupIcon.Error);
                     return;
                 }
+            }
+            else if (!WalletHelper.IsValidAddress(recipient))
+            {
+                _navigationService.ShowToast(Strings.WalletInvalidAddress, ToastPopupIcon.Error);
+                return;
             }
 
             // The name is kept, not just what it resolved to: it is what the user typed and what

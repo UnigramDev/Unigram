@@ -14145,6 +14145,8 @@
     <string name="WalletReview">Review</string>
     <string name="WalletPrivateCommentUnavailable">This recipient can\'t receive private comments. Make the comment public or remove it.</string>
     <string name="WalletTransferFailed">Could not send the transfer.</string>
+    <string name="WalletInvalidAddress">Invalid address</string>
+    <string name="WalletTransferInProgress">Another transfer is still in progress. Please wait for it to complete.</string>
     <string name="WalletSetupFailed">Could not set up your wallet on this device. Try again later.</string>
     <string name="WalletBackupEnableFailed">Could not enable the backup.</string>
     <string name="WalletBackupDisableFailed">Could not disable the backup.</string>

@@ -1012,7 +1012,7 @@ namespace Telegram.Controls
                     _typed.Append(Zero);
                 }
             }
-            else if (char.IsDigit(character) || character == Separator)
+            else if (character is >= '0' and <= '9' || character == Separator)
             {
                 string candidate;
 
@@ -1151,7 +1151,9 @@ namespace Telegram.Controls
 
             foreach (var character in trimmed)
             {
-                if (char.IsDigit(character))
+                // ASCII only: char.IsDigit takes every script's digits, which BigInteger.Parse
+                // then refuses.
+                if (character is >= '0' and <= '9')
                 {
                     builder.Append(character);
                 }

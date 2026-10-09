@@ -67,16 +67,18 @@ namespace Telegram.Controls.Messages.Service
             AmountInteger.Text = (sent ? "-" : "+") + amount.Integer;
             AmountFraction.Text = amount.Fraction;
 
+            // As it is: base64url is case-sensitive, so a changed case is another address.
+            var address = WalletHelper.DisplayAddress(transfer.PeerAddress) ?? string.Empty;
             var builder = new StringBuilder();
 
-            for (int i = 0; i < transfer.PeerAddress.Length; i += 4)
+            for (int i = 0; i < address.Length; i += 4)
             {
                 if (i > 0)
                 {
                     builder.Append(i == 24 ? "\n" : " ");
                 }
 
-                builder.Append(transfer.PeerAddress.Substring(i, 4).ToUpperInvariant());
+                builder.Append(address, i, Math.Min(4, address.Length - i));
             }
 
             Address.Text = builder.ToString();

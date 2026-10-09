@@ -252,13 +252,12 @@ namespace Telegram.Views.Wallet.Popups
                 UpdateFeeAsync();
             }
 
-            _canEncryptComment = HasPublicKey(wallet?.PublicKey);
+            // A failed lookup says nothing about the recipient, so it stays unknown and the engine
+            // decides at sending time. Either way the user's choice is left as they made it: a
+            // private comment that cannot be encrypted is refused with CommentUnavailable, never
+            // quietly sent in the clear.
+            _canEncryptComment = response is Error ? null : HasPublicKey(wallet?.PublicKey);
             _publicKey = _canEncryptComment == true ? wallet.PublicKey : null;
-
-            if (_canEncryptComment == false)
-            {
-                _isCommentPublic = true;
-            }
 
             UpdateRecipientPending(false);
             return response;
@@ -341,7 +340,7 @@ namespace Telegram.Views.Wallet.Popups
         /// </remarks>
         private void UpdateAddress(string address)
         {
-            address ??= string.Empty;
+            address = WalletHelper.DisplayAddress(address) ?? string.Empty;
 
             var groups = new[]
             {
@@ -502,7 +501,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             foreach (var character in value)
             {
-                if (!char.IsDigit(character))
+                if (character is < '0' or > '9')
                 {
                     return false;
                 }
@@ -618,13 +617,8 @@ namespace Telegram.Views.Wallet.Popups
             var nanograms = Nanograms();
 
             UpdateConverted(nanograms);
+            UpdateValidation(nanograms);
 
-            var message = Validate(nanograms);
-
-            Validation.Text = message ?? string.Empty;
-            Validation.Visibility = Visibility.Visible;
-
-            IsPrimaryButtonEnabled = message == null && nanograms > BigInteger.Zero;
             PrimaryButtonContent = nanograms > BigInteger.Zero
                 ? string.Format(Strings.WalletSendAmount, Formatter.Grams(nanograms))
                 : Strings.WalletSendGrams;
@@ -657,6 +651,16 @@ namespace Telegram.Views.Wallet.Popups
             }
         }
 
+        private void UpdateValidation(BigInteger nanograms)
+        {
+            var message = Validate(nanograms);
+
+            Validation.Text = message ?? string.Empty;
+            Validation.Visibility = Visibility.Visible;
+
+            IsPrimaryButtonEnabled = message == null && nanograms > BigInteger.Zero;
+        }
+
         /// <summary>
         /// What is wrong with the amount, or null when nothing is.
         /// </summary>
@@ -678,6 +682,14 @@ namespace Telegram.Views.Wallet.Popups
             }
 
             if (nanograms > State.BalanceNanograms)
+            {
+                return Strings.WalletInsufficientFunds;
+            }
+
+            // The fee comes out of the balance too, unless Telegram pays it. Sending all of it
+            // would fail on chain and still be charged for the attempt. Checked once a fee is
+            // known for this recipient; it does not scale with the amount.
+            if (_gasless is not { LeftCount: > 0 } && _feePriced is { } priced && priced.Address == _address && nanograms + _feeValue > State.BalanceNanograms)
             {
                 return Strings.WalletInsufficientFunds;
             }
@@ -946,7 +958,7 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            var key = (Address: _address, Nanograms: nanograms, Comment: _comment);
+            var key = (Address: _address, Nanograms: nanograms, Comment: _comment, IsCommentPublic: _isCommentPublic);
 
             if (_feePriced is { } priced && priced == key)
             {
@@ -969,7 +981,7 @@ namespace Telegram.Views.Wallet.Popups
                 return;
             }
 
-            var fee = await _wallet.EstimateFeeAsync(key.Address, key.Nanograms, key.Comment);
+            var fee = await _wallet.EstimateFeeAsync(key.Address, key.Nanograms, key.Comment, key.IsCommentPublic);
 
             if (generation != _feeGeneration)
             {
@@ -984,6 +996,12 @@ namespace Telegram.Views.Wallet.Popups
                 _feeValue = value;
 
                 ShowFee(value);
+
+                // The fee may be what puts the amount over the balance.
+                if (!_sending)
+                {
+                    UpdateValidation(Nanograms());
+                }
             }
         }
 
@@ -999,8 +1017,8 @@ namespace Telegram.Views.Wallet.Popups
 
         // What the fee on screen is the fee for, and what is being asked about right now. Null
         // means nothing has been priced, or nothing is in flight.
-        private (string Address, BigInteger Nanograms, string Comment)? _feePriced;
-        private (string Address, BigInteger Nanograms, string Comment)? _feePending;
+        private (string Address, BigInteger Nanograms, string Comment, bool IsCommentPublic)? _feePriced;
+        private (string Address, BigInteger Nanograms, string Comment, bool IsCommentPublic)? _feePending;
 
         private BigInteger _feeValue;
 
@@ -1093,7 +1111,21 @@ namespace Telegram.Views.Wallet.Popups
             IsPrimaryButtonPending = true;
 
             var recipient = await ResolveRecipientAsync();
-            if (recipient != null || string.IsNullOrEmpty(_address))
+            if (recipient == null && !string.IsNullOrEmpty(_address) && !WalletHelper.IsValidAddress(_address))
+            {
+                // Typed or from a link, and not an address at all: said as such, rather than as a
+                // transfer that failed.
+                _sending = false;
+
+                IsPrimaryButtonPending = false;
+                args.Cancel = true;
+
+                deferral.Complete();
+
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Strings.WalletInvalidAddress, Strings.WalletSendGrams, Strings.OK);
+                return;
+            }
+            else if (recipient != null || string.IsNullOrEmpty(_address))
             {
                 // Nothing left, and nothing spent: the amount is still on screen for a second try,
                 // so the popup stays.
@@ -1160,6 +1192,21 @@ namespace Telegram.Views.Wallet.Popups
                 // Completing the deferral is what closes the popup: the button click it belongs to
                 // has been waiting for this. What becomes of the transfer is the history's to show.
                 deferral.Complete();
+                return;
+            }
+            catch (WalletTransferInProgressException)
+            {
+                flight.Cancel();
+
+                // Nothing was signed, so the popup stays armed with the amount in it.
+                _sending = false;
+
+                IsPrimaryButtonPending = false;
+                args.Cancel = true;
+
+                deferral.Complete();
+
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Strings.WalletTransferInProgress, Strings.WalletSendGrams, Strings.OK);
                 return;
             }
             catch (WalletAccessDeniedException)

@@ -166,7 +166,7 @@ namespace Telegram.Services.Wallet
         /// An emulation against a recent block rather than a rule of thumb, so it costs a round
         /// trip and is worth asking for only once the amount has settled.
         /// </remarks>
-        Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment);
+        Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment, bool isCommentPublic);
 
         /// <summary>
         /// What the network would charge to replace this wallet's signing key, in nanograms, or

@@ -22,6 +22,81 @@ namespace Telegram.Common
 {
     public static class WalletHelper
     {
+        public static bool IsValidAddress(string address)
+        {
+            try
+            {
+                return !string.IsNullOrEmpty(address) && WalletEngine.WalletEngineMethods.IsValidTonAddress(address);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// An address in the 48-character form the send card has room for: a raw one is written
+        /// as the bounceable friendly address it stands for, anything else is returned as it is.
+        /// </summary>
+        /// <remarks>
+        /// The raw form is 66 characters, and cut to fit it would show the user an address that is
+        /// not the one being paid. Bounceable, because that is how a raw address is sent.
+        /// </remarks>
+        public static string DisplayAddress(string address)
+        {
+            try
+            {
+                // Friendly already, which is nearly always: the parse is a call into the engine,
+                // and a chat bubble asks on every render.
+                if (string.IsNullOrEmpty(address) || address.Length == 48 || WalletEngine.WalletEngineMethods.ParseTonAddress(address) is not { Format: WalletEngine.TonAddressFormat.Raw } info)
+                {
+                    return address;
+                }
+
+                var colon = info.Raw.IndexOf(':');
+                var hash = info.Raw.Substring(colon + 1);
+
+                var bytes = new byte[36];
+                bytes[0] = 0x11;
+                bytes[1] = unchecked((byte)info.Workchain);
+
+                for (int i = 0; i < 32; i++)
+                {
+                    bytes[2 + i] = Convert.ToByte(hash.Substring(i * 2, 2), 16);
+                }
+
+                var crc = Crc16(bytes, 34);
+                bytes[34] = (byte)(crc >> 8);
+                bytes[35] = (byte)(crc & 0xFF);
+
+                return Convert.ToBase64String(bytes).Replace('+', '-').Replace('/', '_');
+            }
+            catch
+            {
+                return address;
+            }
+        }
+
+        // CRC-16/XMODEM, which is what a friendly TON address ends with.
+        private static ushort Crc16(byte[] data, int length)
+        {
+            int crc = 0;
+
+            for (int i = 0; i < length; i++)
+            {
+                crc ^= data[i] << 8;
+
+                for (int bit = 0; bit < 8; bit++)
+                {
+                    crc = ((crc & 0x8000) != 0
+                        ? (crc << 1) ^ 0x1021
+                        : crc << 1) & 0xFFFF;
+                }
+            }
+
+            return (ushort)crc;
+        }
+
         public static bool TryToCurrency(IClientService clientService, WalletState state, BigInteger nanograms, out BigInteger units, out string currency)
         {
             units = BigInteger.Zero;

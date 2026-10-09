@@ -375,7 +375,7 @@ namespace Telegram.Views.Wallet.Popups
 
             // What this transfer would have cost had Telegram not paid for it. Emulated, so nothing
             // is signed and nothing asks for the key.
-            _fee ??= _wallet.EstimateFeeAsync(_transaction.PeerAddress, BigInteger.Abs(transfer.Amount), transfer.Comment);
+            _fee ??= _wallet.EstimateFeeAsync(_transaction.PeerAddress, BigInteger.Abs(transfer.Amount), transfer.Comment, !transfer.IsCommentEncrypted);
 
             var fee = await _fee;
             if (fee == null)

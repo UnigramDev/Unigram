@@ -930,6 +930,11 @@ namespace Telegram.Services.Wallet
                 throw new WalletRotationPendingException();
             }
 
+            if (HasUnsettledTransfer())
+            {
+                throw new WalletTransferInProgressException();
+            }
+
             SendMessageBody body;
 
             // What the account and the history are told the comment is: the text itself, or for an
@@ -982,11 +987,13 @@ namespace Telegram.Services.Wallet
                 }
             }
 
+            // A wallet the account names a user for may not be deployed yet, and a bounceable
+            // message to an undeployed one comes back instead of arriving.
             var message = new EngineSendMessage(
                 recipient,
                 new SendAmount.Exact(amountNanograms.ToString()),
                 body,
-                Bounceable(recipient),
+                peerUserId == 0 && Bounceable(recipient),
                 null);
 
             var intent = new SendIntent(new SendExpiration.EngineDefault(), new[] { message });
@@ -1088,15 +1095,25 @@ namespace Telegram.Services.Wallet
                         RebuildActivity();
                         EnsureResolver();
                     }
-                    else
+                    else if (response is Error error && error.Code >= 400 && error.Code < 500)
                     {
-                        var error = response as Error;
-                        Logger.Error(string.Format("wallet transfer refused: {0} {1}", error?.Code, error?.Message));
+                        Logger.Error(string.Format("wallet transfer refused: {0} {1}", error.Code, error.Message));
 
                         items[index] = With(pending, new TonWalletTransactionStateFailed(), pending.Type);
                         _pending = items;
 
                         RebuildActivity();
+                    }
+                    else
+                    {
+                        // A timeout or a server fault says nothing about whether the message was
+                        // broadcast, so the row stays pending until the chain or its expiry says.
+                        // Calling it failed would invite sending the same money again.
+                        var unknown = response as Error;
+                        Logger.Error(string.Format("wallet transfer outcome unknown: {0} {1}", unknown?.Code, unknown?.Message));
+
+                        EnsureResolver();
+                        return;
                     }
 
                     SetState(Project());
@@ -1114,6 +1131,11 @@ namespace Telegram.Services.Wallet
             }
         }
 
+        private bool HasUnsettledTransfer()
+        {
+            return _pending.Exists(x => x.State is TonWalletTransactionStatePending);
+        }
+
         private static TonWalletTransaction With(TonWalletTransaction transaction, TonWalletTransactionState state, TonWalletTransactionType type)
         {
             return new TonWalletTransaction(
@@ -1127,7 +1149,7 @@ namespace Telegram.Services.Wallet
                 type);
         }
 
-        public async Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment)
+        public async Task<BigInteger?> EstimateFeeAsync(string recipient, BigInteger amountNanograms, string comment, bool isCommentPublic)
         {
             var client = _client;
             if (client == null || string.IsNullOrEmpty(recipient) || amountNanograms <= BigInteger.Zero)
@@ -1137,13 +1159,12 @@ namespace Telegram.Services.Wallet
 
             try
             {
-                // The comment goes in as plain text even when the transfer will encrypt it.
-                // Encrypting one is a signing operation - the engine reads the recipient's key and
-                // asks for this wallet's phrase - and a user-presence prompt per keystroke is not a
-                // price worth paying for the few forward-fee nanograms the larger cell would add.
+                // A private comment is priced by a stand-in of the size it will encrypt to, never
+                // by its text: the emulation runs on Toncenter. Encrypting the real one is a
+                // signing operation, and a user-presence prompt per keystroke is not worth it.
                 var body = string.IsNullOrEmpty(comment)
                     ? new SendMessageBody.Empty()
-                    : (SendMessageBody)new SendMessageBody.Comment(comment);
+                    : (SendMessageBody)new SendMessageBody.Comment(isCommentPublic ? comment : EncryptedCommentStandIn(comment));
 
                 var message = new EngineSendMessage(
                     recipient,
@@ -1166,6 +1187,22 @@ namespace Telegram.Services.Wallet
                 Logger.Error("wallet fee could not be estimated: " + ex.Message);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Text that encodes to as many bytes as <paramref name="comment"/> will once encrypted.
+        /// </summary>
+        /// <remarks>
+        /// The encrypted format is the 32-byte key XOR and the 16-byte message key, then the text
+        /// behind 16 to 31 bytes of padding that brings it to a multiple of 16. The opcode in front
+        /// is four bytes either way.
+        /// </remarks>
+        private static string EncryptedCommentStandIn(string comment)
+        {
+            var length = Encoding.UTF8.GetByteCount(comment);
+            var padded = (length + 16 + 15) / 16 * 16;
+
+            return new string('0', 32 + 16 + padded);
         }
 
         // How long a prepared phrase update stays submittable. The user writes the phrase down and
@@ -4133,6 +4170,22 @@ namespace Telegram.Services.Wallet
     {
         public WalletRotationPendingException()
             : base("A key change is already out for this wallet.")
+        {
+        }
+    }
+
+    /// <summary>
+    /// A transfer from this wallet has left and not yet settled.
+    /// </summary>
+    /// <remarks>
+    /// A second one would be signed under the same sequence number, so at most one of the two can
+    /// land - and if the first already has, an unsettled row that reads as failed is how a user
+    /// ends up sending the same money twice.
+    /// </remarks>
+    public sealed class WalletTransferInProgressException : Exception
+    {
+        public WalletTransferInProgressException()
+            : base("A transfer from this wallet has not settled yet.")
         {
         }
     }
