@@ -548,8 +548,6 @@
             </LinearGradientBrush>
 
             <ResourceDictionary.MergedDictionaries>
-                <muxc:XamlControlsResources />
-
                 <common:Theme />
                 <ResourceDictionary Source="ms-appx:///Themes/CommonStyles.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml" />

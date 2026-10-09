@@ -27,9 +27,16 @@ namespace Telegram.Common
 
         private readonly bool _isPrimary;
 
+        private static bool _hasPrimaryWindow;
+        private readonly bool _isSecondaryWindow;
+
+        private readonly XamlControlsResources _resources;
+
         public Theme()
         {
             _isPrimary = Current == null;
+            _isSecondaryWindow = _hasPrimaryWindow;
+            _hasPrimaryWindow = true;
 
             // Publish before anything that can fail. Current is the only handle the app has on
             // the theme of this view, and it is dereferenced unguarded all over the message
@@ -40,6 +47,7 @@ namespace Telegram.Common
 
             try
             {
+                this.MergedDictionaries.Add(_resources = new());
                 this.Add("ThreadStackLayout", new StackLayout());
 
                 UpdateEmojiSet();
@@ -261,8 +269,27 @@ namespace Telegram.Common
                 Outgoing.Update(requested, values);
                 Incoming.Update(requested, values);
 
-                var target = GetOrCreateResources(requested, out bool create);
+                var target = GetOrCreateResources(requested, out bool create, out var muxc);
                 var lookup = ThemeService.GetLookup(requested);
+
+                Dictionary<object, object> muxcCopy = null;
+                if (muxc != null)
+                {
+                    muxcCopy = new();
+
+                    foreach (var item in muxc)
+                    {
+                        if (item.Value is Brush)
+                        {
+                            muxcCopy.Add(item.Key, item.Value);
+                        }
+                    }
+
+                    foreach (var item in muxcCopy)
+                    {
+                        muxc.Remove(item.Key);
+                    }
+                }
 
                 var themeParameters = new Dictionary<string, int>
                 {
@@ -354,7 +381,7 @@ namespace Telegram.Common
                             themeParameters[item.Key] = value.ToValue();
                         }
 
-                        AddOrUpdate<SolidColorBrush>(target, item.Key, create,
+                        AddOrUpdate<SolidColorBrush>(target, muxcCopy, item.Key, create,
                             update => update.Color = value);
                     }
                     else
@@ -386,7 +413,7 @@ namespace Telegram.Common
                             continue;
                         }
 
-                        AddOrUpdate<AcrylicBrush>(target, item.Key, create, update =>
+                        AddOrUpdate<AcrylicBrush>(target, muxcCopy, item.Key, create, update =>
                         {
                             update.TintColor = tintColor;
                             update.TintOpacity = tintOpacity;
@@ -404,8 +431,8 @@ namespace Telegram.Common
                     }
                 }
 
-                PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlElevationBorderFocusedBrush", create, GetShade);
-                PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlBorderBrushFocused", create, GetShade);
+                PatchTextControlElevationBorderFocusedBrush(requested, target, muxcCopy, lookup, "TextControlElevationBorderFocusedBrush", create, GetShade);
+                PatchTextControlElevationBorderFocusedBrush(requested, target, muxcCopy, lookup, "TextControlBorderBrushFocused", create, GetShade);
 
                 AddAccentButtonPalette(requested, target, create, "Danger", Color.FromArgb(0xFF, 0xD1, 0x34, 0x38), false);
                 AddAccentButtonPalette(requested, target, create, "Success", Color.FromArgb(0xFF, 0x00, 0x73, 0x05), false);
@@ -419,6 +446,25 @@ namespace Telegram.Common
                 foreach (var item in requested == TelegramTheme.Light ? Incoming.Light : Incoming.Dark)
                 {
                     target[item.Key] = item.Value;
+                }
+
+                if (muxc != null)
+                {
+                    foreach (var item in muxcCopy)
+                    {
+                        try
+                        {
+                            if (!muxc.ContainsKey(item.Key) || muxc[item.Key] is Brush)
+                            {
+                                muxc[item.Key] = item.Value;
+                            }
+                        }
+                        catch
+                        {
+                            // Brushes in reality but declared as Colori n MUX
+                            Logger.Error("Failed to write: " + item.Key);
+                        }
+                    }
                 }
 
                 if (create)
@@ -477,11 +523,11 @@ namespace Telegram.Common
                 ? AccentShade.Dark1
                 : AccentShade.Light2) : accent;
 
-            AddOrUpdate<SolidColorBrush>(target, prefix + "ButtonBackground", create,
+            AddOrUpdate<SolidColorBrush>(target, null, prefix + "ButtonBackground", create,
                 update => update.Color = shade);
-            AddOrUpdate<SolidColorBrush>(target, prefix + "ButtonBackgroundPointerOver", create,
+            AddOrUpdate<SolidColorBrush>(target, null, prefix + "ButtonBackgroundPointerOver", create,
                 update => update.Color = shade.WithAlpha(230));
-            AddOrUpdate<SolidColorBrush>(target, prefix + "ButtonBackgroundPressed", create,
+            AddOrUpdate<SolidColorBrush>(target, null, prefix + "ButtonBackgroundPressed", create,
                 update => update.Color = shade.WithAlpha(204));
         }
 
@@ -546,11 +592,11 @@ namespace Telegram.Common
             return dictionary;
         }
 
-        private void PatchTextControlElevationBorderFocusedBrush(TelegramTheme requested, ResourceDictionary target, ThemeLookup lookup, string key, bool create, Func<AccentShade, Color> getShade)
+        private void PatchTextControlElevationBorderFocusedBrush(TelegramTheme requested, ResourceDictionary target, Dictionary<object, object> muxc, ThemeLookup lookup, string key, bool create, Func<AccentShade, Color> getShade)
         {
             // TextControlElevationBorderFocusedBrush is the only gradient that requires theming,
             // Hence we hardcode the logic to update this brush as it's not worth it to support this scenario.
-            AddOrUpdate(target, key, create, (LinearGradientBrush brush) =>
+            AddOrUpdate(target, muxc, key, create, (LinearGradientBrush brush) =>
             {
                 if (create)
                 {
@@ -583,13 +629,14 @@ namespace Telegram.Common
             });
         }
 
-        private void AddOrUpdate<T>(ResourceDictionary target, string key, bool create, Action<T> callback) where T : new()
+        private void AddOrUpdate<T>(ResourceDictionary target, Dictionary<object, object> muxc, string key, bool create, Action<T> callback) where T : new()
         {
             if (create)
             {
                 var value = new T();
                 callback(value);
                 target[key] = value;
+                muxc?[key] = value;
             }
             else if (target.TryGet(key, out T update))
             {
@@ -617,16 +664,18 @@ namespace Telegram.Common
             }
         }
 
-        private ResourceDictionary GetOrCreateResources(TelegramTheme requested, out bool create)
+        private ResourceDictionary GetOrCreateResources(TelegramTheme requested, out bool create, out ResourceDictionary muxc)
         {
             if (ThemeDictionaries.TryGet(requested == TelegramTheme.Light ? "Light" : "Dark", out ResourceDictionary target))
             {
                 create = false;
+                muxc = null;
             }
             else
             {
                 create = true;
                 target = new ResourceDictionary();
+                muxc = _resources.ThemeDictionaries[requested == TelegramTheme.Light ? "Light" : "Default"] as ResourceDictionary;
             }
 
             return target;
