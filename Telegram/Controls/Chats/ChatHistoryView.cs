@@ -1110,7 +1110,12 @@ namespace Telegram.Controls.Chats
             _consecutiveSizeChangedChecks = 0;
 
             _viewModel = viewModel;
-            _viewModel.MessagesLoaded += OnMessagesLoaded;
+            _viewModel?.MessagesLoaded += OnMessagesLoaded;
+        }
+
+        public void Disconnect()
+        {
+            Initialize(null);
         }
 
         private void OnMessagesLoaded(object sender, MessagesLoadedEventArgs e)

@@ -486,6 +486,7 @@ namespace Telegram.Views
 
             ButtonStickers.Collapse();
 
+            _loader.Disconnect();
             Messages.Suspend(true);
 
             if (navigation)
