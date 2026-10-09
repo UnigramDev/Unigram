@@ -7430,7 +7430,7 @@
     <string name="MonetizationGraphImpressions">Ad impressions</string>
     <string name="MonetizationGraphRevenue">Ad rewards</string>
     <string name="MonetizationSelfWithdraw">Withdraw via Fragment</string>
-    <string name="ChartInTON">{0} in TON</string>
+    <string name="ChartInTON">{0} in Grams</string>
     <string name="ChartInXTR">{0} in Stars</string>
     <string name="ChartInUSD">{0} in USD</string>
 
@@ -14034,7 +14034,7 @@
     <string name="WalletBackupDisabled">Backup Disabled</string>
     <string name="WalletBackupDisabledInfo">Your recovery phrase is now the only way to restore your wallet</string>
     <string name="WalletBackupDisabledDescription">Your encrypted key backup will be split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
-    <string name="WalletDisableBackupConfirmInfo">Telegram will delete its encrypted backup, and your recovery key will be updated. This can\'t be undone.</string>
+    <string name="WalletDisableBackupConfirmInfo">Your distributed encrypted backup will be deleted. Your wallet will switch to the new secret phrase. This secret phrase will be the only way to recover this wallet.</string>
     <string name="WalletDisableBackupTitle">Disable Backup?</string>
     <string name="WalletDisableBackupInfo">The only way to recover your funds will be to manually enter your secret phrase.</string>
     <string name="WalletUpdateSecretPhrase">Update Secret Phrase</string>

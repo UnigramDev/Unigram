@@ -341,7 +341,7 @@ namespace Telegram.ViewModels.Wallet
             // by putting one on the right: they are two different wallets to end up with.
             var replace = new MessagePopup
             {
-                Title = Strings.WalletReplaceWalletTitle,
+                Message = Strings.WalletReplaceWalletTitle,
                 PrimaryButtonText = Strings.WalletCreateNew,
                 SecondaryButtonText = Strings.WalletImportExisting,
                 ButtonsLayout = ContentPopupButtonsLayout.Vertical
