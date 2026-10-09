@@ -10,8 +10,12 @@
 
     <controls:HeaderedControl IsFooterLink="True"
                               Header="{CustomResource BotStarsOverviewAvailableBalance}"
-                              Footer="{CustomResource BotStarsWithdrawInfo}">
-        <StackPanel Background="{ThemeResource SettingsItemBackground}">
+                              Footer="{CustomResource BotStarsWithdrawInfo}"
+                              Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                              BorderThickness="1"
+                              CornerRadius="4">
+        <StackPanel>
             <Grid HorizontalAlignment="Center"
                   Margin="-8,8,0,0">
                 <Grid.ColumnDefinitions>
