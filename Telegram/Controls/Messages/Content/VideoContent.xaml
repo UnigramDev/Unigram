@@ -17,12 +17,69 @@
                 Value="{ThemeResource TelegramMediaMaxWidth}" />
         <Setter Property="MaxHeight"
                 Value="{ThemeResource TelegramMediaMaxHeight}" />
-        <Setter Property="IsTabStop"
-                Value="False" />
+        <Setter Property="RequestedTheme"
+                Value="Dark" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Left" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Top" />
+        <Setter Property="FontFamily"
+                Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="Height"
+                Value="Auto" />
+        <Setter Property="Width"
+                Value="Auto" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="FontSize"
+                Value="24" />
+        <Setter Property="CornerRadius"
+                Value="0" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:VideoContent">
                     <controls:AspectView x:Name="LayoutRoot">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background"
+                                                Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                        <Setter Target="ContentPresenter1.Foreground"
+                                                Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
+                                        <Setter Target="ContentPresenter2.Foreground"
+                                                Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background"
+                                                Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                        <Setter Target="ContentPresenter1.Foreground"
+                                                Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
+                                        <Setter Target="ContentPresenter2.Foreground"
+                                                Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter1.Foreground"
+                                                Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                        <Setter Target="ContentPresenter2.Foreground"
+                                                Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <controls:AspectView.Background>
                             <ImageBrush x:Name="ThumbnailTexture"
                                         Stretch="UniformToFill"
@@ -37,8 +94,31 @@
                                                 DecodeFrameType="Logical"
                                                 Stretch="UniformToFill" />
 
-                        <controls:FileButton x:Name="Button"
-                                             Style="{StaticResource ImmersiveFileButtonStyle}" />
+                        <Border x:Name="RootOverlay"
+                                Background="#54000000"
+                                CornerRadius="24"
+                                Width="48"
+                                Height="48"
+                                Visibility="Collapsed">
+                            <Grid x:Name="RootGrid">
+                                <TextBlock x:Name="ContentPresenter1"
+                                           Foreground="#FFFFFF"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                                <TextBlock x:Name="ContentPresenter2"
+                                           Foreground="#FFFFFF"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                                <controls:ProgressBarRing x:Name="ProgressBar"
+                                                          x:Load="False"
+                                                          Foreground="#FFFFFF"
+                                                          IsHitTestVisible="False"
+                                                          Width="48"
+                                                          Height="48" />
+                            </Grid>
+                        </Border>
 
                         <controls:AnimatedImage x:Name="Player"
                                                 AutoPlay="False"

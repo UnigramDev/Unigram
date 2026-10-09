@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed partial class VideoContent : Control, IContentWithFile, IPlayerView
+    public sealed partial class VideoContent : FileButton, IContentWithFile, IPlayerView
     {
         private readonly bool _album;
 
@@ -51,7 +51,7 @@ namespace Telegram.Controls.Messages.Content
         private AspectView LayoutRoot;
         private ImageBrush ThumbnailTexture;
         private AnimatedImage Particles;
-        private FileButton Button;
+        private FileButton Button => this;
         private AnimatedImage Player;
         private FileButton Overlay;
         private TextBlock Subtitle;
@@ -60,10 +60,11 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
+            base.OnApplyTemplate();
+
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             ThumbnailTexture = LayoutRoot.Background as ImageBrush;
             Particles = GetTemplateChild(nameof(Particles)) as AnimatedImage;
-            Button = GetTemplateChild(nameof(Button)) as FileButton;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
@@ -358,7 +359,9 @@ namespace Telegram.Controls.Messages.Content
                 }
             }
 
-            Button.Opacity = Player.Source == null ? 1 : 0;
+            Button.ProgressVisibility = Player.Source == null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private string GetDuration(Video video)
