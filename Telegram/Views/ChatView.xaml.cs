@@ -2269,7 +2269,7 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.SendDocument, Strings.ChatDocument, Icons.Document);
                 }
 
-                if (messageRights && chat.Type is ChatTypePrivate && user?.Type is UserTypeRegular)
+                if (messageRights && chat.Type is ChatTypePrivate && user?.Type is UserTypeRegular && ViewModel.ClientService.Options.CanUseTonWallet)
                 {
                     flyout.CreateFlyoutItem(ViewModel.SendMoney, Strings.WalletAttachMoney, Icons.Gram);
                 }
