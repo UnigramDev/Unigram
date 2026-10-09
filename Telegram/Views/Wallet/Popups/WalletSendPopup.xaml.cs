@@ -72,6 +72,10 @@ namespace Telegram.Views.Wallet.Popups
         // the account does not have cannot be sent one - see UpdateCommentPrivacyAsync.
         private bool? _canEncryptComment;
 
+        // Whether the recipient has no wallet and this one has no balance to have one made with.
+        // Nothing can be sent until that changes. See CreateRecipientWalletAsync.
+        private bool _unfunded;
+
         // The key a private comment is encrypted to. Passed on rather than left to the engine,
         // which can only read it off a deployed contract - and a wallet that has never sent
         // anything has none, while the account still knows its key.
@@ -213,10 +217,10 @@ namespace Telegram.Views.Wallet.Popups
         /// recipients and not others, and it is settled here rather than at the moment of sending
         /// so it is never offered and then refused.
         ///
-        /// Both calls are reads. Creating a wallet for a user who has none is a side effect and
-        /// stays in ResolveRecipientAsync, at the moment of sending - a recipient with no wallet
-        /// yet gets a fresh undeployed one, which has no key either, so forcing the comment public
-        /// is the right answer for them too.
+        /// A user with no wallet gets one here, while the popup opens, so the address, the fee and
+        /// the comment option are all there before the amount is typed. The account creates one
+        /// only for a sender with a balance, so with none it is not asked: the popup says the funds
+        /// are missing up front, and asks again once the balance arrives.
         /// </remarks>
         private async Task<Object> LookupRecipientAsync()
         {
@@ -231,6 +235,12 @@ namespace Telegram.Views.Wallet.Popups
             else if (_userId != 0)
             {
                 response = await _clientService.SendAsync(new GetUserTonWalletAddresses(new[] { _userId }));
+
+                // Read first: creating is only for a user who has none.
+                if (response is UserTonWalletAddresses addresses && First(addresses) == null)
+                {
+                    response = await CreateRecipientWalletAsync();
+                }
             }
             else
             {
@@ -261,6 +271,42 @@ namespace Telegram.Views.Wallet.Popups
 
             UpdateRecipientPending(false);
             return response;
+        }
+
+        /// <summary>
+        /// Has the account make a wallet for the recipient, or answers why not.
+        /// </summary>
+        /// <remarks>
+        /// Not asked while this wallet's balance is known to be empty, which the account would
+        /// refuse anyway. Either way the popup is marked unfunded, and UpdateWalletState asks again
+        /// once there is a balance.
+        /// </remarks>
+        private async Task<Object> CreateRecipientWalletAsync()
+        {
+            if (State is { IsSynchronized: true } state && state.BalanceNanograms <= 0)
+            {
+                SetUnfunded(true);
+                return null;
+            }
+
+            var created = await _clientService.SendAsync(new CreateUserTonWallet(_userId));
+            if (created is Error error && string.Equals(error.Message, "WALLET_BALANCE_EMPTY", StringComparison.Ordinal))
+            {
+                SetUnfunded(true);
+                return null;
+            }
+
+            SetUnfunded(false);
+            return created;
+        }
+
+        private void SetUnfunded(bool unfunded)
+        {
+            if (_unfunded != unfunded)
+            {
+                _unfunded = unfunded;
+                UpdateAmount();
+            }
         }
 
         /// <remarks>
@@ -318,6 +364,12 @@ namespace Telegram.Views.Wallet.Popups
         protected override void UpdateWalletState(WalletState state)
         {
             BalanceLabel.Text = string.Format(Strings.WalletBalanceAmount, Formatter.Grams(state.BalanceNanograms));
+
+            // Funds arrived while the popup was open, so the recipient's wallet can be made now.
+            if (_unfunded && state.BalanceNanograms > 0 && _lookup is { IsCompleted: true })
+            {
+                _lookup = LookupRecipientAsync();
+            }
 
             UpdateGasless();
             UpdateAmount();
@@ -666,6 +718,12 @@ namespace Telegram.Views.Wallet.Popups
         /// </summary>
         private string Validate(BigInteger nanograms)
         {
+            if (_unfunded)
+            {
+                // Before anything is typed, because nothing typed can change it.
+                return Strings.WalletInsufficientFunds;
+            }
+
             if (nanograms.IsZero)
             {
                 // Nothing typed yet is not an error, it is the starting point.
@@ -1246,10 +1304,9 @@ namespace Telegram.Views.Wallet.Popups
         /// not.
         /// </summary>
         /// <remarks>
-        /// Here rather than when the popup opens, because the second half of this creates a wallet
-        /// for somebody else: doing it on open would make one for every person whose send screen
-        /// was looked at and closed. The account also refuses it unless this wallet has a balance,
-        /// which is the anti-abuse side of the same thing.
+        /// The lookup that ran when the popup opened has usually settled this already, the
+        /// recipient's wallet created along the way. What is left is the case where it failed:
+        /// it is asked once more rather than failing on the same answer.
         /// </remarks>
         private async Task<Error> ResolveRecipientAsync()
         {
@@ -1258,30 +1315,20 @@ namespace Telegram.Views.Wallet.Popups
                 return null;
             }
 
-            var addresses = await (_lookup ??= LookupRecipientAsync());
-            if (addresses is Error error)
+            var response = await (_lookup ??= LookupRecipientAsync());
+            if (string.IsNullOrEmpty(_address) && _userId != 0)
             {
-                // Dropped so that the next press asks again rather than failing on the same answer.
-                _lookup = null;
-                return error;
+                response = await (_lookup = LookupRecipientAsync());
             }
 
-            // A user with no wallet is left out of the answer rather than reported, so an empty
-            // list is the question being answered, not a failure.
             if (!string.IsNullOrEmpty(_address) || _userId == 0)
             {
                 return null;
             }
 
-            var created = await _clientService.SendAsync(new CreateUserTonWallet(_userId));
-            if (created is UserTonWalletAddress wallet && wallet.WalletAddress.Length > 0)
-            {
-                _address = wallet.WalletAddress;
-            }
-
             // Null with nothing to send to is the caller's cue that it failed without the account
             // saying why, which is the one case there are no words for but ours.
-            return created as Error;
+            return response as Error;
         }
 
         /// <summary>
