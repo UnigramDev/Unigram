@@ -334,6 +334,7 @@ namespace Telegram.Controls
             subtitleScale.SetReferenceParameter("scrollViewer", properties);
             subtitleScale.SetReferenceParameter("_", Properties);
 
+            // TODO: too tall
             if (ViewModel.IsSavedMessages)
             {
                 ClipperBackground.Margin = new Thickness(0, -48, 0, -8);
@@ -345,10 +346,10 @@ namespace Telegram.Controls
             }
             else
             {
-                var clipperExpBranch1 = $"-{translationExp} - ((root.Size.Y - 88))";
+                var clipperExpBranch1 = $"-{translationExp} - ((root.Size.Y - 80))";
                 var clipperExpBranch2 = $"-{translationExp} - (root.Size.Y - 48)";
                 var clipperExpDiff = $"{clipperExpBranch2} + -((target.Size.Y - 48) - -{translationExp}) / 64 * 256";
-                var clipperExpClamp = $"min(target.Size.Y - root.Size.Y + 64, {clipperExpDiff})";
+                var clipperExpClamp = $"min(target.Size.Y - root.Size.Y + 56, {clipperExpDiff})";
                 var clipperTranslation = root.Compositor.CreateExpressionAnimation($"{translationExp} < 0 ? -{translationExp} > root.Size.Y - 48 && -{translationExp} < target.Size.Y - 48 ? {clipperExpBranch2} : -{translationExp} < target.Size.Y - 48 ? 0 : -{translationExp} < target.Size.Y - 24 ? {clipperExpClamp} : {clipperExpBranch1} : -{translationExp}");
                 clipperTranslation.SetReferenceParameter("scrollViewer", properties);
                 clipperTranslation.SetReferenceParameter("_", Properties);

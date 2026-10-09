@@ -602,7 +602,7 @@ namespace Telegram.Views
         {
             UpdateBackButton();
 
-            MediaFrame.MinHeight = ScrollingHost.ActualHeight + e.NewSize.Height - 88;
+            MediaFrame.MinHeight = ScrollingHost.ActualHeight + e.NewSize.Height - 80;
 
             if (MediaFrame.Content is ProfileTabPage tabPage)
             {
@@ -615,7 +615,7 @@ namespace Telegram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            MediaFrame.MinHeight = Header.ActualHeight + e.NewSize.Height - 88;
+            MediaFrame.MinHeight = Header.ActualHeight + e.NewSize.Height - 80;
 
             var material = ElementComposition.GetElementVisual(BackgroundRoot);
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
@@ -865,8 +865,6 @@ namespace Telegram.Views
                 return;
             }
 
-            LoadMore(scrollingHost);
-
             var index = scrollingHost.ItemsPanelRoot switch
             {
                 ItemsStackPanel stackPanel => stackPanel.FirstVisibleIndex,
@@ -965,42 +963,6 @@ namespace Telegram.Views
             ToolTip.Visibility = _scrollBarIndicatorEnabled && _scrollBarIndicatorVisible && !_subtitleCollapsed
                 ? Visibility.Visible
                 : Visibility.Collapsed;
-        }
-
-        private bool _loadingMore;
-
-        private async void LoadMore(ListViewBase scrollingHost)
-        {
-            if (_loadingMore)
-            {
-                return;
-            }
-
-            _loadingMore = true;
-
-            uint loadedMore = 0;
-            int lastCacheIndex = scrollingHost.ItemsPanelRoot switch
-            {
-                ItemsStackPanel stackPanel => stackPanel.LastCacheIndex,
-                ItemsWrapGrid wrapGrid => wrapGrid.LastCacheIndex,
-                _ => -1
-            };
-
-            var needsMore = lastCacheIndex == scrollingHost.Items.Count - 1;
-            needsMore |= scrollingHost.ActualHeight < ScrollingHost.ActualHeight;
-
-            if (needsMore && scrollingHost.ItemsSource is ISupportIncrementalLoading supportIncrementalLoading && supportIncrementalLoading.HasMoreItems)
-            {
-                var result = await supportIncrementalLoading.LoadMoreItemsAsync(50);
-                loadedMore = result.Count;
-            }
-
-            _loadingMore = false;
-
-            if (loadedMore > 0)
-            {
-                LoadMore(scrollingHost);
-            }
         }
 
         private bool _fromItemClick;
