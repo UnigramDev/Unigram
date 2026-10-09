@@ -172,31 +172,34 @@ namespace Telegram.Services
                 _translations[key] = new TranslatedMessage(cached, null);
                 ClientService.Send(new TranslateMessageText(message.ChatId, message.Id, toLanguage, string.Empty), handler =>
                 {
+                    MessageTranslateResult result;
                     if (handler is FormattedText text && string.Equals(message.Text?.Text, cached))
                     {
-                        // Entities are lost!!!
-                        text = ClientEx.MergeEntities(text, ClientEx.GetTextEntities(text.Text));
-
-                        var styled = TextStyleRun.GetText(text);
-
-                        MessageTranslateResult result;
                         if (string.IsNullOrWhiteSpace(text.Text))
                         {
                             result = new MessageTranslateResultError();
                         }
                         else
                         {
+                            // Entities are lost!!!
+                            text = ClientEx.MergeEntities(text, ClientEx.GetTextEntities(text.Text));
+
+                            var styled = TextStyleRun.GetText(text);
                             result = new MessageTranslateResultText(toLanguage, styled);
                         }
+                    }
+                    else
+                    {
+                        result = new MessageTranslateResultError();
+                    }
 
-                        _translations[key] = new TranslatedMessage(cached, result);
+                    _translations[key] = new TranslatedMessage(cached, result);
 
-                        // Only dispatch the update if still pending
-                        if (message.TranslatedText is MessageTranslateResultPending)
-                        {
-                            message.TranslatedText = result;
-                            Aggregator.Publish(new UpdateMessageTranslatedText(message.ChatId, message.Id, result));
-                        }
+                    // Only dispatch the update if still pending
+                    if (message.TranslatedText is MessageTranslateResultPending)
+                    {
+                        message.TranslatedText = result;
+                        Aggregator.Publish(new UpdateMessageTranslatedText(message.ChatId, message.Id, result));
                     }
                 });
 
@@ -238,31 +241,34 @@ namespace Telegram.Services
                 _summaries[key] = new TranslatedMessage(cached, null);
                 ClientService.Send(new SummarizeMessage(message.ChatId, message.Id, toLanguage, string.Empty), handler =>
                 {
+                    MessageTranslateResult result;
                     if (handler is FormattedText text && string.Equals(message.Text?.Text, cached))
                     {
-                        // Entities are lost!!!
-                        text = ClientEx.MergeEntities(text, ClientEx.GetTextEntities(text.Text));
-
-                        var styled = TextStyleRun.GetText(text);
-
-                        MessageTranslateResult result;
                         if (string.IsNullOrWhiteSpace(text.Text))
                         {
                             result = new MessageTranslateResultError();
                         }
                         else
                         {
+                            // Entities are lost!!!
+                            text = ClientEx.MergeEntities(text, ClientEx.GetTextEntities(text.Text));
+
+                            var styled = TextStyleRun.GetText(text);
                             result = new MessageTranslateResultSummary(styled);
                         }
+                    }
+                    else
+                    {
+                        result = new MessageTranslateResultError();
+                    }
 
-                        _summaries[key] = new TranslatedMessage(cached, result);
+                    _summaries[key] = new TranslatedMessage(cached, result);
 
-                        // Only dispatch the update if still pending
-                        if (message.SummarizedText is MessageTranslateResultPending)
-                        {
-                            message.SummarizedText = result;
-                            Aggregator.Publish(new UpdateMessageSummarizedText(message.ChatId, message.Id, result));
-                        }
+                    // Only dispatch the update if still pending
+                    if (message.SummarizedText is MessageTranslateResultPending)
+                    {
+                        message.SummarizedText = result;
+                        Aggregator.Publish(new UpdateMessageSummarizedText(message.ChatId, message.Id, result));
                     }
                 });
 
