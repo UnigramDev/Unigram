@@ -112,8 +112,10 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
+                            <RowDefinition Height="Auto"
+                                           MinHeight="22" />
+                            <RowDefinition Height="Auto"
+                                           MinHeight="22" />
                         </Grid.RowDefinitions>
                         <Rectangle x:Name="BackgroundOverlay"
                                    Fill="{TemplateBinding Background}"
