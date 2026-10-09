@@ -3802,29 +3802,36 @@
                           BorderThickness="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="48" />
+                            <ColumnDefinition Width="52" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="GlyphPresenter"
-                                   FontSize="{StaticResource GlyphMediumFontSize}"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Top"
-                                   Margin="12,8,0,0"
-                                   AutomationProperties.AccessibilityView="Raw"
-                                   Text="{TemplateBinding Glyph}"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   Grid.RowSpan="2" />
+                        <Border x:Name="GlyphPresenter"
+                                Width="24"
+                                Height="24"
+                                Margin="16,8,0,0"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Grid.RowSpan="2">
+                            <TextBlock x:Name="GlyphIcon"
+                                       FontSize="25"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       Text="{TemplateBinding Glyph}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                        </Border>
 
                         <TextBlock x:Name="ContentPresenter"
                                    FontSize="{ThemeResource ControlContentThemeFontSize}"
                                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                    AutomationProperties.AccessibilityView="Raw"
-                                   Text="{TemplateBinding Title}"
-                                   Margin="0,4,12,0"
+                                   common:TextBlockHelper.Markdown="{TemplateBinding Title}"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Margin="0,4,24,0"
                                    Grid.Column="1" />
                         <TextBlock x:Name="BadgePresenter"
                                    FontSize="{ThemeResource ControlContentThemeFontSize}"
@@ -3833,7 +3840,8 @@
                                    common:TextBlockHelper.Markdown="{TemplateBinding Subtitle}"
                                    common:TextBlockHelper.FormattedText="{TemplateBinding common:TextBlockHelper.FormattedText}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Margin="0,0,12,12"
+                                   Visibility="{TemplateBinding SubtitleVisibility}"
+                                   Margin="0,0,24,12"
                                    Grid.Column="1"
                                    Grid.Row="1" />
                     </Grid>
