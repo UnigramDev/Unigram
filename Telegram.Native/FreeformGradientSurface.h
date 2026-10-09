@@ -63,8 +63,7 @@ namespace winrt::Telegram::Native::implementation
         bool m_closed = false;
         Compositor m_compositor;
         CompositionGraphicsDevice m_compositionDevice;
-        winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
-        winrt::com_ptr<ID2D1Bitmap1> m_bitmap;
+        winrt::com_ptr<ID2D1Multithread> m_multithread;
         winrt::com_ptr<abi::ICompositionDrawingSurfaceInterop> m_surface;
         CompositionSurfaceBrush m_brush;
         DispatcherTimer m_timer;

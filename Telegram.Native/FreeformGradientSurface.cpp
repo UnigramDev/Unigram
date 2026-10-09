@@ -20,7 +20,7 @@ namespace winrt::Telegram::Native::implementation
 {
     FreeformGradientSurface::FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVectorView<int32_t> colors)
         : m_compositionDevice(device)
-        , m_d2dFactory(d2dFactory)
+        , m_multithread(d2dFactory.try_as<ID2D1Multithread>())
         , m_compositor(compositor)
         , m_surface(surface.as<abi::ICompositionDrawingSurfaceInterop>())
         , m_colors(colors)
@@ -68,8 +68,7 @@ namespace winrt::Telegram::Native::implementation
 
         m_brush = nullptr;
         m_surface = nullptr;
-        m_bitmap = nullptr;
-        m_d2dFactory = nullptr;
+        m_multithread = nullptr;
         m_compositor = nullptr;
         m_colors = nullptr;
     }
@@ -82,7 +81,6 @@ namespace winrt::Telegram::Native::implementation
 
     void FreeformGradientSurface::OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&)
     {
-        m_bitmap = nullptr;
         Invalidate();
     }
 
@@ -166,36 +164,48 @@ namespace winrt::Telegram::Native::implementation
     {
         if (!m_surface) return E_FAIL;
 
-        //std::lock_guard const guard(m_criticalSection);
-        HRESULT result;
-
-        winrt::com_ptr<ID2D1DeviceContext> d2dContext;
+        winrt::com_ptr<IDXGISurface> dxgiSurface;
         POINT offset;
 
-        // BeginDraw can return DXGI_ERROR_DEVICE_REMOVED, if it happens we just return.
-        // Direct2DDevice will be handling this for us, raising RenderingDeviceReplaced.
-        ReturnIfFailed(result, m_surface->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), d2dContext.put_void(), &offset));
-
-        if (m_bitmap == nullptr)
+        if (FAILED(m_surface->BeginDraw(nullptr, __uuidof(IDXGISurface), dxgiSurface.put_void(), &offset)))
         {
-            D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_NONE, 0 };
-            ReturnIfFailed(result, d2dContext->CreateBitmap(D2D1::SizeU(s_width, s_height), nullptr, 0, properties, m_bitmap.put()));
+            return E_FAIL;
         }
 
-        GenerateGradient(m_pixels.data(), m_colors, m_easing[m_index % m_easing.size()]);
+        HRESULT result = E_NOINTERFACE;
 
-        uint32_t pitch = s_width * 4;
-        D2D1_RECT_U destRect = D2D1::RectU(0, 0, s_width, s_height);
+        if (auto texture = dxgiSurface.try_as<ID3D11Texture2D>())
+        {
+            winrt::com_ptr<ID3D11Device> device;
+            texture->GetDevice(device.put());
 
-        m_bitmap->CopyFromMemory(&destRect, m_pixels.data(), pitch);
+            winrt::com_ptr<ID3D11DeviceContext> context;
+            device->GetImmediateContext(context.put());
 
-        d2dContext->Clear(D2D1::ColorF(0, 0, 0, 1));
-        d2dContext->SetTransform(D2D1::Matrix3x2F::Translation(offset.x, offset.y));
+            D3D11_BOX box{ static_cast<UINT>(offset.x), static_cast<UINT>(offset.y), 0, static_cast<UINT>(offset.x + s_width), static_cast<UINT>(offset.y + s_height), 1 };
 
-        d2dContext->DrawBitmap(m_bitmap.get());
+            if (m_multithread)
+            {
+                m_multithread->Enter();
+            }
 
-    Cleanup:
-        return m_surface->EndDraw();
+            GenerateGradient(m_pixels.data(), m_colors, m_easing[m_index % m_easing.size()]);
+            context->UpdateSubresource(texture.get(), 0, &box, m_pixels.data(), s_width * 4, 0);
+
+            if (m_multithread)
+            {
+                m_multithread->Leave();
+            }
+
+            result = S_OK;
+        }
+
+        if (FAILED(m_surface->EndDraw()) || FAILED(result))
+        {
+            return E_FAIL;
+        }
+
+        return S_OK;
     }
 
     IVectorView<int32_t> FreeformGradientSurface::Colors()
