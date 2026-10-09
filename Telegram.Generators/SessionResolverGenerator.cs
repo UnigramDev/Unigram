@@ -77,7 +77,14 @@ namespace Telegram.Services
         /// <summary>The globals that Resolve also hands out. The rest are constructor-only.</summary>
         public Type[] Exposed { get; set; }
 
-        /// <summary>Interface, implementation, interface, implementation. Built eagerly, in dependency order.</summary>
+        /// <summary>
+        /// Interface, implementation, interface, implementation. Built eagerly, in dependency order.
+        /// <para>
+        /// An implementation may instead be a type with no public constructor exposing a public
+        /// static Create, which is then called in place of one and may return whichever implementation
+        /// it likes. That is the one way a registration resolves to a type not named here.
+        /// </para>
+        /// </summary>
         public Type[] Singletons { get; set; }
 
         /// <summary>Same pairing, but built on first Resolve.</summary>
@@ -342,27 +349,32 @@ namespace Telegram.Services
                     type = promoted.Value;
                 }
 
+                var factory = Factory(type);
+                var invoke = factory != null
+                    ? Full(type) + ".Create"
+                    : "new " + Full(type);
+
                 var parameters = Parameters(type);
                 if (parameters.Length == 0)
                 {
-                    if (!type.Constructors.Any(x => x.DeclaredAccessibility == Accessibility.Public))
+                    if (factory == null && !type.Constructors.Any(x => x.DeclaredAccessibility == Accessibility.Public))
                     {
                         _context.ReportDiagnostic(Diagnostic.Create(NoConstructor, Location.None, Full(type, false)));
                     }
 
-                    return "new " + Full(type) + "()";
+                    return invoke + "()";
                 }
 
                 var arguments = parameters.Select(x => Argument(x, depth)).ToArray();
                 if (arguments.Length == 1)
                 {
-                    return "new " + Full(type) + "(" + arguments[0] + ")";
+                    return invoke + "(" + arguments[0] + ")";
                 }
 
                 // "\r\n" rather than Environment.NewLine: generated output must not depend on the
                 // host, and RS1035 bans the latter in analyzers for exactly that reason.
                 var indent = new string(' ', (depth + 1) * 4);
-                return "new " + Full(type) + "(\r\n"
+                return invoke + "(\r\n"
                     + indent + string.Join(",\r\n" + indent, arguments) + ")";
             }
 
@@ -440,11 +452,39 @@ namespace Telegram.Services
 
         private static IParameterSymbol[] Parameters(INamedTypeSymbol type)
         {
+            var factory = Factory(type);
+            if (factory != null)
+            {
+                return factory.Parameters.Where(x => !x.HasExplicitDefaultValue).ToArray();
+            }
+
             var constructor = type.Constructors
                 .FirstOrDefault(x => x.DeclaredAccessibility == Accessibility.Public && !x.IsStatic);
 
             return constructor?.Parameters.Where(x => !x.HasExplicitDefaultValue).ToArray()
                 ?? Array.Empty<IParameterSymbol>();
+        }
+
+        /// <summary>
+        /// The public static Create a registration can provide in place of a constructor, so that one
+        /// interface can be served by an implementation chosen at run time. Its parameters are injected
+        /// exactly as a constructor's are.
+        /// <para>
+        /// Only a type that cannot be constructed qualifies. Several registered view models carry a
+        /// public static Create that is no more than a Resolve wrapper, and calling one in place of the
+        /// constructor makes Resolve call itself until the stack is gone.
+        /// </para>
+        /// </summary>
+        private static IMethodSymbol Factory(INamedTypeSymbol type)
+        {
+            if (type.Constructors.Any(x => x.DeclaredAccessibility == Accessibility.Public && !x.IsStatic))
+            {
+                return null;
+            }
+
+            return type.GetMembers("Create")
+                .OfType<IMethodSymbol>()
+                .FirstOrDefault(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
         }
 
         private static List<INamedTypeSymbol> ReadTypes(AttributeData attribute, string name)

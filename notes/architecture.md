@@ -120,14 +120,16 @@ updates do not go through it at all — `ClientService.UpdateFile` hands them to
 is their own bus (see *Common helpers*).
 
 ## Settings, theme and updates — Telegram/Services/{AppSettings.cs,SettingsService.cs,Settings/,Theme/,Updates/} (26 files)
-<!-- map: verified=66c83ab5d paths=Telegram/Services/AppSettings.cs,Telegram/Services/SettingsService.cs,Telegram/Services/SettingsLegacyService.cs,Telegram/Services/SettingsSearchService.cs,Telegram/Services/Settings,Telegram/Services/Theme,Telegram/Services/ThemeService.cs,Telegram/Services/Updates,Telegram/Services/CloudUpdateService.cs -->
+<!-- map: verified=95560d9f7 paths=Telegram/Services/AppSettings.cs,Telegram/Services/SettingsService.cs,Telegram/Services/SettingsLegacyService.cs,Telegram/Services/SettingsSearchService.cs,Telegram/Services/Settings,Telegram/Services/Theme,Telegram/Services/ThemeService.cs,Telegram/Services/Updates,Telegram/Services/CloudUpdateService.cs,Telegram/Services/StoreUpdateService.cs -->
 A two-tier split: a static, process-wide `AppSettings`, and a per-account `SettingsService` over an
-`ISettingsStore` seam. Plus theme resolution and the sideload updater.
+`ISettingsStore` seam. Plus theme resolution and the updater.
 **Key types:** `AppSettings` (Telegram/Services/AppSettings.cs) — static global config, no DI;
 `SettingsService`/`ISettingsService` (Telegram/Services/SettingsService.cs) — per-session settings, keyed
 by numbered container; `ISettingsStore`/`ApplicationDataSettingsStore` (Telegram/Services/Settings/SettingsStore.cs)
 — the storage abstraction; the typed groups (`AutoDownloadSettings`, `NotificationsSettings`, …) in
-Telegram/Services/Settings/; `ThemeService`/`ThemeLookup`/`ThemeAccentInfo`; `CloudUpdateService`.
+Telegram/Services/Settings/; `ThemeService`/`ThemeLookup`/`ThemeAccentInfo`;
+`CloudUpdateService`/`StoreUpdateService` — the two `ICloudUpdateService` implementations, one per flavour,
+picked by `CloudUpdateServiceFactory.Create`.
 **Traps:** containers are keyed by `$"{session}"` and must exist on disk before `ClientService` is
 constructed — `LifetimeService` discovers sessions from those folders before any `SettingsService`
 exists, and `ClientService` reads `UseTestDC` while being constructed. `ISettingsStore` is the single

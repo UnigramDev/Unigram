@@ -151,7 +151,7 @@ namespace Telegram.ViewModels
 
         private void UpdateAppVersion(CloudUpdate update)
         {
-            IsUpdateAvailable = update?.File != null;
+            IsUpdateAvailable = update?.IsReady is true;
         }
 
         public void Handle(UpdateUnreadMessageCount update)
@@ -527,7 +527,7 @@ namespace Telegram.ViewModels
 
         public async void UpdateApp()
         {
-            await CloudUpdateService.LaunchAsync(false);
+            await _cloudUpdateService.LaunchAsync();
         }
 
         public async void CreateSecretChat()

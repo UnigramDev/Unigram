@@ -48,7 +48,7 @@ namespace Telegram.Services
         Lazy = new Type[]
         {
             typeof(Telegram.Services.ISettingsSearchService), typeof(Telegram.Services.SettingsSearchService),
-            typeof(Telegram.Services.ICloudUpdateService), typeof(Telegram.Services.CloudUpdateService),
+            typeof(Telegram.Services.ICloudUpdateService), typeof(Telegram.Services.CloudUpdateServiceFactory),
             typeof(Telegram.Services.ILocationService), typeof(Telegram.Services.LocationService),
             typeof(Telegram.Services.IThemeService), typeof(Telegram.Services.ThemeService),
             typeof(Telegram.Services.IViewService), typeof(Telegram.Services.ViewService),

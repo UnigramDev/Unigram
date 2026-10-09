@@ -22,9 +22,7 @@
 
                 <controls:StartupSwitch />
 
-                <controls:HeaderedControl x:Name="UpdatePanel"
-                                          x:Load="False"
-                                          Header="{CustomResource VersionAndUpdates}"
+                <controls:HeaderedControl Header="{CustomResource VersionAndUpdates}"
                                           Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
                     <controls:SettingsButton x:Name="Version"
                                              Click="{x:Bind ViewModel.Update}"
@@ -32,7 +30,9 @@
                                              Glyph="{x:Bind ViewModel.UpdateGlyph, Mode=OneWay}"
                                              IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}" />
 
-                    <CheckBox Content="{CustomResource InstallBetaUpdates}"
+                    <CheckBox x:Name="BetaUpdates"
+                              x:Load="False"
+                              Content="{CustomResource InstallBetaUpdates}"
                               IsChecked="{x:Bind ViewModel.InstallBetaUpdates, Mode=TwoWay}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>

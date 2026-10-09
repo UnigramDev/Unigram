@@ -20,9 +20,11 @@ namespace Telegram.Views.Settings
             InitializeComponent();
             Title = Strings.PrivacyAdvanced;
 
+            // The Store serves a single channel: the app channel's beta builds are only reachable
+            // by a sideloaded package.
             if (ApiInfo.IsPackagedRelease)
             {
-                FindName(nameof(UpdatePanel));
+                FindName(nameof(BetaUpdates));
             }
         }
 

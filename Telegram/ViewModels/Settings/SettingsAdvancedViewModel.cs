@@ -112,7 +112,7 @@ namespace Telegram.ViewModels.Settings
                 UpdateText = Strings.CheckForUpdates;
                 UpdateFooter = Strings.CheckForUpdatesInfo;
             }
-            else if (update.File != null)
+            else if (update.IsReady)
             {
                 // Update is ready to be installed
                 IsUpdateEnabled = true;
@@ -167,9 +167,9 @@ namespace Telegram.ViewModels.Settings
                     await Task.Delay(2000 - diff);
                 }
             }
-            else if (update.File != null && launch && Constants.RELEASE)
+            else if (update.IsReady && launch && Constants.RELEASE)
             {
-                await CloudUpdateService.LaunchAsync(false);
+                await _cloudUpdateService.LaunchAsync();
             }
 
             UpdateFile(update, update?.Document, true);

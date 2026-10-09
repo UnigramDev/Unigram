@@ -7,11 +7,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.ViewModels;
 using Windows.ApplicationModel;
-using Windows.Services.Store;
 using Windows.System;
 using Windows.UI.Xaml;
 
@@ -52,46 +50,27 @@ namespace Telegram.Controls.Messages.Service
 
         public static async Task CheckForUpdatesAsync(XamlRoot xamlRoot, IClientService clientService)
         {
-            if (ApiInfo.IsStoreRelease || clientService == null)
+            var service = clientService?.Session.Resolve<ICloudUpdateService>();
+            if (service == null)
             {
-                try
-                {
-                    var context = StoreContext.GetDefault();
-
-                    var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
-                    if (updates == null && updates.Count == 0)
-                    {
-                        ToastPopup.Show(xamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
-                        return;
-                    }
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-                finally
-                {
-                    await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
-                }
+                // Called from a window with no session to check through, so the Store listing is all
+                // that's left to offer.
+                await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
             }
             else
             {
-                var service = clientService.Session.Resolve<ICloudUpdateService>();
-                if (service != null)
+                if (service.NextUpdate == null)
                 {
-                    if (service.NextUpdate == null)
-                    {
-                        await service.UpdateAsync(true);
-                    }
+                    await service.UpdateAsync(true);
+                }
 
-                    if (service.NextUpdate != null)
-                    {
-                        await CloudUpdateService.LaunchAsync(false);
-                    }
-                    else
-                    {
-                        ToastPopup.Show(xamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
-                    }
+                if (service.NextUpdate != null)
+                {
+                    await service.LaunchAsync();
+                }
+                else
+                {
+                    ToastPopup.Show(xamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
                 }
             }
         }

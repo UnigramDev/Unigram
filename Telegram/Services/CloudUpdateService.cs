@@ -28,6 +28,24 @@ namespace Telegram.Services
     {
         CloudUpdate NextUpdate { get; }
         Task UpdateAsync(bool force);
+        Task<bool> LaunchAsync();
+    }
+
+    /// <summary>
+    /// What the session registers for <see cref="ICloudUpdateService"/>: the resolver generator calls
+    /// Create in place of a constructor, which is what lets the flavour decide the implementation.
+    /// </summary>
+    public static class CloudUpdateServiceFactory
+    {
+        public static ICloudUpdateService Create(IClientService clientService, INetworkService networkService, IEventAggregator aggregator)
+        {
+            // Nothing may install over a Store package but the Store, and the Store knows nothing about
+            // the msixbundles the app channel carries, so neither implementation has anything to offer
+            // the other's flavour.
+            return ApiInfo.IsPackagedRelease
+                ? new CloudUpdateService(clientService, networkService, aggregator)
+                : new StoreUpdateService(aggregator);
+        }
     }
 
     public partial class CloudUpdateService : ICloudUpdateService
@@ -63,6 +81,11 @@ namespace Telegram.Services
         public async void Update()
         {
             await UpdateAsync(false);
+        }
+
+        public Task<bool> LaunchAsync()
+        {
+            return LaunchAsync(false);
         }
 
         public static async Task<bool> LaunchAsync(bool checkAvailability)
@@ -216,7 +239,7 @@ namespace Telegram.Services
                 return;
             }
 
-            _lastCheck = diff;
+            _lastCheck = Logger.TickCount;
 
             var current = Package.Current.Id.Version.ToVersion();
             var cloud = await GetNextUpdateAsync();
@@ -401,6 +424,12 @@ namespace Telegram.Services
 
         public File Document { get; set; }
         public StorageFile File { get; set; }
+
+        // A Store update has neither: there is no bundle to fetch from the app channel, and Document is
+        // null, so nothing may reach through it without checking this first.
+        public bool IsStorePackage { get; set; }
+
+        public bool IsReady => File != null || IsStorePackage;
 
         public int Date { get; set; }
 
