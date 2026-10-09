@@ -5,9 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
 using Telegram.Navigation;
 using Windows.UI;
@@ -29,13 +28,14 @@ namespace Telegram.Controls
 
             Checked += OnToggle;
             Unchecked += OnToggle;
+
+            SizeChanged += OnSizeChanged;
         }
 
         protected override void OnApplyTemplate()
         {
             CheckedPart = GetTemplateChild(nameof(CheckedPart)) as Border;
             ContentPresenter = GetTemplateChild(nameof(ContentPresenter)) as TextBlock;
-            ContentPresenter.SizeChanged += OnSizeChanged;
 
             var background = ElementCompositionPreview.GetElementVisual(ContentPresenter);
             var foreground = ElementCompositionPreview.GetElementVisual(CheckedPart);
@@ -48,49 +48,64 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        private void OnSizeChanged(object sender, object e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var colorEffect = new ColorSourceEffect
+            UpdateCheckedPart();
+        }
+
+        protected override void OnGlyphChanged(string newValue, string oldValue)
+        {
+            UpdateCheckedPart();
+        }
+
+        private void UpdateCheckedPart()
+        {
+            if (CheckedPart == null || ContentPresenter == null || ActualWidth == 0 || ActualHeight == 0)
             {
-                Color = Colors.White
+                return;
+            }
+
+            // Glyph rather than ContentPresenter.Text: the template binding that feeds the text
+            // block is not guaranteed to have run by the time this callback does.
+            var text = Glyph;
+            if (string.IsNullOrEmpty(text))
+            {
+                ElementCompositionPreview.SetElementChildVisual(CheckedPart, null);
+                return;
+            }
+
+            var size = ActualSize;
+            var device = ElementComposition.GetSharedDevice();
+
+            // The checked state is a white plate with the glyph knocked out of it, so that the
+            // acrylic behind the button shows through the icon. Cutting the outline out of the
+            // plate keeps it a plain shape: rendering the glyph to an alpha mask instead would
+            // cost a render target and an effect graph evaluated on every composited frame.
+            //
+            // Rooted with using: Win2D's UWP projection has no GC.KeepAlive, so a geometry whose
+            // only reference is a temporary can be finalized while CombineWith is still running.
+            using var format = new CanvasTextFormat
+            {
+                FontFamily = ContentPresenter.FontFamily.Source,
+                FontSize = (float)ContentPresenter.FontSize,
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                VerticalAlignment = CanvasVerticalAlignment.Center
             };
 
-            var compositeEffect = new CompositeEffect
-            {
-                Mode = CanvasComposite.Xor
-            };
-
-            compositeEffect.Sources.Add(colorEffect);
-            compositeEffect.Sources.Add(new CompositionEffectSourceParameter("Source"));
+            using var layout = new CanvasTextLayout(device, text, format, size.X, size.Y);
+            using var glyph = CanvasGeometry.CreateText(layout);
+            using var plate = CanvasGeometry.CreateRectangle(device, 0, 0, size.X, size.Y);
+            using var knockout = plate.CombineWith(glyph, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
 
             var compositor = BootStrapper.Current.Compositor;
-            var effectFactory = compositor.CreateEffectFactory(compositeEffect);
 
-            // Create a VisualSurface positioned at the same location as this control and feed that
-            // through the color effect.
-            var surfaceBrush = compositor.CreateSurfaceBrush();
-            surfaceBrush.Stretch = CompositionStretch.None;
-            var surface = compositor.CreateVisualSurface();
+            var shape = compositor.CreateSpriteShape(compositor.CreatePathGeometry(new CompositionPath(knockout)));
+            shape.FillBrush = compositor.CreateColorBrush(Colors.White);
+            shape.StrokeThickness = 0;
 
-            var testVisual = compositor.CreateSpriteVisual();
-            testVisual.Brush = ContentPresenter.GetAlphaMask();
-            testVisual.Size = ContentPresenter.ActualSize;
-
-            // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = testVisual; //ElementCompositionPreview.GetElementVisual(Part3);
-            surface.SourceOffset = Vector2.Zero;
-            surface.SourceSize = ActualSize;
-            surfaceBrush.Offset = (ActualSize - ContentPresenter.ActualSize) / 2;
-            surfaceBrush.Surface = surface;
-            surfaceBrush.Stretch = CompositionStretch.None;
-
-            var effectBrush = effectFactory.CreateBrush();
-            effectBrush.SetSourceParameter("Source", surfaceBrush);
-
-            var visual = compositor.CreateSpriteVisual();
-            //visual.Size = actualSize;
+            var visual = compositor.CreateShapeVisual();
             visual.RelativeSizeAdjustment = Vector2.One;
-            visual.Brush = effectBrush;
+            visual.Shapes.Add(shape);
 
             ElementCompositionPreview.SetElementChildVisual(CheckedPart, visual);
         }
@@ -107,17 +122,10 @@ namespace Telegram.Controls
                 return;
             }
 
-            //OnLoaded(null, null);
-
             var background = ElementCompositionPreview.GetElementVisual(ContentPresenter);
             var foreground = ElementCompositionPreview.GetElementVisual(CheckedPart);
 
             var compositor = background.Compositor;
-
-            //var back = compositor.CreateEllipseGeometry();
-            //var fore = compositor.CreateEllipseGeometry();
-
-            var rect1 = CanvasGeometry.CreateRectangle(null, 0, 0, 48, 48);
 
             var elli1 = CanvasGeometry.CreateCircle(null, 24, 24, 24);
             var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, elli1 }, CanvasFilledRegionDetermination.Alternate);
@@ -129,7 +137,6 @@ namespace Telegram.Controls
             var fore = compositor.CreatePathGeometry(new CompositionPath(group2));
 
             back.Center = new Vector2(24, 12);
-            //fore.Center = new Vector2(24);
 
             background.Clip = compositor.CreateGeometricClip(back);
             foreground.Clip = compositor.CreateGeometricClip(fore);
@@ -139,15 +146,10 @@ namespace Telegram.Controls
             var backRadius = compositor.CreateVector2KeyFrameAnimation();
             backRadius.InsertKeyFrame(show ? 0 : 1, new Vector2(24));
             backRadius.InsertKeyFrame(show ? 1 : 0, new Vector2(0));
-            //backRadius.Duration = TimeSpan.FromSeconds(5);
 
-            //var foreRadius = compositor.CreateVector2KeyFrameAnimation();
-            //foreRadius.InsertKeyFrame(show ? 0 : 1, new Vector2(0));
-            //foreRadius.InsertKeyFrame(show ? 1 : 0, new Vector2(24));
             var foreRadius = compositor.CreatePathKeyFrameAnimation();
             foreRadius.InsertKeyFrame(show ? 0 : 1, new CompositionPath(group1));
             foreRadius.InsertKeyFrame(show ? 1 : 0, new CompositionPath(group2));
-            //foreRadius.Duration = TimeSpan.FromSeconds(5);
 
             back.StartAnimation("Radius", backRadius);
             fore.StartAnimation("Path", foreRadius);
