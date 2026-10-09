@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -21,8 +20,11 @@ namespace Telegram.Controls.Messages.Content
         public MessageViewModel Message => _message;
         private MessageViewModel _message;
 
-        public AlbumContent(MessageViewModel message)
+        private readonly MessageContentRecyclePool _recyclePool;
+
+        public AlbumContent(MessageViewModel message, MessageContentRecyclePool recyclePool)
         {
+            _recyclePool = recyclePool;
             UpdateMessage(message);
 
             // I don't like this much, but it's the easier way to add margins between children
@@ -129,94 +131,219 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Children.Clear();
-
             if (album.Messages.Count == 1)
             {
-                if (album.Messages[0].Content is MessagePhoto)
+                var single = album.Messages[0];
+
+                if (Children.Count == 1 && Children[0] is IContent content && content.IsValid(single.Content, true))
                 {
-                    Children.Add(new PhotoContent(album.Messages[0]));
+                    content.UpdateMessage(single);
+                    return;
                 }
-                else if (album.Messages[0].Content is MessageVideo)
+
+                ReleaseChildren();
+
+                var element = CreateContent(single, false);
+                if (element != null)
                 {
-                    Children.Add(new VideoContent(album.Messages[0]));
-                }
-                else if (album.Messages[0].Content is MessageAudio)
-                {
-                    Children.Add(new AudioContent(album.Messages[0]));
-                }
-                else if (album.Messages[0].Content is MessageDocument)
-                {
-                    Children.Add(new DocumentContent(album.Messages[0]));
+                    Children.Add(element);
                 }
 
                 return;
             }
 
-            foreach (var pos in album.Messages)
+            var index = 0;
+            var last = album.Messages[album.Messages.Count - 1];
+
+            for (int i = 0; i < album.Messages.Count; i++)
             {
+                var pos = album.Messages[i];
+                if (pos.Content is not (MessagePhoto or MessageVideo or MessageAudio or MessageDocument))
+                {
+                    continue;
+                }
+
+                // A caption this item no longer has, or the lone control of a single-item
+                // album, sits where a selector belongs and cannot be reused as one.
+                while (index < Children.Count && Children[index] is not MessageSelector)
+                {
+                    ReleaseAt(index);
+                }
+
                 FrameworkElement element;
-                if (pos.Content is MessagePhoto)
+                var created = true;
+
+                if (index < Children.Count && Children[index] is MessageSelector selector)
                 {
-                    element = new PhotoContent(pos, null, true);
-                }
-                else if (pos.Content is MessageVideo)
-                {
-                    element = new VideoContent(pos, null, true);
-                }
-                else if (pos.Content is MessageAudio)
-                {
-                    element = new AudioContent(pos);
-                }
-                else if (pos.Content is MessageDocument)
-                {
-                    element = new DocumentContent(pos);
+                    if (selector.Content is IContent content && content.IsValid(pos.Content, true))
+                    {
+                        element = selector.Content as FrameworkElement;
+                        content.UpdateMessage(pos);
+                        created = false;
+                    }
+                    else
+                    {
+                        var previous = selector.Content;
+                        selector.Content = null;
+                        Release(previous);
+
+                        element = CreateContent(pos, true);
+                        selector.Content = element;
+                    }
+
+                    selector.UpdateMessage(pos, null, pos.Delegate?.IsSelectionEnabled ?? false);
                 }
                 else
                 {
-                    continue;
+                    element = CreateContent(pos, true);
+                    selector = new MessageSelector(pos, element)
+                    {
+                        IsTrackerEnabled = false
+                    };
+
+                    Children.Insert(index, selector);
                 }
 
-                var selector = new MessageSelector(pos, element)
-                {
-                    IsTrackerEnabled = false
-                };
-
-                Children.Add(selector);
+                index++;
 
                 if (album.IsMedia)
                 {
-                    element.MinWidth = 0;
-                    element.MinHeight = 0;
-                    element.MaxWidth = double.PositiveInfinity;
-                    element.MaxHeight = double.PositiveInfinity;
+                    if (created)
+                    {
+                        element.MinWidth = 0;
+                        element.MinHeight = 0;
+                        element.MaxWidth = double.PositiveInfinity;
+                        element.MaxHeight = double.PositiveInfinity;
+                    }
+
                     continue;
                 }
-                else if (pos == album.Messages.Last())
+                else if (pos == last)
                 {
-                    return;
+                    element.ClearValue(MarginProperty);
+                    break;
                 }
-
-                element.Margin = new Thickness(0, 0, 0, 2);
-                selector.Margin = new Thickness(0, 0, 0, 6);
 
                 if (string.IsNullOrEmpty(pos.Text?.Text))
                 {
+                    element.Margin = new Thickness(0, 0, 0, -4);
                     continue;
                 }
 
-                var textBlock = new FormattedTextBlock
+                element.ClearValue(MarginProperty);
+
+                if (index >= Children.Count || Children[index] is not FormattedTextBlock textBlock)
                 {
-                    TextSelection = TextSelectionMode.Extended,
-                    Margin = new Thickness(0, 0, 0, 12)
-                };
+                    textBlock = new FormattedTextBlock
+                    {
+                        TextSelection = TextSelectionMode.Extended,
+                        Margin = new Thickness(10, 0, 10, 8)
+                    };
+
+                    textBlock.TextEntityClick += Message_TextEntityClick;
+                    Children.Insert(index, textBlock);
+                }
 
                 textBlock.SetText(message.ClientService, pos.Text);
-
                 textBlock.Tag = pos;
-                textBlock.TextEntityClick += Message_TextEntityClick;
 
-                Children.Add(textBlock);
+                index++;
+            }
+
+            while (Children.Count > index)
+            {
+                ReleaseAt(Children.Count - 1);
+            }
+
+            InvalidateMeasure();
+        }
+
+        private FrameworkElement CreateContent(MessageViewModel message, bool album)
+        {
+            var recycled = _recyclePool?.TryGet(message.Content);
+            if (recycled != null)
+            {
+                if (recycled is PhotoContent photo)
+                {
+                    photo.IsAlbum = album;
+                }
+                else if (recycled is VideoContent video)
+                {
+                    video.IsAlbum = album;
+                }
+
+                recycled.UpdateMessage(message);
+                return recycled as FrameworkElement;
+            }
+
+            return message.Content switch
+            {
+                MessagePhoto => new PhotoContent(message, null, album),
+                MessageVideo => new VideoContent(message, null, album),
+                MessageAudio => new AudioContent(message),
+                MessageDocument => new DocumentContent(message),
+                _ => null
+            };
+        }
+
+        public void ReleaseChildren()
+        {
+            while (Children.Count > 0)
+            {
+                ReleaseAt(Children.Count - 1);
+            }
+        }
+
+        private void ReleaseAt(int index)
+        {
+            var child = Children[index];
+            Children.RemoveAt(index);
+
+            if (child is MessageSelector selector)
+            {
+                var content = selector.Content;
+                selector.Content = null;
+                Release(content);
+            }
+            else if (child is FormattedTextBlock textBlock)
+            {
+                textBlock.TextEntityClick -= Message_TextEntityClick;
+            }
+            else
+            {
+                Release(child);
+            }
+        }
+
+        private void Release(object child)
+        {
+            if (child is not IContent content)
+            {
+                return;
+            }
+
+            content.Recycle();
+
+            if (_recyclePool != null && child is FrameworkElement element)
+            {
+                // A bubble taking it from the pool expects what its style sets, not what
+                // this album applied on top.
+                element.ClearValue(MinWidthProperty);
+                element.ClearValue(MinHeightProperty);
+                element.ClearValue(MaxWidthProperty);
+                element.ClearValue(MaxHeightProperty);
+                element.ClearValue(MarginProperty);
+
+                if (child is PhotoContent photo)
+                {
+                    photo.IsAlbum = false;
+                }
+                else if (child is VideoContent video)
+                {
+                    video.IsAlbum = false;
+                }
+
+                _recyclePool.Put(content);
             }
         }
 
@@ -266,6 +393,10 @@ namespace Telegram.Controls.Messages.Content
                 if (child is MessageSelector selector)
                 {
                     selector.Recycle();
+                }
+                else if (child is IContent content)
+                {
+                    content.Recycle();
                 }
             }
 

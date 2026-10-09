@@ -1950,7 +1950,7 @@ namespace Telegram.Controls.Messages
                 //Grid.SetRow(Message, 2);
                 //Panel.Placeholder = false;
             }
-            else if (content is MessageAudio or MessageDocument or MessageVoiceNote)
+            else if (content is MessageAudio or MessageDocument or MessageVoiceNote or MessageAlbum)
             {
                 var caption = content.HasCaption();
                 if (content is MessageCall)
@@ -2045,7 +2045,19 @@ namespace Telegram.Controls.Messages
                 else
                 {
                     media.Recycle();
-                    _contentRecyclePool?.Put(media);
+
+                    // Pooled as its children, which any bubble can take, rather than whole.
+                    if (media is AlbumContent album)
+                    {
+                        album.ReleaseChildren();
+                    }
+                    else
+                    {
+                        // Detached first: a new AlbumContent below takes its children from
+                        // the pool, and would get this one while it is still Media's child.
+                        Media.Child = null;
+                        _contentRecyclePool?.Put(media);
+                    }
                 }
             }
 
@@ -2071,7 +2083,7 @@ namespace Telegram.Controls.Messages
             {
                 MessageText textMessage when textMessage.LinkPreview != null => /*textMessage.LinkPreview.InstantViewVersion != 0 ? new InstantContent(message) :*/ new WebPageContent(message),
                 MessageRichMessage => new InstantContent(message),
-                MessageAlbum => new AlbumContent(message),
+                MessageAlbum => new AlbumContent(message, _contentRecyclePool),
                 MessagePaidAlbum => new PaidMediaContent(message),
                 MessageAnimation => new AnimationContent(message),
                 MessageAudio => new AudioContent(message),
@@ -3455,6 +3467,7 @@ namespace Telegram.Controls.Messages
             Panel.ForceNewLine = content is MessageBigEmoji;
 
             Media.Margin = new Thickness(10, 4, 10, 8);
+            Media.Margin = new Thickness(0, -4, 0, 0);
             FooterToNormal();
             Grid.SetRow(Footer, 3);
             Grid.SetRow(Message, 2);

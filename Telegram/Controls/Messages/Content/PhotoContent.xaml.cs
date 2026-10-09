@@ -21,7 +21,14 @@ namespace Telegram.Controls.Messages.Content
 {
     public sealed partial class PhotoContent : FileButton, IContentWithFile
     {
-        private readonly bool _album;
+        private bool _album;
+
+        // Read by UpdateMessage, so a change applies from the next call.
+        public bool IsAlbum
+        {
+            get => _album;
+            set => _album = value;
+        }
 
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
