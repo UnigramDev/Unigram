@@ -340,31 +340,31 @@ namespace Telegram.Common
             }
             else if (diff < 60)
             {
-                return diff + "s";
+                return diff + Strings.SecretChatTimerSeconds;
             }
             else if (diff < 60 * 60)
             {
-                return diff / 60 + "m";
+                return diff / 60 + Strings.SecretChatTimerMinutes;
             }
             else if (diff < 60 * 60 * 24)
             {
-                return diff / 60 / 60 + "h";
+                return diff / 60 / 60 + Strings.SecretChatTimerHours;
             }
             else if (diff < 60 * 60 * 24 * 7)
             {
-                return diff / 60 / 60 / 24 + "d";
+                return diff / 60 / 60 / 24 + Strings.SecretChatTimerDays;
             }
             else if (diff < 60 * 60 * 24 * 30)
             {
-                return diff / 60 / 60 / 24 / 7 + "w";
+                return diff / 60 / 60 / 24 / 7 + Strings.SecretChatTimerWeeks;
             }
             else if (diff < 60 * 60 * 24 * 365)
             {
-                return diff / 60 / 60 / 24 / 30 + "mo";
+                return diff / 60 / 60 / 24 / 30 + Strings.SecretChatTimerMonths;
             }
             else
             {
-                return diff / 60 / 60 / 24 / 365 + "y";
+                return diff / 60 / 60 / 24 / 365 + Strings.SecretChatTimerYears;
             }
         }
 

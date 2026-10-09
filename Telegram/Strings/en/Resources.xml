@@ -13955,6 +13955,15 @@
     <string name="ShortcutCommandCallReject">Decline Call</string>
     <string name="ShortcutCommandCallToggleMicrophone">Toggle Microphone</string>
     <string name="ShortcutCommandCallToggleCamera">Toggle Camera</string>
+
+    <string name="SecretChatTimerSeconds">s</string>
+    <string name="SecretChatTimerMinutes">m</string>
+    <string name="SecretChatTimerHours">h</string>
+    <string name="SecretChatTimerDays">d</string>
+    <string name="SecretChatTimerWeeks">w</string>
+    <string name="SecretChatTimerMonths">M</string>
+    <string name="SecretChatTimerYears">y</string>
+
     <string name="WalletAttachMoney">Money</string>
     <string name="WalletTitle">Wallet</string>
     <string name="WalletWaltFunds">You also have funds in Walt</string>
