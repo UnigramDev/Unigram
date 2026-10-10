@@ -432,7 +432,7 @@ namespace Telegram.ViewModels
             {
                 Set(ref _selectedPattern, value);
 
-                if (value?.Document.DocumentValue.Id != _item.Document?.DocumentValue.Id && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
+                if (value?.Document?.DocumentValue.Id != _item.Document?.DocumentValue.Id && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
                 {
                     if (value == null)
                     {
