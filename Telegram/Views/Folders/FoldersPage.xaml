@@ -7,7 +7,8 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d"
-                  NavigationMode="Root">
+                  NavigationMode="Root"
+                  ShowHeader="False">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
@@ -27,15 +28,31 @@
                                         SelectionMode="None"
                                         ContainerContentChanging="OnContainerContentChanging">
                     <ListView.Header>
-                        <controls:SettingsPanel IsHeader="True">
-                            <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
-                                                       Text="{CustomResource CreateNewFilterInfo}"
-                                                       Margin="0,0,0,-14" />
+                        <controls:SettingsPanel IsHeader="True"
+                                                HasTopPadding="False">
+                            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
+                                                    AutoPlay="True"
+                                                    IsCachingEnabled="False"
+                                                    DecodeFrameType="Logical"
+                                                    FrameSize="140,140"
+                                                    Width="140"
+                                                    Height="140"
+                                                    LoopCount="1"
+                                                    Margin="0,16,0,0" />
+                            <controls:StickyHeader x:Name="Header"
+                                                   Text="{CustomResource Filters}"
+                                                   HorizontalContentAlignment="Center"
+                                                   Margin="0,-36,0,0" />
+                            <TextBlock common:TextBlockHelper.Markdown="{CustomResource CreateNewFilterInfo}"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       TextAlignment="Center"
+                                       Margin="12,-16,12,0"
+                                       MaxWidth="480" />
 
                             <TextBlock Text="{CustomResource FilterRecommended}"
                                        Style="{StaticResource BaseTextBlockStyle}"
                                        Visibility="{x:Bind ViewModel.Recommended.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                       Margin="24,30,24,6" />
+                                       Margin="24,16,24,6" />
                         </controls:SettingsPanel>
                     </ListView.Header>
                     <ListView.ItemTemplate>
@@ -489,5 +506,7 @@
                 </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>

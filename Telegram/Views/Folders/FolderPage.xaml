@@ -11,7 +11,8 @@
                   xmlns:drawers="using:Telegram.Controls.Drawers"
                   mc:Ignorable="d"
                   Loaded="OnLoaded"
-                  Title="{x:Bind ConvertTitle(ViewModel.Folder), Mode=OneWay}">
+                  Title="{x:Bind ConvertTitle(ViewModel.Folder), Mode=OneWay}"
+                  ShowHeader="False">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -20,13 +21,6 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-
-    <local:HostedPage.Action>
-        <Button Content="{CustomResource Done}"
-                Click="{x:Bind ViewModel.Continue}"
-                Style="{StaticResource AccentButtonStyle}"
-                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
-    </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
@@ -49,8 +43,22 @@
                                                 ContainerContentChanging="OnContainerContentChanging"
                                                 SelectionMode="None">
                             <ListView.Header>
-                                <controls:SettingsPanel IsHeader="True">
-                                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs" />
+                                <controls:SettingsPanel IsHeader="True"
+                                                        HasTopPadding="False">
+                                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs"
+                                                            AutoPlay="True"
+                                                            IsCachingEnabled="False"
+                                                            DecodeFrameType="Logical"
+                                                            FrameSize="140,140"
+                                                            Width="140"
+                                                            Height="140"
+                                                            LoopCount="1"
+                                                            Margin="0,16,0,0" />
+                                    <controls:StickyHeader x:Name="Header"
+                                                           ScrollingHost="{x:Bind ScrollingHost}"
+                                                           Text="{x:Bind ConvertTitle(ViewModel.Folder), Mode=OneWay}"
+                                                           HorizontalContentAlignment="Center"
+                                                           Margin="0,-36,0,0" />
 
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -446,5 +454,12 @@
                 </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}">
+            <Button Content="{CustomResource Done}"
+                    Click="{x:Bind ViewModel.Continue}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
+        </controls:StickyHeaderChrome>
     </Grid>
 </local:HostedPage>

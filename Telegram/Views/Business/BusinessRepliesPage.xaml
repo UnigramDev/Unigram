@@ -32,7 +32,8 @@
                                 CanDragItems="True"
                                 AllowDrop="True">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
                     <controls:AnimatedImage Source="ms-appx:///Assets/Animations/BusinessReplies.tgs"
                                             AutoPlay="True"
                                             IsCachingEnabled="False"
