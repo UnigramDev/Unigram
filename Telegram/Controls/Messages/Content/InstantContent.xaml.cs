@@ -85,14 +85,22 @@ namespace Telegram.Controls.Messages.Content
         {
             get
             {
-                if (LayoutRoot != null && LayoutRoot.Children.Count > 0
-                    && LayoutRoot.Children[^1] is FormattedTextBlock block
-                    && block.TextAlignment == TextAlignment.DetectFromContent)
-                {
-                    return block;
-                }
+                return FindBlock(LayoutRoot);
 
-                return null;
+                static FormattedTextBlock FindBlock(UIElement element)
+                {
+                    if (element is Panel panel && panel.Children.Count > 0)
+                    {
+                        // TODO: a better logic is needed (i.e. only use for some specific panel type)
+                        return FindBlock(panel.Children[^1]);
+                    }
+                    else if (element is FormattedTextBlock block && block.AdjustLineEnding)
+                    {
+                        return block;
+                    }
+
+                    return null;
+                }
             }
         }
 

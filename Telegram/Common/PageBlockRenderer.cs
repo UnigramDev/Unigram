@@ -146,11 +146,11 @@ namespace Telegram.Common
                 PageBlockEmbeddedPost embedPost => ProcessEmbedPost(clientService, embedPost),
                 PageBlockEmbedded embed => ProcessEmbed(clientService, embed),
                 PageBlockRelatedArticles relatedArticles => ProcessRelatedArticles(clientService, relatedArticles),
-                PageBlockHeader or PageBlockSubheader or PageBlockTitle or PageBlockSubtitle or PageBlockKicker => ProcessText(clientService, block, false),
+                PageBlockHeader or PageBlockSubheader or PageBlockTitle or PageBlockSubtitle or PageBlockKicker => ProcessText(clientService, block, false, true),
                 // Rich messages only
                 PageBlockThinking thinking => ProcessThinking(clientService, thinking),
                 // All
-                PageBlockFooter or PageBlockParagraph or PageBlockSectionHeading => ProcessText(clientService, block, false),
+                PageBlockFooter or PageBlockParagraph or PageBlockSectionHeading => ProcessText(clientService, block, false, true),
                 PageBlockBlockQuote blockquote => ProcessBlockquote(clientService, blockquote),
                 PageBlockDivider divider => ProcessDivider(clientService, divider),
                 PageBlockPhoto photo => ProcessPhoto(clientService, photo, parent),
@@ -182,7 +182,7 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessThinking(IClientService clientService, PageBlockThinking thinking)
         {
-            var text = ProcessText(clientService, thinking, false);
+            var text = ProcessText(clientService, thinking, false, true);
 
             // TODO: animation
 
@@ -214,7 +214,7 @@ namespace Telegram.Common
                 return tex;
             }
 
-            return ProcessText(clientService, new PageBlockParagraph(new RichTextPlain(math.Expression)), false);
+            return ProcessText(clientService, new PageBlockParagraph(new RichTextPlain(math.Expression)), false, true);
         }
 
         #endregion
@@ -254,7 +254,7 @@ namespace Telegram.Common
         {
             var panel = new StackPanel();
 
-            var header = ProcessText(clientService, relatedArticles, false);
+            var header = ProcessText(clientService, relatedArticles, false, false);
             if (header != null)
             {
                 var border = new Border { Style = _context.Resources["BlockRelatedArticlesHeaderPanelStyle"] as Style };
@@ -347,7 +347,7 @@ namespace Telegram.Common
             // no grid to build either, so render just the caption.
             if (table.Cells.Count == 0)
             {
-                return ProcessText(clientService, table, true);
+                return ProcessText(clientService, table, true, false);
             }
 
             var grid = new Grid
@@ -424,7 +424,7 @@ namespace Telegram.Common
 
                     // Wrapping is what both engines do unasked, so only the alignment is set
                     // here - the cell says which, and a table is the one place a page does.
-                    var textBlock = CreateTextBlock();
+                    var textBlock = CreateTextBlock(false);
                     textBlock.TextAlignment = cell.Align switch
                     {
                         PageBlockHorizontalAlignmentCenter => TextAlignment.Center,
@@ -516,7 +516,7 @@ namespace Telegram.Common
                 return panel;
             }
 
-            var caption = ProcessText(clientService, table, true);
+            var caption = ProcessText(clientService, table, true, false);
             if (caption != null)
             {
                 var panel = new StackPanel();
@@ -907,7 +907,7 @@ namespace Telegram.Common
         {
             var panel = new StackPanel();
 
-            var header = new SettingsButton { Content = ProcessText(clientService, details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Margin = new Thickness(-12, 0, -12, 0) };
+            var header = new SettingsButton { Content = ProcessText(clientService, details, false, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Margin = new Thickness(-12, 0, -12, 0) };
             var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
 
             panel.Children.Add(header);
@@ -1017,7 +1017,7 @@ namespace Telegram.Common
                 return null;
             }
 
-            var textBlock = CreateTextBlock();
+            var textBlock = CreateTextBlock(false);
             var element = textBlock as FrameworkElement;
 
             SetAutoFontSize(textBlock, false);
@@ -1028,7 +1028,7 @@ namespace Telegram.Common
             return element;
         }
 
-        private FrameworkElement ProcessText(IClientService clientService, PageBlock block, bool caption)
+        private FrameworkElement ProcessText(IClientService clientService, PageBlock block, bool caption, bool adjustLineEnding)
         {
             var text = GetText(block, caption);
             if (PageBlockHelper.IsEmpty(text))
@@ -1036,7 +1036,7 @@ namespace Telegram.Common
                 return null;
             }
 
-            var textBlock = CreateTextBlock();
+            var textBlock = CreateTextBlock(adjustLineEnding);
 
             SetAutoFontSize(textBlock, false);
             textBlock.SetText(clientService, text);
@@ -1163,7 +1163,7 @@ namespace Telegram.Common
         // Every text in a page, on whichever engine is in use. What the two disagree about is
         // how they are dressed - a Style targets a type - so ApplyStyle picks between the two
         // sets, and everything else here is ITextPresenter.
-        private ITextPresenter CreateTextBlock()
+        private ITextPresenter CreateTextBlock(bool adjustLineEnding)
         {
             if (_directText)
             {
@@ -1181,6 +1181,7 @@ namespace Telegram.Common
             var block = new FormattedTextBlock
             {
                 AutoFontSize = true,
+                AdjustLineEnding = adjustLineEnding,
                 TextAlignment = TextAlignment.DetectFromContent,
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
             };
@@ -1288,17 +1289,17 @@ namespace Telegram.Common
             ITextPresenter textBlock = null;
             if (!textEmpty && !citeEmpty)
             {
-                textBlock = CreateTextBlock();
+                textBlock = CreateTextBlock(true);
                 textBlock.SetText(clientService, new RichTexts([caption.Text, new RichTextPlain("\n"), caption.Credit]));
             }
             else if (!textEmpty)
             {
-                textBlock = CreateTextBlock();
+                textBlock = CreateTextBlock(true);
                 textBlock.SetText(clientService, caption.Text);
             }
             else if (!citeEmpty)
             {
-                textBlock = CreateTextBlock();
+                textBlock = CreateTextBlock(true);
                 textBlock.SetText(clientService, caption.Credit);
             }
 
@@ -1319,7 +1320,7 @@ namespace Telegram.Common
         {
             if (block.Text is not RichTextPlain plain || string.IsNullOrEmpty(block.Language))
             {
-                var text = ProcessText(clientService, block, false);
+                var text = ProcessText(clientService, block, false, false);
                 if (text != null)
                 {
                     return new BlockQuote
@@ -1333,7 +1334,7 @@ namespace Telegram.Common
             else
             {
                 var formatted = new FormattedText(plain.Text, new[] { new TextEntity(0, plain.Text.Length, new TextEntityTypePreCode(block.Language)) });
-                var textBlock = CreateTextBlock();
+                var textBlock = CreateTextBlock(false);
 
                 SetText(textBlock, clientService, formatted);
 
@@ -1440,7 +1441,7 @@ namespace Telegram.Common
 
             UpdateSpacing(content, block.Blocks, false);
 
-            var caption = ProcessText(clientService, block, true);
+            var caption = ProcessText(clientService, block, true, false);
             if (caption != null)
             {
                 ApplyStyle(caption, PullquoteCreditStyle, PullquoteCreditDirectStyle);
@@ -1464,8 +1465,8 @@ namespace Telegram.Common
         // TODO: support expandable + caption?
         private FrameworkElement ProcessExpandableBlockquote(IClientService clientService, PageBlockExpandableBlockQuote block)
         {
-            var text = ProcessText(clientService, block, false);
-            var caption = ProcessText(clientService, block, true);
+            var text = ProcessText(clientService, block, false, false);
+            var caption = ProcessText(clientService, block, true, false);
 
             if (text == null && caption == null)
             {
@@ -1677,7 +1678,7 @@ namespace Telegram.Common
             content.Children.Add(quoteTop);
             content.Children.Add(quoteBottom);
 
-            var text = ProcessText(clientService, block, false);
+            var text = ProcessText(clientService, block, false, false);
             if (text != null)
             {
                 Grid.SetColumn(text, 1);
@@ -1686,7 +1687,7 @@ namespace Telegram.Common
                 content.Children.Add(text);
             }
 
-            var caption = ProcessText(clientService, block, true);
+            var caption = ProcessText(clientService, block, true, false);
             if (caption != null)
             {
                 Grid.SetColumnSpan(caption, 3);

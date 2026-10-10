@@ -2928,6 +2928,8 @@ namespace Telegram.Controls
 
         public bool AutoFontSize { get; set; } = true;
 
+        public bool AdjustLineEnding { get; set; } = true;
+
         public UnderlineStyle HyperlinkStyle { get; set; } = UnderlineStyle.Single;
 
         public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
