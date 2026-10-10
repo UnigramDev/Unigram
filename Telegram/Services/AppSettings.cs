@@ -8,6 +8,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
@@ -33,8 +34,31 @@ namespace Telegram.Services
         private static EmojiSettings _emoji;
         public static EmojiSettings Emoji => _emoji ??= new EmojiSettings();
 
+        // Built once under a lock: the constructor migrates, and the UI thread and TDLib's both
+        // reach it at launch. Two migrations at once delete each other's containers.
+        private static readonly object _appearanceLock = new();
         private static AppearanceSettings _appearance;
-        public static AppearanceSettings Appearance => _appearance ??= new AppearanceSettings();
+        public static AppearanceSettings Appearance
+        {
+            get
+            {
+                var appearance = Volatile.Read(ref _appearance);
+                if (appearance != null)
+                {
+                    return appearance;
+                }
+
+                lock (_appearanceLock)
+                {
+                    if (_appearance == null)
+                    {
+                        Volatile.Write(ref _appearance, new AppearanceSettings());
+                    }
+
+                    return _appearance;
+                }
+            }
+        }
 
         private static DiagnosticsSettings _diagnostics;
         public static DiagnosticsSettings Diagnostics => _diagnostics ??= new DiagnosticsSettings();
