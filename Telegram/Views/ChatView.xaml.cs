@@ -3325,7 +3325,8 @@ namespace Telegram.Views
                         CanBeDeletedOnlyForSelf = true,
                         CanBeEdited = true,
                         CanBeReplied = true,
-                        CanBeSaved = true
+                        CanBeSaved = true,
+                        CustomEmojiIds = Array.Empty<long>()
                     };
                 }
                 else if (ViewModel.Type == DialogType.WelcomeMessages)
@@ -3334,7 +3335,8 @@ namespace Telegram.Views
                     {
                         CanBeDeletedOnlyForSelf = true,
                         CanBeEdited = true,
-                        CanBeSaved = true
+                        CanBeSaved = true,
+                        CustomEmojiIds = Array.Empty<long>()
                     };
                 }
                 else if (ViewModel is DialogEventLogViewModel eventLog && message.Event is ChatEvent chatEvent)
