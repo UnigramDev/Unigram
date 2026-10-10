@@ -313,6 +313,8 @@
     </ClInclude>
     <ClInclude Include="Composition\DirectRectangleClip2.h" />
     <ClInclude Include="Graphics\DiamondScene.h" />
+    <ClInclude Include="Graphics\IconMotion.h" />
+    <ClInclude Include="Graphics\IconScene.h" />
     <ClInclude Include="Graphics\Scene3D.h" />
     <ClInclude Include="Graphics\Scene3DDevice.h" />
     <ClInclude Include="Graphics\Scene3DPanel.h">
@@ -1251,6 +1253,8 @@
     </ClCompile>
     <ClCompile Include="Composition\DirectRectangleClip2.cpp" />
     <ClCompile Include="Graphics\DiamondScene.cpp" />
+    <ClCompile Include="Graphics\IconMotion.cpp" />
+    <ClCompile Include="Graphics\IconScene.cpp" />
     <ClCompile Include="Graphics\Scene3DDevice.cpp" />
     <ClCompile Include="Graphics\Scene3DPanel.cpp">
       <DependentUpon>Graphics\Scene3DPanel.idl</DependentUpon>
@@ -1487,7 +1491,32 @@
       <VariableName>g_CompositePixel</VariableName>
       <ObjectFileOutput></ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="Graphics\Shaders\IconVertex.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>VS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)IconVertex.h</HeaderFileOutput>
+      <VariableName>g_IconVertex</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\StarPixel.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>StarPS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)StarPixel.h</HeaderFileOutput>
+      <VariableName>g_StarPixel</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\CoinPixel.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>CoinPS</EntryPointName>
+      <HeaderFileOutput>$(IntDir)CoinPixel.h</HeaderFileOutput>
+      <VariableName>g_CoinPixel</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
     <None Include="Graphics\Shaders\Diamond.hlsl" />
+    <None Include="Graphics\Shaders\Icon.hlsl" />
     <None Include="Graphics\Shaders\Sparkle.hlsl" />
     <None Include="Graphics\Shaders\Composite.hlsl" />
   </ItemGroup>

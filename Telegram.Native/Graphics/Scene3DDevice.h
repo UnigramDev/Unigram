@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -22,6 +23,11 @@ namespace Graphics3D
     // For catch blocks: logs what is in flight and swallows anything the logging itself throws,
     // because a second exception there would end the process.
     void LogException(const wchar_t* where) noexcept;
+
+    // Reads a file from Assets\Models\<folder>\ in the package. Render thread, like every
+    // scene's Load, so it reads synchronously; the error names the file for the log.
+    bool ReadModelAsset(const wchar_t* folder, const wchar_t* name, std::vector<std::uint8_t>& data,
+        std::wstring& error);
 
     /// <summary>
     /// The one device every <c>Scene3DPanel</c> draws with, and the one thread that draws them.

@@ -1,17 +1,24 @@
 namespace Telegram.Native.Graphics
 {
+    // Diamond is the TON stone; Star and Coin are the Android app's Premium/Stars star and
+    // Business coin, which move themselves and take a tap as well as a drag.
     enum Scene3DModel
     {
-        Diamond
+        Diamond,
+        Star,
+        Coin
     };
 
-    // The looks a scene is authored in. Both names are the source's own: the beta calls palette 2
-    // the "Cool diamond", and the shader builds palette 1 around a colour it names ice.
+    // The looks a scene is authored in. Ice and Cool are the diamond's, and both names are the
+    // source's own: the beta calls palette 2 the "Cool diamond", and the shader builds palette 1
+    // around a colour it names ice. Golden is the star's, as the Stars screens show it; its
+    // Default is the purple Premium star.
     enum Scene3DPalette
     {
         Default,
         Ice,
-        Cool
+        Cool,
+        Golden
     };
 
     [default_interface]

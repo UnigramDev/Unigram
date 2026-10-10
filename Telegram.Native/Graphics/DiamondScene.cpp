@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "DiamondScene.h"
-
-#include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Storage.h>
+#include "Scene3DDevice.h"
 
 #include <algorithm>
 #include <cmath>
@@ -25,8 +23,8 @@ namespace Graphics3D
         constexpr float Pi = 3.14159265358979f;
         constexpr float ToRadians = Pi / 180.0f;
 
-        // Where the assets are packaged. The names are the beta's own.
-        constexpr wchar_t AssetFolder[] = L"\\Assets\\Models\\Diamond\\";
+        // Where the assets are packaged, under Assets\Models. The names are the beta's own.
+        constexpr wchar_t AssetFolder[] = L"Diamond";
 
         // The baked animation: 1441 frames of 42 floats at 240 frames a second, so the loop is
         // six seconds. The table carries the extra frame so the last one has a successor to
@@ -42,58 +40,7 @@ namespace Graphics3D
 
         bool ReadAsset(const wchar_t* name, std::vector<std::uint8_t>& data, std::wstring& error)
         {
-            std::wstring path;
-
-            try
-            {
-                path = winrt::Windows::ApplicationModel::Package::Current()
-                    .InstalledLocation().Path().c_str();
-            }
-            catch (...)
-            {
-                error = L"Diamond: no install location";
-                return false;
-            }
-
-            path += AssetFolder;
-            path += name;
-
-            CREATEFILE2_EXTENDED_PARAMETERS parameters = {};
-            parameters.dwSize = sizeof(parameters);
-            parameters.dwFileFlags = FILE_FLAG_SEQUENTIAL_SCAN;
-
-            HANDLE file = CreateFile2(path.c_str(), GENERIC_READ, FILE_SHARE_READ,
-                OPEN_EXISTING, &parameters);
-
-            if (file == INVALID_HANDLE_VALUE)
-            {
-                error = L"Diamond: could not open " + path;
-                return false;
-            }
-
-            LARGE_INTEGER size = {};
-            if (!GetFileSizeEx(file, &size) || size.QuadPart <= 0 || size.QuadPart > (16 << 20))
-            {
-                CloseHandle(file);
-                error = L"Diamond: implausible size for " + path;
-                return false;
-            }
-
-            data.resize(static_cast<size_t>(size.QuadPart));
-
-            DWORD read = 0;
-            const bool ok = ReadFile(file, data.data(), static_cast<DWORD>(data.size()), &read, nullptr)
-                && read == data.size();
-
-            CloseHandle(file);
-
-            if (!ok)
-            {
-                error = L"Diamond: short read on " + path;
-                return false;
-            }
-
-            return true;
+            return ReadModelAsset(AssetFolder, name, data, error);
         }
 
         bool CreateVertexBuffer(ID3D11Device* device, const std::vector<std::uint8_t>& bytes,

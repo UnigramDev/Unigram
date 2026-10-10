@@ -74,6 +74,10 @@ namespace Graphics3D
         void Drag(float horizontalPixels, float verticalPixels);
         void EndDrag();
 
+        // UI thread. A release that was a tap, positioned as SceneGesture describes. Only a scene
+        // that choreographs itself is told; the others have nothing that responds to one.
+        void Tap(float x, float y);
+
         // UI thread. An angular impulse in degrees per second, added to whatever the scene is
         // already doing and running down from there. Positive hurries the idle spin along.
         void Kick(double degreesPerSecond);
@@ -86,6 +90,9 @@ namespace Graphics3D
 
         // Which look the scene should wear, for one authored with more than one.
         void SetVariant(int variant);
+
+        // Whether the panel sits on a dark surface.
+        void SetDark(bool dark);
 
     private:
         friend class Scene3DDevice;
@@ -111,8 +118,16 @@ namespace Graphics3D
         void ApplyScale();
         void Advance(ScenePose& pose, float delta, bool settling);
 
+        // One frame of motion: the host's own spin, drag and settle, or the pointer handed to a
+        // scene that choreographs itself.
+        void Move(float delta);
+        void Choreograph(float delta);
+
         std::unique_ptr<IScene3D> m_scene;
         SceneMotion m_motion;
+
+        // Read once from the scene, which decides it for its whole life.
+        bool m_choreographed = false;
 
         winrt::Windows::UI::Xaml::Controls::SwapChainPanel m_panel{ nullptr };
 
@@ -167,6 +182,15 @@ namespace Graphics3D
         float m_pendingKick = 0;
         bool m_pendingVariantSet = false;
         int m_pendingVariant = 0;
+        bool m_pendingDarkSet = false;
+        bool m_pendingDark = false;
+
+        // For a choreographed scene: the drag in raw pixels and a tap, gathered into m_gesture.
+        float m_pendingDragX = 0;
+        float m_pendingDragY = 0;
+        bool m_pendingTap = false;
+        float m_pendingTapX = 0;
+        float m_pendingTapY = 0;
 
         std::uint32_t m_width = 0;
         std::uint32_t m_height = 0;
@@ -183,6 +207,14 @@ namespace Graphics3D
 
         // What is left of the kicks it has been given, in degrees per second.
         float m_kick = 0;
+
+        // What a choreographed scene is handed next frame. Render thread only.
+        SceneGesture m_gesture;
+
+        // Set by the press and release themselves, so that a tap shorter than a frame still
+        // reaches the scene as both edges. m_dragging alone would read false on both frames.
+        std::atomic<bool> m_pressLatch{ false };
+        std::atomic<bool> m_releaseLatch{ false };
 
         std::atomic<bool> m_dragging{ false };
         std::atomic<bool> m_spinning{ false };

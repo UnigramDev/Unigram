@@ -2692,6 +2692,14 @@
     <Content Include="Assets\Models\Diamond\small.bin" />
     <Content Include="Assets\Models\Diamond\vertices.bin" />
     <Content Include="Assets\Models\Diamond\widths.bin" />
+    <Content Include="Assets\Models\Icon\coin_border.png" />
+    <Content Include="Assets\Models\Icon\coin_inner.binobj" />
+    <Content Include="Assets\Models\Icon\coin_logo.binobj" />
+    <Content Include="Assets\Models\Icon\coin_outer.binobj" />
+    <Content Include="Assets\Models\Icon\coin_stars.binobj" />
+    <Content Include="Assets\Models\Icon\flecks.png" />
+    <Content Include="Assets\Models\Icon\star.binobj" />
+    <Content Include="Assets\Models\Icon\start_texture.png" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />

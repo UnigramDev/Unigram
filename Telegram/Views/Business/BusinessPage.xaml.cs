@@ -28,14 +28,14 @@ namespace Telegram.Views.Business
             InitializeComponent();
             Title = Strings.TelegramBusiness;
 
-            Headline.Text = Strings.TelegramBusinessSubtitle;
+            TextBlockHelper.SetMarkdown(Headline, Strings.TelegramBusinessSubtitle);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Headline.Text = ViewModel.IsPremium
+            TextBlockHelper.SetMarkdown(Headline, ViewModel.IsPremium
                 ? Strings.TelegramBusinessSubscribedSubtitleTemp
-                : Strings.TelegramBusinessSubtitleTemp;
+                : Strings.TelegramBusinessSubtitleTemp);
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

@@ -43,6 +43,7 @@ namespace Telegram.Views.Premium.Popups
             InitializeComponent();
 
             Animated.Visibility = Visibility.Collapsed;
+            Animated.IsPaused = true;
             Identity.Visibility = Visibility.Visible;
 
             Identity.Source = DelayedFileSource.FromSticker(clientService, gift.Gift.Sticker);
@@ -87,6 +88,7 @@ namespace Telegram.Views.Premium.Popups
             if (chat.EmojiStatus != null && stickerSet != null)
             {
                 Animated.Visibility = Visibility.Collapsed;
+                Animated.IsPaused = true;
                 Identity.Visibility = Visibility.Visible;
 
                 Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);
@@ -129,6 +131,7 @@ namespace Telegram.Views.Premium.Popups
             else if (chat.EmojiStatus != null)
             {
                 Animated.Visibility = Visibility.Collapsed;
+                Animated.IsPaused = true;
                 Identity.Visibility = Visibility.Visible;
 
                 Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);

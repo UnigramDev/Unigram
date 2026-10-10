@@ -134,6 +134,7 @@ namespace Graphics3D
         : m_scene(std::move(scene))
     {
         m_motion = m_scene ? m_scene->Motion() : SceneMotion();
+        m_choreographed = m_scene && m_scene->Choreographs();
         m_spinning = m_motion.spinsByDefault;
     }
 
@@ -399,11 +400,12 @@ namespace Graphics3D
     void Scene3DRenderer::BeginDrag()
     {
         m_dragging = true;
+        m_pressLatch = true;
     }
 
     void Scene3DRenderer::Drag(float horizontalPixels, float verticalPixels)
     {
-        if (m_motion.dragYawPerPixel == 0 && m_motion.dragPitchPerPixel == 0)
+        if (!m_choreographed && m_motion.dragYawPerPixel == 0 && m_motion.dragPitchPerPixel == 0)
         {
             return;
         }
@@ -414,6 +416,8 @@ namespace Graphics3D
             std::scoped_lock lock(m_pendingLock);
             m_pendingYaw -= horizontalPixels * m_motion.dragYawPerPixel;
             m_pendingPitch -= verticalPixels * m_motion.dragPitchPerPixel;
+            m_pendingDragX += horizontalPixels;
+            m_pendingDragY += verticalPixels;
         }
 
         m_pending = true;
@@ -422,6 +426,24 @@ namespace Graphics3D
     void Scene3DRenderer::EndDrag()
     {
         m_dragging = false;
+        m_releaseLatch = true;
+    }
+
+    void Scene3DRenderer::Tap(float x, float y)
+    {
+        if (!m_choreographed)
+        {
+            return;
+        }
+
+        {
+            std::scoped_lock lock(m_pendingLock);
+            m_pendingTap = true;
+            m_pendingTapX = x;
+            m_pendingTapY = y;
+        }
+
+        m_pending = true;
     }
 
     void Scene3DRenderer::Kick(double degreesPerSecond)
@@ -452,6 +474,17 @@ namespace Graphics3D
             std::scoped_lock lock(m_pendingLock);
             m_pendingVariant = variant;
             m_pendingVariantSet = true;
+        }
+
+        m_pending = true;
+    }
+
+    void Scene3DRenderer::SetDark(bool dark)
+    {
+        {
+            std::scoped_lock lock(m_pendingLock);
+            m_pendingDark = dark;
+            m_pendingDarkSet = true;
         }
 
         m_pending = true;
@@ -511,7 +544,7 @@ namespace Graphics3D
 
         std::uint32_t width, height;
         float scale, yaw, pitch, kick;
-        bool variantSet;
+        bool variantSet, darkSet, dark;
         int variant;
 
         {
@@ -524,16 +557,37 @@ namespace Graphics3D
             kick = m_pendingKick;
             variantSet = m_pendingVariantSet;
             variant = m_pendingVariant;
+            darkSet = m_pendingDarkSet;
+            dark = m_pendingDark;
+
+            m_gesture.dragX += m_pendingDragX;
+            m_gesture.dragY += m_pendingDragY;
+
+            if (m_pendingTap)
+            {
+                m_gesture.tapped = true;
+                m_gesture.tapX = m_pendingTapX;
+                m_gesture.tapY = m_pendingTapY;
+            }
 
             m_pendingYaw = 0;
             m_pendingPitch = 0;
             m_pendingKick = 0;
             m_pendingVariantSet = false;
+            m_pendingDarkSet = false;
+            m_pendingDragX = 0;
+            m_pendingDragY = 0;
+            m_pendingTap = false;
         }
 
         if (variantSet)
         {
             m_scene->SetVariant(variant);
+        }
+
+        if (darkSet)
+        {
+            m_scene->SetDark(dark);
         }
 
         // Folded in by the caller through the pose, so the drag is consumed exactly once.
@@ -715,6 +769,53 @@ namespace Graphics3D
         const float delta = std::chrono::duration<float>(now - m_previous).count();
         m_previous = now;
 
+        if (m_choreographed)
+        {
+            Choreograph(delta);
+        }
+        else
+        {
+            Move(delta);
+        }
+
+        const float transparent[4] = { 0, 0, 0, 0 };
+        m_device->Context()->ClearRenderTargetView(m_backBufferView.get(), transparent);
+
+        SceneTarget target = {};
+        target.context = m_device->Context();
+        target.view = m_backBufferView.get();
+        target.width = m_width;
+        target.height = m_height;
+
+        m_scene->Render(target, m_pose);
+
+        // Interval zero, because one refresh is waited for once for every panel - see
+        // Scene3DDevice::WaitForVerticalBlank.
+        const HRESULT hr = m_swapChain->Present(0, 0);
+
+        if (hr == DXGI_STATUS_OCCLUDED)
+        {
+            return FrameResult::Occluded;
+        }
+
+        if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET
+            || (FAILED(hr) && FAILED(m_device->Device()->GetDeviceRemovedReason())))
+        {
+            return FrameResult::Lost;
+        }
+
+        if (FAILED(hr))
+        {
+            LOGGER_ERROR(L"Scene3D: Present, 0x{:08X}", static_cast<std::uint32_t>(hr));
+            m_failed = true;
+            return FrameResult::Failed;
+        }
+
+        return FrameResult::Presented;
+    }
+
+    void Scene3DRenderer::Move(float delta)
+    {
         const bool dragging = m_dragging;
         if (!m_wasDragging && dragging && m_settle < 0)
         {
@@ -772,40 +873,21 @@ namespace Graphics3D
                 m_settle = -1;
             }
         }
+    }
 
-        const float transparent[4] = { 0, 0, 0, 0 };
-        m_device->Context()->ClearRenderTargetView(m_backBufferView.get(), transparent);
+    void Scene3DRenderer::Choreograph(float delta)
+    {
+        const float step = std::clamp(delta, 0.0f, MaximumStep);
 
-        SceneTarget target = {};
-        target.context = m_device->Context();
-        target.view = m_backBufferView.get();
-        target.width = m_width;
-        target.height = m_height;
+        m_pose.time += step;
+        m_pose.step = step;
+        m_pose.width = m_width;
+        m_pose.height = m_height;
 
-        m_scene->Render(target, m_pose);
+        m_gesture.pressed = m_pressLatch.exchange(false);
+        m_gesture.released = m_releaseLatch.exchange(false);
 
-        // Interval zero, because one refresh is waited for once for every panel - see
-        // Scene3DDevice::WaitForVerticalBlank.
-        const HRESULT hr = m_swapChain->Present(0, 0);
-
-        if (hr == DXGI_STATUS_OCCLUDED)
-        {
-            return FrameResult::Occluded;
-        }
-
-        if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET
-            || (FAILED(hr) && FAILED(m_device->Device()->GetDeviceRemovedReason())))
-        {
-            return FrameResult::Lost;
-        }
-
-        if (FAILED(hr))
-        {
-            LOGGER_ERROR(L"Scene3D: Present, 0x{:08X}", static_cast<std::uint32_t>(hr));
-            m_failed = true;
-            return FrameResult::Failed;
-        }
-
-        return FrameResult::Presented;
+        m_scene->Choreograph(m_gesture, step);
+        m_gesture = {};
     }
 }

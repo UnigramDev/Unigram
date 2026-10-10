@@ -5,6 +5,7 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:common="using:Telegram.Common"
                        xmlns:controls="using:Telegram.Controls"
+                       xmlns:graphics="using:Telegram.Native.Graphics"
                        mc:Ignorable="d"
                        Padding="0"
                        IsDismissButtonVisible="True"
@@ -29,16 +30,15 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <controls:AnimatedImage x:Name="Animated"
-                                            Source="ms-appx:///Assets/Animations/Premium.tgs"
-                                            IsCachingEnabled="False"
-                                            AutoPlay="True"
-                                            FrameSize="120,120"
-                                            DecodeFrameType="Logical"
-                                            LoopCount="1"
-                                            Width="120"
-                                            Height="120"
-                                            Margin="0,24,0,8" />
+                    <graphics:Scene3DPanel x:Name="Animated"
+                                           Model="Star"
+                                           FallbackText="&#xEA87;"
+                                           FallbackFontSize="96"
+                                           FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FallbackForeground="#FFA767FF"
+                                           Width="160"
+                                           Height="160"
+                                           Margin="0,8,0,0" />
                     <controls:AnimatedImage x:Name="Identity"
                                             Visibility="Collapsed"
                                             ReplacementColor="{ThemeResource TelegramForegroundAccentBrush}"

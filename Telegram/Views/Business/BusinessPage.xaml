@@ -3,9 +3,11 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:graphics="using:Telegram.Native.Graphics"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d"
+                  ShowHeader="False"
                   NavigationMode="Root">
 
     <Page.Transitions>
@@ -67,10 +69,23 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 Padding="0,0,0,72">
             <ListView.Header>
-                <controls:SettingsPanel>
-                    <controls:SettingsHeadline x:Name="Headline"
-                                               Source="ms-appx:///Assets/Animations/Business.tgs"
-                                               LoopCount="1" />
+                <controls:SettingsPanel HasTopPadding="False">
+                    <graphics:Scene3DPanel Model="Coin"
+                                           FallbackText="&#xEA87;"
+                                           FallbackFontSize="96"
+                                           FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FallbackForeground="#FFA767FF"
+                                           Width="156"
+                                           Height="156" />
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource TelegramBusiness}"
+                                           HorizontalContentAlignment="Center"
+                                           Margin="0,-36,0,0" />
+                    <TextBlock x:Name="Headline"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               TextAlignment="Center"
+                               Margin="12,-16,12,0"
+                               MaxWidth="480" />
 
                     <controls:HeaderedControl x:Name="PaymentOptions"
                                               x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}">

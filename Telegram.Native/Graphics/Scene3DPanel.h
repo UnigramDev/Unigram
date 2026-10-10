@@ -10,6 +10,7 @@
 #include <winrt/Windows.UI.Xaml.Input.h>
 #include <winrt/Windows.UI.Xaml.Media.h>
 
+#include <chrono>
 #include <functional>
 #include <memory>
 
@@ -92,6 +93,9 @@ namespace winrt::Telegram::Native::Graphics::implementation
         void OnCompositionScaleChanged(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& sender,
             winrt::Windows::Foundation::IInspectable const& args);
 
+        void OnActualThemeChanged(winrt::Windows::UI::Xaml::FrameworkElement const& sender,
+            winrt::Windows::Foundation::IInspectable const& args);
+
         void OnPointerPressed(winrt::Windows::Foundation::IInspectable const& sender,
             winrt::Windows::UI::Xaml::Input::PointerRoutedEventArgs const& args);
 
@@ -167,6 +171,11 @@ namespace winrt::Telegram::Native::Graphics::implementation
         std::uint32_t m_pointer = 0;
         winrt::Windows::Foundation::Point m_dragFrom{};
         bool m_dragging = false;
+
+        // Where and when the press began, and whether it has since moved too far to be a tap.
+        winrt::Windows::Foundation::Point m_pressFrom{};
+        std::chrono::steady_clock::time_point m_pressTime{};
+        bool m_pressMoved = false;
     };
 }
 

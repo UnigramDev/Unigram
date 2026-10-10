@@ -5,6 +5,7 @@
 #endif
 
 #include "DiamondScene.h"
+#include "IconScene.h"
 
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.System.h>
@@ -34,11 +35,20 @@ namespace winrt::Telegram::Native::Graphics::implementation
         {
             switch (model)
             {
+            case Graphics::Scene3DModel::Star:
+                return std::make_unique<::Graphics3D::IconScene>(false);
+            case Graphics::Scene3DModel::Coin:
+                return std::make_unique<::Graphics3D::IconScene>(true);
             case Graphics::Scene3DModel::Diamond:
             default:
                 return std::make_unique<::Graphics3D::DiamondScene>();
             }
         }
+
+        // GestureDetector's limits for a tap: ViewConfiguration's touch slop of 8 dp, and the
+        // long-press timeout past which a release is no longer one.
+        constexpr float TapSlop = 8.0f;
+        constexpr std::chrono::milliseconds TapTimeout{ 400 };
     }
 
     Scene3DPanel::Scene3DPanel()
@@ -60,6 +70,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
         PointerReleased({ this, &Scene3DPanel::OnPointerReleased });
         PointerCanceled({ this, &Scene3DPanel::OnPointerReleased });
         PointerCaptureLost({ this, &Scene3DPanel::OnPointerCaptureLost });
+        ActualThemeChanged({ this, &Scene3DPanel::OnActualThemeChanged });
     }
 
     Scene3DPanel::~Scene3DPanel()
@@ -371,6 +382,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
             }
 
             m_renderer->SetSpinSpeed(static_cast<float>(m_spinSpeed));
+            m_renderer->SetDark(ActualTheme() == ElementTheme::Dark);
 
             // SizeChanged reaches a panel before Loaded does, while there is no renderer to tell,
             // and nothing raises it again for a size that has not changed: without this a new
@@ -718,6 +730,14 @@ namespace winrt::Telegram::Native::Graphics::implementation
         UpdateSize();
     }
 
+    void Scene3DPanel::OnActualThemeChanged(FrameworkElement const&, IInspectable const&)
+    {
+        if (m_renderer != nullptr)
+        {
+            m_renderer->SetDark(ActualTheme() == ElementTheme::Dark);
+        }
+    }
+
     void Scene3DPanel::OnPointerPressed(IInspectable const&, PointerRoutedEventArgs const& args)
     {
         if (!m_interactive || m_renderer == nullptr || m_dragging)
@@ -733,6 +753,10 @@ namespace winrt::Telegram::Native::Graphics::implementation
         m_pointer = args.Pointer().PointerId();
         m_dragFrom = args.GetCurrentPoint(nullptr).Position();
         m_dragging = true;
+
+        m_pressFrom = m_dragFrom;
+        m_pressTime = std::chrono::steady_clock::now();
+        m_pressMoved = false;
 
         m_renderer->BeginDrag();
         UpdatePressScale(true);
@@ -762,12 +786,33 @@ namespace winrt::Telegram::Native::Graphics::implementation
         m_renderer->Drag(m_dragFrom.X - point.X, m_dragFrom.Y - point.Y);
 
         m_dragFrom = point;
+
+        const float dx = point.X - m_pressFrom.X;
+        const float dy = point.Y - m_pressFrom.Y;
+
+        if (dx * dx + dy * dy > TapSlop * TapSlop)
+        {
+            m_pressMoved = true;
+        }
     }
 
     void Scene3DPanel::OnPointerReleased(IInspectable const&, PointerRoutedEventArgs const& args)
     {
         if (m_dragging && args.Pointer().PointerId() == m_pointer)
         {
+            const double radius = ActualWidth() / 2;
+
+            if (!m_pressMoved && radius > 0 && m_renderer != nullptr
+                && std::chrono::steady_clock::now() - m_pressTime < TapTimeout)
+            {
+                // In the panel's own space, where the scale a press may put on it is applied;
+                // only a scene that takes taps reads this, and none of those grows on a press.
+                const auto point = args.GetCurrentPoint(*this).Position();
+
+                m_renderer->Tap(static_cast<float>((radius - point.X) / radius),
+                    static_cast<float>((radius - point.Y) / radius));
+            }
+
             ReleasePointerCapture(args.Pointer());
             EndDrag();
         }

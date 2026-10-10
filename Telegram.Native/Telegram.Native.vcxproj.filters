@@ -644,6 +644,12 @@
     <ClCompile Include="Graphics\DiamondScene.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\IconMotion.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\IconScene.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Graphics\Scene3DDevice.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -1331,6 +1337,12 @@
     <ClInclude Include="Graphics\DiamondScene.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\IconMotion.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\IconScene.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Graphics\Scene3D.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -1692,6 +1704,15 @@
     <FxCompile Include="Graphics\Shaders\DiamondVertex.hlsl">
       <Filter>Graphics\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Graphics\Shaders\CoinPixel.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\IconVertex.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\StarPixel.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Graphics\Shaders\SparklePixel.hlsl">
       <Filter>Graphics\Shaders</Filter>
     </FxCompile>
@@ -1702,6 +1723,9 @@
       <Filter>Graphics\Shaders</Filter>
     </None>
     <None Include="Graphics\Shaders\Diamond.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </None>
+    <None Include="Graphics\Shaders\Icon.hlsl">
       <Filter>Graphics\Shaders</Filter>
     </None>
     <None Include="Graphics\Shaders\Sparkle.hlsl">

@@ -102,6 +102,28 @@ namespace Graphics3D
     };
 
     /// <summary>
+    /// The pointer since the last frame, as it arrived, for a scene that moves itself.
+    /// </summary>
+    struct SceneGesture
+    {
+        // Edges, latched so that a press and release landing between two frames are both seen.
+        bool pressed = false;
+        bool released = false;
+
+        // A release that never moved far enough or stayed down long enough to be anything else.
+        // Where, as the fraction of half the panel's width from its centre: positive towards the
+        // left and top edges, one at the left edge. The Android view measures both axes against
+        // its width, and so does this.
+        bool tapped = false;
+        float tapX = 0;
+        float tapY = 0;
+
+        // Logical pixels, previous minus current - the sign a GestureDetector reports.
+        float dragX = 0;
+        float dragY = 0;
+    };
+
+    /// <summary>
     /// What the host hands over to draw into: the back buffer, already cleared to transparent.
     /// </summary>
     /// <remarks>
@@ -198,5 +220,15 @@ namespace Graphics3D
         // Which look to wear, for a scene authored with more than one. Not pure: most scenes have
         // exactly one and should not have to say so.
         virtual void SetVariant(int variant) {}
+
+        // Whether the panel sits on a dark surface, for a scene that shades differently on one.
+        virtual void SetDark(bool dark) {}
+
+        // True for a scene that owns its own motion. The host then neither spins nor settles it,
+        // and only delivers the pointer through Choreograph, once a frame before Render. The star
+        // and the coin are such scenes: on Android they are driven by a shuffled set of keyframed
+        // animations and a tap response that the host's spin and spring cannot express.
+        virtual bool Choreographs() const { return false; }
+        virtual void Choreograph(const SceneGesture& gesture, float step) {}
     };
 }
