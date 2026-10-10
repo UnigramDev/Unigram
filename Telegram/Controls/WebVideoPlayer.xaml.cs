@@ -22,6 +22,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.Data.Json;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -39,6 +40,8 @@ namespace Telegram.Controls
         // waiting on a range that will never finish downloading, and it holds the
         // WebView2 deferral, the source and its download open until it returns.
         private readonly CancellationTokenSource _cancellation = new();
+
+        private readonly HashSet<Deferral> _operations = new();
 
         private double _initialPosition;
 
@@ -60,6 +63,9 @@ namespace Telegram.Controls
             }
 
             _cancellation.Cancel();
+
+            _operations.ForEach(x => x.Complete());
+            _operations.Clear();
 
             if (_core != null)
             {
@@ -249,7 +255,13 @@ namespace Telegram.Controls
 
         private async void OnWebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
         {
+            if (_cancellation.IsCancellationRequested)
+            {
+                return;
+            }
+
             var deferral = args.GetDeferral();
+            _operations.Add(deferral);
 
             try
             {
@@ -261,13 +273,7 @@ namespace Telegram.Controls
             }
             finally
             {
-                // The request stays outstanding until this runs, and the player stalls
-                // waiting for a segment that is never answered - but only while the
-                // WebView2 it came from is still the live one. OnUnloaded closes it with
-                // requests still in flight, and completing the deferral of a closed
-                // CoreWebView2 raises in the browser, which unwinds into a P/Invoke frame
-                // as a fail-fast rather than an exception anything here could catch.
-                if (_core != null)
+                if (_operations.Remove(deferral))
                 {
                     deferral.Complete();
                 }
