@@ -120,6 +120,24 @@
   </Target>
 
   <!--
+    vcpkg.targets decides whether to run `vcpkg install` by comparing its stamp file against two
+    inputs: the root vcpkg.json and vcpkg-configuration.json. The overlay ports are not among them,
+    so editing one - a new webrtc version, a new SHA512 - leaves the stamp looking current and the
+    target is skipped entirely. vcpkg itself never runs, so its own ABI hashing never gets the
+    chance to notice, and the build silently links whatever was installed last.
+
+    That shipped: 12.10.4 went out linking the August webrtc although the port named the September
+    one, and a user hit a capture use-after-free that the newer build had already fixed.
+
+    Adding the port tree to the same item group closes it. `_Z` names are vcpkg's internals, so this
+    is coupled to its implementation - if a vcpkg update renames the group, the symptom is the old
+    silent staleness, which is why the release build deletes the stamp as well.
+  -->
+  <ItemGroup Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj'">
+    <_ZVcpkgInstallManifestDependenciesInputs Include="$(TelegramRoot)Libraries\vcpkg-ports\**\*" />
+  </ItemGroup>
+
+  <!--
     libvlc's plugins are the one dependency that cannot be copied flat: their relative paths are
     recorded in the generated plugins.dat cache, so they have to reach the package as
     plugins\<category>\<name>.dll. ReferenceCopyLocalPaths flattens, hence Content with Link.
