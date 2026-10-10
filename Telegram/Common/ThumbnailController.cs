@@ -267,15 +267,11 @@ namespace Telegram.Common
                 _brush.ImageSource = source;
             }
 
-            // Detached from the brush first, so nothing renders from a disposed source.
             if (previousSource != source && previousSource is SoftwareBitmapSource software)
             {
-                software.Dispose();
-            }
-
-            if (previousBitmap != bitmap)
-            {
-                previousBitmap?.Dispose();
+                // Not Dispose: Close() closes the SoftwareBitmap too, under a reload copy XAML may already
+                // have queued, and that copy fail-fasts on the closed bitmap.
+                _ = software.SetBitmapAsync(null);
             }
         }
     }
