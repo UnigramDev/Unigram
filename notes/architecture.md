@@ -108,7 +108,8 @@ app, split into partials by feature area.
 **Key types:** `ClientService` (Telegram/Services/ClientService.cs) — client, cache, dispatch;
 `ClientService.ChatList.cs` — chat-list ordering and positions per `ChatList`; `ClientService.Files.cs`
 — download bookkeeping and on-disk reconciliation; `ClientService.ForumTopics.cs`/`.SavedMessages.cs`/
-`.StoryList.cs`/`.FeedbackChatTopics.cs` — per-feature caches; `OptionsService` — TDLib global options;
+`.StoryList.cs`/`.FeedbackChatTopics.cs` — per-feature caches; `ClientService.Diagnostics.cs` —
+`GetCacheCounts`, how many objects every cache holds, for the diagnostics page; `OptionsService` — TDLib global options;
 `EventAggregator` (Telegram/Services/EventAggregator.cs) — the pub/sub bus.
 **Entry points:** view models and pages get `IClientService`/`ISession` by DI (Session.Registrations.cs);
 `ClientService.Send`/`SendAsync` is the only path to TDLib; `EventAggregator` is how anything subscribes
@@ -310,7 +311,7 @@ the repo root for the open items here.
 # UI: the chat list
 
 ## Chat and topic list cells — Telegram/Controls/Cells/ (108 files)
-<!-- map: verified=95560d9f7 paths=Telegram/Controls/Cells -->
+<!-- map: verified=07c88b840 paths=Telegram/Controls/Cells -->
 The visual row for every chat-list, topic-list and forum entry: title, preview, ticks, unread badges,
 typing indicator, mute icon, avatar and story ring. These are plain `Control`/`Grid` subclasses, not
 ListViewItems, reused as `ContentTemplateRoot` inside recycled containers.
@@ -324,9 +325,12 @@ ListViewItems, reused as `ContentTemplateRoot` inside recycled containers.
 **Traps:** cells are never constructed per item — one instance is mutated through many narrow
 `Update*` methods fired from TDLib update handlers, so missing one when adding a field silently
 leaves stale UI. `args.InRecycleQueue` must short-circuit before touching content.
+`ChatCell` builds its selection visuals (the photo and outline composition handles) on first
+selection, in `InitializeSelection`, and `SelectionOutline` stays `Collapsed` in XAML until then: every
+composition node a row owns is updated on every XAML frame, and most rows are never selected.
 
 ## Message list virtualization and scrolling — Telegram/Controls/Chats/ChatHistoryView.cs, ChatHistoryViewItem.cs
-<!-- map: verified=95560d9f7 paths=Telegram/Controls/Chats/ChatHistoryView.cs,Telegram/Controls/Chats/ChatHistoryViewItem.cs -->
+<!-- map: verified=b9febb4f2 paths=Telegram/Controls/Chats/ChatHistoryView.cs,Telegram/Controls/Chats/ChatHistoryViewItem.cs -->
 The bubble list (a `ListViewEx` subclass): bidirectional incremental loading, scroll anchoring around
 content changes, multi-select drag gestures, and scroll-to-message with retry and fast paths.
 **Key types:** `ChatHistoryView` — the ListView, owns `ScrollingHost`/`ScrollingPropertySet`;
@@ -337,9 +341,13 @@ for accessible names.
 **Traps:** `Disconnect()` may only be called on page unload — setting `ItemsSource = null` there is a
 deliberate workaround for the ListView otherwise hoarding hundreds of realized containers (comment at
 :122-137). `ScrollIntoViewAsync` calls `panel.UpdateLayout()` right after `ScrollIntoView` to force
-synchronous container realization (~line 538); removing it breaks scroll-to-message. `SetScrollingMode`
-is a two-phase queue because `ItemsPanelRoot` may not exist yet. The saved-messages tab inverts
-`KeepLastItemInView`/`KeepItemsInView` (~line 357) because it scrolls the other way.
+synchronous container realization (~line 538); removing it breaks scroll-to-message. The saved-messages
+tab inverts `KeepLastItemInView`/`KeepItemsInView` (`IsReversed`) because it scrolls the other way.
+`ItemsUpdatingScrollMode` is written only by `PrepareAnchor`, once per mutation — but the panel reads it
+once per layout pass, so a run of mutations gets a single anchor, whichever wrote last, and mutations at
+opposite ends must not share a run. `IsFollowingEnd` is the term in front of that, and requires
+`IsNewestSliceLoaded`: the end of the loaded window is a paging boundary, and following it makes every
+appended page pull the view into the next load (see `chat-history-scroll-mode-todo.md`).
 
 ## Composer and chat chrome — Telegram/Controls/Chats/ (~35 further files)
 <!-- map: verified=95560d9f7 paths=Telegram/Controls/Chats -->
@@ -358,7 +366,7 @@ these must be disposed on stop or the mic session leaks.
 # UI: messages
 
 ## MessageBubble pipeline — Telegram/Controls/Messages/ (MessageBubble, MessageBubblePanel, MessageSelector, MessageContentRecyclePool, IContent)
-<!-- map: verified=95560d9f7 paths=Telegram/Controls/Messages/MessageBubble.xaml.cs,Telegram/Controls/Messages/MessageBubble.xaml,Telegram/Controls/Messages/MessageBubblePanel.cs,Telegram/Controls/Messages/MessageSelector.xaml.cs,Telegram/Controls/Messages/MessageContentRecyclePool.cs,Telegram/Controls/Messages/IContent.cs -->
+<!-- map: verified=07c88b840 paths=Telegram/Controls/Messages/MessageBubble.xaml.cs,Telegram/Controls/Messages/MessageBubble.xaml,Telegram/Controls/Messages/MessageBubblePanel.cs,Telegram/Controls/Messages/MessageSelector.xaml.cs,Telegram/Controls/Messages/MessageContentRecyclePool.cs,Telegram/Controls/Messages/IContent.cs -->
 Renders one regular message: reply and forward headers, text, media content, footer and reactions in a
 single custom-panel layout. `MessageSelector` is the ListView item's `ContentTemplateRoot` — selection
 chrome and the recycling entry point — hosting either a `MessageBubble` or a `MessageService`.
@@ -432,7 +440,7 @@ must be fully reset, never assumed blank. An ms-appx font first in a `FontFamily
 run in RichEdit.
 
 ## Reply, forward, footer and reactions — Telegram/Controls/Messages/ (14 files)
-<!-- map: verified=95560d9f7 paths=Telegram/Controls/Messages/MessageReply.xaml.cs,Telegram/Controls/Messages/MessageForwardHeader.xaml.cs,Telegram/Controls/Messages/MessageFooter.xaml.cs,Telegram/Controls/Messages/ReactionsPanel.cs,Telegram/Controls/Messages/ReactionButton.cs,Telegram/Controls/Messages/ReactionsMenuFlyout.xaml.cs,Telegram/Controls/Messages/MessageReferenceBase.cs,Telegram/Controls/Messages/MessageFactCheck.xaml.cs -->
+<!-- map: verified=07c88b840 paths=Telegram/Controls/Messages/MessageReply.xaml.cs,Telegram/Controls/Messages/MessageForwardHeader.xaml.cs,Telegram/Controls/Messages/MessageFooter.xaml.cs,Telegram/Controls/Messages/ReactionsPanel.cs,Telegram/Controls/Messages/ReactionButton.cs,Telegram/Controls/Messages/ReactionsMenuFlyout.xaml.cs,Telegram/Controls/Messages/MessageReferenceBase.cs,Telegram/Controls/Messages/MessageFactCheck.xaml.cs -->
 Secondary bubble chrome: quoted reply preview, forwarded-from header, timestamp and read-state footer,
 reaction pills and their flyouts, saved-messages tags, summary and fact-check strips.
 **Key types:** `MessageReply`/`MessageReplyPattern` — reply preview with generated background pattern;
@@ -502,6 +510,63 @@ gift input widgets. `Calls/`, despite the name, holds small status widgets (`Sig
 ScrollViewer) to find the scrollbar owner; a template restructure breaks it with no compile-time signal.
 A custom VisualStateManager never sees framework state changes.
 
+## Amount field — Telegram/Controls/AmountTextBlock.cs
+<!-- map: verified=8ad6d0600 paths=Telegram/Controls/AmountTextBlock.cs -->
+An amount being typed, drawn rather than edited: the whole part at the control's size, the fraction
+and its separator smaller beside it. Not a TextBox and not a RichEditBox — two sizes on one baseline
+needs RichEdit, which costs `BeforeTextChanging` and with it the input filter. Characters are offered
+to it (`TryAppend`, `TryReplace`, `TryUndo`) by whatever owns the keypad rather than listened for,
+because which part of the screen has focus is the screen's business; `WalletSendPopup` is the only
+caller today. `Text` is what was typed, verbatim, half-written states included: "1." and "1.0" both
+parse as one and neither may be rewritten while the next digit is still coming.
+**There is no placeholder, and `Text` is never empty**: a field nothing has been entered into holds
+`Zero`, drawn as ordinary content. That is what makes the first digit an ordinary same-slot change —
+the zero pops out, the digit pops in — and it is what the input rules are written against: a digit
+takes the zero's place rather than following it, another zero can only begin a fraction so it writes
+the separator too, and backspacing to nothing lands back on the zero. Phrasing those as "is the field
+empty" is what used to let `05` through once the separator had been deleted.
+**The number is not in the visual tree.** One `CanvasTextLayout` (two sizes via `SetFontSize`, which is
+what shares the baseline) is walked with an `ICanvasTextRenderer`; each glyph is outlined once per size
+into a `CompositionPathGeometry` and drawn as one `CompositionSpriteShape` per glyph in a `ShapeVisual`
+on `AmountHost`. Across a change a glyph is matched by key, never by position — a digit by its index
+from the start of its part, a group separator by its ordinal from the right — which is what lets the
+separator slide from one gap to the next while the digits around it merely shift. Grouping is drawn,
+never stored.
+**Key types:** `GlyphKey`/`GlyphPart` — what gives a glyph an identity from one change to the next;
+`GlyphOutline` — one cached outline and its centre, shared by every shape drawing that glyph;
+`GlyphOutlineRenderer` — the renderer that places the glyphs and fills that cache; `Redraw` — the way
+out when a glyph can no longer be paired with a character; `AmountTextBlockAutomationPeer` — the
+`IValueProvider` that makes it read as an edit field, which nothing else here would tell a screen
+reader. Template parts (`Themes/Generic.xaml`): `PrefixPresenter`, `AmountHost` — empty, the number is
+drawn into it — and `SuffixPresenter`, in three Auto columns.
+**Traps:** which character a glyph came from is worked out by **reading order** — the glyphs are sorted
+by origin and zipped with the text — not from `clusterMapIndices`/`textPosition`. What those are
+indexed against across several runs is documented nowhere, and a fraction is the only thing that makes
+a second run, so getting it wrong dropped every integral digit and nothing else. An amount is one face,
+one glyph per character, which is what makes the zip sound; a count mismatch is caught and redrawn from
+nothing rather than mispaired. The outline cache is keyed by **glyph index**, so it assumes that one
+face, which `InvalidateFormat` enforces by dropping the cache on any font change — along with the
+shapes, which can't glide across faces.
+The symbol and the unit are the control's own `Prefix`/`Suffix` content rather than siblings in a panel:
+the row is arranged at its final width on the keystroke and each part is then translated back and
+glided into place, which the control can only do for the parts it owns. It glides itself by half of
+what it grew by, so **it has to stay centre-aligned** — the style sets that, and the arithmetic in
+`OnSizeChanged` is why it must keep doing so. Every shift is a `SizeChanged` delta rather than a
+position read off the visuals, because XAML writes an aligned element's offset after `ArrangeOverride`
+has returned: a position read during layout is a pass old, and animating off it plays each change late
+over a control that has already jumped.
+**Too little room shrinks the drawing, never the layout.** `MeasureOverride` measures against infinity
+and returns that, so the row always asks for its full width and takes down what it was offered on the
+way past; `ScaleTo` then draws it at the fraction that fits, about `CenterPoint`, so the number stays
+centred. Measuring it smaller instead would re-lay-out the row and throw away the positions the glyphs
+were animated to. The glide and the scale only compose approximately — `TranslateBy` works in layout
+units, so a glyph drawn at *s* moves *s* times what the glide assumes. The style's large negative
+`Margin` is part of this and is not spacing: XAML clips an element whose desired size exceeds its
+arranged slot, in the element's own coordinates and **before its transform**, so without it the
+overflow is cut off before `Scale` can shrink it back inside. It costs the desired width, which it
+drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
+`MeasureOverride` adds it back to recover the width the parent really had.
+
 ---
 
 # Media, theming and platform
@@ -519,16 +584,61 @@ consumption rate; `DelayedFileSource`, `AnimatedEmojiFileSource`, `CustomEmojiFi
 **Entry points:** native players call `AnimatedImageSourceFactory.Create` via the `CreateFromString`
 markup extension, or controls construct a source directly from a `Telegram.Td.Api.File`.
 **Traps:** `RemoteFileSource.ReadCallback` blocks the native player thread on a `ManualResetEvent` until
-TDLib's file-update thread signals it; `UpdateFile` and `MustWait` share `_stateLock`, and misordering
-there reintroduces a documented deadlock (a synchronous `GetFileDownloadedPrefixSize` used to hang
-because `Client.Run` serializes dispatch and reply on one thread). `Equals`/`GetHashCode` special-case
-`IsUnique` sources to avoid cache collisions.
+TDLib's file-update thread signals it, and for at most `ReadTimeout`: past that it reports -1 so the
+read fails and libvlc's input thread can die, because `libvlc_media_player_stop` joins that thread
+while holding the lock `AsyncMediaPlayer`'s position and duration would otherwise take. `Close`
+unsubscribes from `UpdateManager` and `Open` resubscribes — a source reopened without that hears no
+update and every wait runs to the timeout. `UpdateFile` and `MustWait` share `_stateLock`, and
+misordering there reintroduces a documented deadlock (a synchronous `GetFileDownloadedPrefixSize` used
+to hang because `Client.Run` serializes dispatch and reply on one thread). `Equals`/`GetHashCode`
+special-case `IsUnique` sources to avoid cache collisions.
+
+## Animated images — Telegram/Controls/AnimatedImage.cs, Telegram.Native/FrameSurface.*
+<!-- map: verified=07c88b840 paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl -->
+Stickers, custom emoji, GIFs and video stickers, decoded off the UI thread and drawn into a composition
+surface without the UI thread touching a frame. One file holds the control, the presenter, the decode
+tasks and the per-window loader.
+**Key types:** `AnimatedImage` — the control; paints the frame as `LayoutRoot.Background` through
+`AnimatedImageSurfaceBrush`, a `XamlCompositionBrushBase` that carries the replacement-colour tint as an
+effect, so the control owns no composition node. `AnimatedImagePresenter` — one per
+`AnimatedImagePresentation` (source, decode size, playback policy) per window, shared by every image
+showing it; owns the task, two frame buffers and the surface. `AnimatedImageTask` and its Lottie, Video,
+WebP, Particles and Dice subclasses — the decoders. `AnimatedImageLoader` — one per `XamlRoot`: the
+presenter table, the load queue, `BufferRecyclePool` and `FrameFlusher`. `AnimatedImageSurface` — the
+presenter's `FrameSurface`, refcounted between it and the images showing it. `FrameSurface`
+(Telegram.Native) — copies a frame into a `CompositionDrawingSurface` with one `UpdateSubresource`, or
+through Direct2D when the frame is rotated.
+**Frame flow:** `AnimationScheduler` ticks the presenter on a worker, `task.NextFrame` decodes into the
+background buffer, which is published as `_foregroundNext` and handed to `FrameFlusher.Request`. The
+flusher, one thread per window, waits for the compositor clock (`Direct2DDevice.WaitForCompositorClock`,
+a 60 Hz timer before Windows 11), draws every pending presenter in one pass, and passes the buffer that
+was on screen back to the worker. The UI thread is reached only to hook the brush on the first frame,
+and for `PositionChanged` while it has listeners.
+**Traps:** a device takes **one drawing session at a time**: a second `BeginDraw` while one is open
+fails, so all drawing stays on the flusher's thread — drawing from the decode workers lost the only frame
+a still sticker draws. **Every pass is a commit, and every commit a XAML frame** on the UI thread:
+unpaced, the flusher ran about 600 passes a second and cost the UI thread twice as much, so the clock wait
+is not a nicety. A replaced device empties every surface, and a still has no next frame to fix it: the
+loader's `RenderingDeviceReplaced` handler asks each presenter to `Redraw` the frame it holds.
+`_foregroundPrev` belongs to the flusher; the UI thread reads it only to sample the dominant colour.
+`BufferRecyclePool` is single-threaded on the UI thread and `Rent` returns the best fit up to twice the
+size, so code writing a frame must take `Length` as at least `width * height * 4`, never equal, and write
+from offset 0 at a stride of `width * 4`. The surface is closed by the last of the presenter and the
+images to let go (`TryAddRef`/`Release`): that is what keeps an image with `CleanOnSourceChanged="False"`
+(reaction and tag buttons) on its last frame while the next source loads. A rotated video gets a surface
+of the rotated size, and `CachedVideoAnimation::Load` swaps the requested size for 90 and 270 so the frame
+is decoded at the size it fills once turned; its frame cache is keyed on the requested size, so entries
+cached before that change stay blurry until they age out. The brushes are per image because the tint is
+in them; sharing them on the presenter by stretch and tint is an open TODO.
 
 ## Thumbnails and the download path — Telegram/Common/ThumbnailController.cs, HttpServer.cs, MediaHttpServer.cs, VideoPreloader.cs
-<!-- map: verified=95560d9f7 paths=Telegram/Common/ThumbnailController.cs,Telegram/Common/HttpServer.cs,Telegram/Common/MediaHttpServer.cs,Telegram/Common/VideoPreloader.cs,Telegram/Common/LocalDatabase.cs,Telegram/Common/NativeFile.cs -->
+<!-- map: verified=07c88b840 paths=Telegram/Common/ThumbnailController.cs,Telegram/Common/HttpServer.cs,Telegram/Common/MediaHttpServer.cs,Telegram/Common/VideoPreloader.cs,Telegram/Common/LocalDatabase.cs,Telegram/Common/NativeFile.cs -->
 `ThumbnailController` binds an `ImageBrush` to a generation-tracked async pipeline: `Blur(...)` offloads
 to `Direct2D.Shared.DrawBlurred` on a background task, converts to a `SoftwareBitmapSource`, and swaps
 it onto the brush only if `_generation` still matches. `Bitmap(...)` does the unblurred equivalent.
+Files under LocalState are opened on the pool with plain file IO and copied into a native
+`InMemoryRandomAccessStream`; anything else still goes through `StorageFile`, which costs the broker
+and UI-thread continuations. A managed stream adapter would be read on the UI thread by `SetSourceAsync`.
 `HttpServer`/`MediaHttpServer` serve local and streamed media to consumers that need HTTP semantics
 over a TDLib file.
 **Traps:** every request must be generation-checked after each `await` — assigning to the brush without
@@ -550,23 +660,66 @@ because `FrameworkElement.Resources` requires a single owner; never share that w
 app theme is global, the chat override is per window, and popups need it forwarded.
 
 ## Diagnostics and crash reporting — Telegram/Common/{Profiler.cs,WatchDog.cs,Instrumentation.cs,ExceptionSerializer.cs}, Telegram/Logger.cs
-<!-- map: verified=95560d9f7 paths=Telegram/Common/Profiler.cs,Telegram/Common/WatchDog.cs,Telegram/Common/Instrumentation.cs,Telegram/Common/ExceptionSerializer.cs,Telegram/Logger.cs,Telegram/Common/MonotonicUnixTime.cs,Telegram/Common/InactivityHelper.cs -->
+<!-- map: verified=07c88b840 paths=Telegram/Common/Profiler.cs,Telegram/Common/WatchDog.cs,Telegram/Common/Instrumentation.cs,Tools/Instrument/Program.cs,Telegram/Common/ExceptionSerializer.cs,Telegram/Logger.cs,Telegram/Common/MonotonicUnixTime.cs,Telegram/Common/InactivityHelper.cs -->
 Logging, crash capture and upload, and profiling that ships in release. `Logger` keeps a 200-line ring
-buffer (`Dump()`) and forwards to TDLib's own log. `WatchDog` hooks `NativeUtils.SetFatalErrorCallback`,
+buffer (`Dump()`) and writes its own `app_log.txt`, rotated over `app_log.txt.old` at 10 MB the way
+TDLib rotates its own — two files, the newer moved onto the older. Entries are queued to a single
+background writer and batched into one write per burst, because most logging is on the UI thread.
+Nothing is forwarded into TDLib's log any more; `AppSettings.VerbosityLevel` still gates both. `WatchDog` hooks `NativeUtils.SetFatalErrorCallback`,
 `CoreApplication.UnhandledErrorDetected`, `BootStrapper.UnhandledException` and `AppDomain.FirstChanceException`,
 serializes through `ExceptionSerializer`, rate-limits with a persistent token bucket (100/hour), writes
 `crash.id` and `ErrorReports/*.json`, and uploads to the crash endpoint. `Profiler` is a
 `[Conditional("INSTRUMENTATION")]` scoped-timer and tally facility.
+`Instrumentation` is the orphan analysis: every UIElement the app declares registers itself in a
+`[ThreadStatic]` list, and `AnalyzeAsync` reports whatever no window can reach. The registration is
+not in the source - `Tools/Instrument` weaves the call into the constructor of the topmost app type
+of each hierarchy, after the compiler: a step of `Telegram.Modern.csproj` under
+`-p:Instrumented=true`, and of `Telegram.csproj` wherever `INSTRUMENTATION` is defined (Debug|x64,
+off with `-p:Instrumented=false`; `-p:Instrumented=true` defines it for a .NET Native Release, which
+ILC then compiles woven). Reachability is a generic `VisualTreeHelper` walk over every
+`WindowContext`'s `XamlRoot` and its open popups, dispatched to each window's own thread because XAML
+objects are thread-affine. What is left hand-written is `MainPage.DebugDetachedOf`, which names only
+what the app holds OFF the tree: the message list's recycle pools, `MessageTextBlock._blocks`, a
+transport control's player.
+The dashboard groups reports by `ErrorReport.GroupHash`, which the *client* computes in
+`ExceptionSerializer`: version, exception type, first line of the message, the module
+`FatalError.Fault` names, and up to `MaxHashedFrames` frames of the first record in the chain
+that says anything, counting only our own binaries (`_builtinBinaries`) and quantized to the
+function each address falls in. `Fault` is the address the crash was actually at, which no
+frame gives: a backtrace taken in the unhandled-exception filter opens with the dispatcher on
+its way there. It comes from `EXCEPTION_RECORD::ExceptionAddress` on the two hook paths and
+from `STOWED_EXCEPTION_INFORMATION_V2::ExceptionAddress` per stowed record, and it is hashed
+by name alone unless the module is ours. A record stowed by `RoOriginateError` has a stack but
+no `ExceptionAddress`, so `GetFailFastException` falls back to the root record's first frame:
+without a fault the walk finds nothing to say in that record and goes on to the rest of the
+stowed chain, which groups one failure by whatever else the thread had stowed beside it.
+The message the hash sees is the translated one:
+Windows writes system text in the user's language, so `TranslateMessage` rebuilds the first
+line from `FatalError.HResult` — `STOWED_EXCEPTION_INFORMATION_V2::ResultCode`, the code before
+`UnhandledErrorDetected` flattened it to `E_FAIL` — and falls back to matching the sentence in
+`TranslateText` for the codes `TranslateHResult` deliberately does not know.
 **Traps:** `Profiler` compiles out entirely unless `INSTRUMENTATION` is defined — expect no output from a
-normal Debug or Release build. `WatchDog` is disabled when `Constants.DEBUG`. Report writing uses a
+Release build. So does `Instrumentation.Register`, and the weaver that calls it runs for the two
+projects above alone: an instrumented build of any other flavour registers nothing at all, which
+`AnalyzeAsync` reports as such rather than as an app that has entirely leaked. Debug|x64 of
+`Telegram.csproj` is woven by default, so measure performance with `-p:Instrumented=false`. Registering
+costs a `WeakReference` per control constructed, so an instrumented build is not one to measure on. `WatchDog` is disabled when `Constants.DEBUG`. An entry reaches the ring
+before it reaches `app_log.txt`, so a hard kill loses the queued tail of the file — which is why a crash
+report carries `Dump()` rather than the file. Report writing uses a
 `_reporting` thread-static re-entrancy guard, since serializing a report can itself throw.
+Anything in the group hash that varies with the machine rather than with the fault - the OS
+modules that happen to be on the stack, a GPU driver named after its vendor, an address inside a
+function - splits one bug into a group per configuration; and any change to the hash re-buckets
+every report from the release that ships it.
 
-## Common helpers, grouped — Telegram/Common/ (110 files)
+## Common helpers, grouped — Telegram/Common/ (111 files)
 <!-- map: verified=01cb6feb8 paths=Telegram/Common -->
 The cross-cutting helper dump, by cluster. **Extensions and text:** `Extensions*.cs`,
 `NormalizingStringBuilder`, `UniqueList`, `MathEx`/`MathFEx`. **Emoji and text rendering:** `Emoji.cs`,
 `AutocompleteEntityFinder.cs`, `TextStyleRun.cs`, `TextSelectionCoordinator`/`TextSelectionManager`,
-`MarkdownToInstantView.cs`, `PageBlockRenderer.cs`. **Files and downloads:** `UpdateManager.cs` — the
+`MarkdownToInstantView.cs`, `InstantViewToMarkdown.cs` (its inverse, behind the instant
+view's "Save as Markdown"; media has no URL to write, so it exports as text),
+`PageBlockRenderer.cs`. **Files and downloads:** `UpdateManager.cs` — the
 file-id→subscriber bus every source and control uses for TDLib file updates, fed by
 `ClientService.UpdateFile` and owning both the weak subscription tables and the per-UI-thread queues
 that carry the updates — plus `TdThroughput.cs`, `UriEx.cs`. **Recording:** `Recording/ChatRecordEngine.cs`, `ChatRecordSession.cs`, `AudioWaveform.cs`,
@@ -620,13 +773,14 @@ check for Win32 vs UWP conditional compilation before assuming a shim is univers
 # Native
 
 ## Drawing surfaces — Direct2D over the shared Composition device — Telegram.Native/ (14 files)
-<!-- map: verified=95560d9f7 paths=Telegram.Native/Direct2DDevice.cpp,Telegram.Native/Direct2DDevice.h,Telegram.Native/Direct2DDevice.idl,Telegram.Native/SurfaceImage.idl,Telegram.Native/FreeformGradientSurface.cpp,Telegram.Native/ChatBackgroundPattern.cpp,Telegram.Native/MessageBubbleNineGrid.cpp,Telegram.Native/RichMathSurface.cpp,Telegram.Native/Composition,Telegram.Native/Highlight -->
+<!-- map: verified=07c88b840 paths=Telegram.Native/Direct2DDevice.cpp,Telegram.Native/Direct2DDevice.h,Telegram.Native/Direct2DDevice.idl,Telegram.Native/SurfaceImage.idl,Telegram.Native/FreeformGradientSurface.cpp,Telegram.Native/ChatBackgroundPattern.cpp,Telegram.Native/MessageBubbleNineGrid.cpp,Telegram.Native/RichMathSurface.cpp,Telegram.Native/Composition,Telegram.Native/Highlight -->
 All off-thread D2D rasterization — text layout and measurement, chat backgrounds, gradients, particles,
 math formulas, nine-grid bubble masks, syntax highlighting — plus the DirectComposition plumbing XAML has
 no API for. Native because XAML composition visuals cannot do arbitrary D2D drawing or thread-safe
 rasterization. **A C#-only search misses this entire layer.**
 **Key types:** `Direct2DDevice` (Telegram.Native/Direct2DDevice.idl) — owns the app-wide
-`CompositionGraphicsDevice`, plus text metrics, WebP and blur; `DirectTextLayout` — a retained DirectWrite
+`CompositionGraphicsDevice`, plus text metrics, WebP and blur, and `CreateFrameSurface` and
+`WaitForCompositorClock` for animated images (see Animated images); `DirectTextLayout` — a retained DirectWrite
 layout that owns the surface its text is drawn into, `IClosable` because that surface is an atlas region;
 `ChatBackgroundPattern` — SVG pattern onto
 an `ICompositionSurface`; `FreeformGradientSurface` — animated mesh-gradient brush, listens for
@@ -636,11 +790,71 @@ MicroTeX formula rasterizer; `CompositionDevice`/`DirectRectangleClip2`/`WindowV
 **Entry points:** `Telegram/Common/Direct2D.cs`, `Telegram/Controls/Chats/ChatBackgroundPresenter.cs`,
 `Telegram/Controls/Media/ChatBackgroundBrush.cs`, `MessageBubbleBrush.cs`, `Telegram/Controls/RichMathImage.cs`,
 `Telegram/Controls/FormattedTextBlock.cs`.
-**Traps:** `Direct2DDevice.Device` is the single shared `CompositionGraphicsDevice`; surfaces subscribe to
-its `RenderingDeviceReplaced` for device-lost recovery rather than owning a device.
+**Traps:** `Direct2D.Current` is `[ThreadStatic]`, so `Direct2DDevice.Device` is one
+`CompositionGraphicsDevice` per view, not one per app; surfaces subscribe to its `RenderingDeviceReplaced`
+for device-lost recovery rather than owning a device. The device object survives a device loss —
+`CreateDeviceResources` keeps it and calls `SetRenderingDevice` — so a surface is redrawn, never recreated,
+and a brush pointing at it stays valid. The device takes one drawing session at a time: a `BeginDraw`
+while another is open fails rather than waits.
+
+## 3D scenes — D3D11 onto a SwapChainPanel — Telegram.Native/Graphics/ (19 files)
+<!-- map: verified=9e33b7882 paths=Telegram.Native/Graphics -->
+Hardware 3D, which the D2D layer above cannot do and XAML has no API for at all. One scene is
+implemented: the TON diamond, ported shader for shader and asset for asset from the Android beta,
+tracking **beta 12**. Every number in it, and where each was read out of the APK, is in
+`notes/diamond-component.md` - read that before changing any of them.
+**The seam is the host, not the model.** The app being matched has two unrelated 3D families — the
+diamond (its own GLSL ES 3.00 shaders, raw float buffers, a baked 42-float animation table) and the
+star, coin and card (`.binobj` meshes, a normal map, one MVP matrix, `vertex2`/`fragment3`/
+`fragment4`) — sharing no shader, no vertex layout and no uniform block. So what was made generic is
+everything around them: the device, the swap chain, the frame clock and the pointer.
+**Key types:** `IScene3D` (Telegram.Native/Graphics/Scene3D.h) — the per-scene contract, with
+`SceneMotion` (how it turns) and `ScenePose` (where it stands this frame); `Scene3DDevice` — the one
+D3D device and render thread every panel shares, vsync pacing, device-loss recovery; `Scene3DRenderer` —
+one panel's swap chain, frame clock and motion integration; `DiamondScene` — the diamond's three passes, its
+uniform block and the numbers behind them; `Scene3DPanel` (Graphics/Scene3DPanel.idl) — the
+`SwapChainPanel` subclass the app places, which is the only part that touches XAML.
+**Entry points:** `Scene3DPanel` from XAML with `xmlns:graphics="using:Telegram.Native.Graphics"`.
+To carry a stone from one panel to another (the send flight), use `TransferTo`, which moves the
+renderer: a second panel starts from rest, faded out and held still, and cannot be made to match.
+Assets are Content under `Telegram/Assets/Models/Diamond/`; shaders are `FxCompile` items under
+`Graphics/Shaders/` and are compiled into the binary, never loaded.
+**Traps:** The shaders are **generated** by `Tools/build_shaders.py` in `C:\Source\DiamondSpike`
+from the APK's GLSL — edit the generator, not `Diamond.hlsl`.
+**Re-check the host maths, not just the shaders, when the beta moves**: between beta 8 and 11
+every asset and both sparkle shaders stayed byte-identical and the fragment shader gained only an
+Adreno divergence fix, while the driving code changed underneath - the model matrix went from two
+negated axes to three unnegated ones with the camera's reference pitch folded in, the drag flipped
+sign to compensate, and the offscreen became multisampled. None of that shows in a shader diff. FxCompile takes one entry point per
+file and the translated shaders carry both stages in one, so each stage is compiled through a
+one-line wrapper that includes the body. Matrices are column-major at both ends and the camera sits
+at +z: both diamond shaders assume it, and building it the other way anchors the sparkles to the face
+turned away. **Everything that touches the immediate context holds `Scene3DDevice::Lock()`** — the
+frame pass and any swap chain create, resize or release — and `Stop` takes it, so a renderer is never
+mid-frame once it returns; the UI thread otherwise only leaves requests. Not `Direct2DDevice`'s device:
+D2D and composition drive that context from the UI thread. Feature level 11 on a hardware adapter only
+(the shaders are SM 5.0; WARP/Basic Render is refused), and an unsupported machine is remembered for the
+session. Swap chains present with interval 0 and the loop waits once on `IDXGIOutput::WaitForVBlank`,
+since one `Present(1)` per panel would divide the refresh rate by the panel count. On device loss the
+thread backs off and recreates, then each panel rebuilds its renderer on the UI thread — never notified
+before the new device exists, or a lone panel's rebuild would create one mid-reset through `Acquire`.
+What a scene's instances can share lives in the device's `SceneCache`, keyed by type and emptied with
+the device: the diamond keeps shaders, geometry, the animation table and pipeline state in one
+`DiamondResources`, which must never be written after load. Per-panel are only its targets and its
+three dynamic constant buffers. All of it is reference counted: scrolling out of view only stops a
+renderer, unloading or `IsPaused` releases it, and the last one released frees the device, the thread
+and the cache - `Acquire` holds only a weak pointer. A collapsed ancestor is not observable from the
+panel - it is never unloaded and its viewport does not move - so a host hiding it that way sets
+`IsPaused`, or the loop keeps running for the session. When a panel cannot draw - no capable device,
+an asset that will not load, a target or Present that fails, or a device not recovered after eight
+attempts (about twenty seconds; the device is then abandoned) - it shows `FallbackText` in
+`FallbackFontFamily` at `FallbackFontSize` and `FallbackForeground`, a centred TextBlock created only then, and does not retry
+until `Model` changes. Only `FallbackForeground` is a dependency property, so only it takes
+`{ThemeResource}`: a custom DP holding a boxed string or double is stored as an unowned pointer. Failures are logged through `LOGGER_*`; the render thread, the dispatcher
+callback and the Loaded path each catch, because an exception escaping any of them ends the process.
 
 ## Media decode and audio — Telegram.Native/ (19 files)
-<!-- map: verified=67626117d paths=Telegram.Native/VideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/VideoAnimationStreamSource.cpp,Telegram.Native/Media,Telegram.Native/AudioPitchEffect.cpp,Telegram.Native/Opus -->
+<!-- map: verified=07c88b840 paths=Telegram.Native/VideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/VideoAnimationStreamSource.cpp,Telegram.Native/Media,Telegram.Native/AudioPitchEffect.cpp,Telegram.Native/Opus -->
 Video and audio decode and playback. Native because it links ffmpeg (libavformat/libavcodec/libswscale/
 libyuv) and libVLC directly, and runs decode loops on dedicated threads feeding XAML swap chains.
 **Key types:** `VideoAnimation` (Telegram.Native/VideoAnimation.idl) — ffmpeg frame decoder for GIF and
@@ -655,7 +869,16 @@ through XAudio2.
 `Telegram/Common/SoundEffects.cs`.
 **Traps:** ffmpeg is a vcpkg build patched down to the specific decoders and hwaccels this app needs
 (`Libraries/vcpkg-ports/ffmpeg/portfile.cmake`) — not a stock build. ffmpeg is bundled twice; see
-`notes/duplicated-libraries.md`. `SoundPlayer` keeps every XAudio2 call on its own worker: a voice may
+`notes/duplicated-libraries.md`. `AsyncMediaPlayer` queues every libVLC command onto one worker
+(`Write`/`Set`); nothing may call libVLC on the caller's thread, because `libvlc_media_player_stop`
+holds the player's input lock across the join of the input thread and that thread can be parked in
+`RemoteFileSource.ReadCallback` for as long as the network takes — position, duration and can-pause are
+therefore answered from cached values fed by the event callbacks, and `Stop` closes the source before
+stopping so the join can finish.
+`CachedVideoAnimation::Load` fits the coded frame into the requested size, which is the size on screen:
+for a 90 or 270 rotation it swaps the request first, or a portrait element decodes a landscape frame at a
+fraction of the size it is shown at.
+`SoundPlayer` keeps every XAudio2 call on its own worker: a voice may
 not be destroyed from inside its own callback, and the engine may not be released from its critical
 error, so both only flag the worker. A submitted buffer is not copied either, so the voice holds the
 decoded samples alive until `DestroyVoice` returns.
@@ -754,15 +977,43 @@ three different project systems.
 - **`Telegram.Modern.csproj`** — SDK-style (importing `Sdk.props` by hand, not the `Sdk=` attribute, so the
   output paths can be set first), `net10.0-windows10.0.26100.0`, `UseUwp=true`, `PublishAot=true` outside
   Debug, `WinExe`. **Globbed:** zero `<Compile Include>` entries, with ~8 `<Compile Remove>` lines
-  (`Host\**`, `**\*.Win32.cs`, a few one-offs). Ships through `Telegram.Msix.Modern.wapproj`.
+  (`Host\**`, `**\*.Win32.cs`, a few one-offs). Ships through `Telegram.Msix.Modern.wapproj`. Its AOT
+  publish compiles a **patched framework**: `PatchCoreLib` (on by default) runs `Tools\CoreLib` over a
+  private copy of `System.Private.CoreLib` and gives that to ILC — see below.
 - **`Telegram.Win32.csproj`** — same SDK-style base, but `Exe` with `StartupObject=Telegram.Host.Program`
   (XAML Islands desktop host), `Compile Remove="**\*.Uwp.cs"` — the opposite fork. Packages itself; there
   is no wapproj for it.
 **Traps:** the Modern/Win32 comment states parity with the classic project's file list is "today" only and
 unverified by tooling, so silent drift is possible. `DisableRuntimeMarshalling=true` is set only on Modern
 and Win32 (every DllImport has a LibraryImport counterpart); the classic project omits it deliberately,
-since .NET Native keeps the runtime-marshalling branches. All three share
+since .NET Native keeps the runtime-marshalling branches. Modern and Win32 both take
+`ExcludeAssets="compile;runtime"` on Win2D.uwp and reference the rebuilt projection in `Libraries/Win2D/`
+instead, because the one the package ships is generated by CsWinRT 2.2.0 and its ABI stubs have no
+`GC.KeepAlive`, so the receiver of a Win2D call can be finalized mid-call (`Libraries/Libraries.md` holds
+the rebuild recipe). Emitting it through `CsWinRTIncludes` instead is a dead end: in-assembly, the
+projection's internal constructors become visible and every `new CanvasPathBuilder(null)` is ambiguous.
+The classic project reaches Win2D through .NET Native and is not affected. All three share
 `PackageCertificateKeyFile=..\Telegram_TemporaryKey.pfx`.
+**Modern ships a patched `System.Private.CoreLib`,** which is worth knowing before debugging anything
+about secondary-view lifetime. `TrackerObjectManager.ReleaseExternalObjectsFromCurrentThread` never
+drops `NativeObjectWrapper._inner`, so the aggregation cycle between a managed XAML subclass and its
+native inner outlives the view's apartment and nothing can ever break it: the closed view keeps its
+whole tree, and the finalizer later tears one down off-apartment and fail-fasts with `RO_E_CLOSED`.
+`Tools\CoreLib` appends the release the method is missing; its README has the measurements and the two
+narrower variants that do not work. Upstream: dotnet/runtime#133849.
+**Debug gets no equivalent, and that is deliberate.** The release is only safe as the last step of that
+method's own sequence, after it has disconnected the wrapper's tracker and dropped it from the RCW
+cache. Doing it from app code performs the last step alone: `_inner` goes while XAML still holds a
+tracker reference, the native peer dies under the Leave cascade, and the next `PegManagedPeer` reads
+freed memory — an access violation inside `ComObject<GradientBrush>::AddRef`. A reflection-based
+`ApartmentRelease` was written, wired to `ShutdownStarting`, and removed on 2026-09-14;
+`ShutdownCompleted` is no better, being outside the sequence too and not ordered against the runtime's
+pass at all. There is no app-side call site, which is the whole reason the fix is a framework patch.
+**Status:** the patch is proven on a minimal repro (a closed view is collected with no forced GC, where
+before nothing collected it ever), but it has not yet moved the numbers in the app — a closed chat
+window still leaves its whole tree alive, the same count with the patch as without. Unexplained as of
+2026-09-14; what has not been checked is whether
+`ReleaseExternalObjectsFromCurrentThread` runs for those apartments at all.
 
 ## Native dependencies and vcpkg — Directory.Build.props, Directory.Build.targets, vcpkg.json, vcpkg-configuration.json
 <!-- map: verified=95560d9f7 paths=Directory.Build.props,Directory.Build.targets,vcpkg.json,vcpkg-configuration.json -->
@@ -876,13 +1127,16 @@ a runtime theme switch repaint, so a "redundant" row is a latent bug that only s
 after a switch.
 
 ## Icon font — Tools/IconFont/ (SVG to Telegram.ttf)
-<!-- map: verified=95560d9f7 paths=Tools/IconFont,Telegram/Assets/Fonts -->
+<!-- map: verified=bbd23c5fc paths=Tools/IconFont,Telegram/Assets/Fonts -->
 Builds `Telegram/Assets/Fonts/Telegram.ttf` from `icons.json` plus the SVGs in `icons/`. Replaced the
 IcoMoon workflow.
 **Key files:** `Tools/IconFont/README.md` — the authoritative command reference; `Tools/IconFont/icons.json`
 — the manifest (name, codepoint, source: a local SVG or a `fluent:` live source);
 `Tools/IconFont/iconfont/{fontbuild,manifest,outline}.py`; `Tools/IconFont/identified.txt` — the record
 resolving nameless `uniXXXX` glyphs; `notes/icon-font.md` — the project notes.
+An entry marked `"color": true` is built as COLR/CPAL layers instead, one per fill colour in the SVG —
+`PremiumStarCount`'s gold star is the only one. A colour glyph paints its own palette and ignores
+`Foreground`, so a call site that wants it tinted needs a monochrome glyph, not this one.
 **Entry points:** `py -m iconfont <command>` from `Tools/IconFont/` — `build`, `check` (manifest against
 `Icons.cs` and XAML), `verify`/`changes`, `update`/`adopt`/`drift` (sync with upstream Fluent),
 `identify`/`rename`/`tidy`.
@@ -915,7 +1169,7 @@ harness, since BenchmarkDotNet cannot run under AOT; `Corpus.cs` and `Corpus/*.j
 staging for the .NET Native host.
 **Entry points:** `dotnet run -f net10.0 -c Release -- --validate-only|--plain|--filter "*"` on the
 desktop; publish plus `Stage.ps1` plus `Add-AppxPackage` for the UWP AOT host.
-**Traps:** three hosts exist because the shipping app runs .NET Native, which resolves a different
+**Traps:** three hosts exist because .NET Native resolves a different
 (netstandard2.0) System.Text.Json/System.Memory asset than desktop .NET 10 — results differ by ~3x and
 can even reverse between hosts. Compare within a run, never across runs or hosts.
 
@@ -944,6 +1198,7 @@ on develop", "Done", "analysis only") — read that line before treating one as 
 - `pending-messages-review.md` — streamed bot `updatePendingMessage` handling; all applied.
 - `sendfiles-popup-todo.md` — `SendFilesPopup` across storage entities and album grouping. Resume point.
 - `settings-service-refactor.md` — `SettingsService.Current` vs per-session instances; analysis only.
+- `star-transactions.md` — the 45 `starTransactionType*` and 9 `tonTransactionType*` mapped back to the one MTProto `starsTransaction`.
 - `swipe-to-go-back.md` — the Chrome-style back gesture for `MasterDetailView`.
 - `tdlib-vector-migration.md` — done: TDLib `vector<x>` exposed as immutable `Vector<T>`.
 - `tdlib-vector-mutations.md` — every in-place write into a TDLib-sourced list.
