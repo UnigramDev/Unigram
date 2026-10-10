@@ -2,11 +2,13 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:settings="using:Telegram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  ShowHeader="False">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -20,11 +22,27 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <controls:SettingsPanel>
-                <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/AutoDelete.tgs" />
+            <controls:SettingsPanel HasTopPadding="False">
+                <controls:AnimatedImage Source="ms-appx:///Assets/Animations/AutoDelete.tgs"
+                                        AutoPlay="True"
+                                        IsCachingEnabled="False"
+                                        DecodeFrameType="Logical"
+                                        FrameSize="140,140"
+                                        Width="140"
+                                        Height="140"
+                                        LoopCount="1"
+                                        Margin="0,16,0,0" />
+                <controls:StickyHeader x:Name="Header"
+                                       Text="{CustomResource AutoDeleteMessages}"
+                                       HorizontalContentAlignment="Center"
+                                       Margin="0,-36,0,0" />
+                <TextBlock common:TextBlockHelper.Markdown="{CustomResource GlobalAutoDeleteInfo}"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,-16,12,0"
+                           MaxWidth="480" />
 
-                <controls:HeaderedControl Header="{CustomResource MessageLifetime}"
-                                          Footer="{CustomResource GlobalAutoDeleteInfo}">
+                <controls:HeaderedControl Header="{CustomResource MessageLifetime}">
                     <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items}">
                         <ItemsControl.Template>
                             <ControlTemplate>
@@ -51,5 +69,7 @@
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>

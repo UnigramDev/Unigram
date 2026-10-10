@@ -3,9 +3,11 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:local="using:Telegram.Views"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  ShowHeader="False">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -23,9 +25,25 @@
                                 CornerRadius="0,0,4,4"
                                 SelectionMode="None">
             <ListView.Header>
-                <controls:SettingsPanel>
-                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/Passkey.tgs"
-                                               Text="{CustomResource PasskeyTopInfo}" />
+                <controls:SettingsPanel HasTopPadding="False">
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Passkey.tgs"
+                                            AutoPlay="True"
+                                            IsCachingEnabled="False"
+                                            DecodeFrameType="Logical"
+                                            FrameSize="140,140"
+                                            Width="140"
+                                            Height="140"
+                                            LoopCount="1"
+                                            Margin="0,16,0,0" />
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource Passkey}"
+                                           HorizontalContentAlignment="Center"
+                                           Margin="0,-36,0,0" />
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource PasskeyTopInfo}"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               TextAlignment="Center"
+                               Margin="12,-16,12,0"
+                               MaxWidth="480" />
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -89,5 +107,7 @@
                 </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>

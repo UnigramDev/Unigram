@@ -2171,6 +2171,7 @@
 
 
     <string name="BlockedUsers">Blocked Users</string>
+    <string name="BlockedUsersInfo">Blocked users can't send you messages or add you to groups. They will not see your profile photos, stories, online and last seen status.</string>
 
 
 

@@ -2,11 +2,13 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:cells="using:Telegram.Controls.Cells"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  ShowHeader="False">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -27,8 +29,26 @@
                                 SelectionMode="None">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False"
                                         Margin="0,0,0,2">
-                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/BlockedChats.tgs" />
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/BlockedChats.tgs"
+                                            AutoPlay="True"
+                                            IsCachingEnabled="False"
+                                            DecodeFrameType="Logical"
+                                            FrameSize="140,140"
+                                            Width="140"
+                                            Height="140"
+                                            LoopCount="1"
+                                            Margin="0,16,0,0" />
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource BlockedUsers}"
+                                           HorizontalContentAlignment="Center"
+                                           Margin="0,-36,0,0" />
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource BlockedUsersInfo}"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               TextAlignment="Center"
+                               Margin="12,-16,12,0"
+                               MaxWidth="480" />
 
                     <controls:HeaderedControl>
                         <controls:SettingsButton Content="{CustomResource BlockUser}"
@@ -48,5 +68,7 @@
                                          Margin="24,6,24,32" />
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>
