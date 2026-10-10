@@ -18,6 +18,7 @@ using Telegram.Charts.Data;
 using Telegram.Charts.DataView;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.UI;
@@ -592,7 +593,7 @@ namespace Telegram.Charts
             _coordinator = new AnimatorCoordinator(Invalidate);
 
             _device = Direct2D.Current.Device;
-            _visual = Window.Current.Compositor.CreateSpriteVisual();
+            _visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
 
             _brush = _visual.Compositor.CreateSurfaceBrush();
             _brush.Stretch = CompositionStretch.Fill;

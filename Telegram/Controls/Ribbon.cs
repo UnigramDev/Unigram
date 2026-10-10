@@ -75,7 +75,7 @@ namespace Telegram.Controls
 
             var center = new Vector2(37, 23);
 
-            var shape = Window.Current.Compositor.CreateShapeVisual();
+            var shape = BootStrapper.Current.Compositor.CreateShapeVisual();
             shape.Shapes.Add(sprite);
             shape.Size = size;
             shape.Offset = new Vector3(center - size / 2, 0);
