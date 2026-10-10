@@ -440,24 +440,27 @@ namespace Telegram.Charts
             // either way so it drains, and the arrange that gives the chart room asks for the frame.
             if (_surface != null && MeasuredWidth > HORIZONTAL_PADDING * 2 && MeasuredHeight > 0)
             {
-                Profiler.Begin("chart.draw");
-
                 // Scoped rather than a using declaration so that EndDraw, which is where a
                 // composition surface can stall, falls inside the measurement.
-                using (var args = CanvasComposition.CreateDrawingSession(_surface))
+                try
                 {
-                    args.Clear(Colors.Transparent);
+                    using (var args = CanvasComposition.CreateDrawingSession(_surface))
+                    {
+                        args.Clear(Colors.Transparent);
 
-                    // The surface is in pixels and everything below draws in DIPs. The session DPI
-                    // would be the natural place for that, but it belongs to the shared composition
-                    // device, so raising it corrupts every other surface in the app. Hence a base
-                    // transform that every Transform assignment in the draw code composes with.
-                    args.Transform = _baseTransform;
+                        // The surface is in pixels and everything below draws in DIPs. The session DPI
+                        // would be the natural place for that, but it belongs to the shared composition
+                        // device, so raising it corrupts every other surface in the app. Hence a base
+                        // transform that every Transform assignment in the draw code composes with.
+                        args.Transform = _baseTransform;
 
-                    OnDraw(args);
+                        OnDraw(args);
+                    }
                 }
-
-                Profiler.Tally("chart.draw");
+                catch
+                {
+                    // CreateDrawingSession can throw InvalidOperationException
+                }
             }
 
             // One frame per Invalidate, and further frames only while something still needs them:
