@@ -4,10 +4,12 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:cells="using:Telegram.Controls.Cells"
                   xmlns:local="using:Telegram.Views"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  ShowHeader="False">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -17,23 +19,32 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Action>
-        <Button Content="{CustomResource Done}"
-                Click="{x:Bind ViewModel.Continue}"
-                Style="{StaticResource AccentButtonStyle}"
-                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
-    </local:HostedPage.Action>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Results}"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
-                    <controls:SettingsHeadline IsLink="True"
-                                               Text="{CustomResource BusinessBotsInfo}"
-                                               Source="ms-appx:///Assets/Animations/BusinessBots.tgs" />
+                <controls:SettingsPanel IsHeader="True"
+                                        HasTopPadding="False">
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/BusinessBots.tgs"
+                                            AutoPlay="True"
+                                            IsCachingEnabled="False"
+                                            DecodeFrameType="Logical"
+                                            FrameSize="140,140"
+                                            Width="140"
+                                            Height="140"
+                                            LoopCount="1"
+                                            Margin="0,16,0,0" />
+                    <controls:StickyHeader x:Name="Header"
+                                           Text="{CustomResource BusinessBots}"
+                                           HorizontalContentAlignment="Center"
+                                           Margin="0,-36,0,0" />
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource BusinessBotsInfo}"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               TextAlignment="Center"
+                               Margin="12,-16,12,0"
+                               MaxWidth="480" />
 
                     <controls:HeaderedControl>
                         <TextBox x:Name="UsernameField"
@@ -312,5 +323,12 @@
                 </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}">
+            <Button Content="{CustomResource Done}"
+                    Click="{x:Bind ViewModel.Continue}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
+        </controls:StickyHeaderChrome>
     </Grid>
 </local:HostedPage>

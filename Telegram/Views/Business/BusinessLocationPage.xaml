@@ -2,10 +2,12 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d"
+                  ShowHeader="False"
                   Loaded="OnLoaded">
 
     <Page.Transitions>
@@ -16,20 +18,29 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Action>
-        <Button Content="{CustomResource Done}"
-                Click="{x:Bind ViewModel.Continue}"
-                Style="{StaticResource AccentButtonStyle}"
-                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
-    </local:HostedPage.Action>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <controls:SettingsPanel>
-                <controls:SettingsHeadline Text="{CustomResource BusinessLocationInfo}"
-                                           Source="ms-appx:///Assets/Animations/BusinessLocation.tgs" />
+            <controls:SettingsPanel HasTopPadding="False">
+                <controls:AnimatedImage Source="ms-appx:///Assets/Animations/BusinessLocation.tgs"
+                                        AutoPlay="True"
+                                        IsCachingEnabled="False"
+                                        DecodeFrameType="Logical"
+                                        FrameSize="140,140"
+                                        Width="140"
+                                        Height="140"
+                                        LoopCount="1"
+                                        Margin="0,16,0,0" />
+                <controls:StickyHeader x:Name="Header"
+                                       Text="{CustomResource BusinessLocation}"
+                                       HorizontalContentAlignment="Center"
+                                       Margin="0,-36,0,0" />
+                <TextBlock common:TextBlockHelper.Markdown="{CustomResource BusinessLocationInfo}"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,-16,12,0"
+                           MaxWidth="480" />
 
                 <controls:HeaderedControl>
                     <TextBox x:Name="Address"
@@ -102,5 +113,12 @@
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
+
+        <controls:StickyHeaderChrome Header="{x:Bind Header}">
+            <Button Content="{CustomResource Done}"
+                    Click="{x:Bind ViewModel.Continue}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
+        </controls:StickyHeaderChrome>
     </Grid>
 </local:HostedPage>
