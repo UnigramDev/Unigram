@@ -80,7 +80,7 @@ namespace Telegram.Services
             catch (Exception ex)
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
-                Logger.Exception(ex);
+                Logger.Error(ex);
             }
 
             _updateLock.Release();
@@ -130,7 +130,7 @@ namespace Telegram.Services
                 catch (Exception ex)
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
-                    Logger.Exception(ex);
+                    Logger.Error(ex);
                 }
             });
 
