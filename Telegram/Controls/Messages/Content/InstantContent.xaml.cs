@@ -131,6 +131,11 @@ namespace Telegram.Controls.Messages.Content
 
         private RichMessage GetContent(MessageViewModel message)
         {
+            if (message.TranslatedText is MessageTranslateResultRichMessage richMessage)
+            {
+                return richMessage.RichMessage;
+            }
+
             var content = message?.GeneratedContent ?? message?.Content;
             if (content is MessageRichMessage text)
             {
@@ -146,6 +151,9 @@ namespace Telegram.Controls.Messages.Content
             //var response = await _message.ClientService.SendAsync(new GetFullRichMessage(message.ChatId, message.Id));
             //if (response is RichMessage richMessage && /*instantView.IsFull &&*/ !token.IsCancellationRequested)
             {
+                var processedText = message.SummarizedText ?? message.TranslatedText;
+
+                ShowHideSkeleton(processedText is MessageTranslateResultPending);
                 UpdateView(message.ClientService, linkPreview.Blocks, !linkPreview.IsFull);
             }
 

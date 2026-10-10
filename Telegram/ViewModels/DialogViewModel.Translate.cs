@@ -190,7 +190,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        Delegate?.UpdateBubbleWithMessageId(message.Key, bubble => bubble.UpdateMessageText(message));
+                        Delegate?.UpdateBubbleWithMessageId(message.Key, bubble => bubble.UpdateMessageTextLayout(message));
                     }
                 }
             }

@@ -42,6 +42,19 @@ namespace Telegram.Td.Api
         public StyledText Text { get; }
     }
 
+    public partial class MessageTranslateResultRichMessage : MessageTranslateResult
+    {
+        public MessageTranslateResultRichMessage(string language, RichMessage richMessage)
+        {
+            Language = language;
+            RichMessage = richMessage;
+        }
+
+        public string Language { get; }
+
+        public RichMessage RichMessage { get; }
+    }
+
     public partial class MessageTranslateResultPending : MessageTranslateResult
     {
 

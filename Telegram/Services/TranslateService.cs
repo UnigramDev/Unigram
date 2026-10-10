@@ -32,7 +32,7 @@ namespace Telegram.Services
         bool Summarize(MessageViewModel message, string toLanguage);
     }
 
-    public partial class TranslateService : ServiceBase, ITranslateService
+    public partial class TranslateService : ServiceBase, ITranslateService, IHandle
     {
         private const string LANG_UND = "und";
         private const string LANG_AUTO = "auto";
@@ -41,6 +41,42 @@ namespace Telegram.Services
         public TranslateService(IClientService clientService, ISettingsService settings, IEventAggregator aggregator)
             : base(clientService, settings, aggregator)
         {
+            aggregator.Subscribe<UpdateMessageContent>(this, Handle)
+                .Subscribe<UpdateDeleteMessages>(Handle);
+        }
+
+        private void Handle(UpdateMessageContent update)
+        {
+            if (_translations.TryRemove(new TranslatedKey(update.ChatId, update.MessageId), out _))
+            {
+                Aggregator.Publish(new UpdateMessageTranslatedText(update.ChatId, update.MessageId, null));
+            }
+
+            if (_summaries.TryRemove(new TranslatedKey(update.ChatId, update.MessageId), out _))
+            {
+                Aggregator.Publish(new UpdateMessageSummarizedText(update.ChatId, update.MessageId, null));
+            }
+        }
+
+        private void Handle(UpdateDeleteMessages update)
+        {
+            if (!update.FromCache)
+            {
+                return;
+            }
+
+            foreach (var messageId in update.MessageIds)
+            {
+                if (_translations.TryRemove(new TranslatedKey(update.ChatId, messageId), out _))
+                {
+                    Aggregator.Publish(new UpdateMessageTranslatedText(update.ChatId, messageId, null));
+                }
+
+                if (_summaries.TryRemove(new TranslatedKey(update.ChatId, messageId), out _))
+                {
+                    Aggregator.Publish(new UpdateMessageSummarizedText(update.ChatId, messageId, null));
+                }
+            }
         }
 
         public static string LanguageName(string locale)
@@ -148,12 +184,11 @@ namespace Telegram.Services
                 return false;
             }
 
-            var key = new TranslatedKey(message.ChatId, message.Id, toLanguage);
-            var cached = message.Text.Text;
+            var key = new TranslatedKey(message.ChatId, message.Id/*, toLanguage*/);
 
             if (_translations.TryGetValue(key, out var value))
             {
-                if (string.Equals(cached, value.Text))
+                if (toLanguage == value.ToLanguage)
                 {
                     if (value.Result != null)
                     {
@@ -165,15 +200,29 @@ namespace Telegram.Services
                 }
             }
 
-            if (CanTranslateText(message.Text.Text, true))
+            string text;
+            if (message.Content is MessageRichMessage richMessage)
+            {
+                text = richMessage.Message.ToPlainText();
+            }
+            else
+            {
+                text = message.Text.Text;
+            }
+
+            if (CanTranslateText(text, true))
             {
                 message.TranslatedText = new MessageTranslateResultPending();
 
-                _translations[key] = new TranslatedMessage(cached, null);
-                ClientService.Send(new TranslateMessageText(message.ChatId, message.Id, toLanguage, string.Empty), handler =>
+                Function function = message.Content is MessageRichMessage
+                    ? new TranslateMessageRichMessage(message.ChatId, message.Id, toLanguage, string.Empty)
+                    : new TranslateMessageText(message.ChatId, message.Id, toLanguage, string.Empty);
+
+                _translations[key] = new TranslatedMessage(toLanguage, null);
+                ClientService.Send(function, handler =>
                 {
                     MessageTranslateResult result;
-                    if (handler is FormattedText text && string.Equals(message.Text?.Text, cached))
+                    if (handler is FormattedText text)
                     {
                         if (string.IsNullOrWhiteSpace(text.Text))
                         {
@@ -188,12 +237,16 @@ namespace Telegram.Services
                             result = new MessageTranslateResultText(toLanguage, styled);
                         }
                     }
+                    else if (handler is RichMessage richMessage)
+                    {
+                        result = new MessageTranslateResultRichMessage(toLanguage, richMessage);
+                    }
                     else
                     {
                         result = new MessageTranslateResultError();
                     }
 
-                    _translations[key] = new TranslatedMessage(cached, result);
+                    _translations[key] = new TranslatedMessage(toLanguage, result);
 
                     // Only dispatch the update if still pending
                     if (message.TranslatedText is MessageTranslateResultPending)
@@ -217,12 +270,11 @@ namespace Telegram.Services
                 return false;
             }
 
-            var key = new TranslatedKey(message.ChatId, message.Id, toLanguage);
-            var cached = message.Text.Text;
+            var key = new TranslatedKey(message.ChatId, message.Id/*, toLanguage*/);
 
             if (_summaries.TryGetValue(key, out var value))
             {
-                if (string.Equals(cached, value.Text))
+                if (toLanguage == value.ToLanguage)
                 {
                     if (value.Result != null)
                     {
@@ -234,15 +286,15 @@ namespace Telegram.Services
                 }
             }
 
-            if (CanTranslateText(message.Text.Text, true))
+            if (message.CanSummarizeText)
             {
                 message.SummarizedText = new MessageTranslateResultPending();
 
-                _summaries[key] = new TranslatedMessage(cached, null);
+                _summaries[key] = new TranslatedMessage(toLanguage, null);
                 ClientService.Send(new SummarizeMessage(message.ChatId, message.Id, toLanguage, string.Empty), handler =>
                 {
                     MessageTranslateResult result;
-                    if (handler is FormattedText text && string.Equals(message.Text?.Text, cached))
+                    if (handler is FormattedText text)
                     {
                         if (string.IsNullOrWhiteSpace(text.Text))
                         {
@@ -262,7 +314,7 @@ namespace Telegram.Services
                         result = new MessageTranslateResultError();
                     }
 
-                    _summaries[key] = new TranslatedMessage(cached, result);
+                    _summaries[key] = new TranslatedMessage(toLanguage, result);
 
                     // Only dispatch the update if still pending
                     if (message.SummarizedText is MessageTranslateResultPending)
@@ -279,30 +331,35 @@ namespace Telegram.Services
             return false;
         }
 
-        struct TranslatedKey
+        readonly struct TranslatedKey
         {
-            public TranslatedKey(long chatId, long messageId, string toLanguage)
+            public TranslatedKey(long chatId, long messageId)
             {
                 ChatId = chatId;
                 MessageId = messageId;
-                ToLanguage = toLanguage;
             }
 
-            public long ChatId;
-            public long MessageId;
-            public string ToLanguage;
+            public readonly long ChatId;
+            public readonly long MessageId;
+
+            public bool Equals(TranslatedKey other) => ChatId == other.ChatId && MessageId == other.MessageId;
+            public override bool Equals(object obj) => obj is TranslatedKey other && ChatId == other.ChatId && MessageId == other.MessageId;
+            public override int GetHashCode() => HashCode.Combine(ChatId, MessageId);
+
+            public static bool operator ==(TranslatedKey left, TranslatedKey right) => left.ChatId == right.ChatId && left.MessageId == right.MessageId;
+            public static bool operator !=(TranslatedKey left, TranslatedKey right) => left.ChatId != right.ChatId || left.MessageId != right.MessageId;
         }
 
-        struct TranslatedMessage
+        readonly struct TranslatedMessage
         {
-            public TranslatedMessage(string text, MessageTranslateResult result)
+            public TranslatedMessage(string toLanguage, MessageTranslateResult result)
             {
-                Text = text;
+                ToLanguage = toLanguage;
                 Result = result;
             }
 
-            public string Text;
-            public MessageTranslateResult Result;
+            public readonly string ToLanguage;
+            public readonly MessageTranslateResult Result;
         }
     }
 }

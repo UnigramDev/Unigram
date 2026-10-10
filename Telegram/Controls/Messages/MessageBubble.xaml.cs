@@ -1782,7 +1782,18 @@ namespace Telegram.Controls.Messages
         public void UpdateMessageTextLayout(MessageViewModel message)
         {
             UpdateMessageContentLayout(message);
-            UpdateMessageText(message);
+
+            if (message.Content is MessageRichMessage)
+            {
+                if (Media.Child is InstantContent content)
+                {
+                    content.UpdateMessage(message);
+                }
+            }
+            else
+            {
+                UpdateMessageText(message);
+            }
         }
 
         public void UpdateMessageContentLayout(MessageViewModel message)
