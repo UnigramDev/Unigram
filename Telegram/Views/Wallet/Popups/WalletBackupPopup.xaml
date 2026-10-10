@@ -28,7 +28,7 @@
                 <controls:SettingsButton x:Name="DisableBackupButton"
                                          Click="{x:Bind ViewModel.DisableBackup}"
                                          Content="{CustomResource WalletDisableBackup}"
-                                         Foreground="{ThemeResource DangerButtonBackground}" />
+                                         Foreground="{ThemeResource DangerButtonForeground}" />
                 <controls:SettingsButton x:Name="EnableBackupButton"
                                          Click="{x:Bind ViewModel.EnableBackup}"
                                          Content="{CustomResource WalletEnableBackup}" />
@@ -37,7 +37,7 @@
             <controls:HeaderedControl>
                 <controls:SettingsButton Click="{x:Bind ViewModel.DeleteWallet}"
                                          Content="{CustomResource WalletDeleteWallet}"
-                                         Foreground="{ThemeResource DangerButtonBackground}" />
+                                         Foreground="{ThemeResource DangerButtonForeground}" />
             </controls:HeaderedControl>
 
             <!-- Filled in code: each row needs the address broken into groups that alternate

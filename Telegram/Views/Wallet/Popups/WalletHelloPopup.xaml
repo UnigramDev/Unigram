@@ -28,7 +28,7 @@
 
         <TextBlock x:Name="ErrorLabel"
                    Style="{StaticResource BodyTextBlockStyle}"
-                   Foreground="{ThemeResource DangerButtonBackground}"
+                   Foreground="{ThemeResource DangerButtonForeground}"
                    TextAlignment="Center"
                    Visibility="Collapsed"
                    Margin="0,12,0,0" />

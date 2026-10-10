@@ -283,7 +283,7 @@
 
                 <controls:HeaderedControl Footer="{CustomResource UndoAllCustom}">
                     <controls:SettingsButton Content="{CustomResource ResetAllNotifications}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xEA09;"
                                              Click="{x:Bind ViewModel.Reset}" />
                 </controls:HeaderedControl>

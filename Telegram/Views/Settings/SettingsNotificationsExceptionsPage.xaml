@@ -64,7 +64,7 @@
             <ListView.Footer>
                 <controls:HeaderedControl Margin="0,0,0,32">
                     <controls:SettingsButton Content="{CustomResource NotificationsDeleteAllException}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xEA09;"
                                              Click="{x:Bind ViewModel.RemoveAll}"
                                              Visibility="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />

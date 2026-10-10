@@ -372,7 +372,7 @@
             <controls:HeaderedControl x:Name="UnofficialRoot"
                                       Visibility="Collapsed">
                 <controls:SettingsButton Glyph="&#xEAD9;"
-                                         Foreground="{ThemeResource DangerButtonBackground}">
+                                         Foreground="{ThemeResource DangerButtonForeground}">
                     <TextBlock x:Name="UnofficialText"
                                Foreground="{ThemeResource ButtonForeground}"
                                TextWrapping="Wrap" />
@@ -562,14 +562,14 @@
                                          Click="{x:Bind ViewModel.DeleteReaction}"
                                          Visibility="{x:Bind ViewModel.DeleteReactions, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                          Content="{CustomResource DeleteReaction}"
-                                         Foreground="{ThemeResource DangerButtonBackground}"
+                                         Foreground="{ThemeResource DangerButtonForeground}"
                                          Glyph="&#xEB04;" />
 
                 <controls:SettingsButton x:Name="BanAndReport"
                                          Click="{x:Bind ViewModel.BanAndReport}"
                                          Visibility="{x:Bind ViewModel.ReportReactions, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                          Content="{CustomResource ReportReactionAndBan}"
-                                         Foreground="{ThemeResource DangerButtonBackground}"
+                                         Foreground="{ThemeResource DangerButtonForeground}"
                                          Glyph="&#xE98B;" />
 
                 <Border x:Name="BotMainApp"

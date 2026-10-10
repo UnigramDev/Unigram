@@ -125,7 +125,7 @@
                 <controls:HeaderedControl>
                     <controls:SettingsButton Click="{x:Bind services:AppSettings.ToolTip.Reset}"
                                              Content="Reset Tool Tips"
-                                             Foreground="{ThemeResource DangerButtonBackground}" />
+                                             Foreground="{ThemeResource DangerButtonForeground}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Calls Logs">
@@ -204,7 +204,7 @@
                 <controls:HeaderedControl>
                     <controls:SettingsButton Content="Disable Database"
                                              Click="{x:Bind ViewModel.DisableDatabase}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Visibility="{x:Bind ViewModel.IsDatabaseDisabled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
                     <controls:SettingsButton Content="Enable Database"
                                              Click="{x:Bind ViewModel.DisableDatabase}"

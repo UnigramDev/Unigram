@@ -1775,7 +1775,7 @@
     <Style x:Key="DangerTextButtonStyle"
            TargetType="Button">
         <Setter Property="Foreground"
-                Value="{ThemeResource DangerButtonBackground}" />
+                Value="{ThemeResource DangerButtonForeground}" />
         <Setter Property="Background"
                 Value="{ThemeResource HyperlinkButtonBackground}" />
         <Setter Property="BackgroundSizing"

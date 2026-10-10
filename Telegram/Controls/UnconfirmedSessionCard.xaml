@@ -43,7 +43,6 @@
                 Grid.Row="2" />
         <Button x:Name="Deny"
                 Content="{CustomResource UnconfirmedAuthDeny}"
-                Foreground="{ThemeResource DangerButtonBackground}"
                 Style="{StaticResource DangerTextButtonStyle}"
                 FontWeight="SemiBold"
                 HorizontalAlignment="Stretch"

@@ -28,7 +28,7 @@
                     <controls:HeaderedControl Footer="{CustomResource ClearOtherWebSessionsHelp}">
                         <controls:SettingsButton Content="{CustomResource TerminateAllWebSessions}"
                                                  Click="{x:Bind ViewModel.TerminateOthers}"
-                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Foreground="{ThemeResource DangerButtonForeground}"
                                                  Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
 

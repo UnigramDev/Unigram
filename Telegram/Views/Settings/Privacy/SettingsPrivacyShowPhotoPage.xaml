@@ -94,7 +94,7 @@
                     <controls:SettingsButton x:Name="RemovePhoto"
                                              Content="{CustomResource RemovePublicPhoto}"
                                              Click="{x:Bind ViewModel.RemovePhoto}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xE74D;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

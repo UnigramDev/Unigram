@@ -1580,7 +1580,7 @@
                     </Grid.ColumnDefinitions>
                     <chats:ChatBottomButton x:Name="ButtonReport"
                                             Content="{x:Bind ConvertReportSelection(ViewModel.SelectedCount), Mode=OneWay}"
-                                            Foreground="{ThemeResource DangerButtonBackground}"
+                                            Foreground="{ThemeResource DangerButtonForeground}"
                                             Click="{x:Bind ViewModel.ReportSelectedMessages}"
                                             IsEnabled="{x:Bind ViewModel.CanReportSelectedMessages, Mode=OneWay}"
                                             FontWeight="SemiBold"
@@ -1614,7 +1614,7 @@
                     <controls:GlyphButton x:Name="ButtonDelete"
                                           Glyph="&#xE74D;"
                                           Content="{CustomResource Delete}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Foreground="{ThemeResource DangerButtonForeground}"
                                           Click="{x:Bind ViewModel.DeleteSelectedMessages}"
                                           IsEnabled="{x:Bind ViewModel.CanDeleteSelectedMessages, Mode=OneWay}"
                                           Style="{StaticResource GlyphButtonWithLabelStyle}"

@@ -23,7 +23,7 @@
         <Border Padding="12,4">
             <TextBlock Text="{CustomResource UnconfirmedAuthDeniedWarning}"
                        Style="{StaticResource BodyTextBlockStyle}"
-                       Foreground="{ThemeResource DangerButtonBackground}" />
+                       Foreground="{ThemeResource DangerButtonForeground}" />
         </Border>
 
         <Border x:Name="IconBackground"

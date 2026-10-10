@@ -114,7 +114,7 @@
                 <controls:HeaderedControl Visibility="{x:Bind ViewModel.IsNotDefault, Mode=OneWay}">
                     <controls:SettingsButton Click="{x:Bind ViewModel.Clear}"
                                              Content="{CustomResource BusinessIntroReset}"
-                                             Foreground="{ThemeResource DangerButtonBackground}" />
+                                             Foreground="{ThemeResource DangerButtonForeground}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

@@ -74,7 +74,7 @@
                         Grid.Row="7">
                 <HyperlinkButton Click="{x:Bind ViewModel.Reset}"
                                  Content="{CustomResource ResetMyAccount}"
-                                 Foreground="{ThemeResource DangerButtonBackground}" />
+                                 Foreground="{ThemeResource DangerButtonForeground}" />
                 <TextBlock Text="{CustomResource ResetMyAccountText}"
                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"

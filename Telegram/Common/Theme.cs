@@ -523,6 +523,12 @@ namespace Telegram.Common
                 ? AccentShade.Dark1
                 : AccentShade.Light2) : accent;
 
+            var foreground = SystemAccentPalette.GetShade(accent, requested == TelegramTheme.Light
+                ? AccentShade.Dark1
+                : AccentShade.Light2);
+
+            AddOrUpdate<SolidColorBrush>(target, null, prefix + "ButtonForeground", create,
+                update => update.Color = foreground);
             AddOrUpdate<SolidColorBrush>(target, null, prefix + "ButtonBackground", create,
                 update => update.Color = shade);
             AddOrUpdate<SolidColorBrush>(target, null, prefix + "ButtonBackgroundPointerOver", create,

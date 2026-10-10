@@ -85,7 +85,7 @@
            TargetType="MenuFlyoutItem"
            BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
         <Setter Property="Foreground"
-                Value="{ThemeResource DangerButtonBackground}" />
+                Value="{ThemeResource DangerButtonForeground}" />
     </Style>
 
     <Style TargetType="MenuFlyoutItem"

@@ -33,7 +33,7 @@
                     <controls:HeaderedControl>
                         <controls:SettingsButton Content="{CustomResource BlockUser}"
                                                  Click="{x:Bind ViewModel.Block}"
-                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Foreground="{ThemeResource DangerButtonForeground}"
                                                  Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>

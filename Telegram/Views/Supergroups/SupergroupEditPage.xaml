@@ -238,7 +238,7 @@
                 <controls:HeaderedControl x:Name="DeletePanel">
                     <controls:SettingsButton x:Name="Delete"
                                              Click="{x:Bind ViewModel.Delete}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xE74D;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

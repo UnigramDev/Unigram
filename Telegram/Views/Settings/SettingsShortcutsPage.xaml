@@ -176,7 +176,7 @@
                                                  Glyph="&#xF793;"
                                                  Click="Export_Click" />
                         <controls:SettingsButton Content="{CustomResource ShortcutsRestoreAll}"
-                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Foreground="{ThemeResource DangerButtonForeground}"
                                                  Glyph="&#xEA09;"
                                                  Click="ResetAll_Click" />
                     </controls:HeaderedControl>

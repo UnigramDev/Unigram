@@ -46,7 +46,7 @@
             <StackPanel>
                 <TextBlock Text="{CustomResource WalletProtectDontAsk}"
                            Style="{StaticResource BaseTextBlockStyle}"
-                           Foreground="{ThemeResource DangerButtonBackground}"
+                           Foreground="{ThemeResource DangerButtonForeground}"
                            TextWrapping="Wrap" />
                 <TextBlock Text="{CustomResource WalletProtectDontAskInfo}"
                            Style="{StaticResource InfoBodyTextBlockStyle}"

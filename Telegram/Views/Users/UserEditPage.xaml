@@ -263,7 +263,7 @@
                     <controls:SettingsButton x:Name="ResetPhoto"
                                              Click="{x:Bind ViewModel.ResetPhoto}"
                                              Content="{CustomResource ResetToOriginalPhoto}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              IsGlyphVisible="True" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

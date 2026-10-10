@@ -164,7 +164,7 @@
                                           Footer="{CustomResource PrivacyBotsInfo}">
                     <controls:SettingsButton Click="{x:Bind ViewModel.ClearPayments}"
                                              Content="{CustomResource PrivacyPaymentsClear}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xE74D;" />
 
                     <controls:SettingsButton Click="{x:Bind ViewModel.OpenWebSessions}"

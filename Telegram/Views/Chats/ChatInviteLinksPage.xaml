@@ -183,7 +183,7 @@
                                               Margin="0,-14,0,0">
                         <controls:SettingsButton Click="{x:Bind ViewModel.RevokeAll}"
                                                  Content="{CustomResource DeleteAllRevokedLinks}"
-                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Foreground="{ThemeResource DangerButtonForeground}"
                                                  Glyph="&#xE74D;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>

@@ -24,7 +24,7 @@
         <TextBlock x:Name="RetryIn"
                    Visibility="Collapsed"
                    Style="{StaticResource CaptionTextBlockStyle}"
-                   Foreground="{ThemeResource DangerButtonBackground}"
+                   Foreground="{ThemeResource DangerButtonForeground}"
                    Margin="0,4,0,0" />
     </StackPanel>
 </controls:ContentPopup>

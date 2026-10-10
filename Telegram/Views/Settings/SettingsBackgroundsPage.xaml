@@ -57,7 +57,7 @@
                                           Margin="-24,0,-24,32">
                     <controls:SettingsButton Content="{CustomResource ResetChatBackgrounds}"
                                              Click="{x:Bind ViewModel.Reset}"
-                                             Foreground="{ThemeResource DangerButtonBackground}" />
+                                             Foreground="{ThemeResource DangerButtonForeground}" />
                 </controls:HeaderedControl>
             </GridView.Footer>
             <GridView.ItemContainerStyle>

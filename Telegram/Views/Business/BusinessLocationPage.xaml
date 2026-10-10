@@ -98,7 +98,7 @@
                 <controls:HeaderedControl Visibility="{x:Bind ConvertClear(ViewModel.Address, ViewModel.IsLocationValid), Mode=OneWay}">
                     <controls:SettingsButton Click="{x:Bind ViewModel.Clear}"
                                              Content="{CustomResource BusinessLocationClear}"
-                                             Foreground="{ThemeResource DangerButtonBackground}" />
+                                             Foreground="{ThemeResource DangerButtonForeground}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

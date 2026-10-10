@@ -82,7 +82,7 @@
 
                             <controls:SettingsButton Content="{CustomResource TerminateAllSessions}"
                                                      Click="{x:Bind ViewModel.TerminateOthers}"
-                                                     Foreground="{ThemeResource DangerButtonBackground}"
+                                                     Foreground="{ThemeResource DangerButtonForeground}"
                                                      Glyph="&#xE98B;" />
                         </controls:HeaderedControl>
                     </StackPanel>

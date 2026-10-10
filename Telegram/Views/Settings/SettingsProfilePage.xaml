@@ -119,7 +119,7 @@
                     <controls:SettingsButton x:Name="BirthdateRemove"
                                              Content="{CustomResource EditProfileBirthdayRemove}"
                                              Click="{x:Bind ViewModel.RemoveBirthdate}"
-                                             Foreground="{ThemeResource DangerButtonBackground}" />
+                                             Foreground="{ThemeResource DangerButtonForeground}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource EditProfileChatAutomationInfo}">
@@ -141,7 +141,7 @@
                 <controls:HeaderedControl>
                     <controls:SettingsButton Click="LogOut_Click"
                                              Content="{CustomResource LogOutTitle}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xE999;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

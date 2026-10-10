@@ -273,7 +273,7 @@
                     <controls:SettingsButton x:Name="Stop"
                                              Click="{x:Bind ViewModel.Stop}"
                                              Content="{CustomResource AffiliateProgramStop}"
-                                             Foreground="{ThemeResource DangerButtonBackground}" />
+                                             Foreground="{ThemeResource DangerButtonForeground}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

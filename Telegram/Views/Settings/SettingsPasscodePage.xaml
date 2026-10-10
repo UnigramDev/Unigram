@@ -26,7 +26,7 @@
                 <controls:HeaderedControl Footer="{CustomResource ChangePasscodeInfo}">
                     <controls:SettingsButton Click="{x:Bind ViewModel.Toggle}"
                                              Content="{CustomResource DisablePasscode}"
-                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Foreground="{ThemeResource DangerButtonForeground}"
                                              Glyph="&#xE9A6;" />
 
                     <controls:SettingsButton Click="{x:Bind ViewModel.Edit}"
