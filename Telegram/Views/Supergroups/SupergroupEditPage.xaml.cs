@@ -96,7 +96,7 @@ namespace Telegram.Views.Supergroups
             if (messages.Count > 0)
             {
                 var badge = ChatCell.UpdateBriefLabel(messages[0].Content, false, false, out _);
-                WelcomeMessages.Badge = badge.Text;
+                WelcomeMessages.Badge = badge.Text.Length > 10 ? badge.Text.Substring(0, 10) + "..." : badge.Text;
             }
             else
             {
