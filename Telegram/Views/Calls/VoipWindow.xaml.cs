@@ -925,6 +925,7 @@ namespace Telegram.Views.Calls
             _call.StateChanged -= OnStateChanged;
             _call.ConnectionStateChanged -= OnConnectionStateChanged;
             _call.RemoteMediaStateChanged -= OnRemoteMediaStateChanged;
+            _call.RemoteBatteryLevelIsLowChanged -= OnRemoteBatteryLevelIsLowChanged;
             _call.AudioLevelUpdated -= OnAudioLevelUpdated;
             _call.SignalBarsUpdated -= OnSignalBarsUpdated;
             _call.MediaStateChanged -= OnMediaStateChanged;
