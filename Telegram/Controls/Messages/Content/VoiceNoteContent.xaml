@@ -34,6 +34,8 @@
                 Value="-3" />
         <Setter Property="CornerRadius"
                 Value="8" />
+        <Setter Property="AutomationProperties.AutomationId"
+                Value="Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:AnimatedIconToggleButton">

@@ -17,6 +17,8 @@
                 Value="Stretch" />
         <Setter Property="VerticalContentAlignment"
                 Value="Stretch" />
+        <Setter Property="AutomationProperties.AutomationId"
+                Value="Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:StickerContent">

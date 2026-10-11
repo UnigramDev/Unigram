@@ -43,6 +43,8 @@
                 Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
+        <Setter Property="AutomationProperties.AutomationId"
+                Value="Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:VideoContent">

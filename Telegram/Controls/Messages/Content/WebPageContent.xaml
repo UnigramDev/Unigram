@@ -48,6 +48,8 @@
                 Value="4" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="True" />
+        <Setter Property="AutomationProperties.AutomationId"
+                Value="Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:WebPageContent">
