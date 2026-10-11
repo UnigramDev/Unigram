@@ -4309,7 +4309,7 @@
         <Setter Property="Padding"
                 Value="0" />
         <Setter Property="Margin"
-                Value="0,2,0,2" />
+                Value="24,2,24,2" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Stretch" />
         <Setter Property="VerticalContentAlignment"
@@ -4624,7 +4624,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel Margin="24,0" />
+                    <ItemsStackPanel />
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>

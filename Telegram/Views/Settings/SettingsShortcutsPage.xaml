@@ -185,8 +185,7 @@
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False"
-                                     Margin="24,0" />
+                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </controls:TableListView>

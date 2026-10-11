@@ -84,7 +84,6 @@ namespace Telegram.Views.Wallet
             // before there was a view model to read.
             ScrollingHost.ItemsSource = viewModel.Items;
 
-
             StateLabel.Text = Strings.WalletTitle;
 
             // The handle, not the whole strip: a drag region takes the pointer away from anything
@@ -538,7 +537,7 @@ namespace Telegram.Views.Wallet
             var visual = ElementComposition.GetElementVisual(panel);
             ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
 
-            panel.Margin = new Thickness(24, -HeaderTabs.ActualSize.Y - margin, 24, 0);
+            panel.Margin = new Thickness(0, -HeaderTabs.ActualSize.Y - margin, 0, 0);
             Canvas.SetZIndex(panel, 2);
 
             var translation = visual.Compositor.CreateScalarKeyFrameAnimation();
@@ -551,7 +550,7 @@ namespace Telegram.Views.Wallet
             {
                 visual.Properties.InsertVector3("Translation", Vector3.Zero);
 
-                panel.Margin = new Thickness(24, 0, 24, 0);
+                panel.Margin = new Thickness(0, 0, 0, 0);
                 Canvas.SetZIndex(panel, 0);
             };
 
