@@ -151,6 +151,10 @@ namespace Telegram
         private static string _supersedeMessage;
         [ThreadStatic]
         private static long _supersedeTime;
+        // The fail-fast's stowed records start at the XAML frame that received the HRESULT, after
+        // the managed frames had unwound, so the exception is the only place those survive.
+        [ThreadStatic]
+        private static Exception _supersedeException;
 
         private static void OnUnhandledExceptionDetected(object sender, UnhandledErrorDetectedEventArgs e)
         {
@@ -184,11 +188,11 @@ namespace Telegram
                     // So attach both and let the dashboard see the pair, rather than picking.
                     AttachManagedFrames(stowed, ex);
 
-                    Supersede(ProcessException(stowed, defer: true), stowed.Type, stowed.Message);
+                    Supersede(ProcessException(stowed, defer: true), ex);
                 }
                 else
                 {
-                    Supersede(ProcessException(ex, defer: true), ex.GetType().Name, ex.Message);
+                    Supersede(ProcessException(ex, defer: true), ex);
                 }
             }
         }
@@ -393,11 +397,12 @@ namespace Telegram
             _channel.Writer.TryWrite(reportPath);
         }
 
-        private static void Supersede(string reportId, string type, string message)
+        private static void Supersede(string reportId, Exception ex)
         {
             _supersedeId = reportId;
-            _supersedeType = type;
-            _supersedeMessage = message;
+            _supersedeType = ex.GetType().Name;
+            _supersedeMessage = ex.Message;
+            _supersedeException = ex;
             _supersedeTime = MonotonicUnixTime.Now;
         }
 
@@ -597,12 +602,25 @@ namespace Telegram
                 ? _supersedeId
                 : null;
 
+            var exception = _supersedeException;
+
             _supersedeId = null;
+            _supersedeException = null;
 
             if (supersede != null && !string.IsNullOrEmpty(_supersedeType))
             {
                 error.Type = _supersedeType;
                 error.Message = _supersedeMessage;
+            }
+
+            // The report being replaced carried the managed stack, and these records cannot.
+            if (supersede != null && exception != null)
+            {
+                error.StackTrace = string.IsNullOrEmpty(error.StackTrace)
+                    ? exception.StackTrace
+                    : error.StackTrace + "\n" + exception.StackTrace;
+
+                AttachManagedFrames(error, exception);
             }
 
             ProcessException(error, supersede);
