@@ -13887,6 +13887,7 @@
     <string name="ShortcutsTitle">Keyboard Shortcuts</string>
     <string name="ShortcutsCategoryApp">App</string>
     <string name="ShortcutsCategoryChats">Chats</string>
+    <string name="ShortcutsCategoryNavigation">Navigation</string>
     <string name="ShortcutsCategoryFolders">Folders</string>
     <string name="ShortcutsCategoryCalls">Calls</string>
     <string name="ShortcutsEditHint">Recording</string>
@@ -13951,6 +13952,9 @@
     <string name="ShortcutCommandShowFolder6">Folder 6</string>
     <string name="ShortcutCommandShowFolderLast">Last Folder</string>
     <string name="ShortcutCommandShowArchive">Archived Chats</string>
+
+    <string name="ShortcutCommandRegionNext">Next Region</string>
+    <string name="ShortcutCommandRegionPrevious">Previous Region</string>
 
     <string name="ShortcutCommandCallAccept">Accept Call</string>
     <string name="ShortcutCommandCallReject">Decline Call</string>
