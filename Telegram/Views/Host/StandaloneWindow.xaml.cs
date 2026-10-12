@@ -161,6 +161,18 @@ namespace Telegram.Views.Host
 
                 args.Handled = true;
             }
+            else if (command is ShortcutCommand.RegionNext or ShortcutCommand.RegionPrevious)
+            {
+                args.Handled = FocusRegions.MoveFocus(this, XamlRoot, command is ShortcutCommand.RegionPrevious);
+            }
+            else if (command is ShortcutCommand.MentionNext)
+            {
+                if (_navigationService.Frame.Content is IChatPage page)
+                {
+                    page.ViewModel.Mentions.NextMessage();
+                    args.Handled = true;
+                }
+            }
 
             // Close, the media commands and the call ones are answered by WindowContext once this
             // declines them.

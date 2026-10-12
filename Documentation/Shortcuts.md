@@ -27,13 +27,55 @@
       <td>Ctrl + Page Down</td>
     </tr>
     <tr>
-      <td rowspan="2">Search</td>
+      <td rowspan="4">Search</td>
       <td>Chat search</td>
       <td>Ctrl + E</td>
     </tr>
     <tr>
       <td>Messages search per chat</td>
       <td>Ctrl + F</td>
+    </tr>
+    <tr>
+      <td>Next search result</td>
+      <td>F3</td>
+    </tr>
+    <tr>
+      <td>Previous search result</td>
+      <td>Shift + F3</td>
+    </tr>
+    <tr>
+      <td rowspan="5">Focused message</td>
+      <td>Reply</td>
+      <td>Enter</td>
+    </tr>
+    <tr>
+      <td>Edit</td>
+      <td>Ctrl + E</td>
+    </tr>
+    <tr>
+      <td>Forward</td>
+      <td>Ctrl + Shift + F</td>
+    </tr>
+    <tr>
+      <td>Delete</td>
+      <td>Delete</td>
+    </tr>
+    <tr>
+      <td>Copy</td>
+      <td>Ctrl + C</td>
+    </tr>
+    <tr>
+      <td rowspan="3">Navigation</td>
+      <td>Next region <br>(chat list, messages, composer)</td>
+      <td>F6</td>
+    </tr>
+    <tr>
+      <td>Previous region</td>
+      <td>Shift + F6</td>
+    </tr>
+    <tr>
+      <td>Next unread mention</td>
+      <td>Ctrl + Alt + M</td>
     </tr>
     <tr>
       <td rowspan="15">Selected Text <br>in typing area</td>
