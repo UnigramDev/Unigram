@@ -13955,6 +13955,7 @@
 
     <string name="ShortcutCommandRegionNext">Next Region</string>
     <string name="ShortcutCommandRegionPrevious">Previous Region</string>
+    <string name="ShortcutCommandMentionNext">Next Unread Mention</string>
 
     <string name="ShortcutCommandCallAccept">Accept Call</string>
     <string name="ShortcutCommandCallReject">Decline Call</string>

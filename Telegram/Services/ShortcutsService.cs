@@ -226,6 +226,7 @@ namespace Telegram.Services
 
             { "next_region"         , ShortcutCommand.RegionNext },
             { "previous_region"     , ShortcutCommand.RegionPrevious },
+            { "next_mention"        , ShortcutCommand.MentionNext },
 
             // Shortcuts that have no default values.
             { "message"             , ShortcutCommand.JustSendMessage },
@@ -340,6 +341,7 @@ namespace Telegram.Services
             {
                 ShortcutCommand.RegionNext,
                 ShortcutCommand.RegionPrevious,
+                ShortcutCommand.MentionNext,
             }),
             (() => Strings.ShortcutsCategoryFolders, new[]
             {
@@ -899,6 +901,7 @@ namespace Telegram.Services
 
             Set("f6", ShortcutCommand.RegionNext);
             Set("shift+f6", ShortcutCommand.RegionPrevious);
+            Set("ctrl+alt+m", ShortcutCommand.MentionNext);
 
             Set("ctrl+shift+y", ShortcutCommand.SetStatus);
             Set("ctrl+j", ShortcutCommand.Downloads);
@@ -1306,6 +1309,7 @@ namespace Telegram.Services
 
                 ShortcutCommand.RegionNext => Strings.ShortcutCommandRegionNext,
                 ShortcutCommand.RegionPrevious => Strings.ShortcutCommandRegionPrevious,
+                ShortcutCommand.MentionNext => Strings.ShortcutCommandMentionNext,
 
                 ShortcutCommand.CallAccept => Strings.ShortcutCommandCallAccept,
                 ShortcutCommand.CallReject => Strings.ShortcutCommandCallReject,
@@ -1662,6 +1666,7 @@ namespace Telegram.Services
 
         RegionNext,
         RegionPrevious,
+        MentionNext,
 
         CallAccept,
         CallReject,

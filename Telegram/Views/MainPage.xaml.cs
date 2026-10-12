@@ -1512,6 +1512,14 @@ namespace Telegram.Views
             {
                 args.Handled = FocusRegions.MoveFocus(this, XamlRoot, command is ShortcutCommand.RegionPrevious);
             }
+            else if (command is ShortcutCommand.MentionNext)
+            {
+                if (MasterDetail.NavigationService.Frame.Content is IChatPage page)
+                {
+                    page.ViewModel.Mentions.NextMessage();
+                    args.Handled = true;
+                }
+            }
 
             // Quit, Close, Lock, the media commands and the two call ones are answered by
             // WindowContext once this declines them, so that a window without a page still has
