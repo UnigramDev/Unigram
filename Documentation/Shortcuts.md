@@ -36,6 +36,15 @@
       <td>Ctrl + F</td>
     </tr>
     <tr>
+      <td rowspan="2">Navigation</td>
+      <td>Next region <br>(chat list, messages, composer)</td>
+      <td>F6</td>
+    </tr>
+    <tr>
+      <td>Previous region</td>
+      <td>Shift + F6</td>
+    </tr>
+    <tr>
       <td rowspan="15">Selected Text <br>in typing area</td>
       <td>Undo</td>
       <td>Ctrl + Z</td>
