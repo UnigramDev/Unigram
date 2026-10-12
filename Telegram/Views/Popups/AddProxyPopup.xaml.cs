@@ -102,6 +102,19 @@ namespace Telegram.Views.Popups
                 //secretText = !string.IsNullOrEmpty(mtproto.Secret) ? $"{Strings.UseProxySecret}: {mtproto.Secret}\n" : string.Empty;
                 //secretInfo = !string.IsNullOrEmpty(mtproto.Secret) ? $"\n\n{Strings.UseProxyTelegramInfo2}" : string.Empty;
             }
+            else if (proxy.Type is ProxyTypeWeb web)
+            {
+                // The port is always 443, and the path belongs to the address
+                Server.Content = string.IsNullOrEmpty(web.Path) ? proxy.Server : proxy.Server + "/" + web.Path;
+                Secret.Content = web.Secret;
+
+                Port.Visibility = Visibility.Collapsed;
+                Username.Visibility = Visibility.Collapsed;
+                Password.Visibility = Visibility.Collapsed;
+
+                SponsorInfo.Text = Strings.UseProxyWebWarning;
+                SponsorInfo.Visibility = Visibility.Visible;
+            }
 
             var hyperlink = new Hyperlink();
             hyperlink.Inlines.Add(Strings.ProxyBottomSheetCheckStatus);

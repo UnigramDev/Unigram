@@ -25,6 +25,16 @@ namespace Telegram.Navigation
     {
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
+            if (WebProxyCarrierHost.IsCreatingView)
+            {
+                // The web proxy carrier view is never shown: none of the per-window setup applies, but
+                // its awaits still need to resume on its thread.
+#if NET9_0_OR_GREATER
+                System.Threading.SynchronizationContext.SetSynchronizationContext(new Windows.System.DispatcherQueueSynchronizationContext(Windows.System.DispatcherQueue.GetForCurrentThread()));
+#endif
+                return;
+            }
+
             Logger.Info();
 
             IsMainWindowCreated = true;

@@ -51,7 +51,7 @@ namespace Telegram.Views.Settings
 
             if (ViewModel.SelectedItems.Count > 1)
             {
-                if (ViewModel.SelectedItems.All(x => x.Type is ProxyTypeMtproto or ProxyTypeSocks5))
+                if (ViewModel.SelectedItems.All(x => x.Type is ProxyTypeMtproto or ProxyTypeSocks5 or ProxyTypeWeb))
                 {
                     flyout.CreateFlyoutItem(ViewModel.CopySelected, Strings.CopySelected, Icons.Copy, VirtualKey.C, VirtualKeyModifiers.Control);
                 }
@@ -66,7 +66,7 @@ namespace Telegram.Views.Settings
                     return;
                 }
 
-                if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5)
+                if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5 or ProxyTypeWeb)
                 {
                     flyout.CreateFlyoutItem(ViewModel.Share, proxy, Strings.ShareFile, Icons.Share);
                     flyout.CreateFlyoutItem(ViewModel.Copy, proxy, Strings.CopyLink, Icons.Copy, VirtualKey.C, VirtualKeyModifiers.Control);
@@ -137,7 +137,7 @@ namespace Telegram.Views.Settings
             {
                 if (ViewModel.SelectedItems.Count > 0)
                 {
-                    if (ViewModel.SelectedItems.All(x => x.Type is ProxyTypeMtproto or ProxyTypeSocks5))
+                    if (ViewModel.SelectedItems.All(x => x.Type is ProxyTypeMtproto or ProxyTypeSocks5 or ProxyTypeWeb))
                     {
                         ViewModel.CopySelected();
                         args.Handled = true;

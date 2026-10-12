@@ -41,6 +41,7 @@ namespace Telegram.Services
             typeof(Telegram.Services.IClientService), typeof(Telegram.Services.ClientService),
             typeof(Telegram.Services.IContactsService), typeof(Telegram.Services.ContactsService),
             typeof(Telegram.Services.IVoipService), typeof(Telegram.Services.VoipService),
+            typeof(Telegram.Services.IWebProxyCarrierService), typeof(Telegram.Services.WebProxyCarrierService),
             typeof(Telegram.Services.INetworkService), typeof(Telegram.Services.NetworkService),
             typeof(Telegram.Services.IGenerationService), typeof(Telegram.Services.GenerationService),
             typeof(Telegram.Services.INotificationsService), typeof(Telegram.Services.NotificationsService),

@@ -2459,12 +2459,14 @@
     <string name="UseProxyUsername">Username</string>
     <string name="UseProxySocks5">SOCKS5 Proxy</string>
     <string name="UseProxyTelegram">MTProto Proxy</string>
+    <string name="UseProxyWeb">WEB Proxy</string>
 
     <string name="UseProxySponsor">Proxy sponsor</string>
 
     <string name="UseProxyInfo">SOCKS5 proxy settings.</string>
     <string name="UseProxyTelegramInfo">MTProto proxy settings.</string>
     <string name="UseProxyTelegramInfo2">This proxy may display a sponsored channel in your chat list. This doesn\'t reveal any of your Telegram traffic.</string>
+    <string name="UseProxyWebWarning">This WEB proxy runs a web page from its provider in the background while you\'re connected. Only use it if you trust the provider. It may also display a sponsored channel in your chat list. This doesn\'t reveal any of your Telegram traffic.</string>
 
 
     <string name="ConnectingToProxyEnable">Enable</string>
@@ -13351,6 +13353,7 @@
     <string name="ProxyBottomSheetCheckWarning">Warning</string>
     <string name="ProxyBottomSheetCheckWarningText">This will expose your IP address to the admin of the proxy server.</string>
     <string name="ProxyBottomSheetChecking">Checking</string>
+    <string name="ProxyNotTested">Not tested</string>
     <string name="Proceed">Proceed</string>
 
     <string name="BotAuthAllowMessages">Allow Messages</string>

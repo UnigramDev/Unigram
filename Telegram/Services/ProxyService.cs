@@ -241,6 +241,13 @@ namespace Telegram.Services
                     parameters.Add(http.HttpOnly ? 1 : 0);
                     break;
 
+                case ProxyTypeWeb web:
+                    typeFilter = "Type = ? AND Secret = ? AND Username = ?";
+                    parameters.Add(3); // Type code for WEB
+                    parameters.Add(web.Secret);
+                    parameters.Add(web.Path ?? string.Empty);
+                    break;
+
                 default:
                     return false;
             }
@@ -461,6 +468,11 @@ namespace Telegram.Services
                         && xHttp.Password == yHttp.Password
                         && xHttp.HttpOnly == yHttp.HttpOnly;
                 }
+                else if (x.Type is ProxyTypeWeb xWeb && y.Type is ProxyTypeWeb yWeb)
+                {
+                    return xWeb.Path == yWeb.Path
+                        && xWeb.Secret == yWeb.Secret;
+                }
             }
 
             return false;
@@ -503,6 +515,17 @@ namespace Telegram.Services
                     http.Password ?? string.Empty,
                     http.HttpOnly ? 1 : 0
                 },
+                ProxyTypeWeb web => new object[]
+                {
+                    proxy.Proxy.Server,
+                    proxy.Proxy.Port,
+                    proxy.LastUsedDate,
+                    3, // Type: WEB, its path stored in Username
+                    web.Secret,
+                    web.Path ?? string.Empty,
+                    null,
+                    0
+                },
                 _ => throw new NotSupportedException($"Proxy type {proxy.Proxy.Type?.GetType().Name} is not supported")
             };
         }
@@ -521,6 +544,7 @@ namespace Telegram.Services
                 0 => new ProxyTypeMtproto((string)row[5] ?? string.Empty),
                 1 => new ProxyTypeSocks5((string)row[6] ?? string.Empty, (string)row[7] ?? string.Empty),
                 2 => new ProxyTypeHttp((string)row[6] ?? string.Empty, (string)row[7] ?? string.Empty, Convert.ToBoolean(row[8])),
+                3 => new ProxyTypeWeb((string)row[6] ?? string.Empty, (string)row[5] ?? string.Empty),
                 _ => throw new NotSupportedException($"Unknown proxy type code: {typeCode}")
             };
 

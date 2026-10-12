@@ -50,6 +50,11 @@
                              Checked="Type_Toggled"
                              Unchecked="Type_Toggled" />
 
+                <RadioButton x:Name="TypeWeb"
+                             Content="{CustomResource UseProxyWeb}"
+                             Checked="Type_Toggled"
+                             Unchecked="Type_Toggled" />
+
                 <TextBox x:Name="FieldServer"
                          PlaceholderText="{CustomResource UseProxyAddress}"
                          Margin="0,8" />

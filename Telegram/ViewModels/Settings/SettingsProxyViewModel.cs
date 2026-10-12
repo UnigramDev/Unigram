@@ -71,6 +71,13 @@ namespace Telegram.ViewModels.Settings
             //    proxyId = 0;
             //}
 
+            if (proxy.Type is ProxyTypeWeb)
+            {
+                // A check would load the provider's page in a web view of its own for every saved proxy.
+                // The enabled one reports through the connection state instead.
+                return;
+            }
+
             var status = await ClientService.SendAsync(new PingProxy(proxy.Proxy));
             BeginOnUIThread(() =>
             {
@@ -121,6 +128,10 @@ namespace Telegram.ViewModels.Settings
                     else if (item.Seconds > 0)
                     {
                         item.Status = new ConnectionStatusReady(false, item.Seconds);
+                    }
+                    else if (item.Type is ProxyTypeWeb)
+                    {
+                        item.Status = new ConnectionStatusNotTested();
                     }
                     else
                     {
@@ -434,7 +445,9 @@ namespace Telegram.ViewModels.Settings
         public string Server => _proxy.Proxy.Server;
         public int Id => _proxy.Id;
 
-        public string DisplayName => $"{Server}:{Port}";
+        public string DisplayName => Type is ProxyTypeWeb web
+            ? string.IsNullOrEmpty(web.Path) ? Server : $"{Server}/{web.Path}"
+            : $"{Server}:{Port}";
 
         private ConnectionStatus _status = new ConnectionStatusChecking();
         public ConnectionStatus Status
@@ -456,6 +469,10 @@ namespace Telegram.ViewModels.Settings
     }
 
     public partial class ConnectionStatusConnecting : ConnectionStatus
+    {
+    }
+
+    public partial class ConnectionStatusNotTested : ConnectionStatus
     {
     }
 

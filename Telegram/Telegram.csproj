@@ -268,6 +268,8 @@
     <Compile Include="Common\VideoPreloader.cs" />
     <Compile Include="Common\VisualUtilities.Skeleton.cs" />
     <Compile Include="Common\WebAppStorage.cs" />
+    <Compile Include="Common\WebProxyCarrierHost.cs" />
+    <Compile Include="Common\WebProxyCarrierHost.Uwp.cs" />
     <Compile Include="Composition\CompositionPropertySetColorSource.cs" />
     <Compile Include="Composition\CompositionVisualColorSource.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
@@ -552,6 +554,7 @@
     <Compile Include="Converters\ThicknessFilterConverter.cs" />
     <Compile Include="Services\Calls\VoipGroupCallEventArgs.cs" />
     <Compile Include="Services\ProxyService.cs" />
+    <Compile Include="Services\WebProxyCarrierService.cs" />
     <Compile Include="Services\Settings\ToolTipSettings.cs" />
     <Compile Include="Services\StoreUpdateService.cs" />
     <Compile Include="Services\TextRecognitionService.cs" />

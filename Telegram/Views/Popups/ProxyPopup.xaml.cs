@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
@@ -57,10 +58,19 @@ namespace Telegram.Views.Popups
                     FieldTransparent.IsChecked = !http.HttpOnly;
                     TypeHttp.IsChecked = true;
                     break;
+                case ProxyTypeWeb web:
+                    // A web proxy is entered and shown as one address, host or host/path
+                    FieldServer.Text = string.IsNullOrEmpty(web.Path) ? proxy.Server : proxy.Server + "/" + web.Path;
+                    FieldSecret.Text = web.Secret;
+                    TypeWeb.IsChecked = true;
+                    break;
             }
         }
 
-        public Proxy Proxy => new Proxy(Server, Port, Type);
+        // The canonical form TDLib produced for a web proxy, set once the address has been validated
+        private Proxy _webProxy;
+
+        public Proxy Proxy => TypeWeb.IsChecked == true ? _webProxy : new Proxy(Server, Port, Type);
 
         private string Server => FieldServer.Text ?? string.Empty;
 
@@ -94,12 +104,35 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (string.IsNullOrEmpty(FieldServer.Text) /* || !IPAddress.TryParse(Server, out IPAddress server)*/)
             {
                 VisualUtilities.ShakeView(FieldServer);
                 args.Cancel = true;
+                return;
+            }
+
+            if (TypeWeb.IsChecked == true)
+            {
+                if (string.IsNullOrEmpty(FieldSecret.Text))
+                {
+                    VisualUtilities.ShakeView(FieldSecret);
+                    args.Cancel = true;
+                    return;
+                }
+
+                var deferral = args.GetDeferral();
+
+                _webProxy = await NormalizeWebProxyAsync();
+                if (_webProxy == null)
+                {
+                    VisualUtilities.ShakeView(FieldServer);
+                    VisualUtilities.ShakeView(FieldSecret);
+                    args.Cancel = true;
+                }
+
+                deferral.Complete();
                 return;
             }
 
@@ -116,6 +149,32 @@ namespace Telegram.Views.Popups
                 args.Cancel = true;
                 return;
             }
+        }
+
+        // TDLib owns the address rules (IDNA, IP literals, path segments, fake TLS secrets), so it validates the
+        // entry by turning it into a link and parsing that back, which also yields the canonical host and secret.
+        private async Task<Proxy> NormalizeWebProxyAsync()
+        {
+            var address = FieldServer.Text.Trim();
+            if (address.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                address = address.Substring("https://".Length);
+            }
+
+            var index = address.IndexOf('/');
+            var host = index < 0 ? address : address.Substring(0, index);
+            var path = index < 0 ? string.Empty : address.Substring(index + 1);
+
+            var proxy = new Proxy(host, 443, new ProxyTypeWeb(path, FieldSecret.Text.Trim()));
+
+            var link = await _clientService.SendAsync(new GetInternalLink(new InternalLinkTypeProxy(proxy), true)) as HttpUrl;
+            if (link == null)
+            {
+                return null;
+            }
+
+            var type = await _clientService.SendAsync(new GetInternalLinkType(link.Url)) as InternalLinkTypeProxy;
+            return type?.Proxy?.Type is ProxyTypeWeb ? type.Proxy : null;
         }
 
         private void Share_Click(object sender, RoutedEventArgs e)
@@ -148,9 +207,12 @@ namespace Telegram.Views.Popups
         {
             TypeSocksPanel?.Visibility = TypeSocks.IsChecked == true || TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
-            TypeProtoPanel?.Visibility = TypeProto.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            TypeProtoPanel?.Visibility = TypeProto.IsChecked == true || TypeWeb?.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
             TypeHttpPanel?.Visibility = TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+
+            // A web proxy is always reached over HTTPS on 443
+            FieldPort?.Visibility = TypeWeb?.IsChecked == true ? Visibility.Collapsed : Visibility.Visible;
 
             FieldPanel?.Text = TypeSocks.IsChecked == true
                 ? Strings.UseProxyInfo
@@ -158,6 +220,8 @@ namespace Telegram.Views.Popups
                 ? Strings.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.UseProxyTelegramInfo2
                 : TypeHttp.IsChecked == true
                 ? Strings.TransparentTcpConnectionInfo + Environment.NewLine + Environment.NewLine + Strings.TransparentTcpConnectionInfo2
+                : TypeWeb?.IsChecked == true
+                ? Strings.UseProxyWebWarning
                 : string.Empty;
         }
     }

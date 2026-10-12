@@ -39,6 +39,10 @@ namespace Telegram.Controls.Cells
             {
                 UpdateTextAndState(Strings.Connecting, nameof(Connected));
             }
+            else if (value is ConnectionStatusNotTested)
+            {
+                UpdateTextAndState(Strings.ProxyNotTested, nameof(Connected));
+            }
             else if (value is ConnectionStatusReady ready)
             {
                 if (ready.IsConnected)
