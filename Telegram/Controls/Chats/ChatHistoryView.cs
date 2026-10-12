@@ -1353,11 +1353,16 @@ namespace Telegram.Controls.Chats
             }
             finally
             {
-                Interlocked.Decrement(ref _activeLoadOperations);
-
-                if (!ct.IsCancellationRequested && _viewModel != null)
+                // Initialize zeroes the count when it cancels, so a load left over from the
+                // previous chat must not take from the new one's.
+                if (!ct.IsCancellationRequested)
                 {
-                    CheckContinueLoading(direction);
+                    Interlocked.Decrement(ref _activeLoadOperations);
+
+                    if (_viewModel != null)
+                    {
+                        CheckContinueLoading(direction);
+                    }
                 }
             }
         }
@@ -1370,6 +1375,7 @@ namespace Telegram.Controls.Chats
 
             if (scrollableHeight == 0)
             {
+                CheckNonScrollableState();
                 return;
             }
 
