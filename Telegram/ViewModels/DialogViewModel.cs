@@ -2314,6 +2314,8 @@ namespace Telegram.ViewModels
                         continue;
                     }
 
+                    Items.UpdateMessageAlbum(group.Item1);
+
                     Handle(new UpdateMessageContent(group.Item1.ChatId, group.Item2, group.Item1.Content));
                     Handle(new UpdateMessageEdited(group.Item1.ChatId, group.Item2, group.Item1.EditDate, group.Item1.ReplyMarkup));
                     Handle(new UpdateMessageInteractionInfo(group.Item1.ChatId, group.Item2, group.Item1.InteractionInfo));

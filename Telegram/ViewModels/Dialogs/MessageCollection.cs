@@ -174,6 +174,22 @@ namespace Telegram.ViewModels
             return _messages.TryGetValue(key, out value);
         }
 
+        public void UpdateMessageAlbum(MessageViewModel item)
+        {
+            if (item.Content is MessageAlbum album)
+            {
+                foreach (var child in album.Messages)
+                {
+                    _messages[child.Key] = item;
+                }
+            }
+
+            if (item.Id != 0)
+            {
+                _messages[item.Key] = item;
+            }
+        }
+
         public void UpdateMessageSendSucceeded(long oldMessageId, MessageViewModel message)
         {
             _messages.Remove(MessageKey.From(oldMessageId, message.IsUpgradedFrom));

@@ -910,6 +910,7 @@ namespace Telegram.ViewModels
                 BeginOnUIThread(() =>
                 {
                     List<MessageViewModel> toBeDeleted = null;
+                    List<MessageViewModel> toBeUpdated = null;
 
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -917,7 +918,6 @@ namespace Telegram.ViewModels
                         if (message.ChatId == update.ChatId && message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
                         {
                             var found = false;
-                            var invalidated = true;
 
                             for (int k = 0; k < album.Messages.Count; k++)
                             {
@@ -926,35 +926,16 @@ namespace Telegram.ViewModels
                                     album.Messages.RemoveAt(k);
                                     k--;
 
-                                    if (album.Messages.Count > 0)
-                                    {
-                                        message.UpdateAlbum(album.Messages[0]);
-                                        album.Invalidate();
-                                    }
-                                    else
-                                    {
-                                        invalidated = false;
+                                    toBeUpdated ??= new();
+                                    toBeUpdated.Add(message);
 
-                                        _groupedMessages.TryRemove(message.MediaAlbumId, out _);
-
-                                        message.AnimationState = MessageAnimationState.Removed;
-
-                                        toBeDeleted ??= new();
-                                        toBeDeleted.Add(message);
-                                    }
 
                                     found = true;
-                                    //break;
                                 }
                             }
 
                             if (found)
                             {
-                                if (invalidated)
-                                {
-                                    Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
-                                }
-
                                 continue;
                             }
                         }
@@ -978,6 +959,36 @@ namespace Telegram.ViewModels
                         {
                             toBeDeleted ??= new();
                             toBeDeleted.Add(message);
+                        }
+                    }
+
+                    if (toBeUpdated != null)
+                    {
+                        foreach (var item in toBeUpdated)
+                        {
+                            if (item.Content is not MessageAlbum album)
+                            {
+                                continue;
+                            }
+
+                            if (album.Messages.Count > 0)
+                            {
+                                album.Invalidate();
+                                item.UpdateAlbum(album.Messages[0]);
+
+                                Handle(new UpdateMessageContent(item.ChatId, item.Id, album));
+                                Handle(new UpdateMessageEdited(item.ChatId, item.Id, item.EditDate, item.ReplyMarkup));
+                                Handle(new UpdateMessageInteractionInfo(item.ChatId, item.Id, item.InteractionInfo));
+                            }
+                            else
+                            {
+                                _groupedMessages.TryRemove(item.MediaAlbumId, out _);
+
+                                item.AnimationState = MessageAnimationState.Removed;
+
+                                toBeDeleted ??= new();
+                                toBeDeleted.Add(item);
+                            }
                         }
                     }
 
