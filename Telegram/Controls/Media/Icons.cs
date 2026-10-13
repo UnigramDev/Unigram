@@ -196,6 +196,8 @@ namespace Telegram.Controls.Media
         public const string TextItalic = "\uE8DB";
         public const string TextUnderline = "\uE8DC";
         public const string TextStrikethrough = "\uE8DE";
+        public const string TextSuperscript = "\uEB1A";
+        public const string TextSubscript = "\uEB1B";
         public const string Code = "\uE943";
         public const string Link = "\uE71B";
         public const string LinkAdd = "\uEA85";
@@ -255,6 +257,7 @@ namespace Telegram.Controls.Media
         public const string Stealth = "\uEA28";
 
         public const string MusicNote2 = "\uE99D";
+        public const string MusicNote2Filled16 = "\uEADE";
         public const string MusicNoteOff2 = "\uE99E";
 
         public const string ErrorCircle = "\uEA22";
@@ -474,6 +477,9 @@ namespace Telegram.Controls.Media
 
         public const string AppFolder = "\uF122";
         public const string Apps = "\uF796";
+        public const string CommentQuote = "\uF797";
+        public const string DocumentFooter = "\uF798";
+        public const string LineHorizontal1 = "\uF799";
 
         public const string BotMarkup24 = "\uE9D5";
 
