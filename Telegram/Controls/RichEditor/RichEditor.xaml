@@ -165,12 +165,15 @@
                                 </VisualState>
                                 <!--  Captions, and a cell's text, are body text in the sent message.  -->
                                 <VisualState x:Name="Caption" />
+                                <!--  The hint is the credit's colour, faded, at body weight.  -->
                                 <VisualState x:Name="QuoteCredit">
                                     <VisualState.Setters>
                                         <Setter Target="Text.FontWeight"
                                                 Value="SemiBold" />
-                                        <Setter Target="Placeholder.FontWeight"
-                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.Foreground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                        <Setter Target="Placeholder.Opacity"
+                                                Value="0.6" />
                                         <Setter Target="Text.Foreground"
                                                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
                                         <Setter Target="Text.IconForeground"
@@ -193,8 +196,10 @@
                                     <VisualState.Setters>
                                         <Setter Target="Text.FontWeight"
                                                 Value="SemiBold" />
-                                        <Setter Target="Placeholder.FontWeight"
-                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.Foreground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                        <Setter Target="Placeholder.Opacity"
+                                                Value="0.6" />
                                         <Setter Target="Text.TextAlignment"
                                                 Value="Center" />
                                         <Setter Target="Text.Foreground"
