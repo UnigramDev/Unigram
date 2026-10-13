@@ -239,7 +239,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RichEditorView">
+                    <!--  Transparent so that the space below the blocks takes a click.  -->
                     <ScrollViewer x:Name="ScrollViewer"
+                                  Background="Transparent"
                                   HorizontalScrollMode="Disabled"
                                   HorizontalScrollBarVisibility="Disabled"
                                   VerticalScrollMode="Auto"

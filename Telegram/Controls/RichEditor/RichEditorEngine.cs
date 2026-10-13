@@ -271,17 +271,8 @@ namespace Telegram.Controls.RichEditor
 
         public void SelectAll()
         {
-            // Ending in a hidden credit would show it.
-            var leaves = _document.Leaves;
-            var index = leaves.Count - 1;
-
-            while (index > 0 && IsLeafHidden(leaves[index]))
-            {
-                index--;
-            }
-
-            var last = leaves[index];
-            Select(new RichPosition(leaves[0], 0), new RichPosition(last, last.Length));
+            var last = LastShownLeaf();
+            Select(new RichPosition(_document.Leaves[0], 0), new RichPosition(last, last.Length));
         }
 
         /// <summary>The whole of one leaf: triple click.</summary>
@@ -466,9 +457,22 @@ namespace Telegram.Controls.RichEditor
 
         public void MoveToDocumentEdge(int direction, bool extend)
         {
-            var leaves = _document.Leaves;
-            var leaf = direction < 0 ? leaves[0] : leaves[leaves.Count - 1];
+            var leaf = direction < 0 ? _document.Leaves[0] : LastShownLeaf();
             Move(new RichPosition(leaf, direction < 0 ? 0 : leaf.Length), extend);
+        }
+
+        // The last leaf, unless that is a credit not drawn, which ending there would show.
+        private RichTextLeaf LastShownLeaf()
+        {
+            var leaves = _document.Leaves;
+            var index = leaves.Count - 1;
+
+            while (index > 0 && IsLeafHidden(leaves[index]))
+            {
+                index--;
+            }
+
+            return leaves[index];
         }
 
         public void Move(RichPosition position, bool extend)

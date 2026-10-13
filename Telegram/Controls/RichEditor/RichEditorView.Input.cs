@@ -211,6 +211,24 @@ namespace Telegram.Controls.RichEditor
             return true;
         }
 
+        /// <summary>
+        /// A point below the last block (surface coordinates) when that block is not text: a line
+        /// after it, as Down from it gives, and the caret on that line. Below text, the nearest
+        /// line answers as it does anywhere else.
+        /// </summary>
+        internal bool TryAppendBelow(Point point)
+        {
+            var children = Blocks?.Children;
+            if (_engine == null || children == null || children.Count == 0 || children[children.Count - 1] is not FrameworkElement last)
+            {
+                return false;
+            }
+
+            // Not the column's height: the scroll viewer can stretch it to the viewport, and it
+            // then says nothing of where the blocks end.
+            return point.Y > Bounds(last).Bottom && _engine.AppendLine();
+        }
+
         /// <summary>The text position under a point in this control's coordinates; blocks answer nothing.</summary>
         internal bool HitTestFromControl(Point point, out RichPosition position)
         {
@@ -318,12 +336,18 @@ namespace Telegram.Controls.RichEditor
 
             CountClick(point);
 
+            var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
+
+            if (!shift && TryAppendBelow(point.Position))
+            {
+                e.Handled = true;
+                return;
+            }
+
             if (!HitTest(point.Position, out RichPosition position, out RichBlock node))
             {
                 return;
             }
-
-            var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
             if (node != null)
             {
@@ -663,6 +687,12 @@ namespace Telegram.Controls.RichEditor
             Focus(FocusState.Pointer);
 
             var point = e.GetPosition(Surface);
+            if (TryAppendBelow(point))
+            {
+                e.Handled = true;
+                return;
+            }
+
             if (!HitTest(point, out RichPosition position, out RichBlock node))
             {
                 return;

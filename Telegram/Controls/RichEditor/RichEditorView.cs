@@ -16,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
@@ -153,6 +154,7 @@ namespace Telegram.Controls.RichEditor
             if (ScrollViewer != null)
             {
                 ScrollViewer.ViewChanged -= OnViewChanged;
+                ScrollViewer.Tapped -= OnScrollViewerTapped;
             }
 
             ScrollViewer = GetTemplateChild(nameof(ScrollViewer)) as ScrollViewer;
@@ -187,6 +189,7 @@ namespace Telegram.Controls.RichEditor
             if (ScrollViewer != null)
             {
                 ScrollViewer.ViewChanged += OnViewChanged;
+                ScrollViewer.Tapped += OnScrollViewerTapped;
             }
 
             _presenters.Clear();
@@ -559,11 +562,23 @@ namespace Telegram.Controls.RichEditor
         private void HookLeaf(RichLeafView view)
         {
             view.ObjectClick += OnLeafObjectClick;
+            view.Resized += OnLeafResized;
         }
 
         private void UnhookLeaf(RichLeafView view)
         {
             view.ObjectClick -= OnLeafObjectClick;
+            view.Resized -= OnLeafResized;
+        }
+
+        // Measured again at a new size, in this pass: the caret is put back on its line once the
+        // pass is over.
+        private void OnLeafResized(object sender, EventArgs e)
+        {
+            if (_engine != null && ReferenceEquals(((RichLeafView)sender).Leaf, _engine.Focus.Leaf))
+            {
+                _caretStale = true;
+            }
         }
 
         private void OnLeafObjectClick(object sender, RichInlineObjectClickEventArgs e)
@@ -1134,6 +1149,17 @@ namespace Telegram.Controls.RichEditor
         {
             // The text input service keeps its candidate window beside the caret.
             NotifyLayoutChanged();
+        }
+
+        // Below the blocks, should the column not reach that far; within it, the surface's
+        // own handlers have already answered.
+        private void OnScrollViewerTapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (Surface != null && TryAppendBelow(e.GetPosition(Surface)))
+            {
+                Focus(FocusState.Pointer);
+                e.Handled = true;
+            }
         }
 
         private double _arrangedWidth;

@@ -111,6 +111,28 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Raised when an inline button in the text is clicked: the editor opens it for editing.</summary>
         public event EventHandler<RichInlineObjectClickEventArgs> ObjectClick;
 
+        /// <summary>
+        /// Raised when the text was arranged at a new size, whenever that lands: a caret in it may
+        /// stand on a line of another height. Managed, and raised from arrange, rather than
+        /// SizeChanged: views are bound again on every structural change.
+        /// </summary>
+        internal event EventHandler Resized;
+
+        private Size _arrangedSize;
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var size = base.ArrangeOverride(finalSize);
+
+            if (_arrangedSize != size)
+            {
+                _arrangedSize = size;
+                Resized?.Invoke(this, EventArgs.Empty);
+            }
+
+            return size;
+        }
+
         protected override void OnApplyTemplate()
         {
             if (Text != null)

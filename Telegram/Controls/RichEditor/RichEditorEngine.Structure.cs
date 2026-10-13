@@ -547,18 +547,26 @@ namespace Telegram.Controls.RichEditor
         public bool AppendLineAfterLast()
         {
             var blocks = _document.Blocks;
-            if (blocks.Count == 0 || blocks[blocks.Count - 1] is RichParagraphBlock or RichTextQuote)
-            {
-                return false;
-            }
-
             var root = _node ?? _focus.Leaf?.Owner;
+
             while (root?.Parent != null)
             {
                 root = root.Parent;
             }
 
-            if (!ReferenceEquals(root, blocks[blocks.Count - 1]))
+            return blocks.Count > 0 && ReferenceEquals(root, blocks[blocks.Count - 1]) && AppendLine();
+        }
+
+        /// <summary>
+        /// A new line after the document's last block, with the caret on it, when that block is
+        /// not a line of text: a click below the document. False when there is one already.
+        /// </summary>
+        public bool AppendLine()
+        {
+            var blocks = _document.Blocks;
+            // A pull quote is a block to step out of, as a quote is: the line after it is not
+            // its credit, which is not even drawn while empty.
+            if (blocks.Count == 0 || blocks[blocks.Count - 1] is RichParagraphBlock)
             {
                 return false;
             }

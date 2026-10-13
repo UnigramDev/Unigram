@@ -403,13 +403,13 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var stopIndex = leaf.StopIndex;
-            if (stopIndex == 0)
+            var stopIndex = PreviousShownStop(leaf.StopIndex);
+            if (stopIndex < 0)
             {
                 return;
             }
 
-            var previous = _document.Stops[stopIndex - 1];
+            var previous = _document.Stops[stopIndex];
 
             if (previous.Block != null)
             {
@@ -449,16 +449,48 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
+        // The stops either side of one, past the credits that are not drawn: joining into one
+        // would put the caret on a line that appears out of nowhere.
+        private int PreviousShownStop(int index)
+        {
+            var stops = _document.Stops;
+
+            for (index--; index >= 0; index--)
+            {
+                if (stops[index].Leaf is not RichTextLeaf skipped || !IsLeafHidden(skipped))
+                {
+                    return index;
+                }
+            }
+
+            return -1;
+        }
+
+        private int NextShownStop(int index)
+        {
+            var stops = _document.Stops;
+
+            for (index++; index < stops.Count; index++)
+            {
+                if (stops[index].Leaf is not RichTextLeaf skipped || !IsLeafHidden(skipped))
+                {
+                    return index;
+                }
+            }
+
+            return -1;
+        }
+
         /// <summary>Delete at the end of a leaf: the mirror of <see cref="JoinBackward"/>.</summary>
         private void JoinForward(RichTextLeaf leaf)
         {
-            var stopIndex = leaf.StopIndex;
-            if (stopIndex + 1 >= _document.Stops.Count)
+            var stopIndex = NextShownStop(leaf.StopIndex);
+            if (stopIndex < 0)
             {
                 return;
             }
 
-            var next = _document.Stops[stopIndex + 1];
+            var next = _document.Stops[stopIndex];
 
             if (next.Block != null)
             {
