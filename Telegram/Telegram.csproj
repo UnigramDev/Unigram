@@ -660,6 +660,7 @@
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\BadgeControl.cs" />
     <Compile Include="Controls\BlockQuote.cs" />
+    <Compile Include="Controls\DetailsBlock.cs" />
     <Compile Include="Controls\Cells\ActiveStoriesCell.xaml.cs">
       <DependentUpon>ActiveStoriesCell.xaml</DependentUpon>
     </Compile>

@@ -1643,6 +1643,76 @@
         </Setter>
     </Style>
 
+    <!--  A toggle block of a rich message: aligned with the blocks around it, and ended by a
+          line whether it is open or not.  -->
+    <Style TargetType="local:DetailsBlock">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DetailsBlock">
+                    <StackPanel>
+                        <local:DetailsBlockHeader x:Name="Toggle"
+                                                  Content="{TemplateBinding Header}"
+                                                  IsOpen="{TemplateBinding IsOpen}" />
+                        <ContentPresenter x:Name="Body"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Padding="0,4,0,8" />
+                        <Rectangle Fill="{ThemeResource MessageHeaderBackgroundBrush}"
+                                   Height="1" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  No visual states: the chevron turning is the feedback a click gets.  -->
+    <Style TargetType="local:DetailsBlockHeader">
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageForegroundBrush}" />
+        <Setter Property="Padding"
+                Value="0,6,0,6" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DetailsBlockHeader">
+                    <Grid Background="Transparent"
+                          Padding="{TemplateBinding Padding}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Chevron"
+                                   Text="&#xE0E5;"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Width="16"
+                                   Height="16"
+                                   TextAlignment="Center"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.AccessibilityView="Raw" />
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center"
+                                          Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ProfilePatternCover">
         <Setter Property="Template">
             <Setter.Value>

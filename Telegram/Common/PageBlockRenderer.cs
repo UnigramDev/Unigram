@@ -905,13 +905,7 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessDetails(IClientService clientService, PageBlockDetails details)
         {
-            var panel = new StackPanel();
-
-            var header = new SettingsButton { Content = ProcessText(clientService, details, false, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Margin = new Thickness(-12, 0, -12, 0) };
-            var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
-
-            panel.Children.Add(header);
-            panel.Children.Add(inner);
+            var inner = new StackPanel();
 
             foreach (var block in details.Blocks)
             {
@@ -924,7 +918,7 @@ namespace Telegram.Common
 
             UpdateSpacing(inner, details.Blocks, false);
 
-            header.Click += (s, args) =>
+            return new DetailsBlock
             {
                 inner.Visibility = inner.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                 header.Glyph = inner.Visibility == Visibility.Visible ? Icons.ChevronUp : Icons.ChevronDown;
