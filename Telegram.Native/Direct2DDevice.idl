@@ -49,6 +49,10 @@ namespace Telegram.Native
         // Until the compositor's next frame, or a 60th of a second before Windows 11.
         void WaitForCompositorClock();
 
+        // Requests a commit and waits for it: true once the compositor has taken what was drawn so
+        // far, false if timeoutMs passed first.
+        Boolean WaitForCommit(Int32 timeoutMs);
+
         SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
         void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
 

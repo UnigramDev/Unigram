@@ -390,6 +390,8 @@ namespace winrt::Telegram::Native::implementation
 
         void WaitForCompositorClock();
 
+        bool WaitForCommit(int32_t timeoutMs);
+
         winrt::Telegram::Native::SurfaceImage Create(int32_t pixelWidth, int32_t pixelHeight);
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
 

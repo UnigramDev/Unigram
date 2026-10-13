@@ -639,7 +639,11 @@ through Direct2D when the frame is rotated.
 background buffer, which is published as `_foregroundNext` and handed to `FrameFlusher.Request`. The
 flusher, one thread per window, waits for the compositor clock (`Direct2DDevice.WaitForCompositorClock`,
 a 60 Hz timer before Windows 11), draws every pending presenter in one pass, and passes the buffer that
-was on screen back to the worker. The UI thread is reached only to hook the brush on the first frame,
+was on screen back to the worker. A pass that drew then waits for its commit
+(`Direct2DDevice.WaitForCommit`, `RequestCommitAsync`): DComp keeps every surface update until a commit
+takes it, and the clock keeps ticking when none do - behind a stalled UI thread or in a minimized window -
+so pacing on the clock alone piled up gigabytes of frames.
+The UI thread is reached only to hook the brush on the first frame,
 and for `PositionChanged` while it has listeners.
 **Traps:** a device takes **one drawing session at a time**: a second `BeginDraw` while one is open
 fails, so all drawing stays on the flusher's thread — drawing from the decode workers lost the only frame

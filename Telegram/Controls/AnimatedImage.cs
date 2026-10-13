@@ -2672,6 +2672,17 @@ namespace Telegram.Controls
                         }
                     }
 
+                    // DComp keeps every surface update until a commit takes it, and the clock above
+                    // keeps ticking when none do - behind a stalled UI thread, in a minimized window -
+                    // so a pass per tick piled up gigabytes of frames. A pass that drew waits for its
+                    // commit instead; the timeout is only so that Close is noticed.
+                    if (batch.Count > 0)
+                    {
+                        while (!_closed && !_device.WaitForCommit(250))
+                        {
+                        }
+                    }
+
                     batch.Clear();
 
                     if (retry.Count > 0)

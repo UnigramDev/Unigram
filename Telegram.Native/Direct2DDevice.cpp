@@ -462,6 +462,33 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
+    bool Direct2DDevice::WaitForCommit(int32_t timeoutMs)
+    {
+        // Per thread, because Win32 windows share a device and each has its own flusher. Shared with
+        // the completion, which can outlive both the wait and the thread once the wait times out.
+        thread_local auto s_committed = std::make_shared<winrt::handle>(CreateEventW(nullptr, FALSE, FALSE, nullptr));
+
+        if (m_compositor == nullptr || !*s_committed)
+        {
+            return true;
+        }
+
+        try
+        {
+            m_compositor.RequestCommitAsync().Completed([committed = s_committed](auto&&, auto&&)
+            {
+                SetEvent(committed->get());
+            });
+        }
+        catch (winrt::hresult_error const&)
+        {
+            // The compositor is going away with its window, and there is nothing left to wait for.
+            return true;
+        }
+
+        return WaitForSingleObject(s_committed->get(), timeoutMs) == WAIT_OBJECT_0;
+    }
+
     winrt::Telegram::Native::SurfaceImage Direct2DDevice::Create(int32_t pixelWidth, int32_t pixelHeight)
     {
         std::lock_guard const guard(m_criticalSection);
