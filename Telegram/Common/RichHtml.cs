@@ -595,23 +595,63 @@ namespace Telegram.Common
             return Trim(Combine(parts) ?? EmptyText());
         }
 
+        /// <summary>
+        /// The children as one text. Where they are blocks - paragraphs in a table cell, which
+        /// can hold only text - each starts a line of its own, and the whitespace between them is
+        /// markup, not content.
+        /// </summary>
         private static RichText InlineChildren(Node node, bool preserveWhitespace)
         {
             MutableVector<RichText> parts = null;
 
+            var blocks = false;
             foreach (var child in node.Children)
             {
+                blocks |= !child.IsText && IsBlockTag(child.Tag);
+            }
+
+            var afterBlock = false;
+
+            foreach (var child in node.Children)
+            {
+                if (blocks && !preserveWhitespace && child.IsText && string.IsNullOrWhiteSpace(child.Text))
+                {
+                    continue;
+                }
+
+                var block = !child.IsText && IsBlockTag(child.Tag);
                 var text = child.IsText
                     ? PlainOf(child.Text, preserveWhitespace)
                     : InlineNode(child, preserveWhitespace);
 
-                if (text != null)
+                if (text == null)
                 {
-                    (parts ??= new MutableVector<RichText>()).Add(text);
+                    continue;
                 }
+
+                parts ??= new MutableVector<RichText>();
+
+                if ((block || afterBlock) && parts.Count > 0)
+                {
+                    parts.Add(new RichTextPlain { Text = "\n" });
+                }
+
+                parts.Add(text);
+                afterBlock = block;
             }
 
             return Combine(parts);
+        }
+
+        private static bool IsBlockTag(string tag)
+        {
+            return tag switch
+            {
+                "p" or "div" or "li" or "ul" or "ol" or "blockquote" or "pre" or "footer" or "figure" or "figcaption"
+                    or "h1" or "h2" or "h3" or "h4" or "h5" or "h6" or "section" or "article" or "header"
+                    or "details" or "summary" or "table" or "tr" or "dl" or "dt" or "dd" or "address" => true,
+                _ => false
+            };
         }
 
         private static RichText InlineNode(Node node, bool preserveWhitespace)
