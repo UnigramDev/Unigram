@@ -463,6 +463,16 @@ namespace Telegram.Controls
             Layout().SetText(text ?? string.Empty, entities);
             Select(0, 0);
 
+            _marked.Clear();
+
+            for (int i = 0; i < entities?.Count; i++)
+            {
+                if ((entities[i].Type & TextStyle.Marked) != 0)
+                {
+                    _marked.Add(new TextRange(entities[i].Offset, entities[i].Length));
+                }
+            }
+
             // Nothing here says which way it runs, so it runs the way the app does - and it is
             // one paragraph until a styled overload divides it, which they do after this.
             SetDirection(TextDirectionality.Neutral);
@@ -1590,6 +1600,63 @@ namespace Telegram.Controls
             _queryVisual.IsVisible = true;
         }
 
+        // Marked text, which the layout has no background for: a shape under it, as the match.
+        private readonly List<TextRange> _marked = new();
+
+        private ShapeVisual _markedVisual;
+        private CompositionPathGeometry _markedGeometry;
+
+        private void UpdateMarked()
+        {
+            if (_marked.Count == 0)
+            {
+                if (_markedVisual != null)
+                {
+                    _markedVisual.IsVisible = false;
+                }
+
+                return;
+            }
+
+            if (_markedVisual == null && _root != null)
+            {
+                var compositor = BootStrapper.Current.Compositor;
+
+                _markedGeometry = compositor.CreatePathGeometry();
+
+                // The colour FormattedTextBlock gives it, so the two backends draw a message alike.
+                var shape = compositor.CreateSpriteShape(_markedGeometry);
+                shape.FillBrush = compositor.CreateColorBrush(Colors.PaleGoldenrod);
+
+                _markedVisual = compositor.CreateShapeVisual();
+                _markedVisual.RelativeSizeAdjustment = Vector2.One;
+                _markedVisual.Shapes.Add(shape);
+
+                // Lowest of the shapes: a match and a selection are drawn over it.
+                _root.Children.InsertAtBottom(_markedVisual);
+            }
+
+            if (_markedGeometry == null)
+            {
+                return;
+            }
+
+            using var builder = new CanvasPathBuilder(null);
+
+            for (int i = 0; i < _marked.Count; i++)
+            {
+                var rects = Layout().Ranges(_marked[i].Offset, _marked[i].Length);
+
+                for (int j = 0; j < rects?.Length; j++)
+                {
+                    builder.AddGeometry(CanvasGeometry.CreateRectangle(null, rects[j]));
+                }
+            }
+
+            _markedGeometry.Path = new CompositionPath(CanvasGeometry.CreatePath(builder));
+            _markedVisual.IsVisible = true;
+        }
+
         #endregion
 
         #region Skeleton
@@ -2599,6 +2666,10 @@ namespace Telegram.Controls
             {
                 _root.Children.InsertAbove(_selectionVisual, _queryVisual);
             }
+            else if (_markedVisual != null)
+            {
+                _root.Children.InsertAbove(_selectionVisual, _markedVisual);
+            }
             else
             {
                 _root.Children.InsertAtBottom(_selectionVisual);
@@ -2623,7 +2694,14 @@ namespace Telegram.Controls
             _queryVisual.RelativeSizeAdjustment = Vector2.One;
             _queryVisual.Shapes.Add(queryShape);
 
-            _root.Children.InsertAtBottom(_queryVisual);
+            if (_markedVisual != null)
+            {
+                _root.Children.InsertAbove(_queryVisual, _markedVisual);
+            }
+            else
+            {
+                _root.Children.InsertAtBottom(_queryVisual);
+            }
         }
 
         private void Render(Size size)
@@ -2714,6 +2792,7 @@ namespace Telegram.Controls
             _root.Offset = new Vector3((float)_contentLeft, 0, 0);
 
             // The text moved, so everything drawn around it has to follow.
+            UpdateMarked();
             UpdateSelection();
             UpdateQueryHighlight();
         }
