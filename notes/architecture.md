@@ -567,6 +567,27 @@ overflow is cut off before `Scale` can shrink it back inside. It costs the desir
 drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
 `MeasureOverride` adds it back to recover the width the parent really had.
 
+## Rich message editor — Telegram/Controls/RichEditor/ (22 files), Telegram/Views/Host/RichTextWindow.xaml.cs
+<!-- map: verified=505a39677 paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs -->
+The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
+message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
+**Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
+the tree, every editable run of text a leaf of runs with marks, links and inline objects;
+`RichEditorEngine` (seven partials) — every edit, the selection, undo by snapshot, input rules;
+`RichEditorView` — the control: presenters cached by block identity, caret and selection drawn on a
+decorations layer, pointer, touch and keyboard, `CoreTextEditContext` for IME; `RichDocumentConverter` —
+page blocks in, `InputPageBlock`s out; `RichMediaRenderer` — media, collages (`RichCollagePanel`) and maps;
+`RichEditorAutomationPeer` — `ITextProvider2` over the flattened document; `RichTextWindow` — toolbar,
+menus, pickers, popups and send.
+**Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
+it to `RichEditorView.Initialize`.
+**Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
+by TDesktop's rules and returns null when nothing is left. `BeginChange`/`EndChange` hold one undo step
+open across engine edits. `Normalize` runs on every reindex: empty containers go, and a collage of one
+item becomes that item. Selecting a block whole parks the caret's ends next to it, inside the block
+before: nothing may read that as the caret being there. Brushes come from the XAML, never from code. The
+engine has no test project in the repo; `notes/native-rich-editor.md` has the design and its history.
+
 ---
 
 # Media, theming and platform
@@ -773,7 +794,7 @@ check for Win32 vs UWP conditional compilation before assuming a shim is univers
 # Native
 
 ## Drawing surfaces — Direct2D over the shared Composition device — Telegram.Native/ (14 files)
-<!-- map: verified=07c88b840 paths=Telegram.Native/Direct2DDevice.cpp,Telegram.Native/Direct2DDevice.h,Telegram.Native/Direct2DDevice.idl,Telegram.Native/SurfaceImage.idl,Telegram.Native/FreeformGradientSurface.cpp,Telegram.Native/ChatBackgroundPattern.cpp,Telegram.Native/MessageBubbleNineGrid.cpp,Telegram.Native/RichMathSurface.cpp,Telegram.Native/Composition,Telegram.Native/Highlight -->
+<!-- map: verified=c1683f64c paths=Telegram.Native/Direct2DDevice.cpp,Telegram.Native/Direct2DDevice.h,Telegram.Native/Direct2DDevice.idl,Telegram.Native/SurfaceImage.idl,Telegram.Native/FreeformGradientSurface.cpp,Telegram.Native/ChatBackgroundPattern.cpp,Telegram.Native/MessageBubbleNineGrid.cpp,Telegram.Native/RichMathSurface.cpp,Telegram.Native/Composition,Telegram.Native/Highlight -->
 All off-thread D2D rasterization — text layout and measurement, chat backgrounds, gradients, particles,
 math formulas, nine-grid bubble masks, syntax highlighting — plus the DirectComposition plumbing XAML has
 no API for. Native because XAML composition visuals cannot do arbitrary D2D drawing or thread-safe
@@ -795,7 +816,12 @@ MicroTeX formula rasterizer; `CompositionDevice`/`DirectRectangleClip2`/`WindowV
 for device-lost recovery rather than owning a device. The device object survives a device loss —
 `CreateDeviceResources` keeps it and calls `SetRenderingDevice` — so a surface is redrawn, never recreated,
 and a brush pointing at it stays valid. The device takes one drawing session at a time: a `BeginDraw`
-while another is open fails rather than waits.
+while another is open fails rather than waits. `DirectTextLayout.FontFamily` takes a XAML chain, packaged
+fonts included, which the device's `FontChains` turns into a family plus a custom `IDWriteFontFallback`, once
+per distinct string. Each mapping is keyed to the family it falls back from, so a code span skips the text's
+chain. An empty family is still the packaged Apple emoji font with the system fallback behind it, so the
+theme's font never reaches a layout that is not given one. The measuring path (`CreateTextFormat2`) takes no
+family at all.
 
 ## 3D scenes — D3D11 onto a SwapChainPanel — Telegram.Native/Graphics/ (19 files)
 <!-- map: verified=9e33b7882 paths=Telegram.Native/Graphics -->
@@ -930,7 +956,7 @@ UI/tgcalls split as 1:1. Leaving a call once deadlocked TDLib's dispatch thread 
 threads; see the group-call teardown work in `notes/`.
 
 ## Libraries — submodules, vendored source and prebuilt binaries — Libraries/
-<!-- map: verified=ea8423673 paths=Libraries -->
+<!-- map: verified=505a39677 paths=Libraries -->
 **Submodules** (per `.gitmodules`): `tdlib`, `tgcalls`, `libwebp`, `libprisma` (syntax highlighting behind
 Telegram.Native/Highlight), `MicroTeX` (`heads/tdesktop` branch, behind `RichMathSurface`), `flatbuffers`,
 `libutf`, `CoreWindowCustomDPI` and `gzip-hpp` (pinned to the commit the retired RLottie.UWP repo used;
@@ -938,7 +964,7 @@ it decompresses `.tgs`). **Vendored source:** `libtextclassifier`, `tlottie` (a 
 staticlib plus its C ABI header — see `Libraries/tlottie/README.md` to rebuild it; it is the only
 Lottie renderer, rlottie was removed with its submodule and in-tree vcxproj). **Prebuilt binaries
 checked in or downloaded:** `wallet-engine`, `tdjson` (local CMake tree providing `td_api.tl`),
-`ton-walletkit`, `unigram-iv-editor` (the JS instant-view host). **vcpkg overlay ports:**
+`ton-walletkit`. **vcpkg overlay ports:**
 `Libraries/vcpkg-ports/{ffmpeg,libvlc,webrtc}` — ffmpeg, libVLC and webrtc come in as vcpkg packages with
 local patches.
 **Traps:** the ffmpeg portfile is hand-patched to disable most codecs and enable only D3D11VA/DXVA2
@@ -1071,11 +1097,10 @@ and `WebAuthn.Win32.cs` out of `Telegram\Common\` by relative path, shared with 
 or that interop compiles clean and throws.
 
 ## Package sources and line endings — nuget.config, .gitattributes
-<!-- map: verified=95560d9f7 paths=nuget.config,.gitattributes -->
+<!-- map: verified=505a39677 paths=nuget.config,.gitattributes -->
 `nuget.config` clears the feed list and keeps only nuget.org plus a local `Telegram@Local` feed pointing at
 `Libraries`. `.gitattributes` is global `text=auto`, but forces LF on `Telegram/Strings/en/Resources.xml`
-and everything under `Libraries/vcpkg-ports/**`, and marks `Libraries/unigram-iv-editor/editor.html` as
-`-text`.
+and everything under `Libraries/vcpkg-ports/**`.
 **Traps:** the vcpkg overlay rule is not an oversight — vcpkg applies `.patch` files with `git apply`,
 which rejects a CRLF-converted tree.
 
@@ -1191,6 +1216,7 @@ on develop", "Done", "analysis only") — read that line before treating one as 
 - `formatted-text-box-review.md` — FormattedTextBox/ChatTextBox after the typing and paste perf work.
 - `icon-font.md` — the IcoMoon replacement: manifest stats and working commands.
 - `message-collection-plan.md` — `MessageCollection`: live list plus throwaway slice buffer.
+- `native-rich-editor.md` — the native rich message editor: design, decisions and every round of feedback.
 - `net10-benefits-and-winui3.md` — what .NET 10 unlocks, and whether WinUI 3 follows.
 - `net10-port-todo.md` — porting to .NET 10 while keeping .NET Native alive. Resume point.
 - `package-gates.md` — the msixbundle build gates and why each exists.
