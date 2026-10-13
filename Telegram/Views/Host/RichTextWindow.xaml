@@ -12,7 +12,9 @@
                         mc:Ignorable="d">
 
     <controls:WindowContent.Resources>
-        <Style TargetType="controls:GlyphToggleButton">
+        <!--  Keyed as well as implicit, so the grouped toolbar's smaller toggles can build on it.  -->
+        <Style x:Key="ToolbarToggleButtonStyle"
+               TargetType="controls:GlyphToggleButton">
             <Setter Property="Background"
                     Value="Transparent" />
             <Setter Property="UncheckedForeground"
@@ -167,6 +169,409 @@
             </Setter>
         </Style>
 
+        <Style TargetType="controls:GlyphToggleButton"
+               BasedOn="{StaticResource ToolbarToggleButtonStyle}" />
+
+        <!--  The grouped toolbar: two rows of small buttons over the group's label.  -->
+        <Style x:Key="GroupToggleButtonStyle"
+               TargetType="controls:GlyphToggleButton"
+               BasedOn="{StaticResource ToolbarToggleButtonStyle}">
+            <Setter Property="Width"
+                    Value="32" />
+            <Setter Property="Height"
+                    Value="32" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="FontSize"
+                    Value="16" />
+            <Setter Property="CornerRadius"
+                    Value="4" />
+            <Setter Property="AllowFocusOnInteraction"
+                    Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphToggleButton">
+                        <Grid Background="{TemplateBinding Background}"
+                              BorderThickness="1"
+                              CornerRadius="{TemplateBinding CornerRadius}"
+                              Margin="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background"
+                                                    Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                                            <Setter Target="RootGrid.BorderBrush"
+                                                    Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background"
+                                                    Value="{ThemeResource ButtonBackgroundPressed}" />
+                                            <Setter Target="RootGrid.BorderBrush"
+                                                    Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background"
+                                                    Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
+                                            <Setter Target="RootGrid.BorderBrush"
+                                                    Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                            <Setter Target="CheckedBackground.BorderBrush"
+                                                    Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground"
+                                                    Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background"
+                                                    Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
+                                            <Setter Target="RootGrid.BorderBrush"
+                                                    Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                            <Setter Target="CheckedBackground.BorderBrush"
+                                                    Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground"
+                                                    Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background"
+                                                    Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
+                                            <Setter Target="RootGrid.BorderBrush"
+                                                    Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                            <Setter Target="CheckedBackground.BorderBrush"
+                                                    Value="{ThemeResource ControlSolidFillColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground"
+                                                    Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedDisabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="RootGrid"
+                                  CornerRadius="{TemplateBinding CornerRadius}"
+                                  BorderThickness="1">
+                                <Border x:Name="CheckedBackground"
+                                        BorderThickness="1" />
+                                <TextBlock x:Name="ContentPresenter"
+                                           Margin="{TemplateBinding Padding}"
+                                           Foreground="{TemplateBinding UncheckedForeground}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Text="{TemplateBinding Glyph}" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GroupGlyphButtonStyle"
+               TargetType="controls:GlyphButton"
+               BasedOn="{StaticResource DefaultGlyphButtonStyle}">
+            <Setter Property="Width"
+                    Value="32" />
+            <Setter Property="Height"
+                    Value="32" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="FontSize"
+                    Value="16" />
+            <Setter Property="CornerRadius"
+                    Value="4" />
+            <Setter Property="AllowFocusOnInteraction"
+                    Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphButton">
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Content="{TemplateBinding Glyph}"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="Transparent"
+                                          BorderThickness="1"
+                                          CornerRadius="{TemplateBinding CornerRadius}"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.Background"
+                                                    Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                                            <Setter Target="ContentPresenter.BorderBrush"
+                                                    Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.Background"
+                                                    Value="{ThemeResource ButtonBackgroundPressed}" />
+                                            <Setter Target="ContentPresenter.BorderBrush"
+                                                    Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GroupLabelStyle"
+               TargetType="TextBlock"
+               BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground"
+                    Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Bottom" />
+            <Setter Property="TextWrapping"
+                    Value="NoWrap" />
+            <Setter Property="MaxWidth"
+                    Value="100" />
+            <Setter Property="Margin"
+                    Value="0,4,0,0" />
+        </Style>
+
+        <Style x:Key="GroupFoldedGlyphStyle"
+               TargetType="TextBlock">
+            <Setter Property="FontFamily"
+                    Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize"
+                    Value="24" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="Margin"
+                    Value="0,8,0,8" />
+        </Style>
+
+        <Style x:Key="GroupSeparatorStyle"
+               TargetType="Rectangle">
+            <Setter Property="Width"
+                    Value="1" />
+            <Setter Property="Fill"
+                    Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+            <Setter Property="Margin"
+                    Value="0,4,0,4" />
+        </Style>
+
+        <Style TargetType="richEditor:RichToolbarGroup">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="richEditor:RichToolbarGroup">
+                        <Grid Padding="12,4,12,4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition MinHeight="72" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              AutomationProperties.AccessibilityView="Raw" />
+
+                            <controls:GlyphButton x:Name="Button"
+                                                  Content="{TemplateBinding Text}"
+                                                  Glyph="{TemplateBinding Glyph}"
+                                                  AllowFocusOnInteraction="False"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center">
+                                <controls:GlyphButton.Template>
+                                    <ControlTemplate TargetType="controls:GlyphButton">
+                                        <StackPanel x:Name="LayoutRoot"
+                                                    Control.IsTemplateFocusTarget="True"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Padding="4,4,4,4"
+                                                    BorderThickness="1">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                                                            <Setter Target="LayoutRoot.BorderBrush"
+                                                                    Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Pressed">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="LayoutRoot.Background"
+                                                                    Value="{ThemeResource ButtonBackgroundPressed}" />
+                                                            <Setter Target="LayoutRoot.BorderBrush"
+                                                                    Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Disabled">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="ContentPresenter.Foreground"
+                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <TextBlock Text="{TemplateBinding Glyph}"
+                                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                       FontSize="24"
+                                                       Margin="0,0,0,4"
+                                                       AutomationProperties.AccessibilityView="Raw" />
+                                            <TextBlock Text="&#xE70D;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="8"
+                                                       HorizontalAlignment="Center"
+                                                       AutomationProperties.AccessibilityView="Raw" />
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </controls:GlyphButton.Template>
+                            </controls:GlyphButton>
+
+                            <TextBlock Text="{TemplateBinding Text}"
+                                       Style="{StaticResource GroupLabelStyle}"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  A folded group: its glyph over its label, the whole of it opening the group's menu.  -->
+        <Style x:Key="GroupFoldedButtonStyle"
+               TargetType="controls:GlyphButton">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Foreground"
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Setter Property="Padding"
+                    Value="8,0" />
+            <Setter Property="MinWidth"
+                    Value="56" />
+            <Setter Property="Width"
+                    Value="Auto" />
+            <Setter Property="Height"
+                    Value="Auto" />
+            <Setter Property="VerticalAlignment"
+                    Value="Stretch" />
+            <Setter Property="CornerRadius"
+                    Value="4" />
+            <Setter Property="AllowFocusOnInteraction"
+                    Value="False" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphButton">
+                        <Grid x:Name="RootGrid"
+                              Padding="12,4,12,4">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background"
+                                                    Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                                            <Setter Target="LayoutRoot.BorderBrush"
+                                                    Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background"
+                                                    Value="{ThemeResource ButtonBackgroundPressed}" />
+                                            <Setter Target="LayoutRoot.BorderBrush"
+                                                    Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.Foreground"
+                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.RowDefinitions>
+                                <RowDefinition MinHeight="72" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel x:Name="LayoutRoot"
+                                        Control.IsTemplateFocusTarget="True"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Padding="4,4,4,4"
+                                        BorderThickness="1">
+                                <TextBlock Text="{TemplateBinding Glyph}"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="24"
+                                           Margin="0,0,0,4" />
+                                <TextBlock Text="&#xE70D;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="8"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Bottom"
+                                              MaxWidth="100"
+                                              IsHitTestVisible="False"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              FontSize="12"
+                                              Margin="0,4,0,0"
+                                              Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!--  On a tool whose feature needs Premium, for a user without it, as TDesktop marks them.  -->
         <Style x:Key="ToolbarPremiumStyle"
                TargetType="TextBlock">
@@ -190,6 +595,15 @@
                     Value="Collapsed" />
             <Setter Property="AutomationProperties.AccessibilityView"
                     Value="Raw" />
+        </Style>
+
+        <Style x:Key="GroupPremiumStyle"
+               TargetType="TextBlock"
+               BasedOn="{StaticResource ToolbarPremiumStyle}">
+            <Setter Property="FontSize"
+                    Value="9" />
+            <Setter Property="Margin"
+                    Value="0,0,1,1" />
         </Style>
 
     </controls:WindowContent.Resources>
@@ -276,7 +690,7 @@
         <!--  Laid out as TDesktop's editor: history at the left, the tools in the middle and
               emoji at the right, all at the top; Send alone at the bottom.  -->
         <Grid x:Name="ToolbarRoot"
-              Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+              Background="{ThemeResource LayerFillColorDefaultBrush}"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -287,7 +701,7 @@
                     BorderThickness="0,1,0,1"
                     Grid.ColumnSpan="3" />
 
-            <Grid>
+            <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -317,94 +731,323 @@
                     Margin="0,8"
                     Grid.Column="1" />
 
-            <!--  Scrolls when the window is too narrow for all of it.  -->
-            <Grid HorizontalAlignment="Center"
-                  Grid.Column="1">
+            <!--  The commands in labelled groups as Word's ribbon has them, each expanded to its
+                  buttons or folded into one that opens its menu, as the width allows: text
+                  styles first. Scrolls when even every group folded does not fit, and is a
+                  single tab stop with arrows moving within it.  -->
+            <richEditor:RichToolbarHost Grid.Column="1">
                 <ScrollViewer VerticalScrollBarVisibility="Disabled"
                               VerticalScrollMode="Disabled"
                               HorizontalScrollBarVisibility="Hidden"
-                              HorizontalScrollMode="Auto"
-                              CornerRadius="20">
-                    <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton x:Name="ParagraphButton"
-                                              AutomationProperties.Name="{CustomResource Formatting}"
-                                              ToolTipService.ToolTip="{CustomResource Formatting}"
-                                              Click="Paragraph_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xEB23;"
-                                              CornerRadius="20" />
-                        <controls:GlyphButton x:Name="TextStyleButton"
-                                              AutomationProperties.Name="{CustomResource AccDescrIVTextStyle}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrIVTextStyle}"
-                                              Click="TextStyle_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xE8DD;"
-                                              CornerRadius="20"
-                                              Margin="-8,0,0,0" />
-                        <Grid Margin="-8,0,0,0">
-                            <controls:GlyphToggleButton x:Name="ListButton"
-                                                        AutomationProperties.Name="{CustomResource AccDescrIVListStyle}"
-                                                        ToolTipService.ToolTip="{CustomResource AccDescrIVListStyle}"
-                                                        Click="List_Click"
-                                                        AllowFocusOnInteraction="False"
-                                                        Glyph="&#xEB09;"
-                                                        CornerRadius="20" />
-                            <TextBlock x:Name="ListPremium"
-                                       Style="{StaticResource ToolbarPremiumStyle}" />
-                        </Grid>
-                        <Grid Margin="-8,0,0,0">
-                            <controls:GlyphToggleButton x:Name="TableButton"
-                                                        AutomationProperties.Name="{CustomResource AccDescrIVTable}"
-                                                        ToolTipService.ToolTip="{CustomResource AccDescrIVTable}"
-                                                        Click="Table_Click"
-                                                        AllowFocusOnInteraction="False"
-                                                        Glyph="&#xEB08;"
-                                                        CornerRadius="20" />
-                            <TextBlock x:Name="TablePremium"
-                                       Style="{StaticResource ToolbarPremiumStyle}" />
-                        </Grid>
-                        <controls:GlyphButton x:Name="LinkButton"
-                                              AutomationProperties.Name="{CustomResource CreateLink}"
-                                              ToolTipService.ToolTip="{CustomResource CreateLink}"
-                                              Click="Link_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xE71B;"
-                                              CornerRadius="20"
-                                              Margin="-8,0,0,0" />
-                        <Grid Margin="-8,0,0,0">
-                            <controls:GlyphButton x:Name="AttachButton"
-                                                  AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
-                                                  ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
-                                                  Click="Attach_Click"
-                                                  AllowFocusOnInteraction="False"
-                                                  Glyph="&#xE9D8;"
-                                                  CornerRadius="20" />
-                            <TextBlock x:Name="AttachPremium"
-                                       Style="{StaticResource ToolbarPremiumStyle}" />
-                        </Grid>
-                        <Grid Margin="-8,0,0,0">
-                            <controls:GlyphButton x:Name="FormulaButton"
-                                                  AutomationProperties.Name="{CustomResource AccDescrIVFormula}"
-                                                  ToolTipService.ToolTip="{CustomResource AccDescrIVFormula}"
-                                                  Click="Formula_Click"
-                                                  AllowFocusOnInteraction="False"
-                                                  Glyph="&#xEB07;"
-                                                  CornerRadius="20" />
-                            <TextBlock x:Name="FormulaPremium"
-                                       Style="{StaticResource ToolbarPremiumStyle}" />
-                        </Grid>
+                              HorizontalScrollMode="Auto">
+                    <StackPanel x:Name="GroupedBar"
+                                Orientation="Horizontal"
+                                Padding="0,4,0,4"
+                                TabFocusNavigation="Once"
+                                XYFocusKeyboardNavigation="Enabled">
+                        <richEditor:RichToolbarGroup Priority="2"
+                                                     Text="{CustomResource Formatting}"
+                                                     Click="Paragraph_Click"
+                                                     Glyph="&#xEB23;">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:GlyphToggleButton x:Name="GroupTextButton"
+                                                                AutomationProperties.Name="{CustomResource ArticleText}"
+                                                                ToolTipService.ToolTip="{CustomResource ArticleText}"
+                                                                Click="GroupText_Click"
+                                                                Glyph="&#xEB22;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <Grid>
+                                        <controls:GlyphButton AutomationProperties.Name="{CustomResource ArticleHeading}"
+                                                              ToolTipService.ToolTip="{CustomResource ArticleHeading}"
+                                                              Click="GroupHeading_Click"
+                                                              Glyph="&#xEB21;"
+                                                              Style="{StaticResource GroupGlyphButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <controls:GlyphToggleButton x:Name="GroupQuoteButton"
+                                                                AutomationProperties.Name="{CustomResource ArticleQuote}"
+                                                                ToolTipService.ToolTip="{CustomResource ArticleQuote}"
+                                                                Click="GroupQuote_Click"
+                                                                Glyph="&#xEAC7;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupPullQuoteButton"
+                                                                    AutomationProperties.Name="{CustomResource ArticlePullquote}"
+                                                                    ToolTipService.ToolTip="{CustomResource ArticlePullquote}"
+                                                                    Click="GroupPullQuote_Click"
+                                                                    Glyph="&#xF797;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Grid.Row="1">
+                                    <controls:GlyphToggleButton x:Name="GroupCodeButton"
+                                                                AutomationProperties.Name="{CustomResource ArticleCode}"
+                                                                ToolTipService.ToolTip="{CustomResource ArticleCode}"
+                                                                Click="GroupCode_Click"
+                                                                Glyph="&#xE943;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupFooterButton"
+                                                                    AutomationProperties.Name="{CustomResource ArticleFooter}"
+                                                                    ToolTipService.ToolTip="{CustomResource ArticleFooter}"
+                                                                    Click="GroupFooter_Click"
+                                                                    Glyph="&#xF798;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphButton AutomationProperties.Name="{CustomResource ArticleCommandDivider}"
+                                                              ToolTipService.ToolTip="{CustomResource ArticleCommandDivider}"
+                                                              Click="GroupDivider_Click"
+                                                              Glyph="&#xF799;"
+                                                              Style="{StaticResource GroupGlyphButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </richEditor:RichToolbarGroup>
+
+                        <Rectangle Style="{StaticResource GroupSeparatorStyle}" />
+
+                        <richEditor:RichToolbarGroup Priority="1"
+                                                     Text="{CustomResource AccDescrIVTextStyle}"
+                                                     Click="TextStyle_Click"
+                                                     Glyph="&#xE8D2;">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:GlyphToggleButton x:Name="GroupBoldButton"
+                                                                AutomationProperties.Name="{CustomResource Bold}"
+                                                                Click="GroupMark_Click"
+                                                                Glyph="&#xE8DD;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <controls:GlyphToggleButton x:Name="GroupItalicButton"
+                                                                AutomationProperties.Name="{CustomResource Italic}"
+                                                                Click="GroupMark_Click"
+                                                                Glyph="&#xE8DB;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <controls:GlyphToggleButton x:Name="GroupUnderlineButton"
+                                                                AutomationProperties.Name="{CustomResource Underline}"
+                                                                Click="GroupMark_Click"
+                                                                Glyph="&#xE8DC;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <controls:GlyphToggleButton x:Name="GroupStrikethroughButton"
+                                                                AutomationProperties.Name="{CustomResource Strike}"
+                                                                Click="GroupMark_Click"
+                                                                Glyph="&#xE8DE;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <controls:GlyphToggleButton x:Name="GroupSpoilerButton"
+                                                                AutomationProperties.Name="{CustomResource Spoiler}"
+                                                                Click="GroupMark_Click"
+                                                                Glyph="&#xEAA1;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                    <controls:GlyphToggleButton x:Name="GroupMonospaceButton"
+                                                                AutomationProperties.Name="{CustomResource Mono}"
+                                                                Click="GroupMark_Click"
+                                                                Glyph="&#xE943;"
+                                                                Style="{StaticResource GroupToggleButtonStyle}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Grid.Row="1">
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupSubscriptButton"
+                                                                    AutomationProperties.Name="{CustomResource Subscript}"
+                                                                    ToolTipService.ToolTip="{CustomResource Subscript}"
+                                                                    Click="GroupMark_Click"
+                                                                    Glyph="&#xEB1B;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupSuperscriptButton"
+                                                                    AutomationProperties.Name="{CustomResource Superscript}"
+                                                                    ToolTipService.ToolTip="{CustomResource Superscript}"
+                                                                    Click="GroupMark_Click"
+                                                                    Glyph="&#xEB1A;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupMarkedButton"
+                                                                    AutomationProperties.Name="{CustomResource RichEditorMarked}"
+                                                                    ToolTipService.ToolTip="{CustomResource RichEditorMarked}"
+                                                                    Click="GroupMark_Click"
+                                                                    Glyph="&#xF79A;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <controls:GlyphButton x:Name="GroupRegularButton"
+                                                          AutomationProperties.Name="{CustomResource Regular}"
+                                                          Click="GroupRegular_Click"
+                                                          Glyph="&#xF79D;"
+                                                          Style="{StaticResource GroupGlyphButtonStyle}" />
+                                </StackPanel>
+                            </Grid>
+                        </richEditor:RichToolbarGroup>
+
+                        <Rectangle Style="{StaticResource GroupSeparatorStyle}" />
+
+                        <richEditor:RichToolbarGroup Priority="3"
+                                                     Text="{CustomResource ArticleCommandList}"
+                                                     Click="List_Click"
+                                                     Glyph="&#xEB09;">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupNumberedButton"
+                                                                    AutomationProperties.Name="{CustomResource ArticleListNumbered}"
+                                                                    ToolTipService.ToolTip="{CustomResource ArticleListNumbered}"
+                                                                    Click="GroupList_Click"
+                                                                    Glyph="&#xEB17;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupBulletedButton"
+                                                                    AutomationProperties.Name="{CustomResource ArticleListBulleted}"
+                                                                    ToolTipService.ToolTip="{CustomResource ArticleListBulleted}"
+                                                                    Click="GroupList_Click"
+                                                                    Glyph="&#xEB09;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupChecklistButton"
+                                                                    AutomationProperties.Name="{CustomResource ArticleListTodo}"
+                                                                    ToolTipService.ToolTip="{CustomResource ArticleListTodo}"
+                                                                    Click="GroupList_Click"
+                                                                    Glyph="&#xEABE;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Grid.Row="1">
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupToggleBlockButton"
+                                                                    AutomationProperties.Name="{CustomResource ArticleToggleBlock}"
+                                                                    ToolTipService.ToolTip="{CustomResource ArticleToggleBlock}"
+                                                                    Click="GroupToggleBlock_Click"
+                                                                    Glyph="&#xE0E5;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <controls:GlyphButton x:Name="GroupIndentButton"
+                                                          AutomationProperties.Name="{CustomResource ArticleIndent}"
+                                                          ToolTipService.ToolTip="{CustomResource ArticleIndent}"
+                                                          Click="GroupIndent_Click"
+                                                          Glyph="&#xF79B;"
+                                                          Style="{StaticResource GroupGlyphButtonStyle}" />
+                                    <controls:GlyphButton x:Name="GroupOutdentButton"
+                                                          AutomationProperties.Name="{CustomResource ArticleOutdent}"
+                                                          ToolTipService.ToolTip="{CustomResource ArticleOutdent}"
+                                                          Click="GroupOutdent_Click"
+                                                          Glyph="&#xF79C;"
+                                                          Style="{StaticResource GroupGlyphButtonStyle}" />
+                                </StackPanel>
+                            </Grid>
+                        </richEditor:RichToolbarGroup>
+
+                        <Rectangle Style="{StaticResource GroupSeparatorStyle}" />
+
+                        <richEditor:RichToolbarGroup Priority="4"
+                                                     Text="{CustomResource RichEditorInsert}"
+                                                     Click="Insert_Click"
+                                                     Glyph="&#xE9D8;">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid>
+                                        <controls:GlyphToggleButton x:Name="GroupTableButton"
+                                                                    AutomationProperties.Name="{CustomResource AccDescrIVTable}"
+                                                                    ToolTipService.ToolTip="{CustomResource AccDescrIVTable}"
+                                                                    Click="Table_Click"
+                                                                    Glyph="&#xEB08;"
+                                                                    Style="{StaticResource GroupToggleButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphButton AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
+                                                              ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
+                                                              Click="Attach_Click"
+                                                              Glyph="&#xE9D8;"
+                                                              Style="{StaticResource GroupGlyphButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                    <Grid>
+                                        <controls:GlyphButton AutomationProperties.Name="{CustomResource AccDescrIVFormula}"
+                                                              ToolTipService.ToolTip="{CustomResource AccDescrIVFormula}"
+                                                              Click="Formula_Click"
+                                                              Glyph="&#xEB07;"
+                                                              Style="{StaticResource GroupGlyphButtonStyle}" />
+                                        <TextBlock Visibility="{x:Bind PremiumMarksVisibility, Mode=OneWay}"
+                                                   Style="{StaticResource GroupPremiumStyle}" />
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Grid.Row="1">
+                                    <controls:GlyphButton x:Name="GroupLinkButton"
+                                                          AutomationProperties.Name="{CustomResource CreateLink}"
+                                                          ToolTipService.ToolTip="{CustomResource CreateLink}"
+                                                          Click="Link_Click"
+                                                          Glyph="&#xE71B;"
+                                                          Style="{StaticResource GroupGlyphButtonStyle}" />
+                                    <controls:GlyphButton AutomationProperties.Name="{CustomResource RichEditorButton}"
+                                                          ToolTipService.ToolTip="{CustomResource RichEditorButton}"
+                                                          Click="GroupInlineButton_Click"
+                                                          Glyph="&#xF79E;"
+                                                          Style="{StaticResource GroupGlyphButtonStyle}" />
+                                    <controls:GlyphButton AutomationProperties.Name="{CustomResource AccDescrIVInsertDate}"
+                                                          ToolTipService.ToolTip="{CustomResource AccDescrIVInsertDate}"
+                                                          Click="GroupDate_Click"
+                                                          Glyph="&#xE787;"
+                                                          Style="{StaticResource GroupGlyphButtonStyle}" />
+                                </StackPanel>
+                            </Grid>
+                        </richEditor:RichToolbarGroup>
                     </StackPanel>
                 </ScrollViewer>
-            </Grid>
+            </richEditor:RichToolbarHost>
 
-            <Grid Grid.Column="2">
-                <controls:GlyphButton x:Name="EmojiButton"
-                                      AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
-                                      ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
-                                      Click="Emoji_Click"
-                                      AllowFocusOnInteraction="False"
-                                      Glyph="&#xE76E;"
-                                      CornerRadius="20">
+            <Grid VerticalAlignment="Center"
+                  Grid.Column="2">
+                <richEditor:RichToolbarGroup x:Name="EmojiButton"
+                                             Text="{CustomResource Emoji}"
+                                             Click="Emoji_Click"
+                                             Glyph="&#xE76E;">
                     <FlyoutBase.AttachedFlyout>
                         <Flyout x:Name="EmojiFlyout"
                                 Placement="Bottom"
@@ -422,7 +1065,7 @@
                                                  Height="360" />
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
-                </controls:GlyphButton>
+                </richEditor:RichToolbarGroup>
             </Grid>
         </Grid>
 

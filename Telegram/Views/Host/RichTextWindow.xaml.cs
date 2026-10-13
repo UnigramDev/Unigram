@@ -71,6 +71,7 @@ namespace Telegram.Views.Host
             : base(window)
         {
             InitializeComponent();
+            InitializeGroups();
 
             StateLabel.Text = Constants.RELEASE
                 ? Strings.AppDisplayName
@@ -236,12 +237,55 @@ namespace Telegram.Views.Host
 
         private void UpdatePremiumMarks()
         {
-            var visibility = IsPremiumMarked ? Visibility.Visible : Visibility.Collapsed;
+            PremiumMarksVisibility = IsPremiumMarked ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-            ListPremium.Visibility = visibility;
-            TablePremium.Visibility = visibility;
-            AttachPremium.Visibility = visibility;
-            FormulaPremium.Visibility = visibility;
+        /// <summary>What every star on the toolbar binds to.</summary>
+        public Visibility PremiumMarksVisibility
+        {
+            get => (Visibility)GetValue(PremiumMarksVisibilityProperty);
+            set => SetValue(PremiumMarksVisibilityProperty, value);
+        }
+
+        public static readonly DependencyProperty PremiumMarksVisibilityProperty =
+            DependencyProperty.Register("PremiumMarksVisibility", typeof(Visibility), typeof(RichTextWindow), new PropertyMetadata(Visibility.Collapsed));
+
+        // The grouped toolbar's marks and lists, each button with what it toggles.
+        private (GlyphToggleButton Button, RichMarks Mark)[] _markButtons;
+        private (GlyphToggleButton Button, RichListStyle Style)[] _listButtons;
+
+        private void InitializeGroups()
+        {
+            _markButtons = new[]
+            {
+                (GroupBoldButton, RichMarks.Bold),
+                (GroupItalicButton, RichMarks.Italic),
+                (GroupUnderlineButton, RichMarks.Underline),
+                (GroupStrikethroughButton, RichMarks.Strikethrough),
+                (GroupSpoilerButton, RichMarks.Spoiler),
+                (GroupMonospaceButton, RichMarks.Monospace),
+                (GroupSubscriptButton, RichMarks.Subscript),
+                (GroupSuperscriptButton, RichMarks.Superscript),
+                (GroupMarkedButton, RichMarks.Marked)
+            };
+
+            _listButtons = new[]
+            {
+                (GroupNumberedButton, RichListStyle.Ordered),
+                (GroupBulletedButton, RichListStyle.Bullet),
+                (GroupChecklistButton, RichListStyle.Checklist)
+            };
+
+            // With the shortcut, as the Text Style menu shows it.
+            var shift = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift;
+
+            ToolTipService.SetToolTip(GroupBoldButton, $"{Strings.Bold} ({Shortcut(VirtualKey.B)})");
+            ToolTipService.SetToolTip(GroupItalicButton, $"{Strings.Italic} ({Shortcut(VirtualKey.I)})");
+            ToolTipService.SetToolTip(GroupUnderlineButton, $"{Strings.Underline} ({Shortcut(VirtualKey.U)})");
+            ToolTipService.SetToolTip(GroupStrikethroughButton, $"{Strings.Strike} ({Shortcut(VirtualKey.X, shift)})");
+            ToolTipService.SetToolTip(GroupSpoilerButton, $"{Strings.Spoiler} ({Shortcut(VirtualKey.P, shift)})");
+            ToolTipService.SetToolTip(GroupMonospaceButton, $"{Strings.Mono} ({Shortcut(VirtualKey.M, shift)})");
+            ToolTipService.SetToolTip(GroupRegularButton, $"{Strings.Regular} ({Shortcut(VirtualKey.N, shift)})");
         }
 
         private MenuFlyoutItem CreateItem(string text, string icon, ICommand command, object parameter = null, bool premium = false, string shortcut = null)
@@ -285,7 +329,7 @@ namespace Telegram.Views.Host
         // A new one each time: it is a WinRT object, and every editor window has a thread of its own.
         private static FlyoutShowOptions ToolbarMenu => new()
         {
-            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
+            Placement = FlyoutPlacementMode.Bottom,
             ShowMode = FlyoutShowMode.Transient
         };
 
@@ -385,32 +429,111 @@ namespace Telegram.Views.Host
             UndoButton.IsEnabled = status.CanUndo;
             RedoButton.IsEnabled = status.CanRedo;
 
-            ParagraphButton.Glyph = status.TextKind switch
+            // Expanded groups or folded, the same: folding is a layout pass, not a change
+            // anything here hears about.
+            foreach (var (button, mark) in _markButtons)
             {
-                RichBlockKind.Heading => status.HeadingSize switch
-                {
-                    1 => Icons.TextHeader1,
-                    2 => Icons.TextHeader2,
-                    3 => Icons.TextHeader3,
-                    4 => Icons.TextHeader4,
-                    5 => Icons.TextHeader5,
-                    _ => Icons.TextHeader6
-                },
-                RichBlockKind.Preformatted => Icons.Code,
-                _ => Icons.TextParagraph,
-            };
+                button.IsChecked = (status.Marks & mark) != 0;
+                button.IsEnabled = status.CanFormat;
+            }
 
-            ListButton.IsChecked = status.ListStyle != null || status.InDetails;
-            ListButton.Glyph = status.ListStyle switch
+            foreach (var (button, style) in _listButtons)
             {
-                RichListStyle.Ordered => Icons.TextNumberList,
-                _ => Icons.TextBulletList
-            };
+                button.IsChecked = status.ListStyle == style;
+            }
 
-            TableButton.IsChecked = status.Table != null;
+            GroupToggleBlockButton.IsChecked = status.InDetails;
+            GroupTextButton.IsChecked = status.TextKind == RichBlockKind.Paragraph && !status.InBlockQuote;
+            GroupQuoteButton.IsChecked = status.InBlockQuote;
+            GroupPullQuoteButton.IsChecked = status.TextKind == RichBlockKind.PullQuote;
+            GroupCodeButton.IsChecked = status.TextKind == RichBlockKind.Preformatted;
+            GroupFooterButton.IsChecked = status.TextKind == RichBlockKind.Footer;
+            GroupTableButton.IsChecked = status.Table != null;
+            GroupRegularButton.IsEnabled = status.CanFormat;
 
             // Links go on text, so the button waits for some, as TDesktop's does.
-            LinkButton.IsEnabled = status.CanFormat;
+            GroupLinkButton.IsEnabled = status.CanFormat;
+            GroupIndentButton.IsEnabled = _engine.CanIndent(MaxDepth);
+            GroupOutdentButton.IsEnabled = _engine.CanOutdent();
+        }
+
+        // The grouped toolbar's buttons. A toggle checks itself when clicked and what it shows is
+        // what the editor says, so the toolbar is updated after whether or not anything changed.
+        private void GroupMark_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var (button, mark) in _markButtons)
+            {
+                if (ReferenceEquals(button, sender))
+                {
+                    _engine.ToggleMark(mark);
+                    break;
+                }
+            }
+
+            UpdateToolbar();
+        }
+
+        private void GroupList_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var (button, style) in _listButtons)
+            {
+                if (ReferenceEquals(button, sender))
+                {
+                    _engine.ToggleList(style);
+                    break;
+                }
+            }
+
+            UpdateToolbar();
+        }
+
+        private void GroupRegular_Click(object sender, RoutedEventArgs e) => Run(_engine.ClearFormatting);
+
+        private void GroupToggleBlock_Click(object sender, RoutedEventArgs e) => Run(_engine.ToggleDetails);
+
+        private void GroupIndent_Click(object sender, RoutedEventArgs e) => Run(Indent);
+
+        private void GroupOutdent_Click(object sender, RoutedEventArgs e) => Run(Outdent);
+
+        private void GroupText_Click(object sender, RoutedEventArgs e) => Run(SetParagraph);
+
+        private void GroupQuote_Click(object sender, RoutedEventArgs e) => Run(_engine.ToggleBlockQuote);
+
+        private void GroupPullQuote_Click(object sender, RoutedEventArgs e) => Run(_engine.TogglePullQuote);
+
+        private void GroupFooter_Click(object sender, RoutedEventArgs e) => Run(SetFooter);
+
+        private void GroupDivider_Click(object sender, RoutedEventArgs e) => Run(_engine.InsertDivider);
+
+        private void GroupCode_Click(object sender, RoutedEventArgs e)
+        {
+            if ((_status ?? _engine.GetStatus()).TextKind == RichBlockKind.Preformatted)
+            {
+                Run(SetParagraph);
+            }
+            else
+            {
+                Run(SetPreformatted);
+            }
+        }
+
+        private void GroupInlineButton_Click(object sender, RoutedEventArgs e) => InsertInlineButton();
+
+        private void GroupDate_Click(object sender, RoutedEventArgs e) => InsertDate();
+
+        private void GroupHeading_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            PopulateHeadingFlyout(flyout.Items, _status ?? _engine.GetStatus());
+
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+        }
+
+        private void Run(Action action)
+        {
+            action();
+            UpdateToolbar();
         }
 
         private void OnLanguageRequested(object sender, RichLanguageRequestedEventArgs e)
@@ -663,15 +786,54 @@ namespace Telegram.Views.Host
         {
             var flyout = new MenuFlyout();
 
+            PopulateAttachFlyout(flyout.Items);
+
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+        }
+
+        private void PopulateAttachFlyout(IList<MenuFlyoutItemBase> flyout)
+        {
             // The divider, the button and the toggle block went to the menus TDesktop has them in:
             // the block style, the link and the list.
-            flyout.Items.Add(CreateItem(Strings.ArticleCommandImage, Icons.Image, new RelayCommand(PickMedia), premium: true));
-            flyout.Items.Add(CreateItem(Strings.ArticleCommandAudio, Icons.MusicNote2, new RelayCommand(PickAudio), premium: true));
-            flyout.Items.Add(CreateItem(Strings.AttachDocument, Icons.Document, new RelayCommand(PickFile), premium: true));
-            flyout.Items.Add(CreateItem(Strings.AttachLocation, Icons.Location, new RelayCommand(PickLocation), premium: true));
-
-            flyout.ShowAt(AttachButton, ToolbarMenu);
+            flyout.Add(CreateItem(Strings.ArticleCommandImage, Icons.Image, new RelayCommand(PickMedia), premium: true));
+            flyout.Add(CreateItem(Strings.ArticleCommandAudio, Icons.MusicNote2, new RelayCommand(PickAudio), premium: true));
+            flyout.Add(CreateItem(Strings.AttachDocument, Icons.Document, new RelayCommand(PickFile), premium: true));
+            flyout.Add(CreateItem(Strings.AttachLocation, Icons.Location, new RelayCommand(PickLocation), premium: true));
         }
+
+        /// <summary>The Insert group folded: every tool its buttons have, in one menu.</summary>
+        private void Insert_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+            var status = _status ?? _engine.GetStatus();
+
+            // Inside a table, its menu, as the table button opens.
+            if (status.Table == null)
+            {
+                flyout.Items.Add(CreateItem(Strings.AccDescrIVTable, Icons.Table, new RelayCommand(InsertTable), premium: true));
+            }
+            else
+            {
+                var table = new MenuFlyoutSubItem
+                {
+                    Text = Strings.AccDescrIVTable,
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.Table)
+                };
+
+                PopulateTableFlyout(table.Items);
+                flyout.Items.Add(table);
+            }
+
+            flyout.Items.Add(CreateItem(Strings.AccDescrIVFormula, Icons.MathFormula, new RelayCommand(InsertFormula), premium: true));
+            flyout.Items.Add(new MenuFlyoutSeparator());
+            PopulateAttachFlyout(flyout.Items);
+            flyout.Items.Add(new MenuFlyoutSeparator());
+            PopulateLinkFlyout(flyout.Items, status);
+
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+        }
+
+        private void InsertTable() => _engine.InsertTable(2, 2);
 
         private async void PickMedia()
         {
@@ -1151,7 +1313,7 @@ namespace Telegram.Views.Host
                 RichMediaBlock or RichMediaGroupBlock => Icons.Image,
                 RichMapBlock => Icons.Location,
                 RichMathBlock => Icons.Edit,
-                RichButtonRowBlock => Icons.Add,
+                RichButtonRowBlock => Icons.Button,
                 RichDividerBlock => Icons.LineHorizontal1,
                 RichBlockQuote => Icons.QuoteBlock,
                 _ => null
@@ -1294,7 +1456,7 @@ namespace Telegram.Views.Host
 
             PopulateTextStyleFlyout(flyout.Items, _status ?? _engine.GetStatus());
 
-            flyout.ShowAt(TextStyleButton, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
         }
 
         /// <summary>
@@ -1345,13 +1507,13 @@ namespace Telegram.Views.Host
 
             PopulateLinkFlyout(flyout.Items, status);
 
-            flyout.ShowAt(LinkButton, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
         }
 
         private void PopulateLinkFlyout(IList<MenuFlyoutItemBase> flyout, RichEditorStatus status)
         {
             flyout.Add(CreateItem(status.HasLink ? Strings.EditLink : Strings.CreateLink, Icons.Link, new RelayCommand(CreateLink), shortcut: Shortcut(VirtualKey.K)));
-            flyout.Add(CreateItem(Strings.RichEditorButton, Icons.Add, new RelayCommand(InsertInlineButton)));
+            flyout.Add(CreateItem(Strings.RichEditorButton, Icons.Button, new RelayCommand(InsertInlineButton)));
             flyout.Add(CreateItem(Strings.AccDescrIVInsertDate, Icons.Calendar, new RelayCommand(InsertDate)));
         }
 
@@ -1480,7 +1642,7 @@ namespace Telegram.Views.Host
 
             PopulateParagraphFlyout(flyout.Items);
 
-            flyout.ShowAt(ParagraphButton, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
         }
 
         private void PopulateParagraphFlyout(IList<MenuFlyoutItemBase> flyout)
@@ -1493,26 +1655,7 @@ namespace Telegram.Views.Host
                 Icon = MenuFlyoutHelper.CreateIcon(Icons.TextHeader1)
             };
 
-            {
-                var command = new RelayCommand<int>(SetHeading);
-
-                for (int i = 1; i < 7; i++)
-                {
-                    var child = CreateToggle(
-                        i == 1 ? Strings.ArticleHeading1 : i == 2 ? Strings.ArticleHeading2 : i == 3 ? Strings.ArticleHeading3 : i == 4 ? Strings.ArticleHeading4 : i == 5 ? Strings.ArticleHeading5 : Strings.ArticleHeading6,
-                        i == 1 ? Icons.TextHeader1 : i == 2 ? Icons.TextHeader2 : i == 3 ? Icons.TextHeader3 : i == 4 ? Icons.TextHeader4 : i == 5 ? Icons.TextHeader5 : Icons.TextHeader6,
-                        status.TextKind == RichBlockKind.Heading && status.HeadingSize == i,
-                        command,
-                        i,
-                        premium: true);
-
-                    child.FontFamily = new FontFamily("Times New Roman");
-                    child.FontSize = 24 - ((i - 1) * 2);
-                    child.FontWeight = FontWeights.SemiBold;
-
-                    heading.Items.Add(child);
-                }
-            }
+            PopulateHeadingFlyout(heading.Items, status);
 
             // In TDesktop's order, starred where it is: a quote and code are in regular messages too.
             flyout.Add(heading);
@@ -1522,6 +1665,28 @@ namespace Telegram.Views.Host
             flyout.Add(CreateToggle(Strings.ArticleCode, Icons.Code, status.TextKind == RichBlockKind.Preformatted, new RelayCommand(SetPreformatted)));
             flyout.Add(CreateToggle(Strings.ArticleFooter, Icons.DocumentFooter, status.TextKind == RichBlockKind.Footer, new RelayCommand(SetFooter), premium: true));
             flyout.Add(CreateItem(Strings.ArticleCommandDivider, Icons.LineHorizontal1, new RelayCommand(_engine.InsertDivider), premium: true));
+        }
+
+        private void PopulateHeadingFlyout(IList<MenuFlyoutItemBase> flyout, RichEditorStatus status)
+        {
+            var command = new RelayCommand<int>(SetHeading);
+
+            for (int i = 1; i < 7; i++)
+            {
+                var child = CreateToggle(
+                    i == 1 ? Strings.ArticleHeading1 : i == 2 ? Strings.ArticleHeading2 : i == 3 ? Strings.ArticleHeading3 : i == 4 ? Strings.ArticleHeading4 : i == 5 ? Strings.ArticleHeading5 : Strings.ArticleHeading6,
+                    i == 1 ? Icons.TextHeader1 : i == 2 ? Icons.TextHeader2 : i == 3 ? Icons.TextHeader3 : i == 4 ? Icons.TextHeader4 : i == 5 ? Icons.TextHeader5 : Icons.TextHeader6,
+                    status.TextKind == RichBlockKind.Heading && status.HeadingSize == i,
+                    command,
+                    i,
+                    premium: true);
+
+                child.FontFamily = new FontFamily("Times New Roman");
+                child.FontSize = 24 - ((i - 1) * 2);
+                child.FontWeight = FontWeights.SemiBold;
+
+                flyout.Add(child);
+            }
         }
 
         private void SetHeading(int size) => _engine.SetTextKind(RichBlockKind.Heading, size);
@@ -1538,7 +1703,7 @@ namespace Telegram.Views.Host
 
             PopulateListFlyout(flyout.Items);
 
-            flyout.ShowAt(ListButton, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
         }
 
         private void PopulateListFlyout(IList<MenuFlyoutItemBase> flyout)
@@ -1563,8 +1728,13 @@ namespace Telegram.Views.Host
                 change.Items.Add(CreateItem(Strings.ArticleNone, null, new RelayCommand(_engine.RemoveList)));
 
                 flyout.Add(change);
-                flyout.Add(CreateItem(Strings.ArticleIndent, null, new RelayCommand(Indent)));
-                flyout.Add(CreateItem(Strings.ArticleOutdent, null, new RelayCommand(Outdent)));
+                var indent = CreateItem(Strings.ArticleIndent, Icons.TextIndentIncrease, new RelayCommand(Indent));
+                indent.IsEnabled = _engine.CanIndent(MaxDepth);
+                flyout.Add(indent);
+
+                var outdent = CreateItem(Strings.ArticleOutdent, Icons.TextIndentDecrease, new RelayCommand(Outdent));
+                outdent.IsEnabled = _engine.CanOutdent();
+                flyout.Add(outdent);
                 flyout.Add(new MenuFlyoutSeparator());
             }
             else
@@ -1578,7 +1748,9 @@ namespace Telegram.Views.Host
             flyout.Add(CreateToggle(Strings.ArticleToggleBlock, Icons.ChevronDown, status.InDetails, new RelayCommand(_engine.ToggleDetails), premium: true));
         }
 
-        private void Indent() => _engine.Indent((int)_clientService.Options.RichMessageDepthMax);
+        private int MaxDepth => (int)_clientService.Options.RichMessageDepthMax;
+
+        private void Indent() => _engine.Indent(MaxDepth);
 
         private void Outdent() => _engine.Outdent();
 
@@ -1594,7 +1766,10 @@ namespace Telegram.Views.Host
 
             PopulateTableFlyout(flyout.Items);
 
-            flyout.ShowAt(TableButton, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+
+            // The button is a toggle, and opening a menu changed nothing to check it by.
+            UpdateToolbar();
         }
 
         private void PopulateTableFlyout(IList<MenuFlyoutItemBase> flyout)
@@ -1761,7 +1936,9 @@ namespace Telegram.Views.Host
             }
         }
 
-        private async void Formula_Click(object sender, RoutedEventArgs e)
+        private void Formula_Click(object sender, RoutedEventArgs e) => InsertFormula();
+
+        private async void InsertFormula()
         {
             // On a line of its own unless told otherwise, as TDesktop's new formula is.
             var choice = GetSeparateLineChoice(true);
