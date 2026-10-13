@@ -753,24 +753,32 @@ namespace Telegram.Controls.RichEditor
             EndChange();
         }
 
-        /// <summary>Tab inside a list item: under the item before it.</summary>
-        public bool Indent(int maxDepth)
+        /// <summary>Whether <see cref="Indent"/> would do anything: there is an item before the one at the caret, and room for a level.</summary>
+        public bool CanIndent(int maxDepth)
         {
-            var item = GetItemOf(_focus.Leaf.Owner, out RichListBlock list);
-            if (item == null)
-            {
-                return false;
-            }
+            return CanIndent(maxDepth, out _, out _, out _);
+        }
 
-            var index = list.Items.IndexOf(item);
-            if (index == 0)
-            {
-                return false;
-            }
+        private bool CanIndent(int maxDepth, out RichListItem item, out RichListBlock list, out int index)
+        {
+            item = GetItemOf(_focus.Leaf.Owner, out list);
+            index = item != null ? list.Items.IndexOf(item) : -1;
 
             // Each level costs a list and an item block: refusing early here is clearer than a
             // send that fails on depth.
-            if (RichDocument.GetDepth(list) + 2 > maxDepth)
+            return index > 0 && RichDocument.GetDepth(list) + 2 <= maxDepth;
+        }
+
+        /// <summary>Whether <see cref="Outdent"/> would do anything: the caret is in a list item, which a top level one leaves as text.</summary>
+        public bool CanOutdent()
+        {
+            return GetItemOf(_focus.Leaf.Owner, out _) != null;
+        }
+
+        /// <summary>Tab inside a list item: under the item before it.</summary>
+        public bool Indent(int maxDepth)
+        {
+            if (!CanIndent(maxDepth, out RichListItem item, out RichListBlock list, out int index))
             {
                 return false;
             }
