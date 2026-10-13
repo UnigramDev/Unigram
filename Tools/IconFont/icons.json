@@ -691,6 +691,10 @@
     {"name": "ic_fluent_document_footer_20_regular", "code": "F798", "src": "fluent:document_footer_20_regular"},
     {"name": "ic_fluent_line_horizontal_1_20_regular", "code": "F799", "src": "fluent:line_horizontal_1_20_regular"},
     {"name": "ic_fluent_highlight_20_regular", "code": "F79A", "src": "fluent:highlight_20_regular"},
+    {"name": "ic_fluent_text_indent_increase_20_regular", "code": "F79B", "src": "fluent:text_indent_increase_20_regular"},
+    {"name": "ic_fluent_text_indent_decrease_20_regular", "code": "F79C", "src": "fluent:text_indent_decrease_20_regular"},
+    {"name": "ic_fluent_text_clear_formatting_20_regular", "code": "F79D", "src": "fluent:text_clear_formatting_20_regular"},
+    {"name": "ic_fluent_button_20_regular", "code": "F79E", "src": "fluent:button_20_regular"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }
