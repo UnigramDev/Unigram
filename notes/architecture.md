@@ -568,7 +568,7 @@ drives to zero — an ancestor that sizes itself to this control's content gets 
 `MeasureOverride` adds it back to recover the width the parent really had.
 
 ## Rich message editor — Telegram/Controls/RichEditor/ (23 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=e21a22dab paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
+<!-- map: verified=35daaf49a paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -589,7 +589,8 @@ item becomes that item. Selecting a block whole parks the caret's ends next to i
 before: nothing may read that as the caret being there. A collapsed quote is atomic and its text is no
 leaf, so `BindLeaf` registers only leaves in the index - hit testing must never find that text. The spell
 checker's factory is free-threaded: make and call it on the thread pool only. Empty credits are not
-drawn, and every move or join has to step over them (`IsLeafHidden`). Brushes come from the XAML, never from code. The
+drawn, and every move or join has to step over them (`IsLeafHidden`). A selection never ends inside a table
+it runs past: `Select` moves that end to the table's far edge, so delete and copy take it whole. Brushes come from the XAML, never from code. The
 engine has no test project in the repo; `notes/native-rich-editor.md` has the design and its history.
 
 ---

@@ -212,7 +212,8 @@ the model's `RichTextBlock` clashed with XAML's and is now `RichParagraphBlock`.
 - Strings: the `RichEditor*` button set, `ChatLink`, `ColorBlue`/`ColorRed`/`ColorGreen`,
   `StoriesCollage`, `CommunityUngroupChatsButton` (all Android), plus new
   `RichEditorButtonColor` and `ArticleLimitMedia`.
-- Not yet: selecting or reordering single items inside a collage, slideshow paging, a
+- Not yet (2026-10-13: reordering a collage's items is in its context menu, and slideshow paging
+  is there): a
   better look for audio and file blocks than a badge, and media upload progress (TDLib
   uploads on send, so the chat shows progress, not the editor).
 
@@ -269,8 +270,7 @@ Second round of feedback (2026-10-12), fixed:
   (`RichEditorSpoilerBrush`, `RichEditorMarkedBrush`), read from swatch elements in the
   template. The pass skips leaves without such runs before asking the layout anything, and
   reruns when the arranged width changes.
-- Still not drawn in the editor: sub/superscript. Neither the layout nor the editor does it
-  yet; they look right once sent.
+- Sub/superscript: drawn in the editor too (confirmed 2026-10-13).
 
 **Step 6 done, unbuilt (2026-10-12).**
 - Auto-scroll is driven by a timer while a mouse drag or a handle is held near an edge. It
@@ -342,7 +342,8 @@ Second round of feedback (2026-10-12), fixed:
   RichHtml's markup, stamped with `data-telegram-rich`, so the composer recognises a copy
   from the editor as rich. `RichHtml.InlineSpan` learned span styles (font-weight,
   font-style, text-decoration), which fixes bold pasted from Word and Docs for the composer
-  too. RichHtml still joins a `<p>` inside a table cell without a break; left as it is.
+  too. Blocks inside an inline context - paragraphs in a table cell - are now lines of their
+  own (`RichHtml.InlineChildren`), and the markup whitespace between them is dropped.
 - **Sub/superscript drawn.** `DirectTextLayout` lays the range out at `ScriptScale` (0.7), so
   advances, hit testing and the caret are right, then draws it transparent. `DrawScript`
   redraws it per line from small layouts, offset from that line's baseline (up a third, down
@@ -432,8 +433,8 @@ same method. Divider went to Block style, Button and Date to Link, the toggle bl
 Premium is marked, not enforced, as there: a gradient star (`E9B5`) on List, Table, Attach and
 Formula, and `MenuFlyoutPremiumItem`/`ToggleMenuFlyoutPremiumItem` (copies of the default item
 templates with a star column) for headings, pullquote, footer, divider, sub/superscript,
-highlight, list inserts and every attach item. Sending is what still asks. Not done: TDesktop's
-"/" menu, its Discard/Cancel pill, and list numbering types.
+marked text, list inserts and every attach item. Sending is what still asks. TDesktop's "/" menu,
+its Discard/Cancel pill and list numbering types are left out on purpose.
 
 (Done in 8a646ca2e.) The `notes/architecture.md` section for the editor.
 
@@ -508,3 +509,19 @@ for the chat's own clipboard format; HTML out; HTML and markdown in. Then step 6
 `EditMediaPopup`, group/ungroup, collage ↔ slideshow), the mosaic collage, the button editor
 (Url/User/CopyText; label, style), inline buttons, maps (location picker), and paste/drop of
 images.
+
+Tables in a selection (2026-10-13). A selection with one end in a table and the other outside it
+takes the table whole, as Word does: `CoverTables` in `Select` moves the end inside to the table's
+far edge, so a drag, Shift+click or Ctrl+A covers it from caption to last cell, and delete and copy
+take it whole (`Covers`, shared with `DeleteRange`). Extending back into it with the keyboard lets
+it go instead (`ReleaseTable`), or Shift+Up would land on the far edge again every time. A covered
+table is drawn as selected cells, not as text (`GetCoveredTables`). A selection inside one table is
+unchanged.
+
+Links were drawn in the text colour: the leaf view read the block's `HyperlinkForeground` once, at
+render, and the block's implicit style can reach it later. `DirectTextBlock.HyperlinkColorChanged`
+now tells the leaf view to colour them again, which a theme change needs as well.
+
+"Highlight" is "Marked" (`RichEditorMarked`), with Fluent's highlight_20_regular at F79A.
+
+TODO: markdown on paste, which Android offers as an option after a paste.
