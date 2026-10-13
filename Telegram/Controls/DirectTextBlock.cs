@@ -106,9 +106,9 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// The family the text is drawn in. XAML takes a chain and falls back down it; this
-        /// hands DirectWrite the first name and lets it fall back on its own, which is the
-        /// nearest the two get - and near enough, as the direct engine both measures and draws.
+        /// The family the text is drawn in, a chain as XAML takes one - packaged fonts included -
+        /// and fallen back down the same way. Unset, it is the app's emoji font with the system
+        /// fallback behind it, not the theme's family.
         /// </summary>
         public FontFamily FontFamily
         {
@@ -122,14 +122,8 @@ namespace Telegram.Controls
         private static void OnFontFamilyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as DirectTextBlock;
-            var source = (e.NewValue as FontFamily)?.Source;
 
-            var comma = source?.IndexOf(',') ?? -1;
-
-            sender.Layout().FontFamily = comma < 0
-                ? source ?? string.Empty
-                : source[..comma].Trim();
-
+            sender.Layout().FontFamily = (e.NewValue as FontFamily)?.Source ?? string.Empty;
             sender.Invalidate();
         }
 
@@ -2338,6 +2332,9 @@ namespace Telegram.Controls
         // characters each line holds.
         public Rect[] GetRangeRectangles(int start, int end) => FromLayout(Layout().Ranges(start, end - start));
 
+        /// <summary>Where a caret before <paramref name="offset"/> goes: zero wide, the height of its line.</summary>
+        public Rect GetCaretRectangle(int offset) => FromLayout(Layout().Caret(offset));
+
         /// <summary>
         /// The rectangles covering [<paramref name="from"/>, <paramref name="to"/>) of the
         /// text, one per line, for a caller drawing a shape down them.
@@ -2430,6 +2427,12 @@ namespace Telegram.Controls
         {
             _renderedSize = default;
             InvalidateMeasure();
+
+            // The text is drawn in the arrange pass, and a measure does not bring one on its own:
+            // new text measuring to the size the old one did, in the same slot, is not arranged
+            // again, and the surface keeps showing the old text - a recycled bubble's previous
+            // message - while everything the layout answers is about the new one.
+            InvalidateArrange();
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -2617,7 +2620,19 @@ namespace Telegram.Controls
         {
             if (size.Width < 1 || size.Height < 1)
             {
+                // Text that takes no room still replaced what the brush shows: hidden, or the
+                // last text drawn stays on screen - the last character of a field cleared out.
+                if (_visual != null)
+                {
+                    _visual.IsVisible = false;
+                }
+
                 return;
+            }
+
+            if (_visual != null)
+            {
+                _visual.IsVisible = true;
             }
 
             var scale = XamlRoot?.RasterizationScale ?? 1;
@@ -2634,6 +2649,16 @@ namespace Telegram.Controls
             var surface = Layout().Render(color, scale);
             if (surface == null)
             {
+                // Nothing drawable - text that takes no width has no extent - and the brush still
+                // holds the surface of the text before it.
+                if (_visual != null)
+                {
+                    _visual.IsVisible = false;
+                }
+
+                // An empty line still has a caret, which sits where the line would start.
+                _contentLeft = ContentLeft(size.Width, 0);
+
                 return;
             }
 
@@ -2712,7 +2737,8 @@ namespace Telegram.Controls
 
         private double ContentLeft(double width, double content)
         {
-            if (content <= 0 || width <= content)
+            // No content is a line of no width, centred or against the far edge like any other.
+            if (width <= content)
             {
                 return 0;
             }

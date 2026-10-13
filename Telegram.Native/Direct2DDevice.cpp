@@ -1204,6 +1204,8 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
+        m_fontChains = std::make_shared<FontChains>(m_dwriteFactory.as<IDWriteFactory>(), m_systemCollection, std::wstring(path.c_str()), std::wstring(m_monospaceFamily));
+
         return S_OK;
     }
 
@@ -1328,7 +1330,7 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::DirectTextLayout Direct2DDevice::CreateLayout()
     {
-        auto layout = winrt::make_self<DirectTextLayout>(m_compositionDevice, m_dwriteFactory, m_fontCollection, m_systemCollection, hstring(m_monospaceFamily));
+        auto layout = winrt::make_self<DirectTextLayout>(m_compositionDevice, m_dwriteFactory, m_fontCollection, m_systemCollection, hstring(m_monospaceFamily), m_fontChains);
         return layout.as<winrt::Telegram::Native::DirectTextLayout>();
     }
 

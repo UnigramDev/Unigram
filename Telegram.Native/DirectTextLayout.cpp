@@ -252,12 +252,245 @@ namespace winrt::Telegram::Native::implementation
         return locales;
     }
 
-    DirectTextLayout::DirectTextLayout(CompositionGraphicsDevice device, winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> fontCollection, winrt::com_ptr<IDWriteFontCollection> systemCollection, hstring monospaceFamily)
+    FontChains::FontChains(winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> systemCollection, std::wstring root, std::wstring monospaceFamily)
+        : m_factory(factory.try_as<IDWriteFactory5>())
+        , m_systemCollection(systemCollection)
+        , m_root(std::move(root))
+        , m_monospaceFamily(std::move(monospaceFamily))
+    {
+    }
+
+    const ResolvedFontFamily* FontChains::Resolve(std::wstring_view chain) noexcept
+    {
+        try
+        {
+            std::lock_guard const guard(m_mutex);
+
+            std::wstring key(chain);
+
+            auto found = m_chains.find(key);
+            if (found == m_chains.end())
+            {
+                ResolvedFontFamily resolved;
+
+                // A chain that failed is remembered as one, so it is not built again on every
+                // text that asks for it.
+                if (m_factory == nullptr || FAILED(Build(chain, resolved)))
+                {
+                    resolved = ResolvedFontFamily();
+                }
+
+                found = m_chains.emplace(std::move(key), std::move(resolved)).first;
+            }
+
+            return found->second.Family.empty() ? nullptr : &found->second;
+        }
+        catch (...)
+        {
+            return nullptr;
+        }
+    }
+
+    static std::wstring_view Trim(std::wstring_view value)
+    {
+        while (!value.empty() && (value.front() == L' ' || value.front() == L'\'' || value.front() == L'"'))
+        {
+            value.remove_prefix(1);
+        }
+
+        while (!value.empty() && (value.back() == L' ' || value.back() == L'\'' || value.back() == L'"'))
+        {
+            value.remove_suffix(1);
+        }
+
+        return value;
+    }
+
+    static bool HasFamily(IDWriteFontCollection* collection, const std::wstring& family)
+    {
+        UINT32 index;
+        BOOL exists = FALSE;
+
+        return SUCCEEDED(collection->FindFamilyName(family.c_str(), &index, &exists)) && exists;
+    }
+
+    // What XAML does with a family: each character in the first font of the chain that has it,
+    // then the system's choice. DirectWrite gets the first name that exists as the family, and
+    // each later one as a mapping over all of Unicode - a font without the character passes it
+    // on to the next mapping, and the system fallback goes last.
+    //
+    // Every mapping is keyed to the family it falls back from, because a fallback belongs to the
+    // whole layout while a code span names a family of its own: keyed, the code span skips the
+    // text's chain. It gets one of its own instead, the text's chain after it, which is what the
+    // theme's monospace family is.
+    HRESULT FontChains::Build(std::wstring_view chain, ResolvedFontFamily& resolved)
+    {
+        HRESULT result;
+
+        struct Entry
+        {
+            std::wstring Family;
+            winrt::com_ptr<IDWriteFontCollection> Collection;
+        };
+
+        std::vector<Entry> entries;
+
+        while (!chain.empty())
+        {
+            const auto comma = chain.find(L',');
+            const auto name = Trim(chain.substr(0, comma));
+
+            chain = comma == std::wstring_view::npos ? std::wstring_view() : chain.substr(comma + 1);
+
+            if (name.empty())
+            {
+                continue;
+            }
+
+            Entry entry;
+
+            // ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji
+            const auto hash = name.find(L'#');
+            if (hash != std::wstring_view::npos)
+            {
+                entry.Collection = Packaged(name.substr(0, hash));
+                entry.Family = Trim(name.substr(hash + 1));
+
+                if (entry.Collection == nullptr)
+                {
+                    continue;
+                }
+
+                // A font's name in its file is not always the one XAML is given - a weight in
+                // it, say - and a file with one family in it can only mean that one.
+                if (!HasFamily(entry.Collection.get(), entry.Family) && entry.Collection->GetFontFamilyCount() == 1)
+                {
+                    winrt::com_ptr<IDWriteFontFamily> family;
+                    winrt::com_ptr<IDWriteLocalizedStrings> names;
+                    WCHAR buffer[LF_FACESIZE]{};
+
+                    if (SUCCEEDED(entry.Collection->GetFontFamily(0, family.put())) && SUCCEEDED(family->GetFamilyNames(names.put())) && SUCCEEDED(names->GetString(0, buffer, ARRAYSIZE(buffer))))
+                    {
+                        entry.Family = buffer;
+                    }
+                }
+            }
+            else
+            {
+                // XAML's own default, which it resolves to the UI font.
+                entry.Family = name == L"XamlAutoFontFamily" ? L"Segoe UI" : std::wstring(name);
+                entry.Collection = m_systemCollection;
+            }
+
+            if (!HasFamily(entry.Collection.get(), entry.Family))
+            {
+                continue;
+            }
+
+            const auto duplicate = std::any_of(entries.begin(), entries.end(), [&](const Entry& other)
+                {
+                    return other.Family == entry.Family && other.Collection == entry.Collection;
+                });
+
+            if (!duplicate)
+            {
+                entries.push_back(std::move(entry));
+            }
+        }
+
+        if (entries.empty())
+        {
+            return E_FAIL;
+        }
+
+        resolved.Family = entries[0].Family;
+        resolved.Collection = entries[0].Collection;
+
+        const auto monospace = !m_monospaceFamily.empty() && entries[0].Family != m_monospaceFamily;
+        if (entries.size() == 1 && !monospace)
+        {
+            return S_OK;
+        }
+
+        winrt::com_ptr<IDWriteFontFallbackBuilder> builder;
+        ReturnIfFailed(result, m_factory->CreateFontFallbackBuilder(builder.put()));
+
+        const DWRITE_UNICODE_RANGE all{ 0, 0x10FFFF };
+
+        for (size_t i = 0; i < entries.size(); i++)
+        {
+            const wchar_t* family = entries[i].Family.c_str();
+
+            if (i > 0)
+            {
+                ReturnIfFailed(result, builder->AddMapping(&all, 1, &family, 1, entries[i].Collection.get(), nullptr, resolved.Family.c_str(), 1));
+            }
+
+            if (monospace && entries[i].Family != m_monospaceFamily)
+            {
+                ReturnIfFailed(result, builder->AddMapping(&all, 1, &family, 1, entries[i].Collection.get(), nullptr, m_monospaceFamily.c_str(), 1));
+            }
+        }
+
+        winrt::com_ptr<IDWriteFontFallback> system;
+        ReturnIfFailed(result, m_factory->GetSystemFontFallback(system.put()));
+        ReturnIfFailed(result, builder->AddMappings(system.get()));
+        ReturnIfFailed(result, builder->CreateFontFallback(resolved.Fallback.put()));
+
+        return S_OK;
+    }
+
+    // A font file in the package, by the path XAML names it with. Null, and remembered as null,
+    // when there is no such file.
+    winrt::com_ptr<IDWriteFontCollection> FontChains::Packaged(std::wstring_view path)
+    {
+        std::wstring key(path);
+
+        auto found = m_files.find(key);
+        if (found != m_files.end())
+        {
+            return found->second;
+        }
+
+        winrt::com_ptr<IDWriteFontCollection> collection;
+
+        for (std::wstring_view prefix : { L"ms-appx:///", L"ms-appx://", L"/" })
+        {
+            if (path.size() >= prefix.size() && CompareStringOrdinal(path.data(), (int)prefix.size(), prefix.data(), (int)prefix.size(), TRUE) == CSTR_EQUAL)
+            {
+                path.remove_prefix(prefix.size());
+                break;
+            }
+        }
+
+        std::wstring file = m_root + L"\\" + std::wstring(path);
+        std::replace(file.begin(), file.end(), L'/', L'\\');
+
+        winrt::com_ptr<IDWriteFontSetBuilder1> builder;
+        winrt::com_ptr<IDWriteFontFile> reference;
+        winrt::com_ptr<IDWriteFontSet> set;
+        winrt::com_ptr<IDWriteFontCollection1> created;
+
+        if (SUCCEEDED(m_factory->CreateFontSetBuilder(builder.put()))
+            && SUCCEEDED(m_factory->CreateFontFileReference(file.c_str(), nullptr, reference.put()))
+            && SUCCEEDED(builder->AddFontFile(reference.get()))
+            && SUCCEEDED(builder->CreateFontSet(set.put()))
+            && SUCCEEDED(m_factory->CreateFontCollectionFromFontSet(set.get(), created.put())))
+        {
+            collection.copy_from(created.get());
+        }
+
+        m_files.emplace(std::move(key), collection);
+        return collection;
+    }
+
+    DirectTextLayout::DirectTextLayout(CompositionGraphicsDevice device, winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> fontCollection, winrt::com_ptr<IDWriteFontCollection> systemCollection, hstring monospaceFamily, std::shared_ptr<FontChains> chains)
         : m_device(device)
         , m_factory(factory)
         , m_fontCollection(fontCollection)
         , m_systemCollection(systemCollection)
         , m_monospaceFamily(monospaceFamily)
+        , m_chains(std::move(chains))
     {
     }
 
@@ -335,6 +568,7 @@ namespace winrt::Telegram::Native::implementation
         if (m_fontFamily != value)
         {
             m_fontFamily = value;
+            m_resolvedFamily = value.empty() || m_chains == nullptr ? nullptr : m_chains->Resolve(value);
             m_invalid = true;
         }
     }
@@ -621,6 +855,20 @@ namespace winrt::Telegram::Native::implementation
         return S_OK;
     }
 
+    HRESULT DirectTextLayout::ApplyFallback(IDWriteTextLayout* layout)
+    {
+        if (m_resolvedFamily == nullptr || m_resolvedFamily->Fallback == nullptr)
+        {
+            return S_OK;
+        }
+
+        winrt::com_ptr<IDWriteTextLayout2> layout2;
+
+        HRESULT result;
+        ReturnIfFailed(result, layout->QueryInterface(IID_PPV_ARGS(layout2.put())));
+        return layout2->SetFontFallback(m_resolvedFamily->Fallback.get());
+    }
+
     HRESULT DirectTextLayout::BuildParagraph(Paragraph& paragraph)
     {
         HRESULT result;
@@ -630,10 +878,27 @@ namespace winrt::Telegram::Native::implementation
         paragraph.Height = 0;
         paragraph.Hidden = false;
 
-        // The app's own collection carries the emoji font the default family names, and a
-        // caller asking for something else - a page title in a serif - is asking for a system
-        // one. Whatever is missing from the family chosen, DirectWrite falls back for.
-        const auto family = m_fontFamily.empty();
+        // No family is the app's own emoji font, which carries no letters and leaves them to the
+        // system fallback. A family is a chain, resolved by FontChains; one it could make
+        // nothing of is passed through as a system name, and falls back the same way.
+        const wchar_t* family;
+        IDWriteFontCollection* collection;
+
+        if (m_resolvedFamily != nullptr)
+        {
+            family = m_resolvedFamily->Family.c_str();
+            collection = m_resolvedFamily->Collection.get();
+        }
+        else if (m_fontFamily.empty())
+        {
+            family = L"Segoe UI Emoji";
+            collection = m_fontCollection.get();
+        }
+        else
+        {
+            family = m_fontFamily.c_str();
+            collection = m_systemCollection.get();
+        }
 
         // Per paragraph rather than per layout: a message in one script and a quote in another
         // is ordinary, and this is where each of them is built.
@@ -644,8 +909,8 @@ namespace winrt::Telegram::Native::implementation
 
         winrt::com_ptr<IDWriteTextFormat> format;
         ReturnIfFailed(result, m_factory->CreateTextFormat(
-            family ? L"Segoe UI Emoji" : m_fontFamily.c_str(),
-            family ? m_fontCollection.get() : m_systemCollection.get(),
+            family,
+            collection,
             (DWRITE_FONT_WEIGHT)m_fontWeight,
             m_italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
             DWRITE_FONT_STRETCH_NORMAL,
@@ -695,6 +960,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
         ReturnIfFailed(result, m_factory->CreateTextLayout(text, length, format.get(), (float)std::max(m_width, 0.0), INFINITY, paragraph.Layout.put()));
+        ReturnIfFailed(result, ApplyFallback(paragraph.Layout.get()));
 
         if (m_maxLines != 0)
         {
@@ -738,6 +1004,13 @@ namespace winrt::Telegram::Native::implementation
                 {
                     ReturnIfFailed(result, paragraph.Layout->SetFontCollection(m_systemCollection.get(), range));
                     ReturnIfFailed(result, paragraph.Layout->SetFontFamilyName(m_monospaceFamily.c_str(), range));
+                }
+                else if (entity.Type == TextStyle::Subscript || entity.Type == TextStyle::Superscript)
+                {
+                    // Laid out at the size it is drawn at, so its advances, its hit testing and
+                    // the caret are right; DrawScript moves it off the baseline at draw time,
+                    // which DirectWrite has no range property for.
+                    ReturnIfFailed(result, paragraph.Layout->SetFontSize((FLOAT)(m_fontSize * ScriptScale), range));
                 }
             }
         }
@@ -908,7 +1181,11 @@ namespace winrt::Telegram::Native::implementation
         //
         // Only then. Reflowing is where a measure spends its time, and for a paragraph drawn
         // from the leading edge the width of the box behind it moves nothing.
-        if (bounds.Width > 0 && bounds.Width < availableWidth && !IsLeading())
+        //
+        // Text with no width too - an empty line held open by a zero-width character: centred
+        // in the box it was measured in, its caret is wherever the middle of that is, which
+        // for an unbounded measure is nowhere near the block.
+        if (bounds.Width < availableWidth && !IsLeading())
         {
             ReturnDefaultIfFailed(result, Reflow(bounds.Width));
 
@@ -1075,6 +1352,158 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return com_array<Windows::Foundation::Rect>(rects.begin(), rects.end());
+    }
+
+    // A sub- or superscript range, drawn again at its own size and moved off the line's
+    // baseline: the layout already gave it the right advance at that size, so only the height
+    // is decided here. One small layout per line the range covers, as a range may wrap.
+    void DirectTextLayout::DrawScript(ID2D1DeviceContext* context, const Paragraph& paragraph, DWRITE_TEXT_RANGE range, bool superscript, ID2D1Brush* brush)
+    {
+        UINT32 count = 0;
+        paragraph.Layout->HitTestTextRange(range.startPosition, range.length, 0, 0, nullptr, 0, &count);
+
+        if (count == 0)
+        {
+            return;
+        }
+
+        std::vector<DWRITE_HIT_TEST_METRICS> hits(count);
+        if (FAILED(paragraph.Layout->HitTestTextRange(range.startPosition, range.length, 0, 0, hits.data(), count, &count)))
+        {
+            return;
+        }
+
+        UINT32 lineCount = 0;
+        paragraph.Layout->GetLineMetrics(nullptr, 0, &lineCount);
+
+        std::vector<DWRITE_LINE_METRICS> lines(lineCount);
+        if (lineCount == 0 || FAILED(paragraph.Layout->GetLineMetrics(lines.data(), lineCount, &lineCount)))
+        {
+            return;
+        }
+
+        const auto size = (FLOAT)(m_fontSize * ScriptScale);
+
+        // How far off the baseline: the same proportions XAML's own Typography variants use,
+        // a third of the text up and a sixth down.
+        const auto shift = (FLOAT)(superscript ? -m_fontSize / 3 : m_fontSize / 6);
+
+        for (UINT32 i = 0; i < count; i++)
+        {
+            const auto& hit = hits[i];
+
+            // The line the hit is on, and where its baseline is.
+            FLOAT top = 0;
+            FLOAT baseline = 0;
+
+            for (const auto& line : lines)
+            {
+                if (hit.top < top + line.height)
+                {
+                    baseline = top + line.baseline;
+                    break;
+                }
+
+                top += line.height;
+            }
+
+            WCHAR family[100];
+            if (FAILED(paragraph.Layout->GetFontFamilyName(hit.textPosition, family, ARRAYSIZE(family))))
+            {
+                continue;
+            }
+
+            winrt::com_ptr<IDWriteFontCollection> collection;
+            DWRITE_FONT_WEIGHT weight;
+            DWRITE_FONT_STYLE style;
+
+            paragraph.Layout->GetFontCollection(hit.textPosition, collection.put());
+            paragraph.Layout->GetFontWeight(hit.textPosition, &weight);
+            paragraph.Layout->GetFontStyle(hit.textPosition, &style);
+
+            winrt::com_ptr<IDWriteTextFormat> format;
+            if (FAILED(m_factory->CreateTextFormat(family, collection.get(), weight, style, DWRITE_FONT_STRETCH_NORMAL, size, L"", format.put())))
+            {
+                continue;
+            }
+
+            winrt::com_ptr<IDWriteTextLayout> layout;
+            if (FAILED(m_factory->CreateTextLayout(m_text.data() + paragraph.Offset + hit.textPosition, hit.length, format.get(), INFINITY, INFINITY, layout.put())) || FAILED(ApplyFallback(layout.get())))
+            {
+                continue;
+            }
+
+            DWRITE_LINE_METRICS own;
+            UINT32 ownCount = 0;
+
+            if (FAILED(layout->GetLineMetrics(&own, 1, &ownCount)) || ownCount == 0)
+            {
+                continue;
+            }
+
+            // The colour the range was given, if it was given one - a link - over the text's.
+            winrt::com_ptr<ID2D1SolidColorBrush> colored;
+            const auto position = paragraph.Offset + (int32_t)hit.textPosition;
+
+            for (const ColorRange& item : m_colors)
+            {
+                if (position >= item.Offset && position < item.Offset + item.Length)
+                {
+                    context->CreateSolidColorBrush(D2D1::ColorF(item.Color.R / 255.0f, item.Color.G / 255.0f, item.Color.B / 255.0f, item.Color.A / 255.0f), colored.put());
+                }
+            }
+
+            const D2D1_POINT_2F origin{ hit.left, paragraph.Y + baseline - own.baseline + shift };
+            context->DrawTextLayout(origin, layout.get(), colored != nullptr ? colored.get() : brush, D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
+        }
+    }
+
+    // Where a caret before the character at offset is drawn: zero wide, as tall as its line.
+    // A character's box is not that - at the end of a line the caret belongs after the last
+    // character, and in right to left text the leading edge is the box's right side - so the
+    // layout is asked for the position itself.
+    Windows::Foundation::Rect DirectTextLayout::Caret(int32_t offset)
+    {
+        const Paragraph* found = nullptr;
+
+        for (const Paragraph& paragraph : m_paragraphs)
+        {
+            if (paragraph.Layout == nullptr || paragraph.Hidden)
+            {
+                continue;
+            }
+
+            // A position in the newline between two paragraphs is the end of the first.
+            if (found != nullptr && offset < paragraph.Offset)
+            {
+                break;
+            }
+
+            found = &paragraph;
+
+            if (offset <= paragraph.Offset + paragraph.Length)
+            {
+                break;
+            }
+        }
+
+        if (found == nullptr)
+        {
+            return { 0, 0, 0, 0 };
+        }
+
+        const auto position = (UINT32)std::clamp(offset - found->Offset, 0, found->Length);
+
+        FLOAT x;
+        FLOAT y;
+        DWRITE_HIT_TEST_METRICS metrics;
+
+        if (FAILED(found->Layout->HitTestTextPosition(position, FALSE, &x, &y, &metrics)))
+        {
+            return { 0, 0, 0, 0 };
+        }
+
+        return { x, found->Y + y, 0, metrics.height };
     }
 
     // One rectangle per line of a range, where Ranges gives one per bidirectional run: a shape
@@ -1463,10 +1892,51 @@ namespace winrt::Telegram::Native::implementation
                 }
             }
 
+            // Sub- and superscript are drawn by DrawScript, off the baseline; here they are
+            // drawn in nothing, so the layout still flows and hit tests them where they are.
+            winrt::com_ptr<ID2D1SolidColorBrush> transparent;
+            auto scripts = false;
+
+            if (m_entities != nullptr && m_entities.Size() > 0)
+            {
+                for (const Telegram::Native::TextStylePart& entity : m_entities)
+                {
+                    DWRITE_TEXT_RANGE range;
+
+                    if ((entity.Type != TextStyle::Subscript && entity.Type != TextStyle::Superscript)
+                        || !Intersect(paragraph.Offset, paragraph.Length, entity.Offset, entity.Length, range))
+                    {
+                        continue;
+                    }
+
+                    if (transparent == nullptr && FAILED(context->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0), transparent.put())))
+                    {
+                        break;
+                    }
+
+                    paragraph.Layout->SetDrawingEffect(transparent.get(), range);
+                    scripts = true;
+                }
+            }
+
             // Colour fonts on, or every emoji comes out as an outline. Anything the text
             // flows around that draws itself is drawn from in here, at the origin DirectWrite
             // works out for it.
             context->DrawTextLayout({ 0, paragraph.Y }, paragraph.Layout.get(), brush, D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
+
+            if (scripts)
+            {
+                for (const Telegram::Native::TextStylePart& entity : m_entities)
+                {
+                    DWRITE_TEXT_RANGE range;
+
+                    if ((entity.Type == TextStyle::Subscript || entity.Type == TextStyle::Superscript)
+                        && Intersect(paragraph.Offset, paragraph.Length, entity.Offset, entity.Length, range))
+                    {
+                        DrawScript(context, paragraph, range, entity.Type == TextStyle::Superscript, brush);
+                    }
+                }
+            }
         }
 
         for (const InlineRange& item : m_inlines)

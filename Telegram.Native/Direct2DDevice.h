@@ -462,6 +462,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
         winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
         const wchar_t* m_monospaceFamily = L"Consolas";
+        std::shared_ptr<FontChains> m_fontChains;
         winrt::com_ptr<IDWriteInlineObject> m_customEmoji;
         // Dead, and the reason the text methods need no lock: CreateTextFormat is its only
         // writer and every call to that is commented out, so each text method builds its own

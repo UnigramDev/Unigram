@@ -79,6 +79,7 @@ namespace Telegram.Native
 
         // Everything derived comes off the same layout the text was drawn from.
         Windows.Foundation.Rect[] Ranges(Int32 offset, Int32 length);
+        Windows.Foundation.Rect Caret(Int32 offset);
         Windows.Foundation.Rect[] Lines(Int32 offset, Int32 length);
 
         // How many characters each line holds, for a caller walking the text by line - what a

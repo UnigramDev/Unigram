@@ -3,9 +3,14 @@
 #include "DirectTextLayout.g.h"
 
 #include <algorithm>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <string_view>
+#include <unordered_map>
 #include <vector>
 
-#include <Dwrite_1.h>
+#include <dwrite_3.h>
 #include <D2d1_3.h>
 
 #include <winrt/Windows.Foundation.h>
@@ -96,10 +101,46 @@ namespace winrt::Telegram::Native::implementation
         float m_baseline;
     };
 
+    // A XAML font family as DirectWrite takes one: the first name in the chain that exists, in
+    // its own collection, and the names after it as a fallback ahead of the system's.
+    struct ResolvedFontFamily
+    {
+        std::wstring Family;
+        winrt::com_ptr<IDWriteFontCollection> Collection;
+
+        // Null when the chain is one name and there is no monospace face to give it to.
+        winrt::com_ptr<IDWriteFontFallback> Fallback;
+    };
+
+    // The chains in use on a device, built once each. A handful of distinct strings ever reach
+    // it - the theme's families and a few fixed ones - so nothing is evicted, and a resolved
+    // family can be held by pointer for as long as this lives.
+    class FontChains
+    {
+    public:
+        FontChains(winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> systemCollection, std::wstring root, std::wstring monospaceFamily);
+
+        // Null when no name in the chain could be found.
+        const ResolvedFontFamily* Resolve(std::wstring_view chain) noexcept;
+
+    private:
+        HRESULT Build(std::wstring_view chain, ResolvedFontFamily& resolved);
+        winrt::com_ptr<IDWriteFontCollection> Packaged(std::wstring_view path);
+
+        std::mutex m_mutex;
+        winrt::com_ptr<IDWriteFactory5> m_factory;
+        winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
+        std::wstring m_root;
+        std::wstring m_monospaceFamily;
+
+        std::unordered_map<std::wstring, ResolvedFontFamily> m_chains;
+        std::unordered_map<std::wstring, winrt::com_ptr<IDWriteFontCollection>> m_files;
+    };
+
     struct DirectTextLayout : DirectTextLayoutT<DirectTextLayout>
     {
         DirectTextLayout() = default;
-        DirectTextLayout(CompositionGraphicsDevice device, winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> fontCollection, winrt::com_ptr<IDWriteFontCollection> systemCollection, hstring monospaceFamily);
+        DirectTextLayout(CompositionGraphicsDevice device, winrt::com_ptr<IDWriteFactory> factory, winrt::com_ptr<IDWriteFontCollection> fontCollection, winrt::com_ptr<IDWriteFontCollection> systemCollection, hstring monospaceFamily, std::shared_ptr<FontChains> chains);
 
         ~DirectTextLayout();
 
@@ -140,6 +181,7 @@ namespace winrt::Telegram::Native::implementation
         Windows::Foundation::Size Measure(double availableWidth);
 
         com_array<Windows::Foundation::Rect> Ranges(int32_t offset, int32_t length);
+        Windows::Foundation::Rect Caret(int32_t offset);
         com_array<Windows::Foundation::Rect> Lines(int32_t offset, int32_t length);
         com_array<int32_t> LineLengths();
         int32_t HitTest(Windows::Foundation::Point point, bool& inside);
@@ -193,6 +235,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
         winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
         hstring m_monospaceFamily;
+        std::shared_ptr<FontChains> m_chains;
 
         std::vector<Paragraph> m_paragraphs;
 
@@ -223,6 +266,7 @@ namespace winrt::Telegram::Native::implementation
 
         double m_fontSize{ 14 };
         hstring m_fontFamily;
+        const ResolvedFontFamily* m_resolvedFamily{ nullptr };
         int32_t m_fontWeight{ 400 };
         bool m_italic{ false };
         double m_width{ 0 };
@@ -254,6 +298,11 @@ namespace winrt::Telegram::Native::implementation
 
         // Drawing. Not projected: nothing outside this library has a device context to hand.
         HRESULT Draw(ID2D1DeviceContext* context, ID2D1Brush* brush);
+        void DrawScript(ID2D1DeviceContext* context, const Paragraph& paragraph, DWRITE_TEXT_RANGE range, bool superscript, ID2D1Brush* brush);
+        HRESULT ApplyFallback(IDWriteTextLayout* layout);
+
+        // How big sub- and superscript are drawn, against the text around them.
+        static constexpr double ScriptScale = 0.7;
         HRESULT DrawSurface();
 
         void OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&);
