@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="SignalingDataEmittedEventArgs.cpp" />
     <ClCompile Include="VoipManager.cpp" />
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp" />
     <ClCompile Include="VoipDescriptor.cpp" />
@@ -175,16 +174,39 @@
       <Filter>tgcalls\v2</Filter>
     </ClCompile>
     <ClCompile Include="VoipVideoOutputSink.cpp" />
-    <ClCompile Include="LoopbackCapture.cpp" />
     <ClCompile Include="MediaChannelDescriptionsRequestedEventArgs.cpp" />
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\RawTcpSocket.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="VoipLoopbackCapture.cpp" />
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupAudioCapturePostProcessor.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupFrameTransformer.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceReferenceImpl.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\StreamingAudioRenderer.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\CustomDcSctpSocket.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2CompatImpl.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\MtProtoDtlsTransport.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingTranslator.cpp">
       <Filter>tgcalls\v2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SignalingDataEmittedEventArgs.h" />
     <ClInclude Include="VoipManager.h" />
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h" />
     <ClInclude Include="VoipDescriptor.h" />
@@ -399,9 +421,36 @@
     </ClInclude>
     <ClInclude Include="VoipVideoOutputSink.h" />
     <ClInclude Include="VoipVideoOutput.h" />
-    <ClInclude Include="LoopbackCapture.h" />
     <ClInclude Include="MediaChannelDescriptionsRequestedEventArgs.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\RawTcpSocket.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="VoipLoopbackCapture.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupAudioCapturePostProcessor.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupFrameTransformer.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceReferenceImpl.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\StreamingAudioRenderer.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\CustomDcSctpSocket.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\CustomParameters.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2CompatImpl.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\MtProtoDtlsTransport.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingTranslator.h">
       <Filter>tgcalls\v2</Filter>
     </ClInclude>
   </ItemGroup>
@@ -413,7 +462,6 @@
     <Midl Include="VoipVideoCapture.idl" />
     <Midl Include="VoipDescriptor.idl" />
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
-    <Midl Include="SignalingDataEmittedEventArgs.idl" />
     <Midl Include="VoipManager.idl" />
     <Midl Include="VoipGroupManager.idl" />
     <Midl Include="VoipGroupDescriptor.idl" />

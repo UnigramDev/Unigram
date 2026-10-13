@@ -36,6 +36,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     const auto RegisterTag = tgcalls::Register<tgcalls::InstanceImpl>();
     const auto RegisterTagV2_4_0_1 = tgcalls::Register<tgcalls::InstanceV2Impl>();
     const auto RegisterTagV2_4_1_2 = tgcalls::Register<tgcalls::InstanceV2ReferenceImpl>();
+    const auto RegisterTagV2_14_0_0 = tgcalls::Register<tgcalls::InstanceV2CompatImpl>();
 
     void VoipManager::Start(VoipDescriptor descriptor)
     {
