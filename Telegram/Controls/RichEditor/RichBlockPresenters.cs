@@ -565,7 +565,7 @@ namespace Telegram.Controls.RichEditor
     {
         private RichLeafView Header;
         private StackPanel Children;
-        private Button Toggle;
+        private DetailsBlockHeader Toggle;
 
         public RichDetailsPresenter()
         {
@@ -581,7 +581,7 @@ namespace Telegram.Controls.RichEditor
 
             Header = GetTemplateChild(nameof(Header)) as RichLeafView;
             Children = GetTemplateChild(nameof(Children)) as StackPanel;
-            Toggle = GetTemplateChild(nameof(Toggle)) as Button;
+            Toggle = GetTemplateChild(nameof(Toggle)) as DetailsBlockHeader;
 
             if (Toggle != null)
             {
@@ -597,6 +597,7 @@ namespace Telegram.Controls.RichEditor
 
             if (Toggle != null)
             {
+                Toggle.IsOpen = details.IsOpen;
                 Windows.UI.Xaml.Automation.AutomationProperties.SetName(Toggle, details.IsOpen ? Strings.AccDescrCollapsePanel : Strings.AccDescrExpandPanel);
             }
 

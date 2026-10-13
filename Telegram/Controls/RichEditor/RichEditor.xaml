@@ -603,8 +603,8 @@
         </Setter>
     </Style>
 
-    <!--  The header is drawn as the SettingsButton the sent message uses, its chevron in the
-          glyph slot; it is not that button, as its text has to take the caret.  -->
+    <!--  Drawn as the sent message's DetailsBlock. Only the chevron is its header button,
+          as the header's text has to take the caret.  -->
     <Style TargetType="local:RichDetailsPresenter">
         <Setter Property="IsTabStop"
                 Value="False" />
@@ -621,49 +621,30 @@
                                     <VisualState.Setters>
                                         <Setter Target="Children.Visibility"
                                                 Value="Collapsed" />
-                                        <Setter Target="Chevron.Text"
-                                                Value="&#xE0E5;" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid Background="{ThemeResource SettingsItemBackground}"
-                              MinHeight="48"
-                              Margin="-12,0,-12,0">
+                        <Grid Padding="0,6,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="Toggle"
-                                    Width="24"
-                                    Height="24"
-                                    Padding="0"
-                                    Margin="16,0,18,0"
-                                    MinWidth="0"
-                                    MinHeight="0"
-                                    VerticalAlignment="Center"
-                                    IsTabStop="False"
-                                    AllowFocusOnInteraction="False"
-                                    Background="Transparent"
-                                    BorderThickness="0">
-                                <TextBlock x:Name="Chevron"
-                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                           FontSize="25"
-                                           Text="&#xE0E4;"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Button>
+                            <controls:DetailsBlockHeader x:Name="Toggle"
+                                                         Padding="0"
+                                                         IsTabStop="False"
+                                                         AllowFocusOnInteraction="False"
+                                                         HorizontalAlignment="Left"
+                                                         VerticalAlignment="Center" />
                             <local:RichLeafView x:Name="Header"
-                                                Margin="0,11,12,12"
                                                 VerticalAlignment="Center"
                                                 Grid.Column="1" />
                         </Grid>
                         <StackPanel x:Name="Children"
-                                    Padding="0,12,0,12" />
+                                    Padding="0,4,0,8" />
                         <!--  Where the block ends: what follows it is no longer inside.  -->
-                        <Rectangle Fill="{ThemeResource SettingsItemBorderBrush}"
-                                   Height="1"
-                                   Margin="-12,0,-12,0" />
+                        <Rectangle Fill="{ThemeResource MessageHeaderBackgroundBrush}"
+                                   Height="1" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
