@@ -920,11 +920,10 @@ namespace Telegram.Common
 
             return new DetailsBlock
             {
-                inner.Visibility = inner.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                header.Glyph = inner.Visibility == Visibility.Visible ? Icons.ChevronUp : Icons.ChevronDown;
+                Header = ProcessText(clientService, details, false, false),
+                IsOpen = details.IsOpen,
+                Content = inner
             };
-
-            return panel;
         }
 
         #endregion
@@ -1508,6 +1507,7 @@ namespace Telegram.Common
             var message = CreateMessage(clientService, block.Document.DocumentValue.Id, new MessageDocument(block.Document, string.Empty.AsFormattedText()));
             var content = new DocumentContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Left;
+            content.Padding = new Thickness();
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
 
@@ -1805,6 +1805,7 @@ namespace Telegram.Common
         {
             var message = CreateMessage(clientService, block.Audio.AudioValue.Id, new MessageAudio(block.Audio, string.Empty.AsFormattedText()));
             var content = new AudioContent(message);
+            content.Padding = new Thickness();
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1829,6 +1830,7 @@ namespace Telegram.Common
         {
             var message = CreateMessage(clientService, block.VoiceNote.Voice.Id, new MessageVoiceNote(block.VoiceNote, string.Empty.AsFormattedText(), true));
             var content = new VoiceNoteContent(message);
+            content.Padding = new Thickness();
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
