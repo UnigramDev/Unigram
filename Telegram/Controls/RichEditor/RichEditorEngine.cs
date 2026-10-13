@@ -212,6 +212,7 @@ namespace Telegram.Controls.RichEditor
         {
             anchor = Clamp(anchor);
             focus = Clamp(focus);
+            CoverTables(ref anchor, ref focus);
 
             if (_node == null && anchor.Equals(_anchor) && focus.Equals(_focus))
             {
@@ -239,7 +240,7 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            Select(_anchor, focus);
+            Select(_anchor, ReleaseTable(focus));
         }
 
         public void SelectNode(RichBlock block)

@@ -74,6 +74,7 @@ namespace Telegram.Controls.RichEditor
         // The same for cells selected whole.
         private readonly List<RichTableCellPresenter> _selectedCellViews = new();
         private readonly List<RichTableCell> _selectedCells = new();
+        private readonly List<RichTableBlock> _coveredTables = new();
 
         private RichTextLeaf _placeholderLeaf;
 
@@ -866,10 +867,23 @@ namespace Telegram.Controls.RichEditor
 
             foreach (var cell in _selectedCells)
             {
-                if (_cellPresenters.TryGetValue(cell, out RichTableCellPresenter presenter))
+                SelectCell(cell);
+            }
+
+            // A table the selection runs past is taken whole, and is drawn as its cells.
+            _engine.GetCoveredTables(_coveredTables);
+
+            if (_selectedCells.Count == 0)
+            {
+                foreach (var table in _coveredTables)
                 {
-                    presenter.SetSelected(true);
-                    _selectedCellViews.Add(presenter);
+                    foreach (var row in table.Rows)
+                    {
+                        foreach (var cell in row)
+                        {
+                            SelectCell(cell);
+                        }
+                    }
                 }
             }
 
@@ -881,6 +895,11 @@ namespace Telegram.Controls.RichEditor
 
                 for (int i = start.Leaf.Index; i <= end.Leaf.Index; i++)
                 {
+                    if (leaves[i].Role == RichLeafRole.Cell && leaves[i].Owner is RichTableBlock owner && _coveredTables.Contains(owner))
+                    {
+                        continue;
+                    }
+
                     if (_leafViews.TryGetValue(leaves[i], out RichLeafView view))
                     {
                         var from = i == start.Leaf.Index ? start.Offset : 0;
@@ -894,6 +913,15 @@ namespace Telegram.Controls.RichEditor
 
             UpdateCaret();
             UpdateGrippers();
+        }
+
+        private void SelectCell(RichTableCell cell)
+        {
+            if (_cellPresenters.TryGetValue(cell, out RichTableCellPresenter presenter))
+            {
+                presenter.SetSelected(true);
+                _selectedCellViews.Add(presenter);
+            }
         }
 
         /// <summary>

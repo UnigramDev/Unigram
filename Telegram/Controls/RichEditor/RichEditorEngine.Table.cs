@@ -384,6 +384,93 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
+        /// <summary>
+        /// The tables a selection running past them takes whole: drawn as selected cells, not as
+        /// text. A selection inside one table is that table's own, unless it is all of it.
+        /// </summary>
+        public void GetCoveredTables(List<RichTableBlock> tables)
+        {
+            tables.Clear();
+
+            if (_node != null || IsSelectionEmpty)
+            {
+                return;
+            }
+
+            var start = Start;
+            var end = End;
+
+            foreach (var block in _document.AllBlocks)
+            {
+                if (block is RichTableBlock table && table.FirstStop <= table.LastStop && Covers(table, start, end))
+                {
+                    tables.Add(table);
+                }
+            }
+        }
+
+        // From its first character to its last: the caption's start, the last cell's end.
+        private static bool Covers(RichTableBlock table, RichPosition start, RichPosition end)
+        {
+            var startStop = start.Leaf.StopIndex;
+            var endStop = end.Leaf.StopIndex;
+
+            var fromStart = table.FirstStop > startStop || (table.FirstStop == startStop && start.Offset == 0);
+            var toEnd = table.LastStop < endStop || (table.LastStop == endStop && end.Offset == end.Leaf.Length);
+
+            return fromStart && toEnd;
+        }
+
+        private static RichTableBlock TableOf(RichPosition position) => position.Leaf?.Owner as RichTableBlock;
+
+        private RichPosition TableStart(RichTableBlock table) => new(_document.Stops[table.FirstStop].Leaf, 0);
+
+        private RichPosition TableEnd(RichTableBlock table)
+        {
+            var leaf = _document.Stops[table.LastStop].Leaf;
+            return new RichPosition(leaf, leaf.Length);
+        }
+
+        /// <summary>
+        /// A selection with one end in a table and the other outside it takes the table whole,
+        /// as word processors do: cells join nothing around them, so half a table is nothing a
+        /// delete or a copy can act on. The end inside goes to the table's far edge.
+        /// </summary>
+        private void CoverTables(ref RichPosition anchor, ref RichPosition focus)
+        {
+            if (TableOf(focus) is RichTableBlock focusTable && !ReferenceEquals(focusTable, TableOf(anchor)))
+            {
+                focus = RichPosition.Compare(anchor, focus) < 0 ? TableEnd(focusTable) : TableStart(focusTable);
+            }
+
+            if (TableOf(anchor) is RichTableBlock anchorTable && !ReferenceEquals(anchorTable, TableOf(focus)))
+            {
+                anchor = RichPosition.Compare(anchor, focus) < 0 ? TableStart(anchorTable) : TableEnd(anchorTable);
+            }
+        }
+
+        /// <summary>
+        /// Extending back into a table the selection had taken: the table is let go of, or a key
+        /// that narrows the selection would be put back at the table's far edge every time.
+        /// </summary>
+        private RichPosition ReleaseTable(RichPosition focus)
+        {
+            if (TableOf(focus) is not RichTableBlock table || ReferenceEquals(table, TableOf(_anchor)))
+            {
+                return focus;
+            }
+
+            var forward = RichPosition.Compare(_anchor, focus) < 0;
+            var narrowing = forward ? RichPosition.Compare(focus, _focus) < 0 : RichPosition.Compare(focus, _focus) > 0;
+
+            if (!narrowing)
+            {
+                return focus;
+            }
+
+            return (forward ? PositionBefore(table) : PositionAfter(table)) ?? _anchor;
+        }
+
         public RichTableStatus GetTableStatus()
         {
             if (!GetTableSelection(out RichTableBlock table, out RichTableGrid grid, out int top, out int left, out int bottom, out int right))

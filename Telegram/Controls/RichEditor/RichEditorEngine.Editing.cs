@@ -642,18 +642,7 @@ namespace Telegram.Controls.RichEditor
 
         private void AddWholeTable(RichBlock owner, RichPosition start, RichPosition end, List<RichBlock> removals)
         {
-            if (owner is not RichTableBlock table || removals.Contains(table) || IsInside(table, removals))
-            {
-                return;
-            }
-
-            var startStop = start.Leaf.StopIndex;
-            var endStop = end.Leaf.StopIndex;
-
-            var fromStart = table.FirstStop > startStop || (table.FirstStop == startStop && start.Offset == 0);
-            var toEnd = table.LastStop < endStop || (table.LastStop == endStop && end.Offset == end.Leaf.Length);
-
-            if (fromStart && toEnd)
+            if (owner is RichTableBlock table && !removals.Contains(table) && !IsInside(table, removals) && Covers(table, start, end))
             {
                 removals.Add(table);
             }
