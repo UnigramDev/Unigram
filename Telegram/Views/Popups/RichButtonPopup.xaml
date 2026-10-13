@@ -53,18 +53,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <Style x:Key="ButtonColorPreviewStyle"
-               TargetType="controls:ReplyMarkupInlineButton">
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
-            <Setter Property="CornerRadius"
-                    Value="16" />
-            <Setter Property="IsHitTestVisible"
-                    Value="False" />
-            <Setter Property="IsTabStop"
-                    Value="False" />
-        </Style>
     </controls:ModalPopup.Resources>
 
     <StackPanel>
@@ -98,7 +86,10 @@
                          AutomationProperties.Name="{CustomResource RichEditorButtonDefault}">
                 <controls:ReplyMarkupInlineButton x:Name="DefaultPreview"
                                                   Content="{CustomResource RichEditorButtonDefault}"
-                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+                                                  HorizontalAlignment="Stretch"
+                                                  CornerRadius="16"
+                                                  IsTabStop="False"
+                                                  IsHitTestVisible="False"  />
             </RadioButton>
             <RadioButton x:Name="PrimaryColor"
                          GroupName="RichButtonColor"
@@ -107,7 +98,10 @@
                          Grid.Column="1">
                 <controls:ReplyMarkupInlineButton x:Name="PrimaryPreview"
                                                   Content="{CustomResource RichEditorButtonActive}"
-                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+                                                  HorizontalAlignment="Stretch"
+                                                  CornerRadius="16"
+                                                  IsTabStop="False"
+                                                  IsHitTestVisible="False"  />
             </RadioButton>
             <RadioButton x:Name="SuccessColor"
                          GroupName="RichButtonColor"
@@ -116,7 +110,10 @@
                          Grid.Column="2">
                 <controls:ReplyMarkupInlineButton x:Name="SuccessPreview"
                                                   Content="{CustomResource RichEditorButtonAccept}"
-                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+                                                  HorizontalAlignment="Stretch"
+                                                  CornerRadius="16"
+                                                  IsTabStop="False"
+                                                  IsHitTestVisible="False"  />
             </RadioButton>
             <RadioButton x:Name="DangerColor"
                          GroupName="RichButtonColor"
@@ -125,7 +122,10 @@
                          Grid.Column="3">
                 <controls:ReplyMarkupInlineButton x:Name="DangerPreview"
                                                   Content="{CustomResource RichEditorButtonDecline}"
-                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+                                                  HorizontalAlignment="Stretch"
+                                                  CornerRadius="16"
+                                                  IsTabStop="False"
+                                                  IsHitTestVisible="False" />
             </RadioButton>
         </Grid>
 
@@ -165,9 +165,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="UserPhoto"
-                                         IsHitTestVisible="False"
-                                         Width="36"
-                                         Height="36" />
+                                         Size="36" />
                 <TextBlock x:Name="UserName"
                            Style="{StaticResource BodyTextBlockStyle}"
                            VerticalAlignment="Center"

@@ -138,7 +138,7 @@ namespace Telegram.Views.Popups
 
         private void UpdateType()
         {
-            if (TextField == null)
+            if (ProfileType == null)
             {
                 return;
             }
