@@ -280,6 +280,12 @@ namespace Telegram.Controls
         // moves, and this is what says whether it did.
         private Color _linkColor;
 
+        /// <summary>
+        /// Raised when the link colour changed: the brush replaced, by a style applied late or a
+        /// theme, or its colour changed in place. For a caller colouring link ranges of its own.
+        /// </summary>
+        public event EventHandler HyperlinkColorChanged;
+
         private void UpdateLinkColor()
         {
             var color = HyperlinkColor;
@@ -290,6 +296,7 @@ namespace Telegram.Controls
             }
 
             _linkColor = color;
+            HyperlinkColorChanged?.Invoke(this, EventArgs.Empty);
 
             if (_links == null || _links.Count == 0)
             {

@@ -138,6 +138,7 @@ namespace Telegram.Controls.RichEditor
             if (Text != null)
             {
                 Text.TextEntityClick -= OnTextEntityClick;
+                Text.HyperlinkColorChanged -= OnHyperlinkColorChanged;
             }
 
             Text = GetTemplateChild(nameof(Text)) as DirectTextBlock;
@@ -146,6 +147,7 @@ namespace Telegram.Controls.RichEditor
             if (Text != null)
             {
                 Text.TextEntityClick += OnTextEntityClick;
+                Text.HyperlinkColorChanged += OnHyperlinkColorChanged;
                 Text.MaxLines = _maxLines;
             }
 
@@ -428,6 +430,16 @@ namespace Telegram.Controls.RichEditor
                 }
 
                 position += runs[i].Length;
+            }
+        }
+
+        // The block's style can reach it after the text was first drawn, and a theme changes the
+        // colour later: the links are coloured again from it either way.
+        private void OnHyperlinkColorChanged(object sender, EventArgs e)
+        {
+            if (_leaf != null && !_leaf.IsPlain && Text != null)
+            {
+                ApplyLinkColors();
             }
         }
 
