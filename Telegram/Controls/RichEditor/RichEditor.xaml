@@ -1,0 +1,1017 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.RichEditor">
+
+    <!--  The selection, drawn under the glyphs: a tint of the accent the text stays readable on.
+          TODO: a brush of the theme's own, with the rest of the editor's theming.  -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="RichEditorSelectionBrush"
+                             Color="{ThemeResource SystemAccentColorLight2}" />
+            <SolidColorBrush x:Key="RichEditorSpoilerBrush"
+                             Color="#26000000" />
+            <SolidColorBrush x:Key="RichEditorMarkedBrush"
+                             Color="#FFFFEC99" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="RichEditorSelectionBrush"
+                             Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="RichEditorSpoilerBrush"
+                             Color="#33FFFFFF" />
+            <SolidColorBrush x:Key="RichEditorMarkedBrush"
+                             Color="#FF5C4D00" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="RichEditorSelectionBrush"
+                             Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="RichEditorSpoilerBrush"
+                             Color="{ThemeResource SystemColorGrayTextColor}" />
+            <SolidColorBrush x:Key="RichEditorMarkedBrush"
+                             Color="{ThemeResource SystemColorHighlightColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!--  Every editable text in the editor. The kinds of text differ only in how they look,
+          which is a visual state each, so the code says which one and never picks a brush.  -->
+    <Style TargetType="local:RichLeafView">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <!--  Read through the editor's text pattern: an element of its own would be read twice.  -->
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichLeafView">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="AppearanceStates">
+                                <VisualState x:Name="Paragraph" />
+                                <VisualState x:Name="Heading1">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="24" />
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="24" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Heading2">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="22" />
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="22" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Heading3">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="20" />
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="20" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Heading4">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="18" />
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="18" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Heading5">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="16" />
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="16" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Heading6">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="14" />
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="14" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithSerif}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Preformatted">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithMonospace}" />
+                                        <Setter Target="Placeholder.FontFamily"
+                                                Value="{ThemeResource EmojiThemeFontFamilyWithMonospace}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Footer">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontSize"
+                                                Value="12" />
+                                        <Setter Target="Text.Foreground"
+                                                Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                        <Setter Target="Text.IconForeground"
+                                                Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                        <Setter Target="Placeholder.FontSize"
+                                                Value="12" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <!--  Captions, and a cell's text, are body text in the sent message.  -->
+                                <VisualState x:Name="Caption" />
+                                <VisualState x:Name="QuoteCredit">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.Foreground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                        <Setter Target="Text.IconForeground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PullQuote">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.TextAlignment"
+                                                Value="Center" />
+                                        <Setter Target="Text.FontStyle"
+                                                Value="Italic" />
+                                        <Setter Target="Placeholder.TextAlignment"
+                                                Value="Center" />
+                                        <Setter Target="Placeholder.FontStyle"
+                                                Value="Italic" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PullQuoteCredit">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Placeholder.FontWeight"
+                                                Value="SemiBold" />
+                                        <Setter Target="Text.TextAlignment"
+                                                Value="Center" />
+                                        <Setter Target="Text.Foreground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                        <Setter Target="Text.IconForeground"
+                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                        <Setter Target="Placeholder.TextAlignment"
+                                                Value="Center" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="DetailsHeader" />
+                                <VisualState x:Name="HeaderCell" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <TextBlock x:Name="Placeholder"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   TextWrapping="Wrap"
+                                   IsHitTestVisible="False"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Visibility="Collapsed" />
+
+                        <controls:DirectTextBlock x:Name="Text"
+                                                  AutomationProperties.AccessibilityView="Raw"
+                                                  SelectionHighlightColor="{ThemeResource RichEditorSelectionBrush}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  The editor: the blocks, and the layers over them for what is not text - the caret,
+          the outline of a selected block, the touch selection handles.  -->
+    <Style TargetType="local:RichEditorView">
+        <Setter Property="IsTabStop"
+                Value="True" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="False" />
+        <!--  Blocks other than media are inset 10 more by their spacing, as in the message.  -->
+        <Setter Property="Padding"
+                Value="14,16,14,64" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichEditorView">
+                    <ScrollViewer x:Name="ScrollViewer"
+                                  HorizontalScrollMode="Disabled"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollMode="Auto"
+                                  VerticalScrollBarVisibility="Auto"
+                                  IsTabStop="False">
+                        <!--  The padding is a margin on the surface, not padding on the root:
+                              the layers have to share one origin with the blocks, and a Grid's
+                              padding offsets its children but not its own coordinates.  -->
+                        <local:RichEditorColumn x:Name="Root"
+                                                Background="Transparent"
+                                                MaxWidth="{TemplateBinding MaxContentWidth}">
+                            <Grid x:Name="Surface"
+                                  Margin="{TemplateBinding Padding}">
+                                <!--  Under the text: what the layout cannot draw itself, a
+                                      spoiler's tint and a highlight. The swatches only carry the
+                                      brushes the code paints those with.  -->
+                                <Canvas x:Name="Decorations"
+                                        IsHitTestVisible="False">
+                                    <Rectangle x:Name="SpoilerSwatch"
+                                               Fill="{ThemeResource RichEditorSpoilerBrush}"
+                                               Visibility="Collapsed" />
+                                    <Rectangle x:Name="MarkedSwatch"
+                                               Fill="{ThemeResource RichEditorMarkedBrush}"
+                                               Visibility="Collapsed" />
+                                </Canvas>
+
+                                <StackPanel x:Name="Blocks" />
+
+                                <Canvas x:Name="Overlay"
+                                        IsHitTestVisible="False">
+                                    <Border x:Name="NodeOutline"
+                                            BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                            BorderThickness="2"
+                                            CornerRadius="6"
+                                            Visibility="Collapsed" />
+                                    <Rectangle x:Name="Caret"
+                                               Width="1.5"
+                                               Fill="{ThemeResource TextFillColorPrimaryBrush}"
+                                               Visibility="Collapsed" />
+                                </Canvas>
+
+                                <Canvas x:Name="Grippers">
+                                    <local:RichSelectionGripper x:Name="StartGripper"
+                                                                Visibility="Collapsed" />
+                                    <local:RichSelectionGripper x:Name="EndGripper"
+                                                                Visibility="Collapsed" />
+                                </Canvas>
+                            </Grid>
+                        </local:RichEditorColumn>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichSelectionGripper">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Width"
+                Value="40" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="ManipulationMode"
+                Value="TranslateX,TranslateY" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichSelectionGripper">
+                    <Grid Background="Transparent">
+                        <Ellipse Width="16"
+                                 Height="16"
+                                 Margin="0,2,0,0"
+                                 VerticalAlignment="Top"
+                                 Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                                 Stroke="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                 StrokeThickness="2" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  The block templates follow PageBlockRenderer's, so a block is written looking as it
+          will be read. What only the editor has - a language picker on every code block, the
+          details toggle - keeps to the same chrome. Spacing between blocks is set by the view,
+          by the renderer's rule.  -->
+    <Style TargetType="local:RichTextBlockPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichTextBlockPresenter">
+                    <!--  As BlockQuote: the outer border clips, so the bar drawn inside stays
+                          straight. Rounded only as code, or plain text would be clipped too.  -->
+                    <Border x:Name="Clip">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="KindStates">
+                                <VisualState x:Name="Text" />
+                                <VisualState x:Name="Code">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background"
+                                                Value="{ThemeResource MessageHeaderBackgroundBrush}" />
+                                        <Setter Target="Chrome.BorderBrush"
+                                                Value="{ThemeResource MessageHeaderBorderBrush}" />
+                                        <Setter Target="Chrome.BorderThickness"
+                                                Value="3,0,0,0" />
+                                        <Setter Target="Clip.CornerRadius"
+                                                Value="4" />
+                                        <Setter Target="Leaf.Margin"
+                                                Value="8,4,24,6" />
+                                        <Setter Target="LanguageButton.Visibility"
+                                                Value="Visible" />
+                                        <Setter Target="Glyph.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="Chrome">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <HyperlinkButton x:Name="LanguageButton"
+                                             Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                             FontSize="12"
+                                             FontWeight="SemiBold"
+                                             Padding="0"
+                                             Margin="8,2,0,0"
+                                             IsTabStop="False"
+                                             AllowFocusOnInteraction="False"
+                                             Visibility="Collapsed" />
+                            <TextBlock x:Name="Glyph"
+                                       Text="&#xEA5A;"
+                                       Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16"
+                                       Margin="4"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Top"
+                                       IsHitTestVisible="False"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       Visibility="Collapsed"
+                                       Grid.RowSpan="2" />
+                            <local:RichLeafView x:Name="Leaf"
+                                                Grid.Row="1" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichBlockQuotePresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichBlockQuotePresenter">
+                    <Border CornerRadius="4">
+                        <Grid Background="{ThemeResource MessageHeaderBackgroundBrush}"
+                              BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
+                              BorderThickness="3,0,0,0">
+                            <StackPanel Padding="8,4,24,6">
+                                <StackPanel x:Name="Children" />
+                                <local:RichLeafView x:Name="Credit" />
+                            </StackPanel>
+                            <TextBlock Text="&#xEA01;"
+                                       Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16"
+                                       Margin="4"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Top"
+                                       IsHitTestVisible="False"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  A pull quote is centred between its quote marks on a faint tint; an expandable one is a
+          block quote, shown whole while it is written.  -->
+    <Style TargetType="local:RichTextQuotePresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichTextQuotePresenter">
+                    <Grid x:Name="Chrome"
+                          HorizontalAlignment="Center">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="KindStates">
+                                <VisualState x:Name="Pull" />
+                                <VisualState x:Name="Expandable">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.HorizontalAlignment"
+                                                Value="Stretch" />
+                                        <Setter Target="PullBackground.Visibility"
+                                                Value="Collapsed" />
+                                        <Setter Target="QuoteBackground.Visibility"
+                                                Value="Visible" />
+                                        <Setter Target="OpenGlyph.Visibility"
+                                                Value="Collapsed" />
+                                        <Setter Target="Text.Margin"
+                                                Value="8,4,24,0" />
+                                        <Setter Target="Text.(Grid.Column)"
+                                                Value="0" />
+                                        <Setter Target="Text.(Grid.ColumnSpan)"
+                                                Value="3" />
+                                        <Setter Target="Credit.Margin"
+                                                Value="8,0,24,6" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="PullBackground"
+                                Background="{ThemeResource MessageHeaderBorderBrush}"
+                                Opacity="0.1"
+                                CornerRadius="8"
+                                Grid.ColumnSpan="3"
+                                Grid.RowSpan="2" />
+                        <Border x:Name="QuoteBackground"
+                                Background="{ThemeResource MessageHeaderBackgroundBrush}"
+                                BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
+                                BorderThickness="3,0,0,0"
+                                CornerRadius="4"
+                                Visibility="Collapsed"
+                                Grid.ColumnSpan="3"
+                                Grid.RowSpan="2" />
+                        <TextBlock x:Name="OpenGlyph"
+                                   Text="&#xEB19;"
+                                   Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Margin="4"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Bottom"
+                                   IsHitTestVisible="False"
+                                   AutomationProperties.AccessibilityView="Raw" />
+                        <TextBlock Text="&#xEA01;"
+                                   Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Margin="4"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   IsHitTestVisible="False"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Grid.Column="2" />
+                        <local:RichLeafView x:Name="Text"
+                                            Margin="4,6,4,8"
+                                            Grid.Column="1" />
+                        <local:RichLeafView x:Name="Credit"
+                                            Margin="8,-4,8,8"
+                                            Grid.ColumnSpan="3"
+                                            Grid.Row="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichListPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichListPresenter">
+                    <StackPanel x:Name="Items"
+                                Spacing="4" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichListItemPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichListItemPresenter">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="MarkerStates">
+                                <VisualState x:Name="Bullet" />
+                                <VisualState x:Name="Ordered" />
+                                <VisualState x:Name="Unchecked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Marker.Visibility"
+                                                Value="Collapsed" />
+                                        <Setter Target="CheckBox.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Marker.Visibility"
+                                                Value="Collapsed" />
+                                        <Setter Target="CheckBox.Visibility"
+                                                Value="Visible" />
+                                        <Setter Target="CheckBox.IsChecked"
+                                                Value="True" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"
+                                              MinWidth="24" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Marker"
+                                   Foreground="{ThemeResource MessageForegroundBrush}"
+                                   TextAlignment="Right"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Top" />
+                        <CheckBox x:Name="CheckBox"
+                                  MinWidth="0"
+                                  MinHeight="0"
+                                  Padding="0"
+                                  Margin="0,-6,4,4"
+                                  VerticalAlignment="Top"
+                                  IsTabStop="False"
+                                  AllowFocusOnInteraction="False"
+                                  Visibility="Collapsed" />
+                        <StackPanel x:Name="Children"
+                                    Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  The header is drawn as the SettingsButton the sent message uses, its chevron in the
+          glyph slot; it is not that button, as its text has to take the caret.  -->
+    <Style TargetType="local:RichDetailsPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichDetailsPresenter">
+                    <StackPanel>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="OpenStates">
+                                <VisualState x:Name="Open" />
+                                <VisualState x:Name="Closed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Children.Visibility"
+                                                Value="Collapsed" />
+                                        <Setter Target="Chevron.Text"
+                                                Value="&#xE0E5;" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid Background="{ThemeResource SettingsItemBackground}"
+                              MinHeight="48"
+                              Margin="-12,0,-12,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="Toggle"
+                                    Width="24"
+                                    Height="24"
+                                    Padding="0"
+                                    Margin="16,0,18,0"
+                                    MinWidth="0"
+                                    MinHeight="0"
+                                    VerticalAlignment="Center"
+                                    IsTabStop="False"
+                                    AllowFocusOnInteraction="False"
+                                    Background="Transparent"
+                                    BorderThickness="0">
+                                <TextBlock x:Name="Chevron"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="25"
+                                           Text="&#xE0E4;"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Button>
+                            <local:RichLeafView x:Name="Header"
+                                                Margin="0,11,12,12"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="1" />
+                        </Grid>
+                        <StackPanel x:Name="Children"
+                                    Padding="0,12,0,12" />
+                        <!--  Where the block ends: what follows it is no longer inside.  -->
+                        <Rectangle Fill="{ThemeResource SettingsItemBorderBrush}"
+                                   Height="1"
+                                   Margin="-12,0,-12,0" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  The caption above, as the sent message has it. Each cell draws its own edges and
+          corners, which depend on where it is.  -->
+    <Style TargetType="local:RichTablePresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichTablePresenter">
+                    <StackPanel>
+                        <local:RichLeafView x:Name="Caption" />
+                        <ScrollViewer HorizontalScrollMode="Auto"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollMode="Disabled"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      IsTabStop="False">
+                            <Grid x:Name="Cells"
+                                  HorizontalAlignment="Left" />
+                        </ScrollViewer>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichTableCellPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AutomationProperties.AccessibilityView"
+                Value="Raw" />
+        <!--  Wider than the sent table's narrowest column: an empty cell still has to be hit.  -->
+        <Setter Property="MinWidth"
+                Value="96" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichTableCellPresenter">
+                    <Border x:Name="Chrome"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CellStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Header">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background"
+                                                Value="{ThemeResource ControlAltFillColorSecondaryBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Target="SelectionFill.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <!--  Its own layer rather than the cell's background, which a header uses.  -->
+                        <Grid>
+                            <Border x:Name="SelectionFill"
+                                    Background="{ThemeResource RichEditorSelectionBrush}"
+                                    Visibility="Collapsed" />
+                            <local:RichLeafView x:Name="Leaf"
+                                                Margin="8,4,8,4" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Blocks that are selected whole. One control, a state per kind: there is little to
+          each, and what there is differs only in what is shown.  -->
+    <Style TargetType="local:RichAtomPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichAtomPresenter">
+                    <Grid Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="KindStates">
+                                <VisualState x:Name="Divider">
+                                    <VisualState.Setters>
+                                        <Setter Target="DividerLine.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Anchor">
+                                    <VisualState.Setters>
+                                        <Setter Target="AnchorChip.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Math">
+                                    <VisualState.Setters>
+                                        <Setter Target="MathImage.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="ButtonRow">
+                                    <VisualState.Setters>
+                                        <Setter Target="Buttons.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Rectangle x:Name="DividerLine"
+                                   Fill="{ThemeResource SettingsItemBorderBrush}"
+                                   Height="1"
+                                   Visibility="Collapsed" />
+
+                        <Border x:Name="AnchorChip"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                CornerRadius="10"
+                                Padding="8,2,10,2"
+                                HorizontalAlignment="Left"
+                                Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="#"
+                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                           Margin="0,0,4,0" />
+                                <TextBlock x:Name="AnchorName"
+                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}" />
+                            </StackPanel>
+                        </Border>
+
+                        <controls:RichMathImage x:Name="MathImage"
+                                                HorizontalAlignment="Center"
+                                                Visibility="Collapsed" />
+
+                        <Grid x:Name="Buttons"
+                              ColumnSpacing="4"
+                              Visibility="Collapsed" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichMediaControlButton">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="AllowFocusOnInteraction"
+                Value="False" />
+        <Setter Property="Width"
+                Value="27" />
+        <Setter Property="Height"
+                Value="27" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichMediaControlButton">
+                    <Grid x:Name="Root"
+                          Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                          CornerRadius="14">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Opacity"
+                                                Value="0.85" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Opacity"
+                                                Value="0.7" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                          FontSize="16"
+                                          Foreground="White"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          AutomationProperties.AccessibilityView="Raw" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:RichMediaPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RichMediaPresenter">
+                    <StackPanel>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="SpoilerStates">
+                                <VisualState x:Name="NoSpoiler" />
+                                <VisualState x:Name="Spoiler">
+                                    <VisualState.Setters>
+                                        <Setter Target="SpoilerOverlay.Visibility"
+                                                Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <local:RichMediaFrame x:Name="Media"
+                                              HorizontalAlignment="Center">
+                            <!--  What is under a picture still loading; a file has none.  -->
+                            <Border x:Name="Backdrop"
+                                    Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" />
+                            <controls:ImageView x:Name="Thumbnail"
+                                                Stretch="UniformToFill" />
+                            <local:RichCollagePanel x:Name="Tiles" />
+                            <!--  Covered while editing, as the sent message is, but only dimmed:
+                                  the author still has to see what is under it.  -->
+                            <Border x:Name="SpoilerOverlay"
+                                    Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                    Visibility="Collapsed">
+                                <TextBlock Text="&#xEAA1;"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="32"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <!--  At the bottom: the top corners carry the controls.  -->
+                            <Border x:Name="Badge"
+                                    Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                    CornerRadius="4"
+                                    Padding="6,2,6,2"
+                                    Margin="8"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom">
+                                <TextBlock x:Name="BadgeText"
+                                           Foreground="White"
+                                           FontSize="12" />
+                            </Border>
+
+                            <!--  Audio, voice notes and files: a row, as DocumentContent draws one.  -->
+                            <Grid x:Name="FileRow"
+                                  MinWidth="220"
+                                  Visibility="Collapsed">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="{ThemeResource MessageMediaBackgroundBrush}"
+                                        Width="48"
+                                        Height="48"
+                                        CornerRadius="24">
+                                    <TextBlock x:Name="FileIcon"
+                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               FontSize="24"
+                                               Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Grid.Column="1">
+                                    <TextBlock x:Name="FileTitle"
+                                               Foreground="{ThemeResource MessageForegroundBrush}"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               Style="{StaticResource BaseTextBlockStyle}" />
+                                    <TextBlock x:Name="FileSubtitle"
+                                               Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               Typography.NumeralAlignment="Tabular"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Button x:Name="PreviousButton"
+                                    Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                    Foreground="White"
+                                    Width="32"
+                                    Height="32"
+                                    Padding="0"
+                                    Margin="8,0,0,0"
+                                    CornerRadius="16"
+                                    BorderThickness="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsTabStop="False"
+                                    AllowFocusOnInteraction="False"
+                                    AutomationProperties.Name="{CustomResource AccDescrPrevious}"
+                                    Visibility="Collapsed">
+                                <FontIcon Glyph="&#xE76B;"
+                                          FontFamily="Segoe MDL2 Assets"
+                                          FontSize="12" />
+                            </Button>
+                            <Button x:Name="NextButton"
+                                    Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                    Foreground="White"
+                                    Width="32"
+                                    Height="32"
+                                    Padding="0"
+                                    Margin="0,0,8,0"
+                                    CornerRadius="16"
+                                    BorderThickness="0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    IsTabStop="False"
+                                    AllowFocusOnInteraction="False"
+                                    AutomationProperties.Name="{CustomResource Next}"
+                                    Visibility="Collapsed">
+                                <FontIcon Glyph="&#xE76C;"
+                                          FontFamily="Segoe MDL2 Assets"
+                                          FontSize="12" />
+                            </Button>
+
+                            <!--  As TDesktop's editor has them: the menu top left (one per tile
+                                  in a collage, placed by the renderer), more media and the
+                                  layout switch top right.  -->
+                            <local:RichCollagePanel x:Name="TileControls"
+                                                    IsCorners="True"
+                                                    CornerInset="6"
+                                                    CornerMinimum="64" />
+                            <local:RichMediaControlButton x:Name="MoreButton"
+                                                          Content="&#xE712;"
+                                                          Margin="6"
+                                                          HorizontalAlignment="Left"
+                                                          VerticalAlignment="Top"
+                                                          AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                                                          Visibility="Collapsed" />
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="6"
+                                        Margin="6"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top">
+                                <local:RichMediaControlButton x:Name="LayoutButton"
+                                                              Visibility="Collapsed" />
+                                <local:RichMediaControlButton x:Name="AddButton"
+                                                              Content="&#xE710;"
+                                                              AutomationProperties.Name="{CustomResource Add}"
+                                                              Visibility="Collapsed" />
+                            </StackPanel>
+                        </local:RichMediaFrame>
+                        <local:RichLeafView x:Name="Caption"
+                                            Margin="0,8,0,0" />
+                        <local:RichLeafView x:Name="Credit" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

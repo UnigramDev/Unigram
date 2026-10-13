@@ -1317,6 +1317,16 @@
                                                   ToolTipService.ToolTip="{CustomResource AIEditor}"
                                                   Grid.Column="1"
                                                   Grid.Row="1" />
+                            <controls:GlyphButton x:Name="ButtonClear"
+                                                  Click="ButtonClear_Click"
+                                                  Glyph="&#xE74D;"
+                                                  VerticalAlignment="Top"
+                                                  Height="48"
+                                                  Visibility="Collapsed"
+                                                  AutomationProperties.Name="{CustomResource ArticleDeleteDraft}"
+                                                  ToolTipService.ToolTip="{CustomResource ArticleDeleteDraft}"
+                                                  Grid.Column="1"
+                                                  Grid.Row="1" />
 
                             <Grid x:Name="ButtonsRoot"
                                   Grid.Column="3"

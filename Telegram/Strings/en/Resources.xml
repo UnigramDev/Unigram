@@ -4673,6 +4673,28 @@
     <string name="AccDescrStickers">Stickers</string>
     <string name="AccDescrExpandPanel">Expand panel</string>
     <string name="AccDescrCollapsePanel">Collapse panel</string>
+    <string name="AccDescrCollage">Collage</string>
+    <string name="Subscript">Subscript</string>
+    <string name="Superscript">Superscript</string>
+    <string name="AccDescrChecked">Checked</string>
+    <string name="AccDescrNotChecked">Not Checked</string>
+    <string name="AccDescrIVTitle">Title</string>
+    <string name="AccDescrIVHeading">Heading</string>
+    <string name="AccDescrIVBlockquote">Quote</string>
+    <string name="AccDescrIVPullquote">Pull quote</string>
+    <string name="AccDescrIVFooter">Footer</string>
+    <string name="AccDescrIVCode">Code</string>
+    <string name="AccDescrIVDetails">Details</string>
+    <string name="AccDescrIVExpanded">expanded</string>
+    <string name="AccDescrIVCollapsed">collapsed</string>
+    <string name="AccDescrIVTable">Table</string>
+    <string name="AccDescrIVButtons">Buttons</string>
+    <string name="AccDescrIVFormula">Formula</string>
+    <string name="AccDescrIVSlideshow">Slideshow</string>
+    <string name="AccDescrIVAudio">Audio</string>
+    <string name="AccDescrIVTextStyle">Text style</string>
+    <string name="AccDescrIVListStyle">List style</string>
+    <string name="AccDescrIVInsertDate">Insert date</string>
 
     <string name="AccDescrRotate">Rotate</string>
 
@@ -13701,6 +13723,12 @@
     <string name="ArticleCommandAudio">Audio</string>
     <string name="ArticleCommandMap">Map</string>
     <string name="ArticleAlignment">Alignment</string>
+    <string name="ArticleAlignLeft">Left</string>
+    <string name="ArticleAlignCenter">Center</string>
+    <string name="ArticleAlignRight">Right</string>
+    <string name="ArticleAlignTop">Top</string>
+    <string name="ArticleAlignMiddle">Middle</string>
+    <string name="ArticleAlignBottom">Bottom</string>
     <string name="ArticleRemoveHighlight">Remove Highlight</string>
     <string name="ArticleHighlightCell">Highlight Cell</string>
     <string name="ArticleHighlightColumn">Highlight Column</string>
@@ -13714,6 +13742,38 @@
     <string name="ArticleDeleteColumn">Delete Column</string>
     <string name="ArticleDeleteRow">Delete Row</string>
     <string name="ArticleDeleteTable">Delete Table</string>
+    <string name="ArticleTableTitleHint">Add title</string>
+    <string name="ArticleTableBordered">Bordered</string>
+    <string name="ArticleTableStriped">Striped</string>
+    <string name="ArticleTableCompact">Compact</string>
+    <string name="ArticleLimitMedia">A message can hold up to {0} media.</string>
+    <string name="ArticleLimitLength">A message can hold up to {0} characters.</string>
+    <string name="ArticleLimitBlocks">A message can hold up to {0} blocks.</string>
+    <string name="ArticleLimitDepth">Blocks can be nested up to {0} levels deep.</string>
+    <string name="ArticleLimitTableColumns">A table can have up to {0} columns.</string>
+    <string name="RichEditorButtonText">Button Text</string>
+    <string name="RichEditorButtonURL">Button URL</string>
+    <string name="RichEditorButtonCopyText">Button Copy Text</string>
+    <string name="RichEditorButton">Button</string>
+    <string name="RichEditorAddButton">Add Button</string>
+    <string name="RichEditorEditButton">Edit Button</string>
+    <string name="RichEditorButtonSeparateLine">Separate Line Button</string>
+    <string name="RichEditorButtonDefault">Default</string>
+    <string name="RichEditorButtonActive">Active</string>
+    <string name="RichEditorButtonAccept">Accept</string>
+    <string name="RichEditorButtonDecline">Decline</string>
+    <string name="RichEditorButtonMention">Mention</string>
+    <string name="RichEditorChooseUser">Choose User</string>
+    <string name="RichEditorChangeList">Change List</string>
+    <string name="Highlight">Highlight</string>
+    <string name="RichEditorInsertFormula">Insert Formula</string>
+    <string name="RichEditorEditFormula">Edit Formula</string>
+    <string name="RichEditorFormulaSource">LaTeX</string>
+    <string name="RichEditorFormulaResult">Result</string>
+    <string name="RichEditorFormulaSeparateLine">Separate Line Formula</string>
+    <string name="StoriesCollage">Combine into Collage</string>
+    <string name="CommunityUngroupChatsButton">Ungroup</string>
+    <string name="ChatLink">Link</string>
     <string name="ArticleAICreate">Create With AI</string>
     <string name="ArticleAIPrompt">Write a prompt...</string>
     <string name="ArticleAIGenerate">Generate</string>
@@ -14204,5 +14264,9 @@
     <string name="GramEarningsHint">You can withdraw your Grams using Fragment.</string>
     <string name="GramEarningsText">Your Gram from gifts,\nads and Fragment</string>
     <string name="GramEarningsTitle">Gram Earnings</string>
+
+    <string name="ArticleDeleteDraft">Delete draft</string>
+    <string name="ArticleDeleteDraftMessage">You will lose what you’ve written.</string>
+    <string name="ArticleDeleteDraftTitle">Delete this draft?</string>
 
 </resources>

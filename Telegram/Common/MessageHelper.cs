@@ -171,6 +171,23 @@ namespace Telegram.Common
             }
 
             var dataPackage = new DataPackage();
+            await SetTextAsync(dataPackage, text);
+
+            ClipboardEx.TrySetContent(dataPackage);
+
+            if (xamlRoot != null)
+            {
+                ToastPopup.Show(xamlRoot, Strings.TextCopied, ToastPopupIcon.Copied);
+            }
+        }
+
+        /// <summary>
+        /// The text and its entities in <paramref name="dataPackage"/>, in the format
+        /// <see cref="PasteTextAsync"/> reads back: for a caller that puts more in the same
+        /// package before it goes on the clipboard.
+        /// </summary>
+        public static async Task SetTextAsync(DataPackage dataPackage, FormattedText text)
+        {
             dataPackage.SetText(text.Text);
 
             var entities = text.Entities.Where(x => x.IsEditable()).ToList();
@@ -271,13 +288,6 @@ namespace Telegram.Common
                     stream.Seek(0);
                     dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
                 }
-            }
-
-            ClipboardEx.TrySetContent(dataPackage);
-
-            if (xamlRoot != null)
-            {
-                ToastPopup.Show(xamlRoot, Strings.TextCopied, ToastPopupIcon.Copied);
             }
         }
 

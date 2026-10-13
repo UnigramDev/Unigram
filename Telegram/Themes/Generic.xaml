@@ -60,6 +60,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageFactCheck.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageSummary.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageSelector.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/RichEditor/RichEditor.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="DefaultTextBoxStyle"

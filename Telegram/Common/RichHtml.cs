@@ -15,7 +15,7 @@ namespace Telegram.Common
     /// <summary>
     /// Parses the clipboard HTML that Telegram Android writes
     /// (<c>org/telegram/ui/iv/RichHtml.java</c>) and that this app's own rich editor writes
-    /// (<c>Libraries/unigram-iv-editor/src/clipboard.js</c>) into page blocks — the inverse of
+    /// (<see cref="Telegram.Controls.RichEditor.RichClipboard.ToHtml"/>) into page blocks — the inverse of
     /// <see cref="PageBlockHelper.Flatten"/>'s world, and the way rich content pasted from
     /// another client keeps its structure instead of arriving as loose text.
     /// </summary>
@@ -33,8 +33,8 @@ namespace Telegram.Common
     public static class RichHtml
     {
         /// <summary>
-        /// The attribute the rich editor stamps on the first element of everything it
-        /// copies (<c>ORIGIN_ATTRIBUTE</c> in <c>clipboard.js</c>). Keep the two in sync.
+        /// The attribute the rich editor stamps on the wrapper of everything it copies
+        /// (<see cref="Telegram.Controls.RichEditor.RichClipboard.ToHtml"/>).
         /// </summary>
         public const string OriginAttribute = "data-telegram-rich";
 
@@ -738,7 +738,62 @@ namespace Telegram.Common
                 }
             }
 
-            return InlineChildren(node, preserveWhitespace);
+            var inner = InlineChildren(node, preserveWhitespace);
+            return inner == null ? null : StyleOf(node.Attribute("style"), inner);
+        }
+
+        /// <summary>
+        /// The styles a span carries in its style attribute rather than in a tag: what Word,
+        /// and most editors that copy as HTML, write bold and italic as.
+        /// </summary>
+        private static RichText StyleOf(string style, RichText inner)
+        {
+            if (string.IsNullOrEmpty(style))
+            {
+                return inner;
+            }
+
+            var weight = StyleValue(style, "font-weight");
+            if (weight == "bold" || weight == "bolder" || (int.TryParse(weight, NumberStyles.Integer, CultureInfo.InvariantCulture, out int numeric) && numeric >= 600))
+            {
+                inner = new RichTextBold { Text = inner };
+            }
+
+            if (StyleValue(style, "font-style") == "italic")
+            {
+                inner = new RichTextItalic { Text = inner };
+            }
+
+            var decoration = StyleValue(style, "text-decoration") ?? StyleValue(style, "text-decoration-line");
+            if (decoration != null)
+            {
+                if (decoration.Contains("underline"))
+                {
+                    inner = new RichTextUnderline { Text = inner };
+                }
+
+                if (decoration.Contains("line-through"))
+                {
+                    inner = new RichTextStrikethrough { Text = inner };
+                }
+            }
+
+            return inner;
+        }
+
+        /// <summary>One property of a style attribute, lowercase, or null when it is not there.</summary>
+        private static string StyleValue(string style, string property)
+        {
+            foreach (var declaration in style.Split(';'))
+            {
+                var colon = declaration.IndexOf(':');
+                if (colon > 0 && string.Equals(declaration.Substring(0, colon).Trim(), property, StringComparison.OrdinalIgnoreCase))
+                {
+                    return declaration.Substring(colon + 1).Trim().ToLowerInvariant();
+                }
+            }
+
+            return null;
         }
 
         private static RichText Wrap(Node node, bool preserveWhitespace, Func<RichText, RichText> wrap)

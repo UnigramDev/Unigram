@@ -1704,7 +1704,20 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.NavigateToTextEditor(message.ChatId, null, message.Id, richMessage.Message);
+            // A long message arrives cut short: editing what is shown would send back only that
+            // much of it.
+            var full = richMessage.Message;
+            if (!full.IsFull)
+            {
+                if (await ClientService.SendAsync(new GetFullRichMessage(message.ChatId, message.Id)) is not RichMessage loaded)
+                {
+                    return;
+                }
+
+                full = loaded;
+            }
+
+            NavigationService.NavigateToTextEditor(message.ChatId, null, message.Id, full);
 
             //var popup = new RichTextWindow(ClientService, NavigationService, richMessage.Message);
             //var confirm = await ShowPopupAsync(popup);

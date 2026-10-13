@@ -476,6 +476,27 @@
     <Compile Include="Controls\ReplyMarkupInlineButton.cs" />
     <Compile Include="Controls\Ribbon.cs" />
     <Compile Include="Controls\RichMathImage.cs" />
+    <Compile Include="Controls\RichEditor\RichTextLeaf.cs" />
+    <Compile Include="Controls\RichEditor\RichDocument.cs" />
+    <Compile Include="Controls\RichEditor\RichDocumentConverter.cs" />
+    <Compile Include="Controls\RichEditor\RichDocumentLimits.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.Editing.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.Structure.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.Table.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.Media.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.Clipboard.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorEngine.Rules.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorStatus.cs" />
+    <Compile Include="Controls\RichEditor\RichLeafView.cs" />
+    <Compile Include="Controls\RichEditor\RichBlockPresenters.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorView.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorView.Input.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorView.TextInput.cs" />
+    <Compile Include="Controls\RichEditor\RichMediaRenderer.cs" />
+    <Compile Include="Controls\RichEditor\RichMediaFactory.cs" />
+    <Compile Include="Controls\RichEditor\RichClipboard.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorAutomationPeer.cs" />
     <Compile Include="Controls\SettingsRadioButton.cs" />
     <Compile Include="Controls\SlidePanel.cs" />
     <Compile Include="Controls\Stories\Popups\StoryReactPopup.xaml.cs">
@@ -1458,8 +1479,9 @@
     <Compile Include="Views\Host\RichTextWindow.xaml.cs">
       <DependentUpon>RichTextWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\RichEditorCommands.cs" />
-    <Compile Include="Views\Popups\RichEditorState.cs" />
+    <Compile Include="Views\Popups\RichButtonPopup.xaml.cs">
+      <DependentUpon>RichButtonPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\TextStylePopup.xaml.cs">
       <DependentUpon>TextStylePopup.xaml</DependentUpon>
     </Compile>
@@ -2362,9 +2384,6 @@
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
-    <Content Include="..\Libraries\unigram-iv-editor\editor.html">
-      <Link>Assets\editor.html</Link>
-    </Content>
     <Content Include="Assets\Audio\received.mp3" />
     <Content Include="Assets\Audio\sent.mp3" />
     <Content Include="Assets\Audio\voicechat_join.mp3" />
@@ -3077,6 +3096,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\ForumTopicCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\RichEditor\RichEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3945,6 +3968,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\TextStylePreviewPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\RichButtonPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

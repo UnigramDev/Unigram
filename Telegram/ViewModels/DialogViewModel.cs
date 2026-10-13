@@ -4119,6 +4119,15 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        public async void DeleteDraft()
+        {
+            var confirm = await ShowPopupAsync(Strings.ArticleDeleteDraftMessage, Strings.ArticleDeleteDraftTitle, Strings.Delete, Strings.Cancel, destructive: true);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new SetChatDraftMessage(_chat.Id, OutgoingTopicId, null));
+            }
+        }
+
         public async void OpenTextEditor()
         {
             var text = GetFormattedText();

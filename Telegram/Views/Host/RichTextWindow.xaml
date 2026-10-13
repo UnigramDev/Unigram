@@ -7,7 +7,8 @@
                         xmlns:common="using:Telegram.Common"
                         xmlns:controls="using:Telegram.Controls"
                         xmlns:drawers="using:Telegram.Controls.Drawers"
-                        xmlns:messages="using:Telegram.Controls.Messages"
+                        xmlns:richEditor="using:Telegram.Controls.RichEditor"
+                        xmlns:chats="using:Telegram.Controls.Chats"
                         mc:Ignorable="d">
 
     <controls:WindowContent.Resources>
@@ -166,373 +167,301 @@
             </Setter>
         </Style>
 
+        <!--  On a tool whose feature needs Premium, for a user without it, as TDesktop marks them.  -->
+        <Style x:Key="ToolbarPremiumStyle"
+               TargetType="TextBlock">
+            <Setter Property="Text"
+                    Value="&#xE9B5;" />
+            <Setter Property="Foreground"
+                    Value="{ThemeResource PremiumObliqueGradientBrush}" />
+            <Setter Property="FontFamily"
+                    Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize"
+                    Value="12" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+            <Setter Property="VerticalAlignment"
+                    Value="Bottom" />
+            <Setter Property="Margin"
+                    Value="0,0,5,6" />
+            <Setter Property="IsHitTestVisible"
+                    Value="False" />
+            <Setter Property="Visibility"
+                    Value="Collapsed" />
+            <Setter Property="AutomationProperties.AccessibilityView"
+                    Value="Raw" />
+        </Style>
+
     </controls:WindowContent.Resources>
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!-- No Source: Initialize navigates to the same file through the editor.unigram
-             virtual host, and setting both loads the whole editor twice. -->
-        <muxc:WebView2 x:Name="View"
-                       Grid.Row="0"
-                       Grid.RowSpan="3" />
+        <Grid x:Name="TitleBarrr"
+              Height="40"
+              Margin="12,0,0,0"
+              Background="Transparent"
+              Grid.Column="1"
+              Canvas.ZIndex="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="TitleBarHandle"
+                    Background="Transparent"
+                    Grid.Column="2" />
 
-        <messages:CustomEmojiCanvas x:Name="Canvas"
-                                    Grid.Row="0"
-                                    Grid.RowSpan="3" />
+            <HyperlinkButton x:Name="TitleBarLogo"
+                             Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                             IsTabStop="False"
+                             Margin="-10,0,4,0"
+                             Width="40"
+                             Height="40"
+                             Grid.Column="1">
+                <Grid Background="Transparent">
+                    <Border x:Name="LogoBasic"
+                            Width="20"
+                            Height="20"
+                            CornerRadius="10">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="4.44444,3.33333"
+                                                 EndPoint="18.8889,16.6667"
+                                                 MappingMode="Absolute">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStopCollection>
+                                        <GradientStop Color="#29C3FF" />
+                                        <GradientStop Offset="1"
+                                                      Color="#2052CB" />
+                                    </GradientStopCollection>
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Path Data="M4.52684 9.89446C7.44204 8.62435 9.38597 7.78702 10.3586 7.38246C13.1357 6.22737 13.7128 6.02672 14.0889 6.02009C14.1716 6.01863 14.3566 6.03913 14.4764 6.13635C14.5776 6.21844 14.6054 6.32934 14.6187 6.40717C14.632 6.485 14.6486 6.6623 14.6354 6.80083C14.485 8.38207 13.8338 12.2193 13.5025 13.9903C13.3623 14.7397 13.0863 14.991 12.8191 15.0156C12.2384 15.069 11.7974 14.6318 11.2349 14.2631C10.3548 13.6861 9.85759 13.327 9.00328 12.764C8.01596 12.1134 8.656 11.7558 9.21866 11.1714C9.36592 11.0184 11.9246 8.69115 11.9741 8.48003C11.9803 8.45362 11.986 8.3552 11.9276 8.30323C11.8691 8.25126 11.7828 8.26903 11.7205 8.28316C11.6322 8.3032 10.2262 9.23253 7.50246 11.0711C7.10337 11.3452 6.74188 11.4787 6.418 11.4717C6.06095 11.464 5.37413 11.2698 4.86355 11.1039C4.23729 10.9003 3.73956 10.7927 3.7829 10.4469C3.80548 10.2669 4.05346 10.0827 4.52684 9.89446Z"
+                              Fill="#FFFFFF" />
+                    </Border>
+                </Grid>
+            </HyperlinkButton>
 
-        <Border Margin="0,0,0,-8">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,1"
-                                     EndPoint="0,0">
-                    <common:Scrim.Gradient>
-                        <common:CubicBezierGradient x:Name="Scrim"
-                                                    TopOpacity="0"
-                                                    TopColor="{ThemeResource ContentDialogTopOverlaySolid}"
-                                                    BottomColor="{ThemeResource ContentDialogTopOverlaySolid}" />
-                    </common:Scrim.Gradient>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
-        <Border Margin="0,-8,0,0"
-                Grid.Row="2">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0"
-                                     EndPoint="0,1">
-                    <common:Scrim.Gradient>
-                        <common:CubicBezierGradient TopOpacity="0"
-                                                    TopColor="{ThemeResource ContentDialogTopOverlaySolid}"
-                                                    BottomColor="{ThemeResource ContentDialogTopOverlaySolid}" />
-                    </common:Scrim.Gradient>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
-        <Grid Padding="12">
+            <TextBlock x:Name="StateLabel"
+                       VerticalAlignment="Center"
+                       TextLineBounds="TrimToCapHeight"
+                       TextWrapping="NoWrap"
+                       AutomationProperties.LiveSetting="Assertive"
+                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       IsHitTestVisible="False"
+                       Margin="0,2,6,0"
+                       Grid.Column="2" />
+        </Grid>
+
+        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Grid.Row="2"
+                Grid.RowSpan="2" />
+        <!-- Under the toolbars, which float over it: the padding is what keeps the first and
+             last lines clear of them. -->
+        <richEditor:RichEditorView x:Name="Editor"
+                                   Padding="12,12,12,88"
+                                   MaxContentWidth="720"
+                                   AutomationProperties.Name="{CustomResource ArticleEditor}"
+                                   Grid.Row="2"
+                                   Grid.RowSpan="2" />
+
+        <!--  Laid out as TDesktop's editor: history at the left, the tools in the middle and
+              emoji at the right, all at the top; Send alone at the bottom.  -->
+        <Grid x:Name="ToolbarRoot"
+              Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+              Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <Border BorderBrush="{ThemeResource TabViewBorderBrush}"
+                    BorderThickness="0,1,0,1"
+                    Grid.ColumnSpan="3" />
+
             <Grid>
-                <Rectangle x:Name="HistoryShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="80"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Grid CornerRadius="20"
-                      Height="40"
-                      Width="80">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <controls:GlyphButton x:Name="UndoButton"
-                                          Click="Undo_Click"
-                                          IsEnabled="False"
-                                          AllowFocusOnInteraction="False"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xE7A7;"
-                                          CornerRadius="20"
-                                          Padding="0" />
-                    <controls:GlyphButton x:Name="RedoButton"
-                                          Click="Redo_Click"
-                                          IsEnabled="False"
-                                          AllowFocusOnInteraction="False"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xE7A6;"
-                                          CornerRadius="20"
-                                          Padding="0"
-                                          Grid.Column="1" />
-                </Grid>
-            </Grid>
-        </Grid>
-
-        <Grid x:Name="DocumentRoot"
-              Padding="12"
-              ColumnSpacing="8"
-              Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="1">
-                <Rectangle x:Name="BlockShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="240"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Grid CornerRadius="20"
-                      Height="40"
-                      Width="240">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <controls:GlyphButton x:Name="EmojiButton"
-                                          Click="Emoji_Click"
-                                          AllowFocusOnInteraction="False"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xE76E;"
-                                          CornerRadius="20">
-                        <FlyoutBase.AttachedFlyout>
-                            <Flyout x:Name="EmojiFlyout"
-                                    Placement="Top"
-                                    ShowMode="Transient">
-                                <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter"
-                                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
-                                        <Setter Property="Padding"
-                                                Value="0" />
-                                    </Style>
-                                </Flyout.FlyoutPresenterStyle>
-                                <drawers:EmojiDrawer x:Name="EmojiPanel"
-                                                     ItemClick="Emoji_ItemClick"
-                                                     Width="300"
-                                                     Height="360" />
-                            </Flyout>
-                        </FlyoutBase.AttachedFlyout>
-                    </controls:GlyphButton>
-                    <controls:GlyphToggleButton x:Name="ParagraphButton"
-                                                Click="Paragraph_Click"
-                                                AllowFocusOnInteraction="False"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xEB23;"
-                                                CornerRadius="20"
-                                                Grid.Column="1" />
-                    <controls:GlyphToggleButton x:Name="QuoteButton"
-                                                Click="Quote_Click"
-                                                AllowFocusOnInteraction="False"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xEAC7;"
-                                                CornerRadius="20"
-                                                Grid.Column="2" />
-                    <controls:GlyphToggleButton x:Name="ListButton"
-                                                Click="List_Click"
-                                                AllowFocusOnInteraction="False"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xEB09;"
-                                                CornerRadius="20"
-                                                Grid.Column="3" />
-                    <controls:GlyphToggleButton x:Name="TableButton"
-                                                Click="Table_Click"
-                                                AllowFocusOnInteraction="False"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xEB08;"
-                                                CornerRadius="20"
-                                                Grid.Column="4" />
-                    <controls:GlyphToggleButton x:Name="FormulaButton"
-                                                Click="Formula_Click"
-                                                AllowFocusOnInteraction="False"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xEB07;"
-                                                CornerRadius="20"
-                                                Grid.Column="5" />
-                </Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton x:Name="UndoButton"
+                                      AutomationProperties.Name="{CustomResource TextUndo}"
+                                      ToolTipService.ToolTip="{CustomResource TextUndo}"
+                                      Click="Undo_Click"
+                                      IsEnabled="False"
+                                      AllowFocusOnInteraction="False"
+                                      Glyph="&#xE7A7;"
+                                      CornerRadius="20" />
+                <controls:GlyphButton x:Name="RedoButton"
+                                      AutomationProperties.Name="{CustomResource Redo}"
+                                      ToolTipService.ToolTip="{CustomResource Redo}"
+                                      Click="Redo_Click"
+                                      IsEnabled="False"
+                                      AllowFocusOnInteraction="False"
+                                      Glyph="&#xE7A6;"
+                                      CornerRadius="20"
+                                      Margin="-8,0,0,0"
+                                      Grid.Column="1" />
             </Grid>
 
-            <Grid Grid.Column="3">
-                <Rectangle x:Name="AttachShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="40"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Border CornerRadius="20"
-                        Height="40"
-                        Width="40">
-                    <controls:GlyphButton x:Name="AttachButton"
-                                          AllowFocusOnInteraction="False"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xE9D8;"
-                                          CornerRadius="20" />
-                </Border>
-            </Grid>
+            <Border BorderBrush="{ThemeResource TabViewBorderBrush}"
+                    BorderThickness="1,0,1,0"
+                    Margin="0,8"
+                    Grid.Column="1" />
 
-            <Grid Grid.Column="4">
-                <Rectangle x:Name="SendShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="40"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Border CornerRadius="20"
-                        Height="40"
-                        Width="40">
-                    <controls:GlyphButton x:Name="SendButton"
-                                          Click="Send_Click"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xEB06;"
-                                          CornerRadius="20" />
-                </Border>
-                <!-- Premium lock: shown for free users when the message contains rich content that
-                     can't be sent as a plain FormattedText (RichEditorState.HasRichContent). -->
-                <Border x:Name="SendLock"
-                        Visibility="Collapsed"
-                        IsHitTestVisible="False"
-                        Width="18"
-                        Height="18"
-                        CornerRadius="9"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom">
-                    <FontIcon Glyph="&#xE72E;"
-                              FontFamily="Segoe MDL2 Assets"
-                              FontSize="11" />
-                </Border>
-            </Grid>
-
-        </Grid>
-
-        <Grid x:Name="SelectionRoot"
-              Visibility="Collapsed"
-              ColumnSpacing="8"
-              Padding="12"
-              Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Rectangle x:Name="StyleShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
+            <!--  Scrolls when the window is too narrow for all of it.  -->
+            <Grid HorizontalAlignment="Center"
+                  Grid.Column="1">
                 <ScrollViewer VerticalScrollBarVisibility="Disabled"
                               VerticalScrollMode="Disabled"
                               HorizontalScrollBarVisibility="Hidden"
-                              HorizontalScrollMode="Auto">
-                    <Grid CornerRadius="20"
-                          Height="40"
-                          Width="320">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <controls:GlyphToggleButton x:Name="BoldButton"
-                                                    Click="Bold_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xE8DD;"
-                                                    CornerRadius="20" />
-                        <controls:GlyphToggleButton x:Name="ItalicButton"
-                                                    Click="Italic_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xE8DB;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="1" />
-                        <controls:GlyphToggleButton x:Name="UnderlineButton"
-                                                    Click="Underline_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xE8DC;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="2" />
-                        <controls:GlyphToggleButton x:Name="StrikethroughButton"
-                                                    Click="Strikethrough_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xE8DE;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="3" />
-                        <controls:GlyphToggleButton x:Name="SpoilerButton"
-                                                    Click="Spoiler_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xEAA1;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="4" />
-                        <controls:GlyphToggleButton x:Name="MonospaceButton"
-                                                    Click="Monospace_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xE943;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="5" />
-                        <controls:GlyphToggleButton x:Name="SubscriptButton"
-                                                    Click="Subscript_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xEB1B;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="6" />
-                        <controls:GlyphToggleButton x:Name="SuperscriptButton"
-                                                    Click="Superscript_Click"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Glyph="&#xEB1A;"
-                                                    CornerRadius="20"
-                                                    Grid.Column="7" />
-                    </Grid>
+                              HorizontalScrollMode="Auto"
+                              CornerRadius="20">
+                    <StackPanel Orientation="Horizontal">
+                        <controls:GlyphButton x:Name="ParagraphButton"
+                                              AutomationProperties.Name="{CustomResource Formatting}"
+                                              ToolTipService.ToolTip="{CustomResource Formatting}"
+                                              Click="Paragraph_Click"
+                                              AllowFocusOnInteraction="False"
+                                              Glyph="&#xEB23;"
+                                              CornerRadius="20" />
+                        <controls:GlyphButton x:Name="TextStyleButton"
+                                              AutomationProperties.Name="{CustomResource AccDescrIVTextStyle}"
+                                              ToolTipService.ToolTip="{CustomResource AccDescrIVTextStyle}"
+                                              Click="TextStyle_Click"
+                                              AllowFocusOnInteraction="False"
+                                              Glyph="&#xE8DD;"
+                                              CornerRadius="20"
+                                              Margin="-8,0,0,0" />
+                        <Grid Margin="-8,0,0,0">
+                            <controls:GlyphToggleButton x:Name="ListButton"
+                                                        AutomationProperties.Name="{CustomResource AccDescrIVListStyle}"
+                                                        ToolTipService.ToolTip="{CustomResource AccDescrIVListStyle}"
+                                                        Click="List_Click"
+                                                        AllowFocusOnInteraction="False"
+                                                        Glyph="&#xEB09;"
+                                                        CornerRadius="20" />
+                            <TextBlock x:Name="ListPremium"
+                                       Style="{StaticResource ToolbarPremiumStyle}" />
+                        </Grid>
+                        <Grid Margin="-8,0,0,0">
+                            <controls:GlyphToggleButton x:Name="TableButton"
+                                                        AutomationProperties.Name="{CustomResource AccDescrIVTable}"
+                                                        ToolTipService.ToolTip="{CustomResource AccDescrIVTable}"
+                                                        Click="Table_Click"
+                                                        AllowFocusOnInteraction="False"
+                                                        Glyph="&#xEB08;"
+                                                        CornerRadius="20" />
+                            <TextBlock x:Name="TablePremium"
+                                       Style="{StaticResource ToolbarPremiumStyle}" />
+                        </Grid>
+                        <controls:GlyphButton x:Name="LinkButton"
+                                              AutomationProperties.Name="{CustomResource CreateLink}"
+                                              ToolTipService.ToolTip="{CustomResource CreateLink}"
+                                              Click="Link_Click"
+                                              AllowFocusOnInteraction="False"
+                                              Glyph="&#xE71B;"
+                                              CornerRadius="20"
+                                              Margin="-8,0,0,0" />
+                        <Grid Margin="-8,0,0,0">
+                            <controls:GlyphButton x:Name="AttachButton"
+                                                  AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
+                                                  ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
+                                                  Click="Attach_Click"
+                                                  AllowFocusOnInteraction="False"
+                                                  Glyph="&#xE9D8;"
+                                                  CornerRadius="20" />
+                            <TextBlock x:Name="AttachPremium"
+                                       Style="{StaticResource ToolbarPremiumStyle}" />
+                        </Grid>
+                        <Grid Margin="-8,0,0,0">
+                            <controls:GlyphButton x:Name="FormulaButton"
+                                                  AutomationProperties.Name="{CustomResource AccDescrIVFormula}"
+                                                  ToolTipService.ToolTip="{CustomResource AccDescrIVFormula}"
+                                                  Click="Formula_Click"
+                                                  AllowFocusOnInteraction="False"
+                                                  Glyph="&#xEB07;"
+                                                  CornerRadius="20" />
+                            <TextBlock x:Name="FormulaPremium"
+                                       Style="{StaticResource ToolbarPremiumStyle}" />
+                        </Grid>
+                    </StackPanel>
                 </ScrollViewer>
             </Grid>
 
-            <Grid Grid.Column="1">
-                <Rectangle x:Name="EntityShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="80"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Grid CornerRadius="20"
-                      Height="40"
-                      Width="80">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <controls:GlyphToggleButton x:Name="LinkButton"
-                                                Click="Link_Click"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xE71B;"
-                                                CornerRadius="20"
-                                                Padding="0" />
-                    <controls:GlyphToggleButton x:Name="DateButton"
-                                                Click="Date_Click"
-                                                Width="40"
-                                                Height="40"
-                                                Glyph="&#xE787;"
-                                                CornerRadius="20"
-                                                Padding="0"
-                                                Grid.Column="1" />
-                </Grid>
+            <Grid Grid.Column="2">
+                <controls:GlyphButton x:Name="EmojiButton"
+                                      AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
+                                      Click="Emoji_Click"
+                                      AllowFocusOnInteraction="False"
+                                      Glyph="&#xE76E;"
+                                      CornerRadius="20">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout x:Name="EmojiFlyout"
+                                Placement="Bottom"
+                                ShowMode="Transient">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter"
+                                       BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                                    <Setter Property="Padding"
+                                            Value="0" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                 ItemClick="Emoji_ItemClick"
+                                                 Width="300"
+                                                 Height="360" />
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+                </controls:GlyphButton>
             </Grid>
+        </Grid>
+
+        <Grid HorizontalAlignment="Right"
+              Margin="12"
+              Grid.Row="3">
+            <Rectangle x:Name="SendShadow"
+                       Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                       Stroke="{ThemeResource SettingsItemBorderBrush}"
+                       Width="48"
+                       Height="48"
+                       RadiusX="24"
+                       RadiusY="24" />
+            <Border CornerRadius="24"
+                    Height="48"
+                    Width="48">
+                <controls:GlyphButton x:Name="SendButton"
+                                      AutomationProperties.Name="{CustomResource Send}"
+                                      ToolTipService.ToolTip="{CustomResource Send}"
+                                      Click="Send_Click"
+                                      Glyph="&#xEB06;"
+                                      CornerRadius="20"
+                                      FontSize="24" />
+            </Border>
+            <!--  Premium lock: shown for free users when the message contains rich content that
+                  can't be sent as a plain FormattedText (PageBlockHelper.TryGetFormattedText).  -->
+            <Border x:Name="SendLock"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False"
+                    Width="18"
+                    Height="18"
+                    CornerRadius="9"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom">
+                <FontIcon Glyph="&#xE72E;"
+                          FontFamily="Segoe MDL2 Assets"
+                          FontSize="11" />
+            </Border>
         </Grid>
     </Grid>
 </controls:WindowContent>

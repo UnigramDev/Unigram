@@ -6,20 +6,51 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       DefaultButton="Primary">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Border Margin="0,0,0,12">
-            <controls:RichMathImage x:Name="Result" />
-        </Border>
+    <!--  TDesktop's EditMathBox: the source, where it goes, and what it renders as.  -->
+    <StackPanel>
+        <TextBlock Text="{CustomResource RichEditorFormulaSource}"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Margin="0,0,0,8" />
         <TextBox x:Name="Input"
                  PlaceholderText="{CustomResource ArticleLatexEquation}"
+                 AutomationProperties.Name="{CustomResource RichEditorFormulaSource}"
+                 FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
+                 IsSpellCheckEnabled="False"
+                 IsTextPredictionEnabled="False"
+                 TextWrapping="Wrap"
+                 MaxHeight="120"
                  TextChanged="OnTextChanged"
-                 Grid.Row="1" />
-    </Grid>
+                 KeyDown="OnKeyDown" />
+
+        <CheckBox x:Name="SeparateLine"
+                  Content="{CustomResource RichEditorFormulaSeparateLine}"
+                  Margin="0,12,0,0"
+                  Visibility="Collapsed" />
+
+        <TextBlock Text="{CustomResource RichEditorFormulaResult}"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Margin="0,16,0,8" />
+        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="10"
+                MinHeight="72">
+            <ScrollViewer HorizontalScrollMode="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Disabled"
+                          VerticalScrollBarVisibility="Disabled"
+                          VerticalAlignment="Center">
+                <Grid HorizontalAlignment="Center">
+                    <!--  An example while there is nothing to show, dimmed, as TDesktop has it.  -->
+                    <controls:RichMathImage x:Name="Sample"
+                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                            AutomationProperties.AccessibilityView="Raw" />
+                    <controls:RichMathImage x:Name="Result" />
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </StackPanel>
 </controls:ContentPopup>

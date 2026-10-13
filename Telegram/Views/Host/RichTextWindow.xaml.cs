@@ -5,20 +5,24 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Controls.RichEditor;
+using Telegram.Entities;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Telegram.Converters;
 using Telegram.Native.Highlight;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -28,7 +32,6 @@ using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
@@ -57,15 +60,21 @@ namespace Telegram.Views.Host
 
         private bool _closedExpected;
 
-        // The popup's own window, not the chat's: focus has to be taken back when it activates.
-        private bool _ready;
+        private RichEditorEngine _engine;
+        private RichEditorStatus _status;
 
-        private string _translateToLanguage;
+        // Whether the document can only go as a rich message: worked out from the whole document,
+        // so not on every keystroke but once typing pauses.
+        private readonly DispatcherTimer _lockTimer;
 
         public RichTextWindow(WindowContext window, IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
             : base(window)
         {
             InitializeComponent();
+
+            StateLabel.Text = Constants.RELEASE
+                ? Strings.AppDisplayName
+                : Strings.AppName;
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.Session);
 
@@ -82,81 +91,53 @@ namespace Telegram.Views.Host
             _replyTo = replyTo;
             _sendOptions = sendOptions;
 
-            ActualThemeChanged += OnActualThemeChanged;
+            _lockTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+            _lockTimer.Tick += OnLockTimerTick;
 
             if (ApiInfo.CanCreateThemeShadow)
             {
                 var shadow = new ThemeShadow();
                 var translation = new Vector3(0, 0, Constants.BubbleElevation * 2);
 
-                HistoryShadow.Shadow = shadow;
-                HistoryShadow.Translation = translation;
-
-                BlockShadow.Shadow = shadow;
-                BlockShadow.Translation = translation;
-
-                AttachShadow.Shadow = shadow;
-                AttachShadow.Translation = translation;
-
                 SendShadow.Shadow = shadow;
                 SendShadow.Translation = translation;
-
-                StyleShadow.Shadow = shadow;
-                StyleShadow.Translation = translation;
-
-                EntityShadow.Shadow = shadow;
-                EntityShadow.Translation = translation;
             }
 
             Initialize(message);
         }
+
+        protected override UIElement TitleBarElement => TitleBarHandle;
 
         public bool AreTheSame(long chatId, long messageId)
         {
             return chatId == _chatId && messageId == _messageId;
         }
 
-        private async void Initialize(RichMessage message)
+        private void Initialize(RichMessage message)
         {
-            await View.EnsureCoreWebView2Async();
+            // From scratch, or the message being edited: a sent message comes back with its media
+            // as file ids, which is how it is sent again.
+            var document = message != null
+                ? RichDocumentConverter.FromRichMessage(message)
+                : new RichDocument();
 
-            // EnsureCoreWebView2Async doesn't throw when the environment can't be created - the WebView2
-            // runtime being absent is the usual reason: WebView2 swallows the error, reports it through
-            // CoreWebView2Initialized and leaves CoreWebView2 null, having put its own "download the
-            // runtime" message in the control. Nothing below can work, so uncover that message and stop:
-            // the chrome would otherwise sit over it with every button reaching a null CoreWebView2.
-            if (View.CoreWebView2 == null)
-            {
-                foreach (var child in LayoutRoot.Children)
-                {
-                    if (child != View)
-                    {
-                        child.Visibility = Visibility.Collapsed;
-                    }
-                }
+            _engine = new RichEditorEngine(document);
 
-                return;
-            }
+            Editor.StateChanged += OnEditorStateChanged;
+            Editor.MenuRequested += OnMenuRequested;
+            Editor.LanguageRequested += OnLanguageRequested;
+            Editor.ButtonRequested += OnButtonRequested;
+            Editor.ObjectRequested += OnObjectRequested;
+            Editor.NodeActivated += OnNodeActivated;
+            Editor.MediaAddRequested += OnMediaAddRequested;
+            Editor.LinkRequested += OnLinkRequested;
+            Editor.SubmitRequested += OnSubmitRequested;
+            Editor.PasteRequested += OnPasteRequested;
 
-            _state = new RichEditorState();
-            _commands = new RichEditorCommands(View.CoreWebView2);
-
-            var assets = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets");
-            View.CoreWebView2.SetVirtualHostNameToFolderMapping("editor.unigram", assets, CoreWebView2HostResourceAccessKind.Allow);
-
-            View.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
-            View.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
-            try
-            {
-                _contextRequestedSubscribed = true;
-                View.CoreWebView2.ContextMenuRequested += OnContextMenuRequested;
-            }
-            catch
-            {
-                // Requires ICoreWebView2_11
-                _contextRequestedSubscribed = false;
-            }
-            View.CoreWebView2.Navigate("https://editor.unigram/editor.html");
+            Editor.Initialize(_clientService, _engine);
+            UpdateToolbar();
+            UpdateSendLock();
+            UpdatePremiumMarks();
 
             // Premium can change at runtime (UpdateOption "is_premium"); re-evaluate the send-button lock.
             _aggregator = _clientService.Session.Resolve<IEventAggregator>();
@@ -165,17 +146,21 @@ namespace Telegram.Views.Host
 
         private IEventAggregator _aggregator;
 
-        private bool _contextRequestedSubscribed;
-
         protected override void OnWindowClosed()
         {
-            View.CoreWebView2?.NavigationCompleted -= OnNavigationCompleted;
-            View.CoreWebView2?.WebMessageReceived -= OnWebMessageReceived;
-            if (_contextRequestedSubscribed)
-            {
-                View.CoreWebView2?.ContextMenuRequested -= OnContextMenuRequested;
-            }
-            View.Close();
+            Editor.StateChanged -= OnEditorStateChanged;
+            Editor.MenuRequested -= OnMenuRequested;
+            Editor.LanguageRequested -= OnLanguageRequested;
+            Editor.ButtonRequested -= OnButtonRequested;
+            Editor.ObjectRequested -= OnObjectRequested;
+            Editor.NodeActivated -= OnNodeActivated;
+            Editor.MediaAddRequested -= OnMediaAddRequested;
+            Editor.LinkRequested -= OnLinkRequested;
+            Editor.SubmitRequested -= OnSubmitRequested;
+            Editor.PasteRequested -= OnPasteRequested;
+
+            _lockTimer.Stop();
+            _lockTimer.Tick -= OnLockTimerTick;
 
             _aggregator?.Unsubscribe(this);
         }
@@ -185,17 +170,17 @@ namespace Telegram.Views.Host
         // != 0 — nothing to draft), or when the document is empty.
         protected override async void OnWindowCloseRequested(WindowCloseRequestedEventArgs e)
         {
-            if (_closedExpected || _messageId != 0 || (_state?.IsEmpty ?? true))
+            if (_closedExpected || _messageId != 0 || (_engine?.Document.IsEmpty ?? true))
             {
                 return;
             }
 
             var deferral = e.GetDeferral();
 
-            var confirm = await MessagePopup.ShowAsync(XamlRoot, "Save this message as a draft?", "Draft", "Save", "Discard");
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.ArticleSaveDraftMessage, Strings.ArticleSaveDraftTitle, Strings.Save, Strings.Discard);
             if (confirm == ContentDialogResult.Primary)
             {
-                await SaveDraftAsync();
+                SaveDraft();
             }
             else if (confirm != ContentDialogResult.Secondary)
             {
@@ -206,9 +191,9 @@ namespace Telegram.Views.Host
             deferral.Complete();
         }
 
-        private async Task SaveDraftAsync()
+        private void SaveDraft()
         {
-            var richMessage = await _commands.GetInputModelAsync();
+            var richMessage = GetInputModel();
             if (richMessage == null)
             {
                 return;
@@ -218,56 +203,144 @@ namespace Telegram.Views.Host
             _clientService.Send(new SetChatDraftMessage(_chatId, _topic, draft));
         }
 
+        /// <summary>The document as TDLib takes it; null when there is nothing to send.</summary>
+        private InputRichMessage GetInputModel()
+        {
+            if (_engine.Document.IsEmpty)
+            {
+                return null;
+            }
+
+            return RichDocumentConverter.ToInputRichMessage(_engine.Document);
+        }
+
         public void Handle(UpdateOption update)
         {
             if (update.Name == OptionsService.R.IsPremium)
             {
-                this.BeginOnUIThread(UpdateSendLock);
+                this.BeginOnUIThread(OnPremiumChanged);
+            }
+        }
+
+        private void OnPremiumChanged()
+        {
+            UpdateSendLock();
+            UpdatePremiumMarks();
+        }
+
+        /// <summary>
+        /// Whether what needs Premium is marked with a star. Only marked, as TDesktop does: every
+        /// tool still works, and it is sending the result that asks for Premium.
+        /// </summary>
+        private bool IsPremiumMarked => _clientService.IsPremiumAvailable && !_clientService.IsPremium;
+
+        private void UpdatePremiumMarks()
+        {
+            var visibility = IsPremiumMarked ? Visibility.Visible : Visibility.Collapsed;
+
+            ListPremium.Visibility = visibility;
+            TablePremium.Visibility = visibility;
+            AttachPremium.Visibility = visibility;
+            FormulaPremium.Visibility = visibility;
+        }
+
+        private MenuFlyoutItem CreateItem(string text, string icon, ICommand command, object parameter = null, bool premium = false, string shortcut = null)
+        {
+            var item = premium && IsPremiumMarked ? new MenuFlyoutPremiumItem() : new MenuFlyoutItem();
+            item.Text = text;
+            item.Command = command;
+            item.CommandParameter = parameter;
+            item.KeyboardAcceleratorTextOverride = shortcut ?? string.Empty;
+
+            if (icon != null)
+            {
+                item.Icon = MenuFlyoutHelper.CreateIcon(icon);
+            }
+
+            return item;
+        }
+
+        private ToggleMenuFlyoutItem CreateToggle(string text, string icon, bool isChecked, ICommand command, object parameter = null, bool premium = false, string shortcut = null)
+        {
+            var item = premium && IsPremiumMarked ? new ToggleMenuFlyoutPremiumItem() : new ToggleMenuFlyoutItem();
+            item.Text = text;
+            item.IsChecked = isChecked;
+            item.Command = command;
+            item.CommandParameter = parameter;
+            item.KeyboardAcceleratorTextOverride = shortcut ?? string.Empty;
+
+            if (icon != null)
+            {
+                item.Icon = MenuFlyoutHelper.CreateIcon(icon);
+            }
+
+            return item;
+        }
+
+        private static string Shortcut(VirtualKey key, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            return ShortcutsService.GetStringRepresentation(key, modifiers);
+        }
+
+        // A new one each time: it is a WinRT object, and every editor window has a thread of its own.
+        private static FlyoutShowOptions ToolbarMenu => new()
+        {
+            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
+            ShowMode = FlyoutShowMode.Transient
+        };
+
+        // The lock follows the first change of a burst at once and the rest at most every tick:
+        // waiting for typing to stop left it out of date until a send was tried.
+        private bool _lockPending;
+
+        private void ScheduleSendLock()
+        {
+            if (_lockTimer.IsEnabled)
+            {
+                _lockPending = true;
+                return;
+            }
+
+            UpdateSendLock();
+            _lockTimer.Start();
+        }
+
+        private void OnLockTimerTick(object sender, object e)
+        {
+            _lockTimer.Stop();
+
+            if (_lockPending)
+            {
+                _lockPending = false;
+                UpdateSendLock();
+                _lockTimer.Start();
             }
         }
 
         // Free users see a lock over the send button when the document contains rich content that
-        // can't be sent as a plain message FormattedText (RichEditorState.HasRichContent).
+        // can't be sent as a plain message FormattedText.
         private void UpdateSendLock()
         {
-            var locked = _state != null && _state.HasRichContent && !_clientService.IsPremium;
-            SendLock.Visibility = locked ? Visibility.Visible : Visibility.Collapsed;
-        }
+            var locked = false;
 
-        private void OnActualThemeChanged(FrameworkElement sender, object args)
-        {
-            UpdateTheme();
-        }
-
-        private void UpdateTheme()
-        {
-            Color? background = null;
-            if (Scrim.TopColor is SolidColorBrush color)
+            if (_engine != null && _clientService.IsPremiumAvailable && !_clientService.IsPremium)
             {
-                background = color.Color;
+                var input = GetInputModel();
+                locked = input != null && !PageBlockHelper.TryGetFormattedText(input, out _);
             }
 
-            _commands?.SetTheme(ActualTheme == ElementTheme.Light ? Theme.AccentLight.Dark1 : Theme.AccentDark.Light2, ActualTheme == ElementTheme.Dark, background);
-        }
+            SendLock.Visibility = locked ? Visibility.Visible : Visibility.Collapsed;
 
-        private async void OnNavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
-        {
-            //var json = _message.ToJson();
-            //var result = await View.CoreWebView2.ExecuteScriptWithResultAsync(string.Format("UnigramEditor.exec('setModel', {0})", json));
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-
-        }
-
-        private async void View_CoreWebView2Initialized(Microsoft.UI.Xaml.Controls.WebView2 sender, Microsoft.UI.Xaml.Controls.CoreWebView2InitializedEventArgs args)
-        {
+            if (_engine != null)
+            {
+                var within = RichDocumentLimits.Validate(_engine.Document, Limits, out _, out _) == RichLimitError.None;
+                SendButton.Opacity = within ? 1 : 0.5;
+            }
         }
 
         // The window is shown after its content exists, and activating it moves focus to the
-        // first focusable element in the tree - a toolbar button. Focusing the editor when it
-        // reports ready is undone by that, so take focus on activation too.
+        // first focusable element in the tree - a toolbar button. So focus goes to the editor
+        // on activation too.
         protected override void OnWindowActivated(bool active)
         {
             if (active)
@@ -280,293 +353,859 @@ namespace Telegram.Views.Host
 
         private void TryFocus()
         {
-            if (!_ready)
+            if (FocusManager.GetFocusedElement(XamlRoot) is not DependencyObject focused || !IsInsideEditor(focused))
             {
-                return;
-            }
-
-            // The window is activated as soon as its content exists (ViewService.OpenAsync),
-            // which is long before CoreWebView2 does: XAML's initial focus lands on the
-            // WebView2 while it has no controller to forward it to, and that GotFocus goes
-            // nowhere. Focusing it from here is then a no-op — it already has focus — so the
-            // caret only ever appeared after re-activating the window, which raises GotFocus
-            // again. Moving focus off and back does the same thing on a cold open.
-            if (ReferenceEquals(FocusManager.GetFocusedElement(XamlRoot), View))
-            {
-                FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
-            }
-
-            // Both halves, in this order. Focusing the control is what routes the keyboard
-            // into the web content; only then does focusing the document leave a caret
-            // behind. The other way round sets document.activeElement and nothing else.
-            if (View.Focus(FocusState.Programmatic))
-            {
-                _commands.Focus();
+                Editor.Focus(FocusState.Programmatic);
             }
         }
 
-        private RichEditorState _state;
-        private RichEditorCommands _commands;
-
-        private void OnWebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+        private bool IsInsideEditor(DependencyObject element)
         {
-            if (JsonObject.TryParse(args.WebMessageAsJson, out JsonObject data))
+            for (var current = element; current != null; current = VisualTreeHelper.GetParent(current))
             {
-                // {"type":"state","marks":{"bold":false,"italic":false,"underline":false,"strike":false,"code":false,"spoiler":false,"marked":false,"subscript":false,"superscript":false,"link":false},"block":"paragraph","inTable":false,"can":{"undo":false,"redo":false},
-                // "selection":{"empty":true,"hasText":false,"isNode":false,"from":133,"to":133}}
-                var type = data.GetNamedString("type", string.Empty);
-                if (type == "ready")
+                if (ReferenceEquals(current, Editor))
                 {
-                    //var payload = $"{{\"command\":\"setModel\",\"id\":1,\"args\":{_message.ToJson()}}}";
-                    //View.CoreWebView2.PostWebMessageAsJson(payload);
-
-                    UpdateTheme();
-
-                    _commands.SetConfig(
-                        _clientService.Options.RichMessageTextLengthMax,
-                        _clientService.Options.RichMessageBlockCountMax,
-                        _clientService.Options.RichMessageDepthMax,
-                        _clientService.Options.RichMessageMediaCountMax,
-                        _clientService.Options.RichMessageTableColumnCountMax);
-                    _commands.SetModel(_message);
-
-                    //PostEvent("setTheme", "accent", "#ff0000", "dark", false);
-                    //PostEvent("setModel", _message.ToJson());
-
-                    // There is nothing to focus until the document exists, so the activation
-                    // handler waits on this — and this covers the window already being active.
-                    _ready = true;
-                    TryFocus();
-                }
-                else if (type == "result")
-                {
-                    Debugger.Break();
-                }
-                else if (type == "state")
-                {
-                    _state.Update(data);
-                    UpdateSendLock();
-
-                    UndoButton.IsEnabled = _state.CanUndo;
-                    RedoButton.IsEnabled = _state.CanRedo;
-
-                    ParagraphButton.IsChecked = _state.BlockType is RichEditorBlockType.Heading or RichEditorBlockType.Paragraph or RichEditorBlockType.Pullquote or RichEditorBlockType.Preformatted or RichEditorBlockType.Footer;
-                    ParagraphButton.Glyph = _state.BlockType switch
-                    {
-                        RichEditorBlockType.Heading => _state.HeadingSize switch
-                        {
-                            1 => Icons.TextHeader1,
-                            2 => Icons.TextHeader2,
-                            3 => Icons.TextHeader3,
-                            4 => Icons.TextHeader4,
-                            5 => Icons.TextHeader5,
-                            _ => Icons.TextHeader6
-                        },
-                        RichEditorBlockType.Paragraph => Icons.TextParagraph,
-                        RichEditorBlockType.Pullquote => "?",
-                        RichEditorBlockType.Preformatted => Icons.Code,
-                        _ => Icons.TextParagraph,
-                    };
-
-                    QuoteButton.IsChecked = _state.BlockType == RichEditorBlockType.Blockquote;
-
-                    ListButton.IsChecked = _state.BlockType is RichEditorBlockType.List or RichEditorBlockType.Details;
-                    ListButton.Glyph = _state.BlockType switch
-                    {
-                        RichEditorBlockType.List => _state.ListType switch
-                        {
-                            RichEditorListType.Bullet => Icons.TextBulletList,
-                            RichEditorListType.Ordered => Icons.TextNumberList,
-                            RichEditorListType.Checkbox => "?",
-                            _ => Icons.TextBulletList,
-                        },
-                        RichEditorBlockType.Details => "?",
-                        _ => Icons.TextBulletList
-                    };
-
-                    TableButton.IsChecked = _state.BlockType == RichEditorBlockType.Table;
-                    FormulaButton.IsChecked = _state.BlockType == RichEditorBlockType.Math;
-
-                    DocumentRoot.Visibility = _state.BlockType is RichEditorBlockType.Preformatted || _state.SelectionIsEmpty || !_state.SelectionHasText ? Visibility.Visible : Visibility.Collapsed;
-                    SelectionRoot.Visibility = _state.BlockType is RichEditorBlockType.Preformatted || _state.SelectionIsEmpty || !_state.SelectionHasText ? Visibility.Collapsed : Visibility.Visible;
-
-                    BoldButton.IsChecked = _state.Bold;
-                    ItalicButton.IsChecked = _state.Italic;
-                    UnderlineButton.IsChecked = _state.Underline;
-                    StrikethroughButton.IsChecked = _state.Strikethrough;
-                    SpoilerButton.IsChecked = _state.Spoiler;
-                    MonospaceButton.IsChecked = _state.Code;
-                    SubscriptButton.IsChecked = _state.Subscript;
-                    SuperscriptButton.IsChecked = _state.Superscript;
-                    LinkButton.IsChecked = _state.Link;
-                    DateButton.IsChecked = _state.DateTime;
-
-                    //UpdateModel();
-                }
-                else if (type == "customEmoji")
-                {
-                    // {"type":"customEmoji","dpr":1.5,"emojis":[{"id":"5208541126583136130","x":12,"y":189.7291717529297,"w":19.229167938232422,"h":18.197917938232422},{"id":"5384182985224374928","x":31.229167938232422,"y":189.7291717529297,"w":19.229167938232422,"h":18.197917938232422},{"id":"6052851174929860280","x":50.458335876464844,"y":189.7291717529297,"w":19.229167938232422,"h":18.197917938232422}]}
-                    //Logger.Info(args.WebMessageAsJson);
-
-                    var emojis = data.GetNamedArray("emojis");
-                    var moving = data.GetNamedBoolean("moving");
-
-                    var positions = new List<EmojiPosition>();
-
-                    foreach (var item in emojis)
-                    {
-                        var obj = item.GetObject();
-                        positions.Add(new EmojiPosition
-                        {
-                            CustomEmojiId = obj.GetNamedInt64("id", 0),
-                            X = obj.GetNamedInt32("x", 0),
-                            Y = obj.GetNamedInt32("y", 0),
-                            FontSize = 14
-                        });
-                    }
-
-                    Canvas.UpdateEntities(_clientService, positions);
-                    //Canvas.Visibility = moving
-                    //    ? Visibility.Collapsed
-                    //    : Visibility.Visible;
-                }
-                else if (type == "preformattedLanguage")
-                {
-                    // {"type":"preformattedLanguage","language":"js","dpr":1.5,"rect":{"x":42,"y":367.5,"width":9.8854169845581055,"height":13.333333969116211}}
-                    var language = data.GetNamedString("language");
-                    var rect = data.GetNamedObject("rect");
-                    var x = rect.GetNamedNumber("x");
-                    var y = rect.GetNamedNumber("y");
-                    var width = rect.GetNamedNumber("width");
-                    var height = rect.GetNamedNumber("height");
-
-                    OnPreformattedLanguage(language, x, y, width, height);
-                }
-                else if (type == "mathExpression")
-                {
-                    // {"type":"mathExpression","latex":"e^{i\\pi}+1=0","block":false,"dpr":1.5,"rect":{...}}
-                    OnMathExpression(data.GetNamedString("latex"));
-                }
-                else
-                {
-                    Logger.Info(data);
+                    return true;
                 }
             }
+
+            return false;
         }
 
-        private void OnPreformattedLanguage(string language, double x, double y, double width, double height)
+        private void OnEditorStateChanged(object sender, EventArgs e)
         {
-            var command = new RelayCommand<string>(_commands.SetLanguage);
+            UpdateToolbar();
+            ScheduleSendLock();
+        }
+
+        private void UpdateToolbar()
+        {
+            var status = _status = _engine.GetStatus();
+
+            UndoButton.IsEnabled = status.CanUndo;
+            RedoButton.IsEnabled = status.CanRedo;
+
+            ParagraphButton.Glyph = status.TextKind switch
+            {
+                RichBlockKind.Heading => status.HeadingSize switch
+                {
+                    1 => Icons.TextHeader1,
+                    2 => Icons.TextHeader2,
+                    3 => Icons.TextHeader3,
+                    4 => Icons.TextHeader4,
+                    5 => Icons.TextHeader5,
+                    _ => Icons.TextHeader6
+                },
+                RichBlockKind.Preformatted => Icons.Code,
+                _ => Icons.TextParagraph,
+            };
+
+            ListButton.IsChecked = status.ListStyle != null || status.InDetails;
+            ListButton.Glyph = status.ListStyle switch
+            {
+                RichListStyle.Ordered => Icons.TextNumberList,
+                _ => Icons.TextBulletList
+            };
+
+            TableButton.IsChecked = status.Table != null;
+
+            // Links go on text, so the button waits for some, as TDesktop's does.
+            LinkButton.IsEnabled = status.CanFormat;
+        }
+
+        private void OnLanguageRequested(object sender, RichLanguageRequestedEventArgs e)
+        {
+            var block = e.Block;
+            var language = block.Language;
 
             var flyout = new MenuFlyout();
 
             flyout.Items.Add(new ToggleMenuFlyoutItem
             {
-                Text = "None",
-                IsChecked = language == "none",
-                CommandParameter = null,
-                Command = command
+                Text = Strings.ArticleNone,
+                IsChecked = string.IsNullOrEmpty(language),
+                Command = new RelayCommand<string>(SetLanguage),
+                CommandParameter = string.Empty
             });
-
-            if (!string.IsNullOrEmpty(language))
-            {
-                flyout.Items.Add(new ToggleMenuFlyoutItem
-                {
-                    Text = SyntaxToken.GetLanguageName(language),
-                    IsChecked = true,
-                    CommandParameter = null,
-                    Command = command
-                });
-            }
 
             flyout.CreateFlyoutSeparator();
 
             foreach (var lang in SyntaxToken.Languages)
             {
-                if (lang == language)
-                {
-                    continue;
-                }
-
-                var item = new ToggleMenuFlyoutItem
+                flyout.Items.Add(new ToggleMenuFlyoutItem
                 {
                     Text = SyntaxToken.GetLanguageName(lang),
+                    IsChecked = lang == language,
                     CommandParameter = lang,
-                    Command = command
-                };
-
-                flyout.Items.Add(item);
+                    Command = new RelayCommand<string>(SetLanguage)
+                });
             }
 
-            flyout.ShowAt(View, new FlyoutShowOptions
+            _languageTarget = block;
+
+            flyout.ShowAt(e.Anchor, new FlyoutShowOptions
             {
                 Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
-                ShowMode = FlyoutShowMode.Transient,
-                Position = new Point(x, y + height),
-                ExclusionRect = new Rect(x, y, width, height)
+                ShowMode = FlyoutShowMode.Transient
             });
         }
 
-        // Double-clicking a formula in the editor now fires a "mathExpression" event (instead
-        // of an in-web-view prompt); we edit the LaTeX natively and write it back via
-        // setMathExpression, which targets the math node the editor selected on double-click.
-        private async void OnMathExpression(string latex)
-        {
-            var popup = new FormulaPopup(latex);
+        private RichParagraphBlock _languageTarget;
 
-            var confirm = await popup.ShowQueuedAsync(XamlRoot);
-            if (confirm == ContentDialogResult.Primary)
+        private void SetLanguage(string language)
+        {
+            if (_languageTarget != null)
             {
-                _commands.SetMathExpression(popup.Source);
+                _engine.SetLanguage(_languageTarget, language);
+                _languageTarget = null;
             }
         }
 
-        private void OnContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
+        /// <summary>
+        /// Double click or Enter on a block that is selected whole: what editing it means for the
+        /// kind of block it is.
+        /// </summary>
+        private async void OnNodeActivated(object sender, RichNodeActivatedEventArgs e)
         {
-            args.Handled = true;
+            switch (e.Node)
+            {
+                case RichMathBlock math:
+                    {
+                        e.Handled = true;
 
+                        var popup = new FormulaPopup(math.Expression);
+                        var confirm = await popup.ShowQueuedAsync(XamlRoot);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            _engine.BeginChange();
+                            math.Expression = popup.Source;
+                            _engine.EndChange();
+                        }
+
+                        break;
+                    }
+                case RichButtonRowBlock row:
+                    e.Handled = true;
+                    EditButton(row, 0);
+                    break;
+                case RichMediaBlock media when media.Source.Local is StorageMedia:
+                    e.Handled = true;
+                    EditMedia(media);
+                    break;
+                case RichMapBlock map:
+                    e.Handled = true;
+                    ChangeLocation(map);
+                    break;
+            }
+        }
+
+        private async void OnObjectRequested(object sender, RichObjectRequestedEventArgs e)
+        {
+            if (e.Object.Kind == RichInlineKind.Button)
+            {
+                EditInlineButton(e.Leaf, e.Object.Button);
+                return;
+            }
+
+            if (e.Object.Kind == RichInlineKind.Math && e.Offset >= 0)
+            {
+                var popup = new FormulaPopup(e.Object.Text);
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    _engine.ReplaceObject(new RichPosition(e.Leaf, e.Offset), RichInlineObject.FromMath(popup.Source));
+                }
+            }
+        }
+
+        private void OnButtonRequested(object sender, RichButtonRequestedEventArgs e)
+        {
+            EditButton(e.Row, e.Index);
+        }
+
+        /// <summary>One button of a row, or a new one at the end with an index past the last.</summary>
+        private async void EditButton(RichButtonRowBlock row, int index)
+        {
+            var existing = index >= 0 && index < row.Buttons.Count ? row.Buttons[index] : null;
+
+            var popup = new RichButtonPopup(_clientService, _navigationService, existing, existing != null);
+            var result = await popup.ShowQueuedAsync(XamlRoot);
+
+            var buttons = new List<InlineButton>(row.Buttons);
+
+            if (result == RichButtonPopupResult.Save)
+            {
+                if (existing != null)
+                {
+                    buttons[index] = popup.Button;
+                }
+                else
+                {
+                    buttons.Add(popup.Button);
+                }
+
+                _engine.SetButtons(row, buttons, row.Align);
+            }
+            else if (result == RichButtonPopupResult.Delete && existing != null)
+            {
+                buttons.RemoveAt(index);
+                _engine.SetButtons(row, buttons, row.Align);
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private void InsertInlineButton() => InsertButton(false);
+
+        /// <summary>A new button, in a row of its own or in the text as the popup is told.</summary>
+        private async void InsertButton(bool separateLine)
+        {
+            var choice = GetSeparateLineChoice(separateLine);
+
+            var popup = new RichButtonPopup(_clientService, _navigationService, null, false, choice);
+            if (await popup.ShowQueuedAsync(XamlRoot) == RichButtonPopupResult.Save)
+            {
+                if (choice == null ? _engine.SelectedNode != null : popup.IsSeparateLine)
+                {
+                    _engine.InsertButtonRow(new[] { popup.Button });
+                }
+                else
+                {
+                    _engine.InsertObject(RichInlineObject.FromButton(popup.Button));
+                }
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        /// <summary>
+        /// Whether a new button or formula may go on a line of its own or in the text, starting
+        /// as <paramref name="value"/>; null where there is no choice. A selected block takes
+        /// only a block after it, and a cell or a caption only text.
+        /// </summary>
+        private bool? GetSeparateLineChoice(bool value)
+        {
+            if (_engine.SelectedNode != null)
+            {
+                return null;
+            }
+
+            var leaf = _engine.Focus.Leaf;
+            return leaf.Role == RichLeafRole.Text && leaf.Owner is RichParagraphBlock ? value : null;
+        }
+
+        /// <summary>
+        /// An inline button clicked in the text. The click names the button, not where it is, so
+        /// it is found in its leaf by identity - the button object is shared, never copied.
+        /// </summary>
+        private async void EditInlineButton(RichTextLeaf leaf, InlineButton button)
+        {
+            var offset = FindButton(leaf, button);
+            if (offset < 0)
+            {
+                return;
+            }
+
+            var popup = new RichButtonPopup(_clientService, _navigationService, button, true);
+            var result = await popup.ShowQueuedAsync(XamlRoot);
+
+            // The leaf may have changed while the popup was open.
+            offset = FindButton(leaf, button);
+            if (offset < 0)
+            {
+                return;
+            }
+
+            var position = new RichPosition(leaf, offset);
+
+            if (result == RichButtonPopupResult.Save)
+            {
+                _engine.ReplaceObject(position, RichInlineObject.FromButton(popup.Button));
+            }
+            else if (result == RichButtonPopupResult.Delete)
+            {
+                _engine.Select(position, new RichPosition(leaf, offset + 1));
+                _engine.DeleteSelection();
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private static int FindButton(RichTextLeaf leaf, InlineButton button)
+        {
+            var position = 0;
+            foreach (var run in leaf.Runs)
+            {
+                if (ReferenceEquals(run.Object?.Button, button))
+                {
+                    return position;
+                }
+
+                position += run.Length;
+            }
+
+            return -1;
+        }
+
+        private void SetButtonAlignment(PageBlockHorizontalAlignment align)
+        {
+            if (_engine.SelectedNode is RichButtonRowBlock row)
+            {
+                _engine.SetButtons(row, row.Buttons, align);
+            }
+        }
+
+        // =====================================================================================
+        // Media
+        // =====================================================================================
+
+        private void Attach_Click(object sender, RoutedEventArgs e)
+        {
             var flyout = new MenuFlyout();
 
-            var canPaste = ClipboardEx.TryGetContent().Contains(StandardDataFormats.Text);
+            // The divider, the button and the toggle block went to the menus TDesktop has them in:
+            // the block style, the link and the list.
+            flyout.Items.Add(CreateItem(Strings.ArticleCommandImage, Icons.Image, new RelayCommand(PickMedia), premium: true));
+            flyout.Items.Add(CreateItem(Strings.ArticleCommandAudio, Icons.MusicNote2, new RelayCommand(PickAudio), premium: true));
+            flyout.Items.Add(CreateItem(Strings.AttachDocument, Icons.Document, new RelayCommand(PickFile), premium: true));
+            flyout.Items.Add(CreateItem(Strings.AttachLocation, Icons.Location, new RelayCommand(PickLocation), premium: true));
 
-            flyout.CreateFlyoutItem(_state.CanUndo, _commands.Undo, Strings.TextUndo, Icons.ArrowUndo, VirtualKey.Z);
-            flyout.CreateFlyoutItem(_state.CanRedo, _commands.Redo, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
-            flyout.CreateFlyoutSeparator();
-            flyout.CreateFlyoutItem(_state.CanCopy, _commands.Cut, Strings.Cut, Icons.Cut, VirtualKey.X);
-            flyout.CreateFlyoutItem(_state.CanCopy, _commands.Copy, Strings.Copy, Icons.Copy, VirtualKey.C);
-            flyout.CreateFlyoutItem(_state.CanPaste && canPaste, _commands.Paste, Strings.Paste, Icons.ClipboardPaste, VirtualKey.V);
-            flyout.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.Delete, Strings.Delete);
-            flyout.CreateFlyoutSeparator();
+            flyout.ShowAt(AttachButton, ToolbarMenu);
+        }
 
-            if (_state.BlockType is RichEditorBlockType.Heading or RichEditorBlockType.Paragraph or RichEditorBlockType.Pullquote or RichEditorBlockType.Preformatted or RichEditorBlockType.Footer)
+        private async void PickMedia()
+        {
+            var files = await PickAsync(PickerLocationId.PicturesLibrary, Constants.MediaTypes);
+            await InsertFilesAsync(files, false);
+        }
+
+        /// <summary>The + on a picture or a collage: what is picked joins it, a lone picture becoming a collage.</summary>
+        private async void OnMediaAddRequested(object sender, RichNodeActivatedEventArgs e)
+        {
+            var target = e.Node;
+
+            var files = await PickAsync(PickerLocationId.PicturesLibrary, Constants.MediaTypes);
+            if (files == null || files.Count == 0)
             {
-                var paragraph = new MenuFlyoutSubItem
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            var sources = await RichMediaFactory.CreateAsync(files, false);
+            if (sources.Count == 0 || !CheckMediaLimit(sources.Count))
+            {
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            switch (target)
+            {
+                case RichMediaGroupBlock group:
+                    _engine.AddToGroup(group, sources);
+                    break;
+                case RichMediaBlock { Parent: RichMediaGroupBlock parent }:
+                    _engine.AddToGroup(parent, sources);
+                    break;
+                case RichMediaBlock media:
+                    _engine.GroupWith(media, sources);
+                    break;
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private async void PickFile()
+        {
+            var files = await PickAsync(PickerLocationId.DocumentsLibrary, null);
+            await InsertFilesAsync(files, true);
+        }
+
+        /// <summary>
+        /// The composer's music picker: tracks already on Telegram go in by file id, and asking
+        /// for a file from the device falls through to the picker, as it does there.
+        /// </summary>
+        private async void PickAudio()
+        {
+            var sources = await PickAudioAsync();
+            if (sources == null)
+            {
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            InsertMedia(sources);
+        }
+
+        /// <returns>What was picked, or null when nothing was.</returns>
+        private async Task<IList<RichMediaSource>> PickAudioAsync()
+        {
+            var popup = new SendAudiosPopup(_clientService, _navigationService);
+
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            if (popup.SelectedItems?.Count > 0)
+            {
+                var sources = new List<RichMediaSource>(popup.SelectedItems.Count);
+
+                foreach (var item in popup.SelectedItems)
                 {
-                    Text = "Paragraph",
-                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextParagraph)
+                    if (item.ToInputMessage() is InputMessageAudio audio)
+                    {
+                        sources.Add(RichMediaSource.FromInput(RichMediaKind.Audio, audio.Audio, null, 0, 0, audio.Audio.Duration));
+                    }
+                }
+
+                return sources;
+            }
+
+            var files = await PickAsync(PickerLocationId.MusicLibrary, null);
+            if (files == null || files.Count == 0)
+            {
+                return null;
+            }
+
+            return await RichMediaFactory.CreateAsync(files, false);
+        }
+
+        private async Task<IReadOnlyList<StorageFile>> PickAsync(PickerLocationId location, IEnumerable<string> types)
+        {
+            try
+            {
+                var picker = new FileOpenPicker
+                {
+                    ViewMode = PickerViewMode.Thumbnail,
+                    SuggestedStartLocation = location
                 };
 
-                PopulateParagraphFlyout(paragraph.Items);
-
-                flyout.Items.Add(paragraph);
-            }
-            else if (_state.BlockType is RichEditorBlockType.List or RichEditorBlockType.Details)
-            {
-                var paragraph = new MenuFlyoutSubItem
+                if (types == null)
                 {
-                    Text = "List",
-                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextBulletList)
+                    picker.FileTypeFilter.Add("*");
+                }
+                else
+                {
+                    foreach (var type in types)
+                    {
+                        picker.FileTypeFilter.Add(type);
+                    }
+                }
+
+                return await picker.PickMultipleFilesAsync(XamlRoot);
+            }
+            catch
+            {
+                // The picker refuses to open while another one is.
+                return null;
+            }
+        }
+
+        private async Task InsertFilesAsync(IReadOnlyList<IStorageItem> files, bool asDocuments)
+        {
+            if (files == null || files.Count == 0)
+            {
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            var sources = await RichMediaFactory.CreateAsync(files, asDocuments);
+            InsertMedia(sources);
+        }
+
+        /// <summary>
+        /// Into a selected collage, photos and videos join it; anything else goes in at the caret,
+        /// photos and videos picked together as a collage and files a block each.
+        /// </summary>
+        private void InsertMedia(IList<RichMediaSource> sources)
+        {
+            if (sources.Count == 0)
+            {
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            if (!CheckMediaLimit(sources.Count))
+            {
+                return;
+            }
+
+            // Files picked with a collage selected go after it, not into it.
+            if (_engine.SelectedNode is RichMediaGroupBlock group && CanGroupAll(sources))
+            {
+                _engine.AddToGroup(group, sources);
+            }
+            else
+            {
+                _engine.InsertMedia(sources);
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private static bool CanGroupAll(IList<RichMediaSource> sources)
+        {
+            foreach (var source in sources)
+            {
+                if (!RichEditorEngine.CanGroup(source))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool CheckMediaLimit(int adding)
+        {
+            var limit = (int)_clientService.Options.RichMessageMediaCountMax;
+            if (limit > 0 && _engine.CountMedia() + adding > limit)
+            {
+                ToastPopup.Show(XamlRoot, string.Format(Strings.ArticleLimitMedia, limit));
+                return false;
+            }
+
+            return true;
+        }
+
+        private async void OnPasteRequested(object sender, RichPasteRequestedEventArgs e)
+        {
+            var content = e.Content;
+
+            try
+            {
+                if (content.Contains(StandardDataFormats.StorageItems))
+                {
+                    var items = await content.GetStorageItemsAsync();
+                    await InsertFilesAsync(items, false);
+                }
+                else if (content.Contains(StandardDataFormats.Bitmap))
+                {
+                    var media = await StorageMedia.CreateFromBitmapAsync(content);
+                    if (await RichMediaFactory.CreateAsync(media) is RichMediaSource source)
+                    {
+                        InsertMedia(new[] { source });
+                    }
+                }
+            }
+            catch
+            {
+                // The clipboard or the drag source went away mid-read.
+            }
+        }
+
+        /// <summary>The media editor over a block made in this editor; a sent file cannot be opened again.</summary>
+        private async void EditMedia(RichMediaBlock block)
+        {
+            if (block.Source.Local is not StorageMedia media)
+            {
+                return;
+            }
+
+            var popup = new EditMediaPopup(XamlRoot, media);
+
+            var confirm = await popup.ShowAsync();
+            if (confirm == ContentDialogResult.Primary && await RichMediaFactory.CreateAsync(media) is RichMediaSource source)
+            {
+                _engine.SetSource(block, source);
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private async void ReplaceMedia(RichMediaBlock block)
+        {
+            if (block.Source.Kind == RichMediaKind.Audio)
+            {
+                var sources = await PickAudioAsync();
+                if (sources?.Count > 0)
+                {
+                    _engine.SetSource(block, sources[0]);
+                }
+
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            var types = block.Source.Kind switch
+            {
+                RichMediaKind.Photo or RichMediaKind.Video or RichMediaKind.Animation => Constants.MediaTypes,
+                _ => null
+            };
+
+            var files = await PickAsync(PickerLocationId.PicturesLibrary, types);
+            if (files == null || files.Count == 0)
+            {
+                return;
+            }
+
+            var media = await StorageMedia.CreateAsync(files[0]);
+            if (await RichMediaFactory.CreateAsync(media, types == null) is RichMediaSource source)
+            {
+                _engine.SetSource(block, source);
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private async void PickLocation()
+        {
+            var (location, caption) = await PickPlaceAsync();
+            if (location != null)
+            {
+                _engine.InsertMap(location, caption);
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private async void ChangeLocation(RichMapBlock map)
+        {
+            var location = await PickLocationAsync();
+            if (location != null)
+            {
+                _engine.BeginChange();
+                map.Location = location;
+                _engine.EndChange();
+            }
+
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        private async Task<Location> PickLocationAsync()
+        {
+            return (await PickPlaceAsync()).Location;
+        }
+
+        /// <summary>A point, or a venue: the caption of a map of a venue is its name and address, as TDesktop has it.</summary>
+        private async Task<(Location Location, string Caption)> PickPlaceAsync()
+        {
+            var popup = new SendLocationPopup(_clientService.Session);
+
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return default;
+            }
+
+            if (popup.Media is InputMessageVenue venue)
+            {
+                var title = venue.Venue.Title;
+                var address = venue.Venue.Address;
+
+                var caption = !string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(address)
+                    ? title + "\n" + address
+                    : string.IsNullOrEmpty(title) ? address : title;
+
+                return (venue.Venue.Location, caption);
+            }
+
+            return (popup.Media is InputMessageLocation location ? location.Location : null, null);
+        }
+
+        /// <summary>One item naming the other layout, as the switch on the collage does.</summary>
+        private void AddLayoutItem(IList<MenuFlyoutItemBase> flyout, RichMediaGroupBlock group)
+        {
+            flyout.CreateFlyoutItem(() => _engine.SetSlideshow(group, !group.IsSlideshow),
+                group.IsSlideshow ? Strings.AccDescrCollage : Strings.AccDescrIVSlideshow,
+                group.IsSlideshow ? Icons.Apps : Icons.Image);
+        }
+
+        /// <summary>
+        /// What can be done to a selected block, moving it included. A right click puts these in a
+        /// submenu named for the block, next to the editing commands, whose Delete already deletes
+        /// it; the block's own menu button shows them alone, so it brings its own.
+        /// </summary>
+        private void PopulateNodeFlyout(IList<MenuFlyoutItemBase> flyout, RichBlock node, bool delete)
+        {
+            switch (node)
+            {
+                case RichMediaBlock media:
+                    {
+                        var visual = media.Source.Kind is RichMediaKind.Photo or RichMediaKind.Video or RichMediaKind.Animation;
+
+                        if (media.Source.Local is StorageMedia && visual)
+                        {
+                            flyout.CreateFlyoutItem(() => EditMedia(media), Strings.Edit, Icons.Edit);
+                        }
+
+                        flyout.CreateFlyoutItem(() => ReplaceMedia(media), Strings.Replace, Icons.ArrowSync);
+
+                        if (visual)
+                        {
+                            flyout.CreateFlyoutItem(() => _engine.SetSpoiler(media, !media.HasSpoiler), media.HasSpoiler ? Strings.DisablePhotoSpoiler : Strings.EnablePhotoSpoiler, Icons.Spoiler);
+                        }
+
+                        if (media.IsGroupItem)
+                        {
+                            // A photo of a collage: out of it, to stand on its own after it.
+                            flyout.CreateFlyoutItem(() => _engine.ExtractFromGroup(media), Strings.CommunityUngroupChatsButton);
+
+                            if (media.Parent is RichMediaGroupBlock parent)
+                            {
+                                AddLayoutItem(flyout, parent);
+                            }
+
+                            break;
+                        }
+
+                        if (_engine.GetAdjacentMedia(media, 1) != null || _engine.GetAdjacentMedia(media, -1) != null)
+                        {
+                            var direction = _engine.GetAdjacentMedia(media, 1) != null ? 1 : -1;
+                            flyout.CreateFlyoutItem(() => _engine.Group(media, direction), Strings.StoriesCollage);
+                        }
+
+                        flyout.CreateFlyoutItem(() => Editor.FocusLeaf(media.Credit), Strings.ArticleHintAuthor, Icons.Person);
+                        break;
+                    }
+
+                case RichMediaGroupBlock group:
+                    AddLayoutItem(flyout, group);
+                    flyout.Add(new MenuFlyoutSeparator());
+                    flyout.CreateFlyoutItem(PickMedia, Strings.ArticleCommandImage, Icons.Image);
+                    flyout.CreateFlyoutItem(() => _engine.Ungroup(group), Strings.CommunityUngroupChatsButton);
+                    flyout.CreateFlyoutItem(() => Editor.FocusLeaf(group.Credit), Strings.ArticleHintAuthor, Icons.Person);
+                    break;
+
+                case RichMapBlock map:
+                    flyout.CreateFlyoutItem(() => ChangeLocation(map), Strings.Edit, Icons.Location);
+                    flyout.CreateFlyoutItem(() => Editor.FocusLeaf(map.Credit), Strings.ArticleHintAuthor, Icons.Person);
+                    break;
+
+                case RichMathBlock math:
+                    flyout.CreateFlyoutItem(() => OnNodeActivated(Editor, new RichNodeActivatedEventArgs(math)), Strings.Edit, Icons.Edit);
+                    break;
+
+                case RichButtonRowBlock row:
+                    {
+                        for (int i = 0; i < row.Buttons.Count; i++)
+                        {
+                            var index = i;
+                            flyout.CreateFlyoutItem(() => EditButton(row, index), RichDocumentConverter.GetPlainText(row.Buttons[i].Text), Icons.Edit);
+                        }
+
+                        flyout.CreateFlyoutItem(() => EditButton(row, row.Buttons.Count), Strings.RichEditorAddButton, Icons.Add);
+
+                        var alignment = new MenuFlyoutSubItem
+                        {
+                            Text = Strings.ArticleAlignment,
+                            Icon = MenuFlyoutHelper.CreateIcon(Icons.TextAlignCenter)
+                        };
+
+                        var command = new RelayCommand<PageBlockHorizontalAlignment>(SetButtonAlignment);
+
+                        alignment.Items.Add(new ToggleMenuFlyoutItem { Text = Strings.Default, IsChecked = row.Align == null, Command = command, CommandParameter = null });
+                        alignment.Items.Add(new ToggleMenuFlyoutItem { Text = Strings.ArticleAlignLeft, IsChecked = row.Align is PageBlockHorizontalAlignmentLeft, Command = command, CommandParameter = new PageBlockHorizontalAlignmentLeft() });
+                        alignment.Items.Add(new ToggleMenuFlyoutItem { Text = Strings.ArticleAlignCenter, IsChecked = row.Align is PageBlockHorizontalAlignmentCenter, Command = command, CommandParameter = new PageBlockHorizontalAlignmentCenter() });
+                        alignment.Items.Add(new ToggleMenuFlyoutItem { Text = Strings.ArticleAlignRight, IsChecked = row.Align is PageBlockHorizontalAlignmentRight, Command = command, CommandParameter = new PageBlockHorizontalAlignmentRight() });
+
+                        flyout.Add(alignment);
+                        break;
+                    }
+            }
+
+            if (flyout.Count > 0)
+            {
+                flyout.Add(new MenuFlyoutSeparator());
+            }
+
+            flyout.CreateFlyoutItem(_engine.CanMoveBlock(-1), MoveBlockUp, Strings.LinkAbove, Icons.ChevronUp);
+            flyout.CreateFlyoutItem(_engine.CanMoveBlock(1), MoveBlockDown, Strings.LinkBelow, Icons.ChevronDown);
+
+            if (delete)
+            {
+                flyout.Add(new MenuFlyoutSeparator());
+                flyout.CreateFlyoutItem(DeleteNode, Strings.Delete, Icons.Delete, destructive: true);
+            }
+        }
+
+        /// <summary>What the block's submenu is called: what the block is.</summary>
+        private static string GetNodeName(RichBlock node)
+        {
+            return node switch
+            {
+                RichMediaBlock { Source.Kind: RichMediaKind.Photo } => Strings.ArticleCommandImage,
+                RichMediaBlock { Source.Kind: RichMediaKind.Video } => Strings.ArticleCommandVideo,
+                RichMediaBlock { Source.Kind: RichMediaKind.Animation } => Strings.AttachGif,
+                RichMediaBlock { Source.Kind: RichMediaKind.Audio } => Strings.ArticleCommandAudio,
+                RichMediaBlock { Source.Kind: RichMediaKind.VoiceNote } => Strings.AttachAudio,
+                RichMediaBlock => Strings.AttachDocument,
+                RichMediaGroupBlock { IsSlideshow: true } => Strings.AccDescrIVSlideshow,
+                RichMediaGroupBlock => Strings.AccDescrCollage,
+                RichMapBlock => Strings.AttachLocation,
+                RichMathBlock => Strings.AccDescrIVFormula,
+                RichButtonRowBlock => Strings.RichEditorButton,
+                _ => Strings.ArticleCommandDivider
+            };
+        }
+
+        private static string GetNodeIcon(RichBlock node)
+        {
+            return node switch
+            {
+                RichMediaBlock { Source.Kind: RichMediaKind.Audio } => Icons.MusicNote2,
+                RichMediaBlock { Source.Kind: RichMediaKind.VoiceNote } => Icons.MicOn,
+                RichMediaBlock { Source.Kind: RichMediaKind.Document } => Icons.Document,
+                RichMediaBlock or RichMediaGroupBlock => Icons.Image,
+                RichMapBlock => Icons.Location,
+                RichMathBlock => Icons.Edit,
+                RichButtonRowBlock => Icons.Add,
+                RichDividerBlock => Icons.LineHorizontal1,
+                _ => null
+            };
+        }
+
+        private void OnSubmitRequested(object sender, EventArgs e)
+        {
+            Send_Click(SendButton, null);
+        }
+
+        private void OnMenuRequested(object sender, RichMenuRequestedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            if (e.IsBlockMenu && _engine.SelectedNode is RichBlock selected)
+            {
+                PopulateNodeFlyout(flyout.Items, selected, true);
+                Editor.ShowMenu(flyout, e.Position, e.IsTouch);
+                return;
+            }
+
+            var status = _engine.GetStatus();
+
+            var canPaste = ClipboardEx.TryGetContent()?.Contains(StandardDataFormats.Text) ?? false;
+
+            flyout.CreateFlyoutItem(status.CanUndo, _engine.Undo, Strings.TextUndo, Icons.ArrowUndo, VirtualKey.Z);
+            flyout.CreateFlyoutItem(status.CanRedo, _engine.Redo, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(status.HasTextSelection, Editor.Cut, Strings.Cut, Icons.Cut, VirtualKey.X);
+            flyout.CreateFlyoutItem(status.HasTextSelection, Editor.Copy, Strings.Copy, Icons.Copy, VirtualKey.C);
+            flyout.CreateFlyoutItem(canPaste, PasteFormatted, Strings.Paste, Icons.ClipboardPaste, VirtualKey.V);
+            flyout.CreateFlyoutItem(!status.IsSelectionEmpty, _engine.DeleteSelection, Strings.Delete);
+            flyout.CreateFlyoutSeparator();
+
+            if (_engine.SelectedNode is RichBlock node)
+            {
+                var block = new MenuFlyoutSubItem
+                {
+                    Text = GetNodeName(node)
                 };
 
-                PopulateListFlyout(paragraph.Items);
+                if (GetNodeIcon(node) is string icon)
+                {
+                    block.Icon = MenuFlyoutHelper.CreateIcon(icon);
+                }
 
-                flyout.Items.Add(paragraph);
+                PopulateNodeFlyout(block.Items, node, false);
+
+                flyout.Items.Add(block);
             }
-            else if (_state.BlockType == RichEditorBlockType.Table)
+            else if (status.Table != null)
             {
                 var table = new MenuFlyoutSubItem
                 {
-                    Text = "Table",
+                    Text = Strings.AccDescrIVTable,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.Table)
                 };
 
@@ -574,174 +1213,251 @@ namespace Telegram.Views.Host
 
                 flyout.Items.Add(table);
             }
-
-            var formatting = new MenuFlyoutSubItem
+            else if (status.ListStyle != null || status.InDetails)
             {
-                Text = Strings.Formatting,
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
-            };
+                var list = new MenuFlyoutSubItem
+                {
+                    Text = Strings.AccDescrIVListStyle,
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextBulletList)
+                };
 
-            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleBold, Strings.Bold, Icons.TextBold, VirtualKey.B);
+                PopulateListFlyout(list.Items);
 
-            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleItalic, Strings.Italic, Icons.TextItalic, VirtualKey.I);
+                flyout.Items.Add(list);
+            }
+            else if (status.TextKind is RichBlockKind.Heading or RichBlockKind.Paragraph or RichBlockKind.PullQuote or RichBlockKind.Preformatted or RichBlockKind.Footer)
+            {
+                var paragraph = new MenuFlyoutSubItem
+                {
+                    Text = Strings.Formatting,
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextParagraph)
+                };
 
-            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleUnderline, Strings.Underline, Icons.TextUnderline, VirtualKey.U);
+                PopulateParagraphFlyout(paragraph.Items);
 
-            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleStrikethrough, Strings.Strike, Icons.TextStrikethrough, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                flyout.Items.Add(paragraph);
+            }
 
-            //if ((entities & FormattedTextEntity.Quote) != 0)
-            //{
-            //    _formattingFlyout.CreateFlyoutItem(length, ToggleQuote, Strings.Quote, Icons.QuoteBlock, (VirtualKey)190, VirtualKeyModifiers.Control | Windows.System.VirtualKeyModifiers.Shift);
-            //}
+            if (status.CanFormat)
+            {
+                var formatting = new MenuFlyoutSubItem
+                {
+                    Text = Strings.AccDescrIVTextStyle,
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
+                };
 
-            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleCode, Strings.Mono, Icons.Code, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                PopulateTextStyleFlyout(formatting.Items, status);
+                formatting.Items.Add(new MenuFlyoutSeparator());
+                PopulateLinkFlyout(formatting.Items, status);
 
-            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleSpoiler, Strings.Spoiler, Icons.Spoiler, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-
-            //formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, CreateDate, Strings.FormattedDate, Icons.Calendar);
-
-            //formatting.CreateFlyoutSeparator();
-
-            //formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, Icons.Link, VirtualKey.K);
-
-            //formatting.CreateFlyoutSeparator();
-            //formatting.CreateFlyoutItem(length && !IsDefaultFormat(selection), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-
-            flyout.Items.Add(formatting);
+                flyout.Items.Add(formatting);
+            }
 
             flyout.CreateFlyoutSeparator();
-            flyout.CreateFlyoutItem(!_state.IsEmpty, _commands.SelectAll, Strings.SelectAll, null, VirtualKey.A);
+            flyout.CreateFlyoutItem(!status.IsDocumentEmpty, _engine.SelectAll, Strings.SelectAll, null, VirtualKey.A);
 
-            flyout.ShowAt(View, new FlyoutShowOptions
+            Editor.ShowMenu(flyout, e.Position, e.IsTouch);
+        }
+
+        private void PasteFormatted() => Editor.Paste(false);
+
+        private void MoveBlockUp() => _engine.MoveBlock(-1);
+
+        private void MoveBlockDown() => _engine.MoveBlock(1);
+
+        private void DeleteNode()
+        {
+            if (_engine.SelectedNode is RichBlock node)
             {
-                Position = args.Location,
-                ShowMode = FlyoutShowMode.Transient
-            });
+                _engine.Delete(node);
+            }
         }
 
-        //private async void UpdateModel()
-        //{
-        //    var model = await _commands.GetModelAsync();
-        //    if (model != null)
-        //    {
-        //        Content.UpdateView(_clientService, model.Blocks, false);
-        //    }
-        //}
-
-        private void Bold_Click(object sender, RoutedEventArgs e)
+        private void TextStyle_Click(object sender, RoutedEventArgs e)
         {
-            _commands.ToggleBold();
+            var flyout = new MenuFlyout();
+
+            PopulateTextStyleFlyout(flyout.Items, _status ?? _engine.GetStatus());
+
+            flyout.ShowAt(TextStyleButton, ToolbarMenu);
         }
 
-        private void Italic_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// The marks, as TDesktop's Text Style menu has them: what a regular message has first,
+        /// unmarked, then what only a rich message has.
+        /// </summary>
+        private void PopulateTextStyleFlyout(IList<MenuFlyoutItemBase> flyout, RichEditorStatus status)
         {
-            _commands.ToggleItalic();
+            var command = new RelayCommand<RichMarks>(_engine.ToggleMark);
+            var control = VirtualKeyModifiers.Control;
+            var shift = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift;
+
+            flyout.Add(CreateToggle(Strings.Bold, Icons.TextBold, (status.Marks & RichMarks.Bold) != 0, command, RichMarks.Bold, shortcut: Shortcut(VirtualKey.B, control)));
+            flyout.Add(CreateToggle(Strings.Italic, Icons.TextItalic, (status.Marks & RichMarks.Italic) != 0, command, RichMarks.Italic, shortcut: Shortcut(VirtualKey.I, control)));
+            flyout.Add(CreateToggle(Strings.Underline, Icons.TextUnderline, (status.Marks & RichMarks.Underline) != 0, command, RichMarks.Underline, shortcut: Shortcut(VirtualKey.U, control)));
+            flyout.Add(CreateToggle(Strings.Strike, Icons.TextStrikethrough, (status.Marks & RichMarks.Strikethrough) != 0, command, RichMarks.Strikethrough, shortcut: Shortcut(VirtualKey.X, shift)));
+            flyout.Add(CreateToggle(Strings.Spoiler, Icons.Spoiler, (status.Marks & RichMarks.Spoiler) != 0, command, RichMarks.Spoiler, shortcut: Shortcut(VirtualKey.P, shift)));
+            flyout.Add(CreateToggle(Strings.Mono, Icons.Code, (status.Marks & RichMarks.Monospace) != 0, command, RichMarks.Monospace, shortcut: Shortcut(VirtualKey.M, shift)));
+            flyout.Add(CreateToggle(Strings.Subscript, Icons.TextSubscript, (status.Marks & RichMarks.Subscript) != 0, command, RichMarks.Subscript, premium: true));
+            flyout.Add(CreateToggle(Strings.Superscript, Icons.TextSuperscript, (status.Marks & RichMarks.Superscript) != 0, command, RichMarks.Superscript, premium: true));
+            flyout.Add(CreateToggle(Strings.Highlight, null, (status.Marks & RichMarks.Marked) != 0, command, RichMarks.Marked, premium: true));
+            flyout.Add(new MenuFlyoutSeparator());
+            flyout.Add(CreateItem(Strings.Regular, null, new RelayCommand(_engine.ClearFormatting), shortcut: Shortcut(VirtualKey.N, shift)));
+
+            // On a caret too: what is toggled there is what the next text typed gets, and the
+            // menu shows it checked. Only where text takes no marks - a code block, a selected
+            // block - is there nothing to do.
+            foreach (var item in flyout)
+            {
+                if (item is MenuFlyoutItem menu)
+                {
+                    menu.IsEnabled = status.CanFormat;
+                }
+            }
         }
 
-        private void Underline_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleUnderline();
-        }
-
-        private void Strikethrough_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleStrikethrough();
-        }
-
-        private void Spoiler_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleSpoiler();
-        }
-
-        private void Monospace_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleCode();
-        }
-
-        private void Subscript_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleSubscript();
-        }
-
-        private void Superscript_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleSuperscript();
-        }
-
+        /// <summary>A link on the caret is edited straight away; anything else is a choice of what to insert.</summary>
         private void Link_Click(object sender, RoutedEventArgs e)
         {
+            var status = _status ?? _engine.GetStatus();
+            if (status.HasLink)
+            {
+                CreateLink();
+                return;
+            }
 
+            var flyout = new MenuFlyout();
+
+            PopulateLinkFlyout(flyout.Items, status);
+
+            flyout.ShowAt(LinkButton, ToolbarMenu);
         }
 
-        private void Date_Click(object sender, RoutedEventArgs e)
+        private void PopulateLinkFlyout(IList<MenuFlyoutItemBase> flyout, RichEditorStatus status)
         {
+            flyout.Add(CreateItem(status.HasLink ? Strings.EditLink : Strings.CreateLink, Icons.Link, new RelayCommand(CreateLink), shortcut: Shortcut(VirtualKey.K)));
+            flyout.Add(CreateItem(Strings.RichEditorButton, Icons.Add, new RelayCommand(InsertInlineButton)));
+            flyout.Add(CreateItem(Strings.AccDescrIVInsertDate, Icons.Calendar, new RelayCommand(InsertDate)));
+        }
 
+        private void OnLinkRequested(object sender, EventArgs e) => CreateLink();
+
+        private async void CreateLink()
+        {
+            var selected = _engine.GetSelectedText();
+            var existing = _engine.GetSelectionLink();
+
+            var popup = new CreateLinkPopup
+            {
+                Text = selected,
+                Link = existing?.Kind == RichLinkKind.Url ? existing.Url : string.Empty,
+                IsLightDismissEnabled = true
+            };
+
+            if (string.IsNullOrEmpty(popup.Link))
+            {
+                var clipboard = ClipboardEx.TryGetContent();
+                if (clipboard != null && clipboard.Contains(StandardDataFormats.Text))
+                {
+                    try
+                    {
+                        var link = await clipboard.GetTextAsync();
+                        if (link.IsValidUrl())
+                        {
+                            popup.Link = link;
+                        }
+                    }
+                    catch
+                    {
+                        // The clipboard changed or went away while being read.
+                    }
+                }
+            }
+
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm != true || string.IsNullOrEmpty(popup.Link))
+            {
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            ApplyLink(RichLink.FromUrl(popup.Link), popup.Text, selected);
+            Editor.Focus(FocusState.Programmatic);
+        }
+
+        /// <summary>
+        /// A link over the selection: as it is when its text was kept, or over new text that
+        /// replaces it when the text was changed in the popup.
+        /// </summary>
+        private void ApplyLink(RichLink link, string text, string selected)
+        {
+            if (!string.IsNullOrEmpty(selected) && text == selected)
+            {
+                _engine.SetLink(link);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            _engine.BeginBatch();
+
+            if (_engine.IsSelectionEmpty)
+            {
+                _engine.SetLink(link, text);
+            }
+            else
+            {
+                _engine.InsertText(text);
+
+                var end = _engine.Focus;
+                _engine.Select(new RichPosition(end.Leaf, Math.Max(0, end.Offset - text.Length)), end);
+                _engine.SetLink(link);
+                _engine.SetCaret(end);
+            }
+
+            _engine.EndBatch();
+        }
+
+        private async void InsertDate()
+        {
+            var selected = _engine.GetSelectedText();
+
+            var popup = new ChooseDateTimeToast
+            {
+                Title = Strings.RelativeDateAddDate,
+                PrimaryButtonContent = Strings.OK,
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                SecondaryButtonContent = Strings.Cancel,
+                IsLightDismissEnabled = true,
+            };
+
+            var confirm = await popup.ShowAsync(XamlRoot);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                Editor.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            var format = new DateTimeFormattingTypeAbsolute(new DateTimePartPrecisionShort(), new DateTimePartPrecisionShort(), false);
+            var link = RichLink.FromDateTime((int)popup.Value.ToUnixTimeSeconds(), format);
+            var text = string.IsNullOrEmpty(selected) ? Formatter.DateAt((int)popup.Value.ToUnixTimeSeconds()) : selected;
+
+            ApplyLink(link, text, selected);
+            Editor.Focus(FocusState.Programmatic);
         }
 
         private void Undo_Click(object sender, RoutedEventArgs e)
         {
-            _commands.Undo();
+            _engine.Undo();
         }
 
         private void Redo_Click(object sender, RoutedEventArgs e)
         {
-            _commands.Redo();
+            _engine.Redo();
         }
-
-        //private void PostEvent(string eventName, params object[] eventData)
-        //{
-        //    if (eventData.Length % 2 == 0)
-        //    {
-        //        var data = new JsonObject();
-
-        //        for (int i = 0; i < eventData.Length; i += 2)
-        //        {
-        //            if (eventData[i] is string key)
-        //            {
-        //                data[key] = eventData[i + 1] switch
-        //                {
-        //                    string stringValue => CreateStringValue(stringValue),
-        //                    double numberValue => Windows.Data.Json.JsonValue.CreateNumberValue(numberValue),
-        //                    bool booleanValue => Windows.Data.Json.JsonValue.CreateBooleanValue(booleanValue),
-        //                    _ => Windows.Data.Json.JsonValue.CreateNullValue(),
-        //                };
-
-        //                static Windows.Data.Json.JsonValue CreateStringValue(string stringValue)
-        //                {
-        //                    try
-        //                    {
-        //                        if (Windows.Data.Json.JsonValue.TryParse(stringValue, out Windows.Data.Json.JsonValue obj))
-        //                        {
-        //                            return obj;
-        //                        }
-        //                    }
-        //                    catch
-        //                    {
-        //                        Logger.Debug("Unable to parse JSON string: " + stringValue);
-        //                    }
-
-        //                    return Windows.Data.Json.JsonValue.CreateStringValue(stringValue);
-        //                }
-        //            }
-        //        }
-
-        //        PostEventImpl(eventName, data.Stringify());
-        //    }
-        //    else if (eventData.Length > 0)
-        //    {
-        //        PostEventImpl(eventName, string.Join(' ', eventData));
-        //    }
-        //    else
-        //    {
-        //        PostEventImpl(eventName, "null");
-        //    }
-        //}
-
-        //private void PostEventImpl(string eventName, string eventData = "null")
-        //{
-        //    Logger.Info(string.Format("{0}: {1}", eventName, eventData));
-        //    _ = View.CoreWebView2.ExecuteScriptWithResultAsync($"UnigramEditor.exec('{eventName}', {eventData});");
-        //}
 
         private void Paragraph_Click(object sender, RoutedEventArgs e)
         {
@@ -749,82 +1465,57 @@ namespace Telegram.Views.Host
 
             PopulateParagraphFlyout(flyout.Items);
 
-            flyout.ShowAt(ParagraphButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.Top,
-                ShowMode = FlyoutShowMode.Transient
-            });
+            flyout.ShowAt(ParagraphButton, ToolbarMenu);
         }
 
         private void PopulateParagraphFlyout(IList<MenuFlyoutItemBase> flyout)
         {
+            var status = _status ?? _engine.GetStatus();
+
             var heading = new MenuFlyoutSubItem
             {
-                Text = Strings.ArticleHeading
+                Text = Strings.ArticleHeading,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextHeader1)
             };
 
             {
-                var command = new RelayCommand<int>(_commands.SetHeading);
+                var command = new RelayCommand<int>(SetHeading);
 
                 for (int i = 1; i < 7; i++)
                 {
-                    var child = new ToggleMenuFlyoutItem
-                    {
-                        Text = i == 1 ? Strings.ArticleHeading1 : i == 2 ? Strings.ArticleHeading2 : i == 3 ? Strings.ArticleHeading3 : i == 4 ? Strings.ArticleHeading4 : i == 5 ? Strings.ArticleHeading5 : Strings.ArticleHeading6,
-                        FontFamily = new FontFamily("Times New Roman"),
-                        FontSize = 24 - ((i - 1) * 2),
-                        FontWeight = FontWeights.SemiBold,
-                        Icon = MenuFlyoutHelper.CreateIcon(i == 1 ? Icons.TextHeader1 : i == 2 ? Icons.TextHeader2 : i == 3 ? Icons.TextHeader3 : i == 4 ? Icons.TextHeader4 : i == 5 ? Icons.TextHeader5 : Icons.TextHeader6),
-                        IsChecked = _state.BlockType == RichEditorBlockType.Heading && _state.HeadingSize == i,
-                        CommandParameter = i,
-                        Command = command
-                    };
+                    var child = CreateToggle(
+                        i == 1 ? Strings.ArticleHeading1 : i == 2 ? Strings.ArticleHeading2 : i == 3 ? Strings.ArticleHeading3 : i == 4 ? Strings.ArticleHeading4 : i == 5 ? Strings.ArticleHeading5 : Strings.ArticleHeading6,
+                        i == 1 ? Icons.TextHeader1 : i == 2 ? Icons.TextHeader2 : i == 3 ? Icons.TextHeader3 : i == 4 ? Icons.TextHeader4 : i == 5 ? Icons.TextHeader5 : Icons.TextHeader6,
+                        status.TextKind == RichBlockKind.Heading && status.HeadingSize == i,
+                        command,
+                        i,
+                        premium: true);
+
+                    child.FontFamily = new FontFamily("Times New Roman");
+                    child.FontSize = 24 - ((i - 1) * 2);
+                    child.FontWeight = FontWeights.SemiBold;
 
                     heading.Items.Add(child);
                 }
             }
 
-            var text = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticleText,
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextT),
-                IsChecked = _state.BlockType == RichEditorBlockType.Paragraph,
-                Command = new RelayCommand(_commands.SetParagraph)
-            };
-
-            var pullquote = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticlePullquote,
-                IsChecked = _state.BlockType == RichEditorBlockType.Pullquote,
-                Command = new RelayCommand(_commands.TogglePullquote)
-            };
-
-            var preformatted = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticleCode,
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.Code),
-                IsChecked = _state.BlockType == RichEditorBlockType.Preformatted,
-                Command = new RelayCommand(_commands.SetPreformatted)
-            };
-
-            var footer = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticleFooter,
-                IsChecked = _state.BlockType == RichEditorBlockType.Footer,
-                Command = new RelayCommand(_commands.SetFooter)
-            };
-
+            // In TDesktop's order, starred where it is: a quote and code are in regular messages too.
             flyout.Add(heading);
-            flyout.Add(text);
-            flyout.Add(pullquote);
-            flyout.Add(preformatted);
-            flyout.Add(footer);
+            flyout.Add(CreateToggle(Strings.ArticleText, Icons.TextT, status.TextKind == RichBlockKind.Paragraph && !status.InBlockQuote, new RelayCommand(SetParagraph)));
+            flyout.Add(CreateToggle(Strings.ArticleQuote, Icons.QuoteBlock, status.InBlockQuote, new RelayCommand(_engine.ToggleBlockQuote)));
+            flyout.Add(CreateToggle(Strings.ArticlePullquote, Icons.CommentQuote, status.TextKind == RichBlockKind.PullQuote, new RelayCommand(_engine.TogglePullQuote), premium: true));
+            flyout.Add(CreateToggle(Strings.ArticleCode, Icons.Code, status.TextKind == RichBlockKind.Preformatted, new RelayCommand(SetPreformatted)));
+            flyout.Add(CreateToggle(Strings.ArticleFooter, Icons.DocumentFooter, status.TextKind == RichBlockKind.Footer, new RelayCommand(SetFooter), premium: true));
+            flyout.Add(CreateItem(Strings.ArticleCommandDivider, Icons.LineHorizontal1, new RelayCommand(_engine.InsertDivider), premium: true));
         }
 
-        private void Quote_Click(object sender, RoutedEventArgs e)
-        {
-            _commands.ToggleBlockquote();
-        }
+        private void SetHeading(int size) => _engine.SetTextKind(RichBlockKind.Heading, size);
+
+        private void SetParagraph() => _engine.SetTextKind(RichBlockKind.Paragraph);
+
+        private void SetPreformatted() => _engine.SetTextKind(RichBlockKind.Preformatted);
+
+        private void SetFooter() => _engine.SetTextKind(RichBlockKind.Footer);
 
         private void List_Click(object sender, RoutedEventArgs e)
         {
@@ -832,70 +1523,55 @@ namespace Telegram.Views.Host
 
             PopulateListFlyout(flyout.Items);
 
-            flyout.ShowAt(ListButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.Top,
-                ShowMode = FlyoutShowMode.Transient
-            });
+            flyout.ShowAt(ListButton, ToolbarMenu);
         }
 
         private void PopulateListFlyout(IList<MenuFlyoutItemBase> flyout)
         {
-            var command = new RelayCommand<RichEditorListType>(_commands.ToggleList);
+            var status = _status ?? _engine.GetStatus();
+            var command = new RelayCommand<RichListStyle>(_engine.ToggleList);
 
-            var none = new ToggleMenuFlyoutItem
+            // Outside a list, the lists that can be inserted; in one, what it can be changed to -
+            // inserting there would change it instead - as TDesktop's List menu has it.
+            if (status.ListStyle != null)
             {
-                Text = Strings.ArticleNone,
-                IsChecked = _state.ListType == RichEditorListType.None,
-                CommandParameter = RichEditorListType.None,
-                Command = command
-            };
+                var change = new MenuFlyoutSubItem
+                {
+                    Text = Strings.RichEditorChangeList,
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextBulletList)
+                };
 
-            var bulleted = new ToggleMenuFlyoutItem
+                change.Items.Add(CreateToggle(Strings.ArticleListNumbered, Icons.TextNumberList, status.ListStyle == RichListStyle.Ordered, command, RichListStyle.Ordered));
+                change.Items.Add(CreateToggle(Strings.ArticleListBulleted, Icons.TextBulletList, status.ListStyle == RichListStyle.Bullet, command, RichListStyle.Bullet));
+                change.Items.Add(CreateToggle(Strings.ArticleListTodo, Icons.CheckmarkSquare, status.ListStyle == RichListStyle.Checklist, command, RichListStyle.Checklist));
+                change.Items.Add(new MenuFlyoutSeparator());
+                change.Items.Add(CreateItem(Strings.ArticleNone, null, new RelayCommand(_engine.RemoveList)));
+
+                flyout.Add(change);
+                flyout.Add(CreateItem(Strings.ArticleIndent, null, new RelayCommand(Indent)));
+                flyout.Add(CreateItem(Strings.ArticleOutdent, null, new RelayCommand(Outdent)));
+                flyout.Add(new MenuFlyoutSeparator());
+            }
+            else
             {
-                Text = Strings.ArticleListBulleted,
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextBulletList),
-                IsChecked = _state.ListType == RichEditorListType.Bullet,
-                CommandParameter = RichEditorListType.Bullet,
-                Command = command
-            };
+                flyout.Add(CreateItem(Strings.ArticleListNumbered, Icons.TextNumberList, command, RichListStyle.Ordered, premium: true));
+                flyout.Add(CreateItem(Strings.ArticleListBulleted, Icons.TextBulletList, command, RichListStyle.Bullet, premium: true));
+                flyout.Add(CreateItem(Strings.ArticleListTodo, Icons.CheckmarkSquare, command, RichListStyle.Checklist, premium: true));
+            }
 
-            var numbered = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticleListNumbered,
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextNumberList),
-                IsChecked = _state.ListType == RichEditorListType.Ordered,
-                CommandParameter = RichEditorListType.Ordered,
-                Command = command
-            };
-
-            var checklist = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticleListTodo,
-                IsChecked = _state.ListType == RichEditorListType.Checkbox,
-                CommandParameter = RichEditorListType.Checkbox,
-                Command = command
-            };
-
-            var toggle = new ToggleMenuFlyoutItem
-            {
-                Text = Strings.ArticleToggleBlock,
-                IsChecked = _state.BlockType == RichEditorBlockType.Details,
-                Command = new RelayCommand(_commands.InsertDetails)
-            };
-
-            flyout.Add(none);
-            flyout.Add(bulleted);
-            flyout.Add(numbered);
-            flyout.Add(checklist);
-            flyout.Add(toggle);
+            // Checked inside one, where choosing it takes the block away again.
+            flyout.Add(CreateToggle(Strings.ArticleToggleBlock, Icons.ChevronDown, status.InDetails, new RelayCommand(_engine.ToggleDetails), premium: true));
         }
+
+        private void Indent() => _engine.Indent((int)_clientService.Options.RichMessageDepthMax);
+
+        private void Outdent() => _engine.Outdent();
 
         private void Table_Click(object sender, RoutedEventArgs e)
         {
-            if (_state.BlockType != RichEditorBlockType.Table)
+            if (_status?.Table == null)
             {
-                _commands.InsertTable();
+                _engine.InsertTable(2, 2);
                 return;
             }
 
@@ -903,141 +1579,193 @@ namespace Telegram.Views.Host
 
             PopulateTableFlyout(flyout.Items);
 
-            flyout.ShowAt(TableButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.Top,
-                ShowMode = FlyoutShowMode.Transient
-            });
+            flyout.ShowAt(TableButton, ToolbarMenu);
         }
 
         private void PopulateTableFlyout(IList<MenuFlyoutItemBase> flyout)
         {
+            var table = (_status ?? _engine.GetStatus()).Table;
+            if (table == null)
+            {
+                return;
+            }
+
             var alignment = new MenuFlyoutSubItem
             {
-                Text = "Alignment",
+                Text = Strings.ArticleAlignment,
                 Icon = MenuFlyoutHelper.CreateIcon(Icons.TextboxAlignCenter),
             };
 
             {
-                var command = new RelayCommand<RichEditorCellAlignment>(_commands.SetCellAlignment);
+                var command = new RelayCommand<PageBlockHorizontalAlignment>(_engine.TableSetAlignment);
 
-                var left = new ToggleMenuFlyoutItem
+                alignment.Items.Add(new ToggleMenuFlyoutItem
                 {
-                    Text = "Left",
+                    Text = Strings.ArticleAlignLeft,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.TextAlignLeft),
-                    IsChecked = _state.CellAlignment == RichEditorCellAlignment.Left,
-                    CommandParameter = RichEditorCellAlignment.Left,
+                    IsChecked = table.Align is PageBlockHorizontalAlignmentLeft,
+                    CommandParameter = new PageBlockHorizontalAlignmentLeft(),
                     Command = command
-                };
-                var center = new ToggleMenuFlyoutItem
+                });
+                alignment.Items.Add(new ToggleMenuFlyoutItem
                 {
-                    Text = "Center",
+                    Text = Strings.ArticleAlignCenter,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.TextAlignCenter),
-                    IsChecked = _state.CellAlignment == RichEditorCellAlignment.Center,
-                    CommandParameter = RichEditorCellAlignment.Center,
+                    IsChecked = table.Align is PageBlockHorizontalAlignmentCenter,
+                    CommandParameter = new PageBlockHorizontalAlignmentCenter(),
                     Command = command
-                };
-                var right = new ToggleMenuFlyoutItem
+                });
+                alignment.Items.Add(new ToggleMenuFlyoutItem
                 {
-                    Text = "Right",
+                    Text = Strings.ArticleAlignRight,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.TextAlignRight),
-                    IsChecked = _state.CellAlignment == RichEditorCellAlignment.Right,
-                    CommandParameter = RichEditorCellAlignment.Right,
+                    IsChecked = table.Align is PageBlockHorizontalAlignmentRight,
+                    CommandParameter = new PageBlockHorizontalAlignmentRight(),
                     Command = command
-                };
-
-                alignment.Items.Add(left);
-                alignment.Items.Add(center);
-                alignment.Items.Add(right);
+                });
             }
 
             alignment.CreateFlyoutSeparator();
 
             {
-                var command = new RelayCommand<RichEditorCellVerticalAlignment>(_commands.SetCellVerticalAlignment);
+                var command = new RelayCommand<PageBlockVerticalAlignment>(_engine.TableSetVerticalAlignment);
 
-                var top = new ToggleMenuFlyoutItem
+                alignment.Items.Add(new ToggleMenuFlyoutItem
                 {
-                    Text = "Top",
+                    Text = Strings.ArticleAlignTop,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.TextboxAlignTop),
-                    IsChecked = _state.CellVerticalAlignment == RichEditorCellVerticalAlignment.Top,
-                    CommandParameter = RichEditorCellVerticalAlignment.Top,
+                    IsChecked = table.Valign is PageBlockVerticalAlignmentTop,
+                    CommandParameter = new PageBlockVerticalAlignmentTop(),
                     Command = command
-                };
-                var middle = new ToggleMenuFlyoutItem
+                });
+                alignment.Items.Add(new ToggleMenuFlyoutItem
                 {
-                    Text = "Middle",
+                    Text = Strings.ArticleAlignMiddle,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.TextboxAlignMiddle),
-                    IsChecked = _state.CellVerticalAlignment == RichEditorCellVerticalAlignment.Middle,
-                    CommandParameter = RichEditorCellVerticalAlignment.Middle,
+                    IsChecked = table.Valign is PageBlockVerticalAlignmentMiddle,
+                    CommandParameter = new PageBlockVerticalAlignmentMiddle(),
                     Command = command
-                };
-                var bottom = new ToggleMenuFlyoutItem
+                });
+                alignment.Items.Add(new ToggleMenuFlyoutItem
                 {
-                    Text = "Bottom",
+                    Text = Strings.ArticleAlignBottom,
                     Icon = MenuFlyoutHelper.CreateIcon(Icons.TextboxAlignBottom),
-                    IsChecked = _state.CellVerticalAlignment == RichEditorCellVerticalAlignment.Bottom,
-                    CommandParameter = RichEditorCellVerticalAlignment.Bottom,
+                    IsChecked = table.Valign is PageBlockVerticalAlignmentBottom,
+                    CommandParameter = new PageBlockVerticalAlignmentBottom(),
                     Command = command
-                };
-
-                alignment.Items.Add(top);
-                alignment.Items.Add(middle);
-                alignment.Items.Add(bottom);
+                });
             }
 
             flyout.Add(alignment);
-            flyout.CreateFlyoutItem(_commands.TableToggleHeader, _state.CellIsHeader is true ? Strings.ArticleRemoveHighlight : Strings.ArticleHighlightCell, Icons.TabInPrivate);
+            flyout.CreateFlyoutItem(_engine.TableToggleHeader, table.IsHeader ? Strings.ArticleRemoveHighlight : Strings.ArticleHighlightCell, Icons.TabInPrivate);
 
-            if (_state.CanMergeCells)
+            if (table.CanMerge)
             {
-                flyout.CreateFlyoutItem(_commands.TableMergeCells, Strings.ArticleMergeCells, Icons.TableCellMerge);
+                flyout.CreateFlyoutItem(_engine.TableMergeCells, Strings.ArticleMergeCells, Icons.TableCellMerge);
             }
 
-            if (_state.CanUnmergeCells)
+            if (table.CanSplit)
             {
-                flyout.CreateFlyoutItem(_commands.TableSplitCell, Strings.ArticleSplitCells, Icons.TableCellSplit);
+                flyout.CreateFlyoutItem(_engine.TableSplitCell, Strings.ArticleSplitCells, Icons.TableCellSplit);
             }
 
-            if (_state.CanAddRow)
+            flyout.CreateFlyoutItem(InsertRowAbove, Strings.ArticleInsertAbove, Icons.TableInsertRow);
+            flyout.CreateFlyoutItem(InsertRowBelow, Strings.ArticleInsertBelow, Icons.TableInsertRow);
+
+            if (table.CanDeleteRow)
             {
-                flyout.CreateFlyoutItem(_commands.TableAddRowBefore, Strings.ArticleInsertAbove, Icons.TableInsertRow);
-                flyout.CreateFlyoutItem(_commands.TableAddRowAfter, Strings.ArticleInsertBelow, Icons.TableInsertRow);
+                flyout.CreateFlyoutItem(_engine.TableDeleteRows, Strings.ArticleDeleteRow, Icons.TableDeleteRow, destructive: true);
             }
 
-            if (_state.CanDeleteRow)
+            flyout.CreateFlyoutItem(InsertColumnLeft, Strings.ArticleInsertLeft, Icons.TableInsertColumn);
+            flyout.CreateFlyoutItem(InsertColumnRight, Strings.ArticleInsertRight, Icons.TableInsertColumn);
+
+            if (table.CanDeleteColumn)
             {
-                flyout.CreateFlyoutItem(_commands.TableDeleteRow, Strings.ArticleDeleteRow, Icons.TableDeleteRow, destructive: true);
+                flyout.CreateFlyoutItem(_engine.TableDeleteColumns, Strings.ArticleDeleteColumn, Icons.TableDeleteColumn, destructive: true);
             }
 
-            if (_state.CanAddColumn)
+            flyout.Add(new MenuFlyoutSeparator());
+            flyout.Add(new ToggleMenuFlyoutItem { Text = Strings.ArticleTableBordered, IsChecked = table.Table.IsBordered, Command = new RelayCommand(ToggleTableBordered) });
+            flyout.Add(new ToggleMenuFlyoutItem { Text = Strings.ArticleTableStriped, IsChecked = table.Table.IsStriped, Command = new RelayCommand(ToggleTableStriped) });
+            flyout.Add(new ToggleMenuFlyoutItem { Text = Strings.ArticleTableCompact, IsChecked = table.Table.IsCompact, Command = new RelayCommand(ToggleTableCompact) });
+
+            flyout.Add(new MenuFlyoutSeparator());
+            flyout.CreateFlyoutItem(DeleteTable, Strings.ArticleDeleteTable, Icons.Delete, destructive: true);
+        }
+
+        private void InsertRowAbove() => _engine.TableInsertRow(false);
+
+        private void InsertRowBelow() => _engine.TableInsertRow(true);
+
+        private void InsertColumnLeft() => InsertColumn(false);
+
+        private void InsertColumnRight() => InsertColumn(true);
+
+        private void InsertColumn(bool after)
+        {
+            var max = _clientService.Options.RichMessageTableColumnCountMax;
+            if (max > 0 && _engine.GetTableStatus()?.Columns >= max)
             {
-                flyout.CreateFlyoutItem(_commands.TableAddColumnBefore, Strings.ArticleInsertLeft, Icons.TableInsertColumn);
-                flyout.CreateFlyoutItem(_commands.TableAddColumnAfter, Strings.ArticleInsertRight, Icons.TableInsertColumn);
+                ToastPopup.Show(XamlRoot, string.Format(Strings.ArticleLimitTableColumns, max));
+                return;
             }
 
-            if (_state.CanDeleteColumn)
+            _engine.TableInsertColumn(after);
+        }
+
+        private void ToggleTableBordered()
+        {
+            if (_engine.GetTableStatus()?.Table is RichTableBlock table)
             {
-                flyout.CreateFlyoutItem(_commands.TableDeleteColumn, Strings.ArticleDeleteColumn, Icons.TableDeleteColumn, destructive: true);
+                _engine.TableSetStyle(table, !table.IsBordered, null, null);
+            }
+        }
+
+        private void ToggleTableStriped()
+        {
+            if (_engine.GetTableStatus()?.Table is RichTableBlock table)
+            {
+                _engine.TableSetStyle(table, null, !table.IsStriped, null);
+            }
+        }
+
+        private void ToggleTableCompact()
+        {
+            if (_engine.GetTableStatus()?.Table is RichTableBlock table)
+            {
+                _engine.TableSetStyle(table, null, null, !table.IsCompact);
+            }
+        }
+
+        private void DeleteTable()
+        {
+            if (_engine.GetTableStatus()?.Table is RichTableBlock table)
+            {
+                _engine.Delete(table);
             }
         }
 
         private async void Formula_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new FormulaPopup();
+            // On a line of its own unless told otherwise, as TDesktop's new formula is.
+            var choice = GetSeparateLineChoice(true);
+            var popup = new FormulaPopup(null, choice);
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                if (_state.BlockType == RichEditorBlockType.Table)
+                if (choice == null ? _engine.SelectedNode != null : popup.IsSeparateLine)
                 {
-                    _commands.InsertMathInline(popup.Source);
+                    _engine.InsertMathBlock(popup.Source);
                 }
                 else
                 {
-                    _commands.InsertMathBlock(popup.Source);
+                    _engine.InsertObject(RichInlineObject.FromMath(popup.Source));
                 }
             }
+
+            Editor.Focus(FocusState.Programmatic);
         }
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
@@ -1054,19 +1782,47 @@ namespace Telegram.Views.Host
         {
             if (e.ClickedItem is EmojiData emoji)
             {
-                //TitleField.InsertText(emoji.Value);
+                _engine.InsertText(emoji.Value);
             }
             else if (e.ClickedItem is StickerViewModel sticker && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
-                //TitleField.InsertEmoji(sticker);
-                _commands.InsertEmoji(customEmoji.CustomEmojiId, sticker.Emoji);
+                _engine.InsertObject(RichInlineObject.FromCustomEmoji(customEmoji.CustomEmojiId, sticker.Emoji));
             }
+        }
+
+        private RichLimits Limits => new(
+            _clientService.Options.RichMessageTextLengthMax,
+            _clientService.Options.RichMessageBlockCountMax,
+            _clientService.Options.RichMessageDepthMax,
+            _clientService.Options.RichMessageMediaCountMax,
+            _clientService.Options.RichMessageTableColumnCountMax);
+
+        /// <summary>Says which limit the document is over, so the send is refused here and not by the server.</summary>
+        private bool CheckLimits()
+        {
+            var error = RichDocumentLimits.Validate(_engine.Document, Limits, out _, out long limit);
+            if (error == RichLimitError.None)
+            {
+                return true;
+            }
+
+            var format = error switch
+            {
+                RichLimitError.Length => Strings.ArticleLimitLength,
+                RichLimitError.Blocks => Strings.ArticleLimitBlocks,
+                RichLimitError.Depth => Strings.ArticleLimitDepth,
+                RichLimitError.Media => Strings.ArticleLimitMedia,
+                _ => Strings.ArticleLimitTableColumns
+            };
+
+            ToastPopup.Show(XamlRoot, string.Format(format, limit));
+            return false;
         }
 
         private async void Send_Click(object sender, RoutedEventArgs e)
         {
-            var richMessage = await _commands.GetInputModelAsync();
-            if (richMessage == null)
+            var richMessage = GetInputModel();
+            if (richMessage == null || !CheckLimits())
             {
                 return;
             }

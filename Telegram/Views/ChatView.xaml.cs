@@ -6826,7 +6826,8 @@ namespace Telegram.Views
 
             ComposerHeaderCancel.CornerRadius =
                 ButtonMaximize.CornerRadius = new CornerRadius(4, min, 4, 4);
-            ButtonEditor.CornerRadius = new CornerRadius(min, 4, 4, 4);
+            ButtonEditor.CornerRadius =
+                ButtonClear.CornerRadius = new CornerRadius(min, 4, 4, 4);
             TextRoot.CornerRadius =
                 ChatFooter.CornerRadius =
                 ChatRecord.CornerRadius =
@@ -7492,17 +7493,20 @@ namespace Telegram.Views
             if (draft?.Content is DraftMessageContentText text)
             {
                 ViewModel.SetText(text.Text);
+                ButtonClear.Visibility = Visibility.Collapsed;
                 DraftField.Visibility = Visibility.Collapsed;
             }
             else if (draft?.Content is DraftMessageContentRichMessage richMessage)
             {
                 ViewModel.SetText(null as string);
+                ButtonClear.Visibility = Visibility.Visible;
                 DraftField.Visibility = Visibility.Visible;
                 DraftField.UpdateView(ViewModel.ClientService, richMessage.Message.Blocks, false);
             }
             else
             {
                 ViewModel.SetText(null as string);
+                ButtonClear.Visibility = Visibility.Collapsed;
                 DraftField.Visibility = Visibility.Collapsed;
             }
 
@@ -8586,7 +8590,7 @@ namespace Telegram.Views
 
         private void TextField_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ButtonEditor.Visibility = e.NewSize.Height >= 84
+            ButtonEditor.Visibility = e.NewSize.Height >= 84 && !TextField.IsEmpty
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -8603,6 +8607,11 @@ namespace Telegram.Views
         private void ButtonMaximize_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.SendRichMessage();
+        }
+
+        private void ButtonClear_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.DeleteDraft();
         }
     }
 

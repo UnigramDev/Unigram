@@ -175,7 +175,6 @@
     <Content Remove="Assets\i420.hlsl" />
 
     <Content Update="Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Assets\i420.hlsl" />

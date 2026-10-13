@@ -1,0 +1,187 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.RichButtonPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     PrimaryButtonStyle="{StaticResource AccentButtonStyle}"
+                     PrimaryButtonClick="OnPrimaryButtonClick">
+
+    <controls:ModalPopup.Resources>
+        <!--  A colour, shown as the button it makes: a radio button, so the four are one choice
+              to the keyboard and to a screen reader, drawn as TDesktop's outlined preview.  -->
+        <Style x:Key="ButtonColorOptionStyle"
+               TargetType="RadioButton">
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="MinWidth"
+                    Value="0" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="FocusVisualMargin"
+                    Value="-2" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid Background="Transparent"
+                              CornerRadius="20">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="Outline.Opacity"
+                                                    Value="1" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="Outline"
+                                    BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                    BorderThickness="2"
+                                    CornerRadius="20"
+                                    Opacity="0" />
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              HorizontalContentAlignment="Stretch"
+                                              Margin="4" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ButtonColorPreviewStyle"
+               TargetType="controls:ReplyMarkupInlineButton">
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch" />
+            <Setter Property="CornerRadius"
+                    Value="16" />
+            <Setter Property="IsHitTestVisible"
+                    Value="False" />
+            <Setter Property="IsTabStop"
+                    Value="False" />
+        </Style>
+    </controls:ModalPopup.Resources>
+
+    <StackPanel>
+        <TextBlock Text="{CustomResource RichEditorButtonText}"
+                   Style="{StaticResource BaseTextBlockStyle}"
+                   Margin="0,0,0,8" />
+        <TextBox x:Name="TextField"
+                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                 PlaceholderText="{CustomResource RichEditorButtonText}"
+                 AutomationProperties.Name="{CustomResource RichEditorButtonText}"
+                 KeyDown="TextField_KeyDown"
+                 Loaded="TextField_Loaded" />
+
+        <CheckBox x:Name="SeparateLine"
+                  Content="{CustomResource RichEditorButtonSeparateLine}"
+                  Margin="0,12,0,0"
+                  Visibility="Collapsed" />
+
+        <Grid ColumnSpacing="4"
+              Margin="-4,12,-4,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <RadioButton x:Name="DefaultColor"
+                         GroupName="RichButtonColor"
+                         IsChecked="True"
+                         Style="{StaticResource ButtonColorOptionStyle}"
+                         AutomationProperties.Name="{CustomResource RichEditorButtonDefault}">
+                <controls:ReplyMarkupInlineButton x:Name="DefaultPreview"
+                                                  Content="{CustomResource RichEditorButtonDefault}"
+                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+            </RadioButton>
+            <RadioButton x:Name="PrimaryColor"
+                         GroupName="RichButtonColor"
+                         Style="{StaticResource ButtonColorOptionStyle}"
+                         AutomationProperties.Name="{CustomResource RichEditorButtonActive}"
+                         Grid.Column="1">
+                <controls:ReplyMarkupInlineButton x:Name="PrimaryPreview"
+                                                  Content="{CustomResource RichEditorButtonActive}"
+                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+            </RadioButton>
+            <RadioButton x:Name="SuccessColor"
+                         GroupName="RichButtonColor"
+                         Style="{StaticResource ButtonColorOptionStyle}"
+                         AutomationProperties.Name="{CustomResource RichEditorButtonAccept}"
+                         Grid.Column="2">
+                <controls:ReplyMarkupInlineButton x:Name="SuccessPreview"
+                                                  Content="{CustomResource RichEditorButtonAccept}"
+                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+            </RadioButton>
+            <RadioButton x:Name="DangerColor"
+                         GroupName="RichButtonColor"
+                         Style="{StaticResource ButtonColorOptionStyle}"
+                         AutomationProperties.Name="{CustomResource RichEditorButtonDecline}"
+                         Grid.Column="3">
+                <controls:ReplyMarkupInlineButton x:Name="DangerPreview"
+                                                  Content="{CustomResource RichEditorButtonDecline}"
+                                                  Style="{StaticResource ButtonColorPreviewStyle}" />
+            </RadioButton>
+        </Grid>
+
+        <RadioButton x:Name="LinkType"
+                     Content="{CustomResource ChatLink}"
+                     GroupName="RichButtonType"
+                     IsChecked="True"
+                     Checked="OnTypeChecked" />
+        <RadioButton x:Name="CopyType"
+                     Content="{CustomResource Copy}"
+                     GroupName="RichButtonType"
+                     Checked="OnTypeChecked" />
+        <RadioButton x:Name="ProfileType"
+                     Content="{CustomResource RichEditorButtonMention}"
+                     GroupName="RichButtonType"
+                     Checked="OnTypeChecked" />
+
+        <TextBox x:Name="ValueField"
+                 PlaceholderText="{CustomResource RichEditorButtonURL}"
+                 AutomationProperties.Name="{CustomResource RichEditorButtonURL}"
+                 InputScope="Url"
+                 Margin="0,12,0,0"
+                 KeyDown="ValueField_KeyDown" />
+
+        <!--  The user a mention button opens, which is also how to pick another.  -->
+        <Button x:Name="UserButton"
+                Click="UserButton_Click"
+                Style="{StaticResource EmptyButtonStyle}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Padding="0,6"
+                Margin="0,12,0,0"
+                Visibility="Collapsed">
+            <Grid ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture x:Name="UserPhoto"
+                                         IsHitTestVisible="False"
+                                         Width="36"
+                                         Height="36" />
+                <TextBlock x:Name="UserName"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           VerticalAlignment="Center"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Grid.Column="1" />
+            </Grid>
+        </Button>
+
+        <HyperlinkButton x:Name="DeleteButton"
+                         Content="{CustomResource Delete}"
+                         Foreground="{ThemeResource DangerButtonBackground}"
+                         Click="DeleteButton_Click"
+                         Margin="0,12,0,0"
+                         Visibility="Collapsed" />
+    </StackPanel>
+</controls:ModalPopup>
