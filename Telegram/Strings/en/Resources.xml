@@ -13767,7 +13767,7 @@
     <string name="RichEditorButtonMention">Mention</string>
     <string name="RichEditorChooseUser">Choose User</string>
     <string name="RichEditorChangeList">Change List</string>
-    <string name="Highlight">Highlight</string>
+    <string name="RichEditorMarked">Marked</string>
     <string name="RichEditorInsertFormula">Insert Formula</string>
     <string name="RichEditorEditFormula">Edit Formula</string>
     <string name="RichEditorFormulaSource">LaTeX</string>

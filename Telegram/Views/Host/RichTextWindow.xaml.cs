@@ -1315,7 +1315,7 @@ namespace Telegram.Views.Host
             flyout.Add(CreateToggle(Strings.Mono, Icons.Code, (status.Marks & RichMarks.Monospace) != 0, command, RichMarks.Monospace, shortcut: Shortcut(VirtualKey.M, shift)));
             flyout.Add(CreateToggle(Strings.Subscript, Icons.TextSubscript, (status.Marks & RichMarks.Subscript) != 0, command, RichMarks.Subscript, premium: true));
             flyout.Add(CreateToggle(Strings.Superscript, Icons.TextSuperscript, (status.Marks & RichMarks.Superscript) != 0, command, RichMarks.Superscript, premium: true));
-            flyout.Add(CreateToggle(Strings.Highlight, null, (status.Marks & RichMarks.Marked) != 0, command, RichMarks.Marked, premium: true));
+            flyout.Add(CreateToggle(Strings.RichEditorMarked, Icons.Highlight, (status.Marks & RichMarks.Marked) != 0, command, RichMarks.Marked, premium: true));
             flyout.Add(new MenuFlyoutSeparator());
             flyout.Add(CreateItem(Strings.Regular, null, new RelayCommand(_engine.ClearFormatting), shortcut: Shortcut(VirtualKey.N, shift)));
 
