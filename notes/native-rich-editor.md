@@ -382,7 +382,8 @@ beyond the line, ties broken by distance from the remembered column.
   for photos, videos, collages and maps. The editor's own padding is 10 less, so text stays
   where it was. Code and block quotes use `BlockQuote`'s chrome: header tint, 3px accent bar,
   corner glyph, padding 8,4,24,6. A pull quote is centred on a 10% tint between quote marks.
-  An expandable quote is a block quote shown whole. Details headers take the
+  An expandable quote is a block quote with `IsCollapsed` (see "Collapsible quotes" below).
+  Details headers take the
   `SettingsButton` look, with the chevron in the glyph slot. Credits are SemiBold. Captions
   and cells are body text. Table cells draw their own collapsed borders and outer corners;
   bordered, striped and compact are now drawn. A table caption goes above the table, and is
@@ -434,9 +435,48 @@ templates with a star column) for headings, pullquote, footer, divider, sub/supe
 highlight, list inserts and every attach item. Sending is what still asks. Not done: TDesktop's
 "/" menu, its Discard/Cancel pill, and list numbering types.
 
-**Left:** the `notes/architecture.md` section for the editor, written with the commit (with
-its `verified=` SHA). The two architecture sections edited above need their SHAs bumped in
-the same commit.
+(Done in 8a646ca2e.) The `notes/architecture.md` section for the editor.
+
+IME. A composition is formatted a range at a time, a clause each for the IMEs that convert
+clause by clause, so `FormatUpdating` keeps a segment per range (underline style and colour,
+background) and they are drawn together; it used to keep one range and redraw only that, which
+left only the last clause marked. A format follows the update that typed the text, before
+layout, so drawing waits for `LayoutUpdated`. The IME's colours are system element types, read
+from `UISettings` into brushes made in code - the one place the editor does that, because they
+are the IME's, not the theme's. The text colour it asks for is not applied. The input scope is
+per leaf: `Default` for code and with the system spell checker turned off, `Text` otherwise,
+set before every focus enter.
+
+Spelling. `Telegram.Native.SpellChecker` wraps the Windows Spell Checking API, allowed in Store
+apps (`spellcheck.h` puts it in the app partition). Its factory is registered
+`ThreadingModel = Free`, so the checker is made and called on the thread pool only.
+`RichEditorView.SpellCheck.cs` checks when a word ends, as the system text box does, not on a
+timer: an edit that types or deletes a separator, the caret moving after an edit, or any
+structural change. Each result keeps the text it is for; an edit is the diff against it, so
+squiggles before the edit stay, those after shift, and only the word being edited loses its own.
+A result that arrives after more typing is moved the same way rather than thrown away. It draws a
+squiggle per word on the decorations layer (`SpellingSwatch`, critical fill).
+The language is the keyboard's when Windows has a dictionary for it, else the first of the user's
+languages that does. Links, mentions, inline objects and monospace are not checked; neither is
+code; a word typed twice is not flagged (it has nothing to suggest). The right-click menu opens
+with up to five suggestions, Add to Dictionary and Ignore word, awaited before the menu shows -
+which is why a menu's keyboard origin now travels on `RichMenuRequestedEventArgs.IsKeyboard`
+rather than in a field set around the event. All of it follows `AppSettings.UseSystemSpellChecker`.
+
+Collapsible quotes follow TDesktop. A block quote of plain paragraphs only (`IsCollapsible`)
+shows a chevron at its bottom right once its text runs past three lines, and always while it is
+collapsed. Collapsing joins its paragraphs with line breaks, since `inputPageBlockExpandableBlockQuote`
+holds one text. The collapsed quote is then atomic: one stop for the quote, then its credit,
+which also keeps a document of only that quote with a leaf. Its text is clipped by
+`RichLeafView.MaxLines` and not registered with the view, because `BindLeaf` registers only
+leaves that are in the index. Collapsed, it is sent as the expandable quote and read back as
+one; open, it is a plain block quote. The old expandable `RichTextQuote` is gone, and
+`RichTextQuote` is the pull quote only. To open or close it: the chevron, double click, or
+Ctrl+Shift+Enter (the toggle-block key).
+
+A tap below the last block (`OnScrollViewerTapped`; the scroll viewer is transparent so the
+space takes it) does what Down from the end does: `AppendLine` when the last block is not text,
+otherwise Ctrl+End.
 
 (Superseded.) **Left, waiting for Fela:** deleting the WebView editor (`Libraries/unigram-iv-editor`, the
 `editor.html` Content link, `RichEditorState.cs`, `RichEditorCommands.cs`); and the

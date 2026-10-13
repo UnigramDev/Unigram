@@ -567,8 +567,8 @@ overflow is cut off before `Scale` can shrink it back inside. It costs the desir
 drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
 `MeasureOverride` adds it back to recover the width the parent really had.
 
-## Rich message editor — Telegram/Controls/RichEditor/ (22 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=505a39677 paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs -->
+## Rich message editor — Telegram/Controls/RichEditor/ (23 files), Telegram/Views/Host/RichTextWindow.xaml.cs
+<!-- map: verified=e21a22dab paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -577,15 +577,19 @@ the tree, every editable run of text a leaf of runs with marks, links and inline
 `RichEditorView` — the control: presenters cached by block identity, caret and selection drawn on a
 decorations layer, pointer, touch and keyboard, `CoreTextEditContext` for IME; `RichDocumentConverter` —
 page blocks in, `InputPageBlock`s out; `RichMediaRenderer` — media, collages (`RichCollagePanel`) and maps;
-`RichEditorAutomationPeer` — `ITextProvider2` over the flattened document; `RichTextWindow` — toolbar,
-menus, pickers, popups and send.
+`RichEditorAutomationPeer` — `ITextProvider2` over the flattened document; `RichEditorView.SpellCheck.cs`
+over `Telegram.Native.SpellChecker` (the Windows Spell Checking API) — squiggles and suggestions;
+`RichTextWindow` — toolbar, menus, pickers, popups and send.
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
 **Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
 by TDesktop's rules and returns null when nothing is left. `BeginChange`/`EndChange` hold one undo step
 open across engine edits. `Normalize` runs on every reindex: empty containers go, and a collage of one
 item becomes that item. Selecting a block whole parks the caret's ends next to it, inside the block
-before: nothing may read that as the caret being there. Brushes come from the XAML, never from code. The
+before: nothing may read that as the caret being there. A collapsed quote is atomic and its text is no
+leaf, so `BindLeaf` registers only leaves in the index - hit testing must never find that text. The spell
+checker's factory is free-threaded: make and call it on the thread pool only. Empty credits are not
+drawn, and every move or join has to step over them (`IsLeafHidden`). Brushes come from the XAML, never from code. The
 engine has no test project in the repo; `notes/native-rich-editor.md` has the design and its history.
 
 ---
