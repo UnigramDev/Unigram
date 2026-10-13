@@ -391,7 +391,7 @@ namespace Telegram.Controls.RichEditor
 
             var leaf = _focus.Leaf;
 
-            if (leaf.Owner is RichTextQuote quote && !quote.IsExpandable)
+            if (leaf.Owner is RichTextQuote)
             {
                 SetTextKind(RichBlockKind.Paragraph);
                 return;
@@ -402,7 +402,7 @@ namespace Telegram.Controls.RichEditor
                 BeginChange();
 
                 text.SetKind(RichBlockKind.Paragraph);
-                Replace(text, new RichTextQuote(false, leaf));
+                Replace(text, new RichTextQuote(leaf));
 
                 EndChange();
             }
@@ -597,6 +597,66 @@ namespace Telegram.Controls.RichEditor
             }
 
             EndChange();
+        }
+
+        /// <summary>
+        /// Collapses a quote of text to its first lines, or opens it again. Its paragraphs are
+        /// joined by line breaks first, as the expandable quote it is sent as holds one text.
+        /// Collapsed, it is selected whole; opened from there, the caret goes to its start.
+        /// </summary>
+        public void SetQuoteCollapsed(RichBlockQuote quote, bool collapsed)
+        {
+            if (quote.IsCollapsed == collapsed || (collapsed && !quote.IsCollapsible))
+            {
+                return;
+            }
+
+            BeginChange();
+
+            var text = ((RichParagraphBlock)quote.Children[0]).Text;
+
+            if (collapsed)
+            {
+                // What it ends with that is empty would only be blank lines under the three.
+                var children = quote.Children;
+                while (children.Count > 1 && children[children.Count - 1] is RichParagraphBlock { Text.IsEmpty: true })
+                {
+                    children.RemoveAt(children.Count - 1);
+                }
+
+                for (int i = 1; i < quote.Children.Count; i++)
+                {
+                    text.Insert(text.Length, "\n", RichMarks.None, null);
+                    text.Append(((RichParagraphBlock)quote.Children[i]).Text);
+                }
+
+                quote.Children.RemoveRange(1, quote.Children.Count - 1);
+
+                while (text.Length > 0 && text.Text[text.Length - 1] == '\n')
+                {
+                    text.Delete(text.Length - 1, text.Length);
+                }
+
+                quote.IsCollapsed = true;
+
+                // Wherever the selection was inside it is about to be nowhere. The ends go
+                // next to it, as selecting a block puts them; the stops are still the old ones.
+                _anchor = _focus = PositionBefore(quote) ?? new RichPosition(quote.Credit, 0);
+                _node = quote;
+                _storedMarks = null;
+            }
+            else
+            {
+                quote.IsCollapsed = false;
+
+                if (ReferenceEquals(_node, quote))
+                {
+                    SetCaretInternal(new RichPosition(text, 0));
+                }
+            }
+
+            EndChange();
+            Raise(RichEditorChanges.Selection, null);
         }
 
         // =====================================================================================

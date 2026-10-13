@@ -333,7 +333,7 @@ namespace Telegram.Controls.RichEditor
 
                 case AutomationTextAttributesEnum.HorizontalTextAlignmentAttribute:
                     // 0 left, 1 centred: a pull quote and its credit are drawn centred.
-                    return leaf.Owner is RichTextQuote { IsExpandable: false } ? 1 : 0;
+                    return leaf.Owner is RichTextQuote ? 1 : 0;
 
                 case AutomationTextAttributesEnum.StyleIdAttribute:
                     return (int)GetStyleId(leaf, text, list);

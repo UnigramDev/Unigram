@@ -255,6 +255,13 @@ namespace Telegram.Controls.RichEditor
             {
                 view.Render();
                 RefreshCredits(leaf);
+
+                // Text typed into an empty last line counts it without the quote growing, so
+                // its height changing is not enough to go by; asked once the text is measured.
+                if (leaf.Owner?.Parent is RichBlockQuote quote && _presenters.TryGetValue(quote, out RichBlockPresenter presenter))
+                {
+                    _toggleStale = presenter as RichBlockQuotePresenter;
+                }
             }
 
             UpdatePlaceholders();
@@ -540,7 +547,13 @@ namespace Telegram.Controls.RichEditor
             view.Bind(_clientService, leaf, appearance, placeholder, language);
             HookLeaf(view);
 
-            _leafViews[leaf] = view;
+            // A collapsed quote's text is drawn and is not among the leaves: nothing may put the
+            // caret in it, and hit testing finds the leaves it is told of here.
+            var leaves = _engine.Document.Leaves;
+            if (leaf.Index < leaves.Count && ReferenceEquals(leaves[leaf.Index], leaf))
+            {
+                _leafViews[leaf] = view;
+            }
         }
 
         private void HookLeaf(RichLeafView view)
@@ -611,6 +624,7 @@ namespace Telegram.Controls.RichEditor
                     _ => Strings.AttachDocument
                 },
                 RichTableBlock => Strings.AccDescrIVTable,
+                RichBlockQuote { IsCollapsed: true, Children: [RichParagraphBlock text] } => Strings.AccDescrIVBlockquote + ", " + Strings.AccDescrIVCollapsed + ", " + text.Text.ToPlainText(),
                 _ => null
             };
 
@@ -663,8 +677,7 @@ namespace Telegram.Controls.RichEditor
                 RichParagraphBlock { Kind: RichBlockKind.Heading } heading => Strings.AccDescrIVHeading + " " + heading.HeadingSize.ToString(System.Globalization.CultureInfo.CurrentCulture),
                 RichParagraphBlock { Kind: RichBlockKind.Preformatted } => Strings.AccDescrIVCode,
                 RichParagraphBlock { Kind: RichBlockKind.Footer } => Strings.AccDescrIVFooter,
-                RichTextQuote { IsExpandable: false } => Strings.AccDescrIVPullquote,
-                RichTextQuote => Strings.AccDescrIVBlockquote,
+                RichTextQuote => Strings.AccDescrIVPullquote,
                 RichDetailsBlock details => Strings.AccDescrIVDetails + ", " + (details.IsOpen ? Strings.AccDescrIVExpanded : Strings.AccDescrIVCollapsed),
                 _ => Strings.ArticleText
             };

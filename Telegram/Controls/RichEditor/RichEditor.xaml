@@ -408,6 +408,17 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:RichBlockQuotePresenter">
                     <Border CornerRadius="4">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CollapseStates">
+                                <VisualState x:Name="Expanded" />
+                                <VisualState x:Name="Collapsed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chevron.Text"
+                                                Value="&#xEA16;" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid Background="{ThemeResource MessageHeaderBackgroundBrush}"
                               BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                               BorderThickness="3,0,0,0">
@@ -424,6 +435,29 @@
                                        VerticalAlignment="Top"
                                        IsHitTestVisible="False"
                                        AutomationProperties.AccessibilityView="Raw" />
+                            <!--  Where the sent message has it. Shown from code: a quote of text
+                                  past three lines, or one collapsed.  -->
+                            <Button x:Name="Toggle"
+                                    Width="24"
+                                    Height="24"
+                                    Padding="0"
+                                    MinWidth="0"
+                                    MinHeight="0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    IsTabStop="False"
+                                    AllowFocusOnInteraction="False"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Visibility="Collapsed">
+                                <TextBlock x:Name="Chevron"
+                                           Text="&#xEAF3;"
+                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="16"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Button>
                         </Grid>
                     </Border>
                 </ControlTemplate>
@@ -431,8 +465,7 @@
         </Setter>
     </Style>
 
-    <!--  A pull quote is centred between its quote marks on a faint tint; an expandable one is a
-          block quote, shown whole while it is written.  -->
+    <!--  A pull quote is centred between its quote marks on a faint tint.  -->
     <Style TargetType="local:RichTextQuotePresenter">
         <Setter Property="IsTabStop"
                 Value="False" />
@@ -441,33 +474,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RichTextQuotePresenter">
-                    <Grid x:Name="Chrome"
-                          HorizontalAlignment="Center">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="KindStates">
-                                <VisualState x:Name="Pull" />
-                                <VisualState x:Name="Expandable">
-                                    <VisualState.Setters>
-                                        <Setter Target="Chrome.HorizontalAlignment"
-                                                Value="Stretch" />
-                                        <Setter Target="PullBackground.Visibility"
-                                                Value="Collapsed" />
-                                        <Setter Target="QuoteBackground.Visibility"
-                                                Value="Visible" />
-                                        <Setter Target="OpenGlyph.Visibility"
-                                                Value="Collapsed" />
-                                        <Setter Target="Text.Margin"
-                                                Value="8,4,24,0" />
-                                        <Setter Target="Text.(Grid.Column)"
-                                                Value="0" />
-                                        <Setter Target="Text.(Grid.ColumnSpan)"
-                                                Value="3" />
-                                        <Setter Target="Credit.Margin"
-                                                Value="8,0,24,6" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
+                    <Grid HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -477,22 +484,12 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Border x:Name="PullBackground"
-                                Background="{ThemeResource MessageHeaderBorderBrush}"
+                        <Border Background="{ThemeResource MessageHeaderBorderBrush}"
                                 Opacity="0.1"
                                 CornerRadius="8"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="2" />
-                        <Border x:Name="QuoteBackground"
-                                Background="{ThemeResource MessageHeaderBackgroundBrush}"
-                                BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
-                                BorderThickness="3,0,0,0"
-                                CornerRadius="4"
-                                Visibility="Collapsed"
-                                Grid.ColumnSpan="3"
-                                Grid.RowSpan="2" />
-                        <TextBlock x:Name="OpenGlyph"
-                                   Text="&#xEB19;"
+                        <TextBlock Text="&#xEB19;"
                                    Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="16"

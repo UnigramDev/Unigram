@@ -159,6 +159,11 @@ namespace Telegram.Controls.RichEditor
                 _ => RichLeafAppearance.Paragraph
             };
 
+            if (Leaf != null)
+            {
+                Leaf.MaxLines = block.Parent is RichBlockQuote { IsCollapsed: true } ? RichBlockQuotePresenter.CollapsedLines : 0;
+            }
+
             Owner.BindLeaf(Leaf, block.Text, appearance, Owner.GetPlaceholder(block), code ? block.Language : null);
         }
 
@@ -173,26 +178,135 @@ namespace Telegram.Controls.RichEditor
 
     public sealed partial class RichBlockQuotePresenter : RichBlockPresenter
     {
+        // The lines a quote collapses to, as the sent message has it.
+        internal const int CollapsedLines = 3;
+
         private StackPanel Children;
         private RichLeafView Credit;
+        private Button Toggle;
 
         public RichBlockQuotePresenter()
         {
             DefaultStyleKey = typeof(RichBlockQuotePresenter);
         }
 
+        // Collapsed, the text is what is selected whole; the credit under it is still a line.
+        internal override FrameworkElement NodeElement => Children ?? (FrameworkElement)this;
+
         protected override void OnTemplate()
         {
+            if (Children != null)
+            {
+                Children.SizeChanged -= OnChildrenSizeChanged;
+            }
+
+            if (Toggle != null)
+            {
+                Toggle.Click -= OnToggleClick;
+            }
+
             Children = GetTemplateChild(nameof(Children)) as StackPanel;
             Credit = GetTemplateChild(nameof(Credit)) as RichLeafView;
+            Toggle = GetTemplateChild(nameof(Toggle)) as Button;
+
+            if (Children != null)
+            {
+                Children.SizeChanged += OnChildrenSizeChanged;
+            }
+
+            if (Toggle != null)
+            {
+                Toggle.Click += OnToggleClick;
+            }
         }
 
         protected override void OnUpdate()
         {
             var quote = (RichBlockQuote)Block;
 
+            VisualStateManager.GoToState(this, quote.IsCollapsed ? "Collapsed" : "Expanded", false);
+
+            if (Toggle != null)
+            {
+                Windows.UI.Xaml.Automation.AutomationProperties.SetName(Toggle, quote.IsCollapsed ? Strings.AccDescrExpandPanel : Strings.AccDescrCollapsePanel);
+            }
+
             Sync(Children, quote.Children);
             Owner.BindLeaf(Credit, quote.Credit, RichLeafAppearance.QuoteCredit, Owner.GetCreditPlaceholder(quote.Credit));
+
+            if (quote.IsCollapsed)
+            {
+                Owner.RegisterNode(this);
+            }
+
+            UpdateToggle();
+        }
+
+        // How many lines the text takes is known once it is laid out, and a change in it is a
+        // change in height. The chevron is drawn over the padding and is shorter than the lines
+        // it waits for, so showing it changes no size and asks for no further pass.
+        private void OnChildrenSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateToggle();
+        }
+
+        internal void UpdateToggle()
+        {
+            if (Toggle == null || Block is not RichBlockQuote quote)
+            {
+                return;
+            }
+
+            var visibility = quote.IsCollapsed || (quote.IsCollapsible && IsLongerThanCollapsed(quote))
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (Toggle.Visibility != visibility)
+            {
+                Toggle.Visibility = visibility;
+            }
+        }
+
+        // Empty lines at the end are not counted: Enter on the third line would otherwise offer
+        // to collapse three lines, and collapsing drops them anyway.
+        private bool IsLongerThanCollapsed(RichBlockQuote quote)
+        {
+            var last = quote.Children.Count - 1;
+            while (last > 0 && quote.Children[last] is RichParagraphBlock { Text.IsEmpty: true })
+            {
+                last--;
+            }
+
+            var lines = 0;
+
+            for (int i = 0; i <= last; i++)
+            {
+                if (quote.Children[i] is RichParagraphBlock text && Owner.TryGetLeafView(text.Text, out RichLeafView view) && view.TextBlock != null)
+                {
+                    lines += view.TextBlock.LineCount;
+
+                    // A line break at the very end is drawn as an empty line after it.
+                    if (i == last && text.Text.Length > 0 && text.Text.Text[text.Text.Length - 1] == '\n')
+                    {
+                        lines--;
+                    }
+
+                    if (lines > CollapsedLines)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void OnToggleClick(object sender, RoutedEventArgs e)
+        {
+            if (Block is RichBlockQuote quote)
+            {
+                Owner.Engine.SetQuoteCollapsed(quote, !quote.IsCollapsed);
+            }
         }
     }
 
@@ -216,10 +330,8 @@ namespace Telegram.Controls.RichEditor
         {
             var quote = (RichTextQuote)Block;
 
-            VisualStateManager.GoToState(this, quote.IsExpandable ? "Expandable" : "Pull", false);
-
-            Owner.BindLeaf(Text, quote.Text, quote.IsExpandable ? RichLeafAppearance.Paragraph : RichLeafAppearance.PullQuote, Strings.ArticleHintQuote);
-            Owner.BindLeaf(Credit, quote.Credit, quote.IsExpandable ? RichLeafAppearance.QuoteCredit : RichLeafAppearance.PullQuoteCredit, Owner.GetCreditPlaceholder(quote.Credit));
+            Owner.BindLeaf(Text, quote.Text, RichLeafAppearance.PullQuote, Strings.ArticleHintQuote);
+            Owner.BindLeaf(Credit, quote.Credit, RichLeafAppearance.PullQuoteCredit, Owner.GetCreditPlaceholder(quote.Credit));
         }
     }
 

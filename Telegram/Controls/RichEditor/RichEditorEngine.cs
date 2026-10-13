@@ -511,6 +511,12 @@ namespace Telegram.Controls.RichEditor
                 return false;
             }
 
+            // Its text is not among the leaves, and a quote is only collapsed for being long.
+            if (quote.IsCollapsed)
+            {
+                return true;
+            }
+
             // A quote's leaves come right before its credit.
             var leaves = _document.Leaves;
             var index = credit.Index;

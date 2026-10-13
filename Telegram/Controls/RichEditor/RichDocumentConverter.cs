@@ -127,10 +127,10 @@ namespace Telegram.Controls.RichEditor
                         break;
                     }
                 case PageBlockPullQuote x:
-                    result.Add(new RichTextQuote(false, ToLeaf(x.Text, RichLeafRole.Text), ToLeaf(x.Credit, RichLeafRole.Credit)));
+                    result.Add(new RichTextQuote(ToLeaf(x.Text, RichLeafRole.Text), ToLeaf(x.Credit, RichLeafRole.Credit)));
                     break;
                 case PageBlockExpandableBlockQuote x:
-                    result.Add(new RichTextQuote(true, ToLeaf(x.Text, RichLeafRole.Text), ToLeaf(x.Credit, RichLeafRole.Credit)));
+                    result.Add(new RichBlockQuote(new List<RichBlock> { Text(RichBlockKind.Paragraph, x.Text) }, ToLeaf(x.Credit, RichLeafRole.Credit)) { IsCollapsed = true });
                     break;
                 case PageBlockDetails x:
                     {
@@ -556,6 +556,8 @@ namespace Telegram.Controls.RichEditor
                         _ => new InputPageBlockParagraph(ToRichText(x.Text))
                     };
                 // A credit is not content on its own, and a details header is not either.
+                case RichBlockQuote { IsCollapsed: true, Children: [RichParagraphBlock text] } x:
+                    return HasText(text.Text) ? new InputPageBlockExpandableBlockQuote(ToRichText(text.Text), ToRichTextOrNull(x.Credit)) : null;
                 case RichBlockQuote x:
                     {
                         var children = ToInputBlocks(x.Children);
@@ -563,8 +565,6 @@ namespace Telegram.Controls.RichEditor
                     }
                 case RichTextQuote x when !HasText(x.Text):
                     return null;
-                case RichTextQuote x when x.IsExpandable:
-                    return new InputPageBlockExpandableBlockQuote(ToRichText(x.Text), ToRichTextOrNull(x.Credit));
                 case RichTextQuote x:
                     return new InputPageBlockPullQuote(ToRichText(x.Text), ToRichTextOrNull(x.Credit));
                 case RichListBlock x:

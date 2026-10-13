@@ -302,6 +302,12 @@ namespace Telegram.Controls.RichEditor
                     WriteLeaf(x.Text, html);
                     html.Append("</p>");
                     break;
+                case RichBlockQuote { IsCollapsed: true, Children: [RichParagraphBlock text] } x:
+                    html.Append("<blockquote class=\"expandable\">");
+                    WriteLeaf(text.Text, html);
+                    WriteCredit(x.Credit, html);
+                    html.Append("</blockquote>");
+                    break;
                 case RichBlockQuote x:
                     html.Append("<blockquote>");
                     WriteBlocks(x.Children, html);
@@ -309,7 +315,7 @@ namespace Telegram.Controls.RichEditor
                     html.Append("</blockquote>");
                     break;
                 case RichTextQuote x:
-                    html.Append(x.IsExpandable ? "<blockquote class=\"expandable\">" : "<blockquote class=\"pull\">");
+                    html.Append("<blockquote class=\"pull\">");
                     WriteLeaf(x.Text, html);
                     WriteCredit(x.Credit, html);
                     html.Append("</blockquote>");

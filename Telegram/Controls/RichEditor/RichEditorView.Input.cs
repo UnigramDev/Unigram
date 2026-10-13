@@ -261,7 +261,17 @@ namespace Telegram.Controls.RichEditor
             }
 
             UpdateComposition();
+
+            if (_toggleStale != null)
+            {
+                var quote = _toggleStale;
+                _toggleStale = null;
+                quote.UpdateToggle();
+            }
         }
+
+        // A quote whose text changed: whether it is long enough to collapse is known after layout.
+        private RichBlockQuotePresenter _toggleStale;
 
         // A text measures in layout, so a block whose font changed answers a caret query with
         // the old line until then - and an empty one with its old height.
@@ -319,7 +329,11 @@ namespace Telegram.Controls.RichEditor
             {
                 _engine.SelectNode(node);
 
-                if (_clickCount == 2)
+                if (_clickCount == 2 && node is RichBlockQuote quote)
+                {
+                    _engine.SetQuoteCollapsed(quote, false);
+                }
+                else if (_clickCount == 2)
                 {
                     NodeActivated?.Invoke(this, new RichNodeActivatedEventArgs(node));
                 }
@@ -1234,7 +1248,21 @@ namespace Telegram.Controls.RichEditor
 
         private bool ToggleAtCaret()
         {
+            if (_engine.SelectedNode is RichBlockQuote { IsCollapsed: true } collapsed)
+            {
+                _engine.SetQuoteCollapsed(collapsed, false);
+                Peer?.Announce(Strings.AccDescrIVExpanded);
+                return true;
+            }
+
             var leaf = _engine.Focus.Leaf;
+
+            if (_engine.SelectedNode == null && leaf.Owner?.Parent is RichBlockQuote { IsCollapsible: true } quote)
+            {
+                _engine.SetQuoteCollapsed(quote, true);
+                Peer?.Announce(Strings.AccDescrIVCollapsed);
+                return true;
+            }
 
             if (leaf.Owner is RichDetailsBlock details && leaf.Role == RichLeafRole.Header)
             {

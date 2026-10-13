@@ -18,7 +18,6 @@ namespace Telegram.Controls.RichEditor
         Footer,
         BlockQuote,
         PullQuote,
-        ExpandableQuote,
         List,
         Details,
         Table,
@@ -139,30 +138,50 @@ namespace Telegram.Controls.RichEditor
 
         public RichTextLeaf Credit { get; }
 
+        /// <summary>
+        /// Shown to its first lines and sent as an expandable quote. Only a quote of one paragraph
+        /// is: an expandable quote holds one text, and the paragraphs are joined when it collapses.
+        /// </summary>
+        public bool IsCollapsed { get; set; }
+
+        /// <summary>Text and nothing else, which is all an expandable quote can hold.</summary>
+        public bool IsCollapsible => Children.Count > 0 && Children.TrueForAll(IsParagraph);
+
+        private static bool IsParagraph(RichBlock block) => block is RichParagraphBlock { Kind: RichBlockKind.Paragraph };
+
+        // Collapsed, nothing in it can be edited before it is opened, so it is selected whole;
+        // the credit stays a line of its own, as a photo's does.
+        public override bool IsAtomic => IsCollapsed;
+
         public override void CollectStops(List<RichStop> stops)
         {
-            CollectAll(Children, stops);
+            if (IsCollapsed)
+            {
+                stops.Add(new RichStop(this));
+            }
+            else
+            {
+                CollectAll(Children, stops);
+            }
+
             stops.Add(new RichStop(Credit));
         }
 
         public override void CollectChildLists(List<List<RichBlock>> lists) => lists.Add(Children);
 
-        public override RichBlock Clone() => new RichBlockQuote(CloneAll(Children), Credit.Clone());
+        public override RichBlock Clone() => new RichBlockQuote(CloneAll(Children), Credit.Clone()) { IsCollapsed = IsCollapsed };
     }
 
-    /// <summary>A pull quote, or an expandable quote: one text and a credit each.</summary>
+    /// <summary>A pull quote: one text and a credit.</summary>
     public sealed class RichTextQuote : RichBlock
     {
-        public RichTextQuote(bool isExpandable, RichTextLeaf text = null, RichTextLeaf credit = null)
+        public RichTextQuote(RichTextLeaf text = null, RichTextLeaf credit = null)
         {
-            IsExpandable = isExpandable;
             Text = text ?? new RichTextLeaf();
             Credit = credit ?? new RichTextLeaf(RichLeafRole.Credit);
         }
 
-        public override RichBlockKind Kind => IsExpandable ? RichBlockKind.ExpandableQuote : RichBlockKind.PullQuote;
-
-        public bool IsExpandable { get; }
+        public override RichBlockKind Kind => RichBlockKind.PullQuote;
 
         public RichTextLeaf Text { get; }
 
@@ -174,7 +193,7 @@ namespace Telegram.Controls.RichEditor
             stops.Add(new RichStop(Credit));
         }
 
-        public override RichBlock Clone() => new RichTextQuote(IsExpandable, Text.Clone(), Credit.Clone());
+        public override RichBlock Clone() => new RichTextQuote(Text.Clone(), Credit.Clone());
     }
 
     public enum RichListStyle
@@ -823,6 +842,12 @@ namespace Telegram.Controls.RichEditor
                     case RichBlockQuote quote:
                         Normalize(quote.Children);
                         EnsureLeadingText(quote.Children);
+
+                        // Whatever undid its single paragraph opens it.
+                        if (quote.IsCollapsed && (quote.Children.Count != 1 || !quote.IsCollapsible))
+                        {
+                            quote.IsCollapsed = false;
+                        }
                         break;
                     case RichDetailsBlock details:
                         Normalize(details.Children);

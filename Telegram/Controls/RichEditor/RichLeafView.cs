@@ -88,6 +88,26 @@ namespace Telegram.Controls.RichEditor
         /// <summary>The block the text is drawn by, for the automation peer and the decorations layer.</summary>
         public DirectTextBlock TextBlock => Text;
 
+        /// <summary>The lines drawn, all of them for 0: a collapsed quote's text shows its first.</summary>
+        public int MaxLines
+        {
+            get => _maxLines;
+            set
+            {
+                if (_maxLines != value)
+                {
+                    _maxLines = value;
+
+                    if (Text != null)
+                    {
+                        Text.MaxLines = value;
+                    }
+                }
+            }
+        }
+
+        private int _maxLines;
+
         /// <summary>Raised when an inline button in the text is clicked: the editor opens it for editing.</summary>
         public event EventHandler<RichInlineObjectClickEventArgs> ObjectClick;
 
@@ -104,6 +124,7 @@ namespace Telegram.Controls.RichEditor
             if (Text != null)
             {
                 Text.TextEntityClick += OnTextEntityClick;
+                Text.MaxLines = _maxLines;
             }
 
             _renderedVersion = -1;

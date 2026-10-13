@@ -2354,6 +2354,9 @@ namespace Telegram.Controls
 
         public int[] GetLineLengths() => Layout().LineLengths();
 
+        /// <summary>The lines the text took at the last measure.</summary>
+        public int LineCount => Layout().LineCount;
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new DirectTextBlockAutomationPeer(this);

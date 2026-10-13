@@ -1136,6 +1136,7 @@ namespace Telegram.Views.Host
                 RichMapBlock => Strings.AttachLocation,
                 RichMathBlock => Strings.AccDescrIVFormula,
                 RichButtonRowBlock => Strings.RichEditorButton,
+                RichBlockQuote => Strings.AccDescrIVBlockquote,
                 _ => Strings.ArticleCommandDivider
             };
         }
@@ -1152,6 +1153,7 @@ namespace Telegram.Views.Host
                 RichMathBlock => Icons.Edit,
                 RichButtonRowBlock => Icons.Add,
                 RichDividerBlock => Icons.LineHorizontal1,
+                RichBlockQuote => Icons.QuoteBlock,
                 _ => null
             };
         }
