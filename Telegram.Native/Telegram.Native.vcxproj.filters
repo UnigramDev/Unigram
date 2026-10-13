@@ -1615,6 +1615,7 @@
     </Midl>
     <Midl Include="FileStreamFromApp.idl" />
     <Midl Include="LokiRng.idl" />
+    <Midl Include="SpellChecker.idl" />
     <Midl Include="SurfaceImage.idl" />
     <Midl Include="FatalError.idl" />
     <Midl Include="ParticlesAnimation.idl" />

@@ -446,6 +446,10 @@
       <DependentUpon>ScreenshotManager.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="SpellChecker.h">
+      <DependentUpon>SpellChecker.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="SurfaceImage.h">
       <DependentUpon>SurfaceImage.idl</DependentUpon>
@@ -1428,6 +1432,10 @@
       <DependentUpon>ScreenshotManager.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="SpellChecker.cpp">
+      <DependentUpon>SpellChecker.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="SVG\nanosvg.cpp" />
     <ClCompile Include="TelegramWebviewProxy.cpp" />
     <ClCompile Include="VideoAnimation.cpp">
@@ -1613,6 +1621,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ScreenshotManager.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="SpellChecker.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="SurfaceImage.idl">
