@@ -131,7 +131,10 @@ namespace Telegram.Controls.RichEditor
             _engine = engine;
             _engine.Changed += OnEngineChanged;
 
+            _spelling.Clear();
+
             Refresh(RichEditorChanges.Structure | RichEditorChanges.Selection, null);
+            UpdateSpelling(RichEditorChanges.Structure, null);
         }
 
         protected override void OnApplyTemplate()
@@ -159,7 +162,12 @@ namespace Telegram.Controls.RichEditor
             Decorations = GetTemplateChild(nameof(Decorations)) as Canvas;
             SpoilerSwatch = GetTemplateChild(nameof(SpoilerSwatch)) as Rectangle;
             MarkedSwatch = GetTemplateChild(nameof(MarkedSwatch)) as Rectangle;
+            SpellingSwatch = GetTemplateChild(nameof(SpellingSwatch)) as Rectangle;
             _decorationShapes.Clear();
+            _compositionLines.Clear();
+            _compositionBackgrounds.Clear();
+            _spellingLines.Clear();
+            _spellingWidths.Clear();
             NodeOutline = GetTemplateChild(nameof(NodeOutline)) as Border;
             Caret = GetTemplateChild(nameof(Caret)) as Rectangle;
             StartGripper = GetTemplateChild(nameof(StartGripper)) as RichSelectionGripper;
@@ -221,6 +229,8 @@ namespace Telegram.Controls.RichEditor
         {
             Refresh(e.Changes, e.Leaf);
             SyncEditContext(e.Changes);
+            UpdateSpelling(e.Changes, e.Leaf);
+
             (Peer as RichEditorAutomationPeer)?.RaiseChanged(e.Changes);
             Announce();
 
@@ -890,6 +900,9 @@ namespace Telegram.Controls.RichEditor
             {
                 _decorationShapes[i].Visibility = Visibility.Collapsed;
             }
+
+            // Laid out again with everything else under the text.
+            DrawSpelling();
         }
 
         private static bool HasDecoratedRuns(RichTextLeaf leaf)

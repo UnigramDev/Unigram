@@ -14,6 +14,7 @@ using Windows.UI.Text.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.RichEditor
@@ -37,8 +38,34 @@ namespace Telegram.Controls.RichEditor
         private bool _imeUpdating;
         private bool _composing;
 
+        // One per range the service formatted. An IME formats a composition clause by clause, a
+        // call each - the clause being converted set apart from the rest - so each range keeps its
+        // own look, and they are drawn together.
+        private readonly List<CompositionSegment> _composition = new();
         private readonly List<Rectangle> _compositionLines = new();
-        private CoreTextRange _compositionRange;
+        private readonly List<Rectangle> _compositionBackgrounds = new();
+        private readonly Dictionary<UIElementType, SolidColorBrush> _compositionBrushes = new();
+        private UISettings _uiSettings;
+        private bool _compositionStale;
+
+        private readonly struct CompositionSegment
+        {
+            public CompositionSegment(CoreTextRange range, UnderlineType underline, UIElementType? underlineColor, UIElementType? background)
+            {
+                Range = range;
+                Underline = underline;
+                UnderlineColor = underlineColor;
+                Background = background;
+            }
+
+            public CoreTextRange Range { get; }
+
+            public UnderlineType Underline { get; }
+
+            public UIElementType? UnderlineColor { get; }
+
+            public UIElementType? Background { get; }
+        }
 
         private InputPane _inputPane;
 
@@ -108,7 +135,7 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            _editContext.InputScope = CoreTextInputScope.Text;
+            _editContext.InputScope = GetInputScope(_engine?.Focus.Leaf);
             _editContext.InputPaneDisplayPolicy = CoreTextInputPaneDisplayPolicy.Automatic;
             _editContext.Name = "RichEditor";
 
@@ -204,8 +231,22 @@ namespace Telegram.Controls.RichEditor
             if (!_contextFocused)
             {
                 _contextFocused = true;
+                _editContext.InputScope = GetInputScope(_contextLeaf);
                 _editContext.NotifyFocusEnter();
             }
+        }
+
+        /// <summary>
+        /// What the keyboard offers for the text the caret is in. Code takes no suggestions and no
+        /// autocorrect, and neither does anything when the user turned the system's spell checker
+        /// off - the setting the composer follows for the same two things. Set before focus is
+        /// entered, which is when the service reads it.
+        /// </summary>
+        private static CoreTextInputScope GetInputScope(RichTextLeaf leaf)
+        {
+            return leaf == null || leaf.IsPlain || !Telegram.Services.AppSettings.UseSystemSpellChecker
+                ? CoreTextInputScope.Default
+                : CoreTextInputScope.Text;
         }
 
         private void LeaveContext()
@@ -238,6 +279,7 @@ namespace Telegram.Controls.RichEditor
                 _contextLength = leaf?.Length ?? 0;
 
                 _editContext.NotifyFocusLeave();
+                _editContext.InputScope = GetInputScope(leaf);
                 _editContext.NotifyFocusEnter();
                 return;
             }
@@ -311,6 +353,8 @@ namespace Telegram.Controls.RichEditor
             var text = args.Text ?? string.Empty;
 
             _imeUpdating = true;
+            _composition.Clear();
+            _compositionStale = true;
 
             try
             {
@@ -378,6 +422,7 @@ namespace Telegram.Controls.RichEditor
                 _contextLength = current?.Length ?? 0;
 
                 _editContext.NotifyFocusLeave();
+                _editContext.InputScope = GetInputScope(current);
                 _editContext.NotifyFocusEnter();
             }
             else
@@ -419,64 +464,161 @@ namespace Telegram.Controls.RichEditor
             args.Result = CoreTextSelectionUpdatingResult.Succeeded;
         }
 
-        // The composition's own underline: the service decides how the text being composed
-        // looks, and drawing it is what tells the user which part is still provisional.
+        // How the text being composed looks is the service's to say, and drawing it is what tells
+        // the user which part is still provisional and which clause is being converted.
         private void OnFormatUpdating(CoreTextEditContext sender, CoreTextFormatUpdatingEventArgs args)
         {
-            _compositionRange = args.Range;
-            DrawComposition(args.UnderlineType ?? UnderlineType.None);
+            var range = args.Range;
+
+            // A range formatted again replaces what it overlapped.
+            for (int i = _composition.Count - 1; i >= 0; i--)
+            {
+                var other = _composition[i].Range;
+                if (other.StartCaretPosition < range.EndCaretPosition && range.StartCaretPosition < other.EndCaretPosition)
+                {
+                    _composition.RemoveAt(i);
+                }
+            }
+
+            _composition.Add(new CompositionSegment(range, args.UnderlineType ?? UnderlineType.None, args.UnderlineColor, args.BackgroundColor));
+
+            // The text this formats may not be laid out yet - a format follows the update that
+            // typed it - so it is drawn once layout has run.
+            _compositionStale = true;
+            InvalidateArrange();
 
             args.Result = CoreTextFormatUpdatingResult.Succeeded;
         }
 
-        private void DrawComposition(UnderlineType underline)
+        /// <summary>Draws the composition again if it changed since it was last drawn; after layout.</summary>
+        private void UpdateComposition()
+        {
+            if (_compositionStale)
+            {
+                _compositionStale = false;
+                DrawComposition();
+            }
+        }
+
+        private void DrawComposition()
         {
             if (Decorations == null || _contextLeaf == null || !_leafViews.TryGetValue(_contextLeaf, out RichLeafView view))
             {
+                ClearComposition();
                 return;
             }
 
-            var rects = underline == UnderlineType.None
-                ? Array.Empty<Rect>()
-                : view.GetRangeRects(_compositionRange.StartCaretPosition, _compositionRange.EndCaretPosition);
-
-            var thickness = underline is UnderlineType.Thick or UnderlineType.Double ? 2 : 1;
             var transform = view.TransformToVisual(Surface);
+            var lines = 0;
+            var backgrounds = 0;
 
-            for (int i = 0; i < rects.Length; i++)
+            foreach (var segment in _composition)
             {
-                Rectangle line;
-                if (i < _compositionLines.Count)
+                if (segment.Underline == UnderlineType.None && segment.Background == null)
                 {
-                    line = _compositionLines[i];
-                }
-                else
-                {
-                    line = new Rectangle { Fill = Caret?.Fill };
-                    _compositionLines.Add(line);
-                    Decorations.Children.Add(line);
+                    continue;
                 }
 
-                var origin = transform.TransformPoint(new Point(rects[i].X, rects[i].Bottom - thickness));
+                var rects = view.GetRangeRects(segment.Range.StartCaretPosition, segment.Range.EndCaretPosition);
+                var thickness = segment.Underline is UnderlineType.Thick or UnderlineType.Double ? 2 : 1;
 
-                Canvas.SetLeft(line, origin.X);
-                Canvas.SetTop(line, origin.Y);
-                line.Width = rects[i].Width;
-                line.Height = thickness;
-                line.Visibility = Visibility.Visible;
+                foreach (var rect in rects)
+                {
+                    if (segment.Background is UIElementType background)
+                    {
+                        var fill = Take(_compositionBackgrounds, ref backgrounds, true);
+                        var origin = transform.TransformPoint(new Point(rect.X, rect.Y));
+
+                        fill.Fill = GetCompositionBrush(background);
+                        Canvas.SetLeft(fill, origin.X);
+                        Canvas.SetTop(fill, origin.Y);
+                        fill.Width = rect.Width;
+                        fill.Height = rect.Height;
+                    }
+
+                    if (segment.Underline != UnderlineType.None)
+                    {
+                        var line = Take(_compositionLines, ref lines, false);
+                        var origin = transform.TransformPoint(new Point(rect.X, rect.Bottom - thickness));
+
+                        // The caret's own brush, from the template, unless the service asked
+                        // for a colour of the system's.
+                        line.Fill = segment.UnderlineColor is UIElementType color ? GetCompositionBrush(color) : Caret?.Fill;
+                        Canvas.SetLeft(line, origin.X);
+                        Canvas.SetTop(line, origin.Y);
+                        line.Width = rect.Width;
+                        line.Height = thickness;
+                    }
+                }
             }
 
-            for (int i = rects.Length; i < _compositionLines.Count; i++)
+            for (int i = lines; i < _compositionLines.Count; i++)
             {
                 _compositionLines[i].Visibility = Visibility.Collapsed;
             }
+
+            for (int i = backgrounds; i < _compositionBackgrounds.Count; i++)
+            {
+                _compositionBackgrounds[i].Visibility = Visibility.Collapsed;
+            }
+        }
+
+        // A shape of the pool, shown; backgrounds go under everything else in the layer.
+        private Rectangle Take(List<Rectangle> pool, ref int used, bool bottom)
+        {
+            Rectangle shape;
+            if (used < pool.Count)
+            {
+                shape = pool[used];
+            }
+            else
+            {
+                shape = new Rectangle { IsHitTestVisible = false };
+                pool.Add(shape);
+
+                if (bottom)
+                {
+                    Decorations.Children.Insert(0, shape);
+                }
+                else
+                {
+                    Decorations.Children.Add(shape);
+                }
+            }
+
+            used++;
+            shape.Visibility = Visibility.Visible;
+            return shape;
+        }
+
+        /// <summary>
+        /// A colour the input service names: one of the system's own, which the IME picked, so it
+        /// is read from the system rather than from the app's theme. One brush per element type.
+        /// </summary>
+        private SolidColorBrush GetCompositionBrush(UIElementType type)
+        {
+            if (!_compositionBrushes.TryGetValue(type, out SolidColorBrush brush))
+            {
+                _uiSettings ??= new UISettings();
+                _compositionBrushes[type] = brush = new SolidColorBrush(_uiSettings.UIElementColor(type));
+            }
+
+            return brush;
         }
 
         private void ClearComposition()
         {
+            _composition.Clear();
+            _compositionStale = false;
+
             foreach (var line in _compositionLines)
             {
                 line.Visibility = Visibility.Collapsed;
+            }
+
+            foreach (var background in _compositionBackgrounds)
+            {
+                background.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -517,6 +659,7 @@ namespace Telegram.Controls.RichEditor
         private void OnCompositionStarted(CoreTextEditContext sender, CoreTextCompositionStartedEventArgs args)
         {
             _composing = true;
+            ClearComposition();
         }
 
         private void OnCompositionCompleted(CoreTextEditContext sender, CoreTextCompositionCompletedEventArgs args)

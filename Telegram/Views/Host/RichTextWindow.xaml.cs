@@ -1161,15 +1161,28 @@ namespace Telegram.Views.Host
             Send_Click(SendButton, null);
         }
 
-        private void OnMenuRequested(object sender, RichMenuRequestedEventArgs e)
+        private async void OnMenuRequested(object sender, RichMenuRequestedEventArgs e)
         {
             var flyout = new MenuFlyout();
 
             if (e.IsBlockMenu && _engine.SelectedNode is RichBlock selected)
             {
                 PopulateNodeFlyout(flyout.Items, selected, true);
-                Editor.ShowMenu(flyout, e.Position, e.IsTouch);
+                Editor.ShowMenu(flyout, e.Position, e.IsTouch, e.IsKeyboard);
                 return;
+            }
+
+            // A misspelled word under the caret: what it could be first, as text boxes have it.
+            if (Editor.TryGetMisspelling(out string misspelled))
+            {
+                foreach (var suggestion in await Editor.SuggestAsync(misspelled))
+                {
+                    flyout.CreateFlyoutItem(() => Editor.ReplaceMisspelling(suggestion), suggestion);
+                }
+
+                flyout.CreateFlyoutItem(Editor.AddToDictionary, Strings.SpellingAddToDictionary, Icons.Add);
+                flyout.CreateFlyoutItem(Editor.IgnoreMisspelling, Strings.SpellingIgnoreWord);
+                flyout.CreateFlyoutSeparator();
             }
 
             var status = _engine.GetStatus();
@@ -1256,7 +1269,7 @@ namespace Telegram.Views.Host
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(!status.IsDocumentEmpty, _engine.SelectAll, Strings.SelectAll, null, VirtualKey.A);
 
-            Editor.ShowMenu(flyout, e.Position, e.IsTouch);
+            Editor.ShowMenu(flyout, e.Position, e.IsTouch, e.IsKeyboard);
         }
 
         private void PasteFormatted() => Editor.Paste(false);

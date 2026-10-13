@@ -259,6 +259,8 @@ namespace Telegram.Controls.RichEditor
                 UpdateCaret();
                 UpdateGrippers();
             }
+
+            UpdateComposition();
         }
 
         // A text measures in layout, so a block whose font changed answers a caret query with
@@ -924,24 +926,21 @@ namespace Telegram.Controls.RichEditor
                 point = caret.IsEmpty ? new Point(0, 0) : new Point(caret.X, caret.Bottom);
             }
 
-            _menuFromKeyboard = keyboard;
-            MenuRequested?.Invoke(this, new RichMenuRequestedEventArgs(point, false));
-            _menuFromKeyboard = false;
-
+            MenuRequested?.Invoke(this, new RichMenuRequestedEventArgs(point, false) { IsKeyboard = keyboard });
             args.Handled = true;
         }
 
-        // A menu opened by pointer is transient, so the editor keeps focus and its caret; one
-        // opened from the keyboard takes focus, or its items could not be reached.
-        private bool _menuFromKeyboard;
-
-        private FlyoutShowMode MenuShowMode => _menuFromKeyboard ? FlyoutShowMode.Standard : FlyoutShowMode.Transient;
-
-        /// <summary>The host shows its menu from here; the editor keeps its selection drawn while it is open.</summary>
-        public void ShowMenu(FlyoutBase flyout, Point point, bool touch = false)
+        /// <summary>
+        /// The host shows its menu from here; the editor keeps its selection drawn while it is open.
+        /// One opened by pointer is transient, so the editor keeps focus and its caret; one opened
+        /// from the keyboard takes focus, or its items could not be reached.
+        /// </summary>
+        public void ShowMenu(FlyoutBase flyout, Point point, bool touch = false, bool keyboard = false)
         {
             _menuOpen = true;
             flyout.Closed += OnMenuClosed;
+
+            var mode = keyboard ? FlyoutShowMode.Standard : FlyoutShowMode.Transient;
 
             // By touch the menu goes above the selection, where the finger is not.
             if (touch && TryGetSelectionTop(out Point top))
@@ -950,7 +949,7 @@ namespace Telegram.Controls.RichEditor
                 {
                     Position = top,
                     Placement = FlyoutPlacementMode.Top,
-                    ShowMode = MenuShowMode
+                    ShowMode = mode
                 });
 
                 return;
@@ -959,7 +958,7 @@ namespace Telegram.Controls.RichEditor
             flyout.ShowAt(Surface, new FlyoutShowOptions
             {
                 Position = point,
-                ShowMode = MenuShowMode
+                ShowMode = mode
             });
         }
 
@@ -1701,6 +1700,9 @@ namespace Telegram.Controls.RichEditor
 
         /// <summary>From a block's own menu button: what can be done to the block, and nothing else.</summary>
         public bool IsBlockMenu { get; init; }
+
+        /// <summary>From the keyboard, which the menu has to take focus for.</summary>
+        public bool IsKeyboard { get; init; }
     }
 
     public sealed class RichNodeActivatedEventArgs : EventArgs

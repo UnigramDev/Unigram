@@ -493,6 +493,7 @@
     <Compile Include="Controls\RichEditor\RichEditorView.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.Input.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.TextInput.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorView.SpellCheck.cs" />
     <Compile Include="Controls\RichEditor\RichMediaRenderer.cs" />
     <Compile Include="Controls\RichEditor\RichMediaFactory.cs" />
     <Compile Include="Controls\RichEditor\RichClipboard.cs" />

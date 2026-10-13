@@ -264,6 +264,9 @@
                                     <Rectangle x:Name="MarkedSwatch"
                                                Fill="{ThemeResource RichEditorMarkedBrush}"
                                                Visibility="Collapsed" />
+                                    <Rectangle x:Name="SpellingSwatch"
+                                               Fill="{ThemeResource SystemFillColorCriticalBrush}"
+                                               Visibility="Collapsed" />
                                 </Canvas>
 
                                 <StackPanel x:Name="Blocks" />

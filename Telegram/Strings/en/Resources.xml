@@ -11177,6 +11177,8 @@
     <string name="ShowInFolder">Show in Folder</string>
     <string name="ShowTrayIcon">Show Tray Icon</string>
     <string name="Spelling">Spelling</string>
+    <string name="SpellingAddToDictionary">Add to Dictionary</string>
+    <string name="SpellingIgnoreWord">Ignore word</string>
     <string name="StarsYourBalance">your balance</string>
     <string name="StoriesRemovedFromProfile_zero">{0} stories removed from your profile.</string>
     <string name="StoriesRemovedFromProfile_one">{0} story removed from your profile.</string>
