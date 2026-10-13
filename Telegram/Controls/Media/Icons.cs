@@ -480,6 +480,7 @@ namespace Telegram.Controls.Media
         public const string CommentQuote = "\uF797";
         public const string DocumentFooter = "\uF798";
         public const string LineHorizontal1 = "\uF799";
+        public const string Highlight = "\uF79A";
 
         public const string BotMarkup24 = "\uE9D5";
 
