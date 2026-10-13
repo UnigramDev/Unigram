@@ -384,8 +384,9 @@ beyond the line, ties broken by distance from the remembered column.
   where it was. Code and block quotes use `BlockQuote`'s chrome: header tint, 3px accent bar,
   corner glyph, padding 8,4,24,6. A pull quote is centred on a 10% tint between quote marks.
   An expandable quote is a block quote with `IsCollapsed` (see "Collapsible quotes" below).
-  Details headers take the
-  `SettingsButton` look, with the chevron in the glyph slot. Credits are SemiBold. Captions
+  Details blocks look like the message's `DetailsBlock`: a turning 16px chevron, its
+  `DetailsBlockHeader` with no content, beside the header text, which has to take the caret,
+  and a `MessageHeaderBackgroundBrush` line at the end. Credits are SemiBold. Captions
   and cells are body text. Table cells draw their own collapsed borders and outer corners;
   bordered, striped and compact are now drawn. A table caption goes above the table, and is
   first in the stops so arrows and the text pattern read it where it is. Files are a
@@ -525,3 +526,30 @@ now tells the leaf view to colour them again, which a theme change needs as well
 "Highlight" is "Marked" (`RichEditorMarked`), with Fluent's highlight_20_regular at F79A.
 
 TODO: markdown on paste, which Android offers as an option after a paste.
+
+Grouped toolbar (2026-10-13). The toolbar's middle is a `RichToolbarHost` around a scroll viewer
+of groups, as Word's ribbon has them: Formatting, Text style, List and Insert, with separators.
+Only the host sees the column's width, since the scroll viewer measures the groups unbounded.
+Each group is either expanded (two rows of small buttons over its label) or folded into one
+button with its glyph and label, which opens the group's menu. Groups expand in
+`RichToolbarGroup.Priority` order while they fit: Text style, then Formatting, List, Insert.
+The order is strict: once one does not fit the rest fold, so widening the window never folds a
+group back.
+When even every group folded does not fit, the bar scrolls. A first version also had TDesktop's
+one-row compact layout below that width; it was dropped. Every command of the menus has a
+button, so no group needs a "more" button. What is not shown is collapsed, not clipped, which
+keeps it out of the tab order and the automation tree. A group therefore only has a width in
+the state it is in, and the host remembers the other from when it was last shown (unknown at
+first, stale if the content changed meanwhile). It applies a choice and measures again inside the
+same measure pass until the choice was made on real widths, so nothing wrong is ever drawn.
+Widths are the whole group's, its template padding and margin included.
+The bar is one tab stop with arrow keys inside it. The grouped buttons are named and run typed
+handlers: the marks and the list styles through arrays pairing each button with its value. The
+Premium stars bind to `PremiumMarksVisibility`. The small buttons' look is in the window's
+resources (`GroupToggleButtonStyle`, `GroupGlyphButtonStyle`, `GroupFoldedButtonStyle`,
+`GroupLabelStyle`, `GroupSeparatorStyle`), the place to restyle it.
+New glyphs: indent, outdent and clear formatting at F79B-F79D, button at F79E.
+
+Marked text in bubbles drawn by `DirectTextBlock` had no background: the layout has none to give
+a range. It is now a shape under the glyphs, as the search match is, in `FormattedTextBlock`'s
+PaleGoldenrod. The editor is unaffected: its leaves never emit `Marked` parts and draw their own.

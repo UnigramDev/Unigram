@@ -567,8 +567,8 @@ overflow is cut off before `Scale` can shrink it back inside. It costs the desir
 drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
 `MeasureOverride` adds it back to recover the width the parent really had.
 
-## Rich message editor — Telegram/Controls/RichEditor/ (23 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=35daaf49a paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
+## Rich message editor — Telegram/Controls/RichEditor/ (24 files), Telegram/Views/Host/RichTextWindow.xaml.cs
+<!-- map: verified=a9131a758 paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -579,6 +579,7 @@ decorations layer, pointer, touch and keyboard, `CoreTextEditContext` for IME; `
 page blocks in, `InputPageBlock`s out; `RichMediaRenderer` — media, collages (`RichCollagePanel`) and maps;
 `RichEditorAutomationPeer` — `ITextProvider2` over the flattened document; `RichEditorView.SpellCheck.cs`
 over `Telegram.Native.SpellChecker` (the Windows Spell Checking API) — squiggles and suggestions;
+`RichToolbarHost` (RichToolbarHost.cs) — the toolbar's groups, each expanded while it fits;
 `RichTextWindow` — toolbar, menus, pickers, popups and send.
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
