@@ -279,6 +279,55 @@ private:
     std::condition_variable m_cv;
     std::atomic<bool> m_running{ false };
 
+    Compositor m_compositor{ nullptr };
+
+    // Shared with the commit's completion, which can outlive the queue once a wait times out.
+    std::shared_ptr<winrt::handle> m_committed = std::make_shared<winrt::handle>(CreateEventW(nullptr, FALSE, FALSE, nullptr));
+
+    // Render thread only.
+    bool m_awaiting_commit{ false };
+
+    // Every RenderFrame is a BeginDraw/EndDraw, and DComp keeps each update until a commit takes
+    // it. Commits stop behind a stalled UI thread and in a window nobody composes, while frames keep
+    // arriving at the video's rate, so a batch waits for the previous one's commit. Frames that
+    // arrive meanwhile replace each other in m_pending_commands.
+    void request_commit()
+    {
+        if (m_compositor == nullptr || !*m_committed)
+        {
+            return;
+        }
+
+        try
+        {
+            m_compositor.RequestCommitAsync().Completed([committed = m_committed](auto&&, auto&&)
+            {
+                SetEvent(committed->get());
+            });
+
+            m_awaiting_commit = true;
+        }
+        catch (winrt::hresult_error const&)
+        {
+            // The compositor is going away with its window, and there is nothing left to wait for.
+            m_awaiting_commit = false;
+        }
+    }
+
+    // One slice at a time, so that the loop lets go of the queue in between and a queue whose
+    // outputs are all gone is not kept alive by a commit that may never come.
+    bool wait_for_commit()
+    {
+        if (WaitForSingleObject(m_committed->get(), 250) == WAIT_OBJECT_0)
+        {
+            m_awaiting_commit = false;
+            return true;
+        }
+
+        request_commit();
+        return false;
+    }
+
     static void render_loop(std::weak_ptr<CompositionRenderQueue> weak_self)
     {
         SetThreadDescription(GetCurrentThread(), L"CompositionRenderThread");
@@ -291,6 +340,11 @@ private:
             if (!self->m_running.load(std::memory_order_acquire))
             {
                 break;
+            }
+
+            if (self->m_awaiting_commit && !self->wait_for_commit())
+            {
+                continue;
             }
 
             {
@@ -333,6 +387,11 @@ private:
                 }
             }
 
+            if (!batch.empty())
+            {
+                self->request_commit();
+            }
+
             batch.clear();
         }
     }
@@ -354,9 +413,10 @@ public:
             }).detach();
     }
 
-    static std::shared_ptr<CompositionRenderQueue> Create()
+    static std::shared_ptr<CompositionRenderQueue> Create(CompositionGraphicsDevice const& device)
     {
         auto instance = std::shared_ptr<CompositionRenderQueue>(new CompositionRenderQueue());
+        instance->m_compositor = device.Compositor();
         instance->start_thread();
         return instance;
     }
@@ -435,7 +495,7 @@ public:
             m_queues.erase(it);
         }
 
-        auto queue = CompositionRenderQueue::Create();
+        auto queue = CompositionRenderQueue::Create(device);
         m_queues[device] = queue;
 
         return queue;
