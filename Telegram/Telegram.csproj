@@ -384,6 +384,7 @@
     <Compile Include="Controls\MenuFlyoutContent.cs" />
     <Compile Include="Composition\CompositionColorSource.cs" />
     <Compile Include="Controls\MenuFlyoutInfoItem.cs" />
+    <Compile Include="Controls\MenuFlyoutPremiumItem.cs" />
     <Compile Include="Controls\Messages\Content\LiveLocationContent.xaml.cs">
       <DependentUpon>LiveLocationContent.xaml</DependentUpon>
     </Compile>
