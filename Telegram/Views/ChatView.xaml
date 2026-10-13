@@ -1292,7 +1292,8 @@
                                                    TextChanging="TextField_TextChanging"
                                                    Capture="TextField_Tapped" />
                                 <contents:InstantContent x:Name="DraftField"
-                                                         Margin="38,13,0,10" />
+                                                         Margin="38,13,0,10"
+                                                         MaxHeight="192" />
                             </Grid>
                             <Border x:Name="btnAttach"
                                     Grid.Column="1"

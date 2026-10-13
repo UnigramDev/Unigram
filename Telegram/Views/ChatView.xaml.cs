@@ -7501,7 +7501,7 @@ namespace Telegram.Views
                 ViewModel.SetText(null as string);
                 ButtonClear.Visibility = Visibility.Visible;
                 DraftField.Visibility = Visibility.Visible;
-                DraftField.UpdateView(ViewModel.ClientService, richMessage.Message.Blocks, false);
+                DraftField.UpdateChatDraft(ViewModel.MessageDelegate, richMessage);
             }
             else
             {

@@ -218,7 +218,7 @@ namespace Telegram.ViewModels
 
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
-        protected readonly IMessageDelegate _messageDelegate;
+        protected readonly DialogMessageDelegate _messageDelegate;
         protected readonly WeakReference _messageDelegateWeak;
 
         protected readonly ILocationService _locationService;
@@ -241,6 +241,8 @@ namespace Telegram.ViewModels
         public DialogPinnedMessagesViewModel PinnedMessages { get; }
 
         public IDialogDelegate Delegate { get; set; }
+
+        public DialogMessageDelegate MessageDelegate => _messageDelegate;
 
         public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService)
             : base(clientService, settingsService, aggregator)

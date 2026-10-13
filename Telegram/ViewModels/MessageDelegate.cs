@@ -846,7 +846,6 @@ namespace Telegram.ViewModels
     public partial class RichMessageDelegate : DialogMessageDelegate
     {
         private readonly RichMessage _message;
-        private readonly DialogMessageDelegate _delegate;
 
         public RichMessageDelegate(RichMessage message, DialogMessageDelegate delegato)
             : base(delegato.ViewModel)

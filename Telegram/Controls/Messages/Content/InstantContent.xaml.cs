@@ -121,6 +121,12 @@ namespace Telegram.Controls.Messages.Content
             UpdateInstantView(message, text, _instantViewToken.Token);
         }
 
+        public void UpdateChatDraft(DialogMessageDelegate delegato, DraftMessageContentRichMessage richMessage)
+        {
+            _delegate = new RichMessageDelegate(richMessage.Message, delegato);
+            UpdateView(delegato.ClientService, richMessage.Message.Blocks, false);
+        }
+
         public void Recycle()
         {
             _instantViewToken?.Cancel();
