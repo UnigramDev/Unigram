@@ -1087,6 +1087,11 @@ namespace Telegram.Controls.RichEditor
         public Button PreviousButton;
         public Button NextButton;
 
+        // How far an upload has come: over a picture or a collage, or on a file's icon.
+        public Border UploadOverlay;
+        public ProgressBarRing UploadProgress;
+        public ProgressBarRing FileUploadProgress;
+
         // The controls on a picture: its menu, more media, and collage or slideshow. A collage
         // has a menu button per tile instead, in TileControls.
         public Button MoreButton;
@@ -1158,6 +1163,14 @@ namespace Telegram.Controls.RichEditor
             _parts.FileSubtitle = GetTemplateChild(nameof(_parts.FileSubtitle)) as TextBlock;
             _parts.PreviousButton = GetTemplateChild(nameof(_parts.PreviousButton)) as Button;
             _parts.NextButton = GetTemplateChild(nameof(_parts.NextButton)) as Button;
+            _parts.UploadOverlay = GetTemplateChild(nameof(_parts.UploadOverlay)) as Border;
+            _parts.UploadProgress = GetTemplateChild(nameof(_parts.UploadProgress)) as ProgressBarRing;
+            _parts.FileUploadProgress = GetTemplateChild(nameof(_parts.FileUploadProgress)) as ProgressBarRing;
+
+            if (_parts.UploadProgress == null || _parts.FileUploadProgress == null)
+            {
+                _parts.UploadOverlay = null;
+            }
             _parts.MoreButton = GetTemplateChild(nameof(_parts.MoreButton)) as Button;
             _parts.AddButton = GetTemplateChild(nameof(_parts.AddButton)) as Button;
             _parts.LayoutButton = GetTemplateChild(nameof(_parts.LayoutButton)) as Button;
@@ -1210,6 +1223,17 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
+        /// <summary>Whether <paramref name="source"/> is what this block shows, or one of its tiles.</summary>
+        internal bool Shows(RichMediaSource source)
+        {
+            return ReferenceEquals(_parts.Shown, source) || _parts.ShownItems.Contains(source);
+        }
+
+        internal void UpdateUpload()
+        {
+            Owner.Media.ShowUpload(_parts, Block);
+        }
+
         private void OnPreviousClick(object sender, RoutedEventArgs e) => Turn(-1);
 
         private void OnNextClick(object sender, RoutedEventArgs e) => Turn(1);
@@ -1250,6 +1274,8 @@ namespace Telegram.Controls.RichEditor
                     Owner.Media.Show(_parts, map);
                     break;
             }
+
+            Owner.Media.ShowUpload(_parts, Block);
 
             // Under a picture the caption is inset, as the sent message has it; under a file or
             // a map it lines up with the block.

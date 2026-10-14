@@ -100,6 +100,24 @@ namespace Telegram.Controls.RichEditor
 
         public RichEditorEngine Engine => _engine;
 
+        /// <summary>
+        /// Media uploading from the moment it is added, for an article. Null, as for a message's
+        /// text, uploads it with the message instead.
+        /// </summary>
+        public RichMediaUploads Uploads { get; set; }
+
+        // Media whose upload moved on: what shows it shows how far.
+        internal void OnUploadChanged(RichMediaSource source)
+        {
+            foreach (var presenter in _presenters.Values)
+            {
+                if (presenter is RichMediaPresenter media && media.Shows(source))
+                {
+                    media.UpdateUpload();
+                }
+            }
+        }
+
         public IClientService ClientService => _clientService;
 
         internal RichMediaRenderer Media { get; }
@@ -292,6 +310,9 @@ namespace Telegram.Controls.RichEditor
             {
                 Realize();
                 _caretStale = true;
+
+                // Media taken out stops uploading; what came in started as it was shown.
+                Uploads?.Retain(_engine.Document);
             }
             else if ((changes & RichEditorChanges.Text) != 0 && leaf != null && _leafViews.TryGetValue(leaf, out RichLeafView view))
             {

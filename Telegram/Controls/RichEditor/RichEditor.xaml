@@ -907,6 +907,22 @@
                                            FontSize="12" />
                             </Border>
 
+                            <!--  An upload under way: it starts when the media is added, so that
+                                  sending does not have to wait for it.  -->
+                            <Border x:Name="UploadOverlay"
+                                    Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                    Width="48"
+                                    Height="48"
+                                    CornerRadius="24"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False"
+                                    Visibility="Collapsed">
+                                <controls:ProgressBarRing x:Name="UploadProgress"
+                                                          Foreground="White"
+                                                          Width="48"
+                                                          Height="48" />
+                            </Border>
                             <!--  Audio, voice notes and files: a row, as DocumentContent draws one.  -->
                             <Grid x:Name="FileRow"
                                   MinWidth="220"
@@ -919,12 +935,20 @@
                                         Width="48"
                                         Height="48"
                                         CornerRadius="24">
-                                    <TextBlock x:Name="FileIcon"
-                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                               FontSize="24"
-                                               Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
+                                    <Grid>
+                                        <TextBlock x:Name="FileIcon"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                   FontSize="24"
+                                                   Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        <controls:ProgressBarRing x:Name="FileUploadProgress"
+                                                                  Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                                                                  IsHitTestVisible="False"
+                                                                  Visibility="Collapsed"
+                                                                  Width="48"
+                                                                  Height="48" />
+                                    </Grid>
                                 </Border>
                                 <StackPanel Margin="8,0,0,0"
                                             VerticalAlignment="Center"

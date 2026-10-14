@@ -135,6 +135,7 @@ namespace Telegram.Views.Host
             Editor.PasteRequested += OnPasteRequested;
 
             Editor.Suggestions = new RichSuggestionContext(_clientService.Session.Settings, _chatId);
+            Editor.Uploads = new RichMediaUploads(Editor, _clientService);
             Editor.Initialize(_clientService, _engine);
             UpdateToolbar();
             UpdateSendLock();
@@ -161,6 +162,17 @@ namespace Telegram.Views.Host
 
             _lockTimer.Stop();
             _lockTimer.Tick -= OnLockTimerTick;
+
+            // Sent, the message carries the uploads on; otherwise nothing will use them. A draft
+            // names the files on the device, so it does not either.
+            if (_mediaSent)
+            {
+                Editor.Uploads?.Detach();
+            }
+            else
+            {
+                Editor.Uploads?.Cancel();
+            }
 
             _aggregator?.Unsubscribe(this);
         }
@@ -203,16 +215,24 @@ namespace Telegram.Views.Host
             _clientService.Send(new SetChatDraftMessage(_chatId, _topic, draft));
         }
 
-        /// <summary>The document as TDLib takes it; null when there is nothing to send.</summary>
-        private InputRichMessage GetInputModel()
+        /// <summary>
+        /// The document as TDLib takes it; null when there is nothing to send. With
+        /// <paramref name="inputs"/>, media already uploading goes by its file id: for sending,
+        /// never for a draft, which outlives the uploads.
+        /// </summary>
+        private InputRichMessage GetInputModel(IRichMediaInputs inputs = null)
         {
             if (_engine.Document.IsEmpty)
             {
                 return null;
             }
 
-            return RichDocumentConverter.ToInputRichMessage(_engine.Document);
+            return RichDocumentConverter.ToInputRichMessage(_engine.Document, inputs);
         }
+
+        // Whether what was sent took the preliminary uploads with it: a rich message does, the
+        // text a free user is sent instead has no media to take.
+        private bool _mediaSent;
 
         public void Handle(UpdateOption update)
         {
@@ -2007,7 +2027,7 @@ namespace Telegram.Views.Host
 
         private async void Send_Click(object sender, RoutedEventArgs e)
         {
-            var richMessage = GetInputModel();
+            var richMessage = GetInputModel(Editor.Uploads);
             if (richMessage == null || !CheckLimits())
             {
                 return;
@@ -2016,6 +2036,7 @@ namespace Telegram.Views.Host
             // Editing an existing rich message.
             if (_messageId != 0)
             {
+                _mediaSent = true;
                 await _clientService.SendAsync(new EditMessageMedia(_chatId, _messageId, new InputMessageRichMessage(richMessage, false)));
                 Close();
                 return;
@@ -2039,6 +2060,7 @@ namespace Telegram.Views.Host
                 return;
             }
 
+            _mediaSent = true;
             await SendAsync(new InputMessageRichMessage(richMessage, true));
             Close();
         }

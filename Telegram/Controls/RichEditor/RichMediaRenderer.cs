@@ -42,6 +42,76 @@ namespace Telegram.Controls.RichEditor
             _owner = owner;
         }
 
+        /// <summary>
+        /// How far what the block holds has uploaded: one ring for a picture or a whole collage,
+        /// whose bytes are added up, and one on the icon of a file.
+        /// </summary>
+        public void ShowUpload(RichMediaParts parts, RichBlock block)
+        {
+            if (parts.UploadOverlay == null)
+            {
+                return;
+            }
+
+            long uploaded = 0;
+            long size = 0;
+            var uploading = false;
+
+            if (_owner.Uploads is RichMediaUploads uploads)
+            {
+                if (block is RichMediaBlock media)
+                {
+                    uploading = AddProgress(uploads, media.Source, ref uploaded, ref size);
+                }
+                else if (block is RichMediaGroupBlock group)
+                {
+                    foreach (var item in group.Items)
+                    {
+                        if (item is RichMediaBlock tile && AddProgress(uploads, tile.Source, ref uploaded, ref size))
+                        {
+                            uploading = true;
+                        }
+                    }
+                }
+            }
+
+            var value = size > 0 ? (double)uploaded / size : 0;
+
+            if (uploading && !parts.IsFile)
+            {
+                parts.UploadProgress.Value = value;
+            }
+
+            if (uploading && parts.IsFile)
+            {
+                parts.FileUploadProgress.Value = value;
+            }
+
+            SetVisible(parts.UploadOverlay, uploading && !parts.IsFile);
+            SetVisible(parts.FileUploadProgress, uploading && parts.IsFile);
+        }
+
+        private static bool AddProgress(RichMediaUploads uploads, RichMediaSource source, ref long uploaded, ref long size)
+        {
+            if (!uploads.TryGetProgress(source, out long done, out long total))
+            {
+                return false;
+            }
+
+            uploaded += done;
+            size += total;
+            return true;
+        }
+
+        private static void SetVisible(UIElement element, bool visible)
+        {
+            var visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            if (element.Visibility != visibility)
+            {
+                element.Visibility = visibility;
+            }
+        }
+
         public void Show(RichMediaParts parts, RichMediaBlock block)
         {
             if (parts.Media == null)
@@ -58,6 +128,9 @@ namespace Telegram.Controls.RichEditor
 
             parts.Shown = source;
             parts.ShownItems.Clear();
+
+            // Shown is added: from here it uploads, so that sending does not wait for it.
+            _owner.Uploads?.Track(source);
 
             ClearTiles(parts);
             SetPaging(parts, false);
@@ -106,7 +179,10 @@ namespace Telegram.Controls.RichEditor
 
             foreach (var item in group.Items)
             {
-                parts.ShownItems.Add((item as RichMediaBlock)?.Source);
+                var source = (item as RichMediaBlock)?.Source;
+
+                parts.ShownItems.Add(source);
+                _owner.Uploads?.Track(source);
             }
 
             HideFile(parts);

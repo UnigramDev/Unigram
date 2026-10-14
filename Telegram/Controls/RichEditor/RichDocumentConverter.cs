@@ -13,6 +13,13 @@ using Telegram.Td.Api;
 
 namespace Telegram.Controls.RichEditor
 {
+    /// <summary>What a media source is sent as, when not as the input it was added with.</summary>
+    public interface IRichMediaInputs
+    {
+        /// <summary>The input to send for <paramref name="source"/>, or null for its own.</summary>
+        Object GetInput(RichMediaSource source);
+    }
+
     /// <summary>
     /// Between the editor's document and TDLib: a sent message (<see cref="RichMessage"/>) or the
     /// composer's <see cref="FormattedText"/> in, <see cref="InputRichMessage"/> out.
@@ -472,9 +479,10 @@ namespace Telegram.Controls.RichEditor
         /// an empty block anywhere in it, with nothing to tell the user which, so whatever has no
         /// content goes - by the rules TDesktop applies on send. Null when nothing is left.
         /// </summary>
-        public static InputRichMessage ToInputRichMessage(RichDocument document)
+        /// <param name="inputs">What media is sent as, where not as it was added: one already uploading goes by its file id.</param>
+        public static InputRichMessage ToInputRichMessage(RichDocument document, IRichMediaInputs inputs = null)
         {
-            var blocks = ToInputBlocks(document.Blocks);
+            var blocks = ToInputBlocks(document.Blocks, inputs);
             if (blocks.Count == 0)
             {
                 return null;
@@ -498,7 +506,7 @@ namespace Telegram.Controls.RichEditor
         /// blocks and dropped at either end of the list - the line a caret was left on is not
         /// content - including the ends left by a block that was dropped.
         /// </summary>
-        public static MutableVector<InputPageBlock> ToInputBlocks(IList<RichBlock> blocks)
+        public static MutableVector<InputPageBlock> ToInputBlocks(IList<RichBlock> blocks, IRichMediaInputs inputs = null)
         {
             var result = new MutableVector<InputPageBlock>(blocks.Count);
 
@@ -517,7 +525,7 @@ namespace Telegram.Controls.RichEditor
                     continue;
                 }
 
-                if (ToInputBlock(blocks[i]) is not InputPageBlock input)
+                if (ToInputBlock(blocks[i], inputs) is not InputPageBlock input)
                 {
                     continue;
                 }
@@ -541,7 +549,7 @@ namespace Telegram.Controls.RichEditor
             return result;
         }
 
-        private static InputPageBlock ToInputBlock(RichBlock block)
+        private static InputPageBlock ToInputBlock(RichBlock block, IRichMediaInputs inputs)
         {
             switch (block)
             {
@@ -560,7 +568,7 @@ namespace Telegram.Controls.RichEditor
                     return HasText(text.Text) ? new InputPageBlockExpandableBlockQuote(ToRichText(text.Text), ToRichTextOrNull(x.Credit)) : null;
                 case RichBlockQuote x:
                     {
-                        var children = ToInputBlocks(x.Children);
+                        var children = ToInputBlocks(x.Children, inputs);
                         return children.Count == 0 ? null : new InputPageBlockBlockQuote(children, ToRichTextOrNull(x.Credit));
                     }
                 case RichTextQuote x when !HasText(x.Text):
@@ -569,12 +577,12 @@ namespace Telegram.Controls.RichEditor
                     return new InputPageBlockPullQuote(ToRichText(x.Text), ToRichTextOrNull(x.Credit));
                 case RichListBlock x:
                     {
-                        var items = ToInputListItems(x);
+                        var items = ToInputListItems(x, inputs);
                         return items.Count == 0 ? null : new InputPageBlockList(items);
                     }
                 case RichDetailsBlock x:
                     {
-                        var children = ToInputBlocks(x.Children);
+                        var children = ToInputBlocks(x.Children, inputs);
                         return children.Count == 0 ? null : new InputPageBlockDetails(ToRichText(x.Header), children, x.IsOpen);
                     }
                 case RichTableBlock x:
@@ -590,13 +598,13 @@ namespace Telegram.Controls.RichEditor
                 case RichMathBlock x:
                     return new InputPageBlockMathematicalExpression(x.Expression);
                 case RichMediaBlock x:
-                    return ToInputMedia(x, ToCaption(x.Caption, x.Credit));
+                    return ToInputMedia(x, ToCaption(x.Caption, x.Credit), inputs);
                 case RichMediaGroupBlock x:
                     {
                         var items = new MutableVector<InputPageBlock>(x.Items.Count);
                         foreach (var item in x.Items)
                         {
-                            if (item is RichMediaBlock media && ToInputMedia(media, null) is InputPageBlock input)
+                            if (item is RichMediaBlock media && ToInputMedia(media, null, inputs) is InputPageBlock input)
                             {
                                 items.Add(input);
                             }
@@ -621,7 +629,7 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
-        private static MutableVector<InputPageBlockListItem> ToInputListItems(RichListBlock list)
+        private static MutableVector<InputPageBlockListItem> ToInputListItems(RichListBlock list, IRichMediaInputs inputs)
         {
             var items = new MutableVector<InputPageBlockListItem>(list.Items.Count);
             var ordered = list.Style == RichListStyle.Ordered;
@@ -631,7 +639,7 @@ namespace Telegram.Controls.RichEditor
             {
                 // An empty item goes and the ones after it are numbered on, as they are shown
                 // once it has.
-                var children = ToInputBlocks(item.Children);
+                var children = ToInputBlocks(item.Children, inputs);
                 if (children.Count == 0)
                 {
                     continue;
@@ -692,7 +700,7 @@ namespace Telegram.Controls.RichEditor
             return new PageBlockCaption(ToRichText(caption), ToRichText(credit));
         }
 
-        private static InputPageBlock ToInputMedia(RichMediaBlock media, PageBlockCaption caption)
+        private static InputPageBlock ToInputMedia(RichMediaBlock media, PageBlockCaption caption, IRichMediaInputs inputs)
         {
             var source = media.Source;
             if (source == null)
@@ -700,9 +708,10 @@ namespace Telegram.Controls.RichEditor
                 return null;
             }
 
-            if (source.Input != null)
+            var sent = inputs?.GetInput(source) ?? source.Input;
+            if (sent != null)
             {
-                return source.Input switch
+                return sent switch
                 {
                     InputPhoto x => new InputPageBlockPhoto(x, caption, media.HasSpoiler),
                     InputVideo x => new InputPageBlockVideo(x, caption, media.HasSpoiler),
