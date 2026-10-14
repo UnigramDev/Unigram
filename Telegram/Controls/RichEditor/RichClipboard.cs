@@ -135,7 +135,7 @@ namespace Telegram.Controls.RichEditor
             RichMarks.Monospace,
         };
 
-        private static void AppendLeaf(RichTextLeaf leaf, StringBuilder text, MutableVector<TextEntity> entities)
+        internal static void AppendLeaf(RichTextLeaf leaf, StringBuilder text, MutableVector<TextEntity> entities)
         {
             var source = leaf.Text;
             var position = 0;

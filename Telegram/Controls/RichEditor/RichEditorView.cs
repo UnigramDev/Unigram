@@ -110,6 +110,32 @@ namespace Telegram.Controls.RichEditor
 
         #endregion
 
+        #region PlaceholderText
+
+        /// <summary>
+        /// The hint on an empty document, in place of the per-line hints. Set for a message's text,
+        /// which has one line to type on rather than an article's kinds of line.
+        /// </summary>
+        public string PlaceholderText
+        {
+            get => (string)GetValue(PlaceholderTextProperty);
+            set => SetValue(PlaceholderTextProperty, value);
+        }
+
+        public static readonly DependencyProperty PlaceholderTextProperty =
+            DependencyProperty.Register("PlaceholderText", typeof(string), typeof(RichEditorView), new PropertyMetadata(null, OnPlaceholderTextChanged));
+
+        private static void OnPlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (RichEditorView)d;
+            if (sender._engine != null && sender._engine.Document.IsEmpty)
+            {
+                sender.Refresh(RichEditorChanges.Structure, null);
+            }
+        }
+
+        #endregion
+
         /// <summary>Raised after the document or the selection changed and the view caught up: what a toolbar listens to.</summary>
         public event EventHandler StateChanged;
 
@@ -358,7 +384,7 @@ namespace Telegram.Controls.RichEditor
             Realize(presenter, block);
         }
 
-        private static Thickness Spacing(IList<RichBlock> blocks, int index, bool root)
+        private Thickness Spacing(IList<RichBlock> blocks, int index, bool root)
         {
             var block = blocks[index];
             var kind = block.Kind;
@@ -394,8 +420,12 @@ namespace Telegram.Controls.RichEditor
                 top = 8;
             }
 
-            var bottom = kind == RichBlockKind.Divider ? 4 : root && index == blocks.Count - 1 && !IsFullMedia(block) ? 6 : 0;
-            var padding = root && !IsEdgeToEdge(block) ? 10 : 0;
+            // A message's text has no bubble around it to keep clear of: its box's padding is all
+            // the inset there is.
+            var message = _engine?.Schema != null;
+
+            var bottom = kind == RichBlockKind.Divider ? 4 : root && !message && index == blocks.Count - 1 && !IsFullMedia(block) ? 6 : 0;
+            var padding = root && !message && !IsEdgeToEdge(block) ? 10 : 0;
 
             return new Thickness(padding, top, padding, bottom);
         }
@@ -758,6 +788,12 @@ namespace Telegram.Controls.RichEditor
             }
 
             var document = _engine.Document;
+
+            if (PlaceholderText is string placeholder)
+            {
+                return document.IsEmpty && ReferenceEquals(document.Blocks[0], block) ? placeholder : null;
+            }
+
             var focused = ReferenceEquals(leaf, _engine.Focus.Leaf) && FocusState != FocusState.Unfocused;
 
             if (block.Kind == RichBlockKind.Paragraph && !focused && !(document.IsEmpty && ReferenceEquals(document.Blocks[0], block)))

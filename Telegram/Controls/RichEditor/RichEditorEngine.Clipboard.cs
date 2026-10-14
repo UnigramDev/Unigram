@@ -114,6 +114,8 @@ namespace Telegram.Controls.RichEditor
 
             // Copied, so pasting the same fragment twice does not put the same blocks in twice.
             var blocks = fragment.Clone().Blocks;
+            Schema?.Conform(blocks);
+
             if (blocks.Count == 0)
             {
                 return;

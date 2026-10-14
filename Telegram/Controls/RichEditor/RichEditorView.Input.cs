@@ -1287,6 +1287,13 @@ namespace Telegram.Controls.RichEditor
 
             var leaf = _engine.Focus.Leaf;
 
+            if (_engine.Schema != null && _engine.SelectedNode == null && leaf.Owner?.Parent is RichBlockQuote message)
+            {
+                _engine.SetQuoteCollapsed(message, !message.IsExpandable);
+                Peer?.Announce(message.IsExpandable ? Strings.AccDescrIVCollapsed : Strings.AccDescrIVExpanded);
+                return true;
+            }
+
             if (_engine.SelectedNode == null && leaf.Owner?.Parent is RichBlockQuote { IsCollapsible: true } quote)
             {
                 _engine.SetQuoteCollapsed(quote, true);
@@ -1682,11 +1689,15 @@ namespace Telegram.Controls.RichEditor
                 if (!plain && content.Contains("application/x-tl-field-tags"))
                 {
                     var formatted = await MessageHelper.PasteTextAsync(content);
-                    _engine.InsertFragment(RichDocumentConverter.FromFormattedText(formatted));
+                    _engine.InsertFragment(_engine.Schema != null
+                        ? RichFormattedTextConverter.FromFormattedText(formatted, _engine.Schema)
+                        : RichDocumentConverter.FromFormattedText(formatted));
                     return;
                 }
 
-                if (!plain && content.Contains(StandardDataFormats.Html))
+                // Into a message's text, HTML is the text it reads as, as it always was in the
+                // composer: a page's styles are rarely the ones meant for a chat.
+                if (!plain && _engine.Schema == null && content.Contains(StandardDataFormats.Html))
                 {
                     var html = HtmlFormatHelper.GetStaticFragment(await content.GetHtmlFormatAsync());
                     var document = RichClipboard.FromHtml(html);

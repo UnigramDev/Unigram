@@ -131,9 +131,16 @@ namespace Telegram.Controls.RichEditor
 
         public RichMarks? StoredMarks => _storedMarks;
 
+        /// <summary>
+        /// What the document may hold, or null for a rich message, which may hold anything. Set
+        /// it before <see cref="Load"/>, which conforms the document to it.
+        /// </summary>
+        public RichSchema Schema { get; set; }
+
         public void Load(RichDocument document)
         {
             _document = document;
+            Schema?.Conform(_document.Blocks);
             _document.Reindex();
 
             _undo.Clear();

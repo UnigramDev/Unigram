@@ -232,7 +232,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             Sync(Children, quote.Children);
-            Owner.BindLeaf(Credit, quote.Credit, RichLeafAppearance.QuoteCredit, Owner.GetCreditPlaceholder(quote.Credit));
+            Owner.BindLeaf(Credit, quote.HasCredit ? quote.Credit : null, RichLeafAppearance.QuoteCredit, Owner.GetCreditPlaceholder(quote.Credit));
 
             if (quote.IsCollapsed)
             {
@@ -257,7 +257,11 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var visibility = quote.IsCollapsed || (quote.IsCollapsible && IsLongerThanCollapsed(quote))
+            // A message's quote never collapses while it is edited; the chevron only shows that
+            // it will be sent expandable, and takes that back.
+            var visibility = Owner.Engine?.Schema != null
+                ? quote.IsExpandable ? Visibility.Visible : Visibility.Collapsed
+                : quote.IsCollapsed || (quote.IsCollapsible && IsLongerThanCollapsed(quote))
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -305,7 +309,7 @@ namespace Telegram.Controls.RichEditor
         {
             if (Block is RichBlockQuote quote)
             {
-                Owner.Engine.SetQuoteCollapsed(quote, !quote.IsCollapsed);
+                Owner.Engine.SetQuoteCollapsed(quote, Owner.Engine.Schema != null ? !quote.IsExpandable : !quote.IsCollapsed);
             }
         }
     }

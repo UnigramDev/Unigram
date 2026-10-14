@@ -130,7 +130,7 @@ namespace Telegram.Controls.RichEditor
             var position = PrepareInsertion();
             var leaf = position.Leaf;
 
-            if (leaf.IsPlain)
+            if (leaf.IsPlain || (Schema != null && !Schema.AllowsObject(inline)))
             {
                 // Code holds no objects; what the object reads as goes in instead.
                 leaf.Insert(position.Offset, inline.PlainText, RichMarks.None, null);
@@ -894,7 +894,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void ToggleMark(RichMarks mark)
         {
-            if (_node != null)
+            if (_node != null || (Schema != null && !Schema.AllowsMark(mark)))
             {
                 return;
             }
@@ -962,7 +962,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void SetLink(RichLink link, string text = null)
         {
-            if (_node != null)
+            if (_node != null || (Schema != null && !Schema.AllowsLink(link)))
             {
                 return;
             }

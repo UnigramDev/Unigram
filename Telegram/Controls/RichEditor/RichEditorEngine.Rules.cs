@@ -27,6 +27,13 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Called after a space is typed; true when the line became something else.</summary>
         private bool TryApplySpaceRule(RichTextLeaf leaf, int caret)
         {
+            // A message's text keeps what was typed: "> " and "- " are how people write in
+            // chats, and markdown in a message is parsed when it is sent, as it always was.
+            if (Schema != null)
+            {
+                return false;
+            }
+
             if (leaf.Owner is not RichParagraphBlock { Kind: RichBlockKind.Paragraph } paragraph || leaf.Role != RichLeafRole.Text || leaf.IsPlain)
             {
                 return false;
@@ -123,7 +130,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         private bool TryApplyEnterRule()
         {
-            if (!IsSelectionEmpty)
+            if (!IsSelectionEmpty || Schema != null)
             {
                 return false;
             }

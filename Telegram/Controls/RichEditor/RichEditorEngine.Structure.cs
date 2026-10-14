@@ -330,7 +330,7 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Paragraph, heading (with <paramref name="headingSize"/>), code or footer, for every line selected.</summary>
         public void SetTextKind(RichBlockKind kind, int headingSize = 2)
         {
-            if (_node != null)
+            if (_node != null || (Schema != null && !Schema.AllowsTextKind(kind)))
             {
                 return;
             }
@@ -384,7 +384,7 @@ namespace Telegram.Controls.RichEditor
         /// <summary>The selected line as a pull quote, or a pull quote back to a paragraph.</summary>
         public void TogglePullQuote()
         {
-            if (_node != null)
+            if (_node != null || Schema != null)
             {
                 return;
             }
@@ -414,6 +414,11 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void ToggleBlockQuote()
         {
+            if (Schema != null && !Schema.AllowsQuotes)
+            {
+                return;
+            }
+
             var quote = FindAncestor<RichBlockQuote>(_node ?? Start.Leaf.Owner);
             if (quote != null && IsInside(_node ?? End.Leaf.Owner, quote))
             {
@@ -441,7 +446,21 @@ namespace Telegram.Controls.RichEditor
 
             var children = siblings.GetRange(first, last - first + 1);
             siblings.RemoveRange(first, last - first + 1);
-            siblings.Insert(first, new RichBlockQuote(children));
+
+            if (Schema != null)
+            {
+                // A message has no quote in a quote: one already in the selection joins the new one.
+                for (int i = children.Count - 1; i >= 0; i--)
+                {
+                    if (children[i] is RichBlockQuote inner)
+                    {
+                        children.RemoveAt(i);
+                        children.InsertRange(i, inner.Children);
+                    }
+                }
+            }
+
+            siblings.Insert(first, new RichBlockQuote(children) { HasCredit = Schema == null });
 
             EndChange();
         }
@@ -452,7 +471,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void InsertDetails()
         {
-            if (!GetSelectedSiblings(out List<RichBlock> siblings, out int first, out int last))
+            if (Schema != null || !GetSelectedSiblings(out List<RichBlock> siblings, out int first, out int last))
             {
                 return;
             }
@@ -614,6 +633,19 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void SetQuoteCollapsed(RichBlockQuote quote, bool collapsed)
         {
+            // A message's quote stays editable; it is only marked to be sent expandable.
+            if (Schema != null)
+            {
+                if (quote.IsExpandable != collapsed)
+                {
+                    BeginChange();
+                    quote.IsExpandable = collapsed;
+                    EndChange();
+                }
+
+                return;
+            }
+
             if (quote.IsCollapsed == collapsed || (collapsed && !quote.IsCollapsible))
             {
                 return;
@@ -678,6 +710,11 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void ToggleList(RichListStyle style)
         {
+            if (Schema != null)
+            {
+                return;
+            }
+
             var anchor = _node ?? Start.Leaf.Owner;
             var list = FindAncestor<RichListBlock>(anchor);
 
@@ -859,6 +896,11 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void InsertBlock(RichBlock block)
         {
+            if (Schema != null && !Schema.AllowsBlock(block))
+            {
+                return;
+            }
+
             BeginChange();
 
             if (_node != null)
@@ -982,7 +1024,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void InsertMedia(IList<RichMediaSource> sources)
         {
-            if (sources == null || sources.Count == 0)
+            if (sources == null || sources.Count == 0 || Schema != null)
             {
                 return;
             }
@@ -1033,6 +1075,11 @@ namespace Telegram.Controls.RichEditor
 
         public void InsertTable(int rows, int columns)
         {
+            if (Schema != null)
+            {
+                return;
+            }
+
             var table = new RichTableBlock();
 
             for (int i = 0; i < rows; i++)
