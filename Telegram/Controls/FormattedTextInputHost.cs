@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Common;
+using Telegram.Controls.Chats;
 using Telegram.Controls.RichEditor;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -111,7 +112,7 @@ namespace Telegram.Controls
             else
             {
                 FormattedTextBox box = Kind == FormattedTextInputKind.Composer
-                    ? new Chats.ChatTextBox()
+                    ? new ChatTextBox()
                     : new FormattedTextBox();
 
                 box.AcceptsReturn = AcceptsReturn;

@@ -8,6 +8,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -228,7 +229,7 @@ namespace Telegram.Controls.Chats
         /// editor when it can't. Returns false when there is nothing to paste that way, leaving
         /// the caller to paste it as plain text.
         /// </summary>
-        private async System.Threading.Tasks.Task<bool> TryPasteRichAsync(DialogViewModel viewModel, DataPackageView package)
+        private async Task<bool> TryPasteRichAsync(DialogViewModel viewModel, DataPackageView package)
         {
             Vector<PageBlock> blocks;
             bool own;

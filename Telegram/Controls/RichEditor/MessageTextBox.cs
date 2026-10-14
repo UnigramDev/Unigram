@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
@@ -739,7 +740,7 @@ namespace Telegram.Controls.RichEditor
         /// A URL pasted over a selection labels it instead of replacing it, as the old box does,
         /// unless the selection is a URL itself or already a link: that is replacing the link.
         /// </summary>
-        private async System.Threading.Tasks.Task<bool> TryLinkSelectionAsync()
+        private async Task<bool> TryLinkSelectionAsync()
         {
             if (!_engine.Schema.AllowsUrls || _engine.IsSelectionEmpty || _engine.SelectedNode != null || _engine.GetSelectionLink() != null)
             {

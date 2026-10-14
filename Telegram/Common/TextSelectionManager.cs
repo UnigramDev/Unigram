@@ -11,6 +11,7 @@ using System.Text;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Controls.RichEditor;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Devices.Input;
@@ -512,7 +513,7 @@ namespace Telegram.Common
 
         private void OnGotFocus(object sender, FocusManagerGotFocusEventArgs e)
         {
-            if (e.NewFocusedElement is RichEditBox or TextBox or Controls.RichEditor.RichEditorView)
+            if (e.NewFocusedElement is RichEditBox or TextBox or RichEditorView)
             {
                 ClearSelection();
             }

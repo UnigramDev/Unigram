@@ -21,6 +21,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -2657,7 +2658,7 @@ namespace Telegram.Controls
         private const int MaxRenderRetries = 3;
 
         private int _renderRetries;
-        private Windows.System.DispatcherQueueHandler _retryRender;
+        private DispatcherQueueHandler _retryRender;
 
         private void ScheduleRenderRetry()
         {
@@ -2671,7 +2672,7 @@ namespace Telegram.Controls
 
             // Not from here: this runs inside the arrange pass, which an arrange asked for
             // within itself would only repeat at once.
-            DispatcherQueue.GetForCurrentThread()?.TryEnqueue(Windows.System.DispatcherQueuePriority.Low, _retryRender);
+            DispatcherQueue.GetForCurrentThread()?.TryEnqueue(DispatcherQueuePriority.Low, _retryRender);
         }
 
         private void RetryRender()
