@@ -4710,6 +4710,15 @@
     <string name="PaintEraser">Eraser</string>
     <string name="PaintColor">Color</string>
     <string name="PaintSize">Size</string>
+    <string name="PaintPaletteGrid">Grid</string>
+    <string name="PaintPaletteSpectrum">Spectrum</string>
+    <string name="PaintPaletteSliders">Sliders</string>
+    <string name="PaintPaletteSlidersRed">RED</string>
+    <string name="PaintPaletteSlidersGreen">GREEN</string>
+    <string name="PaintPaletteSlidersBlue">BLUE</string>
+    <string name="PaintPaletteSlidersHexColor">Hex Color #</string>
+    <string name="PaintEyedropper">Eyedropper</string>
+    <string name="PaintMoreColors">More Colors</string>
 
 
     <string name="AccDescrPageDown">Go to bottom</string>

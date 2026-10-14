@@ -206,7 +206,16 @@ namespace Telegram.Views.Popups
 
         protected override void OnBackRequestedOverride(object sender, BackRequestedRoutedEventArgs e)
         {
-            Cancel_Click(null, null);
+            // Escape while the eyedropper is out puts it away rather than leaving the editor.
+            if (Canvas.IsPicking)
+            {
+                Canvas.CancelPick();
+            }
+            else
+            {
+                Cancel_Click(null, null);
+            }
+
             e.Handled = true;
         }
 
@@ -604,6 +613,56 @@ namespace Telegram.Views.Popups
 
             ColorPalette.ItemsSource = colors;
             ColorPalette.SelectedIndex = colors.FindIndex(x => x.Color == current);
+
+            PalettePanel.Visibility = Visibility.Visible;
+            CustomColorPicker?.Visibility = Visibility.Collapsed;
+        }
+
+        // The picker's colour is shown as it changes and kept once the flyout closes, however it
+        // closes.
+        private void ColorFlyout_Closed(object sender, object e)
+        {
+            if (CustomColorPicker?.Visibility == Visibility.Visible)
+            {
+                AppSettings.Pencil.SetColor(Canvas.Tool, CustomColorPicker.Color);
+            }
+        }
+
+        private void MoreColors_Click(object sender, RoutedEventArgs e)
+        {
+            if (CustomColorPicker == null)
+            {
+                FindName(nameof(CustomColorPicker));
+            }
+
+            CustomColorPicker.Color = Canvas.Stroke;
+
+            PalettePanel.Visibility = Visibility.Collapsed;
+            CustomColorPicker.Visibility = Visibility.Visible;
+        }
+
+        private void CustomColorPicker_ColorChanged(object sender, EventArgs e)
+        {
+            SetColor(CustomColorPicker.Color);
+        }
+
+        private void CustomColorPicker_Completed(object sender, EventArgs e)
+        {
+            ColorFlyout.Hide();
+        }
+
+        private void CustomColorPicker_EyedropperRequested(object sender, EventArgs e)
+        {
+            ColorFlyout.Hide();
+
+            Canvas.LoupeScale = (float)(1 / Cropper.ZoomFactor);
+            Canvas.BeginPick();
+        }
+
+        private void Canvas_ColorPicked(object sender, PencilColorPickedEventArgs e)
+        {
+            AppSettings.Pencil.SetColor(Canvas.Tool, e.Color);
+            SetColor(e.Color);
         }
 
         private void ColorPalette_ItemClick(object sender, ItemClickEventArgs e)

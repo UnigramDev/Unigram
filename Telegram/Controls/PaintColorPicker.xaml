@@ -1,0 +1,271 @@
+﻿<Grid x:Class="Telegram.Controls.PaintColorPicker"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DesignHeight="420"
+      d:DesignWidth="336"
+      Width="336">
+
+    <Grid.RowDefinitions>
+        <RowDefinition Height="280" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <xaml:CanvasControl x:Name="GridCanvas"
+                        Draw="GridCanvas_Draw"
+                        PointerPressed="GridCanvas_PointerPressed"
+                        PointerMoved="GridCanvas_PointerMoved"
+                        PointerReleased="Surface_PointerReleased"
+                        PointerCanceled="Surface_PointerReleased" />
+
+    <Grid x:Name="SpectrumPanel"
+          Background="Transparent"
+          Visibility="Collapsed"
+          SizeChanged="Panel_SizeChanged"
+          PointerPressed="Spectrum_PointerPressed"
+          PointerMoved="Spectrum_PointerMoved"
+          PointerReleased="Surface_PointerReleased"
+          PointerCanceled="Surface_PointerReleased">
+        <Border CornerRadius="8">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0"
+                                     EndPoint="0,1">
+                    <GradientStop Color="#FFFF0000"
+                                  Offset="0" />
+                    <GradientStop Color="#FFFFFF00"
+                                  Offset="0.1667" />
+                    <GradientStop Color="#FF00FF00"
+                                  Offset="0.3333" />
+                    <GradientStop Color="#FF00FFFF"
+                                  Offset="0.5" />
+                    <GradientStop Color="#FF0000FF"
+                                  Offset="0.6667" />
+                    <GradientStop Color="#FFFF00FF"
+                                  Offset="0.8333" />
+                    <GradientStop Color="#FFFF0000"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Border CornerRadius="8">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0"
+                                     EndPoint="1,0">
+                    <GradientStop Color="#FFFFFFFF"
+                                  Offset="0.06" />
+                    <GradientStop Color="#00FFFFFF"
+                                  Offset="0.22" />
+                    <GradientStop Color="#00000000"
+                                  Offset="0.78" />
+                    <GradientStop Color="#FF000000"
+                                  Offset="0.94" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Canvas IsHitTestVisible="False">
+            <Grid x:Name="SpectrumKnob"
+                  Width="26"
+                  Height="26">
+                <Ellipse Fill="#FFFFFFFF" />
+                <Ellipse x:Name="SpectrumKnobColor"
+                         Margin="3" />
+            </Grid>
+        </Canvas>
+    </Grid>
+
+    <StackPanel x:Name="SlidersPanel"
+                Visibility="Collapsed"
+                SizeChanged="Panel_SizeChanged">
+        <TextBlock Text="{CustomResource PaintPaletteSlidersRed}"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   FontWeight="SemiBold"
+                   Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"
+                   Margin="0,0,0,4" />
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="64" />
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="RedTrack"
+                  Height="32"
+                  CornerRadius="16"
+                  PointerPressed="Track_PointerPressed"
+                  PointerMoved="Track_PointerMoved"
+                  PointerReleased="Surface_PointerReleased"
+                  PointerCanceled="Surface_PointerReleased">
+                <Canvas IsHitTestVisible="False">
+                    <Ellipse x:Name="RedKnob"
+                             Width="26"
+                             Height="26"
+                             Stroke="#FFFFFFFF"
+                             StrokeThickness="3"
+                             Canvas.Top="3" />
+                </Canvas>
+            </Grid>
+            <TextBox x:Name="RedValue"
+                     TextChanged="Value_TextChanged"
+                     BeforeTextChanging="Value_BeforeTextChanging"
+                     LostFocus="Value_LostFocus"
+                     MaxLength="3"
+                     InputScope="Number"
+                     TextAlignment="Center"
+                     Margin="8,0,0,0"
+                     VerticalAlignment="Center"
+                     Grid.Column="1" />
+        </Grid>
+
+        <TextBlock Text="{CustomResource PaintPaletteSlidersGreen}"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   FontWeight="SemiBold"
+                   Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"
+                   Margin="0,0,0,4" />
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="64" />
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="GreenTrack"
+                  Height="32"
+                  CornerRadius="16"
+                  PointerPressed="Track_PointerPressed"
+                  PointerMoved="Track_PointerMoved"
+                  PointerReleased="Surface_PointerReleased"
+                  PointerCanceled="Surface_PointerReleased">
+                <Canvas IsHitTestVisible="False">
+                    <Ellipse x:Name="GreenKnob"
+                             Width="26"
+                             Height="26"
+                             Stroke="#FFFFFFFF"
+                             StrokeThickness="3"
+                             Canvas.Top="3" />
+                </Canvas>
+            </Grid>
+            <TextBox x:Name="GreenValue"
+                     TextChanged="Value_TextChanged"
+                     BeforeTextChanging="Value_BeforeTextChanging"
+                     LostFocus="Value_LostFocus"
+                     MaxLength="3"
+                     InputScope="Number"
+                     TextAlignment="Center"
+                     Margin="8,0,0,0"
+                     VerticalAlignment="Center"
+                     Grid.Column="1" />
+        </Grid>
+
+        <TextBlock Text="{CustomResource PaintPaletteSlidersBlue}"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   FontWeight="SemiBold"
+                   Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"
+                   Margin="0,0,0,4" />
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="64" />
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="BlueTrack"
+                  Height="32"
+                  CornerRadius="16"
+                  PointerPressed="Track_PointerPressed"
+                  PointerMoved="Track_PointerMoved"
+                  PointerReleased="Surface_PointerReleased"
+                  PointerCanceled="Surface_PointerReleased">
+                <Canvas IsHitTestVisible="False">
+                    <Ellipse x:Name="BlueKnob"
+                             Width="26"
+                             Height="26"
+                             Stroke="#FFFFFFFF"
+                             StrokeThickness="3"
+                             Canvas.Top="3" />
+                </Canvas>
+            </Grid>
+            <TextBox x:Name="BlueValue"
+                     TextChanged="Value_TextChanged"
+                     BeforeTextChanging="Value_BeforeTextChanging"
+                     LostFocus="Value_LostFocus"
+                     MaxLength="3"
+                     InputScope="Number"
+                     TextAlignment="Center"
+                     Margin="8,0,0,0"
+                     VerticalAlignment="Center"
+                     Grid.Column="1" />
+        </Grid>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <TextBlock Text="{CustomResource PaintPaletteSlidersHexColor}"
+                       FontWeight="SemiBold"
+                       Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"
+                       Margin="0,0,8,0"
+                       VerticalAlignment="Center" />
+            <TextBox x:Name="HexValue"
+                     TextChanged="Hex_TextChanged"
+                     BeforeTextChanging="Hex_BeforeTextChanging"
+                     LostFocus="Value_LostFocus"
+                     CharacterCasing="Upper"
+                     TextAlignment="Center"
+                     Width="120" />
+        </StackPanel>
+    </StackPanel>
+
+    <xaml:CanvasControl x:Name="AlphaCanvas"
+                        Draw="AlphaCanvas_Draw"
+                        PointerPressed="AlphaCanvas_PointerPressed"
+                        PointerMoved="AlphaCanvas_PointerMoved"
+                        PointerReleased="Surface_PointerReleased"
+                        PointerCanceled="Surface_PointerReleased"
+                        Height="32"
+                        Margin="0,12,0,0"
+                        Grid.Row="1" />
+
+    <Grid Margin="0,8,0,0"
+          Grid.Row="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <controls:GlyphButton x:Name="Eyedropper"
+                              Click="Eyedropper_Click"
+                              Glyph="&#xF7A3;"
+                              AutomationProperties.Name="{CustomResource PaintEyedropper}"
+                              ToolTipService.ToolTip="{CustomResource PaintEyedropper}" />
+
+        <controls:TopNavView x:Name="Navigation"
+                             SelectedIndex="0"
+                             SelectionChanged="Navigation_SelectionChanged"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             Height="32"
+                             Grid.Column="1">
+            <controls:TopNavView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </controls:TopNavView.ItemsPanel>
+            <controls:TopNavView.ItemContainerStyle>
+                <Style TargetType="controls:TopNavViewItem">
+                    <Setter Property="Padding"
+                            Value="8,1,8,0" />
+                    <Setter Property="BorderThickness"
+                            Value="0,4,0,0" />
+                </Style>
+            </controls:TopNavView.ItemContainerStyle>
+            <controls:TopNavViewItem Content="{CustomResource PaintPaletteGrid}" />
+            <controls:TopNavViewItem Content="{CustomResource PaintPaletteSpectrum}" />
+            <controls:TopNavViewItem Content="{CustomResource PaintPaletteSliders}" />
+        </controls:TopNavView>
+
+        <controls:GlyphButton Click="Done_Click"
+                              Glyph="&#xE10B;"
+                              Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                              AutomationProperties.Name="{CustomResource Done}"
+                              ToolTipService.ToolTip="{CustomResource Done}"
+                              Grid.Column="2" />
+    </Grid>
+</Grid>

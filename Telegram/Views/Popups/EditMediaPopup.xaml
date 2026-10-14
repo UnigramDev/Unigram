@@ -31,6 +31,7 @@
                 <controls:PencilCanvas x:Name="Canvas"
                                        StrokesChanged="Canvas_StrokesChanged"
                                        Gesture="Canvas_Gesture"
+                                       ColorPicked="Canvas_ColorPicked"
                                        IsEnabled="False" />
             </Grid>
         </controls:ImageCropper>
@@ -175,26 +176,44 @@
                     <controls:GlyphButton.Flyout>
                         <Flyout x:Name="ColorFlyout"
                                 Placement="Top"
-                                Opening="ColorFlyout_Opening">
-                            <GridView x:Name="ColorPalette"
-                                      IsItemClickEnabled="True"
-                                      ItemClick="ColorPalette_ItemClick"
-                                      SelectionMode="Single">
-                                <GridView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <ItemsWrapGrid MaximumRowsOrColumns="7"
-                                                       Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </GridView.ItemsPanel>
-                                <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="SolidColorBrush">
-                                        <Ellipse Fill="{x:Bind}"
-                                                 Width="28"
-                                                 Height="28"
-                                                 Margin="4" />
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
-                            </GridView>
+                                Opening="ColorFlyout_Opening"
+                                Closed="ColorFlyout_Closed">
+                            <Grid>
+                                <StackPanel x:Name="PalettePanel"
+                                            Orientation="Horizontal">
+                                    <GridView x:Name="ColorPalette"
+                                              IsItemClickEnabled="True"
+                                              ItemClick="ColorPalette_ItemClick"
+                                              SelectionMode="Single">
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid MaximumRowsOrColumns="7"
+                                                               Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate x:DataType="SolidColorBrush">
+                                                <Ellipse Fill="{x:Bind}"
+                                                         Width="28"
+                                                         Height="28"
+                                                         Margin="4" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+
+                                    <controls:GlyphButton Click="MoreColors_Click"
+                                                          Glyph="&#xE2B1;"
+                                                          AutomationProperties.Name="{CustomResource PaintMoreColors}"
+                                                          ToolTipService.ToolTip="{CustomResource PaintMoreColors}"
+                                                          VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <controls:PaintColorPicker x:Name="CustomColorPicker"
+                                                           x:Load="False"
+                                                           ColorChanged="CustomColorPicker_ColorChanged"
+                                                           EyedropperRequested="CustomColorPicker_EyedropperRequested"
+                                                           Completed="CustomColorPicker_Completed" />
+                            </Grid>
                         </Flyout>
                     </controls:GlyphButton.Flyout>
                 </controls:GlyphButton>

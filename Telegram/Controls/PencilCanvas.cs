@@ -118,6 +118,13 @@ namespace Telegram.Controls
         private readonly Dictionary<uint, Point> _touches = new();
         private bool _gesturing;
 
+        // The eyedropper samples a snapshot of the photo with the drawing over it, read back once
+        // when picking starts so following the pointer costs nothing.
+        private bool _picking;
+        private CanvasRenderTarget _pickSnapshot;
+        private Color[] _pickPixels;
+        private Point? _pickPoint;
+
         private SoftwareBitmap _blurSource;
         private CanvasBitmap _blurBitmap;
         private GaussianBlurEffect _blurEffect;
@@ -214,6 +221,83 @@ namespace Telegram.Controls
         /// Raised while two touches pinch or drag over the canvas, in window coordinates.
         /// </summary>
         public event EventHandler<PencilGestureEventArgs> Gesture;
+
+        /// <summary>
+        /// Raised when the eyedropper is released over the canvas, with the colour under it.
+        /// </summary>
+        public event EventHandler<PencilColorPickedEventArgs> ColorPicked;
+
+        /// <summary>
+        /// Canvas units per view pixel, so the eyedropper's loupe keeps one size on screen however
+        /// the canvas is scaled.
+        /// </summary>
+        public float LoupeScale { get; set; } = 1;
+
+        public bool IsPicking => _picking;
+
+        /// <summary>
+        /// Turns the next press into picking a colour instead of drawing.
+        /// </summary>
+        public void BeginPick()
+        {
+            if (_renderTarget == null)
+            {
+                return;
+            }
+
+            StopFill();
+
+            var snapshot = new CanvasRenderTarget(Canvas, Canvas.Size);
+            using (var session = snapshot.CreateDrawingSession())
+            {
+                session.Clear(Colors.Black);
+
+                // GetBlurBrush makes the photo's bitmap as it makes the blur.
+                if (GetBlurBrush() != null && _blurBitmap != null)
+                {
+                    session.DrawImage(_blurBitmap, new Rect(0, 0, Canvas.Size.Width, Canvas.Size.Height), _blurBitmap.Bounds);
+                }
+
+                session.DrawImage(_renderTarget);
+            }
+
+            _pickSnapshot?.Dispose();
+            _pickSnapshot = snapshot;
+            _pickPixels = snapshot.GetPixelColors();
+            _pickPoint = null;
+            _picking = true;
+        }
+
+        public void CancelPick()
+        {
+            if (_picking)
+            {
+                EndPick();
+                Canvas.Invalidate();
+            }
+        }
+
+        private void EndPick()
+        {
+            _picking = false;
+            _pickPoint = null;
+            _pickPixels = null;
+
+            _pickSnapshot?.Dispose();
+            _pickSnapshot = null;
+        }
+
+        private Color SamplePick(Point point)
+        {
+            var width = (int)_pickSnapshot.SizeInPixels.Width;
+            var height = (int)_pickSnapshot.SizeInPixels.Height;
+            var scale = _pickSnapshot.SizeInPixels.Width / _pickSnapshot.Size.Width;
+
+            var x = Math.Clamp((int)(point.X * scale), 0, width - 1);
+            var y = Math.Clamp((int)(point.Y * scale), 0, height - 1);
+
+            return _pickPixels[y * width + x];
+        }
 
         public void Undo()
         {
@@ -359,6 +443,15 @@ namespace Telegram.Controls
         {
             var point = e.GetCurrentPoint(Canvas);
 
+            if (_picking)
+            {
+                Canvas.CapturePointer(e.Pointer);
+
+                _pickPoint = point.Position;
+                Canvas.Invalidate();
+                return;
+            }
+
             if (e.Pointer.PointerDeviceType == PointerDeviceType.Touch)
             {
                 _touches[point.PointerId] = e.GetCurrentPoint(null).Position;
@@ -405,6 +498,18 @@ namespace Telegram.Controls
         {
             var id = e.Pointer.PointerId;
 
+            // A mouse shows the loupe while hovering; a finger or pen only while pressed.
+            if (_picking)
+            {
+                if (e.Pointer.IsInContact || e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+                {
+                    _pickPoint = e.GetCurrentPoint(Canvas).Position;
+                    Canvas.Invalidate();
+                }
+
+                return;
+            }
+
             if (_touches.TryGetValue(id, out Point previous))
             {
                 var position = e.GetCurrentPoint(null).Position;
@@ -440,6 +545,17 @@ namespace Telegram.Controls
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             Canvas.ReleasePointerCapture(e.Pointer);
+
+            if (_picking)
+            {
+                var color = SamplePick(e.GetCurrentPoint(Canvas).Position);
+
+                EndPick();
+                Canvas.Invalidate();
+
+                ColorPicked?.Invoke(this, new PencilColorPickedEventArgs(color));
+                return;
+            }
 
             if (_fillPointer == e.Pointer.PointerId)
             {
@@ -703,6 +819,55 @@ namespace Telegram.Controls
                 // No arrow head until the stroke is finished.
                 DrawPath(args.DrawingSession, builder, size, blur, 0);
             }
+
+            if (_picking && _pickPoint is Point point)
+            {
+                DrawLoupe(args.DrawingSession, point.ToVector2());
+            }
+        }
+
+        // A magnified patch seven pixels across, in a ring of the colour under its centre pixel.
+        private void DrawLoupe(CanvasDrawingSession session, Vector2 center)
+        {
+            const float Pixels = 7;
+
+            var scale = LoupeScale;
+            var radius = 56 * scale;
+            var ring = 6 * scale;
+            var outline = 3 * scale;
+
+            var color = SamplePick(new Point(center.X, center.Y));
+            var pixel = (float)(_pickSnapshot.Size.Width / _pickSnapshot.SizeInPixels.Width);
+
+            var inner = radius - ring - outline;
+            var cell = inner * 2 / Pixels;
+
+            // Snapped to the pixel under the pointer, so the grid lines up with real pixels.
+            var source = new Rect(
+                Math.Floor(center.X / pixel) * pixel - pixel * 3,
+                Math.Floor(center.Y / pixel) * pixel - pixel * 3,
+                pixel * Pixels,
+                pixel * Pixels);
+
+            using (var clip = CanvasGeometry.CreateCircle(session, center, inner))
+            using (session.CreateLayer(1, clip))
+            {
+                session.DrawImage(_pickSnapshot, new Rect(center.X - inner, center.Y - inner, inner * 2, inner * 2), source, 1, CanvasImageInterpolation.NearestNeighbor);
+
+                var lines = Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF);
+
+                for (int i = 1; i < Pixels; i++)
+                {
+                    var offset = -inner + i * cell;
+                    session.DrawLine(center.X + offset, center.Y - inner, center.X + offset, center.Y + inner, lines, scale);
+                    session.DrawLine(center.X - inner, center.Y + offset, center.X + inner, center.Y + offset, lines, scale);
+                }
+
+                session.DrawRoundedRectangle(center.X - cell / 2, center.Y - cell / 2, cell, cell, scale, scale, Colors.White, 2 * scale);
+            }
+
+            session.DrawCircle(center, radius - ring / 2, Color.FromArgb(255, color.R, color.G, color.B), ring);
+            session.DrawCircle(center, radius - ring - outline / 2, Colors.White, outline);
         }
 
         // Far enough that the disc has covered every corner a little before it stops growing.
@@ -865,6 +1030,16 @@ namespace Telegram.Controls
         }
 
         #endregion
+    }
+
+    public sealed partial class PencilColorPickedEventArgs : EventArgs
+    {
+        public PencilColorPickedEventArgs(Color color)
+        {
+            Color = color;
+        }
+
+        public Color Color { get; }
     }
 
     public sealed partial class PencilGestureEventArgs : EventArgs
