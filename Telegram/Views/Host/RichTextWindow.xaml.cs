@@ -135,6 +135,7 @@ namespace Telegram.Views.Host
             Editor.SubmitRequested += OnSubmitRequested;
             Editor.PasteRequested += OnPasteRequested;
 
+            Editor.Suggestions = new RichSuggestionContext(_clientService.Session.Settings, _chatId);
             Editor.Initialize(_clientService, _engine);
             UpdateToolbar();
             UpdateSendLock();

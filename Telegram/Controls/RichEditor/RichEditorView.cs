@@ -237,6 +237,7 @@ namespace Telegram.Controls.RichEditor
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             DestroyEditContext();
+            HideSuggestions();
 
             if (_scrollTimer != null)
             {
@@ -260,6 +261,7 @@ namespace Telegram.Controls.RichEditor
             Refresh(e.Changes, e.Leaf);
             SyncEditContext(e.Changes);
             UpdateSpelling(e.Changes, e.Leaf);
+            UpdateSuggestions(e.Changes);
 
             (Peer as RichEditorAutomationPeer)?.RaiseChanged(e.Changes);
             Announce();

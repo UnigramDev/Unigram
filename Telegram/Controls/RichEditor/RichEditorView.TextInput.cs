@@ -212,6 +212,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             LeaveContext();
+            HideSuggestions();
 
             _placeholderLeaf = null;
             UpdatePlaceholders();

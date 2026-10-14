@@ -494,6 +494,7 @@
     <Compile Include="Controls\RichEditor\RichEditorView.Input.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.TextInput.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.SpellCheck.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorView.Suggestions.cs" />
     <Compile Include="Controls\RichEditor\RichToolbarHost.cs" />
     <Compile Include="Controls\RichEditor\RichMediaRenderer.cs" />
     <Compile Include="Controls\RichEditor\RichMediaFactory.cs" />
