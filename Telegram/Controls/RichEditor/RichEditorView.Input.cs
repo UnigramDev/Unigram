@@ -63,9 +63,6 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Raised on Ctrl+K, for the host to ask for the link.</summary>
         public event EventHandler LinkRequested;
 
-        /// <summary>Raised on Ctrl+Enter: send.</summary>
-        public event EventHandler SubmitRequested;
-
         /// <summary>Raised when clipboard content is not text - an image, files - for the host to turn into media.</summary>
         public event EventHandler<RichPasteRequestedEventArgs> PasteRequested;
 
@@ -1168,9 +1165,6 @@ namespace Telegram.Controls.RichEditor
                     // The checkbox of a checklist item, or a collapsible block's open state:
                     // both are otherwise only a click.
                     return ToggleAtCaret();
-                case VirtualKey.Enter when ctrl:
-                    SubmitRequested?.Invoke(this, EventArgs.Empty);
-                    return true;
                 case VirtualKey.Enter when shift:
                     _engine.InsertLineBreak();
                     return true;

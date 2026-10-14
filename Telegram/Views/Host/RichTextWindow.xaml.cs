@@ -132,7 +132,6 @@ namespace Telegram.Views.Host
             Editor.NodeActivated += OnNodeActivated;
             Editor.MediaAddRequested += OnMediaAddRequested;
             Editor.LinkRequested += OnLinkRequested;
-            Editor.SubmitRequested += OnSubmitRequested;
             Editor.PasteRequested += OnPasteRequested;
 
             Editor.Suggestions = new RichSuggestionContext(_clientService.Session.Settings, _chatId);
@@ -158,7 +157,6 @@ namespace Telegram.Views.Host
             Editor.NodeActivated -= OnNodeActivated;
             Editor.MediaAddRequested -= OnMediaAddRequested;
             Editor.LinkRequested -= OnLinkRequested;
-            Editor.SubmitRequested -= OnSubmitRequested;
             Editor.PasteRequested -= OnPasteRequested;
 
             _lockTimer.Stop();
@@ -1319,11 +1317,6 @@ namespace Telegram.Views.Host
                 RichBlockQuote => Icons.QuoteBlock,
                 _ => null
             };
-        }
-
-        private void OnSubmitRequested(object sender, EventArgs e)
-        {
-            Send_Click(SendButton, null);
         }
 
         private async void OnMenuRequested(object sender, RichMenuRequestedEventArgs e)
