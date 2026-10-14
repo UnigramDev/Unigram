@@ -172,7 +172,8 @@ namespace Telegram.Views.Popups
                     Canvas.Undo();
                     args.Handled = true;
                 }
-                else if (args.Key == VirtualKey.Y && args.Modifiers == VirtualKeyModifiers.Control && Canvas.CanRedo)
+                else if (((args.Key == VirtualKey.Y && args.Modifiers == VirtualKeyModifiers.Control)
+                    || (args.Key == VirtualKey.Z && args.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))) && Canvas.CanRedo)
                 {
                     Canvas.Redo();
                     args.Handled = true;
@@ -695,6 +696,12 @@ namespace Telegram.Views.Popups
         private void Redo_Click(object sender, RoutedEventArgs e)
         {
             Canvas.Redo();
+        }
+
+        private void Canvas_Gesture(object sender, PencilGestureEventArgs e)
+        {
+            Cropper.ZoomView(e.Center, e.Scale);
+            Cropper.PanView(e.X, e.Y);
         }
 
         private void Canvas_StrokesChanged(object sender, EventArgs e)

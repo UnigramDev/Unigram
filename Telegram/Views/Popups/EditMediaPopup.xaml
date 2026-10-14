@@ -30,6 +30,7 @@
                                 x:Load="False" />
                 <controls:PencilCanvas x:Name="Canvas"
                                        StrokesChanged="Canvas_StrokesChanged"
+                                       Gesture="Canvas_Gesture"
                                        IsEnabled="False" />
             </Grid>
         </controls:ImageCropper>

@@ -15,6 +15,7 @@ using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -130,6 +131,11 @@ namespace Telegram.Controls
 
         private Size m_rotationCropSize;
         private bool m_rotating;
+
+        // Draw mode's magnification, applied over the crop's own view: it changes what is seen,
+        // never the crop. The offset is in LayoutRoot pixels, after the zoom.
+        private double m_viewZoom = 1;
+        private Point m_viewOffset;
 
         private bool m_animating;
         private TimeSpan? m_animationStart;
@@ -348,6 +354,7 @@ namespace Telegram.Controls
                 StopAnimation();
 
                 m_area = FitArea(m_cropSize);
+                m_viewOffset = ClampView(m_viewZoom, m_viewOffset);
                 UpdateView();
             }
         }
@@ -386,6 +393,12 @@ namespace Telegram.Controls
                 * Matrix3x2.CreateRotation((float)(angle * Math.PI / 180))
                 * Matrix3x2.CreateScale((float)scale)
                 * Matrix3x2.CreateTranslation((float)position.X, (float)position.Y);
+
+            if (m_viewZoom != 1 || m_viewOffset != default)
+            {
+                matrix *= Matrix3x2.CreateScale((float)m_viewZoom) * Matrix3x2.CreateTranslation((float)m_viewOffset.X, (float)m_viewOffset.Y);
+                area = new Rect(area.X * m_viewZoom + m_viewOffset.X, area.Y * m_viewZoom + m_viewOffset.Y, area.Width * m_viewZoom, area.Height * m_viewZoom);
+            }
 
             m_imageTransform.Matrix = new Matrix(matrix.M11, matrix.M12, matrix.M21, matrix.M22, matrix.M31, matrix.M32);
 
@@ -648,6 +661,113 @@ namespace Telegram.Controls
             m_cropSize = new Size(m_cropSize.Width * ratio, m_cropSize.Height * ratio);
 
             Constrain();
+        }
+
+        #endregion
+
+        #region View zoom
+
+        /// <summary>
+        /// Magnifies the view by <paramref name="factor"/> about a point in window coordinates,
+        /// between the fitted crop and eight times it.
+        /// </summary>
+        public void ZoomView(Point windowPoint, double factor)
+        {
+            if (!CanLayout)
+            {
+                return;
+            }
+
+            var point = LayoutRoot.TransformToVisual(null).Inverse.TransformPoint(windowPoint);
+            ZoomViewAt(point, factor);
+        }
+
+        public void PanView(double x, double y)
+        {
+            if (!CanLayout)
+            {
+                return;
+            }
+
+            m_viewOffset = ClampView(m_viewZoom, new Point(m_viewOffset.X + x, m_viewOffset.Y + y));
+            UpdateView();
+        }
+
+        public void ResetView()
+        {
+            if (m_viewZoom == 1 && m_viewOffset == default)
+            {
+                return;
+            }
+
+            m_viewZoom = 1;
+            m_viewOffset = default;
+
+            UpdateView();
+        }
+
+        private void ZoomViewAt(Point point, double factor)
+        {
+            var zoom = Math.Clamp(m_viewZoom * factor, 1, 8);
+            var ratio = zoom / m_viewZoom;
+
+            // The point under the pointer stays under it.
+            var offset = new Point(point.X - (point.X - m_viewOffset.X) * ratio, point.Y - (point.Y - m_viewOffset.Y) * ratio);
+
+            m_viewZoom = zoom;
+            m_viewOffset = ClampView(zoom, offset);
+
+            UpdateView();
+        }
+
+        // The crop stays covering the view along an axis it overflows, and centred along one it fits.
+        private Point ClampView(double zoom, Point offset)
+        {
+            var area = m_area;
+
+            return new Point(
+                Axis(area.X, area.Width, m_viewport.Width, offset.X),
+                Axis(area.Y, area.Height, m_viewport.Height, offset.Y));
+
+            double Axis(double start, double length, double viewport, double value)
+            {
+                var size = length * zoom;
+                if (size <= viewport)
+                {
+                    return (viewport - size) / 2 - start * zoom;
+                }
+
+                return Math.Clamp(value, viewport - (start + length) * zoom, -start * zoom);
+            }
+        }
+
+        // In draw mode the wheel moves the view: Ctrl, or a touchpad pinch, zooms; otherwise it pans.
+        protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
+        {
+            base.OnPointerWheelChanged(e);
+
+            if (_isCropEnabled || e.Handled || !CanLayout)
+            {
+                return;
+            }
+
+            var point = e.GetCurrentPoint(LayoutRoot);
+            var delta = point.Properties.MouseWheelDelta;
+
+            if ((e.KeyModifiers & VirtualKeyModifiers.Control) != 0)
+            {
+                ZoomViewAt(point.Position, Math.Pow(1.0015, delta));
+            }
+            else if (point.Properties.IsHorizontalMouseWheel || (e.KeyModifiers & VirtualKeyModifiers.Shift) != 0)
+            {
+                PanView(point.Properties.IsHorizontalMouseWheel ? -delta : delta, 0);
+            }
+            else
+            {
+                PanView(0, delta);
+            }
+
+            e.Handled = true;
         }
 
         #endregion
@@ -1541,7 +1661,7 @@ namespace Telegram.Controls
         /// <summary>
         /// View pixels per source pixel.
         /// </summary>
-        public double ZoomFactor => CanLayout ? ViewScale : 1;
+        public double ZoomFactor => CanLayout ? ViewScale * m_viewZoom : 1;
 
         /// <summary>
         /// The crop before <see cref="Angle"/>, normalized to the oriented image. Snapped to the
@@ -1589,6 +1709,12 @@ namespace Telegram.Controls
             {
                 _isCropEnabled = value;
                 VisualStateManager.GoToState(this, value ? "Normal" : "Disabled", true);
+
+                // The magnification belongs to draw mode; the crop handles work on the fitted view.
+                if (value)
+                {
+                    ResetView();
+                }
             }
         }
 

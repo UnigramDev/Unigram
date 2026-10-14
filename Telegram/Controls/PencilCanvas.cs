@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Effects;
 using Windows.Graphics.Imaging;
@@ -84,6 +85,11 @@ namespace Telegram.Controls
     public partial class PencilCanvas : Control
     {
         private const double ArrowDuration = 240;
+        private const double FillDuration = 450;
+
+        // A press held this long without moving further than FillSlop fills the canvas instead.
+        private static readonly TimeSpan FillDelay = TimeSpan.FromMilliseconds(500);
+        private const double FillSlop = 6;
 
         private CanvasRenderTarget _renderTarget;
 
@@ -96,10 +102,21 @@ namespace Telegram.Controls
 
         private PencilTool _tool;
 
-        // An arrow whose head is still growing: drawn over the ink surface, not into it, until done.
-        private SmoothPathBuilder _arrow;
-        private TimeSpan? _arrowStart;
-        private float _arrowProgress;
+        // A stroke still growing in, an arrow's head or a fill's disc: drawn over the ink surface,
+        // not into it, until done.
+        private SmoothPathBuilder _growing;
+        private TimeSpan? _growingStart;
+        private float _growingProgress;
+
+        private bool _rendering;
+
+        private DispatcherTimer _fillTimer;
+        private uint? _fillPointer;
+        private Point _fillOrigin;
+
+        // Two touches move the view instead of drawing, until both have lifted.
+        private readonly Dictionary<uint, Point> _touches = new();
+        private bool _gesturing;
 
         private SoftwareBitmap _blurSource;
         private CanvasBitmap _blurBitmap;
@@ -130,6 +147,7 @@ namespace Telegram.Controls
             Canvas.PointerPressed += OnPointerPressed;
             Canvas.PointerMoved += OnPointerMoved;
             Canvas.PointerReleased += OnPointerReleased;
+            Canvas.PointerCanceled += OnPointerCanceled;
 
             base.OnApplyTemplate();
         }
@@ -181,15 +199,21 @@ namespace Telegram.Controls
 
                 _drawing = value.ToList();
 
-                _strokes = value?.ToList() ?? new List<SmoothPathBuilder>();
+                _strokes = value.ToList();
                 _history.Clear();
 
+                _needToRedrawInkSurface = true;
                 Canvas?.Invalidate();
             }
         }
 
         public bool CanUndo => _strokes.Count > 0;
         public bool CanRedo => _history.Count > 0;
+
+        /// <summary>
+        /// Raised while two touches pinch or drag over the canvas, in window coordinates.
+        /// </summary>
+        public event EventHandler<PencilGestureEventArgs> Gesture;
 
         public void Undo()
         {
@@ -199,18 +223,12 @@ namespace Telegram.Controls
                 return;
             }
 
+            StopAnimations();
+
             _strokes.Remove(last);
             _history.Insert(0, last);
 
-            if (last == _arrow)
-            {
-                StopArrow();
-            }
-
-            _needToRedrawInkSurface = true;
-            Canvas.Invalidate();
-
-            StrokesChanged?.Invoke(this, EventArgs.Empty);
+            Redraw();
         }
 
         public void Redo()
@@ -221,13 +239,12 @@ namespace Telegram.Controls
                 return;
             }
 
+            StopAnimations();
+
             _history.Remove(first);
             _strokes.Add(first);
 
-            _needToRedrawInkSurface = true;
-            Canvas.Invalidate();
-
-            StrokesChanged?.Invoke(this, EventArgs.Empty);
+            Redraw();
         }
 
         public void SaveState()
@@ -237,13 +254,21 @@ namespace Telegram.Controls
 
         public void RestoreState()
         {
-            StopArrow();
+            StopAnimations();
 
             _strokes = _drawing?.ToList() ?? new List<SmoothPathBuilder>();
             _history.Clear();
 
             _needToRedrawInkSurface = true;
             Canvas.Invalidate();
+        }
+
+        private void Redraw()
+        {
+            _needToRedrawInkSurface = true;
+            Canvas.Invalidate();
+
+            StrokesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void Invalidate()
@@ -332,9 +357,36 @@ namespace Telegram.Controls
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            var point = e.GetCurrentPoint(Canvas);
+
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Touch)
+            {
+                _touches[point.PointerId] = e.GetCurrentPoint(null).Position;
+
+                // A second finger turns the touch into moving the view: whatever the first one
+                // had begun is dropped, not drawn.
+                if (_touches.Count >= 2 || _gesturing)
+                {
+                    if (!_gesturing)
+                    {
+                        _gesturing = true;
+                        StopFill();
+
+                        foreach (var id in _touches.Keys)
+                        {
+                            _builders.TryRemove(id, out _);
+                        }
+
+                        Canvas.Invalidate();
+                    }
+
+                    Canvas.CapturePointer(e.Pointer);
+                    return;
+                }
+            }
+
             Canvas.CapturePointer(e.Pointer);
 
-            var point = e.GetCurrentPoint(Canvas);
             var tool = point.Properties.IsEraser ? PencilTool.Eraser : _tool;
 
             // Stored relative to the canvas, like the points are: the same stroke is replayed
@@ -345,13 +397,42 @@ namespace Telegram.Controls
                 Stroke = PencilTools.HasColor(tool) ? Stroke : null,
                 StrokeThickness = tool == PencilTool.Eraser ? EraserThickness : StrokeThickness
             };
+
+            StartFill(point.PointerId, e.GetCurrentPoint(null).Position);
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (_builders.TryGetValue(e.Pointer.PointerId, out SmoothPathBuilder _builder))
+            var id = e.Pointer.PointerId;
+
+            if (_touches.TryGetValue(id, out Point previous))
             {
-                _builder.MoveTo(e.GetCurrentPoint(Canvas).Position.ToVector2() / Canvas.Size.ToVector2());
+                var position = e.GetCurrentPoint(null).Position;
+
+                if (_gesturing)
+                {
+                    MoveGesture(id, previous, position);
+                    return;
+                }
+
+                _touches[id] = position;
+            }
+
+            if (_builders.TryGetValue(id, out SmoothPathBuilder builder))
+            {
+                if (_fillPointer == id)
+                {
+                    var position = e.GetCurrentPoint(null).Position;
+                    var x = position.X - _fillOrigin.X;
+                    var y = position.Y - _fillOrigin.Y;
+
+                    if (x * x + y * y > FillSlop * FillSlop)
+                    {
+                        StopFill();
+                    }
+                }
+
+                builder.MoveTo(e.GetCurrentPoint(Canvas).Position.ToVector2() / Canvas.Size.ToVector2());
                 Canvas.Invalidate();
             }
         }
@@ -360,65 +441,227 @@ namespace Telegram.Controls
         {
             Canvas.ReleasePointerCapture(e.Pointer);
 
+            if (_fillPointer == e.Pointer.PointerId)
+            {
+                StopFill();
+            }
+
+            if (_touches.Remove(e.Pointer.PointerId) && _gesturing)
+            {
+                _gesturing = _touches.Count > 0;
+                return;
+            }
+
             if (_builders.TryRemove(e.Pointer.PointerId, out SmoothPathBuilder builder))
             {
                 builder.EndFigure(e.GetCurrentPoint(Canvas).Position.ToVector2() / Canvas.Size.ToVector2());
 
                 // A finished arrow's head grows in, so it joins the ink surface only once it has.
-                if (builder.Tool == PencilTool.Arrow)
-                {
-                    StopArrow();
+                Commit(builder, builder.Tool == PencilTool.Arrow);
+            }
+        }
 
-                    _arrow = builder;
-                    _arrowStart = null;
-                    _arrowProgress = 0;
-                    CompositionTarget.Rendering += OnRendering;
-                }
-                else
-                {
-                    using (var session = _renderTarget.CreateDrawingSession())
-                    {
-                        DrawPath(session, builder, _renderTarget.Size.ToVector2(), GetBlurBrush());
-                    }
-                }
+        private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
+        {
+            if (_fillPointer == e.Pointer.PointerId)
+            {
+                StopFill();
+            }
 
-                _strokes.Add(builder);
-                _history.Clear();
+            if (_touches.Remove(e.Pointer.PointerId) && _gesturing)
+            {
+                _gesturing = _touches.Count > 0;
+            }
 
+            if (_builders.TryRemove(e.Pointer.PointerId, out _))
+            {
                 Canvas.Invalidate();
-                StrokesChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void Commit(SmoothPathBuilder builder, bool grow)
+        {
+            if (grow)
+            {
+                FinishGrowing();
+
+                _growing = builder;
+                _growingStart = null;
+                _growingProgress = 0;
+
+                StartRendering();
+            }
+            else
+            {
+                using (var session = _renderTarget.CreateDrawingSession())
+                {
+                    DrawPath(session, builder, _renderTarget.Size.ToVector2(), GetBlurBrush());
+                }
+            }
+
+            _strokes.Add(builder);
+            _history.Clear();
+
+            Canvas.Invalidate();
+            StrokesChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        #region Fill
+
+        private void StartFill(uint pointerId, Point origin)
+        {
+            if (_fillTimer == null)
+            {
+                _fillTimer = new DispatcherTimer { Interval = FillDelay };
+                _fillTimer.Tick += OnFillTick;
+            }
+
+            _fillPointer = pointerId;
+            _fillOrigin = origin;
+
+            _fillTimer.Stop();
+            _fillTimer.Start();
+        }
+
+        private void StopFill()
+        {
+            _fillPointer = null;
+            _fillTimer?.Stop();
+        }
+
+        // The press becomes a fill with the same tool and colour, spreading from where it was held.
+        private void OnFillTick(object sender, object e)
+        {
+            var id = _fillPointer;
+            StopFill();
+
+            if (id is not uint pointerId || !_builders.TryRemove(pointerId, out SmoothPathBuilder pressed))
+            {
+                return;
+            }
+
+            Commit(new SmoothPathBuilder(pressed.BeginPoint)
+            {
+                Tool = pressed.Tool,
+                Stroke = pressed.Stroke,
+                StrokeThickness = pressed.StrokeThickness,
+                IsFill = true
+            }, true);
+        }
+
+        #endregion
+
+        #region Gesture
+
+        private void MoveGesture(uint id, Point previous, Point position)
+        {
+            Point? other = null;
+
+            foreach (var touch in _touches)
+            {
+                if (touch.Key != id)
+                {
+                    other = touch.Value;
+                    break;
+                }
+            }
+
+            _touches[id] = position;
+
+            if (other is not Point anchor)
+            {
+                return;
+            }
+
+            var before = Distance(previous, anchor);
+            var after = Distance(position, anchor);
+
+            var previousCenter = new Point((previous.X + anchor.X) / 2, (previous.Y + anchor.Y) / 2);
+            var center = new Point((position.X + anchor.X) / 2, (position.Y + anchor.Y) / 2);
+
+            Gesture?.Invoke(this, new PencilGestureEventArgs(center, before > 0 ? after / before : 1, center.X - previousCenter.X, center.Y - previousCenter.Y));
+        }
+
+        private static double Distance(Point a, Point b)
+        {
+            var x = a.X - b.X;
+            var y = a.Y - b.Y;
+
+            return Math.Sqrt(x * x + y * y);
+        }
+
+        #endregion
+
+        #region Animations
+
+        private void StartRendering()
+        {
+            if (!_rendering)
+            {
+                _rendering = true;
+                CompositionTarget.Rendering += OnRendering;
             }
         }
 
         private void OnRendering(object sender, object e)
         {
             var time = ((RenderingEventArgs)e).RenderingTime;
-            _arrowStart ??= time;
 
-            var t = Math.Min(1, (time - _arrowStart.Value).TotalMilliseconds / ArrowDuration);
-            _arrowProgress = (float)(Math.Cos((t + 1) * Math.PI) / 2 + 0.5);
-
-            if (t >= 1)
+            if (_growing != null)
             {
-                using (var session = _renderTarget.CreateDrawingSession())
-                {
-                    DrawPath(session, _arrow, _renderTarget.Size.ToVector2());
-                }
+                _growingStart ??= time;
 
-                StopArrow();
+                var duration = _growing.IsFill ? FillDuration : ArrowDuration;
+                var t = Math.Min(1, (time - _growingStart.Value).TotalMilliseconds / duration);
+
+                _growingProgress = _growing.IsFill
+                    ? (float)(1 - Math.Pow(1 - t, 5))
+                    : (float)(Math.Cos((t + 1) * Math.PI) / 2 + 0.5);
+
+                if (t >= 1)
+                {
+                    FinishGrowing();
+                }
+            }
+
+            if (_growing == null)
+            {
+                _rendering = false;
+                CompositionTarget.Rendering -= OnRendering;
             }
 
             Canvas.Invalidate();
         }
 
-        private void StopArrow()
+        private void FinishGrowing()
         {
-            if (_arrow != null)
+            if (_growing != null)
             {
-                CompositionTarget.Rendering -= OnRendering;
-                _arrow = null;
+                using (var session = _renderTarget.CreateDrawingSession())
+                {
+                    DrawPath(session, _growing, _renderTarget.Size.ToVector2(), GetBlurBrush());
+                }
+
+                _growing = null;
             }
         }
+
+        // Undo and redo redraw from the stroke list, which already holds whatever was growing, so
+        // the animation simply ends.
+        private void StopAnimations()
+        {
+            _growing = null;
+
+            if (_rendering)
+            {
+                _rendering = false;
+                CompositionTarget.Rendering -= OnRendering;
+            }
+
+            _needToRedrawInkSurface = true;
+        }
+
+        #endregion
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
@@ -428,6 +671,7 @@ namespace Telegram.Controls
             }
 
             var blur = GetBlurBrush();
+            var size = sender.Size.ToVector2();
 
             if (_needToRedrawInkSurface)
             {
@@ -439,7 +683,7 @@ namespace Telegram.Controls
 
                     foreach (var builder in _strokes)
                     {
-                        if (builder != _arrow)
+                        if (builder != _growing)
                         {
                             DrawPath(canvas, builder, _renderTarget.Size.ToVector2(), blur);
                         }
@@ -449,16 +693,26 @@ namespace Telegram.Controls
 
             args.DrawingSession.DrawImage(_renderTarget);
 
-            if (_arrow != null)
+            if (_growing != null)
             {
-                DrawPath(args.DrawingSession, _arrow, sender.Size.ToVector2(), null, _arrowProgress);
+                DrawPath(args.DrawingSession, _growing, size, blur, _growingProgress);
             }
 
             foreach (var builder in _builders.Values)
             {
                 // No arrow head until the stroke is finished.
-                DrawPath(args.DrawingSession, builder, sender.Size.ToVector2(), blur, 0);
+                DrawPath(args.DrawingSession, builder, size, blur, 0);
             }
+        }
+
+        // Far enough that the disc has covered every corner a little before it stops growing.
+        private static float GetFillRadius(Vector2 origin, Vector2 size)
+        {
+            var corners = Math.Max(
+                Math.Max(Vector2.Distance(origin, Vector2.Zero), Vector2.Distance(origin, new Vector2(size.X, 0))),
+                Math.Max(Vector2.Distance(origin, new Vector2(0, size.Y)), Vector2.Distance(origin, size)));
+
+            return corners / 0.84f;
         }
 
         /// <summary>
@@ -466,12 +720,18 @@ namespace Telegram.Controls
         /// <paramref name="blur"/> is the blurred image the blur tool paints, in the surface's own
         /// pixels; without one, blur strokes are skipped.
         /// </summary>
-        public static void DrawPath(CanvasDrawingSession canvas, SmoothPathBuilder builder, Vector2 canvasSize, ICanvasBrush blur = null, float arrowProgress = 1)
+        public static void DrawPath(CanvasDrawingSession canvas, SmoothPathBuilder builder, Vector2 canvasSize, ICanvasBrush blur = null, float progress = 1)
         {
             // Strokes from before there were tools carry no tool, and erased by having no colour.
             var tool = builder.Stroke == null && builder.Tool != PencilTool.Blur
                 ? PencilTool.Eraser
                 : builder.Tool;
+
+            if (builder.IsFill)
+            {
+                DrawFill(canvas, tool, builder.Stroke ?? Colors.Transparent, builder.BeginPoint * canvasSize, canvasSize, blur, progress);
+                return;
+            }
 
             var width = builder.StrokeThickness * canvasSize.X;
             var color = builder.Stroke ?? Colors.Transparent;
@@ -521,15 +781,47 @@ namespace Telegram.Controls
                     {
                         canvas.DrawGeometry(geometry, Opaque(color), width, style);
 
-                        if (tool == PencilTool.Arrow && arrowProgress > 0)
+                        if (tool == PencilTool.Arrow && progress > 0)
                         {
-                            using var head = builder.ToArrowHead(canvas, canvasSize, width * 10 * arrowProgress);
+                            using var head = builder.ToArrowHead(canvas, canvasSize, width * 10 * progress);
                             if (head != null)
                             {
                                 canvas.DrawGeometry(head, Opaque(color), width, style);
                             }
                         }
                     }
+                    break;
+            }
+        }
+
+        // The whole canvas, or while it grows a disc spreading from where the press was held. Marker
+        // and neon fill as plain colour.
+        private static void DrawFill(CanvasDrawingSession canvas, PencilTool tool, Color color, Vector2 origin, Vector2 canvasSize, ICanvasBrush blur, float progress)
+        {
+            using var geometry = progress < 1
+                ? CanvasGeometry.CreateCircle(canvas, origin, GetFillRadius(origin, canvasSize) * progress)
+                : CanvasGeometry.CreateRectangle(canvas, 0, 0, canvasSize.X, canvasSize.Y);
+
+            switch (tool)
+            {
+                case PencilTool.Eraser:
+                    canvas.Blend = CanvasBlend.Copy;
+                    canvas.FillGeometry(geometry, Colors.Transparent);
+                    canvas.Blend = CanvasBlend.SourceOver;
+                    break;
+
+                case PencilTool.Blur:
+                    if (blur != null)
+                    {
+                        Matrix3x2.Invert(canvas.Transform, out Matrix3x2 inverse);
+                        blur.Transform = inverse;
+
+                        canvas.FillGeometry(geometry, blur);
+                    }
+                    break;
+
+                default:
+                    canvas.FillGeometry(geometry, color);
                     break;
             }
         }
@@ -575,6 +867,25 @@ namespace Telegram.Controls
         #endregion
     }
 
+    public sealed partial class PencilGestureEventArgs : EventArgs
+    {
+        public PencilGestureEventArgs(Point center, double scale, double x, double y)
+        {
+            Center = center;
+            Scale = scale;
+            X = x;
+            Y = y;
+        }
+
+        public Point Center { get; }
+
+        public double Scale { get; }
+
+        public double X { get; }
+
+        public double Y { get; }
+    }
+
     public sealed partial class SmoothPathBuilder
     {
         private List<Vector2> _controlPoints;
@@ -591,6 +902,12 @@ namespace Telegram.Controls
         }
 
         public PencilTool Tool { get; set; }
+
+        /// <summary>
+        /// Covers the whole canvas rather than following a path; <see cref="BeginPoint"/> is
+        /// where the press that made it was held.
+        /// </summary>
+        public bool IsFill { get; set; }
 
         public Color? Stroke { get; set; }
 
