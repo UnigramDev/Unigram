@@ -500,6 +500,17 @@ namespace Telegram.Common
 
         public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream source, ImageGeneration generation, int maxSize = 1280)
         {
+            if (generation.Angle != 0)
+            {
+                using var target = await RenderRotatedAsync(source, generation, maxSize, 0, false);
+
+                var software = await SoftwareBitmap.CreateCopyFromSurfaceAsync(target, BitmapAlphaMode.Premultiplied);
+                var rotated = new SoftwareBitmapSource();
+                await rotated.SetBitmapAsync(software);
+
+                return rotated;
+            }
+
             var decoder = await BitmapDecoder.CreateAsync(source);
             var transform = ComputeCropTransform(decoder, generation.Rectangle, generation.Rotation, generation.Flip,
                 maxSize, 0, BitmapInterpolationMode.Linear);
@@ -523,6 +534,140 @@ namespace Telegram.Common
 
                 return bitmapImage;
             }
+        }
+
+        /// <summary>
+        /// Writes a free-angle crop, strokes included, as a JPEG.
+        /// </summary>
+        public static async Task<StorageFile> CropRotatedAsync(StorageFile sourceFile, StorageFile file, ImageGeneration generation, int min = 1280, int max = 0)
+        {
+            using (var source = await OpenReadAsync(sourceFile))
+            using (var target = await RenderRotatedAsync(source, generation, min, max, true))
+            using (var destination = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await target.SaveAsync(destination, CanvasBitmapFileFormat.Jpeg);
+            }
+
+            return file;
+        }
+
+        /// <summary>
+        /// The decoder only turns by quarters, so a free angle is drawn by Win2D instead. The image
+        /// is decoded upright, exactly as ImageCropper previews it, and one matrix then takes it
+        /// through the mirror, the quarter turns, the crop and the angle — strokes too, since they
+        /// are stored against the upright image.
+        /// </summary>
+        private static async Task<CanvasRenderTarget> RenderRotatedAsync(IRandomAccessStream source, ImageGeneration generation, int min, int max, bool bestQuality)
+        {
+            var decoder = await BitmapDecoder.CreateAsync(source);
+
+            var quarter = generation.Rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees;
+            var rectangle = generation.Rectangle;
+
+            double orientedWidth = quarter ? decoder.OrientedPixelHeight : decoder.OrientedPixelWidth;
+            double orientedHeight = quarter ? decoder.OrientedPixelWidth : decoder.OrientedPixelHeight;
+
+            var crop = new Rect(0, 0, rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
+            var output = Scale(crop, new Size(orientedWidth, orientedHeight), min, max).Crop;
+
+            var outputWidth = Math.Max(1, (int)Math.Round(output.Width));
+            var outputHeight = Math.Max(1, (int)Math.Round(output.Height));
+
+            // Never decode larger than the output needs; Win2D scales up when the crop is small.
+            var factor = Math.Min(1, output.Width / crop.Width);
+            var transform = new BitmapTransform
+            {
+                ScaledWidth = (uint)Math.Max(1, Math.Round(decoder.PixelWidth * factor)),
+                ScaledHeight = (uint)Math.Max(1, Math.Round(decoder.PixelHeight * factor)),
+                InterpolationMode = bestQuality ? BitmapInterpolationMode.Fant : BitmapInterpolationMode.Linear
+            };
+
+            using var pixels = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+            var uprightWidth = (float)pixels.PixelWidth;
+            var uprightHeight = (float)pixels.PixelHeight;
+
+            var width = quarter ? uprightHeight : uprightWidth;
+            var height = quarter ? uprightWidth : uprightHeight;
+
+            var cropWidth = rectangle.Width * width;
+            var center = new Vector2((float)((rectangle.X + rectangle.Width / 2) * width), (float)((rectangle.Y + rectangle.Height / 2) * height));
+
+            var matrix = GetOrientationMatrix(generation.Rotation, generation.Flip, uprightWidth, uprightHeight)
+                * Matrix3x2.CreateTranslation(-center)
+                * Matrix3x2.CreateRotation((float)(generation.Angle * Math.PI / 180))
+                * Matrix3x2.CreateScale((float)(outputWidth / cropWidth))
+                * Matrix3x2.CreateTranslation(outputWidth / 2f, outputHeight / 2f);
+
+            var device = ElementComposition.GetSharedDevice();
+            var target = new CanvasRenderTarget(device, outputWidth, outputHeight, 96);
+
+            // Win2D sizes the bitmap by the file's DPI. Scaling it back up at draw time is not
+            // enough: HighQualityCubic draws through an effect that first resamples the bitmap to
+            // that size, so a 300 dpi photo would lose two thirds of its resolution.
+            pixels.DpiX = 96;
+            pixels.DpiY = 96;
+
+            try
+            {
+                using (var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, pixels))
+                using (var session = target.CreateDrawingSession())
+                {
+                    session.Clear(Windows.UI.Colors.Black);
+                    session.Transform = matrix;
+                    session.DrawImage(bitmap, 0, 0, bitmap.Bounds, 1, bestQuality ? CanvasImageInterpolation.HighQualityCubic : CanvasImageInterpolation.Linear);
+                }
+
+                if (generation.Strokes is { Count: > 0 } strokes)
+                {
+                    // Their own target, because the eraser draws transparency with a Copy blend.
+                    using var overlay = new CanvasRenderTarget(device, outputWidth, outputHeight, 96);
+                    using (var session = overlay.CreateDrawingSession())
+                    {
+                        session.Transform = matrix;
+
+                        foreach (var builder in strokes)
+                        {
+                            PencilCanvas.DrawPath(session, builder, new Vector2(uprightWidth, uprightHeight));
+                        }
+                    }
+
+                    using (var session = target.CreateDrawingSession())
+                    {
+                        session.DrawImage(overlay);
+                    }
+                }
+            }
+            catch
+            {
+                // Owned here until it is returned.
+                target.Dispose();
+                throw;
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Upright pixels to oriented pixels: the flip, then the clockwise quarter turns, the order
+        /// <see cref="BitmapTransform"/> applies them in.
+        /// </summary>
+        public static Matrix3x2 GetOrientationMatrix(ImageRotation rotation, ImageFlip flip, float width, float height)
+        {
+            var matrix = flip switch
+            {
+                ImageFlip.Horizontal => new Matrix3x2(-1, 0, 0, 1, width, 0),
+                ImageFlip.Vertical => new Matrix3x2(1, 0, 0, -1, 0, height),
+                _ => Matrix3x2.Identity
+            };
+
+            return rotation switch
+            {
+                ImageRotation.Clockwise90Degrees => matrix * new Matrix3x2(0, 1, -1, 0, height, 0),
+                ImageRotation.Clockwise180Degrees => matrix * new Matrix3x2(-1, 0, 0, -1, width, height),
+                ImageRotation.Clockwise270Degrees => matrix * new Matrix3x2(0, -1, 1, 0, 0, width),
+                _ => matrix
+            };
         }
 
         public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile, TimeSpan? trimStart = null)

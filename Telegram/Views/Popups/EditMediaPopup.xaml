@@ -17,11 +17,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="44" />
+            <RowDefinition Height="60" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <controls:ImageCropper x:Name="Cropper"
+                               Changed="Cropper_Changed"
                                Padding="24">
             <Grid>
                 <SwapChainPanel x:Name="Video"
@@ -32,11 +33,31 @@
             </Grid>
         </controls:ImageCropper>
 
+        <Grid x:Name="CropToolbar"
+              Margin="12,0,12,8"
+              Grid.Row="1">
+            <controls:CropRotationWheel x:Name="RotationWheel"
+                                        RotationStarted="RotationWheel_RotationStarted"
+                                        RotationChanged="RotationWheel_RotationChanged"
+                                        RotationCompleted="RotationWheel_RotationCompleted"
+                                        MaxWidth="400"
+                                        AutomationProperties.Name="{CustomResource AccDescrRotate}" />
+
+            <Button x:Name="ResetCrop"
+                    Click="ResetCrop_Click"
+                    Content="{CustomResource Reset}"
+                    Style="{StaticResource AccentTextButtonStyle}"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center" />
+        </Grid>
+
         <controls:ColorSlider x:Name="DrawSlider"
                               x:Load="False"
                               StrokeChanged="DrawSlider_StrokeChanged"
                               Margin="12,0,12,24"
                               MaxWidth="320"
+                              VerticalAlignment="Bottom"
                               Grid.Row="1" />
 
         <Grid x:Name="Commands"

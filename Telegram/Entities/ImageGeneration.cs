@@ -39,6 +39,13 @@ namespace Telegram.Entities
         public ImageRotation Rotation { get; set; }
         public ImageFlip Flip { get; set; }
 
+        /// <summary>
+        /// Free rotation in degrees, clockwise, applied after <see cref="Rotation"/> and
+        /// <see cref="Flip"/>. <see cref="Rectangle"/> is then the crop before this rotation,
+        /// turning about its own centre, so it may reach outside 0..1.
+        /// </summary>
+        public double Angle { get; set; }
+
         public TimeSpan TrimStartTime { get; set; }
         public TimeSpan TrimStopTime { get; set; }
 
@@ -47,7 +54,8 @@ namespace Telegram.Entities
             get => (Rectangle.IsEmpty || (Rectangle.X == 0 && Rectangle.Y == 0 && Rectangle.Width == 1 && Rectangle.Height == 1))
                 && Strokes == null
                 && Rotation == ImageRotation.None
-                && Flip == ImageFlip.None;
+                && Flip == ImageFlip.None
+                && Angle == 0;
         }
     }
 }

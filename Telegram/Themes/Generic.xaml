@@ -6480,11 +6480,9 @@
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="ImageThumb.ManipulationMode"
-                                                Value="None" />
-                                        <Setter Target="ThumbsContainer.IsHitTestVisible"
+                                        <Setter Target="PanSurface.IsHitTestVisible"
                                                 Value="False" />
-                                        <Setter Target="Clip.IsHitTestVisible"
+                                        <Setter Target="ThumbsContainer.IsHitTestVisible"
                                                 Value="False" />
                                     </VisualState.Setters>
                                     <Storyboard>
@@ -6555,33 +6553,108 @@
                             </Style>
                         </Grid.Resources>
 
-                        <Grid x:Name="LayoutRoot"
-                              VerticalAlignment="Center"
-                              HorizontalAlignment="Center">
-                            <Grid x:Name="ImageThumb"
-                                  RenderTransformOrigin="0.5,0.5"
-                                  ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ImageThumbTransform" />
-                                </Grid.RenderTransform>
-                                <Image x:Name="ImageViewer"
-                                       Stretch="Uniform" />
-                                <ContentPresenter x:Name="ImagePresenter"
-                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center" />
-                            </Grid>
+                        <Grid x:Name="LayoutRoot">
+                            <!-- A Canvas, so an image zoomed past the viewport is not clipped to its layout slot. -->
+                            <Canvas>
+                                <Grid x:Name="ImageThumb">
+                                    <Image x:Name="ImageViewer"
+                                           Stretch="Fill" />
+                                    <ContentPresenter x:Name="ImagePresenter"
+                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    <!-- Inside the image, so only the image is dimmed: the backdrop around it is not. -->
+                                    <Path x:Name="Clip"
+                                          Opacity="0.6"
+                                          Fill="{TemplateBinding Background}"
+                                          IsHitTestVisible="False" />
+                                </Grid>
+                            </Canvas>
 
-                            <Path x:Name="Clip"
-                                  Opacity="0.6"
-                                  Fill="{TemplateBinding Background}"
-                                  Stroke="Transparent"
-                                  StrokeThickness="1" />
+                            <Rectangle x:Name="PanSurface"
+                                       Fill="Transparent" />
 
                             <Grid x:Name="ThumbsContainer">
-                                <Rectangle x:Name="MiddleThumb"
-                                           Fill="Transparent" />
+                                <Grid x:Name="MajorGrid"
+                                      Opacity="0"
+                                      IsHitTestVisible="False">
+                                    <Grid.OpacityTransition>
+                                        <ScalarTransition Duration="0:0:0.2" />
+                                    </Grid.OpacityTransition>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.RowSpan="3" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="1"
+                                               Grid.RowSpan="3" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.ColumnSpan="3" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="1"
+                                               Grid.ColumnSpan="3" />
+                                </Grid>
+
+                                <Grid x:Name="MinorGrid"
+                                      Opacity="0"
+                                      IsHitTestVisible="False">
+                                    <Grid.OpacityTransition>
+                                        <ScalarTransition Duration="0:0:0.2" />
+                                    </Grid.OpacityTransition>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="1" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="2" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="3" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="4" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="5" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="6" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="7" Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="1" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="3" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="4" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="5" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="6" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="7" Grid.ColumnSpan="9" />
+                                </Grid>
 
                                 <local:ImageCropperThumb x:Name="LeftThumb"
                                                          Style="{StaticResource VerticalSideThumbStyle}"
@@ -6626,6 +6699,46 @@
                                                          VerticalAlignment="Bottom" />
                             </Grid>
                         </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:CropRotationWheel">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="ActiveForeground"
+                Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+        <Setter Property="IsTabStop"
+                Value="True" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:CropRotationWheel">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="Label"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontSize="12"
+                                   HorizontalAlignment="Center" />
+                        <Canvas x:Name="TicksPanel"
+                                Grid.Row="1" />
+                        <Rectangle Fill="{TemplateBinding ActiveForeground}"
+                                   Width="2.5"
+                                   Height="22"
+                                   RadiusX="1.25"
+                                   RadiusY="1.25"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

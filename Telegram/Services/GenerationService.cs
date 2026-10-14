@@ -318,12 +318,19 @@ namespace Telegram.Services
                     var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.ImageGeneration);
                     var rectangle = generation.Rectangle;
 
-                    await ImageHelper.CropAsync(file, temp, rectangle, maxSize, generation.MinimumSize, rotation: generation.Rotation, flip: generation.Flip, bestQuality: true);
-
-                    var drawing = generation.Strokes;
-                    if (drawing != null && drawing.Count > 0)
+                    if (generation.Angle != 0)
                     {
-                        await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, generation.Rotation, generation.Flip);
+                        await ImageHelper.CropRotatedAsync(file, temp, generation, maxSize, generation.MinimumSize);
+                    }
+                    else
+                    {
+                        await ImageHelper.CropAsync(file, temp, rectangle, maxSize, generation.MinimumSize, rotation: generation.Rotation, flip: generation.Flip, bestQuality: true);
+
+                        var drawing = generation.Strokes;
+                        if (drawing != null && drawing.Count > 0)
+                        {
+                            await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, generation.Rotation, generation.Flip);
+                        }
                     }
                 }
                 else

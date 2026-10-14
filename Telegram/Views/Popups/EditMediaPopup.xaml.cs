@@ -40,9 +40,6 @@ namespace Telegram.Views.Popups
         private readonly StorageFile _file;
         private readonly StorageMedia _media;
 
-        private ImageRotation _rotation;
-        private ImageFlip _flip;
-
         private AsyncMediaPlayer _player;
 
         private TimeSpan _duration;
@@ -68,12 +65,13 @@ namespace Telegram.Views.Popups
 
             _file = media.File;
             _media = media;
-            _rotation = media.EditState.Rotation;
-            _flip = media.EditState.Flip;
 
-            Rotate.IsChecked = _rotation != ImageRotation.None;
-            Flip.IsChecked = _flip != ImageFlip.None;
             Proportions.IsChecked = media.EditState.Proportions != BitmapProportions.Custom;
+
+            if (mask == ImageCropperMask.Ellipse)
+            {
+                RotationWheel.Visibility = Visibility.Collapsed;
+            }
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -83,6 +81,11 @@ namespace Telegram.Views.Popups
                 FindName(nameof(TrimToolbar));
                 TrimToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Collapsed;
+
+                // MediaTranscoder can only crop a video to a rectangle: no free angle until the
+                // video pipeline replaces it.
+                CropToolbar.Visibility = Visibility.Collapsed;
+                Cropper.MinimumAreaSize = 64;
 
                 InitializeVideo(media, mask);
             }
@@ -96,7 +99,7 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                await Cropper.SetSourceAsync(_media.File, _media.EditState.Rotation, _media.EditState.Flip, _media.EditState.Proportions, _media.EditState.Rectangle);
+                await Cropper.SetSourceAsync(_media.File, _media.EditState.Rotation, _media.EditState.Flip, _media.EditState.Proportions, _media.EditState.Rectangle, _media.EditState.Angle);
             }
 
             ConnectedAnimationServiceEx.TryStart("EditMediaPopup", Cropper);
@@ -368,8 +371,9 @@ namespace Telegram.Views.Popups
                     Rectangle = rect,
                     Proportions = Cropper.Proportions,
                     Strokes = Canvas.Strokes,
-                    Flip = _flip,
-                    Rotation = _rotation,
+                    Flip = Cropper.Flip,
+                    Rotation = Cropper.Orientation,
+                    Angle = Cropper.Angle,
                     TrimStartTime = trimStartTime,
                     TrimStopTime = trimStopTime,
                 };
@@ -383,6 +387,7 @@ namespace Telegram.Views.Popups
                 Cropper.IsCropEnabled = true;
                 Canvas.IsEnabled = false;
 
+                CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 DrawSlider.Visibility = Visibility.Collapsed;
@@ -404,6 +409,7 @@ namespace Telegram.Views.Popups
                 Cropper.IsCropEnabled = true;
                 Canvas.IsEnabled = false;
 
+                CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 DrawSlider.Visibility = Visibility.Collapsed;
@@ -454,127 +460,46 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void Rotate_Click(object sender, RoutedEventArgs e)
+        private void Rotate_Click(object sender, RoutedEventArgs e)
         {
-            var rotation = ImageRotation.None;
-
-            var proportions = RotateProportions(Cropper.Proportions);
-            var rectangle = ImageHelper.RotateArea(Cropper.CropRectangle, 1, 1, 1);
-
-            switch (_rotation)
-            {
-                case ImageRotation.None:
-                    rotation = ImageRotation.Clockwise90Degrees;
-                    break;
-                case ImageRotation.Clockwise90Degrees:
-                    rotation = ImageRotation.Clockwise180Degrees;
-                    break;
-                case ImageRotation.Clockwise180Degrees:
-                    rotation = ImageRotation.Clockwise270Degrees;
-                    break;
-            }
-
-            _rotation = rotation;
-            await Cropper.SetSourceAsync(_file, rotation, _flip, proportions, rectangle);
-
-            Rotate.IsChecked = _rotation != ImageRotation.None;
-            Canvas.Invalidate();
+            Cropper.RotateCounterclockwise();
         }
 
-        private BitmapProportions RotateProportions(BitmapProportions proportions)
+        private void Flip_Click(object sender, RoutedEventArgs e)
         {
-            switch (proportions)
-            {
-                case BitmapProportions.Original:
-                case BitmapProportions.Square:
-                default:
-                    return proportions;
-                // Portrait
-                case BitmapProportions.TwoOverThree:
-                    return BitmapProportions.ThreeOverTwo;
-                case BitmapProportions.ThreeOverFive:
-                    return BitmapProportions.FiveOverThree;
-                case BitmapProportions.ThreeOverFour:
-                    return BitmapProportions.FourOverThree;
-                case BitmapProportions.FourOverFive:
-                    return BitmapProportions.FiveOverFour;
-                case BitmapProportions.FiveOverSeven:
-                    return BitmapProportions.SevenOverFive;
-                case BitmapProportions.NineOverSixteen:
-                    return BitmapProportions.SixteenOverNine;
-                // Landscape
-                case BitmapProportions.ThreeOverTwo:
-                    return BitmapProportions.TwoOverThree;
-                case BitmapProportions.FiveOverThree:
-                    return BitmapProportions.ThreeOverFive;
-                case BitmapProportions.FourOverThree:
-                    return BitmapProportions.ThreeOverFour;
-                case BitmapProportions.FiveOverFour:
-                    return BitmapProportions.FourOverFive;
-                case BitmapProportions.SevenOverFive:
-                    return BitmapProportions.FiveOverSeven;
-                case BitmapProportions.SixteenOverNine:
-                    return BitmapProportions.NineOverSixteen;
-            }
+            Cropper.Mirror();
         }
 
-        private async void Flip_Click(object sender, RoutedEventArgs e)
+        private void ResetCrop_Click(object sender, RoutedEventArgs e)
         {
-            var flip = _flip;
-            var rotation = _rotation;
+            Cropper.Reset();
+        }
 
-            var proportions = Cropper.Proportions;
-            var rectangle = ImageHelper.FlipArea(Cropper.CropRectangle, 1, 1, ImageFlip.Horizontal);
+        private void Cropper_Changed(object sender, EventArgs e)
+        {
+            Rotate.IsChecked = Cropper.Orientation != ImageRotation.None;
+            Flip.IsChecked = Cropper.Flip != ImageFlip.None;
+            Proportions.IsChecked = Cropper.Proportions != BitmapProportions.Custom;
 
-            switch (rotation)
-            {
-                case ImageRotation.Clockwise90Degrees:
-                case ImageRotation.Clockwise270Degrees:
-                    switch (flip)
-                    {
-                        case ImageFlip.None:
-                            flip = ImageFlip.Vertical;
-                            break;
-                        case ImageFlip.Vertical:
-                            flip = ImageFlip.None;
-                            break;
-                        case ImageFlip.Horizontal:
-                            flip = ImageFlip.None;
-                            rotation = rotation == ImageRotation.Clockwise90Degrees
-                                ? ImageRotation.Clockwise270Degrees
-                                : ImageRotation.Clockwise90Degrees;
-                            break;
-                    }
-                    break;
-                case ImageRotation.None:
-                case ImageRotation.Clockwise180Degrees:
-                    switch (flip)
-                    {
-                        case ImageFlip.None:
-                            flip = ImageFlip.Horizontal;
-                            break;
-                        case ImageFlip.Horizontal:
-                            flip = ImageFlip.None;
-                            break;
-                        case ImageFlip.Vertical:
-                            flip = ImageFlip.None;
-                            rotation = rotation == ImageRotation.None
-                                ? ImageRotation.Clockwise180Degrees
-                                : ImageRotation.None;
-                            break;
-                    }
-                    break;
-            }
+            RotationWheel.Angle = Cropper.Angle;
+            ResetCrop.Visibility = Cropper.IsDefault
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
 
-            _flip = flip;
-            _rotation = rotation;
-            await Cropper.SetSourceAsync(_file, _rotation, flip, proportions, rectangle);
+        private void RotationWheel_RotationStarted(object sender, EventArgs e)
+        {
+            Cropper.BeginRotation();
+        }
 
-            //Transform.ScaleX = _flip == ImageFlip.Horizontal ? -1 : 1;
-            //Transform.ScaleY = _flip == ImageFlip.Vertical ? -1 : 1;
+        private void RotationWheel_RotationChanged(object sender, EventArgs e)
+        {
+            Cropper.SetAngle(RotationWheel.Angle);
+        }
 
-            Flip.IsChecked = _flip != ImageFlip.None;
-            Canvas.Invalidate();
+        private void RotationWheel_RotationCompleted(object sender, EventArgs e)
+        {
+            Cropper.EndRotation();
         }
 
         private void Draw_Click(object sender, RoutedEventArgs e)
@@ -582,6 +507,7 @@ namespace Telegram.Views.Popups
             Cropper.IsCropEnabled = false;
             Canvas.IsEnabled = true;
 
+            CropToolbar.Visibility = Visibility.Collapsed;
             BasicToolbar.Visibility = Visibility.Collapsed;
 
             if (DrawToolbar == null)
@@ -600,7 +526,7 @@ namespace Telegram.Views.Popups
 
             Canvas.Mode = PencilCanvasMode.Stroke;
             Canvas.Stroke = DrawSlider.Stroke;
-            Canvas.StrokeThickness = DrawSlider.StrokeThickness;
+            Canvas.StrokeThickness = GetStrokeThickness();
 
             Brush.IsChecked = true;
             Erase.IsChecked = false;
@@ -641,9 +567,16 @@ namespace Telegram.Views.Popups
         private void DrawSlider_StrokeChanged(object sender, EventArgs e)
         {
             Canvas.Stroke = DrawSlider.Stroke;
-            Canvas.StrokeThickness = DrawSlider.StrokeThickness;
+            Canvas.StrokeThickness = GetStrokeThickness();
 
             Brush_Click(null, null);
+        }
+
+        // The canvas is laid out in source pixels and scaled by the cropper, so a stroke as thick
+        // on screen as the slider shows is thicker in the canvas's own units.
+        private float GetStrokeThickness()
+        {
+            return (float)(DrawSlider.StrokeThickness / Cropper.ZoomFactor);
         }
 
         private void Canvas_StrokesChanged(object sender, EventArgs e)
