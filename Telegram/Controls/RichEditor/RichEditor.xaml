@@ -222,7 +222,13 @@
                                    AutomationProperties.AccessibilityView="Raw"
                                    Visibility="Collapsed" />
 
+                        <!--  Set here, not left to the implicit DirectTextBlock style: that style
+                              is not applied inside this template, and the block would fall back
+                              to black text and uncoloured links.  -->
                         <controls:DirectTextBlock x:Name="Text"
+                                                  Foreground="{ThemeResource MessageForegroundBrush}"
+                                                  HyperlinkForeground="{ThemeResource MessageForegroundLinkBrush}"
+                                                  IconForeground="{ThemeResource MessageForegroundBrush}"
                                                   AutomationProperties.AccessibilityView="Raw"
                                                   SelectionHighlightColor="{ThemeResource RichEditorSelectionBrush}" />
                     </Grid>
