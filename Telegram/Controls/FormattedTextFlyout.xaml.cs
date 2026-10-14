@@ -63,7 +63,8 @@ namespace Telegram.Controls
             var character = selection.CharacterFormat;
 
             Quote.IsChecked = paragraph.SpaceAfter != 0;
-            Bold.IsChecked = character.Bold == FormatEffect.On;
+            // Bold is applied as a weight, which the Bold property does not report.
+            Bold.IsChecked = character.Weight == FontWeights.SemiBold.Weight;
             Italic.IsChecked = character.Italic == FormatEffect.On;
             Strikethrough.IsChecked = character.Strikethrough == FormatEffect.On;
             Underline.IsChecked = character.Underline == UnderlineType.Single;
