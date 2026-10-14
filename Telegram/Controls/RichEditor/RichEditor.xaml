@@ -230,7 +230,8 @@
                                                   HyperlinkForeground="{ThemeResource MessageForegroundLinkBrush}"
                                                   IconForeground="{ThemeResource MessageForegroundBrush}"
                                                   AutomationProperties.AccessibilityView="Raw"
-                                                  SelectionHighlightColor="{ThemeResource RichEditorSelectionBrush}" />
+                                                  SelectionHighlightColor="{ThemeResource RichEditorSelectionBrush}"
+                                                  CustomEmojiFitsLine="True" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

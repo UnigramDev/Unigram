@@ -502,6 +502,18 @@ namespace Telegram.Controls
         private const double EmojiSize = 20;
         private const double EmojiBaseline = 16;
 
+        // Inside the 14px line: 15 above the baseline and 3 below, against the text's 15.1 and 3.5.
+        private const double FittedEmojiHeight = 18;
+        private const double FittedEmojiBaseline = 15;
+
+        /// <summary>
+        /// Whether a custom emoji is given only the height of the line and drawn over it, as
+        /// RichEdit does, rather than a box that makes its line taller. For text being edited,
+        /// where a line that grows when an emoji goes in moves everything under it. Set before
+        /// <see cref="SetCustomEmoji"/>.
+        /// </summary>
+        public bool CustomEmojiFitsLine { get; set; }
+
         /// <summary>
         /// The custom emoji in the text: a box each for the layout to flow around, and a player
         /// each, positioned where the layout put the box. Set after <see cref="SetText"/>, and
@@ -513,7 +525,14 @@ namespace Telegram.Controls
 
             for (int i = 0; i < ranges?.Count; i++)
             {
-                Layout().SetInlineObject(ranges[i].Offset, ranges[i].Length, new Size(EmojiSize, EmojiSize), EmojiBaseline);
+                if (CustomEmojiFitsLine)
+                {
+                    Layout().SetInlineObject(ranges[i].Offset, ranges[i].Length, new Size(EmojiSize, FittedEmojiHeight), FittedEmojiBaseline);
+                }
+                else
+                {
+                    Layout().SetInlineObject(ranges[i].Offset, ranges[i].Length, new Size(EmojiSize, EmojiSize), EmojiBaseline);
+                }
 
                 var player = GetOrCreateEmoji(i);
 
@@ -2281,6 +2300,7 @@ namespace Telegram.Controls
                 or TextEntityTypeCashtag
                 or TextEntityTypeBotCommand
                 or TextEntityTypeBankCardNumber
+                or TextEntityTypeTonAddress
                 // A date is one too, and for the same reason the inline path draws it as a
                 // hyperlink: TextStyleRun gives it the Url style. A click opens what it means.
                 or TextEntityTypeDateTime
@@ -2591,9 +2611,18 @@ namespace Telegram.Controls
             {
                 var rects = Layout().Ranges(_ranges[i].Offset, _ranges[i].Length);
 
-                _emoji[i].Arrange(rects?.Length > 0
-                    ? FromLayout(new Rect(rects[0].X, rects[0].Y, EmojiSize, EmojiSize))
-                    : new Rect(0, 0, 0, 0));
+                if (rects?.Length > 0)
+                {
+                    var y = CustomEmojiFitsLine
+                        ? rects[0].Y + (rects[0].Height - EmojiSize) / 2
+                        : rects[0].Y;
+
+                    _emoji[i].Arrange(FromLayout(new Rect(rects[0].X, y, EmojiSize, EmojiSize)));
+                }
+                else
+                {
+                    _emoji[i].Arrange(new Rect(0, 0, 0, 0));
+                }
             }
 
             // Same for the buttons, at the size each reported: the layout reserved exactly
