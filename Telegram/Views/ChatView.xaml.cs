@@ -120,6 +120,9 @@ namespace Telegram.Views
         private ChatBackgroundControl _backgroundControl;
 
         private readonly DebouncedProperty<FocusState> _focusState;
+
+        // Not readonly: the leak test tears it down with the rest of the page.
+        private ComposerController _composer;
         private bool _useSystemSpellChecker = true;
         private bool _isTextReadOnly = false;
 
@@ -160,6 +163,13 @@ namespace Telegram.Views
             AddStrategy(ChatHistoryViewItemType.Unsupported, UnsupportedTemplate);
 
             _focusState = new DebouncedProperty<FocusState>(100, FocusText, CanFocusText);
+
+            _composer = new ComposerController(TextField, TextField)
+            {
+                ListAutocomplete = ListAutocomplete
+            };
+
+            ((IFormattedTextInput)TextField).ContentChanged += TextField_ContentChanged;
 
             _loader = new BidirectionalIncrementalLoader(Messages);
 
@@ -307,7 +317,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                TextField.Focus(state);
+                TextField.FocusInput(state);
             }
         }
 
@@ -470,6 +480,7 @@ namespace Telegram.Views
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
+                _composer.ViewModel = null;
                 ViewModel.HistoryField = null;
                 ViewModel.Sticker_Click = null;
 
@@ -743,6 +754,7 @@ namespace Telegram.Views
             ViewModel.Initialized += OnInitialized;
             ViewModel.TextField = TextField;
             ViewModel.HistoryField = Messages;
+            _composer.ViewModel = ViewModel;
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             ViewModel.SetText(null, false);
@@ -764,7 +776,7 @@ namespace Telegram.Views
 
             Sponsored.UpdateSponsoredMessage(ViewModel.ClientService, ViewModel.Chat, ViewModel.SponsoredMessage);
 
-            TextField.IsMenuExpanded = false;
+            _composer.IsMenuExpanded = false;
             TextField.IsReplaceEmojiEnabled = AppSettings.IsReplaceEmojiEnabled;
 
             if (_useSystemSpellChecker != AppSettings.UseSystemSpellChecker)
@@ -1361,6 +1373,14 @@ namespace Telegram.Views
             ButtonCommands = null;
             ButtonScheduled = null;
             ButtonAttach = null;
+            if (_composer != null)
+            {
+                ((IFormattedTextInput)TextField).ContentChanged -= TextField_ContentChanged;
+
+                _composer.Detach();
+                _composer = null;
+            }
+
             TextField = null;
             ComposerHeaderGlyph = null;
             ComposerHeaderUpload = null;
@@ -1440,7 +1460,7 @@ namespace Telegram.Views
 
             if (fast)
             {
-                TextField.Focus(state);
+                TextField.FocusInput(state);
             }
             else
             {
@@ -1509,7 +1529,7 @@ namespace Telegram.Views
             // the window root, so a focused TextBox or RichEditBox has already handled it, and a
             // popup only swallows it when it took focus. That is what the allow-list encoded by
             // hand - a ToolTip or a TeachingTip takes no focus, so typing over one still lands here.
-            TextField.Focus(FocusState.Keyboard);
+            TextField.FocusInput(FocusState.Keyboard);
 
             // For some reason, this is paste
             if (character == '\u0016')
@@ -1642,7 +1662,7 @@ namespace Telegram.Views
                 ViewModel.SendDocument();
                 args.Handled = true;
             }
-            else if (args.Key == VirtualKey.PageUp && modifiers == VirtualKeyModifiers.None && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+            else if (args.Key == VirtualKey.PageUp && modifiers == VirtualKeyModifiers.None && TextField.IsCaretAtStart && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
@@ -1685,7 +1705,7 @@ namespace Telegram.Views
                 target.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
-            else if (args.Key is VirtualKey.PageDown or VirtualKey.Down && modifiers == VirtualKeyModifiers.None && TextField.Document.Selection.StartPosition == TextField.Document.GetRange(int.MaxValue, int.MaxValue).EndPosition && ViewModel.Autocomplete == null)
+            else if (args.Key is VirtualKey.PageDown or VirtualKey.Down && modifiers == VirtualKeyModifiers.None && TextField.IsCaretAtEnd && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
@@ -2186,17 +2206,14 @@ namespace Telegram.Views
             }
         }
 
-        private void TextField_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        private void TextField_ContentChanged(object sender, EventArgs e)
         {
-            if (args.IsContentChanging)
-            {
-                CheckMessageBoxEmpty();
-            }
+            CheckMessageBoxEmpty();
         }
 
         private void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            TextField.Send();
+            _composer.Send();
         }
 
         private void btnEdit_Click(object sender, RoutedEventArgs e)
@@ -2207,7 +2224,7 @@ namespace Telegram.Views
             }
             else
             {
-                TextField.Send();
+                _composer.Send();
             }
         }
 
@@ -2469,7 +2486,7 @@ namespace Telegram.Views
 
         private void Commands_Click(object sender, RoutedEventArgs e)
         {
-            TextField.SetText("/", null);
+            TextField.SetText(new FormattedText("/", new TextEntity[0]));
             _focusState.Set(FocusState.Keyboard);
         }
 
@@ -2848,22 +2865,22 @@ namespace Telegram.Views
 
             var flyout = new MenuFlyout();
 
-            if (TextField.Effect != null)
+            if (_composer.Effect != null)
             {
                 flyout.CreateFlyoutItem(RemoveMessageEffect, Strings.RemoveEffect, Icons.Delete, destructive: true);
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(() => TextField.Send(true), Strings.SendWithoutSound, Icons.AlertOff);
+            flyout.CreateFlyoutItem(() => _composer.Send(true), Strings.SendWithoutSound, Icons.AlertOff);
 
             if (!ViewModel.ClientService.IsPaid(chat) && !ViewModel.ClientService.IsDirectMessagesGroup(chat))
             {
                 if (ViewModel.ClientService.TryGetUser(chat, out Td.Api.User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
                 {
-                    flyout.CreateFlyoutItem(() => TextField.Schedule(true), Strings.SendWhenOnline, Icons.PersonCircleOnline);
+                    flyout.CreateFlyoutItem(() => _composer.Schedule(true), Strings.SendWhenOnline, Icons.PersonCircleOnline);
                 }
 
-                flyout.CreateFlyoutItem(() => TextField.Schedule(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+                flyout.CreateFlyoutItem(() => _composer.Schedule(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
             }
 
             if (chat.Type is ChatTypePrivate)
@@ -2890,7 +2907,7 @@ namespace Telegram.Views
 
         private void MessageEffectFlyout_Selected(object sender, MessageEffect e)
         {
-            TextField.Effect = e;
+            _composer.Effect = e;
 
             if (e == null)
             {
@@ -3956,6 +3973,7 @@ namespace Telegram.Views
 
             string mention = null;
             string mentionName = null;
+            long mentionUserId = 0;
 
             if (_viewModel.ClientService.TryGetUser(message.SenderId, out User user))
             {
@@ -3980,6 +3998,7 @@ namespace Telegram.Views
                 else
                 {
                     mention = $"\"tg-user://{user.Id}\"";
+                    mentionUserId = user.Id;
 
                     if (FormattedTextBox.IsSafe(user.FirstName))
                     {
@@ -4030,19 +4049,16 @@ namespace Telegram.Views
 
             void Mention()
             {
-                var range = TextField.Document.Selection.GetClone();
-                range.SetText(TextSetOptions.None, mentionName ?? mention);
-
                 if (mentionName != null)
                 {
-                    range.Link = mention;
+                    TextField.InsertMention(mentionName, mentionUserId);
+                }
+                else
+                {
+                    TextField.InsertText(mention + " ");
                 }
 
-                range = TextField.Document.GetRange(range.EndPosition, range.EndPosition);
-                range.SetText(TextSetOptions.None, " ");
-
-                TextField.Document.Selection.StartPosition = range.EndPosition;
-                TextField.Focus(FocusState.Keyboard);
+                TextField.FocusInput(FocusState.Keyboard);
             }
 
             void SearchMessages(MessageSender sender)
@@ -5045,106 +5061,11 @@ namespace Telegram.Views
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
+            _composer.Accept(e.ClickedItem);
+
+            if (e.ClickedItem is Sticker)
             {
-                return;
-            }
-
-            var selection = TextField.Document.Selection.GetClone();
-            var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
-
-            void InsertText(string insert)
-            {
-                var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
-
-                TextField.Document.Selection.StartPosition = index + insert.Length;
-            }
-
-            if (e.ClickedItem is User user && entity is AutocompleteEntity.Username)
-            {
-                var username = user.ActiveUsername(result);
-
-                string insert;
-                if (string.IsNullOrEmpty(username))
-                {
-                    insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
-
-                    if (FormattedTextBox.IsUnsafe(insert))
-                    {
-                        insert = Strings.Username;
-                    }
-                }
-                else
-                {
-                    insert = $"@{username}";
-                }
-
-                var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
-
-                if (string.IsNullOrEmpty(username))
-                {
-                    range.Link = $"\"tg-user://{user.Id}\"";
-                }
-
-                TextField.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
-                TextField.Document.Selection.StartPosition = range.EndPosition + 1;
-
-                if (index == 0 && user.Type is UserTypeBot bot && bot.IsInline)
-                {
-                    ViewModel.ResolveInlineBot(username);
-                }
-            }
-            else if (e.ClickedItem is BotCommandFullInfo command)
-            {
-                var insert = $"/{command.Command}";
-                if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
-                {
-                    var bot = ViewModel.ClientService.GetUser(command.BotUserId);
-                    if (bot != null && bot.HasActiveUsername(out string username))
-                    {
-                        insert += $"@{username}";
-                    }
-                }
-
-                var complete = WindowContext.IsKeyDown(VirtualKey.Tab);
-                if (complete && entity is AutocompleteEntity.Command)
-                {
-                    InsertText($"{insert} ");
-                }
-                else
-                {
-                    TextField.ClearText();
-                    ViewModel.SendMessage(insert);
-                }
-
-                TextField.IsMenuExpanded = false;
-            }
-            else if (e.ClickedItem is string hashtag && entity is AutocompleteEntity.Hashtag)
-            {
-                InsertText($"{hashtag} ");
-            }
-            else if (e.ClickedItem is Sticker sticker)
-            {
-                TextField.ClearText();
-                ViewModel.SendSticker(sticker, SchedulingState.Auto, null, result);
-
                 ButtonStickers.Collapse();
-            }
-            else if (e.ClickedItem is QuickReplyShortcut shortcut)
-            {
-                TextField.ClearText();
-
-                if (ViewModel.IsPremium)
-                {
-                    ViewModel.ClientService.Send(new SendQuickReplyShortcutMessages(ViewModel.Chat.Id, shortcut.Id, 0));
-                }
-                else
-                {
-                    ViewModel.NavigationService.ShowPromo(new PremiumFeatureBusiness());
-                }
             }
         }
 
@@ -5734,7 +5655,7 @@ namespace Telegram.Views
             UpdateChatTheme(chat);
             UpdateChatBusinessBotManageBar(chat, chat.BusinessBotManageBar);
 
-            if (TextField.Effect != null)
+            if (_composer.Effect != null)
             {
                 RemoveMessageEffect();
             }
@@ -6672,7 +6593,7 @@ namespace Telegram.Views
 
             if (next == SideButton.None && prev == SideButton.None)
             {
-                TextField.IsMenuExpanded = false;
+                _composer.IsMenuExpanded = false;
                 ButtonMore.Visibility = Visibility.Collapsed;
                 ButtonAlias.Visibility = Visibility.Collapsed;
 
@@ -6700,7 +6621,7 @@ namespace Telegram.Views
 
                 if (_sideMenuCollapsed != SideButton.BotMenu)
                 {
-                    TextField.IsMenuExpanded = false;
+                    _composer.IsMenuExpanded = false;
                     ButtonMore.Visibility = Visibility.Collapsed;
                 }
 
@@ -7576,7 +7497,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    TextField.IsMenuExpanded = !TextField.IsMenuExpanded;
+                    _composer.IsMenuExpanded = !_composer.IsMenuExpanded;
                 }
             }
         }
@@ -8462,7 +8383,7 @@ namespace Telegram.Views
 
         private void NewThread_Click(object sender, RoutedEventArgs e)
         {
-            TextField.Focus(FocusState.Keyboard);
+            TextField.FocusInput(FocusState.Keyboard);
         }
 
         private void StickySummaryAbove_Click(object sender, RoutedEventArgs e)

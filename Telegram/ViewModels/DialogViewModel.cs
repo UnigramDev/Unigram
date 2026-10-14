@@ -686,20 +686,8 @@ namespace Telegram.ViewModels
             }
         }
 
-        public ChatTextBox TextField { get; set; }
+        public IFormattedTextInput TextField { get; set; }
         public ChatHistoryView HistoryField { get; set; }
-
-        public void SetSelection(int start)
-        {
-            var field = TextField;
-            if (field == null)
-            {
-                return;
-            }
-
-            field.Document.GetText(TextGetOptions.None, out string text);
-            field.Document.Selection.SetRange(start, text.Length);
-        }
 
         public void SetText(FormattedText text, bool focus = false)
         {
@@ -737,12 +725,12 @@ namespace Telegram.ViewModels
             }
             else
             {
-                field.SetText(text, entities);
+                field.SetText(new FormattedText(text, entities));
             }
 
             if (focus)
             {
-                field.Focus(FocusState.Keyboard);
+                field.FocusInput(FocusState.Keyboard);
             }
         }
 
@@ -1238,7 +1226,7 @@ namespace Telegram.ViewModels
                 await LoadLastSliceAsync();
             }
 
-            TextField?.Focus(FocusState.Programmatic);
+            TextField?.FocusInput(FocusState.Programmatic);
         }
 
         public Task LoadLastSliceAsync()
@@ -3005,7 +2993,7 @@ namespace Telegram.ViewModels
                     Forwarding = _composerHeader?.Forwarding
                 };
 
-                TextField?.Focus(FocusState.Keyboard);
+                TextField?.FocusInput(FocusState.Keyboard);
             }
         }
 
@@ -3038,7 +3026,7 @@ namespace Telegram.ViewModels
                 Forwarding = forwarding
             };
 
-            TextField?.Focus(FocusState.Keyboard);
+            TextField?.FocusInput(FocusState.Keyboard);
         }
 
         private async void ShowReplyMarkup(Chat chat)
@@ -3386,7 +3374,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            TextField?.Focus(FocusState.Programmatic);
+            TextField?.FocusInput(FocusState.Programmatic);
         }
 
         /// <summary>
@@ -4140,7 +4128,7 @@ namespace Telegram.ViewModels
             await ShowPopupAsync(popup);
             text = await tcs.Task;
 
-            TextField?.Focus(FocusState.Keyboard);
+            TextField?.FocusInput(FocusState.Keyboard);
 
             if (text != null)
             {

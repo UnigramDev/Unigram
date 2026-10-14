@@ -39,6 +39,12 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
+    /// <summary>
+    /// The composer's box over RichEdit. What makes it the composer is in
+    /// <see cref="ComposerController"/>; what is left here is RichEdit's: its emoji and custom
+    /// emoji suggestions, the caret jumping to the ends, the inline bot's placeholder drawn over
+    /// the text, and a space typed after formatting that ends it.
+    /// </summary>
     public partial class ChatTextBox : FormattedTextBox
     {
         private TextBlock InlinePlaceholderTextContentPresenter;
@@ -46,12 +52,9 @@ namespace Telegram.Controls.Chats
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public MessageEffect Effect { get; set; }
-
         public ChatTextBox()
         {
             DefaultStyleKey = typeof(ChatTextBox);
-            TextChanged += OnTextChanged;
 
             _blockPadding = 48;
         }
@@ -70,104 +73,6 @@ namespace Telegram.Controls.Chats
         {
             Capture?.Invoke(this, e);
             base.OnTapped(e);
-        }
-
-        protected override async void OnPaste(HandledEventArgs e, DataPackageView package)
-        {
-            try
-            {
-                // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
-                // we have to handle the pasting operation manually to allow plaintext only.
-                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap) || package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-                {
-                    e.Handled = true;
-                    await ViewModel.HandlePackageAsync(package);
-                }
-                // Rich content — from this app's editor, from Telegram Android, or from a
-                // browser — arrives as HTML. It becomes message text whenever it can be
-                // said with entities, and reopens the rich editor when it can't. The app's
-                // own inline format is preferred when both are on the clipboard: it carries
-                // exactly what the field can hold, so it never has to escalate.
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Html)
-                    && !package.AvailableFormats.Contains("application/x-tl-field-tags")
-                    && WindowContext.KeyModifiers(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
-                {
-                    e.Handled = true;
-
-                    if (!await TryPasteRichAsync(package))
-                    {
-                        base.OnPaste(e, package);
-                    }
-                }
-                else
-                {
-                    base.OnPaste(e, package);
-                }
-            }
-            catch { }
-        }
-
-        /// <summary>
-        /// Pastes the clipboard's HTML as page blocks. Returns false when there is nothing
-        /// to paste that way, leaving the caller to fall back to plain text.
-        /// </summary>
-        private async Task<bool> TryPasteRichAsync(DataPackageView package)
-        {
-            Vector<PageBlock> blocks;
-            bool own;
-
-            try
-            {
-                // CF_HTML wraps the markup in a header of byte offsets and a source URL.
-                var fragment = HtmlFormatHelper.GetStaticFragment(await package.GetHtmlFormatAsync());
-                own = RichHtml.IsOwnFragment(fragment);
-                blocks = RichHtml.Parse(fragment);
-            }
-            catch
-            {
-                return false;
-            }
-
-            if (blocks.Count == 0)
-            {
-                return false;
-            }
-
-            // A <pre> with nothing inside it is what a browser wraps a text/plain
-            // document in — a log, a raw file — so pasting that as a code block is more
-            // often wrong than right. Anything the source marked up itself, a <code>
-            // child or the spans of a highlighter, parses to more than one leaf and
-            // keeps its block.
-            if (!own && blocks.Count == 1 && blocks[0] is PageBlockPreformatted { Text: RichTextPlain, Language.Length: 0 })
-            {
-                return false;
-            }
-
-            // Everything a message can say: an ordinary formatted paste, entities and all.
-            if (PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out FormattedText text))
-            {
-                SetText(text.Text, text.Entities, true);
-                return true;
-            }
-
-            // Beyond that only our own content is worth a trip to the editor: 
-            // since this is gated behind a different shortcut it's fine, but only for premium users
-            if (!own && !ViewModel.IsPremium)
-            {
-                return false;
-            }
-
-            var start = Math.Min(Document.Selection.StartPosition, Document.Selection.EndPosition);
-            var end = Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition);
-
-            // What the field already held is split around the paste — the selection is
-            // replaced, as any paste would.
-            ViewModel.PasteRichMessage(
-                GetFormattedText(false, true, Document.GetRange(0, start)),
-                blocks,
-                GetFormattedText(false, true, Document.GetRange(end, TextConstants.MaxUnitCount)));
-
-            return true;
         }
 
         private OrientableListView _controlledList;
@@ -192,39 +97,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void SetAutocomplete(IAutocompleteCollection collection, bool recycle = false, bool inline = false)
-        {
-            if (inline is false)
-            {
-                HideEmoji();
-            }
-
-            if (collection != null)
-            {
-                if (ViewModel.Autocomplete is AutocompleteCollection autocomplete)
-                {
-                    if (autocomplete.Source != collection)
-                    {
-                        if (recycle)
-                        {
-                            autocomplete.Update(collection);
-                        }
-                        else
-                        {
-                            ViewModel.Autocomplete = new AutocompleteCollection(collection);
-                        }
-                    }
-                }
-                else
-                {
-                    ViewModel.Autocomplete = new AutocompleteCollection(collection);
-                }
-            }
-            else
-            {
-                ViewModel.Autocomplete = null;
-            }
-        }
+        public override bool HasOpenSuggestions => _emojiFlyout != null;
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
@@ -252,133 +125,25 @@ namespace Telegram.Controls.Chats
                     e.Handled = true;
                 }
             }
-            else if (e.Key is VirtualKey.Up or VirtualKey.Down or VirtualKey.Left or VirtualKey.Right or VirtualKey.Tab or VirtualKey.Enter)
+            else if (_emojiFlyout?.Content is ChatTextFlyout presenter && presenter.ItemsSource is IAutocompleteCollection autocomplete)
             {
-                IAutocompleteCollection autocomplete;
-                ListViewBase autocompleteList;
+                e.Handled = ProcessFlyoutKey(e.Key, presenter.ControlledList, autocomplete);
+            }
+            else if (e.Key is VirtualKey.Up or VirtualKey.Down && WindowContext.KeyModifiers() == VirtualKeyModifiers.None && ViewModel?.Autocomplete == null)
+            {
+                // On the first line Up goes to the start, on the last Down goes to the end, as
+                // in a text box; the composer has already taken Up in an empty one.
+                Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
 
-                if (_emojiFlyout?.Content is ChatTextFlyout presenter)
+                if (e.Key == VirtualKey.Up && rect.Y.AlmostEqualsToZero())
                 {
-                    autocomplete = presenter.ItemsSource;
-                    autocompleteList = presenter.ControlledList;
-                }
-                else
-                {
-                    autocomplete = ViewModel.Autocomplete;
-                    autocompleteList = ControlledList;
-                }
-
-                var modifiers = WindowContext.KeyModifiers();
-
-                if (e.Key is VirtualKey.Up or VirtualKey.Down)
-                {
-                    if (e.Key is VirtualKey.Up or VirtualKey.Down && modifiers == VirtualKeyModifiers.None && autocomplete == null)
-                    {
-                        if (e.Key == VirtualKey.Up && IsEmpty)
-                        {
-                            ViewModel.EditLastMessage();
-                            e.Handled = true;
-                        }
-                        else
-                        {
-                            Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
-
-                            if (e.Key == VirtualKey.Up && rect.Y.AlmostEqualsToZero())
-                            {
-                                Document.Selection.SetRange(0, 0);
-                                e.Handled = true;
-                            }
-                            else if (e.Key == VirtualKey.Down && rect.Bottom >= ContentElement.ExtentHeight - 1)
-                            {
-                                Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
-                                e.Handled = true;
-                            }
-                        }
-                    }
-                    else if (e.Key == VirtualKey.Up && modifiers == VirtualKeyModifiers.Control)
-                    {
-                        ViewModel.MessageReplyPrevious();
-                        e.Handled = true;
-                    }
-                    else if (e.Key == VirtualKey.Down && modifiers == VirtualKeyModifiers.Control)
-                    {
-                        ViewModel.MessageReplyNext();
-                        e.Handled = true;
-                    }
-                    else if (e.Key is VirtualKey.Up or VirtualKey.Down)
-                    {
-                        if (autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete?.Orientation == Orientation.Vertical)
-                        {
-                            autocompleteList.SelectionMode = ListViewSelectionMode.Single;
-
-                            var index = e.Key == VirtualKey.Up ? -1 : 1;
-                            var next = autocompleteList.SelectedIndex + index;
-                            if (next >= 0 && next < autocomplete.Count)
-                            {
-                                autocompleteList.SelectedIndex = next;
-                                autocompleteList.ScrollIntoView(autocompleteList.SelectedItem);
-                            }
-
-                            e.Handled = true;
-                        }
-                    }
-                }
-                else if (e.Key is VirtualKey.Left or VirtualKey.Right && modifiers == VirtualKeyModifiers.None)
-                {
-                    if (autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete?.Orientation == Orientation.Horizontal)
-                    {
-                        if (autocompleteList.SelectedIndex == 0 && e.Key == VirtualKey.Left)
-                        {
-                            autocompleteList.SelectedIndex = -1;
-                            e.Handled = true;
-                        }
-                        else if (autocompleteList.SelectedIndex == autocompleteList.Items.Count - 1 && e.Key == VirtualKey.Right)
-                        {
-                            autocompleteList.SelectedIndex = 0;
-                            e.Handled = true;
-                        }
-                        else
-                        {
-                            autocompleteList.SelectionMode = ListViewSelectionMode.Single;
-
-                            var index = e.Key == VirtualKey.Left ? -1 : 1;
-                            var next = autocompleteList.SelectedIndex + index;
-                            if (next >= 0 && next < autocomplete.Count)
-                            {
-                                autocompleteList.SelectedIndex = next;
-                                autocompleteList.ScrollIntoView(autocompleteList.SelectedItem);
-
-                                e.Handled = true;
-                            }
-                        }
-                    }
-                }
-                else if (e.Key is VirtualKey.Tab or VirtualKey.Enter && autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete != null
-                    && ((autocomplete.InsertOnKeyDown is false && autocompleteList.SelectedItem != null) || autocomplete.InsertOnKeyDown))
-                {
-                    if (modifiers == VirtualKeyModifiers.Shift)
-                    {
-                        return;
-                    }
-
-                    var container = autocompleteList.ContainerFromIndex(Math.Max(0, autocompleteList.SelectedIndex)) as GridViewItem;
-                    if (container != null)
-                    {
-                        var peer = new GridViewItemAutomationPeer(container);
-                        var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                        provider.Invoke();
-                    }
-
-                    Logger.Debug("Tab pressed and handled");
+                    Document.Selection.SetRange(0, 0);
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.Tab)
+                else if (e.Key == VirtualKey.Down && rect.Bottom >= ContentElement.ExtentHeight - 1)
                 {
-                    // Ignored to allow Ctrl+Tab and Ctrl+Shift+Tab to switch chats
-                    if (modifiers != VirtualKeyModifiers.None)
-                    {
-                        return;
-                    }
+                    Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
+                    e.Handled = true;
                 }
             }
 
@@ -388,258 +153,90 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        protected override bool CanAccept()
+        // The emoji flyout's list runs across: Left and Right move along it, Tab or Enter pick.
+        private static bool ProcessFlyoutKey(VirtualKey key, ListViewBase list, IAutocompleteCollection autocomplete)
         {
-            return ViewModel.CurrentInlineBot == null;
-        }
-
-        protected override void OnAccept()
-        {
-            Send();
-        }
-
-        private ulong _lastKeystroke;
-
-        private void OnTextChanged(object sender, RoutedEventArgs e)
-        {
-            if (IsEmpty)
+            var modifiers = WindowContext.KeyModifiers();
+            if (list == null || list.Items.Count == 0 || modifiers == VirtualKeyModifiers.Control || modifiers == VirtualKeyModifiers.Menu)
             {
-                return;
+                return false;
             }
 
-            // Milliseconds since boot rather than the clock: this measures an interval, and
-            // DateTime.Now both resolves the time zone on every call and can jump backwards
-            // on a clock correction, which would leave the indicator silent until it caught up.
-            var timestamp = Logger.TickCount;
-
-            if (timestamp - _lastKeystroke > 4000 || (_wasEmpty && !IsEmpty))
+            if (key is VirtualKey.Left or VirtualKey.Right && modifiers == VirtualKeyModifiers.None && autocomplete.Orientation == Orientation.Horizontal)
             {
-                _lastKeystroke = timestamp;
-                ViewModel.ChatActionManager.SetTyping(new ChatActionTyping());
-            }
-        }
-
-        private CancellationTokenSource _inlineBotToken;
-
-        private void CancelInlineBotToken()
-        {
-            if (_inlineBotToken != null)
-            {
-                _inlineBotToken.Cancel();
-                _inlineBotToken.Dispose();
-                _inlineBotToken = null;
-            }
-        }
-
-        private void GetInlineBotResults(string inlineQuery)
-        {
-            if (ViewModel.InlineBotResults != null && string.Equals(inlineQuery, ViewModel.InlineBotResults.Query, StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-
-            CancelInlineBotToken();
-
-            _inlineBotToken = new CancellationTokenSource();
-            ViewModel.GetInlineBotResults(inlineQuery, _inlineBotToken.Token);
-        }
-
-        private void ClearInlineBotResults()
-        {
-            CancelInlineBotToken();
-
-            ViewModel.CurrentInlineBot = null;
-            ViewModel.InlineBotResults = null;
-            UpdateInlinePlaceholder(null, null);
-        }
-
-        protected override async void OnSelectionChanged(RichEditBox sender, bool fromTextChanging)
-        {
-            if (_isMenuExpanded)
-            {
-                if (ViewModel.Autocomplete is not AutocompleteList)
+                if (list.SelectedIndex == 0 && key == VirtualKey.Left)
                 {
-                    ClearInlineBotResults();
-                    SetAutocomplete(GetCommands(string.Empty));
+                    list.SelectedIndex = -1;
+                    return true;
+                }
+                else if (list.SelectedIndex == list.Items.Count - 1 && key == VirtualKey.Right)
+                {
+                    list.SelectedIndex = 0;
+                    return true;
                 }
 
+                list.SelectionMode = ListViewSelectionMode.Single;
+
+                var next = list.SelectedIndex + (key == VirtualKey.Left ? -1 : 1);
+                if (next >= 0 && next < autocomplete.Count)
+                {
+                    list.SelectedIndex = next;
+                    list.ScrollIntoView(list.SelectedItem);
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (key is VirtualKey.Tab or VirtualKey.Enter && modifiers != VirtualKeyModifiers.Shift
+                && (autocomplete.InsertOnKeyDown || list.SelectedItem != null))
+            {
+                if (list.ContainerFromIndex(Math.Max(0, list.SelectedIndex)) is GridViewItem container
+                    && new GridViewItemAutomationPeer(container).GetPattern(PatternInterface.Invoke) is IInvokeProvider provider)
+                {
+                    provider.Invoke();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override void OnSelectionChanged(RichEditBox sender, bool fromTextChanging)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null || IsEmpty || Document.Selection.Length != 0
+                || !AutocompleteEntityFinder.TrySearch(Document.Selection.GetClone(), out AutocompleteEntity entity, out string result, out int index))
+            {
+                HideEmoji();
                 return;
             }
 
-            // This runs on every keystroke and every caret move, and the draft is the largest
-            // thing here, so only the branches that need it materialize it. Every path below
-            // still ends at ClearInlineBotResults, which is what the search did when it found
-            // nothing.
-            if (ViewModel.CurrentInlineBot != null)
-            {
-                Document.GetText(TextGetOptions.NoHidden, out string text);
+            var chatId = viewModel.Chat?.Id ?? 0;
 
-                if (SearchInlineBotResults(text, true, out string inlineQuery))
+            if (entity == AutocompleteEntity.Sticker)
+            {
+                // A message that is one emoji is a query for custom emoji as a whole; the
+                // composer offers stickers for it as well, in the list under the box.
+                if (index == 0 && viewModel.ComposerHeader?.Editing == null)
                 {
-                    SetAutocomplete(null);
-                    GetInlineBotResults(inlineQuery);
-                    return;
+                    Document.GetText(TextGetOptions.NoHidden, out string text);
+                    ShowOrUpdateEmojiFlyout(0, new SearchStickersCollection(viewModel.ClientService, true, text, chatId));
+                }
+                else
+                {
+                    ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(viewModel.ClientService, true, result, chatId));
                 }
             }
-
-            if (IsEmpty || Document.Selection.Length != 0)
+            else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
             {
-                ClearInlineBotResults();
-                SetAutocomplete(null);
-                return;
-            }
-
-            var selection = Document.Selection.GetClone();
-
-            var prev = ViewModel.Autocomplete;
-
-            if (prev is AutocompleteCollection collection)
-            {
-                prev = collection.Source;
-            }
-
-            if (TryGetAutocomplete(selection, prev, fromTextChanging, out var autocomplete, out bool recycle, out bool inline))
-            {
-                ClearInlineBotResults();
-                SetAutocomplete(autocomplete, recycle, inline);
+                ShowOrUpdateEmojiFlyout(index, new EmojiCollection(viewModel.ClientService, viewModel.Settings.RecentEmoji, result, chatId));
             }
             else
             {
-                SetAutocomplete(null);
-                CancelInlineBotToken();
-
-                var token = (_inlineBotToken = new CancellationTokenSource()).Token;
-
-                // SearchByInlineBot only matches a username that starts the message, which one
-                // character answers without reading the rest of it
-                if (CharacterAt(0) == '@')
-                {
-                    Document.GetText(TextGetOptions.NoHidden, out string text);
-                    var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
-
-                    if (SearchByInlineBot(query, out string username, out _) && await ViewModel.ResolveInlineBotAsync(username, token))
-                    {
-                        if (token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-
-                        if (SearchInlineBotResults(text, true, out query))
-                        {
-                            SetAutocomplete(null);
-                            GetInlineBotResults(query);
-                            return;
-                        }
-                    }
-                }
-
-                ClearInlineBotResults();
+                HideEmoji();
             }
-        }
-
-        private bool TryGetAutocomplete(ITextRange selection, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete, out bool recycle, out bool inline)
-        {
-            autocomplete = null;
-            recycle = false;
-            inline = false;
-
-            if (AutocompleteEntityFinder.TrySearch(selection, out AutocompleteEntity entity, out string result, out int index))
-            {
-                if (entity == AutocompleteEntity.Username)
-                {
-                    var chat = ViewModel.Chat;
-                    if (chat == null)
-                    {
-                        return false;
-                    }
-
-                    if (prev is UsernameCollection && prev.Query.Equals(result))
-                    {
-                        autocomplete = prev;
-                        return true;
-                    }
-
-                    var guestBots = chat.Type is not ChatTypeSecret;
-                    var members = chat.Type is /*ChatTypePrivate or ChatTypeSecret or*/ ChatTypeBasicGroup or ChatTypeSupergroup { IsChannel: false };
-
-                    autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Chat.Id, ViewModel.TopicId, result, index == 0, guestBots, members, false);
-                    recycle = prev is UsernameCollection;
-
-                    return true;
-                }
-                else if (entity == AutocompleteEntity.Hashtag)
-                {
-                    if (prev is SearchHashtagsCollection && prev.Query.Equals(result))
-                    {
-                        autocomplete = prev;
-                        return true;
-                    }
-
-                    autocomplete = new SearchHashtagsCollection(ViewModel.ClientService, result);
-                    recycle = prev is SearchHashtagsCollection;
-
-                    return true;
-                }
-                else if (entity == AutocompleteEntity.Sticker)
-                {
-                    if (index == 0 && ViewModel.ComposerHeader?.Editing == null)
-                    {
-                        // The message is a single emoji, so it is the sticker query
-                        Document.GetText(TextGetOptions.NoHidden, out string text);
-
-                        ShowOrUpdateEmojiFlyout(0, new SearchStickersCollection(ViewModel.ClientService, true, text, ViewModel.Chat?.Id ?? 0));
-                        inline = true;
-
-                        var chat = ViewModel.Chat;
-                        if (chat == null || !chat.CanSendOtherMessages(ViewModel.ClientService))
-                        {
-                            autocomplete = null;
-                            return true;
-                        }
-
-                        if (prev is SearchStickersCollection collection && !collection.IsCustomEmoji && prev.Query.Equals(text.Trim()))
-                        {
-                            autocomplete = prev;
-                            return true;
-                        }
-
-                        autocomplete = new SearchStickersCollection(ViewModel.ClientService, false, text.Trim(), chat.Id);
-                        return true;
-                    }
-                    else
-                    {
-                        ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, true, result, ViewModel.Chat?.Id ?? 0));
-
-                        autocomplete = null;
-                        inline = true;
-                        return true;
-                    }
-                }
-                else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
-                {
-                    ShowOrUpdateEmojiFlyout(index, new EmojiCollection(ViewModel.ClientService, ViewModel.Settings.RecentEmoji, result, ViewModel.Chat.Id));
-
-                    autocomplete = null;
-                    inline = true;
-                    return true;
-                }
-                else if (entity == AutocompleteEntity.Command && index == 0)
-                {
-                    if (prev is AutocompleteList && prev.Query.Equals(result))
-                    {
-                        autocomplete = prev;
-                        return true;
-                    }
-
-                    autocomplete = GetCommands(result);
-                    recycle = prev is AutocompleteList;
-
-                    return true;
-                }
-            }
-
-            autocomplete = null;
-            return false;
         }
 
         private Flyout _emojiFlyout;
@@ -742,31 +339,36 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private AutocompleteList GetCommands(string command)
+        protected override void OnSettingText()
         {
-            var all = ViewModel.BotCommands;
-            if (all != null)
+            UpdateInlinePlaceholder(null, null);
+        }
+
+        public override void SetInlinePlaceholder(string prefix, string hint)
+        {
+            UpdateInlinePlaceholder(prefix, hint);
+        }
+
+        private bool _hasInlinePlaceholder;
+
+        // Drawn over the text, its prefix in no colour so that the hint starts where the text ends.
+        private void UpdateInlinePlaceholder(string prefix, string hint)
+        {
+            if (InlinePlaceholderTextContentPresenter != null)
             {
-                var results = new AutocompleteList(command, all.Where(x => x.Command.StartsWith(command, StringComparison.OrdinalIgnoreCase)));
-                if (results.Count > 0)
+                if (prefix != null && hint != null)
                 {
-                    return results;
+                    _hasInlinePlaceholder = true;
+                    InlinePlaceholderTextContentPresenter.Inlines.Clear();
+                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = prefix, Foreground = null });
+                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = hint });
+                }
+                else if (_hasInlinePlaceholder)
+                {
+                    _hasInlinePlaceholder = false;
+                    InlinePlaceholderTextContentPresenter.Inlines.Clear();
                 }
             }
-            else if (ViewModel.ClientService.TryGetUser(ViewModel.Chat, out var user) && user.Type is UserTypeRegular)
-            {
-                ViewModel.ClientService.LoadQuickReplyShortcuts();
-
-                var replies = ViewModel.ClientService.GetQuickReplyShortcuts();
-
-                var results = new AutocompleteList(command, replies.Where(x => x.Name.StartsWith(command, StringComparison.OrdinalIgnoreCase)));
-                if (results.Count > 0)
-                {
-                    return results;
-                }
-            }
-
-            return null;
         }
 
         public partial class UsernameCollection : IncrementalCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
@@ -1017,243 +619,6 @@ namespace Telegram.Controls.Chats
 
             public bool InsertOnKeyDown => true;
         }
-
-        public async void Send(bool disableNotification = false)
-        {
-            Document.GetText(TextGetOptions.NoHidden, out string plain);
-
-            // This needs to run before text empty check as it cleans up
-            // some stuff if inline bot isn't found
-            if (SearchInlineBotResults(plain, false, out string inlineQuery))
-            {
-                if (string.IsNullOrEmpty(inlineQuery))
-                {
-                    SetText(null);
-                }
-                else
-                {
-                    var split = plain.Split(' ');
-                    var username = split[0] + " ";
-
-                    Document.SetText(TextSetOptions.None, username);
-                    Document.Selection.StartPosition = username.Length;
-                }
-
-                return;
-            }
-            else if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.Editing == null)
-            {
-                Schedule(false);
-                return;
-            }
-
-            // Read, not consumed: how many messages the text splits into is part of what the user
-            // is asked to confirm, and nothing may disappear from the field while they decide.
-            var text = GetPreparedText();
-
-            await ViewModel.SendComposerTextAsync(text, SchedulingState.Auto, disableNotification, Effect?.Id ?? 0);
-        }
-
-        public async void Schedule(bool whenOnline)
-        {
-            var text = GetPreparedText();
-
-            await ViewModel.SendComposerTextAsync(text, whenOnline ? SchedulingState.WhenOnline : SchedulingState.Schedule, null, Effect?.Id ?? 0);
-        }
-
-        protected override void OnGettingFormattedText()
-        {
-        }
-
-        protected override void OnSettingText()
-        {
-            UpdateInlinePlaceholder(null, null);
-        }
-
-        private bool _isMenuExpanded;
-        public bool IsMenuExpanded
-        {
-            get => _isMenuExpanded;
-            set
-            {
-                if (ViewModel?.Chat?.Type is not ChatTypePrivate && value)
-                {
-                    return;
-                }
-
-                _isMenuExpanded = value;
-                OnSelectionChanged(this, false);
-            }
-        }
-
-        #region Username
-
-        public static bool SearchByInlineBot(string text, out string searchText, out int index)
-        {
-            index = -1;
-            searchText = string.Empty;
-
-            var found = true;
-            var i = 0;
-
-            while (i < text.Length)
-            {
-                if (i == 0 && text[i] != '@')
-                {
-                    found = false;
-                    break;
-                }
-                else if (text[i] == ' ')
-                {
-                    index = i;
-                    break;
-                }
-                else if (text[i] == '@')
-                {
-                    i++;
-                }
-                else
-                {
-                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
-                    {
-                        found = false;
-                        break;
-                    }
-
-                    i++;
-                }
-            }
-
-            if (found)
-            {
-                if (index == -1)
-                {
-                    return false;
-                }
-
-                searchText = text.Substring(0, index).TrimStart('@');
-            }
-
-            return found;
-        }
-
-        #endregion
-
-        #region Inline bots
-
-        private bool SearchInlineBotResults(string text, bool apply, out string searchText)
-        {
-            var flag = false;
-            searchText = string.Empty;
-
-            // This runs on every keystroke, and without an inline bot to address none of the
-            // string work below can lead anywhere, so it's not worth an allocation.
-            var inlineBot = ViewModel.CurrentInlineBot;
-            if (inlineBot == null)
-            {
-                if (apply)
-                {
-                    ClearInlineBotResults();
-                }
-
-                return false;
-            }
-
-            if (text.EndsWith('\r'))
-            {
-                text = text.Substring(0, text.Length - 1);
-            }
-
-            if (text.StartsWith('@'))
-            {
-                text = text.Substring(1);
-            }
-
-            var space = text.IndexOf(' ');
-            var first = space < 0 ? text : text.Substring(0, space);
-
-            if (inlineBot.HasActiveUsername(first, out string username))
-            {
-                searchText = ReplaceFirst(text.TrimStart(), username, string.Empty);
-                if (searchText.StartsWith(" "))
-                {
-                    searchText = ReplaceFirst(searchText, " ", string.Empty);
-                    flag = true;
-                }
-
-                if (apply)
-                {
-                    if (!flag)
-                    {
-                        if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
-                        {
-                            ClearInlineBotResults();
-                        }
-                        else
-                        {
-                            var user = ViewModel.CurrentInlineBot;
-                            if (user != null && user.Type is UserTypeBot bot)
-                            {
-                                UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
-                            }
-                        }
-                    }
-                    else if (string.IsNullOrEmpty(searchText))
-                    {
-                        var user = ViewModel.CurrentInlineBot;
-                        if (user != null && user.Type is UserTypeBot bot)
-                        {
-                            UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
-                        }
-                    }
-                    else
-                    {
-                        UpdateInlinePlaceholder(null, null);
-                    }
-                }
-            }
-            else if (apply)
-            {
-                ClearInlineBotResults();
-            }
-
-            searchText = searchText.TrimEnd('\r', '\n');
-            return flag;
-        }
-
-        public string ReplaceFirst(string text, string search, string replace)
-        {
-            var index = text.IndexOf(search, StringComparison.OrdinalIgnoreCase);
-            if (index < 0)
-            {
-                return text;
-            }
-
-            return text.Substring(0, index) + replace + text.Substring(index + search.Length);
-        }
-
-        private bool _hasInlinePlaceholder;
-
-        private void UpdateInlinePlaceholder(string username, string placeholder)
-        {
-            if (InlinePlaceholderTextContentPresenter != null)
-            {
-                if (username != null && placeholder != null)
-                {
-                    _hasInlinePlaceholder = true;
-                    InlinePlaceholderTextContentPresenter.Inlines.Clear();
-                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = "@" + username + " ", Foreground = null });
-                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = placeholder });
-                }
-                else if (_hasInlinePlaceholder)
-                {
-                    _hasInlinePlaceholder = false;
-                    InlinePlaceholderTextContentPresenter.Inlines.Clear();
-                }
-            }
-        }
-
-        #endregion
     }
 
     public interface IAutocompleteCollection : ICollection, IEnumerable<object>

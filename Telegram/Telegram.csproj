@@ -1002,6 +1002,7 @@
     <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatStickerButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
+    <Compile Include="Controls\Chats\ComposerController.cs" />
     <Compile Include="Controls\Chats\ChatThemeDrawer.xaml.cs">
       <DependentUpon>ChatThemeDrawer.xaml</DependentUpon>
     </Compile>

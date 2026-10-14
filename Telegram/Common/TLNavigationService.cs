@@ -525,7 +525,7 @@ namespace Telegram.Common
                     page.ViewModel.Delegate.UpdateUser(chat, user, userFull, false, true);
                 }
 
-                page.ViewModel.TextField?.Focus(FocusState.Programmatic);
+                page.ViewModel.TextField?.FocusInput(FocusState.Programmatic);
 
                 if (state != null && state.TryGet("package", out DataPackageView package))
                 {

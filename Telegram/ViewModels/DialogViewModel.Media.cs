@@ -273,7 +273,7 @@ namespace Telegram.ViewModels
                     }
 
                     var link = await package.GetWebLinkAsync();
-                    field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, link.AbsoluteUri);
+                    field.InsertText(link.AbsoluteUri);
                 }
                 //else if (e.DataView.Contains(StandardDataFormats.WebLink))
                 //{
@@ -307,7 +307,7 @@ namespace Telegram.ViewModels
                         text += Environment.NewLine + link.AbsoluteUri;
                     }
 
-                    field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
+                    field.InsertText(text);
                 }
             }
             catch { }
@@ -429,7 +429,7 @@ namespace Telegram.ViewModels
 
             var confirm = await popup.OpenAsync(XamlRoot);
 
-            TextField?.Focus(FocusState.Programmatic);
+            TextField?.FocusInput(FocusState.Programmatic);
 
             if (confirm != ContentDialogResult.Primary)
             {

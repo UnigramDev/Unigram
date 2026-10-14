@@ -210,7 +210,7 @@ namespace Telegram.ViewModels
                     Forwarding = _composerHeader?.Forwarding
                 };
 
-                TextField?.Focus(FocusState.Keyboard);
+                TextField?.FocusInput(FocusState.Keyboard);
             }
         }
 
@@ -269,7 +269,7 @@ namespace Telegram.ViewModels
                     Forwarding = _composerHeader?.Forwarding
                 };
 
-                TextField?.Focus(FocusState.Keyboard);
+                TextField?.FocusInput(FocusState.Keyboard);
             }
         }
 
@@ -328,7 +328,7 @@ namespace Telegram.ViewModels
                     Forwarding = _composerHeader?.Forwarding
                 };
 
-                TextField?.Focus(FocusState.Keyboard);
+                TextField?.FocusInput(FocusState.Keyboard);
             }
         }
 
@@ -387,7 +387,7 @@ namespace Telegram.ViewModels
                     Forwarding = _composerHeader?.Forwarding
                 };
 
-                TextField?.Focus(FocusState.Keyboard);
+                TextField?.FocusInput(FocusState.Keyboard);
             }
         }
 
@@ -460,7 +460,7 @@ namespace Telegram.ViewModels
                 DeleteMessages(chat, new[] { message });
             }
 
-            TextField?.Focus(FocusState.Programmatic);
+            TextField?.FocusInput(FocusState.Programmatic);
         }
 
         public async void TryDeleteMessage(MessageViewModel message)
@@ -743,7 +743,7 @@ namespace Telegram.ViewModels
                 }
 
                 await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessages(messagesToShare));
-                TextField?.Focus(FocusState.Programmatic);
+                TextField?.FocusInput(FocusState.Programmatic);
             }
         }
 
@@ -764,7 +764,7 @@ namespace Telegram.ViewModels
             if (messages.Count > 0)
             {
                 IsSelectionEnabled = false;
-                TextField?.Focus(FocusState.Programmatic);
+                TextField?.FocusInput(FocusState.Programmatic);
 
                 foreach (var message in messages)
                 {
