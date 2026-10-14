@@ -352,26 +352,23 @@ holds Latin letters and back up once they convert to Chinese characters. Stock `
 `RichEditBox` do the same, so it is the IME's composition string's font metrics, not the editor.
 Worth looking at once the rest is done: a fixed line height in the leaves would hide it.
 
-Right to left: DirectWrite orders and shapes mixed runs inside a line, hit testing and selection
-come from it, and Left and Right swap in a line whose block reads right to left. What is missing
-is the base direction: `RichLeafView` sets plain text, which `DirectTextBlock` reads as neutral, so
-every line runs the way the app's language does, not the way its own text does. An Arabic line in
-an English app is laid out left to right (aligned left, its punctuation at the wrong end), and
-`IsRightToLeft` reads the element's `FlowDirection`, which follows the app, so the arrows only swap
-in an RTL app. Messages decide per paragraph with `NativeUtils.GetDirectionality` (`TextStyleRun`);
-the leaves should do the same, and the arrows should ask the leaf rather than the element.
-`RichDocument.IsRtl`, the rich message's own flag, is loaded and sent but nothing in the window
-sets it.
+Right to left (2026-10-14): each line runs the way its first strong character does
+(`NativeUtils.GetDirectionality` in `RichLeafView.Render`, handed to `DirectTextBlock.SetText`); a
+line with none follows the editor's `FlowDirection`. An article's direction is its first strong
+line's (`RichEditorView.UpdateDocumentDirection`): it sets `RichDocument.IsRtl`, which is sent,
+and mirrors the editor as an instant view mirrors. A message's text keeps the app's direction.
+The leaves' text blocks, formulas and media frames are pinned left to right, since they draw into
+surfaces that a mirrored parent would show mirrored; `RichLeafView` converts across that one flip,
+so everything else, which shares the leaf view's direction, reads its coordinates straight. The
+arrows ask the line (`DirectTextBlock.IsRightToLeft`), and Home and End go to the line's logical
+start and end (`RichLeafView.GetLineEdge`), which they did not for an RTL line before.
 
 Not done yet, in the order they matter:
 - Dates from the menu (`ChooseDateTimeToast`), and mentions inserted by callers.
-- `ComposerController` and moving the composers' callers off `Document`: nothing here touches
-  `ChatTextBox`, `CaptionTextBox`'s autocomplete, or `ChatView`.
+- `CaptionTextBox`'s autocomplete on the controller, for `SendFilesPopup` and `ChooseChatsPopup`
+  (the composer's moved: steps 1 and 2 above).
 - The host forwards no `Padding`, `FontFamily`, `InputScope` or style, and makes a plain
   `FormattedTextBox`; the `CaptionTextBox` surfaces need both, and a `CustomEmoji` canvas for the
   old box.
 - The `WatchDog` fallback to `Off`.
 - The cost of a keystroke and of making the control, measured against `RichEditBox`.
-- Right to left, as above: each leaf's base direction from its own text
-  (`NativeUtils.GetDirectionality`), the arrows asking the leaf, and a way to set
-  `RichDocument.IsRtl` in the rich window.

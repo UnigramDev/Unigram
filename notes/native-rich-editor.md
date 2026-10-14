@@ -106,7 +106,19 @@ Styles: `buttonStyleDefault/Primary/Danger/Success/Link`.
 
 ## State
 
-Each step updates this section.
+Each step updates this section. What follows is a log, oldest first: a later entry settles what
+an earlier one left open. The list just below is the current state.
+
+**Open (checked against the code, 2026-10-14):**
+- Theming: the selection is a stand-in brush (`RichEditorSelectionBrush`, TODO in RichEditor.xaml).
+- Markdown on paste, which Android offers after a paste.
+- Dragging a selection out of the editor.
+- Audio and file blocks look like a badge.
+- Slideshow design is wrong: the frame takes the size of the slide being shown
+  (`RichMediaRenderer`, `SetSize` from `group.Items[page]`), so turning a page resizes the block
+  and moves everything under it. Its size must not depend on the visible slide: one size for
+  the slideshow, every slide fitted inside it.
+- No test project: the engine's tests live in a scratch harness only.
 
 **Step 1 done (2026-10-12).** `RichTextLeaf`, `RichDocument`, `RichDocumentConverter`,
 `RichEditorEngine` (+ `.Editing`, `.Structure`). Not yet in either csproj. Compiled standalone
@@ -163,7 +175,8 @@ dll. Files:
   leaf), and document. It raises the text-changed and selection-changed events.
 - `RichMediaRenderer`: stills only (`ImageView.SetSource` for remote media,
   `GetMapThumbnailFile` for maps, `UriEx.ToBitmap` for local files), plus a kind/duration
-  badge. A collage shows its first item and a count; the mosaic layout is still to do.
+  badge. A collage shows its first item and a count; the mosaic layout is still to do
+  (done since: collages are tiled with the album's mosaic layout, see below).
 - Native: `DirectTextLayout.Caret` (idl/h/cpp). Checked with `/Zs` against the real headers,
   and the check was proven live with a planted error.
 
@@ -553,3 +566,26 @@ New glyphs: indent, outdent and clear formatting at F79B-F79D, button at F79E.
 Marked text in bubbles drawn by `DirectTextBlock` had no background: the layout has none to give
 a range. It is now a shape under the glyphs, as the search match is, in `FormattedTextBlock`'s
 PaleGoldenrod. The editor is unaffected: its leaves never emit `Marked` parts and draw their own.
+
+Right to left (2026-10-14): each line runs the way its first strong character does
+(`NativeUtils.GetDirectionality` in `RichLeafView.Render`, handed to `DirectTextBlock.SetText`); a
+line with none follows the editor's `FlowDirection`. An article's direction is its first strong
+line's (`RichEditorView.UpdateDocumentDirection`): it sets `RichDocument.IsRtl`, which is sent,
+and mirrors the editor as an instant view mirrors. A message's text keeps the app's direction.
+The leaves' text blocks, formulas and media frames are pinned left to right, since they draw into
+surfaces that a mirrored parent would show mirrored; `RichLeafView` converts across that one flip,
+so everything else, which shares the leaf view's direction, reads its coordinates straight. The
+arrows ask the line (`DirectTextBlock.IsRightToLeft`), and Home and End go to the line's logical
+start and end (`RichLeafView.GetLineEdge`), which they did not for an RTL line before.
+
+Media uploads while the article is written (2026-10-14). `RichMediaUploads`, which
+`RichTextWindow` gives the editor, starts TDLib's `preliminaryUploadFile` for a source the first
+time the renderer shows it, which covers inserting, pasting, dropping and a draft loaded with local
+files alike. Progress comes through `UpdateManager` with the editor as the subscriber, so it lands
+on the UI thread; a picture or a collage shows one ring, its uploads' bytes added up, and a file
+shows one on its icon. A structural change stops the uploads of sources no longer in the document
+(`AllBlocks`). On send, `RichDocumentConverter.ToInputRichMessage` asks the uploads
+(`IRichMediaInputs`) what each source goes as, and one uploading goes as a copy of its input
+naming `InputFileId`: the source itself is untouched, because undo steps share it and a draft,
+which is saved without the uploads, has to name the file on the device. The window detaches the
+uploads when a rich message went out and cancels them otherwise, on close.

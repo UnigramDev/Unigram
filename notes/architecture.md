@@ -576,8 +576,8 @@ overflow is cut off before `Scale` can shrink it back inside. It costs the desir
 drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
 `MeasureOverride` adds it back to recover the width the parent really had.
 
-## Rich message editor — Telegram/Controls/RichEditor/ (28 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=26cd946cc paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
+## Rich message editor — Telegram/Controls/RichEditor/ (29 files), Telegram/Views/Host/RichTextWindow.xaml.cs
+<!-- map: verified=fa95aa39f paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -596,6 +596,8 @@ emoji and custom emoji for what is typed (`AutocompleteEntityFinder`'s plain-tex
 composer's `ChatTextFlyout`, offered once the host sets a `RichSuggestionContext`. `MessageTextBox` — the editor in a
 text box's frame, `IFormattedTextInput` (Controls/) like `FormattedTextBox`, picked per surface by
 `FormattedTextInputHost` and the `NativeTextInput` diagnostics setting (notes/native-text-input-plan.md).
+`RichMediaUploads` — an article's media uploading from the moment it is added, sent by file id
+through `IRichMediaInputs`.
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
 **Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
@@ -610,7 +612,10 @@ it runs past: `Select` moves that end to the table's far edge, so delete and cop
 `Schema` set the engine runs no input rules, and a quote has no credit stop (`HasCredit`); a collapsed
 quote is a rich message's, a message's quote is only marked `IsExpandable`. A run with `Replaced`
 set (an emoticon or a picked suggestion) never merges with its neighbours, and Backspace after it
-gives the typing back: `HasSameStyle` must keep refusing it. Brushes come from the XAML, never from code. The
+gives the typing back: `HasSameStyle` must keep refusing it. The leaves' text blocks, formulas and
+media frames are pinned left to right, since they draw into surfaces a mirrored editor would show
+mirrored: `RichLeafView` is the one place their coordinates cross the flip, and nothing else may
+read a text block's coordinates directly. Brushes come from the XAML, never from code. The
 engine has no test project in the repo; `notes/native-rich-editor.md` has the design and its history.
 
 ---
