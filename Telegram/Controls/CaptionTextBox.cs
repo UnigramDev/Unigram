@@ -249,6 +249,8 @@ namespace Telegram.Controls
 
         private Flyout _emojiFlyout;
         private string _emojiQuery;
+
+        public override bool HasOpenSuggestions => _emojiFlyout != null;
         private CancellationTokenSource _emojiToken;
 
         public void CancelEmoji()

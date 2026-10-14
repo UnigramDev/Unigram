@@ -72,7 +72,7 @@ namespace Telegram.Controls
         public bool UpdateOrderOfInstalledStickerSets { get; }
     }
 
-    public partial class FormattedTextBox : RichEditBox
+    public partial class FormattedTextBox : RichEditBox, IFormattedTextInput
     {
         private readonly FormattedTextFlyout _selectionFlyout;
         private readonly MenuFlyoutSubItem _formattingFlyout;
@@ -214,6 +214,7 @@ namespace Telegram.Controls
             }
 
             OnSelectionChanged(this, _fromTextChanging || _selectionIndex == index);
+            _selectionChanged?.Invoke(this, EventArgs.Empty);
 
             _fromTextChanging = false;
             _selectionIndex = index;
@@ -548,17 +549,147 @@ namespace Telegram.Controls
 
         protected virtual bool CanAccept()
         {
-            return true;
+            return IsSubmitEnabled;
         }
+
+        public bool IsSubmitEnabled { get; set; } = true;
 
         protected virtual void OnAccept()
         {
             Accept?.Invoke(this, EventArgs.Empty);
+            _submitted?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler TextChangedForRealNoCap;
 
         public event TypedEventHandler<FormattedTextBox, EventArgs> Accept;
+
+        #region IFormattedTextInput
+
+        FormattedText IFormattedTextInput.GetFormattedText(bool clear, bool parseMarkdown) => GetFormattedText(clear, parseMarkdown);
+
+        void IFormattedTextInput.InsertText(string text) => InsertText(text);
+
+        public bool FocusInput(FocusState state) => Focus(state);
+
+        event EventHandler IFormattedTextInput.ContentChanged
+        {
+            add => TextChangedForRealNoCap += value;
+            remove => TextChangedForRealNoCap -= value;
+        }
+
+        // Accept's sender is this class, which the interface cannot name.
+        private EventHandler _submitted;
+
+        event EventHandler IFormattedTextInput.Submitted
+        {
+            add => _submitted += value;
+            remove => _submitted -= value;
+        }
+
+        // RichEditBox's own SelectionChanged is a routed event of another shape.
+        private EventHandler _selectionChanged;
+
+        event EventHandler IFormattedTextInput.SelectionChanged
+        {
+            add => _selectionChanged += value;
+            remove => _selectionChanged -= value;
+        }
+
+        public event EventHandler<FormattedTextPasteEventArgs> PasteRequested;
+
+        public void InsertFormattedText(FormattedText text)
+        {
+            if (text != null)
+            {
+                SetText(text.Text, text.Entities, true);
+            }
+        }
+
+        public void InsertMention(string text, long userId)
+        {
+            if (string.IsNullOrEmpty(text) || IsLongerThanMaxLength(text.Length + 1, out _))
+            {
+                return;
+            }
+
+            try
+            {
+                using (BeginUndoGroup())
+                {
+                    var range = Document.Selection.GetClone();
+                    range.SetText(TextSetOptions.None, text);
+                    range.Link = $"\"tg-user://{userId}\"";
+
+                    range = Document.GetRange(range.EndPosition, range.EndPosition);
+                    range.SetText(TextSetOptions.None, " ");
+
+                    Document.Selection.SetRange(range.EndPosition, range.EndPosition);
+                }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public bool IsSelectionEmpty => Document.Selection.Length == 0;
+
+        // In the text as it is sent, which counts a custom emoji as its emoji and not as the
+        // hidden payload and placeholder it is stored as.
+        public int CaretOffset => GetFormattedText(false, false, Document.GetRange(0, Document.Selection.EndPosition)).Text?.Length ?? 0;
+
+        public void MoveCaretToEnd()
+        {
+            Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
+        }
+
+        public bool IsCaretAtStart => Document.Selection.Length == 0 && Document.Selection.StartPosition == 0;
+
+        public bool IsCaretAtEnd => Document.Selection.Length == 0
+            && Document.Selection.StartPosition == Document.GetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount).EndPosition;
+
+        public void SplitAtSelection(out FormattedText before, out FormattedText after)
+        {
+            var start = Math.Min(Document.Selection.StartPosition, Document.Selection.EndPosition);
+            var end = Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition);
+
+            before = GetFormattedText(false, true, Document.GetRange(0, start));
+            after = GetFormattedText(false, true, Document.GetRange(end, TextConstants.MaxUnitCount));
+        }
+
+        public bool TryGetQuery(out AutocompleteEntity entity, out string query, out int start)
+        {
+            return AutocompleteEntityFinder.TrySearch(Document.Selection.GetClone(), out entity, out query, out start);
+        }
+
+        public void ReplaceQuery(int start, FormattedText text)
+        {
+            var end = Document.Selection.StartPosition;
+            if (start < 0 || start > end)
+            {
+                return;
+            }
+
+            Document.Selection.SetRange(start, end);
+
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                Document.Selection.SetText(TextSetOptions.None, string.Empty);
+            }
+            else
+            {
+                SetText(text.Text, text.Entities, true);
+            }
+        }
+
+        public virtual bool HasOpenSuggestions => false;
+
+        public virtual void SetInlinePlaceholder(string prefix, string hint)
+        {
+        }
+
+        #endregion
 
         #region Context menu
 
@@ -1111,9 +1242,13 @@ namespace Telegram.Controls
             {
                 var args = new HandledEventArgs(false);
                 var package = ClipboardEx.TryGetContent();
-                if (package != null)
+                if (package != null && !RaisePasteRequested(package))
                 {
                     OnPaste(args, package);
+                }
+                else if (package != null)
+                {
+                    args.Handled = true;
                 }
 
                 e.Handled = args.Handled;
@@ -1122,6 +1257,32 @@ namespace Telegram.Controls
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
             }
+        }
+
+        // What is not text goes to whoever hosts the box, and so does HTML pasted with
+        // Ctrl+Shift+V, which the composer can make a rich message of. Nothing else does.
+        private bool RaisePasteRequested(DataPackageView package)
+        {
+            var handler = PasteRequested;
+            if (handler == null)
+            {
+                return false;
+            }
+
+            var formats = package.AvailableFormats;
+            var media = formats.Contains(StandardDataFormats.Bitmap) || formats.Contains(StandardDataFormats.StorageItems);
+            var rich = formats.Contains(StandardDataFormats.Html)
+                && !formats.Contains("application/x-tl-field-tags")
+                && WindowContext.KeyModifiers(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+            if (!media && !rich)
+            {
+                return false;
+            }
+
+            var args = new FormattedTextPasteEventArgs(package);
+            handler(this, args);
+            return args.Handled;
         }
 
         protected virtual async void OnPaste(HandledEventArgs e, DataPackageView package)

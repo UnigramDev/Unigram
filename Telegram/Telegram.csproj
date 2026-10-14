@@ -1038,6 +1038,7 @@
     <Compile Include="Controls\FormattedTextBlock.cs" />
     <Compile Include="Controls\FormattedTextBlock.Selectable.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
+    <Compile Include="Controls\IFormattedTextInput.cs" />
     <Compile Include="Controls\FormattedTextFlyout.xaml.cs">
       <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>
     </Compile>
