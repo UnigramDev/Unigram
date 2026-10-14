@@ -567,8 +567,8 @@ overflow is cut off before `Scale` can shrink it back inside. It costs the desir
 drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
 `MeasureOverride` adds it back to recover the width the parent really had.
 
-## Rich message editor — Telegram/Controls/RichEditor/ (26 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=5208a6216 paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
+## Rich message editor — Telegram/Controls/RichEditor/ (27 files), Telegram/Views/Host/RichTextWindow.xaml.cs
+<!-- map: verified=cd1b11ad8 paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -582,7 +582,9 @@ over `Telegram.Native.SpellChecker` (the Windows Spell Checking API) — squiggl
 `RichToolbarHost` (RichToolbarHost.cs) — the toolbar's groups, each expanded while it fits;
 `RichTextWindow` — toolbar, menus, pickers, popups and send. Message mode, for a message's text rather
 than a rich message: `RichSchema` — what the engine may make, checked by every command, paste and load;
-`RichFormattedTextConverter` — `FormattedText` in and out, lossless.
+`RichFormattedTextConverter` — `FormattedText` in and out, lossless. `RichEditorView.Suggestions.cs` —
+emoji and custom emoji for what is typed (`AutocompleteEntityFinder`'s plain-text search), in the
+composer's `ChatTextFlyout`, offered once the host sets a `RichSuggestionContext`.
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
 **Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
@@ -595,7 +597,9 @@ checker's factory is free-threaded: make and call it on the thread pool only. Em
 drawn, and every move or join has to step over them (`IsLeafHidden`). A selection never ends inside a table
 it runs past: `Select` moves that end to the table's far edge, so delete and copy take it whole. With a
 `Schema` set the engine runs no input rules, and a quote has no credit stop (`HasCredit`); a collapsed
-quote is a rich message's, a message's quote is only marked `IsExpandable`. Brushes come from the XAML, never from code. The
+quote is a rich message's, a message's quote is only marked `IsExpandable`. A run with `Replaced`
+set (an emoticon or a picked suggestion) never merges with its neighbours, and Backspace after it
+gives the typing back: `HasSameStyle` must keep refusing it. Brushes come from the XAML, never from code. The
 engine has no test project in the repo; `notes/native-rich-editor.md` has the design and its history.
 
 ---
