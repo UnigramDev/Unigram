@@ -137,6 +137,9 @@ namespace Telegram.Controls
         private double m_viewZoom = 1;
         private Point m_viewOffset;
 
+        private Matrix3x2 m_contentTransform = Matrix3x2.Identity;
+        private Rect m_viewArea;
+
         private bool m_animating;
         private TimeSpan? m_animationStart;
         private double m_animationDuration;
@@ -155,6 +158,11 @@ namespace Telegram.Controls
         }
 
         public event EventHandler Changed;
+
+        /// <summary>
+        /// Raised whenever the content moves on screen, every frame of an animation included.
+        /// </summary>
+        public event EventHandler ViewChanged;
 
         /// <summary>
         /// The smallest the crop area may be dragged to, in view pixels.
@@ -401,6 +409,11 @@ namespace Telegram.Controls
             }
 
             m_imageTransform.Matrix = new Matrix(matrix.M11, matrix.M12, matrix.M21, matrix.M22, matrix.M31, matrix.M32);
+
+            m_contentTransform = matrix;
+            m_viewArea = area;
+
+            ViewChanged?.Invoke(this, EventArgs.Empty);
 
             ThumbsContainer.Margin = new Thickness(area.X, area.Y, m_viewport.Width - area.Right, m_viewport.Height - area.Bottom);
 
@@ -1662,6 +1675,18 @@ namespace Telegram.Controls
         /// View pixels per source pixel.
         /// </summary>
         public double ZoomFactor => CanLayout ? ViewScale * m_viewZoom : 1;
+
+        /// <summary>
+        /// The content's pixels to the view's, the draw mode's magnification included.
+        /// </summary>
+        public Matrix3x2 ContentTransform => m_contentTransform;
+
+        /// <summary>
+        /// The crop as it appears in the view, the draw mode's magnification included.
+        /// </summary>
+        public Rect ViewArea => m_viewArea;
+
+        public Size ViewportSize => m_viewport;
 
         /// <summary>
         /// The crop before <see cref="Angle"/>, normalized to the oriented image. Snapped to the

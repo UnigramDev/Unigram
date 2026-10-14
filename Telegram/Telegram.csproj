@@ -220,6 +220,9 @@
     <Compile Include="Controls\PaintColorPicker.xaml.cs">
       <DependentUpon>PaintColorPicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PaintEntityLayer.xaml.cs">
+      <DependentUpon>PaintEntityLayer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Media\CheckBoxResources.cs" />
     <Compile Include="Common\ConnectedAnimationServiceEx.cs" />
     <Compile Include="Common\DebouncedPropertyWithToken.cs" />
@@ -3030,6 +3033,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PaintColorPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PaintEntityLayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

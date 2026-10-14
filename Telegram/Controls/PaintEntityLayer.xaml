@@ -1,0 +1,84 @@
+﻿<Grid x:Class="Telegram.Controls.PaintEntityLayer"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      PointerPressed="OnPointerPressed"
+      PointerMoved="OnPointerMoved"
+      PointerReleased="OnPointerReleased"
+      PointerCanceled="OnPointerCanceled"
+      PointerCaptureLost="OnPointerCanceled"
+      RightTapped="OnRightTapped"
+      SizeChanged="OnSizeChanged"
+      Unloaded="OnUnloaded">
+
+    <Grid.Resources>
+        <!-- Only the text: the frame behind it is drawn on the canvas, from the same layout the
+             sent photo is drawn from. -->
+        <Style x:Key="PaintTextBoxStyle"
+               TargetType="TextBox">
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="MinWidth"
+                    Value="0" />
+            <Setter Property="MinHeight"
+                    Value="0" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="FontFamily"
+                    Value="Segoe UI" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <ContentPresenter x:Name="PlaceholderTextContentPresenter"
+                                              Content="{TemplateBinding PlaceholderText}"
+                                              Foreground="#60FFFFFF"
+                                              TextWrapping="{TemplateBinding TextWrapping}"
+                                              IsHitTestVisible="False" />
+                            <ScrollViewer x:Name="ContentElement"
+                                          HorizontalScrollMode="Disabled"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollMode="Disabled"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          IsHorizontalRailEnabled="False"
+                                          IsVerticalRailEnabled="False"
+                                          ZoomMode="Disabled"
+                                          IsTabStop="False"
+                                          Padding="{TemplateBinding Padding}"
+                                          AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Grid.Resources>
+
+    <xaml:CanvasControl x:Name="Canvas"
+                        Draw="Canvas_Draw"
+                        CreateResources="Canvas_CreateResources"
+                        IsHitTestVisible="False" />
+
+    <!-- One transparent box per object, so a press on an object reaches the layer while a press
+         anywhere else still reaches the drawing canvas below. -->
+    <Canvas x:Name="Targets" />
+
+    <TextBox x:Name="Editor"
+             x:Load="False"
+             Style="{StaticResource PaintTextBoxStyle}"
+             TextChanged="Editor_TextChanged"
+             PlaceholderText="{CustomResource TextPlaceholder}"
+             AcceptsReturn="True"
+             TextWrapping="Wrap"
+             IsSpellCheckEnabled="False"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top">
+        <TextBox.RenderTransform>
+            <MatrixTransform />
+        </TextBox.RenderTransform>
+    </TextBox>
+</Grid>

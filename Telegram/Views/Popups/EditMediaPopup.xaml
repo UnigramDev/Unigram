@@ -24,15 +24,22 @@
 
         <controls:ImageCropper x:Name="Cropper"
                                Changed="Cropper_Changed"
+                               ViewChanged="Cropper_ViewChanged"
                                Padding="24">
             <Grid>
                 <SwapChainPanel x:Name="Video"
                                 x:Load="False" />
                 <controls:PencilCanvas x:Name="Canvas"
                                        StrokesChanged="Canvas_StrokesChanged"
+                                       StrokeAdded="Canvas_StrokeAdded"
                                        Gesture="Canvas_Gesture"
                                        ColorPicked="Canvas_ColorPicked"
                                        IsEnabled="False" />
+                <controls:PaintEntityLayer x:Name="Entities"
+                                           SelectionChanged="Entities_SelectionChanged"
+                                           EntityCreated="Entities_EntityCreated"
+                                           EntityDeleted="Entities_EntityDeleted"
+                                           IsHitTestVisible="False" />
             </Grid>
         </controls:ImageCropper>
 
@@ -146,6 +153,7 @@
                   x:Load="False"
                   Grid.Column="2">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -414,6 +422,17 @@
                         <icons:PaintEraser />
                     </controls:AnimatedIconToggleButton.Source>
                 </controls:AnimatedIconToggleButton>
+
+                <!-- Right after the brushes, so the selection slides onto it while a text is selected. -->
+                <controls:GlyphToggleButton x:Name="TextTool"
+                                            Click="TextTool_Click"
+                                            Glyph="&#xE8D2;"
+                                            CheckedGlyph="&#xE8D2;"
+                                            IsOneWay="True"
+                                            AutomationProperties.Name="{CustomResource AccDescrPlaceText}"
+                                            ToolTipService.ToolTip="{CustomResource AccDescrPlaceText}"
+                                            Margin="0,0,-4,0"
+                                            Grid.Column="9" />
             </Grid>
 
             <Grid x:Name="TrimToolbar"

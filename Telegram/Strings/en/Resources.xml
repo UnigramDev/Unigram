@@ -4719,6 +4719,11 @@
     <string name="PaintPaletteSlidersHexColor">Hex Color #</string>
     <string name="PaintEyedropper">Eyedropper</string>
     <string name="PaintMoreColors">More Colors</string>
+    <string name="PaintEdit">Edit</string>
+    <string name="PaintDuplicate">Duplicate</string>
+    <string name="PaintDelete">Delete</string>
+    <string name="TextPlaceholder">Add text</string>
+    <string name="AccDescrPlaceText">Place text</string>
 
 
     <string name="AccDescrPageDown">Go to bottom</string>

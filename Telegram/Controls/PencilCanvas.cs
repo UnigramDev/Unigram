@@ -35,7 +35,12 @@ namespace Telegram.Controls
         Marker,
         Neon,
         Blur,
-        Eraser
+        Eraser,
+
+        /// <summary>
+        /// Not drawn with: the colour and size given to new text.
+        /// </summary>
+        Text
     }
 
     /// <summary>
@@ -44,9 +49,9 @@ namespace Telegram.Controls
     /// </summary>
     public static class PencilTools
     {
-        public static double GetMinimumWeight(PencilTool tool) => HasColor(tool) ? 0.05 : 0.4;
+        public static double GetMinimumWeight(PencilTool tool) => tool == PencilTool.Text ? 0.5 : HasColor(tool) ? 0.05 : 0.4;
 
-        public static double GetMaximumWeight(PencilTool tool) => HasColor(tool) ? 1 : 1.75;
+        public static double GetMaximumWeight(PencilTool tool) => tool == PencilTool.Text ? 2 : HasColor(tool) ? 1 : 1.75;
 
         public static double GetDefaultWeight(PencilTool tool) => tool switch
         {
@@ -60,6 +65,7 @@ namespace Telegram.Controls
             PencilTool.Arrow => Color.FromArgb(0xFF, 0xFF, 0x8A, 0x00),
             PencilTool.Marker => Color.FromArgb(0xFF, 0xFF, 0xD6, 0x0A),
             PencilTool.Neon => Color.FromArgb(0xFF, 0x34, 0xC7, 0x59),
+            PencilTool.Text => Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF),
             _ => Color.FromArgb(0xFF, 0xFF, 0x45, 0x3A)
         };
 
@@ -169,6 +175,11 @@ namespace Telegram.Controls
 
         public event EventHandler StrokesChanged;
 
+        /// <summary>
+        /// Raised when a stroke or fill is finished, before <see cref="StrokesChanged"/>.
+        /// </summary>
+        public event EventHandler StrokeAdded;
+
         public Color Stroke { get; set; }
 
         /// <summary>
@@ -216,6 +227,17 @@ namespace Telegram.Controls
 
         public bool CanUndo => _strokes.Count > 0;
         public bool CanRedo => _history.Count > 0;
+
+        public int StrokeCount => _strokes.Count;
+
+        /// <summary>
+        /// Forgets what <see cref="Redo"/> would bring back, when something other than a stroke
+        /// has been done since.
+        /// </summary>
+        public void ClearRedo()
+        {
+            _history.Clear();
+        }
 
         /// <summary>
         /// Raised while two touches pinch or drag over the canvas, in window coordinates.
@@ -619,6 +641,7 @@ namespace Telegram.Controls
             _history.Clear();
 
             Canvas.Invalidate();
+            StrokeAdded?.Invoke(this, EventArgs.Empty);
             StrokesChanged?.Invoke(this, EventArgs.Empty);
         }
 

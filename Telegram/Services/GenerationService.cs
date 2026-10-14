@@ -318,7 +318,7 @@ namespace Telegram.Services
                     var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.ImageGeneration);
                     var rectangle = generation.Rectangle;
 
-                    if (generation.Angle != 0)
+                    if (generation.RequiresRender)
                     {
                         await ImageHelper.CropRotatedAsync(file, temp, generation, maxSize, generation.MinimumSize);
                     }

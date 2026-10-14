@@ -50,12 +50,20 @@ namespace Telegram.Views.Popups
         // Not remembered between edits: a session that ended on the eraser would open unable to draw.
         private PencilTool _tool;
 
+        private bool _weightDragging;
+
+        // Strokes and placed objects undo as one history, newest last. An entry is the object its
+        // undo takes away, or null for a stroke, which the canvas keeps the list of.
+        private readonly List<PaintEntity> _undo = new();
+        private readonly List<PaintEntity> _redo = new();
+
         public EditMediaPopup(XamlRoot xamlRoot, StorageMedia media, ImageCropperMask mask = ImageCropperMask.Rectangle)
             : base(xamlRoot)
         {
             InitializeComponent();
 
             Canvas.Strokes = media.EditState.Strokes;
+            Entities.Items = media.EditState.Entities;
 
             Cropper.SetMask(mask);
             Cropper.SetProportions(mask == ImageCropperMask.Ellipse ? BitmapProportions.Square : media.EditState.Proportions);
@@ -148,6 +156,12 @@ namespace Telegram.Views.Popups
 
         private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
         {
+            // Keys typed into a text object belong to the text.
+            if (Entities.IsEditorFocused)
+            {
+                return;
+            }
+
             if (args.Key == VirtualKey.Enter && args.Modifiers == VirtualKeyModifiers.None)
             {
                 Accept_Click(null, null);
@@ -167,20 +181,33 @@ namespace Telegram.Views.Popups
             }
             else if (DrawToolbar?.Visibility == Visibility.Visible)
             {
-                if (args.Key == VirtualKey.Z && args.Modifiers == VirtualKeyModifiers.Control && Canvas.CanUndo)
+                if (args.Key == VirtualKey.Z && args.Modifiers == VirtualKeyModifiers.Control && _undo.Count > 0)
                 {
-                    Canvas.Undo();
+                    UndoStep();
                     args.Handled = true;
                 }
                 else if (((args.Key == VirtualKey.Y && args.Modifiers == VirtualKeyModifiers.Control)
-                    || (args.Key == VirtualKey.Z && args.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))) && Canvas.CanRedo)
+                    || (args.Key == VirtualKey.Z && args.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))) && _redo.Count > 0)
                 {
-                    Canvas.Redo();
+                    RedoStep();
                     args.Handled = true;
                 }
                 else if (args.Key == VirtualKey.D && args.Modifiers == VirtualKeyModifiers.Control)
                 {
-                    SelectTool(PencilTool.Pen);
+                    if (Entities.Selected != null)
+                    {
+                        Entities.DuplicateSelected();
+                    }
+                    else
+                    {
+                        SelectTool(PencilTool.Pen);
+                    }
+
+                    args.Handled = true;
+                }
+                else if ((args.Key is VirtualKey.Delete or VirtualKey.Back) && args.Modifiers == VirtualKeyModifiers.None && Entities.Selected != null)
+                {
+                    Entities.DeleteSelected();
                     args.Handled = true;
                 }
                 else if (args.Key == VirtualKey.E && args.Modifiers == VirtualKeyModifiers.Control)
@@ -206,10 +233,20 @@ namespace Telegram.Views.Popups
 
         protected override void OnBackRequestedOverride(object sender, BackRequestedRoutedEventArgs e)
         {
-            // Escape while the eyedropper is out puts it away rather than leaving the editor.
+            // Escape puts away whatever is in hand, the eyedropper or a text, before it leaves the
+            // editor.
             if (Canvas.IsPicking)
             {
                 Canvas.CancelPick();
+                Entities.IsHitTestVisible = true;
+            }
+            else if (Entities.IsEditing)
+            {
+                Entities.EndEditing();
+            }
+            else if (Entities.Selected != null)
+            {
+                Entities.Deselect();
             }
             else
             {
@@ -398,6 +435,7 @@ namespace Telegram.Views.Popups
                     Rectangle = rect,
                     Proportions = Cropper.Proportions,
                     Strokes = Canvas.Strokes,
+                    Entities = Entities.Items,
                     Flip = Cropper.Flip,
                     Rotation = Cropper.Orientation,
                     Angle = Cropper.Angle,
@@ -410,9 +448,11 @@ namespace Telegram.Views.Popups
             else
             {
                 Canvas.SaveState();
+                Entities.SaveState();
 
                 Cropper.IsCropEnabled = true;
                 Canvas.IsEnabled = false;
+                Entities.IsHitTestVisible = false;
 
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
@@ -430,9 +470,11 @@ namespace Telegram.Views.Popups
             else
             {
                 Canvas.RestoreState();
+                Entities.RestoreState();
 
                 Cropper.IsCropEnabled = true;
                 Canvas.IsEnabled = false;
+                Entities.IsHitTestVisible = false;
 
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
@@ -498,6 +540,11 @@ namespace Telegram.Views.Popups
             Cropper.Reset();
         }
 
+        private void Cropper_ViewChanged(object sender, EventArgs e)
+        {
+            Entities.SetView(Cropper.ContentTransform, Cropper.ViewArea, Cropper.ViewportSize);
+        }
+
         private void Cropper_Changed(object sender, EventArgs e)
         {
             Rotate.IsChecked = Cropper.Orientation != ImageRotation.None;
@@ -529,6 +576,7 @@ namespace Telegram.Views.Popups
         {
             Cropper.IsCropEnabled = false;
             Canvas.IsEnabled = true;
+            Entities.IsHitTestVisible = true;
 
             CropToolbar.Visibility = Visibility.Collapsed;
             BasicToolbar.Visibility = Visibility.Collapsed;
@@ -551,7 +599,7 @@ namespace Telegram.Views.Popups
             SelectTool(_tool);
             LoadBlurSource();
 
-            InvalidateToolbar();
+            ResetHistory();
         }
 
         private void Tool_Click(object sender, RoutedEventArgs e)
@@ -571,34 +619,87 @@ namespace Telegram.Views.Popups
             _tool = tool;
             Canvas.Tool = tool;
 
-            // The tools sit in equal columns from the first one on.
-            ToolSelection.Translation = new Vector3((PenTool.ActualSize.X - 4) * (int)tool, 0, 0);
+            // A brush puts a selected object away; the toolbar then follows the selection.
+            if (Entities.Selected != null)
+            {
+                Entities.Deselect();
+            }
+            else
+            {
+                UpdateTools();
+            }
+        }
 
-            PenTool.IsChecked = tool == PencilTool.Pen;
-            ArrowTool.IsChecked = tool == PencilTool.Arrow;
-            MarkerTool.IsChecked = tool == PencilTool.Marker;
-            NeonTool.IsChecked = tool == PencilTool.Neon;
-            BlurTool.IsChecked = tool == PencilTool.Blur;
-            EraserTool.IsChecked = tool == PencilTool.Eraser;
+        // What the colour and size controls edit: the selected text, or else the brush.
+        private PencilTool Slot => Entities.Selected != null ? PencilTool.Text : _tool;
 
-            var weight = AppSettings.Pencil.GetWeight(tool);
-            WeightSlider.SetRange(PencilTools.GetMinimumWeight(tool), PencilTools.GetMaximumWeight(tool), weight);
-            Canvas.StrokeThickness = PencilTools.GetThickness(tool, WeightSlider.Value);
+        private void UpdateTools()
+        {
+            var slot = Slot;
 
-            ColorButton.IsEnabled = PencilTools.HasColor(tool);
+            // The tools sit in equal columns from the first one on, the text button last.
+            ToolSelection.Translation = new Vector3((PenTool.ActualSize.X - 4) * (int)slot, 0, 0);
+
+            PenTool.IsChecked = slot == PencilTool.Pen;
+            ArrowTool.IsChecked = slot == PencilTool.Arrow;
+            MarkerTool.IsChecked = slot == PencilTool.Marker;
+            NeonTool.IsChecked = slot == PencilTool.Neon;
+            BlurTool.IsChecked = slot == PencilTool.Blur;
+            EraserTool.IsChecked = slot == PencilTool.Eraser;
+            TextTool.IsChecked = slot == PencilTool.Text;
+
+            if (Entities.Selected is PaintEntity entity)
+            {
+                WeightSlider.SetRange(PencilTools.GetMinimumWeight(PencilTool.Text), PencilTools.GetMaximumWeight(PencilTool.Text), entity.TextSize);
+
+                ColorButton.IsEnabled = true;
+                ColorSwatchPanel.Opacity = 1;
+                ColorSwatch.Fill = new SolidColorBrush(entity.Color);
+                return;
+            }
+
+            var weight = AppSettings.Pencil.GetWeight(slot);
+            WeightSlider.SetRange(PencilTools.GetMinimumWeight(slot), PencilTools.GetMaximumWeight(slot), weight);
+            Canvas.StrokeThickness = PencilTools.GetThickness(slot, WeightSlider.Value);
+
+            ColorButton.IsEnabled = PencilTools.HasColor(slot);
             ColorSwatchPanel.Opacity = ColorButton.IsEnabled ? 1 : 0.4;
-            SetColor(PencilTools.HasColor(tool) ? AppSettings.Pencil.GetColor(tool) : Colors.Transparent);
+            SetColor(PencilTools.HasColor(slot) ? AppSettings.Pencil.GetColor(slot) : Colors.Transparent);
         }
 
         private void SetColor(Color color)
         {
-            Canvas.Stroke = color;
+            if (Entities.Selected != null)
+            {
+                Entities.SetSelectedColor(color);
+            }
+            else
+            {
+                Canvas.Stroke = color;
+            }
+
             ColorSwatch.Fill = new SolidColorBrush(color);
+        }
+
+        private void TextTool_Click(object sender, RoutedEventArgs e)
+        {
+            Entities.AddText(AppSettings.Pencil.GetColor(PencilTool.Text), (float)AppSettings.Pencil.GetWeight(PencilTool.Text), PaintTextFrame.Filled, PaintTextAlignment.Left);
+
+            // The button only shows the selection, which placing the text may not have made.
+            UpdateTools();
+        }
+
+        private void Entities_SelectionChanged(object sender, EventArgs e)
+        {
+            if (DrawToolbar != null)
+            {
+                UpdateTools();
+            }
         }
 
         private void ColorFlyout_Opening(object sender, object e)
         {
-            var current = AppSettings.Pencil.GetColor(Canvas.Tool);
+            var current = Entities.Selected?.Color ?? AppSettings.Pencil.GetColor(Slot);
             var colors = new List<SolidColorBrush>();
 
             foreach (var color in PencilSettings.PresetColors)
@@ -624,7 +725,7 @@ namespace Telegram.Views.Popups
         {
             if (CustomColorPicker?.Visibility == Visibility.Visible)
             {
-                AppSettings.Pencil.SetColor(Canvas.Tool, CustomColorPicker.Color);
+                AppSettings.Pencil.SetColor(Slot, CustomColorPicker.Color);
             }
         }
 
@@ -635,7 +736,7 @@ namespace Telegram.Views.Popups
                 FindName(nameof(CustomColorPicker));
             }
 
-            CustomColorPicker.Color = Canvas.Stroke;
+            CustomColorPicker.Color = Entities.Selected?.Color ?? Canvas.Stroke;
 
             PalettePanel.Visibility = Visibility.Collapsed;
             CustomColorPicker.Visibility = Visibility.Visible;
@@ -655,13 +756,18 @@ namespace Telegram.Views.Popups
         {
             ColorFlyout.Hide();
 
+            // The objects would take the press meant for the eyedropper while one is selected.
+            Entities.IsHitTestVisible = false;
+
             Canvas.LoupeScale = (float)(1 / Cropper.ZoomFactor);
             Canvas.BeginPick();
         }
 
         private void Canvas_ColorPicked(object sender, PencilColorPickedEventArgs e)
         {
-            AppSettings.Pencil.SetColor(Canvas.Tool, e.Color);
+            Entities.IsHitTestVisible = true;
+
+            AppSettings.Pencil.SetColor(Slot, e.Color);
             SetColor(e.Color);
         }
 
@@ -669,7 +775,7 @@ namespace Telegram.Views.Popups
         {
             if (e.ClickedItem is SolidColorBrush brush)
             {
-                AppSettings.Pencil.SetColor(Canvas.Tool, brush.Color);
+                AppSettings.Pencil.SetColor(Slot, brush.Color);
                 SetColor(brush.Color);
             }
 
@@ -678,33 +784,49 @@ namespace Telegram.Views.Popups
 
         private void WeightSlider_ValueChanged(object sender, EventArgs e)
         {
-            Canvas.StrokeThickness = PencilTools.GetThickness(Canvas.Tool, WeightSlider.Value);
-
-            if (Canvas.Tool == PencilTool.Eraser)
+            if (Entities.Selected != null)
             {
-                Canvas.EraserThickness = Canvas.StrokeThickness;
-            }
-
-            if (WeightPreview.Visibility == Visibility.Visible)
-            {
-                UpdateWeightPreview();
+                Entities.SetSelectedTextSize((float)WeightSlider.Value);
             }
             else
             {
-                AppSettings.Pencil.SetWeight(Canvas.Tool, WeightSlider.Value);
+                Canvas.StrokeThickness = PencilTools.GetThickness(Canvas.Tool, WeightSlider.Value);
+
+                if (Canvas.Tool == PencilTool.Eraser)
+                {
+                    Canvas.EraserThickness = Canvas.StrokeThickness;
+                }
+
+                if (_weightDragging)
+                {
+                    UpdateWeightPreview();
+                }
+            }
+
+            if (!_weightDragging)
+            {
+                AppSettings.Pencil.SetWeight(Slot, WeightSlider.Value);
             }
         }
 
+        // A text shows its own size as it changes, so only a brush gets the preview dot.
         private void WeightSlider_DragStarted(object sender, EventArgs e)
         {
-            UpdateWeightPreview();
-            WeightPreview.Visibility = Visibility.Visible;
+            _weightDragging = true;
+
+            if (Entities.Selected == null)
+            {
+                UpdateWeightPreview();
+                WeightPreview.Visibility = Visibility.Visible;
+            }
         }
 
         private void WeightSlider_DragCompleted(object sender, EventArgs e)
         {
+            _weightDragging = false;
+
             WeightPreview.Visibility = Visibility.Collapsed;
-            AppSettings.Pencil.SetWeight(Canvas.Tool, WeightSlider.Value);
+            AppSettings.Pencil.SetWeight(Slot, WeightSlider.Value);
         }
 
         // As wide on screen as the stroke will be: the canvas is laid out in source pixels and
@@ -749,12 +871,100 @@ namespace Telegram.Views.Popups
 
         private void Undo_Click(object sender, RoutedEventArgs e)
         {
-            Canvas.Undo();
+            UndoStep();
         }
 
         private void Redo_Click(object sender, RoutedEventArgs e)
         {
-            Canvas.Redo();
+            RedoStep();
+        }
+
+        private void UndoStep()
+        {
+            if (_undo.Count == 0)
+            {
+                return;
+            }
+
+            var entity = _undo[_undo.Count - 1];
+
+            _undo.RemoveAt(_undo.Count - 1);
+            _redo.Add(entity);
+
+            if (entity == null)
+            {
+                Canvas.Undo();
+            }
+            else
+            {
+                Entities.Remove(entity);
+            }
+
+            InvalidateToolbar();
+        }
+
+        private void RedoStep()
+        {
+            if (_redo.Count == 0)
+            {
+                return;
+            }
+
+            var entity = _redo[_redo.Count - 1];
+
+            _redo.RemoveAt(_redo.Count - 1);
+            _undo.Add(entity);
+
+            if (entity == null)
+            {
+                Canvas.Redo();
+            }
+            else
+            {
+                Entities.Restore(entity);
+            }
+
+            InvalidateToolbar();
+        }
+
+        // Each visit to draw mode starts from the strokes already there, which stay undoable; the
+        // objects already there do not.
+        private void ResetHistory()
+        {
+            _undo.Clear();
+            _redo.Clear();
+
+            Canvas.ClearRedo();
+
+            for (int i = 0; i < Canvas.StrokeCount; i++)
+            {
+                _undo.Add(null);
+            }
+
+            InvalidateToolbar();
+        }
+
+        private void Canvas_StrokeAdded(object sender, EventArgs e)
+        {
+            _undo.Add(null);
+            _redo.Clear();
+        }
+
+        private void Entities_EntityCreated(object sender, PaintEntityEventArgs e)
+        {
+            _undo.Add(e.Entity);
+            _redo.Clear();
+
+            Canvas.ClearRedo();
+            InvalidateToolbar();
+        }
+
+        private void Entities_EntityDeleted(object sender, PaintEntityEventArgs e)
+        {
+            _undo.Remove(e.Entity);
+            _redo.Remove(e.Entity);
+
+            InvalidateToolbar();
         }
 
         private void Canvas_Gesture(object sender, PencilGestureEventArgs e)
@@ -770,9 +980,9 @@ namespace Telegram.Views.Popups
 
         private void InvalidateToolbar()
         {
-            Undo?.IsEnabled = Canvas.CanUndo;
+            Undo?.IsEnabled = _undo.Count > 0;
 
-            Redo?.IsEnabled = Canvas.CanRedo;
+            Redo?.IsEnabled = _redo.Count > 0;
         }
 
         // AsyncMediaPlayer raises its events on the thread that created it, so this and

@@ -501,7 +501,7 @@ namespace Telegram.Common
 
         public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream source, ImageGeneration generation, int maxSize = 1280)
         {
-            if (generation.Angle != 0)
+            if (generation.RequiresRender)
             {
                 using var target = await RenderRotatedAsync(source, generation, maxSize, 0, false);
 
@@ -538,7 +538,7 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// Writes a free-angle crop, strokes included, as a JPEG.
+        /// Writes a free-angle crop, strokes and objects included, as a JPEG.
         /// </summary>
         public static async Task<StorageFile> CropRotatedAsync(StorageFile sourceFile, StorageFile file, ImageGeneration generation, int min = 1280, int max = 0)
         {
@@ -555,8 +555,8 @@ namespace Telegram.Common
         /// <summary>
         /// The decoder only turns by quarters, so a free angle is drawn by Win2D instead. The image
         /// is decoded upright, exactly as ImageCropper previews it, and one matrix then takes it
-        /// through the mirror, the quarter turns, the crop and the angle — strokes too, since they
-        /// are stored against the upright image.
+        /// through the mirror, the quarter turns, the crop and the angle — strokes and objects too,
+        /// since they are stored against the upright image.
         /// </summary>
         private static async Task<CanvasRenderTarget> RenderRotatedAsync(IRandomAccessStream source, ImageGeneration generation, int min, int max, bool bestQuality)
         {
@@ -642,6 +642,15 @@ namespace Telegram.Common
                     using (var session = target.CreateDrawingSession())
                     {
                         session.DrawImage(overlay);
+                    }
+                }
+
+                if (generation.Entities is { Count: > 0 } entities)
+                {
+                    using (var session = target.CreateDrawingSession())
+                    {
+                        session.Transform = matrix;
+                        PaintEntityRenderer.Draw(session, entities, new Vector2(uprightWidth, uprightHeight), generation.Flip != ImageFlip.None);
                     }
                 }
             }
