@@ -132,6 +132,12 @@ namespace Telegram.Controls.RichEditor
         public RichMarks? StoredMarks => _storedMarks;
 
         /// <summary>
+        /// Inside <see cref="Changed"/>, what kind of edit is being raised: a handler that acts on
+        /// typing alone, as an emoticon or a suggestion does, tells it from a deletion this way.
+        /// </summary>
+        public RichEditKind LastEdit => _lastEdit;
+
+        /// <summary>
         /// What the document may hold, or null for a rich message, which may hold anything. Set
         /// it before <see cref="Load"/>, which conforms the document to it.
         /// </summary>

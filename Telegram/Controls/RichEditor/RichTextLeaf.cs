@@ -142,17 +142,25 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Set only on a run of length 1 over an <see cref="RichTextLeaf.ObjectChar"/>.</summary>
         public RichInlineObject Object;
 
-        public RichTextRun(int length, RichMarks marks, RichLink link, RichInlineObject inline = null)
+        /// <summary>
+        /// The text this run was put in for, as an emoticon or a suggestion replaces what was
+        /// typed: deleting the run gives it back. Never merged with a neighbour, which would
+        /// make the neighbour part of what is given back.
+        /// </summary>
+        public string Replaced;
+
+        public RichTextRun(int length, RichMarks marks, RichLink link, RichInlineObject inline = null, string replaced = null)
         {
             Length = length;
             Marks = marks;
             Link = link;
             Object = inline;
+            Replaced = replaced;
         }
 
         public readonly bool HasSameStyle(in RichTextRun other)
         {
-            return Object == null && other.Object == null && Marks == other.Marks && RichLink.AreEqual(Link, other.Link);
+            return Object == null && other.Object == null && Replaced == null && other.Replaced == null && Marks == other.Marks && RichLink.AreEqual(Link, other.Link);
         }
     }
 
@@ -253,6 +261,29 @@ namespace Telegram.Controls.RichEditor
 
             var index = FindRun(offset, out _);
             return index >= 0 ? _runs[index].Object : null;
+        }
+
+        /// <summary>
+        /// The run that ends at <paramref name="offset"/> (or, with <paramref name="after"/>,
+        /// starts there) and remembers the text it replaced.
+        /// </summary>
+        public bool TryGetReplaced(int offset, bool after, out int start, out int end, out string replaced)
+        {
+            var index = FindRun(after ? offset : offset - 1, out start);
+            if (index >= 0 && _runs[index].Replaced is string text)
+            {
+                end = start + _runs[index].Length;
+
+                if (after ? start == offset : end == offset)
+                {
+                    replaced = text;
+                    return true;
+                }
+            }
+
+            start = end = offset;
+            replaced = null;
+            return false;
         }
 
         /// <summary>
@@ -420,6 +451,39 @@ namespace Telegram.Controls.RichEditor
             _text = _text.Insert(offset, ObjectChar.ToString());
             InsertRun(offset, new RichTextRun(1, marks, null, inline));
             Changed();
+        }
+
+        /// <summary>
+        /// Puts <paramref name="text"/>, or <paramref name="inline"/> when it is set, in place of
+        /// what is between <paramref name="start"/> and <paramref name="end"/>, remembering what
+        /// that was (see <see cref="RichTextRun.Replaced"/>). Returns the replacement's length.
+        /// </summary>
+        public int Substitute(int start, int end, string text, RichInlineObject inline, RichMarks marks, RichLink link)
+        {
+            var replaced = _text.Substring(start, end - start);
+
+            // Code holds no objects, and keeps what was typed in it.
+            if (IsPlain || replaced.IndexOf(ObjectChar) >= 0 || (inline == null && string.IsNullOrEmpty(text)))
+            {
+                return 0;
+            }
+
+            Delete(start, end);
+
+            if (inline != null)
+            {
+                _text = _text.Insert(start, ObjectChar.ToString());
+                InsertRun(start, new RichTextRun(1, marks, null, inline, replaced));
+                Changed();
+                return 1;
+            }
+
+            text = text.Replace(ObjectChar.ToString(), string.Empty);
+
+            _text = _text.Insert(start, text);
+            InsertRun(start, new RichTextRun(text.Length, marks, link, null, replaced));
+            Changed();
+            return text.Length;
         }
 
         /// <summary>Inserts another leaf's content, styles and objects included.</summary>

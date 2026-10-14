@@ -149,6 +149,66 @@ namespace Telegram.Controls.RichEditor
             EndEdit(RichEditKind.Other);
         }
 
+        /// <summary>
+        /// What was typed from <paramref name="start"/> to the caret, as <paramref name="text"/> or
+        /// <paramref name="inline"/> instead: an emoticon, or a suggestion picked for a query.
+        /// Deleting the replacement gives back what was typed.
+        /// </summary>
+        public void Substitute(int start, string text, RichInlineObject inline = null)
+        {
+            var leaf = _focus.Leaf;
+            var end = _focus.Offset;
+
+            if (!IsSelectionEmpty || _node != null || start < 0 || start >= end)
+            {
+                return;
+            }
+
+            if (inline != null && Schema != null && !Schema.AllowsObject(inline))
+            {
+                text = inline.PlainText;
+                inline = null;
+            }
+
+            leaf.GetInsertionStyle(end, out RichMarks marks, out RichLink link);
+
+            BeginEdit(RichEditKind.Other);
+
+            var length = leaf.Substitute(start, end, text, inline, marks, link);
+            if (length > 0)
+            {
+                SetCaretInternal(new RichPosition(leaf, start + length));
+                Raise(RichEditorChanges.Text | RichEditorChanges.Selection, leaf);
+            }
+
+            EndEdit(RichEditKind.Other);
+        }
+
+        /// <summary>
+        /// Backspace after (or Delete before) a replacement: what was typed comes back, with the
+        /// caret where the key left it.
+        /// </summary>
+        private bool TryRestoreReplaced(bool forward)
+        {
+            var leaf = _focus.Leaf;
+            if (!leaf.TryGetReplaced(_focus.Offset, forward, out int start, out int end, out string replaced))
+            {
+                return false;
+            }
+
+            leaf.GetInsertionStyle(end, out RichMarks marks, out RichLink link);
+
+            BeginEdit(RichEditKind.Deleting);
+
+            leaf.Delete(start, end);
+            leaf.Insert(start, replaced, marks, link);
+            SetCaretInternal(new RichPosition(leaf, forward ? start : start + replaced.Length));
+
+            Raise(RichEditorChanges.Text | RichEditorChanges.Selection, leaf);
+            EndEdit(RichEditKind.Deleting);
+            return true;
+        }
+
         /// <summary>Replaces the object at <paramref name="position"/>: a formula or a button edited in place.</summary>
         public void ReplaceObject(RichPosition position, RichInlineObject inline)
         {
@@ -255,6 +315,11 @@ namespace Telegram.Controls.RichEditor
             var leaf = _focus.Leaf;
             var offset = _focus.Offset;
 
+            if (!word && TryRestoreReplaced(false))
+            {
+                return;
+            }
+
             if (offset > 0)
             {
                 BeginEdit(RichEditKind.Deleting);
@@ -286,6 +351,11 @@ namespace Telegram.Controls.RichEditor
 
             var leaf = _focus.Leaf;
             var offset = _focus.Offset;
+
+            if (!word && TryRestoreReplaced(true))
+            {
+                return;
+            }
 
             if (offset < leaf.Length)
             {
