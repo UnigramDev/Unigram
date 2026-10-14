@@ -122,6 +122,12 @@ namespace Telegram.Controls
         private double m_dragScale;
         private uint? m_dragPointer;
 
+        // While an edge is held past the viewport, the crop keeps growing and the view zooming out.
+        private Edges m_dragEdges;
+        private Point m_dragPosition;
+        private TimeSpan? m_dragTime;
+        private bool m_dragZooming;
+
         private Size m_rotationCropSize;
         private bool m_rotating;
 
@@ -207,6 +213,7 @@ namespace Telegram.Controls
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             StopAnimation();
+            StopDragZoom();
         }
 
         private void LayoutRoot_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -669,13 +676,17 @@ namespace Telegram.Controls
                 Constrain();
 
                 m_dragPointer = e.Pointer.PointerId;
-                m_dragStart = e.GetCurrentPoint(LayoutRoot).Position;
-                m_dragArea = m_area;
-                m_dragCenter = m_center;
-                m_dragCropSize = m_cropSize;
-                m_dragScale = ViewScale;
+                m_dragEdges = ((FrameworkElement)sender).Tag is Edges edges ? edges : default;
 
+                BeginDrag(e.GetCurrentPoint(LayoutRoot).Position);
                 ShowGrid(false);
+
+                if (!m_dragZooming)
+                {
+                    m_dragZooming = true;
+                    m_dragTime = null;
+                    CompositionTarget.Rendering += OnDragRendering;
+                }
             }
 
             e.Handled = true;
@@ -689,11 +700,101 @@ namespace Telegram.Controls
             }
 
             var position = e.GetCurrentPoint(LayoutRoot).Position;
+            m_dragPosition = position;
 
             ResizeCrop(edges, (position.X - m_dragStart.X) / m_dragScale, (position.Y - m_dragStart.Y) / m_dragScale);
             UpdateView();
 
             e.Handled = true;
+        }
+
+        // Every resize is measured from here, so starting over from the current state keeps the
+        // dragged edge under the pointer after the view has zoomed out by itself.
+        private void BeginDrag(Point position)
+        {
+            m_dragStart = position;
+            m_dragPosition = position;
+            m_dragArea = m_area;
+            m_dragCenter = m_center;
+            m_dragCropSize = m_cropSize;
+            m_dragScale = ViewScale;
+        }
+
+        /// <summary>
+        /// While a dragged edge is held past the viewport, grows the crop outwards by itself, faster
+        /// the further past it the pointer is, so a small crop can grow back without letting go:
+        /// the pointer alone soon runs out of room.
+        /// </summary>
+        private void OnDragRendering(object sender, object e)
+        {
+            if (e is not RenderingEventArgs args)
+            {
+                return;
+            }
+
+            var previous = m_dragTime ?? args.RenderingTime;
+            m_dragTime = args.RenderingTime;
+
+            var seconds = (args.RenderingTime - previous).TotalSeconds;
+            if (seconds <= 0 || m_dragPointer == null)
+            {
+                return;
+            }
+
+            var position = m_dragPosition;
+
+            var x = (m_dragEdges & Edges.Left) != 0 ? -Overshoot(-position.X)
+                : (m_dragEdges & Edges.Right) != 0 ? Overshoot(position.X - m_viewport.Width)
+                : 0;
+
+            var y = (m_dragEdges & Edges.Top) != 0 ? -Overshoot(-position.Y)
+                : (m_dragEdges & Edges.Bottom) != 0 ? Overshoot(position.Y - m_viewport.Height)
+                : 0;
+
+            if (x == 0 && y == 0)
+            {
+                return;
+            }
+
+            x *= m_cropSize.Width * seconds;
+            y *= m_cropSize.Height * seconds;
+
+            // A corner past the viewport on one axis only would grow along that axis alone, while
+            // the zoom drew its other edge away from the pointer: that edge follows the pointer.
+            var scale = ViewScale;
+
+            if (x == 0 && (m_dragEdges & (Edges.Left | Edges.Right)) != 0)
+            {
+                var edge = (m_dragEdges & Edges.Left) != 0 ? m_area.Left : m_area.Right;
+                x = (position.X - edge) / scale;
+            }
+
+            if (y == 0 && (m_dragEdges & (Edges.Top | Edges.Bottom)) != 0)
+            {
+                var edge = (m_dragEdges & Edges.Top) != 0 ? m_area.Top : m_area.Bottom;
+                y = (position.Y - edge) / scale;
+            }
+
+            BeginDrag(position);
+
+            ResizeCrop(m_dragEdges, x, y);
+            UpdateView();
+        }
+
+        // The share of the crop's size it grows by each second, for a pointer this far past the
+        // viewport: up to about seven times larger every second.
+        private static double Overshoot(double distance)
+        {
+            return distance <= 0 ? 0 : 2 * Math.Min(distance / 64, 1);
+        }
+
+        private void StopDragZoom()
+        {
+            if (m_dragZooming)
+            {
+                m_dragZooming = false;
+                CompositionTarget.Rendering -= OnDragRendering;
+            }
         }
 
         private void Thumb_PointerReleased(object sender, PointerRoutedEventArgs e)
@@ -706,6 +807,7 @@ namespace Telegram.Controls
             m_dragPointer = null;
             ((UIElement)sender).ReleasePointerCapture(e.Pointer);
 
+            StopDragZoom();
             HideGrid();
 
             // The area grows back to fill the view once the edge is let go.
@@ -799,6 +901,49 @@ namespace Telegram.Controls
                     : (edges & Edges.Bottom) != 0 ? top
                     : -height / 2;
                 bottom = top + height;
+
+                // Growing about the centre, a crop against a border could not grow at all from a
+                // side handle: slide the other axis back inside the image instead, and back off
+                // only as far as no slide can make up for.
+                if (horizontal != vertical && !Fits(left, top, right, bottom))
+                {
+                    var low = 0d;
+                    var high = 1d;
+
+                    if (!TrySlide(left, top, right, bottom, vertical, out _))
+                    {
+                        for (int i = 0; i < 20; i++)
+                        {
+                            var middle = (low + high) / 2;
+                            if (TrySlide(Lerp(-halfWidth, left, middle), Lerp(-halfHeight, top, middle), Lerp(halfWidth, right, middle), Lerp(halfHeight, bottom, middle), vertical, out _))
+                            {
+                                low = middle;
+                            }
+                            else
+                            {
+                                high = middle;
+                            }
+                        }
+
+                        left = Lerp(-halfWidth, left, low);
+                        top = Lerp(-halfHeight, top, low);
+                        right = Lerp(halfWidth, right, low);
+                        bottom = Lerp(halfHeight, bottom, low);
+                    }
+
+                    TrySlide(left, top, right, bottom, vertical, out double shift);
+
+                    if (vertical)
+                    {
+                        left += shift;
+                        right += shift;
+                    }
+                    else
+                    {
+                        top += shift;
+                        bottom += shift;
+                    }
+                }
             }
 
             // Past the image, back off along the drag to the furthest crop that still fits.
@@ -896,6 +1041,62 @@ namespace Telegram.Controls
             }
 
             return low;
+        }
+
+        /// <summary>
+        /// The smallest slide along one of the crop frame's axes that brings a crop, given in the
+        /// drag's crop frame, inside the image; false when no slide can. Each corner keeps inside
+        /// over an interval of slides, so the slides that work are where those intervals overlap.
+        /// </summary>
+        private bool TrySlide(double left, double top, double right, double bottom, bool alongX, out double shift)
+        {
+            var oriented = OrientedSize;
+
+            var radians = -m_angle * Math.PI / 180;
+            var sin = Math.Sin(radians);
+            var cos = Math.Cos(radians);
+
+            // How a unit of slide moves a corner in the image.
+            var stepX = alongX ? cos : -sin;
+            var stepY = alongX ? sin : cos;
+
+            var minimum = double.NegativeInfinity;
+            var maximum = double.PositiveInfinity;
+
+            Limit(left, top);
+            Limit(right, top);
+            Limit(left, bottom);
+            Limit(right, bottom);
+
+            shift = minimum <= maximum ? Math.Clamp(0, minimum, maximum) : 0;
+            return minimum <= maximum;
+
+            void Limit(double x, double y)
+            {
+                Interval(m_dragCenter.X + x * cos - y * sin, stepX, oriented.Width);
+                Interval(m_dragCenter.Y + x * sin + y * cos, stepY, oriented.Height);
+            }
+
+            void Interval(double value, double step, double size)
+            {
+                const double Epsilon = 1e-6;
+
+                if (Math.Abs(step) < 1e-9)
+                {
+                    if (value < -Epsilon || value > size + Epsilon)
+                    {
+                        maximum = double.NegativeInfinity;
+                    }
+
+                    return;
+                }
+
+                var a = (-Epsilon - value) / step;
+                var b = (size + Epsilon - value) / step;
+
+                minimum = Math.Max(minimum, Math.Min(a, b));
+                maximum = Math.Min(maximum, Math.Max(a, b));
+            }
         }
 
         /// <summary>

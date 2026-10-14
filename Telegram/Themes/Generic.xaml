@@ -6515,10 +6515,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="local:ImageCropperThumb">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="10" />
+                                            <Grid Background="Transparent" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -6638,22 +6635,130 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="1" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="2" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="3" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="4" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="5" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="6" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Width="1" HorizontalAlignment="Right" Grid.Column="7" Grid.RowSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="1" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="3" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="4" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="5" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="6" Grid.ColumnSpan="9" />
-                                    <Rectangle Fill="#B2FFFFFF" Height="1" VerticalAlignment="Bottom" Grid.Row="7" Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="1"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="2"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="3"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="4"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="5"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="6"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Width="1"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="7"
+                                               Grid.RowSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="1"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="2"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="3"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="4"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="5"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="6"
+                                               Grid.ColumnSpan="9" />
+                                    <Rectangle Fill="#B2FFFFFF"
+                                               Height="1"
+                                               VerticalAlignment="Bottom"
+                                               Grid.Row="7"
+                                               Grid.ColumnSpan="9" />
+                                </Grid>
+
+                                <Grid x:Name="RectangleGrid"
+                                      BorderThickness="0"
+                                      BorderBrush="#FFFFFF"
+                                      Margin="-3">
+                                    <Path Data="M0,0 L28,0 L28,3 L3,3 L3,28 L0,28 Z"
+                                          Fill="#FFFFFF"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Top" />
+                                    <Path Data="M0,0 L28,0 L28,28 L25,28 L25,3 L0,3 Z"
+                                          Fill="#FFFFFF"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Top" />
+                                    <Path Data="M25,0 L28,0 L28,28 L0,28 L0,25 L25,25 Z"
+                                          Fill="#FFFFFF"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Bottom" />
+                                    <Path Data="M0,0 L3,0 L3,25 L28,25 L28,28 L0,28 Z"
+                                          Fill="#FFFFFF"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Bottom" />
+
+                                    <Border Background="#FFFFFF"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Width="3"
+                                            Height="28" />
+                                    <Border Background="#FFFFFF"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Top"
+                                            Width="28"
+                                            Height="3" />
+                                    <Border Background="#FFFFFF"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Width="3"
+                                            Height="28" />
+                                    <Border Background="#FFFFFF"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Bottom"
+                                            Width="28"
+                                            Height="3" />
+                                    <Border BorderBrush="#FFFFFF"
+                                            BorderThickness="1"
+                                            Margin="2" />
                                 </Grid>
 
                                 <local:ImageCropperThumb x:Name="LeftThumb"
