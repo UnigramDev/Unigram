@@ -354,11 +354,18 @@ appended page pull the view into the next load (see `chat-history-scroll-mode-to
 Everything around the message list but not the list: the input box and its record/send state machine,
 in-chat banners (translate, join requests, pinned message, sponsored, connected bot, group call), and
 the wallpaper renderer.
-**Key types:** `ChatTextBox` (Telegram/Controls/Chats/ChatTextBox.cs) — the rich text composer;
+**Key types:** `ComposerController` (Telegram/Controls/Chats/ComposerController.cs) — what makes a text
+box the composer: sending and scheduling, the inline bot, the `@ # /` lists and their picks, the typing
+indicator, Up to edit and Ctrl+Up/Down to reply, pasting files and Ctrl+Shift+V HTML; it works on an
+`IFormattedTextInput` (Telegram/Controls/), which `DialogViewModel.TextField` is too. `ChatTextBox`
+(…/ChatTextBox.cs) — the composer's box over RichEdit, now only what is RichEdit's: the `:` and custom
+emoji flyout, Up/Down to the ends, the inline bot's placeholder drawn over the text;
 `ChatRecordBar` (…/ChatRecordBar.xaml.cs) — voice/video recording UI with composition-driven waveform
 and blob visuals; `ChatActionBarView` (…/ChatActionBarView.xaml.cs); `ChatBackgroundControl`/
 `ChatBackgroundPresenter` — the wallpaper compositor.
-**Traps:** `ChatRecordBar` holds raw `Visual` handles alongside a `CaptureElement`/`MediaCapture`;
+**Traps:** the controller reads keys on `PreviewKeyDown`, which tunnels, so it sees Enter and Tab
+before either box; it must keep standing aside while the box's own suggestions are open
+(`HasOpenSuggestions`), or Enter sends instead of picking. `ChatRecordBar` holds raw `Visual` handles alongside a `CaptureElement`/`MediaCapture`;
 these must be disposed on stop or the mic session leaks.
 
 ---
