@@ -664,6 +664,10 @@ namespace Telegram.Controls
             {
                 StopAnimation();
 
+                // A crop restored from an older edit may sit a hair outside the image, which would
+                // refuse the whole drag.
+                Constrain();
+
                 m_dragPointer = e.Pointer.PointerId;
                 m_dragStart = e.GetCurrentPoint(LayoutRoot).Position;
                 m_dragArea = m_area;
@@ -857,6 +861,11 @@ namespace Telegram.Controls
             m_center = new Point(m_dragCenter.X + offset.X, m_dragCenter.Y + offset.Y);
             m_cropSize = new Size(right - left, bottom - top);
             m_area = new Rect(screenX + (left - anchorX) * scale, screenY + (top - anchorY) * scale, (right - left) * scale, (bottom - top) * scale);
+
+            // Fits allows a hair past the image, and the search can stop anywhere inside that. Kept,
+            // the slack adds up over drags until the starting crop no longer fits and every move is
+            // refused, so the crop is snapped back exactly inside.
+            Constrain();
         }
 
         /// <summary>
