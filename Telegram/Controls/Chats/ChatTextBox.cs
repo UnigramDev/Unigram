@@ -705,22 +705,7 @@ namespace Telegram.Controls.Chats
             var range = Document.GetRange(index, index);
             range.GetRect(PointOptions.None, out Rect rect, out _);
 
-            var style = new Style
-            {
-                TargetType = typeof(FlyoutPresenter),
-                BasedOn = BootStrapper.Current.Resources["CommandFlyoutPresenterStyle"] as Style
-            };
-
-            style.Setters.Add(new Setter(FlyoutPresenter.IsDefaultShadowEnabledProperty, false));
-            style.Setters.Add(new Setter(FlyoutPresenter.MinWidthProperty, 40));
-
-            _emojiFlyout = new Flyout
-            {
-                Content = new ChatTextFlyout(this, source),
-                AllowFocusOnInteraction = false,
-                ShouldConstrainToRootBounds = false,
-                FlyoutPresenterStyle = style,
-            };
+            _emojiFlyout = ChatTextFlyout.CreateFlyout(new ChatTextFlyout(this, source));
 
             _emojiFlyout.Opened += EmojiFlyout_Opened;
             _emojiFlyout.Closing += EmojiFlyout_Closing;
@@ -735,17 +720,10 @@ namespace Telegram.Controls.Chats
 
         void EmojiFlyout_Opened(object sender, object args)
         {
-            if (sender is Flyout { Content: ChatTextFlyout { Parent: FlyoutPresenter flyout } presenter })
+            if (ChatTextFlyout.Elevate(sender) is ChatTextFlyout presenter)
             {
                 AutomationProperties.GetControlledPeers(this).Clear();
                 AutomationProperties.GetControlledPeers(this).Add(presenter.ControlledList);
-
-                var child = VisualTreeHelper.GetChild(flyout, 0);
-                if (child is UIElement element)
-                {
-                    element.Translation = new Vector3(0, 0, 12);
-                    element.Shadow = new ThemeShadow();
-                }
             }
         }
 
@@ -903,18 +881,20 @@ namespace Telegram.Controls.Chats
             private readonly string _query;
             private readonly string _inputLanguage;
             private readonly long _chatId;
+            private readonly bool _customEmoji;
 
             private bool _hasMore = true;
 
             private string _emoji;
 
-            public EmojiCollection(IClientService clientService, RecentEmojiSettings recent, string query, long chatId)
+            public EmojiCollection(IClientService clientService, RecentEmojiSettings recent, string query, long chatId, bool customEmoji = true)
             {
                 _clientService = clientService;
                 _recent = recent;
                 _query = query.Replace('_', ' ');
                 _inputLanguage = NativeUtils.GetKeyboardCulture();
                 _chatId = chatId;
+                _customEmoji = customEmoji;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -965,7 +945,7 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    if (_emoji?.Length > 0)
+                    if (_customEmoji && _emoji?.Length > 0)
                     {
                         var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji, 1000, _chatId));
                         if (response is Stickers stickers)

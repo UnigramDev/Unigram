@@ -6,28 +6,48 @@
 //
 
 using System;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
     public sealed partial class ChatTextFlyout : GridEx
     {
         private readonly FormattedTextBox _textBox;
+        private readonly IAutocompleteTarget _target;
 
         private readonly ZoomableListHandler _zoomer;
         private readonly AnimatedListHandler _handler;
 
-        public ViewModelBase ViewModel => _textBox.DataContext as ViewModelBase;
+        public ViewModelBase ViewModel => _textBox?.DataContext as ViewModelBase;
+
+        private IClientService ClientService => _target != null ? _target.ClientService : ViewModel?.ClientService;
 
         public ChatTextFlyout(FormattedTextBox textBox, AutocompleteCollection itemsSource)
+            : this(itemsSource)
+        {
+            _textBox = textBox;
+        }
+
+        /// <summary>For an editor that is not RichEdit: a picked item is handed to <paramref name="target"/>.</summary>
+        public ChatTextFlyout(IAutocompleteTarget target, AutocompleteCollection itemsSource)
+            : this(itemsSource)
+        {
+            _target = target;
+        }
+
+        private ChatTextFlyout(AutocompleteCollection itemsSource)
         {
             InitializeComponent();
 
@@ -38,7 +58,6 @@ namespace Telegram.Controls.Chats
             _zoomer.Opening += Zoomer_Opening;
             _zoomer.Closing += Zoomer_Closing;
 
-            _textBox = textBox;
             ScrollingHost.ItemsSource = itemsSource;
 
             MinWidth = 40;
@@ -57,6 +76,39 @@ namespace Telegram.Controls.Chats
         }
 
         public ListViewBase ControlledList => ScrollingHost;
+
+        /// <summary>
+        /// The flyout for <paramref name="content"/>, shown with
+        /// <c>AutocompleteFlyoutPresenterStyle</c>. Call <see cref="Elevate"/> from its
+        /// <see cref="FlyoutBase.Opened"/>: the style turns the default shadow off.
+        /// </summary>
+        public static Flyout CreateFlyout(ChatTextFlyout content)
+        {
+            return new Flyout
+            {
+                Content = content,
+                AllowFocusOnInteraction = false,
+                ShouldConstrainToRootBounds = false,
+                FlyoutPresenterStyle = BootStrapper.Current.Resources["AutocompleteFlyoutPresenterStyle"] as Style,
+            };
+        }
+
+        /// <summary>The flyout's shadow, once it is open and its presenter exists.</summary>
+        public static ChatTextFlyout Elevate(object flyout)
+        {
+            if (flyout is Flyout { Content: ChatTextFlyout { Parent: FlyoutPresenter presenter } content })
+            {
+                if (VisualTreeHelper.GetChildrenCount(presenter) > 0 && VisualTreeHelper.GetChild(presenter, 0) is UIElement element)
+                {
+                    element.Translation = new Vector3(0, 0, 12);
+                    element.Shadow = new ThemeShadow();
+                }
+
+                return content;
+            }
+
+            return null;
+        }
 
         public IAutocompleteCollection ItemsSource
         {
@@ -123,7 +175,7 @@ namespace Telegram.Controls.Chats
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
                 var animated = content.Children[0] as AnimatedImage;
-                animated.Source = DelayedFileSource.FromSticker(ViewModel?.ClientService, sticker);
+                animated.Source = DelayedFileSource.FromSticker(ClientService, sticker);
 
                 AutomationProperties.SetName(args.ItemContainer, sticker.Emoji);
             }
@@ -137,6 +189,12 @@ namespace Telegram.Controls.Chats
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
+            if (_target != null)
+            {
+                _target.Accept(e.ClickedItem);
+                return;
+            }
+
             var selection = _textBox.Document.Selection.GetClone();
             var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
 
@@ -186,5 +244,13 @@ namespace Telegram.Controls.Chats
                 }
             }
         }
+    }
+
+    /// <summary>Where <see cref="ChatTextFlyout"/> puts what is picked, when that is not a RichEdit box.</summary>
+    public interface IAutocompleteTarget
+    {
+        IClientService ClientService { get; }
+
+        void Accept(object item);
     }
 }

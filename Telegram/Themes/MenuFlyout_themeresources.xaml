@@ -71,6 +71,17 @@
         </Setter>
     </Style>
 
+    <!--  The suggestions over a text box (emoji, custom emoji, stickers): narrower than a menu
+          allows, and with a shadow of its own, set when it opens, in place of the default.  -->
+    <Style TargetType="FlyoutPresenter"
+           x:Key="AutocompleteFlyoutPresenterStyle"
+           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+        <Setter Property="IsDefaultShadowEnabled"
+                Value="False" />
+        <Setter Property="MinWidth"
+                Value="40" />
+    </Style>
+
     <!-- Default styles -->
     <Style TargetType="MenuFlyoutItem"
            BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}" />

@@ -303,22 +303,7 @@ namespace Telegram.Controls
             var range = Document.GetRange(index, index);
             range.GetRect(PointOptions.None, out Rect rect, out _);
 
-            var style = new Style
-            {
-                TargetType = typeof(FlyoutPresenter),
-                BasedOn = BootStrapper.Current.Resources["CommandFlyoutPresenterStyle"] as Style
-            };
-
-            style.Setters.Add(new Setter(FlyoutPresenter.IsDefaultShadowEnabledProperty, false));
-            style.Setters.Add(new Setter(FlyoutPresenter.MinWidthProperty, 40));
-
-            _emojiFlyout = new Flyout
-            {
-                Content = new ChatTextFlyout(this, source),
-                AllowFocusOnInteraction = false,
-                ShouldConstrainToRootBounds = false,
-                FlyoutPresenterStyle = style,
-            };
+            _emojiFlyout = ChatTextFlyout.CreateFlyout(new ChatTextFlyout(this, source));
 
             _emojiFlyout.Opened += EmojiFlyout_Opened;
             _emojiFlyout.Closed += EmojiFlyout_Closed;
@@ -333,17 +318,10 @@ namespace Telegram.Controls
 
         void EmojiFlyout_Opened(object sender, object args)
         {
-            if (sender is Flyout { Content: ChatTextFlyout { Parent: FlyoutPresenter flyout } presenter })
+            if (ChatTextFlyout.Elevate(sender) is ChatTextFlyout presenter)
             {
                 AutomationProperties.GetControlledPeers(this).Clear();
                 AutomationProperties.GetControlledPeers(this).Add(presenter.ControlledList);
-
-                var child = VisualTreeHelper.GetChild(flyout, 0);
-                if (child is UIElement element)
-                {
-                    element.Translation = new System.Numerics.Vector3(0, 0, 12);
-                    element.Shadow = new ThemeShadow();
-                }
             }
         }
 
