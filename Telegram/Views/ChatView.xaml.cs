@@ -28,6 +28,7 @@ using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Controls.Messages.Content;
+using Telegram.Controls.RichEditor;
 using Telegram.Controls.Views;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -123,6 +124,9 @@ namespace Telegram.Views
 
         // Not readonly: the leak test tears it down with the rest of the page.
         private ComposerController _composer;
+
+        // Kept for RemoveHandler, which needs the instance AddHandler was given.
+        private TappedEventHandler _textFieldTapped;
         private bool _useSystemSpellChecker = true;
         private bool _isTextReadOnly = false;
 
@@ -170,6 +174,14 @@ namespace Telegram.Views
             };
 
             ((IFormattedTextInput)TextField).ContentChanged += TextField_ContentChanged;
+
+            // Handled ones too: either box marks a tap as its own.
+            TextField.AddHandler(TappedEvent, _textFieldTapped = new TappedEventHandler(TextField_Tapped), true);
+
+            if (TextField.Input is ChatTextBox legacy)
+            {
+                legacy.ControlledList = ListAutocomplete;
+            }
 
             _loader = new BidirectionalIncrementalLoader(Messages);
 
@@ -301,7 +313,7 @@ namespace Telegram.Views
         {
             if (state == FocusState.Keyboard || state == FocusState.Programmatic)
             {
-                return TextField.FocusState != state;
+                return TextField.InputFocusState != state;
             }
 
             return false;
@@ -755,6 +767,7 @@ namespace Telegram.Views
             ViewModel.TextField = TextField;
             ViewModel.HistoryField = Messages;
             _composer.ViewModel = ViewModel;
+            UpdateComposerChat();
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             ViewModel.SetText(null, false);
@@ -1376,6 +1389,7 @@ namespace Telegram.Views
             if (_composer != null)
             {
                 ((IFormattedTextInput)TextField).ContentChanged -= TextField_ContentChanged;
+                TextField.RemoveHandler(TappedEvent, _textFieldTapped);
 
                 _composer.Detach();
                 _composer = null;
@@ -1440,7 +1454,7 @@ namespace Telegram.Views
                 }
 
                 var element = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-                if (element is not TextBox and not RichEditBox)
+                if (element is not TextBox and not RichEditBox and not RichEditorView)
                 {
                     TrySetFocusState(FocusState.Programmatic, true);
                 }
@@ -1529,6 +1543,13 @@ namespace Telegram.Views
             // the window root, so a focused TextBox or RichEditBox has already handled it, and a
             // popup only swallows it when it took focus. That is what the allow-list encoded by
             // hand - a ToolTip or a TeachingTip takes no focus, so typing over one still lands here.
+            // The composer itself is asked as well: the native editor takes its text from the
+            // input service, and some characters still reach here unhandled after it has.
+            if (TextField.InputFocusState != FocusState.Unfocused)
+            {
+                return;
+            }
+
             TextField.FocusInput(FocusState.Keyboard);
 
             // For some reason, this is paste
@@ -1676,7 +1697,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (args.Key == VirtualKey.Up && (focused is TextBox or RichEditBox or ReactionButton))
+                if (args.Key == VirtualKey.Up && (focused is TextBox or RichEditBox or RichEditorView or ReactionButton))
                 {
                     return;
                 }
@@ -1719,7 +1740,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (args.Key == VirtualKey.Down && (focused is TextBox or RichEditBox or ReactionButton))
+                if (args.Key == VirtualKey.Down && (focused is TextBox or RichEditBox or RichEditorView or ReactionButton))
                 {
                     return;
                 }
@@ -5594,7 +5615,7 @@ namespace Telegram.Views
         {
             if (_actionCollapsed && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
             {
-                args.TrySetNewFocusedElement(TextField);
+                args.TrySetNewFocusedElement(TextField.FocusTarget);
                 args.Handled = true;
             }
         }
@@ -5606,8 +5627,19 @@ namespace Telegram.Views
 
         #region UI delegate
 
+        // The native box draws custom emoji with the chat's client, and finds them for its chat.
+        private void UpdateComposerChat()
+        {
+            if (TextField.Input is MessageTextBox native)
+            {
+                native.ClientService = ViewModel.ClientService;
+                native.ChatId = ViewModel.Chat?.Id ?? 0;
+            }
+        }
+
         public void UpdateChat(Chat chat)
         {
+            UpdateComposerChat();
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
             UpdateChatEmojiStatus(chat);

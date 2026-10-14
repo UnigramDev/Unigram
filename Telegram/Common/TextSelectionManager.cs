@@ -512,7 +512,7 @@ namespace Telegram.Common
 
         private void OnGotFocus(object sender, FocusManagerGotFocusEventArgs e)
         {
-            if (e.NewFocusedElement is RichEditBox or TextBox)
+            if (e.NewFocusedElement is RichEditBox or TextBox or Controls.RichEditor.RichEditorView)
             {
                 ClearSelection();
             }

@@ -14,6 +14,7 @@ using Windows.UI.Text.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
@@ -202,6 +203,19 @@ namespace Telegram.Controls.RichEditor
             _placeholderLeaf = null;
             UpdatePlaceholders();
             UpdateSelection();
+        }
+
+        // The text comes through the edit context; the routed event is only marked, as a text
+        // box marks it, so that what listens on the window to send typing somewhere (ChatView
+        // into its composer) does not type it a second time.
+        protected override void OnCharacterReceived(CharacterReceivedRoutedEventArgs e)
+        {
+            if (_engine != null && IsEnabled)
+            {
+                e.Handled = true;
+            }
+
+            base.OnCharacterReceived(e);
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)

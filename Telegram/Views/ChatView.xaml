@@ -7,6 +7,7 @@
                         xmlns:common="using:Telegram.Common"
                         xmlns:controls="using:Telegram.Controls"
                         xmlns:chats="using:Telegram.Controls.Chats"
+                        xmlns:richeditor="using:Telegram.Controls.RichEditor"
                         xmlns:messages="using:Telegram.Controls.Messages"
                         xmlns:local="using:Telegram.Views"
                         xmlns:media="using:Telegram.Controls.Media"
@@ -30,6 +31,60 @@
 
     <UserControl.Resources>
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
+
+        <!--  The composer as it was, for when the native editor is switched off.  -->
+        <Style x:Key="ComposerLegacyTextBoxStyle"
+               TargetType="chats:ChatTextBox"
+               BasedOn="{StaticResource DefaultChatTextBoxStyle}">
+            <Setter Property="FontFamily"
+                    Value="{ThemeResource EmojiTextThemeFontFamily}" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="TextWrapping"
+                    Value="Wrap" />
+            <Setter Property="InputScope"
+                    Value="Chat" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Bottom" />
+            <Setter Property="PreventKeyboardDisplayOnProgrammaticFocus"
+                    Value="True" />
+        </Style>
+
+        <!--  The composer on the native editor: no frame and no states, the text where the old
+              composer put it (past the attach button, centred on the bar), and the inline bot's
+              hint over it. Here rather than with the editor's styles: those are default styles,
+              which a page cannot look up by key.  -->
+        <Style x:Key="MessageTextBoxComposerStyle"
+               TargetType="richeditor:MessageTextBox">
+            <Setter Property="IsTabStop"
+                    Value="False" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Padding"
+                    Value="48,13,0,15" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="richeditor:MessageTextBox">
+                        <Grid Background="{TemplateBinding Background}">
+                            <richeditor:RichEditorView x:Name="Editor"
+                                                       Padding="{TemplateBinding Padding}" />
+
+                            <Border Padding="{TemplateBinding Padding}"
+                                    IsHitTestVisible="False">
+                                <TextBlock x:Name="InlinePlaceholder"
+                                           Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="HeaderBackgroundStyle"
                TargetType="Border">
@@ -1276,20 +1331,15 @@
                                   Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Grid.Row="1">
-                                <chats:ChatTextBox x:Name="TextField"
-                                                   FontFamily="{ThemeResource EmojiTextThemeFontFamily}"
-                                                   Background="Transparent"
-                                                   ControlledList="{x:Bind ListAutocomplete}"
-                                                   AcceptsReturn="False"
-                                                   BorderThickness="0"
-                                                   TextWrapping="Wrap"
-                                                   InputScope="Chat"
-                                                   VerticalAlignment="Bottom"
-                                                   VerticalContentAlignment="Bottom"
-                                                   PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                   MinHeight="{StaticResource TelegramToolBarHeight}"
-                                                   MaxHeight="192"
-                                                   Capture="TextField_Tapped" />
+                                <controls:FormattedTextInputHost x:Name="TextField"
+                                                                 Kind="Composer"
+                                                                 Tier="All"
+                                                                 LegacyStyle="{StaticResource ComposerLegacyTextBoxStyle}"
+                                                                 NativeStyle="{StaticResource MessageTextBoxComposerStyle}"
+                                                                 AcceptsReturn="False"
+                                                                 VerticalAlignment="Bottom"
+                                                                 MinHeight="{StaticResource TelegramToolBarHeight}"
+                                                                 MaxHeight="192" />
                                 <contents:InstantContent x:Name="DraftField"
                                                          Margin="38,13,0,10"
                                                          MaxHeight="192" />
