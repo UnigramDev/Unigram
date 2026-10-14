@@ -687,6 +687,11 @@ namespace Telegram.Controls
                 var button = buttons[i].Button;
                 var element = GetOrCreateButton(i);
 
+                if (element.Visibility != Visibility.Visible)
+                {
+                    element.Visibility = Visibility.Visible;
+                }
+
                 element.Tag = button;
                 element.SetButton(clientService, null, 0, button.Style, button.Type, inline: true);
 
@@ -720,11 +725,14 @@ namespace Telegram.Controls
             }
 
             // The buttons of whatever this element rendered before: out of the way rather than
-            // removed, as the next message may want as many again.
+            // removed, as the next message may want as many again. Collapsed, not only emptied:
+            // the arrange pass places only the buttons in use, so a spare would stay where it
+            // was last put, an empty button over the text that still takes clicks.
             for (int i = buttons?.Count ?? 0; i < _buttons?.Count; i++)
             {
                 _buttons[i].Tag = null;
                 _buttons[i].Content = null;
+                _buttons[i].Visibility = Visibility.Collapsed;
             }
 
             Invalidate();
@@ -2958,6 +2966,7 @@ namespace Telegram.Controls
             {
                 _buttons[i].Tag = null;
                 _buttons[i].Content = null;
+                _buttons[i].Visibility = Visibility.Collapsed;
             }
 
             // The layout stays, holding the text it was given and the surface it drew into:
