@@ -359,7 +359,9 @@ box the composer: sending and scheduling, the inline bot, the `@ # /` lists and 
 indicator, Up to edit and Ctrl+Up/Down to reply, pasting files and Ctrl+Shift+V HTML; it works on an
 `IFormattedTextInput` (Telegram/Controls/), which `DialogViewModel.TextField` is too. `ChatTextBox`
 (…/ChatTextBox.cs) — the composer's box over RichEdit, now only what is RichEdit's: the `:` and custom
-emoji flyout, Up/Down to the ends, the inline bot's placeholder drawn over the text;
+emoji flyout, Up/Down to the ends, the inline bot's placeholder drawn over the text. ChatView declares
+the box as a `FormattedTextInputHost` (`Kind="Composer"`, `Tier="All"`), which makes a `ChatTextBox` or a
+`MessageTextBox` as the diagnostics switch says;
 `ChatRecordBar` (…/ChatRecordBar.xaml.cs) — voice/video recording UI with composition-driven waveform
 and blob visuals; `ChatActionBarView` (…/ChatActionBarView.xaml.cs); `ChatBackgroundControl`/
 `ChatBackgroundPresenter` — the wallpaper compositor.
@@ -574,8 +576,8 @@ overflow is cut off before `Scale` can shrink it back inside. It costs the desir
 drives to zero — an ancestor that sizes itself to this control's content gets nothing — and
 `MeasureOverride` adds it back to recover the width the parent really had.
 
-## Rich message editor — Telegram/Controls/RichEditor/ (27 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=cd1b11ad8 paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
+## Rich message editor — Telegram/Controls/RichEditor/ (28 files), Telegram/Views/Host/RichTextWindow.xaml.cs
+<!-- map: verified=26cd946cc paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -591,7 +593,9 @@ over `Telegram.Native.SpellChecker` (the Windows Spell Checking API) — squiggl
 than a rich message: `RichSchema` — what the engine may make, checked by every command, paste and load;
 `RichFormattedTextConverter` — `FormattedText` in and out, lossless. `RichEditorView.Suggestions.cs` —
 emoji and custom emoji for what is typed (`AutocompleteEntityFinder`'s plain-text search), in the
-composer's `ChatTextFlyout`, offered once the host sets a `RichSuggestionContext`.
+composer's `ChatTextFlyout`, offered once the host sets a `RichSuggestionContext`. `MessageTextBox` — the editor in a
+text box's frame, `IFormattedTextInput` (Controls/) like `FormattedTextBox`, picked per surface by
+`FormattedTextInputHost` and the `NativeTextInput` diagnostics setting (notes/native-text-input-plan.md).
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
 **Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
