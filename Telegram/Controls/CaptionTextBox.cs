@@ -349,8 +349,8 @@ namespace Telegram.Controls
 
         private void EmojiFlyout_Closed(object sender, object e)
         {
-            _emojiFlyout.Opened += EmojiFlyout_Opened;
-            _emojiFlyout.Closed += EmojiFlyout_Closed;
+            _emojiFlyout.Opened -= EmojiFlyout_Opened;
+            _emojiFlyout.Closed -= EmojiFlyout_Closed;
 
             _emojiFlyout = null;
 
