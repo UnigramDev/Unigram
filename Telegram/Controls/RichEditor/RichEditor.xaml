@@ -224,8 +224,12 @@
 
                         <!--  Set here, not left to the implicit DirectTextBlock style: that style
                               is not applied inside this template, and the block would fall back
-                              to black text and uncoloured links.  -->
+                              to black text and uncoloured links. Left to right whatever the
+                              editor's direction: the block draws into a surface, which a mirrored
+                              parent would show mirrored, and lays right to left text out itself.
+                              RichLeafView converts its coordinates across the flip.  -->
                         <controls:DirectTextBlock x:Name="Text"
+                                                  FlowDirection="LeftToRight"
                                                   Foreground="{ThemeResource MessageForegroundBrush}"
                                                   HyperlinkForeground="{ThemeResource MessageForegroundLinkBrush}"
                                                   IconForeground="{ThemeResource MessageForegroundBrush}"
@@ -789,7 +793,9 @@
                             </StackPanel>
                         </Border>
 
+                        <!--  Drawn into a surface as the text is, so not mirrored either.  -->
                         <controls:RichMathImage x:Name="MathImage"
+                                                FlowDirection="LeftToRight"
                                                 HorizontalAlignment="Center"
                                                 Visibility="Collapsed" />
 
@@ -866,7 +872,9 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <!--  A picture is not mirrored with a right to left article.  -->
                         <local:RichMediaFrame x:Name="Media"
+                                              FlowDirection="LeftToRight"
                                               HorizontalAlignment="Center">
                             <!--  What is under a picture still loading; a file has none.  -->
                             <Border x:Name="Backdrop"

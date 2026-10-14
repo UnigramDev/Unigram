@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Telegram.Native;
 using Telegram.Services;
 using Windows.Foundation;
@@ -62,6 +63,7 @@ namespace Telegram.Controls.RichEditor
         private int _renderedVersion = -1;
         private RichTextLeaf _renderedLeaf;
         private string _renderedLanguage;
+        private bool _renderedRightToLeft;
 
         private int _selectionStart;
         private int _selectionEnd;
@@ -202,7 +204,12 @@ namespace Telegram.Controls.RichEditor
 
             UpdatePlaceholder();
 
-            if (ReferenceEquals(_renderedLeaf, _leaf) && _renderedVersion == _leaf.Version && _renderedLanguage == _language)
+            // What a line with no strong character of its own reads as: the editor's direction,
+            // which is the article's, or the app's for a message's text. Kept with the rest, as
+            // the article's direction can change under a line that did not.
+            var rightToLeft = FlowDirection == FlowDirection.RightToLeft;
+
+            if (ReferenceEquals(_renderedLeaf, _leaf) && _renderedVersion == _leaf.Version && _renderedLanguage == _language && _renderedRightToLeft == rightToLeft)
             {
                 return;
             }
@@ -210,6 +217,7 @@ namespace Telegram.Controls.RichEditor
             _renderedLeaf = _leaf;
             _renderedVersion = _leaf.Version;
             _renderedLanguage = _language;
+            _renderedRightToLeft = rightToLeft;
 
             var text = _leaf.Text;
             var display = text.Length == 0 || text[text.Length - 1] == '\n'
@@ -218,7 +226,15 @@ namespace Telegram.Controls.RichEditor
 
             BuildParts();
 
-            Text.SetText(display, _parts.Count > 0 ? _parts : null);
+            // Each line runs the way its first strong character does, as a message's paragraph
+            // does: an Arabic line in an English article reads right to left, and the other way.
+            var direction = text.Length > 0 ? NativeUtils.GetDirectionality(text) : TextDirectionality.Neutral;
+            if (direction == TextDirectionality.Neutral)
+            {
+                direction = rightToLeft ? TextDirectionality.RightToLeft : TextDirectionality.LeftToRight;
+            }
+
+            Text.SetText(display, _parts.Count > 0 ? _parts : null, direction);
 
             if (_leaf.IsPlain)
             {
@@ -453,7 +469,23 @@ namespace Telegram.Controls.RichEditor
 
         // ---------------------------------------------------------------------------------
         // Geometry. Points and rectangles are in this control's coordinates.
+        //
+        // The text block is pinned left to right (see the template), so in a right to left
+        // editor its x runs the other way from this control's: every crossing flips it here,
+        // and everything outside, which shares this control's direction, reads straight.
         // ---------------------------------------------------------------------------------
+
+        private bool IsMirrored => FlowDirection == FlowDirection.RightToLeft && Text.FlowDirection == FlowDirection.LeftToRight;
+
+        // A rectangle of the text block's, in this control's coordinates.
+        private Rect FromText(Rect rect, Vector3 offset, bool mirrored)
+        {
+            var x = mirrored
+                ? offset.X + Text.ActualSize.X - rect.X - rect.Width
+                : offset.X + rect.X;
+
+            return new Rect(x, rect.Y + offset.Y, rect.Width, rect.Height);
+        }
 
         public void Select(int start, int end)
         {
@@ -471,7 +503,29 @@ namespace Telegram.Controls.RichEditor
             }
 
             var offset = Text.ActualOffset;
-            var position = Text.GetPositionFromPoint(new Point(point.X - offset.X, point.Y - offset.Y), out _);
+            var x = IsMirrored
+                ? offset.X + Text.ActualSize.X - point.X
+                : point.X - offset.X;
+
+            var position = Text.GetPositionFromPoint(new Point(x, point.Y - offset.Y), out _);
+
+            return Math.Clamp(position, 0, _leaf.Length);
+        }
+
+        /// <summary>
+        /// The start or the end of the visual line at <paramref name="y"/>: where Home and End go.
+        /// Asked in the text block's own coordinates, which are left to right whatever the
+        /// editor's are, so the line's direction alone says which side its start is on.
+        /// </summary>
+        public int GetLineEdge(double y, bool end)
+        {
+            if (Text == null || _leaf == null || _leaf.IsEmpty)
+            {
+                return 0;
+            }
+
+            var x = end != Text.IsRightToLeft ? 100000d : -100000d;
+            var position = Text.GetPositionFromPoint(new Point(x, y - Text.ActualOffset.Y), out _);
 
             return Math.Clamp(position, 0, _leaf.Length);
         }
@@ -488,10 +542,12 @@ namespace Telegram.Controls.RichEditor
 
             if (rect.Height <= 0)
             {
-                rect = new Rect(0, 0, 0, Math.Max(ActualHeight, 16));
+                // Before any text, at the edge the line starts from.
+                return new Rect(Text.IsRightToLeft != IsMirrored ? ActualSize.X : 0, 0, 0, Math.Max(ActualHeight, 16));
             }
 
-            return new Rect(rect.X + offset.X, rect.Y + offset.Y, 0, rect.Height);
+            rect = FromText(new Rect(rect.X, rect.Y, 0, rect.Height), offset, IsMirrored);
+            return new Rect(rect.X, rect.Y, 0, rect.Height);
         }
 
         public Rect[] GetRangeRects(int start, int end)
@@ -503,10 +559,11 @@ namespace Telegram.Controls.RichEditor
 
             var rects = Text.GetRangeRectangles(start, end);
             var offset = Text.ActualOffset;
+            var mirrored = IsMirrored;
 
             for (int i = 0; i < rects?.Length; i++)
             {
-                rects[i] = new Rect(rects[i].X + offset.X, rects[i].Y + offset.Y, rects[i].Width, rects[i].Height);
+                rects[i] = FromText(rects[i], offset, mirrored);
             }
 
             return rects ?? Array.Empty<Rect>();

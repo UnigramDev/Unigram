@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
@@ -285,6 +286,8 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
+            var flipped = UpdateDocumentDirection(changes, leaf);
+
             if ((changes & RichEditorChanges.Structure) != 0)
             {
                 Realize();
@@ -300,6 +303,15 @@ namespace Telegram.Controls.RichEditor
                 if (leaf.Owner?.Parent is RichBlockQuote quote && _presenters.TryGetValue(quote, out RichBlockPresenter presenter))
                 {
                     _toggleStale = presenter as RichBlockQuotePresenter;
+                }
+            }
+
+            // Every line without a strong character of its own reads the new way.
+            if (flipped)
+            {
+                foreach (var view in _leafViews.Values)
+                {
+                    view.Render();
                 }
             }
 
@@ -833,6 +845,62 @@ namespace Telegram.Controls.RichEditor
         /// The hint on an empty paragraph follows the caret, and so does an empty credit in a quote
         /// with no text: both are settled again whenever the caret changes leaf.
         /// </summary>
+        // The line whose text decided the article's direction: only an edit there or before it
+        // can change it, so typing further down does not ask again.
+        private RichTextLeaf _directionLeaf;
+
+        /// <summary>
+        /// An article reads the way its first line with a strong character does, as its reader
+        /// takes it; the editor mirrors with it, as an instant view does, and that is what is
+        /// sent (<see cref="RichDocument.IsRtl"/>). One with no such line keeps what it was
+        /// loaded with. A message's text is left to the app's direction, as a text box is.
+        /// Returns whether the editor turned around.
+        /// </summary>
+        private bool UpdateDocumentDirection(RichEditorChanges changes, RichTextLeaf leaf)
+        {
+            if (_engine.Schema != null || (changes & (RichEditorChanges.Text | RichEditorChanges.Structure)) == 0)
+            {
+                return false;
+            }
+
+            if ((changes & RichEditorChanges.Structure) == 0 && leaf != null && _directionLeaf != null && leaf.Index > _directionLeaf.Index)
+            {
+                return false;
+            }
+
+            var document = _engine.Document;
+            var rightToLeft = document.IsRtl;
+
+            _directionLeaf = null;
+
+            foreach (var item in document.Leaves)
+            {
+                if (item.Length == 0)
+                {
+                    continue;
+                }
+
+                var direction = NativeUtils.GetDirectionality(item.Text);
+                if (direction != TextDirectionality.Neutral)
+                {
+                    _directionLeaf = item;
+                    rightToLeft = direction == TextDirectionality.RightToLeft;
+                    break;
+                }
+            }
+
+            document.IsRtl = rightToLeft;
+
+            var flow = rightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            if (FlowDirection == flow)
+            {
+                return false;
+            }
+
+            FlowDirection = flow;
+            return true;
+        }
+
         private bool _documentEmpty = true;
 
         // The one hint of a message's text depends on the whole document being empty, not on

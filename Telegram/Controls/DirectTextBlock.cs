@@ -431,6 +431,9 @@ namespace Telegram.Controls
         // decides, as it is the one the text opens with.
         private bool _rightToLeft;
 
+        /// <summary>Whether the text, or the first paragraph of it that has a direction, reads right to left.</summary>
+        public bool IsRightToLeft => _rightToLeft;
+
         // Created on demand and kept: it holds the text and everything said about it, and
         // rebuilds itself when any of that changes.
         private DirectTextLayout Layout()
@@ -443,7 +446,11 @@ namespace Telegram.Controls
             return _layout;
         }
 
-        public void SetText(string text, IList<TextStylePart> entities = null)
+        /// <param name="direction">
+        /// Which way the one paragraph runs. Neutral, what most callers say by saying nothing, is
+        /// the app's direction.
+        /// </param>
+        public void SetText(string text, IList<TextStylePart> entities = null, TextDirectionality direction = TextDirectionality.Neutral)
         {
             _text = text;
             _links = null;
@@ -474,9 +481,9 @@ namespace Telegram.Controls
                 }
             }
 
-            // Nothing here says which way it runs, so it runs the way the app does - and it is
+            // Unless the caller says which way it runs, it runs the way the app does - and it is
             // one paragraph until a styled overload divides it, which they do after this.
-            SetDirection(TextDirectionality.Neutral);
+            SetDirection(direction);
 
             Invalidate();
         }

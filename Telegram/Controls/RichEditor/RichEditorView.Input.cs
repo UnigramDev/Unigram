@@ -1354,8 +1354,10 @@ namespace Telegram.Controls.RichEditor
 
         private bool IsRightToLeft(RichTextLeaf leaf)
         {
+            // The line's own direction, not the element's: the text block is pinned left to
+            // right, and an Arabic line in an English article still reads right to left.
             return _leafViews.TryGetValue(leaf, out RichLeafView view)
-                && view.TextBlock?.FlowDirection == FlowDirection.RightToLeft;
+                && view.TextBlock?.IsRightToLeft == true;
         }
 
         private int PageLines()
@@ -1594,7 +1596,7 @@ namespace Telegram.Controls.RichEditor
             Surface.UpdateLayout();
 
             var caret = view.GetCaretRect(focus.Offset);
-            var offset = view.GetPositionFromPoint(new Point(direction < 0 ? -100000 : 100000, caret.Y + caret.Height / 2));
+            var offset = view.GetLineEdge(caret.Y + caret.Height / 2, direction > 0);
 
             _engine.Move(new RichPosition(focus.Leaf, offset), extend);
         }
