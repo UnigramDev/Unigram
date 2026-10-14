@@ -144,12 +144,39 @@ namespace Telegram.Common
                 if (last != null && Emoji.ContainsSingleEmoji(last))
                 {
                     result = last;
-                    index = end - hidden - last.Length;
+                    index = end - hidden - (shorter.Length - StartOf(shorter, shorter.Length, last));
                     entity = AutocompleteEntity.Sticker;
                 }
             }
 
             return entity != AutocompleteEntity.None;
+        }
+
+        // The emoji comes back without its skin tones, which is what stickers are found by, so
+        // its length is not how far back it starts: walk back over it, stepping over the tones.
+        private static int StartOf(string text, int caret, string emoji)
+        {
+            var index = caret;
+            var remaining = emoji.Length;
+
+            while (remaining > 0 && index > 0)
+            {
+                if (index >= 2 && Emoji.IsSkinModifierCharacter(text, index - 2))
+                {
+                    index -= 2;
+                }
+                else if (text[index - 1] == emoji[remaining - 1])
+                {
+                    index--;
+                    remaining--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return index;
         }
 
         public static bool IsValidSymbol(char symbol)
