@@ -79,6 +79,12 @@ namespace Telegram.Controls.RichEditor
         private RichTextLeaf _placeholderLeaf;
 
         private ScalarKeyFrameAnimation _blink;
+        private bool _blinking;
+
+        // Whether the editor has focus, as GotFocus and LostFocus say. Not FocusState: a window
+        // that is deactivated raises LostFocus but leaves FocusState as it was, and the caret
+        // would go on blinking in the background.
+        private bool _hasFocus;
         private Windows.UI.ViewManagement.UISettings _settings;
 
         public RichEditorView()
@@ -238,6 +244,7 @@ namespace Telegram.Controls.RichEditor
         {
             DestroyEditContext();
             HideSuggestions();
+            StopBlink();
 
             if (_scrollTimer != null)
             {
@@ -796,7 +803,7 @@ namespace Telegram.Controls.RichEditor
                 return document.IsEmpty && ReferenceEquals(document.Blocks[0], block) ? placeholder : null;
             }
 
-            var focused = ReferenceEquals(leaf, _engine.Focus.Leaf) && FocusState != FocusState.Unfocused;
+            var focused = ReferenceEquals(leaf, _engine.Focus.Leaf) && _hasFocus;
 
             if (block.Kind == RichBlockKind.Paragraph && !focused && !(document.IsEmpty && ReferenceEquals(document.Blocks[0], block)))
             {
@@ -1093,7 +1100,7 @@ namespace Telegram.Controls.RichEditor
             NodeOutline.Visibility = Visibility.Visible;
         }
 
-        private bool IsFocusedOrMenuOpen => FocusState != FocusState.Unfocused || _menuOpen;
+        private bool IsFocusedOrMenuOpen => _hasFocus || _menuOpen;
 
         private bool _menuOpen;
         private bool _invalidOverlay;
@@ -1124,10 +1131,10 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var visible = FocusState != FocusState.Unfocused && _engine.SelectedNode == null && _engine.IsSelectionEmpty;
+            var visible = _hasFocus && _engine.SelectedNode == null && _engine.IsSelectionEmpty;
             if (!visible)
             {
-                Caret.Visibility = Visibility.Collapsed;
+                HideCaret();
                 return;
             }
 
@@ -1138,7 +1145,7 @@ namespace Telegram.Controls.RichEditor
             var rect = GetCaretRect();
             if (rect.IsEmpty)
             {
-                Caret.Visibility = Visibility.Collapsed;
+                HideCaret();
                 return;
             }
 
@@ -1164,8 +1171,7 @@ namespace Telegram.Controls.RichEditor
             var interval = _settings.CaretBlinkRate;
             if (interval <= 0 || interval == uint.MaxValue)
             {
-                visual.StopAnimation("Opacity");
-                visual.Opacity = 1;
+                StopBlink();
                 return;
             }
 
@@ -1186,6 +1192,29 @@ namespace Telegram.Controls.RichEditor
             visual.StopAnimation("Opacity");
             visual.Opacity = 1;
             visual.StartAnimation("Opacity", _blink);
+
+            _blinking = true;
+        }
+
+        // Collapsing the caret does not stop its animation, which runs forever on the compositor.
+        private void HideCaret()
+        {
+            Caret.Visibility = Visibility.Collapsed;
+            StopBlink();
+        }
+
+        private void StopBlink()
+        {
+            if (!_blinking || Caret == null)
+            {
+                return;
+            }
+
+            _blinking = false;
+
+            var visual = ElementCompositionPreview.GetElementVisual(Caret);
+            visual.StopAnimation("Opacity");
+            visual.Opacity = 1;
         }
 
         private void BringIntoView(Rect rect)

@@ -847,7 +847,7 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var visible = _touchSelection && !_engine.IsSelectionEmpty && _engine.SelectedNode == null && FocusState != FocusState.Unfocused;
+            var visible = _touchSelection && !_engine.IsSelectionEmpty && _engine.SelectedNode == null && _hasFocus;
             if (!visible)
             {
                 StartGripper.Visibility = Visibility.Collapsed;

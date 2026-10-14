@@ -149,7 +149,7 @@ namespace Telegram.Controls.RichEditor
             _editContext.CompositionCompleted += OnCompositionCompleted;
             _editContext.FocusRemoved += OnFocusRemoved;
 
-            if (FocusState != FocusState.Unfocused)
+            if (_hasFocus)
             {
                 EnterContext();
             }
@@ -194,6 +194,9 @@ namespace Telegram.Controls.RichEditor
         {
             base.OnGotFocus(e);
 
+            // Raised by the editor and bubbled from a block's button alike; moving focus between
+            // them raises no LostFocus here.
+            _hasFocus = true;
             EnterContext();
 
             _placeholderLeaf = null;
@@ -205,11 +208,9 @@ namespace Telegram.Controls.RichEditor
         {
             base.OnLostFocus(e);
 
-            // Focus inside the editor - a button of a block - is still the editor's.
-            if (FocusState != FocusState.Unfocused)
-            {
-                return;
-            }
+            // Focus left the editor, or the window was deactivated with it here: either way the
+            // caret, the hints and the suggestions go until GotFocus.
+            _hasFocus = false;
 
             LeaveContext();
             HideSuggestions();

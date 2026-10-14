@@ -82,7 +82,7 @@ namespace Telegram.Controls.RichEditor
             var focus = _engine.Focus;
             var leaf = focus.Leaf;
 
-            if (leaf == null || leaf.IsPlain || FocusState == FocusState.Unfocused
+            if (leaf == null || leaf.IsPlain || !_hasFocus
                 || !_engine.IsSelectionEmpty || _engine.SelectedNode != null || IsInCode(leaf, focus.Offset)
                 || !AutocompleteEntityFinder.TrySearch(leaf.Text, focus.Offset, RichTextLeaf.ObjectChar, out AutocompleteEntity entity, out string result, out int index))
             {
