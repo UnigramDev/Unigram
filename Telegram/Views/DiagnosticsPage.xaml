@@ -37,6 +37,13 @@
                         </controls:SettingsButton.Badge>
                     </controls:SettingsButton>
 
+                    <controls:SettingsButton Content="Native Text Input (restart)">
+                        <controls:SettingsButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.NativeTextInputOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.NativeTextInput, Mode=TwoWay}" />
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
+
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollBars, Mode=TwoWay}"
                               Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

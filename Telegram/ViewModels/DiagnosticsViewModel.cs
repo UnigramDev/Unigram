@@ -30,6 +30,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using NativeTextInputMode = Telegram.Controls.NativeTextInputMode;
 
 namespace Telegram.ViewModels
 {
@@ -326,6 +327,35 @@ namespace Telegram.ViewModels
             MessageDustEffect.Disabled,
             MessageDustEffect.Particles,
             MessageDustEffect.Layers,
+        };
+
+        public int NativeTextInput
+        {
+            get => Array.IndexOf(_nativeTextInputIndexer, AppSettings.Diagnostics.NativeTextInput);
+            set
+            {
+                if (value >= 0 && value < _nativeTextInputIndexer.Length && AppSettings.Diagnostics.NativeTextInput != _nativeTextInputIndexer[value])
+                {
+                    AppSettings.Diagnostics.NativeTextInput = _nativeTextInputIndexer[value];
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private readonly NativeTextInputMode[] _nativeTextInputIndexer = new[]
+        {
+            NativeTextInputMode.Off,
+            NativeTextInputMode.Popups,
+            NativeTextInputMode.Secondary,
+            NativeTextInputMode.All,
+        };
+
+        public List<SettingsOptionItem<NativeTextInputMode>> NativeTextInputOptions { get; } = new()
+        {
+            new SettingsOptionItem<NativeTextInputMode>(NativeTextInputMode.Off, nameof(NativeTextInputMode.Off)),
+            new SettingsOptionItem<NativeTextInputMode>(NativeTextInputMode.Popups, nameof(NativeTextInputMode.Popups)),
+            new SettingsOptionItem<NativeTextInputMode>(NativeTextInputMode.Secondary, nameof(NativeTextInputMode.Secondary)),
+            new SettingsOptionItem<NativeTextInputMode>(NativeTextInputMode.All, nameof(NativeTextInputMode.All)),
         };
 
         public List<SettingsOptionItem<MessageDustEffect>> MessageDustOptions { get; } = new()

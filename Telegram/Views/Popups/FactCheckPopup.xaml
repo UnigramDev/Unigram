@@ -14,13 +14,14 @@
                    Style="{StaticResource BodyTextBlockStyle}"
                    Visibility="Collapsed" />
 
-        <controls:FormattedTextBox x:Name="Label"
-                                   AllowedEntities="Bold,Italic,TextUrl"
-                                   Margin="0,12,0,0"
-                                   VerticalAlignment="Top"
-                                   TextChanged="Label_TextChanged"
-                                   KeyDown="Label_KeyDown"
-                                   MaxLength="1024" />
+        <controls:FormattedTextInputHost x:Name="Label"
+                                         Tier="Popups"
+                                         AllowedEntities="Bold,Italic,TextUrl"
+                                         Margin="0,12,0,0"
+                                         VerticalAlignment="Top"
+                                         ContentChanged="Label_ContentChanged"
+                                         Submitted="Label_Submitted"
+                                         MaxLength="1024" />
 
         <Grid>
             <Grid.ColumnDefinitions>

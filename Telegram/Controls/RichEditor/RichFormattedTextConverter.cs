@@ -436,5 +436,49 @@ namespace Telegram.Controls.RichEditor
 
             return length;
         }
+
+        /// <summary>Where <paramref name="position"/> falls in the sent text, counted as <see cref="GetLength"/> counts.</summary>
+        public static int GetOffset(RichDocument document, RichPosition position)
+        {
+            var leaves = document.Leaves;
+            var offset = 0;
+
+            for (int i = 0; i < leaves.Count; i++)
+            {
+                var leaf = leaves[i];
+                var end = ReferenceEquals(leaf, position.Leaf) ? position.Offset : leaf.Length;
+
+                offset += end;
+
+                if (leaf.Text.IndexOf(RichTextLeaf.ObjectChar, 0, end) >= 0)
+                {
+                    var start = 0;
+
+                    foreach (var run in leaf.Runs)
+                    {
+                        if (start >= end)
+                        {
+                            break;
+                        }
+
+                        if (run.Object != null)
+                        {
+                            offset += run.Object.PlainText.Length - 1;
+                        }
+
+                        start += run.Length;
+                    }
+                }
+
+                if (ReferenceEquals(leaf, position.Leaf))
+                {
+                    break;
+                }
+
+                offset++;
+            }
+
+            return offset;
+        }
     }
 }

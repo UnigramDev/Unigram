@@ -1187,8 +1187,9 @@
                                           Visibility="Collapsed"
                                           Margin="0,8,0,0">
                     <Border>
-                        <controls:FormattedTextBox x:Name="QuizExplanation"
-                                                   PlaceholderText="{CustomResource AddAnExplanation}" />
+                        <controls:FormattedTextInputHost x:Name="QuizExplanation"
+                                                         Tier="Popups"
+                                                         PlaceholderText="{CustomResource AddAnExplanation}" />
                     </Border>
                 </controls:HeaderedControl>
             </StackPanel>

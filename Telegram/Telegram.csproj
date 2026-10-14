@@ -507,6 +507,7 @@
     <Compile Include="Controls\RichEditor\RichClipboard.cs" />
     <Compile Include="Controls\RichEditor\RichSchema.cs" />
     <Compile Include="Controls\RichEditor\RichFormattedTextConverter.cs" />
+    <Compile Include="Controls\RichEditor\MessageTextBox.cs" />
     <Compile Include="Controls\RichEditor\RichEditorAutomationPeer.cs" />
     <Compile Include="Controls\SettingsRadioButton.cs" />
     <Compile Include="Controls\SlidePanel.cs" />
@@ -1045,6 +1046,7 @@
     <Compile Include="Controls\FormattedTextBlock.Selectable.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
     <Compile Include="Controls\IFormattedTextInput.cs" />
+    <Compile Include="Controls\FormattedTextInputHost.cs" />
     <Compile Include="Controls\FormattedTextFlyout.xaml.cs">
       <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>
     </Compile>

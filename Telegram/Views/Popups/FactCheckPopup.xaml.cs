@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
@@ -34,19 +34,14 @@ namespace Telegram.Views.Popups
             Text = Label.GetFormattedText();
         }
 
-        private void Label_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void Label_Submitted(object sender, EventArgs e)
         {
-            if (e.Key != Windows.System.VirtualKey.Enter)
-            {
-                return;
-            }
-
             Hide(ContentDialogResult.Primary);
         }
 
         private bool _empty = true;
 
-        private void Label_TextChanged(object sender, RoutedEventArgs e)
+        private void Label_ContentChanged(object sender, EventArgs e)
         {
             if (Label.IsEmpty && !_empty)
             {

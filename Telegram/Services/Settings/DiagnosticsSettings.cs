@@ -7,6 +7,7 @@
 
 using Telegram.Common;
 using Telegram.Composition;
+using NativeTextInputMode = Telegram.Controls.NativeTextInputMode;
 
 namespace Telegram.Services.Settings
 {
@@ -22,6 +23,13 @@ namespace Telegram.Services.Settings
         {
             get => (MessageDustEffect)(_messageDust ??= GetValueOrDefault("MessageDust", (int)MessageDustEffect.Layers));
             set => AddOrUpdateValue(ref _messageDust, "MessageDust", (int)value);
+        }
+
+        private int? _nativeTextInput;
+        public NativeTextInputMode NativeTextInput
+        {
+            get => (NativeTextInputMode)(_nativeTextInput ??= GetValueOrDefault("NativeTextInput", (int)NativeTextInputMode.Off));
+            set => AddOrUpdateValue(ref _nativeTextInput, "NativeTextInput", (int)value);
         }
 
         private bool? _legacyScrollBars;

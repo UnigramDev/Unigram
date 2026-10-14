@@ -1009,4 +1009,107 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!--  A message's text: the editor inside a text box's frame, with the text box's brushes and
+          states, so a box that switched over looks like the one it replaced.  -->
+    <Style TargetType="local:MessageTextBox">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Background"
+                Value="{ThemeResource TextControlBackground}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TextControlBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="{ThemeResource TextControlBorderThemeThickness}" />
+        <Setter Property="Padding"
+                Value="{ThemeResource TextControlThemePadding}" />
+        <Setter Property="MinHeight"
+                Value="{ThemeResource TextControlThemeMinHeight}" />
+        <Setter Property="CornerRadius"
+                Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageTextBox">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="BorderElement.Background"
+                                                Value="{ThemeResource TextControlBackgroundPointerOver}" />
+                                        <Setter Target="BorderElement.BorderBrush"
+                                                Value="{ThemeResource TextControlBorderBrushPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Focused">
+                                    <VisualState.Setters>
+                                        <Setter Target="BorderElement.Background"
+                                                Value="{ThemeResource TextControlBackgroundFocused}" />
+                                        <Setter Target="BorderElement.BorderBrush"
+                                                Value="{ThemeResource TextControlBorderBrushFocused}" />
+                                        <Setter Target="BorderElement.BorderThickness"
+                                                Value="{ThemeResource TextControlBorderThemeThicknessFocused}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="BorderElement.Background"
+                                                Value="{ThemeResource TextControlBackgroundDisabled}" />
+                                        <Setter Target="BorderElement.BorderBrush"
+                                                Value="{ThemeResource TextControlBorderBrushDisabled}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <!--  Behind the editor, not around it, as in TextBox: the focused border is
+                              thicker at the bottom, and around the editor it would push the text up
+                              and the box taller on every focus.  -->
+                        <Border x:Name="BorderElement"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+
+                        <local:RichEditorView x:Name="Editor"
+                                              Margin="{TemplateBinding BorderThickness}"
+                                              Padding="{TemplateBinding Padding}" />
+
+                        <!--  The inline bot's hint, after the text it addresses: over the editor,
+                              inset as its text is, and never in the way of the pointer.  -->
+                        <Border Margin="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                IsHitTestVisible="False">
+                            <TextBlock x:Name="InlinePlaceholder"
+                                       Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Only a place for the box it makes, which stretches to fill it as a text box would.  -->
+    <Style TargetType="controls:FormattedTextInputHost">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:FormattedTextInputHost">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
