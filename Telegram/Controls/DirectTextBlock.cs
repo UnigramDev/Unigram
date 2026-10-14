@@ -2531,6 +2531,7 @@ namespace Telegram.Controls
         private void Invalidate()
         {
             _renderedSize = default;
+            _renderRetries = 0;
             InvalidateMeasure();
 
             // The text is drawn in the arrange pass, and a measure does not bring one on its own:
@@ -2651,6 +2652,36 @@ namespace Telegram.Controls
         // The visuals the text itself needs. The selection and the search highlight are not
         // among them: most blocks are never selected and never searched, and a shape visual, a
         // sprite shape and a path geometry each are worth more than they look next to a draw.
+        // Bounded, so that a device that keeps refusing does not keep the dispatcher busy; a new
+        // text starts the count again.
+        private const int MaxRenderRetries = 3;
+
+        private int _renderRetries;
+        private Windows.System.DispatcherQueueHandler _retryRender;
+
+        private void ScheduleRenderRetry()
+        {
+            if (_renderRetries >= MaxRenderRetries || string.IsNullOrEmpty(_text))
+            {
+                return;
+            }
+
+            _renderRetries++;
+            _retryRender ??= RetryRender;
+
+            // Not from here: this runs inside the arrange pass, which an arrange asked for
+            // within itself would only repeat at once.
+            DispatcherQueue.GetForCurrentThread()?.TryEnqueue(Windows.System.DispatcherQueuePriority.Low, _retryRender);
+        }
+
+        private void RetryRender()
+        {
+            if (_renderedSize == default && !string.IsNullOrEmpty(_text))
+            {
+                InvalidateArrange();
+            }
+        }
+
         private void EnsureVisual()
         {
             if (_visual != null)
@@ -2784,8 +2815,14 @@ namespace Telegram.Controls
                 // An empty line still has a caret, which sits where the line would start.
                 _contentLeft = ContentLeft(size.Width, 0);
 
+                // Or the draw itself failed for text that is there: no surface to be had, or
+                // BeginDraw refused. Nothing else would arrange the block again until it is
+                // resized, and it would stay blank over a layout that answers for its text.
+                ScheduleRenderRetry();
                 return;
             }
+
+            _renderRetries = 0;
 
             _renderedSize = size;
             _renderedScale = scale;
