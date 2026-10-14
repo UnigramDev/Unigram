@@ -7,7 +7,6 @@
 
 using System;
 using System.Linq;
-using System.Numerics;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Native.Calls;
@@ -349,28 +348,8 @@ namespace Telegram.Services
             set => _local.AddOrUpdateValue(ref _volumeMuted, "VolumeMuted", value);
         }
 
-        private static Vector2? _pencil;
-        public static Vector2 Pencil
-        {
-            get
-            {
-                if (_pencil == null)
-                {
-                    var offset = _local.GetValueOrDefault("PencilOffset", 0f);
-                    var thickness = _local.GetValueOrDefault("PencilThickness", 0.22f);
-
-                    _pencil = new Vector2(offset, thickness);
-                }
-
-                return _pencil ?? new Vector2(0f, 0.22f);
-            }
-            set
-            {
-                _pencil = value;
-                _local.SetValue("PencilOffset", value.X);
-                _local.SetValue("PencilThickness", value.Y);
-            }
-        }
+        private static PencilSettings _pencil;
+        public static PencilSettings Pencil => _pencil ??= new PencilSettings(_local);
 
         private static int? _previousSession;
         public static int PreviousSession

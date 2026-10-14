@@ -485,6 +485,10 @@ namespace Telegram.Controls.Media
         public const string TextIndentDecrease = "\uF79C";
         public const string TextClearFormatting = "\uF79D";
         public const string Button = "\uF79E";
+        public const string Pen = "\uF79F";
+        public const string ArrowUpRight = "\uF7A0";
+        public const string PenSparkle = "\uF7A1";
+        public const string Blur = "\uF7A2";
         public const string MathFormula = "\uEB07";
 
         public const string BotMarkup24 = "\uE9D5";

@@ -695,6 +695,10 @@
     {"name": "ic_fluent_text_indent_decrease_20_regular", "code": "F79C", "src": "fluent:text_indent_decrease_20_regular"},
     {"name": "ic_fluent_text_clear_formatting_20_regular", "code": "F79D", "src": "fluent:text_clear_formatting_20_regular"},
     {"name": "ic_fluent_button_20_regular", "code": "F79E", "src": "fluent:button_20_regular"},
+    {"name": "ic_fluent_pen_20_regular", "code": "F79F", "src": "fluent:pen_20_regular"},
+    {"name": "ic_fluent_arrow_up_right_20_regular", "code": "F7A0", "src": "fluent:arrow_up_right_20_regular"},
+    {"name": "ic_fluent_pen_sparkle_20_regular", "code": "F7A1", "src": "fluent:pen_sparkle_20_regular"},
+    {"name": "ic_fluent_blur_20_regular", "code": "F7A2", "src": "fluent:blur_20_regular"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

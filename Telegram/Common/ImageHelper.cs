@@ -6,6 +6,7 @@
 //
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -622,13 +623,19 @@ namespace Telegram.Common
                 {
                     // Their own target, because the eraser draws transparency with a Copy blend.
                     using var overlay = new CanvasRenderTarget(device, outputWidth, outputHeight, 96);
+                    using var blur = PencilCanvas.CreateBlur(target, uprightWidth * outputWidth / (float)cropWidth);
+                    using var brush = new CanvasImageBrush(device, blur)
+                    {
+                        SourceRectangle = new Rect(0, 0, outputWidth, outputHeight)
+                    };
+
                     using (var session = overlay.CreateDrawingSession())
                     {
                         session.Transform = matrix;
 
                         foreach (var builder in strokes)
                         {
-                            PencilCanvas.DrawPath(session, builder, new Vector2(uprightWidth, uprightHeight));
+                            PencilCanvas.DrawPath(session, builder, new Vector2(uprightWidth, uprightHeight), brush);
                         }
                     }
 
@@ -875,9 +882,15 @@ namespace Telegram.Common
                 session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(scaleX, scaleY));
                 session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateTranslation(-(offsetX * size.X), -(offsetY * size.Y)));
 
+                using var blur = PencilCanvas.CreateBlur(bitmap, (float)(bitmap.Size.Width / rectangle.Width));
+                using var brush = new CanvasImageBrush(overlay, blur)
+                {
+                    SourceRectangle = new Rect(0, 0, canvasSize.X, canvasSize.Y)
+                };
+
                 foreach (var builder in strokes)
                 {
-                    PencilCanvas.DrawPath(session, builder, size);
+                    PencilCanvas.DrawPath(session, builder, size, brush);
                 }
             }
 

@@ -3,6 +3,7 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:local="using:Telegram.Views.Popups"
                         xmlns:controls="using:Telegram.Controls"
+                        xmlns:icons="using:Telegram.Assets.Icons"
                         xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -52,13 +53,23 @@
                     VerticalAlignment="Center" />
         </Grid>
 
-        <controls:ColorSlider x:Name="DrawSlider"
-                              x:Load="False"
-                              StrokeChanged="DrawSlider_StrokeChanged"
-                              Margin="12,0,12,24"
-                              MaxWidth="320"
-                              VerticalAlignment="Bottom"
-                              Grid.Row="1" />
+        <controls:PencilWeightSlider x:Name="WeightSlider"
+                                     x:Load="False"
+                                     ValueChanged="WeightSlider_ValueChanged"
+                                     DragStarted="WeightSlider_DragStarted"
+                                     DragCompleted="WeightSlider_DragCompleted"
+                                     HorizontalAlignment="Left"
+                                     AutomationProperties.Name="{CustomResource PaintSize}" />
+
+        <Ellipse x:Name="WeightPreview"
+                 x:Load="False"
+                 Fill="#FFFFFFFF"
+                 Stroke="#40000000"
+                 StrokeThickness="1"
+                 Visibility="Collapsed"
+                 IsHitTestVisible="False"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center" />
 
         <Grid x:Name="Commands"
               Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}"
@@ -137,29 +148,252 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton x:Name="Undo"
                                       Click="Undo_Click"
+                                      Margin="-4,0,-4,0"
                                       Glyph="&#xE7A7;" />
 
                 <controls:GlyphButton x:Name="Redo"
                                       Click="Redo_Click"
                                       Glyph="&#xE7A6;"
+                                      Margin="0,0,-4,0"
                                       Grid.Column="1" />
 
-                <controls:GlyphToggleButton x:Name="Brush"
-                                            Click="Brush_Click"
-                                            Glyph="&#xEE56;"
-                                            CheckedGlyph="&#xEE56;"
-                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            Grid.Column="2" />
+                <controls:GlyphButton x:Name="ColorButton"
+                                      Glyph=""
+                                      AutomationProperties.Name="{CustomResource PaintColor}"
+                                      ToolTipService.ToolTip="{CustomResource PaintColor}"
+                                      Margin="0,0,-4,0"
+                                      Grid.Column="2">
+                    <controls:GlyphButton.Flyout>
+                        <Flyout x:Name="ColorFlyout"
+                                Placement="Top"
+                                Opening="ColorFlyout_Opening">
+                            <GridView x:Name="ColorPalette"
+                                      IsItemClickEnabled="True"
+                                      ItemClick="ColorPalette_ItemClick"
+                                      SelectionMode="Single">
+                                <GridView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid MaximumRowsOrColumns="7"
+                                                       Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </GridView.ItemsPanel>
+                                <GridView.ItemTemplate>
+                                    <DataTemplate x:DataType="SolidColorBrush">
+                                        <Ellipse Fill="{x:Bind}"
+                                                 Width="28"
+                                                 Height="28"
+                                                 Margin="4" />
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                            </GridView>
+                        </Flyout>
+                    </controls:GlyphButton.Flyout>
+                </controls:GlyphButton>
 
-                <controls:GlyphToggleButton x:Name="Erase"
-                                            Click="Erase_Click"
-                                            Glyph="&#xE75C;"
-                                            CheckedGlyph="&#xE75C;"
-                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            Grid.Column="3" />
+                <!-- Over the button rather than in it: GlyphButton draws only its glyph. -->
+                <Grid x:Name="ColorSwatchPanel"
+                      Width="24"
+                      Height="24"
+                      IsHitTestVisible="False"
+                      Grid.Column="2">
+                        <Path Data="M 23,12 A 11,11 0 0 1 18.858,20.6"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="23,12"
+                                                     EndPoint="18.858,20.6">
+                                    <GradientStop Color="#FFEB4B4B"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FFEE82EE"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <Path Data="M 18.858,20.6 A 11,11 0 0 1 9.552,22.724"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="18.858,20.6"
+                                                     EndPoint="9.552,22.724">
+                                    <GradientStop Color="#FFEE82EE"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FF6080E4"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <Path Data="M 9.552,22.724 A 11,11 0 0 1 2.089,16.773"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="9.552,22.724"
+                                                     EndPoint="2.089,16.773">
+                                    <GradientStop Color="#FF6080E4"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FF00FFFF"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <Path Data="M 2.089,16.773 A 11,11 0 0 1 2.089,7.227"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="2.089,16.773"
+                                                     EndPoint="2.089,7.227">
+                                    <GradientStop Color="#FF00FFFF"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FF8FCE00"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <Path Data="M 2.089,7.227 A 11,11 0 0 1 9.552,1.276"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="2.089,7.227"
+                                                     EndPoint="9.552,1.276">
+                                    <GradientStop Color="#FF8FCE00"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FFFFFF00"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <Path Data="M 9.552,1.276 A 11,11 0 0 1 18.858,3.4"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="9.552,1.276"
+                                                     EndPoint="18.858,3.4">
+                                    <GradientStop Color="#FFFFFF00"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FFFFA500"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <Path Data="M 18.858,3.4 A 11,11 0 0 1 23,12"
+                              StrokeThickness="2">
+                            <Path.Stroke>
+                                <LinearGradientBrush MappingMode="Absolute"
+                                                     StartPoint="18.858,3.4"
+                                                     EndPoint="23,12">
+                                    <GradientStop Color="#FFFFA500"
+                                                  Offset="0" />
+                                    <GradientStop Color="#FFEB4B4B"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                    <Ellipse x:Name="ColorSwatch"
+                             Width="16"
+                             Height="16" />
+                </Grid>
+
+                <Border x:Name="ToolSelection"
+                        Background="{ThemeResource NavigationViewItemBackgroundSelected}"
+                        CornerRadius="{StaticResource GlyphButtonCornerRadius}"
+                        Margin="4,4,0,4"
+                        IsHitTestVisible="False"
+                        Grid.Column="3">
+                    <Border.TranslationTransition>
+                        <Vector3Transition Duration="0:0:0.25" />
+                    </Border.TranslationTransition>
+                </Border>
+
+                <controls:AnimatedIconToggleButton x:Name="PenTool"
+                                                   Click="Tool_Click"
+                                                   Glyph="&#xF79F;"
+                                                   CheckedGlyph="&#xF79F;"
+                                                   IsOneWay="True"
+                                                   AutomationProperties.Name="{CustomResource PaintPen}"
+                                                   ToolTipService.ToolTip="{CustomResource PaintPen}"
+                                                   Margin="0,0,-4,0"
+                                                   Grid.Column="3">
+                    <controls:AnimatedIconToggleButton.Source>
+                        <icons:PaintPen />
+                    </controls:AnimatedIconToggleButton.Source>
+                </controls:AnimatedIconToggleButton>
+
+                <controls:AnimatedIconToggleButton x:Name="ArrowTool"
+                                                   Click="Tool_Click"
+                                                   Glyph="&#xF7A0;"
+                                                   CheckedGlyph="&#xF7A0;"
+                                                   IsOneWay="True"
+                                                   AutomationProperties.Name="{CustomResource PaintArrow}"
+                                                   ToolTipService.ToolTip="{CustomResource PaintArrow}"
+                                                   Margin="0,0,-4,0"
+                                                   Grid.Column="4">
+                    <controls:AnimatedIconToggleButton.Source>
+                        <icons:PaintArrow />
+                    </controls:AnimatedIconToggleButton.Source>
+                </controls:AnimatedIconToggleButton>
+
+                <controls:AnimatedIconToggleButton x:Name="MarkerTool"
+                                                   Click="Tool_Click"
+                                                   Glyph="&#xF79A;"
+                                                   CheckedGlyph="&#xF79A;"
+                                                   IsOneWay="True"
+                                                   AutomationProperties.Name="{CustomResource PaintMarker}"
+                                                   ToolTipService.ToolTip="{CustomResource PaintMarker}"
+                                                   Margin="0,0,-4,0"
+                                                   Grid.Column="5">
+                    <controls:AnimatedIconToggleButton.Source>
+                        <icons:PaintMarker />
+                    </controls:AnimatedIconToggleButton.Source>
+                </controls:AnimatedIconToggleButton>
+
+                <controls:AnimatedIconToggleButton x:Name="NeonTool"
+                                                   Click="Tool_Click"
+                                                   Glyph="&#xF7A1;"
+                                                   CheckedGlyph="&#xF7A1;"
+                                                   IsOneWay="True"
+                                                   AutomationProperties.Name="{CustomResource PaintNeon}"
+                                                   ToolTipService.ToolTip="{CustomResource PaintNeon}"
+                                                   Margin="0,0,-4,0"
+                                                   Grid.Column="6">
+                    <controls:AnimatedIconToggleButton.Source>
+                        <icons:PaintNeon />
+                    </controls:AnimatedIconToggleButton.Source>
+                </controls:AnimatedIconToggleButton>
+
+                <controls:AnimatedIconToggleButton x:Name="BlurTool"
+                                                   Click="Tool_Click"
+                                                   Glyph="&#xF7A2;"
+                                                   CheckedGlyph="&#xF7A2;"
+                                                   IsOneWay="True"
+                                                   AutomationProperties.Name="{CustomResource PaintBlur}"
+                                                   ToolTipService.ToolTip="{CustomResource PaintBlur}"
+                                                   Margin="0,0,-4,0"
+                                                   Grid.Column="7">
+                    <controls:AnimatedIconToggleButton.Source>
+                        <icons:PaintBlur />
+                    </controls:AnimatedIconToggleButton.Source>
+                </controls:AnimatedIconToggleButton>
+
+                <controls:AnimatedIconToggleButton x:Name="EraserTool"
+                                                   Click="Tool_Click"
+                                                   Glyph="&#xE75C;"
+                                                   CheckedGlyph="&#xE75C;"
+                                                   IsOneWay="True"
+                                                   AutomationProperties.Name="{CustomResource PaintEraser}"
+                                                   ToolTipService.ToolTip="{CustomResource PaintEraser}"
+                                                   Margin="0,0,-4,0"
+                                                   Grid.Column="8">
+                    <controls:AnimatedIconToggleButton.Source>
+                        <icons:PaintEraser />
+                    </controls:AnimatedIconToggleButton.Source>
+                </controls:AnimatedIconToggleButton>
             </Grid>
 
             <Grid x:Name="TrimToolbar"

@@ -4702,6 +4702,14 @@
 
 
     <string name="AccDescrPhotoEditor">Photo editor</string>
+    <string name="PaintPen">Pen</string>
+    <string name="PaintArrow">Arrow</string>
+    <string name="PaintMarker">Marker</string>
+    <string name="PaintNeon">Neon</string>
+    <string name="PaintBlur">Blur</string>
+    <string name="PaintEraser">Eraser</string>
+    <string name="PaintColor">Color</string>
+    <string name="PaintSize">Size</string>
 
 
     <string name="AccDescrPageDown">Go to bottom</string>

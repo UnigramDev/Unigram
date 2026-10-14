@@ -5389,48 +5389,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ColorSlider">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:ColorSlider">
-                    <Grid x:Name="LayoutRoot"
-                          Height="20">
-                        <Grid x:Name="Container"
-                              Background="Transparent"
-                              VerticalAlignment="Top"
-                              Height="20">
-
-                            <Border VerticalAlignment="Bottom"
-                                    Background="{TemplateBinding Background}"
-                                    CornerRadius="10"
-                                    Height="20" />
-                            <Border VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Left">
-                                <Border Margin="-24,-14"
-                                        Width="48"
-                                        Height="48">
-                                    <Border x:Name="Thumb"
-                                            Background="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
-                                            BorderBrush="{ThemeResource SystemControlForegroundChromeHighBrush}"
-                                            BorderThickness="2"
-                                            CornerRadius="24">
-                                        <Ellipse x:Name="ThumbDrop"
-                                                 Stroke="White"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Top"
-                                                 Margin="1.5,1.5,0,0"
-                                                 Width="40"
-                                                 Height="40" />
-                                    </Border>
-                                </Border>
-                            </Border>
-                        </Grid>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="local:ConfettiView">
         <Setter Property="Template">
             <Setter.Value>
@@ -6845,6 +6803,31 @@
                                    IsHitTestVisible="False"
                                    Grid.Row="1" />
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PencilWeightSlider">
+        <Setter Property="Width"
+                Value="48" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PencilWeightSlider">
+                    <Canvas x:Name="LayoutRoot">
+                        <Canvas IsHitTestVisible="False">
+                            <Canvas.RenderTransform>
+                                <TranslateTransform x:Name="PanelTransform" />
+                            </Canvas.RenderTransform>
+                            <Path x:Name="Track"
+                                  Fill="#40FFFFFF" />
+                            <Ellipse x:Name="Thumb"
+                                     Fill="#FFFFFFFF" />
+                        </Canvas>
+                        <Rectangle x:Name="HitArea"
+                                   Fill="Transparent"
+                                   Width="48" />
+                    </Canvas>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

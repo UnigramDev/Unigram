@@ -19,8 +19,10 @@ using Telegram.Native;
 using Telegram.Native.Media;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Streams;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -44,6 +46,9 @@ namespace Telegram.Views.Popups
 
         private TimeSpan _duration;
         private bool _resume;
+
+        // Not remembered between edits: a session that ended on the eraser would open unable to draw.
+        private PencilTool _tool;
 
         public EditMediaPopup(XamlRoot xamlRoot, StorageMedia media, ImageCropperMask mask = ImageCropperMask.Rectangle)
             : base(xamlRoot)
@@ -100,6 +105,18 @@ namespace Telegram.Views.Popups
             else
             {
                 await Cropper.SetSourceAsync(_media.File, _media.EditState.Rotation, _media.EditState.Flip, _media.EditState.Proportions, _media.EditState.Rectangle, _media.EditState.Angle);
+            }
+
+            if (_media.EditState.Strokes is { } strokes)
+            {
+                foreach (var stroke in strokes)
+                {
+                    if (stroke.Tool == PencilTool.Blur)
+                    {
+                        LoadBlurSource();
+                        break;
+                    }
+                }
             }
 
             ConnectedAnimationServiceEx.TryStart("EditMediaPopup", Cropper);
@@ -162,12 +179,12 @@ namespace Telegram.Views.Popups
                 }
                 else if (args.Key == VirtualKey.D && args.Modifiers == VirtualKeyModifiers.Control)
                 {
-                    Brush_Click(null, null);
+                    SelectTool(PencilTool.Pen);
                     args.Handled = true;
                 }
                 else if (args.Key == VirtualKey.E && args.Modifiers == VirtualKeyModifiers.Control)
                 {
-                    Erase_Click(null, null);
+                    SelectTool(PencilTool.Eraser);
                     args.Handled = true;
                 }
             }
@@ -390,9 +407,7 @@ namespace Telegram.Views.Popups
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
                 DrawToolbar.Visibility = Visibility.Collapsed;
-                DrawSlider.Visibility = Visibility.Collapsed;
-
-                AppSettings.Pencil = DrawSlider.GetDefault();
+                WeightSlider.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -412,9 +427,7 @@ namespace Telegram.Views.Popups
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
                 DrawToolbar.Visibility = Visibility.Collapsed;
-                DrawSlider.Visibility = Visibility.Collapsed;
-
-                AppSettings.Pencil = DrawSlider.GetDefault();
+                WeightSlider.Visibility = Visibility.Collapsed;
 
                 Cancel();
             }
@@ -515,42 +528,162 @@ namespace Telegram.Views.Popups
                 FindName(nameof(DrawToolbar));
             }
 
-            if (DrawSlider == null)
+            if (WeightSlider == null)
             {
-                FindName(nameof(DrawSlider));
+                FindName(nameof(WeightSlider));
+                FindName(nameof(WeightPreview));
             }
 
             DrawToolbar.Visibility = Visibility.Visible;
-            DrawSlider.Visibility = Visibility.Visible;
-            DrawSlider.SetDefault(AppSettings.Pencil);
+            WeightSlider.Visibility = Visibility.Visible;
 
-            Canvas.Mode = PencilCanvasMode.Stroke;
-            Canvas.Stroke = DrawSlider.Stroke;
-            Canvas.StrokeThickness = GetStrokeThickness();
-
-            Brush.IsChecked = true;
-            Erase.IsChecked = false;
+            Canvas.EraserThickness = PencilTools.GetThickness(PencilTool.Eraser, AppSettings.Pencil.GetWeight(PencilTool.Eraser));
+            SelectTool(_tool);
+            LoadBlurSource();
 
             InvalidateToolbar();
         }
 
-        private void Brush_Click(object sender, RoutedEventArgs e)
+        private void Tool_Click(object sender, RoutedEventArgs e)
         {
-            if (Canvas.Mode != PencilCanvasMode.Stroke)
+            var tool = sender == ArrowTool ? PencilTool.Arrow
+                : sender == MarkerTool ? PencilTool.Marker
+                : sender == NeonTool ? PencilTool.Neon
+                : sender == BlurTool ? PencilTool.Blur
+                : sender == EraserTool ? PencilTool.Eraser
+                : PencilTool.Pen;
+
+            SelectTool(tool);
+        }
+
+        private void SelectTool(PencilTool tool)
+        {
+            _tool = tool;
+            Canvas.Tool = tool;
+
+            // The tools sit in equal columns from the first one on.
+            ToolSelection.Translation = new Vector3((PenTool.ActualSize.X - 4) * (int)tool, 0, 0);
+
+            PenTool.IsChecked = tool == PencilTool.Pen;
+            ArrowTool.IsChecked = tool == PencilTool.Arrow;
+            MarkerTool.IsChecked = tool == PencilTool.Marker;
+            NeonTool.IsChecked = tool == PencilTool.Neon;
+            BlurTool.IsChecked = tool == PencilTool.Blur;
+            EraserTool.IsChecked = tool == PencilTool.Eraser;
+
+            var weight = AppSettings.Pencil.GetWeight(tool);
+            WeightSlider.SetRange(PencilTools.GetMinimumWeight(tool), PencilTools.GetMaximumWeight(tool), weight);
+            Canvas.StrokeThickness = PencilTools.GetThickness(tool, WeightSlider.Value);
+
+            ColorButton.IsEnabled = PencilTools.HasColor(tool);
+            ColorSwatchPanel.Opacity = ColorButton.IsEnabled ? 1 : 0.4;
+            SetColor(PencilTools.HasColor(tool) ? AppSettings.Pencil.GetColor(tool) : Colors.Transparent);
+        }
+
+        private void SetColor(Color color)
+        {
+            Canvas.Stroke = color;
+            ColorSwatch.Fill = new SolidColorBrush(color);
+        }
+
+        private void ColorFlyout_Opening(object sender, object e)
+        {
+            var current = AppSettings.Pencil.GetColor(Canvas.Tool);
+            var colors = new List<SolidColorBrush>();
+
+            foreach (var color in PencilSettings.PresetColors)
             {
-                Canvas.Mode = PencilCanvasMode.Stroke;
-                Brush.IsChecked = true;
-                Erase.IsChecked = false;
+                colors.Add(new SolidColorBrush(color));
+            }
+
+            foreach (var color in AppSettings.Pencil.GetRecentColors())
+            {
+                colors.Add(new SolidColorBrush(color));
+            }
+
+            ColorPalette.ItemsSource = colors;
+            ColorPalette.SelectedIndex = colors.FindIndex(x => x.Color == current);
+        }
+
+        private void ColorPalette_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is SolidColorBrush brush)
+            {
+                AppSettings.Pencil.SetColor(Canvas.Tool, brush.Color);
+                SetColor(brush.Color);
+            }
+
+            ColorFlyout.Hide();
+        }
+
+        private void WeightSlider_ValueChanged(object sender, EventArgs e)
+        {
+            Canvas.StrokeThickness = PencilTools.GetThickness(Canvas.Tool, WeightSlider.Value);
+
+            if (Canvas.Tool == PencilTool.Eraser)
+            {
+                Canvas.EraserThickness = Canvas.StrokeThickness;
+            }
+
+            if (WeightPreview.Visibility == Visibility.Visible)
+            {
+                UpdateWeightPreview();
+            }
+            else
+            {
+                AppSettings.Pencil.SetWeight(Canvas.Tool, WeightSlider.Value);
             }
         }
 
-        private void Erase_Click(object sender, RoutedEventArgs e)
+        private void WeightSlider_DragStarted(object sender, EventArgs e)
         {
-            if (Canvas.Mode != PencilCanvasMode.Eraser)
+            UpdateWeightPreview();
+            WeightPreview.Visibility = Visibility.Visible;
+        }
+
+        private void WeightSlider_DragCompleted(object sender, EventArgs e)
+        {
+            WeightPreview.Visibility = Visibility.Collapsed;
+            AppSettings.Pencil.SetWeight(Canvas.Tool, WeightSlider.Value);
+        }
+
+        // As wide on screen as the stroke will be: the canvas is laid out in source pixels and
+        // scaled by the cropper.
+        private void UpdateWeightPreview()
+        {
+            var diameter = Canvas.StrokeThickness * Canvas.ActualWidth * Cropper.ZoomFactor;
+
+            WeightPreview.Width = diameter;
+            WeightPreview.Height = diameter;
+        }
+
+        // The blur tool paints a blurred copy of the photo, so the canvas needs the photo too.
+        private async void LoadBlurSource()
+        {
+            if (Canvas.BlurSource != null || _file.HasExtension(Constants.VideoTypes))
             {
-                Canvas.Mode = PencilCanvasMode.Eraser;
-                Brush.IsChecked = false;
-                Erase.IsChecked = true;
+                return;
+            }
+
+            try
+            {
+                using var stream = await ImageHelper.OpenReadAsync(_file);
+
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+
+                var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                // Or Win2D would size it by the file's DPI.
+                bitmap.DpiX = 96;
+                bitmap.DpiY = 96;
+
+                Canvas.BlurSource = bitmap;
+                Canvas.Invalidate();
+            }
+            catch
+            {
+                // Without it blur strokes are left out of the preview, not of the sent photo.
             }
         }
 
@@ -562,21 +695,6 @@ namespace Telegram.Views.Popups
         private void Redo_Click(object sender, RoutedEventArgs e)
         {
             Canvas.Redo();
-        }
-
-        private void DrawSlider_StrokeChanged(object sender, EventArgs e)
-        {
-            Canvas.Stroke = DrawSlider.Stroke;
-            Canvas.StrokeThickness = GetStrokeThickness();
-
-            Brush_Click(null, null);
-        }
-
-        // The canvas is laid out in source pixels and scaled by the cropper, so a stroke as thick
-        // on screen as the slider shows is thicker in the canvas's own units.
-        private float GetStrokeThickness()
-        {
-            return (float)(DrawSlider.StrokeThickness / Cropper.ZoomFactor);
         }
 
         private void Canvas_StrokesChanged(object sender, EventArgs e)

@@ -131,6 +131,12 @@
     <Compile Include="Assets\Icons\MuteUnmute.cs" />
     <Compile Include="Assets\Icons\MyGrams.cs" />
     <Compile Include="Assets\Icons\Notifications.cs" />
+    <Compile Include="Assets\Icons\PaintArrow.cs" />
+    <Compile Include="Assets\Icons\PaintBlur.cs" />
+    <Compile Include="Assets\Icons\PaintEraser.cs" />
+    <Compile Include="Assets\Icons\PaintMarker.cs" />
+    <Compile Include="Assets\Icons\PaintNeon.cs" />
+    <Compile Include="Assets\Icons\PaintPen.cs" />
     <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
     <Compile Include="Assets\Icons\PollSelect.cs" />
@@ -1007,7 +1013,6 @@
       <DependentUpon>ChatThemeDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ColorPicker.cs" />
-    <Compile Include="Controls\ColorSlider.cs" />
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\ContentPopup.cs" />
@@ -1167,6 +1172,7 @@
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\Payments\LabeledPricesPanel.cs" />
     <Compile Include="Controls\PencilCanvas.cs" />
+    <Compile Include="Controls\PencilWeightSlider.cs" />
     <Compile Include="Controls\PhoneTextBox.cs" />
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>
@@ -1933,6 +1939,7 @@
     <Compile Include="Services\AppSettings.cs" />
     <Compile Include="Services\NightModeService.cs" />
     <Compile Include="Services\Settings\SettingsStore.cs" />
+    <Compile Include="Services\Settings\PencilSettings.cs" />
     <Compile Include="Services\Settings\PlaybackSettings.cs" />
     <Compile Include="Services\Settings\RecentEmojiSettings.cs" />
     <Compile Include="Services\Settings\StickersSettings.cs" />
