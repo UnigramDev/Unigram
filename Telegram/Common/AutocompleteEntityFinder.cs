@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Text;
@@ -150,6 +151,95 @@ namespace Telegram.Common
             }
 
             return entity != AutocompleteEntity.None;
+        }
+
+        /// <summary>
+        /// The same search over plain text, for an editor that is not RichEdit: what is typed in
+        /// <paramref name="text"/> before <paramref name="caret"/>. <paramref name="index"/> is
+        /// where the entity starts, its symbol included. <paramref name="objectChar"/> is what
+        /// stands for a custom emoji, after which a ':' still starts an emoji query.
+        /// </summary>
+        public static bool TrySearch(string text, int caret, char objectChar, out AutocompleteEntity entity, out string result, out int index)
+        {
+            entity = AutocompleteEntity.None;
+            result = string.Empty;
+            index = -1;
+
+            for (int i = caret - 1; i >= 0; i--)
+            {
+                var character = text[i];
+
+                if (_symbols.Contains(character))
+                {
+                    if (i == 0 || text[i - 1] is ' ' or '\n' or '\r' or '\v')
+                    {
+                        index = i;
+                    }
+                    // If preceding character is a surrogate pair we assume it's an emoji
+                    else if (character == ':' && (text[i - 1] == objectChar || char.IsLowSurrogate(text[i - 1])))
+                    {
+                        index = i;
+                    }
+
+                    break;
+                }
+                else if (i == 0 || !IsValidSymbol(character))
+                {
+                    break;
+                }
+            }
+
+            if (index >= 0)
+            {
+                entity = text[index] switch
+                {
+                    ':' => AutocompleteEntity.Emoji,
+                    '#' => AutocompleteEntity.Hashtag,
+                    '@' => AutocompleteEntity.Username,
+                    '/' => AutocompleteEntity.Command,
+                    _ => AutocompleteEntity.None
+                };
+
+                result = text.Substring(index + 1, caret - index - 1);
+
+                // Special case for emoji
+                if (entity == AutocompleteEntity.Emoji && (result.Length == 0 || (result.Length == 1 && result[0] == char.ToUpper(result[0]))))
+                {
+                    entity = AutocompleteEntity.None;
+                    result = string.Empty;
+                }
+            }
+
+            if (entity == AutocompleteEntity.None && caret > 0 && MayEndEmoji(text[caret - 1]))
+            {
+                var start = Math.Max(0, caret - LongestEmoji);
+                var shorter = text.Substring(start, caret - start);
+
+                var emoji = Emoji.EnumerateByComposedCharacterSequenceReverse(shorter);
+                var last = emoji.FirstOrDefault();
+
+                if (last != null && Emoji.ContainsSingleEmoji(last))
+                {
+                    result = last;
+                    index = StartOf(text, caret, last);
+                    entity = AutocompleteEntity.Sticker;
+                }
+            }
+
+            if (entity == AutocompleteEntity.None)
+            {
+                index = -1;
+            }
+
+            return entity != AutocompleteEntity.None;
+        }
+
+        // How an emoji can end: a surrogate pair, a variation selector, or a symbol from the
+        // BMP's emoji blocks (U+20E3, the keycap, among them). Letters in any script do not, so
+        // typing them costs nothing more than this.
+        private static bool MayEndEmoji(char c)
+        {
+            return char.IsLowSurrogate(c) || c == '️' || (c >= ' ' && c <= '㋿') || c == '©' || c == '®';
         }
 
         // The emoji comes back without its skin tones, which is what stickers are found by, so
