@@ -304,6 +304,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             UpdatePlaceholders();
+            UpdateDocumentPlaceholder();
             UpdateSelection();
         }
 
@@ -832,6 +833,22 @@ namespace Telegram.Controls.RichEditor
         /// The hint on an empty paragraph follows the caret, and so does an empty credit in a quote
         /// with no text: both are settled again whenever the caret changes leaf.
         /// </summary>
+        private bool _documentEmpty = true;
+
+        // The one hint of a message's text depends on the whole document being empty, not on
+        // where the caret is, so it is asked again whenever that changes.
+        private void UpdateDocumentPlaceholder()
+        {
+            var empty = _engine.Document.IsEmpty;
+            if (PlaceholderText == null || empty == _documentEmpty)
+            {
+                return;
+            }
+
+            _documentEmpty = empty;
+            RefreshLeafChrome(_engine.Document.Leaves[0]);
+        }
+
         private void UpdatePlaceholders()
         {
             var leaf = _engine.Focus.Leaf;
