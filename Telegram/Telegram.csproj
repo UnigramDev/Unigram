@@ -499,6 +499,7 @@
     <Compile Include="Controls\RichEditor\RichEditorEngine.Media.cs" />
     <Compile Include="Controls\RichEditor\RichEditorEngine.Clipboard.cs" />
     <Compile Include="Controls\RichEditor\RichEditorEngine.Rules.cs" />
+    <Compile Include="Controls\RichEditor\RichEditorMeter.cs" />
     <Compile Include="Controls\RichEditor\RichEditorStatus.cs" />
     <Compile Include="Controls\RichEditor\RichLeafView.cs" />
     <Compile Include="Controls\RichEditor\RichBlockPresenters.cs" />

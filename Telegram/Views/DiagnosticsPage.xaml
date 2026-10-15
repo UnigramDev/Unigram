@@ -44,6 +44,10 @@
                         </controls:SettingsButton.Badge>
                     </controls:SettingsButton>
 
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.EditorMeter, Mode=TwoWay}"
+                              Content="Editor Meter (Ctrl+Alt+Shift+M in an Editor)"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollBars, Mode=TwoWay}"
                               Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

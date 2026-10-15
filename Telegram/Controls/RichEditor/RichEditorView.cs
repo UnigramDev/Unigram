@@ -284,6 +284,8 @@ namespace Telegram.Controls.RichEditor
 
         private void OnEngineChanged(object sender, RichEditorChangedEventArgs e)
         {
+            var started = RichEditorMeter.StartView();
+
             Refresh(e.Changes, e.Leaf);
             SyncEditContext(e.Changes);
             UpdateSpelling(e.Changes, e.Leaf);
@@ -292,8 +294,17 @@ namespace Telegram.Controls.RichEditor
             (Peer as RichEditorAutomationPeer)?.RaiseChanged(e.Changes);
             Announce();
 
+            // What the host does with the state is the host's cost, not the view's.
+            RichEditorMeter.StopView(started);
+
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
+
+        /// <summary>The leaves and the root blocks that have their views, for the meter.</summary>
+        internal int RealizedLeafCount => _leafViews.Count;
+
+        internal int RealizedBlockCount => Blocks?.Children.Count ?? 0;
+
 
         private RichEditorAutomationPeer Peer => FrameworkElementAutomationPeer.FromElement(this) as RichEditorAutomationPeer;
 

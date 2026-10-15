@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -1052,6 +1053,13 @@ namespace Telegram.Controls.RichEditor
             var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
             var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
             var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+
+            if (e.Key == VirtualKey.M && ctrl && shift && alt && AppSettings.Diagnostics.EditorMeter)
+            {
+                RichEditorMeter.ShowMenu(this);
+                e.Handled = true;
+                return;
+            }
 
             try
             {

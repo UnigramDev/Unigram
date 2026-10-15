@@ -553,6 +553,26 @@ namespace Telegram.Controls.RichEditor
 
         private bool _structureChanged;
 
+        /// <summary>
+        /// A key typed at the caret, taken as OnTextUpdating takes the service's: for the meter,
+        /// which has no service to type through.
+        /// </summary>
+        internal void TypeForMeasure(string text)
+        {
+            var focus = _engine.Focus;
+
+            _imeUpdating = true;
+
+            try
+            {
+                _engine.ReplaceText(focus.Leaf, focus.Offset, focus.Offset, text);
+            }
+            finally
+            {
+                _imeUpdating = false;
+            }
+        }
+
         private bool IsContextSelection(CoreTextRange range)
         {
             var selection = GetContextSelection();

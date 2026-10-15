@@ -32,6 +32,14 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _nativeTextInput, "NativeTextInput", (int)value);
         }
 
+        // Ctrl+Alt+Shift+M in a native editor offers to measure what typing costs in it.
+        private bool? _editorMeter;
+        public bool EditorMeter
+        {
+            get => _editorMeter ??= GetValueOrDefault("EditorMeter", false);
+            set => AddOrUpdateValue(ref _editorMeter, "EditorMeter", value);
+        }
+
         private bool? _legacyScrollBars;
         public bool LegacyScrollBars
         {
