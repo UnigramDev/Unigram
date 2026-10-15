@@ -1053,7 +1053,14 @@ namespace Telegram.Controls.RichEditor
             var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
             var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
 
-            e.Handled = ProcessSuggestionKey(e.Key, ctrl, shift, alt) || HandleKey(e.Key, ctrl, shift, alt);
+            try
+            {
+                e.Handled = ProcessSuggestionKey(e.Key, ctrl, shift, alt) || HandleKey(e.Key, ctrl, shift, alt);
+            }
+            catch (Exception ex) when (FallBackFromNative(ex))
+            {
+                // Never reached: the filter only takes note.
+            }
 
             if (!e.Handled)
             {

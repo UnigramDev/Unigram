@@ -143,9 +143,9 @@ namespace Telegram.Controls.RichEditor
 
             _editContext.TextRequested += OnTextRequested;
             _editContext.SelectionRequested += OnSelectionRequested;
-            _editContext.TextUpdating += OnTextUpdating;
-            _editContext.SelectionUpdating += OnSelectionUpdating;
-            _editContext.FormatUpdating += OnFormatUpdating;
+            _editContext.TextUpdating += OnTextUpdatingGuarded;
+            _editContext.SelectionUpdating += OnSelectionUpdatingGuarded;
+            _editContext.FormatUpdating += OnFormatUpdatingGuarded;
             _editContext.LayoutRequested += OnLayoutRequested;
             _editContext.CompositionStarted += OnCompositionStarted;
             _editContext.CompositionCompleted += OnCompositionCompleted;
@@ -186,9 +186,9 @@ namespace Telegram.Controls.RichEditor
 
             _editContext.TextRequested -= OnTextRequested;
             _editContext.SelectionRequested -= OnSelectionRequested;
-            _editContext.TextUpdating -= OnTextUpdating;
-            _editContext.SelectionUpdating -= OnSelectionUpdating;
-            _editContext.FormatUpdating -= OnFormatUpdating;
+            _editContext.TextUpdating -= OnTextUpdatingGuarded;
+            _editContext.SelectionUpdating -= OnSelectionUpdatingGuarded;
+            _editContext.FormatUpdating -= OnFormatUpdatingGuarded;
             _editContext.LayoutRequested -= OnLayoutRequested;
             _editContext.CompositionStarted -= OnCompositionStarted;
             _editContext.CompositionCompleted -= OnCompositionCompleted;
@@ -411,6 +411,61 @@ namespace Telegram.Controls.RichEditor
         private void OnSelectionRequested(CoreTextEditContext sender, CoreTextSelectionRequestedEventArgs args)
         {
             args.Request.Selection = GetContextSelection();
+        }
+
+        // The service's edits go through these: an exception here ends the process, so a
+        // message box that throws sends every box back to RichEdit on the next launch, before
+        // the user has to find the diagnostics page.
+        private void OnTextUpdatingGuarded(CoreTextEditContext sender, CoreTextTextUpdatingEventArgs args)
+        {
+            try
+            {
+                OnTextUpdating(sender, args);
+            }
+            catch (Exception ex) when (FallBackFromNative(ex))
+            {
+                // Never reached: the filter only takes note.
+            }
+        }
+
+        private void OnSelectionUpdatingGuarded(CoreTextEditContext sender, CoreTextSelectionUpdatingEventArgs args)
+        {
+            try
+            {
+                OnSelectionUpdating(sender, args);
+            }
+            catch (Exception ex) when (FallBackFromNative(ex))
+            {
+                // Never reached: the filter only takes note.
+            }
+        }
+
+        private void OnFormatUpdatingGuarded(CoreTextEditContext sender, CoreTextFormatUpdatingEventArgs args)
+        {
+            try
+            {
+                OnFormatUpdating(sender, args);
+            }
+            catch (Exception ex) when (FallBackFromNative(ex))
+            {
+                // Never reached: the filter only takes note.
+            }
+        }
+
+        /// <summary>
+        /// Notes an exception on its way out of the editor, for a box the diagnostics switch put
+        /// it in, and returns false so it carries on as it would have: in a filter, the stack is
+        /// left as it was for the crash report.
+        /// </summary>
+        private bool FallBackFromNative(Exception ex)
+        {
+            if (_engine?.Schema != null && AppSettings.Diagnostics.NativeTextInput != NativeTextInputMode.Off)
+            {
+                Logger.Error(ex);
+                AppSettings.Diagnostics.NativeTextInput = NativeTextInputMode.Off;
+            }
+
+            return false;
         }
 
         private void OnTextUpdating(CoreTextEditContext sender, CoreTextTextUpdatingEventArgs args)
