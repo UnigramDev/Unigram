@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "DirectTextLayout.g.h"
+#include "EditableTextLayout.h"
 
 #include <algorithm>
 #include <memory>
@@ -165,11 +166,19 @@ namespace winrt::Telegram::Native::implementation
         bool IsReadOnly();
         void IsReadOnly(bool value);
 
+        bool UseAnalyzer();
+        void UseAnalyzer(bool value);
+
+        hstring CompareWithAnalyzer();
+
         Telegram::Native::TextAlignmentMode Alignment();
         void Alignment(Telegram::Native::TextAlignmentMode value);
 
         static hstring Counters();
         static void ResetCounters();
+
+        static bool VerifyAnalyzer();
+        static void VerifyAnalyzer(bool value);
 
         bool IsTrimmed();
         int32_t LineCount();
@@ -276,7 +285,16 @@ namespace winrt::Telegram::Native::implementation
         bool m_rtl{ false };
         int32_t m_maxLines{ 0 };
         bool m_readOnly{ true };
+        bool m_useAnalyzer{ false };
         Telegram::Native::TextAlignmentMode m_alignment{ Telegram::Native::TextAlignmentMode::Leading };
+
+        // The text laid out on the analyzer instead of in m_paragraphs, when it is being edited
+        // and UseAnalyzer asks for it. Only the one implicit paragraph, without MaxLines.
+        std::unique_ptr<EditableTextLayout> m_editable;
+
+        // The one SetText took out of use, which the next build updates rather than starting
+        // over: until then nothing is answered from it, as nothing is from m_paragraphs.
+        std::unique_ptr<EditableTextLayout> m_previous;
 
         // Whether the last build had to leave anything out for MaxLines.
         bool m_trimmed{ false };
@@ -292,6 +310,10 @@ namespace winrt::Telegram::Native::implementation
 
         HRESULT Build();
         HRESULT BuildParagraph(Paragraph& paragraph);
+
+        bool UsesAnalyzer() const;
+        HRESULT BuildEditable(EditableTextLayout& layout);
+        void VerifyEditable(const EditableTextLayout& layout);
         HRESULT Stack();
         HRESULT Reflow(double availableWidth);
 
@@ -305,6 +327,7 @@ namespace winrt::Telegram::Native::implementation
 
         // Drawing. Not projected: nothing outside this library has a device context to hand.
         HRESULT Draw(ID2D1DeviceContext* context, ID2D1Brush* brush);
+        HRESULT DrawEditable(ID2D1DeviceContext* context, ID2D1Brush* brush);
         void DrawScript(ID2D1DeviceContext* context, const Paragraph& paragraph, DWRITE_TEXT_RANGE range, bool superscript, ID2D1Brush* brush);
         HRESULT ApplyFallback(IDWriteTextLayout* layout);
 

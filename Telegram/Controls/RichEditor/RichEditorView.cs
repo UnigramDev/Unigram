@@ -305,6 +305,17 @@ namespace Telegram.Controls.RichEditor
 
         internal int RealizedBlockCount => Blocks?.Children.Count ?? 0;
 
+        /// <summary>The text blocks of the leaves that have their views, in document order.</summary>
+        internal void GetRealizedTextBlocks(List<DirectTextBlock> blocks)
+        {
+            foreach (var leaf in _engine.Document.Leaves)
+            {
+                if (_leafViews.TryGetValue(leaf, out RichLeafView view) && view.TextBlock != null)
+                {
+                    blocks.Add(view.TextBlock);
+                }
+            }
+        }
 
         private RichEditorAutomationPeer Peer => FrameworkElementAutomationPeer.FromElement(this) as RichEditorAutomationPeer;
 

@@ -67,6 +67,15 @@ namespace winrt::Telegram::Native::implementation
         Counter s_drawText;
         Counter s_endDraw;
 
+        // The analyzer's share of a build, and its updates checked against cold builds. The
+        // last difference is a string, so it alone is written under a lock.
+        Counter s_analyzer;
+        bool s_verifyAnalyzer;
+        int64_t s_verified;
+        int64_t s_mismatched;
+        std::mutex s_mismatchMutex;
+        std::wstring s_mismatch;
+
         int64_t Now()
         {
             LARGE_INTEGER value;
@@ -159,7 +168,28 @@ namespace winrt::Telegram::Native::implementation
         Append(text, L"DrawTextLayout", s_drawText, frequency.QuadPart);
         Append(text, L"EndDraw", s_endDraw, frequency.QuadPart);
 
+        if (s_analyzer.Calls > 0)
+        {
+            Append(text, L"Analyzer layout", s_analyzer, frequency.QuadPart);
+        }
+
+        if (s_verified > 0)
+        {
+            std::lock_guard const guard(s_mismatchMutex);
+            text += std::format(L"Analyzer updates checked: {}, unlike a cold build: {}{}{}\n", s_verified, s_mismatched, s_mismatch.empty() ? L"" : L", the last at ", s_mismatch);
+        }
+
         return hstring(text);
+    }
+
+    bool DirectTextLayout::VerifyAnalyzer()
+    {
+        return s_verifyAnalyzer;
+    }
+
+    void DirectTextLayout::VerifyAnalyzer(bool value)
+    {
+        s_verifyAnalyzer = value;
     }
 
     void DirectTextLayout::ResetCounters()
@@ -173,6 +203,12 @@ namespace winrt::Telegram::Native::implementation
         s_beginDraw = {};
         s_drawText = {};
         s_endDraw = {};
+        s_analyzer = {};
+        s_verified = 0;
+        s_mismatched = 0;
+
+        std::lock_guard const guard(s_mismatchMutex);
+        s_mismatch.clear();
     }
 
     // Which language a Han character belongs to cannot be read off the character: simplified
@@ -545,6 +581,8 @@ namespace winrt::Telegram::Native::implementation
         m_surface = nullptr;
 
         m_paragraphs.clear();
+        m_editable = nullptr;
+        m_previous = nullptr;
         m_entities = nullptr;
 
         m_colors.clear();
@@ -643,6 +681,11 @@ namespace winrt::Telegram::Native::implementation
 
     int32_t DirectTextLayout::LineCount()
     {
+        if (m_editable != nullptr)
+        {
+            return m_editable->LineCount();
+        }
+
         int32_t count = 0;
 
         for (const Paragraph& paragraph : m_paragraphs)
@@ -677,10 +720,29 @@ namespace winrt::Telegram::Native::implementation
         return m_readOnly;
     }
 
-    // Only how the surface is sized: the text is laid out the same either way.
+    // Only how the surface is sized: the text is laid out the same either way, unless the
+    // analyzer lays out what is edited.
     void DirectTextLayout::IsReadOnly(bool value)
     {
-        m_readOnly = value;
+        if (m_readOnly != value)
+        {
+            m_readOnly = value;
+            m_invalid |= m_useAnalyzer;
+        }
+    }
+
+    bool DirectTextLayout::UseAnalyzer()
+    {
+        return m_useAnalyzer;
+    }
+
+    void DirectTextLayout::UseAnalyzer(bool value)
+    {
+        if (m_useAnalyzer != value)
+        {
+            m_useAnalyzer = value;
+            m_invalid = true;
+        }
     }
 
     // The colours and the inline objects belong to the text they were set over, so they go
@@ -699,6 +761,11 @@ namespace winrt::Telegram::Native::implementation
         m_implicit = true;
         m_paragraphs.clear();
 
+        if (m_editable != nullptr)
+        {
+            m_previous = std::move(m_editable);
+        }
+
         m_invalid = true;
     }
 
@@ -710,6 +777,8 @@ namespace winrt::Telegram::Native::implementation
     {
         m_implicit = false;
         m_paragraphs.clear();
+        m_editable = nullptr;
+        m_previous = nullptr;
 
         const auto length = (int32_t)m_text.size();
 
@@ -844,6 +913,16 @@ namespace winrt::Telegram::Native::implementation
 
         m_trimmed = false;
 
+        // What the last build left, which an edit is worked out from.
+        std::unique_ptr<EditableTextLayout> previous = std::move(m_previous);
+
+        if (previous == nullptr)
+        {
+            previous = std::move(m_editable);
+        }
+
+        m_editable = nullptr;
+
         // The division SetText leaves behind: one paragraph over everything, reading the way
         // the properties say. Rebuilt here rather than remembered, so a direction set after the
         // text still reaches it.
@@ -860,6 +939,32 @@ namespace winrt::Telegram::Native::implementation
         {
             m_paragraphs.clear();
             return S_OK;
+        }
+
+        // Laid out by DirectWrite after all when the analyzer fails, which while it is being
+        // proven is a defect to find in the comparison rather than text to lose.
+        if (UsesAnalyzer())
+        {
+            auto editable = previous != nullptr ? std::move(previous) : std::make_unique<EditableTextLayout>();
+
+            const auto started = Now();
+            result = BuildEditable(*editable);
+
+            Record(s_analyzer, started);
+
+            if (SUCCEEDED(result))
+            {
+                if (s_verifyAnalyzer)
+                {
+                    VerifyEditable(*editable);
+                }
+
+                m_paragraphs.clear();
+                m_editable = std::move(editable);
+
+                m_invalid = false;
+                return S_OK;
+            }
         }
 
         for (Paragraph& paragraph : m_paragraphs)
@@ -1144,7 +1249,7 @@ namespace winrt::Telegram::Native::implementation
     {
         HRESULT result;
 
-        if (m_invalid || m_paragraphs.empty())
+        if (m_invalid || (m_paragraphs.empty() && m_editable == nullptr))
         {
             const auto started = Now();
 
@@ -1152,6 +1257,20 @@ namespace winrt::Telegram::Native::implementation
             result = Build();
 
             Record(s_build, started);
+
+            if (FAILED(result))
+            {
+                return result;
+            }
+        }
+        else if (m_width != availableWidth && m_editable != nullptr)
+        {
+            const auto started = Now();
+
+            m_width = availableWidth;
+            result = m_editable->Reflow((float)std::max(availableWidth, 0.0));
+
+            Record(s_reflow, started);
 
             if (FAILED(result))
             {
@@ -1217,6 +1336,11 @@ namespace winrt::Telegram::Native::implementation
     // ordinary case, and the one where the box is only ever as wide as it has to be.
     bool DirectTextLayout::IsLeading() const
     {
+        if (m_editable != nullptr)
+        {
+            return !m_rtl && (m_alignment == Telegram::Native::TextAlignmentMode::Leading || m_alignment == Telegram::Native::TextAlignmentMode::Left);
+        }
+
         for (const Paragraph& paragraph : m_paragraphs)
         {
             if (paragraph.RightToLeft
@@ -1239,6 +1363,12 @@ namespace winrt::Telegram::Native::implementation
     {
         float width = 0;
         float height = 0;
+
+        if (m_editable != nullptr)
+        {
+            width = std::max(m_editable->Left(), 0.0f) + m_editable->Width();
+            height = m_editable->Height();
+        }
 
         for (const Paragraph& paragraph : m_paragraphs)
         {
@@ -1290,6 +1420,12 @@ namespace winrt::Telegram::Native::implementation
         float width = 0;
         float height = 0;
 
+        if (m_editable != nullptr)
+        {
+            width = m_editable->Width();
+            height = m_editable->Height();
+        }
+
         for (const Paragraph& paragraph : m_paragraphs)
         {
             if (paragraph.Layout == nullptr || paragraph.Hidden)
@@ -1321,6 +1457,11 @@ namespace winrt::Telegram::Native::implementation
     com_array<Windows::Foundation::Rect> DirectTextLayout::Ranges(int32_t offset, int32_t length)
     {
         std::vector<Windows::Foundation::Rect> rects;
+
+        if (m_editable != nullptr)
+        {
+            m_editable->Ranges(offset, length, rects);
+        }
 
         for (const Paragraph& paragraph : m_paragraphs)
         {
@@ -1482,6 +1623,11 @@ namespace winrt::Telegram::Native::implementation
     // layout is asked for the position itself.
     Windows::Foundation::Rect DirectTextLayout::Caret(int32_t offset)
     {
+        if (m_editable != nullptr)
+        {
+            return m_editable->Caret(offset);
+        }
+
         const Paragraph* found = nullptr;
 
         for (const Paragraph& paragraph : m_paragraphs)
@@ -1558,6 +1704,11 @@ namespace winrt::Telegram::Native::implementation
     {
         std::vector<int32_t> lengths;
 
+        if (m_editable != nullptr)
+        {
+            m_editable->LineLengths(lengths);
+        }
+
         for (size_t i = 0; i < m_paragraphs.size(); i++)
         {
             const Paragraph& paragraph = m_paragraphs[i];
@@ -1627,6 +1778,20 @@ namespace winrt::Telegram::Native::implementation
     // that ends in one could never reach the end.
     int32_t DirectTextLayout::HitTest(Windows::Foundation::Point point, bool& inside)
     {
+        if (m_editable != nullptr)
+        {
+            EditableHit hit;
+
+            if (!m_editable->HitTest(point.X, point.Y, hit))
+            {
+                inside = false;
+                return -1;
+            }
+
+            inside = hit.Inside;
+            return hit.Position + (hit.Trailing ? hit.Length : 0);
+        }
+
         const Paragraph* paragraph;
         DWRITE_HIT_TEST_METRICS metrics;
         BOOL isTrailingHit;
@@ -1645,6 +1810,20 @@ namespace winrt::Telegram::Native::implementation
     // of an emoji is still the emoji rather than whatever follows it.
     int32_t DirectTextLayout::HitTestContent(Windows::Foundation::Point point, bool& inside)
     {
+        if (m_editable != nullptr)
+        {
+            EditableHit hit;
+
+            if (!m_editable->HitTest(point.X, point.Y, hit))
+            {
+                inside = false;
+                return -1;
+            }
+
+            inside = hit.Inside;
+            return hit.Position;
+        }
+
         const Paragraph* paragraph;
         DWRITE_HIT_TEST_METRICS metrics;
         BOOL isTrailingHit;
@@ -1682,6 +1861,11 @@ namespace winrt::Telegram::Native::implementation
     // ends at - which is the last paragraph that is drawn, wherever it sits in the stack.
     Windows::Foundation::Point DirectTextLayout::ContentEnd()
     {
+        if (m_editable != nullptr)
+        {
+            return m_editable->ContentEnd();
+        }
+
         const Paragraph* paragraph = nullptr;
 
         for (const Paragraph& item : m_paragraphs)
@@ -1895,7 +2079,9 @@ namespace winrt::Telegram::Native::implementation
 
         if (SUCCEEDED(result))
         {
-            result = Draw(context.get(), brush.get());
+            result = m_editable != nullptr
+                ? DrawEditable(context.get(), brush.get())
+                : Draw(context.get(), brush.get());
         }
 
         Record(s_drawText, started);
@@ -2001,5 +2187,396 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return S_OK;
+    }
+
+    bool DirectTextLayout::UsesAnalyzer() const
+    {
+        return m_useAnalyzer && !m_readOnly && m_implicit && m_maxLines == 0;
+    }
+
+    // The same state BuildParagraph hands DirectWrite, in the shape the analyzer takes it.
+    HRESULT DirectTextLayout::BuildEditable(EditableTextLayout& layout)
+    {
+        EditableTextFormat format;
+        format.Factory = m_factory;
+
+        if (m_resolvedFamily != nullptr)
+        {
+            format.Family = m_resolvedFamily->Family;
+            format.Collection = m_resolvedFamily->Collection;
+            format.Fallback = m_resolvedFamily->Fallback;
+        }
+        else if (m_fontFamily.empty())
+        {
+            format.Family = L"Segoe UI Emoji";
+            format.Collection = m_fontCollection;
+        }
+        else
+        {
+            format.Family = m_fontFamily;
+            format.Collection = m_systemCollection;
+        }
+
+        format.MonospaceCollection = m_systemCollection;
+        format.MonospaceFamily = m_monospaceFamily;
+
+        const auto& locales = Locales();
+        format.Locale = locales.EastAsian.empty() || !IsEastAsianText(m_text.data(), (int32_t)m_text.size())
+            ? locales.Primary
+            : locales.EastAsian;
+
+        format.FontSize = (float)m_fontSize;
+        format.Weight = (DWRITE_FONT_WEIGHT)m_fontWeight;
+        format.Style = m_italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
+        format.RightToLeft = m_rtl;
+        format.ScriptScale = (float)ScriptScale;
+
+        format.Alignment = m_alignment == Telegram::Native::TextAlignmentMode::Center ? EditableAlignment::Center
+            : m_alignment == Telegram::Native::TextAlignmentMode::Left ? EditableAlignment::Left
+            : m_alignment == Telegram::Native::TextAlignmentMode::Right ? EditableAlignment::Right
+            : EditableAlignment::Leading;
+
+        // A style is one entity's whole type, as BuildParagraph reads them: an entity that
+        // combines bits is not one of these to it either.
+        std::vector<EditableStyle> styles;
+
+        if (m_entities != nullptr && m_entities.Size() > 0)
+        {
+            for (const Telegram::Native::TextStylePart& entity : m_entities)
+            {
+                switch (entity.Type)
+                {
+                case TextStyle::Bold:
+                case TextStyle::Italic:
+                case TextStyle::Monospace:
+                case TextStyle::Strikethrough:
+                case TextStyle::Underline:
+                case TextStyle::Subscript:
+                case TextStyle::Superscript:
+                    styles.push_back({ entity.Offset, entity.Length, (uint32_t)entity.Type });
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+
+        std::vector<EditableInline> inlines;
+        inlines.reserve(m_inlines.size());
+
+        for (const InlineRange& item : m_inlines)
+        {
+            EditableInline editable{ item.Offset, item.Length, nullptr };
+            editable.Object.copy_from(item.Object.get());
+
+            inlines.push_back(std::move(editable));
+        }
+
+        // An update of whatever the layout already holds, which for a new one is a build.
+        return layout.Update(format, std::wstring_view(m_text.data(), m_text.size()), styles, inlines, (float)std::max(m_width, 0.0));
+    }
+
+    // An update against a build of the same state from scratch, which is what it has to be.
+    void DirectTextLayout::VerifyEditable(const EditableTextLayout& layout)
+    {
+        EditableTextLayout cold;
+        std::wstring difference;
+
+        s_verified++;
+
+        if (SUCCEEDED(BuildEditable(cold)) && !layout.Matches(cold, difference))
+        {
+            s_mismatched++;
+
+            std::lock_guard const guard(s_mismatchMutex);
+            s_mismatch = std::format(L"{} characters: {}", m_text.size(), difference);
+        }
+    }
+
+    HRESULT DirectTextLayout::DrawEditable(ID2D1DeviceContext* context, ID2D1Brush* brush)
+    {
+        for (const InlineRange& item : m_inlines)
+        {
+            item.Object->BeginDraw(context, m_color);
+        }
+
+        std::vector<EditableColor> colors;
+        colors.reserve(m_colors.size());
+
+        for (const ColorRange& item : m_colors)
+        {
+            colors.push_back({ item.Offset, item.Length, D2D1::ColorF(item.Color.R / 255.0f, item.Color.G / 255.0f, item.Color.B / 255.0f, item.Color.A / 255.0f) });
+        }
+
+        const auto result = m_editable->Draw(context, brush, colors);
+
+        for (const InlineRange& item : m_inlines)
+        {
+            item.Object->EndDraw();
+        }
+
+        return result;
+    }
+
+    // Where the analyzer's layout of this text disagrees with DirectWrite's, which is the
+    // answer it has to give: line breaks, line metrics, carets, hit tests and the box, and what
+    // each took to build. Diagnostics only; nothing here is fast.
+    hstring DirectTextLayout::CompareWithAnalyzer()
+    {
+        if (m_factory == nullptr || m_text.empty())
+        {
+            return hstring(L"Nothing to compare: no text.\n");
+        }
+
+        if (!m_implicit || m_maxLines != 0)
+        {
+            return hstring(L"Nothing to compare: the analyzer only lays out one paragraph without MaxLines.\n");
+        }
+
+        LARGE_INTEGER frequency;
+        QueryPerformanceFrequency(&frequency);
+
+        const auto micro = [&](int64_t ticks)
+            {
+                return ticks * 1000000.0 / frequency.QuadPart;
+            };
+
+        const auto snippet = [&](int32_t offset, int32_t length)
+            {
+                std::wstring text(m_text.data() + offset, std::min(length, 24));
+
+                for (wchar_t& c : text)
+                {
+                    if (c == L'\n' || c == L'\r')
+                    {
+                        c = 0x23CE;
+                    }
+                }
+
+                return text;
+            };
+
+        std::wstring report;
+        const auto length = (int32_t)m_text.size();
+
+        Paragraph paragraph;
+        paragraph.Offset = 0;
+        paragraph.Length = length;
+        paragraph.RightToLeft = m_rtl;
+        paragraph.Alignment = m_alignment;
+
+        auto started = Now();
+        auto result = BuildParagraph(paragraph);
+
+        DWRITE_TEXT_METRICS metrics{};
+
+        if (SUCCEEDED(result))
+        {
+            result = paragraph.Layout->GetMetrics(&metrics);
+        }
+
+        const auto directWriteTicks = Now() - started;
+
+        if (FAILED(result))
+        {
+            return hstring(std::format(L"DirectWrite failed: 0x{:08X}\n", (uint32_t)result));
+        }
+
+        EditableTextLayout editable;
+
+        started = Now();
+        result = BuildEditable(editable);
+
+        const auto analyzerTicks = Now() - started;
+
+        if (FAILED(result))
+        {
+            return hstring(std::format(L"Analyzer failed: 0x{:08X}\n", (uint32_t)result));
+        }
+
+        report += std::format(L"{} characters, width {:.1f}\n", length, m_width);
+        report += std::format(L"Build: DirectWrite {:.0f} µs, analyzer {:.0f} µs\n", micro(directWriteTicks), micro(analyzerTicks));
+        report += std::format(L"Box: DirectWrite left {:.2f} width {:.2f} height {:.2f}; analyzer left {:.2f} width {:.2f} height {:.2f}\n",
+            metrics.left, metrics.width, metrics.height, editable.Left(), editable.Width(), editable.Height());
+
+        // Lines.
+        std::vector<DWRITE_LINE_METRICS> lines(metrics.lineCount);
+        UINT32 lineCount = 0;
+        paragraph.Layout->GetLineMetrics(lines.data(), metrics.lineCount, &lineCount);
+        lines.resize(lineCount);
+
+        std::vector<EditableLine> own;
+        editable.Lines(own);
+
+        report += std::format(L"Lines: DirectWrite {}, analyzer {}\n", lines.size(), own.size());
+
+        int32_t breaks = 0;
+        int32_t heights = 0;
+        float heightDelta = 0;
+        float baselineDelta = 0;
+        float top = 0;
+        int32_t start = 0;
+
+        for (size_t i = 0; i < lines.size() && i < own.size(); i++)
+        {
+            const auto& line = lines[i];
+            const auto& mine = own[i];
+
+            const auto count = (int32_t)line.length;
+
+            if (start != mine.Start || count != mine.Length)
+            {
+                if (breaks++ < 5)
+                {
+                    report += std::format(L"  line {}: DirectWrite {}+{} \"{}\", analyzer {}+{} \"{}\"\n",
+                        i, start, count, snippet(start, count), mine.Start, mine.Length, snippet(mine.Start, mine.Length));
+                }
+            }
+
+            const auto height = std::abs(line.height - mine.Height);
+            const auto baseline = std::abs(line.baseline - mine.Baseline);
+
+            if (height > 0.01f || baseline > 0.01f || std::abs(top - mine.Y) > 0.01f)
+            {
+                if (heights++ < 5)
+                {
+                    report += std::format(L"  line {}: DirectWrite y {:.2f} height {:.2f} baseline {:.2f}, analyzer y {:.2f} height {:.2f} baseline {:.2f}\n",
+                        i, top, line.height, line.baseline, mine.Y, mine.Height, mine.Baseline);
+                }
+            }
+
+            heightDelta = std::max(heightDelta, height);
+            baselineDelta = std::max(baselineDelta, baseline);
+
+            start += count;
+            top += line.height;
+        }
+
+        report += std::format(L"Line breaks that differ: {}\n", breaks);
+        report += std::format(L"Line metrics that differ: {} (height by {:.2f} at most, baseline by {:.2f})\n", heights, heightDelta, baselineDelta);
+
+        // Carets, at every position: across, down and how tall, apart, as they go wrong for
+        // different reasons.
+        struct CaretDelta
+        {
+            const wchar_t* Name;
+            int32_t Count;
+            float Worst;
+            int32_t At;
+            float Theirs;
+            float Ours;
+        };
+
+        CaretDelta deltas[] =
+        {
+            { L"x", 0, 0, -1, 0, 0 },
+            { L"y", 0, 0, -1, 0, 0 },
+            { L"height", 0, 0, -1, 0, 0 }
+        };
+
+        for (int32_t i = 0; i <= length; i++)
+        {
+            FLOAT x;
+            FLOAT y;
+            DWRITE_HIT_TEST_METRICS hit;
+
+            if (FAILED(paragraph.Layout->HitTestTextPosition((UINT32)i, FALSE, &x, &y, &hit)))
+            {
+                continue;
+            }
+
+            const auto caret = editable.Caret(i);
+            const float theirs[] = { x, y, hit.height };
+            const float ours[] = { caret.X, caret.Y, caret.Height };
+
+            for (size_t k = 0; k < std::size(deltas); k++)
+            {
+                const auto delta = std::abs(theirs[k] - ours[k]);
+
+                if (delta > 0.5f)
+                {
+                    deltas[k].Count++;
+                }
+
+                if (delta > deltas[k].Worst)
+                {
+                    deltas[k] = { deltas[k].Name, deltas[k].Count, delta, i, theirs[k], ours[k] };
+                }
+            }
+        }
+
+        for (const CaretDelta& delta : deltas)
+        {
+            report += std::format(L"Caret {} more than half a DIP apart: {} of {}, {:.2f} at most", delta.Name, delta.Count, length + 1, delta.Worst);
+
+            if (delta.At >= 0)
+            {
+                report += std::format(L", at {} \"{}\": DirectWrite {:.2f}, analyzer {:.2f}", delta.At, snippet(delta.At, length - delta.At), delta.Theirs, delta.Ours);
+            }
+
+            report += L"\n";
+        }
+
+        // Hit tests, across every line.
+        int32_t hits = 0;
+        int32_t tested = 0;
+        const auto span = std::isfinite(m_width) && m_width > 0 ? (float)m_width : metrics.width;
+
+        top = 0;
+
+        for (size_t i = 0; i < lines.size(); i++)
+        {
+            const auto y = top + lines[i].height / 2;
+
+            for (int32_t step = 0; step <= 16; step++)
+            {
+                const auto x = -4 + (span + 8) * step / 16;
+
+                BOOL isTrailingHit;
+                BOOL isInside;
+                DWRITE_HIT_TEST_METRICS hit;
+
+                if (FAILED(paragraph.Layout->HitTestPoint(x, y, &isTrailingHit, &isInside, &hit)))
+                {
+                    continue;
+                }
+
+                EditableHit mine;
+                editable.HitTest(x, y, mine);
+
+                const auto theirs = (int32_t)hit.textPosition + (isTrailingHit ? (int32_t)hit.length : 0);
+                const auto ours = mine.Position + (mine.Trailing ? mine.Length : 0);
+
+                tested++;
+
+                if (theirs != ours || (isInside != FALSE) != mine.Inside)
+                {
+                    if (hits++ < 5)
+                    {
+                        report += std::format(L"  hit {:.1f},{:.1f}: DirectWrite {}{}, analyzer {}{}\n",
+                            x, y, theirs, isInside ? L" inside" : L"", ours, mine.Inside ? L" inside" : L"");
+                    }
+                }
+            }
+
+            top += lines[i].height;
+        }
+
+        report += std::format(L"Hit tests that differ: {} of {}\n", hits, tested);
+
+        // As ContentEnd asks DirectWrite for it.
+        BOOL isTrailingHit;
+        BOOL isInside;
+        DWRITE_HIT_TEST_METRICS end;
+
+        if (SUCCEEDED(paragraph.Layout->HitTestPoint(metrics.width, metrics.height, &isTrailingHit, &isInside, &end)))
+        {
+            const auto ours = editable.ContentEnd();
+
+            report += std::format(L"Content end: DirectWrite {:.2f},{:.2f}, analyzer {:.2f},{:.2f}\n",
+                end.left + end.width, end.top + end.height, ours.X, ours.Y);
+        }
+
+        return hstring(report);
     }
 }

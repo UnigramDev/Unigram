@@ -48,6 +48,10 @@
                               Content="Editor Meter (Ctrl+Alt+Shift+M in an Editor)"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.AnalyzerTextLayout, Mode=TwoWay}"
+                              Content="Analyzer Text Layout in Editors (restart)"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollBars, Mode=TwoWay}"
                               Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

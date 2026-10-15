@@ -40,6 +40,15 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _editorMeter, "EditorMeter", value);
         }
 
+        // An edited text laid out on IDWriteTextAnalyzer rather than by IDWriteTextLayout, while
+        // that layout is being proven. Read once per launch.
+        private bool? _analyzerTextLayout;
+        public bool AnalyzerTextLayout
+        {
+            get => _analyzerTextLayout ??= GetValueOrDefault("AnalyzerTextLayout", false);
+            set => AddOrUpdateValue(ref _analyzerTextLayout, "AnalyzerTextLayout", value);
+        }
+
         private bool? _legacyScrollBars;
         public bool LegacyScrollBars
         {

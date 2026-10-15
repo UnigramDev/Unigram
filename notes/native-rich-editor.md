@@ -113,7 +113,8 @@ an earlier one left open. The list just below is the current state.
 - Theming: the selection is a stand-in brush (`RichEditorSelectionBrush`, TODO in RichEditor.xaml).
 - Markdown on paste, which Android offers after a paste.
 - Dragging a selection out of the editor.
-- Audio and file blocks look like a badge.
+- Typing in a long text lags: a keystroke lays out and redraws its whole paragraph, and every
+  block is realized. The plan is `native-editor-performance-plan.md`.
 - Slideshow design is wrong: the frame takes the size of the slide being shown
   (`RichMediaRenderer`, `SetSize` from `group.Items[page]`), so turning a page resizes the block
   and moves everything under it. Its size must not depend on the visible slide: one size for

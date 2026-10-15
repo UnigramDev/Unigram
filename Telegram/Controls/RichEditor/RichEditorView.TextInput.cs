@@ -557,7 +557,7 @@ namespace Telegram.Controls.RichEditor
         /// A key typed at the caret, taken as OnTextUpdating takes the service's: for the meter,
         /// which has no service to type through.
         /// </summary>
-        internal void TypeForMeasure(string text)
+        internal void TypeForMeasure(string text, int deleted = 0)
         {
             var focus = _engine.Focus;
 
@@ -565,7 +565,7 @@ namespace Telegram.Controls.RichEditor
 
             try
             {
-                _engine.ReplaceText(focus.Leaf, focus.Offset, focus.Offset, text);
+                _engine.ReplaceText(focus.Leaf, Math.Max(focus.Offset - deleted, 0), focus.Offset, text);
             }
             finally
             {

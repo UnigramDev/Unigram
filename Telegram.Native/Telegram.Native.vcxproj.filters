@@ -331,6 +331,7 @@
     </ClCompile>
     <ClCompile Include="BufferSurface.cpp" />
     <ClCompile Include="TelegramWebviewProxy.cpp" />
+    <ClCompile Include="EditableTextLayout.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Highlight\SyntaxToken.cpp">
       <Filter>Highlight</Filter>
@@ -1183,6 +1184,7 @@
     </ClInclude>
     <ClInclude Include="BufferSurface.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
+    <ClInclude Include="EditableTextLayout.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="Highlight\SyntaxToken.h">
       <Filter>Highlight</Filter>

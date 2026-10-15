@@ -464,6 +464,7 @@
       <DependentUpon>DirectTextLayout.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="EditableTextLayout.h" />
     <ClInclude Include="TextFormat.h">
       <DependentUpon>TextFormat.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1359,6 +1360,7 @@
       <DependentUpon>DirectTextLayout.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="EditableTextLayout.cpp" />
     <ClCompile Include="TextFormat.cpp">
       <DependentUpon>TextFormat.idl</DependentUpon>
       <SubType>Code</SubType>

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Native;
+using Telegram.Services;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -52,8 +53,30 @@ namespace Telegram.Controls.RichEditor
             MessageLines,
             ArticleParagraph,
             ArticleParagraphs,
-            ArticleMixed
+            ArticleMixed,
+            CompareScripts,
+            CompareThisText,
+            CheckUpdates,
+            CheckMessageParagraph,
+            CheckArticleParagraph
         }
+
+        // What the analyzer layout has to get right, a paragraph each: every direction, the
+        // scripts that shape, break or fall back differently, emoji the packaged font draws as
+        // bitmaps, and the styles that change a run's font or size.
+        private static readonly string[] Corpus =
+        {
+            "The quick brown fox jumps over the lazy dog, and then, without pausing for breath, keeps running past the end of the line so that it has to wrap at least twice in an ordinary box.",
+            "Съешь же ещё этих мягких французских булок, да выпей чаю. Ξεσκεπάζω την ψυχοφθόρα βδελυγμία.",
+            "نص عربي طويل بما يكفي ليلتف على أكثر من سطر واحد في مربع عادي، مع أرقام 123 وعلامات ترقيم.",
+            "טקסט בעברית עם English words in the middle ומספרים 2026 בסוף השורה.",
+            "English text with עברית ועוד עברית inside it, and العربية too, back to English at the end.",
+            "हिन्दी में लिखा गया एक वाक्य जो संयुक्ताक्षरों और मात्राओं को दिखाता है। ภาษาไทยไม่มีช่องว่างระหว่างคำจึงต้องตัดคำด้วยพจนานุกรม",
+            "中文文本没有空格，每个字之间都可以换行。日本語のテキストも同じで、句読点の前では改行しない。한국어는 띄어쓰기가 있습니다.",
+            "Emoji 👍🏽 👨‍👩‍👧‍👦 🇮🇹 ❤️ 🏳️‍🌈 1️⃣ and text around them, 😀😃😄😁😆😅🤣😂🙂🙃 in a row.",
+            "Tabs\tbetween\twords\tand\ta long word: Pneumonoultramicroscopicsilicovolcanoconiosis" + "Pneumonoultramicroscopicsilicovolcanoconiosis",
+            "Combining marks: é ä ñ, Zalgo-ish o̶̷̸, and surrogates 𝒳𝒴𝒵 𝔄𝔅."
+        };
 
         private readonly RichEditorView _view;
 
@@ -87,6 +110,19 @@ namespace Telegram.Controls.RichEditor
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(meter.Run, Scenario.ThisText, "This Text", Icons.Timer);
 
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(meter.Run, Scenario.CompareScripts, "Compare Layouts in Every Script", Icons.TextFont);
+            flyout.CreateFlyoutItem(meter.Run, Scenario.CompareThisText, "Compare Layouts in This Text", Icons.TextFont);
+            flyout.CreateFlyoutItem(meter.Run, Scenario.CheckUpdates, "Type in This Text, Checking Every Update", Icons.TextFont);
+
+            if (view.Engine.Schema != null)
+            {
+                flyout.CreateFlyoutItem(meter.Run, Scenario.CheckMessageParagraph, "Type in a Paragraph of 4,096, Checking Every Update", Icons.TextFont);
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(meter.Run, Scenario.CheckArticleParagraph, "Type in a Paragraph of 100,000, Checking Every Update", Icons.TextFont);
+            }
 
             flyout.ShowAt(view, new FlyoutShowOptions { Placement = FlyoutPlacementMode.Auto });
         }
@@ -141,25 +177,65 @@ namespace Telegram.Controls.RichEditor
                 _active = true;
                 DirectTextLayout.ResetCounters();
 
-                if (scenario != Scenario.ThisText)
+                if (scenario is Scenario.CompareScripts or Scenario.CompareThisText)
                 {
-                    var document = Generate(scenario);
-                    await NextFrameAsync();
+                    if (scenario == Scenario.CompareScripts)
+                    {
+                        engine.Load(Generate(scenario));
+                    }
 
-                    var started = Stopwatch.GetTimestamp();
-                    engine.Load(document);
                     _view.UpdateLayout();
 
-                    report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Opened in {0:0.0} ms", Milliseconds(Stopwatch.GetTimestamp() - started)));
+                    Describe(report, engine.Document);
+                    Compare(report);
                 }
+                else if (scenario is Scenario.CheckUpdates or Scenario.CheckMessageParagraph or Scenario.CheckArticleParagraph)
+                {
+                    // The timings mean nothing here, as every key also builds its text from
+                    // scratch: what is reported is whether the updates matched those builds.
+                    if (!AppSettings.Diagnostics.AnalyzerTextLayout)
+                    {
+                        report.AppendLine("Analyzer Text Layout is off in Diagnostics: nothing is updated, so nothing is checked.");
+                    }
 
-                Describe(report, engine.Document);
+                    if (scenario != Scenario.CheckUpdates)
+                    {
+                        engine.Load(Generate(scenario == Scenario.CheckMessageParagraph ? Scenario.MessageParagraph : Scenario.ArticleParagraph));
+                        _view.UpdateLayout();
+                    }
 
-                await RunAsync(report, "In the middle", PlaceInMiddle);
-                await RunAsync(report, "At the end", PlaceAtEnd);
+                    DirectTextLayout.VerifyAnalyzer = true;
 
-                report.AppendLine();
-                report.Append(DirectTextLayout.Counters);
+                    Describe(report, engine.Document);
+
+                    await RunAsync(report, "In the middle", PlaceInMiddle, true);
+                    await RunAsync(report, "At the end", PlaceAtEnd, true);
+
+                    report.AppendLine();
+                    report.Append(DirectTextLayout.Counters);
+                }
+                else
+                {
+                    if (scenario != Scenario.ThisText)
+                    {
+                        var document = Generate(scenario);
+                        await NextFrameAsync();
+
+                        var started = Stopwatch.GetTimestamp();
+                        engine.Load(document);
+                        _view.UpdateLayout();
+
+                        report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Opened in {0:0.0} ms", Milliseconds(Stopwatch.GetTimestamp() - started)));
+                    }
+
+                    Describe(report, engine.Document);
+
+                    await RunAsync(report, "In the middle", PlaceInMiddle);
+                    await RunAsync(report, "At the end", PlaceAtEnd);
+
+                    report.AppendLine();
+                    report.Append(DirectTextLayout.Counters);
+                }
             }
             catch (Exception ex)
             {
@@ -168,6 +244,7 @@ namespace Telegram.Controls.RichEditor
             finally
             {
                 _active = false;
+                DirectTextLayout.VerifyAnalyzer = false;
                 engine.Load(saved);
             }
 
@@ -190,7 +267,8 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
-        private async Task RunAsync(StringBuilder report, string title, Action<RichEditorEngine> place)
+        // Deleting, every fifth key takes a character back instead of typing one.
+        private async Task RunAsync(StringBuilder report, string title, Action<RichEditorEngine> place, bool deleting = false)
         {
             place(_view.Engine);
 
@@ -220,7 +298,14 @@ namespace Telegram.Controls.RichEditor
 
                 var collections = GC.CollectionCount(0);
                 var started = Stopwatch.GetTimestamp();
-                _view.TypeForMeasure(Typed[i % Typed.Length].ToString());
+                if (deleting && i % 5 == 4)
+                {
+                    _view.TypeForMeasure(string.Empty, 1);
+                }
+                else
+                {
+                    _view.TypeForMeasure(Typed[i % Typed.Length].ToString());
+                }
                 var typed = Stopwatch.GetTimestamp();
                 _view.UpdateLayout();
                 var laidOut = Stopwatch.GetTimestamp();
@@ -315,6 +400,29 @@ namespace Telegram.Controls.RichEditor
                 characters, document.Leaves.Count, document.Blocks.Count, longest, _view.RealizedLeafCount, _view.RealizedBlockCount));
         }
 
+        // Every leaf's text laid out both ways, at the width it is shown at. Capped, as a report
+        // of a whole article would be unreadable and the corpus is a screenful.
+        private void Compare(StringBuilder report)
+        {
+            const int Limit = 40;
+
+            var blocks = new List<DirectTextBlock>();
+            _view.GetRealizedTextBlocks(blocks);
+
+            for (int i = 0; i < blocks.Count && i < Limit; i++)
+            {
+                report.AppendLine();
+                report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Leaf {0}", i));
+                report.Append(blocks[i].CompareWithAnalyzer());
+            }
+
+            if (blocks.Count > Limit)
+            {
+                report.AppendLine();
+                report.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} more leaves not compared", blocks.Count - Limit));
+            }
+        }
+
         // The longest text, which is where a keystroke costs most: the paragraph of a single
         // paragraph document, or one in the middle of a document of short ones.
         private static void PlaceInMiddle(RichEditorEngine engine)
@@ -388,6 +496,31 @@ namespace Telegram.Controls.RichEditor
                     {
                         length += Section(random, blocks, section);
                     }
+                    break;
+                case Scenario.CompareScripts:
+                    foreach (var text in Corpus)
+                    {
+                        blocks.Add(Paragraph(text));
+                    }
+
+                    var styled = new RichParagraphBlock(RichBlockKind.Paragraph);
+                    styled.Text.Insert(0, "Plain, ", RichMarks.None, null);
+                    styled.Text.Insert(styled.Text.Length, "bold, ", RichMarks.Bold, null);
+                    styled.Text.Insert(styled.Text.Length, "italic, ", RichMarks.Italic, null);
+                    styled.Text.Insert(styled.Text.Length, "monospace, ", RichMarks.Monospace, null);
+                    styled.Text.Insert(styled.Text.Length, "underlined, ", RichMarks.Underline, null);
+                    styled.Text.Insert(styled.Text.Length, "struck, ", RichMarks.Strikethrough, null);
+                    styled.Text.Insert(styled.Text.Length, "H", RichMarks.None, null);
+                    styled.Text.Insert(styled.Text.Length, "2", RichMarks.Subscript, null);
+                    styled.Text.Insert(styled.Text.Length, "O and E=mc", RichMarks.None, null);
+                    styled.Text.Insert(styled.Text.Length, "2", RichMarks.Superscript, null);
+                    styled.Text.Insert(styled.Text.Length, ", then plain again for long enough to wrap the line in an ordinary box.", RichMarks.None, null);
+                    blocks.Add(styled);
+
+                    // Hard breaks, an empty line between them and one after the last.
+                    var code = Paragraph("var length = 0;\r\n\nforeach (var leaf in leaves)\n{\n\tlength += leaf.Length;\n}\n", RichBlockKind.Preformatted);
+                    code.Language = "csharp";
+                    blocks.Add(code);
                     break;
             }
 

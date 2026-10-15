@@ -442,10 +442,16 @@ namespace Telegram.Controls
             {
                 _layout = Direct2D.Current.CreateLayout();
                 _layout.IsReadOnly = _isReadOnly;
+                _layout.UseAnalyzer = _useAnalyzer;
             }
 
             return _layout;
         }
+
+        // Only consulted by the layout while the text is edited.
+        private static readonly bool _useAnalyzer = AppSettings.Diagnostics.AnalyzerTextLayout;
+
+        internal string CompareWithAnalyzer() => Layout().CompareWithAnalyzer();
 
         private bool _isReadOnly = true;
 

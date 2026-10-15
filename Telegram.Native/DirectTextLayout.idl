@@ -53,6 +53,15 @@ namespace Telegram.Native
         // redraws the surface rather than replacing it every few characters. On by default.
         Boolean IsReadOnly;
 
+        // Whether an edited text is laid out on IDWriteTextAnalyzer rather than by a
+        // IDWriteTextLayout, while that layout is being proven: see
+        // notes/native-editor-performance-plan.md. Only a text that is one paragraph with no
+        // MaxLines; anything else is laid out as before. Off by default.
+        Boolean UseAnalyzer;
+
+        // Both layouts built from this one's state, and a report of where they disagree.
+        String CompareWithAnalyzer();
+
         // Whether the text did not fit in MaxLines, and how many lines it takes: a caller
         // offering to expand asks the second, which is an answer about the text rather than
         // about the limit it is under at the moment.
@@ -114,5 +123,9 @@ namespace Telegram.Native
         // Process-wide.
         static String Counters{ get; };
         static void ResetCounters();
+
+        // Whether every update of an analyzer layout is checked against a build of the same
+        // text from scratch, the result in Counters. Diagnostics: it costs a cold build a key.
+        static Boolean VerifyAnalyzer;
     }
 }

@@ -838,7 +838,7 @@ check for Win32 vs UWP conditional compilation before assuming a shim is univers
 # Native
 
 ## Drawing surfaces — Direct2D over the shared Composition device — Telegram.Native/ (14 files)
-<!-- map: verified=c1683f64c paths=Telegram.Native/Direct2DDevice.cpp,Telegram.Native/Direct2DDevice.h,Telegram.Native/Direct2DDevice.idl,Telegram.Native/SurfaceImage.idl,Telegram.Native/FreeformGradientSurface.cpp,Telegram.Native/ChatBackgroundPattern.cpp,Telegram.Native/MessageBubbleNineGrid.cpp,Telegram.Native/RichMathSurface.cpp,Telegram.Native/Composition,Telegram.Native/Highlight -->
+<!-- map: verified=f433bc27d paths=Telegram.Native/Direct2DDevice.cpp,Telegram.Native/Direct2DDevice.h,Telegram.Native/Direct2DDevice.idl,Telegram.Native/SurfaceImage.idl,Telegram.Native/FreeformGradientSurface.cpp,Telegram.Native/ChatBackgroundPattern.cpp,Telegram.Native/MessageBubbleNineGrid.cpp,Telegram.Native/RichMathSurface.cpp,Telegram.Native/Composition,Telegram.Native/Highlight,Telegram.Native/DirectTextLayout.cpp,Telegram.Native/EditableTextLayout.cpp -->
 All off-thread D2D rasterization — text layout and measurement, chat backgrounds, gradients, particles,
 math formulas, nine-grid bubble masks, syntax highlighting — plus the DirectComposition plumbing XAML has
 no API for. Native because XAML composition visuals cannot do arbitrary D2D drawing or thread-safe
@@ -846,7 +846,10 @@ rasterization. **A C#-only search misses this entire layer.**
 **Key types:** `Direct2DDevice` (Telegram.Native/Direct2DDevice.idl) — owns the app-wide
 `CompositionGraphicsDevice`, plus text metrics, WebP and blur, and `CreateFrameSurface` and
 `WaitForCompositorClock` for animated images (see Animated images); `DirectTextLayout` — a retained DirectWrite
-layout that owns the surface its text is drawn into, `IClosable` because that surface is an atlas region;
+layout that owns the surface its text is drawn into, `IClosable` because that surface is an atlas region,
+and while it is edited with Diagnostics' Analyzer Text Layout on, hands its one paragraph to
+`EditableTextLayout` (C++ only), laid out on `IDWriteTextAnalyzer` and updated around each edit rather
+than rebuilt (notes/native-editor-performance-plan.md);
 `ChatBackgroundPattern` — SVG pattern onto
 an `ICompositionSurface`; `FreeformGradientSurface` — animated mesh-gradient brush, listens for
 `RenderingDeviceReplaced`; `MessageBubbleNineGrid` — bubble tail brush and mask; `RichMathSurface` —
