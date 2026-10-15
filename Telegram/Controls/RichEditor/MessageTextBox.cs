@@ -831,6 +831,11 @@ namespace Telegram.Controls.RichEditor
                     formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, Icons.Spoiler, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
                 }
 
+                if (schema.AllowsDates)
+                {
+                    formatting.CreateFlyoutItem(length && !status.HasLink, CreateDate, Strings.FormattedDate, Icons.Calendar);
+                }
+
                 if (schema.AllowsUrls)
                 {
                     formatting.CreateFlyoutSeparator();
@@ -982,6 +987,20 @@ namespace Telegram.Controls.RichEditor
             if (confirm == true && !string.IsNullOrEmpty(popup.Link))
             {
                 ApplyLink(RichLink.FromUrl(popup.Link), popup.Text, selected);
+            }
+
+            Editor?.Focus(FocusState.Programmatic);
+        }
+
+        // The selected text, shown as a date in the reader's own format.
+        private async void CreateDate()
+        {
+            var selected = _engine.GetSelectedText();
+
+            var url = await ChooseDateTimeToast.ChooseDateUrlAsync(XamlRoot);
+            if (url != null && TdExtensions.TryParseDateTime(url, out TextEntityTypeDateTime dateTime) && selected == _engine.GetSelectedText())
+            {
+                ApplyLink(RichLink.FromDateTime(dateTime.UnixTime, dateTime.FormattingType), selected, selected);
             }
 
             Editor?.Focus(FocusState.Programmatic);

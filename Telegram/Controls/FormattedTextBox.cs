@@ -912,113 +912,13 @@ namespace Telegram.Controls
 
             range.GetText(TextGetOptions.NoHidden, out string text);
 
-            var popup = new ChooseDateTimeToast
-            {
-                Title = Strings.RelativeDateAddDate,
-                PrimaryButtonContent = Strings.OK,
-                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
-                SecondaryButtonContent = Strings.Cancel,
-                IsLightDismissEnabled = true,
-            };
-
-            CheckBox relative = null;
-            CheckBox short_time = null;
-            CheckBox long_time = null;
-            CheckBox short_date = null;
-            CheckBox long_date = null;
-            CheckBox day_of_week = null;
-
-            if (ApiInfo.IsPackagedRelease)
-            {
-                relative = new CheckBox
-                {
-                    Content = "r (relative)"
-                };
-
-                short_time = new CheckBox
-                {
-                    Content = "t (short time)"
-                };
-
-                long_time = new CheckBox
-                {
-                    Content = "T (long time)"
-                };
-
-                short_date = new CheckBox
-                {
-                    Content = "d (short date)"
-                };
-
-                long_date = new CheckBox
-                {
-                    Content = "D (long date)"
-                };
-
-                day_of_week = new CheckBox
-                {
-                    Content = "w (day of week)"
-                };
-
-                var panel = new StackPanel();
-                panel.Children.Add(relative);
-                panel.Children.Add(day_of_week);
-                panel.Children.Add(short_date);
-                panel.Children.Add(long_date);
-                panel.Children.Add(short_time);
-                panel.Children.Add(long_time);
-
-                popup.Footer = panel;
-            }
-
-            popup.IsLightDismissEnabled = true;
-
-            var confirm = await popup.ShowAsync(XamlRoot);
-            if (confirm != ContentDialogResult.Primary /*|| !IsSafe(popup.Text)*/)
+            var url = await ChooseDateTimeToast.ChooseDateUrlAsync(XamlRoot);
+            if (url == null)
             {
                 return;
             }
 
             Document.BatchDisplayUpdates();
-
-            // The bot format string: r|w?[dD]?[tT]?. 'r' can't be combined with anything, and
-            // a part can only be short OR long, so the boxes are read in that priority.
-            var format = string.Empty;
-
-            if (ApiInfo.IsPackagedRelease)
-            {
-                if (relative.IsChecked is true)
-                {
-                    format = "r";
-                }
-                else
-                {
-                    if (day_of_week.IsChecked is true)
-                    {
-                        format += "w";
-                    }
-
-                    if (short_date.IsChecked is true)
-                    {
-                        format += "d";
-                    }
-                    else if (long_date.IsChecked is true)
-                    {
-                        format += "D";
-                    }
-
-                    if (short_time.IsChecked is true)
-                    {
-                        format += "t";
-                    }
-                    else if (long_time.IsChecked is true)
-                    {
-                        format += "T";
-                    }
-                }
-            }
-
-            var url = TdExtensions.ToDateUrl(popup.Value.ToUnixTimeSeconds(), format);
 
             range.SetText(TextSetOptions.Unlink, text);
             range.CharacterFormat = Document.GetDefaultCharacterFormat();
