@@ -168,6 +168,11 @@ namespace Telegram.Controls.RichEditor
                 _inputPane = null;
             }
 
+            ReleaseEditContext();
+        }
+
+        private void ReleaseEditContext()
+        {
             if (_editContext == null)
             {
                 return;
@@ -242,6 +247,19 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
+            // The service keeps its own copy of the text across focus, and a change made while
+            // focus was away was never reported to it: typing would go in where it remembers the
+            // caret, ahead of the character ChatView put in on the way here. A new context has no
+            // copy, and asks.
+            if (_changedAway && !_contextFocused)
+            {
+                _changedAway = false;
+
+                ReleaseEditContext();
+                CreateEditContext();
+                return;
+            }
+
             _contextLeaf = _engine.SelectedNode == null ? _engine.Focus.Leaf : null;
             _contextLength = _contextLeaf?.Length ?? 0;
 
@@ -300,9 +318,17 @@ namespace Telegram.Controls.RichEditor
             ClearComposition();
         }
 
+        // Whether the text changed while the service was not told, which EnterContext makes up for.
+        private bool _changedAway;
+
         /// <summary>Tells the input service about a change it did not make itself.</summary>
         private void SyncEditContext(RichEditorChanges changes)
         {
+            if (_editContext != null && !_contextFocused && (changes & (RichEditorChanges.Text | RichEditorChanges.Structure)) != 0)
+            {
+                _changedAway = true;
+            }
+
             if (_editContext == null || !_contextFocused || _imeUpdating)
             {
                 return;
