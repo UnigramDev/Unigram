@@ -106,6 +106,13 @@ namespace winrt::Telegram::Native::implementation
         // handed something long again.
         constexpr int64_t c_surfaceSlack = 32768;
 
+        // An edited text's surface spans its box up to this many pixels, past which the box is
+        // the stand-in for an unbounded measure rather than a width anything is shown at.
+        constexpr double c_editingMaxWidth = 8192;
+
+        // And takes at least this much more height than the text, in DIPs: a few lines.
+        constexpr double c_editingSpareHeight = 64;
+
         bool Keep(Windows::Graphics::SizeInt32 size, Windows::Graphics::SizeInt32 pixels)
         {
             if (size.Width < pixels.Width || size.Height < pixels.Height)
@@ -663,6 +670,17 @@ namespace winrt::Telegram::Native::implementation
             m_maxLines = value;
             m_invalid = true;
         }
+    }
+
+    bool DirectTextLayout::IsReadOnly()
+    {
+        return m_readOnly;
+    }
+
+    // Only how the surface is sized: the text is laid out the same either way.
+    void DirectTextLayout::IsReadOnly(bool value)
+    {
+        m_readOnly = value;
     }
 
     // The colours and the inline objects belong to the text they were set over, so they go
@@ -1741,7 +1759,7 @@ namespace winrt::Telegram::Native::implementation
         // the region with the compositor, where a new surface is only another region.
         if (m_surface != nullptr)
         {
-            if (Keep(m_surface.SizeInt32(), pixels))
+            if (KeepSurface(pixels))
             {
                 s_surfaceKept++;
             }
@@ -1758,7 +1776,7 @@ namespace winrt::Telegram::Native::implementation
 
             try
             {
-                m_surface = m_device.CreateDrawingSurface2({ Grow(pixels.Width), Grow(pixels.Height) }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+                m_surface = m_device.CreateDrawingSurface2(SurfaceSize(pixels), DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
             }
             catch (...)
             {
@@ -1781,6 +1799,44 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return m_surface;
+    }
+
+    // Shown, a surface fits the text it is made for, rounded up. Edited, the text changes with
+    // every key and mostly grows, so a surface that fits it is outgrown every few characters:
+    // it spans the box instead, unless that is the unbounded width a caller measures with, and
+    // takes lines more than the text so that a new line is a redraw as well.
+    Windows::Graphics::SizeInt32 DirectTextLayout::SurfaceSize(Windows::Graphics::SizeInt32 pixels)
+    {
+        if (m_readOnly)
+        {
+            return { Grow(pixels.Width), Grow(pixels.Height) };
+        }
+
+        auto width = pixels.Width;
+        const auto box = std::ceil(m_width * m_scale);
+
+        if (box > width && box <= c_editingMaxWidth)
+        {
+            width = (int32_t)box;
+        }
+
+        const auto spare = std::max(pixels.Height / 2, (int32_t)std::ceil(c_editingSpareHeight * m_scale));
+        return { Grow(width), Grow(pixels.Height + spare) };
+    }
+
+    // Edited, a surface is only given back when the text has outgrown it: one that holds more
+    // than the text needs is the room it was given to grow into, and deleting is no reason to
+    // replace it.
+    bool DirectTextLayout::KeepSurface(Windows::Graphics::SizeInt32 pixels)
+    {
+        const auto size = m_surface.SizeInt32();
+
+        if (m_readOnly)
+        {
+            return Keep(size, pixels);
+        }
+
+        return size.Width >= pixels.Width && size.Height >= pixels.Height;
     }
 
     // The rendering device was replaced under the surface, which survives it: only the content

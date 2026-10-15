@@ -48,6 +48,11 @@ namespace Telegram.Native
         // lines that fit.
         Int32 MaxLines;
 
+        // Whether the text is only shown, as it is everywhere but an editor. Being edited, its
+        // surface spans the box the text is laid out in, with lines to spare below, so typing
+        // redraws the surface rather than replacing it every few characters. On by default.
+        Boolean IsReadOnly;
+
         // Whether the text did not fit in MaxLines, and how many lines it takes: a caller
         // offering to expand asks the second, which is an answer about the text rather than
         // about the limit it is under at the moment.

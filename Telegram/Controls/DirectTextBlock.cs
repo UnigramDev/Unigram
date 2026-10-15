@@ -441,9 +441,30 @@ namespace Telegram.Controls
             if (_layout == null)
             {
                 _layout = Direct2D.Current.CreateLayout();
+                _layout.IsReadOnly = _isReadOnly;
             }
 
             return _layout;
+        }
+
+        private bool _isReadOnly = true;
+
+        /// <summary>
+        /// Whether the text is only shown. An editor's lines set it off: their surface then spans
+        /// the box with lines to spare, so typing redraws it instead of replacing it every few
+        /// characters.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get => _isReadOnly;
+            set
+            {
+                if (_isReadOnly != value)
+                {
+                    _isReadOnly = value;
+                    _layout?.IsReadOnly = value;
+                }
+            }
         }
 
         /// <param name="direction">

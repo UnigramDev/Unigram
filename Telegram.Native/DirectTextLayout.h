@@ -162,6 +162,9 @@ namespace winrt::Telegram::Native::implementation
         int32_t MaxLines();
         void MaxLines(int32_t value);
 
+        bool IsReadOnly();
+        void IsReadOnly(bool value);
+
         Telegram::Native::TextAlignmentMode Alignment();
         void Alignment(Telegram::Native::TextAlignmentMode value);
 
@@ -272,6 +275,7 @@ namespace winrt::Telegram::Native::implementation
         double m_width{ 0 };
         bool m_rtl{ false };
         int32_t m_maxLines{ 0 };
+        bool m_readOnly{ true };
         Telegram::Native::TextAlignmentMode m_alignment{ Telegram::Native::TextAlignmentMode::Leading };
 
         // Whether the last build had to leave anything out for MaxLines.
@@ -282,6 +286,9 @@ namespace winrt::Telegram::Native::implementation
         bool m_invalid{ true };
 
         void SetObject(int32_t offset, int32_t length, winrt::com_ptr<InlineObject> object);
+
+        Windows::Graphics::SizeInt32 SurfaceSize(Windows::Graphics::SizeInt32 pixels);
+        bool KeepSurface(Windows::Graphics::SizeInt32 pixels);
 
         HRESULT Build();
         HRESULT BuildParagraph(Paragraph& paragraph);

@@ -235,7 +235,8 @@
                                                   IconForeground="{ThemeResource MessageForegroundBrush}"
                                                   AutomationProperties.AccessibilityView="Raw"
                                                   SelectionHighlightColor="{ThemeResource RichEditorSelectionBrush}"
-                                                  CustomEmojiFitsLine="True" />
+                                                  CustomEmojiFitsLine="True"
+                                                  IsReadOnly="False" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
