@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
@@ -25,6 +26,22 @@ namespace Telegram.Td
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// The indexes of the <paramref name="inputs"/> that have a word starting with
+        /// <paramref name="query"/>, in their order: one call for the whole list, where the overload
+        /// above makes one for every string.
+        /// </summary>
+        public static Vector<int> SearchByPrefix(string[] inputs, string query)
+        {
+            var result = Client.Execute(new SearchStringsByPrefix(inputs, query, inputs.Length, true));
+            if (result is FoundPositions positions && positions.Positions != null)
+            {
+                return positions.Positions;
+            }
+
+            return Array.Empty<int>();
         }
 
         public static FormattedText ParseMarkdown(string text)

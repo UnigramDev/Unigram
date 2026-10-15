@@ -1,0 +1,10 @@
+namespace Telegram.Native.Highlight
+{
+    // A language code can be highlighted as, with the other ids it goes by.
+    runtimeclass SyntaxLanguage
+    {
+        String Id{ get; };
+        String Name{ get; };
+        Windows.Foundation.Collections.IVectorView<String> Aliases{ get; };
+    }
+}

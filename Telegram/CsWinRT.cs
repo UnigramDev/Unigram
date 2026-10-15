@@ -32,6 +32,7 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.QuickReplyShortcut>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Views.Popups.CodeLanguage>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.PremiumFeature[]))]
 
 // A grouped CollectionViewSource boxes every group on its own to QI it for IBindableIterable, so

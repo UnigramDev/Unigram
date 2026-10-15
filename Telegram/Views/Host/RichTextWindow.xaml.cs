@@ -555,52 +555,15 @@ namespace Telegram.Views.Host
             UpdateToolbar();
         }
 
-        private void OnLanguageRequested(object sender, RichLanguageRequestedEventArgs e)
+        private async void OnLanguageRequested(object sender, RichLanguageRequestedEventArgs e)
         {
-            var block = e.Block;
-            var language = block.Language;
-
-            var flyout = new MenuFlyout();
-
-            flyout.Items.Add(new ToggleMenuFlyoutItem
+            var language = await CodeLanguagePopup.ChooseAsync(XamlRoot, e.Block.Language);
+            if (language != null)
             {
-                Text = Strings.ArticleNone,
-                IsChecked = string.IsNullOrEmpty(language),
-                Command = new RelayCommand<string>(SetLanguage),
-                CommandParameter = string.Empty
-            });
-
-            flyout.CreateFlyoutSeparator();
-
-            foreach (var lang in SyntaxToken.Languages)
-            {
-                flyout.Items.Add(new ToggleMenuFlyoutItem
-                {
-                    Text = SyntaxToken.GetLanguageName(lang),
-                    IsChecked = lang == language,
-                    CommandParameter = lang,
-                    Command = new RelayCommand<string>(SetLanguage)
-                });
+                _engine.SetLanguage(e.Block, language);
             }
 
-            _languageTarget = block;
-
-            flyout.ShowAt(e.Anchor, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
-                ShowMode = FlyoutShowMode.Transient
-            });
-        }
-
-        private RichParagraphBlock _languageTarget;
-
-        private void SetLanguage(string language)
-        {
-            if (_languageTarget != null)
-            {
-                _engine.SetLanguage(_languageTarget, language);
-                _languageTarget = null;
-            }
+            Editor.Focus(FocusState.Programmatic);
         }
 
         /// <summary>

@@ -163,6 +163,7 @@ namespace Telegram.Controls.RichEditor
             editor.PreviewKeyDown += OnEditorPreviewKeyDown;
             editor.MenuRequested += OnMenuRequested;
             editor.LinkRequested += OnLinkRequested;
+            editor.LanguageRequested += OnLanguageRequested;
             editor.PasteRequested += OnPasteRequested;
             editor.GotFocus += OnEditorGotFocus;
             editor.LostFocus += OnEditorLostFocus;
@@ -175,6 +176,7 @@ namespace Telegram.Controls.RichEditor
             editor.PreviewKeyDown -= OnEditorPreviewKeyDown;
             editor.MenuRequested -= OnMenuRequested;
             editor.LinkRequested -= OnLinkRequested;
+            editor.LanguageRequested -= OnLanguageRequested;
             editor.PasteRequested -= OnPasteRequested;
             editor.GotFocus -= OnEditorGotFocus;
             editor.LostFocus -= OnEditorLostFocus;
@@ -949,6 +951,17 @@ namespace Telegram.Controls.RichEditor
             {
                 CreateLink();
             }
+        }
+
+        private async void OnLanguageRequested(object sender, RichLanguageRequestedEventArgs e)
+        {
+            var language = await CodeLanguagePopup.ChooseAsync(XamlRoot, e.Block.Language);
+            if (language != null)
+            {
+                _engine.SetLanguage(e.Block, language);
+            }
+
+            Editor?.Focus(FocusState.Programmatic);
         }
 
         private async void CreateLink()

@@ -1,3 +1,5 @@
+import "Highlight/SyntaxLanguage.idl";
+
 namespace Telegram.Native.Highlight
 {
     unsealed runtimeclass Token
@@ -12,7 +14,8 @@ namespace Telegram.Native.Highlight
         String Alias{ get; };
         Windows.Foundation.Collections.IVector<Token> Children{ get; };
 
-        static Windows.Foundation.Collections.IVector<String> Languages{ get; };
+        // One for each language, its aliases in it.
+        static Windows.Foundation.Collections.IVector<SyntaxLanguage> Languages{ get; };
 
         static SyntaxToken Tokenize(String language, String coddiri);
         static Windows.Foundation.IAsyncOperation<SyntaxToken> TokenizeAsync(String language, String coddiri);

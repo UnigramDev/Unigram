@@ -367,6 +367,7 @@
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
     <ClInclude Include="Helpers\StringHelper.h" />
+    <ClInclude Include="Highlight\SyntaxLanguage.h" />
     <ClInclude Include="Highlight\SyntaxToken.h" />
     <ClInclude Include="Highlight\TextToken.h" />
     <ClInclude Include="HttpProxyWatcher.h">
@@ -1303,6 +1304,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="graphic_dwrite.cpp" />
+    <ClCompile Include="Highlight\SyntaxLanguage.cpp" />
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
     <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" />
@@ -1576,6 +1578,7 @@
     <Midl Include="GarbageCollectionMonitor.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="Highlight\SyntaxLanguage.idl" />
     <Midl Include="Highlight\SyntaxToken.idl" />
     <Midl Include="Highlight\TextToken.idl" />
     <Midl Include="HttpProxyWatcher.idl">

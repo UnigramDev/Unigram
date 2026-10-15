@@ -335,6 +335,9 @@
     <ClCompile Include="Highlight\SyntaxToken.cpp">
       <Filter>Highlight</Filter>
     </ClCompile>
+    <ClCompile Include="Highlight\SyntaxLanguage.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
     <ClCompile Include="Highlight\TextToken.cpp">
       <Filter>Highlight</Filter>
     </ClCompile>
@@ -1184,6 +1187,9 @@
     <ClInclude Include="Highlight\SyntaxToken.h">
       <Filter>Highlight</Filter>
     </ClInclude>
+    <ClInclude Include="Highlight\SyntaxLanguage.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
     <ClInclude Include="Highlight\TextToken.h">
       <Filter>Highlight</Filter>
     </ClInclude>
@@ -1608,6 +1614,9 @@
     <Midl Include="TelegramWebviewProxy.idl" />
     <Midl Include="VideoAnimationStreamSource.idl" />
     <Midl Include="Highlight\SyntaxToken.idl">
+      <Filter>Highlight</Filter>
+    </Midl>
+    <Midl Include="Highlight\SyntaxLanguage.idl">
       <Filter>Highlight</Filter>
     </Midl>
     <Midl Include="Highlight\TextToken.idl">

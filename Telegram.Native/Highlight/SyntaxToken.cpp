@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "SyntaxToken.h"
+#include "SyntaxLanguage.h"
 #include "TextToken.h"
 #if __has_include("Highlight/SyntaxToken.g.cpp")
 #include "Highlight/SyntaxToken.g.cpp"
@@ -109,15 +110,23 @@ namespace winrt::Telegram::Native::Highlight::implementation
         }
     }
 
-    IVector<hstring> SyntaxToken::Languages()
+    IVector<winrt::Telegram::Native::Highlight::SyntaxLanguage> SyntaxToken::Languages()
     {
         Initialize();
 
-        auto languages = winrt::single_threaded_vector<hstring>();
+        auto languages = winrt::single_threaded_vector<winrt::Telegram::Native::Highlight::SyntaxLanguage>();
 
-        for (const auto& lang : m_highlighter->languages())
+        for (const auto& group : m_highlighter->languageGroups())
         {
-            languages.Append(winrt::to_hstring(lang.first));
+            std::vector<hstring> aliases;
+            aliases.reserve(group.aliases.size());
+
+            for (const auto& alias : group.aliases)
+            {
+                aliases.push_back(winrt::to_hstring(alias));
+            }
+
+            languages.Append(winrt::make<SyntaxLanguage>(winrt::to_hstring(group.id), winrt::to_hstring(group.name), winrt::single_threaded_vector<hstring>(std::move(aliases)).GetView()));
         }
 
         return languages;

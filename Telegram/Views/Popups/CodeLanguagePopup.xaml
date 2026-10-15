@@ -1,0 +1,60 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.CodeLanguagePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:local="using:Telegram.Views.Popups"
+                     mc:Ignorable="d"
+                     PrimaryButtonStyle="{StaticResource AccentButtonStyle}"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     Closing="OnClosing">
+
+    <StackPanel>
+        <AutoSuggestBox x:Name="Input"
+                        AutomationProperties.Name="{CustomResource ArticleHintLanguage}"
+                        TextMemberPath="Id"
+                        TextChanged="OnTextChanged"
+                        QuerySubmitted="OnQuerySubmitted"
+                        Loaded="OnLoaded">
+            <AutoSuggestBox.ItemTemplate>
+                <DataTemplate x:DataType="local:CodeLanguage">
+                    <Grid Padding="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Bind Name}"
+                                   Style="{StaticResource BodyTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind Id}"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Margin="12,0,0,0"
+                                   Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </AutoSuggestBox.ItemTemplate>
+            <AutoSuggestBox.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                </Style>
+            </AutoSuggestBox.ItemContainerStyle>
+            <AutoSuggestBox.TextBoxStyle>
+                <Style TargetType="TextBox"
+                       BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}">
+                    <Setter Property="MaxLength"
+                            Value="32" />
+                    <Setter Property="IsSpellCheckEnabled"
+                            Value="False" />
+                    <Setter Property="IsTextPredictionEnabled"
+                            Value="False" />
+                </Style>
+            </AutoSuggestBox.TextBoxStyle>
+        </AutoSuggestBox>
+
+        <TextBlock Text="{CustomResource ArticleCodeLanguageInfo}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Margin="0,8,0,0" />
+    </StackPanel>
+</controls:ModalPopup>

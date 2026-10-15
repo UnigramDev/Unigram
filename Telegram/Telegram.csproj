@@ -1742,6 +1742,9 @@
     <Compile Include="Views\Popups\ChooseSoundPopup.xaml.cs">
       <DependentUpon>ChooseSoundPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\CodeLanguagePopup.xaml.cs">
+      <DependentUpon>CodeLanguagePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\CreateChatPhotoPopup.xaml.cs">
       <DependentUpon>CreateChatPhotoPopup.xaml</DependentUpon>
     </Compile>
@@ -4306,6 +4309,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseSoundPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\CodeLanguagePopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13727,6 +13727,7 @@
     <string name="ArticleHintDetailsTitle">Title</string>
     <string name="ArticleHintAuthor">Author</string>
     <string name="ArticleHintLanguage">Language</string>
+    <string name="ArticleCodeLanguageInfo">Pick the language the code is highlighted as, or type another. Leave it empty for plain code.</string>
     <string name="ArticleHintCode">Type code here...</string>
     <string name="ArticleHintText">Type something...</string>
     <string name="ArticleConversionTitle">Remove Formatting</string>

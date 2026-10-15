@@ -24,7 +24,7 @@ namespace winrt::Telegram::Native::Highlight::implementation
 
 
 
-        static IVector<hstring> Languages();
+        static IVector<winrt::Telegram::Native::Highlight::SyntaxLanguage> Languages();
 
         static hstring GetLanguageName(hstring languageCode);
 
