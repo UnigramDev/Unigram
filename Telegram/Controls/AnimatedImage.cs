@@ -2615,6 +2615,9 @@ namespace Telegram.Controls
             private Thread _thread;
             private volatile bool _closed;
 
+            // A pass's worth of frames each: what a stalled UI thread can leave uncommitted.
+            private const int CommitsInFlight = 3;
+
             public FrameFlusher(Direct2DDevice device)
             {
                 _device = device;
@@ -2658,6 +2661,16 @@ namespace Telegram.Controls
                     // frame on the UI thread, so frames decoded meanwhile have to share it.
                     _device.WaitForCompositorClock();
 
+                    // DComp keeps every surface update until a commit takes it, and the clock above
+                    // keeps ticking when none do - behind a stalled UI thread, in a minimized window -
+                    // so a pass per tick piled up gigabytes of frames. A pass does not draw while
+                    // CommitsInFlight passes are still uncommitted. More than one, because a commit
+                    // takes two frames or more to be confirmed in the shipping build, and waiting for
+                    // each made every pass that long. The timeout is only so that Close is noticed.
+                    while (!_closed && !_device.WaitForCommit(CommitsInFlight - 1, 250))
+                    {
+                    }
+
                     lock (_lock)
                     {
                         batch.AddRange(_pending);
@@ -2672,15 +2685,9 @@ namespace Telegram.Controls
                         }
                     }
 
-                    // DComp keeps every surface update until a commit takes it, and the clock above
-                    // keeps ticking when none do - behind a stalled UI thread, in a minimized window -
-                    // so a pass per tick piled up gigabytes of frames. A pass that drew waits for its
-                    // commit instead; the timeout is only so that Close is noticed.
                     if (batch.Count > 0)
                     {
-                        while (!_closed && !_device.WaitForCommit(250))
-                        {
-                        }
+                        _device.RequestCommit();
                     }
 
                     batch.Clear();

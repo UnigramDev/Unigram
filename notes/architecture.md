@@ -645,7 +645,7 @@ to hang because `Client.Run` serializes dispatch and reply on one thread). `Equa
 special-case `IsUnique` sources to avoid cache collisions.
 
 ## Animated images — Telegram/Controls/AnimatedImage.cs, Telegram.Native/FrameSurface.*
-<!-- map: verified=07c88b840 paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl -->
+<!-- map: verified=ac47a37da paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl -->
 Stickers, custom emoji, GIFs and video stickers, decoded off the UI thread and drawn into a composition
 surface without the UI thread touching a frame. One file holds the control, the presenter, the decode
 tasks and the per-window loader.
@@ -663,10 +663,14 @@ through Direct2D when the frame is rotated.
 background buffer, which is published as `_foregroundNext` and handed to `FrameFlusher.Request`. The
 flusher, one thread per window, waits for the compositor clock (`Direct2DDevice.WaitForCompositorClock`,
 a 60 Hz timer before Windows 11), draws every pending presenter in one pass, and passes the buffer that
-was on screen back to the worker. A pass that drew then waits for its commit
-(`Direct2DDevice.WaitForCommit`, `RequestCommitAsync`): DComp keeps every surface update until a commit
-takes it, and the clock keeps ticking when none do - behind a stalled UI thread or in a minimized window -
-so pacing on the clock alone piled up gigabytes of frames.
+was on screen back to the worker. A pass that drew requests a commit (`Direct2DDevice.RequestCommit`), and
+after the clock a pass does not draw while `FrameFlusher.CommitsInFlight` (3) of them are unconfirmed
+(`WaitForCommit`): DComp keeps every surface update until a commit takes it, and the clock keeps ticking
+when none do - behind a stalled UI thread or in a minimized window - so pacing on the clock alone piled up
+gigabytes of frames. The limit is not 1 because release builds confirm a commit 22-42 ms after it is
+requested, two frames or more, and waiting for each one halved the flusher, so 60 fps stickers and videos
+played at half speed: a presenter only decodes once the flusher has handed its buffer back, and neither
+Lottie nor a video skips frames to catch up.
 The UI thread is reached only to hook the brush on the first frame,
 and for `PositionChanged` while it has listeners.
 **Traps:** a device takes **one drawing session at a time**: a second `BeginDraw` while one is open

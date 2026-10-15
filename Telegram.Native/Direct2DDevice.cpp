@@ -462,31 +462,70 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    bool Direct2DDevice::WaitForCommit(int32_t timeoutMs)
+    struct CommitState
+    {
+        winrt::handle completed{ CreateEventW(nullptr, FALSE, FALSE, nullptr) };
+        std::atomic<int32_t> outstanding{ 0 };
+    };
+
+    static std::shared_ptr<CommitState> const& Commits()
     {
         // Per thread, because Win32 windows share a device and each has its own flusher. Shared with
-        // the completion, which can outlive both the wait and the thread once the wait times out.
-        thread_local auto s_committed = std::make_shared<winrt::handle>(CreateEventW(nullptr, FALSE, FALSE, nullptr));
+        // the completions, which can outlive both the wait and the thread once the wait times out.
+        thread_local auto s_commits = std::make_shared<CommitState>();
+        return s_commits;
+    }
 
-        if (m_compositor == nullptr || !*s_committed)
+    bool Direct2DDevice::RequestCommit()
+    {
+        auto const& commits = Commits();
+
+        if (m_compositor == nullptr || !commits->completed)
         {
-            return true;
+            return false;
         }
+
+        commits->outstanding++;
 
         try
         {
-            m_compositor.RequestCommitAsync().Completed([committed = s_committed](auto&&, auto&&)
+            m_compositor.RequestCommitAsync().Completed([commits](auto&&, auto&&)
             {
-                SetEvent(committed->get());
+                commits->outstanding--;
+                SetEvent(commits->completed.get());
             });
         }
         catch (winrt::hresult_error const&)
         {
             // The compositor is going away with its window, and there is nothing left to wait for.
+            commits->outstanding--;
+            return false;
+        }
+
+        return true;
+    }
+
+    bool Direct2DDevice::WaitForCommit(int32_t inFlight, int32_t timeoutMs)
+    {
+        auto const& commits = Commits();
+
+        if (!commits->completed)
+        {
             return true;
         }
 
-        return WaitForSingleObject(s_committed->get(), timeoutMs) == WAIT_OBJECT_0;
+        auto deadline = GetTickCount64() + timeoutMs;
+
+        while (commits->outstanding.load() > inFlight)
+        {
+            auto now = GetTickCount64();
+            if (now >= deadline || WaitForSingleObject(commits->completed.get(), static_cast<DWORD>(deadline - now)) != WAIT_OBJECT_0)
+            {
+                return commits->outstanding.load() <= inFlight;
+            }
+        }
+
+        return true;
     }
 
     winrt::Telegram::Native::SurfaceImage Direct2DDevice::Create(int32_t pixelWidth, int32_t pixelHeight)
