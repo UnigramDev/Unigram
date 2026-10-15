@@ -460,29 +460,9 @@
                                                  Padding="12,0,12,12"
                                                  Grid.Row="4" />
 
-                    <RichEditBox x:Name="TabFixResult"
-                                 Padding="12,0,12,12"
-                                 Grid.Row="4">
-                        <RichEditBox.Template>
-                            <ControlTemplate TargetType="RichEditBox">
-                                <Grid>
-                                    <ScrollViewer x:Name="ContentElement"
-                                                  HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                                  VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                                  IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                                  IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                                  IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                                  Padding="{TemplateBinding Padding}"
-                                                  Foreground="{TemplateBinding Foreground}"
-                                                  IsTabStop="False"
-                                                  AutomationProperties.AccessibilityView="Raw"
-                                                  ZoomMode="Disabled" />
-                                </Grid>
-                            </ControlTemplate>
-                        </RichEditBox.Template>
-                    </RichEditBox>
+                    <controls:FormattedTextBlock x:Name="TabFixResult"
+                                                 Padding="12,0,12,12"
+                                                 Grid.Row="4" />
                 </Grid>
             </ScrollViewer>
         </Grid>

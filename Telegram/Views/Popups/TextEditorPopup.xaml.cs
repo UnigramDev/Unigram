@@ -216,15 +216,18 @@ namespace Telegram.Views.Popups
                 _fix = text;
 
                 TabFixLoading.Visibility = Visibility.Collapsed;
-                TabFixResult.Document.SetText(Windows.UI.Text.TextSetOptions.None, text.DiffText.Text);
+                // What was taken out is struck through, what was put in is underlined.
+                var entities = new TextEntity[text.DiffText.Entities.Count];
 
-                foreach (var diff in text.DiffText.Entities)
+                for (int i = 0; i < entities.Length; i++)
                 {
-                    var range = TabFixResult.Document.GetRange(diff.Offset, diff.Offset + diff.Length);
-                    range.CharacterFormat.Underline = Windows.UI.Text.UnderlineType.Wave;
+                    var diff = text.DiffText.Entities[i];
+                    entities[i] = new TextEntity(diff.Offset, diff.Length, diff.Type is DiffEntityTypeDelete
+                        ? new TextEntityTypeStrikethrough()
+                        : new TextEntityTypeUnderline());
                 }
 
-                TabFixResult.IsReadOnly = true;
+                TabFixResult.SetText(_clientService, new FormattedText(text.DiffText.Text, entities));
             }
         }
 
