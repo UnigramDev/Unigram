@@ -79,6 +79,7 @@ namespace Telegram.Controls
 
         private readonly int[] _shapeHandleIds = new int[7];
         private readonly Vector2[] _shapeHandlePoints = new Vector2[7];
+        private readonly List<Ellipse> _handleTargets = new();
 
         // In view pixels.
         private const float HandleHitRadius = 19.5f;
@@ -1039,6 +1040,34 @@ namespace Telegram.Controls
             Select(entity);
         }
 
+        /// <summary>
+        /// Places a shape found in a stroke where the stroke was drawn, in the canvas' pixels,
+        /// which are this layer's. It is left unselected, so drawing goes on.
+        /// </summary>
+        public void AddShape(RecognizedShape shape, Color color, float weight)
+        {
+            var image = ImageSize;
+            if (image.X <= 0 || image.Y <= 0)
+            {
+                return;
+            }
+
+            var entity = shape.ToEntity(image.X / PaintEntityRenderer.Reference, color, weight);
+            entity.Position = shape.Center / image;
+
+            // Its own content is flipped back in a mirrored view, so its points are flipped first
+            // to land where they were drawn.
+            if (Mirrored)
+            {
+                entity.ArrowStart *= new Vector2(-1, 1);
+                entity.ArrowBend *= new Vector2(-1, 1);
+                entity.ArrowTip *= new Vector2(-1, 1);
+            }
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+        }
+
         public void SetSelectedShapeWeight(float weight)
         {
             if (_selected?.Type == PaintEntityType.Shape)
@@ -1155,9 +1184,10 @@ namespace Telegram.Controls
                 }
             }
 
-            // While something is selected the whole layer takes presses: a tap elsewhere puts the
-            // selection away rather than drawing.
-            Background = _hitBrush;
+            // While a text or a sticker is selected the whole layer takes presses: a tap elsewhere
+            // puts it away rather than drawing, and a drag beside it moves it. A shape keeps the
+            // drawing tools, so a press beside it draws, which puts it away.
+            Background = entity.Type == PaintEntityType.Shape ? null : _hitBrush;
 
             _selectProgress = 0;
             StartRendering();
@@ -1702,6 +1732,52 @@ namespace Telegram.Controls
             return count;
         }
 
+        // As large as a handle's reach on screen, over each of the selected shape's handles.
+        private void UpdateHandleTargets()
+        {
+            var count = 0;
+            var entity = _selected;
+
+            if (entity?.Type == PaintEntityType.Shape && _gesture != Gesture.Pinch && TryGetBounds(entity, out Rect bounds))
+            {
+                var transform = GetTransform(entity, bounds);
+                var size = ShapeHandleHitRadius * 2 / Math.Max(Zoom, 0.0001f);
+
+                count = GetShapeHandles(entity);
+
+                for (int i = 0; i < count; i++)
+                {
+                    if (i == _handleTargets.Count)
+                    {
+                        var created = new Ellipse
+                        {
+                            Fill = _hitBrush,
+                            RenderTransform = new TranslateTransform()
+                        };
+
+                        _handleTargets.Add(created);
+                        HandleTargets.Children.Add(created);
+                    }
+
+                    var target = _handleTargets[i];
+                    var point = Vector2.Transform(_shapeHandlePoints[i], transform);
+
+                    target.Width = size;
+                    target.Height = size;
+                    target.Visibility = Visibility.Visible;
+
+                    var translate = (TranslateTransform)target.RenderTransform;
+                    translate.X = point.X - size / 2;
+                    translate.Y = point.Y - size / 2;
+                }
+            }
+
+            for (int i = count; i < _handleTargets.Count; i++)
+            {
+                _handleTargets[i].Visibility = Visibility.Collapsed;
+            }
+        }
+
         // From an arrow's tip back along its curve.
         private static Vector2 GetArrowBack(PaintEntity entity)
         {
@@ -2067,6 +2143,9 @@ namespace Telegram.Controls
                 _elementsInvalid = false;
                 UpdateElements();
             }
+
+            // Drawn whenever the selection or the view changes, which is when they move.
+            UpdateHandleTargets();
 
             // Drawn in this layer's pixels, as everything else is, then taken to the view, and kept
             // to the photo like the objects themselves.

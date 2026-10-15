@@ -63,6 +63,10 @@
         </Canvas.Clip>
     </Canvas>
 
+    <!-- A selected shape's handles, which reach outside its element: they take presses while
+         the rest of the layer lets them through to the drawing. -->
+    <Canvas x:Name="HandleTargets" />
+
     <TextBox x:Name="Editor"
              x:Load="False"
              Style="{StaticResource PaintTextBoxStyle}"

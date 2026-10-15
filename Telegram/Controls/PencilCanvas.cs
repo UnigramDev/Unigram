@@ -14,8 +14,12 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using Telegram.Entities;
+using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Effects;
@@ -78,18 +82,26 @@ namespace Telegram.Controls
 
         public static float GetThickness(PencilTool tool, double weight)
         {
-            // An arrow's line is drawn thinner than a pen's at the same weight, so that its head,
-            // which is sized from the weight, stands out.
-            var scale = tool switch
-            {
-                PencilTool.Arrow => 0.5,
-                PencilTool.Marker => 1.4,
-                PencilTool.Neon => 1.45,
-                _ => 1
-            };
-
-            return (float)((8 + 90 * weight) / 2048 * scale);
+            return (float)((8 + 90 * weight) / 2048 * GetScale(tool));
         }
+
+        /// <summary>
+        /// The weight a stroke of <paramref name="thickness"/> was drawn at.
+        /// </summary>
+        public static double GetWeight(PencilTool tool, float thickness)
+        {
+            return (thickness * 2048 / GetScale(tool) - 8) / 90;
+        }
+
+        // An arrow's line is drawn thinner than a pen's at the same weight, so that its head,
+        // which is sized from the weight, stands out.
+        private static double GetScale(PencilTool tool) => tool switch
+        {
+            PencilTool.Arrow => 0.5,
+            PencilTool.Marker => 1.4,
+            PencilTool.Neon => 1.45,
+            _ => 1
+        };
     }
 
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
@@ -128,6 +140,22 @@ namespace Telegram.Controls
         // Two touches move the view instead of drawing, until both have lifted.
         private readonly Dictionary<uint, Point> _touches = new();
         private bool _gesturing;
+
+        // A pen's or a marker's stroke is matched against the known shapes whenever the hand
+        // pauses, for its first seconds. Points are in the canvas' pixels.
+        private const double RecognitionWindow = 3000;
+        private const double RecognitionFade = 250;
+        private static readonly TimeSpan RecognitionDelay = TimeSpan.FromMilliseconds(150);
+
+        private static readonly Stopwatch _clock = Stopwatch.StartNew();
+
+        private uint? _recognizing;
+        private readonly List<Vector2> _recognitionPoints = new();
+        private double _recognitionStart;
+        private DispatcherTimer _recognitionTimer;
+        private RecognizedShape _recognized;
+        private RecognizedShape _preview;
+        private double _recognizedChanged;
 
         // The eyedropper samples a snapshot of the photo with the drawing over it, read back once
         // when picking starts so following the pointer costs nothing.
@@ -248,6 +276,17 @@ namespace Telegram.Controls
         /// Raised while two touches pinch or drag over the canvas, in window coordinates.
         /// </summary>
         public event EventHandler<PencilGestureEventArgs> Gesture;
+
+        /// <summary>
+        /// Raised when a stroke is let go of as a shape, which takes its place: the stroke itself
+        /// is not kept.
+        /// </summary>
+        public event EventHandler<PencilShapeRecognizedEventArgs> ShapeRecognized;
+
+        /// <summary>
+        /// Raised when a press starts a stroke.
+        /// </summary>
+        public event EventHandler StrokeStarted;
 
         /// <summary>
         /// Raised when the eyedropper is released over the canvas, with the colour under it.
@@ -491,6 +530,7 @@ namespace Telegram.Controls
                     {
                         _gesturing = true;
                         StopFill();
+                        StopRecognition();
 
                         foreach (var id in _touches.Keys)
                         {
@@ -509,6 +549,8 @@ namespace Telegram.Controls
 
             var tool = point.Properties.IsEraser ? PencilTool.Eraser : _tool;
 
+            StrokeStarted?.Invoke(this, EventArgs.Empty);
+
             // Stored relative to the canvas, like the points are: the same stroke is replayed
             // over the preview and the exported file, both at resolutions unrelated to this one.
             _builders[point.PointerId] = new SmoothPathBuilder(point.Position.ToVector2() / Canvas.Size.ToVector2())
@@ -519,6 +561,11 @@ namespace Telegram.Controls
             };
 
             StartFill(point.PointerId, e.GetCurrentPoint(null).Position);
+
+            if (tool is PencilTool.Pen or PencilTool.Marker && ShapeRecognized != null)
+            {
+                StartRecognition(point.PointerId, point.Position.ToVector2());
+            }
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -564,8 +611,15 @@ namespace Telegram.Controls
                     }
                 }
 
-                builder.MoveTo(e.GetCurrentPoint(Canvas).Position.ToVector2() / Canvas.Size.ToVector2());
+                var current = e.GetCurrentPoint(Canvas).Position.ToVector2();
+
+                builder.MoveTo(current / Canvas.Size.ToVector2());
                 Canvas.Invalidate();
+
+                if (_recognizing == id)
+                {
+                    AddRecognitionPoint(current);
+                }
             }
         }
 
@@ -599,6 +653,21 @@ namespace Telegram.Controls
             {
                 builder.EndFigure(e.GetCurrentPoint(Canvas).Position.ToVector2() / Canvas.Size.ToVector2());
 
+                if (_recognizing == e.Pointer.PointerId)
+                {
+                    var shape = _recognized;
+                    StopRecognition();
+
+                    if (shape != null)
+                    {
+                        Canvas.Invalidate();
+
+                        var weight = PencilTools.GetWeight(builder.Tool, builder.StrokeThickness);
+                        ShapeRecognized?.Invoke(this, new PencilShapeRecognizedEventArgs(shape, builder.Stroke ?? Colors.Black, (float)weight));
+                        return;
+                    }
+                }
+
                 // A finished arrow's head grows in, so it joins the ink surface only once it has.
                 Commit(builder, builder.Tool == PencilTool.Arrow);
             }
@@ -609,6 +678,11 @@ namespace Telegram.Controls
             if (_fillPointer == e.Pointer.PointerId)
             {
                 StopFill();
+            }
+
+            if (_recognizing == e.Pointer.PointerId)
+            {
+                StopRecognition();
             }
 
             if (_touches.Remove(e.Pointer.PointerId) && _gesturing)
@@ -649,6 +723,130 @@ namespace Telegram.Controls
             StrokeAdded?.Invoke(this, EventArgs.Empty);
             StrokesChanged?.Invoke(this, EventArgs.Empty);
         }
+
+        #region Recognition
+
+        private void StartRecognition(uint pointerId, Vector2 point)
+        {
+            StopRecognition();
+
+            _recognizing = pointerId;
+            _recognitionStart = _clock.Elapsed.TotalMilliseconds;
+            _recognitionPoints.Add(point);
+        }
+
+        private void StopRecognition()
+        {
+            _recognizing = null;
+            _recognitionPoints.Clear();
+            _recognitionTimer?.Stop();
+
+            _recognized = null;
+            _preview = null;
+        }
+
+        // Points closer than a few pixels on screen add nothing. A quick move puts recognition off
+        // until the hand slows down again.
+        private void AddRecognitionPoint(Vector2 point)
+        {
+            if (_clock.Elapsed.TotalMilliseconds - _recognitionStart > RecognitionWindow)
+            {
+                if (_recognized != null)
+                {
+                    Canvas.Invalidate();
+                }
+
+                StopRecognition();
+                return;
+            }
+
+            var distance = Vector2.Distance(point, _recognitionPoints[_recognitionPoints.Count - 1]);
+            if (distance < 5 * LoupeScale)
+            {
+                return;
+            }
+
+            _recognitionPoints.Add(point);
+
+            if (_recognitionTimer == null)
+            {
+                _recognitionTimer = new DispatcherTimer { Interval = RecognitionDelay };
+                _recognitionTimer.Tick += OnRecognitionTick;
+            }
+
+            if (distance > 6 * LoupeScale)
+            {
+                _recognitionTimer.Stop();
+                _recognitionTimer.Start();
+            }
+            else if (!_recognitionTimer.IsEnabled)
+            {
+                _recognitionTimer.Start();
+            }
+        }
+
+        private void OnRecognitionTick(object sender, object e)
+        {
+            _recognitionTimer.Stop();
+
+            if (_recognizing == null || _recognitionPoints.Count < ShapeRecognizer.MinimumPoints)
+            {
+                return;
+            }
+
+            var shape = ShapeRecognizer.Recognize(_recognitionPoints);
+
+            // A shape fades in over the stroke when one is found and out when it is lost.
+            if ((shape != null) != (_recognized != null))
+            {
+                _recognizedChanged = _clock.Elapsed.TotalMilliseconds;
+            }
+
+            _recognized = shape;
+            _preview = shape ?? _preview;
+
+            Canvas.Invalidate();
+        }
+
+        private void DrawRecognition(CanvasDrawingSession session, SmoothPathBuilder builder, Vector2 size, ICanvasBrush blur)
+        {
+            var t = Math.Min(1, (_clock.Elapsed.TotalMilliseconds - _recognizedChanged) / RecognitionFade);
+            var eased = 1 - Math.Pow(1 - t, 5);
+            var alpha = (float)(_recognized != null ? eased : 1 - eased);
+
+            if (t < 1)
+            {
+                Canvas.Invalidate();
+            }
+
+            using (session.CreateLayer(1 - 0.5f * alpha))
+            {
+                DrawPath(session, builder, size, blur, 0);
+            }
+
+            if (_preview == null || alpha <= 0)
+            {
+                return;
+            }
+
+            var weight = PencilTools.GetWeight(builder.Tool, builder.StrokeThickness);
+            var entity = _preview.ToEntity(size.X / PaintEntityRenderer.Reference, builder.Stroke ?? Colors.Black, (float)weight);
+
+            var previous = session.Transform;
+            session.Transform = Matrix3x2.CreateScale(size.X / PaintEntityRenderer.Reference)
+                * Matrix3x2.CreateRotation(entity.Rotation)
+                * Matrix3x2.CreateTranslation(_preview.Center)
+                * previous;
+
+            using (session.CreateLayer(0.5f * alpha))
+            {
+                PaintEntityRenderer.DrawShape(session, entity);
+            }
+
+            session.Transform = previous;
+        }
+
+        #endregion
 
         #region Fill
 
@@ -842,10 +1040,17 @@ namespace Telegram.Controls
                 DrawPath(args.DrawingSession, _growing, size, blur, _growingProgress);
             }
 
-            foreach (var builder in _builders.Values)
+            foreach (var pair in _builders)
             {
-                // No arrow head until the stroke is finished.
-                DrawPath(args.DrawingSession, builder, size, blur, 0);
+                if (pair.Key == _recognizing && _preview != null)
+                {
+                    DrawRecognition(args.DrawingSession, pair.Value, size, blur);
+                }
+                else
+                {
+                    // No arrow head until the stroke is finished.
+                    DrawPath(args.DrawingSession, pair.Value, size, blur, 0);
+                }
             }
 
             if (_picking && _pickPoint is Point point)
@@ -1058,6 +1263,479 @@ namespace Telegram.Controls
         }
 
         #endregion
+    }
+
+    public sealed partial class PencilShapeRecognizedEventArgs : EventArgs
+    {
+        public PencilShapeRecognizedEventArgs(RecognizedShape shape, Color color, float weight)
+        {
+            Shape = shape;
+            Color = color;
+            Weight = weight;
+        }
+
+        public RecognizedShape Shape { get; }
+
+        public Color Color { get; }
+
+        public float Weight { get; }
+    }
+
+    /// <summary>
+    /// A shape found in a stroke, in the stroke's own pixels.
+    /// </summary>
+    public sealed partial class RecognizedShape
+    {
+        public PaintShapeKind Kind { get; init; }
+
+        public Vector2 Center { get; init; }
+
+        /// <summary>
+        /// Half the width and the height.
+        /// </summary>
+        public Vector2 Size { get; init; }
+
+        public float Rotation { get; init; }
+
+        public Vector2 ArrowStart { get; init; }
+
+        public Vector2 ArrowBend { get; init; }
+
+        public Vector2 ArrowTip { get; init; }
+
+        /// <summary>
+        /// The shape as an object around its centre, <paramref name="pixelsPerUnit"/> of these
+        /// pixels to a unit of the renderer's at a scale of one.
+        /// </summary>
+        public PaintEntity ToEntity(float pixelsPerUnit, Color color, float weight)
+        {
+            var entity = new PaintEntity
+            {
+                Type = PaintEntityType.Shape,
+                Shape = Kind,
+                Color = color,
+                ShapeWeight = Math.Clamp(weight, 0.05f, 1),
+                ShapeSize = Size / pixelsPerUnit,
+                Rotation = Rotation,
+                ArrowStart = (ArrowStart - Center) / pixelsPerUnit,
+                ArrowBend = (ArrowBend - Center) / pixelsPerUnit,
+                ArrowTip = (ArrowTip - Center) / pixelsPerUnit
+            };
+
+            entity.ArrowHead = 16 * PaintEntityRenderer.GetShapeThickness(entity);
+            return entity;
+        }
+    }
+
+    /// <summary>
+    /// Tells a hand-drawn circle, rectangle, star or arrow by comparing its stroke with templates of
+    /// each, the $1 recognizer's way. The templates were recorded through exactly these steps, so
+    /// none of them may change: a stroke is resampled, turned by its indicative angle (one way, not
+    /// the other), centred and stretched to a square, then compared at its best turn.
+    /// </summary>
+    public static class ShapeRecognizer
+    {
+        public const int MinimumPoints = 8;
+
+        private const int PointsCount = 48;
+        private const double SquareSize = 250;
+        private const double AngleRange = Math.PI / 2;
+        private const double AnglePrecision = Math.PI / 45;
+        private const double Threshold = 0.8;
+
+        private static readonly double HalfDiagonal = Math.Sqrt(SquareSize * SquareSize * 2) / 2;
+
+        // Its kinds are numbered as PaintShapeKind; any other number is a template of what is no
+        // shape, which a match turns down.
+        private sealed class Template
+        {
+            public int Type;
+            public double[] X;
+            public double[] Y;
+        }
+
+        private static Template[] _templates;
+
+        // Records with no header: a type, a point count, two offsets above 64, then the points.
+        private static Template[] LoadTemplates()
+        {
+            var templates = new List<Template>();
+
+            try
+            {
+                var bytes = File.ReadAllBytes(Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "shapes.dat"));
+                var offset = 0;
+
+                while (bytes.Length - offset > 5)
+                {
+                    var type = bytes[offset];
+                    var count = bytes[offset + 1];
+                    var ox = bytes[offset + 2] - 64;
+                    var oy = bytes[offset + 3] - 64;
+
+                    offset += 4;
+
+                    if (bytes.Length - offset < count * 2)
+                    {
+                        break;
+                    }
+
+                    var template = new Template
+                    {
+                        Type = type,
+                        X = new double[count],
+                        Y = new double[count]
+                    };
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        template.X[i] = bytes[offset++] - ox - 127;
+                        template.Y[i] = bytes[offset++] - oy - 127;
+                    }
+
+                    templates.Add(template);
+                }
+            }
+            catch
+            {
+                // Without its templates nothing is recognized; drawing goes on as it was.
+            }
+
+            return templates.ToArray();
+        }
+
+        public static RecognizedShape Recognize(IReadOnlyList<Vector2> stroke)
+        {
+            _templates ??= LoadTemplates();
+
+            if (stroke.Count < MinimumPoints || _templates.Length == 0)
+            {
+                return null;
+            }
+
+            var x = new List<double>(stroke.Count);
+            var y = new List<double>(stroke.Count);
+
+            foreach (var point in stroke)
+            {
+                x.Add(point.X);
+                y.Add(point.Y);
+            }
+
+            Resample(x, y, out double[] rx, out double[] ry);
+
+            if (rx.Length < 2)
+            {
+                return null;
+            }
+
+            var nx = (double[])rx.Clone();
+            var ny = (double[])ry.Clone();
+
+            Centroid(nx, ny, out double cx, out double cy);
+            Rotate(nx, ny, Math.Atan2(cy - ny[0], cx - nx[0]), cx, cy);
+
+            Centroid(nx, ny, out cx, out cy);
+
+            for (int i = 0; i < nx.Length; i++)
+            {
+                nx[i] -= cx;
+                ny[i] -= cy;
+            }
+
+            if (!Scale(nx, ny))
+            {
+                return null;
+            }
+
+            Centroid(nx, ny, out cx, out cy);
+
+            var best = double.MaxValue;
+            var type = -1;
+
+            foreach (var template in _templates)
+            {
+                var distance = DistanceAtBestAngle(nx, ny, cx, cy, template);
+                if (distance < best)
+                {
+                    best = distance;
+                    type = template.Type;
+                }
+            }
+
+            if (1 - best / HalfDiagonal < Threshold || type < 0 || type > (int)PaintShapeKind.Arrow)
+            {
+                return null;
+            }
+
+            return Construct((PaintShapeKind)type, rx, ry);
+        }
+
+        // Evenly spaced along the stroke's length.
+        private static void Resample(List<double> x, List<double> y, out double[] rx, out double[] ry)
+        {
+            var length = 0.0;
+
+            for (int i = 1; i < x.Count; i++)
+            {
+                length += Distance(x[i - 1], y[i - 1], x[i], y[i]);
+            }
+
+            var interval = length / (PointsCount - 1);
+            var outX = new List<double>(PointsCount) { x[0] };
+            var outY = new List<double>(PointsCount) { y[0] };
+
+            var walked = 0.0;
+
+            for (int i = 1; i < x.Count; i++)
+            {
+                var current = Distance(x[i - 1], y[i - 1], x[i], y[i]);
+
+                if (walked + current >= interval && current > 0)
+                {
+                    var t = (interval - walked) / current;
+                    var px = x[i - 1] + t * (x[i] - x[i - 1]);
+                    var py = y[i - 1] + t * (y[i] - y[i - 1]);
+
+                    outX.Add(px);
+                    outY.Add(py);
+
+                    x.Insert(i, px);
+                    y.Insert(i, py);
+
+                    walked = 0;
+                }
+                else
+                {
+                    walked += current;
+                }
+            }
+
+            if (outX.Count == PointsCount - 1)
+            {
+                outX.Add(x[x.Count - 1]);
+                outY.Add(y[y.Count - 1]);
+            }
+
+            rx = outX.ToArray();
+            ry = outY.ToArray();
+        }
+
+        private static void Centroid(double[] x, double[] y, out double cx, out double cy)
+        {
+            cx = 0;
+            cy = 0;
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                cx += x[i];
+                cy += y[i];
+            }
+
+            cx /= x.Length;
+            cy /= x.Length;
+        }
+
+        private static void Rotate(double[] x, double[] y, double radians, double cx, double cy)
+        {
+            var cos = Math.Cos(radians);
+            var sin = Math.Sin(radians);
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                var dx = x[i] - cx;
+                var dy = y[i] - cy;
+
+                x[i] = dx * cos - dy * sin + cx;
+                y[i] = dx * sin + dy * cos + cy;
+            }
+        }
+
+        // Each axis on its own, to the template's square; a straight line cannot be.
+        private static bool Scale(double[] x, double[] y)
+        {
+            Bounds(x, y, out double left, out double top, out double right, out double bottom);
+
+            var width = right - left;
+            var height = bottom - top;
+
+            if (width <= 0 || height <= 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                x[i] *= SquareSize / width;
+                y[i] *= SquareSize / height;
+            }
+
+            return true;
+        }
+
+        private static void Bounds(double[] x, double[] y, out double left, out double top, out double right, out double bottom)
+        {
+            left = right = x[0];
+            top = bottom = y[0];
+
+            for (int i = 1; i < x.Length; i++)
+            {
+                left = Math.Min(left, x[i]);
+                right = Math.Max(right, x[i]);
+                top = Math.Min(top, y[i]);
+                bottom = Math.Max(bottom, y[i]);
+            }
+        }
+
+        // A golden section search for the turn that brings the stroke closest to the template.
+        private static double DistanceAtBestAngle(double[] x, double[] y, double cx, double cy, Template template)
+        {
+            var phi = 0.5 * (-1 + Math.Sqrt(5));
+            var from = -AngleRange;
+            var to = AngleRange;
+
+            var x1 = phi * from + (1 - phi) * to;
+            var f1 = DistanceAtAngle(x, y, cx, cy, template, x1);
+
+            var x2 = (1 - phi) * from + phi * to;
+            var f2 = DistanceAtAngle(x, y, cx, cy, template, x2);
+
+            while (Math.Abs(to - from) > AnglePrecision)
+            {
+                if (f1 < f2)
+                {
+                    to = x2;
+                    x2 = x1;
+                    f2 = f1;
+                    x1 = phi * from + (1 - phi) * to;
+                    f1 = DistanceAtAngle(x, y, cx, cy, template, x1);
+                }
+                else
+                {
+                    from = x1;
+                    x1 = x2;
+                    f1 = f2;
+                    x2 = (1 - phi) * from + phi * to;
+                    f2 = DistanceAtAngle(x, y, cx, cy, template, x2);
+                }
+            }
+
+            return Math.Min(f1, f2);
+        }
+
+        private static double DistanceAtAngle(double[] x, double[] y, double cx, double cy, Template template, double radians)
+        {
+            var cos = Math.Cos(radians);
+            var sin = Math.Sin(radians);
+            var count = Math.Min(x.Length, template.X.Length);
+            var distance = 0.0;
+
+            for (int i = 0; i < count; i++)
+            {
+                var px = (x[i] - cx) * cos - (y[i] - cy) * sin + cx;
+                var py = (x[i] - cx) * sin + (y[i] - cy) * cos + cy;
+
+                distance += Distance(template.X[i], template.Y[i], px, py);
+            }
+
+            return distance / x.Length;
+        }
+
+        private static double Distance(double x1, double y1, double x2, double y2)
+        {
+            var dx = x2 - x1;
+            var dy = y2 - y1;
+
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        // The first sharp turn, more than 18 degrees, from a quarter of the way in.
+        private static int FindCorner(double[] x, double[] y)
+        {
+            for (int i = Math.Max(1, x.Length / 4); i < x.Length - 1; i++)
+            {
+                var p12 = Distance(x[i - 1], y[i - 1], x[i], y[i]);
+                var p13 = Distance(x[i - 1], y[i - 1], x[i + 1], y[i + 1]);
+                var p23 = Distance(x[i], y[i], x[i + 1], y[i + 1]);
+
+                var angle = Math.Acos((p12 * p12 + p13 * p13 - p23 * p23) / (2 * p12 * p13)) / Math.PI * 180;
+                if (angle > 18)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private static RecognizedShape Construct(PaintShapeKind kind, double[] x, double[] y)
+        {
+            if (kind == PaintShapeKind.Arrow)
+            {
+                // Drawn from its start to its tip, then the head: the tip is the first sharp turn.
+                var tip = FindCorner(x, y);
+                if (tip <= 0)
+                {
+                    return null;
+                }
+
+                if (tip > 10)
+                {
+                    tip -= 2;
+                }
+
+                var start = new Vector2((float)x[0], (float)y[0]);
+                var bend = new Vector2((float)x[tip / 2], (float)y[tip / 2]);
+                var end = new Vector2((float)x[tip], (float)y[tip]);
+
+                return new RecognizedShape
+                {
+                    Kind = kind,
+                    Center = (Vector2.Min(start, Vector2.Min(bend, end)) + Vector2.Max(start, Vector2.Max(bend, end))) / 2,
+                    ArrowStart = start,
+                    ArrowBend = bend,
+                    ArrowTip = end
+                };
+            }
+
+            Bounds(x, y, out double left, out double top, out double right, out double bottom);
+
+            var center = new Vector2((float)(left + right) / 2, (float)(top + bottom) / 2);
+            var half = new Vector2((float)(right - left) / 2, (float)(bottom - top) / 2);
+            var rotation = 0f;
+
+            if (kind == PaintShapeKind.Circle)
+            {
+                half = new Vector2((half.X + half.Y) / 2);
+            }
+            else if (kind == PaintShapeKind.Star)
+            {
+                // Turned so that a point faces the stroke's farthest one, which is a tip.
+                var farthest = 0;
+                var reach = 0.0;
+
+                for (int i = 0; i < x.Length; i++)
+                {
+                    var distance = Distance(center.X, center.Y, x[i], y[i]);
+                    if (distance > reach)
+                    {
+                        reach = distance;
+                        farthest = i;
+                    }
+                }
+
+                half = new Vector2((float)reach);
+                rotation = (float)(Math.Atan2(y[farthest] - center.Y, x[farthest] - center.X) + Math.PI / 2);
+            }
+
+            return new RecognizedShape
+            {
+                Kind = kind,
+                Center = center,
+                Size = half,
+                Rotation = rotation
+            };
+        }
     }
 
     public sealed partial class PencilColorPickedEventArgs : EventArgs

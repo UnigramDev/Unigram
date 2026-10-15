@@ -2579,6 +2579,7 @@
     <Content Include="Assets\Logos\WebAppLogo.scale-400.png" />
     <Content Include="Assets\mp4.html" />
     <Content Include="Assets\hls.html" />
+    <Content Include="Assets\shapes.dat" />
     <Content Include="Assets\hls.js" />
     <Content Include="Assets\Images\ArrowLeft.scale-100.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-125.png" />

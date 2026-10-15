@@ -576,6 +576,20 @@ namespace Telegram.Views.Popups
         private void Cropper_ViewChanged(object sender, EventArgs e)
         {
             Entities.SetView(Cropper.ContentTransform, Cropper.ViewArea, Cropper.ViewportSize);
+
+            // Recognition measures the hand's movement on screen.
+            Canvas.LoupeScale = (float)(1 / Cropper.ZoomFactor);
+        }
+
+        // Only a press beside a selected shape reaches the canvas: drawing puts the shape away.
+        private void Canvas_StrokeStarted(object sender, EventArgs e)
+        {
+            Entities.Deselect();
+        }
+
+        private void Canvas_ShapeRecognized(object sender, PencilShapeRecognizedEventArgs e)
+        {
+            Entities.AddShape(e.Shape, e.Color, e.Weight);
         }
 
         private void Cropper_Changed(object sender, EventArgs e)

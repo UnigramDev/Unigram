@@ -35,6 +35,8 @@
                                        StrokeAdded="Canvas_StrokeAdded"
                                        Gesture="Canvas_Gesture"
                                        ColorPicked="Canvas_ColorPicked"
+                                       ShapeRecognized="Canvas_ShapeRecognized"
+                                       StrokeStarted="Canvas_StrokeStarted"
                                        IsEnabled="False" />
                 <controls:PaintEntityLayer x:Name="Entities"
                                            SelectionChanged="Entities_SelectionChanged"
