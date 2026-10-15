@@ -1572,6 +1572,10 @@ namespace winrt::Telegram::Native::implementation
                 continue;
             }
 
+            // Whether this line has a rectangle yet, and the level of the last one.
+            auto merged = false;
+            uint8_t level = 0;
+
             for (uint32_t i = 0; i < line.SegmentCount; i++)
             {
                 const Segment& segment = m_segments[line.SegmentStart + i];
@@ -1594,7 +1598,20 @@ namespace winrt::Telegram::Native::implementation
                 const auto left = std::min(firstLeft, lastLeft);
                 const auto right = std::max(firstRight, lastRight);
 
-                rects.push_back({ line.X + left, line.Y, right - left, line.Height });
+                // One rectangle per direction run on a line, as DirectWrite hit tests a range:
+                // the runs a line is split into for its fonts and chunks are not the caller's
+                // business, and a shape drawn per rectangle would show every one of them.
+                if (merged && level == segment.Level && std::abs(rects.back().X + rects.back().Width - (line.X + left)) < 0.01f)
+                {
+                    rects.back().Width = line.X + right - rects.back().X;
+                }
+                else
+                {
+                    rects.push_back({ line.X + left, line.Y, right - left, line.Height });
+                }
+
+                merged = true;
+                level = segment.Level;
             }
         }
     }

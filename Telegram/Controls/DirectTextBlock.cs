@@ -2469,6 +2469,9 @@ namespace Telegram.Controls
         // characters each line holds.
         public Rect[] GetRangeRectangles(int start, int end) => FromLayout(Layout().Ranges(start, end - start));
 
+        /// <summary>One rectangle per line of [<paramref name="start"/>, <paramref name="end"/>), for a shape drawn down them.</summary>
+        public Rect[] GetRangeLines(int start, int end) => FromLayout(Layout().Lines(start, end - start));
+
         /// <summary>Where a caret before <paramref name="offset"/> goes: zero wide, the height of its line.</summary>
         public Rect GetCaretRectangle(int offset) => FromLayout(Layout().Caret(offset));
 

@@ -47,7 +47,7 @@ namespace Telegram.Controls.RichEditor
         private Rectangle SpoilerSwatch;
         private Rectangle MarkedSwatch;
 
-        private readonly List<Rectangle> _decorationShapes = new();
+        private readonly List<Path> _decorationShapes = new();
         private readonly List<(int Start, int End)> _markRanges = new();
         private Border NodeOutline;
         private Rectangle Caret;
@@ -1153,39 +1153,170 @@ namespace Telegram.Controls.RichEditor
 
             foreach (var range in _markRanges)
             {
-                foreach (var rect in view.GetRangeRects(range.Start, range.End))
+                var lines = view.GetRangeLines(range.Start, range.End);
+                if (lines.Length == 0)
                 {
-                    Rectangle shape;
-                    if (used < _decorationShapes.Count)
-                    {
-                        shape = _decorationShapes[used];
-                    }
-                    else
-                    {
-                        shape = new Rectangle
-                        {
-                            RadiusX = 3,
-                            RadiusY = 3
-                        };
-
-                        _decorationShapes.Add(shape);
-                        Decorations.Children.Add(shape);
-                    }
-
-                    var origin = transform.TransformPoint(new Point(rect.X, rect.Y));
-
-                    shape.Fill = fill;
-                    shape.Width = rect.Width;
-                    shape.Height = rect.Height;
-                    Canvas.SetLeft(shape, origin.X);
-                    Canvas.SetTop(shape, origin.Y);
-                    shape.Visibility = Visibility.Visible;
-
-                    used++;
+                    continue;
                 }
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    lines[i] = transform.TransformBounds(lines[i]);
+                }
+
+                Path shape;
+                if (used < _decorationShapes.Count)
+                {
+                    shape = _decorationShapes[used];
+                }
+                else
+                {
+                    shape = new Path();
+
+                    _decorationShapes.Add(shape);
+                    Decorations.Children.Add(shape);
+                }
+
+                shape.Fill = fill;
+                shape.Data = RoundedOutline(lines, DecorationRadius);
+                shape.Visibility = Visibility.Visible;
+
+                used++;
             }
 
             return used;
+        }
+
+        private const double DecorationRadius = 3;
+
+        // The lines of a range as one shape: their outline, stepping in and out where one line
+        // is longer than the next, every corner rounded, inner ones too. Lines that do not touch
+        // - an empty one between them - make a shape each.
+        private static PathGeometry RoundedOutline(Rect[] lines, double radius)
+        {
+            var geometry = new PathGeometry();
+            var first = 0;
+
+            for (int i = 1; i <= lines.Length; i++)
+            {
+                if (i < lines.Length && Touches(lines[i - 1], lines[i]))
+                {
+                    continue;
+                }
+
+                AddOutline(geometry, lines, first, i, radius);
+                first = i;
+            }
+
+            return geometry;
+        }
+
+        private static bool Touches(Rect above, Rect below)
+        {
+            return below.Width >= 1 && above.Width >= 1
+                && Math.Abs(below.Top - above.Bottom) < 1
+                && below.Left < above.Right && below.Right > above.Left;
+        }
+
+        private static void AddOutline(PathGeometry geometry, Rect[] lines, int from, int to, double radius)
+        {
+            if (lines[from].Width < 1 || lines[from].Height < 1)
+            {
+                return;
+            }
+
+            // Clockwise from the top left: down the right edges, back up the left ones, each
+            // step between two lines halfway between them. Edges within a pixel of each other
+            // are one edge, which a corner of no size would otherwise break.
+            var points = new List<Point>((to - from) * 4);
+
+            points.Add(new Point(lines[from].Left, lines[from].Top));
+            points.Add(new Point(lines[from].Right, lines[from].Top));
+
+            var right = lines[from].Right;
+
+            for (int i = from; i < to - 1; i++)
+            {
+                var y = (lines[i].Bottom + lines[i + 1].Top) / 2;
+                var next = Math.Abs(lines[i + 1].Right - right) < 1 ? right : lines[i + 1].Right;
+
+                if (next != right)
+                {
+                    points.Add(new Point(right, y));
+                    points.Add(new Point(next, y));
+                    right = next;
+                }
+            }
+
+            points.Add(new Point(right, lines[to - 1].Bottom));
+
+            var left = lines[to - 1].Left;
+            points.Add(new Point(left, lines[to - 1].Bottom));
+
+            for (int i = to - 1; i > from; i--)
+            {
+                var y = (lines[i - 1].Bottom + lines[i].Top) / 2;
+                var next = Math.Abs(lines[i - 1].Left - left) < 1 ? left : lines[i - 1].Left;
+
+                if (next != left)
+                {
+                    points.Add(new Point(left, y));
+                    points.Add(new Point(next, y));
+                    left = next;
+                }
+            }
+
+            // Where the outline came back to the start's column, the first point closes it.
+            if (left != lines[from].Left)
+            {
+                points.Add(new Point(left, lines[from].Top));
+            }
+
+            // Each corner cut back along both its edges by the radius, or half the shorter one,
+            // and joined by a curve through the corner.
+            var count = points.Count;
+            var figure = new PathFigure { IsClosed = true, IsFilled = true };
+
+            for (int k = 0; k <= count; k++)
+            {
+                var corner = points[k % count];
+                var previous = points[(k + count - 1) % count];
+                var next = points[(k + 1) % count];
+
+                var before = Distance(previous, corner);
+                var after = Distance(corner, next);
+                var r = Math.Min(radius, Math.Min(before, after) / 2);
+
+                var entry = Toward(corner, previous, r, before);
+                var exit = Toward(corner, next, r, after);
+
+                if (k == 0)
+                {
+                    figure.StartPoint = exit;
+                    continue;
+                }
+
+                figure.Segments.Add(new LineSegment { Point = entry });
+                figure.Segments.Add(new QuadraticBezierSegment { Point1 = corner, Point2 = exit });
+            }
+
+            geometry.Figures.Add(figure);
+        }
+
+        private static double Distance(Point a, Point b)
+        {
+            var x = b.X - a.X;
+            var y = b.Y - a.Y;
+
+            return Math.Sqrt(x * x + y * y);
+        }
+
+        // The point r along the edge from a toward b, which is length long.
+        private static Point Toward(Point a, Point b, double r, double length)
+        {
+            return length > 0
+                ? new Point(a.X + (b.X - a.X) * r / length, a.Y + (b.Y - a.Y) * r / length)
+                : a;
         }
 
         private void UpdateNodeOutline(RichBlock node)

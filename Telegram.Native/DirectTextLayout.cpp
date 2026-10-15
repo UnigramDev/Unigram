@@ -2564,6 +2564,58 @@ namespace winrt::Telegram::Native::implementation
 
         report += std::format(L"Hit tests that differ: {} of {}\n", hits, tested);
 
+        // Range rectangles, a line at a time and for the whole text: how many, and where.
+        int32_t ranges = 0;
+        int32_t rangesTested = 0;
+        start = 0;
+
+        for (size_t i = 0; i <= lines.size(); i++)
+        {
+            const auto from = i < lines.size() ? start : 0;
+            const auto count = i < lines.size() ? (int32_t)lines[i].length : length;
+
+            if (i < lines.size())
+            {
+                start += count;
+            }
+
+            if (count == 0)
+            {
+                continue;
+            }
+
+            UINT32 actual = 0;
+            paragraph.Layout->HitTestTextRange((UINT32)from, (UINT32)count, 0, 0, nullptr, 0, &actual);
+
+            std::vector<DWRITE_HIT_TEST_METRICS> theirs(actual);
+            if (actual == 0 || FAILED(paragraph.Layout->HitTestTextRange((UINT32)from, (UINT32)count, 0, 0, theirs.data(), actual, &actual)))
+            {
+                continue;
+            }
+
+            std::vector<Windows::Foundation::Rect> ours;
+            editable.Ranges(from, count, ours);
+
+            rangesTested++;
+
+            auto same = ours.size() == actual;
+
+            for (UINT32 k = 0; same && k < actual; k++)
+            {
+                same = std::abs(theirs[k].left - ours[k].X) <= 0.5f
+                    && std::abs(theirs[k].top - ours[k].Y) <= 0.5f
+                    && std::abs(theirs[k].width - ours[k].Width) <= 0.5f
+                    && std::abs(theirs[k].height - ours[k].Height) <= 0.5f;
+            }
+
+            if (!same && ranges++ < 5)
+            {
+                report += std::format(L"  range {}+{} \"{}\": DirectWrite {} rectangles, analyzer {}\n", from, count, snippet(from, count), actual, ours.size());
+            }
+        }
+
+        report += std::format(L"Ranges that differ: {} of {}\n", ranges, rangesTested);
+
         // As ContentEnd asks DirectWrite for it.
         BOOL isTrailingHit;
         BOOL isInside;

@@ -552,12 +552,23 @@ namespace Telegram.Controls.RichEditor
 
         public Rect[] GetRangeRects(int start, int end)
         {
+            return GetRangeRects(start, end, false);
+        }
+
+        /// <summary>The same, but a rectangle per line rather than per run of one direction.</summary>
+        public Rect[] GetRangeLines(int start, int end)
+        {
+            return GetRangeRects(start, end, true);
+        }
+
+        private Rect[] GetRangeRects(int start, int end, bool lines)
+        {
             if (Text == null || _leaf == null || end <= start)
             {
                 return Array.Empty<Rect>();
             }
 
-            var rects = Text.GetRangeRectangles(start, end);
+            var rects = lines ? Text.GetRangeLines(start, end) : Text.GetRangeRectangles(start, end);
             var offset = Text.ActualOffset;
             var mirrored = IsMirrored;
 
