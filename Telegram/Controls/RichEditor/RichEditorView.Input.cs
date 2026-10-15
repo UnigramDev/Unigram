@@ -682,6 +682,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             Focus(FocusState.Pointer);
+            ShowInputPane();
 
             var point = e.GetPosition(Surface);
             if (TryAppendBelow(point))

@@ -367,7 +367,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private static bool MoveHorizontally(ListViewBase list, IAutocompleteCollection autocomplete, bool forward)
+        internal static bool MoveHorizontally(ListViewBase list, IAutocompleteCollection autocomplete, bool forward)
         {
             if (list.SelectedIndex == 0 && !forward)
             {

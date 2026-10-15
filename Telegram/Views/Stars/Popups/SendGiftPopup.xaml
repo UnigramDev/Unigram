@@ -79,16 +79,19 @@
 
                 <Grid x:Name="CaptionPanel"
                       Background="{ThemeResource ContentDialogBackground}">
-                    <controls:CaptionTextBox x:Name="CaptionInput"
-                                             TextChanged="OnTextChanged"
-                                             InputScope="Chat"
-                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                             PlaceholderText="{CustomResource Gift2Message}"
-                                             Style="{StaticResource DefaultChatTextBoxStyle}"
-                                             Background="Transparent"
-                                             Padding="24,0,0,0"
-                                             BorderThickness="0"
-                                             Grid.Row="1">
+                    <controls:FormattedTextInputHost x:Name="CaptionInput"
+                                                     Kind="Caption"
+                                                     Tier="Popups"
+                                                     ContentChanged="OnContentChanged"
+                                                     InputScope="Chat"
+                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                     PlaceholderText="{CustomResource Gift2Message}"
+                                                     LegacyStyle="{StaticResource DefaultChatTextBoxStyle}"
+                                                     NativeStyle="{StaticResource DefaultChatMessageTextBoxStyle}"
+                                                     Background="Transparent"
+                                                     Padding="24,0,0,0"
+                                                     BorderThickness="0"
+                                                     Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout x:Name="EmojiFlyout"
                                     Placement="Top"
@@ -106,7 +109,7 @@
                                                      Height="360" />
                             </Flyout>
                         </FlyoutBase.AttachedFlyout>
-                    </controls:CaptionTextBox>
+                    </controls:FormattedTextInputHost>
 
                     <Border x:Name="CaptionBorder"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

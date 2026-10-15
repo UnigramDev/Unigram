@@ -245,14 +245,14 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void Title_TextChanged(object sender, RoutedEventArgs e)
+        private void Title_ContentChanged(object sender, EventArgs e)
         {
             UpdatePrimaryButton();
         }
 
-        private void Task_TextChanged(object sender, RoutedEventArgs e)
+        private void Task_ContentChanged(object sender, EventArgs e)
         {
-            if (sender is FormattedTextBox textBox && textBox.Tag is ChecklistTaskViewModel task)
+            if (sender is FormattedTextInputHost textBox && textBox.Tag is ChecklistTaskViewModel task)
             {
                 task.Text = textBox.GetFormattedText(parseMarkdown: false);
             }
@@ -262,12 +262,12 @@ namespace Telegram.Views.Popups
 
         private void Task_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is FormattedTextBox text && text.Tag is ChecklistTaskViewModel task)
+            if (sender is FormattedTextInputHost text && text.Tag is ChecklistTaskViewModel task)
             {
                 if (task.FocusOnLoaded)
                 {
-                    text.Document.Selection.SetRange(int.MaxValue, int.MaxValue);
-                    text.Focus(FocusState.Keyboard);
+                    text.MoveCaretToEnd();
+                    text.FocusInput(FocusState.Keyboard);
                 }
 
                 task.FocusOnLoaded = false;
@@ -276,7 +276,7 @@ namespace Telegram.Views.Popups
 
         private void Task_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (sender is not FormattedTextBox text || text.Tag is not ChecklistTaskViewModel task)
+            if (sender is not FormattedTextInputHost text || text.Tag is not ChecklistTaskViewModel task)
             {
                 return;
             }
@@ -299,7 +299,7 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    AddTask.Focus(FocusState.Keyboard);
+                    AddTask.FocusInput(FocusState.Keyboard);
                 }
             }
             else if (e.Key == Windows.System.VirtualKey.Enter)
@@ -313,7 +313,7 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    AddTask.Focus(FocusState.Keyboard);
+                    AddTask.FocusInput(FocusState.Keyboard);
                 }
             }
         }
@@ -322,7 +322,7 @@ namespace Telegram.Views.Popups
         {
             AddTask.IsReadOnly = false;
 
-            if (sender is FormattedTextBox textBox && textBox.Parent != null)
+            if (sender is FormattedTextInputHost textBox && textBox.Parent != null)
             {
                 OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), true);
             }
@@ -330,7 +330,7 @@ namespace Telegram.Views.Popups
 
         private void Task_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is FormattedTextBox textBox && textBox.Parent != null)
+            if (sender is FormattedTextInputHost textBox && textBox.Parent != null)
             {
                 OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), false);
             }
@@ -382,7 +382,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var inner = container.GetChild<FormattedTextBox>();
+            var inner = container.GetChild<FormattedTextInputHost>();
             if (inner == null)
             {
                 return;
@@ -390,19 +390,19 @@ namespace Telegram.Views.Popups
 
             if (inner.IsEnabled)
             {
-                inner.Focus(FocusState.Keyboard);
+                inner.FocusInput(FocusState.Keyboard);
             }
             else
             {
-                AddTask.Focus(FocusState.Keyboard);
+                AddTask.FocusInput(FocusState.Keyboard);
             }
         }
 
-        private FormattedTextBox _target;
+        private FormattedTextInputHost _target;
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button { Tag: FormattedTextBox textBox })
+            if (sender is not Button { Tag: FormattedTextInputHost textBox })
             {
                 return;
             }
@@ -425,7 +425,7 @@ namespace Telegram.Views.Popups
                 _target?.InsertEmoji(sticker);
             }
 
-            _target?.Focus(FocusState.Programmatic);
+            _target?.FocusInput(FocusState.Programmatic);
         }
 
         private void EmojiFlyout_Closed(object sender, object e)
@@ -451,7 +451,7 @@ namespace Telegram.Views.Popups
 
             if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is ChecklistTaskViewModel task)
             {
-                var text = content.FindName("Text") as FormattedTextBox;
+                var text = content.FindName("Text") as FormattedTextInputHost;
                 var customEmoji = content.FindName("CustomEmoji") as CustomEmojiCanvas;
                 var emoji = content.FindName("Emoji") as Button;
                 var handle = content.FindName("Handle") as Border;
@@ -481,8 +481,8 @@ namespace Telegram.Views.Popups
                     // If the container is recycled the box may still be loaded
                     if (task.FocusOnLoaded && text.IsLoaded)
                     {
-                        text.Document.Selection.SetRange(int.MaxValue, int.MaxValue);
-                        text.Focus(FocusState.Keyboard);
+                        text.MoveCaretToEnd();
+                        text.FocusInput(FocusState.Keyboard);
 
                         task.FocusOnLoaded = false;
                     }

@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
+using Telegram.Controls.RichEditor;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
@@ -231,7 +232,7 @@ namespace Telegram.Controls
                 // TODO: should the if be simplified to focused is null or not Control?
 
                 var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-                if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
+                if (focused is null or (not TextBox and not RichEditBox and not RichEditorView and not Button and not MenuFlyoutItem))
                 {
                     Hide(ContentDialogResult.Primary);
                     args.Handled = true;

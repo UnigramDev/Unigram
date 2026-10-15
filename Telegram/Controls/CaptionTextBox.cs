@@ -17,48 +17,25 @@ using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
+    /// <summary>
+    /// A caption's box over RichEdit: the emoji and custom emoji offered as they are typed, in a
+    /// flyout of its own. Mentions are <see cref="CaptionController"/>'s, which works on either box.
+    /// </summary>
     public partial class CaptionTextBox : FormattedTextBox
     {
         public ViewModelBase ViewModel { get; set; }
-
-        public IViewWithAutocomplete View { get; set; }
 
         public long ChatId => ViewModel is ComposeViewModel compose ? compose.Chat?.Id ?? 0 : 0;
 
         public CaptionTextBox()
         {
             SelectionChanged += OnSelectionChanged;
-        }
-
-        private ListViewBase _controlledList;
-        public ListViewBase ControlledList
-        {
-            get => _controlledList;
-            set => SetControlledList(value);
-        }
-
-        private void SetControlledList(ListViewBase value)
-        {
-            if (_controlledList != null)
-            {
-                AutomationProperties.GetControlledPeers(this).Remove(_controlledList);
-            }
-
-            _controlledList = value;
-
-            if (_controlledList != null)
-            {
-                AutomationProperties.GetControlledPeers(this).Add(_controlledList);
-            }
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -82,115 +59,19 @@ namespace Telegram.Controls
                     // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
-            else if (e.Key is VirtualKey.Up or VirtualKey.Down or VirtualKey.Left or VirtualKey.Right or VirtualKey.Tab or VirtualKey.Enter)
+            else if (e.Key == VirtualKey.Escape && _emojiFlyout != null)
             {
-                IAutocompleteCollection autocomplete;
-                ListViewBase autocompleteList;
-
-                if (_emojiFlyout?.Content is ChatTextFlyout presenter)
-                {
-                    autocomplete = presenter.ItemsSource;
-                    autocompleteList = presenter.ControlledList;
-                }
-                else
-                {
-                    autocomplete = View?.Autocomplete;
-                    autocompleteList = ControlledList;
-                }
-
-                var modifiers = WindowContext.KeyModifiers();
-
-                if (e.Key is VirtualKey.Up or VirtualKey.Down && modifiers == VirtualKeyModifiers.None)
-                {
-                    if (autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete?.Orientation == Orientation.Vertical)
-                    {
-                        autocompleteList.SelectionMode = ListViewSelectionMode.Single;
-
-                        var index = e.Key == VirtualKey.Up ? -1 : 1;
-                        var next = autocompleteList.SelectedIndex + index;
-                        if (next >= 0 && next < autocomplete.Count)
-                        {
-                            autocompleteList.SelectedIndex = next;
-                            autocompleteList.ScrollIntoView(autocompleteList.SelectedItem);
-                        }
-
-                        e.Handled = true;
-                    }
-                }
-                else if (e.Key is VirtualKey.Left or VirtualKey.Right && modifiers == VirtualKeyModifiers.None)
-                {
-                    if (autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete?.Orientation == Orientation.Horizontal)
-                    {
-                        if (autocompleteList.SelectedIndex == 0 && e.Key == VirtualKey.Left)
-                        {
-                            autocompleteList.SelectedIndex = -1;
-                            e.Handled = true;
-                        }
-                        else if (autocompleteList.SelectedIndex == autocompleteList.Items.Count - 1 && e.Key == VirtualKey.Right)
-                        {
-                            autocompleteList.SelectedIndex = 0;
-                            e.Handled = true;
-                        }
-                        else
-                        {
-                            autocompleteList.SelectionMode = ListViewSelectionMode.Single;
-
-                            var index = e.Key == VirtualKey.Left ? -1 : 1;
-                            var next = autocompleteList.SelectedIndex + index;
-                            if (next >= 0 && next < autocomplete.Count)
-                            {
-                                autocompleteList.SelectedIndex = next;
-                                autocompleteList.ScrollIntoView(autocompleteList.SelectedItem);
-
-                                e.Handled = true;
-                            }
-                        }
-                    }
-                }
-                else if (e.Key is VirtualKey.Tab or VirtualKey.Enter && autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete != null
-                    && ((autocomplete.InsertOnKeyDown is false && autocompleteList.SelectedItem != null) || autocomplete.InsertOnKeyDown))
-                {
-                    if (modifiers == VirtualKeyModifiers.Shift)
-                    {
-                        return;
-                    }
-
-                    var container = autocompleteList.ContainerFromIndex(Math.Max(0, autocompleteList.SelectedIndex)) as GridViewItem;
-                    if (container != null)
-                    {
-                        var peer = new GridViewItemAutomationPeer(container);
-                        var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                        provider.Invoke();
-                    }
-
-                    Logger.Debug("Tab pressed and handled");
-                    e.Handled = true;
-                }
-                else if (e.Key == VirtualKey.Tab)
-                {
-                    // Ignored to allow Ctrl+Tab and Ctrl+Shift+Tab to switch chats
-                    if (modifiers != VirtualKeyModifiers.None)
-                    {
-                        return;
-                    }
-                }
+                _emojiFlyout.Hide();
+                e.Handled = true;
+            }
+            else if (_emojiFlyout?.Content is ChatTextFlyout presenter && presenter.ItemsSource is IAutocompleteCollection autocomplete)
+            {
+                e.Handled = ChatTextBox.ProcessFlyoutKey(e.Key, presenter.ControlledList, autocomplete);
             }
 
             if (!e.Handled)
             {
                 base.OnKeyDown(e);
-            }
-        }
-
-        protected override void OnAccept()
-        {
-            if (View != null)
-            {
-                View?.Accept();
-            }
-            else
-            {
-                base.OnAccept();
             }
         }
 
@@ -202,49 +83,23 @@ namespace Telegram.Controls
                 return;
             }
 
-            void ClearAutocomplete()
-            {
-                _emojiQuery = null;
-                _emojiFlyout?.Hide();
-                CancelEmoji();
-
-                SetAutocomplete(null);
-            }
-
-            void SetAutocomplete(IAutocompleteCollection autocomplete)
-            {
-                View?.Autocomplete = autocomplete;
-            }
-
             var selection = Document.Selection.GetClone();
             var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
 
-            if (entity == AutocompleteEntity.Username && viewModel is ComposeViewModel compose)
+            if (entity == AutocompleteEntity.Sticker)
             {
-                var guestBots = compose.Chat.Type is not ChatTypeSecret;
-                var members = compose.Chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup { IsChannel: false };
-
-                if (guestBots || members)
-                {
-                    ClearAutocomplete();
-                    SetAutocomplete(new ChatTextBox.UsernameCollection(viewModel.ClientService, compose.Chat.Id, compose.TopicId, result, false, guestBots, members, false));
-                    return;
-                }
-            }
-            else if (entity == AutocompleteEntity.Sticker)
-            {
-                ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, true, result, ChatId));
-                SetAutocomplete(null);
+                ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(viewModel.ClientService, true, result, ChatId));
                 return;
             }
             else if (entity == AutocompleteEntity.Emoji)
             {
-                ShowOrUpdateEmojiFlyout(index, new ChatTextBox.EmojiCollection(ViewModel.ClientService, ViewModel.Settings.RecentEmoji, result, ChatId));
-                SetAutocomplete(null);
+                ShowOrUpdateEmojiFlyout(index, new ChatTextBox.EmojiCollection(viewModel.ClientService, viewModel.Settings.RecentEmoji, result, ChatId));
                 return;
             }
 
-            ClearAutocomplete();
+            _emojiQuery = null;
+            _emojiFlyout?.Hide();
+            CancelEmoji();
         }
 
         private Flyout _emojiFlyout;
@@ -312,18 +167,21 @@ namespace Telegram.Controls
 
             _emojiFlyout.ShowAt(this, new FlyoutShowOptions
             {
-                Position = new Windows.Foundation.Point(rect.X + Padding.Left - 8, rect.Y + 6),
+                Position = new Point(rect.X + Padding.Left - 8, rect.Y + 6),
                 Placement = FlyoutPlacementMode.TopEdgeAlignedLeft,
                 ShowMode = FlyoutShowMode.Transient
             });
         }
 
+        // Added and taken away rather than cleared: the page's own list may be there as well.
+        private ListViewBase _flyoutList;
+
         void EmojiFlyout_Opened(object sender, object args)
         {
             if (ChatTextFlyout.Elevate(sender) is ChatTextFlyout presenter)
             {
-                AutomationProperties.GetControlledPeers(this).Clear();
-                AutomationProperties.GetControlledPeers(this).Add(presenter.ControlledList);
+                _flyoutList = presenter.ControlledList;
+                AutomationProperties.GetControlledPeers(this).Add(_flyoutList);
             }
         }
 
@@ -334,18 +192,11 @@ namespace Telegram.Controls
 
             _emojiFlyout = null;
 
-            AutomationProperties.GetControlledPeers(this).Clear();
-
-            if (_controlledList != null)
+            if (_flyoutList != null)
             {
-                AutomationProperties.GetControlledPeers(this).Add(_controlledList);
+                AutomationProperties.GetControlledPeers(this).Remove(_flyoutList);
+                _flyoutList = null;
             }
         }
-    }
-
-    public interface IViewWithAutocomplete
-    {
-        IAutocompleteCollection Autocomplete { get; set; }
-        void Accept();
     }
 }

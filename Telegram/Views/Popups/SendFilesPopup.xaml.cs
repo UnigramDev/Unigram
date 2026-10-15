@@ -20,6 +20,7 @@ using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
+using Telegram.Controls.RichEditor;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Navigation;
@@ -93,6 +94,8 @@ namespace Telegram.Views.Popups
         // to what is actually listed.
         private int _expected;
         private bool _mediaRequested;
+
+        private CaptionController _caption;
 
         private IAutocompleteCollection _autocomplete;
         public IAutocompleteCollection Autocomplete
@@ -417,67 +420,7 @@ namespace Telegram.Views.Popups
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var selection = CaptionInput.Document.Selection.GetClone();
-            var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
-
-            if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
-            {
-                var username = user.ActiveUsername(result);
-
-                string insert;
-                if (string.IsNullOrEmpty(username))
-                {
-                    insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
-
-                    if (FormattedTextBox.IsUnsafe(insert))
-                    {
-                        insert = Strings.Username;
-                    }
-                }
-                else
-                {
-                    insert = $"@{username}";
-                }
-
-                var range = CaptionInput.Document.GetRange(index, CaptionInput.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
-
-                if (string.IsNullOrEmpty(username))
-                {
-                    range.Link = $"\"tg-user://{user.Id}\"";
-                }
-
-                CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
-                CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
-            }
-            else if (e.ClickedItem is EmojiData or Sticker && entity == AutocompleteEntity.Emoji)
-            {
-                if (e.ClickedItem is EmojiData emoji)
-                {
-                    var insert = $"{emoji.Value} ";
-                    var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + insert.Length;
-                    var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
-                    range.SetText(TextSetOptions.None, insert);
-
-                    CaptionInput.Document.Selection.StartPosition = start;
-                }
-                else if (e.ClickedItem is Sticker sticker && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
-                {
-                    var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + 1;
-                    var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
-
-                    CaptionInput.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
-                    CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
-                }
-            }
-
-            Autocomplete = null;
+            _caption?.Accept(e.ClickedItem);
         }
 
         private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -795,43 +738,25 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            if (CaptionInput.HandwritingView.IsOpen)
-            {
-                void handler(object s, RoutedEventArgs args)
-                {
-                    CaptionInput.HandwritingView.Unloaded -= handler;
-
-                    Caption = CaptionInput.GetFormattedText();
-                    Hide(ContentDialogResult.Primary);
-                }
-
-                CaptionInput.HandwritingView.Unloaded += handler;
-                CaptionInput.HandwritingView.TryClose();
-            }
-            else
-            {
-                Caption = CaptionInput.GetFormattedText();
-                Hide(ContentDialogResult.Primary);
-            }
+            Caption = CaptionInput.GetFormattedText();
+            Hide(ContentDialogResult.Primary);
         }
 
-        private async void OnPaste(object sender, TextControlPasteEventArgs e)
+        private void CaptionInput_Submitted(object sender, EventArgs e)
         {
-            var content = ClipboardEx.TryGetContent();
-            if (content == null)
+            Accept();
+        }
+
+        // Files and pictures join the album; with text among them, the text is what is pasted.
+        private async void CaptionInput_PasteRequested(object sender, FormattedTextPasteEventArgs e)
+        {
+            if (e.Package.AvailableFormats.Contains(StandardDataFormats.Text))
             {
                 return;
             }
 
-            if (content.AvailableFormats.Contains(StandardDataFormats.Text))
-            {
-                e.Handled = true;
-            }
-            else
-            {
-                e.Handled = true;
-                await HandlePackageAsync(content);
-            }
+            e.Handled = true;
+            await HandlePackageAsync(e.Package);
         }
 
         private void ListView_DragEnter(object sender, DragEventArgs e)
@@ -1523,9 +1448,19 @@ namespace Telegram.Views.Popups
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            CaptionInput.Focus(FocusState.Keyboard);
+            CaptionInput.FocusInput(FocusState.Keyboard);
             CharacterReceived += OnCharacterReceived;
             PreviewKeyDown += OnPreviewKeyDown;
+
+            // Loaded again on every re-parenting, as Unloaded is, so the controller goes with it.
+            _caption?.Detach();
+            _caption = new CaptionController(CaptionInput, CaptionInput, this, ViewModel)
+            {
+                ListAutocomplete = ListAutocomplete
+            };
+
+            CaptionInput.Submitted += CaptionInput_Submitted;
+            CaptionInput.PasteRequested += CaptionInput_PasteRequested;
 
             Load();
         }
@@ -1534,6 +1469,12 @@ namespace Telegram.Views.Popups
         {
             CharacterReceived -= OnCharacterReceived;
             PreviewKeyDown -= OnPreviewKeyDown;
+
+            _caption?.Detach();
+            _caption = null;
+
+            CaptionInput.Submitted -= CaptionInput_Submitted;
+            CaptionInput.PasteRequested -= CaptionInput_PasteRequested;
 
             // The items outlive the popup — they are handed to the send loop — so the thumbnails
             // have to be dropped here rather than left to follow the models.
@@ -1555,7 +1496,7 @@ namespace Telegram.Views.Popups
             }
 
             var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (focused is TextBox or RichEditBox or Button or MenuFlyoutItem)
+            if (focused is TextBox or RichEditBox or RichEditorView or Button or MenuFlyoutItem)
             {
                 return;
             }
@@ -1566,7 +1507,7 @@ namespace Telegram.Views.Popups
 
         private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            if (args.OriginalSource is TextBox or RichEditBox or Button or MenuFlyoutItem)
+            if (args.OriginalSource is TextBox or RichEditBox or RichEditorView or Button or MenuFlyoutItem)
             {
                 return;
             }
@@ -1577,14 +1518,14 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            if (character == '\u0016' && CaptionInput.CanPasteClipboardContent)
+            CaptionInput.FocusInput(FocusState.Keyboard);
+
+            if (character == '\u0016')
             {
-                CaptionInput.Focus(FocusState.Keyboard);
                 CaptionInput.PasteFromClipboard();
             }
             else
             {
-                CaptionInput.Focus(FocusState.Keyboard);
                 CaptionInput.InsertText(character.ToString());
             }
 
@@ -1603,12 +1544,12 @@ namespace Telegram.Views.Popups
             if (e.ClickedItem is EmojiData emoji)
             {
                 CaptionInput.InsertText(emoji.Value);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
                 CaptionInput.InsertEmoji(sticker);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
         }
 

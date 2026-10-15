@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
+using Telegram.Controls.RichEditor;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
@@ -897,7 +898,7 @@ namespace Telegram.Controls
                 // A control that makes its own use of Enter keeps it.
                 var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                 if (DefaultButton == ContentDialogButton.Primary
-                    || focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
+                    || focused is null or (not TextBox and not RichEditBox and not RichEditorView and not Button and not MenuFlyoutItem))
                 {
                     InvokeButton(ContentDialogButton.Primary);
                     args.Handled = true;

@@ -57,12 +57,12 @@ namespace Telegram.Views.Business.Popups
             if (e.ClickedItem is EmojiData emoji)
             {
                 CaptionInput.InsertText(emoji.Value);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
                 CaptionInput.InsertEmoji(sticker);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
         }
 

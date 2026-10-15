@@ -78,15 +78,18 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:CaptionTextBox x:Name="CaptionInput"
-                                         InputScope="Chat"
-                                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                         PlaceholderText="{CustomResource BusinessLinksEnter}"
-                                         Style="{StaticResource DefaultChatTextBoxStyle}"
-                                         Background="Transparent"
-                                         Padding="24,0,0,0"
-                                         BorderThickness="0"
-                                         MinHeight="48" />
+                <controls:FormattedTextInputHost x:Name="CaptionInput"
+                                                 Kind="Caption"
+                                                 Tier="Popups"
+                                                 InputScope="Chat"
+                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                 PlaceholderText="{CustomResource BusinessLinksEnter}"
+                                                 LegacyStyle="{StaticResource DefaultChatTextBoxStyle}"
+                                                 NativeStyle="{StaticResource DefaultChatMessageTextBoxStyle}"
+                                                 Background="Transparent"
+                                                 Padding="24,0,0,0"
+                                                 BorderThickness="0"
+                                                 MinHeight="48" />
 
                 <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                             IsHitTestVisible="False"

@@ -196,14 +196,14 @@ namespace Telegram.Views.Popups
             Focus(Items.Count - 1);
         }
 
-        private void Question_TextChanged(object sender, RoutedEventArgs e)
+        private void Question_ContentChanged(object sender, EventArgs e)
         {
             UpdatePrimaryButton();
         }
 
-        private void Option_TextChanged(object sender, RoutedEventArgs e)
+        private void Option_ContentChanged(object sender, EventArgs e)
         {
-            if (sender is FormattedTextBox textBox && textBox.Tag is PollOptionViewModel option)
+            if (sender is FormattedTextInputHost textBox && textBox.Tag is PollOptionViewModel option)
             {
                 option.Text = textBox.GetFormattedText();
             }
@@ -231,7 +231,7 @@ namespace Telegram.Views.Popups
 
         private void Option_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is FormattedTextBox text && text.DataContext is PollOptionViewModel option)
+            if (sender is FormattedTextInputHost text && text.DataContext is PollOptionViewModel option)
             {
                 text.Tag = option;
                 text.DataContext = _viewModel;
@@ -241,8 +241,8 @@ namespace Telegram.Views.Popups
 
                 if (option.FocusOnLoaded)
                 {
-                    text.Document.Selection.SetRange(int.MaxValue, int.MaxValue);
-                    text.Focus(FocusState.Keyboard);
+                    text.MoveCaretToEnd();
+                    text.FocusInput(FocusState.Keyboard);
                 }
 
                 option.FocusOnLoaded = false;
@@ -251,7 +251,7 @@ namespace Telegram.Views.Popups
 
         private void Option_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (sender is not FormattedTextBox text || text.Tag is not PollOptionViewModel option)
+            if (sender is not FormattedTextInputHost text || text.Tag is not PollOptionViewModel option)
             {
                 return;
             }
@@ -316,7 +316,7 @@ namespace Telegram.Views.Popups
         {
             AddAnOption.IsReadOnly = false;
 
-            if (sender is FormattedTextBox textBox && textBox.Parent != null)
+            if (sender is FormattedTextInputHost textBox && textBox.Parent != null)
             {
                 OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), true);
             }
@@ -324,7 +324,7 @@ namespace Telegram.Views.Popups
 
         private void Option_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is FormattedTextBox textBox && textBox.Parent != null)
+            if (sender is FormattedTextInputHost textBox && textBox.Parent != null)
             {
                 OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), false);
             }
@@ -376,13 +376,13 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var inner = container.GetChild<FormattedTextBox>();
+            var inner = container.GetChild<FormattedTextInputHost>();
             if (inner == null)
             {
                 return;
             }
 
-            inner.Focus(FocusState.Keyboard);
+            inner.FocusInput(FocusState.Keyboard);
         }
 
         private void Multiple_Toggled(object sender, RoutedEventArgs e)
@@ -413,12 +413,13 @@ namespace Telegram.Views.Popups
             UpdatePrimaryButton();
         }
 
-        private FormattedTextBox _target;
+        private FormattedTextInputHost _target;
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            var element = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (element is not FormattedTextBox textBox)
+            // What has focus is the box inside the host, on either side of the switch.
+            var element = FocusManagerEx.TryGetFocusedElement(XamlRoot) as DependencyObject;
+            if (element?.GetParentOrSelf<FormattedTextInputHost>() is not FormattedTextInputHost textBox)
             {
                 return;
             }
@@ -441,7 +442,7 @@ namespace Telegram.Views.Popups
                 _target?.InsertEmoji(sticker);
             }
 
-            _target?.Focus(FocusState.Programmatic);
+            _target?.FocusInput(FocusState.Programmatic);
         }
 
         private void EmojiFlyout_Closed(object sender, object e)

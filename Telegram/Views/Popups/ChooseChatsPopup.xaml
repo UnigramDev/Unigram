@@ -270,17 +270,20 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <controls:CaptionTextBox x:Name="CaptionInput"
-                                     Accept="CaptionInput_Accept"
-                                     InputScope="Chat"
-                                     ViewModel="{x:Bind ViewModel}"
-                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                     PlaceholderText="{CustomResource ShareComment}"
-                                     Style="{StaticResource DefaultChatTextBoxStyle}"
-                                     Background="Transparent"
-                                     Padding="24,0,0,0"
-                                     BorderThickness="0"
-                                     MinHeight="48" />
+            <controls:FormattedTextInputHost x:Name="CaptionInput"
+                                             Kind="Caption"
+                                             Tier="Popups"
+                                             Submitted="CaptionInput_Submitted"
+                                             InputScope="Chat"
+                                             ViewModel="{x:Bind ViewModel}"
+                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                             PlaceholderText="{CustomResource ShareComment}"
+                                             LegacyStyle="{StaticResource DefaultChatTextBoxStyle}"
+                                             NativeStyle="{StaticResource DefaultChatMessageTextBoxStyle}"
+                                             Background="Transparent"
+                                             Padding="24,0,0,0"
+                                             BorderThickness="0"
+                                             MinHeight="48" />
 
             <Border x:Name="CaptionBorder"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

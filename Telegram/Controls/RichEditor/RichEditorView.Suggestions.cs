@@ -182,12 +182,27 @@ namespace Telegram.Controls.RichEditor
             });
         }
 
+        // Added and taken away rather than cleared: a page's own list, the mentions under a
+        // caption, may be there as well.
+        private ListViewBase _suggestionList;
+
         private void OnSuggestionsOpened(object sender, object e)
         {
             if (ChatTextFlyout.Elevate(sender) is ChatTextFlyout presenter)
             {
-                AutomationProperties.GetControlledPeers(this).Clear();
-                AutomationProperties.GetControlledPeers(this).Add(presenter.ControlledList);
+                RemoveSuggestionPeer();
+
+                _suggestionList = presenter.ControlledList;
+                AutomationProperties.GetControlledPeers(this).Add(_suggestionList);
+            }
+        }
+
+        private void RemoveSuggestionPeer()
+        {
+            if (_suggestionList != null)
+            {
+                AutomationProperties.GetControlledPeers(this).Remove(_suggestionList);
+                _suggestionList = null;
             }
         }
 
@@ -205,7 +220,7 @@ namespace Telegram.Controls.RichEditor
                 _suggestionQuery = null;
             }
 
-            AutomationProperties.GetControlledPeers(this).Clear();
+            RemoveSuggestionPeer();
         }
 
         private void CancelSuggestions()

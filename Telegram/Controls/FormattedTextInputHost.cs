@@ -8,11 +8,17 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Messages;
 using Telegram.Controls.RichEditor;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
@@ -43,6 +49,9 @@ namespace Telegram.Controls
 
         /// <summary><see cref="Chats.ChatTextBox"/>, the chat's composer.</summary>
         Composer,
+
+        /// <summary><see cref="CaptionTextBox"/>, which offers emoji as they are typed.</summary>
+        Caption,
     }
 
     /// <summary>
@@ -56,6 +65,22 @@ namespace Telegram.Controls
         // Read once: switching a box under a live caret, an IME composition and an undo history
         // is not worth supporting, so the page says the change needs a restart.
         private static readonly NativeTextInputMode _mode = AppSettings.Diagnostics.NativeTextInput;
+
+        // Set on the host as they would be on a text box, and handed on to the box: the host's
+        // own template draws none of them.
+        private static readonly DependencyProperty[] _forwarded = new[]
+        {
+            PaddingProperty,
+            BackgroundProperty,
+            BorderBrushProperty,
+            BorderThicknessProperty,
+            CornerRadiusProperty,
+            FontFamilyProperty,
+            FontSizeProperty,
+
+            // The box's style has a minimum of its own, which would hold it taller than the host.
+            MinHeightProperty
+        };
 
         private IFormattedTextInput _input;
 
@@ -98,7 +123,9 @@ namespace Telegram.Controls
                 // does with AcceptsReturn off and this one only with it on.
                 var box = new MessageTextBox
                 {
-                    AcceptsReturn = AcceptsReturn || Kind == FormattedTextInputKind.Composer
+                    AcceptsReturn = AcceptsReturn || Kind == FormattedTextInputKind.Composer,
+                    TextInputScope = ToTextInputScope(_inputScope),
+                    PreventKeyboardDisplayOnProgrammaticFocus = PreventKeyboardDisplayOnProgrammaticFocus
                 };
 
                 if (NativeStyle != null)
@@ -111,11 +138,28 @@ namespace Telegram.Controls
             }
             else
             {
-                FormattedTextBox box = Kind == FormattedTextInputKind.Composer
-                    ? new ChatTextBox()
-                    : new FormattedTextBox();
+                FormattedTextBox box = Kind switch
+                {
+                    FormattedTextInputKind.Composer => new ChatTextBox(),
+                    FormattedTextInputKind.Caption => new CaptionTextBox(),
+                    _ => new FormattedTextBox()
+                };
 
                 box.AcceptsReturn = AcceptsReturn;
+                box.CustomEmoji = _customEmoji;
+
+                // Only when set, so as not to override the style.
+                if (PreventKeyboardDisplayOnProgrammaticFocus)
+                {
+                    box.PreventKeyboardDisplayOnProgrammaticFocus = true;
+                }
+
+                if (_inputScope != InputScopeNameValue.Default)
+                {
+                    var scope = new InputScope();
+                    scope.Names.Add(new InputScopeName(_inputScope));
+                    box.InputScope = scope;
+                }
 
                 if (LegacyStyle != null)
                 {
@@ -125,6 +169,20 @@ namespace Telegram.Controls
                 element = box;
                 _input = box;
             }
+
+            foreach (var property in _forwarded)
+            {
+                if (ReadLocalValue(property) != DependencyProperty.UnsetValue)
+                {
+                    element.SetValue(property, GetValue(property));
+                }
+
+                // On the host itself, so nothing outlives it. It also carries a theme change.
+                RegisterPropertyChangedCallback(property, OnForwardedPropertyChanged);
+            }
+
+            UpdateViewModel();
+            UpdateControlledList();
 
             _input.AllowedEntities = AllowedEntities;
             _input.MaxLength = MaxLength;
@@ -140,6 +198,23 @@ namespace Telegram.Controls
 
             Content = element;
             return _input;
+        }
+
+        private void OnForwardedPropertyChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            (Content as Control)?.SetValue(dp, GetValue(dp));
+        }
+
+        private static CoreTextInputScope ToTextInputScope(InputScopeNameValue scope)
+        {
+            return scope switch
+            {
+                InputScopeNameValue.Chat => CoreTextInputScope.Chat,
+                InputScopeNameValue.Number => CoreTextInputScope.Number,
+                InputScopeNameValue.Url => CoreTextInputScope.Url,
+                InputScopeNameValue.Search => CoreTextInputScope.Search,
+                _ => CoreTextInputScope.Text
+            };
         }
 
         private void OnInputContentChanged(object sender, EventArgs e)
@@ -246,6 +321,109 @@ namespace Telegram.Controls
 
         /// <summary>The style for <see cref="MessageTextBox"/>, when the switch puts it in. Set in markup, before the box is made.</summary>
         public Style NativeStyle { get; set; }
+
+        private InputScopeNameValue _inputScope;
+
+        /// <summary>What the touch keyboard offers. Set in markup, before the box is made.</summary>
+        public InputScopeNameValue InputScope
+        {
+            get => _inputScope;
+            set => _inputScope = value;
+        }
+
+        /// <summary>Whether focus given from code leaves the touch keyboard down. Set in markup, before the box is made.</summary>
+        public bool PreventKeyboardDisplayOnProgrammaticFocus { get; set; }
+
+        private CustomEmojiCanvas _customEmoji;
+
+        /// <summary>
+        /// Where the old box draws its custom emoji, a canvas the page places over it. The native
+        /// box draws its own and leaves the canvas empty.
+        /// </summary>
+        public CustomEmojiCanvas CustomEmoji
+        {
+            get => _customEmoji;
+            set
+            {
+                _customEmoji = value;
+
+                if (_input is FormattedTextBox legacy)
+                {
+                    legacy.CustomEmoji = value;
+                }
+            }
+        }
+
+        private ListViewBase _controlledList;
+        private ListViewBase _appliedList;
+
+        /// <summary>The suggestions shown for the box outside it, which a screen reader is told the box controls.</summary>
+        public ListViewBase ControlledList
+        {
+            get => _controlledList;
+            set
+            {
+                _controlledList = value;
+                UpdateControlledList();
+            }
+        }
+
+        private void UpdateControlledList()
+        {
+            if (_input is ChatTextBox composer)
+            {
+                composer.ControlledList = _controlledList as OrientableListView;
+            }
+            else if (_input is MessageTextBox native)
+            {
+                native.ControlledList = _controlledList;
+            }
+            else if (_input is FormattedTextBox legacy)
+            {
+                var peers = AutomationProperties.GetControlledPeers(legacy);
+
+                if (_appliedList != null)
+                {
+                    peers.Remove(_appliedList);
+                }
+
+                if (_controlledList != null)
+                {
+                    peers.Add(_controlledList);
+                }
+
+                _appliedList = _controlledList;
+            }
+        }
+
+        private ViewModelBase _viewModel;
+
+        /// <summary>The session and the chat that emoji suggestions are found for, on either box.</summary>
+        public ViewModelBase ViewModel
+        {
+            get => _viewModel;
+            set
+            {
+                if (_viewModel != value)
+                {
+                    _viewModel = value;
+                    UpdateViewModel();
+                }
+            }
+        }
+
+        private void UpdateViewModel()
+        {
+            if (_input is CaptionTextBox caption)
+            {
+                caption.ViewModel = _viewModel;
+            }
+            else if (_input is MessageTextBox native && _viewModel != null)
+            {
+                native.ClientService = _viewModel.ClientService;
+                native.ChatId = _viewModel is ComposeViewModel compose ? compose.Chat?.Id ?? 0 : 0;
+            }
+        }
 
         #endregion
 

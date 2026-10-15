@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Controls;
@@ -63,7 +64,7 @@ namespace Telegram.Views.Folders
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            TitleField.Focus(FocusState.Keyboard);
+            TitleField.FocusInput(FocusState.Keyboard);
         }
 
         private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -150,7 +151,7 @@ namespace Telegram.Views.Folders
                 TitleField.InsertEmoji(sticker);
             }
 
-            TitleField.Focus(FocusState.Programmatic);
+            TitleField.FocusInput(FocusState.Programmatic);
         }
 
         #region Binding
@@ -332,7 +333,7 @@ namespace Telegram.Views.Folders
             }
         }
 
-        private void TitleField_TextChanged(object sender, RoutedEventArgs e)
+        private void TitleField_ContentChanged(object sender, EventArgs e)
         {
             ViewModel.Title = TitleField.GetFormattedText();
         }

@@ -1336,6 +1336,8 @@
                                                                  Tier="All"
                                                                  LegacyStyle="{StaticResource ComposerLegacyTextBoxStyle}"
                                                                  NativeStyle="{StaticResource MessageTextBoxComposerStyle}"
+                                                                 InputScope="Chat"
+                                                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                                  AcceptsReturn="False"
                                                                  VerticalAlignment="Bottom"
                                                                  MinHeight="{StaticResource TelegramToolBarHeight}"

@@ -154,7 +154,7 @@ namespace Telegram.Controls.Chats
         }
 
         // The emoji flyout's list runs across: Left and Right move along it, Tab or Enter pick.
-        private static bool ProcessFlyoutKey(VirtualKey key, ListViewBase list, IAutocompleteCollection autocomplete)
+        internal static bool ProcessFlyoutKey(VirtualKey key, ListViewBase list, IAutocompleteCollection autocomplete)
         {
             var modifiers = WindowContext.KeyModifiers();
             if (list == null || list.Items.Count == 0 || modifiers == VirtualKeyModifiers.Control || modifiers == VirtualKeyModifiers.Menu)

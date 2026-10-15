@@ -16,6 +16,7 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
+using Telegram.Controls.RichEditor;
 using Telegram.Controls.Views;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -2084,7 +2085,7 @@ namespace Telegram.Views.Popups
             }
 
             var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (focused is TextBox or RichEditBox or Button or MenuFlyoutItem)
+            if (focused is TextBox or RichEditBox or RichEditorView or Button or MenuFlyoutItem)
             {
                 return;
             }
@@ -2098,7 +2099,7 @@ namespace Telegram.Views.Popups
 
         private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            if (args.OriginalSource is TextBox or RichEditBox or Button or MenuFlyoutItem)
+            if (args.OriginalSource is TextBox or RichEditBox or RichEditorView or Button or MenuFlyoutItem)
             {
                 return;
             }
@@ -2109,9 +2110,9 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            if (character == '\u0016' && CaptionInput.CanPasteClipboardContent)
+            if (character == '\u0016')
             {
-                CaptionInput.Focus(FocusState.Keyboard);
+                CaptionInput.FocusInput(FocusState.Keyboard);
                 CaptionInput.PasteFromClipboard();
             }
             else
@@ -2128,24 +2129,8 @@ namespace Telegram.Views.Popups
 
         private void Accept()
         {
-            if (CaptionInput.HandwritingView.IsOpen)
-            {
-                void handler(object s, RoutedEventArgs args)
-                {
-                    CaptionInput.HandwritingView.Unloaded -= handler;
-
-                    ViewModel.Caption = CaptionInput.GetFormattedText();
-                    Hide(ContentDialogResult.Primary);
-                }
-
-                CaptionInput.HandwritingView.Unloaded += handler;
-                CaptionInput.HandwritingView.TryClose();
-            }
-            else
-            {
-                ViewModel.Caption = CaptionInput.GetFormattedText();
-                Hide(ContentDialogResult.Primary);
-            }
+            ViewModel.Caption = CaptionInput.GetFormattedText();
+            Hide(ContentDialogResult.Primary);
         }
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
@@ -2160,12 +2145,12 @@ namespace Telegram.Views.Popups
             if (e.ClickedItem is EmojiData emoji)
             {
                 CaptionInput.InsertText(emoji.Value);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
                 CaptionInput.InsertEmoji(sticker);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
         }
 
@@ -2208,7 +2193,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
+        private void CaptionInput_Submitted(object sender, EventArgs args)
         {
             Accept();
         }

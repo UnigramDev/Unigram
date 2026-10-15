@@ -96,13 +96,15 @@
                                                                   Padding="0"
                                                                   Grid.Row="1">
                                             <Grid>
-                                                <controls:CaptionTextBox x:Name="TitleField"
-                                                                         TextChanged="TitleField_TextChanged"
-                                                                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                                         Padding="58,11,6,12"
-                                                                         Height="44"
-                                                                         MaxLength="12"
-                                                                         AcceptsReturn="False" />
+                                                <controls:FormattedTextInputHost x:Name="TitleField"
+                                                                                 Kind="Caption"
+                                                                                 Tier="Popups"
+                                                                                 ContentChanged="TitleField_ContentChanged"
+                                                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                                                 Padding="58,11,6,12"
+                                                                                 Height="44"
+                                                                                 MaxLength="12"
+                                                                                 AcceptsReturn="False" />
 
                                                 <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                                             IsHitTestVisible="False"

@@ -239,16 +239,16 @@ namespace Telegram.Controls.Stories
             if (e.ClickedItem is EmojiData emoji)
             {
                 MessageField.InsertText(emoji.Value);
-                MessageField.Focus(FocusState.Programmatic);
+                MessageField.FocusInput(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
                 MessageField.InsertEmoji(sticker);
-                MessageField.Focus(FocusState.Programmatic);
+                MessageField.FocusInput(FocusState.Programmatic);
             }
         }
 
-        private void MessageField_TextChanged(object sender, RoutedEventArgs e)
+        private void MessageField_ContentChanged(object sender, EventArgs e)
         {
             UpdateState();
         }
@@ -413,7 +413,7 @@ namespace Telegram.Controls.Stories
             batch.End();
         }
 
-        private void MessageField_Accept(FormattedTextBox sender, System.EventArgs args)
+        private void MessageField_Submitted(object sender, EventArgs args)
         {
             Send();
         }
@@ -671,7 +671,7 @@ namespace Telegram.Controls.Stories
             flyout.Items.Add(new MenuFlyoutLabel { Text = Strings.SendMessageAsTitle });
             flyout.Closing += (s, args) =>
             {
-                MessageField.Focus(FocusState.Programmatic);
+                MessageField.FocusInput(FocusState.Programmatic);
             };
 
             var response = await ViewModel.ClientService.SendAsync(new GetLiveStoryAvailableMessageSenders(_groupCall.Id));

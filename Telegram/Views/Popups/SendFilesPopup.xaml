@@ -331,21 +331,22 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <controls:CaptionTextBox x:Name="CaptionInput"
-                                     Loaded="OnLoaded"
-                                     Unloaded="OnUnloaded"
-                                     View="{x:Bind}"
-                                     ControlledList="{x:Bind ListAutocomplete}"
-                                     DataContext="{x:Bind ViewModel}"
-                                     Paste="OnPaste"
-                                     InputScope="Chat"
-                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                     PlaceholderText="{CustomResource AddCaption}"
-                                     Style="{StaticResource DefaultChatTextBoxStyle}"
-                                     Background="Transparent"
-                                     Padding="24,0,0,0"
-                                     BorderThickness="0"
-                                     MinHeight="48" />
+            <controls:FormattedTextInputHost x:Name="CaptionInput"
+                                             Kind="Caption"
+                                             Tier="Popups"
+                                             Loaded="OnLoaded"
+                                             Unloaded="OnUnloaded"
+                                             ControlledList="{x:Bind ListAutocomplete}"
+                                             DataContext="{x:Bind ViewModel}"
+                                             InputScope="Chat"
+                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                             PlaceholderText="{CustomResource AddCaption}"
+                                             LegacyStyle="{StaticResource DefaultChatTextBoxStyle}"
+                                             NativeStyle="{StaticResource DefaultChatMessageTextBoxStyle}"
+                                             Background="Transparent"
+                                             Padding="24,0,0,0"
+                                             BorderThickness="0"
+                                             MinHeight="48" />
 
             <Border x:Name="CaptionBorder"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

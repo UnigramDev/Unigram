@@ -2342,7 +2342,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void MessageField_TextChanged(object sender, RoutedEventArgs e)
+        private void MessageField_ContentChanged(object sender, EventArgs e)
         {
             ShowHideReactions(MessageField.IsEmpty && !_messageCollapsed);
             SendMessage.IsEnabled = !MessageField.IsEmpty;
@@ -2434,7 +2434,7 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    MessageField.Focus(FocusState.Keyboard);
+                    MessageField.FocusInput(FocusState.Keyboard);
                 }
             };
 
@@ -2481,9 +2481,9 @@ namespace Telegram.Views.Calls
             batch.End();
         }
 
-        private void MessageField_Accept(FormattedTextBox sender, EventArgs args)
+        private void MessageField_Submitted(object sender, EventArgs args)
         {
-            _call.SendMessage(sender.GetFormattedText(true));
+            _call.SendMessage(MessageField.GetFormattedText(true));
         }
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
@@ -2498,12 +2498,12 @@ namespace Telegram.Views.Calls
             if (e.ClickedItem is EmojiData emoji)
             {
                 MessageField.InsertText(emoji.Value);
-                MessageField.Focus(FocusState.Programmatic);
+                MessageField.FocusInput(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
                 MessageField.InsertEmoji(sticker);
-                MessageField.Focus(FocusState.Programmatic);
+                MessageField.FocusInput(FocusState.Programmatic);
             }
         }
 

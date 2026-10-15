@@ -183,6 +183,11 @@ namespace Telegram.Views.Stars.Popups
             PrimaryButtonText = string.Format(Strings.Gift2SendPremium, Formatter.FormatAmount(option.Amount, option.Currency));
         }
 
+        private void OnContentChanged(object sender, EventArgs e)
+        {
+            OnTextChanged(sender, null);
+        }
+
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
             var text = CaptionInput.GetFormattedText();
@@ -228,12 +233,12 @@ namespace Telegram.Views.Stars.Popups
             if (e.ClickedItem is EmojiData emoji)
             {
                 CaptionInput.InsertText(emoji.Value);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
                 CaptionInput.InsertEmoji(sticker);
-                CaptionInput.Focus(FocusState.Programmatic);
+                CaptionInput.FocusInput(FocusState.Programmatic);
             }
         }
 

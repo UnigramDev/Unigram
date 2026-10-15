@@ -638,17 +638,16 @@
                            Style="{StaticResource BaseTextBlockStyle}"
                            Margin="24,16,24,8" />
                 <Grid Margin="24,0,24,8">
-                    <controls:FormattedTextBox x:Name="QuestionText"
-                                               TextChanged="Question_TextChanged"
-                                               CustomEmoji="{x:Bind CustomEmoji}"
-                                               PlaceholderText="{CustomResource QuestionHint}"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               GotFocus="QuestionText_GotFocus"
-                                               LostFocus="QuestionText_LostFocus"
-                                               AllowedEntities="CustomEmoji"
-                                               AcceptsReturn="True"
-                                               TextWrapping="Wrap"
-                                               MaxLength="255" />
+                    <controls:FormattedTextInputHost x:Name="QuestionText"
+                                                     Tier="Popups"
+                                                     ContentChanged="Question_ContentChanged"
+                                                     CustomEmoji="{x:Bind CustomEmoji}"
+                                                     PlaceholderText="{CustomResource QuestionHint}"
+                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                     GotFocus="QuestionText_GotFocus"
+                                                     LostFocus="QuestionText_LostFocus"
+                                                     AllowedEntities="CustomEmoji"
+                                                     MaxLength="255" />
 
                     <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                 IsHitTestVisible="False"
@@ -668,16 +667,15 @@
                 </Grid>
 
                 <Grid Margin="24,0,24,8">
-                    <controls:FormattedTextBox x:Name="DescriptionText"
-                                               CustomEmoji="{x:Bind DescriptionCustomEmoji}"
-                                               PlaceholderText="{CustomResource QuestionDescriptionHint}"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               GotFocus="DescriptionText_GotFocus"
-                                               LostFocus="DescriptionText_LostFocus"
-                                               AllowedEntities="CustomEmoji"
-                                               AcceptsReturn="True"
-                                               TextWrapping="Wrap"
-                                               MaxLength="255" />
+                    <controls:FormattedTextInputHost x:Name="DescriptionText"
+                                                     Tier="Popups"
+                                                     CustomEmoji="{x:Bind DescriptionCustomEmoji}"
+                                                     PlaceholderText="{CustomResource QuestionDescriptionHint}"
+                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                     GotFocus="DescriptionText_GotFocus"
+                                                     LostFocus="DescriptionText_LostFocus"
+                                                     AllowedEntities="CustomEmoji"
+                                                     MaxLength="255" />
 
                     <messages:CustomEmojiCanvas x:Name="DescriptionCustomEmoji"
                                                 IsHitTestVisible="False"
@@ -724,17 +722,18 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <controls:FormattedTextBox x:Name="Text"
-                                                               PlaceholderText="{CustomResource OptionHint}"
-                                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                               AllowedEntities="CustomEmoji"
-                                                               MaxLength="100"
-                                                               Loaded="Option_Loaded"
-                                                               PreviewKeyDown="Option_PreviewKeyDown"
-                                                               TextChanged="Option_TextChanged"
-                                                               GotFocus="Option_GotFocus"
-                                                               LostFocus="Option_LostFocus"
-                                                               Grid.ColumnSpan="3" />
+                                    <controls:FormattedTextInputHost x:Name="Text"
+                                                                     Tier="Popups"
+                                                                     PlaceholderText="{CustomResource OptionHint}"
+                                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                                     AllowedEntities="CustomEmoji"
+                                                                     MaxLength="100"
+                                                                     Loaded="Option_Loaded"
+                                                                     PreviewKeyDown="Option_PreviewKeyDown"
+                                                                     ContentChanged="Option_ContentChanged"
+                                                                     GotFocus="Option_GotFocus"
+                                                                     LostFocus="Option_LostFocus"
+                                                                     Grid.ColumnSpan="3" />
 
                                     <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                                 IsHitTestVisible="False"

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -248,7 +249,26 @@ namespace Telegram.Controls.RichEditor
             {
                 _contextFocused = true;
                 _editContext.InputScope = GetInputScope(_contextLeaf);
+                _editContext.InputPaneDisplayPolicy = PreventKeyboardDisplayOnProgrammaticFocus && FocusState == FocusState.Programmatic
+                    ? CoreTextInputPaneDisplayPolicy.Manual
+                    : CoreTextInputPaneDisplayPolicy.Automatic;
                 _editContext.NotifyFocusEnter();
+            }
+        }
+
+        /// <summary>
+        /// Whether focus given from code leaves the touch keyboard down, as on a text box: the
+        /// composer takes focus whenever a chat opens. A tap still brings the keyboard up.
+        /// </summary>
+        public bool PreventKeyboardDisplayOnProgrammaticFocus { get; set; }
+
+        // A tap is asking for the keyboard, however focus arrived.
+        private void ShowInputPane()
+        {
+            if (_editContext != null && _editContext.InputPaneDisplayPolicy == CoreTextInputPaneDisplayPolicy.Manual)
+            {
+                _editContext.InputPaneDisplayPolicy = CoreTextInputPaneDisplayPolicy.Automatic;
+                _inputPane?.TryShow();
             }
         }
 
@@ -258,12 +278,15 @@ namespace Telegram.Controls.RichEditor
         /// off - the setting the composer follows for the same two things. Set before focus is
         /// entered, which is when the service reads it.
         /// </summary>
-        private static CoreTextInputScope GetInputScope(RichTextLeaf leaf)
+        private CoreTextInputScope GetInputScope(RichTextLeaf leaf)
         {
-            return leaf == null || leaf.IsPlain || !Telegram.Services.AppSettings.UseSystemSpellChecker
+            return leaf == null || leaf.IsPlain || !AppSettings.UseSystemSpellChecker
                 ? CoreTextInputScope.Default
-                : CoreTextInputScope.Text;
+                : TextInputScope;
         }
+
+        /// <summary>What the keyboard offers for text outside code: a message box asks for <see cref="CoreTextInputScope.Chat"/>. Read when focus enters.</summary>
+        public CoreTextInputScope TextInputScope { get; set; } = CoreTextInputScope.Text;
 
         private void LeaveContext()
         {

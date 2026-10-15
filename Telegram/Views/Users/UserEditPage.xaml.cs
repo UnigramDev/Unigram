@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
@@ -142,7 +143,7 @@ namespace Telegram.Views.Users
             return null;
         }
 
-        private void NoteField_TextChanged(object sender, RoutedEventArgs e)
+        private void NoteField_ContentChanged(object sender, EventArgs e)
         {
             ViewModel.Note = NoteField.GetFormattedText();
         }
@@ -169,7 +170,7 @@ namespace Telegram.Views.Users
                 NoteField.InsertEmoji(sticker);
             }
 
-            NoteField.Focus(FocusState.Programmatic);
+            NoteField.FocusInput(FocusState.Programmatic);
         }
     }
 }

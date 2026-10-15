@@ -178,10 +178,7 @@ namespace Telegram.Views
             // Handled ones too: either box marks a tap as its own.
             TextField.AddHandler(TappedEvent, _textFieldTapped = new TappedEventHandler(TextField_Tapped), true);
 
-            if (TextField.Input is ChatTextBox legacy)
-            {
-                legacy.ControlledList = ListAutocomplete;
-            }
+            TextField.ControlledList = ListAutocomplete;
 
             _loader = new BidirectionalIncrementalLoader(Messages);
 

@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="using:Telegram.Controls"
-                    xmlns:messages="using:Telegram.Controls.Messages">
+                    xmlns:messages="using:Telegram.Controls.Messages"
+                    xmlns:richeditor="using:Telegram.Controls.RichEditor">
 
     <!--  DirectTextBlock is a Panel, so it has no DefaultStyleKey and Generic.xaml is never
           consulted for it: the implicit style below is what every block gets. Everything here
@@ -195,6 +196,54 @@
                                    Grid.ColumnSpan="2"
                                    IsHitTestVisible="False"
                                    VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  DefaultChatTextBoxStyle for the native box: no states, and the text inset as there.  -->
+    <Style x:Key="DefaultChatMessageTextBoxStyle"
+           TargetType="richeditor:MessageTextBox">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="MinWidth"
+                Value="{ThemeResource TextControlThemeMinWidth}" />
+        <Setter Property="MinHeight"
+                Value="{ThemeResource TextControlThemeMinHeight}" />
+        <Setter Property="Background"
+                Value="{ThemeResource TextControlBackground}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TextControlBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="{ThemeResource TextControlBorderThemeThickness}" />
+        <Setter Property="FontSize"
+                Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="Padding"
+                Value="48,0,0,0" />
+        <Setter Property="MaxHeight"
+                Value="192" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="richeditor:MessageTextBox">
+                    <Grid Padding="{TemplateBinding Padding}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <richeditor:RichEditorView x:Name="Editor"
+                                                   Margin="{TemplateBinding BorderThickness}"
+                                                   Padding="0,13,0,15" />
+                        <Border Margin="{TemplateBinding BorderThickness}"
+                                Padding="0,13,0,15"
+                                IsHitTestVisible="False">
+                            <TextBlock x:Name="InlinePlaceholder"
+                                       Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                        </Border>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

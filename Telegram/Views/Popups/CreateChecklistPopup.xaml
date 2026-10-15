@@ -50,18 +50,17 @@
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    Margin="24,16,24,8" />-->
                         <Grid Margin="24,8,24,8">
-                            <controls:FormattedTextBox x:Name="TitleText"
-                                                       TextChanged="Title_TextChanged"
-                                                       CustomEmoji="{x:Bind CustomEmoji}"
-                                                       PlaceholderText="{CustomResource TodoTitlePlaceholder}"
-                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                       GotFocus="TitleText_GotFocus"
-                                                       LostFocus="TitleText_LostFocus"
-                                                       AllowedEntities="Checklist"
-                                                       AcceptsReturn="True"
-                                                       TextWrapping="Wrap"
-                                                       MaxLength="255"
-                                                       Padding="10,5,36,6" />
+                            <controls:FormattedTextInputHost x:Name="TitleText"
+                                                             Tier="Popups"
+                                                             ContentChanged="Title_ContentChanged"
+                                                             CustomEmoji="{x:Bind CustomEmoji}"
+                                                             PlaceholderText="{CustomResource TodoTitlePlaceholder}"
+                                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                             GotFocus="TitleText_GotFocus"
+                                                             LostFocus="TitleText_LostFocus"
+                                                             AllowedEntities="Checklist"
+                                                             MaxLength="255"
+                                                             Padding="10,5,36,6" />
 
                             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                         IsHitTestVisible="False"
@@ -119,18 +118,19 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <controls:FormattedTextBox x:Name="Text"
-                                                       PlaceholderText="{CustomResource TodoTaskPlaceholder}"
-                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                       AllowedEntities="Checklist"
-                                                       Padding="28,5,64,6"
-                                                       MaxLength="100"
-                                                       Loaded="Task_Loaded"
-                                                       PreviewKeyDown="Task_PreviewKeyDown"
-                                                       TextChanged="Task_TextChanged"
-                                                       GotFocus="Task_GotFocus"
-                                                       LostFocus="Task_LostFocus"
-                                                       Grid.ColumnSpan="3" />
+                            <controls:FormattedTextInputHost x:Name="Text"
+                                                             Tier="Popups"
+                                                             PlaceholderText="{CustomResource TodoTaskPlaceholder}"
+                                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                             AllowedEntities="Checklist"
+                                                             Padding="28,5,64,6"
+                                                             MaxLength="100"
+                                                             Loaded="Task_Loaded"
+                                                             PreviewKeyDown="Task_PreviewKeyDown"
+                                                             ContentChanged="Task_ContentChanged"
+                                                             GotFocus="Task_GotFocus"
+                                                             LostFocus="Task_LostFocus"
+                                                             Grid.ColumnSpan="3" />
 
                             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                         IsHitTestVisible="False"
@@ -180,13 +180,14 @@
                 <StackPanel>
                     <Grid x:Name="AddTaskRoot"
                           Margin="24,8,24,0">
-                        <controls:FormattedTextBox x:Name="AddTask"
-                                                   CustomEmoji="{x:Bind AddTaskCustomEmoji}"
-                                                   PlaceholderText="{CustomResource TodoNewTask}"
-                                                   AllowedEntities="Checklist"
-                                                   TextChangedForRealNoCap="AddTask_TextChanged"
-                                                   GotFocus="AddTask_GotFocus"
-                                                   LostFocus="AddTask_LostFocus" />
+                        <controls:FormattedTextInputHost x:Name="AddTask"
+                                                         Tier="Popups"
+                                                         CustomEmoji="{x:Bind AddTaskCustomEmoji}"
+                                                         PlaceholderText="{CustomResource TodoNewTask}"
+                                                         AllowedEntities="Checklist"
+                                                         ContentChanged="AddTask_TextChanged"
+                                                         GotFocus="AddTask_GotFocus"
+                                                         LostFocus="AddTask_LostFocus" />
 
                         <messages:CustomEmojiCanvas x:Name="AddTaskCustomEmoji"
                                                     IsHitTestVisible="False"

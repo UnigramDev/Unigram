@@ -18,7 +18,9 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
@@ -70,6 +72,13 @@ namespace Telegram.Controls.RichEditor
             _engine.Changed += OnEngineChanged;
 
             Loaded += OnLoaded;
+            IsEnabledChanged += OnIsEnabledChanged;
+        }
+
+        // A checklist disables the box of a task that is locked, on a container it recycles.
+        private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateVisualState(false);
         }
 
         public RichEditorEngine Engine => _engine;
@@ -119,6 +128,11 @@ namespace Telegram.Controls.RichEditor
             if (Editor != null)
             {
                 Unhook(Editor);
+
+                if (_controlledList != null)
+                {
+                    AutomationProperties.GetControlledPeers(Editor).Remove(_controlledList);
+                }
             }
 
             Editor = GetTemplateChild(nameof(Editor)) as RichEditorView;
@@ -128,6 +142,13 @@ namespace Telegram.Controls.RichEditor
             {
                 Editor.PlaceholderText = PlaceholderText ?? string.Empty;
                 Editor.IsEnabled = !IsReadOnly;
+                Editor.TextInputScope = _textInputScope;
+                Editor.PreventKeyboardDisplayOnProgrammaticFocus = _preventKeyboardDisplayOnProgrammaticFocus;
+
+                if (_controlledList != null)
+                {
+                    AutomationProperties.GetControlledPeers(Editor).Add(_controlledList);
+                }
                 Editor.Initialize(_clientService, _engine);
                 Hook(Editor);
                 UpdateSuggestions();
@@ -270,14 +291,119 @@ namespace Telegram.Controls.RichEditor
                 text = new FormattedText(trimmed, entities);
             }
 
+            // A page that keeps the text in its view model writes it back on every change, often
+            // as GetFormattedText gave it, markdown parsed. Loading what is already there would
+            // move the caret and end a composition.
+            if (string.IsNullOrEmpty(text?.Text) ? _engine.Document.IsEmpty : IsCurrentText(text))
+            {
+                return;
+            }
+
+            if (TryDeferLoad(text))
+            {
+                return;
+            }
+
             _engine.Load(RichFormattedTextConverter.FromFormattedText(text, _engine.Schema));
             _engine.MoveToDocumentEdge(1, false);
+        }
+
+        private bool IsCurrentText(FormattedText text)
+        {
+            var current = RichFormattedTextConverter.ToFormattedText(_engine.Document);
+            // Markdown parsed is never longer, so this is not the text either way.
+            if (current.Text.Length < text.Text.Length)
+            {
+                return false;
+            }
+
+            return IsSameText(current, text) || IsSameText(ClientEx.ParseMarkdown(current), text);
+        }
+
+        // True only when sure: a difference this cannot see, a date's format, counts as one.
+        private static bool IsSameText(FormattedText x, FormattedText y)
+        {
+            if (x.Text != y.Text || (x.Entities?.Count ?? 0) != (y.Entities?.Count ?? 0))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < (x.Entities?.Count ?? 0); i++)
+            {
+                var a = x.Entities[i];
+                var b = y.Entities[i];
+
+                if (a.Offset != b.Offset || a.Length != b.Length || a.Type.GetType() != b.Type.GetType())
+                {
+                    return false;
+                }
+
+                var same = a.Type switch
+                {
+                    TextEntityTypeCustomEmoji customEmoji => customEmoji.CustomEmojiId == ((TextEntityTypeCustomEmoji)b.Type).CustomEmojiId,
+                    TextEntityTypeTextUrl textUrl => textUrl.Url == ((TextEntityTypeTextUrl)b.Type).Url,
+                    TextEntityTypeMentionName mention => mention.UserId == ((TextEntityTypeMentionName)b.Type).UserId,
+                    TextEntityTypePreCode preCode => preCode.Language == ((TextEntityTypePreCode)b.Type).Language,
+                    TextEntityTypeMediaTimestamp timestamp => timestamp.MediaTimestamp == ((TextEntityTypeMediaTimestamp)b.Type).MediaTimestamp,
+                    TextEntityTypeDateTime => ReferenceEquals(a.Type, b.Type),
+                    _ => true
+                };
+
+                if (!same)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void ClearText()
         {
             _insertedCustomEmojiIds = null;
-            _engine.Load(new RichDocument());
+
+            if (!TryDeferLoad(null))
+            {
+                _engine.Load(new RichDocument());
+            }
+        }
+
+        // ContentChanged is raised from inside the engine's change, which often runs inside the
+        // input service's own callback. A handler that loads new text there, as the checklist
+        // does to turn what was typed into a task, would put the service out of step, so the
+        // load waits for the next dispatcher turn.
+        private int _raisingContentChanged;
+        private bool _loadPending;
+        private FormattedText _pendingText;
+
+        private bool TryDeferLoad(FormattedText text)
+        {
+            if (_raisingContentChanged == 0)
+            {
+                return false;
+            }
+
+            _pendingText = text;
+            _loadPending = _loadPending || (DispatcherQueue.GetForCurrentThread()?.TryEnqueue(LoadPending) ?? false);
+            return _loadPending;
+        }
+
+        private void LoadPending()
+        {
+            var text = _pendingText;
+
+            _loadPending = false;
+            _pendingText = null;
+
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                _engine.Load(new RichDocument());
+            }
+            else
+            {
+                _engine.Load(RichFormattedTextConverter.FromFormattedText(text, _engine.Schema));
+                _engine.MoveToDocumentEdge(1, false);
+            }
         }
 
         public void InsertText(string text)
@@ -467,7 +593,16 @@ namespace Telegram.Controls.RichEditor
                 _emoticonPending = DispatcherQueue.GetForCurrentThread()?.TryEnqueue(ReplaceEmoticon) ?? false;
             }
 
-            ContentChanged?.Invoke(this, EventArgs.Empty);
+            _raisingContentChanged++;
+
+            try
+            {
+                ContentChanged?.Invoke(this, EventArgs.Empty);
+            }
+            finally
+            {
+                _raisingContentChanged--;
+            }
         }
 
         // Emoticons are keyed by their last character, and nearly no keystroke is one, so this is
@@ -950,6 +1085,53 @@ namespace Telegram.Controls.RichEditor
 
         /// <summary>False for a box of one line, where Enter that does not send does nothing.</summary>
         public bool AcceptsReturn { get; set; } = true;
+
+        private CoreTextInputScope _textInputScope = CoreTextInputScope.Text;
+
+        private ListViewBase _controlledList;
+
+        /// <summary>The suggestions a page shows for the box outside it, which a screen reader is told the editor controls.</summary>
+        public ListViewBase ControlledList
+        {
+            get => _controlledList;
+            set
+            {
+                if (Editor != null && _controlledList != null)
+                {
+                    AutomationProperties.GetControlledPeers(Editor).Remove(_controlledList);
+                }
+
+                _controlledList = value;
+
+                if (Editor != null && _controlledList != null)
+                {
+                    AutomationProperties.GetControlledPeers(Editor).Add(_controlledList);
+                }
+            }
+        }
+
+        private bool _preventKeyboardDisplayOnProgrammaticFocus;
+
+        public bool PreventKeyboardDisplayOnProgrammaticFocus
+        {
+            get => _preventKeyboardDisplayOnProgrammaticFocus;
+            set
+            {
+                _preventKeyboardDisplayOnProgrammaticFocus = value;
+                Editor?.PreventKeyboardDisplayOnProgrammaticFocus = value;
+            }
+        }
+
+        /// <summary>What the touch keyboard offers for the text, outside code.</summary>
+        public CoreTextInputScope TextInputScope
+        {
+            get => _textInputScope;
+            set
+            {
+                _textInputScope = value;
+                Editor?.TextInputScope = value;
+            }
+        }
 
         #region PlaceholderText
 

@@ -655,12 +655,9 @@ namespace Telegram.Controls.Stories
 
         }
 
-        private void TextField_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        private void TextField_ContentChanged(object sender, EventArgs e)
         {
-            if (args.IsContentChanging)
-            {
-                CheckButtonsVisibility();
-            }
+            CheckButtonsVisibility();
         }
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
@@ -737,7 +734,7 @@ namespace Telegram.Controls.Stories
             Send();
         }
 
-        private void TextField_Accept(FormattedTextBox sender, EventArgs args)
+        private void TextField_Submitted(object sender, EventArgs args)
         {
             Send();
         }

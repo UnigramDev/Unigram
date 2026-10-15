@@ -164,14 +164,16 @@
                                                      Height="360" />
                             </Flyout>
                         </FlyoutBase.AttachedFlyout>
-                        <controls:CaptionTextBox x:Name="NoteField"
-                                                 TextChanged="NoteField_TextChanged"
-                                                 PlaceholderText="{CustomResource AddNotes}"
-                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                 Padding="58,11,6,12"
-                                                 Height="44"
-                                                 MaxLength="12"
-                                                 AcceptsReturn="False" />
+                        <controls:FormattedTextInputHost x:Name="NoteField"
+                                                         Kind="Caption"
+                                                         Tier="Popups"
+                                                         ContentChanged="NoteField_ContentChanged"
+                                                         PlaceholderText="{CustomResource AddNotes}"
+                                                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                         Padding="58,11,6,12"
+                                                         Height="44"
+                                                         MaxLength="12"
+                                                         AcceptsReturn="False" />
 
                         <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                     IsHitTestVisible="False"
