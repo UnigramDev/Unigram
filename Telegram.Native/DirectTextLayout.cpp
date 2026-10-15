@@ -122,6 +122,15 @@ namespace winrt::Telegram::Native::implementation
         // And takes at least this much more height than the text, in DIPs: a few lines.
         constexpr double c_editingSpareHeight = 64;
 
+        // An edited text taller than this many pixels is drawn into a virtual surface instead,
+        // in tiles, and only those in the viewport and a margin around it: a surface that
+        // holds the whole paragraph is drawn whole on every key, and past the largest a surface
+        // can be - 40,000 pixels for 100,000 characters - is never drawn at all.
+        constexpr int32_t c_virtualHeight = 2048;
+        constexpr int32_t c_tileHeight = 256;
+        constexpr int32_t c_tileMargin = 512;
+        constexpr int32_t c_virtualMaxHeight = 1 << 24;
+
         bool Keep(Windows::Graphics::SizeInt32 size, Windows::Graphics::SizeInt32 pixels)
         {
             if (size.Width < pixels.Width || size.Height < pixels.Height)
@@ -579,6 +588,8 @@ namespace winrt::Telegram::Native::implementation
         // The last reference here, but not necessarily the last one: the caller's brush holds
         // the surface too, and the atlas region goes when both are gone.
         m_surface = nullptr;
+        m_virtualSurface = nullptr;
+        m_virtual = false;
 
         m_paragraphs.clear();
         m_editable = nullptr;
@@ -961,6 +972,8 @@ namespace winrt::Telegram::Native::implementation
 
                 m_paragraphs.clear();
                 m_editable = std::move(editable);
+
+                TakeChange();
 
                 m_invalid = false;
                 return S_OK;
@@ -1927,6 +1940,19 @@ namespace winrt::Telegram::Native::implementation
         m_scale = rasterizationScale;
         m_pixels = pixels;
 
+        if (UsesVirtualSurface(pixels))
+        {
+            return RenderVirtual(pixels);
+        }
+
+        // Short enough again, or no longer edited: a surface of the ordinary kind.
+        if (m_virtual)
+        {
+            m_surface = nullptr;
+            m_virtualSurface = nullptr;
+            m_virtual = false;
+        }
+
         // The surface is kept rather than replaced: a text change is a redraw, and a list
         // scrolling past recycled items would otherwise allocate and free one atlas region per
         // item. Resizing drops the content, which is redrawn below anyway.
@@ -2033,7 +2059,15 @@ namespace winrt::Telegram::Native::implementation
             return;
         }
 
-        DrawSurface();
+        if (m_virtual)
+        {
+            m_dirtyAll = true;
+            DrawVirtual();
+        }
+        else
+        {
+            DrawSurface();
+        }
     }
 
     HRESULT DirectTextLayout::DrawSurface()
@@ -2080,7 +2114,7 @@ namespace winrt::Telegram::Native::implementation
         if (SUCCEEDED(result))
         {
             result = m_editable != nullptr
-                ? DrawEditable(context.get(), brush.get())
+                ? DrawEditable(context.get(), brush.get(), -INFINITY, INFINITY)
                 : Draw(context.get(), brush.get());
         }
 
@@ -2293,7 +2327,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    HRESULT DirectTextLayout::DrawEditable(ID2D1DeviceContext* context, ID2D1Brush* brush)
+    HRESULT DirectTextLayout::DrawEditable(ID2D1DeviceContext* context, ID2D1Brush* brush, float top, float bottom)
     {
         for (const InlineRange& item : m_inlines)
         {
@@ -2308,12 +2342,452 @@ namespace winrt::Telegram::Native::implementation
             colors.push_back({ item.Offset, item.Length, D2D1::ColorF(item.Color.R / 255.0f, item.Color.G / 255.0f, item.Color.B / 255.0f, item.Color.A / 255.0f) });
         }
 
-        const auto result = m_editable->Draw(context, brush, colors);
+        const auto result = m_editable->Draw(context, brush, colors, top, bottom);
 
         for (const InlineRange& item : m_inlines)
         {
             item.Object->EndDraw();
         }
+
+        return result;
+    }
+
+    // =========================================================================================
+    // The virtual surface
+    // =========================================================================================
+
+    bool DirectTextLayout::HasVirtualSurface()
+    {
+        return m_virtual;
+    }
+
+    bool DirectTextLayout::UsesVirtualSurface(Windows::Graphics::SizeInt32 pixels)
+    {
+        return m_editable != nullptr && !m_readOnly && SurfaceSize(pixels).Height > c_virtualHeight;
+    }
+
+    // What the analyzer says the last build or update changed, added to what has changed since
+    // the surface was last drawn.
+    void DirectTextLayout::TakeChange()
+    {
+        const auto& change = m_editable->Change();
+
+        if (change.All)
+        {
+            m_dirtyAll = true;
+            return;
+        }
+
+        MarkDirty(change.Top, change.Bottom);
+
+        // Text that was handed over again unchanged is no edit.
+        if (change.OldEnd != change.Start || change.NewEnd != change.Start)
+        {
+            if (m_edits++ == 0)
+            {
+                m_edit = change;
+            }
+        }
+    }
+
+    void DirectTextLayout::MarkDirty(float top, float bottom)
+    {
+        if (top >= bottom)
+        {
+            return;
+        }
+
+        if (m_dirtyTop >= m_dirtyBottom)
+        {
+            m_dirtyTop = top;
+            m_dirtyBottom = bottom;
+        }
+        else
+        {
+            m_dirtyTop = std::min(m_dirtyTop, top);
+            m_dirtyBottom = std::max(m_dirtyBottom, bottom);
+        }
+    }
+
+    void DirectTextLayout::MarkRangeDirty(int32_t start, int32_t end)
+    {
+        const auto length = (int32_t)m_text.size();
+
+        start = std::clamp(start, 0, length);
+        end = std::clamp(end, start, length);
+
+        float top;
+        float bottom;
+        m_editable->RangeExtent(start, std::max(end, start + 1), top, bottom);
+
+        MarkDirty(top, bottom);
+    }
+
+    // The colours set now against the ones last drawn, moved by the edit in between: a link or
+    // a code token after the edit moved with the text and needs nothing, one that was added,
+    // taken away or recoloured - a spoiler revealed - needs its lines drawn again. Every SetText
+    // sets them all over again, so comparing is what keeps a key from redrawing every line a
+    // link is on.
+    void DirectTextLayout::DiffColors()
+    {
+        if (m_dirtyAll || (m_colors.empty() && m_drawnColors.empty()))
+        {
+            return;
+        }
+
+        // Moved by more than one edit, which is rare and not worth following.
+        if (m_edits > 1)
+        {
+            m_dirtyAll = true;
+            return;
+        }
+
+        const auto edited = m_edits == 1;
+        const auto delta = edited ? m_edit.NewEnd - m_edit.OldEnd : 0;
+
+        struct Range
+        {
+            int32_t Offset;
+            int32_t Length;
+            uint32_t Color;
+
+            bool operator<(const Range& other) const
+            {
+                return Offset != other.Offset ? Offset < other.Offset
+                    : Length != other.Length ? Length < other.Length
+                    : Color < other.Color;
+            }
+
+            bool operator==(const Range& other) const
+            {
+                return Offset == other.Offset && Length == other.Length && Color == other.Color;
+            }
+        };
+
+        const auto pack = [](Windows::UI::Color color)
+            {
+                return (uint32_t)color.A << 24 | (uint32_t)color.R << 16 | (uint32_t)color.G << 8 | color.B;
+            };
+
+        std::vector<Range> before;
+        std::vector<Range> after;
+
+        before.reserve(m_drawnColors.size());
+        after.reserve(m_colors.size());
+
+        for (const ColorRange& range : m_drawnColors)
+        {
+            const auto end = range.Offset + range.Length;
+
+            // Into the edit: its lines were broken again, and whatever it covered after the
+            // edit is drawn again with them.
+            if (edited && end > m_edit.Start && range.Offset < m_edit.OldEnd)
+            {
+                MarkRangeDirty(std::min(range.Offset, m_edit.Start), end > m_edit.OldEnd ? end + delta : m_edit.NewEnd);
+                continue;
+            }
+
+            const auto offset = edited && range.Offset >= m_edit.OldEnd ? range.Offset + delta : range.Offset;
+            before.push_back({ offset, range.Length, pack(range.Color) });
+        }
+
+        for (const ColorRange& range : m_colors)
+        {
+            after.push_back({ range.Offset, range.Length, pack(range.Color) });
+        }
+
+        std::sort(before.begin(), before.end());
+        std::sort(after.begin(), after.end());
+
+        size_t i = 0;
+        size_t j = 0;
+
+        while (i < before.size() || j < after.size())
+        {
+            if (j == after.size() || (i < before.size() && before[i] < after[j]))
+            {
+                MarkRangeDirty(before[i].Offset, before[i].Offset + before[i].Length);
+                i++;
+            }
+            else if (i == before.size() || after[j] < before[i])
+            {
+                MarkRangeDirty(after[j].Offset, after[j].Offset + after[j].Length);
+                j++;
+            }
+            else
+            {
+                i++;
+                j++;
+            }
+        }
+    }
+
+    // A surface as wide as the box and twice as tall as the text: a virtual surface holds only
+    // what is drawn into it, so the room to grow into costs nothing, and replacing it is a
+    // redraw of everything in view.
+    CompositionDrawingSurface DirectTextLayout::RenderVirtual(Windows::Graphics::SizeInt32 pixels)
+    {
+        const auto size = SurfaceSize(pixels);
+
+        if (m_virtual && m_surface != nullptr)
+        {
+            const auto current = m_surface.SizeInt32();
+
+            if (current.Width < size.Width || current.Height < pixels.Height)
+            {
+                m_surface = nullptr;
+                m_virtualSurface = nullptr;
+            }
+        }
+        else
+        {
+            m_surface = nullptr;
+            m_virtualSurface = nullptr;
+        }
+
+        if (m_surface == nullptr)
+        {
+            const auto started = Now();
+
+            try
+            {
+                const Windows::Graphics::SizeInt32 virtualSize{ size.Width, std::min(std::max(size.Height, pixels.Height * 2), c_virtualMaxHeight) };
+
+                m_virtualSurface = m_device.CreateVirtualDrawingSurface(virtualSize, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+                m_surface = m_virtualSurface;
+            }
+            catch (...)
+            {
+                m_virtual = false;
+                return nullptr;
+            }
+
+            Record(s_surfaceCreate, started);
+
+            m_virtual = true;
+            m_dirtyAll = true;
+            m_tiles.clear();
+            m_windowFrom = 0;
+            m_windowTo = 0;
+
+            if (!m_renderingDeviceReplaced)
+            {
+                m_renderingDeviceReplaced = m_device.RenderingDeviceReplaced({ get_weak(), &DirectTextLayout::OnRenderingDeviceReplaced });
+            }
+        }
+        else
+        {
+            s_surfaceKept++;
+        }
+
+        if (m_color != m_drawnColor || m_scale != m_drawnScale)
+        {
+            m_dirtyAll = true;
+        }
+
+        DiffColors();
+
+        if (FAILED(DrawVirtual()))
+        {
+            return nullptr;
+        }
+
+        return m_surface;
+    }
+
+    // Where the text is seen, in DIPs from the top of the layout. Tiles that come into view
+    // are drawn at once, as there is no measure or arrange to wait for when only the
+    // viewport moved.
+    void DirectTextLayout::SetViewport(double top, double bottom)
+    {
+        if (m_viewportTop == top && m_viewportBottom == bottom)
+        {
+            return;
+        }
+
+        m_viewportTop = top;
+        m_viewportBottom = bottom;
+
+        if (m_virtual && m_surface != nullptr && !m_closed)
+        {
+            DrawVirtual();
+        }
+    }
+
+    // The tiles in view and in the margin around it: the ones not drawn yet whole, the ones
+    // drawn only where they changed. The rest are given back.
+    HRESULT DirectTextLayout::DrawVirtual()
+    {
+        HRESULT result;
+
+        // The text was replaced and not laid out again yet; the arrange that does draws.
+        if (m_editable == nullptr)
+        {
+            return S_OK;
+        }
+
+        const auto size = m_surface.SizeInt32();
+        const auto count = (size.Height + c_tileHeight - 1) / c_tileHeight;
+
+        if ((int32_t)m_tiles.size() != count)
+        {
+            m_tiles.assign(count, false);
+            m_windowFrom = 0;
+            m_windowTo = 0;
+        }
+
+        if (m_dirtyAll)
+        {
+            std::fill(m_tiles.begin(), m_tiles.end(), false);
+        }
+
+        // Before the first viewport, the start of the text.
+        int32_t top = 0;
+        int32_t bottom = 2 * c_tileMargin;
+
+        if (m_viewportBottom > m_viewportTop)
+        {
+            top = (int32_t)std::floor(m_viewportTop * m_scale) - c_tileMargin;
+            bottom = (int32_t)std::ceil(m_viewportBottom * m_scale) + c_tileMargin;
+        }
+
+        const auto from = std::clamp(top / c_tileHeight, 0, count);
+        const auto to = std::clamp((bottom + c_tileHeight - 1) / c_tileHeight, from, count);
+
+        if (from != m_windowFrom || to != m_windowTo)
+        {
+            for (int32_t i = 0; i < count; i++)
+            {
+                if (i < from || i >= to)
+                {
+                    m_tiles[i] = false;
+                }
+            }
+
+            const Windows::Graphics::RectInt32 keep{ 0, from * c_tileHeight, size.Width, (to - from) * c_tileHeight };
+
+            try
+            {
+                if (to > from)
+                {
+                    m_virtualSurface.Trim({ keep });
+                }
+                else
+                {
+                    m_virtualSurface.Trim({});
+                }
+            }
+            catch (...)
+            {
+                // Holding more than it has to is no reason not to draw.
+            }
+
+            m_windowFrom = from;
+            m_windowTo = to;
+        }
+
+        const auto dirtyTop = m_dirtyAll ? 0 : (int32_t)std::floor(m_dirtyTop * m_scale);
+        const auto dirtyBottom = m_dirtyAll ? size.Height : (int32_t)std::min((double)size.Height, std::ceil(m_dirtyBottom * m_scale));
+
+        for (auto i = from; i < to; )
+        {
+            auto j = i;
+
+            if (!m_tiles[i])
+            {
+                while (j < to && !m_tiles[j])
+                {
+                    j++;
+                }
+
+                ReturnIfFailed(result, DrawRows(i * c_tileHeight, std::min(j * c_tileHeight, size.Height)));
+
+                for (auto k = i; k < j; k++)
+                {
+                    m_tiles[k] = true;
+                }
+            }
+            else
+            {
+                while (j < to && m_tiles[j])
+                {
+                    j++;
+                }
+
+                const auto rowsTop = std::max(i * c_tileHeight, dirtyTop);
+                const auto rowsBottom = std::min(std::min(j * c_tileHeight, size.Height), dirtyBottom);
+
+                if (rowsTop < rowsBottom)
+                {
+                    ReturnIfFailed(result, DrawRows(rowsTop, rowsBottom));
+                }
+            }
+
+            i = j;
+        }
+
+        m_dirtyAll = false;
+        m_dirtyTop = 0;
+        m_dirtyBottom = 0;
+        m_edits = 0;
+
+        m_drawnColors = m_colors;
+        m_drawnColor = m_color;
+        m_drawnScale = m_scale;
+
+        return S_OK;
+    }
+
+    // The rows [top, bottom) of the surface, in pixels, cleared and drawn again. The lines are
+    // drawn from a little above and below them, so that what reaches into the rows from a
+    // line outside - a descender, an emoji - is drawn again too, and cut where the rows end.
+    HRESULT DirectTextLayout::DrawRows(int32_t top, int32_t bottom)
+    {
+        auto surfaceInterop = m_surface.as<abi::ICompositionDrawingSurfaceInterop>();
+
+        const auto width = m_surface.SizeInt32().Width;
+        const RECT update{ 0, top, width, bottom };
+
+        winrt::com_ptr<ID2D1DeviceContext> context;
+        POINT offset;
+
+        auto started = Now();
+        HRESULT result = surfaceInterop->BeginDraw(&update, __uuidof(ID2D1DeviceContext), context.put_void(), &offset);
+        Record(s_beginDraw, started);
+
+        if (FAILED(result))
+        {
+            return result;
+        }
+
+        started = Now();
+
+        // The update rectangle is where BeginDraw put it, and only it is cleared: the context
+        // draws into an atlas that holds other surfaces too.
+        context->SetTransform(D2D1::Matrix3x2F::Identity());
+        context->PushAxisAlignedClip(D2D1::RectF((float)offset.x, (float)offset.y, (float)(offset.x + width), (float)(offset.y + bottom - top)), D2D1_ANTIALIAS_MODE_ALIASED);
+        context->Clear(D2D1::ColorF(0, 0, 0, 0));
+
+        context->SetTransform(
+            D2D1::Matrix3x2F::Scale((float)m_scale, (float)m_scale) *
+            D2D1::Matrix3x2F::Translation((float)offset.x, (float)(offset.y - top)));
+
+        winrt::com_ptr<ID2D1SolidColorBrush> brush;
+        result = context->CreateSolidColorBrush(D2D1::ColorF(m_color.R / 255.0f, m_color.G / 255.0f, m_color.B / 255.0f, m_color.A / 255.0f), brush.put());
+
+        if (SUCCEEDED(result))
+        {
+            const auto margin = (float)m_fontSize * 2;
+            result = DrawEditable(context.get(), brush.get(), (float)(top / m_scale) - margin, (float)(bottom / m_scale) + margin);
+        }
+
+        context->PopAxisAlignedClip();
+
+        Record(s_drawText, started);
+
+        started = Now();
+        surfaceInterop->EndDraw();
+        Record(s_endDraw, started);
 
         return result;
     }

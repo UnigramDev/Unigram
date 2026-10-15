@@ -244,7 +244,27 @@ against phase 0's 121 ms build, the cold build 357 ms.
 - The 100,000 paragraph still spikes (p95 16 ms, max 47), mostly outside the layout. Suspected,
   not shown: the text copied whole per key as a large object, and the full collections that
   brings.
-- One `BeginDraw` took 84 ms in the article, once. Still whole-paragraph per key, and next to measure:
+- One `BeginDraw` took 84 ms in the article, once.
+
+The meter now also counts collections per run: of every generation, and the keys whose handlers ran
+into one or whose frame had a full one, with their median against the rest.
+
+**Phase 2c, written (2026-10-15), not yet built or run.** An edited text on the analyzer whose
+surface would be taller than 2,048 pixels is drawn into a `CompositionVirtualDrawingSurface`
+instead (`DirectTextLayout::RenderVirtual`), as wide as the box and twice as tall as the text,
+returned through `Render` as the `CompositionDrawingSurface` it derives from. It is drawn in tiles
+of 256 pixels, only those in the viewport and 512 pixels around it; the others are trimmed.
+`EditableTextLayout` reports what each build or update changed (`EditableChange`: everything, or
+the rows of the lines broken again, down to the end when the height after them moved), and the
+layout gathers that until the next draw, which redraws those rows only, cleared and clipped, with
+the lines a little above and below drawn into them for what reaches across. Colours are compared
+against the ones last drawn, moved by the edit (`DiffColors`): one that only moved costs nothing,
+one added, removed or recoloured redraws its lines; two edits between draws redraw everything.
+`DirectTextBlock` hands the viewport to `SetViewport` from `OnViewportChanged`, through the
+registration `DirectTextBlockBase` holds in C++ for the custom emoji players, kept while either
+needs it; `SetViewport` draws what came into view at once. Before the first viewport, the start
+of the text is drawn. To check by eye: scrolling the 100,000 paragraph, typing in it at the top,
+in the middle and at the end, revealing a spoiler and following a link past an edit. Still whole-paragraph per key, and next to measure:
 `Prepare` and the prefix compare walk the text, the splices and the copy of everything after the
 window move it, and `Draw` draws every line.
 

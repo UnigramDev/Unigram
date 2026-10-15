@@ -304,6 +304,7 @@ namespace winrt::Telegram::Native::implementation
 
         m_built = false;
         m_bidi = false;
+        m_change = EditableChange{};
         m_format = format;
         m_text.assign(text);
 
@@ -452,7 +453,12 @@ namespace winrt::Telegram::Native::implementation
 
             if (width != m_width)
             {
+                m_change = EditableChange{};
                 Break(width);
+            }
+            else
+            {
+                m_change = { false, 0, 0, newLength, newLength, newLength };
             }
 
             return S_OK;
@@ -589,10 +595,13 @@ namespace winrt::Telegram::Native::implementation
 
         if (width != m_width)
         {
+            m_change = EditableChange{};
             Break(width);
         }
         else
         {
+            // Rebreak says which rows.
+            m_change = { false, 0, 0, prefix, oldEnd, newEnd };
             Rebreak(oldLines, oldSegments, windowStart, newWindowEnd, delta, runDelta);
         }
 
@@ -601,8 +610,25 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT EditableTextLayout::Reflow(float width)
     {
+        m_change = EditableChange{};
         Break(width);
         return S_OK;
+    }
+
+    void EditableTextLayout::RangeExtent(int32_t start, int32_t end, float& top, float& bottom) const
+    {
+        if (m_lines.empty())
+        {
+            top = 0;
+            bottom = 0;
+            return;
+        }
+
+        const Line& first = LineOf(std::max(start, 0));
+        const Line& last = LineOf(std::max(end - 1, start));
+
+        top = first.Y;
+        bottom = last.Y + last.Height;
     }
 
     // What the caller hands over, per position: the inline object, if any, and the style bits,
@@ -1105,6 +1131,10 @@ namespace winrt::Telegram::Native::implementation
         auto y = oldLines[first].Y;
         auto position = oldLines[first].Start;
 
+        // Every row from the first line broken again, until shown otherwise below.
+        m_change.Top = y;
+        m_change.Bottom = INFINITY;
+
         while (position < length)
         {
             const auto end = NextLine(position, limit);
@@ -1129,6 +1159,13 @@ namespace winrt::Telegram::Native::implementation
             }
 
             const auto shift = y - it->Y;
+
+            // The old lines after it are where they were, unless the ones before them took
+            // more or less room.
+            if (shift == 0)
+            {
+                m_change.Bottom = y;
+            }
 
             for (; it != oldLines.end(); ++it)
             {
@@ -1888,9 +1925,28 @@ namespace winrt::Telegram::Native::implementation
     // Drawing
     // =========================================================================================
 
-    HRESULT EditableTextLayout::Draw(ID2D1DeviceContext* context, ID2D1Brush* brush, const std::vector<EditableColor>& colors) const
+    HRESULT EditableTextLayout::Draw(ID2D1DeviceContext* context, ID2D1Brush* brush, const std::vector<EditableColor>& colors, float top, float bottom) const
     {
         HRESULT result;
+
+        // The lines that reach into [top, bottom), and the text they hold.
+        const auto firstLine = std::partition_point(m_lines.begin(), m_lines.end(), [top](const Line& line)
+            {
+                return line.Y + line.Height <= top;
+            });
+
+        const auto lastLine = std::partition_point(firstLine, m_lines.end(), [bottom](const Line& line)
+            {
+                return line.Y < bottom;
+            });
+
+        if (firstLine == lastLine)
+        {
+            return S_OK;
+        }
+
+        const auto textStart = firstLine->Start;
+        const auto textEnd = (lastLine - 1)->Start + (lastLine - 1)->Length;
 
         winrt::com_ptr<ID2D1DeviceContext4> context4;
         context->QueryInterface(IID_PPV_ARGS(context4.put()));
@@ -1910,31 +1966,36 @@ namespace winrt::Telegram::Native::implementation
         const auto sy = dpiY / 96;
         const DWRITE_MATRIX transform{ matrix._11 * sx, matrix._12 * sy, matrix._21 * sx, matrix._22 * sy, matrix._31 * sx, matrix._32 * sy };
 
-        // The colour of every position, the later range over the earlier, as drawing effects
-        // set one after the other end up.
-        const auto length = (int32_t)m_text.size();
+        // The colour of every position drawn, the later range over the earlier, as drawing
+        // effects set one after the other end up.
         std::vector<int32_t> colorOf;
 
         if (!colors.empty())
         {
-            colorOf.assign(length, -1);
+            colorOf.assign(textEnd - textStart, -1);
 
             for (size_t i = 0; i < colors.size(); i++)
             {
-                const auto from = std::clamp(colors[i].Offset, 0, length);
-                const auto to = std::clamp(colors[i].Offset + colors[i].Length, from, length);
+                const auto from = std::clamp(colors[i].Offset, textStart, textEnd);
+                const auto to = std::clamp(colors[i].Offset + colors[i].Length, from, textEnd);
 
                 for (auto p = from; p < to; p++)
                 {
-                    colorOf[p] = (int32_t)i;
+                    colorOf[p - textStart] = (int32_t)i;
                 }
             }
         }
 
+        const auto colorAt = [&](int32_t position)
+            {
+                return colorOf.empty() ? -1 : colorOf[position - textStart];
+            };
+
         std::vector<winrt::com_ptr<ID2D1SolidColorBrush>> brushes(colors.size());
 
-        for (const Line& line : m_lines)
+        for (auto it = firstLine; it != lastLine; ++it)
         {
+            const Line& line = *it;
             const auto baseline = line.Y + line.Baseline;
 
             for (uint32_t i = 0; i < line.SegmentCount; i++)
@@ -1968,13 +2029,13 @@ namespace winrt::Telegram::Native::implementation
                 // In stretches of one colour, each drawn as a glyph run of its own.
                 for (auto p = segment.Start; p < segmentEnd; )
                 {
-                    const auto color = colorOf.empty() ? -1 : colorOf[p];
+                    const auto color = colorAt(p);
                     const auto hardBreak = IsHardBreak(p);
 
                     float width = 0;
                     auto q = p;
 
-                    while (q < segmentEnd && (colorOf.empty() ? -1 : colorOf[q]) == color && IsHardBreak(q) == hardBreak)
+                    while (q < segmentEnd && colorAt(q) == color && IsHardBreak(q) == hardBreak)
                     {
                         width += m_clusterWidth[q];
                         q += std::max(m_clusterLength[q], 1);

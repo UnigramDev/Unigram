@@ -82,6 +82,19 @@ namespace winrt::Telegram::Native::implementation
         bool Inside{ false };
     };
 
+    // What the last build or update changed, for a caller that keeps what it drew: the rows to
+    // draw again, in DIPs, and the edit, which says where the text after it moved to. All is
+    // everything, which a build from scratch and a new width are.
+    struct EditableChange
+    {
+        bool All{ true };
+        float Top{ 0 };
+        float Bottom{ 0 };
+        int32_t Start{ 0 };
+        int32_t OldEnd{ 0 };
+        int32_t NewEnd{ 0 };
+    };
+
     struct EditableLine
     {
         int32_t Start;
@@ -127,7 +140,16 @@ namespace winrt::Telegram::Native::implementation
         Windows::Foundation::Point ContentEnd() const;
         void Lines(std::vector<EditableLine>& lines) const;
 
-        HRESULT Draw(ID2D1DeviceContext* context, ID2D1Brush* brush, const std::vector<EditableColor>& colors) const;
+        const EditableChange& Change() const
+        {
+            return m_change;
+        }
+
+        // Where the lines that hold [start, end) begin and end, in DIPs.
+        void RangeExtent(int32_t start, int32_t end, float& top, float& bottom) const;
+
+        // The lines that reach into [top, bottom), in DIPs.
+        HRESULT Draw(ID2D1DeviceContext* context, ID2D1Brush* brush, const std::vector<EditableColor>& colors, float top, float bottom) const;
 
     private:
         // A stretch of the paragraph in one font, one direction, one script and one style,
@@ -258,5 +280,7 @@ namespace winrt::Telegram::Native::implementation
 
         float m_width{ 0 };
         float m_tabStop{ 0 };
+
+        EditableChange m_change;
     };
 }

@@ -114,6 +114,13 @@ namespace Telegram.Native
         // rendering device is replaced - so a brush set on it once never has to be set again.
         Windows.UI.Composition.CompositionDrawingSurface Render(Windows.UI.Color color, Double rasterizationScale);
 
+        // Whether that surface is a virtual one, which a long edited text on the analyzer is
+        // drawn into: only the tiles in the viewport and a margin around it are drawn, so the
+        // caller says where the viewport is, in DIPs from the top of the text, whenever it
+        // moves. Only those tiles are kept.
+        Boolean HasVirtualSurface{ get; };
+        void SetViewport(Double top, Double bottom);
+
         // The size of the text as it was last drawn, in the top left of that surface. The
         // surface is rounded up from it, so this is what says how much of it carries the text.
         Windows.Graphics.SizeInt32 RenderedPixels{ get; };

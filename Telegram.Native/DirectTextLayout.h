@@ -202,6 +202,9 @@ namespace winrt::Telegram::Native::implementation
 
         CompositionDrawingSurface Render(Windows::UI::Color color, double rasterizationScale);
 
+        void SetViewport(double top, double bottom);
+        bool HasVirtualSurface();
+
         // Deterministic teardown, and the reason this is IClosable: the surface holds a region
         // of the device's atlas, which would otherwise be held until the managed wrapper is
         // collected. MUST be called on the thread the surface was created on.
@@ -296,6 +299,27 @@ namespace winrt::Telegram::Native::implementation
         // over: until then nothing is answered from it, as nothing is from m_paragraphs.
         std::unique_ptr<EditableTextLayout> m_previous;
 
+        // The virtual surface a long edited text is drawn into instead, in tiles of
+        // c_tileHeight pixels: which of them are drawn, the run of them kept (the viewport and
+        // a margin), and what changed since the last draw - rows in DIPs, the edit, and the
+        // colours, scale and colour it was drawn with, to compare against.
+        CompositionVirtualDrawingSurface m_virtualSurface{ nullptr };
+        bool m_virtual{ false };
+        std::vector<bool> m_tiles;
+        int32_t m_windowFrom{ 0 };
+        int32_t m_windowTo{ 0 };
+        double m_viewportTop{ 0 };
+        double m_viewportBottom{ 0 };
+
+        bool m_dirtyAll{ true };
+        float m_dirtyTop{ 0 };
+        float m_dirtyBottom{ 0 };
+        int32_t m_edits{ 0 };
+        EditableChange m_edit;
+        std::vector<ColorRange> m_drawnColors;
+        Windows::UI::Color m_drawnColor{};
+        double m_drawnScale{ 0 };
+
         // Whether the last build had to leave anything out for MaxLines.
         bool m_trimmed{ false };
 
@@ -327,7 +351,16 @@ namespace winrt::Telegram::Native::implementation
 
         // Drawing. Not projected: nothing outside this library has a device context to hand.
         HRESULT Draw(ID2D1DeviceContext* context, ID2D1Brush* brush);
-        HRESULT DrawEditable(ID2D1DeviceContext* context, ID2D1Brush* brush);
+        HRESULT DrawEditable(ID2D1DeviceContext* context, ID2D1Brush* brush, float top, float bottom);
+
+        bool UsesVirtualSurface(Windows::Graphics::SizeInt32 pixels);
+        void TakeChange();
+        void MarkDirty(float top, float bottom);
+        void MarkRangeDirty(int32_t start, int32_t end);
+        void DiffColors();
+        CompositionDrawingSurface RenderVirtual(Windows::Graphics::SizeInt32 pixels);
+        HRESULT DrawVirtual();
+        HRESULT DrawRows(int32_t top, int32_t bottom);
         void DrawScript(ID2D1DeviceContext* context, const Paragraph& paragraph, DWRITE_TEXT_RANGE range, bool superscript, ID2D1Brush* brush);
         HRESULT ApplyFallback(IDWriteTextLayout* layout);
 

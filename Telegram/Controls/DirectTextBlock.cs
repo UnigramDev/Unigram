@@ -592,14 +592,11 @@ namespace Telegram.Controls
                 _emoji[i].Visibility = Visibility.Collapsed;
             }
 
+            UpdateViewportRegistration();
+
             if (ranges?.Count > 0)
             {
-                RegisterViewportChanged();
                 UpdateViewport();
-            }
-            else
-            {
-                UnregisterViewportChanged();
             }
 
             Invalidate();
@@ -646,6 +643,48 @@ namespace Telegram.Controls
             _viewportBottom = bottom;
 
             UpdateViewport();
+
+            // In this element's coordinates, which are the layout's from top to bottom: only
+            // the horizontal offset differs.
+            if (_tracksViewport && bottom > top)
+            {
+                _layout?.SetViewport(top, bottom);
+            }
+        }
+
+        // Whether the layout draws into a virtual surface, which draws only what is in view and
+        // so has to be told what that is.
+        private bool _tracksViewport;
+
+        private void TrackViewport(bool track)
+        {
+            if (_tracksViewport != track)
+            {
+                // Already registered for the players, the viewport is known and no raise for
+                // it is coming; otherwise registering brings one.
+                var known = _ranges?.Count > 0;
+
+                _tracksViewport = track;
+                UpdateViewportRegistration();
+
+                if (track && known && _viewportBottom > _viewportTop)
+                {
+                    _layout?.SetViewport(_viewportTop, _viewportBottom);
+                }
+            }
+        }
+
+        // One registration for both that want the viewport: the players and the surface.
+        private void UpdateViewportRegistration()
+        {
+            if (_ranges?.Count > 0 || _tracksViewport)
+            {
+                RegisterViewportChanged();
+            }
+            else
+            {
+                UnregisterViewportChanged();
+            }
         }
 
         // Never from a layout pass: a player told it became visible builds its presentation,
@@ -2862,6 +2901,9 @@ namespace Telegram.Controls
 
             _renderRetries = 0;
 
+            // A virtual surface draws only what is in view, so it has to be told what that is.
+            TrackViewport(Layout().HasVirtualSurface);
+
             _renderedSize = size;
             _renderedScale = scale;
             _renderedColor = color;
@@ -3024,6 +3066,7 @@ namespace Telegram.Controls
 
             _spoilerBounds = default;
 
+            _tracksViewport = false;
             UnregisterViewportChanged();
 
             if (_spoilerPresenter != null)
