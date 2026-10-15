@@ -150,12 +150,6 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public bool HasCredit { get; set; } = true;
 
-        /// <summary>
-        /// Sent as an expandable quote while it stays open for editing: how a message's text
-        /// keeps the flag, where <see cref="IsCollapsed"/> would make the quote uneditable.
-        /// </summary>
-        public bool IsExpandable { get; set; }
-
         /// <summary>Text and nothing else, which is all an expandable quote can hold.</summary>
         public bool IsCollapsible => Children.Count > 0 && Children.TrueForAll(IsParagraph);
 
@@ -187,8 +181,7 @@ namespace Telegram.Controls.RichEditor
         public override RichBlock Clone() => new RichBlockQuote(CloneAll(Children), Credit.Clone())
         {
             IsCollapsed = IsCollapsed,
-            HasCredit = HasCredit,
-            IsExpandable = IsExpandable
+            HasCredit = HasCredit
         };
     }
 

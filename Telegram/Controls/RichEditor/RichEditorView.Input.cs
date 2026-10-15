@@ -1281,13 +1281,6 @@ namespace Telegram.Controls.RichEditor
 
             var leaf = _engine.Focus.Leaf;
 
-            if (_engine.Schema != null && _engine.SelectedNode == null && leaf.Owner?.Parent is RichBlockQuote message)
-            {
-                _engine.SetQuoteCollapsed(message, !message.IsExpandable);
-                Peer?.Announce(message.IsExpandable ? Strings.AccDescrIVCollapsed : Strings.AccDescrIVExpanded);
-                return true;
-            }
-
             if (_engine.SelectedNode == null && leaf.Owner?.Parent is RichBlockQuote { IsCollapsible: true } quote)
             {
                 _engine.SetQuoteCollapsed(quote, true);

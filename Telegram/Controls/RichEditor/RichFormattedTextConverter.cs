@@ -110,11 +110,16 @@ namespace Telegram.Controls.RichEditor
                 {
                     var block = new RichBlockQuote
                     {
-                        HasCredit = false,
-                        IsExpandable = entities[quote].Type is TextEntityTypeExpandableBlockQuote
+                        HasCredit = false
                     };
 
                     AddLines(block.Children, s, entities, lineStarts, codeOf, line, next, schema);
+
+                    if (entities[quote].Type is TextEntityTypeExpandableBlockQuote)
+                    {
+                        Collapse(block);
+                    }
+
                     blocks.Add(block);
                 }
                 else
@@ -139,6 +144,28 @@ namespace Telegram.Controls.RichEditor
         private static int LineEnd(List<int> lineStarts, int line, int length)
         {
             return line + 1 < lineStarts.Count ? lineStarts[line + 1] - 1 : length;
+        }
+
+        // An expandable quote arrives collapsed, as a rich message's does, and a collapsed quote
+        // holds one text: its lines are joined with line breaks, as collapsing it joins them.
+        // One with code in it cannot collapse, and stays open.
+        private static void Collapse(RichBlockQuote quote)
+        {
+            if (!quote.IsCollapsible)
+            {
+                return;
+            }
+
+            var text = ((RichParagraphBlock)quote.Children[0]).Text;
+
+            for (int i = 1; i < quote.Children.Count; i++)
+            {
+                text.Insert(text.Length, "\n", RichMarks.None, null);
+                text.Append(((RichParagraphBlock)quote.Children[i]).Text);
+            }
+
+            quote.Children.RemoveRange(1, quote.Children.Count - 1);
+            quote.IsCollapsed = true;
         }
 
         private static void AddLines(List<RichBlock> target, string s, Vector<TextEntity> entities, List<int> lineStarts, int[] codeOf, int from, int to, RichSchema schema)
@@ -363,7 +390,7 @@ namespace Telegram.Controls.RichEditor
 
                         if (text.Length > start)
                         {
-                            entities.Add(new TextEntity(start, text.Length - start, quote.IsExpandable || quote.IsCollapsed
+                            entities.Add(new TextEntity(start, text.Length - start, quote.IsCollapsed
                                 ? new TextEntityTypeExpandableBlockQuote()
                                 : new TextEntityTypeBlockQuote()));
                         }

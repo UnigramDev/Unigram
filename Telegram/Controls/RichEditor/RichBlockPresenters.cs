@@ -12,6 +12,7 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -228,7 +229,7 @@ namespace Telegram.Controls.RichEditor
 
             if (Toggle != null)
             {
-                Windows.UI.Xaml.Automation.AutomationProperties.SetName(Toggle, quote.IsCollapsed ? Strings.AccDescrExpandPanel : Strings.AccDescrCollapsePanel);
+                AutomationProperties.SetName(Toggle, quote.IsCollapsed ? Strings.AccDescrExpandPanel : Strings.AccDescrCollapsePanel);
             }
 
             Sync(Children, quote.Children);
@@ -257,11 +258,7 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            // A message's quote never collapses while it is edited; the chevron only shows that
-            // it will be sent expandable, and takes that back.
-            var visibility = Owner.Engine?.Schema != null
-                ? quote.IsExpandable ? Visibility.Visible : Visibility.Collapsed
-                : quote.IsCollapsed || (quote.IsCollapsible && IsLongerThanCollapsed(quote))
+            var visibility = quote.IsCollapsed || (quote.IsCollapsible && IsLongerThanCollapsed(quote))
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -309,7 +306,7 @@ namespace Telegram.Controls.RichEditor
         {
             if (Block is RichBlockQuote quote)
             {
-                Owner.Engine.SetQuoteCollapsed(quote, Owner.Engine.Schema != null ? !quote.IsExpandable : !quote.IsCollapsed);
+                Owner.Engine.SetQuoteCollapsed(quote, !quote.IsCollapsed);
             }
         }
     }
@@ -456,7 +453,7 @@ namespace Telegram.Controls.RichEditor
 
                         if (_item.Children.Count > 0 && _item.Children[0] is RichParagraphBlock first)
                         {
-                            Windows.UI.Xaml.Automation.AutomationProperties.SetName(CheckBox, first.Text.ToPlainText());
+                            AutomationProperties.SetName(CheckBox, first.Text.ToPlainText());
                         }
                     }
                     break;
@@ -602,7 +599,7 @@ namespace Telegram.Controls.RichEditor
             if (Toggle != null)
             {
                 Toggle.IsOpen = details.IsOpen;
-                Windows.UI.Xaml.Automation.AutomationProperties.SetName(Toggle, details.IsOpen ? Strings.AccDescrCollapsePanel : Strings.AccDescrExpandPanel);
+                AutomationProperties.SetName(Toggle, details.IsOpen ? Strings.AccDescrCollapsePanel : Strings.AccDescrExpandPanel);
             }
 
             Owner.BindLeaf(Header, details.Header, RichLeafAppearance.DetailsHeader, Strings.ArticleHintDetailsTitle);

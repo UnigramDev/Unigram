@@ -126,7 +126,6 @@ namespace Telegram.Controls.RichEditor
 
                         quote.Children.Clear();
                         quote.Children.AddRange(children);
-                        quote.IsCollapsed = false;
                         quote.HasCredit = false;
 
                         result.Add(quote);

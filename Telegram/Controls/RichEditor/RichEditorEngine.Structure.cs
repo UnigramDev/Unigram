@@ -633,19 +633,6 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public void SetQuoteCollapsed(RichBlockQuote quote, bool collapsed)
         {
-            // A message's quote stays editable; it is only marked to be sent expandable.
-            if (Schema != null)
-            {
-                if (quote.IsExpandable != collapsed)
-                {
-                    BeginChange();
-                    quote.IsExpandable = collapsed;
-                    EndChange();
-                }
-
-                return;
-            }
-
             if (quote.IsCollapsed == collapsed || (collapsed && !quote.IsCollapsible))
             {
                 return;
