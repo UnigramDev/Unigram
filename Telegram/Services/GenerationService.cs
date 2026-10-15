@@ -14,6 +14,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Native.Opus;
@@ -320,6 +321,12 @@ namespace Telegram.Services
 
                     if (generation.RequiresRender)
                     {
+                        // A photo that would go out without one of its stickers fails instead.
+                        if (!await PaintEntityRenderer.LoadFilesAsync(_clientService, generation.Entities))
+                        {
+                            throw new InvalidOperationException("A sticker drawn on the photo could not be downloaded.");
+                        }
+
                         await ImageHelper.CropRotatedAsync(file, temp, generation, maxSize, generation.MinimumSize);
                     }
                     else

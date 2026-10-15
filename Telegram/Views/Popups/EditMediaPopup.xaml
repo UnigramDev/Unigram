@@ -422,25 +422,6 @@
                                       ToolTipService.ToolTip="{CustomResource AccDescrPlaceText}"
                                       Margin="0,0,-4,0" />
             </StackPanel>
-
-            <!-- In place of the brushes on the sticker tab. -->
-            <StackPanel x:Name="StickerOptions"
-                        Orientation="Horizontal"
-                        Visibility="Collapsed"
-                        Grid.Column="3"
-                        Grid.ColumnSpan="6">
-                <controls:GlyphButton Click="FlipSticker_Click"
-                                      Glyph="&#xE908;"
-                                      AutomationProperties.Name="{CustomResource AccDescrFlip}"
-                                      ToolTipService.ToolTip="{CustomResource AccDescrFlip}"
-                                      Margin="0,0,-4,0" />
-
-                <controls:GlyphButton Click="AddSticker_Click"
-                                      Glyph="&#xE710;"
-                                      AutomationProperties.Name="{CustomResource AccDescrStickers}"
-                                      ToolTipService.ToolTip="{CustomResource AccDescrStickers}"
-                                      Margin="0,0,-4,0" />
-            </StackPanel>
         </Grid>
 
         <controls:PencilWeightSlider x:Name="WeightSlider"
@@ -553,6 +534,7 @@
                                             ToolTipService.ToolTip="{CustomResource PhotoEditorSticker}">
                     <FlyoutBase.AttachedFlyout>
                         <Flyout x:Name="StickerFlyout"
+                                Opened="StickerFlyout_Opened"
                                 Placement="Top"
                                 ShowMode="Transient">
                             <Flyout.FlyoutPresenterStyle>
@@ -562,11 +544,48 @@
                                             Value="0" />
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
-                            <drawers:StickerDrawer x:Name="StickerPicker"
-                                                   x:Load="False"
-                                                   ItemClick="StickerPicker_ItemClick"
-                                                   Width="320"
-                                                   Height="360" />
+                            <Grid Width="320"
+                                  Height="400">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <controls:TopNavView x:Name="PickerTabs"
+                                                     SelectionChanged="PickerTabs_SelectionChanged"
+                                                     HorizontalAlignment="Center"
+                                                     Height="40"
+                                                     Grid.Row="1">
+                                    <controls:TopNavView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </controls:TopNavView.ItemsPanel>
+                                    <controls:TopNavView.ItemContainerStyle>
+                                        <Style TargetType="controls:TopNavViewItem">
+                                            <Setter Property="Padding"
+                                                    Value="8,1,8,0" />
+                                            <Setter Property="BorderThickness"
+                                                    Value="0,4,0,0" />
+                                        </Style>
+                                    </controls:TopNavView.ItemContainerStyle>
+                                    <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
+                                    <controls:TopNavViewItem Content="{CustomResource Emoji}" />
+                                    <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
+                                </controls:TopNavView>
+
+                                <drawers:StickerDrawer x:Name="StickerPicker"
+                                                       x:Load="False"
+                                                       ItemClick="StickerPicker_ItemClick" />
+
+                                <drawers:ChatPhotoEmojiDrawer x:Name="EmojiPicker"
+                                                              x:Load="False"
+                                                              ItemClick="EmojiPicker_ItemClick" />
+
+                                <drawers:AnimationDrawer x:Name="GifPicker"
+                                                         x:Load="False"
+                                                         ItemClick="GifPicker_ItemClick" />
+                            </Grid>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
                 </controls:GlyphToggleButton>

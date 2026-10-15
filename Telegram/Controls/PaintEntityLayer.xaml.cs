@@ -6,6 +6,7 @@
 //
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
@@ -19,7 +20,9 @@ using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Native;
+using Telegram.Services;
 using Telegram.Streams;
+using Telegram.Td.Api;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
@@ -147,6 +150,11 @@ namespace Telegram.Controls
         public event EventHandler<PaintEntityEventArgs> EntityDeleted;
 
         public PaintEntity Selected => _selected;
+
+        /// <summary>
+        /// Downloads the files of stickers and GIFs as they are shown.
+        /// </summary>
+        public IClientService ClientService { get; set; }
 
         #region HandleBrush
 
@@ -374,7 +382,7 @@ namespace Telegram.Controls
         // What the object covers, in the renderer's units; false while a text has no layout yet.
         private bool TryGetBounds(PaintEntity entity, out Rect bounds)
         {
-            if (entity.Type == PaintEntityType.Sticker)
+            if (entity.Type != PaintEntityType.Text)
             {
                 bounds = PaintEntityRenderer.GetStickerBounds(entity);
                 return true;
@@ -391,7 +399,7 @@ namespace Telegram.Controls
         {
             var unit = GetUnit(entity);
 
-            if (entity.Type == PaintEntityType.Sticker)
+            if (entity.Type != PaintEntityType.Text)
             {
                 var radius = Math.Max(bounds.Width, bounds.Height) / 2 + FramePaddingX * unit;
                 var x = bounds.X + bounds.Width / 2;
@@ -529,14 +537,28 @@ namespace Telegram.Controls
                 RenderTransform = new MatrixTransform()
             };
 
-            if (entity.Type == PaintEntityType.Sticker)
+            if (entity.Type == PaintEntityType.Animation)
+            {
+                // Played as the GIF drawer plays them: uncached, at their own size.
+                element.Child = new AnimatedImage
+                {
+                    AutoPlay = true,
+                    IsCachingEnabled = false,
+                    ResizeMode = AnimatedImageResizeMode.Fill,
+                    FrameSize = new Size(0, 0),
+                    DecodeFrameType = DecodePixelType.Logical,
+                    Source = CreateSource(entity)
+                };
+            }
+            else if (entity.Type != PaintEntityType.Text)
             {
                 element.Child = new AnimatedImage
                 {
                     AutoPlay = true,
                     FrameSize = new Size(512, 512),
                     DecodeFrameType = DecodePixelType.Physical,
-                    Source = new LocalFileSource(entity.StickerPath)
+                    ReplacementColor = entity.StickerTinted ? new SolidColorBrush(Colors.White) : null,
+                    Source = CreateSource(entity)
                 };
             }
             else
@@ -555,6 +577,20 @@ namespace Telegram.Controls
 
             UpdateElement(entity, true);
             Canvas.Invalidate();
+        }
+
+        // Shown as soon as the file is on disk, downloading it if it is not yet.
+        private AnimatedImageSource CreateSource(PaintEntity entity)
+        {
+            if (ClientService == null || entity.StickerFile == null)
+            {
+                return null;
+            }
+
+            return new DelayedFileSource(ClientService, entity.StickerFile)
+            {
+                NeedsRepainting = entity.StickerTinted
+            };
         }
 
         private void DetachElement(Border element)
@@ -633,7 +669,7 @@ namespace Telegram.Controls
 
             float raster;
 
-            if (entity.Type == PaintEntityType.Sticker)
+            if (entity.Type != PaintEntityType.Text)
             {
                 raster = k;
             }
@@ -763,9 +799,10 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Places a sticker, whose file is already on disk, where the view is looking.
+        /// Places a sticker, a custom emoji or a GIF where the view is looking. A GIF is placed
+        /// twice as large as a sticker.
         /// </summary>
-        public void AddSticker(string path, int fileId, int width, int height)
+        public void AddSticker(PaintEntityType type, File file, int width, int height, bool tinted)
         {
             EndEditing();
 
@@ -776,14 +813,15 @@ namespace Telegram.Controls
 
             var entity = new PaintEntity
             {
-                Type = PaintEntityType.Sticker,
-                StickerPath = path,
-                StickerFileId = fileId,
+                Type = type,
+                StickerFile = file,
+                StickerRemoteId = file.Remote.Id,
                 StickerWidth = width,
                 StickerHeight = height,
+                StickerTinted = tinted,
                 Position = position,
                 Rotation = GetRotation(0),
-                Scale = scale * 0.75f
+                Scale = scale * (type == PaintEntityType.Animation ? 1.5f : 0.75f)
             };
 
             AddEntity(entity);
@@ -873,7 +911,7 @@ namespace Telegram.Controls
         /// </summary>
         public void FlipSelected()
         {
-            if (_selected?.Type != PaintEntityType.Sticker)
+            if (_selected == null || _selected.Type == PaintEntityType.Text)
             {
                 return;
             }
@@ -1674,7 +1712,7 @@ namespace Telegram.Controls
             var shadowColor = Color.FromArgb((byte)(0x50 * progress), 0, 0, 0);
             var frameColor = Color.FromArgb(alpha, 255, 255, 255);
 
-            if (entity.Type == PaintEntityType.Sticker)
+            if (entity.Type != PaintEntityType.Text)
             {
                 var circle = (float)frame.Width / 2;
 
@@ -2324,6 +2362,22 @@ namespace Telegram.Controls
             }
         }
 
+        // Every colour white, every alpha kept.
+        private static ColorMatrixEffect CreateWhite(ICanvasImage source)
+        {
+            return new ColorMatrixEffect
+            {
+                Source = source,
+                ColorMatrix = new Matrix5x4
+                {
+                    M44 = 1,
+                    M51 = 1,
+                    M52 = 1,
+                    M53 = 1
+                }
+            };
+        }
+
         /// <summary>
         /// A sticker sits in a square half the image wide, as large as its shape allows.
         /// </summary>
@@ -2340,6 +2394,52 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// Brings every sticker's and GIF's file to disk, looking it up by its remote id when the
+        /// edit was read back without it. False when one cannot be had.
+        /// </summary>
+        public static async Task<bool> LoadFilesAsync(IClientService clientService, IReadOnlyList<PaintEntity> entities)
+        {
+            if (entities == null)
+            {
+                return true;
+            }
+
+            foreach (var entity in entities)
+            {
+                if (entity.Type == PaintEntityType.Text)
+                {
+                    continue;
+                }
+
+                if (entity.StickerFile == null && !string.IsNullOrEmpty(entity.StickerRemoteId))
+                {
+                    var response = await clientService.SendAsync(new GetRemoteFile(entity.StickerRemoteId, null));
+                    entity.StickerFile = response as File;
+                }
+
+                var file = entity.StickerFile;
+                if (file == null)
+                {
+                    return false;
+                }
+
+                if (!file.Local.IsDownloadingCompleted)
+                {
+                    file = await clientService.DownloadFileAsync(file, 32);
+                }
+
+                if (file?.Local.IsDownloadingCompleted != true)
+                {
+                    return false;
+                }
+
+                entity.StickerFile = file;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Decodes each sticker's first frame at about the size it will be drawn, given how many
         /// output pixels a unit of the renderer's comes to at a scale of one.
         /// </summary>
@@ -2349,7 +2449,8 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (entity.Type != PaintEntityType.Sticker || string.IsNullOrEmpty(entity.StickerPath))
+                var file = entity.StickerFile;
+                if (entity.Type == PaintEntityType.Text || file?.Local.IsDownloadingCompleted != true)
                 {
                     continue;
                 }
@@ -2357,7 +2458,10 @@ namespace Telegram.Controls
                 var bounds = GetStickerBounds(entity);
                 var side = (int)Math.Clamp(Math.Max(bounds.Width, bounds.Height) * entity.Scale * pixelsPerUnit, 64, 1024);
 
-                var bitmap = await Task.Run(() => DecodeSticker(creator, entity.StickerPath, side));
+                var path = file.Local.Path;
+                var size = file.Size > 0 ? file.Size : file.Local.DownloadedSize;
+
+                var bitmap = await Task.Run(() => DecodeSticker(creator, path, size, side));
                 if (bitmap != null)
                 {
                     bitmaps ??= new Dictionary<PaintEntity, CanvasBitmap>();
@@ -2369,7 +2473,7 @@ namespace Telegram.Controls
         }
 
         // A sticker that cannot be read is left out of the photo rather than failing it.
-        private static CanvasBitmap DecodeSticker(ICanvasResourceCreator creator, string path, int side)
+        private static CanvasBitmap DecodeSticker(ICanvasResourceCreator creator, string path, long size, int side)
         {
             try
             {
@@ -2398,7 +2502,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    using var animation = VideoAnimation.LoadFromFile(new LocalFileSource(path), false, false, false);
+                    using var animation = VideoAnimation.LoadFromFile(new LocalFileSource(path, size), false, false, false);
                     if (animation == null || animation.PixelWidth <= 0 || animation.PixelHeight <= 0)
                     {
                         return null;
@@ -2433,7 +2537,7 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (entity.Type == PaintEntityType.Sticker)
+                if (entity.Type != PaintEntityType.Text)
                 {
                     if (stickers != null && stickers.TryGetValue(entity, out CanvasBitmap bitmap))
                     {
@@ -2441,7 +2545,17 @@ namespace Telegram.Controls
                         var previous = session.Transform;
 
                         session.Transform = GetTransform(entity, bounds, imageSize, mirrored) * previous;
-                        session.DrawImage(bitmap, bounds, bitmap.Bounds);
+
+                        if (entity.StickerTinted)
+                        {
+                            using var white = CreateWhite(bitmap);
+                            session.DrawImage(white, bounds, bitmap.Bounds);
+                        }
+                        else
+                        {
+                            session.DrawImage(bitmap, bounds, bitmap.Bounds);
+                        }
+
                         session.Transform = previous;
                     }
 

@@ -65,13 +65,13 @@ namespace Telegram.Services.Factories
 
             foreach (var entity in generation.Entities)
             {
-                if (entity.Type == PaintEntityType.Sticker && entity.StickerFileId != 0)
+                if (entity.Type == PaintEntityType.Sticker && entity.StickerFile is { } file)
                 {
                     files ??= new List<int>();
 
-                    if (!files.Contains(entity.StickerFileId))
+                    if (!files.Contains(file.Id))
                     {
-                        files.Add(entity.StickerFileId);
+                        files.Add(file.Id);
                     }
                 }
             }

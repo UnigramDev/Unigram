@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Text.Json.Serialization;
 using Telegram.Controls;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 
@@ -32,7 +34,16 @@ namespace Telegram.Entities
     public enum PaintEntityType
     {
         Text,
-        Sticker
+
+        /// <summary>
+        /// A sticker or a custom emoji.
+        /// </summary>
+        Sticker,
+
+        /// <summary>
+        /// A GIF, which goes into the photo like a sticker but is not one.
+        /// </summary>
+        Animation
     }
 
     /// <summary>
@@ -89,16 +100,22 @@ namespace Telegram.Entities
         public bool Mirror { get; set; }
 
         /// <summary>
-        /// A sticker's file, on disk before the sticker is placed: the photo is drawn where no
-        /// client is at hand to download it.
+        /// A sticker's or a GIF's file. Never serialized: the photo may be generated after a
+        /// restart, when only <see cref="StickerRemoteId"/> still names it.
         /// </summary>
-        public string StickerPath { get; set; }
+        [JsonIgnore]
+        public File StickerFile { get; set; }
 
-        public int StickerFileId { get; set; }
+        public string StickerRemoteId { get; set; }
 
         public int StickerWidth { get; set; }
 
         public int StickerHeight { get; set; }
+
+        /// <summary>
+        /// Drawn white, as a custom emoji meant to take the text's colour is.
+        /// </summary>
+        public bool StickerTinted { get; set; }
 
         public string Text { get; set; }
 

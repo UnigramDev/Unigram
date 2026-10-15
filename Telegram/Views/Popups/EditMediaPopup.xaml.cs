@@ -23,6 +23,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -57,6 +58,7 @@ namespace Telegram.Views.Popups
         private PencilTool _tool;
 
         private bool _weightDragging;
+        private bool _accepting;
 
         // Strokes and placed objects undo as one history, newest last. An entry is the object its
         // undo takes away, or null for a stroke, which the canvas keeps the list of.
@@ -71,6 +73,7 @@ namespace Telegram.Views.Popups
             _clientService = clientService;
 
             Canvas.Strokes = media.EditState.Strokes;
+            Entities.ClientService = clientService;
             Entities.Items = media.EditState.Entities;
 
             Cropper.SetMask(mask);
@@ -141,6 +144,8 @@ namespace Telegram.Views.Popups
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             StickerPicker?.Deactivate();
+            EmojiPicker?.Deactivate();
+            GifPicker?.Deactivate();
 
             if (_player != null)
             {
@@ -424,10 +429,26 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void Accept_Click(object sender, RoutedEventArgs e)
+        private async void Accept_Click(object sender, RoutedEventArgs e)
         {
             if (Cropper.IsCropEnabled)
             {
+                // Waiting for the files below leaves room for a second press.
+                if (_accepting)
+                {
+                    return;
+                }
+
+                _accepting = true;
+
+                var entities = Entities.Items;
+
+                // The preview drawn as the editor closes needs every sticker's file on disk.
+                if (_clientService != null)
+                {
+                    await PaintEntityRenderer.LoadFilesAsync(_clientService, entities);
+                }
+
                 var rect = Cropper.CropRectangle;
 
                 TimeSpan trimStartTime = default;
@@ -445,7 +466,7 @@ namespace Telegram.Views.Popups
                     Rectangle = rect,
                     Proportions = Cropper.Proportions,
                     Strokes = Canvas.Strokes,
-                    Entities = Entities.Items,
+                    Entities = entities,
                     Flip = Cropper.Flip,
                     Rotation = Cropper.Orientation,
                     Angle = Cropper.Angle,
@@ -668,7 +689,7 @@ namespace Telegram.Views.Popups
             // drawing.
             var selected = Entities.Selected;
             var text = selected?.Type == PaintEntityType.Text;
-            var sticker = selected?.Type == PaintEntityType.Sticker;
+            var sticker = selected != null && selected.Type != PaintEntityType.Text;
 
             DrawTab.IsChecked = selected == null;
             StickerTab.IsChecked = sticker;
@@ -687,19 +708,18 @@ namespace Telegram.Views.Popups
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            StickerOptions.Visibility = sticker
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            // A sticker has no tools: no colour or size, flipping is in its menu, and another one
+            // comes from the tab.
+            DrawToolbar.Visibility = sticker
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
-            // A sticker has neither colour nor size.
             WeightSlider.Visibility = sticker
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
             if (sticker)
             {
-                ColorButton.IsEnabled = false;
-                ColorSwatchPanel.Opacity = 0.4;
                 return;
             }
 
@@ -888,55 +908,99 @@ namespace Telegram.Views.Popups
             UpdateTools();
         }
 
-        private void AddSticker_Click(object sender, RoutedEventArgs e)
-        {
-            ShowStickerPicker();
-        }
-
-        private void FlipSticker_Click(object sender, RoutedEventArgs e)
-        {
-            Entities.FlipSelected();
-        }
-
         private void ShowStickerPicker()
         {
-            if (_clientService == null)
+            if (_clientService != null)
+            {
+                FlyoutBase.ShowAttachedFlyout(StickerTab);
+            }
+        }
+
+        // The first tab is chosen only once the flyout is open: before that its content is not in
+        // the tree, and FindName cannot load a drawer into it.
+        private void StickerFlyout_Opened(object sender, object e)
+        {
+            if (PickerTabs.SelectedIndex < 0)
+            {
+                PickerTabs.SelectedIndex = 0;
+            }
+        }
+
+        // Each drawer is made the first time its tab is opened.
+        private void PickerTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var index = PickerTabs.SelectedIndex;
+            if (_clientService == null || index < 0)
             {
                 return;
             }
 
-            if (StickerPicker == null)
+            if (index == 0 && StickerPicker == null)
             {
                 FindName(nameof(StickerPicker));
 
                 StickerPicker.DataContext = StickerDrawerViewModel.Create(_clientService.Session);
                 StickerPicker.Activate(null, EmojiSearchType.Default);
             }
+            else if (index == 1 && EmojiPicker == null)
+            {
+                // The chat photo mode lists custom emoji only.
+                FindName(nameof(EmojiPicker));
 
-            FlyoutBase.ShowAttachedFlyout(StickerTab);
+                EmojiPicker.DataContext = EmojiDrawerViewModel.Create(_clientService.Session, EmojiDrawerMode.ChatPhoto);
+                EmojiPicker.Activate(null);
+            }
+            else if (index == 2 && GifPicker == null)
+            {
+                FindName(nameof(GifPicker));
+
+                GifPicker.DataContext = AnimationDrawerViewModel.Create(_clientService.Session);
+                GifPicker.Activate(null);
+            }
+
+            StickerPicker?.Visibility = index == 0 ? Visibility.Visible : Visibility.Collapsed;
+            EmojiPicker?.Visibility = index == 1 ? Visibility.Visible : Visibility.Collapsed;
+            GifPicker?.Visibility = index == 2 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void StickerPicker_ItemClick(object sender, StickerDrawerItemClickEventArgs e)
+        private void StickerPicker_ItemClick(object sender, StickerDrawerItemClickEventArgs e)
+        {
+            AddSticker(e.Sticker);
+        }
+
+        private void EmojiPicker_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
+        {
+            if (e.ClickedItem is StickerViewModel sticker)
+            {
+                AddSticker(sticker);
+            }
+        }
+
+        private void GifPicker_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Animation animation)
+            {
+                AddSticker(PaintEntityType.Animation, animation.AnimationValue, animation.Width, animation.Height, false);
+            }
+        }
+
+        private void AddSticker(Sticker sticker)
+        {
+            if (sticker?.StickerValue is File file)
+            {
+                // A custom emoji that takes the text's colour is shown white.
+                var tinted = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+                AddSticker(PaintEntityType.Sticker, file, sticker.Width, sticker.Height, tinted);
+            }
+        }
+
+        private void AddSticker(PaintEntityType type, File file, int width, int height, bool tinted)
         {
             StickerFlyout.Hide();
 
-            var sticker = e.Sticker;
-            var file = sticker?.StickerValue;
-
-            if (file == null)
+            if (file != null)
             {
-                return;
-            }
-
-            // On disk before it is placed, since the photo is drawn from the file.
-            if (!file.Local.IsDownloadingCompleted)
-            {
-                file = await _clientService.DownloadFileAsync(file, 32);
-            }
-
-            if (file?.Local.IsDownloadingCompleted == true)
-            {
-                Entities.AddSticker(file.Local.Path, file.Id, sticker.Width, sticker.Height);
+                Entities.AddSticker(type, file, width, height, tinted);
             }
         }
 
