@@ -49,7 +49,7 @@ namespace Telegram.Services
                 var media = await picker.PickSingleMediaAsync(navigation.XamlRoot);
                 if (media is StoragePhoto or StorageVideo)
                 {
-                    var popup = new EditMediaPopup(navigation.XamlRoot, media, ImageCropperMask.Ellipse);
+                    var popup = new EditMediaPopup(navigation.XamlRoot, _clientService, media, ImageCropperMask.Ellipse);
 
                     var confirm = await popup.ShowAsync();
                     if (confirm == ContentDialogResult.Primary)

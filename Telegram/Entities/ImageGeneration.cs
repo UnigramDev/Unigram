@@ -31,7 +31,8 @@ namespace Telegram.Entities
 
     public enum PaintEntityType
     {
-        Text
+        Text,
+        Sticker
     }
 
     /// <summary>
@@ -81,6 +82,23 @@ namespace Telegram.Entities
         /// Clockwise, in radians, against the upright image.
         /// </summary>
         public float Rotation { get; set; }
+
+        /// <summary>
+        /// Flipped by the person, which only a sticker can be.
+        /// </summary>
+        public bool Mirror { get; set; }
+
+        /// <summary>
+        /// A sticker's file, on disk before the sticker is placed: the photo is drawn where no
+        /// client is at hand to download it.
+        /// </summary>
+        public string StickerPath { get; set; }
+
+        public int StickerFileId { get; set; }
+
+        public int StickerWidth { get; set; }
+
+        public int StickerHeight { get; set; }
 
         public string Text { get; set; }
 

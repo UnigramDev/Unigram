@@ -1353,7 +1353,7 @@ namespace Telegram.Views.Popups
                     ConnectedAnimationServiceEx.PrepareToAnimate("EditMediaPopup", parent);
                 }
 
-                var popup = new EditMediaPopup(XamlRoot, media);
+                var popup = new EditMediaPopup(XamlRoot, ViewModel.ClientService, media);
 
                 var confirm = await popup.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -1374,7 +1374,7 @@ namespace Telegram.Views.Popups
                 ConnectedAnimationServiceEx.PrepareToAnimate("EditMediaPopup", parent);
             }
 
-            var popup = new EditMediaPopup(XamlRoot, args);
+            var popup = new EditMediaPopup(XamlRoot, ViewModel.ClientService, args);
 
             var confirm = await popup.ShowAsync();
             if (confirm == ContentDialogResult.Primary)

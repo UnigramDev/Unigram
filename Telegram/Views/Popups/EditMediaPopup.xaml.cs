@@ -13,6 +13,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
@@ -22,6 +23,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
+using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -41,6 +43,7 @@ namespace Telegram.Views.Popups
         public StorageMedia ResultMedia { get; private set; }
 
         private readonly ImageCropperMask _mask;
+        private readonly IClientService _clientService;
 
         private readonly StorageFile _file;
         private readonly StorageMedia _media;
@@ -60,10 +63,12 @@ namespace Telegram.Views.Popups
         private readonly List<PaintEntity> _undo = new();
         private readonly List<PaintEntity> _redo = new();
 
-        public EditMediaPopup(XamlRoot xamlRoot, StorageMedia media, ImageCropperMask mask = ImageCropperMask.Rectangle)
+        public EditMediaPopup(XamlRoot xamlRoot, IClientService clientService, StorageMedia media, ImageCropperMask mask = ImageCropperMask.Rectangle)
             : base(xamlRoot)
         {
             InitializeComponent();
+
+            _clientService = clientService;
 
             Canvas.Strokes = media.EditState.Strokes;
             Entities.Items = media.EditState.Entities;
@@ -135,6 +140,8 @@ namespace Telegram.Views.Popups
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            StickerPicker?.Deactivate();
+
             if (_player != null)
             {
                 _player.PositionChanged -= Player_PositionChanged;
@@ -638,7 +645,9 @@ namespace Telegram.Views.Popups
         }
 
         // What the colour and size controls edit: the selected text, or else the brush.
-        private PencilTool Slot => Entities.Selected != null ? PencilTool.Text : _tool;
+        private PencilTool Slot => SelectedText != null ? PencilTool.Text : _tool;
+
+        private PaintEntity SelectedText => Entities.Selected is { Type: PaintEntityType.Text } entity ? entity : null;
 
         private void UpdateTools()
         {
@@ -654,27 +663,47 @@ namespace Telegram.Views.Popups
             NeonTool.IsChecked = slot == PencilTool.Neon;
             BlurTool.IsChecked = slot == PencilTool.Blur;
             EraserTool.IsChecked = slot == PencilTool.Eraser;
-            // The text tab is open exactly while a text is selected: opening it places one if
-            // none is, and putting the text away goes back to drawing.
-            var text = slot == PencilTool.Text;
+            // A tab other than Draw is open exactly while an object of its kind is selected:
+            // opening one places an object if none is, and putting the object away goes back to
+            // drawing.
+            var selected = Entities.Selected;
+            var text = selected?.Type == PaintEntityType.Text;
+            var sticker = selected?.Type == PaintEntityType.Sticker;
 
-            DrawTab.IsChecked = !text;
+            DrawTab.IsChecked = selected == null;
+            StickerTab.IsChecked = sticker;
             TextTab.IsChecked = text;
 
             // Hidden rather than collapsed, so the bar keeps its width and the highlight its place.
-            ShowBrush(ToolSelection, !text);
-            ShowBrush(PenTool, !text);
-            ShowBrush(ArrowTool, !text);
-            ShowBrush(MarkerTool, !text);
-            ShowBrush(NeonTool, !text);
-            ShowBrush(BlurTool, !text);
-            ShowBrush(EraserTool, !text);
+            ShowBrush(ToolSelection, selected == null);
+            ShowBrush(PenTool, selected == null);
+            ShowBrush(ArrowTool, selected == null);
+            ShowBrush(MarkerTool, selected == null);
+            ShowBrush(NeonTool, selected == null);
+            ShowBrush(BlurTool, selected == null);
+            ShowBrush(EraserTool, selected == null);
 
             TextOptions.Visibility = text
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            if (Entities.Selected is PaintEntity entity)
+            StickerOptions.Visibility = sticker
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            // A sticker has neither colour nor size.
+            WeightSlider.Visibility = sticker
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            if (sticker)
+            {
+                ColorButton.IsEnabled = false;
+                ColorSwatchPanel.Opacity = 0.4;
+                return;
+            }
+
+            if (selected is PaintEntity entity)
             {
                 WeightSlider.SetRange(PencilTools.GetMinimumWeight(PencilTool.Text), PencilTools.GetMaximumWeight(PencilTool.Text), entity.TextSize);
 
@@ -697,7 +726,7 @@ namespace Telegram.Views.Popups
 
         private void SetColor(Color color)
         {
-            if (Entities.Selected != null)
+            if (SelectedText != null)
             {
                 Entities.SetSelectedColor(color);
             }
@@ -758,7 +787,7 @@ namespace Telegram.Views.Popups
         // Each change also becomes the look of the next new text.
         private void AlignButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Entities.Selected is not PaintEntity entity)
+            if (SelectedText is not PaintEntity entity)
             {
                 return;
             }
@@ -778,7 +807,7 @@ namespace Telegram.Views.Popups
 
         private void FrameButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Entities.Selected is not PaintEntity entity)
+            if (SelectedText is not PaintEntity entity)
             {
                 return;
             }
@@ -793,7 +822,7 @@ namespace Telegram.Views.Popups
 
         private void FontButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Entities.Selected is not PaintEntity entity)
+            if (SelectedText is not PaintEntity entity)
             {
                 return;
             }
@@ -822,7 +851,7 @@ namespace Telegram.Views.Popups
 
         private void FontItem_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not MenuFlyoutItemBase { Tag: PaintTextFont font } || Entities.Selected is not PaintEntity entity)
+            if (sender is not MenuFlyoutItemBase { Tag: PaintTextFont font } || SelectedText is not PaintEntity entity)
             {
                 return;
             }
@@ -842,13 +871,73 @@ namespace Telegram.Views.Popups
 
         private void TextTab_Click(object sender, RoutedEventArgs e)
         {
-            if (Entities.Selected == null)
+            if (SelectedText == null)
             {
                 AddText();
             }
 
             // The tabs only show the selection, which placing the text may not have made.
             UpdateTools();
+        }
+
+        // The picker opens on every press, so another sticker can be added with one already
+        // selected; the tab itself only lights up once one is.
+        private void StickerTab_Click(object sender, RoutedEventArgs e)
+        {
+            ShowStickerPicker();
+            UpdateTools();
+        }
+
+        private void AddSticker_Click(object sender, RoutedEventArgs e)
+        {
+            ShowStickerPicker();
+        }
+
+        private void FlipSticker_Click(object sender, RoutedEventArgs e)
+        {
+            Entities.FlipSelected();
+        }
+
+        private void ShowStickerPicker()
+        {
+            if (_clientService == null)
+            {
+                return;
+            }
+
+            if (StickerPicker == null)
+            {
+                FindName(nameof(StickerPicker));
+
+                StickerPicker.DataContext = StickerDrawerViewModel.Create(_clientService.Session);
+                StickerPicker.Activate(null, EmojiSearchType.Default);
+            }
+
+            FlyoutBase.ShowAttachedFlyout(StickerTab);
+        }
+
+        private async void StickerPicker_ItemClick(object sender, StickerDrawerItemClickEventArgs e)
+        {
+            StickerFlyout.Hide();
+
+            var sticker = e.Sticker;
+            var file = sticker?.StickerValue;
+
+            if (file == null)
+            {
+                return;
+            }
+
+            // On disk before it is placed, since the photo is drawn from the file.
+            if (!file.Local.IsDownloadingCompleted)
+            {
+                file = await _clientService.DownloadFileAsync(file, 32);
+            }
+
+            if (file?.Local.IsDownloadingCompleted == true)
+            {
+                Entities.AddSticker(file.Local.Path, file.Id, sticker.Width, sticker.Height);
+            }
         }
 
         private void AddText_Click(object sender, RoutedEventArgs e)
@@ -872,7 +961,7 @@ namespace Telegram.Views.Popups
 
         private void ColorFlyout_Opening(object sender, object e)
         {
-            var current = Entities.Selected?.Color ?? AppSettings.Pencil.GetColor(Slot);
+            var current = SelectedText?.Color ?? AppSettings.Pencil.GetColor(Slot);
             var colors = new List<SolidColorBrush>();
 
             foreach (var color in PencilSettings.PresetColors)
@@ -909,7 +998,7 @@ namespace Telegram.Views.Popups
                 FindName(nameof(CustomColorPicker));
             }
 
-            CustomColorPicker.Color = Entities.Selected?.Color ?? Canvas.Stroke;
+            CustomColorPicker.Color = SelectedText?.Color ?? Canvas.Stroke;
 
             PalettePanel.Visibility = Visibility.Collapsed;
             CustomColorPicker.Visibility = Visibility.Visible;
@@ -957,7 +1046,7 @@ namespace Telegram.Views.Popups
 
         private void WeightSlider_ValueChanged(object sender, EventArgs e)
         {
-            if (Entities.Selected != null)
+            if (SelectedText != null)
             {
                 Entities.SetSelectedTextSize((float)WeightSlider.Value);
             }
@@ -987,7 +1076,7 @@ namespace Telegram.Views.Popups
         {
             _weightDragging = true;
 
-            if (Entities.Selected == null)
+            if (SelectedText == null)
             {
                 UpdateWeightPreview();
                 WeightPreview.Visibility = Visibility.Visible;

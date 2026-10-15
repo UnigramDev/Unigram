@@ -14,11 +14,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Entities;
+using Telegram.Native;
+using Telegram.Streams;
 using Windows.Devices.Input;
 using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Text;
@@ -26,13 +30,16 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
     /// <summary>
     /// The media editor's text and stickers. It sits in the cropper beside the drawing canvas, so
     /// it is laid out in the upright image's pixels and turns with it; everything measured on
-    /// screen goes through the view transform the cropper hands it.
+    /// screen goes through the view transform the cropper hands it. Each object is an element of
+    /// its own, so stickers play and objects stack in the order they were last selected; the
+    /// selection and the guides are drawn on one canvas over them all.
     /// </summary>
     public sealed partial class PaintEntityLayer : Grid
     {
@@ -50,6 +57,9 @@ namespace Telegram.Controls
         private const float HandleThreshold = 2;
         private const float FramePaddingX = 10;
         private const float FramePaddingY = 6;
+
+        // How far the overlay reaches past the view on each side, into the cropper's padding.
+        private const float OverlayMargin = 48;
         private const double StickyPositionTrigger = 12;
         private const double StickyPadding = 8;
 
@@ -58,6 +68,7 @@ namespace Telegram.Controls
 
         // In milliseconds.
         private const double SelectDuration = 280;
+        private const double FlipDuration = 500;
         private const double MenuDelay = 500;
 
         private const float MinimumScale = 0.1f;
@@ -67,7 +78,8 @@ namespace Telegram.Controls
 
         private readonly List<PaintEntity> _entities = new();
         private readonly Dictionary<PaintEntity, PaintTextVisual> _visuals = new();
-        private readonly Dictionary<PaintEntity, Border> _targets = new();
+        private readonly Dictionary<PaintEntity, Border> _elements = new();
+        private readonly Dictionary<PaintEntity, float> _rasters = new();
         private List<PaintEntity> _saved = new();
 
         private readonly Stopwatch _clock = Stopwatch.StartNew();
@@ -105,9 +117,12 @@ namespace Telegram.Controls
         private readonly Sticky _stickyAngle = new();
         private readonly double[] _stickyTargets = new double[3];
 
-        // Hit boxes are sized from a layout, which needs the canvas' device: any asked for before
-        // it exists are redone on the next draw.
-        private bool _targetsInvalid;
+        // A text's element is sized from its layout, which needs the canvas' device: any asked for
+        // before it exists are redone on the next draw.
+        private bool _elementsInvalid;
+
+        private PaintEntity _flipping;
+        private double _flipProgress = 1;
 
         private double _selectProgress = 1;
         private bool _rendering;
@@ -132,6 +147,22 @@ namespace Telegram.Controls
         public event EventHandler<PaintEntityEventArgs> EntityDeleted;
 
         public PaintEntity Selected => _selected;
+
+        #region HandleBrush
+
+        /// <summary>
+        /// The fill of the selection's handles.
+        /// </summary>
+        public Brush HandleBrush
+        {
+            get => (Brush)GetValue(HandleBrushProperty);
+            set => SetValue(HandleBrushProperty, value);
+        }
+
+        public static readonly DependencyProperty HandleBrushProperty =
+            DependencyProperty.Register("HandleBrush", typeof(Brush), typeof(PaintEntityLayer), new PropertyMetadata(null));
+
+        #endregion
 
         public bool IsEditing => _editing != null;
 
@@ -195,10 +226,16 @@ namespace Telegram.Controls
                 visual.Dispose();
             }
 
+            foreach (var element in _elements.Values)
+            {
+                DetachElement(element);
+            }
+
             _entities.Clear();
             _visuals.Clear();
-            _targets.Clear();
-            Targets.Children.Clear();
+            _elements.Clear();
+            _rasters.Clear();
+            Objects.Children.Clear();
 
             foreach (var entity in entities)
             {
@@ -225,6 +262,12 @@ namespace Telegram.Controls
                 return;
             }
 
+            if (viewport != _viewport)
+            {
+                Canvas.Width = viewport.Width + OverlayMargin * 2;
+                Canvas.Height = viewport.Height + OverlayMargin * 2;
+            }
+
             _view = transform;
             _area = area;
             _viewport = viewport;
@@ -233,6 +276,8 @@ namespace Telegram.Controls
             {
                 _inverse = Matrix3x2.Identity;
             }
+
+            ((MatrixTransform)Canvas.RenderTransform).Matrix = ToMatrix(Matrix3x2.CreateTranslation(-OverlayMargin, -OverlayMargin) * _inverse);
 
             if (_editing != null)
             {
@@ -314,9 +359,9 @@ namespace Telegram.Controls
             }
         }
 
-        private Matrix3x2 GetTransform(PaintEntity entity, PaintTextVisual visual)
+        private Matrix3x2 GetTransform(PaintEntity entity, Rect bounds)
         {
-            return PaintEntityRenderer.GetTransform(entity, visual.Bounds, ImageSize, Mirrored);
+            return PaintEntityRenderer.GetTransform(entity, bounds, ImageSize, Mirrored);
         }
 
         // An object's own units per view pixel.
@@ -326,10 +371,34 @@ namespace Telegram.Controls
             return scale > 0 ? 1 / scale : 1;
         }
 
-        private Rect GetFrame(PaintEntity entity, PaintTextVisual visual)
+        // What the object covers, in the renderer's units; false while a text has no layout yet.
+        private bool TryGetBounds(PaintEntity entity, out Rect bounds)
+        {
+            if (entity.Type == PaintEntityType.Sticker)
+            {
+                bounds = PaintEntityRenderer.GetStickerBounds(entity);
+                return true;
+            }
+
+            var visual = GetVisual(entity);
+            bounds = visual?.Bounds ?? default;
+
+            return visual != null;
+        }
+
+        // The selection's frame: around a text, or the square around a sticker's circle.
+        private Rect GetFrame(PaintEntity entity, Rect bounds)
         {
             var unit = GetUnit(entity);
-            var bounds = visual.Bounds;
+
+            if (entity.Type == PaintEntityType.Sticker)
+            {
+                var radius = Math.Max(bounds.Width, bounds.Height) / 2 + FramePaddingX * unit;
+                var x = bounds.X + bounds.Width / 2;
+                var y = bounds.Y + bounds.Height / 2;
+
+                return new Rect(x - radius, y - radius, radius * 2, radius * 2);
+            }
 
             return new Rect(
                 bounds.X - FramePaddingX * unit,
@@ -370,16 +439,15 @@ namespace Telegram.Controls
 
         private bool Contains(PaintEntity entity, Vector2 point, bool padded)
         {
-            var visual = GetVisual(entity);
-            if (visual == null || !Matrix3x2.Invert(GetTransform(entity, visual), out Matrix3x2 inverse))
+            if (!TryGetBounds(entity, out Rect bounds) || !Matrix3x2.Invert(GetTransform(entity, bounds), out Matrix3x2 inverse))
             {
                 return false;
             }
 
             var local = Vector2.Transform(point, inverse);
-            var bounds = padded ? GetFrame(entity, visual) : visual.Bounds;
+            var area = padded ? GetFrame(entity, bounds) : bounds;
 
-            return local.X >= bounds.Left && local.X <= bounds.Right && local.Y >= bounds.Top && local.Y <= bounds.Bottom;
+            return local.X >= area.Left && local.X <= area.Right && local.Y >= area.Top && local.Y <= area.Bottom;
         }
 
         private PaintEntity HitEntity(Vector2 point)
@@ -396,29 +464,28 @@ namespace Telegram.Controls
             return null;
         }
 
-        private Vector2 GetHandle(PaintEntity entity, PaintTextVisual visual, bool left)
+        private Vector2 GetHandle(PaintEntity entity, Rect bounds, bool left)
         {
-            var frame = GetFrame(entity, visual);
+            var frame = GetFrame(entity, bounds);
             var local = new Vector2((float)(left ? frame.Left : frame.Right), (float)(frame.Y + frame.Height / 2));
 
-            return ToView(Vector2.Transform(local, GetTransform(entity, visual)));
+            return ToView(Vector2.Transform(local, GetTransform(entity, bounds)));
         }
 
         // -1 for the left handle, 1 for the right, 0 for neither.
         private int HitHandle(Vector2 view)
         {
-            var visual = _selected != null ? GetVisual(_selected) : null;
-            if (visual == null)
+            if (_selected == null || !TryGetBounds(_selected, out Rect bounds))
             {
                 return 0;
             }
 
-            if (Vector2.Distance(view, GetHandle(_selected, visual, true)) <= HandleHitRadius)
+            if (Vector2.Distance(view, GetHandle(_selected, bounds, true)) <= HandleHitRadius)
             {
                 return -1;
             }
 
-            if (Vector2.Distance(view, GetHandle(_selected, visual, false)) <= HandleHitRadius)
+            if (Vector2.Distance(view, GetHandle(_selected, bounds, false)) <= HandleHitRadius)
             {
                 return 1;
             }
@@ -429,14 +496,12 @@ namespace Telegram.Controls
         // Half the size, in the view, of the box the turned object fills.
         private Vector2 GetHalfExtents(PaintEntity entity)
         {
-            var visual = GetVisual(entity);
-            if (visual == null)
+            if (!TryGetBounds(entity, out Rect bounds))
             {
                 return Vector2.Zero;
             }
 
-            var transform = GetTransform(entity, visual) * _view;
-            var bounds = visual.Bounds;
+            var transform = GetTransform(entity, bounds) * _view;
 
             var a = Vector2.Transform(new Vector2((float)bounds.Left, (float)bounds.Top), transform);
             var b = Vector2.Transform(new Vector2((float)bounds.Right, (float)bounds.Top), transform);
@@ -457,17 +522,49 @@ namespace Telegram.Controls
         {
             _entities.Add(entity);
 
-            var target = new Border
+            // Wrapped so that the whole box takes presses, not only what is drawn in it.
+            var element = new Border
             {
                 Background = _hitBrush,
                 RenderTransform = new MatrixTransform()
             };
 
-            _targets[entity] = target;
-            Targets.Children.Add(target);
+            if (entity.Type == PaintEntityType.Sticker)
+            {
+                element.Child = new AnimatedImage
+                {
+                    AutoPlay = true,
+                    FrameSize = new Size(512, 512),
+                    DecodeFrameType = DecodePixelType.Physical,
+                    Source = new LocalFileSource(entity.StickerPath)
+                };
+            }
+            else
+            {
+                var canvas = new CanvasControl
+                {
+                    Tag = entity
+                };
 
-            UpdateTarget(entity);
+                canvas.Draw += TextElement_Draw;
+                element.Child = canvas;
+            }
+
+            _elements[entity] = element;
+            Objects.Children.Add(element);
+
+            UpdateElement(entity, true);
             Canvas.Invalidate();
+        }
+
+        private void DetachElement(Border element)
+        {
+            // Win2D holds on to a control's resources until it is told to let go.
+            if (element.Child is CanvasControl canvas)
+            {
+                canvas.Draw -= TextElement_Draw;
+                canvas.RemoveFromVisualTree();
+            }
         }
 
         private void RemoveEntity(PaintEntity entity, bool deleted)
@@ -495,10 +592,13 @@ namespace Telegram.Controls
                 _visuals.Remove(entity);
             }
 
-            if (_targets.TryGetValue(entity, out Border target))
+            if (_elements.TryGetValue(entity, out Border element))
             {
-                Targets.Children.Remove(target);
-                _targets.Remove(entity);
+                DetachElement(element);
+                Objects.Children.Remove(element);
+
+                _elements.Remove(entity);
+                _rasters.Remove(entity);
             }
 
             Canvas.Invalidate();
@@ -514,42 +614,74 @@ namespace Telegram.Controls
             }
         }
 
-        // The box under an object is its unpadded bounds: only a selected object grows a margin
-        // for grabbing, and while one is selected the whole layer takes presses anyway.
-        private void UpdateTarget(PaintEntity entity)
+        // A text is drawn at the size it had in this layer's pixels when it last settled, and only
+        // stretched in between, so a drag does not remake its surface on every move.
+        private void UpdateElement(PaintEntity entity, bool settle = false)
         {
-            if (!_targets.TryGetValue(entity, out Border target))
+            if (!_elements.TryGetValue(entity, out Border element))
             {
                 return;
             }
 
-            var visual = GetVisual(entity);
-            if (visual == null)
+            var k = ImageSize.X / PaintEntityRenderer.Reference;
+
+            if (!TryGetBounds(entity, out Rect bounds) || k <= 0)
             {
-                _targetsInvalid = true;
+                _elementsInvalid = true;
                 return;
             }
 
-            var scale = entity.Scale * ImageSize.X / PaintEntityRenderer.Reference;
-            var width = (float)visual.Bounds.Width * scale;
-            var height = (float)visual.Bounds.Height * scale;
+            float raster;
 
-            target.Width = width;
-            target.Height = height;
+            if (entity.Type == PaintEntityType.Sticker)
+            {
+                raster = k;
+            }
+            else
+            {
+                var exact = entity.Scale * k;
 
-            // A centred box is its own mirror image, so the content's flip can be left out.
-            var matrix = Matrix3x2.CreateTranslation(-width / 2, -height / 2)
-                * Matrix3x2.CreateRotation(entity.Rotation)
-                * Matrix3x2.CreateTranslation(entity.Position * ImageSize);
+                if (settle || !_rasters.TryGetValue(entity, out raster) || exact / raster is < 0.8f or > 1.25f)
+                {
+                    raster = exact;
+                    _rasters[entity] = raster;
 
-            ((MatrixTransform)target.RenderTransform).Matrix = ToMatrix(matrix);
+                    ((CanvasControl)element.Child).Invalidate();
+                }
+            }
+
+            element.Width = bounds.Width * raster;
+            element.Height = bounds.Height * raster;
+
+            var matrix = Matrix3x2.CreateScale(1 / raster)
+                * Matrix3x2.CreateTranslation((float)bounds.X, (float)bounds.Y)
+                * GetFlip(entity, bounds)
+                * GetTransform(entity, bounds);
+
+            ((MatrixTransform)element.RenderTransform).Matrix = ToMatrix(matrix);
         }
 
-        private void UpdateTargets()
+        // A flip turns the sticker over like a card: squeezed through its width with a slight
+        // shear, from the side it was on to the new one.
+        private Matrix3x2 GetFlip(PaintEntity entity, Rect bounds)
+        {
+            if (entity != _flipping || _flipProgress >= 1)
+            {
+                return Matrix3x2.Identity;
+            }
+
+            var t = 1 - Math.Pow(1 - _flipProgress, 5);
+            var center = new Vector2((float)(bounds.X + bounds.Width / 2), (float)(bounds.Y + bounds.Height / 2));
+
+            return Matrix3x2.CreateScale((float)(2 * t - 1), 1, center)
+                * Matrix3x2.CreateSkew(0, (float)Math.Atan(t * (1 - t)), center);
+        }
+
+        private void UpdateElements()
         {
             foreach (var entity in _entities)
             {
-                UpdateTarget(entity);
+                UpdateElement(entity, true);
             }
         }
 
@@ -558,19 +690,20 @@ namespace Telegram.Controls
             return new Matrix(matrix.M11, matrix.M12, matrix.M21, matrix.M22, matrix.M31, matrix.M32);
         }
 
-        /// <summary>
-        /// Places an empty text where the view is looking and opens it for writing.
-        /// </summary>
-        public void AddText(Color color, float size, PaintTextFrame frame, PaintTextAlignment alignment, PaintTextFont font)
+        // Where a new object goes: the middle of what the view shows, stepped down and to the right
+        // by a fraction of the crop until it lands on nothing else. The scale makes the renderer's
+        // width as wide as the crop.
+        private bool TryGetPlacement(out Vector2 position, out float scale)
         {
-            EndEditing();
+            position = default;
+            scale = 1;
 
             var image = ImageSize;
             var zoom = Zoom;
 
             if (image.X <= 0 || zoom <= 0 || _area.Width <= 0)
             {
-                return;
+                return false;
             }
 
             var visibleLeft = Math.Max(_area.Left, 0);
@@ -582,8 +715,6 @@ namespace Telegram.Controls
                 ? new Rect(visibleLeft, visibleTop, visibleRight - visibleLeft, visibleBottom - visibleTop)
                 : _area;
 
-            // A new text never lands on top of another: it steps down and to the right, by a
-            // fraction of the crop, until it is clear.
             var step = (float)(_area.Width * 200 / 1280);
             var clearance = _area.Width * 100 / 1280;
             var center = new Vector2((float)(visible.X + visible.Width / 2), (float)(visible.Y + visible.Height / 2));
@@ -591,6 +722,24 @@ namespace Telegram.Controls
             for (int i = 0; i < 8 && IsOccupied(center, clearance); i++)
             {
                 center += new Vector2(step, step);
+            }
+
+            position = FromView(center) / image;
+            scale = (float)(_area.Width / (image.X * zoom));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Places an empty text where the view is looking and opens it for writing.
+        /// </summary>
+        public void AddText(Color color, float size, PaintTextFrame frame, PaintTextAlignment alignment, PaintTextFont font)
+        {
+            EndEditing();
+
+            if (!TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
             }
 
             var entity = new PaintEntity
@@ -602,17 +751,45 @@ namespace Telegram.Controls
                 Frame = frame,
                 Alignment = alignment,
                 Font = font,
-                Position = FromView(center) / image,
+                Position = position,
                 Rotation = GetRotation(0),
-
-                // As wide as the crop at full width, so the text wraps at its edges.
-                Scale = (float)(_area.Width / (image.X * zoom))
+                Scale = scale
             };
 
             AddEntity(entity);
             EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
 
             BeginEditing(entity);
+        }
+
+        /// <summary>
+        /// Places a sticker, whose file is already on disk, where the view is looking.
+        /// </summary>
+        public void AddSticker(string path, int fileId, int width, int height)
+        {
+            EndEditing();
+
+            if (!TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            var entity = new PaintEntity
+            {
+                Type = PaintEntityType.Sticker,
+                StickerPath = path,
+                StickerFileId = fileId,
+                StickerWidth = width,
+                StickerHeight = height,
+                Position = position,
+                Rotation = GetRotation(0),
+                Scale = scale * 0.75f
+            };
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
         }
 
         private bool IsOccupied(Vector2 center, double clearance)
@@ -685,10 +862,29 @@ namespace Telegram.Controls
 
             AddEntity(copy);
             SetViewCenter(copy, GetViewCenter(source) + new Vector2(offset, offset));
-            UpdateTarget(copy);
+            UpdateElement(copy, true);
 
             EntityCreated?.Invoke(this, new PaintEntityEventArgs(copy));
             Select(copy);
+        }
+
+        /// <summary>
+        /// Turns a selected sticker over. Like moving it, this is not undone.
+        /// </summary>
+        public void FlipSelected()
+        {
+            if (_selected?.Type != PaintEntityType.Sticker)
+            {
+                return;
+            }
+
+            _selected.Mirror = !_selected.Mirror;
+
+            _flipping = _selected;
+            _flipProgress = 0;
+
+            StartRendering();
+            UpdateElement(_selected);
         }
 
         public void SetSelectedColor(Color color)
@@ -727,7 +923,13 @@ namespace Telegram.Controls
                 UpdateEditor();
             }
 
-            UpdateTarget(entity);
+            UpdateElement(entity);
+
+            if (_elements.TryGetValue(entity, out Border element) && element.Child is CanvasControl canvas)
+            {
+                canvas.Invalidate();
+            }
+
             Canvas.Invalidate();
         }
 
@@ -752,6 +954,17 @@ namespace Telegram.Controls
             // Selecting brings an object to the front for good.
             _entities.Remove(entity);
             _entities.Add(entity);
+
+            if (_elements.TryGetValue(entity, out Border element))
+            {
+                var index = Objects.Children.IndexOf(element);
+                var last = Objects.Children.Count - 1;
+
+                if (index >= 0 && index < last)
+                {
+                    Objects.Children.Move((uint)index, (uint)last);
+                }
+            }
 
             // While something is selected the whole layer takes presses: a tap elsewhere puts the
             // selection away rather than drawing.
@@ -798,6 +1011,10 @@ namespace Telegram.Controls
             {
                 flyout.CreateFlyoutItem(EditSelected, Strings.PaintEdit, Icons.Edit);
             }
+            else
+            {
+                flyout.CreateFlyoutItem(FlipSelected, Strings.AccDescrFlip, Icons.FlipHorizontal);
+            }
 
             flyout.CreateFlyoutItem(DuplicateSelected, Strings.PaintDuplicate, Icons.DocumentCopy, VirtualKey.D);
             flyout.CreateFlyoutItem(DeleteSelected, Strings.PaintDelete, Icons.Delete, VirtualKey.Delete, VirtualKeyModifiers.None, destructive: true);
@@ -840,7 +1057,7 @@ namespace Telegram.Controls
             Editor.Focus(FocusState.Programmatic);
             Editor.Select(Editor.Text.Length, 0);
 
-            Canvas.Invalidate();
+            Invalidate(entity);
         }
 
         /// <summary>
@@ -863,8 +1080,7 @@ namespace Telegram.Controls
             }
             else
             {
-                UpdateTarget(entity);
-                Canvas.Invalidate();
+                Invalidate(entity);
             }
         }
 
@@ -914,7 +1130,7 @@ namespace Telegram.Controls
             // Its left edge is where the widest line starts, whatever the alignment.
             var origin = new Vector2((float)visual.Layout.LayoutBounds.X, 0);
 
-            var matrix = Matrix3x2.CreateScale(1 / k) * Matrix3x2.CreateTranslation(origin) * GetTransform(entity, visual);
+            var matrix = Matrix3x2.CreateScale(1 / k) * Matrix3x2.CreateTranslation(origin) * GetTransform(entity, visual.Bounds);
             ((MatrixTransform)Editor.RenderTransform).Matrix = ToMatrix(matrix);
         }
 
@@ -1280,7 +1496,7 @@ namespace Telegram.Controls
                 UpdateEditor();
             }
 
-            UpdateTarget(_selected);
+            UpdateElement(_selected);
             Canvas.Invalidate();
         }
 
@@ -1289,6 +1505,12 @@ namespace Telegram.Controls
             _gesture = Gesture.None;
             _pressedEmpty = false;
             _pressedSelected = false;
+
+            // Drawn sharp again at the size it came to rest at.
+            if (_selected != null)
+            {
+                UpdateElement(_selected, true);
+            }
 
             Canvas.Invalidate();
         }
@@ -1332,6 +1554,17 @@ namespace Telegram.Controls
                 animating = true;
             }
 
+            if (_flipProgress < 1)
+            {
+                _flipProgress = Math.Min(1, _flipProgress + elapsed / FlipDuration);
+                animating = true;
+
+                if (_flipping != null)
+                {
+                    UpdateElement(_flipping);
+                }
+            }
+
             // Run every frame, not only on moves, so a snap still lands while the pointer holds
             // still inside its zone.
             if (_selected != null && _panned)
@@ -1367,49 +1600,60 @@ namespace Telegram.Controls
             }
 
             _visuals.Clear();
-            UpdateTargets();
+            _elementsInvalid = true;
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (_targetsInvalid)
+            if (_elementsInvalid)
             {
-                _targetsInvalid = false;
-                UpdateTargets();
+                _elementsInvalid = false;
+                UpdateElements();
+            }
+
+            // Drawn in this layer's pixels, as everything else is, then taken to the view, and kept
+            // to the photo like the objects themselves.
+            var session = args.DrawingSession;
+            session.Transform = _view * Matrix3x2.CreateTranslation(OverlayMargin, OverlayMargin);
+
+            var size = ImageSize;
+
+            using (var clip = CanvasGeometry.CreateRectangle(session, 0, 0, size.X, size.Y))
+            using (session.CreateLayer(1, clip))
+            {
+                if (_gesture != Gesture.Pinch && _selected != null && TryGetBounds(_selected, out Rect bounds))
+                {
+                    DrawSelection(session, _selected, bounds);
+                }
+
+                if ((_gesture is Gesture.Move or Gesture.Handle) && _panned)
+                {
+                    DrawGuides(session);
+                }
+            }
+        }
+
+        private void TextElement_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            if (sender.Tag is not PaintEntity entity || GetVisual(entity) is not PaintTextVisual visual || !_rasters.TryGetValue(entity, out float raster))
+            {
+                return;
             }
 
             var session = args.DrawingSession;
             session.TextAntialiasing = CanvasTextAntialiasing.Grayscale;
+            session.Transform = Matrix3x2.CreateTranslation(-(float)visual.Bounds.X, -(float)visual.Bounds.Y) * Matrix3x2.CreateScale(raster);
 
-            var size = sender.Size.ToVector2();
-            var mirrored = Mirrored;
-
-            foreach (var entity in _entities)
-            {
-                if (GetVisual(entity) is PaintTextVisual visual)
-                {
-                    // The text box draws the glyphs of the text being written.
-                    PaintEntityRenderer.Draw(session, entity, visual, size, mirrored, entity != _editing);
-                }
-            }
-
-            if (_gesture != Gesture.Pinch && _selected != null && GetVisual(_selected) is PaintTextVisual selected)
-            {
-                DrawSelection(session, _selected, selected);
-            }
-
-            if ((_gesture is Gesture.Move or Gesture.Handle) && _panned)
-            {
-                DrawGuides(session);
-            }
+            // The text box draws the glyphs of the text being written.
+            PaintEntityRenderer.DrawContent(session, entity, visual, entity != _editing);
         }
 
-        // A dashed rounded frame with a handle on each side, one size on screen however the
-        // object and the view are scaled.
-        private void DrawSelection(CanvasDrawingSession session, PaintEntity entity, PaintTextVisual visual)
+        // A dashed frame with a handle on each side, rounded around a text and round around a
+        // sticker, one size on screen however the object and the view are scaled.
+        private void DrawSelection(CanvasDrawingSession session, PaintEntity entity, Rect bounds)
         {
             var unit = GetUnit(entity);
-            var frame = GetFrame(entity, visual);
+            var frame = GetFrame(entity, bounds);
             var center = new Vector2((float)(frame.X + frame.Width / 2), (float)(frame.Y + frame.Height / 2));
 
             var progress = 1 - Math.Pow(1 - _selectProgress, 5);
@@ -1425,16 +1669,30 @@ namespace Telegram.Controls
             };
 
             var previous = session.Transform;
-            session.Transform = Matrix3x2.CreateScale(grow, center) * GetTransform(entity, visual) * previous;
+            session.Transform = Matrix3x2.CreateScale(grow, center) * GetTransform(entity, bounds) * previous;
 
-            var radius = 12 * unit;
-            var shadow = new Rect(frame.X + 0.75 * unit, frame.Y + 0.75 * unit, frame.Width, frame.Height);
+            var shadowColor = Color.FromArgb((byte)(0x50 * progress), 0, 0, 0);
+            var frameColor = Color.FromArgb(alpha, 255, 255, 255);
 
-            session.DrawRoundedRectangle(shadow, radius, radius, Color.FromArgb((byte)(0x50 * progress), 0, 0, 0), 2 * unit, _dashStyle);
-            session.DrawRoundedRectangle(frame, radius, radius, Color.FromArgb(alpha, 255, 255, 255), 2 * unit, _dashStyle);
+            if (entity.Type == PaintEntityType.Sticker)
+            {
+                var circle = (float)frame.Width / 2;
+
+                session.DrawCircle(center + new Vector2(0.75f * unit), circle, shadowColor, 2 * unit, _dashStyle);
+                session.DrawCircle(center, circle, frameColor, 2 * unit, _dashStyle);
+            }
+            else
+            {
+                var radius = 12 * unit;
+                var shadow = new Rect(frame.X + 0.75 * unit, frame.Y + 0.75 * unit, frame.Width, frame.Height);
+
+                session.DrawRoundedRectangle(shadow, radius, radius, shadowColor, 2 * unit, _dashStyle);
+                session.DrawRoundedRectangle(frame, radius, radius, frameColor, 2 * unit, _dashStyle);
+            }
 
             var y = center.Y;
-            var fill = Color.FromArgb(alpha, 0x1A, 0x9C, 0xFF);
+            var accent = (HandleBrush as SolidColorBrush)?.Color ?? Colors.White;
+            var fill = Color.FromArgb(alpha, accent.R, accent.G, accent.B);
             var ring = Color.FromArgb(alpha, 255, 255, 255);
 
             session.FillCircle((float)frame.Left, y, 5.66f * unit, fill);
@@ -1469,7 +1727,9 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateTargets();
+            ObjectsClip.Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
+
+            UpdateElements();
 
             if (_editing != null)
             {
@@ -2030,7 +2290,7 @@ namespace Telegram.Controls
             var scale = entity.Scale * imageSize.X / Reference;
 
             return Matrix3x2.CreateTranslation(-center)
-                * Matrix3x2.CreateScale(mirrored ? -1 : 1, 1)
+                * Matrix3x2.CreateScale(mirrored != entity.Mirror ? -1 : 1, 1)
                 * Matrix3x2.CreateScale(scale)
                 * Matrix3x2.CreateRotation(entity.Rotation)
                 * Matrix3x2.CreateTranslation(entity.Position * imageSize);
@@ -2038,10 +2298,20 @@ namespace Telegram.Controls
 
         public static void Draw(CanvasDrawingSession session, PaintEntity entity, PaintTextVisual visual, Vector2 imageSize, bool mirrored, bool glyphs = true)
         {
-            GetColors(entity, out Color foreground, out Color? background);
-
             var previous = session.Transform;
             session.Transform = GetTransform(entity, visual.Bounds, imageSize, mirrored) * previous;
+
+            DrawContent(session, entity, visual, glyphs);
+
+            session.Transform = previous;
+        }
+
+        /// <summary>
+        /// Draws a text in the renderer's units, through whatever transform the session has.
+        /// </summary>
+        public static void DrawContent(CanvasDrawingSession session, PaintEntity entity, PaintTextVisual visual, bool glyphs = true)
+        {
+            GetColors(entity, out Color foreground, out Color? background);
 
             if (background is Color fill && visual.Frame != null)
             {
@@ -2052,20 +2322,132 @@ namespace Telegram.Controls
             {
                 session.DrawTextLayout(visual.Layout, 0, 0, foreground);
             }
+        }
 
-            session.Transform = previous;
+        /// <summary>
+        /// A sticker sits in a square half the image wide, as large as its shape allows.
+        /// </summary>
+        public static Rect GetStickerBounds(PaintEntity entity)
+        {
+            const float Side = Reference / 2;
+
+            var width = Math.Max(1f, entity.StickerWidth);
+            var height = Math.Max(1f, entity.StickerHeight);
+
+            return width >= height
+                ? new Rect(0, 0, Side, Side * height / width)
+                : new Rect(0, 0, Side * width / height, Side);
+        }
+
+        /// <summary>
+        /// Decodes each sticker's first frame at about the size it will be drawn, given how many
+        /// output pixels a unit of the renderer's comes to at a scale of one.
+        /// </summary>
+        public static async Task<Dictionary<PaintEntity, CanvasBitmap>> LoadStickersAsync(ICanvasResourceCreator creator, IReadOnlyList<PaintEntity> entities, float pixelsPerUnit)
+        {
+            Dictionary<PaintEntity, CanvasBitmap> bitmaps = null;
+
+            foreach (var entity in entities)
+            {
+                if (entity.Type != PaintEntityType.Sticker || string.IsNullOrEmpty(entity.StickerPath))
+                {
+                    continue;
+                }
+
+                var bounds = GetStickerBounds(entity);
+                var side = (int)Math.Clamp(Math.Max(bounds.Width, bounds.Height) * entity.Scale * pixelsPerUnit, 64, 1024);
+
+                var bitmap = await Task.Run(() => DecodeSticker(creator, entity.StickerPath, side));
+                if (bitmap != null)
+                {
+                    bitmaps ??= new Dictionary<PaintEntity, CanvasBitmap>();
+                    bitmaps[entity] = bitmap;
+                }
+            }
+
+            return bitmaps;
+        }
+
+        // A sticker that cannot be read is left out of the photo rather than failing it.
+        private static CanvasBitmap DecodeSticker(ICanvasResourceCreator creator, string path, int side)
+        {
+            try
+            {
+                if (path.HasExtension(".tgs", ".json"))
+                {
+                    using var animation = LottieAnimation.LoadFromFile(path, side, side, false, null);
+                    if (animation == null)
+                    {
+                        return null;
+                    }
+
+                    var buffer = BufferSurface.Create((uint)(side * side * 4));
+                    animation.RenderSync(buffer, 0);
+
+                    return CanvasBitmap.CreateFromBytes(creator, buffer, side, side, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                }
+                else if (path.HasExtension(".webp"))
+                {
+                    var buffer = Direct2DDevice.DrawWebP(path, side, out int width, out int height);
+                    if (buffer == null || width <= 0 || height <= 0)
+                    {
+                        return null;
+                    }
+
+                    return CanvasBitmap.CreateFromBytes(creator, buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                }
+                else
+                {
+                    using var animation = VideoAnimation.LoadFromFile(new LocalFileSource(path), false, false, false);
+                    if (animation == null || animation.PixelWidth <= 0 || animation.PixelHeight <= 0)
+                    {
+                        return null;
+                    }
+
+                    var fit = Math.Min(1, (double)side / Math.Max(animation.PixelWidth, animation.PixelHeight));
+                    var width = Math.Max(1, (int)(animation.PixelWidth * fit));
+                    var height = Math.Max(1, (int)(animation.PixelHeight * fit));
+
+                    var buffer = BufferSurface.Create((uint)(width * height * 4));
+                    if (!animation.RenderSync(buffer, width, height, true, out _))
+                    {
+                        return null;
+                    }
+
+                    return CanvasBitmap.CreateFromBytes(creator, buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
         /// Draws <paramref name="entities"/> over an image of <paramref name="imageSize"/> upright
         /// pixels, through whatever transform <paramref name="session"/> already has.
         /// </summary>
-        public static void Draw(CanvasDrawingSession session, IReadOnlyList<PaintEntity> entities, Vector2 imageSize, bool mirrored)
+        public static void Draw(CanvasDrawingSession session, IReadOnlyList<PaintEntity> entities, Vector2 imageSize, bool mirrored, IReadOnlyDictionary<PaintEntity, CanvasBitmap> stickers)
         {
             session.TextAntialiasing = CanvasTextAntialiasing.Grayscale;
 
             foreach (var entity in entities)
             {
+                if (entity.Type == PaintEntityType.Sticker)
+                {
+                    if (stickers != null && stickers.TryGetValue(entity, out CanvasBitmap bitmap))
+                    {
+                        var bounds = GetStickerBounds(entity);
+                        var previous = session.Transform;
+
+                        session.Transform = GetTransform(entity, bounds, imageSize, mirrored) * previous;
+                        session.DrawImage(bitmap, bounds, bitmap.Bounds);
+                        session.Transform = previous;
+                    }
+
+                    continue;
+                }
+
                 if (string.IsNullOrEmpty(entity.Text))
                 {
                     continue;

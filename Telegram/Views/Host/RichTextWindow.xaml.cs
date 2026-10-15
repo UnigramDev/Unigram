@@ -1047,7 +1047,7 @@ namespace Telegram.Views.Host
                 return;
             }
 
-            var popup = new EditMediaPopup(XamlRoot, media);
+            var popup = new EditMediaPopup(XamlRoot, _clientService, media);
 
             var confirm = await popup.ShowAsync();
             if (confirm == ContentDialogResult.Primary && await RichMediaFactory.CreateAsync(media) is RichMediaSource source)

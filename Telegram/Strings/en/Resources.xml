@@ -4726,6 +4726,7 @@
     <string name="AccDescrPlaceText">Place text</string>
     <string name="PhotoEditorDraw">Draw</string>
     <string name="PhotoEditorText">Text</string>
+    <string name="PhotoEditorSticker">Sticker</string>
     <string name="PaintTextBackground">Text Background</string>
     <string name="FontType">Font Type</string>
     <string name="PhotoEditorTypefaceItalic">Italic</string>

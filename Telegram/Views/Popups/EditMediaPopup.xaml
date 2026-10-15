@@ -4,6 +4,7 @@
                         xmlns:local="using:Telegram.Views.Popups"
                         xmlns:controls="using:Telegram.Controls"
                         xmlns:icons="using:Telegram.Assets.Icons"
+                        xmlns:drawers="using:Telegram.Controls.Drawers"
                         xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -39,6 +40,7 @@
                                            SelectionChanged="Entities_SelectionChanged"
                                            EntityCreated="Entities_EntityCreated"
                                            EntityDeleted="Entities_EntityDeleted"
+                                           HandleBrush="{ThemeResource TelegramBackgroundAccentBrush}"
                                            IsHitTestVisible="False" />
             </Grid>
         </controls:ImageCropper>
@@ -420,6 +422,25 @@
                                       ToolTipService.ToolTip="{CustomResource AccDescrPlaceText}"
                                       Margin="0,0,-4,0" />
             </StackPanel>
+
+            <!-- In place of the brushes on the sticker tab. -->
+            <StackPanel x:Name="StickerOptions"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed"
+                        Grid.Column="3"
+                        Grid.ColumnSpan="6">
+                <controls:GlyphButton Click="FlipSticker_Click"
+                                      Glyph="&#xE908;"
+                                      AutomationProperties.Name="{CustomResource AccDescrFlip}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrFlip}"
+                                      Margin="0,0,-4,0" />
+
+                <controls:GlyphButton Click="AddSticker_Click"
+                                      Glyph="&#xE710;"
+                                      AutomationProperties.Name="{CustomResource AccDescrStickers}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrStickers}"
+                                      Margin="0,0,-4,0" />
+            </StackPanel>
         </Grid>
 
         <controls:PencilWeightSlider x:Name="WeightSlider"
@@ -521,6 +542,34 @@
                                             IsOneWay="True"
                                             AutomationProperties.Name="{CustomResource PhotoEditorDraw}"
                                             ToolTipService.ToolTip="{CustomResource PhotoEditorDraw}" />
+
+                <controls:GlyphToggleButton x:Name="StickerTab"
+                                            Click="StickerTab_Click"
+                                            Glyph="&#xF4AA;"
+                                            CheckedGlyph="&#xF4AA;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            IsOneWay="True"
+                                            AutomationProperties.Name="{CustomResource PhotoEditorSticker}"
+                                            ToolTipService.ToolTip="{CustomResource PhotoEditorSticker}">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout x:Name="StickerFlyout"
+                                Placement="Top"
+                                ShowMode="Transient">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter"
+                                       BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                                    <Setter Property="Padding"
+                                            Value="0" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <drawers:StickerDrawer x:Name="StickerPicker"
+                                                   x:Load="False"
+                                                   ItemClick="StickerPicker_ItemClick"
+                                                   Width="320"
+                                                   Height="360" />
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+                </controls:GlyphToggleButton>
 
                 <controls:GlyphToggleButton x:Name="TextTab"
                                             Click="TextTab_Click"

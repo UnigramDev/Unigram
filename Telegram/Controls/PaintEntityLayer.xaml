@@ -54,14 +54,14 @@
         </Style>
     </Grid.Resources>
 
-    <xaml:CanvasControl x:Name="Canvas"
-                        Draw="Canvas_Draw"
-                        CreateResources="Canvas_CreateResources"
-                        IsHitTestVisible="False" />
-
-    <!-- One transparent box per object, so a press on an object reaches the layer while a press
-         anywhere else still reaches the drawing canvas below. -->
-    <Canvas x:Name="Targets" />
+    <!-- One element per object, in the order they stack. Only they take presses while nothing is
+         selected, so a press anywhere else still reaches the drawing canvas below. -->
+    <Canvas x:Name="Objects">
+        <!-- Kept to the photo, as the drawing is. -->
+        <Canvas.Clip>
+            <RectangleGeometry x:Name="ObjectsClip" />
+        </Canvas.Clip>
+    </Canvas>
 
     <TextBox x:Name="Editor"
              x:Load="False"
@@ -77,4 +77,16 @@
             <MatrixTransform />
         </TextBox.RenderTransform>
     </TextBox>
+
+    <!-- The selection and the guides, over everything. The canvas is laid back over the view,
+         so they are drawn at screen resolution; inside a Canvas, so its size is its own. -->
+    <Canvas IsHitTestVisible="False">
+        <xaml:CanvasControl x:Name="Canvas"
+                            Draw="Canvas_Draw"
+                            CreateResources="Canvas_CreateResources">
+            <xaml:CanvasControl.RenderTransform>
+                <MatrixTransform />
+            </xaml:CanvasControl.RenderTransform>
+        </xaml:CanvasControl>
+    </Canvas>
 </Grid>

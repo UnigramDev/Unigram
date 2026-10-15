@@ -490,6 +490,7 @@ namespace Telegram.Controls.Media
         public const string PenSparkle = "\uF7A1";
         public const string Blur = "\uF7A2";
         public const string Eyedropper = "\uF7A3";
+        public const string FlipHorizontal = "\uE908";
         public const string MathFormula = "\uEB07";
 
         public const string BotMarkup24 = "\uE9D5";

@@ -647,10 +647,27 @@ namespace Telegram.Common
 
                 if (generation.Entities is { Count: > 0 } entities)
                 {
-                    using (var session = target.CreateDrawingSession())
+                    // Stickers go in as their first frame, at about the size they are drawn.
+                    var pixelsPerUnit = uprightWidth / PaintEntityRenderer.Reference * (float)(outputWidth / cropWidth);
+                    var stickers = await PaintEntityRenderer.LoadStickersAsync(device, entities, pixelsPerUnit);
+
+                    try
                     {
-                        session.Transform = matrix;
-                        PaintEntityRenderer.Draw(session, entities, new Vector2(uprightWidth, uprightHeight), generation.Flip != ImageFlip.None);
+                        using (var session = target.CreateDrawingSession())
+                        {
+                            session.Transform = matrix;
+                            PaintEntityRenderer.Draw(session, entities, new Vector2(uprightWidth, uprightHeight), generation.Flip != ImageFlip.None, stickers);
+                        }
+                    }
+                    finally
+                    {
+                        if (stickers != null)
+                        {
+                            foreach (var bitmap in stickers.Values)
+                            {
+                                bitmap.Dispose();
+                            }
+                        }
                     }
                 }
             }

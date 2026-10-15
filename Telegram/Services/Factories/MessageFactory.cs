@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -49,7 +50,33 @@ namespace Telegram.Services.Factories
                 return new InputMessageDocument(new InputDocument(generated, thumbnail, false), caption);
             }
 
-            return new InputMessagePhoto(new InputPhoto(generated, thumbnail, null, null, size.Width, size.Height), caption, captionAboveMedia, ttl, spoiler);
+            return new InputMessagePhoto(new InputPhoto(generated, thumbnail, null, GetAddedStickers(generation), size.Width, size.Height), caption, captionAboveMedia, ttl, spoiler);
+        }
+
+        // The stickers drawn into the photo, so that it can lead to their sets.
+        private static Vector<int> GetAddedStickers(ImageGeneration generation)
+        {
+            if (generation?.Entities == null)
+            {
+                return null;
+            }
+
+            List<int> files = null;
+
+            foreach (var entity in generation.Entities)
+            {
+                if (entity.Type == PaintEntityType.Sticker && entity.StickerFileId != 0)
+                {
+                    files ??= new List<int>();
+
+                    if (!files.Contains(entity.StickerFileId))
+                    {
+                        files.Add(entity.StickerFileId);
+                    }
+                }
+            }
+
+            return files != null ? new Vector<int>(files) : null;
         }
 
         public static async Task<Object> CreateVideoAsync(StorageVideo video, FormattedText caption, bool animated, bool captionAboveMedia, bool spoiler, MessageSelfDestructType ttl, long starCount)
