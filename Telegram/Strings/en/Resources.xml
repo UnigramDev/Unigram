@@ -4724,6 +4724,14 @@
     <string name="PaintDelete">Delete</string>
     <string name="TextPlaceholder">Add text</string>
     <string name="AccDescrPlaceText">Place text</string>
+    <string name="PhotoEditorDraw">Draw</string>
+    <string name="PhotoEditorText">Text</string>
+    <string name="PaintTextBackground">Text Background</string>
+    <string name="FontType">Font Type</string>
+    <string name="PhotoEditorTypefaceItalic">Italic</string>
+    <string name="PhotoEditorTypefaceSerif">Serif</string>
+    <string name="PhotoEditorTypefaceCondensed">Condensed</string>
+    <string name="PhotoEditorTypefaceMono">Mono-serif</string>
 
 
     <string name="AccDescrPageDown">Go to bottom</string>

@@ -13,6 +13,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
@@ -25,8 +26,10 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -456,6 +459,7 @@ namespace Telegram.Views.Popups
 
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
+                PaintTabs.Visibility = Visibility.Collapsed;
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 WeightSlider.Visibility = Visibility.Collapsed;
             }
@@ -478,6 +482,7 @@ namespace Telegram.Views.Popups
 
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
+                PaintTabs.Visibility = Visibility.Collapsed;
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 WeightSlider.Visibility = Visibility.Collapsed;
 
@@ -584,6 +589,7 @@ namespace Telegram.Views.Popups
             if (DrawToolbar == null)
             {
                 FindName(nameof(DrawToolbar));
+                FindName(nameof(PaintTabs));
             }
 
             if (WeightSlider == null)
@@ -592,6 +598,7 @@ namespace Telegram.Views.Popups
                 FindName(nameof(WeightPreview));
             }
 
+            PaintTabs.Visibility = Visibility.Visible;
             DrawToolbar.Visibility = Visibility.Visible;
             WeightSlider.Visibility = Visibility.Visible;
 
@@ -637,8 +644,9 @@ namespace Telegram.Views.Popups
         {
             var slot = Slot;
 
-            // The tools sit in equal columns from the first one on, the text button last.
-            ToolSelection.Translation = new Vector3((PenTool.ActualSize.X - 4) * (int)slot, 0, 0);
+            // The tools sit in equal columns from the first one on. The highlight stays on the brush
+            // while the text tab hides it, so it is in place on the way back.
+            ToolSelection.Translation = new Vector3((PenTool.ActualSize.X - 4) * (int)_tool, 0, 0);
 
             PenTool.IsChecked = slot == PencilTool.Pen;
             ArrowTool.IsChecked = slot == PencilTool.Arrow;
@@ -646,7 +654,25 @@ namespace Telegram.Views.Popups
             NeonTool.IsChecked = slot == PencilTool.Neon;
             BlurTool.IsChecked = slot == PencilTool.Blur;
             EraserTool.IsChecked = slot == PencilTool.Eraser;
-            TextTool.IsChecked = slot == PencilTool.Text;
+            // The text tab is open exactly while a text is selected: opening it places one if
+            // none is, and putting the text away goes back to drawing.
+            var text = slot == PencilTool.Text;
+
+            DrawTab.IsChecked = !text;
+            TextTab.IsChecked = text;
+
+            // Hidden rather than collapsed, so the bar keeps its width and the highlight its place.
+            ShowBrush(ToolSelection, !text);
+            ShowBrush(PenTool, !text);
+            ShowBrush(ArrowTool, !text);
+            ShowBrush(MarkerTool, !text);
+            ShowBrush(NeonTool, !text);
+            ShowBrush(BlurTool, !text);
+            ShowBrush(EraserTool, !text);
+
+            TextOptions.Visibility = text
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             if (Entities.Selected is PaintEntity entity)
             {
@@ -655,6 +681,8 @@ namespace Telegram.Views.Popups
                 ColorButton.IsEnabled = true;
                 ColorSwatchPanel.Opacity = 1;
                 ColorSwatch.Fill = new SolidColorBrush(entity.Color);
+
+                UpdateTextOptions(entity);
                 return;
             }
 
@@ -681,12 +709,157 @@ namespace Telegram.Views.Popups
             ColorSwatch.Fill = new SolidColorBrush(color);
         }
 
-        private void TextTool_Click(object sender, RoutedEventArgs e)
+        private static void ShowBrush(UIElement brush, bool show)
         {
-            Entities.AddText(AppSettings.Pencil.GetColor(PencilTool.Text), (float)AppSettings.Pencil.GetWeight(PencilTool.Text), PaintTextFrame.Filled, PaintTextAlignment.Left);
+            brush.Opacity = show ? 1 : 0;
+            brush.IsHitTestVisible = show;
+        }
 
-            // The button only shows the selection, which placing the text may not have made.
+        private void UpdateTextOptions(PaintEntity entity)
+        {
+            AlignButton.Glyph = entity.Alignment switch
+            {
+                PaintTextAlignment.Center => Icons.TextAlignCenter,
+                PaintTextAlignment.Right => Icons.TextAlignRight,
+                _ => Icons.TextAlignLeft
+            };
+
+            FrameFilled.Visibility = entity.Frame == PaintTextFrame.Filled ? Visibility.Visible : Visibility.Collapsed;
+            FrameTranslucent.Visibility = entity.Frame == PaintTextFrame.Translucent ? Visibility.Visible : Visibility.Collapsed;
+            FrameSolid.Visibility = entity.Frame == PaintTextFrame.Solid ? Visibility.Visible : Visibility.Collapsed;
+            FrameNone.Visibility = entity.Frame == PaintTextFrame.None ? Visibility.Visible : Visibility.Collapsed;
+
+            SetFont(FontButton, entity.Font);
+            FontButton.Glyph = GetFontName(entity.Font);
+        }
+
+        // Each typeface is named in itself, in the button and in the list.
+        private static void SetFont(Control control, PaintTextFont font)
+        {
+            PaintEntityRenderer.GetFont(font, out string family, out FontWeight weight, out FontStyle style, out FontStretch stretch);
+
+            control.FontFamily = new FontFamily(family);
+            control.FontWeight = weight;
+            control.FontStyle = style;
+            control.FontStretch = stretch;
+        }
+
+        // The two named after the font itself take its Windows name.
+        private static string GetFontName(PaintTextFont font) => font switch
+        {
+            PaintTextFont.Italic => Strings.PhotoEditorTypefaceItalic,
+            PaintTextFont.Serif => Strings.PhotoEditorTypefaceSerif,
+            PaintTextFont.Condensed => Strings.PhotoEditorTypefaceCondensed,
+            PaintTextFont.Mono => Strings.PhotoEditorTypefaceMono,
+            PaintTextFont.Display => "Georgia",
+            _ => "Segoe UI"
+        };
+
+        // Each change also becomes the look of the next new text.
+        private void AlignButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Entities.Selected is not PaintEntity entity)
+            {
+                return;
+            }
+
+            entity.Alignment = entity.Alignment switch
+            {
+                PaintTextAlignment.Left => PaintTextAlignment.Center,
+                PaintTextAlignment.Center => PaintTextAlignment.Right,
+                _ => PaintTextAlignment.Left
+            };
+
+            AppSettings.Pencil.TextAlignment = entity.Alignment;
+
+            Entities.InvalidateSelected();
+            UpdateTextOptions(entity);
+        }
+
+        private void FrameButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Entities.Selected is not PaintEntity entity)
+            {
+                return;
+            }
+
+            entity.Frame = (PaintTextFrame)(((int)entity.Frame + 1) % 4);
+
+            AppSettings.Pencil.TextFrame = entity.Frame;
+
+            Entities.InvalidateSelected();
+            UpdateTextOptions(entity);
+        }
+
+        private void FontButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Entities.Selected is not PaintEntity entity)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            for (int i = 0; i <= (int)PaintTextFont.Display; i++)
+            {
+                var font = (PaintTextFont)i;
+                var item = new ToggleMenuFlyoutItem
+                {
+                    Text = GetFontName(font),
+                    Tag = font,
+                    IsChecked = font == entity.Font,
+                    FontSize = 15
+                };
+
+                SetFont(item, font);
+                item.Click += FontItem_Click;
+
+                flyout.Items.Add(item);
+            }
+
+            flyout.ShowAt(FontButton, FlyoutPlacementMode.Top);
+        }
+
+        private void FontItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuFlyoutItemBase { Tag: PaintTextFont font } || Entities.Selected is not PaintEntity entity)
+            {
+                return;
+            }
+
+            entity.Font = font;
+
+            AppSettings.Pencil.TextFont = font;
+
+            Entities.InvalidateSelected();
+            UpdateTextOptions(entity);
+        }
+
+        private void DrawTab_Click(object sender, RoutedEventArgs e)
+        {
+            SelectTool(_tool);
+        }
+
+        private void TextTab_Click(object sender, RoutedEventArgs e)
+        {
+            if (Entities.Selected == null)
+            {
+                AddText();
+            }
+
+            // The tabs only show the selection, which placing the text may not have made.
             UpdateTools();
+        }
+
+        private void AddText_Click(object sender, RoutedEventArgs e)
+        {
+            AddText();
+        }
+
+        private void AddText()
+        {
+            var settings = AppSettings.Pencil;
+            Entities.AddText(settings.GetColor(PencilTool.Text), (float)settings.GetWeight(PencilTool.Text), settings.TextFrame, settings.TextAlignment, settings.TextFont);
         }
 
         private void Entities_SelectionChanged(object sender, EventArgs e)

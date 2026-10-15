@@ -561,7 +561,7 @@ namespace Telegram.Controls
         /// <summary>
         /// Places an empty text where the view is looking and opens it for writing.
         /// </summary>
-        public void AddText(Color color, float size, PaintTextFrame frame, PaintTextAlignment alignment)
+        public void AddText(Color color, float size, PaintTextFrame frame, PaintTextAlignment alignment, PaintTextFont font)
         {
             EndEditing();
 
@@ -601,6 +601,7 @@ namespace Telegram.Controls
                 TextSize = size,
                 Frame = frame,
                 Alignment = alignment,
+                Font = font,
                 Position = FromView(center) / image,
                 Rotation = GetRotation(0),
 
@@ -704,6 +705,17 @@ namespace Telegram.Controls
             if (_selected != null)
             {
                 _selected.TextSize = size;
+                Invalidate(_selected);
+            }
+        }
+
+        /// <summary>
+        /// Redraws the selected object after its look was changed directly.
+        /// </summary>
+        public void InvalidateSelected()
+        {
+            if (_selected != null)
+            {
                 Invalidate(_selected);
             }
         }
@@ -877,7 +889,16 @@ namespace Telegram.Controls
             }
 
             PaintEntityRenderer.GetColors(entity, out Color foreground, out _);
+            PaintEntityRenderer.GetFont(entity.Font, out string family, out FontWeight weight, out FontStyle style, out FontStretch stretch);
 
+            if (Editor.FontFamily?.Source != family)
+            {
+                Editor.FontFamily = new FontFamily(family);
+            }
+
+            Editor.FontWeight = weight;
+            Editor.FontStyle = style;
+            Editor.FontStretch = stretch;
             Editor.FontSize = PaintEntityRenderer.GetFontSize(entity) * k;
             Editor.MaxWidth = PaintEntityRenderer.MaxWidth * k;
             Editor.TextAlignment = entity.Alignment switch
@@ -1604,12 +1625,14 @@ namespace Telegram.Controls
         private readonly string _text;
         private readonly float _size;
         private readonly PaintTextAlignment _alignment;
+        private readonly PaintTextFont _font;
 
-        public PaintTextVisual(string text, float size, PaintTextAlignment alignment, CanvasTextLayout layout, CanvasGeometry frame, Rect bounds)
+        public PaintTextVisual(string text, float size, PaintTextAlignment alignment, PaintTextFont font, CanvasTextLayout layout, CanvasGeometry frame, Rect bounds)
         {
             _text = text;
             _size = size;
             _alignment = alignment;
+            _font = font;
 
             Layout = layout;
             Frame = frame;
@@ -1632,7 +1655,8 @@ namespace Telegram.Controls
         {
             return _text == PaintEntityRenderer.GetDisplayText(entity, placeholder)
                 && _size == entity.TextSize
-                && _alignment == entity.Alignment;
+                && _alignment == entity.Alignment
+                && _font == entity.Font;
         }
 
         public void Dispose()
@@ -1662,6 +1686,34 @@ namespace Telegram.Controls
             return BaseFontSize * entity.TextSize;
         }
 
+        /// <summary>
+        /// The Windows fonts the typefaces are set in. None is bundled: the text is drawn into the
+        /// sent photo, so whoever receives it never needs the font.
+        /// </summary>
+        public static void GetFont(PaintTextFont font, out string family, out FontWeight weight, out FontStyle style, out FontStretch stretch)
+        {
+            family = font switch
+            {
+                PaintTextFont.Serif => "Times New Roman",
+                PaintTextFont.Condensed => "Bahnschrift",
+                PaintTextFont.Mono => "Consolas",
+                PaintTextFont.Display => "Georgia",
+                _ => "Segoe UI"
+            };
+
+            weight = font is PaintTextFont.Regular or PaintTextFont.Italic
+                ? FontWeights.SemiBold
+                : FontWeights.Bold;
+
+            style = font == PaintTextFont.Italic
+                ? FontStyle.Italic
+                : FontStyle.Normal;
+
+            stretch = font == PaintTextFont.Condensed
+                ? FontStretch.Condensed
+                : FontStretch.Normal;
+        }
+
         public static string GetDisplayText(PaintEntity entity, string placeholder)
         {
             return string.IsNullOrEmpty(entity.Text) ? placeholder ?? string.Empty : entity.Text;
@@ -1672,12 +1724,16 @@ namespace Telegram.Controls
             var text = GetDisplayText(entity, placeholder);
             var fontSize = GetFontSize(entity);
 
+            GetFont(entity.Font, out string family, out FontWeight weight, out FontStyle style, out FontStretch stretch);
+
             CanvasTextLayout layout;
 
             using (var format = new CanvasTextFormat
             {
-                FontFamily = "Segoe UI",
-                FontWeight = FontWeights.SemiBold,
+                FontFamily = family,
+                FontWeight = weight,
+                FontStyle = style,
+                FontStretch = stretch,
                 FontSize = fontSize,
                 WordWrapping = CanvasWordWrapping.Wrap,
                 Options = CanvasDrawTextOptions.EnableColorFont,
@@ -1723,7 +1779,7 @@ namespace Telegram.Controls
                 bounds = new Rect(layoutBounds.X, layoutBounds.Y, Math.Max(layoutBounds.Width, fontSize / 2), Math.Max(layoutBounds.Height, fontSize));
             }
 
-            return new PaintTextVisual(text, entity.TextSize, entity.Alignment, layout, frame, bounds);
+            return new PaintTextVisual(text, entity.TextSize, entity.Alignment, entity.Font, layout, frame, bounds);
         }
 
         // Each line's ink widened by the padding, or null for a line with nothing visible on it.

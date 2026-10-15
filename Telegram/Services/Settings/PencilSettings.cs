@@ -8,12 +8,14 @@
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Entities;
 using Windows.UI;
 
 namespace Telegram.Services.Settings
 {
     /// <summary>
-    /// The media editor's drawing tools: each tool's own weight and colour, and the recent colours.
+    /// The media editor's drawing tools: each tool's own weight and colour, the recent colours, and
+    /// the look new text takes.
     /// </summary>
     public partial class PencilSettings : SettingsServiceBase
     {
@@ -79,6 +81,24 @@ namespace Telegram.Services.Settings
             {
                 AddOrUpdateValue("PencilRecent" + i, ColorEx.ToHex(recent[i]));
             }
+        }
+
+        public PaintTextFrame TextFrame
+        {
+            get => (PaintTextFrame)GetValueOrDefault("PencilTextFrame", (int)PaintTextFrame.Filled);
+            set => AddOrUpdateValue("PencilTextFrame", (int)value);
+        }
+
+        public PaintTextAlignment TextAlignment
+        {
+            get => (PaintTextAlignment)GetValueOrDefault("PencilTextAlignment", (int)PaintTextAlignment.Left);
+            set => AddOrUpdateValue("PencilTextAlignment", (int)value);
+        }
+
+        public PaintTextFont TextFont
+        {
+            get => (PaintTextFont)GetValueOrDefault("PencilTextFont", (int)PaintTextFont.Regular);
+            set => AddOrUpdateValue("PencilTextFont", (int)value);
         }
 
         public List<Color> GetRecentColors()

@@ -27,10 +27,6 @@
                     Value="0" />
             <Setter Property="BorderThickness"
                     Value="0" />
-            <Setter Property="FontFamily"
-                    Value="Segoe UI" />
-            <Setter Property="FontWeight"
-                    Value="SemiBold" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">

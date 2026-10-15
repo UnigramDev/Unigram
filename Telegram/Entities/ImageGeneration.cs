@@ -52,6 +52,16 @@ namespace Telegram.Entities
         Right
     }
 
+    public enum PaintTextFont
+    {
+        Regular,
+        Italic,
+        Serif,
+        Condensed,
+        Mono,
+        Display
+    }
+
     /// <summary>
     /// An object placed over the image. Like strokes it is stored against the upright image, so
     /// cropping or turning the image later never moves it.
@@ -79,6 +89,8 @@ namespace Telegram.Entities
         public PaintTextFrame Frame { get; set; }
 
         public PaintTextAlignment Alignment { get; set; }
+
+        public PaintTextFont Font { get; set; }
 
         /// <summary>
         /// A multiple of the default size, from 0.5 to 2. Unlike <see cref="Scale"/> it changes
