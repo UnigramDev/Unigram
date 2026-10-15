@@ -124,6 +124,23 @@ namespace Telegram.Controls.RichEditor
                 flyout.CreateFlyoutItem(meter.Run, Scenario.CheckArticleParagraph, "Type in a Paragraph of 100,000, Checking Every Update", Icons.TextFont);
             }
 
+            // The documents left in the editor rather than measured, to look at and type in.
+            flyout.CreateFlyoutSeparator();
+
+            if (view.Engine.Schema != null)
+            {
+                flyout.CreateFlyoutItem(meter.Open, Scenario.MessageParagraph, "Open One Paragraph of 4,096 Characters", Icons.Document);
+                flyout.CreateFlyoutItem(meter.Open, Scenario.MessageLines, "Open 100 Lines", Icons.Document);
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(meter.Open, Scenario.ArticleParagraph, "Open One Paragraph of 100,000 Characters", Icons.Document);
+                flyout.CreateFlyoutItem(meter.Open, Scenario.ArticleParagraphs, "Open 2,000 Paragraphs", Icons.Document);
+                flyout.CreateFlyoutItem(meter.Open, Scenario.ArticleMixed, "Open an Article of 100,000 Characters", Icons.Document);
+            }
+
+            flyout.CreateFlyoutItem(meter.Open, Scenario.CompareScripts, "Open Every Script", Icons.Document);
+
             flyout.ShowAt(view, new FlyoutShowOptions { Placement = FlyoutPlacementMode.Auto });
         }
 
@@ -160,6 +177,12 @@ namespace Telegram.Controls.RichEditor
             // one happened in the frame, which is the one the key before was drawn in.
             public bool Collected;
             public bool FrameCollectedFully;
+        }
+
+        // The editor's own text is replaced and not put back; loading clears the undo history too.
+        private void Open(Scenario scenario)
+        {
+            _view.Engine.Load(Generate(scenario));
         }
 
         private async void Run(Scenario scenario)
