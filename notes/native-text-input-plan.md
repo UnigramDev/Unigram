@@ -246,8 +246,10 @@ need no caller moved.
   runs no markdown input rules: "> " and "- " are how people write in a chat, and markdown is
   parsed on send as before. A quote wrapping a quote joins it instead of nesting.
 - **Quotes in a message**: `RichBlockQuote.HasCredit` (false: the credit is no stop and is not
-  drawn) and `IsExpandable` (sent as an expandable quote while it stays editable;
-  Ctrl+Shift+Enter or the chevron toggles it, and the chevron shows only while it is set).
+  drawn). Collapsing is the rich editor's own (2026-10-15; until then a message's quote only
+  carried a flag and stayed open): a collapsed quote is sent expandable, and an expandable one
+  arrives collapsed, its lines joined into one text. One holding code cannot collapse, in either
+  editor, so it arrives open and goes out an ordinary quote.
 - **Converter** (`RichFormattedTextConverter.cs`): in and out as designed above, plus
   `GetLength`, the sent length without building the text. Tested in the engine harness against
   the 14 messages of `formatted-text-block-test-messages.py`, each normalised (block entities to
@@ -363,12 +365,69 @@ so everything else, which shares the leaf view's direction, reads its coordinate
 arrows ask the line (`DirectTextBlock.IsRightToLeft`), and Home and End go to the line's logical
 start and end (`RichLeafView.GetLineEdge`), which they did not for an RTL line before.
 
+Every surface (2026-10-15): steps 5 and 6, and the box's open gaps.
+- **Host:** a `Caption` kind (`CaptionTextBox` on the old side). `Padding`, `Background`,
+  `BorderBrush`, `BorderThickness`, `CornerRadius`, `FontFamily`, `FontSize` and `MinHeight` set on
+  the host go to the box, and so do later changes to them, theme ones included. `MinHeight` goes too
+  because the box's style has its own minimum, which would hold it taller than a host of
+  `Height="0"`. `InputScope` (a name, mapped to the edit context's scope),
+  `PreventKeyboardDisplayOnProgrammaticFocus`, `CustomEmoji` (the old box's canvas; the native box
+  draws its own), `ViewModel` (the session and chat that emoji are suggested for) and
+  `ControlledList` (the page's list, as the box's automation controlled peer, on both boxes).
+  `DefaultChatMessageTextBoxStyle` in `CommonStyles.xaml` is `DefaultChatTextBoxStyle` for the
+  native box.
+- **Surfaces:** `FolderPage`, `UserEditPage`, `BusinessChatLinkPopup` and `SendGiftPopup`; the
+  poll's question, description and options; the checklist's title, tasks and new task;
+  `SendFilesPopup` and `ChooseChatsPopup`. Those are all on `Tier="Popups"`. `StoriesWindow`,
+  `StoryLiveInteractionBar` and `GroupCallWindow` are on `Secondary`. Callers moved onto
+  `ContentChanged`, `Submitted`, `FocusInput` and `MoveCaretToEnd`. The poll and the checklist
+  find the host from the focused element, since what has focus is the box inside it.
+- **Captions:** `CaptionController` (`Controls/Chats/`) holds the mentions under a caption: the
+  list, its keys on `PreviewKeyDown` and the pick. It works on either box, as the composer's does.
+  `CaptionTextBox` keeps only its emoji flyout and the space rule; `IViewWithAutocomplete` moved
+  with the controller and lost `Accept`, since the page now listens to `Submitted`. Media pasted
+  or dropped comes through `PasteRequested`; with text among it, the text is pasted, as before.
+  The `HandwritingView` workaround is gone from both popups.
+- **Code language:** `CodeLanguagePopup` (an `AutoSuggestBox`, as `CountryBox` is), for the
+  native box and the rich editor alike, in place of the rich editor's flyout. It offers the
+  highlighter's languages by name or id and takes any other, as printable ASCII without spaces or
+  a backquote: that is what TDLib keeps when it writes a language into markdown. The 32-character
+  limit is ours, since TDLib sets none. A name typed in full is sent as its id, and an empty box
+  means no language.
+- **Native box:** Formatted date in the menu (`ChooseDateTimeToast.ChooseDateUrlAsync`, which the
+  old box now uses too); `PreventKeyboardDisplayOnProgrammaticFocus`, with a tap raising the
+  keyboard; the input scope; the disabled state following `IsEnabled`. `SetText` skips text the box
+  already holds, raw or with markdown parsed: `FolderPage` writes the title back on every change,
+  and reloading would move the caret and end a composition. A `SetText` or `ClearText` made from
+  inside `ContentChanged` waits for the next dispatcher turn: the checklist turns what is typed
+  into a task there, inside the input service's callback.
+- **Fallback:** an exception leaving the edit context's text, selection or format handlers, or the
+  editor's key handling, sets the switch to `Off` for the next launch. A filter notes it and lets
+  it go on, so the crash report keeps its stack. Release builds have no method names to tell
+  where an exception came from, so `WatchDog` could not do it.
+- **Quotes:** a message's quote collapses exactly as a rich message's does (see "Quotes in a
+  message" above).
+- **Not RichEdit any more:** `TextEditorPopup`'s AI fix result, a read-only `RichEditBox`, is a
+  `FormattedTextBlock`. Deletions are struck through and insertions underlined, where the old box
+  drew every change with a wavy underline.
+- **Left on RichEdit:** `SupergroupReactionsPopup`. It is an emoji picker shaped like a text box
+  and blocks typing by handling keys, but the native box's text arrives from the input service,
+  past any key handler.
+- Up and Down to the ends already worked: past the first or last line the editor goes to the
+  document's edge.
+
+To test first: each surface on Off and on its tier.
+- `StoryLiveInteractionBar` and `GroupCallWindow` declare their field with `Height="0"`, and
+  nothing changes that height; the old box shows anyway, and how is not known. Check the native
+  one is visible there.
+- The checklist's new task box: type into it, which makes a task and moves focus.
+- Mentions in a caption, with the arrows and Enter.
+- The keyboard staying down when a story or chat opens, and coming up on a tap.
+
 Not done yet, in the order they matter:
-- Dates from the menu (`ChooseDateTimeToast`), and mentions inserted by callers.
-- `CaptionTextBox`'s autocomplete on the controller, for `SendFilesPopup` and `ChooseChatsPopup`
-  (the composer's moved: steps 1 and 2 above).
-- The host forwards no `Padding`, `FontFamily`, `InputScope` or style, and makes a plain
-  `FormattedTextBox`; the `CaptionTextBox` surfaces need both, and a `CustomEmoji` canvas for the
-  old box.
-- The `WatchDog` fallback to `Off`.
+- The composer's `FontFamily`: the leaves draw with the message font.
 - The cost of a keystroke and of making the control, measured against `RichEditBox`.
+- Removal (step 8): `UsernameCollection`, `EmojiCollection` and `SearchHashtagsCollection` are
+  nested in `ChatTextBox` and used by both controllers and the editor. They move out first.
+  `ChatTextFlyout` and `FormattedTextFlyout` are built on `FormattedTextBox`, and the
+  `RichEditBox` styles go last.

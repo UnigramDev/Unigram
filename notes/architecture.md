@@ -361,7 +361,9 @@ indicator, Up to edit and Ctrl+Up/Down to reply, pasting files and Ctrl+Shift+V 
 (…/ChatTextBox.cs) — the composer's box over RichEdit, now only what is RichEdit's: the `:` and custom
 emoji flyout, Up/Down to the ends, the inline bot's placeholder drawn over the text. ChatView declares
 the box as a `FormattedTextInputHost` (`Kind="Composer"`, `Tier="All"`), which makes a `ChatTextBox` or a
-`MessageTextBox` as the diagnostics switch says;
+`MessageTextBox` as the diagnostics switch says, and every other message-text box in the app is a host
+too; `CaptionController` (…/CaptionController.cs) — the same for a caption under media being sent: the
+mention list, its keys and the pick, with `CaptionTextBox` (Controls/) left only its emoji flyout;
 `ChatRecordBar` (…/ChatRecordBar.xaml.cs) — voice/video recording UI with composition-driven waveform
 and blob visuals; `ChatActionBarView` (…/ChatActionBarView.xaml.cs); `ChatBackgroundControl`/
 `ChatBackgroundPresenter` — the wallpaper compositor.
@@ -577,7 +579,7 @@ drives to zero — an ancestor that sizes itself to this control's content gets 
 `MeasureOverride` adds it back to recover the width the parent really had.
 
 ## Rich message editor — Telegram/Controls/RichEditor/ (29 files), Telegram/Views/Host/RichTextWindow.xaml.cs
-<!-- map: verified=fa95aa39f paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
+<!-- map: verified=7a28a663d paths=Telegram/Controls/RichEditor,Telegram/Views/Host/RichTextWindow.xaml,Telegram/Views/Host/RichTextWindow.xaml.cs,Telegram/Views/Popups/RichButtonPopup.xaml.cs,Telegram/Views/Popups/FormulaPopup.xaml.cs,Telegram.Native/SpellChecker.idl,Telegram.Native/SpellChecker.cpp -->
 The native editor for rich messages (instant-view page blocks), in a window of its own, for a new
 message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 **Key types:** `RichDocument`, its `RichBlock`s and `RichTextLeaf` (RichDocument.cs, RichTextLeaf.cs) —
@@ -597,7 +599,8 @@ composer's `ChatTextFlyout`, offered once the host sets a `RichSuggestionContext
 text box's frame, `IFormattedTextInput` (Controls/) like `FormattedTextBox`, picked per surface by
 `FormattedTextInputHost` and the `NativeTextInput` diagnostics setting (notes/native-text-input-plan.md).
 `RichMediaUploads` — an article's media uploading from the moment it is added, sent by file id
-through `IRichMediaInputs`.
+through `IRichMediaInputs`. `CodeLanguagePopup` (Views/Popups/) — a code block's language, for both
+editors: the highlighter's languages (`SyntaxToken.Languages`, each with its aliases) or any other.
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
 **Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
@@ -609,10 +612,13 @@ leaf, so `BindLeaf` registers only leaves in the index - hit testing must never 
 checker's factory is free-threaded: make and call it on the thread pool only. Empty credits are not
 drawn, and every move or join has to step over them (`IsLeafHidden`). A selection never ends inside a table
 it runs past: `Select` moves that end to the table's far edge, so delete and copy take it whole. With a
-`Schema` set the engine runs no input rules, and a quote has no credit stop (`HasCredit`); a collapsed
-quote is a rich message's, a message's quote is only marked `IsExpandable`. A run with `Replaced`
+`Schema` set the engine runs no input rules, and a quote has no credit stop (`HasCredit`); a quote
+collapses as in a rich message, and a collapsed one is a message's expandable quote. A run with `Replaced`
 set (an emoticon or a picked suggestion) never merges with its neighbours, and Backspace after it
-gives the typing back: `HasSameStyle` must keep refusing it. The leaves' text blocks, formulas and
+gives the typing back: `HasSameStyle` must keep refusing it. `MessageTextBox.ContentChanged` is
+raised inside the engine's change, often inside the input service's callback, so a `SetText` or
+`ClearText` from a handler waits for the next dispatcher turn; `SetText` of the text already there does
+nothing, since pages write their view model's copy back on every change. The leaves' text blocks, formulas and
 media frames are pinned left to right, since they draw into surfaces a mirrored editor would show
 mirrored: `RichLeafView` is the one place their coordinates cross the flip, and nothing else may
 read a text block's coordinates directly. Brushes come from the XAML, never from code. The
