@@ -666,9 +666,17 @@ namespace Telegram.Views.Popups
         }
 
         // What the colour and size controls edit: the selected text, or else the brush.
-        private PencilTool Slot => SelectedText != null ? PencilTool.Text : _tool;
+        private PencilTool Slot => Entities.Selected?.Type switch
+        {
+            PaintEntityType.Text => PencilTool.Text,
+            PaintEntityType.Shape => PencilTool.Shape,
+            _ => _tool
+        };
 
         private PaintEntity SelectedText => Entities.Selected is { Type: PaintEntityType.Text } entity ? entity : null;
+
+        // What the colour button edits, besides the brush.
+        private PaintEntity SelectedColored => Entities.Selected is { Type: PaintEntityType.Text or PaintEntityType.Shape } entity ? entity : null;
 
         private void UpdateTools()
         {
@@ -689,20 +697,25 @@ namespace Telegram.Views.Popups
             // drawing.
             var selected = Entities.Selected;
             var text = selected?.Type == PaintEntityType.Text;
-            var sticker = selected != null && selected.Type != PaintEntityType.Text;
+            var shape = selected?.Type == PaintEntityType.Shape;
+            var sticker = selected != null && PaintEntityRenderer.IsSticker(selected);
 
             DrawTab.IsChecked = selected == null;
             StickerTab.IsChecked = sticker;
             TextTab.IsChecked = text;
+            ShapesTab.IsChecked = shape;
 
             // Hidden rather than collapsed, so the bar keeps its width and the highlight its place.
+            // A shape keeps the brushes, one press away from drawing again.
+            var brushes = selected == null || shape;
+
             ShowBrush(ToolSelection, selected == null);
-            ShowBrush(PenTool, selected == null);
-            ShowBrush(ArrowTool, selected == null);
-            ShowBrush(MarkerTool, selected == null);
-            ShowBrush(NeonTool, selected == null);
-            ShowBrush(BlurTool, selected == null);
-            ShowBrush(EraserTool, selected == null);
+            ShowBrush(PenTool, brushes);
+            ShowBrush(ArrowTool, brushes);
+            ShowBrush(MarkerTool, brushes);
+            ShowBrush(NeonTool, brushes);
+            ShowBrush(BlurTool, brushes);
+            ShowBrush(EraserTool, brushes);
 
             TextOptions.Visibility = text
                 ? Visibility.Visible
@@ -720,6 +733,16 @@ namespace Telegram.Views.Popups
 
             if (sticker)
             {
+                return;
+            }
+
+            if (shape)
+            {
+                WeightSlider.SetRange(PencilTools.GetMinimumWeight(PencilTool.Shape), PencilTools.GetMaximumWeight(PencilTool.Shape), selected.ShapeWeight);
+
+                ColorButton.IsEnabled = true;
+                ColorSwatchPanel.Opacity = 1;
+                ColorSwatch.Fill = new SolidColorBrush(selected.Color);
                 return;
             }
 
@@ -746,7 +769,7 @@ namespace Telegram.Views.Popups
 
         private void SetColor(Color color)
         {
-            if (SelectedText != null)
+            if (SelectedColored != null)
             {
                 Entities.SetSelectedColor(color);
             }
@@ -1004,6 +1027,65 @@ namespace Telegram.Views.Popups
             }
         }
 
+        private bool _updatingShapeFill;
+
+        // Like the sticker tab, it opens its list on every press; it lights up while a shape is
+        // selected.
+        private void ShapesTab_Click(object sender, RoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(ShapesTab);
+            UpdateTools();
+        }
+
+        private void ShapesFlyout_Opening(object sender, object e)
+        {
+            var filled = Entities.Selected is { Type: PaintEntityType.Shape } shape
+                ? shape.ShapeFilled
+                : AppSettings.Pencil.ShapeFilled;
+
+            _updatingShapeFill = true;
+            ShapeFilled.IsChecked = filled;
+            _updatingShapeFill = false;
+
+            UpdateShapeIcons(filled);
+        }
+
+        private void ShapeItem_Click(object sender, RoutedEventArgs e)
+        {
+            var kind = sender == RectangleItem ? PaintShapeKind.Rectangle
+                : sender == StarItem ? PaintShapeKind.Star
+                : sender == BubbleItem ? PaintShapeKind.Bubble
+                : sender == ArrowItem ? PaintShapeKind.Arrow
+                : PaintShapeKind.Circle;
+
+            var settings = AppSettings.Pencil;
+            Entities.AddShape(kind, settings.ShapeFilled, settings.GetColor(PencilTool.Shape), (float)settings.GetWeight(PencilTool.Shape));
+        }
+
+        // The choice is kept for new shapes, and given to the selected one too.
+        private void ShapeFilled_Changed(object sender, RoutedEventArgs e)
+        {
+            if (_updatingShapeFill)
+            {
+                return;
+            }
+
+            var filled = ShapeFilled.IsChecked == true;
+
+            AppSettings.Pencil.ShapeFilled = filled;
+            Entities.SetSelectedShapeFilled(filled);
+
+            UpdateShapeIcons(filled);
+        }
+
+        private void UpdateShapeIcons(bool filled)
+        {
+            CircleIcon.Glyph = filled ? Icons.CircleFilled : Icons.Circle;
+            RectangleIcon.Glyph = filled ? Icons.SquareFilled : Icons.Square;
+            StarIcon.Glyph = filled ? Icons.StarFilled : Icons.Star;
+            BubbleIcon.Glyph = filled ? Icons.ChatEmptyFilled : Icons.ChatEmpty;
+        }
+
         private void AddText_Click(object sender, RoutedEventArgs e)
         {
             AddText();
@@ -1025,7 +1107,7 @@ namespace Telegram.Views.Popups
 
         private void ColorFlyout_Opening(object sender, object e)
         {
-            var current = SelectedText?.Color ?? AppSettings.Pencil.GetColor(Slot);
+            var current = SelectedColored?.Color ?? AppSettings.Pencil.GetColor(Slot);
             var colors = new List<SolidColorBrush>();
 
             foreach (var color in PencilSettings.PresetColors)
@@ -1062,7 +1144,7 @@ namespace Telegram.Views.Popups
                 FindName(nameof(CustomColorPicker));
             }
 
-            CustomColorPicker.Color = SelectedText?.Color ?? Canvas.Stroke;
+            CustomColorPicker.Color = SelectedColored?.Color ?? Canvas.Stroke;
 
             PalettePanel.Visibility = Visibility.Collapsed;
             CustomColorPicker.Visibility = Visibility.Visible;
@@ -1114,6 +1196,10 @@ namespace Telegram.Views.Popups
             {
                 Entities.SetSelectedTextSize((float)WeightSlider.Value);
             }
+            else if (Entities.Selected?.Type == PaintEntityType.Shape)
+            {
+                Entities.SetSelectedShapeWeight((float)WeightSlider.Value);
+            }
             else
             {
                 Canvas.StrokeThickness = PencilTools.GetThickness(Canvas.Tool, WeightSlider.Value);
@@ -1140,7 +1226,7 @@ namespace Telegram.Views.Popups
         {
             _weightDragging = true;
 
-            if (SelectedText == null)
+            if (Entities.Selected == null)
             {
                 UpdateWeightPreview();
                 WeightPreview.Visibility = Visibility.Visible;

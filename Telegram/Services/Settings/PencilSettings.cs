@@ -95,6 +95,12 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue("PencilTextAlignment", (int)value);
         }
 
+        public bool ShapeFilled
+        {
+            get => GetValueOrDefault("PencilShapeFilled", false);
+            set => AddOrUpdateValue("PencilShapeFilled", value);
+        }
+
         public PaintTextFont TextFont
         {
             get => (PaintTextFont)GetValueOrDefault("PencilTextFont", (int)PaintTextFont.Regular);

@@ -700,6 +700,10 @@
     {"name": "ic_fluent_pen_sparkle_20_regular", "code": "F7A1", "src": "fluent:pen_sparkle_20_regular"},
     {"name": "ic_fluent_blur_20_regular", "code": "F7A2", "src": "fluent:blur_20_regular"},
     {"name": "ic_fluent_eyedropper_20_regular", "code": "F7A3", "src": "fluent:eyedropper_20_regular"},
+    {"name": "ic_fluent_circle_20_regular", "code": "F7A4", "src": "fluent:circle_20_regular"},
+    {"name": "ic_fluent_circle_20_filled", "code": "F7A5", "src": "fluent:circle_20_filled"},
+    {"name": "ic_fluent_square_20_regular", "code": "F7A6", "src": "fluent:square_20_regular"},
+    {"name": "ic_fluent_square_20_filled", "code": "F7A7", "src": "fluent:square_20_filled"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

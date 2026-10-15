@@ -4727,6 +4727,12 @@
     <string name="PhotoEditorDraw">Draw</string>
     <string name="PhotoEditorText">Text</string>
     <string name="PhotoEditorSticker">Sticker</string>
+    <string name="PaintShapes">Shapes</string>
+    <string name="PaintShapeFilled">Filled</string>
+    <string name="PaintCircle">Circle</string>
+    <string name="PaintRectangle">Rectangle</string>
+    <string name="PaintStar">Star</string>
+    <string name="PaintBubble">Bubble</string>
     <string name="PaintTextBackground">Text Background</string>
     <string name="FontType">Font Type</string>
     <string name="PhotoEditorTypefaceItalic">Italic</string>

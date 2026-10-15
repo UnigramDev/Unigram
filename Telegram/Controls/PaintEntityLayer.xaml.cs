@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
@@ -51,8 +52,33 @@ namespace Telegram.Controls
             None,
             Move,
             Handle,
+            ShapeHandle,
             Pinch
         }
+
+        // A shape's handles, each its own index in every shape.
+        private const int ShapeCorner = 0;
+        private const int ShapeRotate = 4;
+        private const int ShapeTail = 5;
+        private const int ShapeRadius = 6;
+        private const int ArrowStart = 7;
+        private const int ArrowBend = 8;
+        private const int ArrowTip = 9;
+        private const int ArrowHead = 10;
+
+        // In view pixels.
+        private const float ShapeHandleHitRadius = 20;
+        private const float ShapeRotateGap = 24;
+        private const float ShapeHandleRadius = 6;
+
+        // Where on a star its handle sits: on the point clockwise from the top one.
+        private const double StarHandleAngle = -Math.PI / 2 + 2 * Math.PI / 5;
+
+        private static readonly float[] CornerX = { -1, 1, 1, -1 };
+        private static readonly float[] CornerY = { -1, -1, 1, 1 };
+
+        private readonly int[] _shapeHandleIds = new int[7];
+        private readonly Vector2[] _shapeHandlePoints = new Vector2[7];
 
         // In view pixels.
         private const float HandleHitRadius = 19.5f;
@@ -89,6 +115,7 @@ namespace Telegram.Controls
         private readonly SolidColorBrush _hitBrush = new(Colors.Transparent);
 
         private CanvasStrokeStyle _dashStyle;
+        private CanvasStrokeStyle _guideStyle;
 
         private Matrix3x2 _view = Matrix3x2.Identity;
         private Matrix3x2 _inverse = Matrix3x2.Identity;
@@ -111,6 +138,7 @@ namespace Telegram.Controls
         private Vector2 _rawCenter;
 
         private bool _leftHandle;
+        private int _shapeHandle;
         private float _handleScale;
         private float _handleDistance;
         private double _rawAngle;
@@ -382,7 +410,12 @@ namespace Telegram.Controls
         // What the object covers, in the renderer's units; false while a text has no layout yet.
         private bool TryGetBounds(PaintEntity entity, out Rect bounds)
         {
-            if (entity.Type != PaintEntityType.Text)
+            if (entity.Type == PaintEntityType.Shape)
+            {
+                bounds = PaintEntityRenderer.GetShapeBounds(entity);
+                return true;
+            }
+            else if (PaintEntityRenderer.IsSticker(entity))
             {
                 bounds = PaintEntityRenderer.GetStickerBounds(entity);
                 return true;
@@ -394,12 +427,12 @@ namespace Telegram.Controls
             return visual != null;
         }
 
-        // The selection's frame: around a text, or the square around a sticker's circle.
+        // The selection's frame: around a text or a shape, or the square around a sticker's circle.
         private Rect GetFrame(PaintEntity entity, Rect bounds)
         {
             var unit = GetUnit(entity);
 
-            if (entity.Type != PaintEntityType.Text)
+            if (PaintEntityRenderer.IsSticker(entity))
             {
                 var radius = Math.Max(bounds.Width, bounds.Height) / 2 + FramePaddingX * unit;
                 var x = bounds.X + bounds.Width / 2;
@@ -453,9 +486,26 @@ namespace Telegram.Controls
             }
 
             var local = Vector2.Transform(point, inverse);
+
+            if (entity is { Type: PaintEntityType.Shape, Shape: PaintShapeKind.Arrow })
+            {
+                var reach = PaintEntityRenderer.GetShapeThickness(entity) + (padded ? FramePaddingX * 2 : FramePaddingX) * GetUnit(entity);
+                return DistanceToSegment(local, entity.ArrowStart, entity.ArrowBend) <= reach
+                    || DistanceToSegment(local, entity.ArrowBend, entity.ArrowTip) <= reach;
+            }
+
             var area = padded ? GetFrame(entity, bounds) : bounds;
 
             return local.X >= area.Left && local.X <= area.Right && local.Y >= area.Top && local.Y <= area.Bottom;
+        }
+
+        private static float DistanceToSegment(Vector2 point, Vector2 from, Vector2 to)
+        {
+            var segment = to - from;
+            var length = segment.LengthSquared();
+            var t = length > 0 ? Math.Clamp(Vector2.Dot(point - from, segment) / length, 0, 1) : 0;
+
+            return Vector2.Distance(point, from + segment * t);
         }
 
         private PaintEntity HitEntity(Vector2 point)
@@ -550,7 +600,7 @@ namespace Telegram.Controls
                     Source = CreateSource(entity)
                 };
             }
-            else if (entity.Type != PaintEntityType.Text)
+            else if (PaintEntityRenderer.IsSticker(entity))
             {
                 element.Child = new AnimatedImage
                 {
@@ -568,8 +618,31 @@ namespace Telegram.Controls
                     Tag = entity
                 };
 
-                canvas.Draw += TextElement_Draw;
-                element.Child = canvas;
+                canvas.Draw += Element_Draw;
+
+                if (entity is { Type: PaintEntityType.Shape, Shape: PaintShapeKind.Arrow })
+                {
+                    // Only the line takes presses: an arrow's box is mostly empty, and presses
+                    // there belong to the drawing below.
+                    element.Background = null;
+                    canvas.IsHitTestVisible = false;
+
+                    var grid = new Grid();
+                    grid.Children.Add(canvas);
+                    grid.Children.Add(new Polyline
+                    {
+                        Stroke = _hitBrush,
+                        StrokeLineJoin = PenLineJoin.Round,
+                        StrokeStartLineCap = PenLineCap.Round,
+                        StrokeEndLineCap = PenLineCap.Round
+                    });
+
+                    element.Child = grid;
+                }
+                else
+                {
+                    element.Child = canvas;
+                }
             }
 
             _elements[entity] = element;
@@ -593,12 +666,17 @@ namespace Telegram.Controls
             };
         }
 
+        private static CanvasControl GetCanvas(Border element)
+        {
+            return element.Child as CanvasControl ?? (element.Child as Grid)?.Children[0] as CanvasControl;
+        }
+
         private void DetachElement(Border element)
         {
             // Win2D holds on to a control's resources until it is told to let go.
-            if (element.Child is CanvasControl canvas)
+            if (GetCanvas(element) is CanvasControl canvas)
             {
-                canvas.Draw -= TextElement_Draw;
+                canvas.Draw -= Element_Draw;
                 canvas.RemoveFromVisualTree();
             }
         }
@@ -669,7 +747,7 @@ namespace Telegram.Controls
 
             float raster;
 
-            if (entity.Type != PaintEntityType.Text)
+            if (PaintEntityRenderer.IsSticker(entity))
             {
                 raster = k;
             }
@@ -682,7 +760,7 @@ namespace Telegram.Controls
                     raster = exact;
                     _rasters[entity] = raster;
 
-                    ((CanvasControl)element.Child).Invalidate();
+                    GetCanvas(element)?.Invalidate();
                 }
             }
 
@@ -695,6 +773,19 @@ namespace Telegram.Controls
                 * GetTransform(entity, bounds);
 
             ((MatrixTransform)element.RenderTransform).Matrix = ToMatrix(matrix);
+
+            if (element.Child is Grid grid && grid.Children.Count > 1 && grid.Children[1] is Polyline line)
+            {
+                var points = new PointCollection();
+
+                foreach (var point in new[] { entity.ArrowStart, entity.ArrowBend, entity.ArrowTip })
+                {
+                    points.Add(new Point((point.X - bounds.X) * raster, (point.Y - bounds.Y) * raster));
+                }
+
+                line.Points = points;
+                line.StrokeThickness = (PaintEntityRenderer.GetShapeThickness(entity) * 2 + FramePaddingX * 2 * GetUnit(entity)) * raster;
+            }
         }
 
         // A flip turns the sticker over like a card: squeezed through its width with a slight
@@ -907,11 +998,71 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// Places a shape where the view is looking, a fifth of the crop's shorter side across.
+        /// </summary>
+        public void AddShape(PaintShapeKind kind, bool filled, Color color, float weight)
+        {
+            EndEditing();
+
+            if (!TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            // The renderer's width is the crop's at this scale.
+            var height = (float)(PaintEntityRenderer.Reference * _area.Height / _area.Width);
+            var radius = Math.Min(PaintEntityRenderer.Reference, height) / 5;
+
+            var entity = new PaintEntity
+            {
+                Type = PaintEntityType.Shape,
+                Shape = kind,
+                ShapeFilled = filled,
+                ShapeWeight = weight,
+                Color = color,
+                ShapeSize = new Vector2(radius),
+                Position = position,
+                Rotation = GetRotation(0),
+                Scale = scale
+            };
+
+            entity.ShapeTail = new Vector2(radius * 0.8f, radius * 1.2f + PaintEntityRenderer.GetShapeThickness(entity));
+
+            entity.ArrowTip = new Vector2(0, -height / 6);
+            entity.ArrowBend = new Vector2(1, 0);
+            entity.ArrowStart = new Vector2(0, height / 6);
+            entity.ArrowHead = height / 6;
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
+        }
+
+        public void SetSelectedShapeWeight(float weight)
+        {
+            if (_selected?.Type == PaintEntityType.Shape)
+            {
+                _selected.ShapeWeight = weight;
+                Invalidate(_selected);
+            }
+        }
+
+        public void SetSelectedShapeFilled(bool filled)
+        {
+            if (_selected?.Type == PaintEntityType.Shape)
+            {
+                _selected.ShapeFilled = filled;
+                Invalidate(_selected);
+            }
+        }
+
+        /// <summary>
         /// Turns a selected sticker over. Like moving it, this is not undone.
         /// </summary>
         public void FlipSelected()
         {
-            if (_selected == null || _selected.Type == PaintEntityType.Text)
+            if (_selected == null || !PaintEntityRenderer.IsSticker(_selected))
             {
                 return;
             }
@@ -963,9 +1114,9 @@ namespace Telegram.Controls
 
             UpdateElement(entity);
 
-            if (_elements.TryGetValue(entity, out Border element) && element.Child is CanvasControl canvas)
+            if (_elements.TryGetValue(entity, out Border element))
             {
-                canvas.Invalidate();
+                GetCanvas(element)?.Invalidate();
             }
 
             Canvas.Invalidate();
@@ -1049,7 +1200,7 @@ namespace Telegram.Controls
             {
                 flyout.CreateFlyoutItem(EditSelected, Strings.PaintEdit, Icons.Edit);
             }
-            else
+            else if (PaintEntityRenderer.IsSticker(entity))
             {
                 flyout.CreateFlyoutItem(FlipSelected, Strings.AccDescrFlip, Icons.FlipHorizontal);
             }
@@ -1220,7 +1371,11 @@ namespace Telegram.Controls
             // The text box keeps its own presses, so this one landed outside it: on a handle or the
             // text's own frame writing goes on, anywhere else it ends.
             var handle = HitHandle(view);
-            if (handle != 0)
+            if (_selected?.Type == PaintEntityType.Shape && HitShapeHandle(view) is int shapeHandle)
+            {
+                BeginShapeHandle(shapeHandle);
+            }
+            else if (handle != 0)
             {
                 BeginHandle(handle < 0, view);
             }
@@ -1282,7 +1437,7 @@ namespace Telegram.Controls
 
             if (!_panned)
             {
-                var threshold = _gesture == Gesture.Handle ? HandleThreshold : PanThreshold;
+                var threshold = _gesture is Gesture.Handle or Gesture.ShapeHandle ? HandleThreshold : PanThreshold;
                 if (Vector2.Distance(view, _pressPoint) < threshold)
                 {
                     return;
@@ -1300,6 +1455,10 @@ namespace Telegram.Controls
             else if (_gesture == Gesture.Handle)
             {
                 MoveHandle(view);
+            }
+            else if (_gesture == Gesture.ShapeHandle)
+            {
+                MoveShapeHandle(view);
             }
         }
 
@@ -1488,6 +1647,266 @@ namespace Telegram.Controls
             UpdateSelected();
         }
 
+        #region Shapes
+
+        // The handles of a shape, in its units, into the shared buffers: a circle has its radius, a
+        // star its radius on one point, which also turns it, a rectangle or a bubble its corners and
+        // a rotation handle above, a bubble its tail too, and an arrow its three points and its
+        // head's size.
+        private int GetShapeHandles(PaintEntity entity)
+        {
+            var count = 0;
+            var size = Vector2.Abs(entity.ShapeSize);
+            var radius = Math.Min(size.X, size.Y);
+
+            void Add(int id, Vector2 point)
+            {
+                _shapeHandleIds[count] = id;
+                _shapeHandlePoints[count] = point;
+                count++;
+            }
+
+            switch (entity.Shape)
+            {
+                case PaintShapeKind.Circle:
+                    Add(ShapeRadius, new Vector2(radius, 0));
+                    break;
+
+                case PaintShapeKind.Star:
+                    Add(ShapeRadius, new Vector2((float)Math.Cos(StarHandleAngle), (float)Math.Sin(StarHandleAngle)) * radius);
+                    break;
+
+                case PaintShapeKind.Rectangle:
+                case PaintShapeKind.Bubble:
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Add(ShapeCorner + i, new Vector2(CornerX[i] * size.X, CornerY[i] * size.Y));
+                    }
+
+                    Add(ShapeRotate, new Vector2(0, -size.Y - ShapeRotateGap * GetUnit(entity)));
+
+                    if (entity.Shape == PaintShapeKind.Bubble)
+                    {
+                        Add(ShapeTail, entity.ShapeTail);
+                    }
+                    break;
+
+                case PaintShapeKind.Arrow:
+                    Add(ArrowStart, entity.ArrowStart);
+                    Add(ArrowBend, entity.ArrowBend);
+                    Add(ArrowTip, entity.ArrowTip);
+                    Add(ArrowHead, entity.ArrowTip + GetArrowBack(entity) * entity.ArrowHead / 5.5f);
+                    break;
+            }
+
+            return count;
+        }
+
+        // From an arrow's tip back along its curve.
+        private static Vector2 GetArrowBack(PaintEntity entity)
+        {
+            var back = entity.ArrowBend - entity.ArrowTip;
+            return back.LengthSquared() > 0 ? Vector2.Normalize(back) : new Vector2(0, 1);
+        }
+
+        private static bool TurnsShape(PaintEntity entity, int handle)
+        {
+            return handle == ShapeRotate || (handle == ShapeRadius && entity?.Shape == PaintShapeKind.Star);
+        }
+
+        private int? HitShapeHandle(Vector2 view)
+        {
+            var entity = _selected;
+            if (entity == null || !TryGetBounds(entity, out Rect bounds))
+            {
+                return null;
+            }
+
+            var transform = GetTransform(entity, bounds) * _view;
+            var count = GetShapeHandles(entity);
+
+            int? hit = null;
+            var best = ShapeHandleHitRadius;
+
+            for (int i = 0; i < count; i++)
+            {
+                var distance = Vector2.Distance(view, Vector2.Transform(_shapeHandlePoints[i], transform));
+                if (distance <= best)
+                {
+                    best = distance;
+                    hit = _shapeHandleIds[i];
+                }
+            }
+
+            return hit;
+        }
+
+        private void BeginShapeHandle(int handle)
+        {
+            _gesture = Gesture.ShapeHandle;
+            _shapeHandle = handle;
+            _pressedSelected = false;
+            _pressedEmpty = false;
+
+            _rawAngle = GetScreenAngle(_selected);
+            _stickyAngle.Reset();
+
+            for (int i = 0; i < StickyAngles.Length; i++)
+            {
+                if (Math.Abs(_rawAngle - StickyAngles[i]) < 0.0001)
+                {
+                    _stickyAngle.Stick(StickyAngles[i], i);
+                    break;
+                }
+            }
+        }
+
+        private void MoveShapeHandle(Vector2 view)
+        {
+            var entity = _selected;
+            if (!TryGetBounds(entity, out Rect bounds) || !Matrix3x2.Invert(GetTransform(entity, bounds), out Matrix3x2 inverse))
+            {
+                return;
+            }
+
+            var local = Vector2.Transform(FromView(view), inverse);
+            var minimum = 8 * GetUnit(entity);
+
+            switch (_shapeHandle)
+            {
+                case ShapeRadius:
+                    entity.ShapeSize = new Vector2(Math.Max(minimum, local.Length()));
+
+                    // A star's handle sits on one of its points, so the star turns to keep it there.
+                    if (entity.Shape == PaintShapeKind.Star)
+                    {
+                        _rawAngle = GetHandleAngle(view, StarHandleAngle);
+                        ApplyAngle();
+                        return;
+                    }
+                    break;
+
+                case ShapeRotate:
+                    _rawAngle = GetHandleAngle(view, -Math.PI / 2);
+                    ApplyAngle();
+                    return;
+
+                case ShapeTail:
+                    entity.ShapeTail = local;
+                    break;
+
+                case ArrowStart:
+                    entity.ArrowStart = local;
+                    break;
+
+                case ArrowBend:
+                    entity.ArrowBend = local;
+                    break;
+
+                case ArrowTip:
+                    entity.ArrowTip = local;
+                    break;
+
+                case ArrowHead:
+                    var thickness = PaintEntityRenderer.GetShapeThickness(entity);
+                    var along = Vector2.Dot(local - entity.ArrowTip, GetArrowBack(entity)) * 5.5f;
+                    var longest = Math.Max(thickness * 4, Vector2.Distance(entity.ArrowTip, entity.ArrowBend) * 5.5f / 2);
+
+                    entity.ArrowHead = Math.Clamp(along, thickness * 4, longest);
+                    break;
+
+                default:
+                    // A corner moves while the opposite one stays, and never past it.
+                    var corner = _shapeHandle - ShapeCorner;
+                    var other = (corner + 2) % 4;
+
+                    var size = Vector2.Abs(entity.ShapeSize);
+                    var opposite = new Vector2(CornerX[other] * size.X, CornerY[other] * size.Y);
+                    var span = local - opposite;
+
+                    span = new Vector2(
+                        CornerX[corner] * Math.Max(minimum * 2, CornerX[corner] * span.X),
+                        CornerY[corner] * Math.Max(minimum * 2, CornerY[corner] * span.Y));
+
+                    var middle = opposite + span / 2;
+
+                    // The origin moves to the new middle; the tail is kept where it was.
+                    entity.Position = Vector2.Transform(middle, GetTransform(entity, bounds)) / ImageSize;
+                    entity.ShapeSize = Vector2.Abs(span) / 2;
+                    entity.ShapeTail -= middle;
+                    break;
+            }
+
+            UpdateSelected();
+        }
+
+        // The object's rotation, as a screen angle, that puts a handle sitting at this angle in
+        // its own units under the pointer. Mirroring flips an object's turn but not its handle's
+        // place in it, since its content is flipped back.
+        private double GetHandleAngle(Vector2 view, double handle)
+        {
+            var offset = view - GetViewCenter(_selected);
+            return Normalize(Math.Atan2(offset.Y, offset.X) - handle);
+        }
+
+        // In view pixels, so they keep one size however the shape and the view are scaled.
+        private void DrawShapeHandles(CanvasDrawingSession session, PaintEntity entity, Rect bounds)
+        {
+            var progress = 1 - Math.Pow(1 - _selectProgress, 5);
+            var alpha = (byte)(255 * progress);
+
+            var accent = (HandleBrush as SolidColorBrush)?.Color ?? Colors.White;
+            var fill = Color.FromArgb(alpha, accent.R, accent.G, accent.B);
+            var white = Color.FromArgb(alpha, 255, 255, 255);
+
+            var previous = session.Transform;
+            session.Transform = Matrix3x2.CreateTranslation(OverlayMargin, OverlayMargin);
+
+            var transform = GetTransform(entity, bounds) * _view;
+            var count = GetShapeHandles(entity);
+
+            if (entity.Shape == PaintShapeKind.Arrow)
+            {
+                _guideStyle ??= new CanvasStrokeStyle
+                {
+                    CustomDashStyle = new float[] { 8, 8 }
+                };
+
+                var start = Vector2.Transform(entity.ArrowStart, transform);
+                var bend = Vector2.Transform(entity.ArrowBend, transform);
+                var tip = Vector2.Transform(entity.ArrowTip, transform);
+                var guide = Color.FromArgb((byte)(alpha * 0.8), 255, 255, 255);
+
+                session.DrawLine(tip, bend, guide, 1, _guideStyle);
+                session.DrawLine(start, bend, guide, 1, _guideStyle);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                var point = Vector2.Transform(_shapeHandlePoints[i], transform);
+
+                // The rotation handle hangs from the shape's top edge, and is drawn the other way
+                // round from the rest.
+                if (_shapeHandleIds[i] == ShapeRotate)
+                {
+                    var edge = Vector2.Transform(new Vector2(0, -Math.Abs(entity.ShapeSize.Y)), transform);
+
+                    session.DrawLine(edge, point, white, 1);
+                    session.FillCircle(point, ShapeHandleRadius, white);
+                    session.DrawCircle(point, ShapeHandleRadius, fill, 1.5f);
+                }
+                else
+                {
+                    session.FillCircle(point, ShapeHandleRadius, fill);
+                    session.DrawCircle(point, ShapeHandleRadius, white, 1.5f);
+                }
+            }
+
+            session.Transform = previous;
+        }
+
+        #endregion
+
         // The midpoint moves the object, the spread scales it and the turn of the line between the
         // fingers turns it. A pinch never snaps.
         private void MovePinch(uint id, Vector2 previous, Vector2 view)
@@ -1611,7 +2030,7 @@ namespace Telegram.Controls
                 {
                     ApplyMove();
                 }
-                else if (_gesture == Gesture.Handle)
+                else if (_gesture == Gesture.Handle || (_gesture == Gesture.ShapeHandle && TurnsShape(_selected, _shapeHandle)))
                 {
                     ApplyAngle();
                 }
@@ -1671,25 +2090,38 @@ namespace Telegram.Controls
             }
         }
 
-        private void TextElement_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        private void Element_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (sender.Tag is not PaintEntity entity || GetVisual(entity) is not PaintTextVisual visual || !_rasters.TryGetValue(entity, out float raster))
+            if (sender.Tag is not PaintEntity entity || !_rasters.TryGetValue(entity, out float raster) || !TryGetBounds(entity, out Rect bounds))
             {
                 return;
             }
 
             var session = args.DrawingSession;
             session.TextAntialiasing = CanvasTextAntialiasing.Grayscale;
-            session.Transform = Matrix3x2.CreateTranslation(-(float)visual.Bounds.X, -(float)visual.Bounds.Y) * Matrix3x2.CreateScale(raster);
+            session.Transform = Matrix3x2.CreateTranslation(-(float)bounds.X, -(float)bounds.Y) * Matrix3x2.CreateScale(raster);
 
-            // The text box draws the glyphs of the text being written.
-            PaintEntityRenderer.DrawContent(session, entity, visual, entity != _editing);
+            if (entity.Type == PaintEntityType.Shape)
+            {
+                PaintEntityRenderer.DrawShape(session, entity);
+            }
+            else if (GetVisual(entity) is PaintTextVisual visual)
+            {
+                // The text box draws the glyphs of the text being written.
+                PaintEntityRenderer.DrawContent(session, entity, visual, entity != _editing);
+            }
         }
 
         // A dashed frame with a handle on each side, rounded around a text and round around a
         // sticker, one size on screen however the object and the view are scaled.
         private void DrawSelection(CanvasDrawingSession session, PaintEntity entity, Rect bounds)
         {
+            if (entity.Type == PaintEntityType.Shape)
+            {
+                DrawShapeHandles(session, entity, bounds);
+                return;
+            }
+
             var unit = GetUnit(entity);
             var frame = GetFrame(entity, bounds);
             var center = new Vector2((float)(frame.X + frame.Width / 2), (float)(frame.Y + frame.Height / 2));
@@ -1712,7 +2144,7 @@ namespace Telegram.Controls
             var shadowColor = Color.FromArgb((byte)(0x50 * progress), 0, 0, 0);
             var frameColor = Color.FromArgb(alpha, 255, 255, 255);
 
-            if (entity.Type != PaintEntityType.Text)
+            if (PaintEntityRenderer.IsSticker(entity))
             {
                 var circle = (float)frame.Width / 2;
 
@@ -1790,6 +2222,9 @@ namespace Telegram.Controls
 
             _dashStyle?.Dispose();
             _dashStyle = null;
+
+            _guideStyle?.Dispose();
+            _guideStyle = null;
         }
 
         #endregion
@@ -2324,7 +2759,11 @@ namespace Telegram.Controls
         /// </summary>
         public static Matrix3x2 GetTransform(PaintEntity entity, Rect bounds, Vector2 imageSize, bool mirrored)
         {
-            var center = new Vector2((float)(bounds.X + bounds.Width / 2), (float)(bounds.Y + bounds.Height / 2));
+            // A shape turns about its own origin, so reshaping it never moves what is left alone.
+            var center = entity.Type == PaintEntityType.Shape
+                ? Vector2.Zero
+                : new Vector2((float)(bounds.X + bounds.Width / 2), (float)(bounds.Y + bounds.Height / 2));
+
             var scale = entity.Scale * imageSize.X / Reference;
 
             return Matrix3x2.CreateTranslation(-center)
@@ -2379,6 +2818,181 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// A sticker, a custom emoji or a GIF: drawn from a file.
+        /// </summary>
+        public static bool IsSticker(PaintEntity entity)
+        {
+            return entity.Type is PaintEntityType.Sticker or PaintEntityType.Animation;
+        }
+
+        private const float ShapeRounding = Reference * 0.04f;
+
+        // A star's inner points, as a share of its outer ones.
+        private const float StarInner = 0.4316f;
+
+        /// <summary>
+        /// Half the width of a shape's line, in the renderer's units: the drawing tools' width for
+        /// the same weight, the line being drawn twice as wide, centred on the edge.
+        /// </summary>
+        public static float GetShapeThickness(PaintEntity entity)
+        {
+            return (8 + 90 * entity.ShapeWeight) / 2048 * Reference;
+        }
+
+        public static Rect GetShapeBounds(PaintEntity entity)
+        {
+            float left, top, right, bottom;
+            var pad = GetShapeThickness(entity) + 1;
+
+            if (entity.Shape == PaintShapeKind.Arrow)
+            {
+                left = Math.Min(entity.ArrowStart.X, Math.Min(entity.ArrowBend.X, entity.ArrowTip.X));
+                top = Math.Min(entity.ArrowStart.Y, Math.Min(entity.ArrowBend.Y, entity.ArrowTip.Y));
+                right = Math.Max(entity.ArrowStart.X, Math.Max(entity.ArrowBend.X, entity.ArrowTip.X));
+                bottom = Math.Max(entity.ArrowStart.Y, Math.Max(entity.ArrowBend.Y, entity.ArrowTip.Y));
+
+                pad += entity.ArrowHead / 2;
+            }
+            else
+            {
+                var size = Vector2.Abs(entity.ShapeSize);
+
+                if (entity.Shape is PaintShapeKind.Circle or PaintShapeKind.Star)
+                {
+                    size = new Vector2(Math.Min(size.X, size.Y));
+                }
+
+                left = -size.X;
+                top = -size.Y;
+                right = size.X;
+                bottom = size.Y;
+
+                if (entity.Shape == PaintShapeKind.Bubble)
+                {
+                    left = Math.Min(left, entity.ShapeTail.X);
+                    top = Math.Min(top, entity.ShapeTail.Y);
+                    right = Math.Max(right, entity.ShapeTail.X);
+                    bottom = Math.Max(bottom, entity.ShapeTail.Y);
+                }
+            }
+
+            return new Rect(left - pad, top - pad, right - left + pad * 2, bottom - top + pad * 2);
+        }
+
+        /// <summary>
+        /// A shape's outline, in its units around its origin, and an arrow's head beside it.
+        /// </summary>
+        public static CanvasGeometry CreateShape(ICanvasResourceCreator creator, PaintEntity entity, out CanvasGeometry head)
+        {
+            head = null;
+
+            var size = Vector2.Abs(entity.ShapeSize);
+            var radius = Math.Min(size.X, size.Y);
+
+            switch (entity.Shape)
+            {
+                case PaintShapeKind.Circle:
+                    return CanvasGeometry.CreateCircle(creator, Vector2.Zero, radius);
+
+                case PaintShapeKind.Rectangle:
+                    var rounding = Math.Min(ShapeRounding, radius);
+                    return CanvasGeometry.CreateRoundedRectangle(creator, -size.X, -size.Y, size.X * 2, size.Y * 2, rounding, rounding);
+
+                case PaintShapeKind.Star:
+                    // Five points, the first straight up.
+                    var points = new Vector2[10];
+
+                    for (int i = 0; i < points.Length; i++)
+                    {
+                        var angle = -MathF.PI / 2 + i * MathF.PI / 5;
+                        var distance = i % 2 == 0 ? radius : radius * StarInner;
+
+                        points[i] = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * distance;
+                    }
+
+                    return CanvasGeometry.CreatePolygon(creator, points);
+
+                case PaintShapeKind.Bubble:
+                    // A tail as wide as half the shorter side, its base across the line to its tip.
+                    var tail = entity.ShapeTail;
+                    var across = MathF.Atan2(tail.X, -tail.Y);
+                    var half = new Vector2(MathF.Cos(across), MathF.Sin(across)) * radius / 2;
+                    var corner = Math.Min(ShapeRounding, radius);
+
+                    using (var body = CanvasGeometry.CreateRoundedRectangle(creator, -size.X, -size.Y, size.X * 2, size.Y * 2, corner, corner))
+                    using (var triangle = CanvasGeometry.CreatePolygon(creator, new[] { -half, half, tail }))
+                    {
+                        return body.CombineWith(triangle, Matrix3x2.Identity, CanvasGeometryCombine.Union);
+                    }
+
+                default:
+                    var start = entity.ArrowStart;
+                    var bend = entity.ArrowBend;
+                    var tip = entity.ArrowTip;
+
+                    // Its head is a triangle pointing along the curve's last direction.
+                    var direction = MathF.Atan2(tip.Y - bend.Y, tip.X - bend.X);
+                    var spread = MathF.PI / 6;
+                    var length = MathF.Sin(spread) * entity.ArrowHead;
+                    var apex = tip + new Vector2(MathF.Cos(direction), MathF.Sin(direction)) * length / 2;
+
+                    head = CanvasGeometry.CreatePolygon(creator, new[]
+                    {
+                        apex,
+                        apex + new Vector2(MathF.Cos(direction + MathF.PI - spread), MathF.Sin(direction + MathF.PI - spread)) * length,
+                        apex + new Vector2(MathF.Cos(direction + MathF.PI + spread), MathF.Sin(direction + MathF.PI + spread)) * length
+                    });
+
+                    using (var builder = new CanvasPathBuilder(creator))
+                    {
+                        builder.BeginFigure(start);
+                        builder.AddQuadraticBezier(bend, tip);
+                        builder.EndFigure(CanvasFigureLoop.Open);
+
+                        return CanvasGeometry.CreatePath(builder);
+                    }
+            }
+        }
+
+        /// <summary>
+        /// Draws a shape in its units around its origin, through whatever transform the session
+        /// has.
+        /// </summary>
+        public static void DrawShape(CanvasDrawingSession session, PaintEntity entity)
+        {
+            using var geometry = CreateShape(session, entity, out CanvasGeometry head);
+            using var style = new CanvasStrokeStyle
+            {
+                StartCap = CanvasCapStyle.Round,
+                EndCap = CanvasCapStyle.Round,
+                LineJoin = CanvasLineJoin.Round
+            };
+
+            var width = GetShapeThickness(entity) * 2;
+            var color = entity.Color;
+            var opaque = Color.FromArgb(255, color.R, color.G, color.B);
+
+            // One layer for a translucent colour, so the line does not darken where it overlaps
+            // the fill or the head.
+            using (color.A < 255 ? session.CreateLayer(color.A / 255f) : null)
+            {
+                if (entity.ShapeFilled && entity.Shape != PaintShapeKind.Arrow)
+                {
+                    session.FillGeometry(geometry, opaque);
+                }
+
+                session.DrawGeometry(geometry, opaque, width, style);
+
+                if (head != null)
+                {
+                    session.FillGeometry(head, opaque);
+                    session.DrawGeometry(head, opaque, width, style);
+                    head.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
         /// A sticker sits in a square half the image wide, as large as its shape allows.
         /// </summary>
         public static Rect GetStickerBounds(PaintEntity entity)
@@ -2406,7 +3020,7 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (entity.Type == PaintEntityType.Text)
+                if (!IsSticker(entity))
                 {
                     continue;
                 }
@@ -2450,7 +3064,7 @@ namespace Telegram.Controls
             foreach (var entity in entities)
             {
                 var file = entity.StickerFile;
-                if (entity.Type == PaintEntityType.Text || file?.Local.IsDownloadingCompleted != true)
+                if (!IsSticker(entity) || file?.Local.IsDownloadingCompleted != true)
                 {
                     continue;
                 }
@@ -2537,7 +3151,17 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (entity.Type != PaintEntityType.Text)
+                if (entity.Type == PaintEntityType.Shape)
+                {
+                    var previous = session.Transform;
+
+                    session.Transform = GetTransform(entity, GetShapeBounds(entity), imageSize, mirrored) * previous;
+                    DrawShape(session, entity);
+                    session.Transform = previous;
+
+                    continue;
+                }
+                else if (IsSticker(entity))
                 {
                     if (stickers != null && stickers.TryGetValue(entity, out CanvasBitmap bitmap))
                     {

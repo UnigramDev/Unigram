@@ -598,6 +598,75 @@
                                             IsOneWay="True"
                                             AutomationProperties.Name="{CustomResource PhotoEditorText}"
                                             ToolTipService.ToolTip="{CustomResource PhotoEditorText}" />
+
+                <controls:GlyphToggleButton x:Name="ShapesTab"
+                                            Click="ShapesTab_Click"
+                                            Glyph="&#xE9E8;"
+                                            CheckedGlyph="&#xE9E8;"
+                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                            IsOneWay="True"
+                                            AutomationProperties.Name="{CustomResource PaintShapes}"
+                                            ToolTipService.ToolTip="{CustomResource PaintShapes}">
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout x:Name="ShapesFlyout"
+                                    Opening="ShapesFlyout_Opening"
+                                    Placement="Top">
+                            <MenuFlyoutItem x:Name="CircleItem"
+                                            Click="ShapeItem_Click"
+                                            Text="{CustomResource PaintCircle}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon x:Name="CircleIcon"
+                                              Glyph="&#xF7A4;"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="RectangleItem"
+                                            Click="ShapeItem_Click"
+                                            Text="{CustomResource PaintRectangle}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon x:Name="RectangleIcon"
+                                              Glyph="&#xF7A6;"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="StarItem"
+                                            Click="ShapeItem_Click"
+                                            Text="{CustomResource PaintStar}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon x:Name="StarIcon"
+                                              Glyph="&#xE734;"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="BubbleItem"
+                                            Click="ShapeItem_Click"
+                                            Text="{CustomResource PaintBubble}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon x:Name="BubbleIcon"
+                                              Glyph="&#xE8BD;"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="ArrowItem"
+                                            Click="ShapeItem_Click"
+                                            Text="{CustomResource PaintArrow}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xF7A0;"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator />
+                            <controls:MenuFlyoutContent>
+                                <controls:MenuFlyoutContent.Content>
+                                    <CheckBox x:Name="ShapeFilled"
+                                              Content="{CustomResource PaintShapeFilled}"
+                                              Checked="ShapeFilled_Changed"
+                                              Unchecked="ShapeFilled_Changed" />
+                                </controls:MenuFlyoutContent.Content>
+                            </controls:MenuFlyoutContent>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
+                </controls:GlyphToggleButton>
             </StackPanel>
 
             <Grid x:Name="TrimToolbar"

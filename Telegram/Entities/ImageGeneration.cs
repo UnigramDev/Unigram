@@ -43,7 +43,18 @@ namespace Telegram.Entities
         /// <summary>
         /// A GIF, which goes into the photo like a sticker but is not one.
         /// </summary>
-        Animation
+        Animation,
+
+        Shape
+    }
+
+    public enum PaintShapeKind
+    {
+        Circle,
+        Rectangle,
+        Star,
+        Bubble,
+        Arrow
     }
 
     /// <summary>
@@ -116,6 +127,39 @@ namespace Telegram.Entities
         /// Drawn white, as a custom emoji meant to take the text's colour is.
         /// </summary>
         public bool StickerTinted { get; set; }
+
+        public PaintShapeKind Shape { get; set; }
+
+        public bool ShapeFilled { get; set; }
+
+        /// <summary>
+        /// The line's weight, on the drawing tools' scale.
+        /// </summary>
+        public float ShapeWeight { get; set; }
+
+        // A shape's geometry is in the renderer's units around the object's position, which is
+        // its origin rather than the middle of what it covers.
+
+        /// <summary>
+        /// Half the width and the height of a circle, a rectangle, a star or a bubble.
+        /// </summary>
+        public Vector2 ShapeSize { get; set; }
+
+        /// <summary>
+        /// Where a bubble's tail points.
+        /// </summary>
+        public Vector2 ShapeTail { get; set; }
+
+        /// <summary>
+        /// An arrow runs from its start, curving towards its bend, to its tip.
+        /// </summary>
+        public Vector2 ArrowStart { get; set; }
+
+        public Vector2 ArrowBend { get; set; }
+
+        public Vector2 ArrowTip { get; set; }
+
+        public float ArrowHead { get; set; }
 
         public string Text { get; set; }
 

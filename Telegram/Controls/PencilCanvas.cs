@@ -40,7 +40,12 @@ namespace Telegram.Controls
         /// <summary>
         /// Not drawn with: the colour and size given to new text.
         /// </summary>
-        Text
+        Text,
+
+        /// <summary>
+        /// Not drawn with either: the colour and weight given to new shapes.
+        /// </summary>
+        Shape
     }
 
     /// <summary>
@@ -55,7 +60,7 @@ namespace Telegram.Controls
 
         public static double GetDefaultWeight(PencilTool tool) => tool switch
         {
-            PencilTool.Pen or PencilTool.Arrow => 0.25,
+            PencilTool.Pen or PencilTool.Arrow or PencilTool.Shape => 0.25,
             PencilTool.Marker or PencilTool.Neon => 0.5,
             _ => 1
         };
