@@ -234,11 +234,29 @@ namespace Telegram.Controls
         {
             m_viewport = e.NewSize;
 
-            // The clip reaches into the padding, so a zoomed image fills the control.
-            var padding = Padding;
-            m_layoutClip.Rect = new Rect(-padding.Left, -padding.Top, e.NewSize.Width + padding.Left + padding.Right, e.NewSize.Height + padding.Top + padding.Bottom);
-
+            UpdateLayoutClip();
             Refit();
+        }
+
+        // Cropping shows the whole image, the clip reaching into the padding so that a zoomed
+        // image fills the control. Drawing shows only what the crop keeps, so that it is plain
+        // what a stroke lands inside.
+        private void UpdateLayoutClip()
+        {
+            if (m_layoutClip == null)
+            {
+                return;
+            }
+
+            if (_isCropEnabled)
+            {
+                var padding = Padding;
+                m_layoutClip.Rect = new Rect(-padding.Left, -padding.Top, m_viewport.Width + padding.Left + padding.Right, m_viewport.Height + padding.Top + padding.Bottom);
+            }
+            else
+            {
+                m_layoutClip.Rect = m_viewArea;
+            }
         }
 
         #region Geometry
@@ -412,6 +430,11 @@ namespace Telegram.Controls
 
             m_contentTransform = matrix;
             m_viewArea = area;
+
+            if (!_isCropEnabled)
+            {
+                UpdateLayoutClip();
+            }
 
             ViewChanged?.Invoke(this, EventArgs.Empty);
 
@@ -1734,6 +1757,8 @@ namespace Telegram.Controls
             {
                 _isCropEnabled = value;
                 VisualStateManager.GoToState(this, value ? "Normal" : "Disabled", true);
+
+                UpdateLayoutClip();
 
                 // The magnification belongs to draw mode; the crop handles work on the fitted view.
                 if (value)
