@@ -39,16 +39,23 @@ namespace Telegram.Entities
 
         /// <summary>
         /// A fixed size to encode at, for video notes and profile videos; otherwise the crop's,
-        /// up to the longest side allowed.
+        /// fitted to the quality picked or else to the longest side allowed.
         /// </summary>
         public Size OutputSize { get; set; }
 
         /// <summary>
-        /// The crop in pixels of the frame once turned and flipped, for the callers that crop by
-        /// hand rather than through the editor: video notes and profile videos.
+        /// The crop in pixels of the frame once turned and flipped, for video notes, which crop
+        /// by hand rather than through the editor.
         /// </summary>
         public Rect CropRectangle { get; set; }
 
+        /// <summary>
+        /// The longest side of the cropped output at the quality picked; 0 for none.
+        /// </summary>
+        public int MaxSide { get; set; }
+
         public bool HasRectangle => Rectangle.Width > 0 && Rectangle.Height > 0;
+
+        public bool HasOutputSize => HasRectangle || MaxSide > 0;
     }
 }

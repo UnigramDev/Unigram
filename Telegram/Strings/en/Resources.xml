@@ -4739,6 +4739,11 @@
     <string name="PhotoEditorTypefaceSerif">Serif</string>
     <string name="PhotoEditorTypefaceCondensed">Condensed</string>
     <string name="PhotoEditorTypefaceMono">Mono-serif</string>
+    <string name="AccDescrVideoQuality">Video quality</string>
+    <string name="AccDescrVideoCompressLow">Smaller size</string>
+    <string name="AccDescrVideoCompressHigh">Higher quality</string>
+    <string name="VideoQualityIsTooLow">Video quality is too low to change compression settings.</string>
+    <string name="EditorMuteHint">Sound is now muted, so the video will play and loop like a GIF.</string>
 
 
     <string name="AccDescrPageDown">Go to bottom</string>

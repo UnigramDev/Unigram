@@ -31,6 +31,7 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
@@ -53,6 +54,13 @@ namespace Telegram.Views.Popups
 
         private TimeSpan _duration;
         private bool _resume;
+
+        private readonly bool _isVideo;
+
+        // The level picked, and how many the crop offers now: a crop made smaller than the pick
+        // allows takes its highest, and the pick comes back if the crop grows again.
+        private int _quality;
+        private int _qualityLevels;
 
         // Not remembered between edits: a session that ended on the eraser would open unable to draw.
         private PencilTool _tool;
@@ -102,17 +110,139 @@ namespace Telegram.Views.Popups
 
             if (media.File.HasExtension(Constants.VideoTypes))
             {
+                _isVideo = true;
+
                 FindName(nameof(TrimToolbar));
                 TrimToolbar.Visibility = Visibility.Visible;
-                BasicToolbar.Visibility = Visibility.Collapsed;
-
-                // MediaTranscoder can only crop a video to a rectangle: no free angle until the
-                // video pipeline replaces it.
-                CropToolbar.Visibility = Visibility.Collapsed;
                 Cropper.MinimumAreaSize = 64;
 
                 InitializeVideo(media, mask);
+                InitializeVideoTools(media as StorageVideo, mask);
             }
+        }
+
+        private void InitializeVideoTools(StorageVideo video, ImageCropperMask mask)
+        {
+            // A profile video is sent silent, at a size of its own.
+            if (video == null || mask == ImageCropperMask.Ellipse)
+            {
+                MuteButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            FindName(nameof(QualityButton));
+
+            var state = video.EditState;
+            _qualityLevels = StorageVideo.GetQualityLevels(StorageVideo.GetCropSize(video.Width, video.Height, state.Rectangle, state.Rotation));
+            _quality = video.Quality ?? GetDefaultQuality(video);
+
+            MuteButton.IsChecked = video.IsMuted;
+            UpdateMute(false);
+        }
+
+        // The level last picked for a video with as many, else the video's own size, which a
+        // video over 1000 MB always starts at.
+        private int GetDefaultQuality(StorageVideo video)
+        {
+            var remembered = AppSettings.Pencil.GetVideoQuality(_qualityLevels);
+            if (remembered >= 0 && remembered < _qualityLevels && video.Size <= 1000L * 1024 * 1024)
+            {
+                return remembered;
+            }
+
+            return _qualityLevels - 1;
+        }
+
+        private void MuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateMute(true);
+        }
+
+        private void UpdateMute(bool hint)
+        {
+            var muted = MuteButton.IsChecked == true;
+            var label = muted ? Strings.Unmute : Strings.Mute;
+
+            AutomationProperties.SetName(MuteButton, label);
+            ToolTipService.SetToolTip(MuteButton, label);
+
+            if (_player != null)
+            {
+                _player.Mute = muted;
+            }
+
+            UpdateQuality();
+
+            if (hint && muted)
+            {
+                ToastPopup.Show(XamlRoot, Strings.EditorMuteHint);
+            }
+        }
+
+        private int QualityLevel => Math.Min(_quality, _qualityLevels - 1);
+
+        private Size GetCropSize()
+        {
+            var video = _media as StorageVideo;
+            return StorageVideo.GetCropSize(video.Width, video.Height, Cropper.CropRectangle, Cropper.Orientation);
+        }
+
+        private void UpdateQuality()
+        {
+            if (QualityButton == null)
+            {
+                return;
+            }
+
+            var crop = GetCropSize();
+            _qualityLevels = StorageVideo.GetQualityLevels(crop);
+
+            // A muted video plays as a GIF, at whatever level was picked before.
+            var muted = MuteButton.IsChecked == true;
+            var size = StorageVideo.GetQualitySize(crop, QualityLevel);
+
+            QualityButton.Glyph = muted ? "GIF" : Math.Min(size.Width, size.Height) >= 720 ? "HD" : "SD";
+            QualityButton.IsEnabled = !muted;
+        }
+
+        private void QualityButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateQuality();
+
+            if (_qualityLevels <= 1)
+            {
+                ToastPopup.Show(XamlRoot, Strings.VideoQualityIsTooLow);
+                return;
+            }
+
+            var level = QualityLevel;
+
+            QualitySlider.Maximum = _qualityLevels - 1;
+            QualitySlider.Value = level;
+            UpdateQualitySize(level);
+
+            FlyoutBase.ShowAttachedFlyout(QualityButton);
+        }
+
+        private void QualitySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            var level = (int)Math.Round(e.NewValue);
+            if (level == QualityLevel || level < 0 || level >= _qualityLevels)
+            {
+                return;
+            }
+
+            _quality = level;
+            AppSettings.Pencil.SetVideoQuality(_qualityLevels, level);
+
+            UpdateQualitySize(level);
+            UpdateQuality();
+        }
+
+        private void UpdateQualitySize(int level)
+        {
+            var size = StorageVideo.GetQualitySize(GetCropSize(), level);
+            QualitySize.Text = string.Format("{0} × {1}", size.Width, size.Height);
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -186,7 +316,12 @@ namespace Telegram.Views.Popups
             {
                 if (args.Key == VirtualKey.M && args.Modifiers == VirtualKeyModifiers.None)
                 {
-                    if (_player != null)
+                    if (MuteButton.Visibility == Visibility.Visible)
+                    {
+                        MuteButton.IsChecked = MuteButton.IsChecked != true;
+                        UpdateMute(true);
+                    }
+                    else if (_player != null)
                     {
                         _player.Mute = !_player.Mute;
                     }
@@ -370,7 +505,7 @@ namespace Telegram.Views.Popups
 
                 var duration = TimeSpan.FromMilliseconds(animation.Duration);
                 var maxLength = mask == ImageCropperMask.Ellipse
-                    ? TimeSpan.FromSeconds(10)
+                    ? TimeSpan.FromSeconds(9.6)
                     : duration;
 
                 TrimRange.SetOriginalDuration(_duration = duration, maxLength);
@@ -474,6 +609,12 @@ namespace Telegram.Views.Popups
                     TrimStopTime = trimStopTime,
                 };
 
+                if (_media is StorageVideo video && MuteButton?.Visibility == Visibility.Visible)
+                {
+                    video.IsMuted = MuteButton.IsChecked == true;
+                    video.Quality = _quality;
+                }
+
                 Hide(ContentDialogResult.Primary);
             }
             else
@@ -487,6 +628,7 @@ namespace Telegram.Views.Popups
 
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
+                TrimToolbar?.Visibility = Visibility.Visible;
                 PaintTabs.Visibility = Visibility.Collapsed;
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 WeightSlider.Visibility = Visibility.Collapsed;
@@ -510,6 +652,7 @@ namespace Telegram.Views.Popups
 
                 CropToolbar.Visibility = Visibility.Visible;
                 BasicToolbar.Visibility = Visibility.Visible;
+                TrimToolbar?.Visibility = Visibility.Visible;
                 PaintTabs.Visibility = Visibility.Collapsed;
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 WeightSlider.Visibility = Visibility.Collapsed;
@@ -602,6 +745,8 @@ namespace Telegram.Views.Popups
             ResetCrop.Visibility = Cropper.IsDefault
                 ? Visibility.Collapsed
                 : Visibility.Visible;
+
+            UpdateQuality();
         }
 
         private void RotationWheel_RotationStarted(object sender, EventArgs e)
@@ -627,11 +772,18 @@ namespace Telegram.Views.Popups
 
             CropToolbar.Visibility = Visibility.Collapsed;
             BasicToolbar.Visibility = Visibility.Collapsed;
+            TrimToolbar?.Visibility = Visibility.Collapsed;
 
             if (DrawToolbar == null)
             {
                 FindName(nameof(DrawToolbar));
                 FindName(nameof(PaintTabs));
+
+                // Blurring samples the photo, so a video has nothing to blur.
+                if (_isVideo)
+                {
+                    BlurTool.Visibility = Visibility.Collapsed;
+                }
             }
 
             if (WeightSlider == null)

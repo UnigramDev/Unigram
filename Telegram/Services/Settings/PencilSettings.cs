@@ -15,7 +15,7 @@ namespace Telegram.Services.Settings
 {
     /// <summary>
     /// The media editor's drawing tools: each tool's own weight and colour, the recent colours, and
-    /// the look new text takes.
+    /// the look new text takes; and the video quality last picked.
     /// </summary>
     public partial class PencilSettings : SettingsServiceBase
     {
@@ -44,6 +44,19 @@ namespace Telegram.Services.Settings
         public PencilSettings(ISettingsStore container)
             : base(container)
         {
+        }
+
+        /// <summary>
+        /// The video quality last picked for a video with this many levels, or -1.
+        /// </summary>
+        public int GetVideoQuality(int levels)
+        {
+            return GetValueOrDefault("VideoQuality" + levels, -1);
+        }
+
+        public void SetVideoQuality(int levels, int value)
+        {
+            AddOrUpdateValue("VideoQuality" + levels, value);
         }
 
         public double GetWeight(PencilTool tool)

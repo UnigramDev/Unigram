@@ -84,12 +84,113 @@ namespace Telegram.Entities
             set => Set(ref _isMuted, value);
         }
 
+        /// <summary>
+        /// The longest side of the cropped output at each quality level, lowest first. No level
+        /// scales the crop up.
+        /// </summary>
+        public static readonly int[] QualitySides = { 480, 854, 1280, 1920 };
+
+        /// <summary>
+        /// The crop in pixels of the frame once turned by <paramref name="rotation"/>.
+        /// </summary>
+        public static Size GetCropSize(double width, double height, Rect rectangle, ImageRotation rotation)
+        {
+            var quarter = rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees;
+            var orientedWidth = quarter ? height : width;
+            var orientedHeight = quarter ? width : height;
+
+            if (rectangle.Width <= 0 || rectangle.Height <= 0)
+            {
+                return new Size(orientedWidth, orientedHeight);
+            }
+
+            return new Size(rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
+        }
+
+        public static int GetQualityLevels(Size crop)
+        {
+            var side = Math.Max(crop.Width, crop.Height);
+            return side > 1280 ? 4 : side > 854 ? 3 : side > 640 ? 2 : 1;
+        }
+
+        /// <summary>
+        /// The output at a level: the crop fitted to its side, in multiples of 4.
+        /// </summary>
+        public static Size GetQualitySize(Size crop, int level)
+        {
+            var scale = Math.Min(1, QualitySides[level] / Math.Max(crop.Width, crop.Height));
+
+            return new Size(
+                Math.Max(4, Math.Floor(crop.Width * scale / 4) * 4),
+                Math.Max(4, Math.Floor(crop.Height * scale / 4) * 4));
+        }
+
+        /// <summary>
+        /// The level picked in the editor, or null to send the video at its own size. A crop too
+        /// small for it takes the highest it offers instead.
+        /// </summary>
+        public int? Quality { get; set; }
+
+        private const int ProfileSide = 800;
+        private const int ProfileBitrate = 1560000;
+
+        private static readonly TimeSpan ProfileDuration = TimeSpan.FromSeconds(9.6);
+
+        /// <summary>
+        /// The video as a profile or chat photo: silent, square at a fixed size, and no longer than
+        /// a profile video may be. The editor's ellipse keeps the crop square.
+        /// </summary>
+        public VideoGeneration GetProfileGeneration()
+        {
+            var state = _editState;
+            var conversion = new VideoGeneration
+            {
+                Mute = true,
+                Transcode = true,
+                Transform = true,
+                OutputSize = new Size(ProfileSide, ProfileSide),
+                VideoBitrate = ProfileBitrate,
+                Rectangle = state.Rectangle,
+                Angle = state.Angle,
+                Rotation = state.Rotation,
+                Flip = state.Flip
+            };
+
+            var start = state.TrimStartTime;
+            var length = state.TrimStopTime > start
+                ? state.TrimStopTime - start
+                : TimeSpan.FromSeconds(TotalSeconds) - start;
+
+            conversion.TrimStartTime = start;
+
+            if (length > ProfileDuration || state.TrimStopTime > start)
+            {
+                conversion.TrimStopTime = start + (length < ProfileDuration ? length : ProfileDuration);
+            }
+
+            return conversion;
+        }
+
         public VideoGeneration GetGeneration()
         {
             var conversion = new VideoGeneration();
             conversion.Mute = IsMuted;
 
             var state = _editState;
+
+            if (Quality is int picked)
+            {
+                var cropSize = state != null
+                    ? GetCropSize(Width, Height, state.Rectangle, state.Rotation)
+                    : new Size(Width, Height);
+
+                var level = Math.Min(picked, GetQualityLevels(cropSize) - 1);
+                if (QualitySides[level] < Math.Max(cropSize.Width, cropSize.Height))
+                {
+                    conversion.MaxSide = QualitySides[level];
+                    conversion.Transcode = true;
+                }
+            }
             if (state == null)
             {
                 return conversion;

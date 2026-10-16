@@ -96,7 +96,7 @@ namespace Telegram.Services.Factories
                 duration = (int)(trimStop.TotalSeconds - trimStart.TotalSeconds);
             }
 
-            if (generation.Transform && generation.HasRectangle)
+            if (generation.HasOutputSize)
             {
                 var output = GenerationService.GetVideoOutputSize(generation, videoWidth, videoHeight);
 

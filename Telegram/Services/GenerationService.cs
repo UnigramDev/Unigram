@@ -121,7 +121,7 @@ namespace Telegram.Services
             double originalWidth = file.Width;
             double originalHeight = file.Height;
 
-            if (video.HasRectangle)
+            if (video.HasOutputSize)
             {
                 var output = GetVideoOutputSize(video, originalWidth, originalHeight);
 
@@ -484,7 +484,7 @@ namespace Telegram.Services
             //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
-        // The longest side a video is encoded at, until the editor lets it be chosen.
+        // The longest side a cropped video is encoded at when no quality was picked.
         private const double VideoMaxSide = 1920;
 
         private async Task TranscodeAsync(UpdateFileGenerationStart update, string[] args, bool allowHardware)
@@ -585,7 +585,7 @@ namespace Telegram.Services
             }
 
             var crop = GetVideoCrop(generation, width, height);
-            var scale = Math.Min(1, VideoMaxSide / Math.Max(crop.Width, crop.Height));
+            var scale = Math.Min(1, (generation.MaxSide > 0 ? generation.MaxSide : VideoMaxSide) / Math.Max(crop.Width, crop.Height));
 
             return new Size(RoundDown(crop.Width * scale), RoundDown(crop.Height * scale));
         }

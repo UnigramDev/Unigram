@@ -2601,31 +2601,7 @@ namespace Telegram.ViewModels
         {
             if (file is StorageVideo media)
             {
-                var props = await media.File.Properties.GetVideoPropertiesAsync();
-
-                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
-                var seconds = duration.TotalSeconds;
-
-                var conversion = new VideoGeneration();
-                conversion.Mute = true;
-                conversion.TrimStartTime = media.EditState.TrimStartTime;
-                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
-                conversion.Transcode = true;
-                conversion.Transform = true;
-                //conversion.Rotation = file.EditState.Rotation;
-                conversion.OutputSize = new Size(640, 640);
-                //conversion.Mirror = transform.Mirror;
-                conversion.CropRectangle = new Rect(
-                    media.EditState.Rectangle.X * props.Width,
-                    media.EditState.Rectangle.Y * props.Height,
-                    media.EditState.Rectangle.Width * props.Width,
-                    media.EditState.Rectangle.Height * props.Height);
-
-                var rectangle = conversion.CropRectangle;
-                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
-                rectangle.Height = rectangle.Width;
-
-                conversion.CropRectangle = rectangle;
+                var conversion = media.GetProfileGeneration();
 
                 var serialized = JsonSerializer.Serialize(conversion, GenerationJsonContext.Default.VideoGeneration);
                 var generated = await GenerationService.PrepareAsync(media.File, ConversionType.Transcode, serialized);
