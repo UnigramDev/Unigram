@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Windows.Foundation;
 using Windows.Storage;
 using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
@@ -39,7 +40,13 @@ namespace Telegram.Services
 
             try
             {
-                return SAP.FutureAccessList.Add(item);
+                // A token of its own, never Add's: for a file already in the list Add hands back
+                // the token it is under, and when that is a fixed one from AddOrReplace, the next
+                // use of it points the conversion string at another file.
+                var token = Guid.NewGuid().ToString("N");
+
+                SAP.FutureAccessList.AddOrReplace(token, item);
+                return token;
             }
             catch
             {
