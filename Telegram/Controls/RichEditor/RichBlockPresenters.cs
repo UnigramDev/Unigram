@@ -31,6 +31,9 @@ namespace Telegram.Controls.RichEditor
 
         public RichBlock Block { get; private set; }
 
+        /// <summary>Where a root block is in the document, which is where the editor's panel places it; stale in a nested one.</summary>
+        internal int RootIndex { get; set; } = -1;
+
         private bool _applied;
 
         protected bool IsApplied => _applied;
@@ -71,10 +74,7 @@ namespace Telegram.Controls.RichEditor
         /// <summary>The element a selected block outlines; a captioned block's media, not its caption.</summary>
         internal virtual FrameworkElement NodeElement => this;
 
-        /// <summary>
-        /// Makes <paramref name="panel"/> hold the presenters of <paramref name="blocks"/>, in
-        /// order, touching it only when something actually differs.
-        /// </summary>
+        /// <summary>Makes <paramref name="panel"/> hold the presenters of <paramref name="blocks"/>, in order, and realizes them.</summary>
         protected void Sync(Panel panel, IList<RichBlock> blocks)
         {
             if (panel == null)
@@ -82,28 +82,7 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var children = panel.Children;
-            var same = children.Count == blocks.Count;
-
-            for (int i = 0; i < blocks.Count; i++)
-            {
-                var presenter = Owner.GetPresenter(blocks[i]);
-
-                if (same && !ReferenceEquals(children[i], presenter))
-                {
-                    same = false;
-                }
-            }
-
-            if (!same)
-            {
-                children.Clear();
-
-                for (int i = 0; i < blocks.Count; i++)
-                {
-                    Owner.Attach(panel, Owner.GetPresenter(blocks[i]));
-                }
-            }
+            Owner.Reconcile(panel, blocks);
 
             for (int i = 0; i < blocks.Count; i++)
             {
@@ -358,26 +337,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             var list = (RichListBlock)Block;
-            var children = Items.Children;
-            var same = children.Count == list.Items.Count;
-
-            for (int i = 0; i < list.Items.Count; i++)
-            {
-                if (same && !ReferenceEquals(children[i], Owner.GetItemPresenter(list.Items[i])))
-                {
-                    same = false;
-                }
-            }
-
-            if (!same)
-            {
-                children.Clear();
-
-                foreach (var item in list.Items)
-                {
-                    Owner.Attach(Items, Owner.GetItemPresenter(item));
-                }
-            }
+            Owner.Reconcile(Items, list.Items);
 
             for (int i = 0; i < list.Items.Count; i++)
             {
@@ -467,26 +427,7 @@ namespace Telegram.Controls.RichEditor
                     break;
             }
 
-            var children = Children.Children;
-            var same = children.Count == _item.Children.Count;
-
-            for (int i = 0; i < _item.Children.Count; i++)
-            {
-                if (same && !ReferenceEquals(children[i], _owner.GetPresenter(_item.Children[i])))
-                {
-                    same = false;
-                }
-            }
-
-            if (!same)
-            {
-                children.Clear();
-
-                foreach (var child in _item.Children)
-                {
-                    _owner.Attach(Children, _owner.GetPresenter(child));
-                }
-            }
+            _owner.Reconcile(Children, _item.Children);
 
             for (int i = 0; i < _item.Children.Count; i++)
             {

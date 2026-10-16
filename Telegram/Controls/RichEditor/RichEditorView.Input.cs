@@ -216,8 +216,16 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         internal bool TryAppendBelow(Point point)
         {
+            // The panel's last child is the last root realized, which only below the end of the
+            // document is the last root.
             var children = Blocks?.Children;
-            if (_engine == null || children == null || children.Count == 0 || children[children.Count - 1] is not FrameworkElement last)
+            if (_engine == null || children == null || children.Count == 0 || children[children.Count - 1] is not RichBlockPresenter last)
+            {
+                return false;
+            }
+
+            var blocks = _engine.Document.Blocks;
+            if (!ReferenceEquals(last.Block, blocks[blocks.Count - 1]))
             {
                 return false;
             }

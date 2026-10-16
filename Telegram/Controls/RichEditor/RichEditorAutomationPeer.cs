@@ -779,6 +779,8 @@ namespace Telegram.Controls.RichEditor
         public void ScrollIntoView(bool alignToTop)
         {
             var position = _peer.ToPosition(alignToTop ? _start : _end);
+            _peer.Owner.EnsureRealized(position.Leaf);
+
             if (_peer.Owner.TryGetLeafView(position.Leaf, out RichLeafView view))
             {
                 view.StartBringIntoView();

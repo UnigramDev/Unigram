@@ -501,6 +501,7 @@
     <Compile Include="Controls\RichEditor\RichEditorStatus.cs" />
     <Compile Include="Controls\RichEditor\RichLeafView.cs" />
     <Compile Include="Controls\RichEditor\RichBlockPresenters.cs" />
+    <Compile Include="Controls\RichEditor\RichBlocksPanel.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.Input.cs" />
     <Compile Include="Controls\RichEditor\RichEditorView.TextInput.cs" />

@@ -170,6 +170,11 @@ namespace Telegram.Controls.RichEditor
         {
             public double Handlers;
             public double View;
+
+            // Inside the handlers' time: building the window, and the layout the view forces.
+            public double Realize;
+            public int Passes;
+            public double PanelMeasure;
             public double Layout;
             public double Frame;
 
@@ -177,6 +182,8 @@ namespace Telegram.Controls.RichEditor
             // one happened in the frame, which is the one the key before was drawn in.
             public bool Collected;
             public bool FrameCollectedFully;
+
+            public bool Enter;
         }
 
         // The editor's own text is replaced and not put back; loading clears the undo history too.
@@ -231,8 +238,8 @@ namespace Telegram.Controls.RichEditor
 
                     Describe(report, engine.Document);
 
-                    await RunAsync(report, "In the middle", PlaceInMiddle, true);
-                    await RunAsync(report, "At the end", PlaceAtEnd, true);
+                    await RunAsync(report, "In the middle", PlaceInMiddle, Keys.Deleting);
+                    await RunAsync(report, "At the end", PlaceAtEnd, Keys.Deleting);
 
                     report.AppendLine();
                     report.Append(DirectTextLayout.Counters);
@@ -255,6 +262,8 @@ namespace Telegram.Controls.RichEditor
 
                     await RunAsync(report, "In the middle", PlaceInMiddle);
                     await RunAsync(report, "At the end", PlaceAtEnd);
+                    await RunAsync(report, "In the middle, with Enter", PlaceInMiddle, Keys.Breaking);
+                    await ScrollAsync(report);
 
                     report.AppendLine();
                     report.Append(DirectTextLayout.Counters);
@@ -290,8 +299,18 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
-        // Deleting, every fifth key takes a character back instead of typing one.
-        private async Task RunAsync(StringBuilder report, string title, Action<RichEditorEngine> place, bool deleting = false)
+        private enum Keys
+        {
+            Typing,
+
+            // Every fifth key takes a character back instead of typing one.
+            Deleting,
+
+            // Every tenth key is Enter: a structural change, which is what realizes blocks.
+            Breaking
+        }
+
+        private async Task RunAsync(StringBuilder report, string title, Action<RichEditorEngine> place, Keys mix = Keys.Typing)
         {
             place(_view.Engine);
 
@@ -319,17 +338,30 @@ namespace Telegram.Controls.RichEditor
 
                 _viewTicks = 0;
 
+                var enter = mix == Keys.Breaking && i % 10 == 9;
+
                 var collections = GC.CollectionCount(0);
+                var passes = _view.RealizeCount;
+                var realizing = _view.RealizeTicks;
+                var measuring = _view.PanelMeasureTicks;
+
                 var started = Stopwatch.GetTimestamp();
-                if (deleting && i % 5 == 4)
+                if (mix == Keys.Deleting && i % 5 == 4)
                 {
                     _view.TypeForMeasure(string.Empty, 1);
+                }
+                else if (enter)
+                {
+                    _view.Engine.InsertParagraph();
                 }
                 else
                 {
                     _view.TypeForMeasure(Typed[i % Typed.Length].ToString());
                 }
                 var typed = Stopwatch.GetTimestamp();
+                var realized = _view.RealizeTicks - realizing;
+                var measured = _view.PanelMeasureTicks - measuring;
+
                 _view.UpdateLayout();
                 var laidOut = Stopwatch.GetTimestamp();
 
@@ -337,10 +369,14 @@ namespace Telegram.Controls.RichEditor
                 {
                     Handlers = Milliseconds(typed - started),
                     View = Milliseconds(_viewTicks),
+                    Realize = Milliseconds(realized),
+                    Passes = _view.RealizeCount - passes,
+                    PanelMeasure = Milliseconds(measured),
                     Layout = Milliseconds(laidOut - typed),
                     Frame = Milliseconds(frame - previous),
                     Collected = GC.CollectionCount(0) != collections,
-                    FrameCollectedFully = frameEndGen2 != frameGen2
+                    FrameCollectedFully = frameEndGen2 != frameGen2,
+                    Enter = enter
                 };
 
                 previous = frame;
@@ -355,6 +391,8 @@ namespace Telegram.Controls.RichEditor
 
             Row(report, "Handlers, all", keys, static key => key.Handlers);
             Row(report, "  of which the view", keys, static key => key.View);
+            Row(report, "    realizing", keys, static key => key.Realize);
+            Row(report, "    the blocks' measure", keys, static key => key.PanelMeasure);
             Row(report, "  the rest: engine, box, page", keys, static key => key.Handlers - key.View);
             Row(report, "Layout and draw", keys, static key => key.Layout);
             Row(report, "Frame", keys, static key => key.Frame);
@@ -362,6 +400,15 @@ namespace Telegram.Controls.RichEditor
             report.AppendLine(collected);
             Split(report, "Keys with a collection in the handlers", keys, static key => key.Collected, static key => key.Handlers);
             Split(report, "Frames with a full collection", keys, static key => key.FrameCollectedFully, static key => key.Frame);
+
+            if (mix == Keys.Breaking)
+            {
+                Split(report, "Enter, handlers", keys, static key => key.Enter, static key => key.Handlers);
+                Split(report, "Enter, layout and draw", keys, static key => key.Enter, static key => key.Layout);
+                Split(report, "Enter, realizing", keys, static key => key.Enter, static key => key.Realize);
+                Split(report, "Enter, passes of it", keys, static key => key.Enter, static key => key.Passes);
+                Split(report, "Enter, the blocks' measure", keys, static key => key.Enter, static key => key.PanelMeasure);
+            }
 
             var slow = 0;
             foreach (var key in keys)
@@ -373,6 +420,100 @@ namespace Telegram.Controls.RichEditor
             }
 
             report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Frames over 25 ms: {0}", slow));
+        }
+
+        // From the top to the end: half a screen a frame, as a wheel or a flick scrolls, and a
+        // twentieth of the document a frame, as a dragged scrollbar does. What realizing the
+        // blocks scrolled into view costs; whether an estimate replaced moves what is seen is for
+        // the eye to judge.
+        private async Task ScrollAsync(StringBuilder report)
+        {
+            var scroller = _view.ScrollerForMeasure;
+            if (scroller == null || scroller.ScrollableHeight <= 0)
+            {
+                return;
+            }
+
+            await ScrollAsync(report, scroller, "half a screen a frame", static scroller => scroller.ViewportHeight / 2);
+            await ScrollAsync(report, scroller, "a twentieth of it a frame", static scroller => scroller.ExtentHeight / 20);
+        }
+
+        private async Task ScrollAsync(StringBuilder report, ScrollViewer scroller, string title, Func<ScrollViewer, double> step)
+        {
+            scroller.ChangeView(null, 0, null, true);
+            await NextFrameAsync();
+            await NextFrameAsync();
+
+            var frames = new List<double>();
+            var most = 0;
+
+            var passes = _view.RealizeCount;
+            var ticks = _view.RealizeTicks;
+            var made = _view.ParagraphsMade;
+            var reused = _view.ParagraphsReused;
+            var viewports = _view.ViewportCount;
+            var following = _view.ViewportTicks;
+            var overlays = _view.OverlayCount;
+            var overlaying = _view.OverlayTicks;
+            var measuring = _view.PanelMeasureTicks;
+            var arranging = _view.PanelArrangeTicks;
+            var started = Stopwatch.GetTimestamp();
+
+            var previous = await NextFrameAsync();
+
+            while (scroller.VerticalOffset < scroller.ScrollableHeight - 1 && frames.Count < 2000)
+            {
+                scroller.ChangeView(null, scroller.VerticalOffset + step(scroller), null, true);
+
+                var frame = await NextFrameAsync();
+                frames.Add(Milliseconds(frame - previous));
+                previous = frame;
+
+                most = Math.Max(most, _view.RealizedBlockCount);
+            }
+
+            var total = Milliseconds(Stopwatch.GetTimestamp() - started);
+
+            frames.Sort();
+
+            var slow = 0;
+            foreach (var frame in frames)
+            {
+                if (frame > 1000.0 / 60 * 1.5)
+                {
+                    slow++;
+                }
+            }
+
+            passes = _view.RealizeCount - passes;
+
+            report.AppendLine();
+            report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Scrolling to the end, {0}, {1} frames, ms: median / p95 / max", title, frames.Count));
+
+            if (frames.Count > 0)
+            {
+                report.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0,-32} {1,7:0.00} {2,7:0.00} {3,7:0.00}",
+                    "Frame", frames[frames.Count / 2], frames[(int)(frames.Count * 0.95)], frames[frames.Count - 1]));
+            }
+
+            report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Frames over 25 ms: {0}; at most {1} blocks realized at once", slow, most));
+            report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Realized {0} times, {1:0.00} ms each; paragraphs made {2}, reused {3}",
+                passes, passes > 0 ? Milliseconds(_view.RealizeTicks - ticks) / passes : 0, _view.ParagraphsMade - made, _view.ParagraphsReused - reused));
+
+            // Where the frames went, on the UI thread: what is not in these is XAML's and the
+            // text blocks' own, outside the panel's passes, or the thread waiting. Rough: the
+            // overlay forces a layout, whose measure is counted in both.
+            var count = Math.Max(1, frames.Count);
+            var realizing = Milliseconds(_view.RealizeTicks - ticks);
+            var viewport = Milliseconds(_view.ViewportTicks - following);
+            var overlay = Milliseconds(_view.OverlayTicks - overlaying);
+            var measure = Milliseconds(_view.PanelMeasureTicks - measuring);
+            var arrange = Milliseconds(_view.PanelArrangeTicks - arranging);
+
+            report.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                "A frame, on average, ms: {0:0.00} in all; following the viewport {1:0.00} ({2} calls), realizing {3:0.00}; redrawing the overlay {4:0.00} ({5} calls); the blocks' measure {6:0.00}, arrange {7:0.00}; the rest {8:0.00}",
+                total / count, viewport / count, _view.ViewportCount - viewports, realizing / count, overlay / count, _view.OverlayCount - overlays,
+                measure / count, arrange / count, (total - viewport - overlay - measure - arrange) / count));
         }
 
         private static void Row(StringBuilder report, string name, Key[] keys, Func<Key, double> value)

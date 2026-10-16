@@ -586,7 +586,9 @@ message or an edit of a sent one. It replaced a WebView2/ProseMirror editor.
 the tree, every editable run of text a leaf of runs with marks, links and inline objects;
 `RichEditorEngine` (seven partials) — every edit, the selection, undo by snapshot, input rules;
 `RichEditorView` — the control: presenters cached by block identity, caret and selection drawn on a
-decorations layer, pointer, touch and keyboard, `CoreTextEditContext` for IME; `RichDocumentConverter` —
+decorations layer, pointer, touch and keyboard, `CoreTextEditContext` for IME; `RichBlocksPanel` — the
+root blocks, placed by a height map, measured or estimated, so that above 100 roots only a window
+around the viewport is realized (notes/native-editor-performance-plan.md, phase 3); `RichDocumentConverter` —
 page blocks in, `InputPageBlock`s out; `RichMediaRenderer` — media, collages (`RichCollagePanel`) and maps;
 `RichEditorAutomationPeer` — `ITextProvider2` over the flattened document; `RichEditorView.SpellCheck.cs`
 over `Telegram.Native.SpellChecker` (the Windows Spell Checking API) — squiggles and suggestions;
@@ -603,7 +605,10 @@ through `IRichMediaInputs`. `CodeLanguagePopup` (Views/Popups/) — a code block
 editors: the highlighter's languages (`SyntaxToken.Languages`, each with its aliases) or any other.
 **Entry points:** `TLNavigationService.NavigateToTextEditor`; `RichTextWindow` makes the engine and hands
 it to `RichEditorView.Initialize`.
-**Traps:** the server refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
+**Traps:** past 100 roots a leaf out of the window has no view, and every query of its geometry
+answers nothing: the caret's root, those either side of it, the selection's ends and the selected
+block are realized whatever the window, and anything else asks `EnsureRealized` first. The server
+refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
 by TDesktop's rules and returns null when nothing is left. `BeginChange`/`EndChange` hold one undo step
 open across engine edits. `Normalize` runs on every reindex: empty containers go, and a collage of one
 item becomes that item. Selecting a block whole parks the caret's ends next to it, inside the block

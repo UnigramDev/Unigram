@@ -174,6 +174,14 @@ namespace Telegram.Controls.RichEditor
                 VisualStateManager.GoToState(this, appearance.ToString(), false);
             }
 
+            // A view reused for another leaf, as a paragraph's is when scrolled out and back in
+            // elsewhere: the selection it drew belonged to the old one.
+            if (!ReferenceEquals(_leaf, leaf))
+            {
+                _selectionStart = 0;
+                _selectionEnd = 0;
+            }
+
             _leaf = leaf;
             _placeholderText = placeholder;
             _language = language;

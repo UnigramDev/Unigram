@@ -288,7 +288,7 @@
                                                Visibility="Collapsed" />
                                 </Canvas>
 
-                                <StackPanel x:Name="Blocks" />
+                                <local:RichBlocksPanel x:Name="Blocks" />
 
                                 <Canvas x:Name="Overlay"
                                         IsHitTestVisible="False">

@@ -7,12 +7,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -42,7 +44,7 @@ namespace Telegram.Controls.RichEditor
         // drawn over them share.
         private RichEditorColumn Root;
         private Grid Surface;
-        private StackPanel Blocks;
+        private RichBlocksPanel Blocks;
         private Canvas Decorations;
         private Rectangle SpoilerSwatch;
         private Rectangle MarkedSwatch;
@@ -209,10 +211,15 @@ namespace Telegram.Controls.RichEditor
                 ScrollViewer.Tapped -= OnScrollViewerTapped;
             }
 
+            if (Blocks != null)
+            {
+                Blocks.EffectiveViewportChanged -= OnBlocksViewportChanged;
+            }
+
             ScrollViewer = GetTemplateChild(nameof(ScrollViewer)) as ScrollViewer;
             Root = GetTemplateChild(nameof(Root)) as RichEditorColumn;
             Surface = GetTemplateChild(nameof(Surface)) as Grid;
-            Blocks = GetTemplateChild(nameof(Blocks)) as StackPanel;
+            Blocks = GetTemplateChild(nameof(Blocks)) as RichBlocksPanel;
             Decorations = GetTemplateChild(nameof(Decorations)) as Canvas;
             SpoilerSwatch = GetTemplateChild(nameof(SpoilerSwatch)) as Rectangle;
             MarkedSwatch = GetTemplateChild(nameof(MarkedSwatch)) as Rectangle;
@@ -244,6 +251,15 @@ namespace Telegram.Controls.RichEditor
                 ScrollViewer.Tapped += OnScrollViewerTapped;
             }
 
+            if (Blocks != null)
+            {
+                Blocks.Owner = this;
+                Blocks.EffectiveViewportChanged += OnBlocksViewportChanged;
+            }
+
+            _viewport = Rect.Empty;
+            _paragraphPool.Clear();
+            _pooledParagraphs = 0;
             _presenters.Clear();
             _itemPresenters.Clear();
             _cellPresenters.Clear();
@@ -305,6 +321,8 @@ namespace Telegram.Controls.RichEditor
 
         internal int RealizedBlockCount => Blocks?.Children.Count ?? 0;
 
+        internal ScrollViewer ScrollerForMeasure => ScrollViewer;
+
         /// <summary>The text blocks of the leaves that have their views, in document order.</summary>
         internal void GetRealizedTextBlocks(List<DirectTextBlock> blocks)
         {
@@ -330,6 +348,9 @@ namespace Telegram.Controls.RichEditor
 
             if ((changes & RichEditorChanges.Structure) != 0)
             {
+                _estimateFontSize = FontSize;
+                Blocks.SetRoots(_engine.Document.Blocks);
+
                 Realize();
                 _caretStale = true;
 
@@ -349,6 +370,12 @@ namespace Telegram.Controls.RichEditor
                 }
             }
 
+            // The selection moved somewhere the window does not reach: Ctrl+End, Select All.
+            if ((changes & (RichEditorChanges.Structure | RichEditorChanges.Selection)) == RichEditorChanges.Selection && IsVirtualizing && !HoldsPinned())
+            {
+                RealizeWindow();
+            }
+
             // Every line without a strong character of its own reads the new way.
             if (flipped)
             {
@@ -363,9 +390,11 @@ namespace Telegram.Controls.RichEditor
             UpdateSelection();
         }
 
-        /// <summary>The whole tree again, reusing every presenter whose object survived.</summary>
+        /// <summary>The roots in the window again, reusing every presenter whose object survived and is still in it.</summary>
         private void Realize()
         {
+            var started = Stopwatch.GetTimestamp();
+
             _bounds.Clear();
             _realized.Clear();
             _leafViews.Clear();
@@ -373,32 +402,506 @@ namespace Telegram.Controls.RichEditor
             _itemViews.Clear();
 
             var blocks = _engine.Document.Blocks;
+            var virtualizing = IsVirtualizing;
+
+            ChooseWindow(blocks, virtualizing);
+
+            // Paragraphs leaving the window go back to the pool before those coming in take
+            // from it; the rest leave with the prune.
             var children = Blocks.Children;
-            var same = children.Count == blocks.Count;
-
-            for (int i = 0; i < blocks.Count && same; i++)
+            for (int i = children.Count - 1; i >= 0 && virtualizing; i--)
             {
-                same = ReferenceEquals(children[i], GetPresenter(blocks[i]));
-            }
-
-            if (!same)
-            {
-                children.Clear();
-
-                foreach (var block in blocks)
+                if (children[i] is RichTextBlockPresenter paragraph
+                    && !_windowSet.Contains(paragraph.Block)
+                    && _presenters.TryGetValue(paragraph.Block, out RichBlockPresenter cached)
+                    && ReferenceEquals(cached, paragraph))
                 {
-                    Attach(Blocks, GetPresenter(block));
+                    _presenters.Remove(paragraph.Block);
+                    _hosts.Remove(paragraph);
+                    children.RemoveAt(i);
+
+                    ReleaseParagraph(paragraph);
                 }
             }
 
-            for (int i = 0; i < blocks.Count; i++)
+            Reconcile(Blocks, _windowBlocks);
+
+            foreach (var index in _window)
             {
-                Realize(blocks, i, true);
+                var presenter = GetPresenter(blocks[index]);
+                presenter.RootIndex = index;
+
+                // What is realized holds the view still while what is above it is measured for
+                // the first time, its estimate replaced.
+                presenter.CanBeScrollAnchor = virtualizing;
+
+                Realize(blocks, index, true);
             }
 
             Prune(_presenters);
             Prune(_itemPresenters);
             Prune(_cellPresenters);
+
+            RealizeCount++;
+            RealizeTicks += Stopwatch.GetTimestamp() - started;
+        }
+
+        /// <summary>
+        /// The window moved and the document did not: what left it and what came in, where
+        /// <see cref="Realize"/> binds every root in it again, some 30 µs each. Paragraphs only -
+        /// one presenter, one leaf, nothing nested to find and unregister; a window that gains or
+        /// loses anything else takes the whole pass.
+        /// </summary>
+        private void RealizeWindow()
+        {
+            if (!IsVirtualizing)
+            {
+                Realize();
+                return;
+            }
+
+            var started = Stopwatch.GetTimestamp();
+            var blocks = _engine.Document.Blocks;
+
+            // The window before this one is left in the spare set.
+            ChooseWindow(blocks, true);
+
+            foreach (var block in _windowSpare)
+            {
+                if (block is not RichParagraphBlock && !_windowSet.Contains(block))
+                {
+                    Realize();
+                    return;
+                }
+            }
+
+            foreach (var block in _windowBlocks)
+            {
+                if (block is not RichParagraphBlock && !_windowSpare.Contains(block))
+                {
+                    Realize();
+                    return;
+                }
+            }
+
+            _bounds.Clear();
+
+            foreach (var block in _windowSpare)
+            {
+                if (_windowSet.Contains(block))
+                {
+                    continue;
+                }
+
+                if (_presenters.TryGetValue(block, out RichBlockPresenter presenter))
+                {
+                    Detach(presenter);
+                    _presenters.Remove(block);
+
+                    if (presenter is RichTextBlockPresenter paragraph)
+                    {
+                        ReleaseParagraph(paragraph);
+                    }
+                }
+
+                _leafViews.Remove(((RichParagraphBlock)block).Text);
+                _realized.Remove(block);
+            }
+
+            foreach (var index in _window)
+            {
+                var block = blocks[index];
+                if (_windowSpare.Contains(block))
+                {
+                    continue;
+                }
+
+                var presenter = GetPresenter(block);
+                presenter.RootIndex = index;
+                presenter.CanBeScrollAnchor = true;
+
+                Attach(Blocks, presenter, ChildIndexBefore(index));
+                Realize(blocks, index, true);
+            }
+
+            RealizeCount++;
+            RealizeTicks += Stopwatch.GetTimestamp() - started;
+        }
+
+        // Where a root goes among the realized ones, which are in document order: before the
+        // first that comes after it.
+        private int ChildIndexBefore(int index)
+        {
+            var children = Blocks.Children;
+            int low = 0, high = children.Count;
+
+            while (low < high)
+            {
+                var middle = (low + high) / 2;
+                if (((RichBlockPresenter)children[middle]).RootIndex < index)
+                {
+                    low = middle + 1;
+                }
+                else
+                {
+                    high = middle;
+                }
+            }
+
+            return low;
+        }
+
+        // For the meter: the passes, what they took, and the paragraphs they made or reused.
+        internal int RealizeCount { get; private set; }
+
+        internal long RealizeTicks { get; private set; }
+
+        internal int ParagraphsMade { get; private set; }
+
+        internal int ParagraphsReused { get; private set; }
+
+        internal int ViewportCount { get; private set; }
+
+        internal long ViewportTicks { get; private set; }
+
+        internal int OverlayCount { get; private set; }
+
+        internal long OverlayTicks { get; private set; }
+
+        internal long PanelMeasureTicks => Blocks?.MeasureTicks ?? 0;
+
+        internal long PanelArrangeTicks => Blocks?.ArrangeTicks ?? 0;
+
+        // =====================================================================================
+        // The window: the roots realized in a document long enough to have one
+        // =====================================================================================
+
+        // Up to this many roots every one is realized, as in nearly every message and article.
+        private const int VirtualizeAbove = 100;
+
+        private bool IsVirtualizing => _engine != null && _engine.Document.Blocks.Count > VirtualizeAbove;
+
+        // The panel's viewport, in its own coordinates, and the stretch of it the window covers.
+        private Rect _viewport = Rect.Empty;
+        private double _windowTop;
+        private double _windowBottom;
+
+        // The roots realized, by index, ascending: a range around the viewport and the pinned
+        // roots outside it.
+        private readonly List<int> _window = new();
+        private readonly List<RichBlock> _windowBlocks = new();
+        private HashSet<RichBlock> _windowSet = new();
+        private HashSet<RichBlock> _windowSpare = new();
+
+        // Roots realized because something asked about them, until the window next moves.
+        private readonly List<RichBlock> _ensured = new();
+
+        private void ChooseWindow(List<RichBlock> blocks, bool virtualizing)
+        {
+            // What was realized moves to the spare set and stays there after: kept below if still
+            // near the viewport, and what RealizeWindow tells what left and what came in by.
+            var realized = _windowSet;
+            _windowSet = _windowSpare;
+            _windowSpare = realized;
+
+            _window.Clear();
+            _windowBlocks.Clear();
+            _windowSet.Clear();
+
+            if (!virtualizing)
+            {
+                for (int i = 0; i < blocks.Count; i++)
+                {
+                    _window.Add(i);
+                }
+
+                _windowTop = double.NegativeInfinity;
+                _windowBottom = double.PositiveInfinity;
+            }
+            else
+            {
+                var focus = RootIndexOf(_engine.Focus.Leaf?.Owner);
+                double top, bottom;
+
+                // A screen either side of the viewport; before there is one, of the caret.
+                if (_viewport.Height > 0)
+                {
+                    top = _viewport.Top - _viewport.Height * _windowMargin;
+                    bottom = _viewport.Bottom + _viewport.Height * _windowMargin;
+                }
+                else
+                {
+                    var screen = ScrollViewer != null && ScrollViewer.ViewportHeight > 0 ? ScrollViewer.ViewportHeight : 800;
+                    var at = Blocks.OffsetOf(Math.Max(focus, 0));
+
+                    top = at - screen;
+                    bottom = at + screen * 2;
+                }
+
+                _windowTop = top;
+                _windowBottom = bottom;
+
+                var last = Blocks.IndexAt(bottom);
+
+                var first = Blocks.IndexAt(top);
+
+                for (int i = first; i <= last; i++)
+                {
+                    _window.Add(i);
+                }
+
+                // A narrow margin while the view moves is for what comes in: what is already
+                // realized inside the wide one stays, or narrowing and widening again would bind
+                // it to another presenter and lay its text out again, twice per move.
+                if (_windowMargin < RestingMargin && _viewport.Height > 0)
+                {
+                    var keepFirst = Blocks.IndexAt(_viewport.Top - _viewport.Height * RestingMargin);
+                    var keepLast = Blocks.IndexAt(_viewport.Bottom + _viewport.Height * RestingMargin);
+
+                    for (int i = keepFirst; i <= keepLast; i++)
+                    {
+                        if ((i < first || i > last) && realized.Contains(blocks[i]))
+                        {
+                            Pin(i, blocks.Count);
+                        }
+                    }
+                }
+
+                // The caret's root and those either side of it, which a line up or down moves
+                // into; both ends of the selection; the block selected whole.
+                Pin(focus - 1, blocks.Count);
+                Pin(focus, blocks.Count);
+                Pin(focus + 1, blocks.Count);
+                Pin(RootIndexOf(_engine.Start.Leaf?.Owner), blocks.Count);
+                Pin(RootIndexOf(_engine.End.Leaf?.Owner), blocks.Count);
+                Pin(RootIndexOf(_engine.SelectedNode), blocks.Count);
+
+                foreach (var block in _ensured)
+                {
+                    Pin(RootIndexOf(block), blocks.Count);
+                }
+            }
+
+            foreach (var index in _window)
+            {
+                _windowBlocks.Add(blocks[index]);
+                _windowSet.Add(blocks[index]);
+            }
+        }
+
+        private void Pin(int index, int count)
+        {
+            if (index < 0 || index >= count)
+            {
+                return;
+            }
+
+            var at = _window.BinarySearch(index);
+            if (at < 0)
+            {
+                _window.Insert(~at, index);
+            }
+        }
+
+        private bool HoldsPinned()
+        {
+            var focus = RootIndexOf(_engine.Focus.Leaf?.Owner);
+
+            return Holds(focus - 1)
+                && Holds(focus)
+                && Holds(focus + 1)
+                && Holds(RootIndexOf(_engine.Start.Leaf?.Owner))
+                && Holds(RootIndexOf(_engine.End.Leaf?.Owner))
+                && Holds(RootIndexOf(_engine.SelectedNode));
+        }
+
+        private bool Holds(int index)
+        {
+            var blocks = _engine.Document.Blocks;
+            return index < 0 || index >= blocks.Count || _windowSet.Contains(blocks[index]);
+        }
+
+        /// <summary>The index of the root a block is in, or -1 for one that is not in the document.</summary>
+        private int RootIndexOf(RichBlock block)
+        {
+            if (block == null)
+            {
+                return -1;
+            }
+
+            while (block.Parent != null)
+            {
+                block = block.Parent;
+            }
+
+            return _engine.Document.Blocks.IndexOf(block);
+        }
+
+        /// <summary>
+        /// Realizes the root a leaf is in, should the window not reach it: for what asks about a
+        /// leaf the editor did not put the caret in, as a screen reader scrolling to a range does.
+        /// </summary>
+        internal void EnsureRealized(RichTextLeaf leaf)
+        {
+            if (leaf == null || _engine == null || _leafViews.ContainsKey(leaf) || !IsVirtualizing)
+            {
+                return;
+            }
+
+            var index = RootIndexOf(leaf.Owner);
+            if (index < 0 || Holds(index))
+            {
+                return;
+            }
+
+            _ensured.Add(_engine.Document.Blocks[index]);
+
+            RealizeWindow();
+            UpdateSelection(false);
+        }
+
+        // Raised after a layout pass, outside it, which is where the window can move: what it
+        // realizes is measured by the pass this raises again.
+        private void OnBlocksViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        {
+            var started = Stopwatch.GetTimestamp();
+            ViewportCount++;
+
+            FollowViewport(args.EffectiveViewport);
+
+            ViewportTicks += Stopwatch.GetTimestamp() - started;
+        }
+
+        private void FollowViewport(Rect viewport)
+        {
+            _viewport = viewport;
+
+            if (!IsVirtualizing || !(_viewport.Height > 0))
+            {
+                return;
+            }
+
+            // Half of the margin left on either side: scrolling less than that realizes nothing.
+            var slack = _viewport.Height * _windowMargin / 2;
+            if (_viewport.Top - slack >= _windowTop && _viewport.Bottom + slack <= _windowBottom)
+            {
+                return;
+            }
+
+            // While the view moves, a narrow margin, and none at all where it landed clear of the
+            // window: a dragged scrollbar does that every frame, and a margin is realized for a
+            // frame that never shows it. Widened once idle.
+            var jumped = _viewport.Bottom < _windowTop || _viewport.Top > _windowBottom;
+            _windowMargin = jumped ? 0 : MovingMargin;
+            _ensured.Clear();
+
+            MoveWindow();
+
+            if (!_widenPending)
+            {
+                _widenPending = true;
+                _ = Dispatcher.RunIdleAsync(OnWidenWindow);
+            }
+        }
+
+        private void OnWidenWindow(IdleDispatchedHandlerArgs e)
+        {
+            _widenPending = false;
+
+            if (_windowMargin < RestingMargin && IsVirtualizing)
+            {
+                _windowMargin = RestingMargin;
+                MoveWindow();
+            }
+        }
+
+        private void MoveWindow()
+        {
+            RealizeWindow();
+
+            // The selection, the decorations and the squiggles of what came in, once it is laid
+            // out; without scrolling to the caret, which may well be what was scrolled away from.
+            _staleOverlay = true;
+            InvalidateArrange();
+        }
+
+        // Screens realized above and below the viewport.
+        private const double MovingMargin = 0.5;
+        private const double RestingMargin = 1;
+
+        private double _windowMargin = RestingMargin;
+        private bool _widenPending;
+
+        private double _estimateFontSize = 15;
+
+        /// <summary>
+        /// How tall a root not yet measured at <paramref name="width"/> is likely to be: its
+        /// leaves by their length, wrapped at an average character width, and a guess for each
+        /// block selected whole; with the spacing it would be given.
+        /// </summary>
+        internal double EstimateHeight(IList<RichBlock> roots, int index, double width)
+        {
+            // Every root is realized and measured before it is drawn.
+            if (!IsVirtualizing)
+            {
+                return 0;
+            }
+
+            var block = roots[index];
+            var margin = Spacing(roots, index, true);
+            var inner = Math.Max(1, width - margin.Left - margin.Right);
+
+            var stops = _engine.Document.Stops;
+            var height = 0d;
+
+            for (int i = block.FirstStop; i <= block.LastStop && i < stops.Count; i++)
+            {
+                var stop = stops[i];
+                height += stop.IsLeaf ? EstimateText(stop.Leaf, inner) : EstimateAtom(stop.Block, inner);
+            }
+
+            return Math.Max(height, _estimateFontSize * LineSpacing) + margin.Top + margin.Bottom;
+        }
+
+        // Segoe UI's line height and average character width, as fractions of its size.
+        private const double LineSpacing = 1.33;
+        private const double CharacterWidth = 0.5;
+
+        private double EstimateText(RichTextLeaf leaf, double width)
+        {
+            var size = leaf.Owner switch
+            {
+                RichParagraphBlock { Kind: RichBlockKind.Heading } heading => 26 - 2 * Math.Clamp(heading.HeadingSize, 1, 6),
+                RichParagraphBlock { Kind: RichBlockKind.Footer } => 12,
+                _ => _estimateFontSize
+            };
+
+            var perLine = Math.Max(1, (int)(width / (size * CharacterWidth)));
+            var text = leaf.Text;
+            var lines = 0;
+            var start = 0;
+
+            for (int i = 0; i <= text.Length; i++)
+            {
+                if (i == text.Length || text[i] == '\n')
+                {
+                    lines += Math.Max(1, (i - start + perLine - 1) / perLine);
+                    start = i + 1;
+                }
+            }
+
+            return lines * size * LineSpacing;
+        }
+
+        private static double EstimateAtom(RichBlock block, double width)
+        {
+            return block switch
+            {
+                RichMediaBlock or RichMediaGroupBlock or RichMapBlock => Math.Min(width * 0.6, 400),
+                RichDividerBlock => 1,
+                RichAnchorBlock => 0,
+                _ => 40
+            };
         }
 
         private void Prune<TKey, TValue>(Dictionary<TKey, TValue> presenters) where TValue : FrameworkElement
@@ -417,8 +920,15 @@ namespace Telegram.Controls.RichEditor
             {
                 foreach (var key in stale)
                 {
-                    Detach(presenters[key]);
+                    var presenter = presenters[key];
+
+                    Detach(presenter);
                     presenters.Remove(key);
+
+                    if (presenter is RichTextBlockPresenter paragraph)
+                    {
+                        ReleaseParagraph(paragraph);
+                    }
                 }
             }
         }
@@ -539,6 +1049,52 @@ namespace Telegram.Controls.RichEditor
             IsRealizing = realizing;
         }
 
+        // Paragraphs scrolled out of the window, template, text block and surface kept, for the
+        // ones scrolling in: building them anew is most of what a window move costs. Nothing
+        // else is pooled: a paragraph is bound whole by its update, other presenters hold more.
+        // By kind: a kind is a visual state, and a presenter brought back into the tree for
+        // another kind was seen drawing its text in the old one before it took the new.
+        private readonly Dictionary<int, Stack<RichTextBlockPresenter>> _paragraphPool = new();
+        private int _pooledParagraphs;
+        private const int MaxPooledParagraphs = 128;
+
+        private static int PoolKey(RichBlock block)
+        {
+            return block is RichParagraphBlock { Kind: RichBlockKind.Heading } heading
+                ? (int)RichBlockKind.Heading * 8 + Math.Clamp(heading.HeadingSize, 1, 6)
+                : (int)block.Kind * 8;
+        }
+
+        private void ReleaseParagraph(RichTextBlockPresenter paragraph)
+        {
+            if (_pooledParagraphs >= MaxPooledParagraphs || paragraph.Block == null)
+            {
+                return;
+            }
+
+            var key = PoolKey(paragraph.Block);
+            if (!_paragraphPool.TryGetValue(key, out Stack<RichTextBlockPresenter> pool))
+            {
+                _paragraphPool[key] = pool = new Stack<RichTextBlockPresenter>();
+            }
+
+            pool.Push(paragraph);
+            _pooledParagraphs++;
+        }
+
+        private RichTextBlockPresenter TakeParagraph(RichParagraphBlock block)
+        {
+            if (_paragraphPool.TryGetValue(PoolKey(block), out Stack<RichTextBlockPresenter> pool) && pool.Count > 0)
+            {
+                _pooledParagraphs--;
+                ParagraphsReused++;
+                return pool.Pop();
+            }
+
+            ParagraphsMade++;
+            return new RichTextBlockPresenter();
+        }
+
         internal RichBlockPresenter GetPresenter(RichBlock block)
         {
             if (_presenters.TryGetValue(block, out RichBlockPresenter presenter))
@@ -548,7 +1104,7 @@ namespace Telegram.Controls.RichEditor
 
             presenter = block switch
             {
-                RichParagraphBlock => new RichTextBlockPresenter(),
+                RichParagraphBlock paragraph => TakeParagraph(paragraph),
                 RichBlockQuote => new RichBlockQuotePresenter(),
                 RichTextQuote => new RichTextQuotePresenter(),
                 RichListBlock => new RichListPresenter(),
@@ -585,6 +1141,77 @@ namespace Telegram.Controls.RichEditor
 
             return presenter;
         }
+
+        /// <summary>
+        /// Makes <paramref name="panel"/> hold the presenters of <paramref name="blocks"/>, in
+        /// order, moving only those out of place: a presenter taken out leaves the live tree, is
+        /// unloaded and loaded with everything in it and measured again, so clearing the panel to
+        /// add them back would do that to the whole document for one Enter.
+        /// </summary>
+        internal void Reconcile(Panel panel, IList<RichBlock> blocks)
+        {
+            foreach (var block in blocks)
+            {
+                _wanted.Add(GetPresenter(block));
+            }
+
+            Reconcile(panel);
+        }
+
+        internal void Reconcile(Panel panel, IList<RichListItem> items)
+        {
+            foreach (var item in items)
+            {
+                _wanted.Add(GetItemPresenter(item));
+            }
+
+            Reconcile(panel);
+        }
+
+        private void Reconcile(Panel panel)
+        {
+            var children = panel.Children;
+            var first = 0;
+
+            while (first < _wanted.Count && first < children.Count && ReferenceEquals(children[first], _wanted[first]))
+            {
+                first++;
+            }
+
+            if (first < _wanted.Count || first < children.Count)
+            {
+                // What left goes first, so the walk below only meets insertions and moves.
+                for (int i = first; i < _wanted.Count; i++)
+                {
+                    _wantedSet.Add(_wanted[i]);
+                }
+
+                for (int i = children.Count - 1; i >= first; i--)
+                {
+                    if (children[i] is FrameworkElement element && !_wantedSet.Contains(element))
+                    {
+                        _hosts.Remove(element);
+                        children.RemoveAt(i);
+                    }
+                }
+
+                _wantedSet.Clear();
+
+                for (int i = first; i < _wanted.Count; i++)
+                {
+                    if (i >= children.Count || !ReferenceEquals(children[i], _wanted[i]))
+                    {
+                        Attach(panel, _wanted[i], i);
+                    }
+                }
+            }
+
+            _wanted.Clear();
+        }
+
+        // Filled and emptied by one Reconcile, which realizes nothing while it runs.
+        private readonly List<FrameworkElement> _wanted = new();
+        private readonly HashSet<FrameworkElement> _wantedSet = new();
 
         /// <summary>Takes a presenter out of the panel <see cref="Attach"/> put it in.</summary>
         internal void Detach(FrameworkElement element)
@@ -1013,6 +1640,12 @@ namespace Telegram.Controls.RichEditor
 
         private void UpdateSelection()
         {
+            UpdateSelection(true);
+        }
+
+        /// <summary>Draws the selection and the caret, and with <paramref name="reveal"/> scrolls the caret into view.</summary>
+        private void UpdateSelection(bool reveal)
+        {
             // Everything below reads the layout: what just changed has to be measured first.
             Surface?.UpdateLayout();
 
@@ -1084,7 +1717,7 @@ namespace Telegram.Controls.RichEditor
                 }
             }
 
-            UpdateCaret();
+            UpdateCaret(reveal);
             UpdateGrippers();
         }
 
@@ -1364,6 +1997,19 @@ namespace Telegram.Controls.RichEditor
         private bool _menuOpen;
         private bool _invalidOverlay;
 
+        // The same, for what the window realized: drawn without scrolling to the caret.
+        private bool _staleOverlay;
+
+        private void RedrawOverlay()
+        {
+            var started = Stopwatch.GetTimestamp();
+
+            UpdateSelection(false);
+
+            OverlayCount++;
+            OverlayTicks += Stopwatch.GetTimestamp() - started;
+        }
+
         /// <summary>The caret rectangle in root coordinates, or empty when there is no caret.</summary>
         internal Rect GetCaretRect()
         {
@@ -1384,6 +2030,11 @@ namespace Telegram.Controls.RichEditor
         }
 
         private void UpdateCaret()
+        {
+            UpdateCaret(true);
+        }
+
+        private void UpdateCaret(bool reveal)
         {
             if (Caret == null)
             {
@@ -1414,7 +2065,11 @@ namespace Telegram.Controls.RichEditor
             Caret.Visibility = Visibility.Visible;
 
             RestartBlink();
-            BringIntoView(rect);
+
+            if (reveal)
+            {
+                BringIntoView(rect);
+            }
         }
 
         /// <summary>
@@ -1532,7 +2187,13 @@ namespace Telegram.Controls.RichEditor
             if (_invalidOverlay)
             {
                 _invalidOverlay = false;
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, UpdateSelection);
+                _staleOverlay = false;
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, UpdateSelection);
+            }
+            else if (_staleOverlay)
+            {
+                _staleOverlay = false;
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, RedrawOverlay);
             }
 
             return size;
