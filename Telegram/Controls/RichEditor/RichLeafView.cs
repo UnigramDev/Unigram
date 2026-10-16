@@ -228,7 +228,7 @@ namespace Telegram.Controls.RichEditor
 
             // Each line runs the way its first strong character does, as a message's paragraph
             // does: an Arabic line in an English article reads right to left, and the other way.
-            var direction = text.Length > 0 ? NativeUtils.GetDirectionality(text) : TextDirectionality.Neutral;
+            var direction = _leaf.Direction;
             if (direction == TextDirectionality.Neutral)
             {
                 direction = rightToLeft ? TextDirectionality.RightToLeft : TextDirectionality.LeftToRight;

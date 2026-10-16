@@ -41,9 +41,12 @@ namespace winrt::Telegram::Native::implementation
         static IXamlDirectObject AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, int32_t offset, int32_t length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize);
 
         //[DefaultOverload]
-        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value);
-        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value, int32_t offset);
-        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value, int32_t offset, int32_t length);
+        // By reference: a string handed over from the managed side is a reference to its
+        // memory, and taking it by value copies all of it - a paragraph per keystroke in an
+        // editor - to find what is usually its first character.
+        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring const& value);
+        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring const& value, int32_t offset);
+        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring const& value, int32_t offset, int32_t length);
         //static int32_t GetDirectionality(char16 value);
 
         static hstring GetCurrentCulture();

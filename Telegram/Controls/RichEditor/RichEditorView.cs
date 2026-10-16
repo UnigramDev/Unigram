@@ -923,7 +923,7 @@ namespace Telegram.Controls.RichEditor
                     continue;
                 }
 
-                var direction = NativeUtils.GetDirectionality(item.Text);
+                var direction = item.Direction;
                 if (direction != TextDirectionality.Neutral)
                 {
                     _directionLeaf = item;

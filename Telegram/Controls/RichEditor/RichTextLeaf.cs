@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using Telegram.Native;
 using Telegram.Td.Api;
 
 namespace Telegram.Controls.RichEditor
@@ -216,6 +217,28 @@ namespace Telegram.Controls.RichEditor
 
         /// <summary>Bumped on every change, so a presenter can skip re-rendering an unchanged leaf.</summary>
         public int Version { get; private set; }
+
+        /// <summary>
+        /// The way its first strong character reads, worked out once a version: the line's view
+        /// and the document's direction both ask on every change, and a line with no strong
+        /// character at all is read to its end to answer.
+        /// </summary>
+        public TextDirectionality Direction
+        {
+            get
+            {
+                if (_directionVersion != Version)
+                {
+                    _direction = _text.Length > 0 ? NativeUtils.GetDirectionality(_text) : TextDirectionality.Neutral;
+                    _directionVersion = Version;
+                }
+
+                return _direction;
+            }
+        }
+
+        private TextDirectionality _direction;
+        private int _directionVersion = -1;
 
         public string Text => _text;
 

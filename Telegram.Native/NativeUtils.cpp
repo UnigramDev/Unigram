@@ -937,17 +937,17 @@ namespace winrt::Telegram::Native::implementation
         return 0;
     }
 
-    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value)
+    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring const& value)
     {
         return GetDirectionality(value, 0, value.size());
     }
 
-    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value, int32_t offset)
+    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring const& value, int32_t offset)
     {
         return GetDirectionality(value, offset, value.size() - offset);
     }
 
-    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value, int32_t offset, int32_t length)
+    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring const& value, int32_t offset, int32_t length)
     {
         DWORD prev = C2_OTHERNEUTRAL;
         for (int i = 0; i < length; i++)
