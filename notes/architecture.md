@@ -607,7 +607,9 @@ editors: the highlighter's languages (`SyntaxToken.Languages`, each with its ali
 it to `RichEditorView.Initialize`.
 **Traps:** past 100 roots a leaf out of the window has no view, and every query of its geometry
 answers nothing: the caret's root, those either side of it, the selection's ends and the selected
-block are realized whatever the window, and anything else asks `EnsureRealized` first. The server
+block are realized whatever the window, and anything else asks `EnsureRealized` first. Presenters
+leaving the window are pooled by kind and look, and come back with whatever their update does not
+set again: a cell's selected look is reset as it is pooled, and anything like it must be. The server
 refuses a message with an empty block anywhere, so `ToInputRichMessage` drops them
 by TDesktop's rules and returns null when nothing is left. `BeginChange`/`EndChange` hold one undo step
 open across engine edits. `Normalize` runs on every reindex: empty containers go, and a collage of one

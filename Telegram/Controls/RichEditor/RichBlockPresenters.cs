@@ -337,11 +337,11 @@ namespace Telegram.Controls.RichEditor
             }
 
             var list = (RichListBlock)Block;
-            Owner.Reconcile(Items, list.Items);
+            Owner.Reconcile(Items, list);
 
             for (int i = 0; i < list.Items.Count; i++)
             {
-                var presenter = Owner.GetItemPresenter(list.Items[i]);
+                var presenter = Owner.GetItemPresenter(list.Items[i], list);
                 presenter.Bind(Owner, list, list.Items[i], i);
                 presenter.ApplyTemplate();
                 presenter.Update();

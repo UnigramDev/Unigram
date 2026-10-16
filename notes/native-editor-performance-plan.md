@@ -390,6 +390,25 @@ it lands (`_scrollingTo`), so bringing the caret into view meanwhile starts from
 The caret is drawn over a selection now, at its moving end, which is what shows where Shift+Page
 Down left it; the far edge is inside `BringIntoView`'s margin, or revealing it would scroll on.
 
+**Phase 3d, pools (2026-10-16).** Measured first: in the mixed article - a section is a
+heading, three paragraphs, a quote, code and a list of three, a table every fifth - the editor's
+own share of a scroll frame was 6.1 ms against 4.2 in 2,000 paragraphs, 13 frames of 146 over 25
+ms against 8. A third of its roots are not paragraphs, so nearly every window move took the whole
+pass, and every quote, list, item, table and cell that came in was built new, its text cold: 325 of
+1,488 builds. Since: `RealizeWindow` takes any root out by itself (`Unrealize`: its leaves through
+its stops, what is nested through the model, which a window move has not changed), and the full
+pass does the same for roots leaving the window before anything comes in. Every presenter but
+media and atoms is pooled, by kind and the state its look depends on - a heading's size, a quote
+collapsed, details open, a list's style, a header cell - up to 192 in all. The meter counts
+presenters of every pooled kind, and whole passes. Not done: virtualizing inside a huge root, which
+no document measured so far has.
+
+Eighth run, the mixed article, on a display at 1x and about 200 Hz, so the frames themselves do not
+compare: half a screen a frame, no whole passes in 144, 3 presenters made and 973 reused, no cold
+builds and no new surfaces; a pass 1.67 ms against 3.00, the blocks' measure 1.11 against 2.24, the
+editor's own share of a frame 3.8 ms against 6.1; frames over 25 ms 1 of 146 against 13, at 63.9
+ms. A twentieth a frame: none over 25 ms.
+
 ## Phase 2: edited text on the analyzer
 
 ### Scope

@@ -448,9 +448,10 @@ namespace Telegram.Controls.RichEditor
             var most = 0;
 
             var passes = _view.RealizeCount;
+            var whole = _view.WholeRealizeCount;
             var ticks = _view.RealizeTicks;
-            var made = _view.ParagraphsMade;
-            var reused = _view.ParagraphsReused;
+            var made = _view.PresentersMade;
+            var reused = _view.PresentersReused;
             var viewports = _view.ViewportCount;
             var following = _view.ViewportTicks;
             var overlays = _view.OverlayCount;
@@ -497,8 +498,8 @@ namespace Telegram.Controls.RichEditor
             }
 
             report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Frames over 25 ms: {0}; at most {1} blocks realized at once", slow, most));
-            report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Realized {0} times, {1:0.00} ms each; paragraphs made {2}, reused {3}",
-                passes, passes > 0 ? Milliseconds(_view.RealizeTicks - ticks) / passes : 0, _view.ParagraphsMade - made, _view.ParagraphsReused - reused));
+            report.AppendLine(string.Format(CultureInfo.InvariantCulture, "Realized {0} times, {1} whole, {2:0.00} ms each; presenters made {3}, reused {4}",
+                passes, _view.WholeRealizeCount - whole, passes > 0 ? Milliseconds(_view.RealizeTicks - ticks) / passes : 0, _view.PresentersMade - made, _view.PresentersReused - reused));
 
             // Where the frames went, on the UI thread: what is not in these is XAML's and the
             // text blocks' own, outside the panel's passes, or the thread waiting. Rough: the

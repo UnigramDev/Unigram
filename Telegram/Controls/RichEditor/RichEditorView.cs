@@ -258,8 +258,8 @@ namespace Telegram.Controls.RichEditor
             }
 
             _viewport = Rect.Empty;
-            _paragraphPool.Clear();
-            _pooledParagraphs = 0;
+            _pool.Clear();
+            _pooled = 0;
             _presenters.Clear();
             _itemPresenters.Clear();
             _cellPresenters.Clear();
@@ -406,21 +406,20 @@ namespace Telegram.Controls.RichEditor
 
             ChooseWindow(blocks, virtualizing);
 
-            // Paragraphs leaving the window go back to the pool before those coming in take
-            // from it; the rest leave with the prune.
+            // Roots leaving the window go back to the pool before those coming in take from it;
+            // what else is gone leaves with the prune. A root nested now is left for its new
+            // parent, which takes its presenter as it is.
             var children = Blocks.Children;
             for (int i = children.Count - 1; i >= 0 && virtualizing; i--)
             {
-                if (children[i] is RichTextBlockPresenter paragraph
-                    && !_windowSet.Contains(paragraph.Block)
-                    && _presenters.TryGetValue(paragraph.Block, out RichBlockPresenter cached)
-                    && ReferenceEquals(cached, paragraph))
+                if (children[i] is RichBlockPresenter root
+                    && root.Block is RichBlock block
+                    && block.Parent == null
+                    && !_windowSet.Contains(block)
+                    && _presenters.TryGetValue(block, out RichBlockPresenter cached)
+                    && ReferenceEquals(cached, root))
                 {
-                    _presenters.Remove(paragraph.Block);
-                    _hosts.Remove(paragraph);
-                    children.RemoveAt(i);
-
-                    ReleaseParagraph(paragraph);
+                    UnrealizeTree(block);
                 }
             }
 
@@ -443,14 +442,13 @@ namespace Telegram.Controls.RichEditor
             Prune(_cellPresenters);
 
             RealizeCount++;
+            WholeRealizeCount++;
             RealizeTicks += Stopwatch.GetTimestamp() - started;
         }
 
         /// <summary>
         /// The window moved and the document did not: what left it and what came in, where
-        /// <see cref="Realize"/> binds every root in it again, some 30 µs each. Paragraphs only -
-        /// one presenter, one leaf, nothing nested to find and unregister; a window that gains or
-        /// loses anything else takes the whole pass.
+        /// <see cref="Realize"/> binds every root in it again, some 30 µs each.
         /// </summary>
         private void RealizeWindow()
         {
@@ -466,46 +464,14 @@ namespace Telegram.Controls.RichEditor
             // The window before this one is left in the spare set.
             ChooseWindow(blocks, true);
 
-            foreach (var block in _windowSpare)
-            {
-                if (block is not RichParagraphBlock && !_windowSet.Contains(block))
-                {
-                    Realize();
-                    return;
-                }
-            }
-
-            foreach (var block in _windowBlocks)
-            {
-                if (block is not RichParagraphBlock && !_windowSpare.Contains(block))
-                {
-                    Realize();
-                    return;
-                }
-            }
-
             _bounds.Clear();
 
             foreach (var block in _windowSpare)
             {
-                if (_windowSet.Contains(block))
+                if (!_windowSet.Contains(block))
                 {
-                    continue;
+                    Unrealize(block);
                 }
-
-                if (_presenters.TryGetValue(block, out RichBlockPresenter presenter))
-                {
-                    Detach(presenter);
-                    _presenters.Remove(block);
-
-                    if (presenter is RichTextBlockPresenter paragraph)
-                    {
-                        ReleaseParagraph(paragraph);
-                    }
-                }
-
-                _leafViews.Remove(((RichParagraphBlock)block).Text);
-                _realized.Remove(block);
             }
 
             foreach (var index in _window)
@@ -551,14 +517,17 @@ namespace Telegram.Controls.RichEditor
             return low;
         }
 
-        // For the meter: the passes, what they took, and the paragraphs they made or reused.
+        // For the meter: the passes, how many were whole, what they took, and the presenters of
+        // pooled kinds they made or reused.
         internal int RealizeCount { get; private set; }
+
+        internal int WholeRealizeCount { get; private set; }
 
         internal long RealizeTicks { get; private set; }
 
-        internal int ParagraphsMade { get; private set; }
+        internal int PresentersMade { get; private set; }
 
-        internal int ParagraphsReused { get; private set; }
+        internal int PresentersReused { get; private set; }
 
         internal int ViewportCount { get; private set; }
 
@@ -945,9 +914,11 @@ namespace Telegram.Controls.RichEditor
                     Detach(presenter);
                     presenters.Remove(key);
 
-                    if (presenter is RichTextBlockPresenter paragraph)
+                    // Items and cells come back to the pool when their root leaves the window;
+                    // what is pruned is what an edit took away.
+                    if (presenter is RichBlockPresenter block)
                     {
-                        ReleaseParagraph(paragraph);
+                        Release(block);
                     }
                 }
             }
@@ -1069,50 +1040,70 @@ namespace Telegram.Controls.RichEditor
             IsRealizing = realizing;
         }
 
-        // Paragraphs scrolled out of the window, template, text block and surface kept, for the
-        // ones scrolling in: building them anew is most of what a window move costs. Nothing
-        // else is pooled: a paragraph is bound whole by its update, other presenters hold more.
-        // By kind: a kind is a visual state, and a presenter brought back into the tree for
-        // another kind was seen drawing its text in the old one before it took the new.
-        private readonly Dictionary<int, Stack<RichTextBlockPresenter>> _paragraphPool = new();
-        private int _pooledParagraphs;
-        private const int MaxPooledParagraphs = 128;
+        // Presenters scrolled out of the window, template, text blocks and surfaces kept, for the
+        // ones scrolling in: building them anew is most of what a window move costs. Every kind
+        // but media, whose players and uploads are their own, and atoms, which are cheap. Taken
+        // down empty: what was nested in one is pooled on its own.
+        // By kind and look: a kind is a visual state, and a presenter brought back into the tree
+        // for another kind was seen drawing its text in the old one before it took the new.
+        private readonly Dictionary<int, Stack<FrameworkElement>> _pool = new();
+        private int _pooled;
+        private const int MaxPooled = 192;
+
+        private const int ItemPoolKeys = 256;
+        private const int CellPoolKeys = 512;
 
         private static int PoolKey(RichBlock block)
         {
-            return block is RichParagraphBlock { Kind: RichBlockKind.Heading } heading
-                ? (int)RichBlockKind.Heading * 8 + Math.Clamp(heading.HeadingSize, 1, 6)
-                : (int)block.Kind * 8;
+            return block switch
+            {
+                RichParagraphBlock { Kind: RichBlockKind.Heading } heading => (int)RichBlockKind.Heading * 8 + Math.Clamp(heading.HeadingSize, 1, 6),
+                RichBlockQuote { IsCollapsed: true } => (int)RichBlockKind.BlockQuote * 8 + 1,
+                RichDetailsBlock { IsOpen: true } => (int)RichBlockKind.Details * 8 + 1,
+                _ => (int)block.Kind * 8
+            };
         }
 
-        private void ReleaseParagraph(RichTextBlockPresenter paragraph)
+        private static bool IsPooled(RichBlock block)
         {
-            if (_pooledParagraphs >= MaxPooledParagraphs || paragraph.Block == null)
+            return block is RichParagraphBlock or RichBlockQuote or RichTextQuote or RichListBlock or RichDetailsBlock or RichTableBlock;
+        }
+
+        private void Release(int key, FrameworkElement presenter)
+        {
+            if (_pooled >= MaxPooled)
             {
                 return;
             }
 
-            var key = PoolKey(paragraph.Block);
-            if (!_paragraphPool.TryGetValue(key, out Stack<RichTextBlockPresenter> pool))
+            if (!_pool.TryGetValue(key, out Stack<FrameworkElement> pool))
             {
-                _paragraphPool[key] = pool = new Stack<RichTextBlockPresenter>();
+                _pool[key] = pool = new Stack<FrameworkElement>();
             }
 
-            pool.Push(paragraph);
-            _pooledParagraphs++;
+            pool.Push(presenter);
+            _pooled++;
         }
 
-        private RichTextBlockPresenter TakeParagraph(RichParagraphBlock block)
+        private void Release(RichBlockPresenter presenter)
         {
-            if (_paragraphPool.TryGetValue(PoolKey(block), out Stack<RichTextBlockPresenter> pool) && pool.Count > 0)
+            if (presenter.Block != null && IsPooled(presenter.Block))
             {
-                _pooledParagraphs--;
-                ParagraphsReused++;
+                Release(PoolKey(presenter.Block), presenter);
+            }
+        }
+
+        private FrameworkElement Take(int key)
+        {
+            if (_pool.TryGetValue(key, out Stack<FrameworkElement> pool) && pool.Count > 0)
+            {
+                _pooled--;
+                PresentersReused++;
                 return pool.Pop();
             }
 
-            ParagraphsMade++;
-            return new RichTextBlockPresenter();
+            PresentersMade++;
+            return null;
         }
 
         internal RichBlockPresenter GetPresenter(RichBlock block)
@@ -1122,29 +1113,38 @@ namespace Telegram.Controls.RichEditor
                 return presenter;
             }
 
-            presenter = block switch
+            if (IsPooled(block))
             {
-                RichParagraphBlock paragraph => TakeParagraph(paragraph),
-                RichBlockQuote => new RichBlockQuotePresenter(),
-                RichTextQuote => new RichTextQuotePresenter(),
-                RichListBlock => new RichListPresenter(),
-                RichDetailsBlock => new RichDetailsPresenter(),
-                RichTableBlock => new RichTablePresenter(),
-                RichMediaBlock or RichMediaGroupBlock or RichMapBlock => new RichMediaPresenter(),
-                _ => new RichAtomPresenter()
-            };
+                presenter = Take(PoolKey(block)) as RichBlockPresenter;
+            }
+
+            if (presenter == null)
+            {
+                presenter = block switch
+                {
+                    RichParagraphBlock => new RichTextBlockPresenter(),
+                    RichBlockQuote => new RichBlockQuotePresenter(),
+                    RichTextQuote => new RichTextQuotePresenter(),
+                    RichListBlock => new RichListPresenter(),
+                    RichDetailsBlock => new RichDetailsPresenter(),
+                    RichTableBlock => new RichTablePresenter(),
+                    RichMediaBlock or RichMediaGroupBlock or RichMapBlock => new RichMediaPresenter(),
+                    _ => new RichAtomPresenter()
+                };
+            }
 
             _presenters[block] = presenter;
             return presenter;
         }
 
-        internal RichListItemPresenter GetItemPresenter(RichListItem item)
+        internal RichListItemPresenter GetItemPresenter(RichListItem item, RichListBlock list)
         {
             _realized.Add(item);
 
             if (!_itemPresenters.TryGetValue(item, out RichListItemPresenter presenter))
             {
-                _itemPresenters[item] = presenter = new RichListItemPresenter();
+                presenter = Take(ItemPoolKeys + (int)list.Style) as RichListItemPresenter ?? new RichListItemPresenter();
+                _itemPresenters[item] = presenter;
             }
 
             return presenter;
@@ -1156,10 +1156,103 @@ namespace Telegram.Controls.RichEditor
 
             if (!_cellPresenters.TryGetValue(cell, out RichTableCellPresenter presenter))
             {
-                _cellPresenters[cell] = presenter = new RichTableCellPresenter();
+                presenter = Take(CellPoolKeys + (cell.IsHeader ? 1 : 0)) as RichTableCellPresenter ?? new RichTableCellPresenter();
+                _cellPresenters[cell] = presenter;
             }
 
             return presenter;
+        }
+
+        /// <summary>
+        /// Takes a root out of the window by itself, where <see cref="Realize"/> would bind every
+        /// root in it again: its presenter, everything nested in it, and what they registered.
+        /// The document has not changed since it was realized, so what its stops and children
+        /// are now is what it was realized with.
+        /// </summary>
+        private void Unrealize(RichBlock root)
+        {
+            var stops = _engine.Document.Stops;
+
+            for (int i = root.FirstStop; i <= root.LastStop && i < stops.Count; i++)
+            {
+                if (stops[i].IsLeaf)
+                {
+                    _leafViews.Remove(stops[i].Leaf);
+                }
+            }
+
+            UnrealizeTree(root);
+        }
+
+        // Out of the tree before what is in it, which then leaves a panel no longer live.
+        private void UnrealizeTree(RichBlock block)
+        {
+            if (_presenters.TryGetValue(block, out RichBlockPresenter presenter))
+            {
+                Detach(presenter);
+                _presenters.Remove(block);
+            }
+
+            switch (block)
+            {
+                case RichBlockQuote quote:
+                    UnrealizeTree(quote.Children);
+                    break;
+                case RichDetailsBlock details:
+                    UnrealizeTree(details.Children);
+                    break;
+                case RichListBlock list:
+                    foreach (var item in list.Items)
+                    {
+                        if (_itemPresenters.TryGetValue(item, out RichListItemPresenter itemPresenter))
+                        {
+                            Detach(itemPresenter);
+                            _itemPresenters.Remove(item);
+                            Release(ItemPoolKeys + (int)list.Style, itemPresenter);
+                        }
+
+                        _realized.Remove(item);
+                        UnrealizeTree(item.Children);
+                    }
+                    break;
+                case RichTableBlock table:
+                    foreach (var row in table.Rows)
+                    {
+                        foreach (var cell in row)
+                        {
+                            if (_cellPresenters.TryGetValue(cell, out RichTableCellPresenter cellPresenter))
+                            {
+                                Detach(cellPresenter);
+                                _cellPresenters.Remove(cell);
+
+                                cellPresenter.SetSelected(false);
+                                Release(CellPoolKeys + (cell.IsHeader ? 1 : 0), cellPresenter);
+                            }
+
+                            _realized.Remove(cell);
+                        }
+                    }
+                    break;
+                case RichMediaGroupBlock group:
+                    UnregisterItems(group);
+                    break;
+            }
+
+            _nodeViews.Remove(block);
+            _realized.Remove(block);
+
+            if (presenter != null)
+            {
+                Release(presenter);
+            }
+        }
+
+        private void UnrealizeTree(List<RichBlock> blocks)
+        {
+            foreach (var block in blocks)
+            {
+                UnrealizeTree(block);
+            }
         }
 
         /// <summary>
@@ -1178,11 +1271,11 @@ namespace Telegram.Controls.RichEditor
             Reconcile(panel);
         }
 
-        internal void Reconcile(Panel panel, IList<RichListItem> items)
+        internal void Reconcile(Panel panel, RichListBlock list)
         {
-            foreach (var item in items)
+            foreach (var item in list.Items)
             {
-                _wanted.Add(GetItemPresenter(item));
+                _wanted.Add(GetItemPresenter(item, list));
             }
 
             Reconcile(panel);
