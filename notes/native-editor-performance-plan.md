@@ -268,6 +268,18 @@ in the middle and at the end, revealing a spoiler and following a link past an e
 `Prepare` and the prefix compare walk the text, the splices and the copy of everything after the
 window move it, and `Draw` draws every line.
 
+**Full collections (2026-10-15, Release).** In the 100,000 paragraph, 9 gen2 collections in 200
+keys, the frames they fall in 38 ms at the median against 4.15; one every run in the 4,096 one.
+What a key copies whole, from reading the code: the leaf's string itself (`RichTextLeaf.Insert`,
+an immutable `string`), on the large object heap past 42,500 characters; on a space, everything
+before the caret as well, for the markdown rules (`TryApplySpaceRule`); twice the whole message in
+the message box, for the composer and the chat; and natively, the direction of each leaf up to the
+first with a strong character, twice for the one edited. Done: the rules look at no line longer
+than any of them can match; `GetDirectionality` takes its string by reference, and a leaf caches
+its direction per version; `MessageTextBox` converts its document once per state of it. Left: the
+leaf's string, which takes a buffer in the leaf and an edit call to the layout instead of a whole
+string per key; a code block tokenized whole per key; and what a screen reader's `GetText` builds.
+
 ## Phase 2: edited text on the analyzer
 
 ### Scope

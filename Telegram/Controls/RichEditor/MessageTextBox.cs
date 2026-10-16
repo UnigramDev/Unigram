@@ -243,13 +243,48 @@ namespace Telegram.Controls.RichEditor
         // Text
         // =====================================================================================
 
-        public string Text => RichFormattedTextConverter.ToFormattedText(_engine.Document).Text;
+        // The document as a message, converted once for as long as it stays the same: the
+        // composer and the chat each ask for it on every keystroke, and converting is a copy of
+        // the whole text each time. Keyed on the document rather than dropped on a change
+        // event, which a batch holds back until it ends while its own code may read the text.
+        // A leaf's version only grows, so their sum moves with any edit to any of them.
+        private FormattedText _converted;
+        private RichDocument _convertedDocument;
+        private int _convertedStructure;
+        private long _convertedLeaves;
+
+        private FormattedText Converted()
+        {
+            var document = _engine.Document;
+            var leaves = document.Leaves;
+            var versions = 0L;
+
+            for (int i = 0; i < leaves.Count; i++)
+            {
+                versions += leaves[i].Version;
+            }
+
+            if (_converted == null || !ReferenceEquals(_convertedDocument, document) || _convertedStructure != document.Version || _convertedLeaves != versions)
+            {
+                _converted = RichFormattedTextConverter.ToFormattedText(document);
+                _convertedDocument = document;
+                _convertedStructure = document.Version;
+                _convertedLeaves = versions;
+            }
+
+            return _converted;
+        }
+
+        public string Text => Converted().Text;
 
         public bool IsEmpty => _engine.Document.IsEmpty;
 
         public FormattedText GetFormattedText(bool clear = false, bool parseMarkdown = true)
         {
-            var text = RichFormattedTextConverter.ToFormattedText(_engine.Document);
+            // A vector of its own, as callers adjust what they are given; the text is a string,
+            // and shared.
+            var converted = Converted();
+            var text = new FormattedText(converted.Text, new MutableVector<TextEntity>(converted.Entities));
 
             if (clear)
             {
