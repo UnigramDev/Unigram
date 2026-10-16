@@ -24,6 +24,8 @@ namespace Telegram.Controls.RichEditor
         // a rule is several operations that undo as one.
         private int _suppressUndo;
 
+        private const int MaxRulePrefix = 64;
+
         /// <summary>Called after a space is typed; true when the line became something else.</summary>
         private bool TryApplySpaceRule(RichTextLeaf leaf, int caret)
         {
@@ -45,7 +47,10 @@ namespace Telegram.Controls.RichEditor
                 return false;
             }
 
-            if (caret < 2 || leaf.Text[caret - 1] != ' ')
+            // Every rule is a few characters, a code fence's language the longest of them: a
+            // longer line cannot be one, and copying it to find out would copy a whole paragraph
+            // on every space typed in it.
+            if (caret < 2 || caret - 1 > MaxRulePrefix || leaf.Text[caret - 1] != ' ')
             {
                 return false;
             }
