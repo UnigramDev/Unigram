@@ -10,7 +10,9 @@ namespace Telegram.Native
         // No Cache/IsReadyToCache: the animation queues its own build after the first frame it
         // decodes itself. IsCaching stays, because that build walks the decoder a direct render
         // would use, so the caller does have to stand aside.
-        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, out Double seconds, out Boolean completed);
+        // Frames stamped before skipBefore are passed over, a bounded number per call, so a caller
+        // that has fallen behind catches up. 0 renders the next frame.
+        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Double skipBefore, out Double seconds, out Boolean completed);
         void Stop();
 
         void Seek(Double seconds);

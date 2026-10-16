@@ -67,6 +67,12 @@ namespace winrt::Telegram::Native::implementation
 
         bool NextFrame(uint8_t* pixels, size_t capacity, float& timestamp) noexcept override
         {
+            return NextFrame(pixels, capacity, timestamp, 0);
+        }
+
+        /// <summary>For the direct-render path, which skips the frames stamped before skipBefore.</summary>
+        bool NextFrame(uint8_t* pixels, size_t capacity, float& timestamp, double skipBefore) noexcept
+        {
             if (m_finished || m_animation == nullptr || pixels == nullptr)
             {
                 return false;
@@ -80,7 +86,7 @@ namespace winrt::Telegram::Native::implementation
             double seconds = 0;
             bool completed = false;
 
-            if (!m_animation->RenderSync(pixels, m_width, m_height, false, seconds, completed))
+            if (!m_animation->RenderSync(pixels, m_width, m_height, false, seconds, completed, skipBefore))
             {
                 m_finished = true;
                 return false;

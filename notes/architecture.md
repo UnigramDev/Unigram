@@ -651,7 +651,7 @@ to hang because `Client.Run` serializes dispatch and reply on one thread). `Equa
 special-case `IsUnique` sources to avoid cache collisions.
 
 ## Animated images — Telegram/Controls/AnimatedImage.cs, Telegram.Native/FrameSurface.*
-<!-- map: verified=ac47a37da paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl -->
+<!-- map: verified=0ee90927a paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
 Stickers, custom emoji, GIFs and video stickers, decoded off the UI thread and drawn into a composition
 surface without the UI thread touching a frame. One file holds the control, the presenter, the decode
 tasks and the per-window loader.
@@ -674,12 +674,21 @@ after the clock a pass does not draw while `FrameFlusher.CommitsInFlight` (3) of
 (`WaitForCommit`): DComp keeps every surface update until a commit takes it, and the clock keeps ticking
 when none do - behind a stalled UI thread or in a minimized window - so pacing on the clock alone piled up
 gigabytes of frames. The limit is not 1 because release builds confirm a commit 22-42 ms after it is
-requested, two frames or more, and waiting for each one halved the flusher, so 60 fps stickers and videos
-played at half speed: a presenter only decodes once the flusher has handed its buffer back, and neither
-Lottie nor a video skips frames to catch up.
+requested, two frames or more, and waiting for each one halved the flusher.
+**Pacing:** a presenter only decodes once the flusher has handed its buffer back, so the scheduler's
+ticks and the flusher's passes, on two unrelated clocks, lose decodes. A task therefore picks its frame
+from playback time (`AnimatedImageTask.Advance`) rather than taking the next one: Lottie and Dice by
+time x the animation's frame rate, video by holding each frame for the length of the last and, when more
+than a frame and a half behind, asking `CachedVideoAnimation.RenderSync` to skip to the clock (decoded,
+not converted, at most 30 a call; from the cache, the index moves). A task's `FrameRate` is only how often
+it is polled. `notes/animated-image-frame-loop.md` is the plan to replace the two clocks with one.
 The UI thread is reached only to hook the brush on the first frame,
 and for `PositionChanged` while it has listeners.
-**Traps:** a device takes **one drawing session at a time**: a second `BeginDraw` while one is open
+**Traps:** the clock resumes on the frame that was next after a gap of more than four polls - paused,
+starved behind a stalled UI thread, waiting for a cache build - so a stall plays as a pause; only
+shorter shortfalls are skipped. A frame must not be skipped past a Lottie marker, which stops on the
+frame before it, nor past the last frame, which is what reports `Loop`.
+A device takes **one drawing session at a time**: a second `BeginDraw` while one is open
 fails, so all drawing stays on the flusher's thread — drawing from the decode workers lost the only frame
 a still sticker draws. **Every pass is a commit, and every commit a XAML frame** on the UI thread:
 unpaced, the flusher ran about 600 passes a second and cost the UI thread twice as much, so the clock wait

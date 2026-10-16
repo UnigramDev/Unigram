@@ -47,7 +47,7 @@ namespace winrt::Telegram::Native::implementation
 
         static winrt::Telegram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool fit, bool precache, bool limitFps);
 
-        void RenderSync(IBuffer bitmap, double& seconds, bool& completed);
+        void RenderSync(IBuffer bitmap, double skipBefore, double& seconds, bool& completed);
         void Stop();
 
         void Seek(double seconds);
@@ -82,7 +82,7 @@ namespace winrt::Telegram::Native::implementation
         /// ffmpeg's open-probe-find_stream_info-open_codec was being paid by every cache hit.
         /// </summary>
         bool EnsureProducer();
-        void RenderSync(uint8_t* pixels, double& seconds, bool& completed, bool* rendered);
+        void RenderSync(uint8_t* pixels, double skipBefore, double& seconds, bool& completed, bool* rendered);
 
         /// <summary>Queues this animation's own build, once, after it has decoded a frame itself.</summary>
         void RequestCache();

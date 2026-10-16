@@ -188,14 +188,14 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    void CachedVideoAnimation::RenderSync(IBuffer bitmap, double& seconds, bool& completed)
+    void CachedVideoAnimation::RenderSync(IBuffer bitmap, double skipBefore, double& seconds, bool& completed)
     {
         uint8_t* pixels = bitmap.data();
         bool rendered;
-        RenderSync(pixels, seconds, completed, &rendered);
+        RenderSync(pixels, skipBefore, seconds, completed, &rendered);
     }
 
-    void CachedVideoAnimation::RenderSync(uint8_t* pixels, double& seconds, bool& completed, bool* rendered)
+    void CachedVideoAnimation::RenderSync(uint8_t* pixels, double skipBefore, double& seconds, bool& completed, bool* rendered)
     {
         if (rendered)
         {
@@ -234,6 +234,13 @@ namespace winrt::Telegram::Native::implementation
             if (m_scratch.size() < m_reader.MaxCompressedSize())
             {
                 m_scratch.resize(m_reader.MaxCompressedSize());
+            }
+
+            // Random access, so catching up costs nothing but the frame that is shown. The last
+            // frame is never passed over: it is the one that reports the loop.
+            while (m_frameIndex + 1 < m_reader.FrameCount() && m_reader.Timestamp(m_frameIndex) < skipBefore)
+            {
+                m_frameIndex++;
             }
 
             if (m_reader.ReadFrame(m_frameIndex, pixels, size, m_scratch.data(), m_scratch.size()))
@@ -275,7 +282,7 @@ namespace winrt::Telegram::Native::implementation
         float timestamp = 0;
         auto size = static_cast<size_t>(m_pixelWidth) * m_pixelHeight * 4;
 
-        if (m_producer->NextFrame(pixels, size, timestamp))
+        if (m_producer->NextFrame(pixels, size, timestamp, skipBefore))
         {
             seconds = timestamp;
             completed = m_producer->IsFinished();

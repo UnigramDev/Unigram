@@ -1891,13 +1891,20 @@ namespace Telegram.Controls
             PixelWidth = presentation.PixelWidth; //animation.PixelWidth;
             PixelHeight = presentation.PixelHeight; //animation.PixelHeight;
 
+            // The poll rate only: LimitFps polls a 60 fps animation at 30, and the clock then picks
+            // every other frame.
             var frameRate = Math.Clamp(animation.FrameRate, 30, presentation.LimitFps ? 30 : 60);
             var interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
 
             Interval = interval;
             FrameRate = frameRate;
+
+            _frameRate = animation.FrameRate > 0 ? animation.FrameRate : 60;
         }
 
+        private readonly double _frameRate;
+
+        // The next frame to render, one past the last one rendered.
         private int _index;
 
         public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
@@ -1916,19 +1923,49 @@ namespace Telegram.Controls
                 return AnimatedImageTaskState.Stop;
             }
 
-            var framesPerUpdate = _presentation.LimitFps ? _animation.FrameRate < 60 ? 1 : 2 : 1;
+            var total = _animation.TotalFrame;
+            var clock = Advance(_index / _frameRate);
 
-            _animation.RenderSync(frame, _index);
-            _index = Math.Min(_animation.TotalFrame, _index + framesPerUpdate);
+            // The epsilon is for a resume, which lands exactly on a frame's time and can multiply
+            // back to a hair below its index.
+            var due = (int)Math.Floor(clock * _frameRate + 1e-6);
+            if (due < _index)
+            {
+                return AnimatedImageTaskState.Skip;
+            }
 
-            if (_animation.TotalFrame == 1 || _shouldStop)
+            // Behind, the frames in between are skipped - but never the last one, which is what
+            // reports the loop, and never past a marker, which stops on the frame before it.
+            var target = Math.Max(0, Math.Min(due, total - 1));
+
+            if (_markers != null)
+            {
+                foreach (var marker in _markers)
+                {
+                    if (marker > _index && marker <= target)
+                    {
+                        target = marker - 1;
+                    }
+                }
+            }
+
+            _animation.RenderSync(frame, target);
+
+
+            _index = target + 1;
+
+            if (total == 1 || _shouldStop)
             {
                 _index = 0;
                 return AnimatedImageTaskState.Stop;
             }
-            else if (_animation.TotalFrame == _index)
+            else if (_index >= total)
             {
+                // What the clock ran past the end is carried into the next loop, or every loop
+                // would lose it.
                 _index = 0;
+                SetClock(clock - total / _frameRate);
+
                 return AnimatedImageTaskState.Loop;
             }
 
@@ -1941,6 +1978,7 @@ namespace Telegram.Controls
             if (_presentation.Source.Markers.TryGetValue(marker, out int index))
             {
                 _index = index + 1;
+                SetClock(_index / _frameRate);
             }
         }
 
@@ -1983,10 +2021,11 @@ namespace Telegram.Controls
 
         private readonly double _pollInterval;
 
-        private long _lastTick;
-        private double _clock;
         private double _lastPosition;
         private double _nextDue;
+
+        // How long the frame just rendered is held: the gap between the last two timestamps.
+        private double _frameDuration;
 
         public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
@@ -1999,22 +2038,41 @@ namespace Telegram.Controls
             {
                 return AnimatedImageTaskState.Skip;
             }
-            else if (!Due())
+
+            var clock = Advance(_nextDue);
+            if (clock < _nextDue)
             {
                 return AnimatedImageTaskState.Skip;
             }
 
-            _animation.RenderSync(frame, out double seconds, out bool completed);
+            // Within a frame and a half of the clock the next frame is on time. Further behind, the
+            // frames before the clock are passed over rather than every one of them shown late.
+            var behind = clock - _nextDue > _frameDuration * 1.5;
+
+            _animation.RenderSync(frame, behind ? clock - _frameDuration : 0, out double seconds, out bool completed);
             _index++;
 
-            // The next frame's timestamp is only known once it has been decoded, so the one
-            // just rendered is held for as long as its predecessor was. The deadline is
-            // re-anchored on a real timestamp every time, so the estimate cannot drift.
-            // A timestamp that did not move forward means the frame was not rendered at
-            // all, and pacing off it would put the deadline in the past and spin.
-            _nextDue = seconds > _lastPosition
-                ? seconds + (seconds - _lastPosition)
-                : seconds + _pollInterval;
+
+            // The next frame's timestamp is only known once it has been decoded, so the one just
+            // rendered is held for as long as frames have been lasting, and the deadline is
+            // re-anchored on a real timestamp every time, so the estimate cannot drift. A gap that
+            // spans skipped frames is not a frame's length, so it is only measured on time.
+            // A timestamp that did not move forward means the frame was not rendered at all, and
+            // pacing off it would put the deadline in the past and spin.
+            if (seconds > _lastPosition)
+            {
+                if (!behind)
+                {
+                    _frameDuration = seconds - _lastPosition;
+                }
+
+                _nextDue = seconds + _frameDuration;
+            }
+            else
+            {
+                _nextDue = seconds + _pollInterval;
+            }
+
             _lastPosition = seconds;
 
             // completed is authoritative, and TotalFrame deliberately is not: it is 0 until a
@@ -2040,32 +2098,14 @@ namespace Telegram.Controls
             return AnimatedImageTaskState.None;
         }
 
-        private bool Due()
-        {
-            var now = Stopwatch.GetTimestamp();
-
-            if (_lastTick != 0)
-            {
-                var elapsed = (now - _lastTick) / (double)Stopwatch.Frequency;
-
-                // A suspended or starved worker comes back owing more time than it can
-                // usefully spend: catching up would decode a run of frames nobody sees.
-                _clock = elapsed > _pollInterval * 4
-                    ? _nextDue
-                    : _clock + elapsed;
-            }
-
-            _lastTick = now;
-            return _clock >= _nextDue;
-        }
-
         private void Rewind()
         {
-            _clock = 0;
+            SetClock(0);
             _nextDue = 0;
 
             // One poll behind zero, so the first frame's hold is estimated at the poll
             // interval rather than at nothing, which would show the second frame instantly.
+            _frameDuration = _pollInterval;
             _lastPosition = -_pollInterval;
         }
 
@@ -2195,7 +2235,16 @@ namespace Telegram.Controls
 
             Interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
             FrameRate = frameRate;
+
+            // The initial state's, kept for the final one: the clock is counted in frames, and both
+            // states come from the same set.
+            _frameRate = reels.FrameRate > 0 ? reels.FrameRate : 60;
         }
+
+        private readonly double _frameRate;
+
+        // The frame the clock was on at the last render, counted from the start and never wrapped.
+        private int _frame = -1;
 
         public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
@@ -2206,6 +2255,19 @@ namespace Telegram.Controls
             {
                 return AnimatedImageTaskState.Skip;
             }
+
+            var clock = Advance((_frame + 1) / _frameRate);
+            var due = (int)Math.Floor(clock * _frameRate + 1e-6);
+
+            if (due <= _frame)
+            {
+                return AnimatedImageTaskState.Skip;
+            }
+
+            // Frames to skip on top of the next one, when behind.
+            var extra = due - _frame - 1;
+            _frame = due;
+
 
             // The result is taken at frame zero, which is the loop boundary and also the state a
             // task that has not played yet is in. One rule covers both: a dice whose result arrives
@@ -2237,6 +2299,17 @@ namespace Telegram.Controls
                 }
             }
 
+            // Not past the end of a roll, the boundary the result is taken up on.
+            if (extra > 0)
+            {
+                _index = Math.Min(_index + extra, reels.TotalFrame - 1);
+
+                if (_lever != null)
+                {
+                    _leverIndex = Math.Max(_leverIndex, Math.Min(_leverIndex + extra, _lever.TotalFrame - 1));
+                }
+            }
+
             // Bottom to top into the one buffer: the first layer replaces what the buffer held, and
             // everything above it composites over what is already there.
             if (_backdrop != null)
@@ -2254,12 +2327,10 @@ namespace Telegram.Controls
                 _lever.RenderSync(frame, _leverIndex, false);
             }
 
-            var framesPerUpdate = _presentation.LimitFps ? reels.FrameRate < 60 ? 1 : 2 : 1;
-
             // Pulled once, and left down for every roll after it.
-            if (_lever != null && _leverIndex + framesPerUpdate < _lever.TotalFrame)
+            if (_lever != null && _leverIndex + 1 < _lever.TotalFrame)
             {
-                _leverIndex += framesPerUpdate;
+                _leverIndex++;
             }
 
             // Only the final state reports its frames. A caller watching for one particular frame
@@ -2267,9 +2338,9 @@ namespace Telegram.Controls
             // state come round on it again and again.
             position = _looping ? 0 : _index;
 
-            if (_index + framesPerUpdate < reels.TotalFrame)
+            if (_index + 1 < reels.TotalFrame)
             {
-                _index += framesPerUpdate;
+                _index++;
                 return AnimatedImageTaskState.None;
             }
 
@@ -2380,7 +2451,44 @@ namespace Telegram.Controls
 
         public TimeSpan Interval { get; init; }
 
+        /// <summary>How often the task is polled, which is not the rate it plays at.</summary>
         public double FrameRate { get; init; }
+
+        private long _lastTick;
+        private double _clock;
+
+        /// <summary>
+        /// Playback time in seconds, advanced by the wall time since the previous call. Frames are
+        /// chosen from it rather than one per call, because a call is a decode and decodes are lost
+        /// whenever the presenter has no free buffer.
+        /// </summary>
+        /// <param name="resume">
+        /// Where to pick up after a gap of more than four polls - paused, starved behind a stalled UI
+        /// thread, waiting for a cache build: the frame that was next, so a stall plays as a pause and
+        /// not as a jump. Shorter shortfalls are left on the clock, for the caller to catch up on.
+        /// </param>
+        protected double Advance(double resume)
+        {
+            var now = Stopwatch.GetTimestamp();
+
+            if (_lastTick != 0)
+            {
+                var elapsed = (now - _lastTick) / (double)Stopwatch.Frequency;
+
+                _clock = elapsed > 4 / FrameRate
+                    ? resume
+                    : _clock + elapsed;
+            }
+
+            _lastTick = now;
+            return _clock;
+        }
+
+        protected void SetClock(double clock)
+        {
+            _clock = clock;
+        }
+
 
         public abstract AnimatedImageTaskState NextFrame(IBuffer frame, out double position);
 

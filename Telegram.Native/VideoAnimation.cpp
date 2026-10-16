@@ -569,12 +569,13 @@ namespace winrt::Telegram::Native::implementation
         return value;
     }
 
-    bool VideoAnimation::RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed)
+    bool VideoAnimation::RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed, double skipBefore)
     {
         slim_lock_guard const guard(m_lock);
         completed = false;
         int ret = 0;
         int32_t triesCount = preview ? 50 : 6;
+        int32_t skipped = 0;
 
         if (!fmt_ctx || !video_dec_ctx || !pkt || !frame)
         {
@@ -618,6 +619,7 @@ namespace winrt::Telegram::Native::implementation
                         }
                         avcodec_flush_buffers(video_dec_ctx);
                         dropper.reset();
+                        skipBefore = 0;
                         waiting = Waiting::ReadFrame;
 
                         // Cleared on the way round, as the drained branch below does.
@@ -696,7 +698,7 @@ namespace winrt::Telegram::Native::implementation
                     {
                         double nextFrame = pts * av_q2d(video_stream->time_base);
 
-                        if (dropper.should_display_frame(nextFrame))
+                        if (dropper.should_display_frame(nextFrame) && (nextFrame >= skipBefore || ++skipped > MaxSkippedFrames))
                         {
                             seconds = clamp(nextFrame, 0.0, duration);
 
@@ -752,6 +754,7 @@ namespace winrt::Telegram::Native::implementation
                         }
                         avcodec_flush_buffers(video_dec_ctx);
                         dropper.reset();
+                        skipBefore = 0;
                         waiting = Waiting::ReadFrame;
                         packet_pending = false;
                         has_decoded_frames = false;
