@@ -53,10 +53,10 @@ namespace Telegram.Native
         // redraws the surface rather than replacing it every few characters. On by default.
         Boolean IsReadOnly;
 
-        // Whether an edited text is laid out on IDWriteTextAnalyzer rather than by a
-        // IDWriteTextLayout, while that layout is being proven: see
-        // notes/native-editor-performance-plan.md. Only a text that is one paragraph with no
-        // MaxLines; anything else is laid out as before. Off by default.
+        // Whether an edited text is laid out on IDWriteTextAnalyzer rather than by an
+        // IDWriteTextLayout: see notes/native-editor-performance-plan.md. Only a text that is
+        // one paragraph with no MaxLines; anything else is laid out as before. Off unless set:
+        // DirectTextBlock sets it from Diagnostics' Analyzer Text Layout, which is on.
         Boolean UseAnalyzer;
 
         // Both layouts built from this one's state, and a report of where they disagree.
