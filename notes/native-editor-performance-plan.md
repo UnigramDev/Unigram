@@ -1,6 +1,7 @@
 # Typing at any length in the native editor
 
-A plan (2026-10-15); the meter is built and has measured, phase 2 is designed. The native editor (`Controls/RichEditor/`) is to become the
+A plan (2026-10-15); the meter is built and has measured, phase 2 is done (2026-10-16), phase 3 is
+under way, 3a and 3b built and measured. The native editor (`Controls/RichEditor/`) is to become the
 app's main text editor: the composer, every message box, and `RichTextWindow`, whose main use is
 long text. Typing a long text already starts to lag. This is what it takes for a keystroke to cost
 the same in a 100,000 character article as in a one-line message.
@@ -268,6 +269,13 @@ in the middle and at the end, revealing a spoiler and following a link past an e
 `Prepare` and the prefix compare walk the text, the splices and the copy of everything after the
 window move it, and `Draw` draws every line.
 
+**Phase 2d, the switch (2026-10-16).** Edited text is on the analyzer by default: Diagnostics'
+Analyzer Text Layout is on unless turned off, which is the way back to `IDWriteTextLayout` should
+a text come out wrong, and the comparison and the checked runs stay in the meter. The targets, in
+Release: the 100,000 paragraph at 0.75 ms an update and 0.13 ms a draw against 2 ms, the 4,096 one
+at about 0.3 ms against 1. Not met, and not the layout's: the spikes of full collections (below),
+and the many-paragraph documents, which are phase 3.
+
 **Full collections (2026-10-15, Release).** In the 100,000 paragraph, 9 gen2 collections in 200
 keys, the frames they fall in 38 ms at the median against 4.15; one every run in the 4,096 one.
 What a key copies whole, from reading the code: the leaf's string itself (`RichTextLeaf.Insert`,
@@ -279,6 +287,96 @@ than any of them can match; `GetDirectionality` takes its string by reference, a
 its direction per version; `MessageTextBox` converts its document once per state of it. Left: the
 leaf's string, which takes a buffer in the leaf and an edit call to the layout instead of a whole
 string per key; a code block tokenized whole per key; and what a screen reader's `GetText` builds.
+
+**Phase 3a, blocks kept in place (2026-10-16, unbuilt).** Every list of presenters - the root
+blocks, a quote's, a details block's, a list's items and an item's blocks - is reconciled in
+place (`RichEditorView.Reconcile`): what left is removed, what came in inserted, what moved moved,
+where each of them used to be cleared and filled again whenever one differed. The meter's typing
+scenarios gain a third run, Enter every tenth key in the middle, with the Enter keys' handlers and
+layout split out. Moved to 3b, where it has something to do: routing the geometry queries through
+`EnsureRealized`. Measured in Release, 2,000 paragraphs: a key 6.3 ms in the view against 0.9 in
+100 lines, and Enter 61 ms against 5.4 - about 3 µs a block a key and 30 µs a block an Enter, all
+of it in the view, so all of it what the window is for.
+
+**Phase 3b, the window (2026-10-16, unbuilt).** `RichBlocksPanel` replaces the `StackPanel`: it
+places each realized root by its index (`RichBlockPresenter.RootIndex`) at the sum of the heights
+before it, a height per root kept by block across structural changes, measured when realized and
+estimated when not (`EstimateHeight`: each leaf's length wrapped at half its font size a character,
+a line 1.33 of it; a guess per block selected whole). Past 100 roots (`VirtualizeAbove`) `Realize`
+binds only the window: a screen either side of the panel's effective viewport, or of the caret before
+there is one, and pinned the caret's root and its two neighbours, both ends of the selection, the
+selected block, and what `EnsureRealized` was asked for until the window next moves. A selection
+change that leaves a pin outside realizes again (Ctrl+End, Select All). The viewport moving by more
+than half the margin realizes again, then redraws the selection, decorations and squiggles without
+scrolling to the caret. Realized roots are scroll anchors. Only the automation peer's
+`ScrollIntoView` calls `EnsureRealized`: every other query is of a pinned root, or of what is on
+screen. Not done: Page Up and Down still walk lines; a playing video or a drag inside a root that
+leaves the window is not pinned.
+
+First run, by hand: content slow to appear while scrolling 2,000 paragraphs, and dragging the
+scrollbar very laggy. Each window move built every incoming paragraph from nothing - template, text
+block, layout, surface - for three screens, and a dragged scrollbar passes the whole window every
+frame. Since: paragraph presenters leaving the window go to a pool (up to 128) that those coming in
+take from, before they are made; a view reused for another leaf drops the selection it drew; while
+the view moves the margin is half a screen, widened to one when the dispatcher is next idle. The
+meter scrolls twice, half a screen and a twentieth of the document a frame, and counts the passes,
+their time, and the paragraphs made and reused.
+
+Second run (Release, 2,000 paragraphs): opened in 25 ms against 1,808, 53 blocks realized; a key
+1.3 ms against 6.3. Not yet: scrolling half a screen a frame, 118 ms frames with 5.5 ms of `Realize`
+in them; a twentieth a frame, 44 ms with 22; Enter 123 ms against 61 with everything realized. And
+a bug: a pooled paragraph reused for another kind drew in the old kind's style before settling, a
+visual state taking hold late. Since: the pool is by kind (`PoolKey`); narrowing the window while
+it moves keeps what is realized inside the wide margin; the meter splits a frame into following the
+viewport, realizing, the overlay, and the panel's measure and arrange, and a key into realizing and
+the blocks' measure, with passes counted for Enter.
+
+Third run: 2,000 paragraphs, a key 1.1 ms, Enter 9.3 ms against 123; the 100,000 article, Enter
+22 ms. Scrolling half a screen a frame, 37 ms frames: the editor's own 8.3 ms of it - following the
+viewport 3.0, the blocks' measure 3.6, overlay and arrange 1.8 - and the rest XAML's or a missed
+vsync, a frame over 16.7 ms counting as 33. Two things in the editor's: every move bound all ~88
+realized roots again, and a paragraph's text bound to a pooled view cost ~235 µs, an update with
+nothing in common, against 118 for a cold build. Since: `RealizeWindow` moves the window by what
+left and what came in, for paragraphs, and anything else takes the whole pass; and
+`EditableTextLayout::Update` builds cold when its window is the whole paragraph, which is every
+paragraph of one run, typed into or rebound.
+
+Fourth run: scrolling half a screen a frame, 16.9 ms frames at the median in 2,000 paragraphs (41
+of 142 over 25 ms), 20.3 in the 100,000 article; following the viewport 1.65 ms against 3.0. A
+paragraph's text still ~240 µs: the cold build did not move it, if Telegram.Native was rebuilt,
+and the 118 µs at open was likely 2,000 builds back to back, everything warm. Dragging still 32 ms frames: 56 paragraphs realized a jump, 13.7 ms
+of their text measured. Since: a viewport that lands clear of the window realizes itself only,
+widened when idle.
+
+Fifth run: dragging, 17.3 ms frames, none over 25 ms, against 32 (the 100,000 article 19.3); half
+a screen a frame unchanged. What is left in every scroll is a paragraph's text, ~250 µs for 60
+characters. A cold build makes, for every paragraph, a text format for its tab stop, the system
+fallback, the base font's face and a text analyzer, none of which depend on the text: the counters
+now split cold builds into preparing, setting up, analysing, mapping fonts, shaping and breaking
+lines (`EditableTextLayout::BuildStages`), before any of it is cached.
+
+Sixth run, 60 characters a build, µs: setting up 8.3, analysing 11.5, mapping fonts 64, shaping
+129, breaking lines 19; the 300 character leaves of the mixed article twice that, which scales with
+words, not with 256 character chunks. Sharing the setup across layouts - all four are immutable
+DirectWrite objects - saves 8 µs of 233. The likely cause, from the August `RichEditBox` freeze
+(memory: packaged font fallback): an editor's text has no family, so its base font is the packaged
+emoji font, letters fall back to the system's, and the emoji font has a space - mapping cuts a
+paragraph at every space, a run for each word and each space, mapped and shaped one by one. The
+counters now give runs a build to confirm it. The cold build `Update` took for a whole-paragraph
+window is reverted: Telegram.Native was rebuilt for the fifth run, and it changed nothing.
+The emoji font maps, besides emoji, only the space, `#`, `*`, the digits, © and ®, plus U+200D
+and U+20E3; its space is Segoe UI's (561 units, the same ascent and descent), and was put back the
+day the font was trimmed (ec0529bcc, 2026-08-19) because TextBlock drew no spaces without it, as
+Fela recalls. Decided: every `DirectTextBlock` defaults to `EmojiTextThemeFontFamily`, text font
+first, as `ChatTextBox` already was - the implicit style, the two keyed ones in App.xaml and the
+editor's leaf template. A paragraph should be one run; keycaps, © and ® are drawn as text, in the
+bubbles too. Headings keep `EmojiThemeFontFamilyWithSerif`, emoji first.
+
+Seventh run: 1.0 runs a build; a paragraph's text 89 µs against 258, the mixed article's 180
+against 448; the blocks' measure 1.3 ms a frame scrolling against 3.6, frames over 25 ms 8 of 142
+against 21, the editor's own share of a frame about 4 ms. Of a cold build's ~100 µs, setting up
+was now 20. Written since, unbuilt: the tab stop, the fallback, the base face and the analyzer
+kept per thread and format (`SetupFor`, up to 32) instead of made per paragraph.
 
 ## Phase 2: edited text on the analyzer
 
@@ -399,6 +497,95 @@ string per key; a code block tokenized whole per key; and what a screen reader's
 - Line spacing has to match DirectWrite's default, or text moves when a line becomes editable.
 - It is a text layout engine: thousands of lines of C++, against an API that does the same today
   in one call.
+
+## Phase 3: blocks in view only
+
+Designed 2026-10-16, against a map of `RichEditorView` taken the same day.
+
+### What it costs today
+
+- **Every block is a presenter** in the `Blocks` `StackPanel`, nested blocks as presenters inside
+  their parent's template; 2,000 paragraphs open in 1.8 seconds and every frame lays them out.
+- **A structural change touches all of them.** `Realize()` empties `_leafViews`, `_nodeViews` and
+  `_itemViews` and binds and updates every presenter again; when the root list changed at all -
+  Enter at the top level - it clears `Blocks` and adds every root back, so the whole content
+  leaves the tree and comes back.
+- **A key lays out the stack twice.** `UpdateSelection` and `UpdateCaret` call
+  `Surface.UpdateLayout()`, and a size change anywhere measures the `StackPanel`'s children;
+  `UpdateDecorations` and `DrawSpelling` walk every leaf view.
+- **Geometry exists only where a view does.** The caret, hit testing, vertical movement, Home and
+  End, the selection, grippers, suggestions, composition, decorations and the automation peer's
+  rectangles all ask a view; with none they do nothing, or the wrong thing: vertical movement goes
+  to the document's edge when nothing is below it, and a caret with no view never scrolls in.
+- **The model already has what the view needs:** `Blocks`, `Stops`, `Leaves`, a leaf's
+  `StopIndex`, a block's `FirstStop` and `LastStop` - contiguous and increasing at the top level,
+  so the root of any stop is a binary search - and `Owner` and `Parent` for the chain.
+
+### Scope
+
+- **Root blocks are the unit.** A root is realized whole, nested blocks and all; one that is not
+  stands as a height. A single huge list or table stays realized whole, until measured otherwise.
+- **Short documents are not virtualized.** Below a number of roots - every message box, for one -
+  the window is the whole document and nothing changes.
+- **Pinned roots** are always realized: the caret's and the selection anchor's, the selected
+  node's, and one with pointer capture, an upload or a drag in progress.
+
+### The panel
+
+- `Blocks` becomes a panel of our own, not an `ItemsRepeater` (decided 2026-10-16): presenters are
+  bound to model identity and `EnsureRealized` has to realize synchronously, where the repeater
+  recycles by element kind on a schedule of its own. It lays out the realized roots in document order at the
+  offsets a height map gives them, and reports the total height.
+- **The height map** holds a height per root, measured when it has been realized and estimated when
+  not: a paragraph from its length, the width and the line height; media from its aspect ratio;
+  everything else a fixed guess per kind. Offsets are a running sum, a tree if measured to need it.
+- **The window** is the viewport and a margin of a screen above and below. The panel follows the
+  viewport (`EffectiveViewportChanged`, outside the layout pass), and roots come and go as it moves.
+  Before the first viewport, a screen from the caret's root.
+- **Anchoring.** An estimate above the viewport replaced by a real height must not move what is
+  seen: the realized roots are scroll anchors (`CanBeScrollAnchor`), and the offset is corrected by
+  hand if that does not hold.
+
+### Realizing
+
+- `Realize()` reconciles the panel with the window instead of the whole tree: roots that left it
+  are unrealized and their registrations go with them, roots that entered it are bound, in place,
+  without moving the others. The pass over the model stays; the pass over XAML is the window only.
+- **`EnsureRealized(leaf or block)`** realizes the root of what it is given and lays it out. Every
+  geometry query that may land outside the window goes through it first: the caret, a selection
+  end, `FocusLeaf`, vertical movement past the last realized line, Ctrl+Home and Ctrl+End, the
+  automation peer's `ScrollIntoView`, a drop target, the drag's autoscroll.
+- **A root realized into a selection** is told its share of it, as `UpdateSelection` tells the
+  others; spelling and decorations draw for what is realized, again on a realization.
+- **Page Up and Down** scroll by the viewport and hit test where they land, instead of moving a
+  line at a time some 30 times.
+
+### Not realized, and how it answers
+
+- The automation peer's text, ranges and attributes are the model's already. Rectangles of what is
+  out of view are empty, which is what the platform expects of text off screen; embedded objects
+  out of view are not among the children until they are realized.
+- Suggestions, composition and the caret live in the caret's root, which is pinned.
+
+### Steps
+
+1. **3a.** Every list of presenters reconciled in place rather than cleared, which ends Enter
+   re-adding every root; the meter's run with Enter.
+2. **3b.** The panel, the height map and the estimates, the window and the pinned roots,
+   anchoring, and `EnsureRealized` at every geometry query that may land outside the window. The
+   meter: opening, keys, and a scroll from end to end at a frame each.
+3. **3c.** Navigation across what is not realized: vertical movement, Page Up and Down, the
+   document edges, selections that reach out of view (Select All, Shift with a click far away).
+4. **3d, if measured.** A pool of presenters per kind, and virtualizing inside a huge root.
+
+### Risks
+
+- Interaction inside a presenter - a checkbox, a table's scroller, a playing video - when its root
+  leaves the window: what is pinned, and what a player does when taken down.
+- Estimates that are badly wrong move the scrollbar as roots are realized; the meter's scroll has
+  to show it does not jump.
+- Every call site in the map has to be found: below the root count that turns the window on, a
+  missed one cannot show, so the meter's documents are what has to find it.
 
 ## Open questions
 
