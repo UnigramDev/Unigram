@@ -235,6 +235,8 @@
                   the colour of the text around it.  -->
             <Style x:Key="InfoCaptionDirectTextBlockStyle"
                    TargetType="controls:DirectTextBlock">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiTextThemeFontFamily}" />
                 <Setter Property="FontSize"
                         Value="12" />
                 <Setter Property="Foreground"
@@ -249,6 +251,8 @@
 
             <Style x:Key="PullquoteCreditDirectTextBlockStyle"
                    TargetType="controls:DirectTextBlock">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiTextThemeFontFamily}" />
                 <Setter Property="Foreground"
                         Value="{ThemeResource MessageHeaderForegroundBrush}" />
                 <Setter Property="IconForeground"

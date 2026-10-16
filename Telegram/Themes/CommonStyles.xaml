@@ -13,6 +13,11 @@
           adding to it: a caller that needs its own builds on this instead of losing it.  -->
     <Style x:Key="DefaultDirectTextBlockStyle"
            TargetType="controls:DirectTextBlock">
+        <!--  Text font first, as in the text inputs: with the emoji font first, every space is
+              taken from it and cuts the text there, and a paragraph is laid out a word at a time.
+              Keycaps, © and ® are drawn as text.  -->
+        <Setter Property="FontFamily"
+                Value="{ThemeResource EmojiTextThemeFontFamily}" />
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageForegroundBrush}" />
         <Setter Property="HyperlinkForeground"

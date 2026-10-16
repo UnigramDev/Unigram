@@ -230,6 +230,7 @@
                               RichLeafView converts its coordinates across the flip.  -->
                         <controls:DirectTextBlock x:Name="Text"
                                                   FlowDirection="LeftToRight"
+                                                  FontFamily="{ThemeResource EmojiTextThemeFontFamily}"
                                                   Foreground="{ThemeResource MessageForegroundBrush}"
                                                   HyperlinkForeground="{ThemeResource MessageForegroundLinkBrush}"
                                                   IconForeground="{ThemeResource MessageForegroundBrush}"
