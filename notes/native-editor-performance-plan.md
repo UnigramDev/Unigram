@@ -375,8 +375,20 @@ bubbles too. Headings keep `EmojiThemeFontFamilyWithSerif`, emoji first.
 Seventh run: 1.0 runs a build; a paragraph's text 89 µs against 258, the mixed article's 180
 against 448; the blocks' measure 1.3 ms a frame scrolling against 3.6, frames over 25 ms 8 of 142
 against 21, the editor's own share of a frame about 4 ms. Of a cold build's ~100 µs, setting up
-was now 20. Written since, unbuilt: the tab stop, the fallback, the base face and the analyzer
-kept per thread and format (`SetupFor`, up to 32) instead of made per paragraph.
+was now 20 - but only 88 of 3,450 builds were cold: a pooled view's new text is an update, which
+keeps what the last build set up, so setup is about 1 ms of an open. A per-thread cache of it was
+written and dropped unbuilt, not worth what it would hold.
+
+**Phase 3c, navigation (2026-10-16).** Most of it came with 3b's pins: Up and Down always
+have the caret's neighbours to land in, the document's edges and Select All move the selection and
+so realize its ends, and what a selection reaches is drawn as it scrolls in. What was left, Page Up
+and Down, no longer walk some 30 lines: `MovePage` scrolls the view by its height, realizes the root
+a viewport from the caret (`EnsureRealizedAt`), and hit tests there at the run's column; with Shift
+it takes the far edge of the new page instead, the last line wholly on it; when the hit would not
+move it forward, it goes to the document's edge. A scroll the view asked for is remembered until
+it lands (`_scrollingTo`), so bringing the caret into view meanwhile starts from where it is going.
+The caret is drawn over a selection now, at its moving end, which is what shows where Shift+Page
+Down left it; the far edge is inside `BringIntoView`'s margin, or revealing it would scroll on.
 
 ## Phase 2: edited text on the analyzer
 

@@ -760,6 +760,26 @@ namespace Telegram.Controls.RichEditor
             UpdateSelection(false);
         }
 
+        /// <summary>Realizes the root at a height of the surface, should the window not reach it: for a move that lands where nothing may be laid out yet.</summary>
+        internal void EnsureRealizedAt(double y)
+        {
+            if (Blocks == null || !IsVirtualizing)
+            {
+                return;
+            }
+
+            var index = Blocks.IndexAt(y);
+            if (index < 0 || Holds(index))
+            {
+                return;
+            }
+
+            _ensured.Add(_engine.Document.Blocks[index]);
+
+            RealizeWindow();
+            Surface.UpdateLayout();
+        }
+
         // Raised after a layout pass, outside it, which is where the window can move: what it
         // realizes is measured by the pass this raises again.
         private void OnBlocksViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
@@ -2013,13 +2033,18 @@ namespace Telegram.Controls.RichEditor
         /// <summary>The caret rectangle in root coordinates, or empty when there is no caret.</summary>
         internal Rect GetCaretRect()
         {
-            var focus = _engine.Focus;
-            if (_engine.SelectedNode != null || !_leafViews.TryGetValue(focus.Leaf, out RichLeafView view) || view.Visibility != Visibility.Visible)
+            return _engine.SelectedNode != null ? Rect.Empty : GetCaretRect(_engine.Focus);
+        }
+
+        /// <summary>Where a caret at <paramref name="position"/> would be, in root coordinates, or empty when its text is not realized.</summary>
+        private Rect GetCaretRect(RichPosition position)
+        {
+            if (!position.IsValid || !_leafViews.TryGetValue(position.Leaf, out RichLeafView view) || view.Visibility != Visibility.Visible)
             {
                 return Rect.Empty;
             }
 
-            var rect = view.GetCaretRect(focus.Offset);
+            var rect = view.GetCaretRect(position.Offset);
             if (rect.IsEmpty)
             {
                 return Rect.Empty;
@@ -2144,7 +2169,7 @@ namespace Telegram.Controls.RichEditor
             // The surface sits in the scrolled content below the top padding.
             var top = rect.Y + Padding.Top - 8;
             var bottom = rect.Y + Padding.Top + rect.Height + 8;
-            var offset = ScrollViewer.VerticalOffset;
+            var offset = _scrollingTo ?? ScrollViewer.VerticalOffset;
             var viewport = ScrollViewer.ViewportHeight;
 
             if (top < offset)
@@ -2157,8 +2182,17 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
+        // Where a scroll this control asked for is going, until it gets there: the offset read
+        // in between is still the old one, and the caret would be brought into view from it.
+        private double? _scrollingTo;
+
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (!e.IsIntermediate)
+            {
+                _scrollingTo = null;
+            }
+
             // The text input service keeps its candidate window beside the caret.
             NotifyLayoutChanged();
         }

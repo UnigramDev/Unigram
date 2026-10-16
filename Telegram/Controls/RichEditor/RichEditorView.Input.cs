@@ -1148,10 +1148,10 @@ namespace Telegram.Controls.RichEditor
                     MoveLine(1, shift, 1);
                     return true;
                 case VirtualKey.PageUp:
-                    MoveLine(-1, shift, PageLines());
+                    MovePage(-1, shift);
                     return true;
                 case VirtualKey.PageDown:
-                    MoveLine(1, shift, PageLines());
+                    MovePage(1, shift);
                     return true;
 
                 case VirtualKey.Home:
@@ -1381,6 +1381,111 @@ namespace Telegram.Controls.RichEditor
         {
             var height = ScrollViewer?.ViewportHeight ?? 0;
             return Math.Max(1, (int)(height / 24) - 1);
+        }
+
+        /// <summary>
+        /// Page Up and Down: the view scrolled by its height, and the caret onto the line a
+        /// viewport away, at the column the run of vertical moves started in, so it keeps its
+        /// place on screen. Not a line at a time: in a long document each line passed could
+        /// realize a block of its own.
+        /// </summary>
+        private void MovePage(int direction, bool extend)
+        {
+            var viewport = ScrollViewer?.ViewportHeight ?? 0;
+            if (viewport <= 0 || Surface == null)
+            {
+                MoveLine(direction, extend, PageLines());
+                return;
+            }
+
+            Surface.UpdateLayout();
+
+            Rect from;
+
+            if (_engine.SelectedNode != null && !extend && TryGetNodeBounds(_engine.SelectedNode, out Rect nodeBounds))
+            {
+                from = nodeBounds;
+            }
+            else
+            {
+                from = GetCaretRect();
+
+                if (from.IsEmpty)
+                {
+                    MoveLine(direction, extend, PageLines());
+                    return;
+                }
+            }
+
+            if (double.IsNaN(_goalX))
+            {
+                _goalX = from.X;
+            }
+
+            var goal = _goalX;
+            var offset = _scrollingTo ?? ScrollViewer.VerticalOffset;
+            var target = Math.Clamp(offset + direction * viewport, 0, ScrollViewer.ScrollableHeight);
+
+            // The caret keeps its place on screen; a selection takes in the whole page it
+            // scrolls to, and ends on the line at its far edge, inside the margin BringIntoView
+            // keeps, or revealing the caret there would scroll past the page.
+            var edge = direction > 0 ? target + viewport - Padding.Top - 8 : target - Padding.Top + 8;
+            var y = extend ? edge : from.Y + from.Height / 2 + direction * viewport;
+
+            // What is there may not be realized yet, and is measured before it is asked.
+            EnsureRealizedAt(y);
+
+            if (!HitTest(new Point(goal, y), out RichPosition position, out RichBlock node))
+            {
+                return;
+            }
+
+            if (extend && node == null)
+            {
+                // A line the edge cuts is left for the next page, unless it is the only one there.
+                var line = GetCaretRect(position);
+                var inside = direction > 0 ? line.Y - 1 : line.Y + line.Height + 1;
+
+                if (!line.IsEmpty && (direction > 0 ? line.Y + line.Height > edge : line.Y < edge)
+                    && HitTest(new Point(goal, inside), out RichPosition within, out RichBlock withinNode)
+                    && withinNode == null
+                    && RichPosition.Compare(within, _engine.Focus) * direction > 0)
+                {
+                    position = within;
+                }
+            }
+
+            if (target != offset && ScrollViewer.ChangeView(null, target, null, true))
+            {
+                _scrollingTo = target;
+            }
+
+            if (node != null)
+            {
+                // A selection being extended crosses blocks selected whole, a line at a time.
+                if (extend)
+                {
+                    MoveLine(direction, true, PageLines());
+                }
+                else
+                {
+                    _engine.SelectNode(node);
+                }
+            }
+            else if (RichPosition.Compare(position, _engine.Focus) * direction > 0)
+            {
+                _engine.Move(position, extend);
+            }
+            else
+            {
+                // Already on the first or last line that way: to the very start or end, as a
+                // text box does. Not back to the column the moves started in, which the line
+                // past the end hits again once the caret is at the end of it.
+                _engine.MoveToDocumentEdge(direction, extend);
+            }
+
+            // Moving reset the goal; this run of moves keeps it.
+            _goalX = goal;
         }
 
         /// <summary>
