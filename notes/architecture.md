@@ -651,7 +651,7 @@ to hang because `Client.Run` serializes dispatch and reply on one thread). `Equa
 special-case `IsUnique` sources to avoid cache collisions.
 
 ## Animated images — Telegram/Controls/AnimatedImage.cs, Telegram.Native/FrameSurface.*
-<!-- map: verified=5e5550097 paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
+<!-- map: verified=3c8ae898a paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
 Stickers, custom emoji, GIFs and video stickers, decoded off the UI thread and drawn into a composition
 surface without the UI thread touching a frame. One file holds the control, the presenter, the decode
 tasks and the per-window loader.
@@ -665,23 +665,28 @@ presenter table, the load queue, `BufferRecyclePool` and `FrameFlusher`. `Animat
 presenter's `FrameSurface`, refcounted between it and the images showing it. `FrameSurface`
 (Telegram.Native) — copies a frame into a `CompositionDrawingSurface` with one `UpdateSubresource`, or
 through Direct2D when the frame is rotated.
-**Frame flow:** `AnimationScheduler` ticks the presenter on a worker, `task.NextFrame` decodes into the
-background buffer, which is published as `_foregroundNext` and handed to `FrameFlusher.Request`. The
-flusher, one thread per window, waits for the compositor clock (`Direct2DDevice.WaitForCompositorClock`,
-a 60 Hz timer before Windows 11), draws every pending presenter in one pass, and passes the buffer that
-was on screen back to the worker. A pass that drew requests a commit (`Direct2DDevice.RequestCommit`), and
+**Frame flow:** `FrameFlusher` is the window's frame loop, one thread per window. Each pass waits for
+the compositor clock (`Direct2DDevice.WaitForCompositorClock`, a 60 Hz timer before Windows 11), stamps
+that vblank, draws every presenter whose next frame is ready (`_foregroundNext`, handed over by
+`Request`), which passes the buffer that was on screen back as the free one, and then queues a decode,
+stamped with the vblank, for each playing presenter that is due a poll (`Subscribe`, `TryBeginDecode`).
+Decodes run on the thread pool in batches of 16; `task.Render` fills the free buffer, which is published
+as `_foregroundNext` for the next pass. A pass that drew requests a commit (`Direct2DDevice.RequestCommit`), and
 after the clock a pass does not draw while `FrameFlusher.CommitsInFlight` (3) of them are unconfirmed
 (`WaitForCommit`): DComp keeps every surface update until a commit takes it, and the clock keeps ticking
 when none do - behind a stalled UI thread or in a minimized window - so pacing on the clock alone piled up
 gigabytes of frames. The limit is not 1 because release builds confirm a commit 22-42 ms after it is
 requested, two frames or more, and waiting for each one halved the flusher.
-**Pacing:** a presenter only decodes once the flusher has handed its buffer back, so the scheduler's
-ticks and the flusher's passes, on two unrelated clocks, lose decodes. A task therefore picks its frame
-from playback time (`AnimatedImageTask.Advance`) rather than taking the next one: Lottie and Dice by
-time x the animation's frame rate, video by holding each frame for the length of the last and, when more
-than a frame and a half behind, asking `CachedVideoAnimation.RenderSync` to skip to the clock (decoded,
-not converted, at most 30 a call; from the cache, the index moves). A task's `FrameRate` is only how often
-it is polled. `notes/animated-image-frame-loop.md` is the plan to replace the two clocks with one.
+**Pacing:** a task picks its frame from playback time (`AnimatedImageTask.Advance`, moved by the vblank
+stamps) rather than taking the next one, so a decode that misses its vblank costs a frame, not time; the
+presenter is not polled again until it finishes (`_decoding`). Lottie and Dice take the frame nearest to
+time x the animation's frame rate, video holds each frame for the length of the last and shows the next
+once within half a frame of it, and when more than a frame and a half behind asks
+`CachedVideoAnimation.RenderSync` to skip to the clock (decoded, not converted, at most 30 a call; from
+the cache, the index moves). Nearest rather than the last to have started, because polls land on
+vblanks, and an animation at the display's rate has its frame boundaries there too: a millisecond of
+jitter repeated a frame and then skipped one. A task's `FrameRate` is only how often it is polled
+(`LimitFps` lowers it). `notes/animated-image-frame-loop.md` has the plan and the measurements.
 The UI thread is reached only to hook the brush on the first frame,
 and for `PositionChanged` while it has listeners.
 **Traps:** the clock resumes on the frame that was next after a gap of more than four polls - paused,
@@ -691,7 +696,10 @@ frame before it, nor past the last frame, which is what reports `Loop`. A video 
 loop on two different frames: a cached one on its last, live decoding on the next loop's first, because
 `VideoAnimation::RenderSync` seeks back and decodes on in the same call; the task tells them apart by the
 timestamp going back, so a cache must hold exactly one loop (`VideoFrameProducer` drops that frame from a
-build, and the `.2.tgfc` name retired the caches that held it).
+build, and the `.2.tgfc` name retired the caches that held it). A loop end with `LoopCompleted`
+listeners blocks its pool thread, and the rest of its batch, on `_pausedLock` until the UI thread
+answers. A presenter unloaded while it plays leaves its `Dispose` to its next poll, so `Close` is
+followed by `FrameFlusher.Drain`, a last round of polls.
 A device takes **one drawing session at a time**: a second `BeginDraw` while one is open
 fails, so all drawing stays on the flusher's thread — drawing from the decode workers lost the only frame
 a still sticker draws. **Every pass is a commit, and every commit a XAML frame** on the UI thread:

@@ -98,3 +98,24 @@ between calls. A gap of more than four poll intervals - paused, starved behind a
 thread, waiting for a cache build - resumes on the frame that was next rather than jumping, so
 a stall plays as a pause. Smaller shortfalls, the ones that used to accumulate, are skipped.
 Stage 2 replaces it with the loop's vblank time.
+
+## Stage 2, as built
+
+Both stages are done. Where stage 2 departs from the design above:
+
+- Decodes run on the thread pool, in batches of 16 presenters queued once per pass, rather than
+  on a pool of their own.
+- Tasks still keep a clock and pick the frame for it; the loop stamps each decode with the vblank
+  it was queued after, and the clock advances by those stamps, so a decode that runs late still
+  renders the frame for its vblank.
+- The `_pausedLock` handshake at a loop end is unchanged: it blocks a pool thread and the rest of
+  its batch while the UI thread answers. It only happens with `LoopCompleted` listeners.
+- Lottie and Dice round to the nearest frame, and video shows a frame half a frame early. Polls
+  land on vblanks, so an animation at the display's rate has its frame boundaries there too, and
+  taking the last frame to have started repeated a frame and then skipped one on every
+  millisecond of jitter: about 53 distinct frames a second instead of 60.
+
+Measured on a Release build, 2026-10-16, with up to 40 presenters playing: 60 passes a second, no
+decode that missed its vblank, 0.2 ms of the loop's own time per pass. The 60 fps screen
+recording draws 59 frames a second at speed 0.98. With rounding, measured in Debug, 60 fps
+Lottie draws 60 a second with none skipped once playing.

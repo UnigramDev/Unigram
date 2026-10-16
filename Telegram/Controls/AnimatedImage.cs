@@ -922,9 +922,8 @@ namespace Telegram.Controls
         public bool IsOutlineAnimated { get; set; } = false;
     }
 
-    public partial class AnimatedImagePresenter : IAnimation
+    public partial class AnimatedImagePresenter
     {
-        private static readonly AnimationScheduler _scheduler = new();
         private static readonly FifoActionWorker _workerQueue = new();
 
         private readonly AnimatedImagePresentation _presentation;
@@ -1213,7 +1212,7 @@ namespace Telegram.Controls
                 {
                     if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
                     {
-                        _scheduler.Subscribe(this);
+                        _loader.Flusher.Subscribe(this);
                     }
                 }
                 else
@@ -1279,7 +1278,7 @@ namespace Telegram.Controls
                 {
                     if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
                     {
-                        _scheduler.Subscribe(this);
+                        _loader.Flusher.Subscribe(this);
                     }
                 }
                 else
@@ -1575,7 +1574,7 @@ namespace Telegram.Controls
 
                     if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
                     {
-                        _scheduler.Subscribe(this);
+                        _loader.Flusher.Subscribe(this);
                     }
 
                     return true;
@@ -1587,13 +1586,72 @@ namespace Telegram.Controls
 
         #endregion
 
+        /// <summary>How often the task asks to be polled, which is not the rate it plays at.</summary>
         public double FrameRate { get; private set; }
+
+        // The frame loop's, on its thread: when this is next due a poll.
+        private long _nextPoll;
+
+        // Set by the frame loop when it queues a decode, cleared once the decode has run, so a decode
+        // that outlasts a frame is not queued a second time on top of itself.
+        private int _decoding;
+
+        /// <summary>
+        /// Whether to queue a decode for the vblank at <paramref name="time"/>, on the frame loop's
+        /// thread. Polled at the task's rate rather than every vblank: Particles steps once per call,
+        /// and LimitFps is a poll rate.
+        /// </summary>
+        internal bool TryBeginDecode(long time)
+        {
+            if (Volatile.Read(ref _decoding) != 0)
+            {
+                return false;
+            }
+
+            var rate = FrameRate;
+            if (rate > 0)
+            {
+                // A quarter of a frame early still counts, or a 60 Hz poll on a 60 Hz clock would
+                // miss whenever the two drift a hair apart.
+                var interval = (long)(Stopwatch.Frequency / rate);
+                if (time + interval / 4 < _nextPoll)
+                {
+                    return false;
+                }
+
+                // Re-anchored after a gap rather than polled in a burst to catch up.
+                _nextPoll = time - _nextPoll > interval
+                    ? time + interval
+                    : _nextPoll + interval;
+            }
+
+            Volatile.Write(ref _decoding, 1);
+            return true;
+        }
+
+        /// <summary>A decode queued by <see cref="TryBeginDecode"/>, on a thread-pool thread.</summary>
+        internal void Decode(long time)
+        {
+            try
+            {
+                RenderNextFrame(time);
+            }
+            finally
+            {
+                Volatile.Write(ref _decoding, 0);
+            }
+        }
 
         public void RenderNextFrame()
         {
+            RenderNextFrame(Stopwatch.GetTimestamp());
+        }
+
+        private void RenderNextFrame(long time)
+        {
             if (_loaded > 0 && !_disposing && !_disposed)
             {
-                NextFrame();
+                NextFrame(time);
             }
 
             if (!_ticking)
@@ -1601,7 +1659,7 @@ namespace Telegram.Controls
                 //Logger.Debug("-=");
                 if (Interlocked.CompareExchange(ref _timerSubscribed, 0, 1) == 1)
                 {
-                    _scheduler.Unsubscribe(this);
+                    _loader.Flusher.Unsubscribe(this);
                 }
 
                 if (_disposing)
@@ -1613,12 +1671,25 @@ namespace Telegram.Controls
 
         #region Next frame
 
-        private void NextFrame()
+        private void NextFrame(long time)
         {
             var frame = Interlocked.Exchange(ref _backgroundNext, null);
             if (frame != null)
             {
-                if (NextFrame(frame))
+                bool rendered;
+
+                try
+                {
+                    rendered = NextFrame(frame, time);
+                }
+                catch
+                {
+                    // Put back, or the presenter never has a free buffer again and stops for good.
+                    Interlocked.Exchange(ref _backgroundNext, frame);
+                    throw;
+                }
+
+                if (rendered)
                 {
                     var dropped = Interlocked.Exchange(ref _foregroundNext, frame);
                     if (dropped != null)
@@ -1668,7 +1739,7 @@ namespace Telegram.Controls
             Interlocked.Exchange(ref _task, null)?.Dispose();
         }
 
-        private bool NextFrame(IBuffer frame)
+        private bool NextFrame(IBuffer frame, long time)
         {
             // The borrow. Dispose can run on the UI thread while this is inside the native renderer,
             // and closing the animation underneath it would be a use-after-free. Reading the count
@@ -1691,7 +1762,7 @@ namespace Telegram.Controls
 
             try
             {
-                return NextFrameCore(frame);
+                return NextFrameCore(frame, time);
             }
             finally
             {
@@ -1704,7 +1775,7 @@ namespace Telegram.Controls
             }
         }
 
-        private bool NextFrameCore(IBuffer frame)
+        private bool NextFrameCore(IBuffer frame, long time)
         {
             var task = Volatile.Read(ref _task);
             if (task == null)
@@ -1721,7 +1792,7 @@ namespace Telegram.Controls
                 return false;
             }
 
-            var state = task.NextFrame(frame, out _nextPosition);
+            var state = task.Render(frame, time, out _nextPosition);
             if (state == AnimatedImageTaskState.Stop)
             {
                 _ticking = false;
@@ -1926,9 +1997,11 @@ namespace Telegram.Controls
             var total = _animation.TotalFrame;
             var clock = Advance(_index / _frameRate);
 
-            // The epsilon is for a resume, which lands exactly on a frame's time and can multiply
-            // back to a hair below its index.
-            var due = (int)Math.Floor(clock * _frameRate + 1e-6);
+            // The nearest frame, not the last one to have started. Polls land on vblanks, and when an
+            // animation at the display's rate has its frame boundaries there too, a millisecond of
+            // jitter either side repeated a frame and then skipped one; rounding puts the boundaries
+            // half a frame away.
+            var due = (int)Math.Floor(clock * _frameRate + 0.5);
             if (due < _index)
             {
                 return AnimatedImageTaskState.Skip;
@@ -1950,7 +2023,6 @@ namespace Telegram.Controls
             }
 
             _animation.RenderSync(frame, target);
-
 
             _index = target + 1;
 
@@ -2004,9 +2076,7 @@ namespace Telegram.Controls
             Rotation = animation.Rotation;
 
             // Only how often the task is polled: the frames carry their own timestamps and
-            // NextFrame skips until the one it holds is due. It must stay constant for the
-            // task's lifetime, because AnimationScheduler keys the batch a subscriber is
-            // removed from on this value and would otherwise never remove it.
+            // NextFrame skips until the one it holds is due.
             var frameRate = Math.Clamp(animation.FrameRate, 1, 60 /*presentation.LimitFps ? 30 : 60*/);
             var interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
 
@@ -2039,8 +2109,10 @@ namespace Telegram.Controls
                 return AnimatedImageTaskState.Skip;
             }
 
+            // Half a frame early counts, for the reason LottieAnimatedImageTask rounds: a deadline
+            // that falls on a vblank is otherwise met or missed by jitter.
             var clock = Advance(_nextDue);
-            if (clock < _nextDue)
+            if (clock + _frameDuration / 2 < _nextDue)
             {
                 return AnimatedImageTaskState.Skip;
             }
@@ -2057,7 +2129,6 @@ namespace Telegram.Controls
             // one, while live decoding seeks back and decodes on in the same call, and reports it on
             // the next loop's first. The timestamp going back is what tells them apart.
             var wrapped = completed && seconds < previous;
-
 
             // The next frame's timestamp is only known once it has been decoded, so the one just
             // rendered is held for as long as frames have been lasting, and the deadline is
@@ -2280,7 +2351,8 @@ namespace Telegram.Controls
             }
 
             var clock = Advance((_frame + 1) / _frameRate);
-            var due = (int)Math.Floor(clock * _frameRate + 1e-6);
+            // The nearest frame, as in LottieAnimatedImageTask.
+            var due = (int)Math.Floor(clock * _frameRate + 0.5);
 
             if (due <= _frame)
             {
@@ -2290,7 +2362,6 @@ namespace Telegram.Controls
             // Frames to skip on top of the next one, when behind.
             var extra = due - _frame - 1;
             _frame = due;
-
 
             // The result is taken at frame zero, which is the loop boundary and also the state a
             // task that has not played yet is in. One rule covers both: a dice whose result arrives
@@ -2477,13 +2548,24 @@ namespace Telegram.Controls
         /// <summary>How often the task is polled, which is not the rate it plays at.</summary>
         public double FrameRate { get; init; }
 
+        private long _time;
         private long _lastTick;
         private double _clock;
 
         /// <summary>
-        /// Playback time in seconds, advanced by the wall time since the previous call. Frames are
-        /// chosen from it rather than one per call, because a call is a decode and decodes are lost
-        /// whenever the presenter has no free buffer.
+        /// Renders the frame for <paramref name="time"/>, a <see cref="Stopwatch"/> timestamp: the
+        /// vblank the frame loop queued this for, or now for a render outside it.
+        /// </summary>
+        public AnimatedImageTaskState Render(IBuffer frame, long time, out double position)
+        {
+            _time = time;
+            return NextFrame(frame, out position);
+        }
+
+        /// <summary>
+        /// Playback time in seconds, advanced by the time since the previous call. Frames are chosen
+        /// from it rather than one per call, because a call is a decode and a decode that misses its
+        /// vblank is skipped, not waited for.
         /// </summary>
         /// <param name="resume">
         /// Where to pick up after a gap of more than four polls - paused, starved behind a stalled UI
@@ -2492,7 +2574,14 @@ namespace Telegram.Controls
         /// </param>
         protected double Advance(double resume)
         {
-            var now = Stopwatch.GetTimestamp();
+            var now = _time;
+
+            // Not backwards: a render outside the loop, stamped now, can run before a loop decode
+            // stamped with the vblank before it.
+            if (now <= _lastTick)
+            {
+                return _clock;
+            }
 
             if (_lastTick != 0)
             {
@@ -2511,7 +2600,6 @@ namespace Telegram.Controls
         {
             _clock = clock;
         }
-
 
         public abstract AnimatedImageTaskState NextFrame(IBuffer frame, out double position);
 
@@ -2732,8 +2820,11 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Draws every presenter's pending frame into its surface, one after another, on one thread
-        /// per window. The composition device allows a single drawing session at a time, so workers
+        /// The window's frame loop. Each vblank it draws every presenter's pending frame into its
+        /// surface, commits, and queues the decodes for the next one, so frames are decoded on the
+        /// compositor's clock: decoding on a timer of its own, which drifted against it, lost a
+        /// frame whenever two ticks fell between two passes. Drawing stays on this one thread
+        /// because the composition device allows a single drawing session at a time: workers
         /// drawing their own frames failed whenever two overlapped, and queued on the device lock
         /// ahead of XAML's own commit when they did not.
         /// </summary>
@@ -2741,6 +2832,7 @@ namespace Telegram.Controls
         {
             private readonly object _lock = new();
             private readonly HashSet<AnimatedImagePresenter> _pending = new();
+            private readonly HashSet<AnimatedImagePresenter> _playing = new();
             private readonly AutoResetEvent _signal = new(false);
             private readonly Direct2DDevice _device;
             private Thread _thread;
@@ -2749,11 +2841,21 @@ namespace Telegram.Controls
             // A pass's worth of frames each: what a stalled UI thread can leave uncommitted.
             private const int CommitsInFlight = 3;
 
+            // Presenters per thread-pool work item: a panel is a handful of items a frame, and one
+            // slow decode holds up few others.
+            private const int DecodeBatchSize = 16;
+
+            private static readonly WaitCallback _decode = Decode;
+
+            // Not in use, handed back by the pool threads that ran them.
+            private readonly Stack<DecodeBatch> _batches = new();
+
             public FrameFlusher(Direct2DDevice device)
             {
                 _device = device;
             }
 
+            /// <summary>Draws the presenter's pending frame on the next pass.</summary>
             public void Request(AnimatedImagePresenter presenter)
             {
                 lock (_lock)
@@ -2763,14 +2865,43 @@ namespace Telegram.Controls
                         return;
                     }
 
-                    if (_thread == null)
-                    {
-                        _thread = new Thread(Run) { IsBackground = true, Name = "AnimatedImage flush" };
-                        _thread.Start();
-                    }
+                    Start();
                 }
 
                 _signal.Set();
+            }
+
+            /// <summary>Polls the presenter for a frame after every pass, at its task's rate.</summary>
+            public void Subscribe(AnimatedImagePresenter presenter)
+            {
+                lock (_lock)
+                {
+                    if (_closed || !_playing.Add(presenter))
+                    {
+                        return;
+                    }
+
+                    Start();
+                }
+
+                _signal.Set();
+            }
+
+            public void Unsubscribe(AnimatedImagePresenter presenter)
+            {
+                lock (_lock)
+                {
+                    _playing.Remove(presenter);
+                }
+            }
+
+            private void Start()
+            {
+                if (_thread == null)
+                {
+                    _thread = new Thread(Run) { IsBackground = true, Name = "AnimatedImage flush" };
+                    _thread.Start();
+                }
             }
 
             public void Close()
@@ -2783,14 +2914,32 @@ namespace Telegram.Controls
             {
                 var batch = new List<AnimatedImagePresenter>();
                 var retry = new List<AnimatedImagePresenter>();
+                var playing = new List<AnimatedImagePresenter>();
 
                 while (!_closed)
                 {
-                    _signal.WaitOne();
+                    bool idle;
+
+                    lock (_lock)
+                    {
+                        idle = _pending.Count == 0 && _playing.Count == 0;
+                    }
+
+                    // Asleep only while nothing plays: a playing presenter is polled every pass,
+                    // whether or not it had a frame for the last one.
+                    if (idle)
+                    {
+                        _signal.WaitOne();
+                        continue;
+                    }
 
                     // One pass per compositor frame: every pass is a commit, and every commit a XAML
                     // frame on the UI thread, so frames decoded meanwhile have to share it.
                     _device.WaitForCompositorClock();
+
+                    // The vblank the decodes queued below render for. Taken before the wait for
+                    // commits, which only adds jitter to it.
+                    var time = Stopwatch.GetTimestamp();
 
                     // DComp keeps every surface update until a commit takes it, and the clock above
                     // keeps ticking when none do - behind a stalled UI thread, in a minimized window -
@@ -2806,6 +2955,11 @@ namespace Telegram.Controls
                     {
                         batch.AddRange(_pending);
                         _pending.Clear();
+
+                        foreach (var presenter in _playing)
+                        {
+                            playing.Add(presenter);
+                        }
                     }
 
                     foreach (var presenter in batch)
@@ -2822,6 +2976,11 @@ namespace Telegram.Controls
                     }
 
                     batch.Clear();
+
+                    // After drawing, which is what handed each presenter its free buffer back. The
+                    // decodes then have most of a frame to finish before the next pass draws them.
+                    Queue(playing, time);
+                    playing.Clear();
 
                     if (retry.Count > 0)
                     {
@@ -2840,6 +2999,139 @@ namespace Telegram.Controls
                         _signal.Set();
                     }
                 }
+
+                Drain();
+            }
+
+            private void Queue(List<AnimatedImagePresenter> playing, long time)
+            {
+                DecodeBatch batch = null;
+
+                foreach (var presenter in playing)
+                {
+                    if (!presenter.TryBeginDecode(time))
+                    {
+                        continue;
+                    }
+
+                    batch ??= Rent(time);
+                    batch.Presenters.Add(presenter);
+
+                    if (batch.Presenters.Count == DecodeBatchSize)
+                    {
+                        ThreadPool.QueueUserWorkItem(_decode, batch);
+                        batch = null;
+                    }
+                }
+
+                if (batch != null)
+                {
+                    ThreadPool.QueueUserWorkItem(_decode, batch);
+                }
+            }
+
+            private DecodeBatch Rent(long time)
+            {
+                DecodeBatch batch = null;
+
+                lock (_batches)
+                {
+                    if (_batches.Count > 0)
+                    {
+                        batch = _batches.Pop();
+                    }
+                }
+
+                batch ??= new DecodeBatch(this);
+                batch.Time = time;
+
+                return batch;
+            }
+
+            private static void Decode(object state)
+            {
+                var batch = (DecodeBatch)state;
+
+                foreach (var presenter in batch.Presenters)
+                {
+                    try
+                    {
+                        presenter.Decode(batch.Time);
+                    }
+                    catch (Exception ex)
+                    {
+                        // One presenter's failure is not the batch's.
+                        Logger.Info($"Animation threw exception: {ex.Message}");
+                    }
+                }
+
+                batch.Presenters.Clear();
+
+                lock (batch.Owner._batches)
+                {
+                    batch.Owner._batches.Push(batch);
+                }
+            }
+
+            /// <summary>
+            /// After Close. A presenter unloaded while it plays leaves its Dispose to its next poll
+            /// (UnloadImpl), and the window closes this straight after its Unloaded cascade, so
+            /// without a last round of polls those presenters would keep their decoders.
+            /// </summary>
+            private void Drain()
+            {
+                var playing = new List<AnimatedImagePresenter>();
+
+                // About a second and a half, for decodes still in flight to finish.
+                for (int attempt = 0; attempt < 100; attempt++)
+                {
+                    lock (_lock)
+                    {
+                        foreach (var presenter in _playing)
+                        {
+                            playing.Add(presenter);
+                        }
+                    }
+
+                    if (playing.Count == 0)
+                    {
+                        return;
+                    }
+
+                    var time = Stopwatch.GetTimestamp();
+
+                    foreach (var presenter in playing)
+                    {
+                        if (presenter.TryBeginDecode(time))
+                        {
+                            try
+                            {
+                                presenter.Decode(time);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Info($"Animation threw exception: {ex.Message}");
+                            }
+                        }
+                    }
+
+                    playing.Clear();
+                    Thread.Sleep(16);
+                }
+            }
+
+            private sealed class DecodeBatch
+            {
+                public DecodeBatch(FrameFlusher owner)
+                {
+                    Owner = owner;
+                }
+
+                public FrameFlusher Owner { get; }
+
+                public List<AnimatedImagePresenter> Presenters { get; } = new(DecodeBatchSize);
+
+                public long Time;
             }
         }
 
