@@ -67,7 +67,16 @@ namespace winrt::Telegram::Native::implementation
 
         bool NextFrame(uint8_t* pixels, size_t capacity, float& timestamp) noexcept override
         {
-            return NextFrame(pixels, capacity, timestamp, 0);
+            // At the end of the file the decoder seeks back and decodes on in the same call, so the
+            // frame that comes with completed is the next loop's first. A build that wrote it ended
+            // every cached loop on a copy of frame 0, stamped 0.
+            if (!NextFrame(pixels, capacity, timestamp, 0) || m_finished)
+            {
+                m_finished = true;
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>For the direct-render path, which skips the frames stamped before skipBefore.</summary>
@@ -94,9 +103,9 @@ namespace winrt::Telegram::Native::implementation
 
             timestamp = static_cast<float>(seconds);
 
-            // completed is raised on the last frame rather than after it, so this frame counts and
-            // the next call ends the build. Writing one frame too many would be harmless; dropping
-            // the last one would not, which is why the flag is read this way round.
+            // completed comes with the next loop's first frame, the decoder having already gone back
+            // to the start. Latched, so the caller can tell; the direct render shows the frame and
+            // re-arms, the build above drops it and stops.
             if (completed)
             {
                 m_finished = true;
@@ -107,6 +116,12 @@ namespace winrt::Telegram::Native::implementation
 
         /// <summary>Whether the decoder has walked off the end, for the direct-render path.</summary>
         bool IsFinished() const noexcept { return m_finished; }
+
+        /// <summary>
+        /// Clears the latch without seeking, for a direct render that has just been handed the next
+        /// loop's first frame: the decoder is already past it, and rewinding would decode it twice.
+        /// </summary>
+        void Rearm() noexcept { m_finished = false; }
 
         void SeekToMilliseconds(int64_t milliseconds, bool precise) noexcept
         {

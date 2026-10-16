@@ -651,7 +651,7 @@ to hang because `Client.Run` serializes dispatch and reply on one thread). `Equa
 special-case `IsUnique` sources to avoid cache collisions.
 
 ## Animated images — Telegram/Controls/AnimatedImage.cs, Telegram.Native/FrameSurface.*
-<!-- map: verified=0ee90927a paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
+<!-- map: verified=5e5550097 paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
 Stickers, custom emoji, GIFs and video stickers, decoded off the UI thread and drawn into a composition
 surface without the UI thread touching a frame. One file holds the control, the presenter, the decode
 tasks and the per-window loader.
@@ -687,7 +687,11 @@ and for `PositionChanged` while it has listeners.
 **Traps:** the clock resumes on the frame that was next after a gap of more than four polls - paused,
 starved behind a stalled UI thread, waiting for a cache build - so a stall plays as a pause; only
 shorter shortfalls are skipped. A frame must not be skipped past a Lottie marker, which stops on the
-frame before it, nor past the last frame, which is what reports `Loop`.
+frame before it, nor past the last frame, which is what reports `Loop`. A video reports the end of a
+loop on two different frames: a cached one on its last, live decoding on the next loop's first, because
+`VideoAnimation::RenderSync` seeks back and decodes on in the same call; the task tells them apart by the
+timestamp going back, so a cache must hold exactly one loop (`VideoFrameProducer` drops that frame from a
+build, and the `.2.tgfc` name retired the caches that held it).
 A device takes **one drawing session at a time**: a second `BeginDraw` while one is open
 fails, so all drawing stays on the flusher's thread — drawing from the decode workers lost the only frame
 a still sticker draws. **Every pass is a commit, and every commit a XAML frame** on the UI thread:

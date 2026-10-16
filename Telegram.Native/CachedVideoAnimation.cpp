@@ -37,7 +37,9 @@ namespace winrt::Telegram::Native::implementation
                 result += L".fit";
             }
 
-            result += L".tgfc";
+            // The 2 retires the caches built while the next loop's first frame was written at the
+            // end of every one; they are not opened again, and age out.
+            result += L".2.tgfc";
             return result;
         }
     }
@@ -289,10 +291,11 @@ namespace winrt::Telegram::Native::implementation
 
             // The producer latches at the end so a cache build knows to stop. Playback shares
             // that path, so the latch has to be cleared here or the animation renders nothing
-            // ever again: one dead frame, then a stale one, then it stops.
+            // ever again: one dead frame, then a stale one, then it stops. Cleared without a
+            // seek: this frame is already the next loop's first.
             if (completed)
             {
-                m_producer->Reset();
+                m_producer->Rearm();
                 m_atLoopBoundary = true;
             }
 

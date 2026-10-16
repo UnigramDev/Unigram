@@ -2048,9 +2048,15 @@ namespace Telegram.Controls
             // Within a frame and a half of the clock the next frame is on time. Further behind, the
             // frames before the clock are passed over rather than every one of them shown late.
             var behind = clock - _nextDue > _frameDuration * 1.5;
+            var previous = _lastPosition;
 
             _animation.RenderSync(frame, behind ? clock - _frameDuration : 0, out double seconds, out bool completed);
             _index++;
+
+            // The end of a loop is reported on two different frames: the cache reports it on the last
+            // one, while live decoding seeks back and decodes on in the same call, and reports it on
+            // the next loop's first. The timestamp going back is what tells them apart.
+            var wrapped = completed && seconds < previous;
 
 
             // The next frame's timestamp is only known once it has been decoded, so the one just
@@ -2059,11 +2065,18 @@ namespace Telegram.Controls
             // spans skipped frames is not a frame's length, so it is only measured on time.
             // A timestamp that did not move forward means the frame was not rendered at all, and
             // pacing off it would put the deadline in the past and spin.
-            if (seconds > _lastPosition)
+            if (wrapped)
+            {
+                // As though the last frame of the loop that ended had been held for its length, and
+                // with what the clock ran past that carried into this one.
+                SetClock(clock - (previous + _frameDuration) + seconds);
+                _nextDue = seconds + _frameDuration;
+            }
+            else if (seconds > previous)
             {
                 if (!behind)
                 {
-                    _frameDuration = seconds - _lastPosition;
+                    _frameDuration = seconds - previous;
                 }
 
                 _nextDue = seconds + _frameDuration;
@@ -2090,7 +2103,17 @@ namespace Telegram.Controls
             else if (completed)
             {
                 _index = 0;
-                Rewind();
+
+                // The last frame, held for a frame's length before the next loop starts from zero.
+                // The length measured so far is kept: starting it over at the poll interval showed
+                // every loop's first frame for one poll, which a loop of a few frames plays fast on.
+                if (!wrapped)
+                {
+                    SetClock(clock - (seconds + _frameDuration));
+                    _nextDue = 0;
+                    _lastPosition = -_frameDuration;
+                }
+
                 return AnimatedImageTaskState.Loop;
             }
 
