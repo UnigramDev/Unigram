@@ -5,8 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -20,12 +22,14 @@ using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Native.Media;
 using Telegram.Native.Opus;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Services
 {
@@ -506,6 +510,7 @@ namespace Telegram.Services
 
                 var probe = await ProbeVideoAsync(file);
                 var output = GetVideoOutputSize(generation, probe.Width, probe.Height);
+                var transform = GetVideoTransform(generation, (float)probe.Width, (float)probe.Height, output);
 
                 var options = new VideoTranscoderOptions
                 {
@@ -516,7 +521,7 @@ namespace Telegram.Services
                     Mute = generation.Mute,
                     OutputWidth = (int)output.Width,
                     OutputHeight = (int)output.Height,
-                    Transform = GetVideoTransform(generation, (float)probe.Width, (float)probe.Height, output),
+                    Transform = transform,
                     VideoBitrate = generation.VideoBitrate != 0
                         ? (int)generation.VideoBitrate
                         : MakeVideoBitrate(probe.Height, probe.Width, probe.Bitrate, (int)output.Height, (int)output.Width),
@@ -527,8 +532,15 @@ namespace Telegram.Services
                 var transcoder = new VideoTranscoder();
                 _transcoders[update.GenerationId] = transcoder;
 
+                var animations = new List<IDisposable>();
+
                 try
                 {
+                    if (generation.HasOverlay)
+                    {
+                        await AddOverlaysAsync(options, generation, output, transform, new Vector2((float)probe.Width, (float)probe.Height), animations);
+                    }
+
                     var id = update.GenerationId;
                     var handler = new VideoTranscoderProgressHandler(progress => _clientService.Send(new SetFileGenerationProgress(id, 100, (long)(progress * 100))));
 
@@ -537,6 +549,11 @@ namespace Telegram.Services
                 finally
                 {
                     _transcoders.TryRemove(update.GenerationId, out _);
+
+                    foreach (var animation in animations)
+                    {
+                        animation.Dispose();
+                    }
                 }
 
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
@@ -545,6 +562,189 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+        }
+
+        // The phone's cap on an animated sticker's frames, in pixels a side.
+        private const int OverlayAnimationSide = 512;
+
+        // The edit, drawn over the video in the order it was made: strokes and still objects baked
+        // into one image per run, the size of the output, and each animated sticker a layer of its
+        // own between them, decoded frame by frame as the video goes.
+        private async Task AddOverlaysAsync(VideoTranscoderOptions options, VideoGeneration generation, Size output, Matrix3x2 transform, Vector2 upright, List<IDisposable> animations)
+        {
+            var entities = generation.Entities ?? Array.Empty<PaintEntity>();
+
+            // A video that would go out without one of its stickers fails instead, as a photo does.
+            if (!await PaintEntityRenderer.LoadFilesAsync(_clientService, entities))
+            {
+                throw new InvalidOperationException("A sticker drawn on the video could not be downloaded.");
+            }
+
+            var device = ElementComposition.GetSharedDevice();
+            var mirrored = generation.Flip != ImageFlip.None;
+
+            // How many output pixels a unit of the renderer's comes to, for decoding stills at about
+            // the size they are drawn.
+            var pixelsPerUnit = upright.X / PaintEntityRenderer.Reference * new Vector2(transform.M11, transform.M12).Length();
+
+            var strokes = generation.Strokes;
+            var still = new List<PaintEntity>();
+
+            foreach (var entity in entities)
+            {
+                if (IsAnimatedOverlay(entity))
+                {
+                    await AddStillOverlayAsync(options, device, strokes, still, output, transform, upright, mirrored, pixelsPerUnit);
+                    AddAnimatedOverlay(options, entity, transform, upright, mirrored, animations);
+
+                    strokes = null;
+                    still.Clear();
+                }
+                else
+                {
+                    still.Add(entity);
+                }
+            }
+
+            await AddStillOverlayAsync(options, device, strokes, still, output, transform, upright, mirrored, pixelsPerUnit);
+        }
+
+        private static bool IsAnimatedOverlay(PaintEntity entity)
+        {
+            return PaintEntityRenderer.IsSticker(entity)
+                && entity.StickerFile?.Local.Path is string path
+                && !path.HasExtension(".webp");
+        }
+
+        private static async Task AddStillOverlayAsync(VideoTranscoderOptions options, CanvasDevice device, IReadOnlyList<SmoothPathBuilder> strokes, List<PaintEntity> entities, Size output, Matrix3x2 transform, Vector2 upright, bool mirrored, float pixelsPerUnit)
+        {
+            if (entities.Count == 0 && strokes is not { Count: > 0 })
+            {
+                return;
+            }
+
+            var width = (int)output.Width;
+            var height = (int)output.Height;
+
+            using var target = new CanvasRenderTarget(device, width, height, 96);
+
+            // The strokes first and on their own, so that the eraser's transparent Copy blend only
+            // ever takes away strokes.
+            using (var session = target.CreateDrawingSession())
+            {
+                session.Clear(Windows.UI.Colors.Transparent);
+                session.Transform = transform;
+
+                if (strokes != null)
+                {
+                    foreach (var builder in strokes)
+                    {
+                        PencilCanvas.DrawPath(session, builder, upright);
+                    }
+                }
+            }
+
+            if (entities.Count > 0)
+            {
+                var stickers = await PaintEntityRenderer.LoadStickersAsync(device, entities, pixelsPerUnit);
+
+                try
+                {
+                    using var session = target.CreateDrawingSession();
+                    session.Transform = transform;
+
+                    PaintEntityRenderer.Draw(session, entities, upright, mirrored, stickers);
+                }
+                finally
+                {
+                    if (stickers != null)
+                    {
+                        foreach (var bitmap in stickers.Values)
+                        {
+                            bitmap.Dispose();
+                        }
+                    }
+                }
+            }
+
+            var pixels = BufferSurface.Create((uint)(width * height * 4));
+            target.GetPixelBytes(pixels);
+
+            options.AddLayer(new VideoTranscoderLayer
+            {
+                Pixels = pixels,
+                PixelWidth = width,
+                PixelHeight = height
+            });
+        }
+
+        // A sticker that cannot be decoded is left out, as a photo's is.
+        private static void AddAnimatedOverlay(VideoTranscoderOptions options, PaintEntity entity, Matrix3x2 transform, Vector2 upright, bool mirrored, List<IDisposable> animations)
+        {
+            var file = entity.StickerFile;
+            var path = file.Local.Path;
+
+            var bounds = PaintEntityRenderer.GetStickerBounds(entity);
+            var matrix = PaintEntityRenderer.GetTransform(entity, bounds, upright, mirrored) * transform;
+
+            // Decoded at the size it is drawn, up to the cap.
+            var scale = new Vector2(matrix.M11, matrix.M12).Length();
+            var fit = Math.Min(1, OverlayAnimationSide / (Math.Max(bounds.Width, bounds.Height) * scale));
+
+            var width = Math.Max(1, (int)Math.Round(bounds.Width * scale * fit));
+            var height = Math.Max(1, (int)Math.Round(bounds.Height * scale * fit));
+
+            var layer = new VideoTranscoderLayer
+            {
+                White = entity.StickerTinted
+            };
+
+            try
+            {
+                if (path.HasExtension(".tgs", ".json"))
+                {
+                    var lottie = LottieAnimation.LoadFromFile(path, width, height, false, null);
+                    if (lottie == null)
+                    {
+                        return;
+                    }
+
+                    animations.Add(lottie);
+
+                    layer.Lottie = lottie;
+                    width = lottie.PixelWidth;
+                    height = lottie.PixelHeight;
+                }
+                else
+                {
+                    var size = file.Size > 0 ? file.Size : file.Local.DownloadedSize;
+
+                    var video = VideoAnimation.LoadFromFile(new LocalFileSource(path, size), false, false, false);
+                    if (video == null)
+                    {
+                        return;
+                    }
+
+                    animations.Add(video);
+                    layer.Video = video;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return;
+            }
+
+            layer.PixelWidth = width;
+            layer.PixelHeight = height;
+
+            // From the decoded pixels to the sticker's place in the renderer's units, then on to the
+            // output's pixels.
+            layer.Transform = Matrix3x2.CreateScale((float)(bounds.Width / width), (float)(bounds.Height / height))
+                * Matrix3x2.CreateTranslation((float)bounds.X, (float)bounds.Y)
+                * matrix;
+
+            options.AddLayer(layer);
         }
 
         private readonly record struct VideoProbe(double Width, double Height, int Bitrate);

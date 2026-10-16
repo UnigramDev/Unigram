@@ -6,6 +6,8 @@
 //
 
 using System;
+using System.Collections.Generic;
+using Telegram.Controls;
 using Windows.Foundation;
 
 namespace Telegram.Entities
@@ -53,6 +55,16 @@ namespace Telegram.Entities
         /// The longest side of the cropped output at the quality picked; 0 for none.
         /// </summary>
         public int MaxSide { get; set; }
+
+        /// <summary>
+        /// Drawn over every frame through the frame's own transform: the strokes, then the objects
+        /// in the order they were made.
+        /// </summary>
+        public IReadOnlyList<SmoothPathBuilder> Strokes { get; set; }
+
+        public IReadOnlyList<PaintEntity> Entities { get; set; }
+
+        public bool HasOverlay => Strokes is { Count: > 0 } || Entities is { Count: > 0 };
 
         public bool HasRectangle => Rectangle.Width > 0 && Rectangle.Height > 0;
 

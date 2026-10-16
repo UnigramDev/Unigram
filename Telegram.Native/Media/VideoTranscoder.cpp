@@ -5,9 +5,12 @@
 #endif
 
 #include "H264Encoder.h"
+#include "VideoTranscoderOptions.h"
+#include "VideoAnimation.h"
 
 #include <winrt/Telegram.Native.h>
 #include <winrt/Windows.Foundation.Numerics.h>
+#include <winrt/Windows.Storage.Streams.h>
 
 #include <d3d10.h>
 #include <fileapifromapp.h>
@@ -199,6 +202,41 @@ namespace winrt::Telegram::Native::Media::implementation
             }
         };
 
+        // Every colour white, every alpha kept: premultiplied, white is the alpha in each channel.
+        void Whiten(uint8_t* pixels, size_t count)
+        {
+            for (size_t i = 0; i < count; i += 4)
+            {
+                pixels[i] = pixels[i + 1] = pixels[i + 2] = pixels[i + 3];
+            }
+        }
+
+        // A layer ready to draw: its bitmap, and for an animation what it has got to.
+        struct Overlay
+        {
+            winrt::Telegram::Native::LottieAnimation lottie{ nullptr };
+            winrt::Telegram::Native::VideoAnimation video{ nullptr };
+
+            winrt::com_ptr<ID2D1Bitmap1> bitmap;
+            D2D1_MATRIX_3X2_F transform{};
+            D2D1_INTERPOLATION_MODE interpolation{ D2D1_INTERPOLATION_MODE_LINEAR };
+            uint32_t width{ 0 };
+            uint32_t height{ 0 };
+            bool white{ false };
+
+            winrt::Windows::Storage::Streams::Buffer buffer{ nullptr };
+            std::vector<uint8_t> pixels;
+
+            int32_t frames{ 0 };
+            int32_t frame{ -1 };
+            double frameRate{ 0 };
+
+            // A video goes by its frames' timestamps, in seconds into its loop.
+            double duration{ 0 };
+            double position{ -1 };
+            double target{ 0 };
+        };
+
         // A device of its own: the app's Direct2DDevice belongs to a view and draws for it, and a
         // D2D context takes one BeginDraw at a time. It supports video, so a hardware encoder can
         // take its textures, and is protected for the encoder's own threads.
@@ -221,6 +259,8 @@ namespace winrt::Telegram::Native::Media::implementation
             bool video{ false };
             uint32_t width{ 0 };
             uint32_t height{ 0 };
+
+            std::vector<Overlay> overlays;
 
             void Create(uint32_t sourceWidth, uint32_t sourceHeight, uint32_t outputWidth, uint32_t outputHeight)
             {
@@ -354,6 +394,149 @@ namespace winrt::Telegram::Native::Media::implementation
                 }
             }
 
+            // A layer that cannot be read is left out of the video rather than failing it.
+            void AddLayers(const std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer>& layers)
+            {
+                auto format = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+                auto plain = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_NONE, format);
+
+                for (auto const& layer : layers)
+                {
+                    Overlay item;
+                    item.width = static_cast<uint32_t>(std::max(0, layer.PixelWidth()));
+                    item.height = static_cast<uint32_t>(std::max(0, layer.PixelHeight()));
+                    item.white = layer.White();
+
+                    const auto matrix = layer.Transform();
+                    item.transform = D2D1_MATRIX_3X2_F{ matrix.m11, matrix.m12, matrix.m21, matrix.m22, matrix.m31, matrix.m32 };
+
+                    const size_t size = static_cast<size_t>(item.width) * item.height * 4;
+                    if (size == 0)
+                    {
+                        continue;
+                    }
+
+                    if (auto pixels = layer.Pixels())
+                    {
+                        if (pixels.Length() < size)
+                        {
+                            continue;
+                        }
+
+                        if (FAILED(context->CreateBitmap(D2D1::SizeU(item.width, item.height), pixels.data(), item.width * 4, plain, item.bitmap.put())))
+                        {
+                            continue;
+                        }
+                    }
+                    else if (auto lottie = layer.Lottie())
+                    {
+                        item.lottie = lottie;
+                        item.frames = lottie.TotalFrame();
+                        item.frameRate = lottie.FrameRate();
+
+                        if (item.frames <= 0 || item.frameRate <= 0 || lottie.PixelWidth() != layer.PixelWidth() || lottie.PixelHeight() != layer.PixelHeight())
+                        {
+                            continue;
+                        }
+
+                        item.buffer = winrt::Windows::Storage::Streams::Buffer(static_cast<uint32_t>(size));
+                        item.buffer.Length(static_cast<uint32_t>(size));
+                        item.interpolation = D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC;
+                    }
+                    else if (auto video = layer.Video())
+                    {
+                        // Not FrameRate, which is the rate the animation is polled at.
+                        item.video = video;
+                        item.duration = video.Duration() / 1000.0;
+                        item.pixels.resize(size);
+                        item.interpolation = D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    if (!item.bitmap && FAILED(context->CreateBitmap(D2D1::SizeU(item.width, item.height), nullptr, 0, plain, item.bitmap.put())))
+                    {
+                        continue;
+                    }
+
+                    overlays.push_back(std::move(item));
+                }
+            }
+
+            // The animations as they are at this time into the output.
+            void UpdateLayers(double seconds)
+            {
+                for (auto& item : overlays)
+                {
+                    if (item.lottie)
+                    {
+                        const auto frame = static_cast<int32_t>(static_cast<int64_t>(std::floor(seconds * item.frameRate)) % item.frames);
+                        if (frame == item.frame)
+                        {
+                            continue;
+                        }
+
+                        item.frame = frame;
+                        item.lottie.RenderSync(item.buffer, frame);
+
+                        auto data = item.buffer.data();
+                        if (item.white)
+                        {
+                            Whiten(data, item.buffer.Length());
+                        }
+
+                        item.bitmap->CopyFromMemory(nullptr, data, item.width * 4);
+                    }
+                    else if (item.video)
+                    {
+                        constexpr double Epsilon = 0.001;
+
+                        // Where the loop should be, and whether it has come round since the last
+                        // frame: the decoder then has to come round too before it catches up.
+                        const auto target = item.duration > 0 ? std::fmod(seconds, item.duration) : seconds;
+                        auto wrapping = item.frame >= 0 && target + Epsilon < item.target;
+                        item.target = target;
+
+                        auto video = winrt::get_self<winrt::Telegram::Native::implementation::VideoAnimation>(item.video);
+                        auto rendered = false;
+
+                        // Frames are taken until one is at or past the time; the first comes at once.
+                        // Bounded, in case the timestamps never get there.
+                        for (int i = 0; i < 600 && (item.frame < 0 || wrapping || item.position + Epsilon < target); i++)
+                        {
+                            double position = 0;
+                            bool completed = false;
+
+                            if (!video->RenderSync(item.pixels.data(), static_cast<int32_t>(item.width), static_cast<int32_t>(item.height), false, position, completed))
+                            {
+                                break;
+                            }
+
+                            if (position + Epsilon < item.position)
+                            {
+                                wrapping = false;
+                            }
+
+                            item.position = position;
+                            item.frame = 0;
+                            rendered = true;
+                        }
+
+                        if (rendered)
+                        {
+                            if (item.white)
+                            {
+                                Whiten(item.pixels.data(), item.pixels.size());
+                            }
+
+                            item.bitmap->CopyFromMemory(nullptr, item.pixels.data(), item.width * 4);
+                        }
+                    }
+                }
+            }
+
             // Draws a BGRA frame through the transform onto black.
             void Draw(const uint8_t* pixels, uint32_t stride, const D2D1_MATRIX_3X2_F& transform)
             {
@@ -363,6 +546,13 @@ namespace winrt::Telegram::Native::Media::implementation
                 context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
                 context->SetTransform(transform);
                 context->DrawBitmap(source.get(), nullptr, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, nullptr, nullptr);
+
+                for (auto const& item : overlays)
+                {
+                    context->SetTransform(item.transform);
+                    context->DrawBitmap(item.bitmap.get(), nullptr, 1.0f, item.interpolation, nullptr, nullptr);
+                }
+
                 context->SetTransform(D2D1::Matrix3x2F::Identity());
                 winrt::check_hresult(context->EndDraw());
             }
@@ -838,6 +1028,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         Compositor compositor;
         compositor.Create(sourceWidth, sourceHeight, width, height);
+        compositor.AddLayers(winrt::get_self<implementation::VideoTranscoderOptions>(options)->Layers());
 
         // Video encoder: a hardware one when allowed and the GPU can convert frames for it, Windows'
         // software one otherwise.
@@ -986,6 +1177,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
                 av_frame_unref(session.frame);
 
+                compositor.UpdateLayers(static_cast<double>(pts) / frameRate);
                 compositor.Draw(bgra.data(), sourceWidth * 4, drawTransform);
 
                 const int64_t sampleTime = pts * Second / frameRate;

@@ -4,6 +4,8 @@
 
 #include <winrt/Windows.Foundation.Numerics.h>
 
+#include <vector>
+
 namespace winrt::Telegram::Native::Media::implementation
 {
     struct VideoTranscoderOptions : VideoTranscoderOptionsT<VideoTranscoderOptions>
@@ -43,6 +45,9 @@ namespace winrt::Telegram::Native::Media::implementation
         bool HardwareEncoding() const { return m_hardwareEncoding; }
         void HardwareEncoding(bool value) { m_hardwareEncoding = value; }
 
+        void AddLayer(winrt::Telegram::Native::Media::VideoTranscoderLayer const& layer) { m_layers.push_back(layer); }
+        const std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer>& Layers() const { return m_layers; }
+
     private:
         hstring m_inputPath;
         hstring m_outputPath;
@@ -55,6 +60,7 @@ namespace winrt::Telegram::Native::Media::implementation
         int32_t m_videoBitrate{ 0 };
         int32_t m_maxFrameRate{ 0 };
         bool m_hardwareEncoding{ true };
+        std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer> m_layers;
     };
 }
 

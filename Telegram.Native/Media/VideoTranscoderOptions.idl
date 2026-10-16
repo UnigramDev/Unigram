@@ -1,3 +1,5 @@
+import "Media/VideoTranscoderLayer.idl";
+
 namespace Telegram.Native.Media
 {
     [default_interface]
@@ -29,5 +31,8 @@ namespace Telegram.Native.Media
 
         // Lets a hardware encoder be tried before Windows' software one.
         Boolean HardwareEncoding;
+
+        // Drawn over every frame, each over the ones added before it.
+        void AddLayer(VideoTranscoderLayer layer);
     }
 }

@@ -1,0 +1,30 @@
+import "LottieAnimation.idl";
+import "VideoAnimation.idl";
+
+namespace Telegram.Native.Media
+{
+    // Something drawn over every frame, in the order the layers were added: a still, or an
+    // animation advancing with the video from its first frame and looping.
+    [default_interface]
+    runtimeclass VideoTranscoderLayer
+    {
+        VideoTranscoderLayer();
+
+        // Premultiplied BGRA, PixelWidth by PixelHeight. Only one of the three is set.
+        Windows.Storage.Streams.IBuffer Pixels;
+        Telegram.Native.LottieAnimation Lottie;
+        Telegram.Native.VideoAnimation Video;
+
+        // The size the layer is drawn at before its transform: a Lottie animation's must be the
+        // size it was loaded at.
+        Int32 PixelWidth;
+        Int32 PixelHeight;
+
+        // From the layer's pixels to the output's.
+        Windows.Foundation.Numerics.Matrix3x2 Transform;
+
+        // Every colour white, every alpha kept, as an emoji that takes the text's colour is
+        // drawn.
+        Boolean White;
+    }
+}

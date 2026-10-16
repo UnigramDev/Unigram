@@ -202,6 +202,13 @@ namespace Telegram.Entities
                 conversion.Transcode = true;
             }
 
+            if (state.Strokes is { Count: > 0 } || state.Entities is { Count: > 0 })
+            {
+                conversion.Strokes = state.Strokes;
+                conversion.Entities = state.Entities;
+                conversion.Transcode = true;
+            }
+
             if (state.TrimStopTime != default)
             {
                 conversion.TrimStopTime = state.TrimStopTime;

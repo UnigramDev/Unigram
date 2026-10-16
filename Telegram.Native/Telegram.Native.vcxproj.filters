@@ -747,6 +747,9 @@
     <ClCompile Include="Media\VideoTranscoder.cpp">
       <Filter>Media</Filter>
     </ClCompile>
+    <ClCompile Include="Media\VideoTranscoderLayer.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
     <ClCompile Include="Media\VideoTranscoderOptions.cpp">
       <Filter>Media</Filter>
     </ClCompile>
@@ -1423,6 +1426,9 @@
     <ClInclude Include="Media\VideoTranscoder.h">
       <Filter>Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\VideoTranscoderLayer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
     <ClInclude Include="Media\VideoTranscoderOptions.h">
       <Filter>Media</Filter>
     </ClInclude>
@@ -1679,6 +1685,9 @@
       <Filter>Media</Filter>
     </Midl>
     <Midl Include="Media\VideoTranscoder.idl">
+      <Filter>Media</Filter>
+    </Midl>
+    <Midl Include="Media\VideoTranscoderLayer.idl">
       <Filter>Media</Filter>
     </Midl>
     <Midl Include="Media\VideoTranscoderOptions.idl">

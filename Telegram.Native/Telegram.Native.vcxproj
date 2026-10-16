@@ -395,6 +395,7 @@
     <ClInclude Include="Media\SoundPlayer.h" />
     <ClInclude Include="Media\H264Encoder.h" />
     <ClInclude Include="Media\VideoTranscoder.h" />
+    <ClInclude Include="Media\VideoTranscoderLayer.h" />
     <ClInclude Include="Media\VideoTranscoderOptions.h" />
     <ClInclude Include="MessageBubbleNineGrid.h">
       <DependentUpon>MessageBubbleNineGrid.idl</DependentUpon>
@@ -1345,6 +1346,7 @@
     <ClCompile Include="Media\SoundPlayer.cpp" />
     <ClCompile Include="Media\H264Encoder.cpp" />
     <ClCompile Include="Media\VideoTranscoder.cpp" />
+    <ClCompile Include="Media\VideoTranscoderLayer.cpp" />
     <ClCompile Include="Media\VideoTranscoderOptions.cpp" />
     <ClCompile Include="MessageBubbleNineGrid.cpp">
       <DependentUpon>MessageBubbleNineGrid.idl</DependentUpon>
@@ -1609,6 +1611,7 @@
     <Midl Include="Media\AsyncMediaPlayerSwapChain.idl" />
     <Midl Include="Media\SoundPlayer.idl" />
     <Midl Include="Media\VideoTranscoder.idl" />
+    <Midl Include="Media\VideoTranscoderLayer.idl" />
     <Midl Include="Media\VideoTranscoderOptions.idl" />
     <Midl Include="MessageBubbleNineGrid.idl">
       <SubType>Designer</SubType>
