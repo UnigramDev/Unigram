@@ -891,8 +891,8 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Places a sticker, a custom emoji or a GIF where the view is looking. A GIF is placed
-        /// twice as large as a sticker.
+        /// Places a sticker, a custom emoji or a GIF where the view is looking, its longer side
+        /// three quarters of the crop's shorter one.
         /// </summary>
         public void AddSticker(PaintEntityType type, File file, int width, int height, bool tinted)
         {
@@ -902,6 +902,10 @@ namespace Telegram.Controls
             {
                 return;
             }
+
+            // By the crop's shorter side: by its width alone, a wide and short crop would get a
+            // sticker taller than itself. The box is half the renderer's width.
+            scale *= (float)Math.Min(1, _area.Height / _area.Width) * 1.5f;
 
             var entity = new PaintEntity
             {
@@ -913,7 +917,7 @@ namespace Telegram.Controls
                 StickerTinted = tinted,
                 Position = position,
                 Rotation = GetRotation(0),
-                Scale = scale * (type == PaintEntityType.Animation ? 1.5f : 0.75f)
+                Scale = scale
             };
 
             AddEntity(entity);
