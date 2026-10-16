@@ -166,7 +166,7 @@ namespace Telegram.Controls
 
         private SoftwareBitmap _blurSource;
         private CanvasBitmap _blurBitmap;
-        private GaussianBlurEffect _blurEffect;
+        private CanvasRenderTarget _blurred;
         private CanvasImageBrush _blurBrush;
 
         private bool _needToCreateSizeDependentResources;
@@ -460,14 +460,19 @@ namespace Telegram.Controls
             _blurBitmap = CanvasBitmap.CreateFromSoftwareBitmap(Canvas, _blurSource);
 
             var size = Canvas.Size.ToVector2();
-            var scale = new Transform2DEffect
-            {
-                Source = _blurBitmap,
-                TransformMatrix = Matrix3x2.CreateScale(size / _blurBitmap.Size.ToVector2())
-            };
 
-            _blurEffect = CreateBlur(scale, size.X);
-            _blurBrush = new CanvasImageBrush(Canvas, _blurEffect)
+            // Blurred once: a brush over the effect itself would blur again under every stroke,
+            // each frame, over an area that grows with the stroke.
+            _blurred = new CanvasRenderTarget(Canvas, Canvas.Size);
+
+            using (var scale = new Transform2DEffect { Source = _blurBitmap, TransformMatrix = Matrix3x2.CreateScale(size / _blurBitmap.Size.ToVector2()) })
+            using (var effect = CreateBlur(scale, size.X))
+            using (var session = _blurred.CreateDrawingSession())
+            {
+                session.DrawImage(effect);
+            }
+
+            _blurBrush = new CanvasImageBrush(Canvas, _blurred)
             {
                 SourceRectangle = new Rect(0, 0, size.X, size.Y)
             };
@@ -480,8 +485,8 @@ namespace Telegram.Controls
             _blurBrush?.Dispose();
             _blurBrush = null;
 
-            _blurEffect?.Dispose();
-            _blurEffect = null;
+            _blurred?.Dispose();
+            _blurred = null;
 
             _blurBitmap?.Dispose();
             _blurBitmap = null;
@@ -1157,8 +1162,10 @@ namespace Telegram.Controls
                         Matrix3x2.Invert(canvas.Transform, out Matrix3x2 inverse);
                         blur.Transform = inverse;
 
-                        using var outline = geometry.Stroke(width, style);
-                        canvas.FillGeometry(outline, blur);
+                        // Stroked with the brush, not filled as an outline: widening the path on the
+                        // CPU costs more with every point, and the stroke being drawn is redrawn
+                        // whole each frame.
+                        canvas.DrawGeometry(geometry, blur, width, style);
                     }
                     break;
 
