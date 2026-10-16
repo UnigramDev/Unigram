@@ -2041,7 +2041,10 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var visible = _hasFocus && _engine.SelectedNode == null && _engine.IsSelectionEmpty;
+            // Over a selection too, at the end that moves, except where grippers or whole cells
+            // stand for it.
+            var visible = _hasFocus && _engine.SelectedNode == null && _selectedCells.Count == 0
+                && (_engine.IsSelectionEmpty || !_touchSelection);
             if (!visible)
             {
                 HideCaret();
