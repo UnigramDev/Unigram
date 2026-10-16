@@ -741,6 +741,15 @@
     <ClCompile Include="Media\SoundPlayer.cpp">
       <Filter>Media</Filter>
     </ClCompile>
+    <ClCompile Include="Media\H264Encoder.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\VideoTranscoder.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\VideoTranscoderOptions.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
     <ClCompile Include="..\Libraries\MicroTeX\src\latex.cpp">
       <Filter>MicroTeX</Filter>
     </ClCompile>
@@ -1408,6 +1417,15 @@
     <ClInclude Include="Media\SoundPlayer.h">
       <Filter>Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\H264Encoder.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\VideoTranscoder.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\VideoTranscoderOptions.h">
+      <Filter>Media</Filter>
+    </ClInclude>
     <ClInclude Include="Media\AsyncMediaPlayerBufferingEventArgs.h">
       <Filter>Media</Filter>
     </ClInclude>
@@ -1658,6 +1676,12 @@
       <Filter>Media</Filter>
     </Midl>
     <Midl Include="Media\SoundPlayer.idl">
+      <Filter>Media</Filter>
+    </Midl>
+    <Midl Include="Media\VideoTranscoder.idl">
+      <Filter>Media</Filter>
+    </Midl>
+    <Midl Include="Media\VideoTranscoderOptions.idl">
       <Filter>Media</Filter>
     </Midl>
     <Midl Include="Media\AsyncMediaPlayerBufferingEventArgs.idl">

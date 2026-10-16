@@ -25,7 +25,30 @@ namespace Telegram.Entities
         public bool Transform { get; set; }
         public ImageRotation Rotation { get; set; }
         public ImageFlip Flip { get; set; }
+
+        /// <summary>
+        /// The crop as fractions of the frame once turned and flipped, as a photo's edit has it, or
+        /// empty for none. Turned by <see cref="Angle"/> about its own centre.
+        /// </summary>
+        public Rect Rectangle { get; set; }
+
+        /// <summary>
+        /// Free rotation in degrees, clockwise, after <see cref="Rotation"/> and <see cref="Flip"/>.
+        /// </summary>
+        public double Angle { get; set; }
+
+        /// <summary>
+        /// A fixed size to encode at, for video notes and profile videos; otherwise the crop's,
+        /// up to the longest side allowed.
+        /// </summary>
         public Size OutputSize { get; set; }
+
+        /// <summary>
+        /// The crop in pixels of the frame once turned and flipped, for the callers that crop by
+        /// hand rather than through the editor: video notes and profile videos.
+        /// </summary>
         public Rect CropRectangle { get; set; }
+
+        public bool HasRectangle => Rectangle.Width > 0 && Rectangle.Height > 0;
     }
 }

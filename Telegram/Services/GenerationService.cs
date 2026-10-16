@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -17,13 +18,11 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Native;
+using Telegram.Native.Media;
 using Telegram.Native.Opus;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
-using Windows.Media.Effects;
-using Windows.Media.MediaProperties;
-using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -56,6 +55,9 @@ namespace Telegram.Services
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
+
+        // The transcodes under way, so that TDLib stopping a generation stops its work.
+        private readonly ConcurrentDictionary<long, VideoTranscoder> _transcoders = new();
 
         public GenerationService(IClientService clientService, IEventAggregator aggregator)
         {
@@ -119,7 +121,14 @@ namespace Telegram.Services
             double originalWidth = file.Width;
             double originalHeight = file.Height;
 
-            if (!video.CropRectangle.IsEmpty)
+            if (video.HasRectangle)
+            {
+                var output = GetVideoOutputSize(video, originalWidth, originalHeight);
+
+                originalWidth = output.Width;
+                originalHeight = output.Height;
+            }
+            else if (!video.CropRectangle.IsEmpty)
             {
                 originalWidth = video.CropRectangle.Width;
                 originalHeight = video.CropRectangle.Height;
@@ -144,6 +153,33 @@ namespace Telegram.Services
                 return;
             }
 
+            // A conversion that took the app down is not tried again as it was: TDLib would resume
+            // it on every launch, and the app would never stay up. A transcode gets one more go
+            // without the hardware encoder, the one part of it that runs a vendor's code.
+            var crashes = GenerationGuard.Begin(update.Conversion);
+            var tolerated = args[1].Equals(nameof(ConversionType.Transcode), StringComparison.OrdinalIgnoreCase) ? 1 : 0;
+
+            if (crashes > tolerated)
+            {
+                Logger.Error("The last attempt at this generation closed the app");
+
+                GenerationGuard.End(update.Conversion);
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID The last attempt to prepare this file closed the app")));
+                return;
+            }
+
+            try
+            {
+                await HandleAsync(update, args, crashes == 0);
+            }
+            finally
+            {
+                GenerationGuard.End(update.Conversion);
+            }
+        }
+
+        private async Task HandleAsync(UpdateFileGenerationStart update, string[] args, bool allowHardware)
+        {
             if (Enum.TryParse(args[1], true, out ConversionType conversion))
             {
                 // Url is the only conversion requested by TDLib
@@ -177,7 +213,7 @@ namespace Telegram.Services
                     }
                     else if (conversion == ConversionType.Transcode)
                     {
-                        await TranscodeAsync(update, args);
+                        await TranscodeAsync(update, args, allowHardware);
                     }
                     else if (conversion == ConversionType.TranscodeThumbnail)
                     {
@@ -201,7 +237,10 @@ namespace Telegram.Services
 
         public void Handle(UpdateFileGenerationStop update)
         {
-            //throw new NotImplementedException();
+            if (_transcoders.TryGetValue(update.GenerationId, out VideoTranscoder transcoder))
+            {
+                transcoder.Cancel();
+            }
         }
 
         private bool IsTemporary(StorageFile source)
@@ -445,119 +484,200 @@ namespace Telegram.Services
             //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
-        private async Task TranscodeAsync(UpdateFileGenerationStart update, string[] args)
+        // The longest side a video is encoded at, until the editor lets it be chosen.
+        private const double VideoMaxSide = 1920;
+
+        private async Task TranscodeAsync(UpdateFileGenerationStart update, string[] args, bool allowHardware)
         {
             try
             {
                 var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.VideoGeneration);
-                if (generation.Mute || generation.Transcode)
-                {
-                    var file = await GenerationSources.GetFileAsync(args[0]);
-                    var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
-
-                    var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
-                    if (profile.Audio == null && generation.Mute && generation.TrimStartTime == null && generation.TrimStopTime == null && !generation.Transform)
-                    {
-                        Logger.Info("No op, copying");
-
-                        await CopyAsync(update, args);
-                        return;
-                    }
-                    //profile.Video.Width = conversion.Width;
-                    //profile.Video.Height = conversion.Height;
-                    //profile.Video.Bitrate = conversion.Bitrate;
-
-                    if (generation.Mute)
-                    {
-                        profile.Audio = null;
-                    }
-
-                    var transcoder = new MediaTranscoder();
-                    //var clip = await MediaClip.CreateFromFileAsync(file);
-                    //var composition = new MediaComposition();
-                    //composition.Clips.Add(clip);
-
-                    if (generation.TrimStartTime is TimeSpan trimStart)
-                    {
-                        transcoder.TrimStartTime = trimStart;
-                        //clip.TrimTimeFromStart = trimStart;
-                    }
-                    if (generation.TrimStopTime is TimeSpan trimStop)
-                    {
-                        transcoder.TrimStopTime = trimStop;
-                        //clip.TrimTimeFromEnd = trimStop;
-                    }
-
-                    if (generation.Transform)
-                    {
-                        Logger.Info("Transcoding is needed");
-
-                        var crop = generation.CropRectangle;
-                        var empty = crop == default || (crop.Width == 0 && crop.Height == 0);
-
-                        var transform = new VideoTransformEffectDefinition();
-                        transform.Rotation = (MediaRotation)generation.Rotation;
-                        transform.Mirror = (MediaMirroringOptions)generation.Flip;
-                        transform.OutputSize = generation.OutputSize;
-                        transform.CropRectangle = empty ? Rect.Empty : generation.CropRectangle;
-
-                        if (generation.VideoBitrate != 0)
-                        {
-                            profile.Video.Bitrate = generation.VideoBitrate;
-                        }
-
-                        if (generation.AudioBitrate != 0 && profile.Audio != null)
-                        {
-                            profile.Audio.Bitrate = generation.AudioBitrate;
-                        }
-
-                        profile.Video.Width = (uint)generation.OutputSize.Width;
-                        profile.Video.Height = (uint)generation.OutputSize.Height;
-
-                        transcoder.AddVideoEffect(transform.ActivatableClassId, true, transform.Properties);
-                        //clip.VideoEffectDefinitions.Add(transform);
-                    }
-
-                    var prepare = await transcoder.PrepareFileTranscodeAsync(file, temp, profile);
-                    if (prepare.CanTranscode)
-                    {
-                        Logger.Info("Can transcode");
-
-                        var progress = prepare.TranscodeAsync();
-                        //var progress = composition.RenderToFileAsync(temp, MediaTrimmingPreference.Precise, profile);
-                        progress.Progress = (info, delta) =>
-                        {
-                            _clientService.Send(new SetFileGenerationProgress(update.GenerationId, 100, (int)delta));
-                        };
-                        progress.Completed = (info, status) =>
-                        {
-                            //var results = info.GetResults();
-                            //if (results != TranscodeFailureReason.None || status != AsyncStatus.Completed)
-                            //{
-                            //    _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, results.ToString())));
-                            //}
-                            //else
-                            {
-                                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
-                            }
-                        };
-                    }
-                    else
-                    {
-                        _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, prepare.FailureReason.ToString())));
-                    }
-                }
-                else
+                if (!generation.Mute && !generation.Transcode)
                 {
                     await CopyAsync(update, args);
+                    return;
                 }
+
+                var file = await GenerationSources.GetFileAsync(args[0]);
+                if (string.IsNullOrEmpty(file.Path))
+                {
+                    throw new InvalidOperationException("The video has no path to read it from");
+                }
+
+                var probe = await ProbeVideoAsync(file);
+                var output = GetVideoOutputSize(generation, probe.Width, probe.Height);
+
+                var options = new VideoTranscoderOptions
+                {
+                    InputPath = file.Path,
+                    OutputPath = update.DestinationPath,
+                    StartTime = (long)(generation.TrimStartTime?.TotalMilliseconds ?? 0),
+                    StopTime = (long)(generation.TrimStopTime?.TotalMilliseconds ?? 0),
+                    Mute = generation.Mute,
+                    OutputWidth = (int)output.Width,
+                    OutputHeight = (int)output.Height,
+                    Transform = GetVideoTransform(generation, (float)probe.Width, (float)probe.Height, output),
+                    VideoBitrate = generation.VideoBitrate != 0
+                        ? (int)generation.VideoBitrate
+                        : MakeVideoBitrate(probe.Height, probe.Width, probe.Bitrate, (int)output.Height, (int)output.Width),
+                    MaxFrameRate = 60,
+                    HardwareEncoding = allowHardware && !AppSettings.Diagnostics.DisableHardwareVideoEncoding
+                };
+
+                var transcoder = new VideoTranscoder();
+                _transcoders[update.GenerationId] = transcoder;
+
+                try
+                {
+                    var id = update.GenerationId;
+                    var handler = new VideoTranscoderProgressHandler(progress => _clientService.Send(new SetFileGenerationProgress(id, 100, (long)(progress * 100))));
+
+                    await Task.Run(() => transcoder.Transcode(options, handler));
+                }
+                finally
+                {
+                    _transcoders.TryRemove(update.GenerationId, out _);
+                }
+
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
             catch (Exception ex)
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+        }
 
-            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+        private readonly record struct VideoProbe(double Width, double Height, int Bitrate);
+
+        // The frame's upright size, as the transcoder sees it once the source's own rotation is
+        // applied, and a bitrate taken from the file's size, which no container reliably states.
+        private static async Task<VideoProbe> ProbeVideoAsync(StorageFile file)
+        {
+            var properties = await file.GetBasicPropertiesAsync();
+
+            using var stream = await file.OpenReadAsync();
+            using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false, false));
+
+            if (animation == null)
+            {
+                throw new InvalidOperationException("The video could not be read");
+            }
+
+            var quarter = animation.Rotation is 90 or 270;
+            var width = quarter ? animation.PixelHeight : animation.PixelWidth;
+            var height = quarter ? animation.PixelWidth : animation.PixelHeight;
+
+            var seconds = animation.Duration / 1000.0;
+            var bitrate = seconds > 0 ? (int)Math.Min(int.MaxValue, properties.Size * 8 / seconds) : 0;
+
+            return new VideoProbe(width, height, bitrate);
+        }
+
+        /// <summary>
+        /// The size a video comes out at: a fixed one when asked for, else the crop's, fitted to
+        /// the longest side allowed. Sides are multiples of four, as encoders like them.
+        /// </summary>
+        public static Size GetVideoOutputSize(VideoGeneration generation, double width, double height)
+        {
+            if (generation.OutputSize.Width > 0 && generation.OutputSize.Height > 0)
+            {
+                return new Size(RoundDown(generation.OutputSize.Width), RoundDown(generation.OutputSize.Height));
+            }
+
+            var crop = GetVideoCrop(generation, width, height);
+            var scale = Math.Min(1, VideoMaxSide / Math.Max(crop.Width, crop.Height));
+
+            return new Size(RoundDown(crop.Width * scale), RoundDown(crop.Height * scale));
+        }
+
+        private static double RoundDown(double value)
+        {
+            return Math.Max(4, Math.Floor(value / 4) * 4);
+        }
+
+        // In pixels of the frame once turned and flipped.
+        private static Rect GetVideoCrop(VideoGeneration generation, double width, double height)
+        {
+            var quarter = generation.Rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees;
+            var orientedWidth = quarter ? height : width;
+            var orientedHeight = quarter ? width : height;
+
+            if (generation.HasRectangle)
+            {
+                var rectangle = generation.Rectangle;
+                return new Rect(rectangle.X * orientedWidth, rectangle.Y * orientedHeight, rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
+            }
+            else if (generation.CropRectangle.Width > 0 && generation.CropRectangle.Height > 0)
+            {
+                return generation.CropRectangle;
+            }
+
+            return new Rect(0, 0, orientedWidth, orientedHeight);
+        }
+
+        // From the upright frame to the output, as a photo is drawn: turned and flipped, cropped
+        // about the crop's centre, turned by the free angle, and scaled to fill the output.
+        private static Matrix3x2 GetVideoTransform(VideoGeneration generation, float width, float height, Size output)
+        {
+            var crop = GetVideoCrop(generation, width, height);
+            var center = new Vector2((float)(crop.X + crop.Width / 2), (float)(crop.Y + crop.Height / 2));
+
+            return ImageHelper.GetOrientationMatrix(generation.Rotation, generation.Flip, width, height)
+                * Matrix3x2.CreateTranslation(-center)
+                * Matrix3x2.CreateRotation((float)(generation.Angle * Math.PI / 180))
+                * Matrix3x2.CreateScale((float)(output.Width / crop.Width), (float)(output.Height / crop.Height))
+                * Matrix3x2.CreateTranslation((float)output.Width / 2, (float)output.Height / 2);
+        }
+
+        // As the official apps pick it: the source's bitrate for the pixels kept, within a range
+        // set by the output's shorter side.
+        private static int MakeVideoBitrate(double originalHeight, double originalWidth, int originalBitrate, int height, int width)
+        {
+            float compressFactor;
+            float minCompressFactor;
+            int maxBitrate;
+
+            if (Math.Min(height, width) >= 1080)
+            {
+                maxBitrate = 6800000;
+                compressFactor = 1;
+                minCompressFactor = 1;
+            }
+            else if (Math.Min(height, width) >= 720)
+            {
+                maxBitrate = 2600000;
+                compressFactor = 1;
+                minCompressFactor = 1;
+            }
+            else if (Math.Min(height, width) >= 480)
+            {
+                maxBitrate = 1000000;
+                compressFactor = 0.75f;
+                minCompressFactor = 0.9f;
+            }
+            else
+            {
+                maxBitrate = 750000;
+                compressFactor = 0.6f;
+                minCompressFactor = 0.7f;
+            }
+
+            var remeasuredBitrate = (int)(originalBitrate / Math.Min(originalHeight / height, originalWidth / width));
+            remeasuredBitrate = (int)(remeasuredBitrate * compressFactor);
+
+            var minBitrate = (int)(minCompressFactor * 2000f * 1000f * 1.13f / (1280f * 720f / (width * height)));
+
+            if (originalBitrate < minBitrate)
+            {
+                return remeasuredBitrate > 0 ? remeasuredBitrate : minBitrate;
+            }
+
+            if (remeasuredBitrate > maxBitrate)
+            {
+                return maxBitrate;
+            }
+
+            return Math.Max(remeasuredBitrate, minBitrate);
         }
 
         private async Task ThumbnailTranscodeAsync(UpdateFileGenerationStart update, string[] args)
@@ -569,7 +689,19 @@ namespace Telegram.Services
 
                 var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.VideoGeneration);
 
-                if (args.Length > 3)
+                if (generation.HasRectangle)
+                {
+                    var image = new ImageGeneration
+                    {
+                        Rectangle = generation.Rectangle,
+                        Rotation = generation.Rotation,
+                        Flip = generation.Flip,
+                        Angle = generation.Angle
+                    };
+
+                    await ImageHelper.CropRotatedAsync(file, temp, image, 320);
+                }
+                else if (args.Length > 3)
                 {
                     var rectangle = generation.CropRectangle;
 

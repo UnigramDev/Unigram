@@ -518,6 +518,7 @@ namespace Telegram.Navigation
         {
             Logger.Info();
             SoundEffects.Resume();
+            GenerationGuard.Resume();
 
             try
             {
@@ -547,6 +548,7 @@ namespace Telegram.Navigation
             finally
             {
                 WatchDog.Suspend();
+                GenerationGuard.Suspend();
                 deferral.Complete();
             }
         }

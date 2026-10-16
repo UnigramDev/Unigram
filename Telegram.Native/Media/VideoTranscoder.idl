@@ -1,0 +1,22 @@
+import "Media/VideoTranscoderOptions.idl";
+
+namespace Telegram.Native.Media
+{
+    // From 0 to 1.
+    delegate void VideoTranscoderProgressHandler(Double progress);
+
+    // Decodes a video, draws it through a transform on a device of its own, encodes it as H.264
+    // and muxes it to MP4, its audio copied when it is AAC and re-encoded as AAC otherwise.
+    [default_interface]
+    runtimeclass VideoTranscoder
+    {
+        VideoTranscoder();
+
+        // Runs on the calling thread until the file is written, and throws with the reason when
+        // it cannot be.
+        void Transcode(VideoTranscoderOptions options, VideoTranscoderProgressHandler progress);
+
+        // From any thread: Transcode stops before its next frame and throws.
+        void Cancel();
+    }
+}

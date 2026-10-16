@@ -1,0 +1,66 @@
+﻿#pragma once
+
+#include "Media/VideoTranscoderOptions.g.h"
+
+#include <winrt/Windows.Foundation.Numerics.h>
+
+namespace winrt::Telegram::Native::Media::implementation
+{
+    struct VideoTranscoderOptions : VideoTranscoderOptionsT<VideoTranscoderOptions>
+    {
+        VideoTranscoderOptions() = default;
+
+        hstring InputPath() const { return m_inputPath; }
+        void InputPath(hstring const& value) { m_inputPath = value; }
+
+        hstring OutputPath() const { return m_outputPath; }
+        void OutputPath(hstring const& value) { m_outputPath = value; }
+
+        int64_t StartTime() const { return m_startTime; }
+        void StartTime(int64_t value) { m_startTime = value; }
+
+        int64_t StopTime() const { return m_stopTime; }
+        void StopTime(int64_t value) { m_stopTime = value; }
+
+        bool Mute() const { return m_mute; }
+        void Mute(bool value) { m_mute = value; }
+
+        int32_t OutputWidth() const { return m_outputWidth; }
+        void OutputWidth(int32_t value) { m_outputWidth = value; }
+
+        int32_t OutputHeight() const { return m_outputHeight; }
+        void OutputHeight(int32_t value) { m_outputHeight = value; }
+
+        winrt::Windows::Foundation::Numerics::float3x2 Transform() const { return m_transform; }
+        void Transform(winrt::Windows::Foundation::Numerics::float3x2 const& value) { m_transform = value; }
+
+        int32_t VideoBitrate() const { return m_videoBitrate; }
+        void VideoBitrate(int32_t value) { m_videoBitrate = value; }
+
+        int32_t MaxFrameRate() const { return m_maxFrameRate; }
+        void MaxFrameRate(int32_t value) { m_maxFrameRate = value; }
+
+        bool HardwareEncoding() const { return m_hardwareEncoding; }
+        void HardwareEncoding(bool value) { m_hardwareEncoding = value; }
+
+    private:
+        hstring m_inputPath;
+        hstring m_outputPath;
+        int64_t m_startTime{ 0 };
+        int64_t m_stopTime{ 0 };
+        bool m_mute{ false };
+        int32_t m_outputWidth{ 0 };
+        int32_t m_outputHeight{ 0 };
+        winrt::Windows::Foundation::Numerics::float3x2 m_transform{ winrt::Windows::Foundation::Numerics::float3x2::identity() };
+        int32_t m_videoBitrate{ 0 };
+        int32_t m_maxFrameRate{ 0 };
+        bool m_hardwareEncoding{ true };
+    };
+}
+
+namespace winrt::Telegram::Native::Media::factory_implementation
+{
+    struct VideoTranscoderOptions : VideoTranscoderOptionsT<VideoTranscoderOptions, implementation::VideoTranscoderOptions>
+    {
+    };
+}

@@ -1,0 +1,33 @@
+namespace Telegram.Native.Media
+{
+    [default_interface]
+    runtimeclass VideoTranscoderOptions
+    {
+        VideoTranscoderOptions();
+
+        String InputPath;
+        String OutputPath;
+
+        // In milliseconds of the source; a stop time of 0 is its end.
+        Int64 StartTime;
+        Int64 StopTime;
+
+        // Leaves the audio out.
+        Boolean Mute;
+
+        Int32 OutputWidth;
+        Int32 OutputHeight;
+
+        // From the source's upright pixels, once its own rotation is applied, to the output's.
+        Windows.Foundation.Numerics.Matrix3x2 Transform;
+
+        // In bits per second.
+        Int32 VideoBitrate;
+
+        // Frames past this rate are dropped; 0 keeps them all.
+        Int32 MaxFrameRate;
+
+        // Lets a hardware encoder be tried before Windows' software one.
+        Boolean HardwareEncoding;
+    }
+}

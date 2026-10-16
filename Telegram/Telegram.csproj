@@ -1930,6 +1930,7 @@
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\Factories\MessageFactory.cs" />
+    <Compile Include="Services\GenerationGuard.cs" />
     <Compile Include="Services\GenerationService.cs" />
     <Compile Include="Services\GenerationSources.cs" />
     <Compile Include="Services\CloudUpdateService.cs" />

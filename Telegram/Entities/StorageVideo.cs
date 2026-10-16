@@ -108,18 +108,12 @@ namespace Telegram.Entities
             }
 
             var crop = state.Rectangle;
-            if (crop.X != 0 || crop.Y != 0 || crop.Right != 1 || crop.Bottom != 1)
+            if (crop.X != 0 || crop.Y != 0 || crop.Right != 1 || crop.Bottom != 1 || state.Angle != 0 || state.Rotation != ImageRotation.None || state.Flip != ImageFlip.None)
             {
-                var x = Math.Floor(crop.X * Width);
-                var y = Math.Floor(crop.Y * Height);
-                var width = Math.Ceiling(crop.Width * Width);
-                var height = Math.Ceiling(crop.Height * Height);
-
-                width -= (width % 4);
-                height -= (height % 4);
-
-                conversion.CropRectangle = new Rect(x, y, width, height);
-                conversion.OutputSize = new Size(width, height);
+                conversion.Rectangle = crop;
+                conversion.Angle = state.Angle;
+                conversion.Rotation = state.Rotation;
+                conversion.Flip = state.Flip;
                 conversion.Transcode = true;
                 conversion.Transform = true;
             }

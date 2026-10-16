@@ -68,6 +68,10 @@
                               Content="Force Raw Audio"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.DisableHardwareVideoEncoding, Mode=TwoWay}"
+                              Content="Disable Hardware Video Encoding"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.EnableWebViewDevTools, Mode=TwoWay}"
                               Content="Enable WebView DevTools"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

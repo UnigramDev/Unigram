@@ -96,7 +96,14 @@ namespace Telegram.Services.Factories
                 duration = (int)(trimStop.TotalSeconds - trimStart.TotalSeconds);
             }
 
-            if (generation.Transform && !generation.CropRectangle.IsEmpty)
+            if (generation.Transform && generation.HasRectangle)
+            {
+                var output = GenerationService.GetVideoOutputSize(generation, videoWidth, videoHeight);
+
+                videoWidth = (int)output.Width;
+                videoHeight = (int)output.Height;
+            }
+            else if (generation.Transform && !generation.CropRectangle.IsEmpty)
             {
                 videoWidth = (int)generation.CropRectangle.Width;
                 videoHeight = (int)generation.CropRectangle.Height;

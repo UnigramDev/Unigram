@@ -161,6 +161,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _forceRawAudio, "ForceRawAudio", value);
         }
 
+        private bool? _disableHardwareVideoEncoding;
+        public bool DisableHardwareVideoEncoding
+        {
+            get => _disableHardwareVideoEncoding ??= GetValueOrDefault("DisableHardwareVideoEncoding", false);
+            set => AddOrUpdateValue(ref _disableHardwareVideoEncoding, "DisableHardwareVideoEncoding", value);
+        }
+
         private bool? _forceEdgeHtml;
         public bool ForceEdgeHtml
         {
