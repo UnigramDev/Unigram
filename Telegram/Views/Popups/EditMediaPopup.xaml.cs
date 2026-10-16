@@ -329,7 +329,8 @@ namespace Telegram.Views.Popups
                     args.Handled = true;
                 }
             }
-            else if (DrawToolbar?.Visibility == Visibility.Visible)
+            // Draw mode, which the tabs mark: the toolbar itself hides while a sticker is selected.
+            else if (PaintTabs?.Visibility == Visibility.Visible)
             {
                 if (args.Key == VirtualKey.Z && args.Modifiers == VirtualKeyModifiers.Control && _undo.Count > 0)
                 {
