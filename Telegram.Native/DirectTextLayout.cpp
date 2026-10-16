@@ -182,6 +182,18 @@ namespace winrt::Telegram::Native::implementation
             Append(text, L"Analyzer layout", s_analyzer, frequency.QuadPart);
         }
 
+        const auto& stages = EditableTextLayout::BuildStages;
+        if (stages.Builds > 0)
+        {
+            const auto each = [&](int64_t ticks)
+                {
+                    return ticks / (double)frequency.QuadPart * 1000000 / stages.Builds;
+                };
+
+            text += std::format(L"Analyzer cold builds: {}, µs each: preparing {:.1f}, setting up {:.1f}, analysing {:.1f}, mapping fonts {:.1f}, shaping {:.1f}, breaking lines {:.1f}; {:.1f} runs each\n",
+                stages.Builds, each(stages.Prepare), each(stages.Setup), each(stages.Analysis), each(stages.Mapping), each(stages.Shaping), each(stages.Breaking), stages.Runs / (double)stages.Builds);
+        }
+
         if (s_verified > 0)
         {
             std::lock_guard const guard(s_mismatchMutex);
@@ -213,6 +225,7 @@ namespace winrt::Telegram::Native::implementation
         s_drawText = {};
         s_endDraw = {};
         s_analyzer = {};
+        EditableTextLayout::BuildStages = {};
         s_verified = 0;
         s_mismatched = 0;
 

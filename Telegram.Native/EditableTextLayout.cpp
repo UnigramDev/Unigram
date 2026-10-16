@@ -31,6 +31,14 @@ namespace winrt::Telegram::Native::implementation
         // A line is as wide as it may be up to this much past the box, which is rounding.
         constexpr float c_epsilon = 0.0001f;
 
+        int64_t Ticks()
+        {
+            LARGE_INTEGER value;
+            QueryPerformanceCounter(&value);
+
+            return value.QuadPart;
+        }
+
         bool SameScript(const DWRITE_SCRIPT_ANALYSIS& x, const DWRITE_SCRIPT_ANALYSIS& y)
         {
             return x.script == y.script && x.shapes == y.shapes;
@@ -308,7 +316,20 @@ namespace winrt::Telegram::Native::implementation
         m_format = format;
         m_text.assign(text);
 
+        auto& stages = BuildStages;
+        auto mark = Ticks();
+        stages.Builds++;
+
+        // Charged to the stage that just ended, from the mark the one before it left.
+        const auto lap = [&](int64_t& stage)
+            {
+                const auto now = Ticks();
+                stage += now - mark;
+                mark = now;
+            };
+
         Prepare(text, styles, inlines);
+        lap(stages.Prepare);
 
         const auto length = (int32_t)m_text.size();
 
@@ -353,6 +374,8 @@ namespace winrt::Telegram::Native::implementation
             winrt::com_ptr<IDWriteTextAnalyzer> analyzer;
             ReturnIfFailed(result, m_format.Factory->CreateTextAnalyzer(analyzer.put()));
 
+            lap(stages.Setup);
+
             auto analysis = winrt::make_self<Analysis>(m_analysis.c_str(), (UINT32)length, m_format.Locale.c_str(), m_format.RightToLeft, 0, (UINT32)length);
 
             ReturnIfFailed(result, analyzer->AnalyzeScript(analysis.get(), 0, (UINT32)length, analysis.get()));
@@ -372,10 +395,29 @@ namespace winrt::Telegram::Native::implementation
                 }
             }
 
-            ReturnIfFailed(result, ShapeRange(analyzer.get(), analysis.get(), 0, length, analysis->Scripts.data(), analysis->Levels.data()));
+            lap(stages.Analysis);
+
+            // Mapping and shaping alternate run by run, and ShapeRange charges each its own.
+            m_timing = true;
+            result = ShapeRange(analyzer.get(), analysis.get(), 0, length, analysis->Scripts.data(), analysis->Levels.data());
+            m_timing = false;
+
+            if (FAILED(result))
+            {
+                return result;
+            }
+
+            mark = Ticks();
+        }
+        else
+        {
+            lap(stages.Setup);
         }
 
         Break(width);
+        lap(stages.Breaking);
+
+        stages.Runs += (int64_t)m_runs.size();
 
         m_built = true;
         return S_OK;
@@ -768,6 +810,8 @@ namespace winrt::Telegram::Native::implementation
 
             while (mapped < end)
             {
+                const auto mapping = Ticks();
+
                 UINT32 mappedLength = 0;
                 FLOAT scale = 1;
                 winrt::com_ptr<IDWriteFont> font;
@@ -796,6 +840,13 @@ namespace winrt::Telegram::Native::implementation
 
                 const auto emSize = m_format.FontSize * scale * scriptScale;
                 const auto stop = std::min(mapped + (int32_t)mappedLength, end);
+
+                const auto shaping = Ticks();
+
+                if (m_timing)
+                {
+                    BuildStages.Mapping += shaping - mapping;
+                }
 
                 // In chunks that end where a word starts, so that no chunk's glyphs depend on
                 // its neighbour's: nothing is shaped across a space.
@@ -834,6 +885,11 @@ namespace winrt::Telegram::Native::implementation
 
                     ReturnIfFailed(result, Shape(analyzer, chunk, next - chunk, face, emSize, script, level, style));
                     chunk = next;
+                }
+
+                if (m_timing)
+                {
+                    BuildStages.Shaping += Ticks() - shaping;
                 }
 
                 mapped = stop;

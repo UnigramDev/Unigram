@@ -145,6 +145,24 @@ namespace winrt::Telegram::Native::implementation
             return m_change;
         }
 
+        // What cold builds spend, stage by stage, in QueryPerformanceCounter ticks: for the
+        // meter, process-wide and unlocked, as DirectTextLayout's counters are.
+        struct Stages
+        {
+            int64_t Builds;
+            int64_t Prepare;
+            int64_t Setup;
+            int64_t Analysis;
+            int64_t Mapping;
+            int64_t Shaping;
+            int64_t Breaking;
+
+            // The runs they came to, which a font fallback can cut far finer than the chunks.
+            int64_t Runs;
+        };
+
+        inline static Stages BuildStages{};
+
         // Where the lines that hold [start, end) begin and end, in DIPs.
         void RangeExtent(int32_t start, int32_t end, float& top, float& bottom) const;
 
@@ -259,6 +277,9 @@ namespace winrt::Telegram::Native::implementation
         // Whether any level is not the paragraph's own, which an update does not keep track of.
         bool m_bidi{ false };
         bool m_built{ false };
+
+        // While a cold build shapes, which is what BuildStages charges mapping and shaping to.
+        bool m_timing{ false };
 
         // Per text position.
         std::vector<uint32_t> m_styleOf;
