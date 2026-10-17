@@ -1424,7 +1424,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var frame = _loader.Device.CreateFrameSurface(task.PixelWidth, task.PixelHeight, task.Rotation);
+            var frame = _loader.Device.CreateFrameSurface(_loader.GraphicsDevice, task.PixelWidth, task.PixelHeight, task.Rotation);
             if (frame != null)
             {
                 Volatile.Write(ref _surface, new AnimatedImageSurface(frame));
@@ -1494,7 +1494,7 @@ namespace Telegram.Controls
 
             if (_surface == null)
             {
-                var frame = _loader.Device.CreateFrameSurface(width, height, task.Rotation);
+                var frame = _loader.Device.CreateFrameSurface(_loader.GraphicsDevice, width, height, task.Rotation);
                 if (frame != null)
                 {
                     Volatile.Write(ref _surface, new AnimatedImageSurface(frame));
@@ -2795,13 +2795,17 @@ namespace Telegram.Controls
             Device = Direct2D.Current;
             Flusher = new FrameFlusher(Device);
 
-            _graphicsDevice = Device.Device;
+            // Not the view's own: the flusher draws from its thread, and a BeginDraw that overlaps
+            // one of the UI thread's on the same graphics device fails.
+            _graphicsDevice = Device.CreateGraphicsDevice();
             _graphicsDevice.RenderingDeviceReplaced += OnRenderingDeviceReplaced;
 
             Debug.Assert(_dispatcherQueue != null);
         }
 
         public FrameFlusher Flusher { get; }
+
+        public CompositionGraphicsDevice GraphicsDevice => _graphicsDevice;
 
         private void OnRenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
         {
@@ -3147,6 +3151,7 @@ namespace Telegram.Controls
         {
             Flusher.Close();
             _graphicsDevice.RenderingDeviceReplaced -= OnRenderingDeviceReplaced;
+            Device.ReleaseGraphicsDevice(_graphicsDevice);
 
             if (_window.XamlRoot != null)
             {

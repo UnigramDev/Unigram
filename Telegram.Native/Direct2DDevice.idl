@@ -17,6 +17,12 @@ namespace Telegram.Native
 
         Windows.UI.Composition.CompositionGraphicsDevice Device{ get; };
 
+        // A graphics device of its own on the same rendering device, for a thread that draws apart
+        // from the view's: each graphics device takes one drawing session at a time. Given the new
+        // rendering device after a loss until ReleaseGraphicsDevice, or until this device closes.
+        Windows.UI.Composition.CompositionGraphicsDevice CreateGraphicsDevice();
+        void ReleaseGraphicsDevice(Windows.UI.Composition.CompositionGraphicsDevice device);
+
         static void WriteBytes(byte[] hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
         static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
         static Boolean IsWebP(String fileName, out Int32 pixelWidth, out Int32 pixelHeight);
@@ -44,7 +50,7 @@ namespace Telegram.Native
         Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(byte[] bytes, Single blurAmount);
 
         // Rotation is clockwise, in degrees: 0, 90, 180 or 270.
-        FrameSurface CreateFrameSurface(Int32 pixelWidth, Int32 pixelHeight, Int32 rotation);
+        FrameSurface CreateFrameSurface(Windows.UI.Composition.CompositionGraphicsDevice device, Int32 pixelWidth, Int32 pixelHeight, Int32 rotation);
 
         // Until the compositor's next frame, or a 60th of a second before Windows 11.
         void WaitForCompositorClock();

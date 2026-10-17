@@ -413,16 +413,45 @@ namespace winrt::Telegram::Native::implementation
         return true;
     }
 
-    winrt::Telegram::Native::FrameSurface Direct2DDevice::CreateFrameSurface(int32_t pixelWidth, int32_t pixelHeight, int32_t rotation)
+    winrt::Telegram::Native::FrameSurface Direct2DDevice::CreateFrameSurface(CompositionGraphicsDevice const& device, int32_t pixelWidth, int32_t pixelHeight, int32_t rotation)
     {
         auto turned = rotation == 90 || rotation == 270;
-        auto surface = CreateDrawingSurface({ turned ? pixelHeight : pixelWidth, turned ? pixelWidth : pixelHeight });
-        if (surface)
+
+        try
         {
+            auto surface = device.CreateDrawingSurface2({ turned ? pixelHeight : pixelWidth, turned ? pixelWidth : pixelHeight }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
             return winrt::make<FrameSurface>(surface, m_d2dFactory, pixelWidth, pixelHeight, rotation);
         }
+        catch (...)
+        {
+            // Throws while the rendering device is lost.
+            return nullptr;
+        }
+    }
 
-        return nullptr;
+    CompositionGraphicsDevice Direct2DDevice::CreateGraphicsDevice()
+    {
+        std::lock_guard const guard(m_criticalSection);
+
+        if (m_compositor == nullptr || m_d2dDevice == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto compositorInterop = m_compositor.as<abi::ICompositorInterop>();
+        winrt::com_ptr<abi::ICompositionGraphicsDevice> deviceInterop;
+        winrt::check_hresult(compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
+
+        auto device = deviceInterop.as<CompositionGraphicsDevice>();
+        m_graphicsDevices.push_back(device);
+
+        return device;
+    }
+
+    void Direct2DDevice::ReleaseGraphicsDevice(CompositionGraphicsDevice const& device)
+    {
+        std::lock_guard const guard(m_criticalSection);
+        std::erase(m_graphicsDevices, device);
     }
 
     void Direct2DDevice::WaitForCompositorClock()
@@ -1311,6 +1340,12 @@ namespace winrt::Telegram::Native::implementation
             {
                 winrt::com_ptr<abi::ICompositionGraphicsDeviceInterop> compositionGraphicsDeviceInterop{ m_compositionDevice.as<abi::ICompositionGraphicsDeviceInterop>() };
                 result = compositionGraphicsDeviceInterop->SetRenderingDevice(m_d2dDevice.get());
+
+                // Each raises its own RenderingDeviceReplaced, the only signal its owner gets.
+                for (auto const& device : m_graphicsDevices)
+                {
+                    device.as<abi::ICompositionGraphicsDeviceInterop>()->SetRenderingDevice(m_d2dDevice.get());
+                }
             }
             else
             {

@@ -302,6 +302,11 @@ namespace winrt::Telegram::Native::implementation
             // running holds a raw pointer to this object and would outlive it otherwise.
             m_deviceLostHelper.Shutdown();
 
+            {
+                std::lock_guard const guard(m_criticalSection);
+                m_graphicsDevices.clear();
+            }
+
             m_nineGridCache.clear();
 
             {
@@ -339,6 +344,9 @@ namespace winrt::Telegram::Native::implementation
         {
             return m_compositionDevice;
         }
+
+        CompositionGraphicsDevice CreateGraphicsDevice();
+        void ReleaseGraphicsDevice(CompositionGraphicsDevice const& device);
 
         //static winrt::Telegram::Native::Direct2DDevice Background()
         //{
@@ -391,7 +399,7 @@ namespace winrt::Telegram::Native::implementation
         SoftwareBitmap DrawBlurred(hstring fileName, float blurAmount);
         SoftwareBitmap DrawBlurred(array_view<uint8_t const> bytes, float blurAmount);
 
-        winrt::Telegram::Native::FrameSurface CreateFrameSurface(int32_t pixelWidth, int32_t pixelHeight, int32_t rotation);
+        winrt::Telegram::Native::FrameSurface CreateFrameSurface(CompositionGraphicsDevice const& device, int32_t pixelWidth, int32_t pixelHeight, int32_t rotation);
 
         void WaitForCompositorClock();
 
@@ -440,6 +448,9 @@ namespace winrt::Telegram::Native::implementation
         Compositor m_compositor;
         CompositionEffectFactory m_alphaMaskFactory;
         CompositionGraphicsDevice m_compositionDevice;
+        // Strong, under m_criticalSection: CompositionGraphicsDevice has no IWeakReferenceSource, and
+        // make_weak on it faults.
+        std::vector<CompositionGraphicsDevice> m_graphicsDevices;
         DeviceLostHelper m_deviceLostHelper;
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
         winrt::com_ptr<ID2D1Device> m_d2dDevice;
