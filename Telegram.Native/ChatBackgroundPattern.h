@@ -2,8 +2,12 @@
 
 #include "ChatBackgroundPattern.g.h"
 
+#include <memory>
+#include <vector>
+
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Numerics.h>
+#include <winrt/Windows.System.h>
 #include <winrt/Windows.UI.Composition.h>
 
 using namespace winrt::Windows::Foundation::Collections;
@@ -12,6 +16,26 @@ using namespace winrt::Windows::UI::Composition;
 
 namespace winrt::Telegram::Native::implementation
 {
+    struct SvgShape
+    {
+        winrt::com_ptr<ID2D1PathGeometry1> Geometry;
+        winrt::com_ptr<ID2D1StrokeStyle1> StrokeStyle; // null when the shape is not stroked
+        float Opacity;
+        float StrokeWidth;
+        bool Fill;
+    };
+
+    // In SVG units, so one parse serves every scale the pattern is drawn at. The geometries belong
+    // to the factory that parsed them, and Direct2D draws them only on a device of that factory.
+    struct SvgPattern
+    {
+        float Width;
+        float Height;
+        winrt::com_ptr<ID2D1GeometryGroup> Solid; // every opaque fill, drawn in one call
+        std::vector<SvgShape> Shapes;
+        std::vector<ChatBackgroundSymbol> Symbols;
+    };
+
     inline static float2 ComputeRenderSize(float width, float height, float rasterizationScale)
     {
         auto scale = (int)(rasterizationScale * 100);
@@ -41,15 +65,9 @@ namespace winrt::Telegram::Native::implementation
 
         }
 
-        ChatBackgroundPattern(ICompositionSurface surface, float width, float height, float rasterizationScale, IVector<ChatBackgroundSymbol> patterns)
-            : m_surface(surface)
-            , m_renderSize(ComputeRenderSize(width, height, rasterizationScale))
-            , m_renderPhysicalSize(ComputeRenderPhysicalSize(width, height, rasterizationScale))
-            , m_naturalSize(width, height)
-            , m_symbols(patterns)
-        {
-
-        }
+        // Must be constructed on the view's thread, which is where the redraw after a device
+        // replacement is posted.
+        ChatBackgroundPattern(CompositionGraphicsDevice device, CompositionDrawingSurface surface, std::shared_ptr<const SvgPattern> svg, float rasterizationScale, float dpi, float intensity, bool negative, IVector<ChatBackgroundSymbol> patterns);
 
         ICompositionSurface Surface();
         float2 RenderSize();
@@ -57,12 +75,30 @@ namespace winrt::Telegram::Native::implementation
         float2 NaturalSize();
         IVector<ChatBackgroundSymbol> Symbols();
 
+        HRESULT Invalidate();
+
+        // Must be called on the view's thread. The surface is kept: a brush that is still fading
+        // out may show it.
+        void Close();
+
     private:
+        bool m_closed = false;
         ICompositionSurface m_surface;
         float2 m_renderSize;
         float2 m_renderPhysicalSize;
         float2 m_naturalSize;
         IVector<ChatBackgroundSymbol> m_symbols;
+
+        CompositionGraphicsDevice m_compositionDevice{ nullptr };
+        winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
+        std::shared_ptr<const SvgPattern> m_svg;
+        float m_dpi = 0;
+        float m_intensity = 0;
+        bool m_negative = false;
+
+        winrt::event_token m_renderingDeviceReplaced;
+
+        void OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&);
     };
 }
 

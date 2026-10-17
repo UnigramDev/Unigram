@@ -573,23 +573,32 @@ namespace winrt::Telegram::Native::implementation
         return native->EndDraw();
     }
 
-    winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> Direct2DDevice::DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight)
+    // Parsed in the background, drawn back on the caller's thread.
+    winrt::Windows::Foundation::IAsyncOperation<winrt::Telegram::Native::ChatBackgroundPattern> Direct2DDevice::DrawSvgAsync(hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight)
     {
+        auto strong = get_strong();
+
         winrt::apartment_context ui_thread;
         co_await winrt::resume_background();
 
-        ChatBackgroundPattern pattern{ nullptr };
+        std::shared_ptr<const SvgPattern> svg;
         try
         {
-            pattern = DrawSvg(compositor, path, intensity, negative, rasterizationScale, minimumHeight);
+            svg = GetSvgPattern(path);
         }
         catch (...)
         {
-            pattern = nullptr;
+            svg = nullptr;
         }
 
         co_await ui_thread;
-        co_return pattern;
+
+        if (svg == nullptr)
+        {
+            co_return nullptr;
+        }
+
+        co_return CreatePattern(svg, intensity, negative, rasterizationScale, minimumHeight);
     }
 
     constexpr float PI = 3.14159265358979323846f;
@@ -850,25 +859,42 @@ namespace winrt::Telegram::Native::implementation
 
     // Geometries come from the factory, not the device, so they survive a device loss and can be
     // drawn at any scale; only the surface is redone per render.
-    const Direct2DDevice::SvgPattern* Direct2DDevice::GetSvgPattern(hstring const& path)
+    //
+    // The parse runs outside every lock, m_criticalSection above all: HandleDeviceLost takes that one
+    // on each Direct2D.Current access, so a parse under it would stall the view's thread.
+    std::shared_ptr<const SvgPattern> Direct2DDevice::GetSvgPattern(hstring const& path)
     {
         std::wstring key(path.c_str());
 
-        auto found = m_svgCacheIndex.find(key);
-        if (found != m_svgCacheIndex.end())
         {
-            m_svgCacheList.splice(m_svgCacheList.begin(), m_svgCacheList, found->second);
-            return &found->second->second;
+            std::lock_guard const guard(m_svgCacheLock);
+
+            auto found = m_svgCacheIndex.find(key);
+            if (found != m_svgCacheIndex.end())
+            {
+                m_svgCacheList.splice(m_svgCacheList.begin(), m_svgCacheList, found->second);
+                return found->second->second;
+            }
         }
 
-        SvgPattern pattern;
-        if (FAILED(ParseSvgPattern(path, pattern)))
+        auto pattern = std::make_shared<SvgPattern>();
+        if (FAILED(ParseSvgPattern(path, *pattern)))
         {
             // Not cached, so a file that is not downloaded yet is read again next time.
             return nullptr;
         }
 
-        m_svgCacheList.emplace_front(key, std::move(pattern));
+        std::lock_guard const guard(m_svgCacheLock);
+
+        // Parsed meanwhile by another caller: theirs is the one patterns may already share.
+        auto found = m_svgCacheIndex.find(key);
+        if (found != m_svgCacheIndex.end())
+        {
+            m_svgCacheList.splice(m_svgCacheList.begin(), m_svgCacheList, found->second);
+            return found->second->second;
+        }
+
+        m_svgCacheList.emplace_front(key, pattern);
         m_svgCacheIndex[key] = m_svgCacheList.begin();
 
         if (m_svgCacheList.size() > kSvgCacheCapacity)
@@ -877,22 +903,30 @@ namespace winrt::Telegram::Native::implementation
             m_svgCacheList.pop_back();
         }
 
-        return &m_svgCacheList.front().second;
+        return pattern;
     }
 
-    ChatBackgroundPattern Direct2DDevice::DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight)
+    winrt::Telegram::Native::ChatBackgroundPattern Direct2DDevice::DrawSvg(hstring path, float intensity, bool negative, double rasterizationScale, float minimumHeight)
     {
-        std::lock_guard const guard(m_criticalSection);
-        HRESULT result;
-
-        auto pattern = GetSvgPattern(path);
-        if (pattern == nullptr)
+        auto svg = GetSvgPattern(path);
+        if (svg == nullptr)
         {
             return nullptr;
         }
 
-        auto imageWidth = pattern->Width;
-        auto imageHeight = pattern->Height;
+        return CreatePattern(svg, intensity, negative, rasterizationScale, minimumHeight);
+    }
+
+    winrt::Telegram::Native::ChatBackgroundPattern Direct2DDevice::CreatePattern(std::shared_ptr<const SvgPattern> const& svg, float intensity, bool negative, double rasterizationScale, float minimumHeight)
+    {
+        // The background instance has no compositor, and so nothing to draw into.
+        if (m_compositionDevice == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto imageWidth = svg->Width;
+        auto imageHeight = svg->Height;
 
         if (rasterizationScale < 1)
         {
@@ -915,93 +949,34 @@ namespace winrt::Telegram::Native::implementation
 
         auto patterns = winrt::single_threaded_vector<ChatBackgroundSymbol>();
 
-        for (auto symbol : pattern->Symbols)
+        for (auto symbol : svg->Symbols)
         {
             symbol.Offset *= dpi;
             symbol.Size *= dpi;
             patterns.Append(symbol);
         }
 
-        winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
-
-        winrt::com_ptr<abi::ICompositionGraphicsDevice> deviceInterop;
-        CompositionGraphicsDevice device{ nullptr };
-        CompositionDrawingSurface surface{ nullptr };
-        winrt::com_ptr<abi::ICompositionDrawingSurfaceInterop> surfaceInterop;
         winrt::Windows::Foundation::Size imageSize(imageWidth * dpi, imageHeight * dpi);
 
-        winrt::com_ptr<ID2D1DeviceContext> d2dContext;
-        POINT offset;
-
-        // Only one surface may be open for drawing on a device at a time, and every
-        // CleanupIfFailed below used to jump past EndDraw - one failed brush or geometry and
-        // no pattern would render again for the life of the process.
-        bool drawing = false;
-
-        auto compositorInterop = compositor.as<abi::ICompositorInterop>();
-        CleanupIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
-
-        device = deviceInterop.as<CompositionGraphicsDevice>();
-        surface = device.CreateDrawingSurface(imageSize, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
-        surfaceInterop = surface.as<abi::ICompositionDrawingSurfaceInterop>();
-
-        // TODO: BeginDraw can return DXGI_ERROR_DEVICE_REMOVED, but it shouldn't be possible
-        // Because we always create a new composition graphics device (not great ndr, but we must use background instance not to block messages measure)
-        // And we handle device loss right before this method is invoked.
-        CleanupIfFailed(result, surfaceInterop->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), d2dContext.put_void(), &offset));
-        drawing = true;
-
-        if (negative)
+        try
         {
-            d2dContext->Clear(D2D1::ColorF(0, 0, 0, 1));
-            d2dContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+            auto surface = m_compositionDevice.CreateDrawingSurface(imageSize, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+            auto pattern = winrt::make_self<implementation::ChatBackgroundPattern>(m_compositionDevice, surface, svg, (float)rasterizationScale, dpi, intensity, negative, patterns);
 
-            CleanupIfFailed(result, d2dContext->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 1 - intensity), blackBrush.put()));
-        }
-        else
-        {
-            d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
-
-            CleanupIfFailed(result, d2dContext->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, intensity), blackBrush.put()));
-        }
-
-        d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(dpi, dpi));
-
-        if (pattern->Solid)
-        {
-            blackBrush->SetOpacity(1);
-            d2dContext->FillGeometry(pattern->Solid.get(), blackBrush.get());
-        }
-
-        for (auto const& shape : pattern->Shapes)
-        {
-            blackBrush->SetOpacity(shape.Opacity);
-
-            if (shape.Fill)
+            // An empty surface as the source of the background's effect blanks the fill under it
+            // too, so no pattern at all is the better failure.
+            if (FAILED(pattern->Invalidate()))
             {
-                d2dContext->FillGeometry(shape.Geometry.get(), blackBrush.get());
+                pattern->Close();
+                return nullptr;
             }
 
-            if (shape.StrokeStyle)
-            {
-                d2dContext->DrawGeometry(shape.Geometry.get(), blackBrush.get(), shape.StrokeWidth, shape.StrokeStyle.get());
-            }
+            return pattern.as<winrt::Telegram::Native::ChatBackgroundPattern>();
         }
-
-        d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
-
-        drawing = false;
-        CleanupIfFailed(result, surfaceInterop->EndDraw());
-
-        return ChatBackgroundPattern(surface, imageWidth, imageHeight, rasterizationScale, patterns);
-
-    Cleanup:
-        if (drawing)
+        catch (...)
         {
-            surfaceInterop->EndDraw();
+            return nullptr;
         }
-
-        return nullptr;
     }
 
     SoftwareBitmap Direct2DDevice::DrawBlurred(hstring fileName, float blurAmount)
