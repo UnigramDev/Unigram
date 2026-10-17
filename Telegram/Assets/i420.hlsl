@@ -19,6 +19,6 @@ D2D_PS_ENTRY(main)
     // TODO: Explicit reference to `a` is needed because of compiler optimizations.
     return float4(1.164 * y + 1.596 * v,
         1.164 * y - 0.392 * u - 0.813 * v,
-        1.164 * y + 2.17 * u,
+        1.164 * y + 2.018 * u,
         a);
 }
