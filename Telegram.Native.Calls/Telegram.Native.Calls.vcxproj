@@ -134,6 +134,7 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\TurnCustomizerImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpContext.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturerShader.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioFrame.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayload.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h" />
@@ -536,6 +537,7 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.hlsl" />
     <None Include="packages.config" />
     <None Include="VoipManager.def" />
     <None Include="PropertySheet.props" />

@@ -340,6 +340,9 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturerShader.h">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClInclude>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpContext.h">
       <Filter>tgcalls\platform\uwp</Filter>
     </ClInclude>
@@ -478,6 +481,9 @@
     <Midl Include="VoipCallServer.idl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.hlsl">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </None>
     <None Include="PropertySheet.props" />
     <None Include="VoipManager.def" />
     <None Include="packages.config" />
