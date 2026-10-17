@@ -12,6 +12,7 @@
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.Xaml.h>
+#include <winrt/Windows.System.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Windows.Graphics.DirectX.h>
@@ -26,6 +27,7 @@ using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::UI::Composition;
 using namespace winrt::Windows::UI;
 using namespace winrt::Windows::UI::Xaml;
+using namespace winrt::Windows::System;
 
 namespace abi
 {
@@ -61,14 +63,22 @@ namespace winrt::Telegram::Native::implementation
 
     private:
         bool m_closed = false;
-        Compositor m_compositor;
-        CompositionGraphicsDevice m_compositionDevice;
+        CompositionGraphicsDevice m_compositionDevice{ nullptr };
+        DispatcherQueue m_dispatcherQueue{ nullptr };
         winrt::com_ptr<ID2D1Multithread> m_multithread;
         winrt::com_ptr<abi::ICompositionDrawingSurfaceInterop> m_surface;
-        CompositionSurfaceBrush m_brush;
+        CompositionSurfaceBrush m_brush{ nullptr };
         DispatcherTimer m_timer;
         IVectorView<int32_t> m_colors;
         std::vector<uint8_t> m_pixels;
+
+        // Copied out of m_colors on each change: read per pixel, every GetAt crosses the ABI. At most
+        // four, one per point of QuadPoints.
+        std::array<int32_t, 4> m_colorValues{};
+        std::array<float3, 4> m_colorChannels{};
+        uint32_t m_colorCount = 0;
+
+        bool SetColors(IVectorView<int32_t> const& value);
 
         winrt::event_token m_renderingDeviceReplaced;
         winrt::event_token m_tick;
