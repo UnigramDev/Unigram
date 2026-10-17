@@ -12,8 +12,11 @@
 
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
+#include "modules/video_coding/codecs/h264/win/d3d11_texture_buffer.h"
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/string_utils.h"
 
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.System.h>
@@ -34,6 +37,7 @@
 #include <windows.ui.composition.interop.h>
 
 #include <d3d11.h>
+#include <d3d11_4.h>
 #include <d2d1_3.h>
 #include <d2d1effectauthor.h>
 #include <d2d1effecthelpers.h>
@@ -564,6 +568,23 @@ struct VoipVideoOutput : public std::enable_shared_from_this<VoipVideoOutput>, r
     winrt::com_ptr<ID2D1Bitmap1> m_bitmapV{ nullptr };
     std::shared_ptr<CompositionRenderQueue> m_queue;
 
+    // What this output opened of a decoder's shared textures, under m_deviceMutex. Keyed by
+    // ring, because a handle value can come back for another texture once a ring is gone.
+    winrt::com_ptr<ID3D11Device> m_textureDevice;
+    LUID m_textureAdapter{};
+    uint64_t m_textureRing{ 0 };
+    winrt::com_ptr<ID3D11Fence> m_textureFence;
+    std::unordered_map<int, winrt::com_ptr<ID3D11Texture2D>> m_textures;
+    bool m_textureFramesFailed{ false };
+
+    // This output's own fence, which the decoder waits on before reusing a slot it drew.
+    winrt::com_ptr<ID3D11DeviceContext4> m_textureContext;
+    winrt::com_ptr<ID2D1Multithread> m_textureMultithread;
+    winrt::com_ptr<ID3D11Fence> m_readFence;
+    winrt::handle m_readFenceHandle;
+    uint64_t m_readFenceValue{ 0 };
+    uint64_t m_readerId{ 0 };
+
     winrt::com_ptr<winrt::Telegram::Native::Calls::implementation::FrameReceivedEventArgs> m_frameReceivedArgs;
     winrt::event<winrt::Windows::Foundation::TypedEventHandler<
         winrt::Telegram::Native::Calls::VoipVideoOutputSink,
@@ -788,10 +809,15 @@ public:
     inline HRESULT RenderFrame(const webrtc::VideoFrame& frame)
     {
         HRESULT result;
-        rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(frame.video_frame_buffer()->ToI420());
 
-        int32_t width = buffer->width();
-        int32_t height = buffer->height();
+        // A texture frame is drawn straight off the GPU. Anything else, or a texture this
+        // output cannot open, goes through I420 and YUV420Effect as before.
+        const webrtc::D3D11TextureBuffer* texture = m_textureFramesFailed
+            ? nullptr
+            : webrtc::D3D11TextureBuffer::Is(frame.video_frame_buffer().get());
+
+        int32_t width = frame.width();
+        int32_t height = frame.height();
 
         D2D1::Matrix3x2F matrix;
         SIZE finalSize{ width, height };
@@ -849,6 +875,237 @@ public:
             return result;
         }
 
+        if (m_mirrored)
+        {
+            matrix = matrix * D2D1::Matrix3x2F::Scale(-1, 1, D2D1::Point2F(finalSize.cx / 2, finalSize.cy / 2));
+        }
+
+        matrix._31 += offset.x;
+        matrix._32 += offset.y;
+
+        bool drewTexture = false;
+
+        if (texture != nullptr)
+        {
+            const HRESULT textureResult = DrawTexture(d2dContext.get(), *texture, matrix, x, y, width, height);
+            drewTexture = SUCCEEDED(textureResult);
+
+            if (!drewTexture)
+            {
+                // Not retried: what fails here - another adapter, a device without D3D11.4 -
+                // fails the same way every frame.
+                m_textureFramesFailed = true;
+                RTC_LOG(LS_WARNING) << "Video output can't draw texture ring " << texture->ring_id()
+                    << ": 0x" << rtc::ToHex(textureResult) << "; reading frames back to I420";
+            }
+        }
+
+        if (!drewTexture)
+        {
+            rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(frame.video_frame_buffer()->ToI420());
+            if (buffer != nullptr)
+            {
+                DrawI420(d2dContext.get(), buffer, matrix, x, y, width, height);
+            }
+        }
+
+        result = m_surface->EndDraw();
+
+        if (drewTexture && SUCCEEDED(result))
+        {
+            SignalTextureRead(*texture);
+        }
+
+        return result;
+    }
+
+    // After EndDraw, which is when Direct2D hands the draw to the immediate context, so the
+    // fence follows it there. Until the decoder holds this, its next copy into the slot could
+    // overwrite the frame while the draw is still queued: releasing the buffer only means the
+    // CPU is done with it.
+    void SignalTextureRead(webrtc::D3D11TextureBuffer const& texture)
+    {
+        HRESULT result;
+
+        if (m_textureMultithread)
+        {
+            m_textureMultithread->Enter();
+        }
+
+        result = m_textureContext->Signal(m_readFence.get(), m_readFenceValue + 1);
+
+        // Composition stops flushing behind a minimized window, and the decoder would wait
+        // on a signal still sitting in this context.
+        m_textureContext->Flush();
+
+        if (m_textureMultithread)
+        {
+            m_textureMultithread->Leave();
+        }
+
+        if (SUCCEEDED(result))
+        {
+            texture.AddReadFence(m_readerId, m_readFenceHandle.get(), ++m_readFenceValue);
+        }
+    }
+
+    // The decoder's texture, opened on this output's device and drawn through Direct2D, which
+    // converts NV12 itself. Fails without drawing whenever the texture cannot be used here.
+    HRESULT DrawTexture(ID2D1DeviceContext* d2dContext, webrtc::D3D11TextureBuffer const& texture,
+        D2D1::Matrix3x2F const& matrix, float x, float y, int32_t width, int32_t height)
+    {
+        HRESULT result;
+
+        winrt::com_ptr<ID2D1DeviceContext2> d2dContext2;
+        ReturnIfFailed(result, d2dContext->QueryInterface(IID_PPV_ARGS(d2dContext2.put())));
+
+        // The device behind the surface being drawn, which is the one composition uses.
+        winrt::com_ptr<ID2D1Image> target;
+        d2dContext->GetTarget(target.put());
+
+        auto targetBitmap = target.try_as<ID2D1Bitmap1>();
+        if (targetBitmap == nullptr)
+        {
+            return E_NOINTERFACE;
+        }
+
+        winrt::com_ptr<IDXGISurface> targetSurface;
+        ReturnIfFailed(result, targetBitmap->GetSurface(targetSurface.put()));
+
+        winrt::com_ptr<ID3D11Device> device;
+        ReturnIfFailed(result, targetSurface->GetDevice(IID_PPV_ARGS(device.put())));
+
+        if (device != m_textureDevice)
+        {
+            m_textureDevice = nullptr;
+            m_textureAdapter = {};
+            m_textureRing = 0;
+            m_textureFence = nullptr;
+            m_textures.clear();
+            m_textureContext = nullptr;
+            m_readFence = nullptr;
+            m_readFenceHandle.close();
+            m_readFenceValue = 0;
+
+            auto device5 = device.try_as<ID3D11Device5>();
+            if (device5 == nullptr)
+            {
+                return E_NOINTERFACE;
+            }
+
+            winrt::com_ptr<ID3D11DeviceContext> immediate;
+            device->GetImmediateContext(immediate.put());
+
+            m_textureContext = immediate.try_as<ID3D11DeviceContext4>();
+            if (m_textureContext == nullptr)
+            {
+                return E_NOINTERFACE;
+            }
+
+            // The immediate context is shared with composition and Direct2D, which use it from
+            // other threads under Direct2D's lock.
+            winrt::com_ptr<ID2D1Factory> factory;
+            d2dContext->GetFactory(factory.put());
+            m_textureMultithread = factory.try_as<ID2D1Multithread>();
+
+            ReturnIfFailed(result, device5->CreateFence(0, D3D11_FENCE_FLAG_SHARED, IID_PPV_ARGS(m_readFence.put())));
+            ReturnIfFailed(result, m_readFence->CreateSharedHandle(nullptr, GENERIC_ALL, nullptr, m_readFenceHandle.put()));
+
+            // A new id with every fence: the decoder caches what it opened by id.
+            m_readerId = webrtc::D3D11TextureBuffer::NewReaderId();
+            m_textureDevice = device;
+
+            winrt::com_ptr<IDXGIAdapter> adapter;
+            DXGI_ADAPTER_DESC description{};
+            if (auto dxgiDevice = device.try_as<IDXGIDevice>(); dxgiDevice &&
+                SUCCEEDED(dxgiDevice->GetAdapter(adapter.put())) && SUCCEEDED(adapter->GetDesc(&description)))
+            {
+                m_textureAdapter = description.AdapterLuid;
+            }
+        }
+
+        // A WARP renderer, or a hybrid laptop decoding on the other GPU.
+        const LUID adapter = texture.adapter_luid();
+        if (adapter.LowPart != m_textureAdapter.LowPart || adapter.HighPart != m_textureAdapter.HighPart)
+        {
+            return E_FAIL;
+        }
+
+        if (texture.ring_id() != m_textureRing)
+        {
+            m_textureRing = texture.ring_id();
+            m_textureFence = nullptr;
+            m_textures.clear();
+
+            auto device5 = device.try_as<ID3D11Device5>();
+            if (device5 == nullptr)
+            {
+                return E_NOINTERFACE;
+            }
+
+            ReturnIfFailed(result, device5->OpenSharedFence(texture.fence_handle(), IID_PPV_ARGS(m_textureFence.put())));
+        }
+
+        auto& opened = m_textures[texture.slot()];
+        if (opened == nullptr)
+        {
+            auto device1 = device.try_as<ID3D11Device1>();
+            if (device1 == nullptr)
+            {
+                return E_NOINTERFACE;
+            }
+
+            ReturnIfFailed(result, device1->OpenSharedResource1(texture.texture_handle(), IID_PPV_ARGS(opened.put())));
+        }
+
+        auto surface = opened.try_as<IDXGISurface>();
+        if (surface == nullptr || m_textureFence == nullptr)
+        {
+            return E_FAIL;
+        }
+
+        if (m_textureMultithread)
+        {
+            m_textureMultithread->Enter();
+        }
+
+        // On the GPU: the draw below waits for the decoder's copy into this slot, and the
+        // CPU does not.
+        result = m_textureContext->Wait(m_textureFence.get(), texture.fence_value());
+
+        if (m_textureMultithread)
+        {
+            m_textureMultithread->Leave();
+        }
+
+        if (FAILED(result))
+        {
+            return result;
+        }
+
+        const DXGI_COLOR_SPACE_TYPE colorSpace = texture.bt709()
+            ? (texture.full_range() ? DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P709 : DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P709)
+            : (texture.full_range() ? DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P601 : DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P601);
+
+        IDXGISurface* surfaces[] = { surface.get() };
+        winrt::com_ptr<ID2D1ImageSource> source;
+        ReturnIfFailed(result, d2dContext2->CreateImageSourceFromDxgi(surfaces, 1, colorSpace, D2D1_IMAGE_SOURCE_FROM_DXGI_OPTIONS_NONE, source.put()));
+
+        // The texture is rounded up to even sizes; only the visible area is drawn.
+        const D2D1_RECT_F visible = D2D1::RectF(0, 0, static_cast<float>(width), static_cast<float>(height));
+        const D2D1_POINT_2F offset = D2D1::Point2F(x, y);
+
+        d2dContext->Clear();
+        d2dContext->SetTransform(matrix);
+        d2dContext->DrawImage(source.get(), &offset, &visible);
+        return S_OK;
+    }
+
+    HRESULT DrawI420(ID2D1DeviceContext* d2dContext, rtc::scoped_refptr<webrtc::I420BufferInterface> const& buffer,
+        D2D1::Matrix3x2F const& matrix, float x, float y, int32_t width, int32_t height)
+    {
+        HRESULT result = S_OK;
+
         if (m_shader == nullptr ||
             m_bitmapSize.width != width ||
             m_bitmapSize.height != height)
@@ -901,21 +1158,13 @@ public:
 
         if (m_shader && m_surface)
         {
-            if (m_mirrored)
-            {
-                matrix = matrix * D2D1::Matrix3x2F::Scale(m_mirrored ? -1 : 1, 1, D2D1::Point2F(finalSize.cx / 2, finalSize.cy / 2));
-            }
-
-            matrix._31 += offset.x;
-            matrix._32 += offset.y;
-
             d2dContext->Clear();
             d2dContext->SetTransform(matrix);
             d2dContext->DrawImage(m_shader.get(), D2D1::Point2F(x, y));
         }
 
     Cleanup:
-        return m_surface->EndDraw();
+        return result;
     }
 
     void OnFrame(const webrtc::VideoFrame& frame) override
