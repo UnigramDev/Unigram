@@ -889,15 +889,29 @@ namespace Telegram.Services
 
                 var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.VideoGeneration);
 
-                if (generation.HasRectangle)
+                // The video's first frame as sent: at the trim start, with what was drawn on it.
+                if (generation.HasRectangle || generation.HasOverlay)
                 {
                     var image = new ImageGeneration
                     {
-                        Rectangle = generation.Rectangle,
                         Rotation = generation.Rotation,
                         Flip = generation.Flip,
-                        Angle = generation.Angle
+                        Angle = generation.Angle,
+                        Strokes = generation.Strokes,
+                        Entities = generation.Entities,
+                        TrimStartTime = generation.TrimStartTime ?? TimeSpan.Zero
                     };
+
+                    if (generation.HasRectangle)
+                    {
+                        image.Rectangle = generation.Rectangle;
+                    }
+
+                    // The transcode fails on a missing sticker; the thumbnail goes without it.
+                    if (generation.Entities is { Count: > 0 })
+                    {
+                        await PaintEntityRenderer.LoadFilesAsync(_clientService, generation.Entities);
+                    }
 
                     await ImageHelper.CropRotatedAsync(file, temp, image, 320);
                 }
@@ -905,7 +919,7 @@ namespace Telegram.Services
                 {
                     var rectangle = generation.CropRectangle;
 
-                    await ImageHelper.CropAsync(file, temp, rectangle, 320, 0, rotation: generation.Rotation, flip: generation.Flip, bestQuality: false);
+                    await ImageHelper.CropAsync(file, temp, rectangle, 320, 0, rotation: generation.Rotation, flip: generation.Flip, trimStart: generation.TrimStartTime, bestQuality: false);
 
                     //var drawing = generation.Strokes;
                     //if (drawing != null && drawing.Count > 0)

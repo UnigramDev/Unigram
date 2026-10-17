@@ -542,7 +542,7 @@ namespace Telegram.Common
         /// </summary>
         public static async Task<StorageFile> CropRotatedAsync(StorageFile sourceFile, StorageFile file, ImageGeneration generation, int min = 1280, int max = 0)
         {
-            using (var source = await OpenReadAsync(sourceFile))
+            using (var source = await OpenReadAsync(sourceFile, generation.TrimStartTime))
             using (var target = await RenderRotatedAsync(source, generation, min, max, true))
             using (var destination = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
