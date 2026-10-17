@@ -2,6 +2,7 @@
 
 #include "Media/VideoTranscoderLayer.g.h"
 
+#include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Numerics.h>
 #include <winrt/Windows.Storage.Streams.h>
 
@@ -26,6 +27,9 @@ namespace winrt::Telegram::Native::Media::implementation
         int32_t PixelHeight() const { return m_pixelHeight; }
         void PixelHeight(int32_t value) { m_pixelHeight = value; }
 
+        winrt::Windows::Foundation::Rect Crop() const { return m_crop; }
+        void Crop(winrt::Windows::Foundation::Rect const& value) { m_crop = value; }
+
         winrt::Windows::Foundation::Numerics::float3x2 Transform() const { return m_transform; }
         void Transform(winrt::Windows::Foundation::Numerics::float3x2 const& value) { m_transform = value; }
 
@@ -38,6 +42,7 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::Telegram::Native::VideoAnimation m_video{ nullptr };
         int32_t m_pixelWidth{ 0 };
         int32_t m_pixelHeight{ 0 };
+        winrt::Windows::Foundation::Rect m_crop{};
         winrt::Windows::Foundation::Numerics::float3x2 m_transform{ winrt::Windows::Foundation::Numerics::float3x2::identity() };
         bool m_white{ false };
     };

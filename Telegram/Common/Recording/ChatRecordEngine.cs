@@ -685,6 +685,7 @@ namespace Telegram.Common.Recording
                 {
                     Transcode = true,
                     Rectangle = rectangle,
+                    RoundOverlay = true,
                     OutputSize = new Size(length, length),
                     Flip = mirroring ? ImageFlip.Horizontal : ImageFlip.None,
                     Width = (uint)length,

@@ -24,6 +24,7 @@ using Telegram.Native.Media;
 using Telegram.Native.Opus;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -536,6 +537,12 @@ namespace Telegram.Services
                         await AddOverlaysAsync(options, generation, output, transform, new Vector2((float)probe.Width, (float)probe.Height), animations);
                     }
 
+                    if (generation.RoundOverlay)
+                    {
+                        options.RoundBlur = true;
+                        await AddRoundOverlayAsync(options, output, animations);
+                    }
+
                     var id = update.GenerationId;
                     var handler = new VideoTranscoderProgressHandler(progress => _clientService.Send(new SetFileGenerationProgress(id, 100, (long)(progress * 100))));
 
@@ -559,8 +566,68 @@ namespace Telegram.Services
             }
         }
 
-        // The phone's cap on an animated sticker's frames, in pixels a side.
+        // The cap on an animated sticker's frames, in pixels a side.
         private const int OverlayAnimationSide = 512;
+
+        // A video note's marks, white in the corners the circle leaves out, sized as the official
+        // apps size them against a 1536 pixel side: the name bottom right, and the plane bottom
+        // left, cut from the middle of its animation's frame.
+        private static async Task AddRoundOverlayAsync(VideoTranscoderOptions options, Size output, List<IDisposable> animations)
+        {
+            var width = (float)output.Width;
+            var height = (float)output.Height;
+
+            var textSide = (int)Math.Round(width * 372 / 1536);
+            if (textSide > 0)
+            {
+                var device = ElementComposition.GetSharedDevice();
+
+                using var bitmap = await CanvasBitmap.LoadAsync(device, new Uri("ms-appx:///Assets/Images/VideoNoteText.png"));
+                using var target = new CanvasRenderTarget(device, textSide, textSide, 96);
+
+                using (var session = target.CreateDrawingSession())
+                {
+                    session.Clear(Windows.UI.Colors.Transparent);
+                    session.DrawImage(bitmap, new Rect(0, 0, textSide, textSide), bitmap.Bounds, 1, CanvasImageInterpolation.HighQualityCubic);
+                }
+
+                var pixels = BufferSurface.Create((uint)(textSide * textSide * 4));
+                target.GetPixelBytes(pixels);
+
+                options.AddLayer(new VideoTranscoderLayer
+                {
+                    Pixels = pixels,
+                    PixelWidth = textSide,
+                    PixelHeight = textSide,
+                    Transform = Matrix3x2.CreateTranslation(width - textSide, height - textSide),
+                    White = true
+                });
+            }
+
+            var logoSize = (int)Math.Round(width * 0.2f);
+            var logoMargin = (int)Math.Round(width * 28 / 1536);
+            var logoSide = logoSize - logoMargin * 2;
+
+            if (logoSide > 0)
+            {
+                var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Animations", "VideoNoteLogo.json");
+
+                var lottie = LottieAnimation.LoadFromFile(path, logoSize, logoSize, false, null);
+                if (lottie != null)
+                {
+                    animations.Add(lottie);
+                    options.AddLayer(new VideoTranscoderLayer
+                    {
+                        Lottie = lottie,
+                        PixelWidth = lottie.PixelWidth,
+                        PixelHeight = lottie.PixelHeight,
+                        Crop = new Rect(logoMargin, logoMargin, logoSide, logoSide),
+                        Transform = Matrix3x2.CreateTranslation(-logoMargin, height - logoSide - logoMargin),
+                        White = true
+                    });
+                }
+            }
+        }
 
         // The edit, drawn over the video in the order it was made: strokes and still objects baked
         // into one image per run, the size of the output, and each animated sticker a layer of its

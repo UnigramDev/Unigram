@@ -2539,6 +2539,7 @@
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <Content Include="Assets\Animations\DeviceAndroid.json" />
+    <Content Include="Assets\Animations\VideoNoteLogo.json" />
     <Content Include="Assets\Animations\DeviceChrome.json" />
     <Content Include="Assets\Animations\DeviceEdge.json" />
     <Content Include="Assets\Animations\DeviceFirefox.json" />
@@ -2580,6 +2581,7 @@
     <Content Include="Assets\mp4.html" />
     <Content Include="Assets\hls.html" />
     <Content Include="Assets\shapes.dat" />
+    <Content Include="Assets\Images\VideoNoteText.png" />
     <Content Include="Assets\hls.js" />
     <Content Include="Assets\Images\ArrowLeft.scale-100.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-125.png" />

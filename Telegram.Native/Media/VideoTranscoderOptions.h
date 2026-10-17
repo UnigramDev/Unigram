@@ -45,6 +45,9 @@ namespace winrt::Telegram::Native::Media::implementation
         bool HardwareEncoding() const { return m_hardwareEncoding; }
         void HardwareEncoding(bool value) { m_hardwareEncoding = value; }
 
+        bool RoundBlur() const { return m_roundBlur; }
+        void RoundBlur(bool value) { m_roundBlur = value; }
+
         void AddLayer(winrt::Telegram::Native::Media::VideoTranscoderLayer const& layer) { m_layers.push_back(layer); }
         const std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer>& Layers() const { return m_layers; }
 
@@ -60,6 +63,7 @@ namespace winrt::Telegram::Native::Media::implementation
         int32_t m_videoBitrate{ 0 };
         int32_t m_maxFrameRate{ 0 };
         bool m_hardwareEncoding{ true };
+        bool m_roundBlur{ false };
         std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer> m_layers;
     };
 }

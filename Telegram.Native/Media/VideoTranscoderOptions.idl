@@ -32,6 +32,10 @@ namespace Telegram.Native.Media
         // Lets a hardware encoder be tried before Windows' software one.
         Boolean HardwareEncoding;
 
+        // Outside the ellipse the output fits, the frame blurred and darkened: a video note's
+        // corners, which only a player that shows the whole square ever sees.
+        Boolean RoundBlur;
+
         // Drawn over every frame, each over the ones added before it.
         void AddLayer(VideoTranscoderLayer layer);
     }

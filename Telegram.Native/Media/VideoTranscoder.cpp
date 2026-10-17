@@ -224,6 +224,9 @@ namespace winrt::Telegram::Native::Media::implementation
             uint32_t height{ 0 };
             bool white{ false };
 
+            D2D1_RECT_F crop{};
+            bool cropped{ false };
+
             winrt::Windows::Storage::Streams::Buffer buffer{ nullptr };
             std::vector<uint8_t> pixels;
 
@@ -255,6 +258,16 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::com_ptr<ID3D11VideoProcessorEnumerator> enumerator;
             winrt::com_ptr<ID3D11VideoProcessor> processor;
             winrt::com_ptr<ID3D11VideoProcessorInputView> inputView;
+
+            // Only with RoundBlur: the sharp frame, drawn first so that it can be both shrunk
+            // and kept inside the circle.
+            winrt::com_ptr<ID2D1Bitmap1> frame;
+            winrt::com_ptr<ID2D1Bitmap1> reduced;
+            winrt::com_ptr<ID2D1Bitmap1> blurred;
+            winrt::com_ptr<ID2D1Effect> border;
+            winrt::com_ptr<ID2D1Effect> blur;
+            winrt::com_ptr<ID2D1BitmapBrush1> sharp;
+            winrt::com_ptr<ID2D1SolidColorBrush> shade;
 
             bool video{ false };
             uint32_t width{ 0 };
@@ -410,6 +423,13 @@ namespace winrt::Telegram::Native::Media::implementation
                     const auto matrix = layer.Transform();
                     item.transform = D2D1_MATRIX_3X2_F{ matrix.m11, matrix.m12, matrix.m21, matrix.m22, matrix.m31, matrix.m32 };
 
+                    const auto crop = layer.Crop();
+                    if (crop.Width > 0 && crop.Height > 0)
+                    {
+                        item.crop = D2D1::RectF(crop.X, crop.Y, crop.X + crop.Width, crop.Y + crop.Height);
+                        item.cropped = true;
+                    }
+
                     const size_t size = static_cast<size_t>(item.width) * item.height * 4;
                     if (size == 0)
                     {
@@ -537,20 +557,78 @@ namespace winrt::Telegram::Native::Media::implementation
                 }
             }
 
+            // The frame shrunk this far, blurred, and drawn at a quarter of its brightness: the
+            // official apps' corners, which their white marks stay readable on.
+            static constexpr uint32_t RoundBlurSide = 48;
+
+            // The standard deviation of the official apps' 9-tap kernel, in pixels of the shrunk
+            // frame.
+            static constexpr float RoundBlurDeviation = 1.7f;
+
+            void CreateRoundBlur()
+            {
+                auto format = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+                auto drawable = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, format);
+
+                winrt::check_hresult(context->CreateBitmap(D2D1::SizeU(width, height), nullptr, 0, drawable, frame.put()));
+                winrt::check_hresult(context->CreateBitmap(D2D1::SizeU(RoundBlurSide, RoundBlurSide), nullptr, 0, drawable, reduced.put()));
+                winrt::check_hresult(context->CreateBitmap(D2D1::SizeU(RoundBlurSide, RoundBlurSide), nullptr, 0, drawable, blurred.put()));
+
+                // Clamped, so that the edges blur with their own colour rather than with transparency.
+                winrt::check_hresult(context->CreateEffect(CLSID_D2D1Border, border.put()));
+                border->SetInput(0, reduced.get());
+                winrt::check_hresult(border->SetValue(D2D1_BORDER_PROP_EDGE_MODE_X, D2D1_BORDER_EDGE_MODE_CLAMP));
+                winrt::check_hresult(border->SetValue(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP));
+
+                winrt::check_hresult(context->CreateEffect(CLSID_D2D1GaussianBlur, blur.put()));
+                blur->SetInputEffect(0, border.get());
+                winrt::check_hresult(blur->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, RoundBlurDeviation));
+                winrt::check_hresult(blur->SetValue(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, D2D1_GAUSSIANBLUR_OPTIMIZATION_QUALITY));
+                winrt::check_hresult(blur->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD));
+
+                winrt::check_hresult(context->CreateBitmapBrush(frame.get(), sharp.put()));
+                winrt::check_hresult(context->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0.75f), shade.put()));
+            }
+
             // Draws a BGRA frame through the transform onto black.
             void Draw(const uint8_t* pixels, uint32_t stride, const D2D1_MATRIX_3X2_F& transform)
             {
                 winrt::check_hresult(source->CopyFromMemory(nullptr, pixels, stride));
 
                 context->BeginDraw();
+                context->SetTarget(frame ? frame.get() : target.get());
                 context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
                 context->SetTransform(transform);
                 context->DrawBitmap(source.get(), nullptr, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, nullptr, nullptr);
 
+                if (frame)
+                {
+                    const auto side = static_cast<float>(RoundBlurSide);
+                    const auto bounds = D2D1::RectF(0, 0, side, side);
+
+                    context->SetTarget(reduced.get());
+                    context->SetTransform(D2D1::Matrix3x2F::Scale(side / width, side / height));
+                    context->DrawBitmap(frame.get(), nullptr, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, nullptr, nullptr);
+
+                    context->SetTarget(blurred.get());
+                    context->SetTransform(D2D1::Matrix3x2F::Identity());
+                    context->DrawImage(blur.get(), nullptr, &bounds, D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_COPY);
+
+                    context->SetTarget(target.get());
+                    context->SetTransform(D2D1::Matrix3x2F::Scale(width / side, height / side));
+                    context->DrawBitmap(blurred.get(), nullptr, 1.0f, D2D1_INTERPOLATION_MODE_LINEAR, nullptr, nullptr);
+
+                    context->SetTransform(D2D1::Matrix3x2F::Identity());
+                    context->FillRectangle(D2D1::RectF(0, 0, static_cast<float>(width), static_cast<float>(height)), shade.get());
+                    context->FillEllipse(D2D1::Ellipse(D2D1::Point2F(width / 2.0f, height / 2.0f), width / 2.0f, height / 2.0f), sharp.get());
+                }
+
                 for (auto const& item : overlays)
                 {
+                    const auto crop = item.cropped ? &item.crop : nullptr;
+
                     context->SetTransform(item.transform);
-                    context->DrawBitmap(item.bitmap.get(), nullptr, 1.0f, item.interpolation, nullptr, nullptr);
+                    context->DrawBitmap(item.bitmap.get(), crop, 1.0f, item.interpolation, crop, nullptr);
                 }
 
                 context->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -1028,6 +1106,11 @@ namespace winrt::Telegram::Native::Media::implementation
 
         Compositor compositor;
         compositor.Create(sourceWidth, sourceHeight, width, height);
+
+        if (options.RoundBlur())
+        {
+            compositor.CreateRoundBlur();
+        }
         compositor.AddLayers(winrt::get_self<implementation::VideoTranscoderOptions>(options)->Layers());
 
         // Video encoder: a hardware one when allowed and the GPU can convert frames for it, Windows'

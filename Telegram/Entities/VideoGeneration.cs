@@ -57,6 +57,12 @@ namespace Telegram.Entities
 
         public IReadOnlyList<PaintEntity> Entities { get; set; }
 
+        /// <summary>
+        /// A video note's corners: blurred and darkened outside the circle, with the name and the
+        /// plane in white.
+        /// </summary>
+        public bool RoundOverlay { get; set; }
+
         public bool HasOverlay => Strokes is { Count: > 0 } || Entities is { Count: > 0 };
 
         public bool HasRectangle => Rectangle.Width > 0 && Rectangle.Height > 0;

@@ -20,6 +20,9 @@ namespace Telegram.Native.Media
         Int32 PixelWidth;
         Int32 PixelHeight;
 
+        // The part of the layer's pixels that is drawn; empty for all of them.
+        Windows.Foundation.Rect Crop;
+
         // From the layer's pixels to the output's.
         Windows.Foundation.Numerics.Matrix3x2 Transform;
 
