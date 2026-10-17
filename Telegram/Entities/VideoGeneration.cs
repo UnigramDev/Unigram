@@ -24,7 +24,6 @@ namespace Telegram.Entities
         public TimeSpan? TrimStartTime { get; set; }
         public TimeSpan? TrimStopTime { get; set; }
 
-        public bool Transform { get; set; }
         public ImageRotation Rotation { get; set; }
         public ImageFlip Flip { get; set; }
 
@@ -44,12 +43,6 @@ namespace Telegram.Entities
         /// fitted to the quality picked or else to the longest side allowed.
         /// </summary>
         public Size OutputSize { get; set; }
-
-        /// <summary>
-        /// The crop in pixels of the frame once turned and flipped, for video notes, which crop
-        /// by hand rather than through the editor.
-        /// </summary>
-        public Rect CropRectangle { get; set; }
 
         /// <summary>
         /// The longest side of the cropped output at the quality picked; 0 for none.

@@ -147,7 +147,6 @@ namespace Telegram.Entities
             {
                 Mute = true,
                 Transcode = true,
-                Transform = true,
                 OutputSize = new Size(ProfileSide, ProfileSide),
                 VideoBitrate = ProfileBitrate,
                 Rectangle = state.Rectangle,
@@ -223,7 +222,6 @@ namespace Telegram.Entities
                 conversion.Rotation = state.Rotation;
                 conversion.Flip = state.Flip;
                 conversion.Transcode = true;
-                conversion.Transform = true;
             }
 
             return conversion;

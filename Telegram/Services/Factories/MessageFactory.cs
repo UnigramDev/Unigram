@@ -103,11 +103,6 @@ namespace Telegram.Services.Factories
                 videoWidth = (int)output.Width;
                 videoHeight = (int)output.Height;
             }
-            else if (generation.Transform && !generation.CropRectangle.IsEmpty)
-            {
-                videoWidth = (int)generation.CropRectangle.Width;
-                videoHeight = (int)generation.CropRectangle.Height;
-            }
 
             var serialized = JsonSerializer.Serialize(generation, GenerationJsonContext.Default.VideoGeneration);
             var generated = await GenerationService.PrepareAsync(video.File, ConversionType.Transcode, serialized);

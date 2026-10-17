@@ -132,11 +132,6 @@ namespace Telegram.Services
                 originalWidth = output.Width;
                 originalHeight = output.Height;
             }
-            else if (!video.CropRectangle.IsEmpty)
-            {
-                originalWidth = video.CropRectangle.Width;
-                originalHeight = video.CropRectangle.Height;
-            }
 
             double ratioX = 90 / originalWidth;
             double ratioY = 90 / originalHeight;
@@ -807,10 +802,6 @@ namespace Telegram.Services
                 var rectangle = generation.Rectangle;
                 return new Rect(rectangle.X * orientedWidth, rectangle.Y * orientedHeight, rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
             }
-            else if (generation.CropRectangle.Width > 0 && generation.CropRectangle.Height > 0)
-            {
-                return generation.CropRectangle;
-            }
 
             return new Rect(0, 0, orientedWidth, orientedHeight);
         }
@@ -914,18 +905,6 @@ namespace Telegram.Services
                     }
 
                     await ImageHelper.CropRotatedAsync(file, temp, image, 320);
-                }
-                else if (args.Length > 3)
-                {
-                    var rectangle = generation.CropRectangle;
-
-                    await ImageHelper.CropAsync(file, temp, rectangle, 320, 0, rotation: generation.Rotation, flip: generation.Flip, trimStart: generation.TrimStartTime, bestQuality: false);
-
-                    //var drawing = generation.Strokes;
-                    //if (drawing != null && drawing.Count > 0)
-                    //{
-                    //    await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, generation.Rotation, generation.Flip);
-                    //}
                 }
                 else
                 {

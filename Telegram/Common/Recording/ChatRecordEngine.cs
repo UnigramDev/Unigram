@@ -667,21 +667,14 @@ namespace Telegram.Common.Recording
             if (mode == ChatRecordMode.Video)
             {
                 var props = await file.Properties.GetVideoPropertiesAsync();
-                var width = props.GetWidth();
-                var height = props.GetHeight();
-                var x = 0d;
-                var y = 0d;
+                double width = props.GetWidth();
+                double height = props.GetHeight();
 
-                if (width > height)
-                {
-                    x = (width - height) / 2;
-                    width = height;
-                }
-                else if (height > width)
-                {
-                    y = (height - width) / 2;
-                    height = width;
-                }
+                // The centred square, as fractions of the frame.
+                var side = Math.Min(width, height);
+                var rectangle = side > 0
+                    ? new Rect((width - side) / 2 / width, (height - side) / 2 / height, side / width, side / height)
+                    : default;
 
                 var length = viewModel.ClientService.Options.SuggestedVideoNoteLength;
                 var videoBitrate = viewModel.ClientService.Options.SuggestedVideoNoteVideoBitrate;
@@ -691,8 +684,7 @@ namespace Telegram.Common.Recording
                 var generation = new VideoGeneration
                 {
                     Transcode = true,
-                    Transform = true,
-                    CropRectangle = new Rect(x, y, width, height),
+                    Rectangle = rectangle,
                     OutputSize = new Size(length, length),
                     Flip = mirroring ? ImageFlip.Horizontal : ImageFlip.None,
                     Width = (uint)length,
