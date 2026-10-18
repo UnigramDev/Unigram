@@ -15,6 +15,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using XamlTextBlock = Windows.UI.Xaml.Controls.TextBlock;
 
 namespace Telegram.Controls.RichEditor
 {
@@ -214,9 +215,15 @@ namespace Telegram.Controls.RichEditor
             UpdatePlaceholder();
 
             // What a line with no strong character of its own reads as: the editor's direction,
-            // which is the article's, or the app's for a message's text. Kept with the rest, as
-            // the article's direction can change under a line that did not.
+            // which is the article's, or the app's for a message's text, or the keyboard's while
+            // the line is typed in. Kept with the rest, as the article's direction can change
+            // under a line that did not.
             var rightToLeft = FlowDirection == FlowDirection.RightToLeft;
+
+            if (_neutralRightToLeft is bool neutral && _leaf.Direction == TextDirectionality.Neutral)
+            {
+                rightToLeft = neutral;
+            }
 
             if (ReferenceEquals(_renderedLeaf, _leaf) && _renderedVersion == _leaf.Version && _renderedLanguage == _language && _renderedRightToLeft == rightToLeft)
             {
@@ -300,7 +307,45 @@ namespace Telegram.Controls.RichEditor
             var visible = _leaf.IsEmpty && !string.IsNullOrEmpty(_placeholderText);
             Placeholder.Text = visible ? _placeholderText : string.Empty;
             Placeholder.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            // On the side the caret is, which is where the typing it stands for will start. Its
+            // alignment, not its direction: the hint is in the app's language and reads the
+            // app's way, and turned round its punctuation went to the other end. Left and
+            // Right are the start and the end, of the editor's direction.
+            if (_neutralRightToLeft is bool neutral)
+            {
+                Placeholder.TextAlignment = neutral == (FlowDirection == FlowDirection.RightToLeft) ? TextAlignment.Left : TextAlignment.Right;
+            }
+            else
+            {
+                Placeholder.ClearValue(XamlTextBlock.TextAlignmentProperty);
+            }
         }
+
+        /// <summary>
+        /// The direction a line with no strong character of its own reads in, in place of the
+        /// editor's: the keyboard's, while the caret is in it. Null for the editor's.
+        /// </summary>
+        public bool? NeutralRightToLeft
+        {
+            get => _neutralRightToLeft;
+            set
+            {
+                if (_neutralRightToLeft == value)
+                {
+                    return;
+                }
+
+                _neutralRightToLeft = value;
+
+                if (_leaf != null && _leaf.Direction == TextDirectionality.Neutral)
+                {
+                    Render();
+                }
+            }
+        }
+
+        private bool? _neutralRightToLeft;
 
         private void BuildParts()
         {

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using Telegram.Services;
 using Windows.Foundation;
+using Windows.Globalization;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Text.Core;
@@ -128,6 +129,10 @@ namespace Telegram.Controls.RichEditor
             {
                 var manager = CoreTextServicesManager.GetForCurrentView();
                 _editContext = manager.CreateEditContext();
+
+                // The manager lives as long as the view, which outlives this control.
+                _textServices = manager;
+                _textServices.InputLanguageChanged += OnInputLanguageChanged;
             }
             catch
             {
@@ -136,6 +141,8 @@ namespace Telegram.Controls.RichEditor
                 _editContext = null;
                 return;
             }
+
+            UpdateKeyboardDirection();
 
             _editContext.InputScope = GetInputScope(_engine?.Focus.Leaf);
             _editContext.InputPaneDisplayPolicy = CoreTextInputPaneDisplayPolicy.Automatic;
@@ -171,6 +178,38 @@ namespace Telegram.Controls.RichEditor
             ReleaseEditContext();
         }
 
+        private CoreTextServicesManager _textServices;
+
+        // Whether the keyboard writes right to left. What has no direction of its own goes its
+        // way while it is typed in: the caret's line before its first letter, and the caret's
+        // flag, as Windows draws it for a right to left keyboard.
+        private bool _keyboardRightToLeft;
+
+        private void OnInputLanguageChanged(CoreTextServicesManager sender, object args)
+        {
+            UpdateKeyboardDirection();
+        }
+
+        private void UpdateKeyboardDirection()
+        {
+            var rightToLeft = false;
+
+            try
+            {
+                rightToLeft = _textServices?.InputLanguage?.LayoutDirection == LanguageLayoutDirection.Rtl;
+            }
+            catch
+            {
+                // No input language to be had: the keyboard reads as the app does.
+            }
+
+            if (_keyboardRightToLeft != rightToLeft)
+            {
+                _keyboardRightToLeft = rightToLeft;
+                UpdateCaret(false);
+            }
+        }
+
         private void ReleaseEditContext()
         {
             if (_editContext == null)
@@ -195,6 +234,12 @@ namespace Telegram.Controls.RichEditor
             _editContext.FocusRemoved -= OnFocusRemoved;
 
             _editContext = null;
+
+            if (_textServices != null)
+            {
+                _textServices.InputLanguageChanged -= OnInputLanguageChanged;
+                _textServices = null;
+            }
 
             // A new context holds no text.
             _contextLeaf = null;
@@ -251,6 +296,9 @@ namespace Telegram.Controls.RichEditor
             {
                 return;
             }
+
+            // The keyboard may have been switched while focus was elsewhere.
+            UpdateKeyboardDirection();
 
             // The service keeps its own copy of the text across focus, and a change made while
             // focus was away was never reported to it: typing would go in where it remembers the

@@ -53,6 +53,7 @@ namespace Telegram.Controls.RichEditor
         private readonly List<(int Start, int End)> _markRanges = new();
         private Border NodeOutline;
         private Rectangle Caret;
+        private Polygon CaretFlag;
         private RichSelectionGripper StartGripper;
         private RichSelectionGripper EndGripper;
 
@@ -237,6 +238,7 @@ namespace Telegram.Controls.RichEditor
             _spellingWidths.Clear();
             NodeOutline = GetTemplateChild(nameof(NodeOutline)) as Border;
             Caret = GetTemplateChild(nameof(Caret)) as Rectangle;
+            CaretFlag = GetTemplateChild(nameof(CaretFlag)) as Polygon;
             StartGripper = GetTemplateChild(nameof(StartGripper)) as RichSelectionGripper;
             EndGripper = GetTemplateChild(nameof(EndGripper)) as RichSelectionGripper;
 
@@ -2165,6 +2167,9 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
+            // First, as it can lay the caret's line out again in the other direction.
+            UpdateKeyboardLine();
+
             // Over a selection too, at the end that moves, except where grippers or whole cells
             // stand for it.
             var visible = _hasFocus && _engine.SelectedNode == null && _selectedCells.Count == 0
@@ -2186,11 +2191,28 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            Canvas.SetLeft(Caret, Math.Round(rect.X));
+            var flag = CaretFlagSize();
+            var mirrored = FlowDirection == FlowDirection.RightToLeft;
+
+            // Inside the surface, flag and all: a line starting at the far edge - an empty right
+            // to left one starts at it - put the bar just past it, and only the flag showed. At
+            // the near edge the bar moves over for the flag, as CTextBoxView::UpdateCaretElement
+            // does. The flag is on the left, which a mirrored canvas counts from the other side.
+            var left = Math.Round(rect.X);
+            var min = mirrored ? 0 : flag;
+            var max = Surface.ActualWidth - Caret.Width - (mirrored ? flag : 0);
+
+            if (max >= min)
+            {
+                left = Math.Clamp(left, min, max);
+            }
+
+            Canvas.SetLeft(Caret, left);
             Canvas.SetTop(Caret, rect.Y);
             Caret.Height = rect.Height;
             Caret.Visibility = Visibility.Visible;
 
+            UpdateCaretFlag(left, rect.Y, flag);
             RestartBlink();
 
             if (reveal)
@@ -2234,6 +2256,15 @@ namespace Telegram.Controls.RichEditor
             visual.Opacity = 1;
             visual.StartAnimation("Opacity", _blink);
 
+            // Started together, so the two keep time.
+            if (CaretFlag != null)
+            {
+                var flag = ElementCompositionPreview.GetElementVisual(CaretFlag);
+                flag.StopAnimation("Opacity");
+                flag.Opacity = 1;
+                flag.StartAnimation("Opacity", _blink);
+            }
+
             _blinking = true;
         }
 
@@ -2241,6 +2272,12 @@ namespace Telegram.Controls.RichEditor
         private void HideCaret()
         {
             Caret.Visibility = Visibility.Collapsed;
+
+            if (CaretFlag != null)
+            {
+                CaretFlag.Visibility = Visibility.Collapsed;
+            }
+
             StopBlink();
         }
 
@@ -2256,6 +2293,81 @@ namespace Telegram.Controls.RichEditor
             var visual = ElementCompositionPreview.GetElementVisual(Caret);
             visual.StopAnimation("Opacity");
             visual.Opacity = 1;
+
+            if (CaretFlag != null)
+            {
+                var flag = ElementCompositionPreview.GetElementVisual(CaretFlag);
+                flag.StopAnimation("Opacity");
+                flag.Opacity = 1;
+            }
+        }
+
+        /// <summary>
+        /// The caret's flag, shown while the keyboard writes right to left, beside the bar on its
+        /// reading side, as CTextBoxView::UpdateCaretElement places it: 2 DIPs, rounded up to whole
+        /// pixels (GetRTLIndicatorSize).
+        /// </summary>
+        private void UpdateCaretFlag(double left, double top, double size)
+        {
+            if (CaretFlag == null)
+            {
+                return;
+            }
+
+            if (size <= 0)
+            {
+                CaretFlag.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            CaretFlag.Width = size;
+            CaretFlag.Height = size;
+
+            // A mirrored editor mirrors the canvas too: the bar's left there is where it ends.
+            Canvas.SetLeft(CaretFlag, FlowDirection == FlowDirection.RightToLeft ? left + Caret.Width : left - size);
+            Canvas.SetTop(CaretFlag, top);
+            CaretFlag.Visibility = Visibility.Visible;
+        }
+
+        // How wide the flag is, 0 when there is none.
+        private double CaretFlagSize()
+        {
+            if (CaretFlag == null || !_keyboardRightToLeft)
+            {
+                return 0;
+            }
+
+            var scale = XamlRoot?.RasterizationScale ?? 1;
+            return Math.Ceiling(2 * scale) / scale;
+        }
+
+        // The view of the caret's line, which reads the keyboard's way while it has no strong
+        // character of its own; the one before it goes back to the editor's.
+        private RichLeafView _keyboardLine;
+
+        private void UpdateKeyboardLine()
+        {
+            RichLeafView view = null;
+
+            if (_hasFocus && _engine != null && _engine.SelectedNode == null)
+            {
+                _leafViews.TryGetValue(_engine.Focus.Leaf, out view);
+            }
+
+            if (!ReferenceEquals(view, _keyboardLine))
+            {
+                if (_keyboardLine != null)
+                {
+                    _keyboardLine.NeutralRightToLeft = null;
+                }
+
+                _keyboardLine = view;
+            }
+
+            if (view != null)
+            {
+                view.NeutralRightToLeft = _keyboardRightToLeft;
+            }
         }
 
         private void BringIntoView(Rect rect)

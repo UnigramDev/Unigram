@@ -302,6 +302,19 @@
                                                Width="1.5"
                                                Fill="{ThemeResource TextFillColorPrimaryBrush}"
                                                Visibility="Collapsed" />
+                                    <!--  The flag on the caret's reading side while the keyboard
+                                          writes right to left, as the system's text boxes draw it
+                                          (CTextBoxView::GenerateRTLCaret): a triangle off the top
+                                          of the bar. Left to right, so a mirrored editor does not
+                                          turn it round.  -->
+                                    <Polygon x:Name="CaretFlag"
+                                             Points="0,0 1,0 1,1"
+                                             Stretch="Fill"
+                                             Width="2"
+                                             Height="2"
+                                             FlowDirection="LeftToRight"
+                                             Fill="{ThemeResource TextFillColorPrimaryBrush}"
+                                             Visibility="Collapsed" />
                                 </Canvas>
 
                                 <Canvas x:Name="Grippers">
