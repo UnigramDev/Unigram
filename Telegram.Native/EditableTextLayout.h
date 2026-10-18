@@ -149,6 +149,7 @@ namespace winrt::Telegram::Native::implementation
         // As DWRITE_TEXT_METRICS has them: where the leftmost line starts, the widest line
         // without the white space it ends with, and the height of all of them.
         float Left() const;
+        float Right() const;
         float Width() const;
         float Height() const;
         int32_t LineCount() const;

@@ -1637,6 +1637,20 @@ namespace winrt::Telegram::Native::implementation
         return left;
     }
 
+    // Where the text on the furthest reaching line ends, its white space left out: right to left
+    // that hangs on the left, between the line's start and its text.
+    float EditableTextLayout::Right() const
+    {
+        float right = 0;
+
+        for (const Line& line : m_lines)
+        {
+            right = std::max(right, line.X + (m_format.RightToLeft ? line.Hang : 0) + line.Width);
+        }
+
+        return right;
+    }
+
     float EditableTextLayout::Width() const
     {
         float width = 0;

@@ -1452,7 +1452,12 @@ namespace winrt::Telegram::Native::implementation
         // Text with no width too - an empty line held open by a zero-width character: centred
         // in the box it was measured in, its caret is wherever the middle of that is, which
         // for an unbounded measure is nowhere near the block.
-        if (bounds.Width < availableWidth && !IsLeading())
+        //
+        // Not an edited text in a box of its own width, which is laid out in all of it: shrunk
+        // to the text, the caller places the box by the pixels the text was drawn in, a whole
+        // number of them, while the text ends where it ends, so a line against the far edge
+        // moved by a fraction of a pixel with every key.
+        if (bounds.Width < availableWidth && !IsLeading() && (m_readOnly || availableWidth > c_editingMaxWidth))
         {
             ReturnDefaultIfFailed(result, Reflow(bounds.Width));
 
@@ -1496,7 +1501,7 @@ namespace winrt::Telegram::Native::implementation
 
         if (m_editable != nullptr)
         {
-            width = std::max(m_editable->Left(), 0.0f) + m_editable->Width();
+            width = m_editable->Right();
             height = m_editable->Height();
         }
 
@@ -1514,13 +1519,17 @@ namespace winrt::Telegram::Native::implementation
                 continue;
             }
 
-            // Clamped at zero: metrics.width leaves out the whitespace a line ends with, while
-            // metrics.left is the left-most point of the text INCLUDING it - and right to left
-            // that whitespace is at the left end, so a box no wider than the text puts it
-            // outside and left comes back negative. Taken at face value it makes the surface
-            // too narrow by exactly that space, and the text runs off the end of it. Nothing
-            // can be drawn left of the origin anyway, and what is there is whitespace.
-            width = std::max(width, std::max(metrics.left, 0.0f) + metrics.width);
+            // metrics.width leaves out the whitespace a line ends with, while metrics.left is the
+            // left-most point of the text INCLUDING it - and right to left that whitespace is at
+            // the left end, so the text ends that much further right than left + width says:
+            // the surface came out short by it and the text was moved off the box's edge, a
+            // space further with every space typed. Left to right, left is clamped at zero, as
+            // nothing can be drawn left of the origin.
+            const auto right = paragraph.RightToLeft
+                ? metrics.left + metrics.widthIncludingTrailingWhitespace
+                : std::max(metrics.left, 0.0f) + metrics.width;
+
+            width = std::max(width, right);
             height = paragraph.Y + paragraph.Height;
         }
 
