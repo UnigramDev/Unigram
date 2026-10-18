@@ -220,7 +220,11 @@ namespace Telegram.Controls.RichEditor
                 _suggestionQuery = null;
             }
 
-            RemoveSuggestionPeer();
+            // Its own list only: the flyout open now may be another one.
+            if (sender is Flyout { Content: ChatTextFlyout presenter } && ReferenceEquals(presenter.ControlledList, _suggestionList))
+            {
+                RemoveSuggestionPeer();
+            }
         }
 
         private void CancelSuggestions()
@@ -239,7 +243,18 @@ namespace Telegram.Controls.RichEditor
 
             _suggestionQuery = null;
             _suggestionLeaf = null;
-            _suggestions?.Hide();
+
+            // Let go of now, not when it has closed, which is later: what is found meanwhile -
+            // the custom emoji for the emoji just picked - would be shown in the flyout that is
+            // going away, and never seen.
+            if (_suggestions != null)
+            {
+                var flyout = _suggestions;
+                _suggestions = null;
+
+                RemoveSuggestionPeer();
+                flyout.Hide();
+            }
         }
 
         /// <summary>
