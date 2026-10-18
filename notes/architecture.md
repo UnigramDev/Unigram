@@ -716,7 +716,11 @@ answers. A presenter unloaded while it plays leaves its `Dispose` to its next po
 followed by `FrameFlusher.Drain`, a last round of polls.
 A device takes **one drawing session at a time**: a second `BeginDraw` while one is open
 fails, so all drawing stays on the flusher's thread — drawing from the decode workers lost the only frame
-a still sticker draws. **Every pass is a commit, and every commit a XAML frame** on the UI thread:
+a still sticker draws. The rule is per graphics device, and the UI thread draws text on the window's
+(`DirectTextLayout`): the loader draws on one of its own (`Direct2DDevice.CreateGraphicsDevice`, given
+back with `ReleaseGraphicsDevice`), since a key's redraw that landed in a flusher pass on a shared one
+failed and `DirectTextBlock` hid the line - the composer's occasional blink. A call's video sinks
+draw on another of the window's (`Direct2D.VideoDevice`), for the same reason. **Every pass is a commit, and every commit a XAML frame** on the UI thread:
 unpaced, the flusher ran about 600 passes a second and cost the UI thread twice as much, so the clock wait
 is not a nicety. A replaced device empties every surface, and a still has no next frame to fix it: the
 loader's `RenderingDeviceReplaced` handler asks each presenter to `Redraw` the frame it holds.

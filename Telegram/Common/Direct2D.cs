@@ -45,8 +45,25 @@ namespace Telegram.Common
             }
         }
 
+        [ThreadStatic]
+        private static CompositionGraphicsDevice _video;
+
+        /// <summary>
+        /// The device a call's video is drawn on, apart from the one the window's text is: a sink
+        /// draws from its own render queue, and a device takes one drawing session at a time, so
+        /// a frame and a line of text drawn at once failed one of the two. One for the window,
+        /// as the sinks on one device share one queue.
+        /// </summary>
+        public static CompositionGraphicsDevice VideoDevice => _video ??= Current.CreateGraphicsDevice();
+
         public static void Release()
         {
+            if (_video != null)
+            {
+                _current?.ReleaseGraphicsDevice(_video);
+                _video = null;
+            }
+
             _current?.Dispose();
             _current = null;
         }
