@@ -219,6 +219,9 @@ namespace Telegram.Controls.RichEditor
                 Blocks.EffectiveViewportChanged -= OnBlocksViewportChanged;
             }
 
+            // On the caret it runs on, which the template is about to replace.
+            StopBlink();
+
             ScrollViewer = GetTemplateChild(nameof(ScrollViewer)) as ScrollViewer;
             Root = GetTemplateChild(nameof(Root)) as RichEditorColumn;
             Surface = GetTemplateChild(nameof(Surface)) as Grid;
