@@ -2828,7 +2828,6 @@ namespace Telegram.Controls
         private void Invalidate()
         {
             _renderedSize = default;
-            _renderRetries = 0;
             InvalidateMeasure();
 
             // The text is drawn in the arrange pass, and a measure does not bring one on its own:
@@ -2966,36 +2965,6 @@ namespace Telegram.Controls
         // The visuals the text itself needs. The selection and the search highlight are not
         // among them: most blocks are never selected and never searched, and a shape visual, a
         // sprite shape and a path geometry each are worth more than they look next to a draw.
-        // Bounded, so that a device that keeps refusing does not keep the dispatcher busy; a new
-        // text starts the count again.
-        private const int MaxRenderRetries = 3;
-
-        private int _renderRetries;
-        private DispatcherQueueHandler _retryRender;
-
-        private void ScheduleRenderRetry()
-        {
-            if (_renderRetries >= MaxRenderRetries || _textLength == 0)
-            {
-                return;
-            }
-
-            _renderRetries++;
-            _retryRender ??= RetryRender;
-
-            // Not from here: this runs inside the arrange pass, which an arrange asked for
-            // within itself would only repeat at once.
-            DispatcherQueue.GetForCurrentThread()?.TryEnqueue(DispatcherQueuePriority.Low, _retryRender);
-        }
-
-        private void RetryRender()
-        {
-            if (_renderedSize == default && _textLength > 0)
-            {
-                InvalidateArrange();
-            }
-        }
-
         private void EnsureVisual()
         {
             if (_visual != null)
@@ -3120,7 +3089,9 @@ namespace Telegram.Controls
             if (surface == null)
             {
                 // Nothing drawable - text that takes no width has no extent - and the brush still
-                // holds the surface of the text before it.
+                // holds the surface of the text before it. A draw that failed is not this: the
+                // layout hands its surface back all the same, and draws it again itself once
+                // the device is replaced.
                 if (_visual != null)
                 {
                     _visual.IsVisible = false;
@@ -3128,15 +3099,8 @@ namespace Telegram.Controls
 
                 // An empty line still has a caret, which sits where the line would start.
                 _contentLeft = ContentLeft(size.Width, 0);
-
-                // Or the draw itself failed for text that is there: no surface to be had, or
-                // BeginDraw refused. Nothing else would arrange the block again until it is
-                // resized, and it would stay blank over a layout that answers for its text.
-                ScheduleRenderRetry();
                 return;
             }
-
-            _renderRetries = 0;
 
             // A virtual surface draws only what is in view, so it has to be told what that is.
             TrackViewport(Layout().HasVirtualSurface);

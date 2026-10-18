@@ -2148,10 +2148,10 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
-        if (FAILED(DrawSurface()))
-        {
-            return nullptr;
-        }
+        // A draw that failed still hands the surface back: it fails when the device is lost, and
+        // OnRenderingDeviceReplaced draws it then, which only reaches the screen if the caller
+        // has it. Null is for there being nothing to draw.
+        DrawSurface();
 
         return m_surface;
     }
@@ -2732,10 +2732,9 @@ namespace winrt::Telegram::Native::implementation
 
         DiffColors();
 
-        if (FAILED(DrawVirtual()))
-        {
-            return nullptr;
-        }
+        // As Render: handed back even when the draw failed. A tile it did not get to is not
+        // marked drawn, and the next draw, or the one after the device is replaced, tries again.
+        DrawVirtual();
 
         return m_surface;
     }

@@ -134,6 +134,8 @@ namespace Telegram.Native
         // The text drawn into a surface of its own. The same surface comes back every time -
         // resized only when the text no longer fits it, and redrawn by itself when the
         // rendering device is replaced - so a brush set on it once never has to be set again.
+        // Null only when there is nothing to draw or no surface to be had: a surface whose draw
+        // failed comes back too, and is drawn when the device is replaced.
         Windows.UI.Composition.CompositionDrawingSurface Render(Windows.UI.Color color, Double rasterizationScale);
 
         // Whether that surface is a virtual one, which a long edited text on the analyzer is

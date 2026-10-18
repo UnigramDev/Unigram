@@ -425,6 +425,13 @@ To test first: each surface on Off and on its tier.
 - The keyboard staying down when a story or chat opens, and coming up on a tap.
 
 Not done yet, in the order they matter:
+- The composer's text blinks now and then (2026-10-16, found from a log): the line's `BeginDraw`
+  fails while `FrameFlusher` is drawing a sticker or emoji frame on the same graphics device, and
+  `DirectTextBlock` hides it until a retry at Low priority. Done (2026-10-17): the frames are drawn
+  on a graphics device of their own (`AnimatedImageLoader`, `Direct2DDevice.CreateGraphicsDevice`),
+  and a call's video on another (`Direct2D.VideoDevice`). The retry is gone: `DirectTextLayout.Render`
+  hands back its surface when the draw fails, so the redraw after a lost device reaches the screen,
+  and null means only that there is nothing to draw.
 - The composer's `FontFamily`: the leaves draw with the message font.
 - The cost of a keystroke and of making the control, measured against `RichEditBox`.
 - Removal (step 8): `UsernameCollection`, `EmojiCollection` and `SearchHashtagsCollection` are
