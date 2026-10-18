@@ -625,7 +625,10 @@ set (an emoticon or a picked suggestion) never merges with its neighbours, and B
 gives the typing back: `HasSameStyle` must keep refusing it. `MessageTextBox.ContentChanged` is
 raised inside the engine's change, often inside the input service's callback, so a `SetText` or
 `ClearText` from a handler waits for the next dispatcher turn; `SetText` of the text already there does
-nothing, since pages write their view model's copy back on every change. The leaves' text blocks, formulas and
+nothing, since pages write their view model's copy back on every change. The input service sees one
+leaf; leaving and entering focus to hand it another does not make it read the text again, so
+`NotifyContextReplaced` reports all of what it held replaced, or the pinyin IME composes at its old
+caret. The leaves' text blocks, formulas and
 media frames are pinned left to right, since they draw into surfaces a mirrored editor would show
 mirrored: `RichLeafView` is the one place their coordinates cross the flip, and nothing else may
 read a text block's coordinates directly. Brushes come from the XAML, never from code. The

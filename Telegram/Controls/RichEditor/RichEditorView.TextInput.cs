@@ -195,6 +195,11 @@ namespace Telegram.Controls.RichEditor
             _editContext.FocusRemoved -= OnFocusRemoved;
 
             _editContext = null;
+
+            // A new context holds no text.
+            _contextLeaf = null;
+            _contextLength = 0;
+            _contextStale = false;
         }
 
         protected override void OnGotFocus(RoutedEventArgs e)
@@ -260,8 +265,12 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            _contextLeaf = _engine.SelectedNode == null ? _engine.Focus.Leaf : null;
-            _contextLength = _contextLeaf?.Length ?? 0;
+            var leaf = _engine.SelectedNode == null ? _engine.Focus.Leaf : null;
+            if (!ReferenceEquals(leaf, _contextLeaf))
+            {
+                _contextLeaf = leaf;
+                _contextStale = true;
+            }
 
             if (!_contextFocused)
             {
@@ -272,6 +281,44 @@ namespace Telegram.Controls.RichEditor
                     : CoreTextInputPaneDisplayPolicy.Automatic;
                 _editContext.NotifyFocusEnter();
             }
+
+            NotifyContextReplaced();
+        }
+
+        // Whether the service still holds the text of the leaf it was told about before
+        // _contextLeaf, which _contextLength is then the length of.
+        private bool _contextStale;
+
+        /// <summary>
+        /// Hands the service another leaf, or the same one rebuilt. Leaving and entering focus
+        /// ends what was being composed and makes the service read the input scope again, but
+        /// it keeps the text it had: the pinyin IME went on composing at its old caret, into a
+        /// line that was not that long, until <see cref="NotifyContextReplaced"/> told it.
+        /// </summary>
+        private void SwitchContext(RichTextLeaf leaf)
+        {
+            _contextLeaf = leaf;
+            _contextStale = true;
+
+            _editContext.NotifyFocusLeave();
+            _editContext.InputScope = GetInputScope(leaf);
+            _editContext.NotifyFocusEnter();
+        }
+
+        /// <summary>Tells the service the text it holds was replaced, all of it, by the leaf's.</summary>
+        private void NotifyContextReplaced()
+        {
+            if (_editContext == null || !_contextFocused || !_contextStale)
+            {
+                return;
+            }
+
+            _contextStale = false;
+
+            var previous = _contextLength;
+            _contextLength = _contextLeaf?.Length ?? 0;
+
+            _editContext.NotifyTextChanged(new CoreTextRange { StartCaretPosition = 0, EndCaretPosition = previous }, _contextLength, GetContextSelection());
         }
 
         /// <summary>
@@ -338,18 +385,17 @@ namespace Telegram.Controls.RichEditor
 
             if ((changes & RichEditorChanges.Structure) != 0 || !ReferenceEquals(leaf, _contextLeaf))
             {
-                // Another text altogether: what was being composed is over, and the service
-                // asks for the new text when focus comes back.
-                _contextLeaf = leaf;
-                _contextLength = leaf?.Length ?? 0;
-
-                _editContext.NotifyFocusLeave();
-                _editContext.InputScope = GetInputScope(leaf);
-                _editContext.NotifyFocusEnter();
+                // Another text altogether: what was being composed is over.
+                SwitchContext(leaf);
+                NotifyContextReplaced();
                 return;
             }
 
-            if ((changes & RichEditorChanges.Text) != 0)
+            if (_contextStale)
+            {
+                NotifyContextReplaced();
+            }
+            else if ((changes & RichEditorChanges.Text) != 0)
             {
                 var previous = _contextLength;
                 _contextLength = leaf?.Length ?? 0;
@@ -472,6 +518,9 @@ namespace Telegram.Controls.RichEditor
         {
             var text = args.Text ?? string.Empty;
 
+            // What the service holds once this is applied, whatever the editor makes of it.
+            var held = _contextLength - (args.Range.EndCaretPosition - args.Range.StartCaretPosition) + text.Length;
+
             _imeUpdating = true;
             _composition.Clear();
             _compositionStale = true;
@@ -480,47 +529,48 @@ namespace Telegram.Controls.RichEditor
             {
                 if (text == "\r" || text == "\n")
                 {
-                    // Some keyboards send Enter as text rather than as a key.
+                    // Some keyboards send Enter as text rather than as a key. The line it makes
+                    // is another leaf, which the service is told of below.
                     _engine.InsertParagraph();
-                    args.Result = CoreTextTextUpdatingResult.Succeeded;
-                    return;
-                }
-
-                text = text.Replace("\r\n", "\n").Replace('\r', '\n');
-
-                var leaf = _contextLeaf;
-                var range = args.Range;
-
-                if (leaf == null || !ReferenceEquals(_engine.Focus.Leaf, leaf) || _engine.SelectedNode != null)
-                {
-                    // A block is selected, or the selection reaches past this leaf: what is
-                    // typed replaces the selection the user sees, all of it.
-                    _engine.InsertText(text);
-                }
-                else if (!_engine.IsSelectionEmpty && !ReferenceEquals(_engine.Start.Leaf, _engine.End.Leaf) && IsContextSelection(range))
-                {
-                    _engine.InsertText(text);
                 }
                 else
                 {
-                    var version = _engine.Document.Version;
-                    _engine.ReplaceText(leaf, range.StartCaretPosition, range.EndCaretPosition, text);
+                    text = text.Replace("\r\n", "\n").Replace('\r', '\n');
 
-                    // A space that completed a markdown rule turned the line into another block:
-                    // the selection the service asks for is in text that is no longer there.
-                    if (_engine.Document.Version != version)
+                    var leaf = _contextLeaf;
+                    var range = args.Range;
+
+                    if (leaf == null || !ReferenceEquals(_engine.Focus.Leaf, leaf) || _engine.SelectedNode != null)
                     {
-                        _structureChanged = true;
+                        // A block is selected, or the selection reaches past this leaf: what is
+                        // typed replaces the selection the user sees, all of it.
+                        _engine.InsertText(text);
+                    }
+                    else if (!_engine.IsSelectionEmpty && !ReferenceEquals(_engine.Start.Leaf, _engine.End.Leaf) && IsContextSelection(range))
+                    {
+                        _engine.InsertText(text);
                     }
                     else
                     {
-                        var selection = args.NewSelection;
-                        var caret = new RichPosition(leaf, Math.Clamp(selection.StartCaretPosition, 0, leaf.Length));
-                        var focus = new RichPosition(leaf, Math.Clamp(selection.EndCaretPosition, 0, leaf.Length));
+                        var version = _engine.Document.Version;
+                        _engine.ReplaceText(leaf, range.StartCaretPosition, range.EndCaretPosition, text);
 
-                        if (!caret.Equals(_engine.Anchor) || !focus.Equals(_engine.Focus))
+                        // A space that completed a markdown rule turned the line into another
+                        // block: the selection the service asks for is in text no longer there.
+                        if (_engine.Document.Version != version)
                         {
-                            _engine.Select(caret, focus);
+                            _structureChanged = true;
+                        }
+                        else
+                        {
+                            var selection = args.NewSelection;
+                            var caret = new RichPosition(leaf, Math.Clamp(selection.StartCaretPosition, 0, leaf.Length));
+                            var focus = new RichPosition(leaf, Math.Clamp(selection.EndCaretPosition, 0, leaf.Length));
+
+                            if (!caret.Equals(_engine.Anchor) || !focus.Equals(_engine.Focus))
+                            {
+                                _engine.Select(caret, focus);
+                            }
                         }
                     }
                 }
@@ -533,21 +583,20 @@ namespace Telegram.Controls.RichEditor
             }
 
             // Whatever the update ended in is the text the service now believes in, unless the
-            // update moved to another leaf or rebuilt the line: then it is told so.
+            // update moved to another leaf or rebuilt the line: then it is told so, once this
+            // handler has returned - the service is in the middle of its own edit.
             var current = _engine.SelectedNode == null ? _engine.Focus.Leaf : null;
             if (!ReferenceEquals(current, _contextLeaf) || _structureChanged)
             {
                 _structureChanged = false;
-                _contextLeaf = current;
-                _contextLength = current?.Length ?? 0;
+                _contextLength = Math.Max(0, held);
 
-                _editContext.NotifyFocusLeave();
-                _editContext.InputScope = GetInputScope(current);
-                _editContext.NotifyFocusEnter();
+                SwitchContext(current);
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, NotifyContextReplaced);
             }
             else
             {
-                _contextLength = current?.Length ?? 0;
+                _contextLength = _contextStale ? Math.Max(0, held) : current?.Length ?? 0;
             }
         }
 

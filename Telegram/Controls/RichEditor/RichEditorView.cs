@@ -190,6 +190,9 @@ namespace Telegram.Controls.RichEditor
 
             Refresh(RichEditorChanges.Structure | RichEditorChanges.Selection, null);
             UpdateSpelling(RichEditorChanges.Structure, null);
+
+            // Another chat's text, which the input service has to be told of as any other.
+            SyncEditContext(RichEditorChanges.Structure);
         }
 
         protected override void OnApplyTemplate()
