@@ -195,6 +195,7 @@ namespace winrt::Telegram::Native::implementation
         bool SetMathObject(int32_t offset, int32_t length, hstring expression);
 
         Windows::Foundation::Size Measure(double availableWidth);
+        void Arrange(double width);
 
         com_array<Windows::Foundation::Rect> Ranges(int32_t offset, int32_t length);
         Windows::Foundation::Rect Caret(int32_t offset);

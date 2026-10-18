@@ -106,6 +106,13 @@ namespace Telegram.Native
 
         Windows.Foundation.Size Measure(Double availableWidth);
 
+        // The width the caller shows the text in, when that is wider than Measure left the box:
+        // a text not drawn from the leading edge throughout - right to left, centred, or both
+        // ways - is laid out again in it, so that each paragraph sits against its own edge of
+        // it, where moving the whole text across moved every paragraph to one side. Left to
+        // right, it changes nothing.
+        void Arrange(Double width);
+
         // Everything derived comes off the same layout the text was drawn from.
         Windows.Foundation.Rect[] Ranges(Int32 offset, Int32 length);
         Windows.Foundation.Rect Caret(Int32 offset);

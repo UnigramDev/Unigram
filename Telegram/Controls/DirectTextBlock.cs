@@ -2903,6 +2903,23 @@ namespace Telegram.Controls
         {
             _arranged = finalSize;
 
+            // Measuring shrank the box to the widest paragraph, and a bubble arranges the text
+            // wider when its footer fits beside the last line: a text not drawn from the leading
+            // edge throughout is laid out again in that width, so a Latin paragraph under an
+            // Arabic one stays left instead of going right with it. Nothing for left to right.
+            Layout().Arrange(finalSize.Width);
+
+            // What the spoilers cover may have moved with it.
+            if (_spoilers?.Count > 0)
+            {
+                var bounds = SpoilerBounds();
+                if (bounds != _spoilerBounds)
+                {
+                    _spoilerBounds = bounds;
+                    _spoilerPresenter?.Measure(new Size(bounds.Width, bounds.Height));
+                }
+            }
+
             Render(finalSize);
 
             _host?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));

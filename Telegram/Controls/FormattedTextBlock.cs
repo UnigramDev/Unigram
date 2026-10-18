@@ -1062,6 +1062,7 @@ namespace Telegram.Controls
             {
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontSize);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily);
+                direct.ClearProperty(paragraph, XamlPropertyIndex.Block_TextAlignment);
 
                 _activeParagraphs.Add(paragraph);
                 return paragraph;
@@ -1649,6 +1650,10 @@ namespace Telegram.Controls
             // No return between here and the matching Tally, or the scope would be closed by
             // whatever runs next and charge its time to this label.
 
+            // What each paragraph is aligned against: see below.
+            var detect = TextAlignment == TextAlignment.DetectFromContent;
+            var flow = TextBlock.FlowDirection;
+
             for (int i = _first; i <= _last; i++)
             {
                 var part = styled.Paragraphs[i];
@@ -1682,20 +1687,22 @@ namespace Telegram.Controls
 
                 OpenBlock();
 
-                // TODO: we use DetectFromContent, but this could be used too:
-                //direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, part.Direction switch
-                //{
-                //    TextDirectionality.LeftToRight => (uint)TextAlignment.Left,
-                //    TextDirectionality.RightToLeft => (uint)TextAlignment.Right,
-                //    _ => (uint)TextAlignment.DetectFromContent
-                //});
-
                 var direction = paragraph == null ? locale : part.Direction switch
                 {
                     TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
                     TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
                     _ => locale
                 };
+
+                // Against the edge its own direction reads from: a block left to detect its
+                // alignment takes its first paragraph's for all of them, and a Latin line under
+                // an Arabic one went right with it. Left and Right are the start and the end,
+                // so they are relative to the block's own direction. One aligned on purpose -
+                // centred - keeps that.
+                if (paragraph != null && detect)
+                {
+                    direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, (uint)(direction == flow ? TextAlignment.Left : TextAlignment.Right));
+                }
 
                 if (part.Type is TextParagraphTypeQuote quote && paragraph != null)
                 {

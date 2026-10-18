@@ -1467,6 +1467,25 @@ namespace winrt::Telegram::Native::implementation
         return bounds;
     }
 
+    // Measure shrank the box to the widest paragraph, and the caller may show it wider - a
+    // bubble that leaves room for its footer: laid out again there, so the extra width goes to
+    // each paragraph by its own direction rather than to all of them by one offset.
+    void DirectTextLayout::Arrange(double width)
+    {
+        if (m_closed || width <= 0 || width == m_width || IsLeading())
+        {
+            return;
+        }
+
+        // Narrower than the text would wrap it again, into lines the measure did not count.
+        if (width < Bounds().Width)
+        {
+            return;
+        }
+
+        Reflow(width);
+    }
+
     // Whether every paragraph is drawn from the leading edge of the box, left to right - the
     // ordinary case, and the one where the box is only ever as wide as it has to be.
     bool DirectTextLayout::IsLeading() const
