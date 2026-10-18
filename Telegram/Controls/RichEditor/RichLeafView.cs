@@ -64,6 +64,7 @@ namespace Telegram.Controls.RichEditor
         private RichTextLeaf _renderedLeaf;
         private string _renderedLanguage;
         private bool _renderedRightToLeft;
+        private bool _renderedHolder;
 
         private int _selectionStart;
         private int _selectionEnd;
@@ -222,15 +223,25 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
+            var holder = _leaf.IsEmpty || _leaf.EndsWith('\n');
+
+            // What changed since the text was last handed over, if only the text did, and the
+            // line holder is where it was: the edit alone goes across.
+            RichTextEdit edit = default;
+
+            var edited = ReferenceEquals(_renderedLeaf, _leaf)
+                && _renderedLanguage == _language
+                && _renderedRightToLeft == rightToLeft
+                && _renderedHolder == holder
+                && _leaf.TryGetEdit(_renderedVersion, out edit)
+                && !edit.IsEmpty
+                && !edit.Restyled;
+
             _renderedLeaf = _leaf;
             _renderedVersion = _leaf.Version;
             _renderedLanguage = _language;
             _renderedRightToLeft = rightToLeft;
-
-            var text = _leaf.Text;
-            var display = text.Length == 0 || text[text.Length - 1] == '\n'
-                ? text + LineHolder
-                : text;
+            _renderedHolder = holder;
 
             BuildParts();
 
@@ -242,7 +253,25 @@ namespace Telegram.Controls.RichEditor
                 direction = rightToLeft ? TextDirectionality.RightToLeft : TextDirectionality.LeftToRight;
             }
 
-            Text.SetText(display, _parts.Count > 0 ? _parts : null, direction);
+            if (edited)
+            {
+                Text.ReplaceText(edit.Start, edit.OldEnd - edit.Start, _leaf.Substring(edit.Start, edit.NewEnd - edit.Start), _parts.Count > 0 ? _parts : null, direction);
+
+#if DEBUG
+                // An edit the block applied wrong is text that is not the leaf's, and nothing
+                // else would notice: the layout answers for whatever it holds.
+                var expected = holder ? _leaf.Text + LineHolder : _leaf.Text;
+                if (Text.Text != expected)
+                {
+                    Logger.Error($"The line's text is not the leaf's after an edit at {edit.Start}: {Text.Text.Length} characters against {expected.Length}");
+                }
+#endif
+            }
+            else
+            {
+                var text = _leaf.Text;
+                Text.SetText(holder ? text + LineHolder : text, _parts.Count > 0 ? _parts : null, direction);
+            }
 
             if (_leaf.IsPlain)
             {

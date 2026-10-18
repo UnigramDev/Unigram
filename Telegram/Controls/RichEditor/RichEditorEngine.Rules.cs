@@ -50,12 +50,12 @@ namespace Telegram.Controls.RichEditor
             // Every rule is a few characters, a code fence's language the longest of them: a
             // longer line cannot be one, and copying it to find out would copy a whole paragraph
             // on every space typed in it.
-            if (caret < 2 || caret - 1 > MaxRulePrefix || leaf.Text[caret - 1] != ' ')
+            if (caret < 2 || caret - 1 > MaxRulePrefix || leaf[caret - 1] != ' ')
             {
                 return false;
             }
 
-            var prefix = leaf.Text.Substring(0, caret - 1);
+            var prefix = leaf.Substring(0, caret - 1);
             if (prefix.IndexOf(RichTextLeaf.ObjectChar) >= 0)
             {
                 return false;
@@ -142,6 +142,13 @@ namespace Telegram.Controls.RichEditor
 
             var leaf = _focus.Leaf;
             if (leaf.Owner is not RichParagraphBlock { Kind: RichBlockKind.Paragraph } paragraph || leaf.Role != RichLeafRole.Text || _focus.Offset != leaf.Length || paragraph.Parent is RichListBlock)
+            {
+                return false;
+            }
+
+            // A rule's line is short, as for the space rules: a longer one is not made a string
+            // to find out.
+            if (leaf.Length > MaxRulePrefix + 1)
             {
                 return false;
             }

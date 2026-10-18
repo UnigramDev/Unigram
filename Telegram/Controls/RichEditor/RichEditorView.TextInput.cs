@@ -445,13 +445,16 @@ namespace Telegram.Controls.RichEditor
 
         private void OnTextRequested(CoreTextEditContext sender, CoreTextTextRequestedEventArgs args)
         {
-            var text = _contextLeaf?.Text ?? string.Empty;
+            // What was asked for, and not the line made into a string to cut it from: a service
+            // composing asks again on every key.
+            var leaf = _contextLeaf;
+            var length = leaf?.Length ?? 0;
             var range = args.Request.Range;
 
-            var start = Math.Clamp(range.StartCaretPosition, 0, text.Length);
-            var end = Math.Clamp(range.EndCaretPosition, start, text.Length);
+            var start = Math.Clamp(range.StartCaretPosition, 0, length);
+            var end = Math.Clamp(range.EndCaretPosition, start, length);
 
-            args.Request.Text = text.Substring(start, end - start);
+            args.Request.Text = leaf == null ? string.Empty : start == 0 && end == length ? leaf.Text : leaf.Substring(start, end - start);
         }
 
         private void OnSelectionRequested(CoreTextEditContext sender, CoreTextSelectionRequestedEventArgs args)

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Converters;
@@ -49,6 +50,10 @@ namespace Telegram.Controls
     {
         private DirectTextLayout _layout;
         private string _text;
+        private int _textLength;
+
+        // Whether _text is behind the layout's, which an edit handed over as one leaves it.
+        private bool _textStale;
 
         public DirectTextBlock()
         {
@@ -480,6 +485,62 @@ namespace Telegram.Controls
         public void SetText(string text, IList<TextStylePart> entities = null, TextDirectionality direction = TextDirectionality.Neutral)
         {
             _text = text;
+            _textLength = text?.Length ?? 0;
+            _textStale = false;
+
+            Layout().SetText(text ?? string.Empty, entities);
+            _tokensDrawn = false;
+            _editedSinceTokenized = false;
+
+            OnTextSet(entities, direction);
+        }
+
+        /// <summary>
+        /// An edit of the text set before, where <see cref="SetText"/> takes all of it again:
+        /// <paramref name="length"/> characters at <paramref name="offset"/> replaced by
+        /// <paramref name="text"/>, and <paramref name="entities"/> those of the text it leaves.
+        /// Styles outside the edit have to be as they were. For an editor's lines, whose text is
+        /// not made into a string on every key: the block reads it back from the layout when
+        /// something asks.
+        /// </summary>
+        public void ReplaceText(int offset, int length, string text, IList<TextStylePart> entities, TextDirectionality direction)
+        {
+            _text = null;
+            _textLength += text.Length - length;
+            _textStale = true;
+
+            Layout().ReplaceText(offset, length, text, entities);
+
+            if (_tokens != null)
+            {
+                MoveTokens(offset, length, text.Length);
+            }
+
+            _editedSinceTokenized = true;
+
+            OnTextSet(entities, direction);
+        }
+
+        // The text as it is now, which after ReplaceText only the layout has.
+        private string CurrentText
+        {
+            get
+            {
+                if (_textStale)
+                {
+                    _text = Layout().Text;
+                    _textStale = false;
+                }
+
+                return _text;
+            }
+        }
+
+        private void OnTextSet(IList<TextStylePart> entities, TextDirectionality direction)
+        {
+            _tokenized++;
+            _codeLanguage = null;
+
             _links = null;
             _entities = null;
             _styled = null;
@@ -495,7 +556,6 @@ namespace Telegram.Controls
 
             UpdateInteraction();
 
-            Layout().SetText(text ?? string.Empty, entities);
             Select(0, 0);
 
             _marked.Clear();
@@ -1406,9 +1466,10 @@ namespace Telegram.Controls
             {
                 var from = Math.Min(_selectionFrom, _selectionTo);
                 var to = Math.Max(_selectionFrom, _selectionTo);
+                var text = CurrentText;
 
-                return to > from && _text != null && to <= _text.Length
-                    ? _text.Substring(from, to - from)
+                return to > from && text != null && to <= text.Length
+                    ? text.Substring(from, to - from)
                     : string.Empty;
             }
         }
@@ -1493,56 +1554,213 @@ namespace Telegram.Controls
         private readonly record struct TokenRange(int Offset, int Length, string Type, string Alias);
 
         private List<TokenRange> _tokens;
+        private string _tokensLanguage;
+
+        // Whether the layout holds the tokens' colours, moved by every edit since they were
+        // found: SetText takes them away, ReplaceText moves them.
+        private bool _tokensDrawn;
+
+        // Bumped by every text and every language, so a result knows whether it is still for
+        // what the block shows.
         private int _tokenized;
+
+        // One tokenization at a time, of the text as it is when it starts: typing in a long block
+        // started one per key, each of the whole text, and threw all but the last away.
+        private bool _tokenizing;
+        private string _codeLanguage;
+        private bool _editedSinceTokenized;
+
+        // How long typing has to pause before a block is tokenized again, once a result came back
+        // for a text that had already moved on.
+        private const int TokenizeAgainDelay = 150;
+
         private bool _themeChanged;
 
         /// <summary>
         /// Colours the text as code in <paramref name="language"/>, which is asynchronous - the
         /// tokenizer runs off the UI thread. Called after the text is set, whose colours it adds
-        /// to; a null language only forgets the tokens, as setting the text took the colours of
-        /// whatever this block rendered before with it.
+        /// to; a null language only forgets the tokens. After an edit (<see cref="ReplaceText"/>)
+        /// the tokens found before stand, moved with the text, until the new ones come.
         /// </summary>
-        public async void SetCode(string language)
+        public void SetCode(string language)
         {
-            // Whatever is in flight was started for a text this block no longer renders.
-            var tokenized = ++_tokenized;
+            _tokenized++;
 
-            if (_tokens != null)
+            if (string.IsNullOrEmpty(language) || _textLength == 0)
             {
-                _tokens = null;
-                UnregisterThemeChanged();
-            }
+                _codeLanguage = null;
+                ForgetTokens();
 
-            if (string.IsNullOrEmpty(language) || string.IsNullOrEmpty(_text))
-            {
+                if (_tokensDrawn)
+                {
+                    _tokensDrawn = false;
+                    Layout().ClearColors();
+
+                    _renderedSize = default;
+                    InvalidateArrange();
+                }
+
                 return;
             }
 
+            if (_tokens != null && (_tokensLanguage != language || !_tokensDrawn))
+            {
+                ForgetTokens();
+            }
+
+            _codeLanguage = language;
+
+            if (!_tokenizing)
+            {
+                Tokenize();
+            }
+        }
+
+        private async void Tokenize()
+        {
+            _tokenizing = true;
+
             try
             {
-                var root = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), _text);
+                var again = false;
 
-                if (_tokenized != tokenized)
+                while (_codeLanguage != null && _textLength > 0)
                 {
-                    return;
-                }
+                    // Typing, rather than a text of its own - a recycled bubble's - which is
+                    // tokenized at once.
+                    if (again && _editedSinceTokenized)
+                    {
+                        await Task.Delay(TokenizeAgainDelay);
 
-                var tokens = new List<TokenRange>();
-                CollectTokens(root.Children, tokens, 0);
+                        if (_codeLanguage == null || _textLength == 0)
+                        {
+                            break;
+                        }
+                    }
 
-                _tokens = tokens;
-                ApplyTokens();
+                    var tokenized = _tokenized;
+                    var language = _codeLanguage;
 
-                if (!_themeChanged)
-                {
-                    _themeChanged = true;
-                    ActualThemeChanged += OnActualThemeChanged;
+                    _editedSinceTokenized = false;
+
+                    var root = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), CurrentText);
+
+                    // Typed into meanwhile: again, with the text as it is now.
+                    if (tokenized != _tokenized)
+                    {
+                        again = true;
+                        continue;
+                    }
+
+                    var tokens = new List<TokenRange>();
+                    CollectTokens(root.Children, tokens, 0);
+
+                    // The moved ones are not all where the new ones are, so they go first.
+                    if (_tokensDrawn)
+                    {
+                        Layout().ClearColors();
+                    }
+
+                    _tokens = tokens;
+                    _tokensLanguage = language;
+                    _tokensDrawn = true;
+
+                    AddTokenColors();
+
+                    if (!_themeChanged)
+                    {
+                        _themeChanged = true;
+                        ActualThemeChanged += OnActualThemeChanged;
+                    }
+
+                    break;
                 }
             }
             catch
             {
                 // Tokenization may fail
             }
+            finally
+            {
+                _tokenizing = false;
+            }
+        }
+
+        private void ForgetTokens()
+        {
+            if (_tokens != null)
+            {
+                _tokens = null;
+                _tokensLanguage = null;
+                UnregisterThemeChanged();
+            }
+        }
+
+        // Each token as the edit leaves it: before it as it was, after it moved, around it taking
+        // in what was typed. One the edit cuts into is dropped, as the layout drops its colour.
+        private void MoveTokens(int offset, int length, int inserted)
+        {
+            var end = offset + length;
+            var delta = inserted - length;
+            var kept = 0;
+
+            for (int i = 0; i < _tokens.Count; i++)
+            {
+                var token = _tokens[i];
+                var tokenEnd = token.Offset + token.Length;
+
+                if (tokenEnd <= offset)
+                {
+                    _tokens[kept++] = token;
+                }
+                else if (token.Offset >= end)
+                {
+                    _tokens[kept++] = token with { Offset = token.Offset + delta };
+                }
+                else if (token.Offset <= offset && tokenEnd >= end && token.Length + delta > 0)
+                {
+                    _tokens[kept++] = token with { Length = token.Length + delta };
+                }
+            }
+
+            _tokens.RemoveRange(kept, _tokens.Count - kept);
+        }
+
+        // All at once, appended: a long block's tokens are thousands, and setting them one at a
+        // time looks each one up among the others. The spoilers go back over them.
+        private void AddTokenColors()
+        {
+            var theme = ActualTheme;
+            var count = 0;
+
+            var offsets = new int[_tokens.Count];
+            var lengths = new int[_tokens.Count];
+            var colors = new Color[_tokens.Count];
+
+            foreach (var token in _tokens)
+            {
+                if (SyntaxPalette.TryGetColor(token.Type, theme, out var color)
+                    || (token.Alias.Length > 0 && SyntaxPalette.TryGetColor(token.Alias, theme, out color)))
+                {
+                    offsets[count] = token.Offset;
+                    lengths[count] = token.Length;
+                    colors[count] = color;
+                    count++;
+                }
+            }
+
+            if (count < offsets.Length)
+            {
+                Array.Resize(ref offsets, count);
+                Array.Resize(ref lengths, count);
+                Array.Resize(ref colors, count);
+            }
+
+            Layout().AddColors(offsets, lengths, colors);
+            ApplySpoilerColors();
+
+            _renderedSize = default;
+            InvalidateArrange();
         }
 
         // Parent before children, which is the order the colours have to be applied in: a token
@@ -1634,8 +1852,8 @@ namespace Telegram.Controls
 
         private void UpdateQuery()
         {
-            var offset = _query?.Length > 0 && _text != null
-                ? _text.IndexOf(_query, StringComparison.OrdinalIgnoreCase)
+            var offset = _query?.Length > 0 && CurrentText != null
+                ? CurrentText.IndexOf(_query, StringComparison.OrdinalIgnoreCase)
                 : -1;
 
             if (offset == _queryOffset && (offset < 0 || _query.Length == _queryLength))
@@ -2412,10 +2630,10 @@ namespace Telegram.Controls
         /// </summary>
         public void InvokeLink(int index)
         {
-            if (_entities != null && index >= 0 && index < _entities.Count && _text != null)
+            if (_entities != null && index >= 0 && index < _entities.Count && CurrentText != null)
             {
                 var entity = _entities[index];
-                var text = _text.Substring(entity.Offset, entity.Length);
+                var text = CurrentText.Substring(entity.Offset, entity.Length);
 
                 var args = new TextEntityClickEventArgs(entity.Type, text);
                 args.Handled = false;
@@ -2442,13 +2660,13 @@ namespace Telegram.Controls
             var position = Layout().HitTestContent(ToLayout(point), out var inside);
             var link = inside ? LinkAt(position) : -1;
 
-            if (link < 0 || _entities == null || link >= _entities.Count || _text == null)
+            if (link < 0 || _entities == null || link >= _entities.Count || CurrentText == null)
             {
                 return null;
             }
 
             var entity = _entities[link];
-            return new TextEntityClickEventArgs(entity.Type, _text.Substring(entity.Offset, entity.Length));
+            return new TextEntityClickEventArgs(entity.Type, CurrentText.Substring(entity.Offset, entity.Length));
         }
 
         // What the automation tree needs to know about the links: how many there are, what each
@@ -2457,13 +2675,13 @@ namespace Telegram.Controls
 
         public string GetLinkText(int index)
         {
-            if (_links == null || index < 0 || index >= _links.Count || _text == null)
+            if (_links == null || index < 0 || index >= _links.Count || CurrentText == null)
             {
                 return string.Empty;
             }
 
             var link = _links[index];
-            return _text.Substring(link.Offset, Math.Min(link.Length, _text.Length - link.Offset));
+            return CurrentText.Substring(link.Offset, Math.Min(link.Length, CurrentText.Length - link.Offset));
         }
 
         public Rect[] GetLinkRectangles(int index)
@@ -2490,13 +2708,13 @@ namespace Telegram.Controls
 
         private bool _selectionEnabled;
 
-        public int ContentLength => _text?.Length ?? 0;
+        public int ContentLength => _textLength;
 
         /// <summary>
         /// The text as rendered, for the automation peer and anything else that reads rather
         /// than draws it.
         /// </summary>
-        public string Text => _text;
+        public string Text => CurrentText;
 
         public void GetSelection(out int start, out int end)
         {
@@ -2574,30 +2792,32 @@ namespace Telegram.Controls
         {
             start = end = Math.Clamp(position, 0, ContentLength);
 
-            if (granularity == TextSelectionGranularity.Character || string.IsNullOrEmpty(_text))
+            if (granularity == TextSelectionGranularity.Character || _textLength == 0)
             {
                 return;
             }
 
+            var text = CurrentText;
+
             if (granularity == TextSelectionGranularity.Paragraph)
             {
-                start = _text.LastIndexOf('\n', Math.Max(0, Math.Min(start - 1, _text.Length - 1)));
+                start = text.LastIndexOf('\n', Math.Max(0, Math.Min(start - 1, text.Length - 1)));
                 start = start < 0 ? 0 : start + 1;
 
-                end = end < _text.Length ? _text.IndexOf('\n', end) : -1;
-                end = end < 0 ? _text.Length : end;
+                end = end < text.Length ? text.IndexOf('\n', end) : -1;
+                end = end < 0 ? text.Length : end;
 
                 return;
             }
 
             // A word: out from the position while there is one to expand into. A position
             // between two words expands to neither, which is what a double tap on a space does.
-            while (start > 0 && !char.IsWhiteSpace(_text[start - 1]))
+            while (start > 0 && !char.IsWhiteSpace(text[start - 1]))
             {
                 start--;
             }
 
-            while (end < _text.Length && !char.IsWhiteSpace(_text[end]))
+            while (end < text.Length && !char.IsWhiteSpace(text[end]))
             {
                 end++;
             }
@@ -2738,7 +2958,7 @@ namespace Telegram.Controls
 
         private void ScheduleRenderRetry()
         {
-            if (_renderRetries >= MaxRenderRetries || string.IsNullOrEmpty(_text))
+            if (_renderRetries >= MaxRenderRetries || _textLength == 0)
             {
                 return;
             }
@@ -2753,7 +2973,7 @@ namespace Telegram.Controls
 
         private void RetryRender()
         {
-            if (_renderedSize == default && !string.IsNullOrEmpty(_text))
+            if (_renderedSize == default && _textLength > 0)
             {
                 InvalidateArrange();
             }
@@ -3039,6 +3259,8 @@ namespace Telegram.Controls
             Visibility = Visibility.Collapsed;
 
             _text = null;
+            _textLength = 0;
+            _textStale = false;
             _links = null;
             _entities = null;
             _styled = null;
@@ -3046,6 +3268,8 @@ namespace Telegram.Controls
             _revealed = false;
 
             _tokens = null;
+            _tokensLanguage = null;
+            _codeLanguage = null;
             _tokenized++;
             UnregisterThemeChanged();
 

@@ -107,12 +107,28 @@ namespace Telegram.Controls.RichEditor
             media = 0;
             columns = 0;
 
+            // From the runs, rather than from the leaf's text and the rich text made of it: this
+            // runs as the article is typed, and that was a string of every leaf, a long one on
+            // the large object heap.
             foreach (var leaf in document.Leaves)
             {
-                length += leaf.ToPlainText().Length;
+                long textDepth = 0;
 
-                var leafDepth = BlockDepth(leaf.Owner) + RichTextDepth(RichDocumentConverter.ToRichText(leaf));
-                depth = Math.Max(depth, leafDepth);
+                foreach (var run in leaf.Runs)
+                {
+                    if (run.Object != null)
+                    {
+                        length += run.Object.PlainText?.Length ?? 0;
+                        textDepth = Math.Max(textDepth, RichDocumentConverter.CountWrappers(run) + RichTextDepth(RichDocumentConverter.ToRichText(run)));
+                    }
+                    else
+                    {
+                        length += run.Length;
+                        textDepth = Math.Max(textDepth, RichDocumentConverter.CountWrappers(run));
+                    }
+                }
+
+                depth = Math.Max(depth, BlockDepth(leaf.Owner) + textDepth);
             }
 
             foreach (var block in document.AllBlocks)

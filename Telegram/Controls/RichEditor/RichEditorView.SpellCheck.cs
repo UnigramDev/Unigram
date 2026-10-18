@@ -51,41 +51,57 @@ namespace Telegram.Controls.RichEditor
 
         private readonly struct SpellingResult
         {
-            public SpellingResult(int version, string text, int[] ranges, bool isChecked)
+            public SpellingResult(int version, int[] ranges, int dirtyStart = -1, int dirtyEnd = -1)
             {
                 Version = version;
-                Text = text;
                 Ranges = ranges;
-                IsChecked = isChecked;
+                DirtyStart = dirtyStart;
+                DirtyEnd = dirtyEnd;
             }
 
-            /// <summary>The leaf's version <see cref="Ranges"/> were moved to.</summary>
+            /// <summary>The leaf's version <see cref="Ranges"/> were moved to: the edits since are the leaf's to say.</summary>
             public int Version { get; }
-
-            /// <summary>The leaf's text at that version: the next edit is found by comparing against it.</summary>
-            public string Text { get; }
 
             // Start, length, start, length...
             public int[] Ranges { get; }
 
-            /// <summary>False once an edit left part of the text unchecked.</summary>
-            public bool IsChecked { get; }
+            /// <summary>
+            /// What edits left unchecked, [DirtyStart, DirtyEnd), which is what the next check
+            /// checks; nothing when DirtyStart is negative, and to the end at <see cref="ToTheEnd"/>.
+            /// </summary>
+            public int DirtyStart { get; }
+
+            public int DirtyEnd { get; }
+
+            public bool IsChecked => DirtyStart < 0;
         }
 
+        private const int ToTheEnd = int.MaxValue;
+
+        /// <summary>
+        /// A leaf's text to check, from <see cref="Start"/>, and what was found in the rest of it,
+        /// which stands.
+        /// </summary>
         private readonly struct SpellingWork
         {
-            public SpellingWork(RichTextLeaf leaf, int version, string text)
+            public SpellingWork(RichTextLeaf leaf, int version, int start, string text, int[] kept)
             {
                 Leaf = leaf;
                 Version = version;
+                Start = start;
                 Text = text;
+                Kept = kept;
             }
 
             public RichTextLeaf Leaf { get; }
 
             public int Version { get; }
 
+            public int Start { get; }
+
             public string Text { get; }
+
+            public int[] Kept { get; }
         }
 
         private void UpdateSpelling(RichEditorChanges changes, RichTextLeaf leaf)
@@ -170,16 +186,27 @@ namespace Telegram.Controls.RichEditor
                 // by comparing against it.
                 if (leaf.Length == 0)
                 {
-                    _spelling[leaf] = new SpellingResult(leaf.Version, string.Empty, Array.Empty<int>(), true);
+                    _spelling[leaf] = new SpellingResult(leaf.Version, Array.Empty<int>());
                     continue;
                 }
 
-                if (Rebase(leaf) && _spelling[leaf].IsChecked)
+                if (!Rebase(leaf))
+                {
+                    (work ??= new List<SpellingWork>()).Add(new SpellingWork(leaf, leaf.Version, 0, leaf.Text, Array.Empty<int>()));
+                    continue;
+                }
+
+                var result = _spelling[leaf];
+                if (result.IsChecked)
                 {
                     continue;
                 }
 
-                (work ??= new List<SpellingWork>()).Add(new SpellingWork(leaf, leaf.Version, leaf.Text));
+                // Only what edits left unchecked, out to the ends of its words: a check of the
+                // whole leaf for every word typed made a string of all of it each time.
+                GetDirtyWords(leaf, result, out int start, out int end);
+
+                (work ??= new List<SpellingWork>()).Add(new SpellingWork(leaf, leaf.Version, start, leaf.Substring(start, end - start), Outside(result.Ranges, start, end)));
             }
 
             if (work == null)
@@ -251,11 +278,18 @@ namespace Telegram.Controls.RichEditor
                         continue;
                     }
 
+                    var ranges = Combine(item.Kept, found[i], item.Start);
+                    var dirtyStart = -1;
+                    var dirtyEnd = -1;
+
                     // Typed into meanwhile: what was found is moved onto the text as it is now,
                     // like any edit, and the leaf is checked again with the next word.
-                    var ranges = item.Version == leaf.Version ? found[i] : Move(item.Text, leaf.Text, found[i], out _, out _);
+                    if (item.Version != leaf.Version)
+                    {
+                        ranges = Move(leaf, item.Version, ranges, ref dirtyStart, ref dirtyEnd, out _, out _);
+                    }
 
-                    _spelling[leaf] = new SpellingResult(leaf.Version, leaf.Text, Filter(leaf, ranges), item.Version == leaf.Version);
+                    _spelling[leaf] = new SpellingResult(leaf.Version, Filter(leaf, ranges), dirtyStart, dirtyEnd);
                     _spellingDirty |= item.Version != leaf.Version;
                 }
 
@@ -283,9 +317,12 @@ namespace Telegram.Controls.RichEditor
 
             if (result.Version != leaf.Version)
             {
-                var ranges = Move(result.Text, leaf.Text, result.Ranges, out bool changed, out bool boundary);
+                var dirtyStart = result.DirtyStart;
+                var dirtyEnd = result.DirtyEnd;
 
-                _spelling[leaf] = new SpellingResult(leaf.Version, leaf.Text, ranges, result.IsChecked && !changed);
+                var ranges = Move(leaf, result.Version, result.Ranges, ref dirtyStart, ref dirtyEnd, out bool changed, out bool boundary);
+
+                _spelling[leaf] = new SpellingResult(leaf.Version, ranges, dirtyStart, dirtyEnd);
                 _spellingDirty |= changed;
                 _spellingDue |= boundary;
             }
@@ -294,34 +331,57 @@ namespace Telegram.Controls.RichEditor
         }
 
         /// <summary>
-        /// Word ranges found in <paramref name="from"/>, moved onto <paramref name="to"/>: those
-        /// before the edited span stay, those after it shift, and one touching it goes, as that
-        /// word is still being typed. <paramref name="boundary"/> says whether the edit typed or
-        /// deleted anything that is not part of a word, which is what ends one.
+        /// Word ranges found in the leaf's text at <paramref name="version"/>, moved onto the text
+        /// as it is now by the edits the leaf says it took since: those before the edited span
+        /// stay, those after it shift, and one touching it goes, as that word is still being
+        /// typed. <paramref name="boundary"/> says whether the edit typed or deleted anything that
+        /// is not part of a word, which is what ends one. What was left unchecked follows the
+        /// edit too, and takes in what it changed. Edits the leaf no longer knows of are taken as
+        /// the whole text changed.
         /// </summary>
-        private static int[] Move(string from, string to, int[] ranges, out bool changed, out bool boundary)
+        private static int[] Move(RichTextLeaf leaf, int version, int[] ranges, ref int dirtyStart, ref int dirtyEnd, out bool changed, out bool boundary)
         {
-            var prefix = 0;
-            var shortest = Math.Min(from.Length, to.Length);
-
-            while (prefix < shortest && from[prefix] == to[prefix])
+            if (!leaf.TryGetEdit(version, out RichTextEdit edit))
             {
-                prefix++;
+                changed = true;
+                boundary = true;
+                dirtyStart = 0;
+                dirtyEnd = ToTheEnd;
+                return Array.Empty<int>();
             }
 
-            var suffix = 0;
-            while (suffix < shortest - prefix && from[from.Length - 1 - suffix] == to[to.Length - 1 - suffix])
+            changed = !edit.IsEmpty;
+            boundary = false;
+
+            if (!changed)
             {
-                suffix++;
+                return ranges;
             }
 
-            var oldEnd = from.Length - suffix;
-            var newEnd = to.Length - suffix;
+            var to = leaf.Chars;
+            var prefix = edit.Start;
+            var oldEnd = edit.OldEnd;
+            var newEnd = edit.NewEnd;
 
-            changed = prefix != oldEnd || prefix != newEnd;
-            boundary = HasSeparator(from, prefix, oldEnd) || HasSeparator(to, prefix, newEnd);
+            if (dirtyStart < 0)
+            {
+                dirtyStart = prefix;
+                dirtyEnd = newEnd;
+            }
+            else
+            {
+                dirtyStart = Math.Min(dirtyStart < oldEnd ? Math.Min(dirtyStart, prefix) : dirtyStart + newEnd - oldEnd, prefix);
+                dirtyEnd = dirtyEnd == ToTheEnd ? ToTheEnd : Math.Max(dirtyEnd <= prefix ? dirtyEnd : dirtyEnd < oldEnd ? newEnd : dirtyEnd + newEnd - oldEnd, newEnd);
+            }
 
-            if (!changed || ranges.Length == 0)
+            // What the edit took out, when the leaf still knows: the old text's characters at
+            // either end of the edit are those, or, when nothing was taken out, the characters
+            // around it, which are the same now as then.
+            var removed = edit.Removed;
+
+            boundary = removed == null || HasSeparator(removed.AsSpan(), 0, removed.Length) || HasSeparator(to, prefix, newEnd);
+
+            if (ranges.Length == 0)
             {
                 return ranges;
             }
@@ -330,8 +390,24 @@ namespace Telegram.Controls.RichEditor
 
             // A word right against the edit is still the same word if a separator stands between
             // them before and after it: a space typed after a misspelling keeps its squiggle.
-            var before = IsWordEnd(from, prefix) && IsWordEnd(to, prefix) ? prefix : prefix - 1;
-            var after = IsWordStart(from, oldEnd) && IsWordStart(to, newEnd) ? oldEnd : oldEnd + 1;
+            var before = prefix - 1;
+            var after = oldEnd + 1;
+
+            if (removed != null)
+            {
+                var endedBefore = removed.Length > 0 ? IsSeparator(removed[0]) : newEnd >= to.Length || IsSeparator(to[newEnd]);
+                var startedAfter = removed.Length > 0 ? IsSeparator(removed[removed.Length - 1]) : prefix == 0 || IsSeparator(to[prefix - 1]);
+
+                if (endedBefore && IsWordEnd(to, prefix))
+                {
+                    before = prefix;
+                }
+
+                if ((oldEnd == 0 || startedAfter) && IsWordStart(to, newEnd))
+                {
+                    after = oldEnd;
+                }
+            }
 
             var count = 0;
 
@@ -366,11 +442,98 @@ namespace Telegram.Controls.RichEditor
             return moved;
         }
 
-        private static bool IsWordEnd(string text, int offset) => offset >= text.Length || IsSeparator(text[offset]);
+        // The range what edits left unchecked spans, a character either side for the words that
+        // touched it, out to the ends of the words at either end.
+        private static void GetDirtyWords(RichTextLeaf leaf, in SpellingResult result, out int start, out int end)
+        {
+            var length = leaf.Length;
 
-        private static bool IsWordStart(string text, int offset) => offset == 0 || IsSeparator(text[offset - 1]);
+            start = Math.Clamp(result.DirtyStart - 1, 0, length);
+            end = result.DirtyEnd == ToTheEnd ? length : Math.Clamp(result.DirtyEnd + 1, start, length);
 
-        private static bool HasSeparator(string text, int start, int end)
+            while (start > 0 && !IsSeparator(leaf[start - 1]))
+            {
+                start--;
+            }
+
+            while (end < length && !IsSeparator(leaf[end]))
+            {
+                end++;
+            }
+        }
+
+        // The ranges wholly outside [start, end): what a check of that range leaves standing.
+        private static int[] Outside(int[] ranges, int start, int end)
+        {
+            var count = 0;
+
+            for (int i = 0; i + 1 < ranges.Length; i += 2)
+            {
+                if (ranges[i] + ranges[i + 1] <= start || ranges[i] >= end)
+                {
+                    count += 2;
+                }
+            }
+
+            if (count == ranges.Length)
+            {
+                return ranges;
+            }
+
+            var outside = new int[count];
+            var j = 0;
+
+            for (int i = 0; i + 1 < ranges.Length; i += 2)
+            {
+                if (ranges[i] + ranges[i + 1] <= start || ranges[i] >= end)
+                {
+                    outside[j++] = ranges[i];
+                    outside[j++] = ranges[i + 1];
+                }
+            }
+
+            return outside;
+        }
+
+        // What stood before the checked text, what was found in it, and what stood after it, in
+        // order. Found is in the checked text's own offsets.
+        private static int[] Combine(int[] kept, int[] found, int start)
+        {
+            if (kept.Length == 0 && start == 0)
+            {
+                return found;
+            }
+
+            var combined = new int[kept.Length + found.Length];
+            var j = 0;
+            var k = 0;
+
+            while (k + 1 < kept.Length && kept[k] < start)
+            {
+                combined[j++] = kept[k++];
+                combined[j++] = kept[k++];
+            }
+
+            for (int i = 0; i + 1 < found.Length; i += 2)
+            {
+                combined[j++] = found[i] + start;
+                combined[j++] = found[i + 1];
+            }
+
+            while (k + 1 < kept.Length)
+            {
+                combined[j++] = kept[k++];
+                combined[j++] = kept[k++];
+            }
+
+            return combined;
+        }
+
+        private static bool IsWordEnd(ReadOnlySpan<char> text, int offset) => offset >= text.Length || IsSeparator(text[offset]);
+
+        private static bool IsWordStart(ReadOnlySpan<char> text, int offset) => offset == 0 || IsSeparator(text[offset - 1]);
+
+        private static bool HasSeparator(ReadOnlySpan<char> text, int start, int end)
         {
             for (int i = start; i < end; i++)
             {
@@ -562,7 +725,7 @@ namespace Telegram.Controls.RichEditor
                 return false;
             }
 
-            word = leaf.Text.Substring(start, length);
+            word = leaf.Substring(start, length);
             return true;
         }
 
@@ -685,7 +848,7 @@ namespace Telegram.Controls.RichEditor
             foreach (var leaf in new List<RichTextLeaf>(_spelling.Keys))
             {
                 var result = _spelling[leaf];
-                _spelling[leaf] = new SpellingResult(result.Version, result.Text, result.Ranges, false);
+                _spelling[leaf] = new SpellingResult(result.Version, result.Ranges, 0, ToTheEnd);
             }
 
             CheckSpelling();

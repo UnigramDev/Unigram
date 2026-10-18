@@ -84,7 +84,7 @@ namespace Telegram.Controls.RichEditor
 
             if (leaf == null || leaf.IsPlain || !_hasFocus
                 || !_engine.IsSelectionEmpty || _engine.SelectedNode != null || IsInCode(leaf, focus.Offset)
-                || !AutocompleteEntityFinder.TrySearch(leaf.Text, focus.Offset, RichTextLeaf.ObjectChar, out AutocompleteEntity entity, out string result, out int index))
+                || !AutocompleteEntityFinder.TrySearch(leaf.Chars, focus.Offset, RichTextLeaf.ObjectChar, out AutocompleteEntity entity, out string result, out int index))
             {
                 HideSuggestions();
                 return;
@@ -363,7 +363,7 @@ namespace Telegram.Controls.RichEditor
         {
             var tail = leaf.Length - _engine.Focus.Offset;
 
-            while (AutocompleteEntityFinder.TrySearch(leaf.Text, end, RichTextLeaf.ObjectChar, out AutocompleteEntity entity, out string result, out int index)
+            while (AutocompleteEntityFinder.TrySearch(leaf.Chars, end, RichTextLeaf.ObjectChar, out AutocompleteEntity entity, out string result, out int index)
                 && entity == AutocompleteEntity.Sticker && result == emoji)
             {
                 _engine.SetCaret(new RichPosition(leaf, end));

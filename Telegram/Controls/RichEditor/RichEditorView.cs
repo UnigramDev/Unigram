@@ -872,7 +872,7 @@ namespace Telegram.Controls.RichEditor
             };
 
             var perLine = Math.Max(1, (int)(width / (size * CharacterWidth)));
-            var text = leaf.Text;
+            var text = leaf.Chars;
             var lines = 0;
             var start = 0;
 

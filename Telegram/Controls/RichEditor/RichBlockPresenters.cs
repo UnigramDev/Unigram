@@ -266,7 +266,7 @@ namespace Telegram.Controls.RichEditor
                     lines += view.TextBlock.LineCount;
 
                     // A line break at the very end is drawn as an empty line after it.
-                    if (i == last && text.Text.Length > 0 && text.Text.Text[text.Text.Length - 1] == '\n')
+                    if (i == last && text.Text.EndsWith('\n'))
                     {
                         lines--;
                     }

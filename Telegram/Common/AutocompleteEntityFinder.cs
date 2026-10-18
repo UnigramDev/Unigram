@@ -159,7 +159,7 @@ namespace Telegram.Common
         /// where the entity starts, its symbol included. <paramref name="objectChar"/> is what
         /// stands for a custom emoji, after which a ':' still starts an emoji query.
         /// </summary>
-        public static bool TrySearch(string text, int caret, char objectChar, out AutocompleteEntity entity, out string result, out int index)
+        public static bool TrySearch(ReadOnlySpan<char> text, int caret, char objectChar, out AutocompleteEntity entity, out string result, out int index)
         {
             entity = AutocompleteEntity.None;
             result = string.Empty;
@@ -200,7 +200,7 @@ namespace Telegram.Common
                     _ => AutocompleteEntity.None
                 };
 
-                result = text.Substring(index + 1, caret - index - 1);
+                result = text.Slice(index + 1, caret - index - 1).ToString();
 
                 // Special case for emoji
                 if (entity == AutocompleteEntity.Emoji && (result.Length == 0 || (result.Length == 1 && result[0] == char.ToUpper(result[0]))))
@@ -213,7 +213,7 @@ namespace Telegram.Common
             if (entity == AutocompleteEntity.None && caret > 0 && MayEndEmoji(text[caret - 1]))
             {
                 var start = Math.Max(0, caret - LongestEmoji);
-                var shorter = text.Substring(start, caret - start);
+                var shorter = text.Slice(start, caret - start).ToString();
 
                 var emoji = Emoji.EnumerateByComposedCharacterSequenceReverse(shorter);
                 var last = emoji.FirstOrDefault();
@@ -221,7 +221,7 @@ namespace Telegram.Common
                 if (last != null && Emoji.ContainsSingleEmoji(last))
                 {
                     result = last;
-                    index = StartOf(text, caret, last);
+                    index = start + StartOf(shorter, caret - start, last);
                     entity = AutocompleteEntity.Sticker;
                 }
             }

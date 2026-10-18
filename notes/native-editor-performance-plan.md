@@ -288,6 +288,64 @@ its direction per version; `MessageTextBox` converts its document once per state
 leaf's string, which takes a buffer in the leaf and an edit call to the layout instead of a whole
 string per key; a code block tokenized whole per key; and what a screen reader's `GetText` builds.
 
+**Phase 2e, the edit instead of the string (2026-10-16, unbuilt).** `RichTextLeaf` holds its text in
+a `char` buffer edited in place, shared with a clone - an undo step - until either writes; `Text`
+is made when asked and kept until the next edit, and what runs on every key reads `Chars`, the
+indexer, `Substring` or `IndexOf` instead: the caret and word stops (`ReadOnlySpan<char>`, with
+`StringInfo` asked only past a character on its own), the markdown rules, suggestions
+(`AutocompleteEntityFinder.TrySearch`), the composer's emoticons and length, the input service's
+requests, the height estimates. Each change is journalled, the last eight (`RichTextEdit`, merged
+by `TryGetEdit`, which also says whether a style changed on its own), and the direction is worked
+out from a prefix and again only for an edit before where it was decided. `RichLeafView` hands
+`DirectTextBlock.ReplaceText` the edit rather than the text whenever only the text changed and
+the line holder stayed; the block keeps a length and reads its text back from the layout when
+asked. `DirectTextLayout::ReplaceText` puts the text together natively, moves its colours with it,
+and gathers the edits until the build, which hands them to `EditableTextLayout::Update` in place
+of comparing the texts from both ends; the inline objects outside the edit are still compared, as
+they are handed over again with every text, and the layout's own copy is replaced in place. The
+spell checker moves its ranges by the journal instead of keeping a copy of every leaf to compare
+against. A code block is tokenized one run at a time, again on the text as it is once a run comes
+back stale, 150 ms after typing when it was typed into; the tokens move with each edit meanwhile,
+and a run's colours go over in one call (`AddColors`) after the moved ones are cleared, where they
+were set one by one, each looked up among the rest. A screen reader's `GetText` with a limit builds
+only that much. Still whole per key, natively: `Prepare`'s per-position styles, objects and
+analysis text, the copy of the runs and glyphs after the window, and putting the `hstring`
+together; and a word ended checks the whole leaf (`SpellingWork`), a string of it per check.
+
+Ninth run (Release, 1x and about 200 Hz), the 100,000 paragraph: full collections 4 in 200 keys
+against 9, every collection a full one; a key's handlers 3.3 ms in the middle and 2.5 at the end,
+against 1.5 to 1.8 in phase 2d, with the layout ~1.7 ms an update once the cold halves of the ten
+Enters (24 ms each) are taken out, against 0.75. Not measured where it goes, as only cold builds
+were timed by stage. Read from the code since: an update moved its per-position styles and
+objects out to compare against and `Prepare` allocated them again, 400 KB each a key here, and
+the runs and glyphs after the window were copied into new vectors and back. Since: told the edit,
+the per-position state keeps its capacity; the tail goes through vectors the layout keeps; and
+updates are timed by stage (`EditableTextLayout::UpdateStages`: preparing, finding the edit,
+splicing, analysing, shaping, putting the tail back, breaking lines, and how many were told their
+edit). The collections left, from the code: the spell checker took the whole leaf as a string
+for every word ended, and the first key of every undo step copies the buffer it shares. Since: a
+result keeps the range edits left unchecked (`DirtyStart`, `DirtyEnd`) instead of a flag, and a
+check takes only that, out to the ends of its words, and keeps what was found around it.
+
+Tenth run (Release, 1.5x), the mixed article: a key 0.75 ms against 0.85 to 1.1, one full
+collection in 300 keys; updates 133 µs each - preparing 7, finding the edit 0.5, splicing 18,
+analysing 18, shaping 64, the tail 2, breaking 23 - 300 of 1,330 told their edit, the typed keys,
+the rest pooled views given a whole new text. The 50 cold builds mapped fonts for 1.5 ms each
+against 7 µs in the seventh run, and setting up took 137 µs against 20, with an open of 179 ms
+against 17 and one build of 66 ms: as if the fonts were loaded in this run, not shown. Not yet
+run on the 100,000 paragraph, where the 1.7 ms an update is.
+
+Eleventh run, the 100,000 paragraph (1.5x): a key's handlers 1.50 ms in the middle and 0.89 at
+the end, against 3.30 and 2.53; every typed key told its edit, finding it 0.4 µs. What a typed key
+still pays whole, from the stages: preparing ~210 µs, splicing ~135, the tail ~150 (the averages
+also hold the halves of the ten Enters, ~20 ms each, which inflate shaping, analysing and
+breaking). Full collections still 7 in 300 keys: `RichTextWindow.UpdateSendLock`, on every change
+and then every 500 ms while typing, measured the document for its limits
+(`RichDocumentLimits.Measure`) with `ToPlainText` and `ToRichText` of every leaf, which is the leaf
+as a string and as a rich text. Since: the length and the depth of styles come from the runs, with
+only an object's own rich text made. Left: for a user without Premium the send lock converts the
+whole document (`ToInputRichMessage`) on the same timer.
+
 **Phase 3a, blocks kept in place (2026-10-16, unbuilt).** Every list of presenters - the root
 blocks, a quote's, a details block's, a list's items and an item's blocks - is reconciled in
 place (`RichEditorView.Reconcile`): what left is removed, what came in inserted, what moved moved,

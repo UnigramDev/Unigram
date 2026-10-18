@@ -551,7 +551,7 @@ namespace Telegram.Controls.RichEditor
                 return false;
             }
 
-            return AutocompleteEntityFinder.TrySearch(focus.Leaf.Text, focus.Offset, RichTextLeaf.ObjectChar, out entity, out query, out start);
+            return AutocompleteEntityFinder.TrySearch(focus.Leaf.Chars, focus.Offset, RichTextLeaf.ObjectChar, out entity, out query, out start);
         }
 
         // An ordinary replacement, not a substitution: Backspace after a mention or a command
@@ -648,7 +648,7 @@ namespace Telegram.Controls.RichEditor
         {
             var focus = _engine.Focus;
             return _engine.IsSelectionEmpty && focus.Offset > 0 && !focus.Leaf.IsPlain
-                && Emoticon.Matches.ContainsKey(focus.Leaf.Text[focus.Offset - 1]);
+                && Emoticon.Matches.ContainsKey(focus.Leaf[focus.Offset - 1]);
         }
 
         /// <summary>The emoticon just typed, as the emoji it stands for. Not in code, as the old box did not.</summary>
@@ -660,7 +660,7 @@ namespace Telegram.Controls.RichEditor
             var leaf = focus.Leaf;
             var offset = focus.Offset;
 
-            if (!_engine.IsSelectionEmpty || offset == 0 || leaf.IsPlain || !Emoticon.Matches.TryGetValue(leaf.Text[offset - 1], out string[] matches))
+            if (!_engine.IsSelectionEmpty || offset == 0 || leaf.IsPlain || !Emoticon.Matches.TryGetValue(leaf[offset - 1], out string[] matches))
             {
                 return;
             }
@@ -673,7 +673,7 @@ namespace Telegram.Controls.RichEditor
             foreach (var match in matches)
             {
                 var start = offset - match.Length;
-                if (start >= 0 && string.CompareOrdinal(leaf.Text, start, match, 0, match.Length) == 0)
+                if (start >= 0 && leaf.Chars.Slice(start, match.Length).SequenceEqual(match.AsSpan()))
                 {
                     _engine.Substitute(start, Emoticon.Data[match]);
                     return;

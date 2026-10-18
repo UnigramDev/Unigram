@@ -484,12 +484,12 @@ namespace Telegram.Controls.RichEditor
                 case TextUnit.Character:
                     start = flat;
                     end = position.Offset < leaf.Length
-                        ? leafStart + RichEditorEngine.NextCaretStop(leaf.Text, position.Offset)
+                        ? leafStart + RichEditorEngine.NextCaretStop(leaf.Chars, position.Offset)
                         : Math.Min(flat + 1, length);
                     return;
 
                 case TextUnit.Word:
-                    RichEditorEngine.GetWordRange(leaf.Text, position.Offset, out int wordStart, out int wordEnd);
+                    RichEditorEngine.GetWordRange(leaf.Chars, position.Offset, out int wordStart, out int wordEnd);
                     start = leafStart + wordStart;
                     end = leafStart + wordEnd;
                     return;
@@ -642,6 +642,20 @@ namespace Telegram.Controls.RichEditor
 
         public string GetText(int maxLength)
         {
+            // Only as far as was asked, rather than the whole range cut down: a reader asks for
+            // the start of the document after every change, and the document is the range. An
+            // object reads as its text, which is not one character, so a short answer is built
+            // again in full.
+            if (maxLength >= 0 && maxLength < _end - _start)
+            {
+                var start = _peer.GetText(_start, _start + maxLength);
+
+                if (start.Length >= maxLength)
+                {
+                    return start.Substring(0, maxLength);
+                }
+            }
+
             var text = _peer.GetText(_start, _end);
             return maxLength >= 0 && maxLength < text.Length ? text.Substring(0, maxLength) : text;
         }

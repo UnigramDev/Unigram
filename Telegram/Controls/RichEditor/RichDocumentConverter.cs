@@ -834,6 +834,32 @@ namespace Telegram.Controls.RichEditor
             return parts.Count == 1 ? parts[0] : new RichTexts(parts);
         }
 
+        /// <summary>
+        /// How many wrappers <see cref="ToRichText"/> puts around a run: its link, when that is
+        /// one of the kinds that wrap, and each of its marks. A group shares what it is grouped
+        /// by, so every run in the tree sits under exactly its own.
+        /// </summary>
+        internal static int CountWrappers(in RichTextRun run)
+        {
+            var count = run.Link?.Kind is RichLinkKind.Url or RichLinkKind.EmailAddress or RichLinkKind.PhoneNumber or RichLinkKind.MentionName or RichLinkKind.DateTime ? 1 : 0;
+
+            foreach (var mark in _markOrder)
+            {
+                if ((run.Marks & mark) != 0)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        /// <summary>What an object's run reads as, under its wrappers; its text is not read.</summary>
+        internal static RichText ToRichText(in RichTextRun run)
+        {
+            return run.Object != null ? Leaf(null, run, 0) : new RichTextPlain(string.Empty);
+        }
+
         private static bool SameAtLevel(in RichTextRun x, in RichTextRun y, int level)
         {
             if (level < 0)

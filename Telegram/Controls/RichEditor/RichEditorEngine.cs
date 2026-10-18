@@ -298,7 +298,7 @@ namespace Telegram.Controls.RichEditor
         public void SelectWord(RichPosition position)
         {
             var leaf = position.Leaf;
-            GetWordRange(leaf.Text, position.Offset, out int start, out int end);
+            GetWordRange(leaf.Chars, position.Offset, out int start, out int end);
             Select(new RichPosition(leaf, start), new RichPosition(leaf, end));
         }
 
@@ -419,7 +419,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             var leaf = focus.Leaf;
-            var offset = direction < 0 ? PreviousCaretStop(leaf.Text, focus.Offset) : NextCaretStop(leaf.Text, focus.Offset);
+            var offset = direction < 0 ? PreviousCaretStop(leaf.Chars, focus.Offset) : NextCaretStop(leaf.Chars, focus.Offset);
 
             if (offset != focus.Offset)
             {
@@ -452,7 +452,7 @@ namespace Telegram.Controls.RichEditor
 
             var focus = _focus;
             var leaf = focus.Leaf;
-            var offset = direction < 0 ? PreviousWordStart(leaf.Text, focus.Offset) : NextWordEnd(leaf.Text, focus.Offset);
+            var offset = direction < 0 ? PreviousWordStart(leaf.Chars, focus.Offset) : NextWordEnd(leaf.Chars, focus.Offset);
 
             if (offset == focus.Offset)
             {
@@ -612,15 +612,14 @@ namespace Telegram.Controls.RichEditor
         // =====================================================================================
 
         /// <summary>The next caret position: whole surrogate pairs and combining sequences, never half of one.</summary>
-        public static int NextCaretStop(string text, int offset)
+        public static int NextCaretStop(ReadOnlySpan<char> text, int offset)
         {
             if (offset >= text.Length)
             {
                 return text.Length;
             }
 
-            var element = StringInfo.GetNextTextElement(text, offset);
-            var next = offset + Math.Max(1, element.Length);
+            var next = TextElementEnd(text, offset);
 
             // Emoji sequences: StringInfo on .NET Native predates extended grapheme clusters, so
             // a ZWJ sequence or a modifier would be stepped into. Absorb joiners, variation
@@ -653,7 +652,34 @@ namespace Telegram.Controls.RichEditor
             return Math.Min(next, text.Length);
         }
 
-        public static int PreviousCaretStop(string text, int offset)
+        // Where the text element at offset ends, as StringInfo has it. Only asked of StringInfo,
+        // which takes a string, where the answer is not a character on its own: nearly every
+        // step is one, and a string of the line per step is what this is here to avoid.
+        private static int TextElementEnd(ReadOnlySpan<char> text, int offset)
+        {
+            if (!char.IsSurrogate(text[offset]) && (offset + 1 >= text.Length || !MayCombine(text[offset + 1])))
+            {
+                return offset + 1;
+            }
+
+            var length = Math.Min(text.Length - offset, 32);
+            var element = StringInfo.GetNextTextElement(text.Slice(offset, length).ToString(), 0);
+
+            return offset + Math.Max(1, element.Length);
+        }
+
+        private static bool MayCombine(char c)
+        {
+            if (char.IsSurrogate(c))
+            {
+                return true;
+            }
+
+            var category = CharUnicodeInfo.GetUnicodeCategory(c);
+            return category is UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark or UnicodeCategory.EnclosingMark;
+        }
+
+        public static int PreviousCaretStop(ReadOnlySpan<char> text, int offset)
         {
             if (offset <= 0)
             {
@@ -679,7 +705,7 @@ namespace Telegram.Controls.RichEditor
             return previous;
         }
 
-        private static bool IsContinuation(string text, int index)
+        private static bool IsContinuation(ReadOnlySpan<char> text, int index)
         {
             var c = text[index];
             if (char.IsLowSurrogate(c) || c == '‍' || c == '️' || c == '︎' || c == '⃣')
@@ -735,7 +761,7 @@ namespace Telegram.Controls.RichEditor
         }
 
         /// <summary>Ctrl+Right: past the end of the next word, as Windows text boxes do.</summary>
-        public static int NextWordEnd(string text, int offset)
+        public static int NextWordEnd(ReadOnlySpan<char> text, int offset)
         {
             var i = offset;
             while (i < text.Length && Classify(text[i]) == CharClass.Space)
@@ -768,7 +794,7 @@ namespace Telegram.Controls.RichEditor
         }
 
         /// <summary>Ctrl+Left: to the start of the word before the caret.</summary>
-        public static int PreviousWordStart(string text, int offset)
+        public static int PreviousWordStart(ReadOnlySpan<char> text, int offset)
         {
             var i = offset;
             while (i > 0 && Classify(text[i - 1]) == CharClass.Space)
@@ -796,7 +822,7 @@ namespace Telegram.Controls.RichEditor
         }
 
         /// <summary>The word, run of spaces or run of punctuation around <paramref name="offset"/>: double click.</summary>
-        public static void GetWordRange(string text, int offset, out int start, out int end)
+        public static void GetWordRange(ReadOnlySpan<char> text, int offset, out int start, out int end)
         {
             if (text.Length == 0)
             {

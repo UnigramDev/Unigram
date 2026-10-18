@@ -182,14 +182,26 @@ namespace Telegram.Controls.RichEditor
     {
         public const char ObjectChar = '￼';
 
-        private string _text;
+        private const string ObjectString = "￼";
+
+        // The text, edited in place: a string per edit was a copy of the whole line on every key,
+        // on the large object heap past 42,500 characters, and the full collections that brings.
+        // Shared with a clone - every undo step is one - until either of them writes.
+        private char[] _chars;
+        private int _length;
+        private bool _shared;
+
+        // The text as a string, made when it is asked for and kept until the next edit.
+        private string _string;
+
         private readonly List<RichTextRun> _runs;
 
         public RichTextLeaf(RichLeafRole role = RichLeafRole.Text, bool isPlain = false)
         {
             Role = role;
             IsPlain = isPlain;
-            _text = string.Empty;
+            _chars = Array.Empty<char>();
+            _string = string.Empty;
             _runs = new List<RichTextRun>();
         }
 
@@ -197,7 +209,10 @@ namespace Telegram.Controls.RichEditor
         {
             Role = source.Role;
             IsPlain = source.IsPlain;
-            _text = source._text;
+            _chars = source._chars;
+            _length = source._length;
+            _string = source._string;
+            _shared = source._shared = true;
             _runs = new List<RichTextRun>(source._runs);
         }
 
@@ -229,7 +244,13 @@ namespace Telegram.Controls.RichEditor
             {
                 if (_directionVersion != Version)
                 {
-                    _direction = _text.Length > 0 ? NativeUtils.GetDirectionality(_text) : TextDirectionality.Neutral;
+                    // Decided by the first strong character, so an edit past where that was found
+                    // cannot change it.
+                    if (!TryGetEdit(_directionVersion, out RichTextEdit edit) || (!edit.IsEmpty && edit.Start < _directionReach))
+                    {
+                        ComputeDirection();
+                    }
+
                     _directionVersion = Version;
                 }
 
@@ -240,11 +261,65 @@ namespace Telegram.Controls.RichEditor
         private TextDirectionality _direction;
         private int _directionVersion = -1;
 
-        public string Text => _text;
+        // Where an edit has to start to leave the direction as it is: past the strong character
+        // that decided it. Nowhere while none has - the next one typed, anywhere, is the first.
+        private int _directionReach;
 
-        public int Length => _text.Length;
+        // Read from the start: a prefix is enough for nearly every line, and the whole text is
+        // only made into a string when that prefix has no strong character in it.
+        private const int DirectionPrefix = 256;
 
-        public bool IsEmpty => _text.Length == 0;
+        private void ComputeDirection()
+        {
+            _directionReach = int.MaxValue;
+
+            if (_length == 0)
+            {
+                _direction = TextDirectionality.Neutral;
+                return;
+            }
+
+            if (_length <= DirectionPrefix)
+            {
+                _direction = NativeUtils.GetDirectionality(Text);
+
+                if (_direction != TextDirectionality.Neutral)
+                {
+                    _directionReach = _length;
+                }
+
+                return;
+            }
+
+            _direction = NativeUtils.GetDirectionality(new string(_chars, 0, DirectionPrefix));
+
+            if (_direction == TextDirectionality.Neutral)
+            {
+                _direction = NativeUtils.GetDirectionality(Text);
+            }
+            else
+            {
+                _directionReach = DirectionPrefix;
+            }
+        }
+
+        /// <summary>The text as a string. Made on the first read after an edit: what runs on every key reads <see cref="Chars"/> instead.</summary>
+        public string Text => _string ??= new string(_chars, 0, _length);
+
+        /// <summary>The text, without making a string of it; valid until the next edit.</summary>
+        public ReadOnlySpan<char> Chars => new(_chars, 0, _length);
+
+        public char this[int index] => (uint)index < (uint)_length ? _chars[index] : throw new ArgumentOutOfRangeException(nameof(index));
+
+        public int Length => _length;
+
+        public bool IsEmpty => _length == 0;
+
+        public string Substring(int start, int length) => length == 0 ? string.Empty : new string(_chars, start, length);
+
+        public int IndexOf(char value, int start, int count) => Array.IndexOf(_chars, value, start, count);
+
+        public bool EndsWith(char value) => _length > 0 && _chars[_length - 1] == value;
 
         public IReadOnlyList<RichTextRun> Runs => _runs;
 
@@ -277,7 +352,7 @@ namespace Telegram.Controls.RichEditor
 
         public RichInlineObject GetObjectAt(int offset)
         {
-            if (offset < 0 || offset >= _text.Length || _text[offset] != ObjectChar)
+            if (offset < 0 || offset >= _length || _chars[offset] != ObjectChar)
             {
                 return null;
             }
@@ -328,7 +403,7 @@ namespace Telegram.Controls.RichEditor
             if (index < 0)
             {
                 index = _runs.Count - 1;
-                runStart = _text.Length - _runs[index].Length;
+                runStart = _length - _runs[index].Length;
             }
 
             var run = _runs[index];
@@ -459,9 +534,8 @@ namespace Telegram.Controls.RichEditor
                 }
             }
 
-            _text = _text.Insert(offset, text);
+            Splice(offset, 0, text);
             InsertRun(offset, new RichTextRun(text.Length, marks, link));
-            Changed();
         }
 
         public void InsertObject(int offset, RichInlineObject inline, RichMarks marks)
@@ -471,9 +545,8 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            _text = _text.Insert(offset, ObjectChar.ToString());
+            Splice(offset, 0, ObjectString);
             InsertRun(offset, new RichTextRun(1, marks, null, inline));
-            Changed();
         }
 
         /// <summary>
@@ -483,7 +556,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         public int Substitute(int start, int end, string text, RichInlineObject inline, RichMarks marks, RichLink link)
         {
-            var replaced = _text.Substring(start, end - start);
+            var replaced = Substring(start, end - start);
 
             // Code holds no objects, and keeps what was typed in it.
             if (IsPlain || replaced.IndexOf(ObjectChar) >= 0 || (inline == null && string.IsNullOrEmpty(text)))
@@ -495,17 +568,15 @@ namespace Telegram.Controls.RichEditor
 
             if (inline != null)
             {
-                _text = _text.Insert(start, ObjectChar.ToString());
+                Splice(start, 0, ObjectString);
                 InsertRun(start, new RichTextRun(1, marks, null, inline, replaced));
-                Changed();
                 return 1;
             }
 
-            text = text.Replace(ObjectChar.ToString(), string.Empty);
+            text = text.Replace(ObjectString, string.Empty);
 
-            _text = _text.Insert(start, text);
+            Splice(start, 0, text);
             InsertRun(start, new RichTextRun(text.Length, marks, link, null, replaced));
-            Changed();
             return text.Length;
         }
 
@@ -523,7 +594,15 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            _text = _text.Insert(offset, content._text);
+            // A leaf's own text, or one it shares, is read while it is being moved.
+            if (ReferenceEquals(content._chars, _chars))
+            {
+                Splice(offset, 0, content.Text);
+            }
+            else
+            {
+                Splice(offset, 0, content.Chars);
+            }
 
             var position = offset;
             foreach (var run in content._runs)
@@ -531,8 +610,6 @@ namespace Telegram.Controls.RichEditor
                 InsertRun(position, run);
                 position += run.Length;
             }
-
-            Changed();
         }
 
         public void Delete(int start, int end)
@@ -542,7 +619,7 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            _text = _text.Remove(start, end - start);
+            Splice(start, end - start, ReadOnlySpan<char>.Empty);
 
             var position = 0;
             for (int i = 0; i < _runs.Count; i++)
@@ -569,7 +646,6 @@ namespace Telegram.Controls.RichEditor
             }
 
             Normalize();
-            Changed();
         }
 
         /// <summary>A new leaf with [start, end) of this one.</summary>
@@ -581,7 +657,9 @@ namespace Telegram.Controls.RichEditor
                 return slice;
             }
 
-            slice._text = _text.Substring(start, end - start);
+            slice._chars = Chars.Slice(start, end - start).ToArray();
+            slice._length = end - start;
+            slice._string = null;
 
             var position = 0;
             foreach (var run in _runs)
@@ -606,12 +684,12 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Cuts [offset, end) off into a new leaf, which is returned: what Enter does.</summary>
         public RichTextLeaf Split(int offset, RichLeafRole role)
         {
-            var tail = Slice(offset, _text.Length, role);
-            Delete(offset, _text.Length);
+            var tail = Slice(offset, _length, role);
+            Delete(offset, _length);
             return tail;
         }
 
-        public void Append(RichTextLeaf other) => Insert(_text.Length, other);
+        public void Append(RichTextLeaf other) => Insert(_length, other);
 
         public void SetMark(int start, int end, RichMarks mark, bool value)
         {
@@ -669,27 +747,47 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Replaces the content wholesale; used when converting the block between kinds.</summary>
         public void SetContent(RichTextLeaf content)
         {
-            _text = content?._text ?? string.Empty;
-            _runs.Clear();
+            var previous = _length;
 
-            if (content != null)
+            if (content == null)
             {
-                if (IsPlain && !content.IsPlain)
-                {
-                    _text = content.ToPlainText();
+                _chars = Array.Empty<char>();
+                _length = 0;
+                _string = string.Empty;
+                _shared = false;
+                _runs.Clear();
+            }
+            else if (IsPlain && !content.IsPlain)
+            {
+                SetChars(content.ToPlainText());
+                _runs.Clear();
 
-                    if (_text.Length > 0)
-                    {
-                        _runs.Add(new RichTextRun(_text.Length, RichMarks.None, null));
-                    }
-                }
-                else
+                if (_length > 0)
                 {
-                    _runs.AddRange(content._runs);
+                    _runs.Add(new RichTextRun(_length, RichMarks.None, null));
                 }
             }
+            else if (!ReferenceEquals(content, this))
+            {
+                _chars = content._chars;
+                _length = content._length;
+                _string = content._string;
+                _shared = content._shared = true;
 
-            Changed();
+                _runs.Clear();
+                _runs.AddRange(content._runs);
+            }
+
+            Changed(0, previous, _length, null);
+        }
+
+        // The whole text replaced by one that is already a string, which is kept as it is.
+        private void SetChars(string text)
+        {
+            _chars = text.ToCharArray();
+            _length = text.Length;
+            _string = text;
+            _shared = false;
         }
 
         /// <summary>
@@ -703,20 +801,28 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            IsPlain = value;
-
             if (value)
             {
-                _text = ToPlainText();
+                var previous = _length;
+                var plain = ToPlainText();
+
+                IsPlain = true;
+
+                SetChars(plain);
                 _runs.Clear();
 
-                if (_text.Length > 0)
+                if (_length > 0)
                 {
-                    _runs.Add(new RichTextRun(_text.Length, RichMarks.None, null));
+                    _runs.Add(new RichTextRun(_length, RichMarks.None, null));
                 }
-            }
 
-            Changed();
+                Changed(0, previous, _length, null);
+            }
+            else
+            {
+                IsPlain = false;
+                Changed();
+            }
         }
 
         /// <summary>Appends a styled run at the end; how converters build a leaf.</summary>
@@ -724,17 +830,17 @@ namespace Telegram.Controls.RichEditor
         {
             if (!string.IsNullOrEmpty(text))
             {
-                Insert(_text.Length, text, marks, link);
+                Insert(_length, text, marks, link);
             }
         }
 
         internal void AppendObject(RichInlineObject inline, RichMarks marks)
         {
-            InsertObject(_text.Length, inline, marks);
+            InsertObject(_length, inline, marks);
         }
 
         /// <summary>The text with each object read as its plain text.</summary>
-        public string ToPlainText() => ToPlainText(0, _text.Length);
+        public string ToPlainText() => ToPlainText(0, _length);
 
         public string ToPlainText(int start, int end)
         {
@@ -743,21 +849,21 @@ namespace Telegram.Controls.RichEditor
                 return string.Empty;
             }
 
-            if (_text.IndexOf(ObjectChar, start, end - start) < 0)
+            if (IndexOf(ObjectChar, start, end - start) < 0)
             {
-                return _text.Substring(start, end - start);
+                return start == 0 && end == _length ? Text : Substring(start, end - start);
             }
 
             var builder = new System.Text.StringBuilder(end - start);
             for (int i = start; i < end; i++)
             {
-                if (_text[i] == ObjectChar)
+                if (_chars[i] == ObjectChar)
                 {
                     builder.Append(GetObjectAt(i)?.PlainText);
                 }
                 else
                 {
-                    builder.Append(_text[i]);
+                    builder.Append(_chars[i]);
                 }
             }
 
@@ -882,9 +988,170 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
+        /// <summary>Puts <paramref name="inserted"/> in place of [start, start + removed), in the buffer, and records it.</summary>
+        private void Splice(int start, int removed, ReadOnlySpan<char> inserted)
+        {
+            var length = _length - removed + inserted.Length;
+            var tail = _length - start - removed;
+
+            // Kept from the text before: what the edit took out, while it is short enough to be
+            // worth keeping, for whoever has to know what was there.
+            var taken = removed == 0 ? string.Empty : removed <= MaxRemembered ? new string(_chars, start, removed) : null;
+
+            if (_shared || length > _chars.Length)
+            {
+                // Grown by half again, so a line typed to the end of is copied a few times over,
+                // not once a key.
+                var capacity = length > _chars.Length ? Math.Max(Math.Max(length, _chars.Length + _chars.Length / 2), 16) : _chars.Length;
+                var chars = new char[capacity];
+
+                Array.Copy(_chars, 0, chars, 0, start);
+                Array.Copy(_chars, start + removed, chars, start + inserted.Length, tail);
+
+                _chars = chars;
+                _shared = false;
+            }
+            else if (removed != inserted.Length)
+            {
+                Array.Copy(_chars, start + removed, _chars, start + inserted.Length, tail);
+            }
+
+            inserted.CopyTo(new Span<char>(_chars, start, inserted.Length));
+
+            _length = length;
+            _string = null;
+
+            Changed(start, start + removed, start + inserted.Length, taken);
+        }
+
+        private void Splice(int start, int removed, string inserted)
+        {
+            Splice(start, removed, inserted.AsSpan());
+        }
+
+        // Longer than this, what an edit took out is not kept: a selection deleted or a block
+        // pasted over, where a reader can as well take the whole text as changed.
+        private const int MaxRemembered = 64;
+
+        // The last edits, a ring, for whoever kept something about an earlier version: the
+        // line's view and the spell checker move what they hold by them rather than compare
+        // the old text with the new. Made on the first edit; most leaves are never edited.
+        private RichTextEdit[] _edits;
+        private int _editHead;
+        private int _editCount;
+
+        private const int MaxEdits = 8;
+
+        // A change of style only: the text stands as it was.
         private void Changed()
         {
+            Changed(-1, -1, -1, null);
+        }
+
+        private void Changed(int start, int oldEnd, int newEnd, string removed)
+        {
             Version++;
+
+            _edits ??= new RichTextEdit[MaxEdits];
+            _edits[_editHead] = new RichTextEdit(Version, start, oldEnd, newEnd, removed);
+            _editHead = (_editHead + 1) % MaxEdits;
+            _editCount = Math.Min(_editCount + 1, MaxEdits);
+        }
+
+        /// <summary>
+        /// What changed in the text from <paramref name="fromVersion"/> to <see cref="Version"/>,
+        /// as one edit: [Start, OldEnd) of the text then is [Start, NewEnd) of the text now. Empty
+        /// when only styles changed, or nothing did; false when the edits are no longer known,
+        /// and the text has to be taken as changed throughout.
+        /// </summary>
+        public bool TryGetEdit(int fromVersion, out RichTextEdit edit)
+        {
+            edit = new RichTextEdit(Version, -1, -1, -1, null);
+
+            if (fromVersion == Version)
+            {
+                return true;
+            }
+
+            if (fromVersion > Version || Version - fromVersion > _editCount)
+            {
+                return false;
+            }
+
+            var first = true;
+            var restyled = false;
+
+            for (int version = fromVersion + 1; version <= Version; version++)
+            {
+                var next = _edits[(_editHead - (Version - version) - 1 + MaxEdits) % MaxEdits];
+
+                if (next.IsEmpty)
+                {
+                    restyled = true;
+                    continue;
+                }
+
+                edit = first ? next : edit.Then(next);
+                first = false;
+            }
+
+            if (restyled)
+            {
+                edit = edit.WithRestyled();
+            }
+
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// An edit of a leaf's text: [Start, OldEnd) of the text before it became [Start, NewEnd).
+    /// <see cref="Removed"/> is what was there, when a single short edit took it out.
+    /// </summary>
+    public readonly struct RichTextEdit
+    {
+        public RichTextEdit(int version, int start, int oldEnd, int newEnd, string removed, bool restyled = false)
+        {
+            Version = version;
+            Start = start;
+            OldEnd = oldEnd;
+            NewEnd = newEnd;
+            Removed = removed;
+            Restyled = restyled;
+        }
+
+        /// <summary>Whether a style changed on its own among the edits, which can be anywhere in the text, not only in [Start, NewEnd).</summary>
+        public bool Restyled { get; }
+
+        internal RichTextEdit WithRestyled() => new(Version, Start, OldEnd, NewEnd, Removed, true);
+
+        public int Version { get; }
+
+        public int Start { get; }
+
+        public int OldEnd { get; }
+
+        public int NewEnd { get; }
+
+        public string Removed { get; }
+
+        /// <summary>No text changed: a style did, or nothing.</summary>
+        public bool IsEmpty => Start < 0;
+
+        /// <summary>
+        /// This edit followed by <paramref name="next"/>, which is in the text this one left, as
+        /// one. What it removed is known only when that is nothing: otherwise the range can hold
+        /// text neither of them touched.
+        /// </summary>
+        public RichTextEdit Then(in RichTextEdit next)
+        {
+            var start = Math.Min(Start, next.Start);
+            var middle = Math.Max(NewEnd, next.OldEnd);
+
+            var oldEnd = middle - (NewEnd - OldEnd);
+            var newEnd = middle + (next.NewEnd - next.OldEnd);
+
+            return new RichTextEdit(next.Version, start, oldEnd, newEnd, oldEnd == start ? string.Empty : null);
         }
     }
 }

@@ -460,7 +460,7 @@ namespace Telegram.Controls.RichEditor
 
             if (_dragGranularity == TextSelectionGranularity.Word)
             {
-                RichEditorEngine.GetWordRange(position.Leaf.Text, position.Offset, out start, out end);
+                RichEditorEngine.GetWordRange(position.Leaf.Chars, position.Offset, out start, out end);
             }
             else
             {

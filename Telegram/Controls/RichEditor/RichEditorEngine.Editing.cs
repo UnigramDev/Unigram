@@ -324,7 +324,7 @@ namespace Telegram.Controls.RichEditor
             {
                 BeginEdit(RichEditKind.Deleting);
 
-                var start = word ? PreviousWordStart(leaf.Text, offset) : PreviousDeletionStop(leaf.Text, offset);
+                var start = word ? PreviousWordStart(leaf.Chars, offset) : PreviousDeletionStop(leaf.Chars, offset);
                 leaf.Delete(start, offset);
                 SetCaretInternal(new RichPosition(leaf, start));
 
@@ -361,7 +361,7 @@ namespace Telegram.Controls.RichEditor
             {
                 BeginEdit(RichEditKind.Deleting);
 
-                var end = word ? NextWordEnd(leaf.Text, offset) : NextCaretStop(leaf.Text, offset);
+                var end = word ? NextWordEnd(leaf.Chars, offset) : NextCaretStop(leaf.Chars, offset);
                 leaf.Delete(offset, end);
 
                 Raise(RichEditorChanges.Text, leaf);
@@ -381,7 +381,7 @@ namespace Telegram.Controls.RichEditor
         /// so an accent typed on its own can be taken back - except across a surrogate pair or
         /// a joined emoji sequence, which would leave garbage.
         /// </summary>
-        private static int PreviousDeletionStop(string text, int offset)
+        private static int PreviousDeletionStop(ReadOnlySpan<char> text, int offset)
         {
             var previous = PreviousCaretStop(text, offset);
 
@@ -938,7 +938,7 @@ namespace Telegram.Controls.RichEditor
         /// </summary>
         private void EnterInMultilineLeaf(RichBlock block, RichTextLeaf leaf, int offset)
         {
-            if (offset == leaf.Length && leaf.Length > 0 && leaf.Text[leaf.Length - 1] == '\n')
+            if (offset == leaf.Length && leaf.EndsWith('\n'))
             {
                 leaf.Delete(leaf.Length - 1, leaf.Length);
 

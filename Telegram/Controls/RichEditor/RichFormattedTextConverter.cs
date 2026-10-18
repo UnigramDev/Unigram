@@ -447,7 +447,7 @@ namespace Telegram.Controls.RichEditor
                 var leaf = leaves[i];
                 length += leaf.Length;
 
-                if (leaf.Text.IndexOf(RichTextLeaf.ObjectChar) < 0)
+                if (leaf.IndexOf(RichTextLeaf.ObjectChar, 0, leaf.Length) < 0)
                 {
                     continue;
                 }
@@ -477,7 +477,7 @@ namespace Telegram.Controls.RichEditor
 
                 offset += end;
 
-                if (leaf.Text.IndexOf(RichTextLeaf.ObjectChar, 0, end) >= 0)
+                if (leaf.IndexOf(RichTextLeaf.ObjectChar, 0, end) >= 0)
                 {
                     var start = 0;
 
