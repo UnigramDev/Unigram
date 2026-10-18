@@ -423,12 +423,69 @@ namespace winrt::Telegram::Native::implementation
         return S_OK;
     }
 
+    // Whether an edit the caller said it made fits the two texts.
+    bool EditableTextLayout::IsEdit(const EditableEdit& edit, int32_t oldLength, int32_t newLength)
+    {
+        return edit.Start >= 0 && edit.Start <= edit.OldEnd && edit.OldEnd <= oldLength
+            && edit.Start <= edit.NewEnd && edit.NewEnd <= newLength
+            && oldLength - edit.OldEnd == newLength - edit.NewEnd;
+    }
+
+    // Whether the objects outside an edit are the same boxes in the same places, before it and
+    // after it: a caller hands every object over again with each text, and one outside the edit
+    // that changed size is a change the edit does not say. Prepare has put the new ones in place.
+    bool EditableTextLayout::SameObjectsAround(const EditableEdit& edit, const std::vector<EditableInline>& oldInlines, const std::vector<DWRITE_INLINE_OBJECT_METRICS>& oldMetrics) const
+    {
+        const auto delta = edit.NewEnd - edit.OldEnd;
+
+        const auto outside = [&](const EditableInline& item, int32_t end)
+            {
+                return item.Offset + item.Length <= edit.Start || item.Offset >= end;
+            };
+
+        size_t o = 0;
+        size_t n = 0;
+
+        while (true)
+        {
+            while (o < oldInlines.size() && !outside(oldInlines[o], edit.OldEnd))
+            {
+                o++;
+            }
+
+            while (n < m_inlines.size() && !outside(m_inlines[n], edit.NewEnd))
+            {
+                n++;
+            }
+
+            if (o == oldInlines.size() || n == m_inlines.size())
+            {
+                return o == oldInlines.size() && n == m_inlines.size();
+            }
+
+            const auto& before = oldInlines[o];
+            const auto& after = m_inlines[n];
+            const auto moved = before.Offset >= edit.OldEnd ? before.Offset + delta : before.Offset;
+
+            if (moved != after.Offset || before.Length != after.Length
+                || oldMetrics[o].width != m_inlineMetrics[n].width
+                || oldMetrics[o].height != m_inlineMetrics[n].height
+                || oldMetrics[o].baseline != m_inlineMetrics[n].baseline)
+            {
+                return false;
+            }
+
+            o++;
+            n++;
+        }
+    }
+
     // The paragraph after an edit, worked out from what is already shaped: the runs around the
     // change analysed and shaped again, the ones after it moved, and the lines broken again
     // from the one before the change until they meet the old ones. Anything this does not
     // handle - another format, a paragraph or an edit with right to left text in it, an empty
     // text, a failure half way - is a cold build, which leaves nothing of the old state.
-    HRESULT EditableTextLayout::Update(const EditableTextFormat& format, std::wstring_view text, const std::vector<EditableStyle>& styles, const std::vector<EditableInline>& inlines, float width)
+    HRESULT EditableTextLayout::Update(const EditableTextFormat& format, std::wstring_view text, const std::vector<EditableStyle>& styles, const std::vector<EditableInline>& inlines, float width, const EditableEdit* edit)
     {
         const auto oldLength = (int32_t)m_text.size();
         const auto newLength = (int32_t)text.size();
@@ -440,11 +497,36 @@ namespace winrt::Telegram::Native::implementation
             return Build(format, text, styles, inlines, width);
         }
 
-        const auto oldStyleOf = std::move(m_styleOf);
-        const auto oldInlineOf = std::move(m_inlineOf);
+        auto& stages = UpdateStages;
+        auto mark = Ticks();
+        stages.Updates++;
+
+        // Charged to the stage that just ended, from the mark the one before it left.
+        const auto lap = [&](int64_t& stage)
+            {
+                const auto now = Ticks();
+                stage += now - mark;
+                mark = now;
+            };
+
+        // Told the edit, nothing per position is compared, so the old per-position state is not
+        // kept aside: moved out, Prepare made all of it again, the paragraph's length of it.
+        const auto told = edit != nullptr && IsEdit(*edit, oldLength, newLength);
+
+        std::vector<uint32_t> oldStyleOf;
+        std::vector<int32_t> oldInlineOf;
+
+        if (!told)
+        {
+            oldStyleOf = std::move(m_styleOf);
+            oldInlineOf = std::move(m_inlineOf);
+        }
+
         const auto oldMetrics = std::move(m_inlineMetrics);
+        const auto oldInlines = std::move(m_inlines);
 
         Prepare(text, styles, inlines);
+        lap(stages.Prepare);
 
         // Whether a position shapes the same before and after: the same character in the same
         // style, and the same box where there is an object. Which object draws the box is not
@@ -473,21 +555,40 @@ namespace winrt::Telegram::Native::implementation
                     && oldMetrics[x].baseline == m_inlineMetrics[y].baseline;
             };
 
-        const auto shorter = std::min(oldLength, newLength);
-
         int32_t prefix = 0;
-
-        while (prefix < shorter && same(prefix, prefix))
-        {
-            prefix++;
-        }
-
         int32_t suffix = 0;
 
-        while (suffix < shorter - prefix && same(oldLength - 1 - suffix, newLength - 1 - suffix))
+        if (told)
         {
-            suffix++;
+            // An object outside the edit that is not the box it was: a change the edit does not
+            // say, and there is nothing left to compare against to find it.
+            if (!SameObjectsAround(*edit, oldInlines, oldMetrics))
+            {
+                return Build(format, text, styles, inlines, width);
+            }
+
+            // Said rather than found: walking both texts from either end to find it is the one
+            // thing here that costs the whole paragraph on every key.
+            prefix = edit->Start;
+            suffix = oldLength - edit->OldEnd;
+            stages.Told++;
         }
+        else
+        {
+            const auto shorter = std::min(oldLength, newLength);
+
+            while (prefix < shorter && same(prefix, prefix))
+            {
+                prefix++;
+            }
+
+            while (suffix < shorter - prefix && same(oldLength - 1 - suffix, newLength - 1 - suffix))
+            {
+                suffix++;
+            }
+        }
+
+        lap(stages.Find);
 
         if (prefix == oldLength && prefix == newLength)
         {
@@ -537,7 +638,8 @@ namespace winrt::Telegram::Native::implementation
         m_lines.clear();
         m_segments.clear();
 
-        m_text.assign(text);
+        // Only the edit: the rest is the same text either way.
+        m_text.replace(prefix, oldEnd - prefix, text.substr(prefix, newEnd - prefix));
 
         const auto removed = oldWindowEnd - windowStart;
         const auto inserted = newWindowEnd - windowStart;
@@ -549,15 +651,17 @@ namespace winrt::Telegram::Native::implementation
         Splice(m_clusterWidth, windowStart, removed, inserted);
 
         // What comes after the window, put back once the window is shaped onto the end.
-        const std::vector<Run> tailRuns(m_runs.begin() + lastRun + 1, m_runs.end());
-        const std::vector<uint16_t> tailIndices(m_glyphIndices.begin() + glyphEnd, m_glyphIndices.end());
-        const std::vector<float> tailAdvances(m_glyphAdvances.begin() + glyphEnd, m_glyphAdvances.end());
-        const std::vector<DWRITE_GLYPH_OFFSET> tailOffsets(m_glyphOffsets.begin() + glyphEnd, m_glyphOffsets.end());
+        m_tailRuns.assign(m_runs.begin() + lastRun + 1, m_runs.end());
+        m_tailIndices.assign(m_glyphIndices.begin() + glyphEnd, m_glyphIndices.end());
+        m_tailAdvances.assign(m_glyphAdvances.begin() + glyphEnd, m_glyphAdvances.end());
+        m_tailOffsets.assign(m_glyphOffsets.begin() + glyphEnd, m_glyphOffsets.end());
 
         m_runs.resize(firstRun);
         m_glyphIndices.resize(glyphStart);
         m_glyphAdvances.resize(glyphStart);
         m_glyphOffsets.resize(glyphStart);
+
+        lap(stages.Splice);
 
         winrt::com_ptr<IDWriteTextAnalyzer> analyzer;
 
@@ -608,15 +712,21 @@ namespace winrt::Telegram::Native::implementation
 
         std::copy(analysis->Breakpoints.begin(), analysis->Breakpoints.end(), m_breakpoints.begin() + windowStart);
 
+        lap(stages.Analysis);
+
         if (FAILED(ShapeRange(analyzer.get(), analysis.get(), windowStart, newWindowEnd, analysis->Scripts.data(), analysis->Levels.data())))
         {
             return Build(format, text, styles, inlines, width);
         }
 
+        lap(stages.Shaping);
+
         const auto runDelta = (int32_t)m_runs.size() - (int32_t)(lastRun + 1);
         const auto glyphDelta = (int64_t)m_glyphIndices.size() - (int64_t)glyphEnd;
 
-        for (Run run : tailRuns)
+        m_runs.reserve(m_runs.size() + m_tailRuns.size());
+
+        for (Run run : m_tailRuns)
         {
             run.Start += delta;
             run.GlyphStart = (uint32_t)(run.GlyphStart + glyphDelta);
@@ -624,9 +734,9 @@ namespace winrt::Telegram::Native::implementation
             m_runs.push_back(run);
         }
 
-        m_glyphIndices.insert(m_glyphIndices.end(), tailIndices.begin(), tailIndices.end());
-        m_glyphAdvances.insert(m_glyphAdvances.end(), tailAdvances.begin(), tailAdvances.end());
-        m_glyphOffsets.insert(m_glyphOffsets.end(), tailOffsets.begin(), tailOffsets.end());
+        m_glyphIndices.insert(m_glyphIndices.end(), m_tailIndices.begin(), m_tailIndices.end());
+        m_glyphAdvances.insert(m_glyphAdvances.end(), m_tailAdvances.begin(), m_tailAdvances.end());
+        m_glyphOffsets.insert(m_glyphOffsets.end(), m_tailOffsets.begin(), m_tailOffsets.end());
 
         for (auto i = newWindowEnd; i < newLength; i++)
         {
@@ -634,6 +744,8 @@ namespace winrt::Telegram::Native::implementation
         }
 
         RemapInlines();
+
+        lap(stages.Tail);
 
         if (width != m_width)
         {
@@ -646,6 +758,8 @@ namespace winrt::Telegram::Native::implementation
             m_change = { false, 0, 0, prefix, oldEnd, newEnd };
             Rebreak(oldLines, oldSegments, windowStart, newWindowEnd, delta, runDelta);
         }
+
+        lap(stages.Breaking);
 
         return S_OK;
     }

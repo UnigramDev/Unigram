@@ -194,6 +194,18 @@ namespace winrt::Telegram::Native::implementation
                 stages.Builds, each(stages.Prepare), each(stages.Setup), each(stages.Analysis), each(stages.Mapping), each(stages.Shaping), each(stages.Breaking), stages.Runs / (double)stages.Builds);
         }
 
+        const auto& updates = EditableTextLayout::UpdateStages;
+        if (updates.Updates > 0)
+        {
+            const auto each = [&](int64_t ticks)
+                {
+                    return ticks / (double)frequency.QuadPart * 1000000 / updates.Updates;
+                };
+
+            text += std::format(L"Analyzer updates: {}, {} told their edit, µs each: preparing {:.1f}, finding the edit {:.1f}, splicing {:.1f}, analysing {:.1f}, shaping {:.1f}, putting back the tail {:.1f}, breaking lines {:.1f}\n",
+                updates.Updates, updates.Told, each(updates.Prepare), each(updates.Find), each(updates.Splice), each(updates.Analysis), each(updates.Shaping), each(updates.Tail), each(updates.Breaking));
+        }
+
         if (s_verified > 0)
         {
             std::lock_guard const guard(s_mismatchMutex);
@@ -226,6 +238,7 @@ namespace winrt::Telegram::Native::implementation
         s_endDraw = {};
         s_analyzer = {};
         EditableTextLayout::BuildStages = {};
+        EditableTextLayout::UpdateStages = {};
         s_verified = 0;
         s_mismatched = 0;
 
@@ -776,6 +789,9 @@ namespace winrt::Telegram::Native::implementation
         m_text = text;
         m_entities = entities;
 
+        m_replaceKnown = false;
+        m_replacePending = false;
+
         m_colors.clear();
         m_inlines.clear();
 
@@ -793,6 +809,83 @@ namespace winrt::Telegram::Native::implementation
         m_invalid = true;
     }
 
+    // Only the edit crosses from the caller, rather than the whole text as a string: in a long
+    // paragraph that string was a copy of it on the managed heap on every key.
+    void DirectTextLayout::ReplaceText(int32_t offset, int32_t length, hstring text, IVector<Telegram::Native::TextStylePart> entities)
+    {
+        const auto size = (int32_t)m_text.size();
+
+        offset = std::clamp(offset, 0, size);
+        length = std::clamp(length, 0, size - offset);
+
+        m_replaced.assign(m_text.data(), offset);
+        m_replaced.append(text.data(), text.size());
+        m_replaced.append(m_text.data() + offset + length, size - offset - length);
+
+        // Whether every change since the last build is known, which SetText ends.
+        const auto known = m_replaceKnown;
+        const auto pending = m_replacePending;
+
+        auto colors = std::move(m_colors);
+
+        SetText(hstring(m_replaced), entities);
+
+        const EditableEdit edit{ offset, offset + length, offset + (int32_t)text.size() };
+
+        if (known)
+        {
+            m_replace = pending ? m_replace.Then(edit) : edit;
+            m_replaceKnown = true;
+            m_replacePending = true;
+        }
+
+        // The colours go with the text rather than with SetText: a code block's are its tokens,
+        // and dropping them on every key drew it plain until it was tokenized again. One the
+        // edit cuts into is dropped; one around it takes in what was typed.
+        const auto delta = edit.NewEnd - edit.OldEnd;
+
+        for (ColorRange& item : colors)
+        {
+            const auto end = item.Offset + item.Length;
+
+            if (end <= edit.Start)
+            {
+                m_colors.push_back(item);
+            }
+            else if (item.Offset >= edit.OldEnd)
+            {
+                m_colors.push_back({ item.Offset + delta, item.Length, item.Color });
+            }
+            else if (item.Offset <= edit.Start && end >= edit.OldEnd && item.Length + delta > 0)
+            {
+                m_colors.push_back({ item.Offset, item.Length + delta, item.Color });
+            }
+        }
+    }
+
+    void DirectTextLayout::ClearColors()
+    {
+        m_colors.clear();
+    }
+
+    // Appended as they come, without looking for a range set before: a code block's tokens
+    // are thousands, and SetColor looking each one up among the others is quadratic.
+    void DirectTextLayout::AddColors(array_view<int32_t const> offsets, array_view<int32_t const> lengths, array_view<Windows::UI::Color const> colors)
+    {
+        const auto count = std::min({ offsets.size(), lengths.size(), colors.size() });
+        m_colors.reserve(m_colors.size() + count);
+
+        for (uint32_t i = 0; i < count; i++)
+        {
+            m_colors.push_back({ offsets[i], lengths[i], colors[i] });
+        }
+    }
+
+    hstring DirectTextLayout::Text()
+    {
+        return m_text;
+    }
+
     // The division of the text. Offsets are into the text, and what lies between one paragraph
     // and the next - the newline that separates them - belongs to neither: it is in no layout,
     // and the line the paragraph before it ends with is where a caller walking by line finds
@@ -803,6 +896,9 @@ namespace winrt::Telegram::Native::implementation
         m_paragraphs.clear();
         m_editable = nullptr;
         m_previous = nullptr;
+
+        m_replaceKnown = false;
+        m_replacePending = false;
 
         const auto length = (int32_t)m_text.size();
 
@@ -937,6 +1033,14 @@ namespace winrt::Telegram::Native::implementation
 
         m_trimmed = false;
 
+        // The edits since the last build, if every one of them was said, and from here on the
+        // ones since this one.
+        const auto replaced = m_replaceKnown && m_replacePending;
+        const auto edit = m_replace;
+
+        m_replaceKnown = true;
+        m_replacePending = false;
+
         // What the last build left, which an edit is worked out from.
         std::unique_ptr<EditableTextLayout> previous = std::move(m_previous);
 
@@ -972,7 +1076,7 @@ namespace winrt::Telegram::Native::implementation
             auto editable = previous != nullptr ? std::move(previous) : std::make_unique<EditableTextLayout>();
 
             const auto started = Now();
-            result = BuildEditable(*editable);
+            result = BuildEditable(*editable, replaced ? &edit : nullptr);
 
             Record(s_analyzer, started);
 
@@ -2242,7 +2346,7 @@ namespace winrt::Telegram::Native::implementation
     }
 
     // The same state BuildParagraph hands DirectWrite, in the shape the analyzer takes it.
-    HRESULT DirectTextLayout::BuildEditable(EditableTextLayout& layout)
+    HRESULT DirectTextLayout::BuildEditable(EditableTextLayout& layout, const EditableEdit* edit)
     {
         EditableTextFormat format;
         format.Factory = m_factory;
@@ -2320,7 +2424,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
         // An update of whatever the layout already holds, which for a new one is a build.
-        return layout.Update(format, std::wstring_view(m_text.data(), m_text.size()), styles, inlines, (float)std::max(m_width, 0.0));
+        return layout.Update(format, std::wstring_view(m_text.data(), m_text.size()), styles, inlines, (float)std::max(m_width, 0.0), edit);
     }
 
     // An update against a build of the same state from scratch, which is what it has to be.

@@ -184,9 +184,13 @@ namespace winrt::Telegram::Native::implementation
         int32_t LineCount();
 
         void SetText(hstring text, IVector<Telegram::Native::TextStylePart> entities);
+        void ReplaceText(int32_t offset, int32_t length, hstring text, IVector<Telegram::Native::TextStylePart> entities);
+        hstring Text();
         void SetParagraphs(IVector<Telegram::Native::TextParagraph> paragraphs);
         void SetColor(int32_t offset, int32_t length, Windows::UI::Color color);
         void ClearColor(int32_t offset, int32_t length);
+        void ClearColors();
+        void AddColors(array_view<int32_t const> offsets, array_view<int32_t const> lengths, array_view<Windows::UI::Color const> colors);
         void SetInlineObject(int32_t offset, int32_t length, Windows::Foundation::Size size, double baseline);
         bool SetMathObject(int32_t offset, int32_t length, hstring expression);
 
@@ -299,6 +303,16 @@ namespace winrt::Telegram::Native::implementation
         // over: until then nothing is answered from it, as nothing is from m_paragraphs.
         std::unique_ptr<EditableTextLayout> m_previous;
 
+        // What ReplaceText changed since the last build, all of it as one edit, which that build
+        // hands the analyzer instead of having it compare the texts. Known only while every
+        // change since was a ReplaceText; SetText is a text that may differ anywhere.
+        EditableEdit m_replace{};
+        bool m_replaceKnown{ false };
+        bool m_replacePending{ false };
+
+        // Where ReplaceText puts the text together, kept for its capacity.
+        std::wstring m_replaced;
+
         // The virtual surface a long edited text is drawn into instead, in tiles of
         // c_tileHeight pixels: which of them are drawn, the run of them kept (the viewport and
         // a margin), and what changed since the last draw - rows in DIPs, the edit, and the
@@ -336,7 +350,7 @@ namespace winrt::Telegram::Native::implementation
         HRESULT BuildParagraph(Paragraph& paragraph);
 
         bool UsesAnalyzer() const;
-        HRESULT BuildEditable(EditableTextLayout& layout);
+        HRESULT BuildEditable(EditableTextLayout& layout, const EditableEdit* edit = nullptr);
         void VerifyEditable(const EditableTextLayout& layout);
         HRESULT Stack();
         HRESULT Reflow(double availableWidth);

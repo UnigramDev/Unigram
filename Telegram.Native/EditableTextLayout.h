@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -95,6 +96,24 @@ namespace winrt::Telegram::Native::implementation
         int32_t NewEnd{ 0 };
     };
 
+    // An edit the caller knows it made: [Start, OldEnd) of the text before became [Start, NewEnd)
+    // of the text after, and everything outside it, styles included, is as it was.
+    struct EditableEdit
+    {
+        int32_t Start;
+        int32_t OldEnd;
+        int32_t NewEnd;
+
+        // This edit followed by next, which is in the text this one left, as one.
+        EditableEdit Then(const EditableEdit& next) const
+        {
+            const auto start = std::min(Start, next.Start);
+            const auto middle = std::max(NewEnd, next.OldEnd);
+
+            return { start, middle - (NewEnd - OldEnd), middle + (next.NewEnd - next.OldEnd) };
+        }
+    };
+
     struct EditableLine
     {
         int32_t Start;
@@ -116,8 +135,9 @@ namespace winrt::Telegram::Native::implementation
         HRESULT Build(const EditableTextFormat& format, std::wstring_view text, const std::vector<EditableStyle>& styles, const std::vector<EditableInline>& inlines, float width);
 
         // The same input as Build, after an edit: only what is around the change is analysed,
-        // shaped and broken again. Built from scratch whenever that cannot be done.
-        HRESULT Update(const EditableTextFormat& format, std::wstring_view text, const std::vector<EditableStyle>& styles, const std::vector<EditableInline>& inlines, float width);
+        // shaped and broken again. Built from scratch whenever that cannot be done. The edit is
+        // found by comparing the text with the one before, unless the caller says what it was.
+        HRESULT Update(const EditableTextFormat& format, std::wstring_view text, const std::vector<EditableStyle>& styles, const std::vector<EditableInline>& inlines, float width, const EditableEdit* edit = nullptr);
 
         // The lines again at another width, from the advances already shaped.
         HRESULT Reflow(float width);
@@ -162,6 +182,23 @@ namespace winrt::Telegram::Native::implementation
         };
 
         inline static Stages BuildStages{};
+
+        // The same for updates: how many, how many were told their edit rather than finding
+        // it, and the stages, the last of them putting back what came after the window.
+        struct UpdateStageTicks
+        {
+            int64_t Updates;
+            int64_t Told;
+            int64_t Prepare;
+            int64_t Find;
+            int64_t Splice;
+            int64_t Analysis;
+            int64_t Shaping;
+            int64_t Tail;
+            int64_t Breaking;
+        };
+
+        inline static UpdateStageTicks UpdateStages{};
 
         // Where the lines that hold [start, end) begin and end, in DIPs.
         void RangeExtent(int32_t start, int32_t end, float& top, float& bottom) const;
@@ -235,6 +272,9 @@ namespace winrt::Telegram::Native::implementation
         void Prepare(std::wstring_view text, const std::vector<EditableStyle>& styles, const std::vector<EditableInline>& inlines);
         void RemapInlines();
 
+        static bool IsEdit(const EditableEdit& edit, int32_t oldLength, int32_t newLength);
+        bool SameObjectsAround(const EditableEdit& edit, const std::vector<EditableInline>& oldInlines, const std::vector<DWRITE_INLINE_OBJECT_METRICS>& oldMetrics) const;
+
         HRESULT ShapeRange(IDWriteTextAnalyzer* analyzer, IDWriteTextAnalysisSource* source, int32_t from, int32_t to, const DWRITE_SCRIPT_ANALYSIS* scripts, const uint8_t* levels);
         HRESULT Shape(IDWriteTextAnalyzer* analyzer, int32_t start, int32_t length, uint32_t face, float emSize, const DWRITE_SCRIPT_ANALYSIS& script, uint8_t level, uint32_t style);
         HRESULT AddFace(IDWriteFontFace* face, uint32_t& index);
@@ -294,6 +334,13 @@ namespace winrt::Telegram::Native::implementation
         std::vector<uint16_t> m_glyphIndices;
         std::vector<float> m_glyphAdvances;
         std::vector<DWRITE_GLYPH_OFFSET> m_glyphOffsets;
+
+        // What an update sets aside from after its window while the window is shaped, kept
+        // for their capacity: made anew, they were a few allocations of the paragraph a key.
+        std::vector<Run> m_tailRuns;
+        std::vector<uint16_t> m_tailIndices;
+        std::vector<float> m_tailAdvances;
+        std::vector<DWRITE_GLYPH_OFFSET> m_tailOffsets;
 
         std::vector<Run> m_runs;
         std::vector<Segment> m_segments;

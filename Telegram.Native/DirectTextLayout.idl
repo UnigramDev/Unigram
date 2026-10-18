@@ -70,6 +70,16 @@ namespace Telegram.Native
 
         void SetText(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities);
 
+        // An edit, where SetText hands over all of the text again: length characters at offset
+        // replaced by text, and the entities those of the text it leaves. The inline objects are
+        // cleared as SetText clears them; the colours move with the text, and one the edit cuts
+        // into is dropped. Everything outside the range has to be as it was, styles included,
+        // which is what lets the next build start from the edit instead of finding it.
+        void ReplaceText(Int32 offset, Int32 length, String text, Windows.Foundation.Collections.IVector<TextStylePart> entities);
+
+        // The text as it stands, for a caller that handed over edits rather than strings.
+        String Text{ get; };
+
         // How the text is divided. Set after SetText, which leaves it as one paragraph reading
         // the way RightToLeft and Alignment say. Everything else here - a colour, an inline
         // object, a hit test, a range - is in offsets into the whole text, whichever paragraph
@@ -80,6 +90,11 @@ namespace Telegram.Native
         // Takes the colour off a range again - a spoiler that has been revealed draws in
         // whatever the caller draws the rest of the text with.
         void ClearColor(Int32 offset, Int32 length);
+
+        // Every colour off, and many on at once, appended without replacing a range set before:
+        // a code block's tokens, which SetColor one at a time looks up among each other.
+        void ClearColors();
+        void AddColors(Int32[] offsets, Int32[] lengths, Windows.UI.Color[] colors);
 
         // An element the text flows around: the caller draws it, the layout only reserves the
         // box. A fixed one - an emoji - declares its size; a variable one - a button - is
