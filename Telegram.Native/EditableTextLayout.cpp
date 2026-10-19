@@ -2229,7 +2229,9 @@ namespace winrt::Telegram::Native::implementation
                     const auto last = q < runEnd ? run.GlyphStart + m_clusterMap[q] : run.GlyphStart + run.GlyphCount;
 
                     ID2D1Brush* stretch = brush;
-                    auto visible = !hardBreak && last > first;
+                    // Control characters, a tab among them, shape to the font's missing glyph:
+                    // a layout draws nothing for them.
+                    auto visible = !hardBreak && last > first && (run.Script.shapes & DWRITE_SCRIPT_SHAPES_NO_VISUAL) == 0;
 
                     if (color >= 0)
                     {
