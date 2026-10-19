@@ -17,6 +17,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Profile;
@@ -30,6 +31,7 @@ using Telegram.Views.Stars.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
+using Telegram.Views.Wallet.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -896,6 +898,15 @@ namespace Telegram.ViewModels
             else
             {
                 ShowPopup(new GiftPopup(ClientService, NavigationService, chat));
+            }
+        }
+
+        public async void SendMoney()
+        {
+            if (ClientService.TryGetUser(Chat, out User user))
+            {
+                var wallet = Session.Resolve<IWalletService>();
+                ShowPopup(new WalletSendPopup(ClientService, wallet, NavigationService, user.Id));
             }
         }
 

@@ -321,49 +321,68 @@
                 </Grid>
             </controls:ProfileButtonsGrid>
 
-            <Button x:Name="UserFirstAudioRoot"
-                    Click="UserFirstAudio_Click"
-                    Margin="-8,8,-8,-8"
-                    CornerRadius="0"
-                    BorderThickness="0"
-                    HorizontalAlignment="Stretch"
-                    Visibility="Collapsed"
-                    Grid.Row="4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="&#xEADE;"
-                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                               FontSize="16"
-                               Margin="0,0,4,0"
-                               VerticalAlignment="Center"
-                               Grid.Column="1" />
-                    <TextBlock x:Name="UserFirstAudioText"
-                               TextTrimming="CharacterEllipsis"
-                               TextWrapping="NoWrap"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                               Grid.Column="2">
-                        <Run x:Name="UserFirstAudioTitle"
-                             FontWeight="SemiBold" />
-                        <Run x:Name="UserFirstAudioSubtitle" />
-                    </TextBlock>
+            <Grid x:Name="FooterRoot"
+                  Margin="-8,8,-8,-8"
+                  HorizontalAlignment="Center"
+                  Visibility="Collapsed"
+                  Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="UserFirstAudioRoot"
+                        Click="UserFirstAudio_Click"
+                        Padding="9,2,9,3"
+                        CornerRadius="12"
+                        Margin="0,0,0,6"
+                        Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="&#xEADE;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Margin="0,0,4,0"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" />
+                        <TextBlock x:Name="UserFirstAudioText"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   Grid.Column="2">
+                            <Run x:Name="UserFirstAudioTitle"
+                                 FontWeight="SemiBold" />
+                            <Run x:Name="UserFirstAudioSubtitle" />
+                        </TextBlock>
 
-                    <TextBlock Text="&#xEAB9;"
-                               Foreground="#FFFFFF"
-                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                               FontSize="12"
-                               Margin="2,2,0,0"
-                               VerticalAlignment="Top"
-                               Width="12"
-                               Grid.Column="3" />
-                </Grid>
-            </Button>
+                        <TextBlock Text="&#xEAB9;"
+                                   Foreground="#FFFFFF"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="12"
+                                   Margin="2,2,0,0"
+                                   VerticalAlignment="Top"
+                                   Width="12"
+                                   Grid.Column="3" />
+                    </Grid>
+                </Button>
+                <Button x:Name="UserBalanceRoot"
+                        Click="UserBalance_Click"
+                        FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                        FontSize="12"
+                        Padding="11,2,11,3"
+                        CornerRadius="12"
+                        Margin="0,0,0,6"
+                        Visibility="Collapsed"
+                        Grid.Column="1">
+                    <TextBlock x:Name="UserBalance" />
+                </Button>
+            </Grid>
         </Grid>
 
         <StackPanel x:Name="ControlsRoot"

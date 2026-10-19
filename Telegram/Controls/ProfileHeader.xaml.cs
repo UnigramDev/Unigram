@@ -26,6 +26,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Popups;
+using Telegram.Views.Wallet.Popups;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -211,7 +212,7 @@ namespace Telegram.Controls
             _backgroundCollapsed = !show;
             HeaderPhotoRoot.IsHitTestVisible = !show;
             Buttons.IsHitTestVisible = !show;
-            UserFirstAudioRoot.IsHitTestVisible = !show;
+            FooterRoot.IsHitTestVisible = !show;
 
             if (HeaderTheme != ElementTheme.Default)
             {
@@ -256,7 +257,7 @@ namespace Telegram.Controls
             var root = ElementComposition.GetElementVisual(HeaderRoot);
             var photoRoot = ElementComposition.GetElementVisual(HeaderPhotoRoot);
             var photo = ElementComposition.GetElementVisual(HeaderPhoto);
-            var audio = ElementComposition.GetElementVisual(UserFirstAudioRoot);
+            var audio = ElementComposition.GetElementVisual(FooterRoot);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Buttons, true);
             ElementCompositionPreview.SetIsTranslationEnabled(HeaderRoot, true);
@@ -870,9 +871,35 @@ namespace Telegram.Controls
                 UserNote.Visibility = Visibility.Collapsed;
             }
 
+            var footerVisible = false;
+            var balanceVisible = false;
+
+            if (fullInfo.TonWalletCard != null)
+            {
+                footerVisible = true;
+                balanceVisible = true;
+                UserBalanceRoot.Visibility = Visibility.Visible;
+
+                TextBlockHelper.SetMarkdown(UserBalance, string.Format(Strings.WalletBalanceAmount, $"**{Icons.Gram14} {Formatter.GramSummary(fullInfo.TonWalletCard.GramAmount).Join()}**"));
+            }
+            else
+            {
+                UserBalanceRoot.Visibility = Visibility.Collapsed;
+            }
+
             if (fullInfo.FirstProfileAudio != null)
             {
+                footerVisible = true;
                 UserFirstAudioRoot.Visibility = Visibility.Visible;
+
+                if (balanceVisible)
+                {
+                    UserFirstAudioRoot.Margin = new Thickness(0, 0, 8, 6);
+                }
+                else
+                {
+                    UserFirstAudioRoot.Margin = new Thickness(0, 0, 0, 6);
+                }
 
                 if (fullInfo.FirstProfileAudio.Title.Length > 0)
                 {
@@ -899,6 +926,10 @@ namespace Telegram.Controls
             {
                 UserFirstAudioRoot.Visibility = Visibility.Collapsed;
             }
+
+            FooterRoot.Visibility = footerVisible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             var animation = fullInfo.PersonalPhoto != null
                 ? fullInfo.PersonalPhoto.SmallAnimation ?? fullInfo.PersonalPhoto.Animation
@@ -1572,6 +1603,11 @@ namespace Telegram.Controls
                         flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.SendAGift, Icons.GiftPremium);
                     }
 
+                    if (user.Type is UserTypeRegular && ViewModel.ClientService.Options.CanUseTonWallet)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.SendMoney, Strings.WalletAttachMoney, Icons.Gram);
+                    }
+
                     if (user.Type is UserTypeRegular && !user.IsSupport)
                     {
                         flyout.CreateFlyoutItem(ViewModel.CreateSecretChat, Strings.StartEncryptedChat, Icons.LockClosed);
@@ -2057,6 +2093,21 @@ namespace Telegram.Controls
                     {
                         // All the remote procedure calls must be wrapped in a try-catch block
                     }
+                }
+            }
+        }
+
+        private async void UserBalance_Click(object sender, RoutedEventArgs e)
+        {
+            var clientService = ViewModel.ClientService;
+            if (clientService.TryGetUser(ViewModel.Chat, out User user)
+                && clientService.TryGetUserFull(user.Id, out UserFullInfo fullInfo)
+                && fullInfo.TonWalletCard != null)
+            {
+                var confirm = await ViewModel.ShowPopupAsync(new WalletBalancePopup(clientService, user, fullInfo.TonWalletCard, UserBalanceRoot));
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ViewModel.SendMoney();
                 }
             }
         }
