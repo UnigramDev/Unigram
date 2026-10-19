@@ -103,7 +103,7 @@ Almost every glyph is one monochrome outline that takes the `Foreground` of
 whatever draws it. An entry marked
 
 ```json
-{"name": "tl_fluent_star_14_regular", "code": "F78E", "src": "icons/tl_fluent_star_14_regular.svg", "color": true},
+{"name": "tl_fluent_star_14_colored", "code": "F78E", "src": "icons/tl_fluent_star_14_colored.svg", "color": true},
 ```
 
 is built the other way: one glyph per fill colour in the SVG, in paint order,
@@ -116,7 +116,7 @@ API the XAML text stack does not go through. So a gradient in the artwork has to
 become one colour, and `build` says which one it picked:
 
 ```
-warning: tl_fluent_star_14_regular: gradient flattened to #EB7814 - COLRv0 layers are flat
+warning: tl_fluent_star_14_colored: gradient flattened to #EB7814 - COLRv0 layers are flat
 ```
 
 The colour is the gradient sampled where the centre of that shape falls on it,
