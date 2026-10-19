@@ -338,19 +338,7 @@ namespace Telegram.Controls
 
         public StyledText Text => _text;
 
-        private bool _hasLineEnding;
-        public bool HasLineEnding
-        {
-            get => _hasLineEnding;
-            set
-            {
-                if (_hasLineEnding != value)
-                {
-                    _hasLineEnding = value;
-                    //InvalidateMeasure();
-                }
-            }
-        }
+        private bool _bottomPadding;
 
         private bool _hasCodeBlocks;
         public bool HasCodeBlocks
@@ -557,6 +545,11 @@ namespace Telegram.Controls
         /// </summary>
         public float ContentEnd()
         {
+            if (_bottomPadding)
+            {
+                return -1;
+            }
+
             if (_text == null || TextBlock == null || _last < 0 || _last >= _text.Paragraphs.Count || string.IsNullOrEmpty(_text.Text))
             {
                 return 0;
@@ -1560,7 +1553,7 @@ namespace Telegram.Controls
                 // Plain text has no spoiler/cached/marked; only the query may apply.
                 ApplyHighlighters();
 
-                HasLineEnding = direction != locale;
+                _bottomPadding = direction != locale;
 
                 if (!_skeletonCollapsed)
                 {
@@ -2247,7 +2240,7 @@ namespace Telegram.Controls
                 }
             }
 
-            HasLineEnding = bottomPadding;
+            _bottomPadding = bottomPadding;
 
             if (spoilerChanged || !_skeletonCollapsed)
             {

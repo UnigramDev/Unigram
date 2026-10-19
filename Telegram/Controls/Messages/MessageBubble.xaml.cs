@@ -1939,21 +1939,19 @@ namespace Telegram.Controls.Messages
                 Grid.SetRow(Message, 2);
                 Panel.Placeholder = false;
             }
-            else if (content is MessageRichMessage)
+            else if (content is MessageRichMessage richMessage)
             {
-                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                var top = richMessage.Message.IsMedia(0)
+                    ? 0 : 4;
+
+                var caption = !richMessage.Message.IsFullMedia(^1);
+
+                ContentPanel.Padding = new Thickness(0, top, 0, 0);
                 Media.Margin = new Thickness(0);
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
-                Panel.Placeholder = true;
-
-                //ContentPanel.Padding = new Thickness(0, 0, 0, 0);
-                //Media.Margin = new Thickness(0, 0, 0, 0);
-                //FooterToNormal();
-                //Grid.SetRow(Footer, 4);
-                //Grid.SetRow(Message, 2);
-                //Panel.Placeholder = false;
+                Panel.Placeholder = caption;
             }
             else if (content is MessageAudio or MessageDocument or MessageVoiceNote or MessageAlbum)
             {
@@ -4036,7 +4034,7 @@ namespace Telegram.Controls.Messages
                 case MessageAsyncStory story:
                     return story.State != MessageStoryState.Expired;
                 case MessageRichMessage richMessage:
-                    return richMessage.Message.Blocks[^1] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption: null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
+                    return richMessage.Message.IsFullMedia(^1);
                 default:
                     return false;
             }

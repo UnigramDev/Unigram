@@ -2765,6 +2765,16 @@ namespace Telegram.Td.Api
             return caption != null && !string.IsNullOrEmpty(caption.Text);
         }
 
+        internal static bool IsMedia(this RichMessage message, Index index)
+        {
+            return message.Blocks[index] is PageBlockAnimation or PageBlockCollage or PageBlockMap or PageBlockPhoto or PageBlockSlideshow or PageBlockVideo;
+        }
+
+        internal static bool IsFullMedia(this RichMessage message, Index index)
+        {
+            return message.Blocks[index] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption: null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
+        }
+
         public static bool HasCaption(this MessageContent content)
         {
             if (content is MessageRichMessage richMessage)

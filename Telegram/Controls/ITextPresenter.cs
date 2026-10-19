@@ -34,5 +34,7 @@ namespace Telegram.Controls
         bool IsTextSelectionEnabled { get; set; }
 
         void SetText(IClientService clientService, RichText text);
+
+        float ContentEnd();
     }
 }

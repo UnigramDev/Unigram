@@ -85,22 +85,26 @@ namespace Telegram.Controls.Messages.Content
         /// Centered ones are left out: the footer would land in the gap beside the text rather
         /// than after it.
         /// </remarks>
-        public FormattedTextBlock LastBlock
+        public ITextPresenter LastBlock
         {
             get
             {
                 return FindBlock(LayoutRoot);
 
-                static FormattedTextBlock FindBlock(UIElement element)
+                static ITextPresenter FindBlock(UIElement element)
                 {
-                    if (element is Panel panel && panel.Children.Count > 0)
+                    if (element is FormattedTextBlock block && block.AdjustLineEnding)
+                    {
+                        return block;
+                    }
+                    else if (element is DirectTextBlock direct && direct.AdjustLineEnding)
+                    {
+                        return direct;
+                    }
+                    else if (element is Panel panel && panel.Children.Count > 0)
                     {
                         // TODO: a better logic is needed (i.e. only use for some specific panel type)
                         return FindBlock(panel.Children[^1]);
-                    }
-                    else if (element is FormattedTextBlock block && block.AdjustLineEnding)
-                    {
-                        return block;
                     }
 
                     return null;

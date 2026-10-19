@@ -1176,6 +1176,7 @@ namespace Telegram.Common
             {
                 var direct = new DirectTextBlock
                 {
+                    AdjustLineEnding = adjustLineEnding,
                     IsSelectionEnabled = true
                 };
 

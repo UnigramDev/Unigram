@@ -106,7 +106,7 @@ namespace Telegram.Controls.Messages
             }
             else if (_textRow == _footerRow && _text.Children.Count > 0)
             {
-                _margin = Margins(availableSize.Width, 0, _text.DesiredSize.Width, _text.Children[^1], _footer);
+                _margin = Margins(availableSize.Width, 0, _text.DesiredSize.Width, _text.Children[^1] as ITextPresenter, _footer);
             }
             else if (_mediaRow == _footerRow)
             {
@@ -114,10 +114,10 @@ namespace Telegram.Controls.Messages
             }
             else if (_media is Border { Child: InstantContent rich })
             {
-                if (rich.LastBlock is FormattedTextBlock lastBlock)
+                if (rich.LastBlock is ITextPresenter lastBlock)
                 {
                     footerTarget = _media.DesiredSize.Width;
-                    _margin = Margins(availableSize.Width, LeftInset(lastBlock, _media), footerTarget, lastBlock, _footer);
+                    _margin = Margins(availableSize.Width, LeftInset(lastBlock as FrameworkElement, _media), footerTarget, lastBlock, _footer);
                 }
                 else
                 {
@@ -274,14 +274,12 @@ namespace Telegram.Controls.Messages
         /// The last block of the text, whichever engine rendered it: both can say where their last
         /// line ends, and that is all this needs to know.
         /// </remarks>
-        private Size Margins(double availableWidth, double left, double width, UIElement text, MessageFooter footer)
+        private Size Margins(double availableWidth, double left, double width, ITextPresenter text, MessageFooter footer)
         {
             var marginLeft = 0d;
             var marginBottom = 0d;
 
-            var hasLineEnding = text is FormattedTextBlock formatted && formatted.HasLineEnding;
-
-            if (text is not FormattedTextBlock and not DirectTextBlock)
+            if (text is null)
             {
                 return new Size(0, AppSettings.Appearance.MessageFontSize * 1.33);
             }
@@ -292,18 +290,18 @@ namespace Telegram.Controls.Messages
 
                 var fontSize = AppSettings.Appearance.MessageFontSize;
 
-                if (hasLineEnding)
-                {
-                    return new Size(0, fontSize * 1.33);
-                }
-                else if (ForceNewLine)
+                if (ForceNewLine)
                 {
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
 
-                var bounds = left + (text is DirectTextBlock direct
-                    ? direct.ContentEnd()
-                    : ((FormattedTextBlock)text).ContentEnd());
+                var contentEnd = text.ContentEnd();
+                if (contentEnd == -1)
+                {
+                    return new Size(0, fontSize * 1.33);
+                }
+
+                var bounds = left + contentEnd;
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)

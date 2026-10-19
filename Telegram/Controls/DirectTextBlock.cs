@@ -1474,12 +1474,20 @@ namespace Telegram.Controls
             }
         }
 
+        // Used to decide whether or not MessageBubblePanel should reserve a line for the footer
+        private bool _bottomPadding;
+
         /// <summary>
         /// The X where the last line of text ends, for a caller placing something beside it -
         /// the message footer.
         /// </summary>
         public float ContentEnd()
         {
+            if (_bottomPadding)
+            {
+                return -1;
+            }
+
             return (float)(Layout().ContentEnd().X + _contentLeft);
         }
 
@@ -2260,6 +2268,19 @@ namespace Telegram.Controls
                         _entities ??= new List<TextEntity>();
                         _entities.Add(new TextEntity(start, count, entity.Type));
                     }
+                }
+
+                if (i == last)
+                {
+                    var locale = LocaleService.Current.FlowDirection;
+                    var direction = paragraph.Direction switch
+                    {
+                        TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                        TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                        _ => locale
+                    };
+
+                    _bottomPadding = direction != locale;
                 }
             }
 
@@ -3301,5 +3322,7 @@ namespace Telegram.Controls
             // The layout stays, holding the text it was given and the surface it drew into:
             // the next message replaces the first and draws into the second.
         }
+
+        public bool AdjustLineEnding { get; set; }
     }
 }
