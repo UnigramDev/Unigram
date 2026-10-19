@@ -469,7 +469,16 @@ one of the same type showing the same reaction. `ReactionButton.Recycle` drops t
 in, or the pool keeps the chat it came from alive, and bumps a generation that `Animate` checks after
 its awaits. `MessageBubblePanel`
 compares `reactions.Footer` against `footer.DesiredSize` to conditionally `InvalidateMeasure()`, so
-`ReactionsPanel.Footer` must be set every measure pass before `Reactions.Measure`.
+`ReactionsPanel.Footer` must be set every measure pass before `Reactions.Measure`. A quote from a
+rich message is `TextQuote.RichTexts`, and its `Text` may be empty: read a quote through `GetText()`.
+Sending one, the server checks each text against the message, so `PageBlockHelper.TryGetQuote` takes
+every text between the ends from the message itself and finds the ends through
+`ISelectableControl.QuoteSource`, which `PageBlockRenderer` sets on every text it renders. Following
+one, `PageBlockHelper.TryFindQuote` finds the texts again by their plain text, and
+`InstantContent.GetQuoteRectangles` hands `MessageBubble.Highlight` the lines they cover. Copying a
+selection in a rich message goes through the same sources: `RichDocumentConverter.FromSelection`
+converts the message into an editor document, records the leaf each text became, and cuts it with
+`RichEditorEngine.GetFragment`, the editor's own copy, so `RichClipboard` writes it in the editor's formats.
 
 ---
 
