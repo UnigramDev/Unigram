@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 
 namespace Telegram.Controls.RichEditor
@@ -35,16 +36,58 @@ namespace Telegram.Controls.RichEditor
         private static RichDocument _fragment;
         private static string _token;
 
-        public static string Store(RichDocument fragment)
+        // A stream, not the token as a string: once flushed, the clipboard hands a custom format
+        // back as a stream whatever it was set as.
+        private static async Task<IRandomAccessStream> StoreAsync(RichDocument fragment)
         {
             _fragment = fragment;
             _token = Guid.NewGuid().ToString("N");
-            return _token;
+
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                {
+                    writer.WriteInt32((int)writer.MeasureString(_token));
+                    writer.WriteString(_token);
+
+                    await writer.FlushAsync();
+                    await writer.StoreAsync();
+                }
+
+                stream.Seek(0);
+                return stream.CloneStream();
+            }
         }
 
-        public static RichDocument Take(string token)
+        /// <summary>
+        /// The fragment the last copy in this process put on the clipboard, while the clipboard
+        /// still holds it; null for anything else.
+        /// </summary>
+        public static async Task<RichDocument> TakeAsync(DataPackageView content)
         {
-            return token != null && token == _token ? _fragment : null;
+            if (_token == null || !content.Contains(FormatId) || await content.GetDataAsync(FormatId) is not IRandomAccessStream stream)
+            {
+                return null;
+            }
+
+            using (var reader = new DataReader(stream.GetInputStreamAt(0)))
+            {
+                await reader.LoadAsync((uint)stream.Size);
+
+                // The size can come back rounded up, hence the length ahead of the token.
+                if (reader.UnconsumedBufferLength < 4)
+                {
+                    return null;
+                }
+
+                var length = reader.ReadInt32();
+                if (length < 0 || length > reader.UnconsumedBufferLength)
+                {
+                    return null;
+                }
+
+                return reader.ReadString((uint)length) == _token ? _fragment : null;
+            }
         }
 
         /// <summary>
@@ -72,7 +115,7 @@ namespace Telegram.Controls.RichEditor
             {
                 await MessageHelper.SetTextAsync(package, ToFormattedText(fragment));
                 package.SetHtmlFormat(HtmlFormatHelper.CreateHtmlFormat(ToHtml(fragment)));
-                package.SetData(FormatId, Store(fragment));
+                package.SetData(FormatId, await StoreAsync(fragment));
             }
             catch
             {

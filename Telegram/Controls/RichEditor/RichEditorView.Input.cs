@@ -1764,8 +1764,7 @@ namespace Telegram.Controls.RichEditor
             try
             {
                 // Copied from this editor: the document itself, media and all.
-                if (!plain && content.Contains(RichClipboard.FormatId)
-                    && RichClipboard.Take(await content.GetDataAsync(RichClipboard.FormatId) as string) is RichDocument fragment)
+                if (!plain && await RichClipboard.TakeAsync(content) is RichDocument fragment)
                 {
                     _engine.InsertFragment(fragment);
                     return;
