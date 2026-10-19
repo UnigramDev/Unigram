@@ -2778,6 +2778,8 @@ namespace Telegram.Controls
 
         public FormattedText GetSourceText(int from, int to) => _styled?.Substring(from, to - from);
 
+        public object QuoteSource { get; set; }
+
         public int GetPositionFromPoint(Point point, out int hit)
         {
             hit = SelectionHit.None;

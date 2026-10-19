@@ -76,6 +76,27 @@ namespace Telegram.Common
         public override string ToString() => $"[{Kind}] {Url}" + (Text.Length > 0 && Text != Url ? $" ({Text})" : "");
     }
 
+    /// <summary>
+    /// The part of a rich message's text a selection covers, for a reply quote:
+    /// <c>[Start, End)</c> of <see cref="Source"/> in the offsets <see cref="PageBlockHelper.Flatten"/>
+    /// writes. The source is what <see cref="Controls.ISelectableControl.QuoteSource"/> holds.
+    /// </summary>
+    public readonly struct RichQuoteRange
+    {
+        public RichQuoteRange(object source, int start, int end)
+        {
+            Source = source;
+            Start = start;
+            End = end;
+        }
+
+        public object Source { get; }
+
+        public int Start { get; }
+
+        public int End { get; }
+    }
+
     public static class PageBlockHelper
     {
         // Placeholder strings inserted in place of non-text blocks when projecting
@@ -899,6 +920,7 @@ namespace Telegram.Common
                 case RichTextCashtag b: AppendPlainText(b.Text, sb); return;
                 case RichTextBotCommand b: AppendPlainText(b.Text, sb); return;
                 case RichTextBankCardNumber b: AppendPlainText(b.Text, sb); return;
+                case RichTextTonAddress b: AppendPlainText(b.Text, sb); return;
                 case RichTextReference b: AppendPlainText(b.Text, sb); return;
                 case RichTextReferenceLink b: AppendPlainText(b.Text, sb); return;
                 case RichTextAnchorLink b: AppendPlainText(b.Text, sb); return;
@@ -1034,6 +1056,9 @@ namespace Telegram.Common
                 case RichTextBankCardNumber b:
                     EmitSpan(b.Text, text, entities, new TextEntityTypeBankCardNumber());
                     return;
+                case RichTextTonAddress b:
+                    EmitSpan(b.Text, text, entities, new TextEntityTypeTonAddress());
+                    return;
                 case RichTextDateTime b:
                     EmitSpan(b.Text, text, entities, new TextEntityTypeDateTime(b.UnixTime, b.FormattingType));
                     return;
@@ -1124,6 +1149,702 @@ namespace Telegram.Common
             {
                 entities.Add(new TextEntity(start, length, type));
             }
+        }
+
+        // =====================================================================
+        // Quotes — a reply quote made of a rich message's own texts
+        // =====================================================================
+
+        // The server takes no more texts than this in one quote.
+        private const int QuoteTextsMax = 32;
+
+        // A text of a rich message a quote can be made of. Source is what it is rendered from,
+        // which ISelectableControl.QuoteSource points back to: the text itself, or for a formula
+        // the block, since the rich text a formula is quoted as exists nowhere in the message.
+        private readonly struct QuoteNode
+        {
+            public QuoteNode(object source, RichText text)
+            {
+                Source = source;
+                Text = text;
+            }
+
+            public object Source { get; }
+
+            public RichText Text { get; }
+        }
+
+        /// <summary>
+        /// A quote that came as rich texts, as text to show: flat, one text per line, with nothing
+        /// left of the blocks they were taken from.
+        /// </summary>
+        public static FormattedText GetQuoteText(Vector<RichText> texts)
+        {
+            var builder = new StringBuilder();
+            var entities = new MutableVector<TextEntity>();
+
+            foreach (var text in texts)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append('\n');
+                }
+
+                Flatten(text, builder, entities);
+            }
+
+            return new FormattedText(builder.ToString(), entities);
+        }
+
+        /// <summary>
+        /// A reply quote from a selection in a rich message, in the shape the server checks it
+        /// against the message in: a rich text per text of the message the selection covers, the
+        /// first and the last cut where it starts and ends, and every one between them whole and
+        /// exactly as the message has it - so they are taken from the message, never rebuilt.
+        /// </summary>
+        /// <param name="ranges">The selection, a range per selected control.</param>
+        /// <param name="position">
+        /// Where the quote starts in the plain text of every quotable text of the message joined by
+        /// line feeds, which is what the server reads it against.
+        /// </param>
+        public static bool TryGetQuote(Vector<PageBlock> blocks, IReadOnlyList<RichQuoteRange> ranges, long lengthMax, out Vector<RichText> texts, out int position)
+        {
+            texts = null;
+            position = 0;
+
+            var nodes = new List<QuoteNode>();
+            CollectQuoteNodes(blocks, nodes);
+
+            // A caption is one control for its text and its credit, laid out as ProcessCaption
+            // lays them out: a line feed between the two when both are there.
+            var parts = new List<RichQuoteRange>(ranges.Count + 1);
+
+            foreach (var range in ranges)
+            {
+                if (range.Source is PageBlockCaption caption)
+                {
+                    var textEmpty = IsEmpty(caption.Text);
+                    var creditEmpty = IsEmpty(caption.Credit);
+
+                    if (!textEmpty && !creditEmpty)
+                    {
+                        var split = GetQuoteLength(caption.Text);
+
+                        parts.Add(new RichQuoteRange(caption.Text, range.Start, Math.Min(range.End, split)));
+                        parts.Add(new RichQuoteRange(caption.Credit, Math.Max(range.Start - split - 1, 0), range.End - split - 1));
+                    }
+                    else
+                    {
+                        parts.Add(new RichQuoteRange(textEmpty ? caption.Credit : caption.Text, range.Start, range.End));
+                    }
+                }
+                else
+                {
+                    parts.Add(range);
+                }
+            }
+
+            int first = -1, last = -1;
+            int start = 0, end = 0;
+            var hint = 0;
+
+            foreach (var part in parts)
+            {
+                if (part.End <= part.Start)
+                {
+                    continue;
+                }
+
+                var index = FindQuoteNode(nodes, part.Source, hint);
+                if (index < 0)
+                {
+                    continue;
+                }
+
+                hint = index;
+
+                var text = nodes[index].Text;
+                var length = GetQuoteLength(text);
+
+                var from = Math.Max(part.Start, 0);
+                var to = Math.Min(part.End, length);
+
+                // A formula is quoted whole or not at all, and a block one is selected as a
+                // single position anyway.
+                if (nodes[index].Source is PageBlockMathematicalExpression)
+                {
+                    from = 0;
+                    to = length;
+                }
+
+                if (GetQuotePlainLength(text, from, to) == 0)
+                {
+                    continue;
+                }
+
+                if (first < 0 || index < first)
+                {
+                    first = index;
+                    start = from;
+                }
+                else if (index == first)
+                {
+                    start = Math.Min(start, from);
+                }
+
+                if (index > last)
+                {
+                    last = index;
+                    end = to;
+                }
+                else if (index == last)
+                {
+                    end = Math.Max(end, to);
+                }
+            }
+
+            if (first < 0)
+            {
+                return false;
+            }
+
+            start = SnapQuoteStart(nodes[first].Text, start);
+            end = SnapQuoteEnd(nodes[last].Text, end);
+
+            var result = new MutableVector<RichText>();
+            var remaining = lengthMax > 0 ? lengthMax : 1024;
+
+            for (int i = first; i <= last && result.Count < QuoteTextsMax; i++)
+            {
+                var text = nodes[i].Text;
+                var length = GetQuoteLength(text);
+
+                var from = i == first ? start : 0;
+                var to = i == last ? end : length;
+
+                var plain = GetQuotePlainLength(text, from, to);
+                if (plain > remaining)
+                {
+                    // Cut short, this becomes the last text of the quote, which may end anywhere
+                    // but inside a formula or an emoji.
+                    to = GetQuoteEnd(text, from, (int)remaining);
+
+                    if (GetQuotePlainLength(text, from, to) > 0)
+                    {
+                        result.Add(SliceQuote(text, from, to));
+                    }
+
+                    break;
+                }
+
+                remaining -= plain;
+
+                // A middle text goes as the message has it, which a slice of all of it is not:
+                // a slice drops the icons and anchors in it.
+                result.Add(from == 0 && to == length ? text : SliceQuote(text, from, to));
+            }
+
+            if (result.Count == 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first; i++)
+            {
+                position += GetQuotePlainLength(nodes[i].Text, 0, int.MaxValue) + 1;
+            }
+
+            position += GetQuotePlainLength(nodes[first].Text, 0, start);
+
+            texts = result;
+            return true;
+        }
+
+        // In document order, which is the order the server expects the texts of a quote in.
+        private static void CollectQuoteNodes(Vector<PageBlock> blocks, List<QuoteNode> nodes)
+        {
+            if (blocks == null)
+            {
+                return;
+            }
+
+            foreach (var block in blocks)
+            {
+                CollectQuoteNodes(block, nodes);
+            }
+        }
+
+        private static void CollectQuoteNodes(PageBlock block, List<QuoteNode> nodes)
+        {
+            switch (block)
+            {
+                case PageBlockParagraph paragraph:
+                    AddQuoteNode(paragraph.Text, nodes);
+                    break;
+                case PageBlockSectionHeading heading:
+                    AddQuoteNode(heading.Text, nodes);
+                    break;
+                case PageBlockFooter footer:
+                    AddQuoteNode(footer.Footer, nodes);
+                    break;
+                case PageBlockThinking thinking:
+                    AddQuoteNode(thinking.Text, nodes);
+                    break;
+                case PageBlockPreformatted preformatted:
+                    AddQuoteNode(preformatted.Text, nodes);
+                    break;
+                case PageBlockMathematicalExpression math:
+                    if (!string.IsNullOrEmpty(math.Expression))
+                    {
+                        nodes.Add(new QuoteNode(math, new RichTextMathematicalExpression(math.Expression)));
+                    }
+                    break;
+                case PageBlockExpandableBlockQuote expandable:
+                    AddQuoteNode(expandable.Text, nodes);
+                    AddQuoteNode(expandable.Credit, nodes);
+                    break;
+                case PageBlockBlockQuote blockQuote:
+                    CollectQuoteNodes(blockQuote.Blocks, nodes);
+                    AddQuoteNode(blockQuote.Credit, nodes);
+                    break;
+                case PageBlockPullQuote pullQuote:
+                    AddQuoteNode(pullQuote.Text, nodes);
+                    AddQuoteNode(pullQuote.Credit, nodes);
+                    break;
+                case PageBlockList list:
+                    foreach (var item in list.Items)
+                    {
+                        CollectQuoteNodes(item.Blocks, nodes);
+                    }
+                    break;
+                case PageBlockTable table:
+                    AddQuoteNode(table.Caption, nodes);
+                    foreach (var row in table.Cells)
+                    {
+                        foreach (var cell in row)
+                        {
+                            AddQuoteNode(cell?.Text, nodes);
+                        }
+                    }
+                    break;
+                case PageBlockDetails details:
+                    AddQuoteNode(details.Header, nodes);
+                    CollectQuoteNodes(details.Blocks, nodes);
+                    break;
+                case PageBlockPhoto photo:
+                    AddQuoteNodes(photo.Caption, nodes);
+                    break;
+                case PageBlockVideo video:
+                    AddQuoteNodes(video.Caption, nodes);
+                    break;
+                case PageBlockAnimation animation:
+                    AddQuoteNodes(animation.Caption, nodes);
+                    break;
+                case PageBlockAudio audio:
+                    AddQuoteNodes(audio.Caption, nodes);
+                    break;
+                case PageBlockVoiceNote voiceNote:
+                    AddQuoteNodes(voiceNote.Caption, nodes);
+                    break;
+                case PageBlockDocument document:
+                    AddQuoteNodes(document.Caption, nodes);
+                    break;
+                case PageBlockMap map:
+                    AddQuoteNodes(map.Caption, nodes);
+                    break;
+                case PageBlockCollage collage:
+                    CollectQuoteNodes(collage.Blocks, nodes);
+                    AddQuoteNodes(collage.Caption, nodes);
+                    break;
+                case PageBlockSlideshow slideshow:
+                    CollectQuoteNodes(slideshow.Blocks, nodes);
+                    AddQuoteNodes(slideshow.Caption, nodes);
+                    break;
+            }
+        }
+
+        private static void AddQuoteNodes(PageBlockCaption caption, List<QuoteNode> nodes)
+        {
+            if (caption != null)
+            {
+                AddQuoteNode(caption.Text, nodes);
+                AddQuoteNode(caption.Credit, nodes);
+            }
+        }
+
+        // The server skips a text with nothing in it to quote, and so must the position.
+        private static void AddQuoteNode(RichText text, List<QuoteNode> nodes)
+        {
+            if (GetQuotePlainLength(text, 0, int.MaxValue) > 0)
+            {
+                nodes.Add(new QuoteNode(text, text));
+            }
+        }
+
+        private static int FindQuoteNode(List<QuoteNode> nodes, object source, int hint)
+        {
+            if (source == null)
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (ReferenceEquals(nodes[i].Source, source))
+                {
+                    return i;
+                }
+            }
+
+            // An edit that leaves a block as it was keeps the element rendered for the message
+            // before it, so what that element points to is an equal text, not this one. Looking
+            // from the last text found picks the right one of two equal texts far more often.
+            for (int j = 0; j < nodes.Count; j++)
+            {
+                var i = (hint + j) % nodes.Count;
+
+                var same = (nodes[i].Source, source) switch
+                {
+                    (RichText x, RichText y) => Compare(x, y),
+                    (PageBlockMathematicalExpression x, PageBlockMathematicalExpression y) => x.Expression == y.Expression,
+                    _ => false
+                };
+
+                if (same)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        // The texts a quote is measured and cut in: what Flatten writes a character for, and the
+        // anchors it writes nothing for. Everything else is a wrapper around one of them.
+        private static IEnumerable<RichText> GetQuoteLeaves(RichText text)
+        {
+            if (text is RichTexts texts)
+            {
+                if (texts.Texts != null)
+                {
+                    foreach (var child in texts.Texts)
+                    {
+                        foreach (var leaf in GetQuoteLeaves(child))
+                        {
+                            yield return leaf;
+                        }
+                    }
+                }
+            }
+            else if (GetQuoteInner(text) is RichText inner)
+            {
+                foreach (var leaf in GetQuoteLeaves(inner))
+                {
+                    yield return leaf;
+                }
+            }
+            else if (text != null)
+            {
+                yield return text;
+            }
+        }
+
+        // Every wrapper Flatten descends into, and nothing else: a selection's offsets are
+        // Flatten's, so a quote has to count exactly what it counts.
+        private static RichText GetQuoteInner(RichText text)
+        {
+            return text switch
+            {
+                RichTextBold x => x.Text,
+                RichTextItalic x => x.Text,
+                RichTextUnderline x => x.Text,
+                RichTextStrikethrough x => x.Text,
+                RichTextSpoiler x => x.Text,
+                RichTextFixed x => x.Text,
+                RichTextSubscript x => x.Text,
+                RichTextSuperscript x => x.Text,
+                RichTextMarked x => x.Text,
+                RichTextUrl x => x.Text,
+                RichTextEmailAddress x => x.Text,
+                RichTextPhoneNumber x => x.Text,
+                RichTextMentionName x => x.Text,
+                RichTextReference x => x.Text,
+                RichTextReferenceLink x => x.Text,
+                RichTextAnchorLink x => x.Text,
+                RichTextMention x => x.Text,
+                RichTextHashtag x => x.Text,
+                RichTextCashtag x => x.Text,
+                RichTextBotCommand x => x.Text,
+                RichTextBankCardNumber x => x.Text,
+                RichTextTonAddress x => x.Text,
+                RichTextDateTime x => x.Text,
+                RichTextDiff x => x.Text,
+                _ => null
+            };
+        }
+
+        // The wrapper again, around part of what it wrapped. A link keeps its target: the server
+        // compares one by its text alone, and reduces it to that itself.
+        private static RichText WithQuoteInner(RichText text, RichText inner)
+        {
+            return text switch
+            {
+                RichTextBold => new RichTextBold(inner),
+                RichTextItalic => new RichTextItalic(inner),
+                RichTextUnderline => new RichTextUnderline(inner),
+                RichTextStrikethrough => new RichTextStrikethrough(inner),
+                RichTextSpoiler => new RichTextSpoiler(inner),
+                RichTextFixed => new RichTextFixed(inner),
+                RichTextSubscript => new RichTextSubscript(inner),
+                RichTextSuperscript => new RichTextSuperscript(inner),
+                RichTextMarked => new RichTextMarked(inner),
+                RichTextUrl x => new RichTextUrl(inner, x.Url, x.IsCached),
+                RichTextEmailAddress x => new RichTextEmailAddress(inner, x.EmailAddress),
+                RichTextPhoneNumber x => new RichTextPhoneNumber(inner, x.PhoneNumber),
+                RichTextMentionName x => new RichTextMentionName(inner, x.UserId),
+                RichTextReference x => new RichTextReference(x.Name, inner),
+                RichTextReferenceLink x => new RichTextReferenceLink(inner, x.ReferenceName, x.Url),
+                RichTextAnchorLink x => new RichTextAnchorLink(inner, x.AnchorName, x.Url),
+                RichTextMention x => new RichTextMention(inner, x.Username),
+                RichTextHashtag x => new RichTextHashtag(inner, x.Hashtag),
+                RichTextCashtag x => new RichTextCashtag(inner, x.Cashtag),
+                RichTextBotCommand x => new RichTextBotCommand(inner, x.BotCommand),
+                RichTextBankCardNumber x => new RichTextBankCardNumber(inner, x.BankCardNumber),
+                RichTextTonAddress x => new RichTextTonAddress(inner, x.Address),
+                RichTextDateTime x => new RichTextDateTime(inner, x.UnixTime, x.FormattingType),
+                RichTextDiff x => new RichTextDiff(inner, x.OldText),
+                _ => inner
+            };
+        }
+
+        // What a leaf adds to the flattened text, which is what a selection counts in. The plain
+        // text the server counts in is the same but for an icon: Flatten writes it as a
+        // character so that it has a run to be drawn in, and the server counts nothing for it.
+        private static int GetQuoteLeafLength(RichText leaf, out bool plain)
+        {
+            plain = leaf is not RichTextIcon;
+
+            switch (leaf)
+            {
+                case RichTextPlain x:
+                    return x.Text?.Length ?? 0;
+                case RichTextCustomEmoji x:
+                    return x.AlternativeText?.Length ?? 0;
+                case RichTextMathematicalExpression x:
+                    return x.Expression?.Length ?? 0;
+                case RichTextButton x:
+                    return GetButtonText(x).Length;
+                case RichTextIcon:
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+
+        private static string GetButtonText(RichTextButton button)
+        {
+            var builder = new StringBuilder();
+            AppendPlainText(button.Button.Text, builder);
+            return builder.ToString();
+        }
+
+        // Neither is ever cut: a formula is checked against the whole of its source, and an
+        // emoji's alternative text is a single emoji.
+        private static bool IsQuoteAtomic(RichText leaf)
+        {
+            return leaf is RichTextMathematicalExpression or RichTextCustomEmoji;
+        }
+
+        private static int GetQuoteLength(RichText text)
+        {
+            var length = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                length += GetQuoteLeafLength(leaf, out _);
+            }
+
+            return length;
+        }
+
+        // The plain text over [start, end) of the flattened text.
+        private static int GetQuotePlainLength(RichText text, int start, int end)
+        {
+            var offset = 0;
+            var length = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                var size = GetQuoteLeafLength(leaf, out bool plain);
+                if (plain)
+                {
+                    length += Math.Max(0, Math.Min(end, offset + size) - Math.Max(start, offset));
+                }
+
+                offset += size;
+
+                if (offset >= end)
+                {
+                    break;
+                }
+            }
+
+            return length;
+        }
+
+        private static int SnapQuoteStart(RichText text, int start)
+        {
+            var offset = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                var size = GetQuoteLeafLength(leaf, out _);
+                if (IsQuoteAtomic(leaf) && offset < start && start < offset + size)
+                {
+                    return offset;
+                }
+
+                offset += size;
+            }
+
+            return start;
+        }
+
+        private static int SnapQuoteEnd(RichText text, int end)
+        {
+            var offset = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                var size = GetQuoteLeafLength(leaf, out _);
+                if (IsQuoteAtomic(leaf) && offset < end && end < offset + size)
+                {
+                    return offset + size;
+                }
+
+                offset += size;
+            }
+
+            return end;
+        }
+
+        // Where a text starting at start has to end to hold no more than length characters of
+        // plain text.
+        private static int GetQuoteEnd(RichText text, int start, int length)
+        {
+            var offset = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                var size = GetQuoteLeafLength(leaf, out bool plain);
+                var from = Math.Max(start, offset);
+
+                if (plain && offset + size > from)
+                {
+                    var take = offset + size - from;
+                    if (take > length)
+                    {
+                        if (IsQuoteAtomic(leaf))
+                        {
+                            return from;
+                        }
+
+                        var cut = from + length;
+
+                        if (leaf is RichTextPlain x && cut > offset && char.IsHighSurrogate(x.Text[cut - offset - 1]))
+                        {
+                            cut--;
+                        }
+
+                        return cut;
+                    }
+
+                    length -= take;
+                }
+
+                offset += size;
+            }
+
+            return offset;
+        }
+
+        // The part of a text over [start, end) of its flattened text, with the formatting it has
+        // there. Icons and anchors are left out: the server quotes the text around an icon, and
+        // an anchor has none.
+        private static RichText SliceQuote(RichText text, int start, int end)
+        {
+            var offset = 0;
+            return SliceQuote(text, start, end, ref offset);
+        }
+
+        private static RichText SliceQuote(RichText text, int start, int end, ref int offset)
+        {
+            if (text is RichTexts texts)
+            {
+                if (texts.Texts == null)
+                {
+                    return null;
+                }
+
+                MutableVector<RichText> children = null;
+                var whole = true;
+
+                foreach (var child in texts.Texts)
+                {
+                    var slice = SliceQuote(child, start, end, ref offset);
+                    if (slice != child)
+                    {
+                        whole = false;
+                    }
+
+                    if (slice != null)
+                    {
+                        (children ??= new MutableVector<RichText>()).Add(slice);
+                    }
+                }
+
+                return whole ? texts : children != null ? new RichTexts(children) : null;
+            }
+            else if (GetQuoteInner(text) is RichText inner)
+            {
+                var slice = SliceQuote(inner, start, end, ref offset);
+                if (slice == null)
+                {
+                    return null;
+                }
+
+                return slice == inner ? text : WithQuoteInner(text, slice);
+            }
+            else if (text == null)
+            {
+                return null;
+            }
+
+            var size = GetQuoteLeafLength(text, out _);
+            var leafStart = offset;
+
+            offset += size;
+
+            var from = Math.Max(start, leafStart);
+            var to = Math.Min(end, leafStart + size);
+
+            if (to <= from || text is RichTextIcon)
+            {
+                return null;
+            }
+            else if (from == leafStart && to == leafStart + size)
+            {
+                return text;
+            }
+
+            return text switch
+            {
+                RichTextPlain x => new RichTextPlain(x.Text.Substring(from - leafStart, to - from)),
+                // The server takes a button's label as plain text, all of it or part.
+                RichTextButton x => new RichTextPlain(GetButtonText(x).Substring(from - leafStart, to - from)),
+                // Only a formula or an emoji is left, and neither is ever cut.
+                _ => text
+            };
         }
 
         // =====================================================================

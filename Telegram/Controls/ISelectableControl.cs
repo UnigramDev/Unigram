@@ -32,6 +32,26 @@ namespace Telegram.Controls
     }
 
     /// <summary>
+    /// The part of one control a selection covers: <c>[Start, End)</c> in the control's own
+    /// positions.
+    /// </summary>
+    public readonly struct TextSelectionRange
+    {
+        public TextSelectionRange(ISelectableControl item, int start, int end)
+        {
+            Item = item;
+            Start = start;
+            End = end;
+        }
+
+        public ISelectableControl Item { get; }
+
+        public int Start { get; }
+
+        public int End { get; }
+    }
+
+    /// <summary>
     /// A control that can participate in a cross-block text selection driven by
     /// <see cref="Telegram.Common.TextSelectionManager"/>. Implementers are <c>FrameworkElement</c>s
     /// living in the manager's working tree (so the manager can read their geometry
@@ -98,5 +118,12 @@ namespace Telegram.Controls
         /// the same source, so any of them yields the full range. Null when empty.
         /// </summary>
         FormattedText GetSourceText(int from, int to);
+
+        /// <summary>
+        /// What a rich message's control was rendered from, for a reply quote: one is made of the
+        /// message's own rich texts, which nothing a selection reads back can stand in for. See
+        /// <see cref="Telegram.Common.PageBlockHelper.TryGetQuote"/>. Null anywhere else.
+        /// </summary>
+        object QuoteSource { get; set; }
     }
 }

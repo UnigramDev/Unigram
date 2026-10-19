@@ -1617,6 +1617,20 @@ namespace Telegram.Td.Api
             return TextStyleRun.GetRelativeRange(x.Offset, x.Length, y.Offset, y.Length, out _, out _);
         }
 
+        /// <summary>
+        /// The quote as text to show. One chosen from a rich message is its rich texts, and its
+        /// text may then be empty.
+        /// </summary>
+        public static FormattedText GetText(this TextQuote quote)
+        {
+            return quote.RichTexts.Count > 0 ? PageBlockHelper.GetQuoteText(quote.RichTexts) : quote.Text;
+        }
+
+        public static FormattedText GetText(this InputTextQuote quote)
+        {
+            return quote.RichTexts.Count > 0 ? PageBlockHelper.GetQuoteText(quote.RichTexts) : quote.Text;
+        }
+
         public static FormattedText ToFormattedText(this PageBlockCaption caption)
         {
             return caption.Text.ToFormattedText();

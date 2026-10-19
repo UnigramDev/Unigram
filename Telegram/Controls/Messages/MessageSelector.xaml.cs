@@ -7,6 +7,7 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Assets.Icons;
@@ -67,6 +68,8 @@ namespace Telegram.Controls.Messages
         public void CopySelectionToClipboard() => _textSelectionManager?.CopySelectionToClipboard();
 
         public FormattedText GetSelectedText() => _textSelectionManager?.GetSelectedText();
+
+        public IReadOnlyList<TextSelectionRange> SelectedRanges => _textSelectionManager?.SelectedRanges;
 
         public FormattedText GetSelectedSourceText(out int position)
         {

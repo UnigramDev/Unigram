@@ -244,6 +244,8 @@ namespace Telegram.Controls
             return _text != null && to > from ? _text.Substring(from, to - from) : null;
         }
 
+        public object QuoteSource { get; set; }
+
         // Expand a rendered position to its word/paragraph, returned in rendered indices.
         // Works in StyledText space (the real characters, no injected ZWNJ/marks) so the
         // ProcessCodeBlock span tree and emoji workarounds don't perturb boundaries, then

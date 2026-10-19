@@ -45,6 +45,12 @@ namespace Telegram.ViewModels
 
         public FormattedText Quote { get; set; }
 
+        /// <summary>
+        /// A quote from a rich message is these, and <see cref="Quote"/> is then only the
+        /// selection as text, for copy and translate.
+        /// </summary>
+        public Vector<RichText> RichTexts { get; set; } = Vector<RichText>.Empty;
+
         public int Position { get; set; }
 
         public MessageQuote()
@@ -56,12 +62,17 @@ namespace Telegram.ViewModels
         {
             Message = reply.Message;
             Quote = reply.Quote.Text;
+            RichTexts = reply.Quote.RichTexts;
             Position = reply.Quote.Position;
         }
 
         public InputTextQuote ToInput()
         {
-            return new InputTextQuote(Quote, Position);
+            // The text is ignored next to rich texts, and the selection's text carries entities
+            // that exist only in this app.
+            return RichTexts.Count > 0
+                ? new InputTextQuote(string.Empty.AsFormattedText(), RichTexts, Position)
+                : new InputTextQuote(Quote, Vector<RichText>.Empty, Position);
         }
     }
 
@@ -254,7 +265,11 @@ namespace Telegram.ViewModels
 
                 ClearComposer();
 
-                var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
+                // In another chat the server quotes a rich message itself, from its start, and
+                // takes no quote of one from the client.
+                var input = quote.RichTexts.Count > 0 ? null : quote.ToInput();
+
+                var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message, input));
                 if (confirm != ContentDialogResult.Primary)
                 {
                     ComposerHeader = header;

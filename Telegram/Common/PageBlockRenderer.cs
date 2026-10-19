@@ -193,7 +193,8 @@ namespace Telegram.Common
         {
             var tex = new RichMathImage
             {
-                Source = math.Expression
+                Source = math.Expression,
+                QuoteSource = math
             };
 
             if (tex.IsValid)
@@ -214,7 +215,10 @@ namespace Telegram.Common
                 return tex;
             }
 
-            return ProcessText(clientService, new PageBlockParagraph(new RichTextPlain(math.Expression)), false, true);
+            var text = ProcessText(clientService, new PageBlockParagraph(new RichTextPlain(math.Expression)), false, true);
+            SetQuoteSource(text, math);
+
+            return text;
         }
 
         #endregion
@@ -443,6 +447,7 @@ namespace Telegram.Common
                     if (cell.Text != null)
                     {
                         textBlock.SetText(clientService, cell.Text);
+                        SetQuoteSource(textBlock, cell.Text);
                     }
 
                     var border = new Border
@@ -1033,9 +1038,18 @@ namespace Telegram.Common
 
             SetAutoFontSize(textBlock, false);
             textBlock.SetText(clientService, text);
+            SetQuoteSource(textBlock, text);
 
             ApplyTextStyle(textBlock, block, caption);
             return textBlock as FrameworkElement;
+        }
+
+        private static void SetQuoteSource(object element, object source)
+        {
+            if (element is ISelectableControl selectable)
+            {
+                selectable.QuoteSource = source;
+            }
         }
 
         // The RichText a block renders as a styled text block. Returns null for blocks
@@ -1296,6 +1310,10 @@ namespace Telegram.Common
                 textBlock.SetText(clientService, caption.Credit);
             }
 
+            // The caption rather than either text: one block shows both, and which of them a
+            // selection is in is decided where the quote is made.
+            SetQuoteSource(textBlock, caption);
+
             return textBlock as FrameworkElement;
         }
 
@@ -1330,6 +1348,7 @@ namespace Telegram.Common
                 var textBlock = CreateTextBlock(false);
 
                 SetText(textBlock, clientService, formatted);
+                SetQuoteSource(textBlock, plain);
 
                 return new BlockQuote
                 {

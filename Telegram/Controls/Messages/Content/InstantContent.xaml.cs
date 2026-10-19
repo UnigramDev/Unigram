@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Telegram.Collections;
 using Telegram.Common;
@@ -141,6 +142,34 @@ namespace Telegram.Controls.Messages.Content
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageRichMessage;
+        }
+
+        /// <summary>
+        /// A reply quote from a selection in this message, as the message's own rich texts. False
+        /// when the selection covers nothing quotable, or when what is shown is not the message
+        /// itself - a translation is not what the server checks the quote against.
+        /// </summary>
+        public bool TryGetQuote(IReadOnlyList<TextSelectionRange> selection, long lengthMax, out Vector<RichText> texts, out int position)
+        {
+            texts = null;
+            position = 0;
+
+            if (_message?.Content is not MessageRichMessage richMessage || _message.TranslatedText is MessageTranslateResultRichMessage || selection == null)
+            {
+                return false;
+            }
+
+            var ranges = new List<RichQuoteRange>(selection.Count);
+
+            foreach (var range in selection)
+            {
+                if (range.Item.QuoteSource is object source)
+                {
+                    ranges.Add(new RichQuoteRange(source, range.Item.GetSourceOffset(range.Start), range.Item.GetSourceOffset(range.End)));
+                }
+            }
+
+            return PageBlockHelper.TryGetQuote(richMessage.Message.Blocks, ranges, lengthMax, out texts, out position);
         }
 
         private RichMessage GetContent(MessageViewModel message)

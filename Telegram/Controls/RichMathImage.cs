@@ -254,6 +254,8 @@ namespace Telegram.Controls
 
         public FormattedText GetSourceText(int from, int to) => GetSelectedText(from, to);
 
+        public object QuoteSource { get; set; }
+
         #endregion
 
         #region Source

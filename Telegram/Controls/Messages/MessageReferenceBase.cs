@@ -118,7 +118,7 @@ namespace Telegram.Controls.Messages
             else if (embedded.ReplyTo != null)
             {
                 Message = embedded.ReplyTo.Message;
-                GetMessageTemplate(embedded.ReplyTo.Message, embedded.ReplyTo.Quote?.Text, false, embedded.ReplyTo.ChecklistTaskId, embedded.ReplyTo.PollOptionId, embedded.ReplyTo.Quote != null ? Strings.ReplyToQuote : Strings.ReplyTo, true, false, false);
+                GetMessageTemplate(embedded.ReplyTo.Message, embedded.ReplyTo.Quote?.GetText(), false, embedded.ReplyTo.ChecklistTaskId, embedded.ReplyTo.PollOptionId, embedded.ReplyTo.Quote != null ? Strings.ReplyToQuote : Strings.ReplyTo, true, false, false);
             }
         }
 
@@ -187,7 +187,7 @@ namespace Telegram.Controls.Messages
             else if (message.ReplyToItem is MessageViewModel replyToMessage && message.ReplyTo is MessageReplyToMessage replyToMessage1)
             {
                 Visibility = Visibility.Visible;
-                GetMessageTemplate(replyToMessage, replyToMessage1.Quote?.Text, replyToMessage1.Quote?.IsManual ?? false, replyToMessage1.ChecklistTaskId, replyToMessage1.PollOptionId, null, outgoing, light, message.ForwardInfo != null);
+                GetMessageTemplate(replyToMessage, replyToMessage1.Quote?.GetText(), replyToMessage1.Quote?.IsManual ?? false, replyToMessage1.ChecklistTaskId, replyToMessage1.PollOptionId, null, outgoing, light, message.ForwardInfo != null);
             }
             else if (message.ReplyToItem is Story replyToStory)
             {
@@ -367,6 +367,9 @@ namespace Telegram.Controls.Messages
                 case MessageText text1:
                     SetTextTemplate(message, sender, text1, quote, manual, title, outgoing, white);
                     break;
+                case MessageRichMessage:
+                    SetRichMessageTemplate(message, sender, quote, manual, title, outgoing, white);
+                    break;
                 case MessageAnimatedEmoji animatedEmoji:
                     SetAnimatedEmojiTemplate(message, sender, animatedEmoji, title, outgoing, white);
                     break;
@@ -466,7 +469,7 @@ namespace Telegram.Controls.Messages
                 _ => null
             };
 
-            var quote = replyToMessage.Quote?.Text;
+            var quote = replyToMessage.Quote?.GetText();
             var manual = replyToMessage.Quote?.IsManual ?? false;
 
             switch (replyToMessage.Content)
@@ -550,7 +553,7 @@ namespace Telegram.Controls.Messages
                 sender,
                 title,
                 string.Empty,
-                replyToMessage.Quote?.Text,
+                replyToMessage.Quote?.GetText(),
                 replyToMessage.Quote?.IsManual ?? false,
                 white);
         }
@@ -594,6 +597,21 @@ namespace Telegram.Controls.Messages
                 string.Empty,
                 quote,
                 qoote,
+                white);
+        }
+
+        private void SetRichMessageTemplate(MessageViewModel message, MessageSender sender, FormattedText quote, bool manual, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            SetText(message.ClientService,
+                message,
+                outgoing,
+                sender,
+                title,
+                string.Empty,
+                quote,
+                manual,
                 white);
         }
 

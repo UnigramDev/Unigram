@@ -99,7 +99,7 @@ namespace Telegram.Common
         private bool _watchingFocus; // subscribed to the (static) FocusManager.LostFocus
 
         // The current per-control selected ranges, in document order (for copy).
-        private readonly List<(ISelectableControl Item, int Start, int End)> _selectedRanges = new();
+        private readonly List<TextSelectionRange> _selectedRanges = new();
 
         // What each item was last told to highlight, parallel to _items; (-1, -1) is cleared.
         private readonly List<(int Start, int End)> _applied = new();
@@ -615,7 +615,7 @@ namespace Telegram.Common
                     _applied[i] = (from, to);
                 }
 
-                _selectedRanges.Add((item, from, to));
+                _selectedRanges.Add(new TextSelectionRange(item, from, to));
             }
         }
 
@@ -623,6 +623,12 @@ namespace Telegram.Common
         {
             MessageHelper.CopyText(_owner.XamlRoot, GetSelectedText());
         }
+
+        /// <summary>
+        /// Every control the selection covers, in document order, with the range of it selected
+        /// in its own positions. The selection's own list: read it before the selection changes.
+        /// </summary>
+        public IReadOnlyList<TextSelectionRange> SelectedRanges => _selectedRanges;
 
         /// <summary>
         /// The whole selection as a single <see cref="FormattedText"/> — each selected

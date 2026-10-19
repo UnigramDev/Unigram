@@ -2874,7 +2874,8 @@ namespace Telegram.Controls.Messages
             _highlight.Children.InsertAtTop(solid);
             _highlight.Size = target.ActualSize;
 
-            if (options.Quote != null && options.Quote.IsManual && !string.IsNullOrEmpty(message.Text?.Text))
+            // A rich message is not drawn by Message, which the rectangles below come from.
+            if (options.Quote != null && options.Quote.IsManual && !string.IsNullOrEmpty(message.Text?.Text) && message.Content is not MessageRichMessage)
             {
                 var caption = content.GetCaption();
                 var index = ClientEx.SearchQuote(caption, options.Quote);

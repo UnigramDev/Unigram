@@ -3548,13 +3548,36 @@ namespace Telegram.Views
                         };
                     }
                 }
-                else if (element is MessageBubble { Parent: MessageSelector parent } && parent.HasSelection)
+                else if (element is MessageBubble { Parent: MessageSelector parent } bubble && parent.HasSelection && message.Content is MessageRichMessage)
+                {
+                    // Each block of a rich message is a text of its own, so the selection is
+                    // copied and translated as the blocks read, and quoted as the texts it covers.
+                    var selection = parent.GetSelectedText();
+                    if (selection != null)
+                    {
+                        quote = new MessageQuote
+                        {
+                            Message = message,
+                            Quote = selection
+                        };
+
+                        if (bubble.MediaTemplateRoot is InstantContent instant && instant.TryGetQuote(parent.SelectedRanges, ViewModel.ClientService.Options.MessageReplyQuoteLengthMax, out Vector<RichText> texts, out int position))
+                        {
+                            quote.RichTexts = texts;
+                            quote.Position = position;
+                        }
+
+                        selectionStart = quote.Position;
+                        selectionEnd = selectionStart + selection.Text.Length;
+                    }
+                }
+                else if (element is MessageBubble { Parent: MessageSelector selector } && selector.HasSelection)
                 {
                     // HasSelection only reports that a selection is shown; the source text behind
                     // it can still be unavailable, in which case GetSelectedSourceText returns
                     // null. Everything below already treats a null quote as "no quote", so leave
                     // it unset instead of dereferencing it.
-                    var selection = parent.GetSelectedSourceText(out selectionStart);
+                    var selection = selector.GetSelectedSourceText(out selectionStart);
                     if (selection != null)
                     {
                         quote = new MessageQuote
@@ -4555,7 +4578,7 @@ namespace Telegram.Views
 
         private bool MessageQuote_Loaded(MessageQuote quote, MessageProperties properties)
         {
-            if (quote.Message.Content is MessageRichMessage)
+            if (quote.Message.Content is MessageRichMessage && quote.RichTexts.Count == 0)
             {
                 return false;
             }
