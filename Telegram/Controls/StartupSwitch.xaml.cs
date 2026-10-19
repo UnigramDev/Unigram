@@ -60,7 +60,7 @@ namespace Telegram.Controls
             }
 
             var task = await GetTaskAsync();
-            if (task == null || task.State == StartupTaskState.DisabledByUser)
+            if (task == null || task.State is StartupTaskState.DisabledByUser or StartupTaskState.DisabledByPolicy)
             {
                 Toggle.IsChecked = false;
                 Toggle.IsEnabled = false;
@@ -71,13 +71,16 @@ namespace Telegram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Headered.Footer = Strings.AutoStartDisabledInfo;
+                Headered.Footer = task?.State == StartupTaskState.DisabledByPolicy
+                    ? Strings.AutoStartDisabledByPolicyInfo
+                    : Strings.AutoStartDisabledInfo;
+
                 Visibility = Visibility.Visible;
             }
-            else if (task.State == StartupTaskState.Enabled)
+            else if (task.State is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy)
             {
                 Toggle.IsChecked = true;
-                Toggle.IsEnabled = true;
+                Toggle.IsEnabled = task.State == StartupTaskState.Enabled;
 
                 if (ToggleMinimized != null)
                 {
@@ -85,7 +88,9 @@ namespace Telegram.Controls
                     ToggleMinimized.Visibility = Visibility.Visible;
                 }
 
-                Headered.Footer = string.Empty;
+                Headered.Footer = task.State == StartupTaskState.EnabledByPolicy
+                    ? Strings.AutoStartEnabledByPolicyInfo
+                    : string.Empty;
 
                 Visibility = Visibility.Visible;
             }
@@ -106,7 +111,17 @@ namespace Telegram.Controls
             }
             else
             {
-                Visibility = Visibility.Collapsed;
+                // An unknown future state: TraySwitch shares this control, so disable rather than collapse.
+                Toggle.IsChecked = false;
+                Toggle.IsEnabled = false;
+
+                if (ToggleMinimized != null)
+                {
+                    ToggleMinimized.IsChecked = false;
+                    ToggleMinimized.Visibility = Visibility.Collapsed;
+                }
+
+                Headered.Footer = string.Empty;
             }
 
             Toggle.Checked += OnToggled;

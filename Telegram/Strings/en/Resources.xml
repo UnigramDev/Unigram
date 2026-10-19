@@ -11071,7 +11071,9 @@
     <string name="ArchiveMoveToMainMenuInfo">Archive moved to the main menu\nRight click the archive button to return the Archive to your chat list.</string>
     <string name="AreTyping">are typing...</string>
     <string name="AutoStart">Launch Unigram When System Starts</string>
+    <string name="AutoStartDisabledByPolicyInfo">Starting with the system was disabled by your organization.\n\nPlease contact your administrator to change this.</string>
     <string name="AutoStartDisabledInfo">Starting with the system was disabled in Windows Settings.\n\nPlease enable Unigram in the Startup Apps Settings.</string>
+    <string name="AutoStartEnabledByPolicyInfo">Starting with the system was enabled by your organization.\n\nPlease contact your administrator to change this.</string>
     <string name="AutoStartMinized">Launch minimized</string>
     <string name="BizBotStatusAccess">bot has access to this chat</string>
     <string name="BoostLevel">Level {0}</string>
