@@ -7,9 +7,10 @@
 
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Telegram.Composition;
-using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -19,247 +20,387 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Common
 {
-    // Ported from https://github.com/microsoft/microsoft-ui-xaml/blob/main/src/dxaml/xcp/components/comptree/HWCompNodeWinRT.cpp
-    // TODO: brushes cache, proper invalidation, ...
-    // This can be used to have theme shadows on Windows 10, for now we pass
+    /// <summary>
+    /// The drop shadow XAML draws for a <see cref="Windows.UI.Xaml.Media.ThemeShadow"/>, as an
+    /// ordinary child visual: a hollow nine grid over a pre-rendered ambient plus directional
+    /// shadow.
+    /// </summary>
+    /// <remarks>
+    /// Ported from https://github.com/microsoft/microsoft-ui-xaml/blob/main/src/dxaml/xcp/components/comptree/HWCompNodeWinRT.cpp
+    /// <para>
+    /// This is for Windows 10, where <c>UIElement.Shadow</c> is still the projected shadow. On
+    /// Windows 11 a package targeting SDK 22000 or later already gets this exact drop shadow from
+    /// the framework, so <c>UIElement.Shadow</c> is the cheaper way to ask for it there - it needs
+    /// no managed object per caster.
+    /// </para>
+    /// <para>
+    /// Brushes are cached per window and per recipe, the way the framework caches them on its
+    /// WUCBrushManager: every bubble in a chat shares one. A caster costs a sprite visual and the
+    /// two subscriptions it needs to keep up with size and theme, which <see cref="Detach"/>
+    /// releases.
+    /// </para>
+    /// <para>
+    /// The element's child visual slot belongs to this object for as long as it is attached.
+    /// </para>
+    /// </remarks>
     public partial class ThemeShadowEx
     {
         private readonly FrameworkElement _element;
         private readonly float _translationZ;
 
-        private readonly SpriteVisual _dropShadowSpriteVisual;
+        private readonly SpriteVisual _visual;
 
         private DropShadowRecipe _recipe;
+        private RecipeKey _key;
+
+        private bool _detached;
 
         public ThemeShadowEx(FrameworkElement element, float translationZ)
         {
             _element = element;
+            _translationZ = translationZ;
+
+            _visual = ElementComposition.GetElementVisual(element).Compositor.CreateSpriteVisual();
+            _visual.IsVisible = false;
+
             _element.SizeChanged += OnSizeChanged;
             _element.ActualThemeChanged += OnActualThemeChanged;
 
-            _translationZ = translationZ;
-            _dropShadowSpriteVisual = BootStrapper.Current.Compositor.CreateSpriteVisual();
+            ElementComposition.SetElementChildVisual(element, _visual);
 
-            _recipe = GetDropShadowRecipe(translationZ, _element.ActualTheme);
-            UpdateDropShadowRecipeCornerRadius(_element, ref _recipe);
-            UpdateDropShadowVisualBrush(BootStrapper.Current.Compositor, _recipe);
-
-            ElementCompositionPreview.SetElementChildVisual(element, _dropShadowSpriteVisual);
+            Update();
         }
 
-        // Let's avoid registering for CornerRadius property changed
+        /// <summary>
+        /// Rebuilds the shadow if anything it is derived from has changed. Cheap and safe to call
+        /// on any update: an unchanged recipe reuses the brush and only re-reads the size.
+        /// </summary>
+        /// <remarks>
+        /// Corner radius is read rather than observed - registering for a property changed callback
+        /// on every caster costs more than the callers, who know when they changed it.
+        /// </remarks>
         public void Invalidate()
         {
-            _recipe = GetDropShadowRecipe(_translationZ, _element.ActualTheme);
-            UpdateDropShadowRecipeCornerRadius(_element, ref _recipe);
-            UpdateDropShadowVisualBrush(BootStrapper.Current.Compositor, _recipe);
+            Update();
+        }
+
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    Update();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Detaches from the element and releases the sprite. The cached brush is shared and stays.
+        /// </summary>
+        public void Detach()
+        {
+            if (_detached)
+            {
+                return;
+            }
+
+            _detached = true;
+
+            _element.SizeChanged -= OnSizeChanged;
+            _element.ActualThemeChanged -= OnActualThemeChanged;
+
+            ElementComposition.SetElementChildVisual(_element, null);
+
+            _visual.Brush = null;
+            _visual.Dispose();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // Update the offset
-            Vector3 offset = new();
-            offset.X = -_recipe.LeftInset;
-            offset.Y = -_recipe.TopInset;
-            offset.Z = 0;
-            _dropShadowSpriteVisual.Offset = offset;
-
-            // Update the Size
-            Vector2 size = new();
-            size.X = _element.ActualSize.X + _recipe.LeftInset + _recipe.RightInset;
-            size.Y = _element.ActualSize.Y + _recipe.TopInset + _recipe.BottomInset;
-            _dropShadowSpriteVisual.Size = size;
+            Update();
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            _recipe = GetDropShadowRecipe(_translationZ, _element.ActualTheme);
-            UpdateDropShadowRecipeCornerRadius(_element, ref _recipe);
-            UpdateDropShadowVisualBrush(BootStrapper.Current.Compositor, _recipe);
+            Update();
         }
 
-        void UpdateDropShadowRecipeCornerRadius(FrameworkElement element, ref DropShadowRecipe recipe)
+        private void Update()
+        {
+            if (_detached)
+            {
+                return;
+            }
+
+            // Casters are built before the window has content, and again from a recycled element
+            // that is not in the tree yet. Both come back through SizeChanged once laid out.
+            var xamlRoot = _element.XamlRoot;
+            if (xamlRoot == null)
+            {
+                _visual.IsVisible = false;
+                return;
+            }
+
+            var size = _element.ActualSize;
+            if (!_isVisible || size.X < 1 || size.Y < 1)
+            {
+                _visual.IsVisible = false;
+                return;
+            }
+
+            GetCornerRadius(_element, out var radiusX, out var radiusY);
+
+            var key = new RecipeKey(_translationZ, _element.ActualTheme, radiusX, radiusY);
+            if (!key.Equals(_key))
+            {
+                _key = key;
+                _recipe = GetDropShadowRecipe(key);
+                _visual.Brush = GetBrush(xamlRoot, _visual.Compositor, key, _recipe);
+            }
+
+            _visual.Offset = new Vector3(-_recipe.LeftInset, -_recipe.TopInset, 0);
+            _visual.Size = new Vector2(
+                size.X + _recipe.LeftInset + _recipe.RightInset,
+                size.Y + _recipe.TopInset + _recipe.BottomInset);
+            _visual.IsVisible = true;
+        }
+
+        private static void GetCornerRadius(FrameworkElement element, out float radiusX, out float radiusY)
         {
             if (element is Rectangle rect)
             {
-                if (rect.RadiusX != 0 || rect.RadiusY != 0)
-                {
-                    recipe.RadiusX = (float)rect.RadiusX;
-                    recipe.RadiusY = (float)rect.RadiusY;
-                }
+                radiusX = (float)rect.RadiusX;
+                radiusY = (float)rect.RadiusY;
+                return;
             }
-            else
+
+            // Control does not override FrameworkElement::GetCornerRadius, so the value has to come
+            // from the type that declares it. Add others as needed: the UWP FrameworkElement does
+            // not expose CornerRadius.
+            var cornerRadius = element switch
             {
-                var cornerRadius = new CornerRadius(0, 0, 0, 0);
-                // Since Control doesn't override FrameworkElement::GetCornerRadius, we'll have to detect
-                // if the element is a Control, and if so, get the corner radius from Control_CornerRadius instead.
-                if (element is Control control)
-                {
-                    cornerRadius = control.CornerRadius;
-                }
-                else if (element is Border border)
-                {
-                    cornerRadius = border.CornerRadius;
-                }
-                // Add as needed as UWP FrameworkElement wrapper doesn't expose CornerRadius 
+                Control control => control.CornerRadius,
+                Border border => border.CornerRadius,
+                _ => default
+            };
 
-                bool hasRoundedCorner =
-                cornerRadius.TopLeft != 0
-                || cornerRadius.TopRight != 0
-                || cornerRadius.BottomLeft != 0
-                || cornerRadius.BottomRight != 0;
+            // The shadow is drawn from a rounded rectangle, which has one radius per axis, so a
+            // CornerRadius collapses to its largest corner.
+            radiusX = radiusY = (float)Math.Max(
+                Math.Max(cornerRadius.TopLeft, cornerRadius.TopRight),
+                Math.Max(cornerRadius.BottomLeft, cornerRadius.BottomRight));
+        }
 
-                if (hasRoundedCorner)
-                {
-                    // Since we're creating our DropShadow with rectangles, we'll want to
-                    // use radiusX and radiusY values. So if the element gives us an XCORNERRADIUS,
-                    // fill in the recipe's equivalent radiusX and radiusY values.
-                    float cr = (float)Math.Max(Math.Max(cornerRadius.TopLeft, cornerRadius.TopRight), Math.Max(cornerRadius.BottomLeft, cornerRadius.BottomRight));
-                    recipe.RadiusX = cr;
-                    recipe.RadiusY = cr;
-                }
+        #region Brush cache
+
+        // Keyed on the window because a composition object belongs to one view's compositor, and
+        // not on the thread: a XAML island host puts more than one window on a thread.
+        private static readonly ConditionalWeakTable<XamlRoot, Dictionary<RecipeKey, CompositionBrush>> _brushes = new();
+        private static readonly ConditionalWeakTable<XamlRoot, Dictionary<RecipeKey, CompositionBrush>>.CreateValueCallback _create = _ => new Dictionary<RecipeKey, CompositionBrush>();
+
+        private static CompositionBrush GetBrush(XamlRoot xamlRoot, Compositor compositor, RecipeKey key, DropShadowRecipe recipe)
+        {
+            var cache = _brushes.GetValue(xamlRoot, _create);
+            if (cache.TryGetValue(key, out var brush))
+            {
+                return brush;
+            }
+
+            brush = CreateBrush(compositor, recipe);
+            cache[key] = brush;
+
+            return brush;
+        }
+
+        /// <summary>
+        /// The same shadow, for a caster that paints it as its own fill rather than hosting it as a
+        /// child visual. Uncached: the caller is a brush that is itself declared once per theme.
+        /// </summary>
+        internal static CompositionBrush CreateBrush(Compositor compositor, float translationZ, ElementTheme theme, float radiusX, float radiusY)
+        {
+            var key = new RecipeKey(translationZ, theme, radiusX, radiusY);
+            return CreateBrush(compositor, GetDropShadowRecipe(key));
+        }
+
+        /// <summary>
+        /// How far the shadow falls outside the caster, which is how much the caster has to grow by
+        /// to leave room for it. A function of elevation alone - theme moves colour and opacity, and
+        /// the corner radius belongs to the nine grid rather than to the bounds.
+        /// </summary>
+        internal static Thickness GetInsets(float translationZ)
+        {
+            var recipe = GetDropShadowRecipe(new RecipeKey(translationZ, ElementTheme.Default, 0, 0));
+            return new Thickness(recipe.LeftInset, recipe.TopInset, recipe.RightInset, recipe.BottomInset);
+        }
+
+        /// <summary>
+        /// Everything the brush is derived from. Two casters that agree on all of it share one.
+        /// </summary>
+        private readonly struct RecipeKey : IEquatable<RecipeKey>
+        {
+            public readonly float TranslationZ;
+            public readonly ElementTheme Theme;
+            public readonly float RadiusX;
+            public readonly float RadiusY;
+
+            public RecipeKey(float translationZ, ElementTheme theme, float radiusX, float radiusY)
+            {
+                TranslationZ = translationZ;
+                Theme = theme;
+                RadiusX = radiusX;
+                RadiusY = radiusY;
+            }
+
+            public bool Equals(RecipeKey other)
+            {
+                return TranslationZ == other.TranslationZ
+                    && Theme == other.Theme
+                    && RadiusX == other.RadiusX
+                    && RadiusY == other.RadiusY;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is RecipeKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(TranslationZ, Theme, RadiusX, RadiusY);
             }
         }
 
-        private void UpdateDropShadowVisualBrush(Compositor compositor, DropShadowRecipe recipe)
+        #endregion
+
+        private static CompositionBrush CreateBrush(Compositor compositor, DropShadowRecipe recipe)
         {
-            var dropShadowVisual = CreateDropShadowVisual(compositor);
+            var shadowVisual = CreateDropShadowVisual(compositor, recipe);
 
-            // We'll need to put the dropShadowVisual inside of a surface to be the source of the NineGrid brush.
-            var dropShadowVS = compositor.CreateVisualSurface();
-            dropShadowVS.SourceVisual = dropShadowVisual;
-            dropShadowVS.SourceSize = dropShadowVisual.Size;
+            // The shadow visual has to go through a surface to be the source of the nine grid.
+            var surface = compositor.CreateVisualSurface();
+            surface.SourceVisual = shadowVisual;
+            surface.SourceSize = shadowVisual.Size;
 
-            if (dropShadowVS.TryGetPartner(out var visualSurfacePartner))
+            // Logical size, and the insets below stay logical with it - the framework does the same
+            // and passes 1.0 for the nine grid's realization scale, so every dialog and flyout on
+            // Windows 11 is drawn this way at every scale. If a shadow ever comes out soft at 200%,
+            // the fix is the pair WUCBrushManager::GetNineGridBrush spells out: realize at
+            // size * scale, insets * scale, inset scales 1 / scale. Not one without the other.
+            if (surface.TryGetPartner(out var partner))
             {
-                // TODO: Make sure to test in high DPI
-                // Required to avoid dwm.exe picking an arbitrary size that will cause bluriness.
-                visualSurfacePartner.SetRealizationSize(dropShadowVisual.Size);
+                // Required to avoid dwm picking an arbitrary size that will cause bluriness.
+                partner.SetRealizationSize(shadowVisual.Size);
             }
 
-            var dropShadowBrush = compositor.CreateSurfaceBrush(dropShadowVS);
-            dropShadowBrush.Stretch = CompositionStretch.Fill;
+            // Deliberately not frozen, unlike the other visual surfaces in the app: freezing drops
+            // the source, and a bubble shadow has to survive a device loss that a burst effect does
+            // not live long enough to see.
 
-            // Since the shape used to generate the shadow is rounded, the insets must extend to include its corner radius.
-            // Otherwise the nine grid won't extend into the rounded corners of the content, and there will be no shadow behind
-            // the rounded corners.
-            // See picture in GetDropShadowRecipe.
-            float maxCR = Math.Max(recipe.RadiusX, recipe.RadiusY);
-            float leftInset = recipe.LeftInset + maxCR + 1; // We're extending the insets by a pixel to overlap the real visual.
-            float topInset = recipe.TopInset + maxCR + 1;  // See diagram and calculations in CreateDropShadowVisual below.
-            float rightInset = recipe.RightInset + maxCR + 1;
-            float bottomInset = recipe.BottomInset + maxCR + 1;
+            var surfaceBrush = compositor.CreateSurfaceBrush(surface);
+            surfaceBrush.Stretch = CompositionStretch.Fill; // Required for use as a nine grid source
+
+            // The shape casting the shadow is rounded, so the insets have to extend over its corner
+            // radius: otherwise the nine grid does not reach into the rounded corners of the content
+            // and there is no shadow behind them. One pixel more so it overlaps the real visual.
+            var maxCR = Math.Max(recipe.RadiusX, recipe.RadiusY);
+
             var nineGridBrush = compositor.CreateNineGridBrush();
-            nineGridBrush.SetInsets(leftInset, topInset, rightInset, bottomInset);
+            nineGridBrush.SetInsets(
+                recipe.LeftInset + maxCR + 1,
+                recipe.TopInset + maxCR + 1,
+                recipe.RightInset + maxCR + 1,
+                recipe.BottomInset + maxCR + 1);
             nineGridBrush.IsCenterHollow = true;
-            nineGridBrush.Source = dropShadowBrush;
+            nineGridBrush.Source = surfaceBrush;
 
-            // Update the visual with the NineGrid brush and cache it.
-            _dropShadowSpriteVisual.Brush = nineGridBrush;
+            return nineGridBrush;
         }
 
-        private Visual CreateDropShadowVisual(Compositor compositor)
+        // Creates this visual tree:
+        // <ContainerVisual>         <!-- Sized to the largest shadow's visible bounds -->
+        //   <ContainerVisual.Clip>
+        //     <GeometricClip/>      <!-- Removes the pixels the shape visuals drew, keeps the shadows -->
+        //   </ContainerVisual.Clip>
+        //   <LayerVisual>           <!-- Ambient shadow, only above elevation 16 -->
+        //   <LayerVisual>           <!-- Directional shadow -->
+        // </ContainerVisual>
+        private static Visual CreateDropShadowVisual(Compositor compositor, DropShadowRecipe recipe)
         {
-            var recipe = _recipe;
-
-            Vector2 roundedRectSize = new(
-                // For simplicity we make the content square.
-                Math.Max(
-                    // The content must be large enough to accommodate rounded corners on both sides.
-                    MathF.Round(2 * Math.Max(recipe.RadiusX, recipe.RadiusY)),
-                    // A rect that's too small will cast a very light shadow at large shadow radiuses. Clamp to a min value.
-                    64.0f
-                )
-            );
+            var roundedRectSize = new Vector2(
+                // Square, for simplicity. Large enough for a rounded corner on both sides, and
+                // never so small that a large blur radius washes the shadow out.
+                Math.Max(MathF.Round(2 * Math.Max(recipe.RadiusX, recipe.RadiusY)), 64.0f));
 
             var roundedRectSizeSmaller = new Vector2(roundedRectSize.X - 2, roundedRectSize.Y - 2);
 
-            // (0, 0) is the top-left corner of the shadow region. The content rounded rect renders at an offset.
-            // Note: We add 1 here to both dimensions to keep the smaller dummy shape centered in the area that the real visual
-            // is going to cover.
+            // (0, 0) is the top-left of the shadow region, so the content renders at an offset. The
+            // extra pixel keeps the smaller dummy shape centered in the area the real visual covers.
             var roundedRectOffset = new Vector3(recipe.LeftInset + 1, recipe.TopInset + 1, 0);
 
-            //
-            // This is the bounding box of the shadow being cast by the content rounded rect. This also defines the size of
-            // the drop shadow image that we'll draw using a hollow nine grid brush.
-            //
-            // Note: recipe.Insets is the amount of space allotted to the shadow, but from empirical measurements the shadow
-            // won't actually fill all of this space. There will be a few fully transparent pixels along the edges. This doesn't
-            // cause any problems because we're doing a 1:1 mapping from the shadow surface to the visual - the visual that we
-            // produce will be large enough to accommodate these empty pixels.
-            //
+            // The bounding box of the shadow the rounded rect casts, and so the size of the image
+            // the hollow nine grid draws. The insets are the space allotted to the shadow and it
+            // does not fill all of it - the empty pixels along the edges are harmless, the mapping
+            // from surface to visual is 1:1.
             var containerSize = new Vector2(
                 roundedRectSize.X + recipe.LeftInset + recipe.RightInset,
                 roundedRectSize.Y + recipe.TopInset + recipe.BottomInset);
 
-            // First we'll create the RoundedRectangleShape that will be put inside
-            // both the AmbientShapeVisual and DirectionalShapeVisual.
             var roundedRectangleGeometry = compositor.CreateRoundedRectangleGeometry();
             roundedRectangleGeometry.Size = roundedRectSizeSmaller;
             roundedRectangleGeometry.CornerRadius = new Vector2(recipe.RadiusX, recipe.RadiusY);
 
-            var roundedRectangleShape = compositor.CreateSpriteShape();
-            roundedRectangleShape.Geometry = roundedRectangleGeometry;
+            // Opaque: the clip removes the colour, but the drop shadow inherits the shape's opacity.
+            var fillBrush = compositor.CreateColorBrush(Color.FromArgb(255, 0, 0, 0));
 
-            // Give the rectangle shape an opaque color - the color will be removed by a clip, but it must be opaque
-            // since the DropShadow will inherit from the rectangle's opacity.
-            var rectFillColor = compositor.CreateColorBrush(Color.FromArgb(255, 0, 0, 0));
-            roundedRectangleShape.FillBrush = rectFillColor;
+            // One shape per shape visual, over the shared geometry. The framework puts the same
+            // shape in both, which only ever runs above elevation 16 - not worth inheriting a
+            // question about who owns a shape for an object that is created once per recipe.
+            CompositionSpriteShape CreateShape()
+            {
+                var shape = compositor.CreateSpriteShape();
+                shape.Geometry = roundedRectangleGeometry;
+                shape.FillBrush = fillBrush;
 
-            // The AmbientLayerVisual has a rounded rectangle shape visual inside as the dummy shape that casts the shadow.
-            // The layer visual is sized to include the shadow. We set the shadow's source policy to InheritFromVisualContent
-            // so that only the shape inside that draws pixels casts the shadow.
-            //
-            // At low elevations, there should not be an ambient shadow. This is marked by setting the ambient opacity in the
-            // recipe to 0.
-            Visual ambientLayerVisual = null;
+                return shape;
+            }
 
+            var shadowVisual = compositor.CreateContainerVisual();
+
+            // At low elevations there is no ambient shadow, which the recipe marks with a zero
+            // opacity. The blur radius is bumped by a pixel to compensate for pushing the shadow
+            // into the real visual. InheritFromVisualContent keeps the layer visual itself from
+            // casting - only the shape inside it draws pixels.
             if (recipe.AmbientOpacity > 0)
             {
-                // Bump up the blur radius to compensate for pushing the shadow to overlap with the real visual.
                 var ambientShadow = MakeDropShadow(compositor, recipe.AmbientBlurRadius + 1, recipe.AmbientColor, recipe.AmbientYOffset);
+                var ambientShapeVisual = MakeShapeVisual(compositor, CreateShape(), roundedRectSizeSmaller, roundedRectOffset);
 
-                var ambientShapeVisual = MakeShapeVisual(compositor, roundedRectangleShape, roundedRectSizeSmaller, roundedRectOffset);
-
-                ambientLayerVisual = MakeLayerVisual(compositor, ambientShadow, ambientShapeVisual, containerSize);
+                shadowVisual.Children.InsertAtTop(MakeLayerVisual(compositor, ambientShadow, ambientShapeVisual, containerSize));
             }
 
-            // The DirectionalLayerVisual also has a rounded rectangle shape visual inside as the dummy shape that casts the
-            // shadow. The layer visual is sized to include the shadow, and again we set the shadow's source policy to
-            // InheritFromVisualContent so that only the dummy shape casts the shadow and not the entire layer visual. This
-            // shadow exists at all elevations.
-            // Bump up the blur radius to compensate for pushing the shadow to overlap with the real visual.
             var directionalShadow = MakeDropShadow(compositor, recipe.DirectionalBlurRadius + 1, recipe.DirectionalColor, recipe.DirectionalYOffset);
+            var directionalShapeVisual = MakeShapeVisual(compositor, CreateShape(), roundedRectSizeSmaller, roundedRectOffset);
 
-            var directionalShapeVisual = MakeShapeVisual(compositor, roundedRectangleShape, roundedRectSizeSmaller, roundedRectOffset);
-
-            var directionalLayerVisual = MakeLayerVisual(compositor, directionalShadow, directionalShapeVisual, containerSize);
-
-            // Now to combine the Ambient and Directional visuals, we'll put them in a container visual.
-            var shadowVisual = compositor.CreateContainerVisual();
-            if (ambientLayerVisual != null)
-            {
-                shadowVisual.Children.InsertAtTop(ambientLayerVisual);
-            }
-            shadowVisual.Children.InsertAtTop(directionalLayerVisual);
+            shadowVisual.Children.InsertAtTop(MakeLayerVisual(compositor, directionalShadow, directionalShapeVisual, containerSize));
             shadowVisual.Size = containerSize;
 
-            // Now we'll clip out the rounded rectangle from our visual.
-            // We'll have to create the clip using D2D since it's able to combine geometries
-            var d2OuterRectGeometry = CanvasGeometry.CreateRectangle(null, 0, 0, containerSize.X, containerSize.Y);
-            var d2RoundedRectGeometry = CanvasGeometry.CreateRoundedRectangle(null, roundedRectOffset.X, roundedRectOffset.Y, roundedRectSizeSmaller.X, roundedRectSizeSmaller.Y, recipe.RadiusX, recipe.RadiusY);
-            var d2PathGeometry = d2OuterRectGeometry.CombineWith(d2RoundedRectGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+            // Clip the rounded rectangle back out of the result. D2D because it combines geometries.
+            // Rooted with using: Win2D's UWP projection has no GC.KeepAlive, so a geometry whose only
+            // reference is a temporary can be finalized while CombineWith is still running.
+            using var outerRect = CanvasGeometry.CreateRectangle(null, 0, 0, containerSize.X, containerSize.Y);
+            using var innerRect = CanvasGeometry.CreateRoundedRectangle(null, roundedRectOffset.X, roundedRectOffset.Y, roundedRectSizeSmaller.X, roundedRectSizeSmaller.Y, recipe.RadiusX, recipe.RadiusY);
+            using var combined = outerRect.CombineWith(innerRect, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
 
-            var shadowPath = new CompositionPath(d2PathGeometry);
-            var compPG = compositor.CreatePathGeometry(shadowPath);
-            var geoClip = compositor.CreateGeometricClip(compPG);
-
-            shadowVisual.Clip = geoClip;
+            shadowVisual.Clip = compositor.CreateGeometricClip(compositor.CreatePathGeometry(new CompositionPath(combined)));
 
             return shadowVisual;
         }
 
-        CompositionShadow MakeDropShadow(Compositor compositor, float blurRadius, Color color, float offsetY)
+        private static CompositionShadow MakeDropShadow(Compositor compositor, float blurRadius, Color color, float offsetY)
         {
             var dropShadow = compositor.CreateDropShadow();
             dropShadow.BlurRadius = blurRadius;
@@ -270,7 +411,7 @@ namespace Telegram.Common
             return dropShadow;
         }
 
-        Visual MakeShapeVisual(Compositor compositor, CompositionShape compositionShape, Vector2 size, Vector3 offset)
+        private static Visual MakeShapeVisual(Compositor compositor, CompositionShape compositionShape, Vector2 size, Vector3 offset)
         {
             var shapeVisual = compositor.CreateShapeVisual();
             shapeVisual.Shapes.Add(compositionShape);
@@ -280,7 +421,7 @@ namespace Telegram.Common
             return shapeVisual;
         }
 
-        Visual MakeLayerVisual(Compositor compositor, CompositionShadow shadow, Visual child, Vector2 size)
+        private static Visual MakeLayerVisual(Compositor compositor, CompositionShadow shadow, Visual child, Vector2 size)
         {
             var layerVisual = compositor.CreateLayerVisual();
             layerVisual.Shadow = shadow;
@@ -290,105 +431,105 @@ namespace Telegram.Common
             return layerVisual;
         }
 
-        // The values necessary to achieve the theme shadow look, intended to be applied to a composition drop shadow.
-        struct DropShadowRecipe
+        // The values necessary to achieve the theme shadow look, intended to be applied to a
+        // composition drop shadow.
+        private struct DropShadowRecipe
         {
-            // Stores the corner radiuses of the content rounded rect that's casting the shadow.
+            // The corner radiuses of the content rounded rect that casts the shadow.
             public float RadiusX;
             public float RadiusY;
 
-            // Drop shadows have the concept of elevation, which effectively simulates elevation that projected shadows
-            // have (greater elevation = bigger shadow).
-            public float Elevation;
+            // There are two sets of blur radius and colour because the shadow is two visuals - an
+            // ambient and a directional one, each with a drop shadow.
 
-            // There are two sets of BlurRadius/Color because we'll be creating the DropShadowVisual by combining two
-            // visuals - an Ambient and a Directional visual with drop shadows.
-
-            // Provided by design. Determines how "blurred" the DropShadow should be and how far out it extends.
+            // Provided by design. How blurred the shadow is, and so how far out it extends.
             public float AmbientBlurRadius;
             public float DirectionalBlurRadius;
 
-            // Provided by design. Shadows can have a Y offset to give the illusion that light is hitting the caster at a certain angle.
+            // Provided by design. A Y offset gives the illusion of light hitting the caster at an
+            // angle.
             public float AmbientYOffset;
             public float DirectionalYOffset;
 
-            // Provided by design. The opacity of the shadow.
+            // Provided by design.
             public float AmbientOpacity;
             public float DirectionalOpacity;
 
-            // The color of the drop shadow being casted. The AmbientOpacity/DirectionalOpacity is already multiplied in.
+            // The colour cast, opacity already multiplied in.
             public Color AmbientColor;
             public Color DirectionalColor;
 
-            // How much the drop shadow should poke out from underneath the caster.
+            // How far the shadow pokes out from underneath the caster.
             public float LeftInset;
             public float TopInset;
             public float RightInset;
             public float BottomInset;
         }
 
-        // The "theme" drop shadow actually consists of two drop shadows, designed to simulate shadows generated by
-        // two shell-wide light sources: one ambient, and one directional.
-        // These formulas were taken from the shell team implementation of the ThemeNineGridShadowBrush
-        // At low elevations [2 to 16], there should not be an Ambient shadow.
-        // At high elevations (> 16), there will be an Ambient shadow.
-        private static DropShadowRecipe GetDropShadowRecipe(float translationZ, ElementTheme t)
+        // The "theme" drop shadow is two drop shadows, simulating the two shell-wide light sources:
+        // one ambient, one directional. The formulas are the shell team's ThemeNineGridShadowBrush.
+        // Below elevation 16 there is no ambient shadow, above it there is.
+        private static DropShadowRecipe GetDropShadowRecipe(RecipeKey key)
         {
             DropShadowRecipe recipe = new();
-            recipe.Elevation = Math.Min(64.0f, translationZ / 2);   // Clamped to a max of 64 (corresponding to Translation.Z = 128)
+            recipe.RadiusX = key.RadiusX;
+            recipe.RadiusY = key.RadiusY;
 
-            if (recipe.Elevation < 2)
+            // Clamped to a max of 64, which is Translation.Z = 128
+            var elevation = Math.Min(64.0f, key.TranslationZ / 2);
+
+            if (elevation < 2)
             {
                 recipe.AmbientBlurRadius = 2.0f;
 
                 recipe.AmbientOpacity = 0;
                 recipe.DirectionalOpacity = 0;
             }
-            else if (recipe.Elevation >= 2 && recipe.Elevation <= 16)
+            else if (elevation >= 2 && elevation <= 16)
             {
                 recipe.AmbientBlurRadius = 2.0f;
 
                 // Ambient shadow won't show.
                 recipe.AmbientOpacity = 0;
-                if (t == ElementTheme.Light)
-                {
-                    recipe.DirectionalOpacity = Math.Min((recipe.Elevation / 100.0f) + 0.06f, 0.14f);   // maxes out at elevation = 8
-                }
-                else if (t == ElementTheme.Dark)
+                if (key.Theme == ElementTheme.Dark)
                 {
                     recipe.DirectionalOpacity = 0.26f;
+                }
+                else
+                {
+                    // Maxes out at elevation = 8
+                    recipe.DirectionalOpacity = Math.Min((elevation / 100.0f) + 0.06f, 0.14f);
                 }
             }
             else
             {
-                recipe.AmbientBlurRadius = recipe.Elevation / 3;    // Translation.Z / 6, but we already divided by 2
+                // Translation.Z / 6, but it was already divided by 2
+                recipe.AmbientBlurRadius = elevation / 3;
                 recipe.AmbientYOffset = 2;
 
-                if (t == ElementTheme.Light)
-                {
-                    recipe.AmbientOpacity = 0.15f;
-                    recipe.DirectionalOpacity = 0.19f;
-                }
-                else if (t == ElementTheme.Dark)
+                if (key.Theme == ElementTheme.Dark)
                 {
                     recipe.AmbientOpacity = 0.37f;
                     recipe.DirectionalOpacity = 0.37f;
                 }
+                else
+                {
+                    recipe.AmbientOpacity = 0.15f;
+                    recipe.DirectionalOpacity = 0.19f;
+                }
             }
 
             recipe.AmbientColor = Color.FromArgb((byte)(recipe.AmbientOpacity * 255), 0, 0, 0);
-            ;
-            recipe.DirectionalBlurRadius = recipe.Elevation;
-            recipe.DirectionalYOffset = recipe.Elevation * 0.5f;   // positive means shifted down
+            recipe.DirectionalBlurRadius = elevation;
+            recipe.DirectionalYOffset = elevation * 0.5f; // Positive means shifted down
             recipe.DirectionalColor = Color.FromArgb((byte)(recipe.DirectionalOpacity * 255), 0, 0, 0);
-            ;
 
-            float maxBlurRadius = MathF.Ceiling(Math.Max(recipe.AmbientBlurRadius, recipe.DirectionalBlurRadius));
+            var maxBlurRadius = MathF.Ceiling(Math.Max(recipe.AmbientBlurRadius, recipe.DirectionalBlurRadius));
             recipe.LeftInset = maxBlurRadius;
             recipe.RightInset = maxBlurRadius;
-            // If the shadow is shifted vertically, then the amount of space needed for the shadow at the top and bottom
-            // depend on both the shadow's blur radius and how much it shifted. A positive offset means to shift down, so
-            // subtract from the top and add to the bottom.
+
+            // A vertically shifted shadow needs different room above and below: the space depends on
+            // both the blur radius and the shift, and a positive offset means down.
             recipe.TopInset = MathF.Ceiling(Math.Max(recipe.AmbientBlurRadius - recipe.AmbientYOffset, recipe.DirectionalBlurRadius - recipe.DirectionalYOffset));
             recipe.BottomInset = MathF.Ceiling(Math.Max(recipe.AmbientBlurRadius + recipe.AmbientYOffset, recipe.DirectionalBlurRadius + recipe.DirectionalYOffset));
 
