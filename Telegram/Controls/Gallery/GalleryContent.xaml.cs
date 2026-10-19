@@ -599,9 +599,18 @@ namespace Telegram.Controls.Gallery
         public bool IsTextSelectionEnabled
         {
             get => Selection.Visibility == Visibility.Visible;
-            private set => Selection.Visibility = value
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            private set
+            {
+                Selection.Visibility = value
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                // Every way recognition gives up ends here, and a collapsed skeleton still sweeps.
+                if (!value)
+                {
+                    Selection.HideSkeleton();
+                }
+            }
         }
 
         public void SelectAllText()

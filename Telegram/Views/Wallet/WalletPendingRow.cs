@@ -630,7 +630,12 @@ namespace Telegram.Views.Wallet
             _props.StopAnimation("Arrived");
 
             _shimmer?.Dispose();
-            _clock?.Dispose();
+
+            if (_clock != null)
+            {
+                WalletTransferVisuals.StopClock(_clock);
+                _clock.Dispose();
+            }
 
             _shimmer = null;
             _clock = null;

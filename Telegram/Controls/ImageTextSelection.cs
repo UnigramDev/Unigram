@@ -396,8 +396,13 @@ namespace Telegram.Controls
             endless.IterationBehavior = AnimationIterationBehavior.Forever;
             endless.Duration = TimeSpan.FromMilliseconds(2000);
 
+            StopSkeleton();
+
             stroke.StartAnimation("Offset.X", endless);
             fill.StartAnimation("Offset.X", endless);
+
+            _skeletonStroke = stroke;
+            _skeletonFill = fill;
 
             _showSkeleton = true;
             ElementCompositionPreview.SetElementChildVisual(this, shapeVisual);
@@ -412,7 +417,21 @@ namespace Telegram.Controls
         public void HideSkeleton()
         {
             _showSkeleton = false;
+            StopSkeleton();
             ElementCompositionPreview.SetElementChildVisual(this, BootStrapper.Current.Compositor.CreateSpriteVisual());
+        }
+
+        // Replacing the child visual does not stop these: they run until the brushes are finalized.
+        private CompositionLinearGradientBrush _skeletonStroke;
+        private CompositionLinearGradientBrush _skeletonFill;
+
+        private void StopSkeleton()
+        {
+            _skeletonStroke?.StopAnimation("Offset.X");
+            _skeletonFill?.StopAnimation("Offset.X");
+
+            _skeletonStroke = null;
+            _skeletonFill = null;
         }
 
         #endregion

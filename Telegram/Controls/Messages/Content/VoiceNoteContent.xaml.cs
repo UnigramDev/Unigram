@@ -226,6 +226,12 @@ namespace Telegram.Controls.Messages.Content
             RecognizedIcon ??= GetTemplateChild(nameof(RecognizedIcon)) as Border;
             RecognizedIcon.Visibility = Visibility.Visible;
 
+            // Every partial result lands here; dots already running carry on.
+            if (_props != null)
+            {
+                return;
+            }
+
             Color foreground = default;
             if (RecognizedText.Foreground is SolidColorBrush brush)
             {
@@ -242,10 +248,14 @@ namespace Telegram.Controls.Messages.Content
             {
                 RecognizedIcon.Visibility = Visibility.Collapsed;
 
-                _previous = null;
-                _props = null;
+                // Detaching the dots does not stop them: they loop until the property set is finalized.
+                _props?.StopAnimation("Progress");
 
                 ElementCompositionPreview.SetElementChildVisual(RecognizedIcon, null);
+
+                _previous?.Dispose();
+                _previous = null;
+                _props = null;
             }
         }
 
@@ -474,6 +484,7 @@ namespace Telegram.Controls.Messages.Content
             _message = null;
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
+            UnloadPending();
         }
 
         public bool IsValid(MessageContent content, bool primary)

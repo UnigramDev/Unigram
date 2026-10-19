@@ -567,8 +567,8 @@ namespace Telegram.Views.Wallet.Popups
 
         private void Rebuild()
         {
-            // The children the animations were running on are about to go.
-            _running = false;
+            // Removing a child leaves its visual's loops running, so they are stopped first.
+            Stop();
 
             Children.Clear();
             _cells.Clear();

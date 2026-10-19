@@ -870,6 +870,7 @@ namespace Telegram.Controls
 
             ClearEntities();
             ApplyHighlighters();
+            ShowHideSkeleton(false);
         }
 
         private void ClearEntities()
@@ -3223,6 +3224,10 @@ namespace Telegram.Controls
             }
             else
             {
+                // Detaching the skeleton does not stop the sweep, and this field would keep it alive.
+                _foreground?.StopAnimation("RelativeOffsetAdjustment");
+                _foreground = null;
+
                 _skeleton?.Opacity = 0;
                 _skeleton = null;
                 ElementCompositionPreview.SetElementChildVisual(this, null);

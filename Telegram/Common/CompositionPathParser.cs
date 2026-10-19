@@ -178,6 +178,18 @@ namespace Telegram.Common
             return animation;
         }
 
+        /// <summary>
+        /// Stops the sweep of a thumbnail made by <see cref="CreateThumbnail(float, float, CompositionPath, out ShapeVisual, bool)"/>.
+        /// Detaching or dropping the visual does not: the gradient sweeps until it is collected.
+        /// </summary>
+        public static void StopThumbnail(ShapeVisual visual)
+        {
+            if (visual?.Shapes.Count > 1 && visual.Shapes[1] is CompositionSpriteShape shape)
+            {
+                shape.FillBrush?.StopAnimation("Offset");
+            }
+        }
+
 
         private const int MaxSegmentsStackAlloc = 256;
         private const int MaxDataStackAlloc = 1024;

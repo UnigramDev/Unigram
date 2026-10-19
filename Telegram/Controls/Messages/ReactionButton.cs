@@ -431,12 +431,11 @@ namespace Telegram.Controls.Messages
                         paragraph.Inlines.Add(suffix);
                     }
 
-                    var visual = ElementCompositionPreview.GetElementChildVisual(grid);
-                    var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
-                    animation.InsertKeyFrame(0, 1);
-                    animation.InsertKeyFrame(1, 0);
-
-                    visual.StartAnimation("Opacity", animation);
+                    VisualUtilities.HideSkeleton(grid);
+                }
+                else
+                {
+                    VisualUtilities.HideSkeleton(grid);
                 }
             }
             else

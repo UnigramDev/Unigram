@@ -947,13 +947,16 @@ namespace Telegram.Controls
             Particles();
         }
 
-        // The spinner is the one thing here that runs without anyone watching, so a chart that is
-        // navigated away from mid-count stops costing the compositor anything. It restarts from the
-        // top of its loop on the way back, which on a spinner is not something anyone can see.
+        // The spinner and the particle field loop forever on the compositor whether anyone is watching
+        // or not, so both go with the chart. OnLoaded brings them back; the spinner restarts from the
+        // top of its loop, which on a spinner is not something anyone can see.
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _morphTimer.Stop();
             StopSpin();
+
+            // Disposing the sprites is what stops their loops.
+            _particles.SetBands(null);
         }
 
         // The symbol font is packaged, so the first layout can measure a fallback and only settle
@@ -988,7 +991,8 @@ namespace Telegram.Controls
             //
             // Read where it is read, not subscribed to: the settings that move it are a page away,
             // so the chart will have been rebuilt by the time any of them has.
-            if (!PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            // Loading and complete both hold the field at zero opacity, where it would only loop unseen.
+            if (_loading || _complete || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
             {
                 _particles.SetBands(null);
                 return;

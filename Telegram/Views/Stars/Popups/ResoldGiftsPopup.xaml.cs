@@ -533,13 +533,7 @@ namespace Telegram.Views.Stars.Popups
             else if (_skeletonCollapsed is false && _gifts.Count > 0)
             {
                 _skeletonCollapsed = true;
-
-                var visual = ElementCompositionPreview.GetElementChildVisual(ScrollingHost);
-                var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(0, 1);
-                animation.InsertKeyFrame(1, 0);
-
-                visual.StartAnimation("Opacity", animation);
+                VisualUtilities.HideSkeleton(ScrollingHost);
             }
         }
 

@@ -444,6 +444,9 @@ namespace Telegram.Views.Host
             PostViewportChanged();
             PostThemeChanged();
 
+            CompositionPathParser.StopThumbnail(_placeholderVisual);
+            ElementCompositionPreview.SetElementChildVisual(PlaceholderPanel, null);
+
             _placeholderShimmer = null;
             _placeholderVisual = null;
 

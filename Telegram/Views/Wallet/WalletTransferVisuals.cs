@@ -166,6 +166,18 @@ namespace Telegram.Views.Wallet
             return visual;
         }
 
+        /// <summary>
+        /// Stops the hands of a <see cref="CreateClock"/> clock. Disposing the clock is not enough:
+        /// the hands are shapes of their own and keep turning until they are collected.
+        /// </summary>
+        public static void StopClock(ShapeVisual clock)
+        {
+            foreach (var shape in clock.Shapes)
+            {
+                shape.StopAnimation("RotationAngleInDegrees");
+            }
+        }
+
         private static CompositionSpriteShape Disc(Compositor compositor, Vector2 centre, float radius, Color color)
         {
             var geometry = compositor.CreateEllipseGeometry();

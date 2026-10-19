@@ -245,13 +245,14 @@ namespace Telegram.Controls.Messages.Content
 
             // TODO: how des it work?
             var response = await _message.ClientService.SendAsync(new GetGiveawayInfo(_message.ChatId, _message.Id));
+
+            Button.HideSkeleton();
+
             if (response is not GiveawayInfoOngoing and not GiveawayInfoCompleted || !this.IsConnected())
             {
                 // TODO
                 return;
             }
-
-            Button.HideSkeleton();
 
             var boostedChat = _message.ClientService.GetChat(giveaway.Parameters.BoostedChatId);
             var isChannel = boostedChat.Type is ChatTypeSupergroup { IsChannel: true };

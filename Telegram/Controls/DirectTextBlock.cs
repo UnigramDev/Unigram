@@ -1981,6 +1981,7 @@ namespace Telegram.Controls
         #region Skeleton
 
         private ContainerVisual _skeleton;
+        private SpriteVisual _skeletonSprite;
 
         // The size the block was last arranged at, for a skeleton asked for between two layout
         // passes: ActualSize is the one before this arrange until this arrange is over.
@@ -2025,13 +2026,13 @@ namespace Telegram.Controls
 
                 // Twice the width and swept across: the wrap is what makes one gradient look
                 // like a light travelling over the whole of it.
-                var foreground = compositor.CreateSpriteVisual();
-                foreground.RelativeSizeAdjustment = new Vector2(2, 1);
-                foreground.Brush = gradient;
-                foreground.StartAnimation("RelativeOffsetAdjustment", animation);
+                _skeletonSprite = compositor.CreateSpriteVisual();
+                _skeletonSprite.RelativeSizeAdjustment = new Vector2(2, 1);
+                _skeletonSprite.Brush = gradient;
+                _skeletonSprite.StartAnimation("RelativeOffsetAdjustment", animation);
 
                 _skeleton = compositor.CreateContainerVisual();
-                _skeleton.Children.InsertAtTop(foreground);
+                _skeleton.Children.InsertAtTop(_skeletonSprite);
 
                 // On this element rather than on the host: the host carries the text, and a
                 // child visual is drawn over everything the element holds.
@@ -2041,6 +2042,9 @@ namespace Telegram.Controls
             }
             else
             {
+                _skeletonSprite?.StopAnimation("RelativeOffsetAdjustment");
+                _skeletonSprite = null;
+
                 _skeleton = null;
                 ElementCompositionPreview.SetElementChildVisual(this, null);
             }

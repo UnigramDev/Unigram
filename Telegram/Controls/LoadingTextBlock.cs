@@ -24,6 +24,7 @@ namespace Telegram.Controls
     {
         private ContainerVisual _skeleton;
         private SpriteVisual _foreground;
+        private Vector3KeyFrameAnimation _shimmer;
 
         private TextBlock Placeholder;
         private TextBlock Presenter;
@@ -41,6 +42,8 @@ namespace Telegram.Controls
             animation.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
             animation.IterationBehavior = AnimationIterationBehavior.Forever;
             animation.Duration = TimeSpan.FromSeconds(1);
+
+            _shimmer = animation;
 
             var backgroundColor = GetColor(BorderBrushProperty);
             var foregroundColor = GetColor(BackgroundProperty);
@@ -149,6 +152,7 @@ namespace Telegram.Controls
             if (string.IsNullOrEmpty(text))
             {
                 Placeholder.Visibility = Visibility.Visible;
+                _foreground?.StartAnimation("RelativeOffsetAdjustment", _shimmer);
 
                 visual1.Clip = null;
                 visual2.Clip = null;
@@ -160,10 +164,7 @@ namespace Telegram.Controls
             await this.UpdateLayoutAsync();
 
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                Placeholder.Visibility = Visibility.Collapsed;
-            };
+            batch.Completed += OnPlaceholderHidden;
 
             var fadeIn = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             fadeIn.InsertKeyFrame(0, 0);
@@ -180,6 +181,19 @@ namespace Telegram.Controls
             StartClip(visual2, false, final);
 
             batch.End();
+        }
+
+        private void OnPlaceholderHidden(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= OnPlaceholderHidden;
+            }
+
+            Placeholder.Visibility = Visibility.Collapsed;
+
+            // Collapsing the placeholder does not stop its sweep.
+            _foreground?.StopAnimation("RelativeOffsetAdjustment");
         }
 
         private void StartClip(Visual visual, bool show, Vector2 desiredSize)

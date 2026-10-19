@@ -321,6 +321,7 @@ namespace Telegram.Controls.Messages
         {
             _styled = null;
             _query = null;
+            _showSkeleton = false;
             HasCodeBlocks = false;
 
             RecycleBlocks();

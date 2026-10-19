@@ -379,6 +379,7 @@ namespace Telegram.Controls.Messages.Service
 
             ElementCompositionPreview.SetElementChildVisual(ClockHost, null);
 
+            WalletTransferVisuals.StopClock(_clock);
             _clock.Dispose();
             _clock = null;
 

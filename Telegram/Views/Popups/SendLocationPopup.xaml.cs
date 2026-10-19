@@ -26,7 +26,7 @@ namespace Telegram.Views.Popups
     {
         public SendLocationViewModel ViewModel => DataContext as SendLocationViewModel;
 
-        private CompositionAnimation _previewShimmer;
+        private ShapeVisual _previewShimmer;
         private Geolocator _geolocator;
 
         private readonly Visual _position;
@@ -58,8 +58,9 @@ namespace Telegram.Views.Popups
             _position.CenterPoint = new Vector3(20, 48, 0);
             _position.Scale = Vector3.Zero;
 
-            _previewShimmer = CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
+            CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
             ElementCompositionPreview.SetElementChildVisual(MapShimmer, visual);
+            _previewShimmer = visual;
         }
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -74,6 +75,9 @@ namespace Telegram.Views.Popups
                 _geolocator.PositionChanged -= OnPositionChanged;
                 _geolocator = null;
             }
+
+            CompositionPathParser.StopThumbnail(_previewShimmer);
+            _previewShimmer = null;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -115,8 +119,9 @@ namespace Telegram.Views.Popups
                 {
                     if (_previewShimmer == null)
                     {
-                        _previewShimmer = CompositionPathParser.CreateThumbnail(320, 200, 0, out ShapeVisual visual);
+                        CompositionPathParser.CreateThumbnail(320, 200, 0, out ShapeVisual visual);
                         ElementCompositionPreview.SetElementChildVisual(MapShimmer, visual);
+                        _previewShimmer = visual;
                     }
 
                     try
@@ -152,8 +157,9 @@ namespace Telegram.Views.Popups
 
             if (_previewShimmer == null && (ViewModel?.Location.Latitude != point.Coordinate.Point.Position.Latitude || ViewModel?.Location.Longitude != point.Coordinate.Point.Position.Longitude))
             {
-                _previewShimmer = CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
+                CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
                 ElementCompositionPreview.SetElementChildVisual(MapShimmer, visual);
+                _previewShimmer = visual;
             }
 
             var latitude = point.Coordinate.Point.Position.Latitude;
@@ -251,6 +257,7 @@ namespace Telegram.Views.Popups
 
         private void Map_ImageOpened(object sender, RoutedEventArgs e)
         {
+            CompositionPathParser.StopThumbnail(_previewShimmer);
             _previewShimmer = null;
             ElementCompositionPreview.SetElementChildVisual(MapShimmer, null);
         }

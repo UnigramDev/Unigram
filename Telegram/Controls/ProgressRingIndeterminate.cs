@@ -40,13 +40,23 @@ namespace Telegram.Controls
         {
             _fillBrush?.Register();
             _strokeBrush?.Register();
+
+            if (_animation != null)
+            {
+                _props.StartAnimation("Progress", _animation);
+            }
         }
 
         protected override void OnUnloaded()
         {
             _fillBrush?.Unregister();
             _strokeBrush?.Unregister();
+
+            // Leaving the tree does not stop it: it runs until the property set is finalized.
+            _props?.StopAnimation("Progress");
         }
+
+        private ScalarKeyFrameAnimation _animation;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -56,13 +66,17 @@ namespace Telegram.Controls
                 ElementCompositionPreview.SetElementChildVisual(this, _visual.RootVisual);
 
                 var linearEasing = _props.Compositor.CreateLinearEasingFunction();
-                var animation = _props.Compositor.CreateScalarKeyFrameAnimation();
-                animation.Duration = _visual.Duration;
-                animation.InsertKeyFrame(0, 0, linearEasing);
-                animation.InsertKeyFrame(1, 1, linearEasing);
-                animation.IterationBehavior = AnimationIterationBehavior.Forever;
+                _animation = _props.Compositor.CreateScalarKeyFrameAnimation();
+                _animation.Duration = _visual.Duration;
+                _animation.InsertKeyFrame(0, 0, linearEasing);
+                _animation.InsertKeyFrame(1, 1, linearEasing);
+                _animation.IterationBehavior = AnimationIterationBehavior.Forever;
 
-                _props.StartAnimation("Progress", animation);
+                // Measure can come before Loaded or after it; whichever is second starts it.
+                if (IsConnected)
+                {
+                    _props.StartAnimation("Progress", _animation);
+                }
             }
 
             var newSize = availableSize.ToVector2();

@@ -1598,6 +1598,9 @@ namespace Telegram.Controls.Cells
 
         private bool _skeletonCollapsed = true;
 
+        // Fading the skeleton out leaves its sweep running for as long as the cell lives.
+        private CompositionSpriteShape _skeletonShape;
+
         public void ShowHideSkeleton(bool show)
         {
             if (_skeletonCollapsed && show)
@@ -1611,6 +1614,9 @@ namespace Telegram.Controls.Cells
             {
                 _skeletonCollapsed = true;
                 SizeChanged -= OnSizeChanged;
+
+                _skeletonShape?.StopAnimation("Offset");
+                _skeletonShape = null;
 
                 var visual = ElementCompositionPreview.GetElementChildVisual(this);
                 var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
@@ -1686,7 +1692,9 @@ namespace Telegram.Controls.Cells
             animation.IterationBehavior = AnimationIterationBehavior.Forever;
             animation.Duration = TimeSpan.FromSeconds(1);
 
+            _skeletonShape?.StopAnimation("Offset");
             foregroundShape.StartAnimation("Offset", animation);
+            _skeletonShape = foregroundShape;
 
             ElementCompositionPreview.SetElementChildVisual(this, visual);
         }

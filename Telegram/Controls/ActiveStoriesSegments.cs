@@ -77,6 +77,12 @@ namespace Telegram.Controls
 
         private void UpdateVisual(bool live, Visual visual)
         {
+            // OnApplyTemplate hands the pending visual back in, which may be the spinner itself.
+            if (!ReferenceEquals(visual, _indeterminate))
+            {
+                StopIndeterminate();
+            }
+
             _hasLiveBadge = live;
 
             if (Presenter != null)
@@ -506,6 +512,37 @@ namespace Telegram.Controls
             unreadStroke.StartAnimation("RotationAngle", rotation);
 
             UpdateVisual(false, indefiniteReplicatorLayer);
+
+            _indeterminate = indefiniteReplicatorLayer;
+            _indeterminateStroke = unreadStroke;
+        }
+
+        // Replacing the child visual leaves these looping until the objects are finalized.
+        private ShapeVisual _indeterminate;
+        private CompositionLinearGradientBrush _indeterminateStroke;
+
+        private void StopIndeterminate()
+        {
+            if (_indeterminate == null)
+            {
+                return;
+            }
+
+            var shapes = _indeterminate.Shapes;
+
+            for (int i = 0; i < shapes.Count; i++)
+            {
+                if (shapes[i] is CompositionSpriteShape shape)
+                {
+                    shape.Geometry.StopAnimation("TrimStart");
+                }
+            }
+
+            _indeterminate.StopAnimation("RotationAngle");
+            _indeterminateStroke.StopAnimation("RotationAngle");
+
+            _indeterminate = null;
+            _indeterminateStroke = null;
         }
 
         #region Mode

@@ -86,13 +86,7 @@ namespace Telegram.Controls.Views
             else if (_skeletonCollapsed is false && _items.Count > 0 && ScrollingHost.ItemsPanelRoot != null)
             {
                 _skeletonCollapsed = true;
-
-                var visual = ElementCompositionPreview.GetElementChildVisual(ScrollingHost.ItemsPanelRoot);
-                var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(0, 1);
-                animation.InsertKeyFrame(1, 0);
-
-                visual.StartAnimation("Opacity", animation);
+                VisualUtilities.HideSkeleton(ScrollingHost.ItemsPanelRoot);
             }
         }
 

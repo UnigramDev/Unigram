@@ -89,8 +89,9 @@ namespace Telegram.Views.Profile
             {
                 FindName(nameof(LoadingState));
             }
-            else
+            else if (LoadingState != null)
             {
+                VisualUtilities.HideSkeleton(LoadingState);
                 UnloadObject(LoadingState);
             }
         }

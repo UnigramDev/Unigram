@@ -97,6 +97,7 @@ namespace Telegram.Controls.Stories
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _unloaded = true;
+            StopSkeleton();
             Logger.Info();
 
             if (_player != null)
@@ -1284,6 +1285,7 @@ namespace Telegram.Controls.Stories
         private void ShowSkeleton()
         {
             _loading = true;
+            StopSkeleton();
 
             if (ActualSize.X == 0 || ActualSize.Y == 0)
             {
@@ -1327,13 +1329,30 @@ namespace Telegram.Controls.Stories
             stroke.StartAnimation("Offset.X", endless);
             fill.StartAnimation("Offset.X", endless);
 
+            _skeletonStroke = stroke;
+            _skeletonFill = fill;
+
             ElementCompositionPreview.SetElementChildVisual(ActiveRoot, visual);
         }
 
         private void HideSkeleton()
         {
             _loading = false;
+            StopSkeleton();
             ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
+        }
+
+        // Replacing the child visual does not stop these: they run until the brushes are finalized.
+        private CompositionLinearGradientBrush _skeletonStroke;
+        private CompositionLinearGradientBrush _skeletonFill;
+
+        private void StopSkeleton()
+        {
+            _skeletonStroke?.StopAnimation("Offset.X");
+            _skeletonFill?.StopAnimation("Offset.X");
+
+            _skeletonStroke = null;
+            _skeletonFill = null;
         }
 
         private bool _loading;

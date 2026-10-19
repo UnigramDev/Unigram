@@ -54,6 +54,8 @@ namespace Telegram.Common
                 return;
             }
 
+            StopSkeleton(ElementCompositionPreview.GetElementChildVisual(element) as ShapeVisual);
+
             var compositor = BootStrapper.Current.Compositor;
 
             var path = compositor.CreatePathGeometry(new CompositionPath(
@@ -113,6 +115,34 @@ namespace Telegram.Common
             foregroundShape.StartAnimation("Offset", animation);
 
             ElementCompositionPreview.SetElementChildVisual(element, visual);
+        }
+
+        /// <summary>
+        /// Fades out a skeleton attached by <see cref="SetSkeleton(FrameworkElement, Vector2, CanvasGeometry[])"/>
+        /// and stops its sweep, which fading alone leaves running for as long as the element lives.
+        /// </summary>
+        public static void HideSkeleton(FrameworkElement element)
+        {
+            if (ElementCompositionPreview.GetElementChildVisual(element) is not ShapeVisual visual)
+            {
+                return;
+            }
+
+            StopSkeleton(visual);
+
+            var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(0, 1);
+            animation.InsertKeyFrame(1, 0);
+
+            visual.StartAnimation("Opacity", animation);
+        }
+
+        private static void StopSkeleton(ShapeVisual visual)
+        {
+            if (visual?.Shapes.Count > 1)
+            {
+                visual.Shapes[1].StopAnimation("Offset");
+            }
         }
 
         // The geometries above are handed to CreateGroup, which keeps them, and the

@@ -45,6 +45,10 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
+            // Replacing the property set does not end its Forever animation; only the finalizer would.
+            _props?.StopAnimation("Progress");
+
+            var previous = _previous;
             var color = Fill?.Color ?? Colors.Black;
             var visual = GetVisual(type, BootStrapper.Current.Compositor, color, out _props);
 
@@ -57,6 +61,7 @@ namespace Telegram.Controls.Chats
             }
 
             ElementCompositionPreview.SetElementChildVisual(this, visual?.RootVisual);
+            previous?.Dispose();
         }
 
         #region Fill
