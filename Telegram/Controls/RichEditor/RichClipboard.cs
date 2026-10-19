@@ -31,7 +31,7 @@ namespace Telegram.Controls.RichEditor
     /// </summary>
     public static class RichClipboard
     {
-        public const string FormatId = "application/x-unigram-rich-message";
+        public const string FormatId = "application/x-tl-rich-message";
 
         private static RichDocument _fragment;
         private static string _token;

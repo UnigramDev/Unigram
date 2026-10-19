@@ -254,7 +254,7 @@ Fela's feedback after the first run (2026-10-12), all fixed:
   line splits and the first and last pasted paragraphs join its halves. Into a cell, a
   caption or code, only text goes.
 - `RichClipboard`: an in-process store (fragment plus a token in
-  `application/x-unigram-rich-message`, as tdesktop and Android do; media cannot go
+  `application/x-tl-rich-message`, as tdesktop and Android do; media cannot go
   through the clipboard); `ToFormattedText` (one line per leaf with message entities, pre
   for code blocks, merged blockquotes, custom emoji with their alt text); `ToHtml`; and a
   tolerant `FromHtml` (block tags, lists including checkboxes, tables with spans, inline
