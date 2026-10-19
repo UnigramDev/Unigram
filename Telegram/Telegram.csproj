@@ -895,6 +895,7 @@
     <Compile Include="Common\EventDebouncer.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
+    <Compile Include="Common\MenuFlyoutMorph.cs" />
     <Compile Include="Td\Api\PremiumLimitTypeConnectedAccounts.cs" />
     <Compile Include="Common\Scrim.cs" />
     <Compile Include="Common\SoundEffects.cs" />

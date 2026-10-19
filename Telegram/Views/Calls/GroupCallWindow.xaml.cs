@@ -2490,7 +2490,7 @@ namespace Telegram.Views.Calls
         {
             // We don't want to unfocus the text are when the context menu gets opened
             EmojiPanel.ViewModel.Update();
-            EmojiFlyout.ShowAt(MessagePanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+            EmojiFlyout.ShowAt(MessagePanel, FlyoutPlacementMode.Auto, FlyoutShowMode.Transient);
         }
 
         private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)

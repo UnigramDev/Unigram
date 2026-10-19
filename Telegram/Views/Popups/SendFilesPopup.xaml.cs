@@ -1536,7 +1536,7 @@ namespace Telegram.Views.Popups
         {
             // We don't want to unfocus the text are when the context menu gets opened
             EmojiPanel.ViewModel.Update();
-            EmojiFlyout.ShowAt(CaptionPanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+            EmojiFlyout.ShowAt(CaptionPanel, FlyoutPlacementMode.Auto, FlyoutShowMode.Transient);
         }
 
         private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)

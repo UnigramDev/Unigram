@@ -121,7 +121,7 @@ namespace Telegram.Views.Business
         {
             // We don't want to unfocus the text are when the context menu gets opened
             StickerPanel.ViewModel.Update(null);
-            StickerFlyout.ShowAt(sender as UIElement, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+            StickerFlyout.ShowAt(sender as UIElement, FlyoutPlacementMode.Auto, FlyoutShowMode.Transient);
         }
 
         private void Sticker_ItemClick(object sender, StickerDrawerItemClickEventArgs e)

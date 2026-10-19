@@ -345,13 +345,6 @@ namespace Telegram.Views.Host
             return ShortcutsService.GetStringRepresentation(key, modifiers);
         }
 
-        // A new one each time: it is a WinRT object, and every editor window has a thread of its own.
-        private static FlyoutShowOptions ToolbarMenu => new()
-        {
-            Placement = FlyoutPlacementMode.Bottom,
-            ShowMode = FlyoutShowMode.Transient
-        };
-
         // The lock follows the first change of a burst at once and the rest at most every tick:
         // waiting for typing to stop left it out of date until a send was tried.
         private bool _lockPending;
@@ -546,7 +539,7 @@ namespace Telegram.Views.Host
 
             PopulateHeadingFlyout(flyout.Items, _status ?? _engine.GetStatus());
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         private void Run(Action action)
@@ -770,7 +763,7 @@ namespace Telegram.Views.Host
 
             PopulateAttachFlyout(flyout.Items);
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         private void PopulateAttachFlyout(IList<MenuFlyoutItemBase> flyout)
@@ -812,7 +805,7 @@ namespace Telegram.Views.Host
             flyout.Items.Add(new MenuFlyoutSeparator());
             PopulateLinkFlyout(flyout.Items, status);
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         private void InsertTable() => _engine.InsertTable(2, 2);
@@ -1433,7 +1426,7 @@ namespace Telegram.Views.Host
 
             PopulateTextStyleFlyout(flyout.Items, _status ?? _engine.GetStatus());
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         /// <summary>
@@ -1484,7 +1477,7 @@ namespace Telegram.Views.Host
 
             PopulateLinkFlyout(flyout.Items, status);
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         private void PopulateLinkFlyout(IList<MenuFlyoutItemBase> flyout, RichEditorStatus status)
@@ -1619,7 +1612,7 @@ namespace Telegram.Views.Host
 
             PopulateParagraphFlyout(flyout.Items);
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         private void PopulateParagraphFlyout(IList<MenuFlyoutItemBase> flyout)
@@ -1680,7 +1673,7 @@ namespace Telegram.Views.Host
 
             PopulateListFlyout(flyout.Items);
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
         }
 
         private void PopulateListFlyout(IList<MenuFlyoutItemBase> flyout)
@@ -1743,7 +1736,7 @@ namespace Telegram.Views.Host
 
             PopulateTableFlyout(flyout.Items);
 
-            flyout.ShowAt(sender as FrameworkElement, ToolbarMenu);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
 
             // The button is a toggle, and opening a menu changed nothing to check it by.
             UpdateToolbar();
@@ -1940,11 +1933,7 @@ namespace Telegram.Views.Host
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
             EmojiPanel.ViewModel.Update();
-            EmojiFlyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions
-            {
-                ShowMode = FlyoutShowMode.Transient,
-                Placement = FlyoutPlacementMode.BottomEdgeAlignedRight
-            });
+            EmojiFlyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight, FlyoutShowMode.Transient);
         }
 
         private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)

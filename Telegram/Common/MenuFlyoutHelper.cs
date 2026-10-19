@@ -22,15 +22,43 @@ namespace Telegram.Common
 {
     public static class MenuFlyoutHelper
     {
-        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement)
+        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, bool overlap = false)
         {
             try
             {
-                if (flyout is not MenuFlyout || flyout is MenuFlyout { Items.Count: > 0 })
+                if (flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
+                {
+                    return menuFlyout.ShowMorphAt(placementTarget, placement, overlap: overlap);
+                }
+                else
                 {
                     flyout.ShowAt(placementTarget, new FlyoutShowOptions
                     {
                         Placement = placement
+                    });
+
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, FlyoutShowMode showMode, bool overlap = false)
+        {
+            try
+            {
+                if (flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
+                {
+                    return menuFlyout.ShowMorphAt(placementTarget, placement, showMode, overlap: overlap);
+                }
+                else
+                {
+                    flyout.ShowAt(placementTarget, new FlyoutShowOptions
+                    {
+                        Placement = placement,
+                        ShowMode = showMode,
                     });
 
                     return true;
