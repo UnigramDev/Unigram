@@ -669,6 +669,15 @@
     <ClCompile Include="Graphics\StickerCurlSurface.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\WalletCardEffect.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\WalletCardSurface.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\WalletCardTextures.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\creatwth.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
@@ -1387,6 +1396,15 @@
     <ClInclude Include="Graphics\StickerCurlSurface.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\WalletCardEffect.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\WalletCardSurface.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\WalletCardTextures.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.h">
       <Filter>Detours</Filter>
     </ClInclude>
@@ -1676,6 +1694,9 @@
     <Midl Include="Graphics\StickerCurlSurface.idl">
       <Filter>Graphics</Filter>
     </Midl>
+    <Midl Include="Graphics\WalletCardSurface.idl">
+      <Filter>Graphics</Filter>
+    </Midl>
     <Midl Include="Composition\WindowVisual.idl">
       <Filter>Composition</Filter>
     </Midl>
@@ -1768,6 +1789,9 @@
       <Filter>Graphics\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Graphics\Shaders\StickerCurl.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\WalletCard.hlsl">
       <Filter>Graphics\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Graphics\Shaders\IconVertex.hlsl">

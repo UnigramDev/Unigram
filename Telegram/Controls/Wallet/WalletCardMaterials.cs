@@ -6,6 +6,8 @@
 //
 
 using System;
+using System.Numerics;
+using Telegram.Native.Graphics;
 using Windows.UI;
 
 namespace Telegram.Controls.Wallet
@@ -15,7 +17,7 @@ namespace Telegram.Controls.Wallet
     /// </summary>
     public sealed class WalletCardStyle
     {
-        public WalletCardStyle(Color background, Color sheen, Color accent, Color pattern, float patternOpacity, Color glint, bool isGift)
+        public WalletCardStyle(Color background, Color sheen, Color accent, Color pattern, float patternOpacity, Color glint, bool isGift, WalletCardPalette palette)
         {
             Background = background;
             Sheen = sheen;
@@ -24,7 +26,11 @@ namespace Telegram.Controls.Wallet
             PatternOpacity = patternOpacity;
             Glint = glint;
             IsGift = isGift;
+            Palette = palette;
         }
+
+        // What WalletCardSurface draws the card's material in.
+        public WalletCardPalette Palette { get; }
 
         // WalletCardSheen's three: the card's colour, what the light picks out of it, and what is
         // written on it.
@@ -66,8 +72,21 @@ namespace Telegram.Controls.Wallet
         private const uint StockDark = 0xFF088FEE;
         private const uint StockLight = 0xFF16ABF9;
 
+        // The material's own colours, which the blue card wears as they are.
+        private static readonly WalletCardPalette StockPalette = new()
+        {
+            GradientFrom = new Vector3(0.025f, 0.140f, 0.885f),
+            GradientTo = new Vector3(0.038f, 0.180f, 0.955f),
+            Reflection = new Vector3(0.090f, 0.565f, 0.965f),
+            Spark = new Vector3(0.55f, 0.8f, 1.0f),
+            Bevel = new Vector3(0.10f, 0.36f, 0.85f),
+            Edge = new Vector3(0.014f, 0.085f, 0.40f),
+            Streak = new Vector3(0.30f, 0.62f, 1.0f),
+            Ring = new Vector3(0.047f, 0.451f, 0.835f)
+        };
+
         public static WalletCardStyle Blue { get; } = new WalletCardStyle(
-            ToColor(CardBackground), ToColor(CardSheen), ToColor(CardAccent), default, 0, default, false);
+            ToColor(CardBackground), ToColor(CardSheen), ToColor(CardAccent), default, 0, default, false, StockPalette);
 
         public static WalletCardStyle ForBackdrop(int centerColor, int edgeColor)
         {
@@ -125,6 +144,26 @@ namespace Telegram.Controls.Wallet
             var pattern = darkCard ? 0xFFFFFFFF : OklchArgb(tone.L * 0.7, tone.C * 1.4, tone.H);
             var glint = darkCard ? 0xFFFFFFFF : OklchArgb(tone.L * 0.86, tone.C * 1.6, tone.H);
 
+            // Each of the material's tones tinted as the colour it ends up on screen, which is what
+            // Tint is fitted against. The ring is drawn as it is; the rest go through the shader's
+            // encoding and saturation, undone again after.
+            Vector3 TintMaterial(Vector3 stock)
+            {
+                return FromShown(Tint(ToShown(stock)));
+            }
+
+            var palette = new WalletCardPalette
+            {
+                GradientFrom = TintMaterial(StockPalette.GradientFrom),
+                GradientTo = TintMaterial(StockPalette.GradientTo),
+                Reflection = TintMaterial(StockPalette.Reflection),
+                Spark = TintMaterial(StockPalette.Spark),
+                Bevel = TintMaterial(StockPalette.Bevel),
+                Edge = TintMaterial(StockPalette.Edge),
+                Streak = TintMaterial(StockPalette.Streak),
+                Ring = ToVector(Tint(ToArgb(StockPalette.Ring)))
+            };
+
             return new WalletCardStyle(
                 ToColor(Tint(CardBackground)),
                 ToColor(Tint(CardSheen)),
@@ -132,7 +171,60 @@ namespace Telegram.Controls.Wallet
                 ToColor(pattern),
                 darkCard ? 0.32f : 1,
                 ToColor(glint),
-                true);
+                true,
+                palette);
+        }
+
+        // WalletCard.hlsl's ApplySaturation.
+        private const double MaterialSaturation = 1.6;
+
+        private static double Luminance(double r, double g, double b)
+        {
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+
+        // A material tone as the shader shows it: encoded, then saturated.
+        private static uint ToShown(Vector3 tone)
+        {
+            var r = Encode(Math.Max(tone.X, 0));
+            var g = Encode(Math.Max(tone.Y, 0));
+            var b = Encode(Math.Max(tone.Z, 0));
+            var luminance = Luminance(r, g, b);
+
+            return ToArgb(new Vector3(
+                (float)(luminance + (r - luminance) * MaterialSaturation),
+                (float)(luminance + (g - luminance) * MaterialSaturation),
+                (float)(luminance + (b - luminance) * MaterialSaturation)));
+        }
+
+        // The tone the shader would show as this. Saturating keeps the luminance, so undoing it is
+        // exact for any colour it could have produced.
+        private static Vector3 FromShown(uint argb)
+        {
+            var shown = ToVector(argb);
+            var luminance = Luminance(shown.X, shown.Y, shown.Z);
+
+            double Unsaturate(double v)
+            {
+                return Decode(Math.Clamp(luminance + (v - luminance) / MaterialSaturation, 0, 1));
+            }
+
+            return new Vector3((float)Unsaturate(shown.X), (float)Unsaturate(shown.Y), (float)Unsaturate(shown.Z));
+        }
+
+        private static uint ToArgb(Vector3 color)
+        {
+            static uint Channel(float v)
+            {
+                return (uint)Math.Clamp((int)(v * 255 + 0.5f), 0, 255);
+            }
+
+            return 0xFF000000 | Channel(color.X) << 16 | Channel(color.Y) << 8 | Channel(color.Z);
+        }
+
+        private static Vector3 ToVector(uint argb)
+        {
+            return new Vector3(((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f);
         }
 
         private readonly struct Oklch

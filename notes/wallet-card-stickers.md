@@ -101,6 +101,17 @@ Elsewhere:
   as a composition shape) in the backdrop's symbol colour, with the art collapsed, and "on card" on
   the ribbon. Cells are found by address, never by instance.
 - `WalletCard` - `Stickers`, the frame, `SetStyle` (origin in face units), the reveal and pattern.
+  Its material is `Telegram.Native`'s `WalletCardSurface` (`WalletCard.hlsl`): face, thickness
+  plates and lift shadow, drawn at the card's shown size on the shared graphics device. The
+  colours are a `WalletCardPalette` on the style, the stock one for the blue card and each tone
+  tinted by `WalletCardMaterials` for a gift; the reveal is the shader mixing two palettes inside
+  a circle. Hover tilts it (mouse and pen only), and it draws only while something moves:
+  `TwinkleWhileIdle` is off. `Eject(slot)` plays it coming out of an element on its side and
+  sprung to rest, with the motion measured from the Android beta: 35 degrees about the slot line
+  through `HingeRoot`, the eye placed for a 1.6 times spread, 1 s rather than 650 ms.
+- `WalletBalancePopup` - a profile's card out of its balance: a `ModalPopup` with the card as its
+  `Overlay`, its chrome hidden until the card is on its way to rest. A fixed `CardSpace` height,
+  because a resize slides the popup and the card with it off the slot.
 - `WalletWindow` - the layout, tabs, drag and drop, menus, pin, saving.
 - `ProfileHeader` - the spike's read-only card on the profile, kept compiling with
   `Stickers.IsReadOnly`; out of scope otherwise.
@@ -111,11 +122,13 @@ The spike's files as they were before the rewrite are in the session scratchpad 
 
 ## Unverified
 
-- Nothing here has been built. The native files passed `cl /Zs` against generated headers and the
-  shader compiles with fxc; the C# and XAML have only been read.
 - Whether `DragUIOverride.IsContentVisible = false` hides the in-app drag visual of a `GridView`
   item drag.
 - Whether a press on a sticker inside the scroll viewer reaches the layer before touch panning
   (`ManipulationMode` is set off System on the sticker).
 - The curl's scene-position assumption: the effect is drawn untransformed into its own bitmap, so
   scene and input coordinates should coincide.
+- The card material: how tinted palettes look on real backdrops, and the hover strength (0.7 of
+  the full tilt).
+- The eject: the tilt's sign is Skia's convention as read, not the bytecode's, and the slot's
+  edge is hard where the beta fades it over 28 dp.

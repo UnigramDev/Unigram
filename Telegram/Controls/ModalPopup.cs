@@ -244,6 +244,7 @@ namespace Telegram.Controls
         private bool _isClosing;
         private bool _themeApplied;
         private bool _entered;
+        private bool _chromeHidden;
 
         // Set while a button handler runs, so that a handler hiding with its own result closes
         // rather than asking for the same button again.
@@ -1044,7 +1045,13 @@ namespace Telegram.Controls
             scale.Duration = OpenScaleDuration;
 
             visual.StartAnimation("Opacity", opacity);
-            card.StartAnimation("Scale", scale);
+
+            // Nothing to see of a hidden card settling, and an overlay placed against something
+            // outside the popup would be carried off it.
+            if (!_chromeHidden)
+            {
+                card.StartAnimation("Scale", scale);
+            }
         }
 
         private void PlayCloseAnimation()
@@ -1075,6 +1082,47 @@ namespace Telegram.Controls
             card.StartAnimation("Scale", scale);
 
             _batch.End();
+        }
+
+        /// <summary>
+        /// Hides the card - its fill, shadow, content and buttons - leaving the smoke and the
+        /// <see cref="Overlay"/>, for a popup whose overlay arrives first. From OnApplyTemplate, so
+        /// the card is never seen; <see cref="ShowChrome"/> brings it in.
+        /// </summary>
+        protected void HideChrome()
+        {
+            if (ClipRoot == null || ShadowCaster == null)
+            {
+                return;
+            }
+
+            _chromeHidden = true;
+            ElementComposition.GetElementVisual(ClipRoot).Opacity = 0;
+            ElementComposition.GetElementVisual(ShadowCaster).Opacity = 0;
+
+            // Invisible buttons must not take a click meant for the overlay.
+            ClipRoot.IsHitTestVisible = false;
+        }
+
+        protected void ShowChrome()
+        {
+            if (ClipRoot == null || ShadowCaster == null)
+            {
+                return;
+            }
+
+            _chromeHidden = false;
+            ClipRoot.IsHitTestVisible = true;
+
+            var clip = ElementComposition.GetElementVisual(ClipRoot);
+            var compositor = clip.Compositor;
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(1, 1, CreateSettleEasing(compositor));
+            opacity.Duration = OpenScaleDuration;
+
+            clip.StartAnimation("Opacity", opacity);
+            ElementComposition.GetElementVisual(ShadowCaster).StartAnimation("Opacity", opacity);
         }
 
         // cubic-bezier(0, 0, 0, 1): the easing CreateStoryboardImpl builds by taking a linear
@@ -1326,6 +1374,23 @@ namespace Telegram.Controls
                     : Visibility.Collapsed;
             }
         }
+
+        #endregion
+
+        #region Overlay
+
+        /// <summary>
+        /// Drawn over the card, unclipped, laid out against the card's top left. The content keeps
+        /// room for it.
+        /// </summary>
+        public object Overlay
+        {
+            get => GetValue(OverlayProperty);
+            set => SetValue(OverlayProperty, value);
+        }
+
+        public static readonly DependencyProperty OverlayProperty =
+            DependencyProperty.Register("Overlay", typeof(object), typeof(ModalPopup), new PropertyMetadata(null));
 
         #endregion
 

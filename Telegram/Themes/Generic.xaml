@@ -1538,6 +1538,14 @@
                                     </Grid>
                                 </Border>
                             </Grid>
+
+                            <!-- Over the card and outside its clip, for something that sits on it
+                                 without being part of it, in a space the content keeps free. Above
+                                 the corner buttons too, so a popup that has one keeps clear of them. -->
+                            <ContentControl Content="{TemplateBinding Overlay}"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            IsTabStop="False" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>

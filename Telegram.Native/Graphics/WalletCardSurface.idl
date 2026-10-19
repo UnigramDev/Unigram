@@ -1,0 +1,59 @@
+namespace Telegram.Native.Graphics
+{
+    // The card's colours as WalletCard.hlsl mixes them: linear light, before the encoding and the
+    // saturation it applies to the result - except Ring, the QR chip's rim, which is drawn as it is.
+    struct WalletCardPalette
+    {
+        Windows.Foundation.Numerics.Vector3 GradientFrom;
+        Windows.Foundation.Numerics.Vector3 GradientTo;
+        Windows.Foundation.Numerics.Vector3 Reflection;
+        Windows.Foundation.Numerics.Vector3 Spark;
+        Windows.Foundation.Numerics.Vector3 Bevel;
+        Windows.Foundation.Numerics.Vector3 Edge;
+        Windows.Foundation.Numerics.Vector3 Streak;
+        Windows.Foundation.Numerics.Vector3 Ring;
+    };
+
+    // What a frame of the card depends on besides its layout and colours. Radians; pitch tips the
+    // top edge away, yaw the right edge.
+    struct WalletCardFrame
+    {
+        Single Time;
+        Single Pitch;
+        Single Yaw;
+
+        // Where the second palette has spread to, in the units of the card's size: inside a circle
+        // round RevealCenter when RevealRadius is not negative, and otherwise everywhere by
+        // RevealMix, 0 for the first palette and 1 for the second.
+        Windows.Foundation.Numerics.Vector2 RevealCenter;
+        Single RevealRadius;
+        Single RevealMix;
+    };
+
+    // The wallet card's face and the plate behind it that gives it its thickness, drawn flat into
+    // one composition surface for XAML to tilt: the face in the top half, the plate in the bottom.
+    // Each half is the card with Margin units of transparent room on every side, so its antialiased
+    // edge is inside the texture when the tilt resamples it.
+    [default_interface]
+    runtimeclass WalletCardSurface : Windows.Foundation.IClosable
+    {
+        WalletCardSurface(Windows.UI.Composition.CompositionGraphicsDevice device);
+
+        static Single Margin{ get; };
+
+        Windows.UI.Composition.CompositionDrawingSurface Surface{ get; };
+
+        // The height of one half, in the units of the card's size: where the plate starts.
+        Single HalfHeight{ get; };
+
+        // cardSize, cornerRadius and qrRect in the card's own units, scale in pixels per unit.
+        // Resizes the surface; the next draw fills it.
+        void SetLayout(Windows.Foundation.Size cardSize, Single cornerRadius, Windows.Foundation.Rect qrRect, Single scale);
+
+        void SetPalettes(WalletCardPalette from, WalletCardPalette to);
+
+        // False when nothing could be drawn: no layout yet, a lost device, or a GPU without the
+        // shader model the effect needs.
+        Boolean Draw(WalletCardFrame frame);
+    }
+}

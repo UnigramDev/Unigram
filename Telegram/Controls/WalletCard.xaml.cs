@@ -5,18 +5,23 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using LinqToVisualTree;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
+using Telegram.Charts;
 using Telegram.Common;
 using Telegram.Controls.Wallet;
 using Telegram.Converters;
+using Telegram.Native.Graphics;
 using Telegram.Services;
 using Telegram.Services.Wallet;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -38,13 +43,11 @@ namespace Telegram.Controls
     /// which wallet they are about to hand over.
     ///
     /// Everything it draws comes from <see cref="SetState"/>. It owns the parts that are the card
-    /// rather than the screen: the tilt, the gradient that repaints with it, and the skeleton that
+    /// rather than the screen: the tilt, the material that is lit by it, and the skeleton that
     /// stands in before the numbers are known.
     /// </remarks>
     public sealed partial class WalletCard : UserControl
     {
-        private readonly WalletCardSheen _sheen = new();
-
         private bool _skeleton;
 
         public WalletCard()
@@ -55,8 +58,13 @@ namespace Telegram.Controls
             LayoutRoot.Constraint = new Size(360, 220);
             LayoutRoot.SizeChanged += OnSizeChanged;
 
-            CardBalanceGram.Foreground = new SolidColorBrush(_sheen.Accent);
-            CardBalanceUsd.Foreground = new SolidColorBrush(_sheen.Accent);
+            CardBalanceGram.Foreground = new SolidColorBrush(WalletCardMaterials.Blue.Accent);
+            CardBalanceUsd.Foreground = new SolidColorBrush(WalletCardMaterials.Blue.Accent);
+
+            Stage.PointerMoved += Stage_PointerMoved;
+            Stage.PointerExited += Stage_PointerExited;
+            Stage.PointerCanceled += Stage_PointerExited;
+            Stage.PointerCaptureLost += Stage_PointerExited;
 
             CardAddress.SizeChanged += OnAddressSizeChanged;
 
@@ -77,7 +85,7 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            VisualUtilities.AttachTilt(LayoutRoot, Sheen, 10, 20, 0, OnTilt);
+            CreateSurface();
 
             // box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.06)
             //
@@ -93,12 +101,15 @@ namespace Telegram.Controls
         {
             StopRendering();
             FinishReveal();
+            FinishEject();
+            RestoreSlotText();
 
-            VisualUtilities.DetachTilt(LayoutRoot);
+            // Shown again, it starts at rest rather than wherever the pointer left it.
+            _hovering = false;
+            _pitch = _yaw = _targetPitch = _targetYaw = 0;
+            _lift = 1;
 
-            // Detaching stops the per-frame callback wherever it happens to be, and the card can be
-            // shown again with its surface intact, so the bands are reset explicitly.
-            OnTilt(Vector2.Zero, 0);
+            DestroySurface();
         }
 
         /// <summary>
@@ -255,40 +266,10 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SheenRoot.CornerRadius = new CornerRadius(e.NewSize.Width * (3.18 / 85.60));
-            RevealRoot.CornerRadius = SheenRoot.CornerRadius;
+            Tilt.CenterX = e.NewSize.Width / 2;
+            Tilt.CenterY = e.NewSize.Height / 2;
 
-            if (_revealSheen != null && _revealSheen.Update(e.NewSize))
-            {
-                RevealSheen.Fill = new ImageBrush { ImageSource = _revealSheen.Source };
-            }
-
-            // A new surface only when the size actually moved, and the card settles at one size
-            // and is measured again at that size on every reflow.
-            if (_sheen.Update(e.NewSize))
-            {
-                if (Sheen.Fill is ImageBrush brush)
-                {
-                    brush.ImageSource = _sheen.Source;
-                }
-                else
-                {
-                    Sheen.Fill = new ImageBrush
-                    {
-                        ImageSource = _sheen.Source
-                    };
-                }
-            }
-        }
-
-        /// <summary>
-        /// Repaints the card's gradient for one frame of the tilt. What changes is the shape of
-        /// the ramp, which is why it is a redraw rather than something the compositor can do.
-        /// </summary>
-        private void OnTilt(Vector2 pointer, float amount)
-        {
-            _sheen.Render(pointer, amount);
-            _revealSheen?.Render(pointer, amount);
+            UpdateSurfaceLayout();
         }
 
         private void OnAddressSizeChanged(object sender, SizeChangedEventArgs e)
@@ -322,14 +303,15 @@ namespace Telegram.Controls
         private WalletCardStyle _style = WalletCardMaterials.Blue;
         private WalletCardStyle _revealFrom;
         private WalletCardStyle _revealTo;
-        private WalletCardSheen _revealSheen;
-        private CompositionEllipseGeometry _revealGeometry;
         private Ellipse _revealRim;
         private Vector2 _revealOrigin;
         private float _revealElapsed = -1;
         private bool _revealFade;
-        private TimeSpan _revealLast;
-        private bool _rendering;
+
+        // Where the new colours are, in face units: a circle that radius round the origin, or
+        // everywhere by the mix while it is negative.
+        private float _revealRadius = -1;
+        private float _revealMix = 1;
 
         private readonly List<PatternSymbol> _symbols = new();
         private UpgradedGift _patternGift;
@@ -412,30 +394,12 @@ namespace Telegram.Controls
             _revealOrigin = origin;
             _revealElapsed = 0;
 
-            _revealSheen ??= new WalletCardSheen();
-            _revealSheen.SetColors(style.Background, style.Sheen, style.Accent);
-            _revealSheen.Update(new Size(LayoutRoot.ActualSize.X, LayoutRoot.ActualSize.Y));
-            RevealSheen.Fill = new ImageBrush { ImageSource = _revealSheen.Source };
-            RevealRoot.CornerRadius = SheenRoot.CornerRadius;
-            RevealRoot.Opacity = _revealFade ? 0 : 1;
-            RevealRoot.Visibility = Visibility.Visible;
-
-            var visual = ElementComposition.GetElementVisual(RevealRoot);
-            if (_revealFade)
-            {
-                visual.Clip = null;
-            }
-            else
-            {
-                _revealGeometry ??= visual.Compositor.CreateEllipseGeometry();
-                _revealGeometry.Center = ToBox(origin);
-                _revealGeometry.Radius = Vector2.Zero;
-                visual.Clip = visual.Compositor.CreateGeometricClip(_revealGeometry);
-            }
+            _surface?.SetPalettes(_revealFrom.Palette, _revealTo.Palette);
 
             UpdatePattern(clientService, gift);
-            StartRendering();
             StepReveal(0);
+            UpdateRendering();
+            Draw();
         }
 
         private Vector2 ToBox(Vector2 units)
@@ -446,8 +410,12 @@ namespace Telegram.Controls
 
         private void ApplyColors(WalletCardStyle style)
         {
-            _sheen.SetColors(style.Background, style.Sheen, style.Accent);
+            _revealRadius = -1;
+            _revealMix = 1;
+            _surface?.SetPalettes(style.Palette, style.Palette);
+
             SetAccent(style.Accent);
+            Draw();
         }
 
         private void SetAccent(Color accent)
@@ -473,49 +441,12 @@ namespace Telegram.Controls
             _revealElapsed = -1;
             ApplyColors(_style);
 
-            RevealRoot.Visibility = Visibility.Collapsed;
-            ElementComposition.GetElementVisual(RevealRoot).Clip = null;
-
             if (_revealRim != null)
             {
                 _revealRim.Opacity = 0;
             }
 
             StepSymbols(-1, Vector2.Zero, 0);
-        }
-
-        private void StartRendering()
-        {
-            if (!_rendering)
-            {
-                _rendering = true;
-                _revealLast = TimeSpan.Zero;
-                CompositionTarget.Rendering += OnRendering;
-            }
-        }
-
-        private void StopRendering()
-        {
-            if (_rendering)
-            {
-                _rendering = false;
-                CompositionTarget.Rendering -= OnRendering;
-            }
-        }
-
-        private void OnRendering(object sender, object e)
-        {
-            var time = e is RenderingEventArgs args ? args.RenderingTime : TimeSpan.Zero;
-            var dt = _revealLast == TimeSpan.Zero ? 0 : (float)(time - _revealLast).TotalSeconds;
-            _revealLast = time;
-
-            if (_revealElapsed < 0)
-            {
-                StopRendering();
-                return;
-            }
-
-            StepReveal(Math.Min(dt, 0.05f));
         }
 
         /// <summary>
@@ -535,7 +466,8 @@ namespace Telegram.Controls
 
             if (_revealFade)
             {
-                RevealRoot.Opacity = p;
+                _revealRadius = -1;
+                _revealMix = p;
             }
             else
             {
@@ -544,11 +476,8 @@ namespace Telegram.Controls
                     MathF.Max(new Vector2(origin.X, size.Y - origin.Y).Length(), new Vector2(size.X - origin.X, size.Y - origin.Y).Length()));
                 var radius = far * 1.05f * p;
 
-                if (_revealGeometry != null)
-                {
-                    _revealGeometry.Center = origin;
-                    _revealGeometry.Radius = new Vector2(radius, radius);
-                }
+                _revealRadius = size.X > 0 ? radius * FaceWidth / size.X : 0;
+                _revealMix = 1;
 
                 UpdateRim(origin, radius, p);
             }
@@ -803,6 +732,634 @@ namespace Telegram.Controls
             }
 
             return slots;
+        }
+
+        #endregion
+
+        #region Material and tilt
+
+        // The tilt the pointer reaches at the card's edge, in radians, and how much of it.
+        private const double MaxPitch = 0.20;
+        private const double MaxYaw = 0.30;
+        private const double TiltStrength = 0.7;
+
+        // Lifted while the pointer is over it, and shadowed by as much.
+        private const double LiftScale = 1.01;
+        private const float MaxShadowOpacity = 0.16f;
+
+        // The thickness in face units, as plates from the back one forwards.
+        private const double Thickness = 9;
+        private static readonly double[] PlateDepths = { 1, 2 / 3.0, 1 / 3.0 };
+
+        // QrButton's place on the face, where the surface draws the chip.
+        private static readonly Rect QrRect = new(FaceWidth - 96, 80, 48, 36);
+
+        // At rest the stars would cost a draw every frame for as long as the card is on screen, so
+        // they twinkle only while the card is moving.
+        private static readonly bool TwinkleWhileIdle = false;
+
+        private WalletCardSurface _surface;
+        private CompositionGraphicsDevice _device;
+        private CompositionSurfaceBrush _faceBrush;
+        private CompositionSurfaceBrush _edgeBrush;
+        private SpriteVisual _face;
+        private SpriteVisual _shadow;
+        private ContainerVisual _plateContainer;
+        private SpriteVisual[] _plates;
+        private DropShadow _dropShadow;
+        private XamlRoot _xamlRoot;
+
+        // DIPs and pixels per face unit, as the surface was last laid out.
+        private float _units;
+        private float _scale;
+
+        private bool _rendering;
+        private TimeSpan _lastFrame;
+
+        // Where the pointer asks the card to be, and where it is on its way there.
+        private bool _hovering;
+        private double _targetPitch;
+        private double _targetYaw;
+        private double _pitch;
+        private double _yaw;
+        private double _lift = 1;
+        private double _time;
+
+        private void CreateSurface()
+        {
+            if (_surface != null)
+            {
+                return;
+            }
+
+            var compositor = ElementComposition.GetElementVisual(this).Compositor;
+
+            _device = Direct2D.Current.Device;
+            _surface = new WalletCardSurface(_device);
+
+            if (_revealElapsed >= 0)
+            {
+                _surface.SetPalettes(_revealFrom.Palette, _revealTo.Palette);
+            }
+            else
+            {
+                _surface.SetPalettes(_style.Palette, _style.Palette);
+            }
+
+            _faceBrush = CreateSurfaceBrush(compositor);
+            _edgeBrush = CreateSurfaceBrush(compositor);
+
+            _dropShadow = compositor.CreateDropShadow();
+            _dropShadow.Mask = _faceBrush;
+            _dropShadow.Color = Colors.Black;
+            _dropShadow.Opacity = 0;
+
+            _shadow = compositor.CreateSpriteVisual();
+            _shadow.Shadow = _dropShadow;
+            ElementCompositionPreview.SetElementChildVisual(ShadowHost, _shadow);
+
+            _plateContainer = compositor.CreateContainerVisual();
+            _plates = new SpriteVisual[PlateDepths.Length];
+
+            for (int i = 0; i < _plates.Length; i++)
+            {
+                _plates[i] = compositor.CreateSpriteVisual();
+                _plates[i].Brush = _edgeBrush;
+                _plateContainer.Children.InsertAtTop(_plates[i]);
+            }
+
+            ElementCompositionPreview.SetElementChildVisual(PlateHost, _plateContainer);
+
+            _face = compositor.CreateSpriteVisual();
+            _face.Brush = _faceBrush;
+            ElementCompositionPreview.SetElementChildVisual(FaceHost, _face);
+
+            _xamlRoot = XamlRoot;
+            _xamlRoot.Changed += OnXamlRootChanged;
+            _device.RenderingDeviceReplaced += OnRenderingDeviceReplaced;
+
+            UpdateSurfaceLayout();
+        }
+
+        private CompositionSurfaceBrush CreateSurfaceBrush(Compositor compositor)
+        {
+            var brush = compositor.CreateSurfaceBrush(_surface.Surface);
+            brush.Stretch = CompositionStretch.None;
+            brush.HorizontalAlignmentRatio = 0;
+            brush.VerticalAlignmentRatio = 0;
+            return brush;
+        }
+
+        private void DestroySurface()
+        {
+            if (_surface == null)
+            {
+                return;
+            }
+
+            _xamlRoot.Changed -= OnXamlRootChanged;
+            _xamlRoot = null;
+
+            _device.RenderingDeviceReplaced -= OnRenderingDeviceReplaced;
+            _device = null;
+
+            ElementCompositionPreview.SetElementChildVisual(ShadowHost, null);
+            ElementCompositionPreview.SetElementChildVisual(PlateHost, null);
+            ElementCompositionPreview.SetElementChildVisual(FaceHost, null);
+
+            _shadow.Dispose();
+            _face.Dispose();
+
+            foreach (var plate in _plates)
+            {
+                plate.Dispose();
+            }
+
+            _plateContainer.Dispose();
+            _dropShadow.Dispose();
+            _faceBrush.Dispose();
+            _edgeBrush.Dispose();
+            _surface.Dispose();
+
+            _surface = null;
+            _shadow = null;
+            _face = null;
+            _plates = null;
+            _plateContainer = null;
+            _dropShadow = null;
+            _faceBrush = null;
+            _edgeBrush = null;
+        }
+
+        private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
+        {
+            if ((float)(sender.RasterizationScale * _units) != _scale)
+            {
+                UpdateSurfaceLayout();
+            }
+        }
+
+        // Raised by the compositor, which has thrown away whatever the surface held.
+        private void OnRenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
+        {
+            this.BeginOnUIThread(Draw);
+        }
+
+        // The surface is drawn at the size the card is shown, not at the face's design size, so the
+        // Viewbox never stretches it.
+        private void UpdateSurfaceLayout()
+        {
+            var width = LayoutRoot.ActualSize.X;
+            if (_surface == null || width <= 0)
+            {
+                return;
+            }
+
+            var rasterization = _xamlRoot.RasterizationScale;
+            var margin = WalletCardSurface.Margin;
+
+            _units = width / FaceWidth;
+            _scale = (float)(rasterization * _units);
+            _surface.SetLayout(new Size(FaceWidth, FaceHeight), WalletStickerLayer.CornerRadius, QrRect, _scale);
+
+            var size = new Vector2(FaceWidth + margin * 2, FaceHeight + margin * 2) * _units;
+            var offset = new Vector3(-margin * _units, -margin * _units, 0);
+
+            _face.Size = size;
+            _face.Offset = offset;
+            _shadow.Size = size;
+            _shadow.Offset = offset;
+
+            foreach (var plate in _plates)
+            {
+                plate.Size = size;
+            }
+
+            _dropShadow.BlurRadius = 24 * _units;
+            _dropShadow.Offset = new Vector3(0, 7 * _units, 0);
+
+            // The surface is in pixels and the sprites in DIPs; the plate is the surface's bottom half.
+            var toDips = Matrix3x2.CreateScale((float)(1 / rasterization));
+            _faceBrush.TransformMatrix = toDips;
+            _edgeBrush.TransformMatrix = toDips * Matrix3x2.CreateTranslation(0, -_surface.HalfHeight * _units);
+
+            Apply();
+            Draw();
+        }
+
+        private void Stage_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            // A finger only ever presses, and a drag is not a tilt. Nor is a card still coming out.
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Touch || _ejectElapsed >= 0)
+            {
+                return;
+            }
+
+            var size = LayoutRoot.ActualSize;
+            if (size.X <= 0 || size.Y <= 0)
+            {
+                return;
+            }
+
+            var point = e.GetCurrentPoint(Stage).Position;
+            var offset = LayoutRoot.ActualOffset;
+
+            var x = Math.Clamp((point.X - offset.X - size.X / 2) / (size.X / 2), -1, 1);
+            var y = Math.Clamp((point.Y - offset.Y - size.Y / 2) / (size.Y / 2), -1, 1);
+
+            // The side under the pointer goes down: positive yaw takes the right edge away,
+            // negative pitch the bottom one.
+            _targetYaw = x * MaxYaw * TiltStrength;
+            _targetPitch = -y * MaxPitch * TiltStrength;
+            _hovering = true;
+
+            UpdateRendering();
+        }
+
+        private void Stage_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            _hovering = false;
+            UpdateRendering();
+        }
+
+        private bool IsIdle()
+        {
+            return !_hovering
+                && _revealElapsed < 0
+                && _ejectElapsed < 0
+                && !(TwinkleWhileIdle && PowerSavingPolicy.AreSmoothTransitionsEnabled)
+                && Math.Abs(_pitch) < 0.0005
+                && Math.Abs(_yaw) < 0.0005
+                && Math.Abs(_targetPitch) < 0.0005
+                && Math.Abs(_targetYaw) < 0.0005
+                && Math.Abs(_lift - 1) < 0.0001;
+        }
+
+        private void UpdateRendering()
+        {
+            if (IsIdle())
+            {
+                StopRendering();
+            }
+            else if (!_rendering)
+            {
+                _rendering = true;
+                _lastFrame = TimeSpan.Zero;
+                CompositionTarget.Rendering += OnRendering;
+            }
+        }
+
+        private void StopRendering()
+        {
+            if (_rendering)
+            {
+                _rendering = false;
+                CompositionTarget.Rendering -= OnRendering;
+            }
+        }
+
+        private void OnRendering(object sender, object e)
+        {
+            var time = e is RenderingEventArgs args ? args.RenderingTime : TimeSpan.Zero;
+            var dt = _lastFrame == TimeSpan.Zero ? 0 : Math.Min((time - _lastFrame).TotalSeconds, 1.0 / 20);
+            _lastFrame = time;
+
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                _time += dt;
+            }
+
+            if (_ejectElapsed >= 0)
+            {
+                StepEject((float)dt);
+            }
+            else
+            {
+                // A released card lets go of its tilt at 4 per second, and everything chases its
+                // target at 8, the lift at 12.
+                if (!_hovering)
+                {
+                    var decay = Math.Exp(-dt * 4);
+                    _targetPitch *= decay;
+                    _targetYaw *= decay;
+                }
+
+                var smoothing = 1 - Math.Exp(-dt * 8);
+                _pitch += (_targetPitch - _pitch) * smoothing;
+                _yaw += (_targetYaw - _yaw) * smoothing;
+                _lift += ((_hovering ? LiftScale : 1) - _lift) * (1 - Math.Exp(-dt * 12));
+            }
+
+            if (_revealElapsed >= 0)
+            {
+                StepReveal((float)Math.Min(dt, 0.05));
+            }
+
+            if (IsIdle())
+            {
+                _pitch = _yaw = _targetPitch = _targetYaw = 0;
+                _lift = 1;
+                StopRendering();
+            }
+
+            Apply();
+            Draw();
+        }
+
+        private void Apply()
+        {
+            // Positive pitch tips the top edge away and positive yaw the right one, and
+            // CompositeTransform3D turns the other way about both axes.
+            Tilt.RotationX = -_pitch * 180 / Math.PI;
+            Tilt.RotationY = -_yaw * 180 / Math.PI;
+            Tilt.RotationZ = _ejectRotation;
+            Tilt.TranslateX = -_yaw * 3 * _units + _ejectTranslation.X;
+            Tilt.TranslateY = _pitch * 2.5 * _units + _ejectTranslation.Y;
+            Tilt.ScaleX = _lift * _ejectScale;
+            Tilt.ScaleY = _lift * _ejectScale;
+
+            if (_plates == null)
+            {
+                return;
+            }
+
+            // The back face is the front one moved by the thickness along the tilted z axis, with no
+            // perspective of its own. A real depth would show nothing at these angles: from straight
+            // in front, the plate shrinks behind the face faster than the tilt moves it out.
+            var shiftX = -Thickness * Math.Sin(_yaw) * _units;
+            var shiftY = Thickness * Math.Cos(_yaw) * Math.Sin(_pitch) * _units;
+            var margin = WalletCardSurface.Margin * _units;
+
+            for (int i = 0; i < _plates.Length; i++)
+            {
+                _plates[i].Offset = new Vector3((float)(shiftX * PlateDepths[i]) - margin, (float)(shiftY * PlateDepths[i]) - margin, 0);
+            }
+
+            var progress = Math.Clamp((_lift - 1) / (LiftScale - 1), 0, 1);
+            _dropShadow.Opacity = MaxShadowOpacity * (float)(progress * progress * (3 - 2 * progress));
+        }
+
+        private void Draw()
+        {
+            _surface?.Draw(new WalletCardFrame
+            {
+                Time = (float)_time,
+                Pitch = (float)_pitch,
+                Yaw = (float)_yaw,
+                RevealCenter = _revealOrigin,
+                RevealRadius = _revealRadius,
+                RevealMix = _revealMix
+            });
+        }
+
+        #endregion
+
+        #region Eject
+
+        // The whole motion, one progress driving three curves: the slide out of the slot over its
+        // first 40%, and from 30% a spring for the turn and the flight, and an ease for the slot's
+        // edge rising out of the way. Longer than on a phone, because on a desktop the card comes
+        // out of a wider slot and flies further.
+        private const float EjectSeconds = 1.0f;
+
+        // The tilt about the slot line while the card comes out, in degrees: what makes it a
+        // trapezoid, the part already out nearer the eye.
+        private const double EjectTilt = 35;
+
+        // How much wider than the slot the far end of the card is once it is all out. The eye is
+        // put where that holds, so the trapezoid has the same shape however wide the slot is.
+        private const double EjectSpread = 1.6;
+        private const double RestDepth = 650;
+
+        // The narrowest the card starts, as a share of its full size, however small the slot.
+        private const float EjectMinimumScale = 0.2f;
+
+        // Further than the card ever reaches, for a clip that only has a top edge.
+        private const float SlotReach = 10000;
+
+        // How far the slot's own text rises out of the way as the card comes out of it.
+        private const float SlotTextRise = 20;
+
+        private FrameworkElement _ejectSlot;
+        private TextBlock _slotText;
+        private float _ejectElapsed = -1;
+        private bool _ejectStarted;
+        private bool _ejectSettling;
+
+        // In Stage's coordinates: the slot's middle, the window's top edge, which the slot's edge
+        // rises to, and where the card's centre rests.
+        private Vector2 _slotCenter;
+        private float _windowTop;
+        private Vector2 _restCenter;
+
+        // The card's scale on its side, which makes it exactly as wide as the slot.
+        private float _slotScale;
+        private CompositionRectangleGeometry _slotGeometry;
+
+        // Where the flight has the card, on top of its tilt: moved, turned in degrees, scaled.
+        private Vector2 _ejectTranslation;
+        private double _ejectRotation;
+        private double _ejectScale = 1;
+
+        /// <summary>
+        /// The card is out of the slot and on its way to rest after <see cref="Eject"/>: what it
+        /// was handed over for can come in around it.
+        /// </summary>
+        public event EventHandler EjectSettling;
+
+        /// <summary>
+        /// Plays the card coming out of <paramref name="slot"/> as a cash machine hands one back:
+        /// on its side and chip end up, slid down out of it tilted towards the eye, then turned and
+        /// sprung to where it rests. Can be called before the card is shown; it starts once the
+        /// card has a size, and is skipped if the slot is nowhere to be seen.
+        /// </summary>
+        public void Eject(FrameworkElement slot)
+        {
+            _ejectSlot = slot;
+            _ejectElapsed = 0;
+            _ejectStarted = false;
+            _ejectSettling = false;
+
+            _hovering = false;
+            _pitch = _yaw = _targetPitch = _targetYaw = 0;
+            _lift = 1;
+
+            // Until it has a size there is nothing to put in the slot.
+            LayoutRoot.Opacity = 0;
+
+            UpdateRendering();
+        }
+
+        private bool StartEject()
+        {
+            // The slot is the text the button shows, not the whole button, which may be much wider.
+            var text = _ejectSlot?.Descendants<TextBlock>().FirstOrDefault();
+            var slot = text ?? _ejectSlot;
+            if (slot == null || slot.XamlRoot != XamlRoot || slot.ActualWidth <= 0)
+            {
+                return false;
+            }
+
+            RestoreSlotText();
+            _slotText = text;
+
+            // Through the window: the slot is under the popup the card is in, in another tree.
+            var bounds = slot.TransformToVisual(null).TransformBounds(new Rect(0, 0, slot.ActualWidth, slot.ActualHeight));
+            var origin = Stage.TransformToVisual(null).TransformPoint(new Point(0, 0));
+
+            var size = LayoutRoot.ActualSize;
+            var offset = LayoutRoot.ActualOffset;
+
+            _restCenter = new Vector2(offset.X + size.X / 2, offset.Y + size.Y / 2);
+            _slotCenter = new Vector2((float)(bounds.X + bounds.Width / 2 - origin.X), (float)(bounds.Y + bounds.Height / 2 - origin.Y));
+            _windowTop = (float)-origin.Y;
+
+            // On its side the card is as wide as it is tall.
+            _slotScale = Math.Clamp((float)bounds.Width / size.Y, EjectMinimumScale, 1);
+
+            // Everything above the slot's middle is inside the machine.
+            var visual = ElementComposition.GetElementVisual(Stage);
+            _slotGeometry = visual.Compositor.CreateRectangleGeometry();
+            _slotGeometry.Offset = new Vector2(-SlotReach, _slotCenter.Y);
+            _slotGeometry.Size = new Vector2(SlotReach * 2, SlotReach);
+            visual.Clip = visual.Compositor.CreateGeometricClip(_slotGeometry);
+
+            // Out, the card on its side reaches its scaled length below the slot and leans that far
+            // times sin(tilt) towards the eye; the far end then projects EjectSpread times wider.
+            var lean = _slotScale * size.X * Math.Sin(EjectTilt * Math.PI / 180);
+            Perspective.Depth = EjectSpread * lean / (EjectSpread - 1);
+
+            _ejectStarted = true;
+            return true;
+        }
+
+        private void StepEject(float dt)
+        {
+            // Not before it can be seen, so none of it plays to an empty window.
+            if (_surface == null || LayoutRoot.ActualHeight <= 0)
+            {
+                return;
+            }
+
+            if (!_ejectStarted)
+            {
+                if (!StartEject())
+                {
+                    FinishEject();
+                    return;
+                }
+
+                // The first frame it is seen is its first, however long the ones that made the
+                // popup took: the clock starts on the next frame.
+                dt = 0;
+                _lastFrame = TimeSpan.Zero;
+            }
+
+            LayoutRoot.Opacity = 1;
+
+            _ejectElapsed += dt;
+
+            var progress = Math.Min(_ejectElapsed / EjectSeconds, 1);
+            var slide = CubicBezierInterpolator.EASE_OUT.getInterpolation(Math.Clamp(progress / 0.4f, 0, 1));
+            var flight = Math.Clamp((progress - 0.3f) / 0.7f, 0, 1);
+            var edge = CubicBezierInterpolator.EASE_OUT_QUINT.getInterpolation(flight);
+
+            // The slot's text makes way for the card, rising and fading as the card comes out where
+            // it was.
+            if (_slotText != null)
+            {
+                _slotText.Translation = new Vector3(0, -SlotTextRise * slide, 0);
+                _slotText.Opacity = 1 - slide;
+            }
+            var spring = (float)Spring(flight);
+
+            var size = LayoutRoot.ActualSize;
+            var middle = size / 2;
+
+            // On its side, the card's left edge leads it down out of the slot, and its middle is
+            // where the slide has got it to; the spring takes it from there to its rest.
+            var slid = new Vector2(_slotCenter.X, _slotCenter.Y + _slotScale * size.X * (slide - 0.5f));
+            var center = Vector2.Lerp(slid, _restCenter, spring);
+            var rotation = -90 * (1 - spring);
+            var scale = _slotScale + (1 - _slotScale) * spring;
+
+            _ejectTranslation = center - _restCenter;
+            _ejectRotation = rotation;
+            _ejectScale = scale;
+
+            // The hinge is the point of the card on the slot line while it slides, and moves to its
+            // middle as it flies. That is where the eye is, too.
+            var hinge = Vector2.Lerp(new Vector2(size.X * slide, middle.Y), middle, edge);
+            var angle = rotation * Math.PI / 180;
+            var arm = (hinge - middle) * scale;
+            var pivot = center + new Vector2(
+                (float)(arm.X * Math.Cos(angle) - arm.Y * Math.Sin(angle)),
+                (float)(arm.X * Math.Sin(angle) + arm.Y * Math.Cos(angle)));
+
+            // Negative, because CompositeTransform3D turns the other way: the part below the slot,
+            // the part out, comes towards the eye.
+            Hinge.CenterX = pivot.X;
+            Hinge.CenterY = pivot.Y;
+            Hinge.RotationX = -EjectTilt * (1 - spring);
+
+            Perspective.OffsetX = pivot.X - Stage.ActualWidth / 2;
+            Perspective.OffsetY = pivot.Y - Stage.ActualHeight / 2;
+
+            // The slot's edge rises to the top of the window as the card flies.
+            _slotGeometry.Offset = new Vector2(-SlotReach, _slotCenter.Y + (_windowTop - _slotCenter.Y) * edge);
+
+            if (!_ejectSettling && progress >= 0.3f)
+            {
+                _ejectSettling = true;
+                EjectSettling?.Invoke(this, EventArgs.Empty);
+            }
+
+            if (progress >= 1)
+            {
+                FinishEject();
+            }
+        }
+
+        // The card is out for as long as it is shown, and its slot stays empty until it goes.
+        private void RestoreSlotText()
+        {
+            if (_slotText != null)
+            {
+                _slotText.Translation = Vector3.Zero;
+                _slotText.Opacity = 1;
+                _slotText = null;
+            }
+        }
+
+        // A damped spring, damping ratio 0.75 and natural frequency 10 per unit of the flight:
+        // overshoots by under 3% and is all but still when the flight ends.
+        private static double Spring(double t)
+        {
+            const double Damped = 6.6143782776614763; // 10 * sqrt(1 - 0.75 * 0.75)
+            return 1 - Math.Exp(-7.5 * t) * (Math.Cos(Damped * t) + 7.5 / Damped * Math.Sin(Damped * t));
+        }
+
+        private void FinishEject()
+        {
+            if (_ejectElapsed < 0)
+            {
+                return;
+            }
+
+            _ejectElapsed = -1;
+            _ejectSlot = null;
+            _slotGeometry = null;
+            _ejectTranslation = Vector2.Zero;
+            _ejectRotation = 0;
+            _ejectScale = 1;
+
+            Hinge.RotationX = 0;
+            Perspective.Depth = RestDepth;
+            Perspective.OffsetX = 0;
+            Perspective.OffsetY = 0;
+
+            ElementComposition.GetElementVisual(Stage).Clip = null;
+            LayoutRoot.Opacity = 1;
         }
 
         #endregion

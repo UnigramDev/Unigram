@@ -9,256 +9,187 @@
              xmlns:wallet="using:Telegram.Controls.Wallet"
              mc:Ignorable="d">
 
-    <!-- The perspective the tilt bends the card through. It has to sit on the card's own
-         parent: AttachTilt puts the vanishing point over the element it is attached to, and
-         reads that element's parent to do it - so this has to travel with the card rather than
-         stay on whatever screen is showing it.
-
-         In markup rather than from code because XAML owns an element's TransformMatrix and
-         rewrites it on layout, which is what a PerspectiveTransform3D goes through. -->
-    <Grid>
+    <!-- The perspective the tilt bends the card through, on the card's own parent so that it
+         travels with the card. The pointer is read here rather than on the card: the tilt moves
+         the card's edges, and reading through the card would feed the tilt back into itself. -->
+    <Grid x:Name="Stage"
+          Background="Transparent">
         <Grid.Transform3D>
-            <PerspectiveTransform3D Depth="800" />
+            <PerspectiveTransform3D x:Name="Perspective"
+                                    Depth="650" />
         </Grid.Transform3D>
-        <controls:AspectView x:Name="LayoutRoot"
-                             Background="Transparent">
-            <!-- Carries the conic gradient so it can rotate on its own
-                 while the card tilts. Oversized and clipped by AttachTilt. -->
-            <Border x:Name="SheenRoot">
-                <Rectangle x:Name="Sheen"
-                           Visibility="Visible" />
-            </Border>
-            <!-- A gift's colours spreading over the card from where it landed: the lacquer in the
-                 new colours, clipped to a growing circle, until it covers the card and becomes the
-                 lacquer itself. -->
-            <Border x:Name="RevealRoot"
-                    Visibility="Collapsed"
-                    IsHitTestVisible="False">
-                <Rectangle x:Name="RevealSheen" />
-            </Border>
-            <!--<Image Source="ms-appx:///Views/Wallet/Card.png"
-                   VerticalAlignment="Bottom"
-                   Visibility="Collapsed" />
-            <Image Source="ms-appx:///Views/Wallet/Card.png"
-                   VerticalAlignment="Top"
-                   Visibility="Collapsed" />-->
-            <Viewbox>
-                <!--<Grid Width="360"
-                      Height="227.333">-->
-                <Grid Width="360"
-                      Height="220">
-                    <!-- The symbols of the gift whose colours the card wears, under the print. -->
-                    <Canvas x:Name="PatternLayer"
-                            IsHitTestVisible="False" />
-                    <!-- The gifts stuck on the card, under its print. No background, so only the
-                         stickers are hit and a press beside them reaches the card. -->
-                    <wallet:WalletStickerLayer x:Name="StickerLayer" />
-                    <Grid HorizontalAlignment="Right"
-                          VerticalAlignment="Center"
-                          IsHitTestVisible="False"
-                          Margin="0,0,12,0"
-                          Opacity="0.3">
-                        <!-- box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.06)
-                             is applied in OnLoaded — it needs the glyph
-                             alpha mask, which markup cannot express. -->
-                        <Border x:Name="CardAddressShadow"
-                                RenderTransformOrigin="0.5,0.5"
-                                Opacity="0.6">
-                            <!--<Border.RenderTransform>
-                                <RotateTransform Angle="90" />
-                            </Border.RenderTransform>-->
-                        </Border>
-                        <TextBlock x:Name="CardAddress"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
-                                   FontSize="10"
-                                   FontWeight="Normal"
-                                   Foreground="#000000"
-                                   RenderTransformOrigin="0.5,0.5">
-                            <TextBlock.RenderTransform>
-                                <RotateTransform Angle="90" />
-                            </TextBlock.RenderTransform>
-                        </TextBlock>
-                    </Grid>
-                    <HyperlinkButton x:Name="QrButton"
-                                     Style="{StaticResource EmptyHyperlinkButtonStyle}"
-                                     Width="48"
-                                     Height="36"
-                                     HorizontalAlignment="Right"
-                                     VerticalAlignment="Top"
-                                     Margin="0,80,48,0">
-                        <Grid BorderBrush="#28000000"
-                              BorderThickness="1"
-                              CornerRadius="8">
-                            <Grid.Background>
-                                <LinearGradientBrush StartPoint="-0.039,0.090"
-                                                     EndPoint="1.039,0.910">
-                                    <GradientStop Color="#E0BBBDC0"
-                                                  Offset="0.0799" />
-                                    <GradientStop Color="#E0FFFFFF"
-                                                  Offset="0.922" />
-                                </LinearGradientBrush>
-                            </Grid.Background>
-                            <!--<TextBlock Text="&#xEACA;"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       FontSize="20"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />-->
-                            <Grid Width="16"
-                                  Height="16">
-                                <Border Width="7"
-                                        Height="7"
-                                        BorderThickness="1"
-                                        BorderBrush="#1A1A1A"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"
-                                        CornerRadius="2" />
-                                <Border Width="7"
-                                        Height="7"
-                                        BorderThickness="1"
-                                        BorderBrush="#1A1A1A"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        CornerRadius="2" />
-                                <Border Width="7"
-                                        Height="7"
-                                        BorderThickness="1"
-                                        BorderBrush="#1A1A1A"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
-                                        CornerRadius="2" />
-                                <Grid Width="7"
-                                      Height="7"
-                                      HorizontalAlignment="Right"
-                                      VerticalAlignment="Bottom">
-                                    <Border Width="2"
-                                            Height="2"
-                                            Background="#1A1A1A"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top" />
-                                    <Border Width="2"
-                                            Height="2"
-                                            Background="#1A1A1A"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Top" />
-                                    <Border Width="2"
-                                            Height="2"
-                                            Background="#1A1A1A"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Bottom" />
-                                    <Border Width="2"
-                                            Height="2"
-                                            Background="#1A1A1A"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Bottom" />
-                                    <Border Width="2"
-                                            Height="2"
-                                            Background="#1A1A1A" />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </HyperlinkButton>
-                    <Grid HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
-                          Margin="20,76,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <!--<Border Background="White"
-                                Width="28"
-                                Height="28">
-                            <Border Width="19.968095779418945"
-                                    Height="16.878997802734375"
-                                    Margin="4.01,5.6,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Background="Red" />
-                        </Border>-->
-                        <Border x:Name="CardBalanceIcon"
-                                Width="28"
-                                Height="28"
-                                Canvas.ZIndex="1">
-                            <graphics:Scene3DPanel x:Name="Diamond"
-                                                   Model="Diamond"
-                                                   Palette="Ice"
-                                                   PressScale="3"
-                                                   IsSpinning="True"
-                                                   IsInteractive="True"
-                                                   FallbackText="&#xEA7E;"
-                                                   FallbackFontSize="24"
-                                                   FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                   FallbackForeground="#FFFFFF"
-                                                   Width="40"
-                                                   Height="40"
-                                                   Margin="-10,-8,-2,-4" />
-                        </Border>
+        <!-- A tilt about a line on the screen rather than on the card, for Eject: nested, the card's
+             own transform turns it first and this one tips the result. -->
+        <Grid x:Name="HingeRoot">
+            <Grid.Transform3D>
+                <CompositeTransform3D x:Name="Hinge" />
+            </Grid.Transform3D>
+            <controls:AspectView x:Name="LayoutRoot"
+                                 Background="Transparent">
+                <controls:AspectView.Transform3D>
+                    <CompositeTransform3D x:Name="Tilt" />
+                </controls:AspectView.Transform3D>
 
-                        <!-- Each text over a host of the same size for the shadow it casts
-                             on a sticker under it. -->
-                        <Grid IsHitTestVisible="False"
-                              Grid.Column="1">
-                            <Border x:Name="CardBalanceTextShadow" />
-                            <TextBlock x:Name="CardBalanceText"
-                                       FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                       FontWeight="SemiBold"
-                                       FontSize="22"
-                                       Foreground="#FFFFFF">
-                                <Run x:Name="CardBalance" /><Run x:Name="CardBalanceFraction"
-                                                                 FontSize="18" />
-                                <Run x:Name="CardBalanceGram"
-                                     Text="{CustomResource GramCurrency}"
-                                     Foreground="#6DDCFF" />
+                <!-- WalletCardSurface's shadow, thickness and face. The thickness is drawn before the
+                     face because XAML does not depth sort. -->
+                <Border x:Name="ShadowHost"
+                        IsHitTestVisible="False" />
+                <Border x:Name="PlateHost"
+                        IsHitTestVisible="False" />
+                <Border x:Name="FaceHost"
+                        IsHitTestVisible="False" />
+                <Viewbox>
+                    <!--<Grid Width="360"
+                          Height="227.333">-->
+                    <Grid Width="360"
+                          Height="220">
+                        <!-- The symbols of the gift whose colours the card wears, under the print. -->
+                        <Canvas x:Name="PatternLayer"
+                                IsHitTestVisible="False" />
+                        <!-- The gifts stuck on the card, under its print. No background, so only the
+                             stickers are hit and a press beside them reaches the card. -->
+                        <wallet:WalletStickerLayer x:Name="StickerLayer" />
+                        <Grid HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              IsHitTestVisible="False"
+                              Margin="0,0,12,0"
+                              Opacity="0.3">
+                            <!-- box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.06)
+                                 is applied in OnLoaded — it needs the glyph
+                                 alpha mask, which markup cannot express. -->
+                            <Border x:Name="CardAddressShadow"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Opacity="0.6">
+                                <!--<Border.RenderTransform>
+                                    <RotateTransform Angle="90" />
+                                </Border.RenderTransform>-->
+                            </Border>
+                            <TextBlock x:Name="CardAddress"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
+                                       FontSize="10"
+                                       FontWeight="Normal"
+                                       Foreground="#000000"
+                                       RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.RenderTransform>
                             </TextBlock>
                         </Grid>
+                        <!-- The surface draws the chip; this is what is clicked and focused. Where it is
+                             is WalletCard.QrRect. -->
+                        <HyperlinkButton x:Name="QrButton"
+                                         Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                         Width="48"
+                                         Height="36"
+                                         HorizontalAlignment="Right"
+                                         VerticalAlignment="Top"
+                                         Margin="0,80,48,0">
+                            <Grid Background="Transparent"
+                                  CornerRadius="9" />
+                        </HyperlinkButton>
                         <Grid HorizontalAlignment="Left"
-                              IsHitTestVisible="False"
-                              Margin="4"
-                              Grid.ColumnSpan="2"
-                              Grid.Row="1">
-                            <Border x:Name="CardBalanceUsdShadow" />
-                            <TextBlock x:Name="CardBalanceUsd"
-                                       FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                       FontWeight="Bold"
-                                       Foreground="#6DDCFF" />
+                              VerticalAlignment="Top"
+                              Margin="20,76,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <!--<Border Background="White"
+                                    Width="28"
+                                    Height="28">
+                                <Border Width="19.968095779418945"
+                                        Height="16.878997802734375"
+                                        Margin="4.01,5.6,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Background="Red" />
+                            </Border>-->
+                            <Border x:Name="CardBalanceIcon"
+                                    Width="28"
+                                    Height="28"
+                                    Canvas.ZIndex="1">
+                                <graphics:Scene3DPanel x:Name="Diamond"
+                                                       Model="Diamond"
+                                                       Palette="Ice"
+                                                       PressScale="3"
+                                                       IsSpinning="True"
+                                                       IsInteractive="True"
+                                                       FallbackText="&#xEA7E;"
+                                                       FallbackFontSize="24"
+                                                       FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                       FallbackForeground="#FFFFFF"
+                                                       Width="40"
+                                                       Height="40"
+                                                       Margin="-10,-8,-2,-4" />
+                            </Border>
+
+                            <!-- Each text over a host of the same size for the shadow it casts
+                                 on a sticker under it. -->
+                            <Grid IsHitTestVisible="False"
+                                  Grid.Column="1">
+                                <Border x:Name="CardBalanceTextShadow" />
+                                <TextBlock x:Name="CardBalanceText"
+                                           FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                           FontWeight="SemiBold"
+                                           FontSize="22"
+                                           Foreground="#FFFFFF">
+                                    <Run x:Name="CardBalance" /><Run x:Name="CardBalanceFraction"
+                                                                     FontSize="18" />
+                                    <Run x:Name="CardBalanceGram"
+                                         Text="{CustomResource GramCurrency}"
+                                         Foreground="#6DDCFF" />
+                                </TextBlock>
+                            </Grid>
+                            <Grid HorizontalAlignment="Left"
+                                  IsHitTestVisible="False"
+                                  Margin="4"
+                                  Grid.ColumnSpan="2"
+                                  Grid.Row="1">
+                                <Border x:Name="CardBalanceUsdShadow" />
+                                <TextBlock x:Name="CardBalanceUsd"
+                                           FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                           FontWeight="Bold"
+                                           Foreground="#6DDCFF" />
+                            </Grid>
                         </Grid>
+                        <!-- What the two lines above look like before there is anything to
+                             put in them. The bars are drawn by the skeleton itself, clipped
+                             to its own geometry, so this only reserves the room. -->
+                        <Border x:Name="CardBalanceSkeleton"
+                                Width="180"
+                                Height="62"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Visibility="Collapsed"
+                                Margin="20,76,0,0" />
+
+                        <Grid HorizontalAlignment="Left"
+                              VerticalAlignment="Bottom"
+                              IsHitTestVisible="False"
+                              Margin="24,20">
+                            <Border x:Name="CardNameShadow" />
+                            <TextBlock x:Name="CardName"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
+                                       FontWeight="Medium"
+                                       Foreground="#FFFFFF" />
+                        </Grid>
+
+                        <!-- The selected sticker's frame, over the print so its handles can always
+                             be reached. -->
+                        <wallet:WalletStickerFrame x:Name="StickerFrame"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top" />
                     </Grid>
-                    <!-- What the two lines above look like before there is anything to
-                         put in them. The bars are drawn by the skeleton itself, clipped
-                         to its own geometry, so this only reserves the room. -->
-                    <Border x:Name="CardBalanceSkeleton"
-                            Width="180"
-                            Height="62"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Visibility="Collapsed"
-                            Margin="20,76,0,0" />
+                </Viewbox>
 
-                    <Grid HorizontalAlignment="Left"
-                          VerticalAlignment="Bottom"
-                          IsHitTestVisible="False"
-                          Margin="24,20">
-                        <Border x:Name="CardNameShadow" />
-                        <TextBlock x:Name="CardName"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
-                                   FontWeight="Medium"
-                                   Foreground="#FFFFFF" />
-                    </Grid>
-
-                    <!-- The selected sticker's frame, over the print so its handles can always
-                         be reached. -->
-                    <wallet:WalletStickerFrame x:Name="StickerFrame"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Top" />
-                </Grid>
-            </Viewbox>
-
-            <!-- The rim of light riding the colour wave. -->
-            <Canvas x:Name="RevealRimLayer"
-                    IsHitTestVisible="False" />
-        </controls:AspectView>
+                <!-- The rim of light riding the colour wave. -->
+                <Canvas x:Name="RevealRimLayer"
+                        IsHitTestVisible="False" />
+            </controls:AspectView>
+        </Grid>
     </Grid>
 </UserControl>

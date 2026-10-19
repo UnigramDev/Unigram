@@ -14189,6 +14189,9 @@
     <string name="WalletMinimumAmount">Min Amount: {0}</string>
     <string name="WalletInsufficientFunds">Insufficient Funds.</string>
     <string name="WalletBalanceAmount">Balance: {0}</string>
+    <string name="WalletPublicBalanceNote">Your balance is public due to\nblockchain transparency.</string>
+    <string name="WalletProfileOwnsGrams">{0} owns {1} on the TON Blockchain.</string>
+    <string name="WalletProfileOwnsNoGrams">{0} doesn\'t own any Grams yet.</string>
     <string name="WalletNetworkFeeAmount">Network fee: {0}</string>
     <string name="WalletSendGrams">Send Grams</string>
     <string name="WalletSendAmount">Send {0}</string>

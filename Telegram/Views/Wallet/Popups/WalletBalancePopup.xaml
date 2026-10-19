@@ -1,0 +1,33 @@
+<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletBalancePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     ContentMinWidth="408"
+                     ContentMaxWidth="408"
+                     ButtonsLayout="Vertical">
+
+    <!-- Over the popup rather than in it, so that it can come out of its slot before the popup is
+         there, and in the room CardSpace keeps for it once it is. -->
+    <controls:ModalPopup.Overlay>
+        <controls:WalletCard x:Name="Card"
+                             SizeChanged="Card_SizeChanged"
+                             EjectSettling="Card_EjectSettling"
+                             VerticalAlignment="Top"
+                             Margin="24,24,24,0" />
+    </controls:ModalPopup.Overlay>
+
+    <StackPanel>
+        <!-- The card's height at the popup's width from the start, so the popup never grows into
+             it: a resize slides the popup, and the card with it, off the slot it comes out of. -->
+        <Border x:Name="CardSpace"
+                Height="220" />
+
+        <TextBlock x:Name="Note"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"
+                   Margin="0,16,0,0" />
+    </StackPanel>
+</controls:ModalPopup>
