@@ -2874,12 +2874,34 @@ namespace Telegram.Controls.Messages
             _highlight.Children.InsertAtTop(solid);
             _highlight.Size = target.ActualSize;
 
-            // A rich message is not drawn by Message, which the rectangles below come from.
-            if (options.Quote != null && options.Quote.IsManual && !string.IsNullOrEmpty(message.Text?.Text) && message.Content is not MessageRichMessage)
+            if (options.Quote != null && options.Quote.IsManual)
             {
-                var caption = content.GetCaption();
-                var index = ClientEx.SearchQuote(caption, options.Quote);
-                if (index >= 0)
+                // The text says where it is: it owns the layouts, so it answers with the lines
+                // the quote covers in its own coordinates, and this only moves them into the
+                // bubble and groups the ones that touch into a shape. A rich message is drawn by
+                // its content rather than by Message.
+                IList<Rect> lines = null;
+                UIElement owner = null;
+
+                if (message.Content is MessageRichMessage)
+                {
+                    if (Media.Child is InstantContent instant)
+                    {
+                        lines = instant.GetQuoteRectangles(options.Quote);
+                        owner = instant;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(message.Text?.Text))
+                {
+                    var index = ClientEx.SearchQuote(content.GetCaption(), options.Quote);
+                    if (index >= 0)
+                    {
+                        lines = Message.GetHighlightRectangles(index, index + options.Quote.Text.Text.Length);
+                        owner = Message;
+                    }
+                }
+
+                if (lines?.Count > 0)
                 {
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
@@ -2895,15 +2917,10 @@ namespace Telegram.Controls.Messages
                     visual.Size = target.ActualSize;
                     visual.Opacity = 0;
 
-                    var transform = Message.TransformToVisual(ContentPanel);
+                    var transform = owner.TransformToVisual(ContentPanel);
                     var position = transform.TransformPoint(new Windows.Foundation.Point());
 
-                    // The text says where it is: it owns the layouts, so it answers with the
-                    // lines the range covers in its own coordinates, and this only moves them
-                    // into the bubble and groups the ones that touch into a shape.
-                    var lines = Message.GetHighlightRectangles(index, index + options.Quote.Text.Text.Length);
-
-                    for (int i = 0; i < lines?.Count; i++)
+                    for (int i = 0; i < lines.Count; i++)
                     {
                         var rect = new Rect(
                             lines[i].X - 2 + position.X,

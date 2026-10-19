@@ -1360,6 +1360,196 @@ namespace Telegram.Common
             return true;
         }
 
+        /// <summary>
+        /// Where a quote made of rich texts is in the message: a range per text of the message it
+        /// covers, in the offsets <see cref="Flatten"/> writes. The texts are found by their
+        /// plain text, the first ending a text of the message, the last starting one and every
+        /// one between equal to one; the position, which is only the sender's hint, picks
+        /// between places that all match.
+        /// </summary>
+        public static bool TryFindQuote(Vector<PageBlock> blocks, Vector<RichText> texts, int position, List<RichQuoteRange> ranges)
+        {
+            if (texts.Count == 0)
+            {
+                return false;
+            }
+
+            var nodes = new List<QuoteNode>();
+            CollectQuoteNodes(blocks, nodes);
+
+            var count = texts.Count;
+            if (count > nodes.Count)
+            {
+                return false;
+            }
+
+            var plain = new string[nodes.Count];
+            var offsets = new int[nodes.Count];
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                plain[i] = GetQuotePlainText(nodes[i].Text);
+                offsets[i] = i > 0 ? offsets[i - 1] + plain[i - 1].Length + 1 : 0;
+            }
+
+            var firstText = GetQuotePlainText(texts[0]);
+            var lastText = GetQuotePlainText(texts[count - 1]);
+
+            if (firstText.Length == 0 || lastText.Length == 0)
+            {
+                return false;
+            }
+
+            var best = -1;
+            var bestStart = 0;
+            var bestDistance = int.MaxValue;
+
+            for (int i = 0; i + count <= nodes.Count; i++)
+            {
+                if (count == 1)
+                {
+                    var index = plain[i].IndexOf(firstText, StringComparison.Ordinal);
+
+                    while (index >= 0)
+                    {
+                        var distance = Math.Abs(offsets[i] + index - position);
+                        if (distance < bestDistance)
+                        {
+                            best = i;
+                            bestStart = index;
+                            bestDistance = distance;
+                        }
+
+                        index = plain[i].IndexOf(firstText, index + 1, StringComparison.Ordinal);
+                    }
+
+                    continue;
+                }
+
+                if (!plain[i].EndsWith(firstText, StringComparison.Ordinal) || !plain[i + count - 1].StartsWith(lastText, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var middle = true;
+
+                for (int j = 1; j < count - 1 && middle; j++)
+                {
+                    middle = plain[i + j] == GetQuotePlainText(texts[j]);
+                }
+
+                if (middle)
+                {
+                    var start = plain[i].Length - firstText.Length;
+                    var distance = Math.Abs(offsets[i] + start - position);
+
+                    if (distance < bestDistance)
+                    {
+                        best = i;
+                        bestStart = start;
+                        bestDistance = distance;
+                    }
+                }
+            }
+
+            if (best < 0)
+            {
+                return false;
+            }
+
+            for (int j = 0; j < count; j++)
+            {
+                var text = nodes[best + j].Text;
+
+                var from = j == 0 ? ToQuoteOffset(text, bestStart) : 0;
+                var to = j == count - 1
+                    ? ToQuoteOffset(text, (j == 0 ? bestStart : 0) + lastText.Length)
+                    : GetQuoteLength(text);
+
+                ranges.Add(new RichQuoteRange(nodes[best + j].Source, from, to));
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// The part of <paramref name="ranges"/> a control rendered from <paramref name="source"/>
+        /// shows, in the control's own offsets. <paramref name="exact"/> matches the text itself;
+        /// otherwise an equal text will do, which an element kept across an edit needs.
+        /// </summary>
+        public static bool TryGetQuoteRange(object source, IReadOnlyList<RichQuoteRange> ranges, bool exact, out int start, out int end)
+        {
+            start = int.MaxValue;
+            end = int.MinValue;
+
+            if (source is PageBlockCaption caption)
+            {
+                // Laid out as ProcessCaption lays it out, as in TryGetQuote.
+                var textEmpty = IsEmpty(caption.Text);
+                var creditEmpty = IsEmpty(caption.Credit);
+
+                if (!textEmpty)
+                {
+                    AddQuoteRange(caption.Text, 0, ranges, exact, ref start, ref end);
+                }
+
+                if (!creditEmpty)
+                {
+                    AddQuoteRange(caption.Credit, textEmpty ? 0 : GetQuoteLength(caption.Text) + 1, ranges, exact, ref start, ref end);
+                }
+            }
+            else
+            {
+                AddQuoteRange(source, 0, ranges, exact, ref start, ref end);
+            }
+
+            return end > start;
+        }
+
+        private static void AddQuoteRange(object source, int offset, IReadOnlyList<RichQuoteRange> ranges, bool exact, ref int start, ref int end)
+        {
+            foreach (var range in ranges)
+            {
+                if (ReferenceEquals(range.Source, source) || (!exact && IsSameQuoteSource(range.Source, source)))
+                {
+                    start = Math.Min(start, offset + range.Start);
+                    end = Math.Max(end, offset + range.End);
+                }
+            }
+        }
+
+        private static string GetQuotePlainText(RichText text)
+        {
+            var builder = new StringBuilder();
+            AppendPlainText(text, builder);
+            return builder.ToString();
+        }
+
+        // The offset of the flattened text a plain text offset is at: the plain text leaves out
+        // the icons that Flatten writes a character for.
+        private static int ToQuoteOffset(RichText text, int plain)
+        {
+            var offset = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                var size = GetQuoteLeafLength(leaf, out bool counted);
+                if (counted)
+                {
+                    if (plain <= size)
+                    {
+                        return offset + plain;
+                    }
+
+                    plain -= size;
+                }
+
+                offset += size;
+            }
+
+            return offset;
+        }
+
         // In document order, which is the order the server expects the texts of a quote in.
         private static void CollectQuoteNodes(Vector<PageBlock> blocks, List<QuoteNode> nodes)
         {
@@ -1503,20 +1693,23 @@ namespace Telegram.Common
             {
                 var i = (hint + j) % nodes.Count;
 
-                var same = (nodes[i].Source, source) switch
-                {
-                    (RichText x, RichText y) => Compare(x, y),
-                    (PageBlockMathematicalExpression x, PageBlockMathematicalExpression y) => x.Expression == y.Expression,
-                    _ => false
-                };
-
-                if (same)
+                if (IsSameQuoteSource(nodes[i].Source, source))
                 {
                     return i;
                 }
             }
 
             return -1;
+        }
+
+        private static bool IsSameQuoteSource(object x, object y)
+        {
+            return (x, y) switch
+            {
+                (RichText a, RichText b) => Compare(a, b),
+                (PageBlockMathematicalExpression a, PageBlockMathematicalExpression b) => a.Expression == b.Expression,
+                _ => false
+            };
         }
 
         // The texts a quote is measured and cut in: what Flatten writes a character for, and the

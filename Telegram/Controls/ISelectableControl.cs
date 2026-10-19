@@ -5,7 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
 using Telegram.Td.Api;
+using Windows.Foundation;
 
 namespace Telegram.Controls
 {
@@ -125,5 +127,11 @@ namespace Telegram.Controls
         /// <see cref="Telegram.Common.PageBlockHelper.TryGetQuote"/>. Null anywhere else.
         /// </summary>
         object QuoteSource { get; set; }
+
+        /// <summary>
+        /// The rectangles covering <c>[from, to)</c> of the SOURCE text, one per line, in this
+        /// control's own coordinates. Null when none of the range is here.
+        /// </summary>
+        IList<Rect> GetHighlightRectangles(int from, int to);
     }
 }

@@ -15,8 +15,10 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -170,6 +172,85 @@ namespace Telegram.Controls.Messages.Content
             }
 
             return PageBlockHelper.TryGetQuote(richMessage.Message.Blocks, ranges, lengthMax, out texts, out position);
+        }
+
+        /// <summary>
+        /// The lines a quote of this message covers, in this control's coordinates, for the
+        /// highlight shown on following a reply to it. Null when it is not found in what is shown.
+        /// </summary>
+        public IList<Rect> GetQuoteRectangles(TextQuote quote)
+        {
+            if (_message?.Content is not MessageRichMessage richMessage || _message.TranslatedText is MessageTranslateResultRichMessage || LayoutRoot == null)
+            {
+                return null;
+            }
+
+            var ranges = new List<RichQuoteRange>();
+            if (!PageBlockHelper.TryFindQuote(richMessage.Message.Blocks, quote.RichTexts, quote.Position, ranges))
+            {
+                return null;
+            }
+
+            var controls = new List<ISelectableControl>();
+            CollectQuoteControls(LayoutRoot, controls);
+
+            // Equal texts only when none is the text itself: an element kept across an edit
+            // points to the text before it, but an exact match never lights up a twin.
+            return GetQuoteRectangles(controls, ranges, true) ?? GetQuoteRectangles(controls, ranges, false);
+        }
+
+        private List<Rect> GetQuoteRectangles(List<ISelectableControl> controls, List<RichQuoteRange> ranges, bool exact)
+        {
+            List<Rect> result = null;
+
+            foreach (var control in controls)
+            {
+                if (!PageBlockHelper.TryGetQuoteRange(control.QuoteSource, ranges, exact, out int start, out int end))
+                {
+                    continue;
+                }
+
+                var rects = control.GetHighlightRectangles(start, end);
+                if (rects == null)
+                {
+                    continue;
+                }
+
+                var offset = ((UIElement)control).TransformToPoint(this);
+
+                foreach (var rect in rects)
+                {
+                    (result ??= new List<Rect>()).Add(new Rect(rect.X + offset.X, rect.Y + offset.Y, rect.Width, rect.Height));
+                }
+            }
+
+            return result;
+        }
+
+        // What is collapsed is not shown, so there is nothing of it to highlight.
+        private static void CollectQuoteControls(DependencyObject node, List<ISelectableControl> controls)
+        {
+            var count = VisualTreeHelper.GetChildrenCount(node);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(node, i);
+
+                if (child is FrameworkElement { Visibility: Visibility.Collapsed })
+                {
+                    continue;
+                }
+                else if (child is ISelectableControl control)
+                {
+                    if (control.QuoteSource != null)
+                    {
+                        controls.Add(control);
+                    }
+
+                    continue;
+                }
+
+                CollectQuoteControls(child, controls);
+            }
         }
 
         private RichMessage GetContent(MessageViewModel message)

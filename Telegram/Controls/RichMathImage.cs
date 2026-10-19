@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Native.Controls;
@@ -255,6 +256,13 @@ namespace Telegram.Controls
         public FormattedText GetSourceText(int from, int to) => GetSelectedText(from, to);
 
         public object QuoteSource { get; set; }
+
+        public IList<Rect> GetHighlightRectangles(int from, int to)
+        {
+            return to > from
+                ? new[] { new Rect(0, 0, ActualWidth, ActualHeight) }
+                : null;
+        }
 
         #endregion
 
