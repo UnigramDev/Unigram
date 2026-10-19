@@ -865,7 +865,7 @@ namespace Telegram.ViewModels
 
             if (ClientService.HasActiveUsername(chat, out string username))
             {
-                MessageHelper.CopyLink(ClientService, XamlRoot, new InternalLinkTypePublicChat(username, string.Empty, false));
+                MessageHelper.CopyLink(ClientService, XamlRoot, new InternalLinkTypePublicChat(username, string.Empty, false, string.Empty));
             }
         }
 

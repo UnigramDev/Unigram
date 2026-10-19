@@ -579,6 +579,10 @@
     </Compile>
     <Compile Include="Controls\ProfileRating.cs" />
     <Compile Include="Controls\ProfilePatternCover.cs" />
+    <Compile Include="Controls\QrChipSparks.cs" />
+    <Compile Include="Controls\QrCodeTransition.cs" />
+    <Compile Include="Controls\QrGlassRim.cs" />
+    <Compile Include="Controls\QrShareBackground.cs" />
     <Compile Include="Common\RectangleF.cs" />
     <Compile Include="Controls\SlideTextBlock.cs" />
     <Compile Include="Controls\TableView.cs" />
@@ -1090,6 +1094,7 @@
     <Compile Include="Controls\MenuButton.cs" />
     <Compile Include="Controls\MenuFlyoutLabel.cs" />
     <Compile Include="Controls\MenuFlyoutProfile.cs" />
+    <Compile Include="Controls\MenuFlyoutSubtitleItem.cs" />
     <Compile Include="Controls\MessagePopup.xaml.cs">
       <DependentUpon>MessagePopup.xaml</DependentUpon>
     </Compile>

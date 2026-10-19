@@ -49,6 +49,15 @@ namespace Telegram.Controls.Drawers
         }
     }
 
+    public partial class ShareThemeEmojiDrawer : EmojiDrawer
+    {
+        public ShareThemeEmojiDrawer()
+            : base(EmojiDrawerMode.ShareTheme)
+        {
+
+        }
+    }
+
     public partial class EmojiDrawerItemClickEventArgs : EventArgs
     {
         public EmojiDrawerItemClickEventArgs(object clickedItem)
@@ -126,7 +135,7 @@ namespace Telegram.Controls.Drawers
                 Toolbar3.Visibility = Visibility.Collapsed;
                 Toolbar2.Header = null;
 
-                if (mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto)
+                if (mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.ShareTheme)
                 {
                     List.Padding = new Thickness(8, 0, 0, 0);
                     List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
@@ -202,6 +211,7 @@ namespace Telegram.Controls.Drawers
                 {
                     EmojiDrawerMode.ChatPhoto => EmojiSearchType.ChatPhoto,
                     EmojiDrawerMode.UserPhoto => EmojiSearchType.ChatPhoto,
+                    EmojiDrawerMode.ShareTheme => EmojiSearchType.ChatPhoto,
                     EmojiDrawerMode.EmojiStatus => EmojiSearchType.EmojiStatus,
                     EmojiDrawerMode.ChatEmojiStatus => EmojiSearchType.EmojiStatus,
                     EmojiDrawerMode.Reactions => EmojiSearchType.Combined,
@@ -281,7 +291,7 @@ namespace Telegram.Controls.Drawers
 
         public void UpdateView()
         {
-            if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
+            if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.ShareTheme and not EmojiDrawerMode.Chat)
             {
                 return;
             }
@@ -482,7 +492,7 @@ namespace Telegram.Controls.Drawers
 
         private void UpdateToolbar(bool collapse = false)
         {
-            if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
+            if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.ShareTheme and not EmojiDrawerMode.Chat)
             {
                 return;
             }

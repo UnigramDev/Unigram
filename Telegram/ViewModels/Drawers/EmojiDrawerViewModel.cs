@@ -28,13 +28,15 @@ namespace Telegram.ViewModels.Drawers
         UserPhoto,
         Background,
         Topics,
-        Text
+        Text,
+        ShareTheme
     }
 
     public partial class EmojiDrawerViewModel : ViewModelBase
     {
         private bool _updated;
 
+        private readonly StickerSetInfo _reactionTopSetInfo;
         private readonly StickerSetViewModel _reactionTopSet;
         private readonly StickerSetViewModel _reactionRecentSet;
         private readonly StickerSetViewModel _reactionUpgradedSet;
@@ -45,12 +47,14 @@ namespace Telegram.ViewModels.Drawers
             //Items = new DiffObservableCollection<object>(new EmojiSetDiffHandler());
             Items = new RangeObservableCollection<object>();
 
-            _reactionTopSet = new StickerSetViewModel(ClientService, new StickerSetInfo
+            _reactionTopSetInfo = new StickerSetInfo
             {
                 Title = string.Empty,
                 Name = "tg/recentlyUsed",
                 IsInstalled = true
-            });
+            };
+
+            _reactionTopSet = new StickerSetViewModel(ClientService, _reactionTopSetInfo);
 
             _reactionRecentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
@@ -292,6 +296,8 @@ namespace Telegram.ViewModels.Drawers
                             defaultStickers.StickersValue = [placeholder, .. defaultStickers.StickersValue];
                         }
 
+                        // The share theme's free set is the only one with a header of its own.
+                        _reactionTopSetInfo.Title = _mode == EmojiDrawerMode.ShareTheme ? Strings.QrEmojiPresets : string.Empty;
                         _reactionTopSet.Update(defaultStickers.StickersValue);
 
                         sets.Insert(0, _reactionTopSet);
@@ -355,6 +361,10 @@ namespace Telegram.ViewModels.Drawers
             {
                 return GetDefaultChatStatusAsync();
             }
+            else if (mode == EmojiDrawerMode.ShareTheme)
+            {
+                return GetShareThemePresetsAsync();
+            }
 
             Function func = _mode switch
             {
@@ -371,6 +381,19 @@ namespace Telegram.ViewModels.Drawers
             }
 
             return Task.FromResult<Object>(null);
+        }
+
+        // The emoji a QR code can use without Premium: a sticker set known by its name, as there is no
+        // method for it.
+        private async Task<Object> GetShareThemePresetsAsync()
+        {
+            var response = await ClientService.SendAsync(new SearchStickerSet("RestrictedEmoji", false));
+            if (response is StickerSet set)
+            {
+                return new Stickers(set.Stickers);
+            }
+
+            return response;
         }
 
         private async Task<Object> GetDefaultStatusAsync()
@@ -447,6 +470,20 @@ namespace Telegram.ViewModels.Drawers
             //}
 
             return await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
+        }
+
+        // Whether the emoji is in the set shown first, which is free to use where the rest needs Premium.
+        public bool IsDefaultEmoji(long customEmojiId)
+        {
+            foreach (var sticker in _reactionTopSet.Stickers)
+            {
+                if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji && customEmoji.CustomEmojiId == customEmojiId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool Filter(StickerSetInfo info)

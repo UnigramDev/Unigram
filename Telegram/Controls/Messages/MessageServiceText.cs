@@ -75,6 +75,7 @@ namespace Telegram.Controls.Messages
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, history),
                 MessagePaidMessagePriceChanged paidMessagePriceChanged => UpdatePaidMessagePriceChanged(message, paidMessagePriceChanged, history),
                 MessagePaidMessagesRefunded paidMessagesRefunded => UpdatePaidMessagesRefunded(message, paidMessagesRefunded, history),
+                MessageUnpaidMessagesAllowedByLink => UpdateUnpaidMessagesAllowedByLink(message),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, history),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, history),
                 MessagePaymentRefunded paymentRefunded => UpdatePaymentRefunded(message, paymentRefunded, history),
@@ -1752,6 +1753,21 @@ namespace Telegram.Controls.Messages
             {
                 var content = Locale.Declension(Strings.R.PaidMessagesRefunded, paidMessagesRefunded.StarCount);
                 return ReplaceWithLink(content, senderUser);
+            }
+
+            return _emptyString;
+        }
+
+        // The sender is the one who used the link; the link is the other member's.
+        private static FormattedText UpdateUnpaidMessagesAllowedByLink(MessageWithOwner message)
+        {
+            if (message.IsOutgoing && message.ClientService.TryGetUser(message.Chat, out User receiverUser))
+            {
+                return ReplaceWithLink(Strings.NoPaidMessagesTokenUsedOut, receiverUser);
+            }
+            else if (message.ClientService.TryGetMessageSender(message.SenderId, out Object senderUser))
+            {
+                return ReplaceWithLink(Strings.NoPaidMessagesTokenUsed, senderUser);
             }
 
             return _emptyString;

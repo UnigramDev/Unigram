@@ -63,12 +63,15 @@ namespace Telegram.Views.Premium.Popups
 
         private readonly DiffObservableCollection<AvailableGift> _gifts = new();
 
-        public GiftPopup(IClientService clientService, INavigationService navigationService, User user, UserFullInfo fullInfo)
+        private readonly GiftGroupType _initialGroup;
+
+        public GiftPopup(IClientService clientService, INavigationService navigationService, User user, UserFullInfo fullInfo, GiftGroupType initialGroup = GiftGroupType.All)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _navigationService = navigationService;
+            _initialGroup = initialGroup;
 
             _receiverId = new MessageSenderUser(user.Id);
             clientService.TryGetChatFromUser(user.Id, out _chat);
@@ -199,7 +202,7 @@ namespace Telegram.Views.Premium.Popups
                 }
 
                 Navigation.ItemsSource = navigation;
-                Navigation.SelectedIndex = 0;
+                Navigation.SelectedIndex = Math.Max(0, navigation.IndexOf(navigation.FirstOrDefault(x => x.Type == _initialGroup)));
             }
 
             if (self)

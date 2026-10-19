@@ -619,7 +619,7 @@ namespace Telegram.Common
                     NavigateToProxy(clientService, navigation, proxy.Proxy);
                     break;
                 case InternalLinkTypePublicChat publicChat:
-                    NavigateToUsername(clientService, navigation, publicChat.ChatUsername, draftText: publicChat.DraftText, openProfile: publicChat.OpenProfile);
+                    NavigateToUsername(clientService, navigation, publicChat.ChatUsername, draftText: publicChat.DraftText, openProfile: publicChat.OpenProfile, unpaidMessagesToken: publicChat.UnpaidMessagesToken);
                     break;
                 case InternalLinkTypeQrCodeAuthentication:
                     break;
@@ -666,10 +666,10 @@ namespace Telegram.Common
                     NavigateToUnknownDeepLink(clientService, navigation, unknownDeepLink.Link);
                     break;
                 case InternalLinkTypeUserPhoneNumber phoneNumber:
-                    NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber, phoneNumber.DraftText, phoneNumber.OpenProfile);
+                    NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber, phoneNumber.DraftText, phoneNumber.OpenProfile, phoneNumber.UnpaidMessagesToken);
                     break;
                 case InternalLinkTypeUserToken userToken:
-                    NavigateToUserToken(clientService, navigation, userToken.Token);
+                    NavigateToUserToken(clientService, navigation, userToken.Token, userToken.UnpaidMessagesToken);
                     break;
                 case InternalLinkTypeVideoChat videoChat:
                     NavigateToUsername(clientService, navigation, videoChat.ChatUsername, videoChat.InviteHash, null);
@@ -1918,21 +1918,23 @@ namespace Telegram.Common
             await StickersPopup.ShowAsync(navigation, text);
         }
 
-        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber, string draftText = null, bool openProfile = false)
+        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber, string draftText = null, bool openProfile = false, string unpaidMessagesToken = null)
         {
-            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber, false), draftText, openProfile);
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber, false), draftText, openProfile, unpaidMessagesToken);
         }
 
-        public static async void NavigateToUserToken(IClientService clientService, INavigationService navigation, string userToken)
+        public static async void NavigateToUserToken(IClientService clientService, INavigationService navigation, string userToken, string unpaidMessagesToken = null)
         {
-            await NavigateToUserByResponse(clientService, navigation, new SearchUserByToken(userToken));
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByToken(userToken), unpaidMessagesToken: unpaidMessagesToken);
         }
 
-        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request, string draftText = null, bool openProfile = false)
+        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request, string draftText = null, bool openProfile = false, string unpaidMessagesToken = null)
         {
             var response = await clientService.SendAsync(request);
             if (response is User user)
             {
+                await ApplyUnpaidMessagesTokenAsync(clientService, navigation, user, unpaidMessagesToken);
+
                 var chat = await clientService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
                 if (chat != null)
                 {
@@ -1994,7 +1996,23 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null, string referrer = null, bool openProfile = false)
+        // A link from a user's QR code can carry a token that lifts their fee for incoming messages; it is
+        // applied before the chat opens, so it opens without the fee.
+        private static async Task ApplyUnpaidMessagesTokenAsync(IClientService clientService, INavigationService navigation, User user, string token)
+        {
+            if (string.IsNullOrEmpty(token) || user.Type is not UserTypeRegular || user.Id == clientService.Options.MyId)
+            {
+                return;
+            }
+
+            var response = await clientService.SendAsync(new ApplyUnpaidMessagesToken(user.Id, token));
+            if (response is Ok)
+            {
+                navigation.ShowToast(string.Format(Strings.NoPaidMessagesTokenImported, user.FirstName), ToastPopupIcon.Success);
+            }
+        }
+
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null, string referrer = null, bool openProfile = false, string unpaidMessagesToken = null)
         {
             var response = await clientService.SendAsync(referrer != null ? new SearchChatAffiliateProgram(username, referrer) : new SearchPublicChat(username));
             if (response is Chat chat)
@@ -2005,6 +2023,8 @@ namespace Telegram.Common
                 }
                 else if (clientService.TryGetUser(chat, out User user))
                 {
+                    await ApplyUnpaidMessagesTokenAsync(clientService, navigation, user, unpaidMessagesToken);
+
                     if (draftText != null)
                     {
                         navigation.NavigateToChat(chat, state: new NavigationState { { "draft", draftText.AsFormattedText() } });

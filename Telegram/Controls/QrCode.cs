@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
@@ -115,7 +116,24 @@ namespace Telegram.Controls
 
         public static QrCodeGeometry CreateGeometry(string text, int minVersion = 1, int maxVersion = 40, bool combine = false, float size = 222)
         {
-            var data = QrBuffer.FromString(text);
+            var data = Build(null, QrBuffer.FromString(text), combine, size, out CanvasGeometry position);
+
+            return position == null
+                ? new QrCodeGeometry(new CompositionPath(data))
+                : new QrCodeGeometry(new CompositionPath(data), new CompositionPath(position));
+        }
+
+        // The whole code as one geometry to draw, finders included and the logo's circle left out.
+        public static CanvasGeometry CreateCanvasGeometry(ICanvasResourceCreator resourceCreator, QrBuffer data, float size)
+        {
+            using var modules = Build(resourceCreator, data, false, size, out CanvasGeometry position);
+            using var finders = position;
+
+            return CanvasGeometry.CreateGroup(resourceCreator, new[] { modules, finders }, CanvasFilledRegionDetermination.Winding);
+        }
+
+        private static CanvasGeometry Build(ICanvasResourceCreator resourceCreator, QrBuffer data, bool combine, float size, out CanvasGeometry position)
+        {
             var replaceFrom = data.ReplaceFrom;
             var replaceTill = data.ReplaceTill;
 
@@ -158,13 +176,13 @@ namespace Telegram.Controls
             var geometries = new CanvasGeometry[6];
             var geometry = 0;
 
-            using var builder = new CanvasPathBuilder(null);
+            using var builder = new CanvasPathBuilder(resourceCreator);
 
             void large(float x, float y)
             {
-                var rect1 = CanvasGeometry.CreateRoundedRectangle(null, x, y, pixel * 7 + 2, pixel * 7 + 2, 15 / 222f * size, 15 / 222f * size);
-                var rect2 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel, y + pixel, pixel * 5 + 2, pixel * 5 + 2, 9 / 222f * size, 9 / 222f * size);
-                var rect3 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel * 2, y + pixel * 2, pixel * 3 + 2, pixel * 3 + 2, pixel, pixel);
+                var rect1 = CanvasGeometry.CreateRoundedRectangle(resourceCreator, x, y, pixel * 7 + 2, pixel * 7 + 2, 15 / 222f * size, 15 / 222f * size);
+                var rect2 = CanvasGeometry.CreateRoundedRectangle(resourceCreator, x + pixel, y + pixel, pixel * 5 + 2, pixel * 5 + 2, 9 / 222f * size, 9 / 222f * size);
+                var rect3 = CanvasGeometry.CreateRoundedRectangle(resourceCreator, x + pixel * 2, y + pixel * 2, pixel * 3 + 2, pixel * 3 + 2, pixel, pixel);
 
                 if (combine)
                 {
@@ -179,7 +197,7 @@ namespace Telegram.Controls
             }
             void brect(float x, float y, float width, float height)
             {
-                builder.AddGeometry(CanvasGeometry.CreateRectangle(null, x, y, width, height));
+                builder.AddGeometry(CanvasGeometry.CreateRectangle(resourceCreator, x, y, width, height));
             }
             void barch(float x, float y, bool topLeft, bool topRight, bool bottomRight, bool bottomLeft)
             {
@@ -320,15 +338,15 @@ namespace Telegram.Controls
                 if (size == 222)
                 {
                     // If combined we add the inner circle
-                    builder.AddGeometry(CanvasGeometry.CreateCircle(null, 111, 111, 16));
+                    builder.AddGeometry(CanvasGeometry.CreateCircle(resourceCreator, 111, 111, 16));
                 }
 
-                return new QrCodeGeometry(new CompositionPath(CanvasGeometry.CreatePath(builder)));
+                position = null;
+                return CanvasGeometry.CreatePath(builder);
             }
 
-            return new QrCodeGeometry(
-                new CompositionPath(CanvasGeometry.CreatePath(builder)),
-                new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));
+            position = CanvasGeometry.CreateGroup(resourceCreator, geometries, CanvasFilledRegionDetermination.Winding);
+            return CanvasGeometry.CreatePath(builder);
         }
 
         #region Text
