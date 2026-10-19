@@ -48,48 +48,6 @@ namespace Telegram.ViewModels
 
         protected override bool CanSchedule => Type is DialogType.History or DialogType.Thread;
 
-        private async Task<ContentDialogResult> ShowPaidMessageConfirmationAsync(int messageCount, long starCount)
-        {
-            Settings.Chats.TryGet(Chat.Id, null, Services.ChatSetting.PaidMessageStarCount, out long savedMessageStarCount);
-
-            if (starCount != 0 && starCount != savedMessageStarCount)
-            {
-                var message1 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage1, starCount, Chat.Title);
-
-                string message2;
-                if (messageCount > 1)
-                {
-                    var message3 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage2Many1, starCount * messageCount);
-                    var message4 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage2Many2, messageCount);
-
-                    message2 = string.Format("{0} {1}", message3, message4);
-                }
-                else
-                {
-                    message2 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage2One, starCount);
-                }
-
-                var popup = new MessagePopup
-                {
-                    Title = Strings.MessageLockedStarsConfirmTitle,
-                    Message = string.Format("{0} {1}", message1, message2),
-                    CheckBoxLabel = Strings.MessageLockedStarsConfirmMessageDontAsk,
-                    PrimaryButtonText = Icons.Premium16 + Icons.Spacing + (starCount * messageCount).ToString("N0"), //Locale.Declension(Strings.R.MessageLockedStarsConfirmMessagePay, messageCount),
-                    SecondaryButtonText = Strings.Cancel
-                };
-
-                var confirm = await ShowPopupAsync(popup);
-                if (confirm == ContentDialogResult.Primary && popup.IsChecked is true)
-                {
-                    Settings.Chats[Chat.Id, null, Services.ChatSetting.PaidMessageStarCount] = starCount;
-                }
-
-                return confirm;
-            }
-
-            return ContentDialogResult.Primary;
-        }
-
         /// <summary>
         /// Asks the user to pick a scheduling state, if the send calls for one. Returns false when
         /// they dismissed the picker without choosing.
@@ -136,26 +94,13 @@ namespace Telegram.ViewModels
                 };
             }
 
-            var paidMessageStarCount = 0L;
-
-            if (ClientService.TryGetUserFull(chat, out UserFullInfo userFullInfo))
-            {
-                paidMessageStarCount = userFullInfo.OutgoingPaidMessageStarCount;
-            }
-            else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
-            {
-                if (supergroup.Status is not ChatMemberStatusAdministrator and not ChatMemberStatusCreator && !supergroup.IsAdministeredDirectMessagesGroup)
-                {
-                    paidMessageStarCount = supergroup.PaidMessageStarCount;
-                }
-            }
+            var paidMessageStarCount = PaidMessageHelper.OutgoingStarCount(ClientService, chat);
 
             // Every message the send is carrying to forward is one more the user pays for. Only the
             // composer's own send carries any: for every other one this is zero.
             messageCount += composer?.Forwarding?.Messages.Count ?? 0;
 
-            var paid = await ShowPaidMessageConfirmationAsync(messageCount, paidMessageStarCount);
-            if (paid != ContentDialogResult.Primary)
+            if (!await PaidMessageHelper.ConfirmAsync(NavigationService, Settings, chat, messageCount, paidMessageStarCount))
             {
                 return null;
             }

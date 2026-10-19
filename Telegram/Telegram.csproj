@@ -2481,6 +2481,7 @@
     <Compile Include="Common\MessageHelper.cs" />
     <Compile Include="Common\WalletCardSheen.cs" />
     <Compile Include="Common\GiftHelper.cs" />
+    <Compile Include="Common\PaidMessageHelper.cs" />
     <Compile Include="Common\WalletHelper.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\MasterDetailView.cs" />

@@ -1104,8 +1104,7 @@ namespace Telegram.ViewModels
                 paidMessageStarCount = failed.RequiredPaidMessageStarCount;
             }
 
-            var paid = await ShowPaidMessageConfirmationAsync(1, paidMessageStarCount);
-            if (paid != ContentDialogResult.Primary)
+            if (Chat is not Chat chat || !await PaidMessageHelper.ConfirmAsync(NavigationService, Settings, chat, 1, paidMessageStarCount))
             {
                 return;
             }
