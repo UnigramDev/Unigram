@@ -66,7 +66,7 @@
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal"
                                                     HorizontalAlignment="Center"
-                                                    Margin="0,0,8,0"/>
+                                                    Margin="0,0,8,0" />
                                     </ItemsPanelTemplate>
                                 </controls:TopNavView.ItemsPanel>
                             </controls:TopNavView>
@@ -106,6 +106,15 @@
                 <controls:MoreButton x:Name="Menu"
                                      Click="Menu_ContextRequested" />
             </Border>
+            <Grid x:Name="EditRoot"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Height="48"
+                  Margin="0,16,0,0"
+                  Visibility="Collapsed">
+                <Button Click="Edit_Click"
+                        Content="{CustomResource Edit}" />
+            </Grid>
         </Grid>
 
         <ToolTip x:Name="ToolTip"

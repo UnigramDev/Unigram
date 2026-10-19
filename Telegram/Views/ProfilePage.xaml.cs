@@ -29,6 +29,7 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
+using Telegram.Views.Settings;
 using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -115,6 +116,7 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(EditRoot, true);
 
             var translation = visual.Compositor.CreateExpressionAnimation(ViewModel.IsSavedMessages ? "-scrollViewer.Translation.Y" :
                 $"_.ActualHeight > 16 ? scrollViewer.Translation.Y > -(_.ActualHeight + 8) ? 0 : -scrollViewer.Translation.Y - (_.ActualHeight + 8) : -scrollViewer.Translation.Y");
@@ -171,6 +173,7 @@ namespace Telegram.Views
 
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
 
+            var visual3 = ElementComposition.GetElementVisual(EditRoot);
             var visual4 = ElementComposition.GetElementVisual(BackButton);
             visual4.CenterPoint = new Vector3(24, 16, 0);
 
@@ -185,11 +188,13 @@ namespace Telegram.Views
 
                 visual4.StartAnimation("Scale", slideOut2);
                 visual4.StartAnimation("Translation.Y", slideOut3);
+                visual3.StartAnimation("Translation.Y", slideOut3);
             }
             else
             {
                 visual4.Scale = new Vector3(0.8f);
                 visual4.Properties.InsertVector3("Translation", new Vector3(0, -16, 0));
+                visual3.Properties.InsertVector3("Translation", new Vector3(0, -16, 0));
             }
 
             ProfileHeader.InitializeScrolling(properties);
@@ -296,6 +301,9 @@ namespace Telegram.Views
             BackButton.RequestedTheme = ScrollingHost.VerticalOffset >= ProfileHeader.OccludedHeight
                 ? ElementTheme.Default
                 : ProfileHeader.HeaderTheme;
+            EditRoot.RequestedTheme = ScrollingHost.VerticalOffset >= ProfileHeader.OccludedHeight
+                ? ElementTheme.Default
+                : ProfileHeader.HeaderTheme;
         }
 
         #region Delegate
@@ -305,6 +313,15 @@ namespace Telegram.Views
             ProfileHeader.UpdateChat(chat);
 
             UpdateBackButton();
+
+            if (ViewModel.MyProfile && ViewModel.ClientService.IsSavedMessages(chat))
+            {
+                EditRoot.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EditRoot.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -1322,6 +1339,11 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.SetMainTab, tabItem.Type, Strings.ProfileTabSetAsMain);
                 flyout.ShowAt(sender, args);
             }
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(SettingsProfilePage));
         }
     }
 
