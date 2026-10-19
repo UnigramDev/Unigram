@@ -1621,6 +1621,9 @@
     <Compile Include="Views\Popups\ScheduleMessageToast.xaml.cs">
       <DependentUpon>ScheduleMessageToast.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\MoveGiftToWalletPopup.xaml.cs">
+      <DependentUpon>MoveGiftToWalletPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\TransferGiftPopup.xaml.cs">
       <DependentUpon>TransferGiftPopup.xaml</DependentUpon>
     </Compile>
@@ -2477,6 +2480,7 @@
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\MessageHelper.cs" />
     <Compile Include="Common\WalletCardSheen.cs" />
+    <Compile Include="Common\GiftHelper.cs" />
     <Compile Include="Common\WalletHelper.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\MasterDetailView.cs" />
@@ -4151,6 +4155,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ScheduleMessageToast.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\MoveGiftToWalletPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

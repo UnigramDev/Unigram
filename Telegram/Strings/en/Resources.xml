@@ -14341,6 +14341,30 @@
     <string name="NoPaidMessagesTokenUsed">un1 used your QR code and can message you for free</string>
     <string name="NoPaidMessagesTokenImported">You can now message **{0}** for free.</string>
     <string name="NoPaidMessagesTokenUsedOut">You used the QR code of un1 and can message them for free</string>
+    <string name="Gift2TransferToMyWallet">Transfer to My Wallet</string>
+    <string name="Gift2MoveToMyWallet">Move to My Wallet</string>
+    <string name="Gift2MoveToMyWalletText">Transfer this gift to your blockchain wallet?</string>
+    <string name="Gift2MoveAppearIn">It will appear in</string>
+    <string name="Gift2KeepOnProfile">Keep showing on my profile</string>
+    <string name="Gift2Move">Move</string>
+    <string name="Gift2MovedToWallet">Gift moved to your wallet.</string>
+    <string name="Gift2SendViaFragment">Send via Fragment</string>
+    <string name="Gift2ExportTONUnlocksAlertTitle">Unlocking in progress</string>
+    <string name="Gift2ExportTONUnlocksAlertText_one">In {0} day, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
+    <string name="Gift2ExportTONUnlocksAlertText_other">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
+    <string name="Gift2ExportTONUnlocksAlertText_zero">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
+    <string name="Gift2ExportTONUnlocksAlertText_two">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
+    <string name="Gift2ExportTONUnlocksAlertText_few">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
+    <string name="Gift2ExportTONUnlocksAlertText_many">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
+    <string name="Gift2ExportTONFragmentTitle">Manage with Fragment</string>
+    <string name="Gift2ExportTONFragmentText">You can use Fragment, a third-party service, to transfer **{0}** to your TON account. After that, you can manage it as an NFT with any TON wallet outside Telegram.\n\nYou can also move such NFTs back to your Telegram account via Fragment.</string>
+    <string name="Gift2TransferToTONAlertTitle">Security Check</string>
+    <string name="Gift2TransferToTONAlertText">You can transfer your gift to TON if you have:</string>
+    <string name="Gift2TransferToTONAlertText1">Enabled **2-Step Verification** more than **7 days** ago.</string>
+    <string name="Gift2TransferToTONAlertText2">Logged in on this device more than **24 hours** ago.</string>
+    <string name="Gift2TransferToTONAlertText3">Please come back later.</string>
+    <string name="PleaseEnterCurrentPasswordGiftTransfer">Please enter your password to send **{0}** to Fragment.</string>
+    <string name="PleaseEnterCurrentPasswordGiftWallet">Please enter your password to move **{0}** to your wallet.</string>
 
     <!--NOT FINAL: the wallet card's gift stickers, worded after the GramWallet prototype. Replace with
         the Android strings once they ship, and remove this block.-->

@@ -1,0 +1,42 @@
+<controls:ModalPopup x:Class="Telegram.Views.Popups.MoveGiftToWalletPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d">
+
+    <StackPanel>
+        <TextBlock Text="{CustomResource Gift2MoveToMyWalletText}"
+                   Style="{StaticResource BodyTextBlockStyle}" />
+
+        <Border x:Name="AddressInfo"
+                Background="{ThemeResource ContentDialogBackground}"
+                CornerRadius="8"
+                Padding="12,8,12,10"
+                Margin="0,16,0,0">
+            <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
+                       FontSize="13"
+                       LineHeight="18"
+                       TextAlignment="Center">
+                <Run x:Name="AddressGroup0" /><Run Text=" " /><Run x:Name="AddressGroup1"
+                                                                   Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup2" /><Run Text=" " /><Run x:Name="AddressGroup3"
+                                                                                                                                                                                                       Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><LineBreak /><Run x:Name="AddressGroup4"
+                                                                                                                                                                                                                                                                                                Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup5" /><Run Text=" " /><Run x:Name="AddressGroup6"
+                                                                                                                                                                                                                                                                                                                                                                                                                          Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup7" /><LineBreak /><Run x:Name="AddressGroup8" /><Run Text=" " /><Run x:Name="AddressGroup9"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" /><Run Text=" " /><Run x:Name="AddressGroup10" /><Run Text=" " /><Run x:Name="AddressGroup11"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+            </TextBlock>
+        </Border>
+
+        <TextBlock x:Name="AppearIn"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   TextWrapping="Wrap"
+                   Margin="0,8,0,0" />
+
+        <CheckBox x:Name="KeepOnProfileCheck"
+                  Content="{CustomResource Gift2KeepOnProfile}"
+                  IsChecked="True"
+                  Margin="0,12,0,-4" />
+    </StackPanel>
+</controls:ModalPopup>

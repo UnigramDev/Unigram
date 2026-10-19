@@ -1162,6 +1162,22 @@ namespace Telegram.Views.Popups
                 }
             }
 
+            // An export date of 0 means the gift cannot go to the blockchain at all.
+            if (ViewModel.Configuration is ChooseChatsConfigurationTransferGift { Gift: { ExportDate: > 0, Gift: SentGiftUpgraded } })
+            {
+                var wallet = ViewModel.ClientService.Options.CanUseTonWallet;
+                var button = new SettingsButton
+                {
+                    Content = wallet ? Strings.Gift2TransferToMyWallet : Strings.Gift2SendViaFragment,
+                    Glyph = wallet ? Icons.Wallet : Icons.FragmentFilled,
+                    Style = BootStrapper.Current.Resources["GlyphBadgeButtonPopupStyle"] as Style,
+                    Margin = new Thickness(12, 0, 12, 0),
+                };
+
+                button.Click += ExportGift_Click;
+                Header = button;
+            }
+
             if (ViewModel.Configuration is ChooseChatsConfigurationShareOperation
                 && LifetimeService.Current.Count > 1
                 && ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
@@ -1179,6 +1195,20 @@ namespace Telegram.Views.Popups
             }
 
             base.OnApplyTemplate();
+        }
+
+        private void ExportGift_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is SettingsButton button)
+            {
+                button.Click -= ExportGift_Click;
+            }
+
+            if (ViewModel.Configuration is ChooseChatsConfigurationTransferGift transferGift)
+            {
+                Hide();
+                GiftHelper.Export(ViewModel.ClientService, ViewModel.NavigationService, transferGift.Gift);
+            }
         }
 
         private void Send_ContextRequested(object sender, ContextRequestedEventArgs args)
