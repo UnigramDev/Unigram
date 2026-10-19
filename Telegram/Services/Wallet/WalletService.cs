@@ -196,6 +196,11 @@ namespace Telegram.Services.Wallet
         private string _collectiblesOffset = string.Empty;
         private int _collectiblesGeneration;
 
+        private readonly object _cardSaveLock = new();
+        private Task _cardSaving;
+        private IReadOnlyList<InputTonWalletCardSticker> _pendingCardStickers;
+        private string _pendingCardBackground;
+
         public WalletService(IClientService clientService, IEventAggregator aggregator)
         {
             _clientService = clientService;
@@ -3683,6 +3688,75 @@ namespace Telegram.Services.Wallet
             if (!same)
             {
                 _collectiblesGeneration++;
+            }
+        }
+
+        public async Task<TonWalletCard> LoadCardAsync()
+        {
+            var response = await _clientService.SendAsync(new GetUserFullInfo(_clientService.Options.MyId));
+            return response is UserFullInfo fullInfo ? fullInfo.TonWalletCard : null;
+        }
+
+        public void SaveCard(IReadOnlyList<InputTonWalletCardSticker> stickers, string backgroundNftAddress)
+        {
+            lock (_cardSaveLock)
+            {
+                _pendingCardStickers = stickers ?? Array.Empty<InputTonWalletCardSticker>();
+                _pendingCardBackground = backgroundNftAddress ?? string.Empty;
+
+                if (_cardSaving == null)
+                {
+                    _cardSaving = SaveCardLoopAsync();
+                }
+            }
+        }
+
+        private async Task SaveCardLoopAsync()
+        {
+            try
+            {
+                while (true)
+                {
+                    IReadOnlyList<InputTonWalletCardSticker> stickers;
+                    string background;
+
+                    lock (_cardSaveLock)
+                    {
+                        if (_pendingCardStickers == null)
+                        {
+                            return;
+                        }
+
+                        stickers = _pendingCardStickers;
+                        background = _pendingCardBackground;
+                        _pendingCardStickers = null;
+                        _pendingCardBackground = null;
+                    }
+
+                    var response = await _clientService.SendAsync(new SetTonWalletCardStickers(new Vector<InputTonWalletCardSticker>(stickers), background));
+                    if (response is Error error)
+                    {
+                        Logger.Error("wallet card could not be saved: " + error.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            finally
+            {
+                // Whatever ended the loop, the next save starts a new one; a save left pending by a
+                // throw is taken by it.
+                lock (_cardSaveLock)
+                {
+                    _cardSaving = null;
+
+                    if (_pendingCardStickers != null)
+                    {
+                        _cardSaving = SaveCardLoopAsync();
+                    }
+                }
             }
         }
 

@@ -102,6 +102,18 @@ namespace Telegram.Common
         }
         private Color _background;
 
+        /// <summary>
+        /// All three at once, for a palette that derives them its own way - a gift's colours, which
+        /// keep the stock card's lightness and take the gift's hue.
+        /// </summary>
+        public void SetColors(Color background, Color sheen, Color accent)
+        {
+            if (background != _background || sheen != Sheen || accent != Accent)
+            {
+                Apply(background, sheen, accent);
+            }
+        }
+
         /// <summary>What the light picks out of it, which the gradient reaches.</summary>
         public Color Sheen { get; private set; }
 

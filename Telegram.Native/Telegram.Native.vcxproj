@@ -321,6 +321,10 @@
       <DependentUpon>Graphics\Scene3DPanel.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="Graphics\Scene3DRenderer.h" />
+    <ClInclude Include="Graphics\StickerCurlEffect.h" />
+    <ClInclude Include="Graphics\StickerCurlSurface.h">
+      <DependentUpon>Graphics\StickerCurlSurface.idl</DependentUpon>
+    </ClInclude>
     <ClInclude Include="Composition\DwmThumbnail.h" />
     <ClInclude Include="Composition\WindowVisual.h" />
     <ClInclude Include="Controls\ControlEx.h">
@@ -1271,6 +1275,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Graphics\Scene3DRenderer.cpp" />
+    <ClCompile Include="Graphics\StickerCurlEffect.cpp" />
+    <ClCompile Include="Graphics\StickerCurlSurface.cpp">
+      <DependentUpon>Graphics\StickerCurlSurface.idl</DependentUpon>
+    </ClCompile>
     <ClCompile Include="Composition\WindowVisual.cpp" />
     <ClCompile Include="Controls\ControlEx.cpp">
       <DependentUpon>Controls\ControlEx.idl</DependentUpon>
@@ -1535,6 +1543,16 @@
       <VariableName>g_CoinPixel</VariableName>
       <ObjectFileOutput></ObjectFileOutput>
     </FxCompile>
+    <!-- Run by Direct2D as a custom effect, not by the 3D scenes: its inputs are Direct2D's, and
+         model 4.0 keeps it to what feature level 10 hardware runs. -->
+    <FxCompile Include="Graphics\Shaders\StickerCurl.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>4.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <HeaderFileOutput>$(IntDir)StickerCurlPixel.h</HeaderFileOutput>
+      <VariableName>g_StickerCurlPixel</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
     <None Include="Graphics\Shaders\Diamond.hlsl" />
     <None Include="Graphics\Shaders\Icon.hlsl" />
     <None Include="Graphics\Shaders\Sparkle.hlsl" />
@@ -1617,6 +1635,7 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="Graphics\Scene3DPanel.idl" />
+    <Midl Include="Graphics\StickerCurlSurface.idl" />
     <Midl Include="NativeUtils.idl" />
     <Midl Include="TextHost.idl" />
     <Midl Include="AI\TextRecognizer.idl" />

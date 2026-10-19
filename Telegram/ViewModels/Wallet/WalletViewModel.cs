@@ -306,7 +306,8 @@ namespace Telegram.ViewModels.Wallet
                 && ReferenceEquals(shown.Content, item.Content)
                 && ReferenceEquals(shown.Sticker, item.Sticker)
                 && ReferenceEquals(shown.Attributes, item.Attributes)
-                && ReferenceEquals(shown.Extra, item.Extra))
+                && ReferenceEquals(shown.Extra, item.Extra)
+                && ReferenceEquals(shown.Gift, item.Gift))
             {
                 return false;
             }
@@ -322,6 +323,7 @@ namespace Telegram.ViewModels.Wallet
             shown.Sticker = item.Sticker;
             shown.Attributes = item.Attributes;
             shown.Extra = item.Extra;
+            shown.Gift = item.Gift;
             return true;
         }
 

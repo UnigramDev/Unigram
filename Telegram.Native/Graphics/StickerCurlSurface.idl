@@ -1,0 +1,30 @@
+namespace Telegram.Native.Graphics
+{
+    // A sticker on the wallet card: a frame of it with a white die-cut edge, drawn into a
+    // composition surface flat, or curled as it rolls on or peels off.
+    [default_interface]
+    runtimeclass StickerCurlSurface : Windows.Foundation.IClosable
+    {
+        // side is the sticker's, in pixels. The surface is larger by Margin times that on every
+        // edge, which is the room the lifted part grows into as it comes closer to the eye.
+        StickerCurlSurface(Windows.UI.Composition.CompositionGraphicsDevice device, Int32 side);
+
+        static Single Margin{ get; };
+
+        Windows.UI.Composition.CompositionDrawingSurface Surface{ get; };
+
+        // BGRA, premultiplied, fitted into the sticker's side. The die-cut edge is the coverage
+        // blurred by dieCut pixels and then cut sharp, as AnimatedImageEffect.DieCut makes it.
+        void SetImage(Windows.Storage.Streams.IBuffer pixels, Int32 pixelWidth, Int32 pixelHeight, Single dieCut);
+
+        // curl is 1 for lifted but the leading edge and 0 for flat; direction is the way the
+        // sticker moves, in its own unrotated space, and bend scales how sharply it turns. False
+        // when nothing could be drawn: no image yet, a lost device, or a GPU without the shader
+        // model the effect needs.
+        Boolean Draw(Single curl, Windows.Foundation.Numerics.Vector2 direction, Single bend);
+
+        // Lets go of the bitmaps a draw works in, while the sticker rests: the surface keeps what
+        // was last drawn, and the next draw makes them again.
+        void Trim();
+    }
+}

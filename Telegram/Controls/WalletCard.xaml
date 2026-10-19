@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:graphics="using:Telegram.Native.Graphics"
+             xmlns:wallet="using:Telegram.Controls.Wallet"
              mc:Ignorable="d">
 
     <!-- The perspective the tilt bends the card through. It has to sit on the card's own
@@ -27,6 +28,14 @@
                 <Rectangle x:Name="Sheen"
                            Visibility="Visible" />
             </Border>
+            <!-- A gift's colours spreading over the card from where it landed: the lacquer in the
+                 new colours, clipped to a growing circle, until it covers the card and becomes the
+                 lacquer itself. -->
+            <Border x:Name="RevealRoot"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False">
+                <Rectangle x:Name="RevealSheen" />
+            </Border>
             <!--<Image Source="ms-appx:///Views/Wallet/Card.png"
                    VerticalAlignment="Bottom"
                    Visibility="Collapsed" />
@@ -38,8 +47,15 @@
                       Height="227.333">-->
                 <Grid Width="360"
                       Height="220">
+                    <!-- The symbols of the gift whose colours the card wears, under the print. -->
+                    <Canvas x:Name="PatternLayer"
+                            IsHitTestVisible="False" />
+                    <!-- The gifts stuck on the card, under its print. No background, so only the
+                         stickers are hit and a press beside them reaches the card. -->
+                    <wallet:WalletStickerLayer x:Name="StickerLayer" />
                     <Grid HorizontalAlignment="Right"
                           VerticalAlignment="Center"
+                          IsHitTestVisible="False"
                           Margin="0,0,12,0"
                           Opacity="0.3">
                         <!-- box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.06)
@@ -63,7 +79,8 @@
                             </TextBlock.RenderTransform>
                         </TextBlock>
                     </Grid>
-                    <HyperlinkButton Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                    <HyperlinkButton x:Name="QrButton"
+                                     Style="{StaticResource EmptyHyperlinkButtonStyle}"
                                      Width="48"
                                      Height="36"
                                      HorizontalAlignment="Right"
@@ -180,25 +197,34 @@
                                                    Margin="-10,-8,-2,-4" />
                         </Border>
 
-                        <TextBlock x:Name="CardBalanceText"
-                                   FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                   FontWeight="SemiBold"
-                                   FontSize="22"
-                                   Foreground="#FFFFFF"
-                                   Grid.Column="1">
-                            <Run x:Name="CardBalance" /><Run x:Name="CardBalanceFraction"
-                                                             FontSize="18" />
-                            <Run x:Name="CardBalanceGram"
-                                 Text="{CustomResource GramCurrency}"
-                                 Foreground="#6DDCFF" />
-                        </TextBlock>
-                        <TextBlock x:Name="CardBalanceUsd"
-                                   FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
-                                   FontWeight="Bold"
-                                   Foreground="#6DDCFF"
-                                   Margin="4"
-                                   Grid.ColumnSpan="2"
-                                   Grid.Row="1" />
+                        <!-- Each text over a host of the same size for the shadow it casts
+                             on a sticker under it. -->
+                        <Grid IsHitTestVisible="False"
+                              Grid.Column="1">
+                            <Border x:Name="CardBalanceTextShadow" />
+                            <TextBlock x:Name="CardBalanceText"
+                                       FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                       FontWeight="SemiBold"
+                                       FontSize="22"
+                                       Foreground="#FFFFFF">
+                                <Run x:Name="CardBalance" /><Run x:Name="CardBalanceFraction"
+                                                                 FontSize="18" />
+                                <Run x:Name="CardBalanceGram"
+                                     Text="{CustomResource GramCurrency}"
+                                     Foreground="#6DDCFF" />
+                            </TextBlock>
+                        </Grid>
+                        <Grid HorizontalAlignment="Left"
+                              IsHitTestVisible="False"
+                              Margin="4"
+                              Grid.ColumnSpan="2"
+                              Grid.Row="1">
+                            <Border x:Name="CardBalanceUsdShadow" />
+                            <TextBlock x:Name="CardBalanceUsd"
+                                       FontFamily="ms-appx:///Assets/Fonts/Nunito.ttf#Nunito"
+                                       FontWeight="Bold"
+                                       Foreground="#6DDCFF" />
+                        </Grid>
                     </Grid>
                     <!-- What the two lines above look like before there is anything to
                          put in them. The bars are drawn by the skeleton itself, clipped
@@ -211,15 +237,28 @@
                             Visibility="Collapsed"
                             Margin="20,76,0,0" />
 
-                    <TextBlock x:Name="CardName"
-                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
-                               FontWeight="Medium"
-                               Foreground="#FFFFFF"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Bottom"
-                               Margin="24,20" />
+                    <Grid HorizontalAlignment="Left"
+                          VerticalAlignment="Bottom"
+                          IsHitTestVisible="False"
+                          Margin="24,20">
+                        <Border x:Name="CardNameShadow" />
+                        <TextBlock x:Name="CardName"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithMonospace}"
+                                   FontWeight="Medium"
+                                   Foreground="#FFFFFF" />
+                    </Grid>
+
+                    <!-- The selected sticker's frame, over the print so its handles can always
+                         be reached. -->
+                    <wallet:WalletStickerFrame x:Name="StickerFrame"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Top" />
                 </Grid>
             </Viewbox>
+
+            <!-- The rim of light riding the colour wave. -->
+            <Canvas x:Name="RevealRimLayer"
+                    IsHitTestVisible="False" />
         </controls:AspectView>
     </Grid>
 </UserControl>

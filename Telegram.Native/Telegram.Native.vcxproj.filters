@@ -663,6 +663,12 @@
     <ClCompile Include="Graphics\Scene3DRenderer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\StickerCurlEffect.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\StickerCurlSurface.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\creatwth.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
@@ -1375,6 +1381,12 @@
     <ClInclude Include="Graphics\Scene3DRenderer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\StickerCurlEffect.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\StickerCurlSurface.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.h">
       <Filter>Detours</Filter>
     </ClInclude>
@@ -1661,6 +1673,9 @@
     <Midl Include="Graphics\Scene3DPanel.idl">
       <Filter>Graphics</Filter>
     </Midl>
+    <Midl Include="Graphics\StickerCurlSurface.idl">
+      <Filter>Graphics</Filter>
+    </Midl>
     <Midl Include="Composition\WindowVisual.idl">
       <Filter>Composition</Filter>
     </Midl>
@@ -1750,6 +1765,9 @@
       <Filter>Graphics\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Graphics\Shaders\CoinPixel.hlsl">
+      <Filter>Graphics\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Graphics\Shaders\StickerCurl.hlsl">
       <Filter>Graphics\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Graphics\Shaders\IconVertex.hlsl">

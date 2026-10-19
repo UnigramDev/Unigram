@@ -14342,4 +14342,13 @@
     <string name="NoPaidMessagesTokenImported">You can now message **{0}** for free.</string>
     <string name="NoPaidMessagesTokenUsedOut">You used the QR code of un1 and can message them for free</string>
 
+    <!--NOT FINAL: the wallet card's gift stickers, worded after the GramWallet prototype. Replace with
+        the Android strings once they ship, and remove this block.-->
+    <string name="WalletCardAddToCard">Add to Card</string>
+    <string name="WalletCardApplyColor">Apply Color</string>
+    <string name="WalletCardFull">You can add up to {0} collectibles to your card.</string>
+    <string name="WalletCardOnCard">on card</string>
+    <string name="WalletCardRemoveColor">Remove Color</string>
+    <string name="WalletCardRemoveFromCard">Remove from Card</string>
+
 </resources>

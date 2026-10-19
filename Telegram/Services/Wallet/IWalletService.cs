@@ -390,6 +390,18 @@ namespace Telegram.Services.Wallet
         Task LoadMoreCollectiblesAsync();
 
         /// <summary>
+        /// The current user's card as their full info has it: the stickers on it and the gift it
+        /// takes its colours from. Null when there is none.
+        /// </summary>
+        Task<TonWalletCard> LoadCardAsync();
+
+        /// <summary>
+        /// Saves the card as it now stands, after whatever save is in flight. A request can take
+        /// many seconds, so edits made meanwhile are folded into one: only the latest is sent.
+        /// </summary>
+        void SaveCard(IReadOnlyList<InputTonWalletCardSticker> stickers, string backgroundNftAddress);
+
+        /// <summary>
         /// Stops tracking and releases the engine's client.
         /// </summary>
         Task ShutdownAsync();

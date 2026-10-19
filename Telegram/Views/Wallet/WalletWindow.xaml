@@ -6,11 +6,19 @@
                         xmlns:cells="using:Telegram.Controls.Cells"
                         xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                         xmlns:media="using:Telegram.Controls.Media"
+                        xmlns:common="using:Telegram.Common"
+                        xmlns:wallet="using:Telegram.Controls.Wallet"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         mc:Ignorable="d">
 
-    <Grid>
+    <!-- The drop target for a gift dragged from the list, wherever the pointer is: the card may
+         be translated where layout does not see it, so the window works out what is under it. -->
+    <Grid x:Name="DropRoot"
+          AllowDrop="True"
+          DragLeave="OnDragLeave"
+          Drop="OnDrop"
+          Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -167,38 +175,27 @@
                     Grid.Column="4" />
         </Grid>
 
-        <controls:TableListView x:Name="ScrollingHost"
-                                Loaded="OnLoaded"
-                                SizeChanged="OnSizeChanged"
-                                ContainerContentChanging="OnContainerContentChanging"
-                                ItemClick="OnItemClick"
-                                IsItemClickEnabled="True"
-                                SelectionMode="None"
-                                ScrollViewer.CanContentRenderOutsideBounds="True"
-                                Padding="0,0,0,24"
-                                Margin="0,-8,0,0"
-                                Grid.Row="0"
-                                Grid.RowSpan="2">
-            <ListView.ItemTemplateSelector>
-                <local:WalletItemTemplateSelector>
-                    <local:WalletItemTemplateSelector.TransactionTemplate>
-                        <DataTemplate>
-                            <cells:WalletTransactionCell />
-                        </DataTemplate>
-                    </local:WalletItemTemplateSelector.TransactionTemplate>
-                    <local:WalletItemTemplateSelector.CollectibleTemplate>
-                        <DataTemplate>
-                            <cells:WalletCollectibleCell />
-                        </DataTemplate>
-                    </local:WalletItemTemplateSelector.CollectibleTemplate>
-                </local:WalletItemTemplateSelector>
-            </ListView.ItemTemplateSelector>
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
-            <ListView.Header>
-                <controls:SettingsPanel IsHeader="True"
-                                        HasTopPadding="False">
+        <!--
+            The header and both lists scroll together. The lists have no scroll viewer of their
+            own, so they still virtualize against this one; each starts under an empty header as
+            tall as the real one, which lies over it.
+        -->
+        <ScrollViewer x:Name="ScrollingHost"
+                      Loaded="OnLoaded"
+                      SizeChanged="OnSizeChanged"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      CanContentRenderOutsideBounds="True"
+                      Margin="0,-8,0,0"
+                      Grid.Row="0"
+                      Grid.RowSpan="2">
+            <Grid>
+                <controls:SettingsPanel x:Name="HeaderPanel"
+                                        IsHeader="True"
+                                        HasTopPadding="False"
+                                        SizeChanged="HeaderPanel_SizeChanged"
+                                        VerticalAlignment="Top"
+                                        Canvas.ZIndex="1">
                     <controls:StickyHeader x:Name="Header"
                                            Margin="0,0,0,-26" />
 
@@ -301,7 +298,116 @@
                                             Glyph="&#xEA8B;" />
                     </StackPanel>
                 </controls:SettingsPanel>
-            </ListView.Header>
-        </controls:TableListView>
+
+                <controls:TableListView x:Name="TransactionsList"
+                                        ContainerContentChanging="OnContainerContentChanging"
+                                        ItemClick="OnItemClick"
+                                        IsItemClickEnabled="True"
+                                        SelectionMode="None"
+                                        Padding="0,0,0,24"
+                                        VerticalAlignment="Top">
+                    <ListView.Template>
+                        <ControlTemplate TargetType="ListView">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <Border.Resources>
+                                    <x:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">False</x:Boolean>
+                                </Border.Resources>
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                Footer="{TemplateBinding Footer}"
+                                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                Padding="{TemplateBinding Padding}" />
+                            </Border>
+                        </ControlTemplate>
+                    </ListView.Template>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <cells:WalletTransactionCell />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </ListView.ItemContainerTransitions>
+                    <ListView.Header>
+                        <Border x:Name="TransactionsHeader" />
+                    </ListView.Header>
+                </controls:TableListView>
+
+                <!-- The wallet's NFTs. The gifts among them can be dragged onto the card. -->
+                <wallet:WalletNftGridView x:Name="CollectiblesList"
+                                          ChoosingItemContainer="Collectibles_ChoosingItemContainer"
+                                          ContainerContentChanging="Collectibles_ContainerContentChanging"
+                                          ItemClick="Collectibles_ItemClick"
+                                          IsItemClickEnabled="True"
+                                          SelectionMode="None"
+                                          Visibility="Collapsed"
+                                          Padding="24,0,20,24"
+                                          VerticalAlignment="Top"
+                                          common:FluidGridView.Padding="0,0,4,0"
+                                          common:FluidGridView.MaxLength="364">
+                    <common:FluidGridView.Triggers>
+                        <common:FluidGridViewTrigger MinLength="0"
+                                                     RowsOrColumns="3" />
+                    </common:FluidGridView.Triggers>
+                    <GridView.Template>
+                        <ControlTemplate TargetType="GridView">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}">
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                Footer="{TemplateBinding Footer}"
+                                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                Padding="{TemplateBinding Padding}" />
+                            </Border>
+                        </ControlTemplate>
+                    </GridView.Template>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem"
+                               BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                            <Setter Property="Margin"
+                                    Value="0,4,4,0" />
+                            <Setter Property="Padding"
+                                    Value="0" />
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <cells:WalletCollectibleCell />
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </GridView.ItemContainerTransitions>
+                    <GridView.Header>
+                        <Border x:Name="CollectiblesHeader" />
+                    </GridView.Header>
+                </wallet:WalletNftGridView>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- The gift being dragged from the list, over everything until it lands. Scaled to the
+             card, so it is the size it will be on it. -->
+        <wallet:WalletStickerLayer x:Name="DragLayer"
+                                   IsHitTestVisible="False"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Canvas.ZIndex="2"
+                                   Grid.RowSpan="2">
+            <wallet:WalletStickerLayer.RenderTransform>
+                <ScaleTransform x:Name="DragLayerScale" />
+            </wallet:WalletStickerLayer.RenderTransform>
+        </wallet:WalletStickerLayer>
     </Grid>
 </controls:WindowContent>

@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Telegram.Controls.Wallet.WalletStickerFrame"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             IsTabStop="False"
+             Visibility="Collapsed">
+
+    <UserControl.RenderTransform>
+        <CompositeTransform x:Name="Transform" />
+    </UserControl.RenderTransform>
+
+    <!-- A dashed ring round the selected sticker, with a handle on each side that turns and
+         sizes it. Only the handles take the pointer. -->
+    <Grid x:Name="LayoutRoot">
+        <Ellipse Stroke="#4D000000"
+                 StrokeThickness="1.5"
+                 StrokeDashArray="2,2"
+                 StrokeDashCap="Round"
+                 IsHitTestVisible="False"
+                 Margin="0.75,0.75,-0.75,-0.75" />
+        <Ellipse Stroke="#FFFFFF"
+                 StrokeThickness="1.5"
+                 StrokeDashArray="2,2"
+                 StrokeDashCap="Round"
+                 IsHitTestVisible="False" />
+
+        <Border x:Name="LeftHandle"
+                Background="Transparent"
+                Width="24"
+                Height="24"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="-12,0,0,0">
+            <Ellipse Fill="#FFFFFF"
+                     Stroke="#33000000"
+                     StrokeThickness="1"
+                     Width="10"
+                     Height="10" />
+        </Border>
+        <Border x:Name="RightHandle"
+                Background="Transparent"
+                Width="24"
+                Height="24"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="0,0,-12,0">
+            <Ellipse Fill="#FFFFFF"
+                     Stroke="#33000000"
+                     StrokeThickness="1"
+                     Width="10"
+                     Height="10" />
+        </Border>
+    </Grid>
+</UserControl>

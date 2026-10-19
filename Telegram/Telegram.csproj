@@ -928,6 +928,14 @@
     <Compile Include="Controls\AnimatedIconButton.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AmountTextBlock.cs" />
+    <Compile Include="Controls\Wallet\StickerSpring.cs" />
+    <Compile Include="Controls\Wallet\WalletCardMaterials.cs" />
+    <Compile Include="Controls\Wallet\WalletStickerFrame.xaml.cs">
+      <DependentUpon>WalletStickerFrame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Wallet\WalletNftGridView.cs" />
+    <Compile Include="Controls\Wallet\WalletStickerLayer.cs" />
+    <Compile Include="Controls\Wallet\WalletStickerView.cs" />
     <Compile Include="Controls\WalletCard.xaml.cs">
       <DependentUpon>WalletCard.xaml</DependentUpon>
     </Compile>
@@ -3055,6 +3063,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WalletCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Wallet\WalletStickerFrame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

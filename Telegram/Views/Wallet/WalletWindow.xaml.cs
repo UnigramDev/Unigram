@@ -9,10 +9,12 @@ using System;
 using System.ComponentModel;
 using System.Numerics;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Controls.Wallet;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -24,11 +26,17 @@ using Telegram.ViewModels.Wallet;
 using Telegram.Views.Grams;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
+using Telegram.Views.Stars.Popups;
 using Telegram.Views.Wallet.Popups;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
+using Windows.Graphics.Imaging;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -53,6 +61,17 @@ namespace Telegram.Views.Wallet
         private readonly IWalletService _wallet;
         private readonly SecondaryNavigationService _navigationService;
 
+        private readonly ScrollViewerIncrementalLoader _loader;
+
+        // The NFT whose colours the card wears, which has to be one of the stickers on it.
+        private string _backgroundAddress = string.Empty;
+
+        // The gift being dragged from the list, until the drag is over, and the address of the one
+        // out of its cell meanwhile, until it lands or is back.
+        private TonNft _dragged;
+        private string _carried;
+
+        private DragEventHandler _dragOverHandler;
 
         public WalletViewModel ViewModel => DataContext as WalletViewModel;
 
@@ -82,9 +101,29 @@ namespace Telegram.Views.Wallet
 
             // Assigned rather than bound: x:Bind would have run inside InitializeComponent,
             // before there was a view model to read.
-            ScrollingHost.ItemsSource = viewModel.Items;
+            TransactionsList.ItemsSource = viewModel.Transactions;
+            CollectiblesList.ItemsSource = viewModel.Collectibles;
+
+            // The lists have no scroll viewer of their own to ask for more as they near the end.
+            _loader = new ScrollViewerIncrementalLoader(ScrollingHost);
+            _loader.ItemsSource = viewModel.Transactions;
 
             StateLabel.Text = Strings.WalletTitle;
+
+            Card.Stickers.HomeResolver = GetHome;
+            Card.Stickers.Changed += OnStickersChanged;
+            Card.Stickers.StickerLeft += OnStickerLeft;
+            Card.Stickers.StickerContextRequested += OnStickerContextRequested;
+            Card.Stickers.ActiveChanged += OnStickersActiveChanged;
+
+            DragLayer.IsReadOnly = true;
+            DragLayer.HomeResolver = GetCarrierHome;
+            DragLayer.StickerLeft += OnCarriedLeft;
+
+            // Handled ones too: over its own items the list takes DragOver for itself, and the
+            // carried gift would stop following the pointer there.
+            _dragOverHandler = OnDragOver;
+            DropRoot.AddHandler(DragOverEvent, _dragOverHandler, true);
 
             // The handle, not the whole strip: a drag region takes the pointer away from anything
             // under it, and the window's own close button is drawn over the right of this bar.
@@ -110,11 +149,15 @@ namespace Telegram.Views.Wallet
 
             UpdateCard();
             UpdateEmpty(ViewModel.IsEmpty);
+
+            _ = LoadStickersAsync();
         }
 
         protected override void OnUnloaded()
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
+
+            _unpinTimer?.Stop();
         }
 
         protected override void OnWindowClosed()
@@ -128,6 +171,17 @@ namespace Telegram.Views.Wallet
             {
                 ViewModel.Delegate = null;
             }
+
+            Card.Stickers.HomeResolver = null;
+            Card.Stickers.Changed -= OnStickersChanged;
+            Card.Stickers.StickerLeft -= OnStickerLeft;
+            Card.Stickers.StickerContextRequested -= OnStickerContextRequested;
+            Card.Stickers.ActiveChanged -= OnStickersActiveChanged;
+
+            DragLayer.HomeResolver = null;
+            DragLayer.StickerLeft -= OnCarriedLeft;
+
+            DropRoot.RemoveHandler(DragOverEvent, _dragOverHandler);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -147,6 +201,11 @@ namespace Telegram.Views.Wallet
             {
                 UpdateEarnings();
             }
+            else if (e.PropertyName == nameof(ViewModel.HasCollectibles) && !ViewModel.HasCollectibles)
+            {
+                // The tabs unload with the last NFT, and the history is all there is to show.
+                ShowCollectibles(false);
+            }
         }
 
         /// <summary>
@@ -158,9 +217,10 @@ namespace Telegram.Views.Wallet
             Card.SetState(_clientService, _wallet.State);
         }
 
+        // It stands in for the history, so not over the NFTs.
         private void UpdateEmpty(bool empty)
         {
-            EmptyPanel.Visibility = empty
+            EmptyPanel.Visibility = empty && CollectiblesList.Visibility == Visibility.Collapsed
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -205,11 +265,6 @@ namespace Telegram.Views.Wallet
                 UpdateTransaction(args.ItemContainer, transactionCell, transaction);
                 args.Handled = true;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is WalletCollectibleCell collectibleCell && args.Item is TonNft collectible)
-            {
-                collectibleCell.UpdateInfo(_clientService, collectible);
-                args.Handled = true;
-            }
         }
 
         // A bind, and a new version of a row already shown, which the view model hands over rather
@@ -230,7 +285,7 @@ namespace Telegram.Views.Wallet
 
         public void UpdateTransaction(TonWalletTransaction transaction)
         {
-            if (ScrollingHost.ContainerFromItem(transaction) is SelectorItem container && container.ContentTemplateRoot is WalletTransactionCell cell)
+            if (TransactionsList.ContainerFromItem(transaction) is SelectorItem container && container.ContentTemplateRoot is WalletTransactionCell cell)
             {
                 UpdateTransaction(container, cell, transaction);
             }
@@ -238,9 +293,9 @@ namespace Telegram.Views.Wallet
 
         public void UpdateCollectible(TonNft collectible)
         {
-            if (ScrollingHost.ContainerFromItem(collectible) is SelectorItem container && container.ContentTemplateRoot is WalletCollectibleCell cell)
+            if (CollectiblesList.ContainerFromItem(collectible) is SelectorItem container && container.ContentTemplateRoot is WalletCollectibleCell cell)
             {
-                cell.UpdateInfo(_clientService, collectible);
+                cell.UpdateInfo(_clientService, collectible, IsOutOfCell(collectible.Address), Card.Stickers.Contains(collectible.Address));
             }
         }
 
@@ -510,25 +565,41 @@ namespace Telegram.Views.Wallet
                 return;
             }
 
-            if (Navigation.SelectedIndex == 1)
-            {
-                ViewModel.Items.SetSource(ViewModel.Collectibles);
-            }
-            else
-            {
-                ViewModel.Items.SetSource(ViewModel.Transactions);
-            }
+            ShowCollectibles(Navigation.SelectedIndex == 1);
+        }
+
+        private ListViewBase ActiveList => CollectiblesList.Visibility == Visibility.Visible
+            ? CollectiblesList
+            : TransactionsList;
+
+        private void ShowCollectibles(bool show)
+        {
+            TransactionsList.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+            CollectiblesList.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+
+            _loader.ItemsSource = show ? ViewModel.Collectibles : ViewModel.Transactions;
+
+            UpdateEmpty(ViewModel.IsEmpty);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var scrollViewer = ScrollingHost.GetScrollViewer();
-            scrollViewer.SetVerticalPadding(48, 0);
+            ScrollingHost.SetVerticalPadding(48, 0);
+            AttachPin();
+        }
+
+        private void HeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            TransactionsHeader.Height = e.NewSize.Height;
+            CollectiblesHeader.Height = e.NewSize.Height;
+
+            UpdateMinHeight();
+            UpdatePinTop();
         }
 
         private void HeaderTabs_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.PreviousSize.Height != 0 || ScrollingHost.ItemsPanelRoot is not Panel panel)
+            if (e.PreviousSize.Height != 0 || ActiveList.ItemsPanelRoot is not Panel panel)
             {
                 return;
             }
@@ -560,31 +631,593 @@ namespace Telegram.Views.Wallet
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ScrollingHost.ItemsPanelRoot is Panel panel)
-            {
-                panel.MinHeight = e.NewSize.Height - 80 - 24 - 8; // Header and footer + outer
-            }
+            UpdateMinHeight();
         }
-    }
 
-    public partial class WalletItemTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate TransactionTemplate { get; set; }
-
-        public DataTemplate CollectibleTemplate { get; set; }
-
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        // Room under the header for the tabs to reach the top, however little is in the list.
+        private void UpdateMinHeight()
         {
-            if (item is TonWalletTransaction)
+            var minHeight = HeaderPanel.ActualHeight + Math.Max(0, ScrollingHost.ActualHeight - 80 - 24 - 8); // Header and footer + outer
+
+            TransactionsList.MinHeight = minHeight;
+            CollectiblesList.MinHeight = minHeight;
+        }
+
+        #region Card stickers
+
+        private async Task LoadStickersAsync()
+        {
+            var card = await _wallet.LoadCardAsync();
+            if (card == null)
             {
-                return TransactionTemplate;
-            }
-            else if (item is TonNft)
-            {
-                return CollectibleTemplate;
+                return;
             }
 
-            return base.SelectTemplateCore(item, container);
+            Card.Stickers.Show(_clientService, card);
+
+            var background = Card.Stickers.Find(card.BackgroundNftAddress);
+            _backgroundAddress = background?.Address ?? string.Empty;
+
+            Card.SetStyle(_clientService, background?.Collectible.Gift, default, false);
+            CollectiblesList.ForEach(UpdateOnCard);
         }
+
+        private void Save()
+        {
+            _wallet.SaveCard(Card.Stickers.ToInput(), _backgroundAddress);
+        }
+
+        private void OnStickersChanged(object sender, EventArgs e)
+        {
+            // The colours go with the sticker that gave them, however it left.
+            if (_backgroundAddress.Length > 0 && !Card.Stickers.Contains(_backgroundAddress))
+            {
+                _backgroundAddress = string.Empty;
+                Card.SetStyle(_clientService, null, new Vector2(WalletStickerLayer.FaceWidth / 2, WalletStickerLayer.FaceHeight / 2), true);
+            }
+
+            Save();
+        }
+
+        private void OnStickerLeft(object sender, TonNft collectible)
+        {
+            UpdateCell(collectible.Address);
+        }
+
+        // By address: a sticker loaded with the card is not the instance the list holds.
+        private WalletCollectibleCell CellOf(string address)
+        {
+            var collectibles = ViewModel.Collectibles;
+
+            for (int i = 0; i < collectibles.Count; i++)
+            {
+                if (collectibles[i].Address == address)
+                {
+                    return CollectiblesList.ContainerFromIndex(i) is SelectorItem container
+                        ? container.ContentTemplateRoot as WalletCollectibleCell
+                        : null;
+                }
+            }
+
+            return null;
+        }
+
+        private void UpdateCell(string address)
+        {
+            if (CellOf(address) is WalletCollectibleCell cell)
+            {
+                UpdateOnCard(cell);
+            }
+        }
+
+        private void UpdateOnCard(SelectorItem container)
+        {
+            if (container.ContentTemplateRoot is WalletCollectibleCell cell)
+            {
+                UpdateOnCard(cell);
+            }
+        }
+
+        private void UpdateOnCard(WalletCollectibleCell cell)
+        {
+            if (cell.Collectible is TonNft collectible)
+            {
+                cell.UpdateOnCard(IsOutOfCell(collectible.Address), Card.Stickers.Contains(collectible.Address));
+            }
+        }
+
+        // On the card, or on its way there.
+        private bool IsOutOfCell(string address)
+        {
+            return address == _carried || Card.Stickers.Contains(address);
+        }
+
+        // The cell of a gift, while it is on screen.
+        private WalletCollectibleCell VisibleCellOf(string address)
+        {
+            if (CollectiblesList.Visibility != Visibility.Visible || CellOf(address) is not WalletCollectibleCell cell)
+            {
+                return null;
+            }
+
+            var size = cell.ActualSize;
+            var bounds = cell.TransformToVisual(ScrollingHost).TransformBounds(new Rect(0, 0, size.X, size.Y));
+
+            return bounds.Bottom < 0 || bounds.Top > ScrollingHost.ActualHeight ? null : cell;
+        }
+
+        /// <summary>
+        /// Where a gift's cell is on the card, and how big its art is against a sticker: where a
+        /// sticker taken off goes back to, and where one put on from the menu comes from.
+        /// </summary>
+        private (Vector2 Center, float Scale)? GetHome(TonNft collectible)
+        {
+            if (VisibleCellOf(collectible.Address) is not WalletCollectibleCell cell)
+            {
+                return null;
+            }
+
+            var size = cell.ActualSize;
+            return (ToFace(cell, new Point(size.X / 2, size.Y / 2)), (float)cell.ArtSize * FaceScale / WalletStickerView.BaseSize);
+        }
+
+        // The same, for the gift carried over the window.
+        private (Vector2 Center, float Scale)? GetCarrierHome(TonNft collectible)
+        {
+            if (VisibleCellOf(collectible.Address) is not WalletCollectibleCell cell)
+            {
+                return null;
+            }
+
+            var size = cell.ActualSize;
+            var center = cell.TransformToVisual(DragLayer).TransformPoint(new Point(size.X / 2, size.Y / 2));
+
+            return (new Vector2((float)center.X, (float)center.Y), (float)cell.ArtSize * FaceScale / WalletStickerView.BaseSize);
+        }
+
+        // Face units to a pixel of the card as it is shown.
+        private float FaceScale => Card.ActualSize.X > 0
+            ? WalletStickerLayer.FaceWidth / Card.ActualSize.X
+            : 1;
+
+        private Vector2 ToFace(DragEventArgs e)
+        {
+            return ToFace(DropRoot, e.GetPosition(DropRoot));
+        }
+
+        // Whether a transform through the card includes the pin's translation is not relied on:
+        // the point goes to the card's parent, which is not translated, and from there into the
+        // card by its layout offset and the pin offset. Between the card and its stickers the
+        // translation is common to both either way.
+        private Vector2 ToFace(UIElement from, Point point)
+        {
+            var parent = VisualTreeHelper.GetParent(Card) as UIElement;
+            var offset = Card.ActualOffset;
+
+            var local = from.TransformToVisual(parent).TransformPoint(point);
+            local = new Point(local.X - offset.X, local.Y - offset.Y - PinOffset);
+
+            var face = Card.TransformToVisual(Card.Stickers).TransformPoint(local);
+            return new Vector2((float)face.X, (float)face.Y);
+        }
+
+        private void Collectibles_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new WalletNftGridViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+
+                args.ItemContainer.ContextRequested += Collectible_ContextRequested;
+                args.ItemContainer.DragStarting += Collectible_DragStarting;
+                args.ItemContainer.DropCompleted += Collectible_DropCompleted;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void Collectibles_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is WalletCollectibleCell cell && args.Item is TonNft collectible)
+            {
+                cell.UpdateInfo(_clientService, collectible, IsOutOfCell(collectible.Address), Card.Stickers.Contains(collectible.Address));
+                args.ItemContainer.CanDrag = collectible.Gift != null;
+            }
+
+            args.Handled = true;
+        }
+
+        private void Collectibles_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            // By name: the NFT's own copy of the gift leaves out the owner.
+            if (e.ClickedItem is TonNft { Gift: UpgradedGift gift })
+            {
+                MessageHelper.NavigateToUpgradedGift(_clientService, _navigationService, gift.Name);
+            }
+        }
+
+        private void Collectible_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            if (CollectiblesList.ItemFromContainer(sender) is not TonNft { Gift: not null } collectible)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            CreateColorItem(flyout, collectible);
+
+            if (Card.Stickers.Contains(collectible.Address))
+            {
+                flyout.CreateFlyoutItem(RemoveFromCard, collectible, Strings.WalletCardRemoveFromCard, Icons.Sticker);
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(AddToCard, collectible, Strings.WalletCardAddToCard, Icons.Sticker);
+            }
+
+            flyout.ShowAt(sender, args);
+        }
+
+        private void OnStickerContextRequested(object sender, WalletStickerContextRequestedEventArgs e)
+        {
+            var collectible = e.Sticker.Collectible;
+            var flyout = new MenuFlyout();
+
+            CreateColorItem(flyout, collectible);
+            flyout.CreateFlyoutItem(RemoveStickerFromCard, collectible, Strings.WalletCardRemoveFromCard, Icons.Sticker);
+
+            flyout.ShowAt(e.Sticker, e.Args);
+        }
+
+        private void CreateColorItem(MenuFlyout flyout, TonNft collectible)
+        {
+            if (collectible.Address == _backgroundAddress)
+            {
+                flyout.CreateFlyoutItem(RemoveColor, Strings.WalletCardRemoveColor, Icons.Color);
+            }
+            else if (collectible.Gift.CanBeTonWalletCardBackground)
+            {
+                flyout.CreateFlyoutItem(ApplyColor, collectible, Strings.WalletCardApplyColor, Icons.Color);
+            }
+        }
+
+        private void AddToCard(TonNft collectible)
+        {
+            TryAddToCard(collectible);
+        }
+
+        private bool TryAddToCard(TonNft collectible)
+        {
+            if (Card.Stickers.Contains(collectible.Address))
+            {
+                return true;
+            }
+            else if (Card.Stickers.Count >= WalletStickerLayer.MaximumStickers)
+            {
+                ShowCardFull();
+                return false;
+            }
+
+            // Brought into view first, so the toss has somewhere to land that can be seen.
+            Pin(true, ActionHold);
+
+            Card.Stickers.Add(_clientService, collectible, GetHome(collectible));
+            UpdateCell(collectible.Address);
+            return true;
+        }
+
+        // From the cell the card is left where it is, out of view or not: the sticker flies home
+        // to the cell either way.
+        private void RemoveFromCard(TonNft collectible)
+        {
+            if (collectible.Address == _backgroundAddress)
+            {
+                RemoveColor();
+            }
+
+            Card.Stickers.Remove(collectible.Address);
+        }
+
+        private void RemoveStickerFromCard(TonNft collectible)
+        {
+            Pin(true, ActionHold / 2);
+            RemoveFromCard(collectible);
+        }
+
+        private void ApplyColor(TonNft collectible)
+        {
+            if (!TryAddToCard(collectible) || Card.Stickers.Find(collectible.Address) is not WalletStickerView sticker)
+            {
+                return;
+            }
+
+            Pin(true, ActionHold);
+
+            _backgroundAddress = collectible.Address;
+            Card.SetStyle(_clientService, collectible.Gift, new Vector2(sticker.X.Target, sticker.Y.Target), true);
+
+            Save();
+        }
+
+        private void RemoveColor()
+        {
+            var sticker = Card.Stickers.Find(_backgroundAddress);
+            var origin = sticker != null
+                ? sticker.Center
+                : new Vector2(WalletStickerLayer.FaceWidth / 2, WalletStickerLayer.FaceHeight / 2);
+
+            _backgroundAddress = string.Empty;
+            Card.SetStyle(_clientService, null, origin, true);
+
+            Save();
+        }
+
+        private void ShowCardFull()
+        {
+            _navigationService.ShowToast(string.Format(Strings.WalletCardFull, WalletStickerLayer.MaximumStickers), ToastPopupIcon.Info);
+        }
+
+        #endregion
+
+        #region Drag and drop
+
+        // From the moment the gift leaves its cell it is carried by DragLayer, and the system's
+        // drag visual is empty, then hidden while it is over the window. Dropped on the card, the
+        // card's own sticker, made when the drag started, takes over where the carried one is.
+        //
+        // The drag starts from the container, not from the list's CanDragItems: the list draws
+        // its own visual of the item before anything can replace it.
+
+        private void Collectible_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            if (CollectiblesList.ItemFromContainer(sender) is not TonNft { Gift: not null } collectible || Card.Stickers.Contains(collectible.Address))
+            {
+                args.Cancel = true;
+                return;
+            }
+            else if (Card.Stickers.Count >= WalletStickerLayer.MaximumStickers)
+            {
+                args.Cancel = true;
+                ShowCardFull();
+                return;
+            }
+
+            _dragged = collectible;
+            _carried = collectible.Address;
+
+            args.AllowedOperations = DataPackageOperation.Copy;
+            args.Data.RequestedOperation = DataPackageOperation.Copy;
+            args.DragUI.SetContentFromSoftwareBitmap(_emptyDragContent ??= new SoftwareBitmap(BitmapPixelFormat.Bgra8, 1, 1, BitmapAlphaMode.Premultiplied));
+
+            Card.Stickers.Deselect();
+            Card.Stickers.Prepare(_clientService, collectible);
+            Pin(true);
+
+            // The size it will have on the card.
+            DragLayerScale.ScaleX = DragLayerScale.ScaleY = 1 / FaceScale;
+
+            var home = GetCarrierHome(collectible);
+            DragLayer.PickUp(_clientService, collectible, home, home?.Center ?? Vector2.Zero);
+
+            UpdateCell(collectible.Address);
+        }
+
+        private SoftwareBitmap _emptyDragContent;
+
+        private void Collectible_DropCompleted(UIElement sender, DropCompletedEventArgs args)
+        {
+            _dragged = null;
+
+            // Dropped, it is landing; carried away, it goes back into its cell.
+            if (args.DropResult == DataPackageOperation.None)
+            {
+                Card.Stickers.HidePreview(false);
+                DragLayer.ReturnPreview();
+                Pin(false);
+            }
+        }
+
+        private void OnCarriedLeft(object sender, TonNft collectible)
+        {
+            if (_carried == collectible.Address)
+            {
+                _carried = null;
+            }
+
+            UpdateCell(collectible.Address);
+        }
+
+        private void OnDragOver(object sender, DragEventArgs e)
+        {
+            if (_dragged == null)
+            {
+                return;
+            }
+
+            e.DragUIOverride.IsContentVisible = false;
+            e.DragUIOverride.IsCaptionVisible = false;
+            e.DragUIOverride.IsGlyphVisible = false;
+
+            var position = e.GetPosition(DragLayer);
+            DragLayer.MovePreview(new Vector2((float)position.X, (float)position.Y));
+
+            e.AcceptedOperation = WalletStickerLayer.IsOnCard(ToFace(e))
+                ? DataPackageOperation.Copy
+                : DataPackageOperation.None;
+
+            e.Handled = true;
+        }
+
+        private void OnDragLeave(object sender, DragEventArgs e)
+        {
+            DragLayer.FadePreview();
+        }
+
+        private void OnDrop(object sender, DragEventArgs e)
+        {
+            var collectible = _dragged;
+            if (collectible == null)
+            {
+                return;
+            }
+
+            if (Card.Stickers.Drop(_clientService, collectible, ToFace(e), DragLayer.PreviewMotion))
+            {
+                DragLayer.HidePreview(false);
+
+                _carried = null;
+                UpdateCell(collectible.Address);
+
+                Pin(true, DropHold);
+            }
+
+            e.Handled = true;
+        }
+
+        #endregion
+
+        #region Card pin
+
+        // While a gift is on its way to the card, the card comes down over the list to meet it, as
+        // far as just under the title bar, and goes back once the gift has landed. Translated
+        // rather than scrolled to, so the list stays where the user left it.
+
+        // How long the card stays down after an action from the menu, for the toss and the colour
+        // wave, and after a drop, for the roll-on.
+        private const double ActionHold = 2.6;
+        private const double DropHold = 1.2;
+
+        // Under the title bar, measured from the top of the scroll viewer, which starts 8 above it.
+        private const float PinInset = 40 + 8 + 8;
+
+        private CompositionPropertySet _pin;
+        private float _pinTop;
+        private bool _pinned;
+        private bool _pinRaised;
+        private DispatcherTimer _unpinTimer;
+
+        // How far the translation has moved the card, which layout does not know about: hit
+        // testing and TransformToVisual still see it where it was.
+        private float PinOffset => _pinned
+            ? Math.Max(0, (float)ScrollingHost.VerticalOffset - _pinTop)
+            : 0;
+
+        private void AttachPin()
+        {
+            if (_pin != null)
+            {
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(Card);
+            var scroll = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Card, true);
+
+            _pin = visual.Compositor.CreatePropertySet();
+            _pin.InsertScalar("Pinned", 0);
+            _pin.InsertScalar("Top", _pinTop);
+
+            var translation = visual.Compositor.CreateExpressionAnimation("max(0, -scroll.Translation.Y - pin.Top) * pin.Pinned");
+            translation.SetReferenceParameter("scroll", scroll);
+            translation.SetReferenceParameter("pin", _pin);
+
+            visual.StartAnimation("Translation.Y", translation);
+        }
+
+        private void UpdatePinTop()
+        {
+            if (ScrollingHost.Content is not UIElement content || VisualTreeHelper.GetParent(Card) is not UIElement parent)
+            {
+                return;
+            }
+
+            // Through the parent, as in ToFace, so a header resize while pinned doesn't count the
+            // translation in.
+            var offset = Card.ActualOffset;
+            _pinTop = (float)parent.TransformToVisual(content).TransformPoint(new Point(offset.X, offset.Y)).Y - PinInset;
+            _pin?.InsertScalar("Top", _pinTop);
+        }
+
+        private void Pin(bool pinned, double releaseAfter = 0)
+        {
+            _unpinTimer?.Stop();
+
+            if (pinned && releaseAfter > 0)
+            {
+                if (_unpinTimer == null)
+                {
+                    _unpinTimer = new DispatcherTimer();
+                    _unpinTimer.Tick += OnUnpinTick;
+                }
+
+                _unpinTimer.Interval = TimeSpan.FromSeconds(releaseAfter);
+                _unpinTimer.Start();
+            }
+
+            if (_pin == null || _pinned == pinned)
+            {
+                return;
+            }
+
+            _pinned = pinned;
+
+            if (pinned)
+            {
+                _pinRaised = true;
+                UpdateCardLayer();
+            }
+
+            var animation = _pin.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(1, pinned ? 1 : 0);
+            animation.Duration = TimeSpan.FromMilliseconds(pinned ? 250 : 350);
+
+            var batch = _pin.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += OnPinCompleted;
+
+            _pin.StartAnimation("Pinned", animation);
+            batch.End();
+        }
+
+        private void OnPinCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= OnPinCompleted;
+            }
+
+            // Back in the header, under the sticky parts again.
+            if (!_pinned)
+            {
+                _pinRaised = false;
+                UpdateCardLayer();
+            }
+        }
+
+        private void OnStickersActiveChanged(object sender, EventArgs e)
+        {
+            UpdateCardLayer();
+        }
+
+        // Over the sticky header, the buttons and the tabs while it is down, and while a sticker
+        // may be beyond its edge: one in hand or flying home is drawn as part of the card.
+        private void UpdateCardLayer()
+        {
+            Canvas.SetZIndex(Card, _pinRaised || Card.Stickers.IsActive ? 2 : 0);
+        }
+
+        private void OnUnpinTick(object sender, object e)
+        {
+            _unpinTimer.Stop();
+            Pin(false);
+        }
+
+        #endregion
     }
 }

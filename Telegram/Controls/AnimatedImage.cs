@@ -718,6 +718,7 @@ namespace Telegram.Controls
             _surfaceBrush ??= new AnimatedImageSurfaceBrush();
             _surfaceBrush.Update(surface.Surface, Stretch);
             _surfaceBrush.TintColor = GetTintColor();
+            _surfaceBrush.SetEffect(_effect, _effectColor, _effectBlur);
 
             LayoutRoot.Background = _surfaceBrush;
 
@@ -754,6 +755,23 @@ namespace Telegram.Controls
             _shown?.Release();
             _shown = surface;
             return true;
+        }
+
+        private AnimatedImageEffect _effect;
+        private Color _effectColor;
+        private float _effectBlur;
+
+        /// <summary>
+        /// Draws the frame through an effect rather than as it is. Set from code; the image
+        /// applies it from its next frame, or at once if it is showing one.
+        /// </summary>
+        public void SetEffect(AnimatedImageEffect effect, Color color, float blur)
+        {
+            _effect = effect;
+            _effectColor = color;
+            _effectBlur = blur;
+
+            _surfaceBrush?.SetEffect(effect, color, blur);
         }
 
         private Color? GetTintColor()
@@ -2621,6 +2639,17 @@ namespace Telegram.Controls
     public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled, AnimatedImageResizeMode ResizeMode, bool IsPopup);
 
     /// <summary>
+    /// What an AnimatedImage can draw its frame through.
+    /// </summary>
+    public enum AnimatedImageEffect
+    {
+        None,
+
+        // The art's shape in one colour, blurred.
+        Silhouette
+    }
+
+    /// <summary>
     /// Paints a presenter's composition surface as a XAML brush, optionally recoloured. The tint is
     /// an effect over the surface itself: a colour matrix that keeps only the alpha, then a tint.
     /// </summary>
@@ -2629,6 +2658,14 @@ namespace Telegram.Controls
         private CompositionDrawingSurface _surface;
         private CompositionStretch _stretch = CompositionStretch.Uniform;
         private Color? _tintColor;
+
+        private AnimatedImageEffect _effect;
+        private Color _effectColor;
+        private float _effectBlur;
+        private CompositionEffectBrush _customBrush;
+
+        [ThreadStatic]
+        private static CompositionEffectFactory _silhouetteFactory;
 
         private CompositionSurfaceBrush _surfaceBrush;
         private CompositionEffectBrush _effectBrush;
@@ -2677,6 +2714,41 @@ namespace Telegram.Controls
             }
         }
 
+        public void SetEffect(AnimatedImageEffect effect, Color color, float blur)
+        {
+            if (_effect == effect && _effectColor == color && _effectBlur == blur)
+            {
+                return;
+            }
+
+            var kind = _effect != effect;
+
+            _effect = effect;
+            _effectColor = color;
+            _effectBlur = blur;
+
+            if (_surfaceBrush == null)
+            {
+                return;
+            }
+
+            if (kind)
+            {
+                Rebuild();
+            }
+            else if (_customBrush != null)
+            {
+                // The same graph with new numbers: a size change moves the blur every frame a
+                // sticker is resized, which must not rebuild the brush.
+                _customBrush.Properties.InsertScalar("Blur.BlurAmount", blur);
+
+                if (effect == AnimatedImageEffect.Silhouette)
+                {
+                    _customBrush.Properties.InsertColor("Tint.Color", color);
+                }
+            }
+        }
+
         protected override void OnConnected()
         {
             Rebuild();
@@ -2685,6 +2757,9 @@ namespace Telegram.Controls
         protected override void OnDisconnected()
         {
             CompositionBrush = null;
+
+            _customBrush?.Dispose();
+            _customBrush = null;
 
             _effectBrush?.Dispose();
             _effectBrush = null;
@@ -2708,6 +2783,21 @@ namespace Telegram.Controls
                 _surfaceBrush.Stretch = _stretch;
             }
 
+            if (_effect != AnimatedImageEffect.None)
+            {
+                _customBrush?.Dispose();
+                _customBrush = GetSilhouetteFactory(compositor).CreateBrush();
+                _customBrush.SetSourceParameter("Source", _surfaceBrush);
+                _customBrush.Properties.InsertScalar("Blur.BlurAmount", _effectBlur);
+                _customBrush.Properties.InsertColor("Tint.Color", _effectColor);
+
+                CompositionBrush = _customBrush;
+                return;
+            }
+
+            _customBrush?.Dispose();
+            _customBrush = null;
+
             if (_tintColor is not Color tint)
             {
                 _effectBrush?.Dispose();
@@ -2730,6 +2820,34 @@ namespace Telegram.Controls
 
             _effectBrush.Properties.InsertColor("Tint.Color", tint);
             CompositionBrush = _effectBrush;
+        }
+
+        private static CompositionEffectFactory GetSilhouetteFactory(Compositor compositor)
+        {
+            if (_silhouetteFactory != null)
+            {
+                return _silhouetteFactory;
+            }
+
+            // The coverage in white: colour from the offsets, alpha kept.
+            var white = new Matrix5x4 { M51 = 1, M52 = 1, M53 = 1, M44 = 1 };
+
+            var silhouette = new GaussianBlurEffect
+            {
+                Name = "Blur",
+                BorderMode = EffectBorderMode.Soft,
+                Source = new TintEffect
+                {
+                    Name = "Tint",
+                    Source = new ColorMatrixEffect
+                    {
+                        Source = new CompositionEffectSourceParameter("Source"),
+                        ColorMatrix = white
+                    }
+                }
+            };
+
+            return _silhouetteFactory = compositor.CreateEffectFactory(silhouette, new[] { "Blur.BlurAmount", "Tint.Color" });
         }
 
         private static CompositionEffectFactory GetFactory(Compositor compositor, bool opaque)
