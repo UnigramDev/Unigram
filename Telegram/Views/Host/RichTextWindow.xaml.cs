@@ -28,6 +28,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
@@ -1977,7 +1978,39 @@ namespace Telegram.Views.Host
             return false;
         }
 
-        private async void Send_Click(object sender, RoutedEventArgs e)
+        private void Send_Click(object sender, RoutedEventArgs e)
+        {
+            Send(SchedulingState.Auto, false);
+        }
+
+        // The composer's menu, but for the effects: those play in the chat, which this window is not.
+        private void Send_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            // An edit goes as it is, with nothing to send it with.
+            if (_messageId != 0 || !_clientService.TryGetChat(_chatId, out Chat chat))
+            {
+                return;
+            }
+
+            var self = _clientService.IsSavedMessages(chat);
+
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(() => Send(SchedulingState.Auto, true), Strings.SendWithoutSound, Icons.AlertOff);
+
+            if (!_clientService.IsPaid(chat) && !_clientService.IsDirectMessagesGroup(chat))
+            {
+                if (_clientService.TryGetUser(chat, out User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
+                {
+                    flyout.CreateFlyoutItem(() => Send(SchedulingState.WhenOnline, false), Strings.SendWhenOnline, Icons.PersonCircleOnline);
+                }
+
+                flyout.CreateFlyoutItem(() => Send(SchedulingState.Schedule, false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+            }
+
+            flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight);
+        }
+
+        private async void Send(SchedulingState schedule, bool silent)
         {
             var richMessage = GetInputModel(Editor.Uploads);
             if (richMessage == null || !CheckLimits())
@@ -2001,8 +2034,10 @@ namespace Telegram.Views.Host
             {
                 if (PageBlockHelper.TryGetFormattedText(richMessage, out FormattedText formatted))
                 {
-                    await SendAsync(new InputMessageText(formatted, null, false));
-                    Close();
+                    if (await SendAsync(new InputMessageText(formatted, null, false), schedule, silent))
+                    {
+                        Close();
+                    }
                 }
                 else
                 {
@@ -2013,15 +2048,64 @@ namespace Telegram.Views.Host
             }
 
             _mediaSent = true;
-            await SendAsync(new InputMessageRichMessage(richMessage, true));
-            Close();
+
+            if (await SendAsync(new InputMessageRichMessage(richMessage, true), schedule, silent))
+            {
+                Close();
+            }
         }
 
-        private async Task SendAsync(InputMessageContent content)
+        // As the composer's PrepareSendAsync asks before a send: whether to pay, then when to send.
+        // False when either is declined, and the window stays open.
+        private async Task<bool> SendAsync(InputMessageContent content, SchedulingState schedule, bool silent)
         {
+            if (!_clientService.TryGetChat(_chatId, out Chat chat))
+            {
+                return false;
+            }
+
+            var paidMessageStarCount = PaidMessageHelper.OutgoingStarCount(_clientService, chat);
+
+            if (!await PaidMessageHelper.ConfirmAsync(_navigationService, _clientService.Session.Settings, chat, 1, paidMessageStarCount))
+            {
+                _mediaSent = false;
+                return false;
+            }
+
+            MessageSchedulingState schedulingState = null;
+
+            if (schedule == SchedulingState.Schedule)
+            {
+                var popup = new ScheduleMessagePopup(_clientService, _navigationService, _clientService.GetUser(chat), _clientService.IsSavedMessages(chat));
+                await popup.ShowQueuedAsync(XamlRoot);
+
+                if (popup.SchedulingState == null)
+                {
+                    _mediaSent = false;
+                    return false;
+                }
+
+                schedulingState = popup.SchedulingState;
+            }
+            else if (schedule == SchedulingState.WhenOnline)
+            {
+                schedulingState = new MessageSchedulingStateSendWhenOnline();
+            }
+
             var options = _sendOptions ?? new MessageSendOptions();
             options.SendingId = Math.Max(options.SendingId, 1);
+            options.DisableNotification = silent;
+            options.SchedulingState = schedulingState;
+            options.PaidMessageStarCount = paidMessageStarCount;
+
             await _clientService.SendAsync(new SendMessage(_chatId, _topic, _replyTo, options, content));
+
+            if (schedulingState != null)
+            {
+                _navigationService.NavigateToChat(chat, scheduled: true);
+            }
+
+            return true;
         }
 
         private void Close()

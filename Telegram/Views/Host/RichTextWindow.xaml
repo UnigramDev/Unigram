@@ -1086,6 +1086,7 @@
                                       AutomationProperties.Name="{CustomResource Send}"
                                       ToolTipService.ToolTip="{CustomResource Send}"
                                       Click="Send_Click"
+                                      ContextRequested="Send_ContextRequested"
                                       Glyph="&#xEB06;"
                                       CornerRadius="20"
                                       FontSize="24" />
