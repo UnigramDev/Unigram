@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Messages;
+using Telegram.Controls.RichEditor;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
@@ -50,6 +51,12 @@ namespace Telegram.ViewModels
         /// selection as text, for copy and translate.
         /// </summary>
         public Vector<RichText> RichTexts { get; set; } = Vector<RichText>.Empty;
+
+        /// <summary>
+        /// A selection in a rich message as the blocks it covers, which is what copying it puts
+        /// on the clipboard.
+        /// </summary>
+        public RichDocument Fragment { get; set; }
 
         public int Position { get; set; }
 
@@ -1135,7 +1142,8 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageRichMessage richMessage)
             {
-                input = PageBlockHelper.GetFormattedText(richMessage.Message);
+                RichClipboard.Copy(XamlRoot, RichDocumentConverter.FromRichMessage(richMessage.Message));
+                return;
             }
 
             if (input != null)
@@ -1146,6 +1154,12 @@ namespace Telegram.ViewModels
 
         public void CopyMessage(MessageQuote quote)
         {
+            if (quote?.Fragment != null)
+            {
+                RichClipboard.Copy(XamlRoot, quote.Fragment);
+                return;
+            }
+
             var input = quote?.Quote;
             if (input != null)
             {

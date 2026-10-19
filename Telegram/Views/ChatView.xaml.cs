@@ -3558,7 +3558,8 @@ namespace Telegram.Views
                         quote = new MessageQuote
                         {
                             Message = message,
-                            Quote = selection
+                            Quote = selection,
+                            Fragment = parent.GetSelectionFragment()
                         };
 
                         if (bubble.MediaTemplateRoot is InstantContent instant && instant.TryGetQuote(parent.SelectedRanges, ViewModel.ClientService.Options.MessageReplyQuoteLengthMax, out Vector<RichText> texts, out int position))

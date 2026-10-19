@@ -10,8 +10,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Td.Api;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml;
 
 namespace Telegram.Controls.RichEditor
 {
@@ -42,6 +45,42 @@ namespace Telegram.Controls.RichEditor
         public static RichDocument Take(string token)
         {
             return token != null && token == _token ? _fragment : null;
+        }
+
+        /// <summary>
+        /// <see cref="CopyAsync"/>, with the toast <see cref="MessageHelper.CopyText(XamlRoot, FormattedText)"/>
+        /// shows for a copy out of a chat.
+        /// </summary>
+        public static async void Copy(XamlRoot xamlRoot, RichDocument fragment)
+        {
+            if (await CopyAsync(fragment) && xamlRoot != null)
+            {
+                ToastPopup.Show(xamlRoot, Strings.TextCopied, ToastPopupIcon.Copied);
+            }
+        }
+
+        /// <summary>
+        /// The fragment on the clipboard in every form another place can take: plain text, the
+        /// chat's text with entities, HTML, and a token naming the fragment itself for a paste
+        /// into an editor.
+        /// </summary>
+        public static async Task<bool> CopyAsync(RichDocument fragment)
+        {
+            var package = new DataPackage();
+
+            try
+            {
+                await MessageHelper.SetTextAsync(package, ToFormattedText(fragment));
+                package.SetHtmlFormat(HtmlFormatHelper.CreateHtmlFormat(ToHtml(fragment)));
+                package.SetData(FormatId, Store(fragment));
+            }
+            catch
+            {
+                return false;
+            }
+
+            ClipboardEx.TrySetContent(package);
+            return true;
         }
 
         // =====================================================================================

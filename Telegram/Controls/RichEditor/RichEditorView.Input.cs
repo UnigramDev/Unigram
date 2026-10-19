@@ -1732,33 +1732,10 @@ namespace Telegram.Controls.RichEditor
             await CopyAsync();
         }
 
-        /// <summary>
-        /// The selection in every form another place can take: plain text, the chat's text with
-        /// entities, HTML, and a token naming the whole fragment for a paste back in here.
-        /// </summary>
         private async Task<bool> CopyAsync()
         {
             var fragment = _engine.GetSelectionFragment();
-            if (fragment == null)
-            {
-                return false;
-            }
-
-            var package = new DataPackage();
-
-            try
-            {
-                await MessageHelper.SetTextAsync(package, RichClipboard.ToFormattedText(fragment));
-                package.SetHtmlFormat(HtmlFormatHelper.CreateHtmlFormat(RichClipboard.ToHtml(fragment)));
-                package.SetData(RichClipboard.FormatId, RichClipboard.Store(fragment));
-            }
-            catch
-            {
-                return false;
-            }
-
-            ClipboardEx.TrySetContent(package);
-            return true;
+            return fragment != null && await RichClipboard.CopyAsync(fragment);
         }
 
         public async void Cut()

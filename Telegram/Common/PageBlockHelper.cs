@@ -1215,34 +1215,7 @@ namespace Telegram.Common
             var nodes = new List<QuoteNode>();
             CollectQuoteNodes(blocks, nodes);
 
-            // A caption is one control for its text and its credit, laid out as ProcessCaption
-            // lays them out: a line feed between the two when both are there.
-            var parts = new List<RichQuoteRange>(ranges.Count + 1);
-
-            foreach (var range in ranges)
-            {
-                if (range.Source is PageBlockCaption caption)
-                {
-                    var textEmpty = IsEmpty(caption.Text);
-                    var creditEmpty = IsEmpty(caption.Credit);
-
-                    if (!textEmpty && !creditEmpty)
-                    {
-                        var split = GetQuoteLength(caption.Text);
-
-                        parts.Add(new RichQuoteRange(caption.Text, range.Start, Math.Min(range.End, split)));
-                        parts.Add(new RichQuoteRange(caption.Credit, Math.Max(range.Start - split - 1, 0), range.End - split - 1));
-                    }
-                    else
-                    {
-                        parts.Add(new RichQuoteRange(textEmpty ? caption.Credit : caption.Text, range.Start, range.End));
-                    }
-                }
-                else
-                {
-                    parts.Add(range);
-                }
-            }
+            var parts = SplitQuoteCaptions(ranges);
 
             int first = -1, last = -1;
             int start = 0, end = 0;
@@ -1358,6 +1331,120 @@ namespace Telegram.Common
 
             texts = result;
             return true;
+        }
+
+        /// <summary>
+        /// A selection in a rich message as ranges over the texts and formulas of
+        /// <paramref name="blocks"/> themselves, in reading order: a caption split into its text
+        /// and its credit, and an element kept across an edit read as the equal text it shows.
+        /// Ranges over nothing, or over nothing in <paramref name="blocks"/>, are left out.
+        /// </summary>
+        public static List<RichQuoteRange> GetSelectionRanges(Vector<PageBlock> blocks, IReadOnlyList<RichQuoteRange> ranges)
+        {
+            var nodes = new List<QuoteNode>();
+            CollectQuoteNodes(blocks, nodes);
+
+            var result = new List<RichQuoteRange>(ranges.Count + 1);
+            var hint = 0;
+
+            foreach (var part in SplitQuoteCaptions(ranges))
+            {
+                if (part.End <= part.Start)
+                {
+                    continue;
+                }
+
+                var index = FindQuoteNode(nodes, part.Source, hint);
+                if (index < 0)
+                {
+                    continue;
+                }
+
+                hint = index;
+                result.Add(new RichQuoteRange(nodes[index].Source, part.Start, part.End));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// An offset in the flattened <paramref name="text"/> as one in the editor's leaf made
+        /// from it, where an emoji, a formula, a button, an icon and an anchor are a position
+        /// each - or, for a <paramref name="plain"/> leaf, in its plain text. An offset inside an
+        /// object goes before it, or past it for the <paramref name="end"/> of a range.
+        /// </summary>
+        public static int ToLeafOffset(RichText text, int offset, bool plain, bool end)
+        {
+            var position = 0;
+            var result = 0;
+
+            foreach (var leaf in GetQuoteLeaves(text))
+            {
+                if (position >= offset)
+                {
+                    break;
+                }
+
+                var size = GetQuoteLeafLength(leaf, out bool counted);
+                int units;
+
+                if (plain)
+                {
+                    units = counted ? size : 0;
+                }
+                else if (leaf is RichTextPlain)
+                {
+                    units = size;
+                }
+                else
+                {
+                    units = leaf is RichTextCustomEmoji or RichTextMathematicalExpression or RichTextButton or RichTextIcon or RichTextAnchor ? 1 : 0;
+                }
+
+                if (offset < position + size)
+                {
+                    return result + (units == size ? offset - position : end ? units : 0);
+                }
+
+                result += units;
+                position += size;
+            }
+
+            return result;
+        }
+
+        // A caption is one control for its text and its credit, laid out as ProcessCaption lays
+        // them out: a line feed between the two when both are there.
+        private static List<RichQuoteRange> SplitQuoteCaptions(IReadOnlyList<RichQuoteRange> ranges)
+        {
+            var parts = new List<RichQuoteRange>(ranges.Count + 1);
+
+            foreach (var range in ranges)
+            {
+                if (range.Source is PageBlockCaption caption)
+                {
+                    var textEmpty = IsEmpty(caption.Text);
+                    var creditEmpty = IsEmpty(caption.Credit);
+
+                    if (!textEmpty && !creditEmpty)
+                    {
+                        var split = GetQuoteLength(caption.Text);
+
+                        parts.Add(new RichQuoteRange(caption.Text, range.Start, Math.Min(range.End, split)));
+                        parts.Add(new RichQuoteRange(caption.Credit, Math.Max(range.Start - split - 1, 0), range.End - split - 1));
+                    }
+                    else
+                    {
+                        parts.Add(new RichQuoteRange(textEmpty ? caption.Credit : caption.Text, range.Start, range.End));
+                    }
+                }
+                else
+                {
+                    parts.Add(range);
+                }
+            }
+
+            return parts;
         }
 
         /// <summary>

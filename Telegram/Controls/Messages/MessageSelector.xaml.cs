@@ -17,6 +17,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Messages.Service;
+using Telegram.Controls.RichEditor;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -65,7 +66,27 @@ namespace Telegram.Controls.Messages
 
         public bool HasSelection => _textSelectionManager?.HasSelection ?? false;
 
-        public void CopySelectionToClipboard() => _textSelectionManager?.CopySelectionToClipboard();
+        public void CopySelectionToClipboard()
+        {
+            if (GetSelectionFragment() is RichDocument fragment)
+            {
+                RichClipboard.Copy(XamlRoot, fragment);
+            }
+            else
+            {
+                _textSelectionManager?.CopySelectionToClipboard();
+            }
+        }
+
+        /// <summary>
+        /// The selection in a rich message as the blocks it covers; null for any other message.
+        /// </summary>
+        public RichDocument GetSelectionFragment()
+        {
+            return _textSelectionManager is { HasSelection: true } && Content is MessageBubble { MediaTemplateRoot: InstantContent instant }
+                ? instant.GetSelectionFragment(_textSelectionManager.SelectedRanges)
+                : null;
+        }
 
         public FormattedText GetSelectedText() => _textSelectionManager?.GetSelectedText();
 

@@ -49,12 +49,21 @@ namespace Telegram.Controls.RichEditor
 
         public static RichDocument FromPageBlocks(IReadOnlyList<PageBlock> blocks)
         {
+            return FromPageBlocks(blocks, null);
+        }
+
+        /// <summary>
+        /// The document, and in <paramref name="sources"/> the stop each text and formula of
+        /// <paramref name="blocks"/> became, by the object it was read from.
+        /// </summary>
+        public static RichDocument FromPageBlocks(IReadOnlyList<PageBlock> blocks, Dictionary<object, RichStop> sources)
+        {
             var result = new List<RichBlock>();
             if (blocks != null)
             {
                 foreach (var block in blocks)
                 {
-                    AddBlock(block, result);
+                    AddBlock(block, result, sources);
                 }
             }
 
@@ -63,7 +72,118 @@ namespace Telegram.Controls.RichEditor
             return document;
         }
 
-        private static void AddBlocks(IReadOnlyList<PageBlock> blocks, List<RichBlock> result)
+        /// <summary>
+        /// The part of <paramref name="blocks"/> a selection covers, cut as the editor cuts its
+        /// own selection for copy. <paramref name="ranges"/> are over the texts and formulas of
+        /// <paramref name="blocks"/> themselves (<see cref="PageBlockHelper.GetSelectionRanges"/>).
+        /// Null when none of them made it into the document.
+        /// </summary>
+        public static RichDocument FromSelection(IReadOnlyList<PageBlock> blocks, IReadOnlyList<RichQuoteRange> ranges)
+        {
+            var sources = new Dictionary<object, RichStop>();
+            var document = FromPageBlocks(blocks, sources);
+
+            // A collapsed quote and a closed details block have no stops inside them, and the
+            // selection may have been made with them open. They are closed again afterwards.
+            var closed = new List<RichBlock>();
+
+            foreach (var block in document.AllBlocks)
+            {
+                if (block is RichBlockQuote { IsCollapsed: true } quote)
+                {
+                    quote.IsCollapsed = false;
+                    closed.Add(quote);
+                }
+                else if (block is RichDetailsBlock { IsOpen: false } details)
+                {
+                    details.IsOpen = true;
+                    closed.Add(details);
+                }
+            }
+
+            if (closed.Count > 0)
+            {
+                document.Reindex();
+            }
+
+            int startStop = -1, startOffset = 0;
+            int endStop = -1, endOffset = 0;
+
+            foreach (var range in ranges)
+            {
+                if (!sources.TryGetValue(range.Source, out RichStop stop))
+                {
+                    continue;
+                }
+
+                var index = GetStopIndex(document, stop);
+                if (index < 0)
+                {
+                    continue;
+                }
+
+                int from = 0, to = 0;
+
+                if (stop.Leaf != null && range.Source is RichText text)
+                {
+                    from = PageBlockHelper.ToLeafOffset(text, range.Start, stop.Leaf.IsPlain, false);
+                    to = PageBlockHelper.ToLeafOffset(text, range.End, stop.Leaf.IsPlain, true);
+                }
+
+                if (startStop < 0 || index < startStop || (index == startStop && from < startOffset))
+                {
+                    startStop = index;
+                    startOffset = from;
+                }
+
+                if (index > endStop || (index == endStop && to > endOffset))
+                {
+                    endStop = index;
+                    endOffset = to;
+                }
+            }
+
+            if (startStop < 0)
+            {
+                return null;
+            }
+
+            RichEditorEngine.GetFragment(document, startStop, startOffset, endStop, endOffset);
+
+            if (closed.Count > 0)
+            {
+                foreach (var block in closed)
+                {
+                    if (block is RichBlockQuote quote)
+                    {
+                        quote.IsCollapsed = true;
+                    }
+                    else if (block is RichDetailsBlock details)
+                    {
+                        details.IsOpen = false;
+                    }
+                }
+
+                document.Reindex();
+            }
+
+            return document;
+        }
+
+        // A leaf only has a stop while it is in the document's reading order: an item of a
+        // collage, for one, keeps a caption it never shows.
+        private static int GetStopIndex(RichDocument document, RichStop stop)
+        {
+            if (stop.Leaf == null)
+            {
+                return document.GetStopIndex(stop.Block);
+            }
+
+            var index = stop.Leaf.StopIndex;
+            return index < document.Stops.Count && document.Stops[index].Leaf == stop.Leaf ? index : -1;
+        }
+
+        private static void AddBlocks(IReadOnlyList<PageBlock> blocks, List<RichBlock> result, Dictionary<object, RichStop> sources)
         {
             if (blocks == null)
             {
@@ -72,46 +192,46 @@ namespace Telegram.Controls.RichEditor
 
             foreach (var block in blocks)
             {
-                AddBlock(block, result);
+                AddBlock(block, result, sources);
             }
         }
 
-        private static void AddBlock(PageBlock block, List<RichBlock> result)
+        private static void AddBlock(PageBlock block, List<RichBlock> result, Dictionary<object, RichStop> sources)
         {
             switch (block)
             {
                 case PageBlockParagraph x:
-                    result.Add(Text(RichBlockKind.Paragraph, x.Text));
+                    result.Add(Text(RichBlockKind.Paragraph, x.Text, sources));
                     break;
                 case PageBlockSectionHeading x:
-                    result.Add(Heading(x.Text, Math.Clamp(x.Size, 1, 6)));
+                    result.Add(Heading(x.Text, Math.Clamp(x.Size, 1, 6), sources));
                     break;
                 case PageBlockTitle x:
-                    result.Add(Heading(x.Title, 1));
+                    result.Add(Heading(x.Title, 1, sources));
                     break;
                 case PageBlockSubtitle x:
-                    result.Add(Heading(x.Subtitle, 2));
+                    result.Add(Heading(x.Subtitle, 2, sources));
                     break;
                 case PageBlockHeader x:
-                    result.Add(Heading(x.Header, 2));
+                    result.Add(Heading(x.Header, 2, sources));
                     break;
                 case PageBlockSubheader x:
-                    result.Add(Heading(x.Subheader, 3));
+                    result.Add(Heading(x.Subheader, 3, sources));
                     break;
                 case PageBlockKicker x:
-                    result.Add(Text(RichBlockKind.Paragraph, x.Kicker));
+                    result.Add(Text(RichBlockKind.Paragraph, x.Kicker, sources));
                     break;
                 case PageBlockThinking x:
-                    result.Add(Text(RichBlockKind.Paragraph, x.Text));
+                    result.Add(Text(RichBlockKind.Paragraph, x.Text, sources));
                     break;
                 case PageBlockPreformatted x:
-                    result.Add(new RichParagraphBlock(RichBlockKind.Preformatted, ToLeaf(x.Text, RichLeafRole.Text, true))
+                    result.Add(new RichParagraphBlock(RichBlockKind.Preformatted, ToLeaf(x.Text, RichLeafRole.Text, sources, true))
                     {
                         Language = x.Language ?? string.Empty
                     });
                     break;
                 case PageBlockFooter x:
-                    result.Add(Text(RichBlockKind.Footer, x.Footer));
+                    result.Add(Text(RichBlockKind.Footer, x.Footer, sources));
                     break;
                 case PageBlockDivider:
                     result.Add(new RichDividerBlock());
@@ -120,53 +240,61 @@ namespace Telegram.Controls.RichEditor
                     result.Add(new RichAnchorBlock(x.Name));
                     break;
                 case PageBlockMathematicalExpression x:
-                    result.Add(new RichMathBlock(x.Expression));
-                    break;
+                    {
+                        var math = new RichMathBlock(x.Expression);
+                        if (sources != null)
+                        {
+                            sources[x] = new RichStop(math);
+                        }
+
+                        result.Add(math);
+                        break;
+                    }
                 case PageBlockList x:
-                    result.Add(List(x));
+                    result.Add(List(x, sources));
                     break;
                 case PageBlockBlockQuote x:
                     {
                         var children = new List<RichBlock>();
-                        AddBlocks(x.Blocks, children);
+                        AddBlocks(x.Blocks, children, sources);
                         EnsureText(children);
-                        result.Add(new RichBlockQuote(children, ToLeaf(x.Credit, RichLeafRole.Credit)));
+                        result.Add(new RichBlockQuote(children, ToLeaf(x.Credit, RichLeafRole.Credit, sources)));
                         break;
                     }
                 case PageBlockPullQuote x:
-                    result.Add(new RichTextQuote(ToLeaf(x.Text, RichLeafRole.Text), ToLeaf(x.Credit, RichLeafRole.Credit)));
+                    result.Add(new RichTextQuote(ToLeaf(x.Text, RichLeafRole.Text, sources), ToLeaf(x.Credit, RichLeafRole.Credit, sources)));
                     break;
                 case PageBlockExpandableBlockQuote x:
-                    result.Add(new RichBlockQuote(new List<RichBlock> { Text(RichBlockKind.Paragraph, x.Text) }, ToLeaf(x.Credit, RichLeafRole.Credit)) { IsCollapsed = true });
+                    result.Add(new RichBlockQuote(new List<RichBlock> { Text(RichBlockKind.Paragraph, x.Text, sources) }, ToLeaf(x.Credit, RichLeafRole.Credit, sources)) { IsCollapsed = true });
                     break;
                 case PageBlockDetails x:
                     {
                         var children = new List<RichBlock>();
-                        AddBlocks(x.Blocks, children);
+                        AddBlocks(x.Blocks, children, sources);
                         EnsureText(children);
-                        result.Add(new RichDetailsBlock(ToLeaf(x.Header, RichLeafRole.Header), children) { IsOpen = x.IsOpen });
+                        result.Add(new RichDetailsBlock(ToLeaf(x.Header, RichLeafRole.Header, sources), children) { IsOpen = x.IsOpen });
                         break;
                     }
                 case PageBlockTable x:
-                    result.Add(Table(x));
+                    result.Add(Table(x, sources));
                     break;
                 case PageBlockCollage x:
-                    result.Add(Group(false, x.Blocks, x.Caption));
+                    result.Add(Group(false, x.Blocks, x.Caption, sources));
                     break;
                 case PageBlockSlideshow x:
-                    result.Add(Group(true, x.Blocks, x.Caption));
+                    result.Add(Group(true, x.Blocks, x.Caption, sources));
                     break;
                 case PageBlockMap x:
-                    result.Add(new RichMapBlock(x.Location, x.Zoom, x.Width, x.Height, ToLeaf(x.Caption?.Text, RichLeafRole.Caption), ToLeaf(x.Caption?.Credit, RichLeafRole.Credit)));
+                    result.Add(new RichMapBlock(x.Location, x.Zoom, x.Width, x.Height, ToLeaf(x.Caption?.Text, RichLeafRole.Caption, sources), ToLeaf(x.Caption?.Credit, RichLeafRole.Credit, sources)));
                     break;
                 case PageBlockButtonRow x:
                     result.Add(new RichButtonRowBlock(new List<InlineButton>(x.Buttons)) { Align = x.Align });
                     break;
                 case PageBlockCover x:
-                    AddBlock(x.Cover, result);
+                    AddBlock(x.Cover, result, sources);
                     break;
                 default:
-                    if (Media(block) is RichMediaBlock media)
+                    if (Media(block, sources) is RichMediaBlock media)
                     {
                         result.Add(media);
                     }
@@ -178,14 +306,14 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
-        private static RichParagraphBlock Text(RichBlockKind kind, RichText text)
+        private static RichParagraphBlock Text(RichBlockKind kind, RichText text, Dictionary<object, RichStop> sources)
         {
-            return new RichParagraphBlock(kind, ToLeaf(text, RichLeafRole.Text));
+            return new RichParagraphBlock(kind, ToLeaf(text, RichLeafRole.Text, sources));
         }
 
-        private static RichParagraphBlock Heading(RichText text, int size)
+        private static RichParagraphBlock Heading(RichText text, int size, Dictionary<object, RichStop> sources)
         {
-            return new RichParagraphBlock(RichBlockKind.Heading, ToLeaf(text, RichLeafRole.Text)) { HeadingSize = size };
+            return new RichParagraphBlock(RichBlockKind.Heading, ToLeaf(text, RichLeafRole.Text, sources)) { HeadingSize = size };
         }
 
         /// <summary>A container needs a first text block for its caret to have somewhere to go.</summary>
@@ -197,7 +325,7 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
-        private static RichListBlock List(PageBlockList list)
+        private static RichListBlock List(PageBlockList list, Dictionary<object, RichStop> sources)
         {
             var style = RichListStyle.Bullet;
             var orderedType = "1";
@@ -222,7 +350,7 @@ namespace Telegram.Controls.RichEditor
             foreach (var item in list.Items)
             {
                 var children = new List<RichBlock>();
-                AddBlocks(item.Blocks, children);
+                AddBlocks(item.Blocks, children, sources);
                 EnsureText(children);
 
                 items.Add(new RichListItem(children) { IsChecked = item.IsChecked });
@@ -235,7 +363,7 @@ namespace Telegram.Controls.RichEditor
             };
         }
 
-        private static RichTableBlock Table(PageBlockTable table)
+        private static RichTableBlock Table(PageBlockTable table, Dictionary<object, RichStop> sources)
         {
             var rows = new List<List<RichTableCell>>(table.Cells.Count);
             foreach (var row in table.Cells)
@@ -243,7 +371,7 @@ namespace Telegram.Controls.RichEditor
                 var cells = new List<RichTableCell>(row.Count);
                 foreach (var cell in row)
                 {
-                    cells.Add(new RichTableCell(ToLeaf(cell.Text, RichLeafRole.Cell))
+                    cells.Add(new RichTableCell(ToLeaf(cell.Text, RichLeafRole.Cell, sources))
                     {
                         IsHeader = cell.IsHeader,
                         Colspan = Math.Max(1, cell.Colspan),
@@ -256,7 +384,7 @@ namespace Telegram.Controls.RichEditor
                 rows.Add(cells);
             }
 
-            return new RichTableBlock(rows, ToLeaf(table.Caption, RichLeafRole.Caption))
+            return new RichTableBlock(rows, ToLeaf(table.Caption, RichLeafRole.Caption, sources))
             {
                 IsBordered = table.IsBordered,
                 IsStriped = table.IsStriped,
@@ -264,24 +392,24 @@ namespace Telegram.Controls.RichEditor
             };
         }
 
-        private static RichMediaGroupBlock Group(bool isSlideshow, IReadOnlyList<PageBlock> blocks, PageBlockCaption caption)
+        private static RichMediaGroupBlock Group(bool isSlideshow, IReadOnlyList<PageBlock> blocks, PageBlockCaption caption, Dictionary<object, RichStop> sources)
         {
             var items = new List<RichBlock>();
             if (blocks != null)
             {
                 foreach (var block in blocks)
                 {
-                    if (Media(block) is RichMediaBlock media)
+                    if (Media(block, sources) is RichMediaBlock media)
                     {
                         items.Add(media);
                     }
                 }
             }
 
-            return new RichMediaGroupBlock(isSlideshow, items, ToLeaf(caption?.Text, RichLeafRole.Caption), ToLeaf(caption?.Credit, RichLeafRole.Credit));
+            return new RichMediaGroupBlock(isSlideshow, items, ToLeaf(caption?.Text, RichLeafRole.Caption, sources), ToLeaf(caption?.Credit, RichLeafRole.Credit, sources));
         }
 
-        private static RichMediaBlock Media(PageBlock block)
+        private static RichMediaBlock Media(PageBlock block, Dictionary<object, RichStop> sources)
         {
             RichMediaSource source;
             PageBlockCaption caption;
@@ -321,7 +449,7 @@ namespace Telegram.Controls.RichEditor
                     return null;
             }
 
-            return new RichMediaBlock(source, ToLeaf(caption?.Text, RichLeafRole.Caption), ToLeaf(caption?.Credit, RichLeafRole.Credit))
+            return new RichMediaBlock(source, ToLeaf(caption?.Text, RichLeafRole.Caption, sources), ToLeaf(caption?.Credit, RichLeafRole.Credit, sources))
             {
                 HasSpoiler = spoiler
             };
@@ -330,6 +458,18 @@ namespace Telegram.Controls.RichEditor
         // -------------------------------------------------------------------------------------
         // RichText -> leaf
         // -------------------------------------------------------------------------------------
+
+        private static RichTextLeaf ToLeaf(RichText text, RichLeafRole role, Dictionary<object, RichStop> sources, bool isPlain = false)
+        {
+            var leaf = ToLeaf(text, role, isPlain);
+
+            if (sources != null && text != null)
+            {
+                sources[text] = new RichStop(leaf);
+            }
+
+            return leaf;
+        }
 
         public static RichTextLeaf ToLeaf(RichText text, RichLeafRole role, bool isPlain = false)
         {

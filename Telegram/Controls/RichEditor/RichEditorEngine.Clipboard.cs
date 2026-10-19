@@ -33,17 +33,18 @@ namespace Telegram.Controls.RichEditor
             var start = Start;
             var end = End;
 
-            // The clone is indexed in the same order, so the selection's indices carry over.
-            var clone = _document.Clone();
-            var leaves = clone.Leaves;
+            // The clone is indexed in the same order, so the selection's stops carry over.
+            return GetFragment(_document.Clone(), start.Leaf.StopIndex, start.Offset, end.Leaf.StopIndex, end.Offset);
+        }
 
-            var startLeaf = leaves[start.Leaf.Index];
-            var endLeaf = leaves[end.Leaf.Index];
-
-            var startStop = startLeaf.StopIndex;
-            var endStop = endLeaf.StopIndex;
-
-            foreach (var leaf in leaves)
+        /// <summary>
+        /// <paramref name="document"/> cut down in place to what lies between two stops, as
+        /// <see cref="GetSelectionFragment"/> cuts a selection. The offsets are into the stops'
+        /// leaves; an atomic block at either end is kept whole.
+        /// </summary>
+        public static RichDocument GetFragment(RichDocument document, int startStop, int startOffset, int endStop, int endOffset)
+        {
+            foreach (var leaf in document.Leaves)
             {
                 if (leaf.StopIndex < startStop || leaf.StopIndex > endStop)
                 {
@@ -51,13 +52,21 @@ namespace Telegram.Controls.RichEditor
                 }
             }
 
-            endLeaf.Delete(end.Offset, endLeaf.Length);
-            startLeaf.Delete(0, start.Offset);
+            // The end first: in the same leaf, cutting the start would move it.
+            if (document.Stops[endStop].Leaf is RichTextLeaf endLeaf)
+            {
+                endLeaf.Delete(endOffset, endLeaf.Length);
+            }
 
-            Prune(clone.Blocks, startStop, endStop);
-            clone.Reindex();
+            if (document.Stops[startStop].Leaf is RichTextLeaf startLeaf)
+            {
+                startLeaf.Delete(0, startOffset);
+            }
 
-            return clone;
+            Prune(document.Blocks, startStop, endStop);
+            document.Reindex();
+
+            return document;
         }
 
         /// <summary>Blocks wholly outside [first, last] go; containers that reach into it stay, pruned in turn.</summary>

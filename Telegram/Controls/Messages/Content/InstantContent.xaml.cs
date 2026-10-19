@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls.RichEditor;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -172,6 +173,31 @@ namespace Telegram.Controls.Messages.Content
             }
 
             return PageBlockHelper.TryGetQuote(richMessage.Message.Blocks, ranges, lengthMax, out texts, out position);
+        }
+
+        /// <summary>
+        /// A selection in this message as the blocks it covers, for copy: of what is shown, so
+        /// of a translation when one is. Null when it covers none of the message's texts.
+        /// </summary>
+        public RichDocument GetSelectionFragment(IReadOnlyList<TextSelectionRange> selection)
+        {
+            var content = _message != null ? GetContent(_message) : null;
+            if (content == null || selection == null)
+            {
+                return null;
+            }
+
+            var ranges = new List<RichQuoteRange>(selection.Count);
+
+            foreach (var range in selection)
+            {
+                if (range.Item.QuoteSource is object source)
+                {
+                    ranges.Add(new RichQuoteRange(source, range.Item.GetSourceOffset(range.Start), range.Item.GetSourceOffset(range.End)));
+                }
+            }
+
+            return RichDocumentConverter.FromSelection(content.Blocks, PageBlockHelper.GetSelectionRanges(content.Blocks, ranges));
         }
 
         /// <summary>
