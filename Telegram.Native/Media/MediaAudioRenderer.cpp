@@ -29,6 +29,14 @@ namespace winrt::Telegram::Native::Media::implementation
         // the maximum are filled only that far, and the clock jumps the rest.
         constexpr double kMinGap = 0.02;
         constexpr double kMaxGap = 60;
+
+        // Matroska stores timestamps to the millisecond, which puts a packet up to half of one
+        // before where the previous ended. Closer than this it follows on, rather than lose the
+        // samples that overlap, which is heard as a click.
+        constexpr double kJitter = 0.005;
+
+        // How often XAudio2 moves SamplesPlayed on.
+        constexpr double kPass = 0.01;
     }
 
     MediaAudioRenderer::MediaAudioRenderer(MediaWaiter& waiter)
@@ -134,8 +142,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (FAILED(result))
         {
+            // Then nothing is played, and nothing would ever be heard to finish.
             LOGGER_WARNING(L"CreateSourceVoice failed with 0x{:08x}", static_cast<uint32_t>(result));
             m_voice = nullptr;
+            m_failed = true;
             return false;
         }
 
@@ -204,8 +214,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (result < 0)
         {
+            // Every frame would fail the same way, and the audio never reach its end.
             LOGGER_WARNING(L"swr_init failed with {}", result);
             swr_free(&m_swr);
+            m_failed = true;
             return false;
         }
 
@@ -249,6 +261,11 @@ namespace winrt::Telegram::Native::Media::implementation
         // ended. Anything before that is dropped, which is what makes a seek land where it was
         // asked to, and what keeps the sound of two qualities from overlapping where they meet.
         const double expected = std::isnan(m_nextPts) ? from : std::max(from, m_nextPts);
+
+        if (!std::isnan(m_nextPts) && m_nextPts >= from && pts < expected && pts > expected - kJitter)
+        {
+            pts = expected;
+        }
 
         size_t skip = 0;
 
@@ -367,6 +384,9 @@ namespace winrt::Telegram::Native::Media::implementation
                 if (running)
                 {
                     m_voice->Start(0);
+
+                    // Nothing was played while stopped, which Clock must not carry forward over.
+                    m_lastPlayedAt = MediaNow();
                 }
                 else
                 {
@@ -434,7 +454,10 @@ namespace winrt::Telegram::Native::Media::implementation
                 return;
             }
 
-            m_failed = false;
+            if (m_failed.exchange(false))
+            {
+                m_recovered = true;
+            }
         }
         else
         {
@@ -513,7 +536,14 @@ namespace winrt::Telegram::Native::Media::implementation
 
         const uint64_t played = PlayedLocked();
 
-        while (!m_submitted.empty())
+        // Samples counted as played are not the end of XAudio2 reading the buffer: only one it no
+        // longer counts as queued is safe to free.
+        XAUDIO2_VOICE_STATE state{};
+        m_voice->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+
+        size_t finished = m_submitted.size() > state.BuffersQueued ? m_submitted.size() - state.BuffersQueued : 0;
+
+        while (finished > 0)
         {
             auto const& buffer = m_submitted.front();
 
@@ -524,6 +554,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
             m_lastMedia = buffer.media + buffer.frames * buffer.step;
             m_submitted.pop_front();
+            finished--;
         }
 
         const double heard = MediaAtLocked(static_cast<double>(played));
@@ -788,13 +819,13 @@ namespace winrt::Telegram::Native::Media::implementation
 
         const uint64_t played = PlayedLocked();
 
-        if (m_endSubmitted && played >= m_submittedFrames)
+        if (played >= m_submittedFrames && (m_endSubmitted || m_pendingFrames == 0))
         {
             return false;
         }
 
-        // SamplesPlayed moves once per XAudio2 pass, every 10 ms. Between passes the position is
-        // carried forward on the wall clock, so the picture is not paced in 10 ms steps.
+        // SamplesPlayed moves once per XAudio2 pass. Between passes the position is carried
+        // forward on the wall clock, so the picture is not paced in 10 ms steps.
         const double now = MediaNow();
 
         if (played != m_lastPlayed)
@@ -807,7 +838,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (m_running)
         {
-            frames += std::min(now - m_lastPlayedAt, 0.015) * m_sampleRate;
+            frames += std::min(now - m_lastPlayedAt, kPass) * m_sampleRate;
             frames = std::min(frames, static_cast<double>(m_submittedFrames));
         }
 

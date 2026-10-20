@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Threading.Tasks;
 using Telegram.Native.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -25,6 +26,11 @@ namespace Telegram.Streams
 
         // Written and read on the player's demux thread only.
         private RemoteFileSource _source;
+
+        // Whether LoadPlaylist is waiting on the download. Under the lock, so that a cancel either
+        // finds no request or is sent after it.
+        private readonly object _loadLock = new();
+        private bool _loading;
 
         public RemoteRendition(IClientService clientService, File file, File playlist, int width, int height, double duration)
         {
@@ -72,7 +78,27 @@ namespace Telegram.Streams
 
                 if (!file.Local.IsDownloadingCompleted)
                 {
-                    var response = _clientService.SendAsync(new DownloadFile(_playlist.Id, 32, 0, 0, true)).Result;
+                    Task<Object> request;
+
+                    lock (_loadLock)
+                    {
+                        _loading = true;
+                        request = _clientService.SendAsync(new DownloadFile(_playlist.Id, 32, 0, 0, true));
+                    }
+
+                    Object response;
+
+                    try
+                    {
+                        response = request.Result;
+                    }
+                    finally
+                    {
+                        lock (_loadLock)
+                        {
+                            _loading = false;
+                        }
+                    }
 
                     if (response is not File downloaded || !downloaded.Local.IsDownloadingCompleted)
                     {
@@ -97,6 +123,19 @@ namespace Telegram.Streams
             {
                 Logger.Error(ex);
                 return string.Empty;
+            }
+        }
+
+        public void CancelPlaylist()
+        {
+            lock (_loadLock)
+            {
+                // A synchronous download answers once it is canceled, which LoadPlaylist then
+                // reads as no playlist.
+                if (_loading)
+                {
+                    _clientService.Send(new CancelDownloadFile(_playlist.Id, false));
+                }
             }
         }
 

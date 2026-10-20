@@ -133,6 +133,11 @@ namespace winrt::Telegram::Native::Media::implementation
             return winrt::to_string(m_rendition.LoadPlaylist());
         }
 
+        void CancelPlaylist() override
+        {
+            m_rendition.CancelPlaylist();
+        }
+
         std::shared_ptr<IMediaByteSource> CreateSource() override
         {
             auto source = m_rendition.CreateSource();

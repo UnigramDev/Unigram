@@ -368,8 +368,6 @@ reuse one source object.
   goes through the same requeue.
 
 **Not done yet:**
-- **Device loss:** logged, and the renderer stops drawing. The swap chain belongs to the panel, so
-  replacing it needs the panel's thread.
 - **10-bit and 4:2:2/4:4:4 video** is converted to 8-bit NV12 by swscale on the decoder thread.
   HDR is therefore shown as SDR without tone mapping. P010 into the video processor comes with
   phase 5.
@@ -400,23 +398,37 @@ input does not subtract it the way a plain file does. Its timestamps are already
 - **Manual:** immediate, as a seek to the current position with the new quality. The last frame
   stays up until the new one is ready.
 - **Auto up:** seamless. The switch happens at the first segment boundary at least 3 s ahead of
-  playback, and only if neither decoder has taken a packet of that segment
-  (`PacketQueue::TrimFrom`). Queued packets from the boundary on are dropped, the new quality is
+  playback, once the demuxer has read into that segment, and only if neither decoder has taken a
+  packet of it (`PacketQueue::TrimFrom`). Short of the boundary, whatever lay between the demuxer
+  and it would never be read. Queued packets from the boundary on are dropped, the new quality is
   opened at the boundary, and a `Switch` marker makes each decoder drain what it holds and start a
   decoder for the new parameters. The audio renderer carries on: its expected-time trim and its
   silence fill absorb any overlap or gap where the two qualities meet.
-- **Auto down:** immediate after 0.5 s of stall. It is also taken seamlessly at a boundary when the
-  measured speed falls below the quality's average rate with under 10 s buffered.
+- **Auto down:** immediate after 0.5 s of stall. It is also taken seamlessly when the measured speed
+  falls below the quality's average rate with under 10 s buffered: at the same boundary as a step
+  up, or, if the demuxer has not reached it, at the start of the segment it is reading.
+- **Reported** when the video decoder reaches the `Switch` marker, not when the demuxer opens the
+  new quality, which can be up to 30 s earlier.
+- **Failures:** a quality that fails to open, or whose playlist fails to load, is one automatic
+  quality no longer moves to. A pick by hand still tries it.
+- **During the first open,** a quality picked by hand ends that open and is opened instead.
 - **Up rule:** TDesktop's. The largest quality whose average rate × speed × 1.2 the measured download
   speed covers, once 4 s are buffered.
 - **Damping:** no switch within 5 s of another, and no step up within 15 s of a step down.
 
-**Bandwidth** is `RemoteFileSource`'s own EWMA of the downloaded prefix's growth, which counts only
-time spent downloading. It is reached through `IAsyncMediaPlayerRendition.DownloadSpeed`.
+**Bandwidth** is `RemoteFileSource`'s own EWMA of how fast the end of the downloaded range moves.
+It is reached through `IAsyncMediaPlayerRendition.DownloadSpeed`.
+- **Only time spent downloading:** an interval counts only if it starts with TDLib short of the
+  window last asked for. Once TDLib has the window it waits, and the reader asks for more at the
+  media's rate, so time spent waiting would measure the media rather than the link.
+- **The end, not the prefix:** `downloaded_prefix_size` is measured from `download_offset`, which
+  moves with every read. Counting the prefix after the offset moved counted the whole window as
+  new, a few megabytes in a tenth of a second, and auto stepped up into stalls.
 
 **Sources:** one per quality, created on first use, with only the playing one open. Closing the
 one left behind cancels its download-ahead. Playlists are downloaded on first use, on the demux
-thread, so opening a video costs nothing for the qualities it never plays.
+thread, so opening a video costs nothing for the qualities it never plays. Closing the player
+cancels a playlist download still waiting (`CancelPlaylist`), which offline would never end.
 
 ## Phase 3 as built
 
@@ -485,10 +497,42 @@ work, and a `Present` can wait for a vblank.
 
 **HDR:** frames tagged PQ or HLG are given the matching DXGI colour space, and the video processor
 maps them to the SDR output. That fixes the washed-out HDR from phase 1. 10-bit HEVC on the GPU
-reaches the processor as P010, never through the CPU. How well a driver maps HDR to SDR varies.
+reaches the processor as P010, never through the CPU. How well a driver maps HDR to SDR varies. A
+processor whose enumerator says it cannot convert from PQ or HLG is told the frames are SDR BT.2020
+instead: washed out, but still drawn on the GPU.
 
 **CPU drawing path:** it takes a GPU surface only when the processor has failed on one. It copies
-the surface back, NV12 only.
+the surface back, and brings P010 down to NV12.
+
+## Device loss
+
+Recovered within the session, without reopening the file:
+
+1. **Detect.** The renderer notices the loss on `Present`, the video processor `Blt`,
+   `ResizeBuffers`, or any failed draw whose device reports a removed reason. A hardware decoder
+   whose work fails asks it to check as well (`CheckDevice`), since a decoder that stops producing
+   frames gives the renderer nothing to draw.
+2. **Rebuild.** `AsyncMediaPlayerSwapChain::Recreate` builds a new device, context, mutex and swap
+   chain on a thread-pool thread, retrying with a doubling wait while the driver is still resetting
+   (8 tries from 250 ms). Only swapping them in and `SetSwapChain` run on the panel's thread.
+3. **Rebind.** The renderer takes the new objects, drops its views, textures and the held frame, and
+   releases the ffmpeg hardware device. It then bumps its generation and calls the engine back.
+4. **Reset.** The engine seeks to the current position. That flush drops the frames decoded for
+   the old device, and each decoder thread, seeing the new generation, takes a fresh hardware device
+   and rebuilds its decoder. Audio pauses only for the seek's preroll.
+
+**Guard against loops:** a second loss within 60 s turns GPU decoding off for that player, since
+the hardware decoder may be what brings the device down.
+
+**Traps:**
+- **Each ffmpeg device context holds its own handle to the context mutex,** closed in its `free`.
+  Decoders keep the old device until their next flush, after the renderer has closed its own
+  handle, and waiting on a closed handle is fatal in a UWP process.
+- **A frame from the old device is dropped by `Render`.** Drawn, its failure would be taken for the
+  processor's, and the renderer would draw on the CPU from then on.
+- **At the end, the reset seek is quiet:** it brings the last picture back without reporting a
+  state change or the end again.
+- **A closed swap chain ends the retries.**
 
 ## Open questions
 

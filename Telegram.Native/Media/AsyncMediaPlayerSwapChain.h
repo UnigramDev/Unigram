@@ -73,7 +73,45 @@ namespace winrt::Telegram::Native::Media::implementation
         // can draw its frame again at the new size.
         void SizeChanged(std::function<void()> handler);
 
+        // Builds a new device and swap chain once the old device is lost. They are created on the
+        // calling thread, which may be any; swapping them in and handing them to the panel happens
+        // on the panel's thread, the only one SetSwapChain may be called on, and the one Clear and
+        // the size updates run on. Done is called there once the new ones are in place, with false
+        // if the swap chain was closed meanwhile. False when nothing could be created yet, which
+        // while a driver is resetting is worth trying again; true without doing anything once the
+        // swap chain is closed.
+        bool Recreate(std::function<void(bool)> done);
+
     private:
+        struct Resources
+        {
+            winrt::com_ptr<ID3D11Device> device;
+            winrt::com_ptr<ID3D11DeviceContext> context;
+            winrt::com_ptr<IDXGISwapChain1> swapChain;
+            winrt::com_ptr<IDXGISwapChain2> swapChain2;
+            winrt::com_ptr<IDXGIDevice3> device3;
+            HANDLE mutex{ nullptr };
+            bool hardwareDecoding{ false };
+
+            Resources() = default;
+            Resources(const Resources&) = delete;
+            Resources& operator=(const Resources&) = delete;
+
+            ~Resources()
+            {
+                if (mutex != nullptr)
+                {
+                    CloseHandle(mutex);
+                }
+            }
+        };
+
+        static bool CreateResources(Resources& resources);
+        void Assign(Resources& resources);
+
+        // Hands the swap chain to the panel. On the panel's thread, under m_panelLock.
+        void ShowLocked();
+
         void OnAttach(SwapChainPanel const& oldPanel, SwapChainPanel const& newPanel,
             bool subscribe);
 
@@ -99,6 +137,9 @@ namespace winrt::Telegram::Native::Media::implementation
         HANDLE m_contextMutex{ nullptr };
 
         bool m_loaded = false;
+
+        // Set by Close, so that a recovery still in flight does not bring a closed swap chain back.
+        std::atomic<bool> m_closed{ false };
 
         // Whether the adapter Create() settled on exposes ID3D11VideoDevice. libvlc reads the
         // device straight out of SwapChainOptions, so one that can't decode has to say so there.

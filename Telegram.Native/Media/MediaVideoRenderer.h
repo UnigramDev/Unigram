@@ -36,9 +36,22 @@ namespace winrt::Telegram::Native::Media::implementation
         MediaVideoRenderer(const MediaVideoRenderer&) = delete;
         MediaVideoRenderer& operator=(const MediaVideoRenderer&) = delete;
 
-        // The callback runs on the panel's thread whenever its size changes.
-        void Attach(std::function<void()> sizeChanged);
+        // Size changed runs on the panel's thread whenever its size changes. Reset runs on the same
+        // thread once a lost device has been replaced: whatever was decoded for the old one, and
+        // any decoder bound to it, is of no use any more.
+        void Attach(std::function<void()> sizeChanged, std::function<void()> reset);
         void Detach();
+
+        // Changes whenever the renderer moves to a new device, so a decoder can tell that the
+        // hardware device it holds is the lost one.
+        uint64_t Generation() const noexcept
+        {
+            return m_generation.load();
+        }
+
+        // For a decoder whose GPU work failed. A lost device is otherwise only noticed by drawing,
+        // and a decoder that has stopped producing frames gives nothing to draw.
+        void CheckDevice();
 
         void Activate(uint64_t session);
 
@@ -74,10 +87,16 @@ namespace winrt::Telegram::Native::Media::implementation
         bool DrawSoftware();
         void Present();
 
+        void DeviceLost(const wchar_t* stage, HRESULT result);
+        void StartRecovery();
+        bool Recover();
+        void Rebind();
+
         void UpdateSize();
         bool EnsureProcessor(UINT width, UINT height, DXGI_FORMAT format);
         bool EnsureUpload(UINT width, UINT height);
         ID3D11VideoProcessorInputView* DecoderView(ID3D11Texture2D* texture, UINT slice);
+        DXGI_COLOR_SPACE_TYPE SupportedSpace(DXGI_COLOR_SPACE_TYPE space);
         void ReleaseProcessor();
 
         static void LockContext(void* context) noexcept;
@@ -133,6 +152,10 @@ namespace winrt::Telegram::Native::Media::implementation
         UINT m_processorWidth{ 0 };
         UINT m_processorHeight{ 0 };
 
+        // The last color space a frame asked for, and what the processor is told in its place.
+        DXGI_COLOR_SPACE_TYPE m_checkedSpace{ DXGI_COLOR_SPACE_CUSTOM };
+        DXGI_COLOR_SPACE_TYPE m_usedSpace{ DXGI_COLOR_SPACE_CUSTOM };
+
         // Views on the decoder's texture array, one per slice. A decoder allocates its surfaces as
         // a single array, so a new array means a new decoder and the old views go.
         ID3D11Texture2D* m_decoderTexture{ nullptr };
@@ -140,6 +163,14 @@ namespace winrt::Telegram::Native::Media::implementation
 
         AVBufferRef* m_hardware{ nullptr };
         bool m_hardwareFailed{ false };
+
+        // Set after a second device loss within a short while: decoding on the GPU may be what is
+        // bringing the device down, and recovering would only bring it down again.
+        bool m_hardwareDisabled{ false };
+        double m_lastLoss{ -1e9 };
+
+        std::atomic<uint64_t> m_generation{ 0 };
+        std::function<void()> m_reset;
 
         // A decoded surface copied back to memory, for the CPU path.
         AVFrame* m_transfer{ nullptr };
@@ -158,6 +189,8 @@ namespace winrt::Telegram::Native::Media::implementation
         UINT m_softwareWidth{ 0 };
         UINT m_softwareHeight{ 0 };
         I420 m_converted;
+        Plane m_narrowY;
+        Plane m_narrowUV;
         I420 m_scaled;
         I420 m_rotated;
         std::vector<uint8_t> m_bgra;

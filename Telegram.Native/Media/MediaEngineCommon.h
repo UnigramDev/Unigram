@@ -8,6 +8,8 @@
 #include <limits>
 #include <memory>
 #include <mutex>
+#include <thread>
+#include <type_traits>
 
 extern "C"
 {
@@ -34,6 +36,30 @@ namespace winrt::Telegram::Native::Media::implementation
     // What a decoder needs to decode the packets of one stream of one open file. A new one comes
     // with every file opened, so a decoder knows to start over when the quality changes.
     struct MediaStreamSetup;
+
+    // Falls back to a thread of its own when the pool refuses the work: what is posted here is
+    // teardown and recovery, which are worse dropped, and callers post it while holding locks the
+    // work takes, so it never runs inline.
+    template <typename Func>
+    void RunOnThreadPool(Func&& func)
+    {
+        using Work = std::decay_t<Func>;
+        auto* work = new Work(std::forward<Func>(func));
+
+        const BOOL submitted = TrySubmitThreadpoolCallback([](PTP_CALLBACK_INSTANCE, PVOID context)
+            {
+                std::unique_ptr<Work> owned(static_cast<Work*>(context));
+                (*owned)();
+            }, work, nullptr);
+
+        if (!submitted)
+        {
+            std::thread([owned = std::unique_ptr<Work>(work)]
+                {
+                    (*owned)();
+                }).detach();
+        }
+    }
 
     inline double MediaNow() noexcept
     {
@@ -123,6 +149,28 @@ namespace winrt::Telegram::Native::Media::implementation
             m_wall = MediaNow();
         }
 
+        // Moves the clock to a seek's target, after which only times read for that seek are taken.
+        void Set(double time, int32_t serial)
+        {
+            std::lock_guard<std::mutex> lock(m_lock);
+            m_base = time;
+            m_wall = MediaNow();
+            m_serial = serial;
+        }
+
+        // A time read from the audio before a seek, and applied after it, would put the clock back
+        // where playback was.
+        void Sync(double time, int32_t serial)
+        {
+            std::lock_guard<std::mutex> lock(m_lock);
+
+            if (serial == m_serial)
+            {
+                m_base = time;
+                m_wall = MediaNow();
+            }
+        }
+
         void Run(bool running)
         {
             std::lock_guard<std::mutex> lock(m_lock);
@@ -160,6 +208,7 @@ namespace winrt::Telegram::Native::Media::implementation
         double m_wall{ 0 };
         double m_rate{ 1 };
         bool m_running{ false };
+        int32_t m_serial{ 0 };
     };
 
     struct MediaPacket

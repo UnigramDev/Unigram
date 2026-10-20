@@ -82,6 +82,10 @@ namespace winrt::Telegram::Native::Media::implementation
         // the quality is first needed, on the engine's thread, and may block on the download.
         virtual std::string LoadPlaylist() = 0;
 
+        // Ends a LoadPlaylist blocked on the download, from another thread, so that a player closed
+        // while the playlist cannot arrive is not held open until it does.
+        virtual void CancelPlaylist() = 0;
+
         virtual std::shared_ptr<IMediaByteSource> CreateSource() = 0;
 
         // Bytes per second the source last created has been downloading at, zero while unknown.
@@ -196,10 +200,12 @@ namespace winrt::Telegram::Native::Media::implementation
         friend class MediaSession;
 
         // Called by sessions. Each drops what it is told unless the session is still the current
-        // one, so a session winding down never reaches the caller.
+        // one, so a session winding down never reaches the caller. Under m_reportLock, together
+        // with what it reports: checked first and acted on after, an Ended could land on the next
+        // session.
         bool IsCurrent(uint64_t session) const noexcept
         {
-            return m_current.load() == session;
+            return m_current == session;
         }
 
         void SetState(uint64_t session, MediaEngineState state);
@@ -213,6 +219,7 @@ namespace winrt::Telegram::Native::Media::implementation
         void ReportRendition(uint64_t session, int32_t rendition);
 
         void RendererResized();
+        void RendererReset();
 
         void OpenRenditions(std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic, double position, bool shared);
         void StartLocked(double position);
@@ -225,6 +232,14 @@ namespace winrt::Telegram::Native::Media::implementation
         std::mutex m_lock;
         std::shared_ptr<MediaSession> m_session;
 
+        // The session Stop shut down, which may still be reading the shared source that Play
+        // opens again.
+        std::shared_ptr<MediaSession> m_stopped;
+
+        // Taken after m_lock and after any lock of a session's, and nothing is taken under it: the
+        // host only posts.
+        std::mutex m_reportLock;
+
         // Kept after Stop, because Play opens them again: a stopped player plays from the start.
         std::vector<std::shared_ptr<IMediaRendition>> m_renditions;
 
@@ -232,7 +247,7 @@ namespace winrt::Telegram::Native::Media::implementation
         bool m_shared{ false };
 
         uint64_t m_sessions{ 0 };
-        std::atomic<uint64_t> m_current{ 0 };
+        uint64_t m_current{ 0 };
         bool m_closed{ false };
 
         std::atomic<MediaEngineState> m_state{ MediaEngineState::NothingSpecial };

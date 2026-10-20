@@ -166,6 +166,9 @@ namespace Telegram.Controls
             _levels = null;
             _currentLevel = null;
 
+            // The player is reused across items, and one without qualities reports none.
+            OnLevelsChanged(Array.Empty<VideoPlayerLevel>(), null);
+
             if (_renditions != null)
             {
                 var rendition = PickRendition(_renditions);
@@ -187,8 +190,6 @@ namespace Telegram.Controls
 
             var renditions = new List<RemoteRendition>();
 
-            // H.264 only until the decoders run on the GPU: the other codecs cost far more to
-            // decode in software for the bytes they save.
             foreach (var alternative in video.FindAlternatives("h264"))
             {
                 if (alternative.Width > 0 && alternative.Height > 0 && alternative.HlsFile != null)
@@ -289,8 +290,9 @@ namespace Telegram.Controls
             IsCurrentLevelAuto = sender.IsRenditionAutomatic;
             OnLevelsChanged(_levels, _currentLevel = _levels[index]);
 
-            // Where the next video starts. The original says nothing about the connection.
-            if (IsCurrentLevelAuto && !_renditions[index].IsOriginal)
+            // Where the next video starts. Neither the original nor a quality already on disk, which
+            // is picked for being there, says anything about the connection.
+            if (IsCurrentLevelAuto && !_renditions[index].IsOriginal && !_renditions[index].File.Local.IsDownloadingCompleted)
             {
                 AppSettings.Playback.VideoQuality = _renditions[index].Quality;
             }

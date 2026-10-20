@@ -4,7 +4,9 @@
 
 #include <winrt/Telegram.Native.h>
 
+#include <chrono>
 #include <format>
+#include <thread>
 
 #include <libyuv.h>
 
@@ -44,6 +46,14 @@ namespace winrt::Telegram::Native::Media::implementation
         private:
             HANDLE m_mutex;
         };
+
+        // A second loss within this long turns decoding on the GPU off for the player.
+        constexpr double kRepeatedLoss = 60;
+
+        // While a driver resets, creating a device fails for a while. Tried this many times, with
+        // the wait doubling from the first, before giving up.
+        constexpr int kRecoveryAttempts = 8;
+        constexpr int kRecoveryWait = 250;
 
         constexpr UINT Even(int32_t value) noexcept
         {
@@ -122,9 +132,33 @@ namespace winrt::Telegram::Native::Media::implementation
             }
         }
 
+        bool IsHdr(DXGI_COLOR_SPACE_TYPE space) noexcept
+        {
+            return space == DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_LEFT_P2020 || space == DXGI_COLOR_SPACE_YCBCR_STUDIO_GHLG_TOPLEFT_P2020;
+        }
+
         AsyncMediaPlayerSwapChain* Owner(winrt::Telegram::Native::Media::AsyncMediaPlayerSwapChain const& owner) noexcept
         {
             return winrt::get_self<AsyncMediaPlayerSwapChain>(owner);
+        }
+
+        // A surface decoded on a device the renderer has since left cannot be drawn on the new one.
+        bool IsOnDevice(AVFrame const* frame, ID3D11Device* device) noexcept
+        {
+            if (frame->hw_frames_ctx == nullptr)
+            {
+                return false;
+            }
+
+            auto const* frames = reinterpret_cast<AVHWFramesContext const*>(frame->hw_frames_ctx->data);
+            auto const* context = static_cast<AVD3D11VADeviceContext const*>(frames->device_ctx->hwctx);
+
+            return context->device == device;
+        }
+
+        void FreeDevice(AVHWDeviceContext* context) noexcept
+        {
+            CloseHandle(static_cast<HANDLE>(context->user_opaque));
         }
 
         D3D11_VIDEO_PROCESSOR_ROTATION RotationOf(int32_t degrees) noexcept
@@ -218,8 +252,13 @@ namespace winrt::Telegram::Native::Media::implementation
         }
     }
 
-    void MediaVideoRenderer::Attach(std::function<void()> sizeChanged)
+    void MediaVideoRenderer::Attach(std::function<void()> sizeChanged, std::function<void()> reset)
     {
+        {
+            std::lock_guard<std::mutex> lock(m_lock);
+            m_reset = std::move(reset);
+        }
+
         Owner(m_owner)->SizeChanged([weak = weak_from_this(), sizeChanged = std::move(sizeChanged)]()
             {
                 if (auto strong = weak.lock())
@@ -249,6 +288,13 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         std::lock_guard<std::mutex> lock(m_lock);
         m_session = session;
+
+        // A decoder's surfaces are one texture array, which the last frame and the views on it
+        // would otherwise keep alive, whole, after the decoder is gone.
+        av_frame_unref(m_frame);
+        av_frame_unref(m_transfer);
+        m_decoderViews.clear();
+        m_decoderTexture = nullptr;
     }
 
     bool MediaVideoRenderer::Render(uint64_t session, AVFrame const* frame, MediaVideoFormat const& format)
@@ -256,6 +302,13 @@ namespace winrt::Telegram::Native::Media::implementation
         std::lock_guard<std::mutex> lock(m_lock);
 
         if (session != m_session || m_lost || !m_swapChain || m_frame == nullptr)
+        {
+            return false;
+        }
+
+        // Decoded before the device was replaced, and dropped by the seek that follows. Drawn, it
+        // would fail, and the failure be taken for the processor's.
+        if (frame->format == AV_PIX_FMT_D3D11 && !IsOnDevice(frame, m_device.get()))
         {
             return false;
         }
@@ -301,6 +354,12 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 drawn = DrawProcessor(upload);
 
+                // A lost device fails everything, which is not the processor's fault.
+                if (const HRESULT reason = m_device->GetDeviceRemovedReason(); !drawn && !m_lost && FAILED(reason))
+                {
+                    DeviceLost(L"drawing", reason);
+                }
+
                 if (!drawn && !m_lost)
                 {
                     // Some drivers refuse a size or a format the enumerator was asked about.
@@ -318,6 +377,12 @@ namespace winrt::Telegram::Native::Media::implementation
         catch (winrt::hresult_error const& ex)
         {
             LOGGER_ERROR(L"Drawing failed: 0x{:08X}", static_cast<uint32_t>(ex.code()));
+
+            if (m_device && FAILED(m_device->GetDeviceRemovedReason()))
+            {
+                DeviceLost(L"drawing", ex.code());
+            }
+
             return false;
         }
 
@@ -333,6 +398,12 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         std::lock_guard<std::mutex> lock(m_lock);
 
+        // Not while the device is lost: building on it would fail, and be remembered as failing.
+        if (m_lost || m_hardwareDisabled)
+        {
+            return nullptr;
+        }
+
         if (m_hardware == nullptr && !m_hardwareFailed && !m_software && m_videoDevice && m_videoContext)
         {
             AVBufferRef* device = av_hwdevice_ctx_alloc(AV_HWDEVICE_TYPE_D3D11VA);
@@ -347,15 +418,24 @@ namespace winrt::Telegram::Native::Media::implementation
                 d3d11->device->AddRef();
 
                 // The same lock this renderer draws under, which ffmpeg requires to be recursive.
-                // A Win32 mutex is.
-                if (m_contextMutex != nullptr)
+                // A Win32 mutex is. Through a handle of the device's own: decoders hold on to the
+                // device until they are rebuilt, after the renderer has moved to a new one and
+                // closed its handle, and waiting on a closed handle is fatal in a UWP process.
+                HANDLE mutex = nullptr;
+
+                if (m_contextMutex != nullptr && DuplicateHandle(GetCurrentProcess(), m_contextMutex, GetCurrentProcess(), &mutex, 0, FALSE, DUPLICATE_SAME_ACCESS))
                 {
                     d3d11->lock = &LockContext;
                     d3d11->unlock = &UnlockContext;
-                    d3d11->lock_ctx = m_contextMutex;
+                    d3d11->lock_ctx = mutex;
+
+                    context->user_opaque = mutex;
+                    context->free = &FreeDevice;
                 }
 
-                if (av_hwdevice_ctx_init(device) >= 0)
+                // Without the shared lock ffmpeg would make one of its own, and decode on the
+                // context while this draws on it.
+                if (mutex != nullptr && av_hwdevice_ctx_init(device) >= 0)
                 {
                     m_hardware = device;
                 }
@@ -391,10 +471,139 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
         {
-            // Nothing here can recover the device: the swap chain belongs to the panel, and
-            // replacing it has to happen on the panel's thread. The player is reopened instead.
-            LOGGER_ERROR(L"Device lost while presenting: 0x{:08X}, reason 0x{:08X}", static_cast<uint32_t>(result), static_cast<uint32_t>(m_device->GetDeviceRemovedReason()));
-            m_lost = true;
+            DeviceLost(L"presenting", result);
+        }
+    }
+
+    void MediaVideoRenderer::CheckDevice()
+    {
+        std::lock_guard<std::mutex> lock(m_lock);
+
+        if (!m_lost && m_device)
+        {
+            if (const HRESULT reason = m_device->GetDeviceRemovedReason(); FAILED(reason))
+            {
+                DeviceLost(L"decoding", reason);
+            }
+        }
+    }
+
+    void MediaVideoRenderer::DeviceLost(const wchar_t* stage, HRESULT result)
+    {
+        if (m_lost)
+        {
+            return;
+        }
+
+        m_lost = true;
+
+        LOGGER_ERROR(L"Device lost while {}: 0x{:08X}, reason 0x{:08X}", stage, static_cast<uint32_t>(result), static_cast<uint32_t>(m_device->GetDeviceRemovedReason()));
+
+        const double now = MediaNow();
+
+        if (now - m_lastLoss < kRepeatedLoss && !m_hardwareDisabled)
+        {
+            LOGGER_WARNING(L"Second device loss in {:.0f}s, decoding on the CPU from now on", now - m_lastLoss);
+            m_hardwareDisabled = true;
+        }
+
+        m_lastLoss = now;
+        StartRecovery();
+    }
+
+    void MediaVideoRenderer::StartRecovery()
+    {
+        RunOnThreadPool([weak = weak_from_this()]()
+            {
+                for (int attempt = 0; attempt < kRecoveryAttempts; attempt++)
+                {
+                    {
+                        auto strong = weak.lock();
+
+                        if (!strong || strong->Recover())
+                        {
+                            return;
+                        }
+                    }
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(kRecoveryWait << attempt));
+                }
+
+                LOGGER_ERROR(L"No new device after {} attempts, video stays off", kRecoveryAttempts);
+            });
+    }
+
+    bool MediaVideoRenderer::Recover()
+    {
+        return Owner(m_owner)->Recreate([weak = weak_from_this()](bool applied)
+            {
+                if (!applied)
+                {
+                    return;
+                }
+
+                if (auto strong = weak.lock())
+                {
+                    strong->Rebind();
+                }
+            });
+    }
+
+    void MediaVideoRenderer::Rebind()
+    {
+        std::function<void()> reset;
+
+        {
+            std::lock_guard<std::mutex> lock(m_lock);
+
+            ReleaseTargets();
+            ReleaseProcessor();
+
+            // Both may hold a surface of the lost device.
+            av_frame_unref(m_frame);
+            av_frame_unref(m_transfer);
+
+            // Decoders keep their own references to the old one until they rebuild.
+            av_buffer_unref(&m_hardware);
+            m_hardwareFailed = false;
+
+            auto* owner = Owner(m_owner);
+
+            m_device = owner->Device();
+            m_context = owner->DeviceContext();
+            m_swapChain = owner->SwapChain();
+
+            if (m_contextMutex != nullptr)
+            {
+                CloseHandle(m_contextMutex);
+                m_contextMutex = nullptr;
+            }
+
+            if (HANDLE mutex = owner->ContextMutex())
+            {
+                DuplicateHandle(GetCurrentProcess(), mutex, GetCurrentProcess(), &m_contextMutex, 0, FALSE, DUPLICATE_SAME_ACCESS);
+            }
+
+            m_videoDevice = m_device ? m_device.try_as<ID3D11VideoDevice>() : nullptr;
+            m_videoContext = m_context ? m_context.try_as<ID3D11VideoContext>() : nullptr;
+            m_videoContext1 = m_context ? m_context.try_as<ID3D11VideoContext1>() : nullptr;
+            m_software = !m_videoDevice || !m_videoContext;
+
+            // The new swap chain starts at its placeholder size; the next draw sizes it.
+            m_width = 0;
+            m_height = 0;
+            m_resized = false;
+            m_lost = false;
+
+            m_generation++;
+            reset = m_reset;
+        }
+
+        LOGGER_INFO(L"Video device recovered");
+
+        if (reset)
+        {
+            reset();
         }
     }
 
@@ -431,6 +640,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
         const HRESULT result = m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 
+        if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
+        {
+            DeviceLost(L"resizing", result);
+            return;
+        }
+
         if (FAILED(result))
         {
             LOGGER_WARNING(L"ResizeBuffers to {}x{} failed: 0x{:08X}", width, height, static_cast<uint32_t>(result));
@@ -466,6 +681,7 @@ namespace winrt::Telegram::Native::Media::implementation
         m_decoderTexture = nullptr;
         m_processor = nullptr;
         m_enumerator = nullptr;
+        m_checkedSpace = DXGI_COLOR_SPACE_CUSTOM;
 
         D3D11_VIDEO_PROCESSOR_CONTENT_DESC desc{};
         desc.InputFrameFormat = D3D11_VIDEO_FRAME_FORMAT_PROGRESSIVE;
@@ -606,8 +822,37 @@ namespace winrt::Telegram::Native::Media::implementation
         return view.get();
     }
 
+    DXGI_COLOR_SPACE_TYPE MediaVideoRenderer::SupportedSpace(DXGI_COLOR_SPACE_TYPE space)
+    {
+        if (space == m_checkedSpace)
+        {
+            return m_usedSpace;
+        }
+
+        m_checkedSpace = space;
+        m_usedSpace = space;
+
+        // A processor that cannot map HDR down may refuse the blit, which would send every frame
+        // after it through the CPU. Told it is SDR instead, it shows it washed out, but on the GPU.
+        if (IsHdr(space))
+        {
+            BOOL supported = TRUE;
+
+            if (auto enumerator = m_enumerator.try_as<ID3D11VideoProcessorEnumerator1>(); enumerator
+                && SUCCEEDED(enumerator->CheckVideoProcessorFormatConversion(m_inputFormat, space, DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709, &supported))
+                && !supported)
+            {
+                LOGGER_WARNING(L"The video processor does not take color space {}, drawing it as SDR", static_cast<int>(space));
+                m_usedSpace = DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P2020;
+            }
+        }
+
+        return m_usedSpace;
+    }
+
     void MediaVideoRenderer::ReleaseProcessor()
     {
+        m_checkedSpace = DXGI_COLOR_SPACE_CUSTOM;
         m_inputView = nullptr;
         m_decoderViews.clear();
         m_decoderTexture = nullptr;
@@ -828,7 +1073,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (m_videoContext1)
         {
-            m_videoContext1->VideoProcessorSetStreamColorSpace1(m_processor.get(), 0, ColorSpaceOf(frame));
+            m_videoContext1->VideoProcessorSetStreamColorSpace1(m_processor.get(), 0, SupportedSpace(ColorSpaceOf(frame)));
             m_videoContext1->VideoProcessorSetOutputColorSpace1(m_processor.get(), DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709);
         }
         else
@@ -852,8 +1097,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
         {
-            LOGGER_ERROR(L"Device lost while drawing: 0x{:08X}", static_cast<uint32_t>(result));
-            m_lost = true;
+            DeviceLost(L"drawing", result);
         }
 
         return SUCCEEDED(result);
@@ -863,35 +1107,70 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         AVFrame const* frame = m_frame;
 
-        if (frame->format == AV_PIX_FMT_D3D11)
-        {
-            // Only once the processor has failed on a surface the GPU decoded: copied back, which is
-            // slow but still a picture. 10 bit surfaces come back as P010, which this does not take.
-            av_frame_unref(m_transfer);
-
-            if (av_hwframe_transfer_data(m_transfer, frame, 0) < 0 || m_transfer->format != AV_PIX_FMT_NV12)
-            {
-                return false;
-            }
-
-            av_frame_copy_props(m_transfer, frame);
-            frame = m_transfer;
-        }
-
         const uint8_t* srcY = frame->data[0];
         const uint8_t* srcU = frame->data[1];
         const uint8_t* srcV = frame->data[2];
         int strideY = frame->linesize[0];
         int strideU = frame->linesize[1];
         int strideV = frame->linesize[2];
+        bool nv12 = frame->format == AV_PIX_FMT_NV12;
 
-        if (frame->format == AV_PIX_FMT_NV12)
+        if (frame->format == AV_PIX_FMT_D3D11)
+        {
+            // Only once the processor has failed on a surface the GPU decoded: copied back, which is
+            // slow but still a picture.
+            av_frame_unref(m_transfer);
+
+            if (av_hwframe_transfer_data(m_transfer, frame, 0) < 0)
+            {
+                return false;
+            }
+
+            av_frame_copy_props(m_transfer, frame);
+            frame = m_transfer;
+
+            srcY = frame->data[0];
+            srcU = frame->data[1];
+            strideY = frame->linesize[0];
+            strideU = frame->linesize[1];
+            nv12 = true;
+
+            if (frame->format == AV_PIX_FMT_P010)
+            {
+                // Ten bits, as HDR decodes to, brought down to eight: shown, if not as it should be.
+                const int32_t chromaHeight = (frame->height + 1) / 2;
+
+                m_narrowY.stride = frame->width;
+                m_narrowUV.stride = static_cast<int32_t>(Even(frame->width));
+                m_narrowY.data.resize(std::max(m_narrowY.data.size(), static_cast<size_t>(m_narrowY.stride) * frame->height));
+                m_narrowUV.data.resize(std::max(m_narrowUV.data.size(), static_cast<size_t>(m_narrowUV.stride) * chromaHeight));
+
+                // Strides of 16 bit planes are counted in samples, not bytes.
+                libyuv::P010ToNV12(
+                    reinterpret_cast<const uint16_t*>(frame->data[0]), frame->linesize[0] / 2,
+                    reinterpret_cast<const uint16_t*>(frame->data[1]), frame->linesize[1] / 2,
+                    m_narrowY.data.data(), m_narrowY.stride,
+                    m_narrowUV.data.data(), m_narrowUV.stride,
+                    frame->width, frame->height);
+
+                srcY = m_narrowY.data.data();
+                srcU = m_narrowUV.data.data();
+                strideY = m_narrowY.stride;
+                strideU = m_narrowUV.stride;
+            }
+            else if (frame->format != AV_PIX_FMT_NV12)
+            {
+                return false;
+            }
+        }
+
+        if (nv12)
         {
             m_converted.Resize(frame->width, frame->height);
 
             libyuv::NV12ToI420(
-                frame->data[0], frame->linesize[0],
-                frame->data[1], frame->linesize[1],
+                srcY, strideY,
+                srcU, strideU,
                 m_converted.y.data.data(), m_converted.y.stride,
                 m_converted.u.data.data(), m_converted.u.stride,
                 m_converted.v.data.data(), m_converted.v.stride,

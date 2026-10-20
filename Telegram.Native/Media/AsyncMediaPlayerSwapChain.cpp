@@ -129,10 +129,34 @@ namespace winrt::Telegram::Native::Media::implementation
 
     bool AsyncMediaPlayerSwapChain::Create(bool subscribe)
     {
-        // TODO: this whole code and player doesn't support device loss
-        // This means that device loss CAN'T be recovered without creating a new
-        // LibVLC/MediaPlayer instance and everything else associated.
+        m_closed = false;
 
+        Resources resources;
+
+        if (!CreateResources(resources))
+        {
+            Close();
+            return false;
+        }
+
+        Assign(resources);
+        m_loaded = true;
+
+        if (m_panel)
+        {
+            OnAttach(nullptr, m_panel, subscribe);
+        }
+        else
+        {
+            // It's important that private data for the device is set before the swap chain is passed to LibVLC
+            UpdateSize();
+        }
+
+        return true;
+    }
+
+    bool AsyncMediaPlayerSwapChain::CreateResources(Resources& resources)
+    {
         winrt::com_ptr<IDXGIFactory2> dxgiFactory;
 
         // Every call below is into the display driver and any of them can fail while the driver is
@@ -162,9 +186,6 @@ namespace winrt::Telegram::Native::Media::implementation
 
             stage = L"D3D11CreateDevice";
 
-            m_d3d11Device = nullptr;
-            m_deviceContext = nullptr;
-            m_hardwareDecoding = false;
             UINT adapterIndex = 0;
 
             // This device is handed to libvlc, whose DXVA decoder queries ID3D11VideoDevice off it
@@ -191,16 +212,16 @@ namespace winrt::Telegram::Native::Media::implementation
                     nullptr,
                     0,
                     D3D11_SDK_VERSION,
-                    m_d3d11Device.put(),
+                    resources.device.put(),
                     nullptr,
-                    m_deviceContext.put());
+                    resources.context.put());
 
                 if (SUCCEEDED(hr))
                 {
                     winrt::com_ptr<ID3D11VideoDevice> videoDevice;
-                    if (!software && SUCCEEDED(m_d3d11Device->QueryInterface(IID_PPV_ARGS(videoDevice.put()))))
+                    if (!software && SUCCEEDED(resources.device->QueryInterface(IID_PPV_ARGS(videoDevice.put()))))
                     {
-                        m_hardwareDecoding = true;
+                        resources.hardwareDecoding = true;
                         break;
                     }
 
@@ -208,27 +229,27 @@ namespace winrt::Telegram::Native::Media::implementation
 
                     if (!fallbackDevice)
                     {
-                        fallbackDevice = m_d3d11Device;
-                        fallbackContext = m_deviceContext;
+                        fallbackDevice = resources.device;
+                        fallbackContext = resources.context;
                     }
                 }
 
                 // put() overwrites without releasing, so anything a failed attempt left behind has
                 // to go before the next adapter is tried.
-                m_d3d11Device = nullptr;
-                m_deviceContext = nullptr;
+                resources.device = nullptr;
+                resources.context = nullptr;
 
                 adapter = nullptr;
                 adapterIndex++;
             }
 
-            if (!m_d3d11Device && fallbackDevice)
+            if (!resources.device && fallbackDevice)
             {
-                m_d3d11Device = std::move(fallbackDevice);
-                m_deviceContext = std::move(fallbackContext);
+                resources.device = std::move(fallbackDevice);
+                resources.context = std::move(fallbackContext);
             }
 
-            if (!m_d3d11Device)
+            if (!resources.device)
             {
                 throw std::runtime_error("Could not create Direct3D11 device: No compatible adapter found.");
             }
@@ -243,29 +264,23 @@ namespace winrt::Telegram::Native::Media::implementation
             stage = L"ID3D11Multithread";
 
             winrt::com_ptr<ID3D11Multithread> multithread;
-            winrt::check_hresult(m_d3d11Device->QueryInterface(IID_PPV_ARGS(multithread.put())));
+            winrt::check_hresult(resources.device->QueryInterface(IID_PPV_ARGS(multithread.put())));
             multithread->SetMultithreadProtected(TRUE);
 
             stage = L"CreateMutexEx";
 
-            if (m_contextMutex != nullptr)
-            {
-                CloseHandle(m_contextMutex);
-                m_contextMutex = nullptr;
-            }
-
-            m_contextMutex = CreateMutexEx(nullptr, nullptr, 0, SYNCHRONIZE);
-            winrt::check_bool(m_contextMutex != nullptr);
+            resources.mutex = CreateMutexEx(nullptr, nullptr, 0, SYNCHRONIZE);
+            winrt::check_bool(resources.mutex != nullptr);
 
             stage = L"SetPrivateData";
 
-            winrt::check_hresult(m_deviceContext->SetPrivateData(CONTEXT_MUTEX_GUID,
-                sizeof(m_contextMutex), &m_contextMutex));
+            winrt::check_hresult(resources.context->SetPrivateData(CONTEXT_MUTEX_GUID,
+                sizeof(resources.mutex), &resources.mutex));
 
             stage = L"IDXGIDevice1";
 
             winrt::com_ptr<IDXGIDevice1> device;
-            winrt::check_hresult(m_d3d11Device->QueryInterface(IID_PPV_ARGS(device.put())));
+            winrt::check_hresult(resources.device->QueryInterface(IID_PPV_ARGS(device.put())));
 
             // Create the swap chain
             DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
@@ -284,57 +299,167 @@ namespace winrt::Telegram::Native::Media::implementation
             stage = L"CreateSwapChainForComposition";
 
             winrt::check_hresult(dxgiFactory->CreateSwapChainForComposition(
-                m_d3d11Device.get(),
+                resources.device.get(),
                 &swapChainDesc,
                 nullptr,
-                m_swapChain.put()));
+                resources.swapChain.put()));
 
             device->SetMaximumFrameLatency(1);
 
             stage = L"IDXGIDevice3";
 
             // This is necessary so we can call Trim() on suspend
-            winrt::check_hresult(device->QueryInterface(IID_PPV_ARGS(m_device3.put())));
+            winrt::check_hresult(device->QueryInterface(IID_PPV_ARGS(resources.device3.put())));
 
             stage = L"IDXGISwapChain2";
 
-            winrt::check_hresult(m_swapChain->QueryInterface(IID_PPV_ARGS(m_swapChain2.put())));
-
-            m_loaded = true;
-
-            if (m_panel)
-            {
-                OnAttach(nullptr, m_panel, subscribe);
-            }
-            else
-            {
-                // It's important that private data for the device is set before the swap chain is passed to LibVLC
-                UpdateSize();
-            }
+            winrt::check_hresult(resources.swapChain->QueryInterface(IID_PPV_ARGS(resources.swapChain2.put())));
 
             return true;
         }
         catch (winrt::hresult_error const& ex)
         {
             LOGGER_ERROR(L"{} failed: 0x{:08X}, {}", stage, static_cast<uint32_t>(ex.code()), ex.message().c_str());
-            Close();
         }
         catch (std::exception const& ex)
         {
             LOGGER_ERROR(L"{} failed: {}", stage, winrt::to_hstring(ex.what()).c_str());
-            Close();
         }
         catch (...)
         {
             LOGGER_ERROR(L"{} failed", stage);
-            Close();
         }
 
         return false;
     }
 
+
+    void AsyncMediaPlayerSwapChain::Assign(Resources& resources)
+    {
+        m_swapChain2 = std::move(resources.swapChain2);
+        m_device3 = std::move(resources.device3);
+        m_swapChain = std::move(resources.swapChain);
+        m_deviceContext = std::move(resources.context);
+        m_d3d11Device = std::move(resources.device);
+        m_hardwareDecoding = resources.hardwareDecoding;
+
+        if (m_contextMutex != nullptr)
+        {
+            CloseHandle(m_contextMutex);
+        }
+
+        m_contextMutex = resources.mutex;
+        resources.mutex = nullptr;
+    }
+
+    bool AsyncMediaPlayerSwapChain::Recreate(std::function<void(bool)> done)
+    {
+        if (m_closed)
+        {
+            return true;
+        }
+
+        auto resources = std::make_shared<Resources>();
+
+        if (!CreateResources(*resources))
+        {
+            return false;
+        }
+
+        SwapChainPanel panel{ nullptr };
+
+        {
+            std::lock_guard<std::mutex> lock(m_panelLock);
+            panel = m_panel;
+        }
+
+        auto apply = [self = get_strong(), resources, done]()
+            {
+                bool applied = false;
+                SwapChainPanel panel{ nullptr };
+
+                {
+                    std::lock_guard<std::mutex> lock(self->m_panelLock);
+
+                    if (!self->m_closed)
+                    {
+                        self->Assign(*resources);
+                        self->m_loaded = true;
+
+                        if (self->m_panel && self->m_panel.Dispatcher().HasThreadAccess())
+                        {
+                            self->ShowLocked();
+                        }
+                        else
+                        {
+                            // A panel attached since Recreate looked is shown the new swap chain on
+                            // its own thread.
+                            panel = self->m_panel;
+
+                            if (!panel)
+                            {
+                                self->UpdateSize();
+                            }
+                        }
+
+                        applied = true;
+                    }
+                }
+
+                if (panel)
+                {
+                    self->BeginOnUIThread(panel, [self]()
+                        {
+                            std::lock_guard<std::mutex> lock(self->m_panelLock);
+
+                            if (!self->m_closed && self->m_panel)
+                            {
+                                self->ShowLocked();
+                            }
+                        });
+                }
+
+                if (done)
+                {
+                    done(applied);
+                }
+            };
+
+        if (panel)
+        {
+            BeginOnUIThread(panel, apply);
+        }
+        else
+        {
+            apply();
+        }
+
+        return true;
+    }
+
+    void AsyncMediaPlayerSwapChain::ShowLocked()
+    {
+        try
+        {
+            winrt::check_hresult(m_panel.as<ISwapChainPanelNative>()->SetSwapChain(m_swapChain.get()));
+            UpdateScale();
+        }
+        catch (winrt::hresult_error const& ex)
+        {
+            LOGGER_ERROR(L"SetSwapChain failed: 0x{:08X}", static_cast<uint32_t>(ex.code()));
+        }
+
+        UpdateSize();
+    }
+
     void AsyncMediaPlayerSwapChain::Close()
     {
+        // Under the lock a recovery swaps the new device and swap chain in with, so that one in
+        // flight either finds this closed or is done before it starts.
+        std::lock_guard<std::mutex> lock(m_panelLock);
+
+        m_closed = true;
+
         //if (m_suspending)
         //{
         //    Application::Current().Suspending(m_suspending);
@@ -350,10 +475,7 @@ namespace winrt::Telegram::Native::Media::implementation
             m_device3 = nullptr;
         }
 
-        {
-            std::lock_guard<std::mutex> lock(m_panelLock);
-            OnAttach(m_panel, m_panel = nullptr, false);
-        }
+        OnAttach(m_panel, m_panel = nullptr, false);
 
         if (m_swapChain)
         {

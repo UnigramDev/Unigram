@@ -46,8 +46,9 @@ namespace winrt::Telegram::Native::Media::implementation
         void Pump(bool running);
 
         // The media time being heard right now. False until something has been submitted since the
-        // last flush, and once everything submitted has been heard: the engine's own clock carries
-        // on from there.
+        // last flush, and whenever everything submitted has been heard: the engine's own clock
+        // carries on from there, rather than stand still where the sound of a file runs out
+        // before its picture.
         bool Clock(double& time);
 
         // Media seconds decoded and not yet heard, and the part of that not yet given to XAudio2.
@@ -57,8 +58,15 @@ namespace winrt::Telegram::Native::Media::implementation
         bool Starved();
         bool Finished();
 
+        // Everything up to the end of the stream has been given to XAudio2.
+        bool EndSubmitted() const noexcept { return m_endSubmitted.load(); }
+
         // No output could be built, so this plays nothing, and the engine runs without audio.
         bool Failed() const noexcept { return m_failed.load(); }
+
+        // Whether an output was built again after having failed, once: what was decoded meanwhile
+        // was dropped, so the engine has to start the audio over from where playback is.
+        bool TakeRecovered() noexcept { return m_recovered.exchange(false); }
 
         void Rate(double rate);
         void Volume(double volume, bool mute);
@@ -203,6 +211,7 @@ namespace winrt::Telegram::Native::Media::implementation
         bool m_endOfStream{ false };
         std::atomic<bool> m_endSubmitted{ false };
         std::atomic<bool> m_failed{ false };
+        std::atomic<bool> m_recovered{ false };
 
         std::atomic<double> m_rate{ 1 };
         std::atomic<double> m_volume{ 1 };

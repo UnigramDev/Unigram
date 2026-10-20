@@ -29,6 +29,9 @@ namespace Telegram.Native.Media
         // Empty when there is none.
         String LoadPlaylist();
 
+        // Called on another thread when the player closes, to end a LoadPlaylist still waiting.
+        void CancelPlaylist();
+
         IAsyncMediaPlayerSource CreateSource();
 
         // Bytes per second the source last created has been downloading at, zero while unknown.

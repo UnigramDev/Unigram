@@ -28,6 +28,7 @@ namespace winrt::Telegram::Native::Media::implementation
         double startTime{ 0 };
         double frameDuration{ 1.0 / 30 };
         MediaVideoFormat format;
+        int32_t rendition{ -1 };
 
         MediaStreamSetup() = default;
         MediaStreamSetup(const MediaStreamSetup&) = delete;
@@ -152,24 +153,9 @@ namespace winrt::Telegram::Native::Media::implementation
         constexpr double kSwitchHold = 5;
         constexpr double kUpHold = 15;
 
-        template <typename Func>
-        void RunOnThreadPool(Func&& func)
-        {
-            using Work = std::decay_t<Func>;
-            auto* work = new Work(std::forward<Func>(func));
-
-            const BOOL submitted = TrySubmitThreadpoolCallback([](PTP_CALLBACK_INSTANCE, PVOID context)
-                {
-                    std::unique_ptr<Work> owned(static_cast<Work*>(context));
-                    (*owned)();
-                }, work, nullptr);
-
-            if (!submitted)
-            {
-                std::unique_ptr<Work> owned(work);
-                (*owned)();
-            }
-        }
+        // Video read this far past the last audio means the file's sound has ended before its
+        // picture, rather than that the audio is late: playback does not wait for it.
+        constexpr double kAudioGone = 2;
 
         double ToSeconds(int64_t value, AVRational base) noexcept
         {
@@ -362,6 +348,10 @@ namespace winrt::Telegram::Native::Media::implementation
                 return {};
             }
 
+            void CancelPlaylist() override
+            {
+            }
+
             std::shared_ptr<IMediaByteSource> CreateSource() override
             {
                 return m_source;
@@ -390,8 +380,9 @@ namespace winrt::Telegram::Native::Media::implementation
         void Start();
         void Shutdown();
 
-        // A rendition of -1 keeps the current one.
-        void Seek(double target, int32_t rendition = -1);
+        // A rendition of -1 keeps the current one. Quiet reports no change of state, and no end
+        // reached once more, for a seek that only brings back what was already on screen.
+        void Seek(double target, int32_t rendition = -1, bool quiet = false);
 
         // The caller paused or resumed.
         void Wake();
@@ -401,10 +392,14 @@ namespace winrt::Telegram::Native::Media::implementation
         void Automatic(bool automatic);
         void AudioDeviceChanged();
         void Resized();
+        void DeviceReset();
 
         double Position();
 
     private:
+        // Seeks to where playback is, to start over everything that is decoded.
+        void Resync();
+
         void DemuxMain();
         void VideoMain();
         void AudioMain();
@@ -429,7 +424,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         bool TakeSeek(double& target, int32_t& serial, int32_t& rendition);
         bool HasPendingSeek();
+        bool SeekInterrupts();
+        void KeepRendition(int32_t rendition);
         void ReopenIfClosed();
+        void RenditionShown(MediaStreamSetup const* setup);
 
         AVFrame* Normalize(AVFrame* frame);
 
@@ -487,10 +485,19 @@ namespace winrt::Telegram::Native::Media::implementation
         std::vector<std::shared_ptr<IMediaByteSource>> m_sources;
         std::vector<MediaPlaylist> m_playlists;
         std::vector<int8_t> m_playlistLoaded;
+
+        // Qualities that failed to open, which automatic quality no longer moves to.
+        std::vector<bool> m_unplayable;
+
+        // The segment of the last packet read from the current input, -1 before the first.
+        int32_t m_lastSegment{ -1 };
+
         double m_lastAdapt{ 0 };
         double m_lastSwitch{ 0 };
         double m_lastDown{ -kUpHold };
 
+        // The quality last reported, which is the one on screen: a seamless switch is reported when
+        // the decoder reaches it, not when the demuxer does, up to half a minute earlier.
         std::atomic<int32_t> m_rendition{ 0 };
         std::atomic<bool> m_automatic{ false };
 
@@ -537,6 +544,7 @@ namespace winrt::Telegram::Native::Media::implementation
         bool m_videoEnded{ false };
         double m_videoEnd{ 0 };
         bool m_videoOut{ false };
+        bool m_quiet{ false };
         float m_lastBuffering{ -1 };
 
         std::thread m_demuxThread;
@@ -561,6 +569,7 @@ namespace winrt::Telegram::Native::Media::implementation
         m_sources.resize(count);
         m_playlists.resize(count);
         m_playlistLoaded.resize(count);
+        m_unplayable.resize(count);
 
         for (auto const& item : m_renditions)
         {
@@ -632,6 +641,19 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             m_sourceClosed = true;
+        }
+
+        // The demux thread may be waiting on a playlist instead, which no source close ends.
+        for (auto const& rendition : m_renditions)
+        {
+            try
+            {
+                rendition->CancelPlaylist();
+            }
+            catch (...)
+            {
+                // Then the thread pool waits on it, which only delays the release.
+            }
         }
 
         m_videoPackets.Abort();
@@ -837,6 +859,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         setup->timeBase = stream->time_base;
         setup->startTime = startTime;
+        setup->rendition = input.rendition;
 
         if (video)
         {
@@ -1040,7 +1063,24 @@ namespace winrt::Telegram::Native::Media::implementation
             rendition = m_rendition.load();
         }
 
-        auto input = OpenInput(rendition, target);
+        std::unique_ptr<MediaInput> input;
+
+        while (true)
+        {
+            input = OpenInput(rendition, target);
+
+            // A quality picked while the first was still opening ends that open, and is opened
+            // in its place: on a slow link the first may take a long while.
+            int32_t next;
+
+            if (input || m_abort || !TakeSeek(target, serial, next))
+            {
+                break;
+            }
+
+            rendition = next >= 0 ? next : rendition;
+        }
+
         if (!input)
         {
             return false;
@@ -1058,7 +1098,14 @@ namespace winrt::Telegram::Native::Media::implementation
 
             if (audio->Open(input->audio->parameters->sample_rate, m_engine->m_rate.load(), m_engine->m_volume.load(), m_engine->m_mute.load()))
             {
-                m_audio = std::move(audio);
+                {
+                    std::lock_guard<std::mutex> lock(m_controlLock);
+                    m_audio = std::move(audio);
+                }
+
+                // A change made while the output was being built did not reach it.
+                m_audio->Rate(m_engine->m_rate.load());
+                m_audio->Volume(m_engine->m_volume.load(), m_engine->m_mute.load());
             }
             else
             {
@@ -1168,6 +1215,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         m_demuxSerial = serial;
         m_demuxEnded = false;
+        m_lastSegment = -1;
 
         if (m_hasVideo)
         {
@@ -1187,31 +1235,53 @@ namespace winrt::Telegram::Native::Media::implementation
             rendition = m_input->rendition;
         }
 
+        // Nothing to read from: end here rather than wait for packets that never come. Flushed for
+        // the new serial first, or the decoders would drop the end as stale.
+        auto fail = [&]()
+            {
+                if (!m_abort && !HasPendingSeek())
+                {
+                    Begin(serial, target, false);
+                    EndOfStream();
+                }
+            };
+
         // A plain file seeks in place. A quality is opened again at the segment the target is in,
         // which costs its init section and nothing more.
         if (rendition == m_input->rendition && m_input->map == nullptr)
         {
+            // A change of quality a seek interrupted leaves that quality's source the active one,
+            // and this one closed.
+            if (!Activate(rendition))
+            {
+                fail();
+                return;
+            }
+
             Begin(serial, target, true);
             return;
         }
 
         auto input = OpenInput(rendition, target);
 
-        if (!input && !m_abort && !HasPendingSeek() && rendition != m_input->rendition)
+        if (!input && !m_abort && rendition != m_input->rendition)
         {
+            if (HasPendingSeek())
+            {
+                // Interrupted rather than failed: the seek that did it still goes to this quality.
+                KeepRendition(rendition);
+                return;
+            }
+
             LOGGER_WARNING(L"Rendition {} could not be opened, staying on {}", rendition, m_input->rendition);
+
+            m_unplayable[rendition] = true;
             input = OpenInput(m_input->rendition, target);
         }
 
         if (!input)
         {
-            if (!m_abort && !HasPendingSeek())
-            {
-                // Nothing to read from: end here rather than wait for packets that never come.
-                m_demuxSerial = serial;
-                EndOfStream();
-            }
-
+            fail();
             return;
         }
 
@@ -1228,9 +1298,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         m_input = std::move(input);
 
-        if (changed)
+        // Compared with what was last shown rather than what was read: a seamless switch the
+        // demuxer made may not have reached the screen, and never will now.
+        if (m_rendition.exchange(m_input->rendition) != m_input->rendition)
         {
-            m_rendition = m_input->rendition;
             m_engine->ReportRendition(m_id, m_input->rendition);
         }
 
@@ -1259,6 +1330,33 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         std::lock_guard<std::mutex> lock(m_seekLock);
         return m_seekPending;
+    }
+
+    bool MediaSession::SeekInterrupts()
+    {
+        std::lock_guard<std::mutex> lock(m_seekLock);
+
+        // While the first file opens, only a change of quality is worth starting over for: a
+        // plain seek is applied once it is open.
+        return m_seekPending && (m_opened || m_seekRendition >= 0);
+    }
+
+    void MediaSession::KeepRendition(int32_t rendition)
+    {
+        std::lock_guard<std::mutex> lock(m_seekLock);
+
+        if (m_seekPending && m_seekRendition < 0)
+        {
+            m_seekRendition = rendition;
+        }
+    }
+
+    void MediaSession::RenditionShown(MediaStreamSetup const* setup)
+    {
+        if (setup != nullptr && setup->rendition >= 0 && m_rendition.exchange(setup->rendition) != setup->rendition)
+        {
+            m_engine->ReportRendition(m_id, setup->rendition);
+        }
     }
 
     void MediaSession::ReopenIfClosed()
@@ -1416,6 +1514,11 @@ namespace winrt::Telegram::Native::Media::implementation
             av_packet_move_ref(item, packet);
             queue->Push({ MediaPacket::Kind::Data, item, m_demuxSerial.load(), 0, segment, end });
 
+            if (segment >= 0)
+            {
+                m_lastSegment = segment;
+            }
+
             if (m_stalledHint)
             {
                 UpdatePlayback();
@@ -1458,7 +1561,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         for (int32_t index = 0; index < static_cast<int32_t>(m_renditions.size()); index++)
         {
-            if (m_segmented[index] && m_heights[index] < m_heights[rendition] && (lower < 0 || m_heights[index] > m_heights[lower]))
+            if (m_segmented[index] && !m_unplayable[index] && m_heights[index] < m_heights[rendition] && (lower < 0 || m_heights[index] > m_heights[lower]))
             {
                 lower = index;
             }
@@ -1553,7 +1656,7 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             for (int32_t index = 0; index < static_cast<int32_t>(m_renditions.size()); index++)
             {
-                const bool better = m_segmented[index] && m_heights[index] > m_heights[current]
+                const bool better = m_segmented[index] && !m_unplayable[index] && m_heights[index] > m_heights[current]
                     && (target < 0 || m_heights[index] > m_heights[target]);
 
                 if (better && speed >= m_sizes[index] / duration * rate * kUpHeadroom)
@@ -1569,7 +1672,15 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         auto const* playlist = Playlist(current);
-        const int32_t segment = playlist ? playlist->SegmentFrom(position + kSwitchMargin) : -1;
+        int32_t segment = playlist ? playlist->SegmentFrom(position + kSwitchMargin) : -1;
+
+        // Not past where the demuxer has read to: what lies between there and the boundary would
+        // never be read. A step up can wait for it. A step down cannot, and takes the segment being
+        // read instead, which works as long as no decoder has reached it.
+        if (segment > m_lastSegment)
+        {
+            segment = m_heights[target] < m_heights[current] ? m_lastSegment : -1;
+        }
 
         if (segment < 0)
         {
@@ -1596,7 +1707,15 @@ namespace winrt::Telegram::Native::Media::implementation
         auto const* playlist = Playlist(rendition);
         auto const* current = Playlist(m_input->rendition);
 
-        if (playlist == nullptr || current == nullptr || segment >= static_cast<int32_t>(current->segments.size()) || HasPendingSeek())
+        if (playlist == nullptr)
+        {
+            // Its playlist failed to load, and is not asked for again.
+            m_unplayable[rendition] = true;
+            return false;
+        }
+
+        // Only at a boundary the demuxer has read to, see Adapt.
+        if (current == nullptr || segment >= static_cast<int32_t>(current->segments.size()) || segment > m_lastSegment || HasPendingSeek())
         {
             return false;
         }
@@ -1611,6 +1730,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (!input && !m_abort && !HasPendingSeek())
         {
+            LOGGER_WARNING(L"Rendition {} could not be opened, staying on {}", rendition, m_input->rendition);
+            m_unplayable[rendition] = true;
+
             // What followed the boundary in this quality was dropped already, so it is read again.
             input = OpenInput(m_input->rendition, start);
         }
@@ -1627,25 +1749,30 @@ namespace winrt::Telegram::Native::Media::implementation
 
         const bool changed = input->rendition != m_input->rendition;
 
+        // The same quality read again goes on from where it was cut, through the same decoders.
+        if (!changed)
+        {
+            input->video = input->video && m_input->video ? m_input->video : input->video;
+            input->audio = input->audio && m_input->audio ? m_input->audio : input->audio;
+        }
+
         m_input = std::move(input);
         m_demuxEnded = false;
-
-        const int32_t serial = m_demuxSerial.load();
-
-        if (m_hasVideo && m_input->video)
-        {
-            m_videoPackets.Push({ MediaPacket::Kind::Switch, nullptr, serial, start, -1, NAN, m_input->video });
-        }
-
-        if (m_hasAudio && m_input->audio)
-        {
-            m_audioPackets.Push({ MediaPacket::Kind::Switch, nullptr, serial, start, -1, NAN, m_input->audio });
-        }
+        m_lastSegment = -1;
 
         if (changed)
         {
-            m_rendition = m_input->rendition;
-            m_engine->ReportRendition(m_id, m_input->rendition);
+            const int32_t serial = m_demuxSerial.load();
+
+            if (m_hasVideo && m_input->video)
+            {
+                m_videoPackets.Push({ MediaPacket::Kind::Switch, nullptr, serial, start, -1, NAN, m_input->video });
+            }
+
+            if (m_hasAudio && m_input->audio)
+            {
+                m_audioPackets.Push({ MediaPacket::Kind::Switch, nullptr, serial, start, -1, NAN, m_input->audio });
+            }
         }
 
         return changed;
@@ -1670,7 +1797,7 @@ namespace winrt::Telegram::Native::Media::implementation
             // read finds the seek and never starts.
             self->m_reading = true;
 
-            if (self->m_opened && self->HasPendingSeek())
+            if (self->SeekInterrupts())
             {
                 self->m_reading = false;
                 return AVERROR_EXIT;
@@ -1678,6 +1805,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
             int64_t offset = input->position;
             int64_t count = size;
+            int64_t window = input->window;
 
             if (input->map)
             {
@@ -1690,13 +1818,21 @@ namespace winrt::Telegram::Native::Media::implementation
                 }
 
                 count = std::min(count, available);
+
+                // The init section is all that is wanted from the start of the file. A window there
+                // would start downloading parts that the next read, a segment further on, cancels.
+                if (input->map->SegmentOf(input->position) < 0)
+                {
+                    window = available;
+                }
             }
 
+            const double started = MediaNow();
             int64_t read;
 
             try
             {
-                read = input->source->Read(offset, buffer, count, input->window);
+                read = input->source->Read(offset, buffer, count, window);
             }
             catch (...)
             {
@@ -1716,7 +1852,7 @@ namespace winrt::Telegram::Native::Media::implementation
                 return AVERROR_EOF;
             }
 
-            if (self->m_abort || (self->m_opened && self->HasPendingSeek()))
+            if (self->m_abort || self->SeekInterrupts())
             {
                 return AVERROR_EXIT;
             }
@@ -1728,7 +1864,11 @@ namespace winrt::Telegram::Native::Media::implementation
 
             // RemoteFileSource gives up after 30 seconds without a byte. The file can still come,
             // and the player already shows that it is waiting, so it waits on: a seek or a close is
-            // what ends this.
+            // what ends this. A closed source answers at once, and is not asked again in a spin.
+            if (MediaNow() - started < 0.01)
+            {
+                self->m_demuxWaiter.Wait(0.05);
+            }
         }
     }
 
@@ -1855,9 +1995,26 @@ namespace winrt::Telegram::Native::Media::implementation
         std::shared_ptr<MediaStreamSetup> setup;
 
         // Shared by every decoder of the session, and the renderer's: what is decoded into it is
-        // drawn where it is.
+        // drawn where it is. Taken again whenever the renderer has moved to a new device.
+        uint64_t generation = m_renderer->Generation();
         AVBufferRef* hardware = m_renderer->HardwareDevice();
         DecoderState state;
+
+        auto refreshDevice = [&]()
+            {
+                const uint64_t current = m_renderer->Generation();
+
+                if (current == generation)
+                {
+                    return false;
+                }
+
+                generation = current;
+                av_buffer_unref(&hardware);
+                hardware = m_renderer->HardwareDevice();
+
+                return true;
+            };
 
         int32_t serial = -1;
         double target = 0;
@@ -1958,7 +2115,9 @@ namespace winrt::Telegram::Native::Media::implementation
                 nextPts = target;
                 pushed = false;
 
-                if (item.setup != setup)
+                // A decoder on a lost device decodes nothing more, so it is built again. One that
+                // failed to open is tried again: it marks the end only for the serial it failed in.
+                if (refreshDevice() || item.setup != setup || codec == nullptr)
                 {
                     open(item.setup);
                 }
@@ -1977,7 +2136,10 @@ namespace winrt::Telegram::Native::Media::implementation
                     receive();
                 }
 
+                refreshDevice();
                 open(item.setup);
+
+                RenditionShown(item.setup.get());
                 break;
 
             case MediaPacket::Kind::Drain:
@@ -2053,6 +2215,11 @@ namespace winrt::Telegram::Native::Media::implementation
                 {
                     receive();
                     result = avcodec_send_packet(codec, item.packet);
+                }
+
+                if (result < 0 && result != AVERROR_EOF && codec->hw_device_ctx != nullptr)
+                {
+                    m_renderer->CheckDevice();
                 }
 
                 receive();
@@ -2252,6 +2419,15 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             m_audio->Pump(m_running);
+
+            // What was decoded while there was no output is gone, and the decoder ran ahead
+            // through the queue meanwhile: started over from where the picture is.
+            if (m_audio->TakeRecovered())
+            {
+                Resync();
+                continue;
+            }
+
             UpdatePlayback();
 
             if (!m_hasVideo && m_running)
@@ -2285,11 +2461,11 @@ namespace winrt::Telegram::Native::Media::implementation
                     target = item.target;
                     nextPts = target;
 
-                    if (item.setup != setup)
+                    if (item.setup != setup || codec == nullptr)
                     {
                         open(item.setup);
                     }
-                    else if (codec != nullptr)
+                    else
                     {
                         avcodec_flush_buffers(codec);
                     }
@@ -2306,6 +2482,12 @@ namespace winrt::Telegram::Native::Media::implementation
                     }
 
                     open(item.setup);
+
+                    if (!m_hasVideo)
+                    {
+                        RenditionShown(item.setup.get());
+                    }
+
                     break;
 
                 case MediaPacket::Kind::Drain:
@@ -2369,10 +2551,11 @@ namespace winrt::Telegram::Native::Media::implementation
     double MediaSession::CurrentTime()
     {
         double time;
+        const int32_t serial = m_serial.load();
 
-        if (m_audio && m_audioSerial.load() == m_serial.load() && m_audio->Clock(time))
+        if (m_audio && m_audioSerial.load() == serial && m_audio->Clock(time))
         {
-            m_clock.Set(time);
+            m_clock.Sync(time, serial);
             return time;
         }
 
@@ -2407,10 +2590,17 @@ namespace winrt::Telegram::Native::Media::implementation
         const bool audioEnded = !hasAudio || m_audio->Failed() || (audioCurrent && m_audio->Finished());
         const bool videoEnded = !hasVideo || m_videoEnded;
 
+        // The sound of the file ended before its picture: nothing to wait for.
+        const bool audioGone = hasVideo && !videoEnded && m_videoPackets.End() - m_audioPackets.End() > kAudioGone;
+
         if (m_prerolling)
         {
             const bool videoReady = !hasVideo || m_videoShown || m_videoEnded;
-            const bool audioReady = !hasAudio || audioEnded || (audioCurrent && m_audio->Buffered() >= kAudioPreroll);
+
+            // Less audio left than the preroll, all of it submitted, is as ready as it gets: it is
+            // only played once the clock starts.
+            const bool audioReady = !hasAudio || audioEnded
+                || (audioCurrent && (m_audio->Buffered() >= kAudioPreroll || m_audio->EndSubmitted()));
 
             if (!videoReady || !audioReady)
             {
@@ -2440,7 +2630,12 @@ namespace winrt::Telegram::Native::Media::implementation
                 m_endPosition = m_duration.load() > 0 ? m_duration.load() : now;
 
                 SetRunningLocked(false);
-                m_engine->ReportEnded(m_id, m_endPosition);
+
+                if (!m_quiet)
+                {
+                    m_engine->ReportEnded(m_id, m_endPosition);
+                }
+
                 return;
             }
         }
@@ -2466,7 +2661,7 @@ namespace winrt::Telegram::Native::Media::implementation
                 ahead = std::min(ahead, m_videoPackets.End() - now);
             }
 
-            if (hasAudio && !audioEnded)
+            if (hasAudio && !audioEnded && !audioGone)
             {
                 ahead = std::min(ahead, m_audioPackets.End() - now);
             }
@@ -2495,12 +2690,14 @@ namespace winrt::Telegram::Native::Media::implementation
             const double now = CurrentTime();
 
             // Starved means nothing left to play and nothing waiting to be decoded either: a
-            // decoder that is merely slow is not a reason to stop the clock.
-            const bool videoStarved = hasVideo && !videoEnded
+            // decoder that is merely slow is not a reason to stop the clock. Nor is one that
+            // decodes nothing, as on a lost device, with the demuxer as far ahead as it goes:
+            // waiting would not bring a picture, and only flip the buffering on and off.
+            const bool videoStarved = hasVideo && !videoEnded && !m_readingPaused
                 && m_frames.Front() == nullptr && m_videoPackets.Empty()
                 && now > m_videoEnd + m_frameDuration * 2;
 
-            const bool audioStarved = audioCurrent && !audioEnded
+            const bool audioStarved = audioCurrent && !audioEnded && !audioGone
                 && m_audio->Starved() && m_audioPackets.Empty();
 
             if (videoStarved || audioStarved)
@@ -2515,7 +2712,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         SetRunningLocked(!m_stalled && !paused);
 
-        m_engine->SetState(m_id, paused ? MediaEngineState::Paused : MediaEngineState::Playing);
+        if (!m_quiet)
+        {
+            m_engine->SetState(m_id, paused ? MediaEngineState::Paused : MediaEngineState::Playing);
+        }
     }
 
     void MediaSession::ReportPosition(double position)
@@ -2536,7 +2736,7 @@ namespace winrt::Telegram::Native::Media::implementation
         m_engine->ReportPosition(m_id, std::max(0.0, position));
     }
 
-    void MediaSession::Seek(double target, int32_t rendition)
+    void MediaSession::Seek(double target, int32_t rendition, bool quiet)
     {
         target = std::max(0.0, target);
 
@@ -2544,6 +2744,9 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             target = std::min(target, m_duration.load());
         }
+
+        int32_t serial;
+        bool interrupt;
 
         {
             std::lock_guard<std::mutex> lock(m_seekLock);
@@ -2556,7 +2759,14 @@ namespace winrt::Telegram::Native::Media::implementation
 
             m_seekPending = true;
             m_seekTarget = target;
-            m_seekSerial = ++m_serial;
+            m_seekSerial = serial = ++m_serial;
+
+            interrupt = m_opened || m_seekRendition >= 0;
+
+            // Inside the lock: the demux thread takes the seek under it, and the Flush it then
+            // queues for the new serial must not be among what is flushed here.
+            m_videoPackets.Flush();
+            m_audioPackets.Flush();
         }
 
         {
@@ -2570,16 +2780,15 @@ namespace winrt::Telegram::Native::Media::implementation
             m_videoShown = false;
             m_videoEnded = false;
             m_videoEnd = target;
+            m_quiet = quiet;
 
             SetRunningLocked(false);
-            m_clock.Set(target);
+            m_clock.Set(target, serial);
         }
 
-        m_videoPackets.Flush();
-        m_audioPackets.Flush();
         m_frames.Wake();
 
-        if (m_opened && m_reading)
+        if (interrupt && m_reading)
         {
             std::lock_guard<std::mutex> lock(m_sourceLock);
 
@@ -2617,9 +2826,14 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         m_clock.Rate(rate);
 
-        if (m_audio)
         {
-            m_audio->Rate(rate);
+            // The demux thread assigns the renderer while the file opens.
+            std::lock_guard<std::mutex> lock(m_controlLock);
+
+            if (m_audio)
+            {
+                m_audio->Rate(rate);
+            }
         }
 
         m_presentWaiter.Signal();
@@ -2627,6 +2841,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaSession::Volume(double volume, bool mute)
     {
+        std::lock_guard<std::mutex> lock(m_controlLock);
+
         if (m_audio)
         {
             m_audio->Volume(volume, mute);
@@ -2640,6 +2856,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaSession::AudioDeviceChanged()
     {
+        std::lock_guard<std::mutex> lock(m_controlLock);
+
         if (m_audio)
         {
             m_audio->RequestRebuild();
@@ -2649,6 +2867,29 @@ namespace winrt::Telegram::Native::Media::implementation
     void MediaSession::Resized()
     {
         m_presentWaiter.Signal();
+    }
+
+    void MediaSession::DeviceReset()
+    {
+        // Every frame decoded so far is on the lost device, and so are the decoders. A seek to where
+        // playback is drops the frames, and its flush is where the decoders pick up the new device.
+        if (m_opened && m_hasVideo)
+        {
+            Resync();
+        }
+    }
+
+    void MediaSession::Resync()
+    {
+        bool ended;
+
+        {
+            std::lock_guard<std::mutex> lock(m_controlLock);
+            ended = m_ended;
+        }
+
+        // At the end, only the last picture comes back: the end is not reached, and reported, again.
+        Seek(Position(), -1, ended);
     }
 
     double MediaSession::Position()
@@ -2678,11 +2919,21 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (renderer)
         {
-            renderer->Attach([weak = std::weak_ptr<MediaEngine>(engine)]()
+            const std::weak_ptr<MediaEngine> weak = engine;
+
+            renderer->Attach(
+                [weak]()
                 {
                     if (auto strong = weak.lock())
                     {
                         strong->RendererResized();
+                    }
+                },
+                [weak]()
+                {
+                    if (auto strong = weak.lock())
+                    {
+                        strong->RendererReset();
                     }
                 });
         }
@@ -2713,9 +2964,22 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             previous->Shutdown();
         }
+        else
+        {
+            previous = std::move(m_stopped);
+        }
+
+        m_stopped = nullptr;
 
         const uint64_t id = ++m_sessions;
-        m_current = id;
+
+        {
+            // Before the session starts, so that an error it reports at once is not overwritten.
+            std::lock_guard<std::mutex> lock(m_reportLock);
+
+            m_current = id;
+            SetStateLocked(MediaEngineState::Opening);
+        }
 
         if (m_renderer)
         {
@@ -2730,8 +2994,6 @@ namespace winrt::Telegram::Native::Media::implementation
         m_session = std::make_shared<MediaSession>(shared_from_this(), m_renditions, m_rendition.load(), m_automatic.load(), m_renderer,
             m_shared ? std::move(previous) : nullptr, position, id);
         m_session->Start();
-
-        SetStateLocked(MediaEngineState::Opening);
     }
 
     void MediaEngine::SetStateLocked(MediaEngineState state)
@@ -2877,20 +3139,24 @@ namespace winrt::Telegram::Native::Media::implementation
         if (m_session)
         {
             m_session->Shutdown();
-            m_session = nullptr;
+            m_stopped = std::move(m_session);
         }
 
-        // An id no session has, so that what the one just stopped still reports goes nowhere,
-        // and nothing it still has queued is drawn over a panel the caller is about to clear.
-        m_current = ++m_sessions;
+        {
+            // An id no session has, so that what the one just stopped still reports goes nowhere,
+            // and nothing it still has queued is drawn over a panel the caller is about to clear.
+            std::lock_guard<std::mutex> lock(m_reportLock);
+
+            m_current = ++m_sessions;
+            SetStateLocked(MediaEngineState::Stopped);
+        }
+
         m_position = 0;
 
         if (m_renderer)
         {
             m_renderer->Activate(0);
         }
-
-        SetStateLocked(MediaEngineState::Stopped);
     }
 
     void MediaEngine::Close()
@@ -2910,7 +3176,13 @@ namespace winrt::Telegram::Native::Media::implementation
             m_session = nullptr;
         }
 
-        m_current = ++m_sessions;
+        m_stopped = nullptr;
+
+        {
+            std::lock_guard<std::mutex> lock(m_reportLock);
+            m_current = ++m_sessions;
+        }
+
         m_renditions.clear();
 
         if (m_renderer)
@@ -3035,16 +3307,30 @@ namespace winrt::Telegram::Native::Media::implementation
         }
     }
 
+    void MediaEngine::RendererReset()
+    {
+        std::lock_guard<std::mutex> lock(m_lock);
+
+        if (m_session)
+        {
+            m_session->DeviceReset();
+        }
+    }
+
     void MediaEngine::SetState(uint64_t session, MediaEngineState state)
     {
-        if (IsCurrent(session) && m_state.exchange(state) != state)
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
+        if (IsCurrent(session))
         {
-            m_host->StateChanged(state);
+            SetStateLocked(state);
         }
     }
 
     void MediaEngine::ReportPosition(uint64_t session, double position)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_position = position;
@@ -3054,6 +3340,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportDuration(uint64_t session, double duration)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_duration = duration;
@@ -3067,6 +3355,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportBuffering(uint64_t session, float progress)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_host->Buffering(progress);
@@ -3075,6 +3365,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportStream(uint64_t session, MediaStreamKind kind, int32_t id, int32_t width, int32_t height)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_host->StreamSelected(kind, id, width, height);
@@ -3083,6 +3375,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportVideoOut(uint64_t session)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_host->VideoOut();
@@ -3091,6 +3385,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportEnded(uint64_t session, double position)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_position = position;
@@ -3106,6 +3402,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportError(uint64_t session)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             if (m_state.exchange(MediaEngineState::Error) != MediaEngineState::Error)
@@ -3119,6 +3417,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::ReportRendition(uint64_t session, int32_t rendition)
     {
+        std::lock_guard<std::mutex> lock(m_reportLock);
+
         if (IsCurrent(session))
         {
             m_rendition = rendition;
