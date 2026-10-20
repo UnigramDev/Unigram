@@ -279,6 +279,12 @@ namespace Telegram.Services.Wallet
         Task<WalletConnectResult> ConnectAsync(TonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease);
 
         /// <summary>
+        /// Everything <see cref="ConnectAsync"/> does short of sending the result, for a login that
+        /// carries it to the server itself. Null when this wallet cannot answer for the session.
+        /// </summary>
+        Task<TonConnectConnectData> PrepareOauthConnectAsync(TonConnectSession session, string domain, string payload, WalletVault.WalletVaultLease lease);
+
+        /// <summary>
         /// Tells the dApp the connection was refused, if that can be done without asking anything.
         /// </summary>
         /// <remarks>

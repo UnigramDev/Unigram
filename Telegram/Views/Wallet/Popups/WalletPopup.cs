@@ -36,9 +36,18 @@ namespace Telegram.Views.Wallet.Popups
         protected readonly IWalletService _wallet;
 
         protected WalletPopup(IWalletService wallet, INavigationService navigationService)
+            : this(wallet, navigationService.Session.Resolve<IEventAggregator>())
+        {
+        }
+
+        /// <summary>
+        /// For a wallet of an account other than the window's, whose updates are published on
+        /// that account's aggregator.
+        /// </summary>
+        protected WalletPopup(IWalletService wallet, IEventAggregator aggregator)
         {
             _wallet = wallet;
-            _aggregator = navigationService.Session.Resolve<IEventAggregator>();
+            _aggregator = aggregator;
         }
 
         /// <summary>

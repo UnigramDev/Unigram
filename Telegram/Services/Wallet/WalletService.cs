@@ -1965,12 +1965,41 @@ namespace Telegram.Services.Wallet
 
         public async Task<WalletConnectResult> ConnectAsync(TdTonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease)
         {
+            var (prepared, error) = await PrepareConnectAsync(session, Payload(request), RequestedNetwork(request), domain, lease);
+            if (prepared == null)
+            {
+                return new WalletConnectResult(error);
+            }
+
+            var result = await _clientService.SendAsync(new SendTonConnectSessionConnectResult(
+                session.Id, prepared.ChallengeAnswer, false, prepared.Body, traceId ?? string.Empty));
+
+            return result is Ok
+                ? WalletConnectResult.Connected
+                : new WalletConnectResult(result as Error);
+        }
+
+        public async Task<TonConnectConnectData> PrepareOauthConnectAsync(TdTonConnectSession session, string domain, string payload, WalletVault.WalletVaultLease lease)
+        {
+            var (prepared, _) = await PrepareConnectAsync(session, payload ?? string.Empty, null, domain, lease);
+            if (prepared == null)
+            {
+                return null;
+            }
+
+            return new TonConnectConnectData(session.Id, prepared.ChallengeAnswer, prepared.Body, prepared.Proof);
+        }
+
+        private sealed record PreparedConnect(byte[] ChallengeAnswer, byte[] Body, TonWalletOwnershipProof Proof);
+
+        private async Task<(PreparedConnect, Error)> PrepareConnectAsync(TdTonConnectSession session, string payload, string network, string domain, WalletVault.WalletVaultLease lease)
+        {
             var lifecycle = _lifecycle;
             var descriptor = _descriptor;
 
             if (lifecycle == null || descriptor == null || session == null)
             {
-                return new WalletConnectResult(null);
+                return (null, null);
             }
 
             await EnsureLeaseAsync(lease);
@@ -1983,11 +2012,11 @@ namespace Telegram.Services.Wallet
                 throw new WalletRotationPendingException();
             }
 
-            if (Payload(request) != null && !await IsProofDomainAllowedAsync(domain))
+            if (payload != null && !await IsProofDomainAllowedAsync(domain))
             {
                 // Before anything is registered: binding the session key is one-way.
                 Logger.Error("ton connect proof refused for domain " + domain);
-                return new WalletConnectResult(null);
+                return (null, null);
             }
 
             // Derived, not stored: every device of this account arrives at the same key from the
@@ -1997,7 +2026,7 @@ namespace Telegram.Services.Wallet
             using var derived = await DeriveAsync(lifecycle, descriptor, session);
             if (derived == null)
             {
-                return new WalletConnectResult(null);
+                return (null, null);
             }
 
             // Registering W is what earns the challenge, and it is one-way: the server binds the
@@ -2005,13 +2034,14 @@ namespace Telegram.Services.Wallet
             var response = await _clientService.SendAsync(new SetTonConnectSessionWalletClientId(session.Id, derived.PublicKeyHex()));
             if (response is not TonConnectChallenge challenge)
             {
-                return new WalletConnectResult(response as Error);
+                return (null, response as Error);
             }
 
             var account = lifecycle.TonConnectAccount(descriptor);
             TonConnectProofReply proof = null;
+            TonWalletOwnershipProof ownership = null;
 
-            if (Payload(request) is string payload)
+            if (payload != null)
             {
                 var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -2020,7 +2050,7 @@ namespace Telegram.Services.Wallet
                 {
                     // Asked for and not produced. Connecting anyway would look like success and
                     // leave the dApp unable to sign the user in.
-                    return new WalletConnectResult(null);
+                    return (null, null);
                 }
 
                 // The proof carries the key that signed it, which after a rotation is not the
@@ -2031,21 +2061,17 @@ namespace Telegram.Services.Wallet
                 // The same timestamp, domain and payload that were signed: the dApp rebuilds the
                 // digest from these, and anything that drifts makes the proof fail.
                 proof = new TonConnectProofReply((ulong)timestamp, domain, payload, signature.Signature);
+                ownership = new TonWalletOwnershipProof(signature.PublicKey, (int)timestamp, signature.Signature);
             }
 
-            if (RequestedNetwork(request) is string network)
+            if (network != null)
             {
                 account = account with { Network = network };
             }
 
             var body = derived.EncryptConnectEvent((ulong)challenge.EventId, account, proof, Device());
 
-            var result = await _clientService.SendAsync(new SendTonConnectSessionConnectResult(
-                session.Id, derived.OpenChallenge(challenge.Challenge), false, body, traceId ?? string.Empty));
-
-            return result is Ok
-                ? WalletConnectResult.Connected
-                : new WalletConnectResult(result as Error);
+            return (new PreparedConnect(derived.OpenChallenge(challenge.Challenge), body, ownership), null);
         }
 
         /// <summary>
