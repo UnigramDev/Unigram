@@ -139,6 +139,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         void Play(IAsyncMediaPlayerSource stream, double position = 0);
         void Play(winrt::Windows::Foundation::Uri uri, double position = 0);
+        void Play(winrt::Windows::Foundation::Collections::IVectorView<IAsyncMediaPlayerRendition> const& renditions, int32_t rendition, bool automatic, double position);
         void Play();
         void Stop();
         void Pause(bool pause = true);
@@ -164,6 +165,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         bool Mute();
         void Mute(bool value);
+
+        int32_t Rendition();
+        bool IsRenditionAutomatic();
+        void SelectRendition(int32_t rendition);
 
         winrt::event_token StateChanged(Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Media::AsyncMediaPlayer,
@@ -229,6 +234,11 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::Telegram::Native::Media::AsyncMediaPlayer,
             winrt::Telegram::Native::Media::AsyncMediaPlayerLogEventArgs> const& value);
         void Log(winrt::event_token const& token);
+
+        winrt::event_token RenditionChanged(Windows::Foundation::TypedEventHandler<
+            winrt::Telegram::Native::Media::AsyncMediaPlayer,
+            winrt::Windows::Foundation::IInspectable> const& value);
+        void RenditionChanged(winrt::event_token const& token);
 
     private:
         // Position, duration and can-pause are answered from here instead of from libvlc.
@@ -395,6 +405,9 @@ namespace winrt::Telegram::Native::Media::implementation
         struct EngineEvents;
         void InitializeEngine();
 
+        // What libvlc was handed of a video with qualities: the one it plays, which it never leaves.
+        int32_t m_rendition{ 0 };
+
         // The reference handed to libvlc_media_new_callbacks as its opaque, owned by whoever
         // exchanges it out. Atomic because Close() takes it from the caller's thread while the
         // worker may still be inside Play.
@@ -451,6 +464,9 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Media::AsyncMediaPlayer,
             winrt::Telegram::Native::Media::AsyncMediaPlayerLogEventArgs>> m_log;
+        winrt::event<Windows::Foundation::TypedEventHandler<
+            winrt::Telegram::Native::Media::AsyncMediaPlayer,
+            winrt::Windows::Foundation::IInspectable>> m_renditionChanged;
 
     private:
         mutable std::mutex close_lock_;

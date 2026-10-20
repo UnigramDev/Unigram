@@ -195,9 +195,12 @@ namespace Telegram.Streams
             }
         }
 
+        // A window the caller asks for wins. The prefetch policy measures the rate the reader
+        // consumes at, which describes libvlc reading at the media's pace; a reader that keeps its
+        // own read-ahead reads in bursts, and the bursts read as an enormous bitrate.
         private long PrefetchWindow(long buffer)
         {
-            return _prefetch?.Window ?? buffer;
+            return buffer > 0 ? buffer : _prefetch?.Window ?? buffer;
         }
 
         public async Task<long> ReadCallbackAsync(long count, long buffer)
@@ -223,6 +226,8 @@ namespace Telegram.Streams
         // and compared there against a per-second media bitrate, which made the link look
         // a thousand times slower than it is.
         private double DownloadBitsPerSecond => (_bitrate?.CurrentBitrate ?? 0) * 1000;
+
+        public double DownloadBytesPerSecond => DownloadBitsPerSecond / 8;
 
         private long DownloadedBytes => CalculateDownloadedBytes();
 

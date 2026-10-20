@@ -542,6 +542,7 @@
     <Compile Include="Controls\Messages\MessageContentRecyclePool.cs" />
     <Compile Include="Streams\MediaRange.cs" />
     <Compile Include="Streams\RemoteFilePrefetch.cs" />
+    <Compile Include="Streams\RemoteRendition.cs" />
     <Compile Include="Td\Api\FormattedText.cs" />
     <Compile Include="Td\Api\FormattedTextBuilder.cs" />
     <Compile Include="Td\Api\TonWalletTransactionStatePending.cs" />

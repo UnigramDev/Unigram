@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <string>
+#include <vector>
 
 namespace winrt::Telegram::Native::Media::implementation
 {
@@ -57,8 +59,33 @@ namespace winrt::Telegram::Native::Media::implementation
         virtual int64_t Size() = 0;
 
         // Blocks until bytes at the offset are there. Returns how many were read, zero at the end
-        // of the file, or one of the values above.
-        virtual int64_t Read(int64_t offset, uint8_t* buffer, int64_t count) = 0;
+        // of the file, or one of the values above. Window is how far past the offset to have
+        // downloaded meanwhile.
+        virtual int64_t Read(int64_t offset, uint8_t* buffer, int64_t count, int64_t window) = 0;
+    };
+
+    // One quality of a video. A file without qualities is played as a single one of these.
+    class IMediaRendition
+    {
+    public:
+        virtual ~IMediaRendition() = default;
+
+        virtual int32_t Width() = 0;
+        virtual int32_t Height() = 0;
+        virtual int64_t Size() = 0;
+
+        // Whether LoadPlaylist has anything to load. Only qualities with one can be switched to
+        // seamlessly; the others are opened at a position like any file.
+        virtual bool HasPlaylist() = 0;
+
+        // The HLS playlist cutting the file into segments, or empty for a plain file. Called when
+        // the quality is first needed, on the engine's thread, and may block on the download.
+        virtual std::string LoadPlaylist() = 0;
+
+        virtual std::shared_ptr<IMediaByteSource> CreateSource() = 0;
+
+        // Bytes per second the source last created has been downloading at, zero while unknown.
+        virtual double DownloadSpeed() = 0;
     };
 
     // Called on the engine's threads; an implementation posts to wherever it needs to be.
@@ -76,6 +103,7 @@ namespace winrt::Telegram::Native::Media::implementation
         virtual void EndReached() = 0;
         virtual void EncounteredError() = 0;
         virtual void VolumeChanged() = 0;
+        virtual void RenditionChanged() = 0;
     };
 
     class MediaSession;
@@ -94,6 +122,23 @@ namespace winrt::Telegram::Native::Media::implementation
         MediaEngine& operator=(const MediaEngine&) = delete;
 
         void Open(std::shared_ptr<IMediaByteSource> source, double position);
+
+        // Plays a video available in several qualities, starting with the one given. Automatic
+        // lets the engine move between them as the connection allows.
+        void Open(std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic, double position);
+
+        // -1 hands the choice back to the engine.
+        void SelectRendition(int32_t rendition);
+
+        int32_t Rendition() const noexcept
+        {
+            return m_rendition.load();
+        }
+
+        bool IsRenditionAutomatic() const noexcept
+        {
+            return m_automatic.load();
+        }
         void Play();
         void Pause(bool pause);
         void Toggle();
@@ -161,9 +206,11 @@ namespace winrt::Telegram::Native::Media::implementation
         void ReportVideoOut(uint64_t session);
         void ReportEnded(uint64_t session, double position);
         void ReportError(uint64_t session);
+        void ReportRendition(uint64_t session, int32_t rendition);
 
         void RendererResized();
 
+        void OpenRenditions(std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic, double position, bool shared);
         void StartLocked(double position);
         void SetStateLocked(MediaEngineState state);
 
@@ -174,8 +221,11 @@ namespace winrt::Telegram::Native::Media::implementation
         std::mutex m_lock;
         std::shared_ptr<MediaSession> m_session;
 
-        // Kept after Stop, because Play opens it again: a stopped player plays from the start.
-        std::shared_ptr<IMediaByteSource> m_source;
+        // Kept after Stop, because Play opens them again: a stopped player plays from the start.
+        std::vector<std::shared_ptr<IMediaRendition>> m_renditions;
+
+        // Whether the renditions are one plain source, which sessions then share.
+        bool m_shared{ false };
 
         uint64_t m_sessions{ 0 };
         std::atomic<uint64_t> m_current{ 0 };
@@ -192,5 +242,8 @@ namespace winrt::Telegram::Native::Media::implementation
         std::atomic<double> m_rate{ 1 };
         std::atomic<double> m_volume{ 1 };
         std::atomic<bool> m_mute{ false };
+
+        std::atomic<int32_t> m_rendition{ 0 };
+        std::atomic<bool> m_automatic{ false };
     };
 }

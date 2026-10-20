@@ -6,12 +6,14 @@
 #include <condition_variable>
 #include <deque>
 #include <limits>
+#include <memory>
 #include <mutex>
 
 extern "C"
 {
 #include <libavcodec/avcodec.h>
 #include <libavutil/frame.h>
+#include <libavutil/rational.h>
 }
 
 #ifndef CREATE_WAITABLE_TIMER_HIGH_RESOLUTION
@@ -20,6 +22,19 @@ extern "C"
 
 namespace winrt::Telegram::Native::Media::implementation
 {
+    struct MediaVideoFormat
+    {
+        // Clockwise, in degrees: 0, 90, 180 or 270.
+        int32_t rotation{ 0 };
+
+        // Zero when the pixels are square.
+        AVRational aspect{ 0, 1 };
+    };
+
+    // What a decoder needs to decode the packets of one stream of one open file. A new one comes
+    // with every file opened, so a decoder knows to start over when the quality changes.
+    struct MediaStreamSetup;
+
     inline double MediaNow() noexcept
     {
         using namespace std::chrono;
@@ -155,13 +170,24 @@ namespace winrt::Telegram::Native::Media::implementation
             // Where a seek lands: decoders flush, and drop what they decode before the target.
             Flush,
             // The end of the stream: decoders drain what they still hold.
-            Drain
+            Drain,
+            // Another quality takes over from here: decoders drain what they hold of the previous
+            // one, which all plays before this point, and go on with the setup this carries.
+            Switch
         };
 
         Kind kind{ Kind::Data };
         AVPacket* packet{ nullptr };
         int32_t serial{ 0 };
         double target{ 0 };
+
+        // The segment of the playlist the packet was read from, -1 for a file without one.
+        int32_t segment{ -1 };
+
+        // When the packet stops playing, in seconds, NAN if unknown.
+        double end{ NAN };
+
+        std::shared_ptr<MediaStreamSetup> setup;
     };
 
     class PacketQueue
@@ -177,8 +203,8 @@ namespace winrt::Telegram::Native::Media::implementation
             Flush();
         }
 
-        // Takes the packet. End is when the packet stops playing, in seconds, NAN if unknown.
-        void Push(MediaPacket&& item, double end = NAN)
+        // Takes the packet.
+        void Push(MediaPacket&& item)
         {
             {
                 std::lock_guard<std::mutex> lock(m_lock);
@@ -198,9 +224,9 @@ namespace winrt::Telegram::Native::Media::implementation
                 {
                     m_end = item.target;
                 }
-                else if (!std::isnan(end))
+                else if (!std::isnan(item.end))
                 {
-                    m_end = std::max(m_end, end);
+                    m_end = std::max(m_end, item.end);
                 }
 
                 m_items.push_back(std::move(item));
@@ -240,6 +266,25 @@ namespace winrt::Telegram::Native::Media::implementation
             m_items.clear();
             m_bytes = 0;
             m_end = -std::numeric_limits<double>::infinity();
+            m_popped = -1;
+        }
+
+        // Drops what was read from the segment on, from both queues at once, so that another
+        // quality can be read from there instead. Refused when a decoder has already taken a packet
+        // of that segment: what it holds could then no longer be followed seamlessly.
+        static bool TrimFrom(PacketQueue& first, PacketQueue& second, int32_t segment)
+        {
+            std::scoped_lock lock(first.m_lock, second.m_lock);
+
+            if (first.m_popped >= segment || second.m_popped >= segment)
+            {
+                return false;
+            }
+
+            first.TrimLocked(segment);
+            second.TrimLocked(segment);
+
+            return true;
         }
 
         void Abort()
@@ -288,7 +333,52 @@ namespace winrt::Telegram::Native::Media::implementation
                 m_bytes -= item.packet->size;
             }
 
+            if (item.kind == MediaPacket::Kind::Data)
+            {
+                m_popped = std::max(m_popped, item.segment);
+            }
+            else if (item.kind != MediaPacket::Kind::Drain)
+            {
+                m_popped = -1;
+            }
+
             return true;
+        }
+
+        void TrimLocked(int32_t segment)
+        {
+            std::deque<MediaPacket> kept;
+
+            m_bytes = 0;
+            m_end = -std::numeric_limits<double>::infinity();
+
+            for (auto& item : m_items)
+            {
+                // The end of the stream goes too: the next quality is read to its own end.
+                if ((item.kind == MediaPacket::Kind::Data && item.segment >= segment) || item.kind == MediaPacket::Kind::Drain)
+                {
+                    av_packet_free(&item.packet);
+                    continue;
+                }
+
+                if (item.packet != nullptr)
+                {
+                    m_bytes += item.packet->size;
+                }
+
+                if (item.kind == MediaPacket::Kind::Flush)
+                {
+                    m_end = item.target;
+                }
+                else if (!std::isnan(item.end))
+                {
+                    m_end = std::max(m_end, item.end);
+                }
+
+                kept.push_back(std::move(item));
+            }
+
+            m_items = std::move(kept);
         }
 
         mutable std::mutex m_lock;
@@ -299,6 +389,9 @@ namespace winrt::Telegram::Native::Media::implementation
         int64_t m_bytes{ 0 };
         double m_end{ -std::numeric_limits<double>::infinity() };
         bool m_aborted{ false };
+
+        // The latest segment a decoder has taken a packet of.
+        int32_t m_popped{ -1 };
     };
 
     struct VideoFrame
@@ -308,6 +401,7 @@ namespace winrt::Telegram::Native::Media::implementation
         double pts{ 0 };
         double duration{ 0 };
         int32_t serial{ 0 };
+        MediaVideoFormat format;
     };
 
     // Decoded pictures waiting for their time. One producer, the decoder, and one consumer, the

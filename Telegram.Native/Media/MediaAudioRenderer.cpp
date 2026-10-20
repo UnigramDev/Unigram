@@ -245,11 +245,16 @@ namespace winrt::Telegram::Native::Media::implementation
             return;
         }
 
+        // Where this audio should begin: the seek target at first, then where the last of it
+        // ended. Anything before that is dropped, which is what makes a seek land where it was
+        // asked to, and what keeps the sound of two qualities from overlapping where they meet.
+        const double expected = std::isnan(m_nextPts) ? from : std::max(from, m_nextPts);
+
         size_t skip = 0;
 
-        if (pts < from)
+        if (pts < expected - 0.5 / m_sampleRate)
         {
-            skip = static_cast<size_t>(std::llround((from - pts) * m_sampleRate));
+            skip = static_cast<size_t>(std::llround((expected - pts) * m_sampleRate));
 
             if (skip >= static_cast<size_t>(converted))
             {
@@ -269,8 +274,6 @@ namespace winrt::Telegram::Native::Media::implementation
         // The clock counts samples played, so audio that starts after the video - or resumes
         // after a hole - would make it jump ahead by the gap, and the picture skip to catch up.
         // Silence keeps it counting real time until the sound begins.
-        const double expected = std::isnan(m_nextPts) ? from : m_nextPts;
-
         if (pts - expected > kMinGap)
         {
             EnqueueSilence(expected, std::min(pts - expected, kMaxGap));

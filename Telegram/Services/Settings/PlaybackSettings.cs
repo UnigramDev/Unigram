@@ -42,6 +42,25 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _videoSpeed, "VideoSpeed", value);
         }
 
+        private int? _videoQuality;
+        /// <summary>
+        /// The quality of the last video, by its short side: what automatic quality settled on, or
+        /// what was picked by hand when <see cref="VideoQualityManual"/> is set. Zero until the
+        /// first video with several qualities has played.
+        /// </summary>
+        public int VideoQuality
+        {
+            get => _videoQuality ??= GetValueOrDefault("VideoQuality", 0);
+            set => AddOrUpdateValue(ref _videoQuality, "VideoQuality", value);
+        }
+
+        private bool? _videoQualityManual;
+        public bool VideoQualityManual
+        {
+            get => _videoQualityManual ??= GetValueOrDefault("VideoQualityManual", false);
+            set => AddOrUpdateValue(ref _videoQualityManual, "VideoQualityManual", value);
+        }
+
         private bool? _highQuality;
         public bool HighQuality
         {

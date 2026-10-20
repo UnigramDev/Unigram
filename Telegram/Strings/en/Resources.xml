@@ -3027,6 +3027,7 @@
     <!--photo gallery view-->
     <string name="Quality">Quality</string>
     <string name="QualityAuto">Auto</string>
+    <string name="QualityOriginal">Original</string>
 
     <string name="Speed">Speed</string>
     <string name="SpeedSlow">Slow</string>

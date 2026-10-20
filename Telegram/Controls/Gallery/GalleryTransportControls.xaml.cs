@@ -537,7 +537,9 @@ namespace Telegram.Controls.Gallery
                 foreach (var level in _player.Levels.OrderBy(x => x.Bitrate))
                 {
                     var option = new ToggleMenuFlyoutItem();
-                    option.Text = level.ToP();
+                    option.Text = level.IsOriginal
+                        ? string.Format("{0} ({1})", Strings.QualityOriginal, level.ToP())
+                        : level.ToP();
                     option.IsChecked = current?.Index == level.Index && !auto;
                     option.Click += (s, args) =>
                     {

@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Native.Media;
 using Telegram.Services;
@@ -24,6 +25,17 @@ namespace Telegram.Controls
         private long _bufferedToken;
 
         private double _initialPosition;
+
+        // Set when the core is the ffmpeg backend, the only one that moves between qualities.
+        private bool _renditionsSupported;
+
+        // The qualities of the video playing, sorted from the smallest, or null when it has none.
+        private List<RemoteRendition> _renditions;
+        private IClientService _clientService;
+        private double _duration;
+
+        private IList<VideoPlayerLevel> _levels;
+        private VideoPlayerLevel _currentLevel;
 
         public NativeVideoPlayer()
         {
@@ -78,13 +90,15 @@ namespace Telegram.Controls
                 _core.Paused += OnPaused;
                 _core.VolumeChanged += OnVolumeChanged;
                 _core.StreamSelected += OnEESelected;
+                _core.RenditionChanged += OnRenditionChanged;
+
+                _renditionsSupported = options.Backend == AsyncMediaPlayerBackend.FFmpeg;
 
                 _core.Context.Attach(Video, true);
 
                 if (_video != null)
                 {
-                    _core.Play(new RemoteFileSource(_video.ClientService, _video.File, _video.Duration));
-                    _core.Position = _initialPosition;
+                    Open(_video, _initialPosition);
                 }
 
                 _video = null;
@@ -110,6 +124,7 @@ namespace Telegram.Controls
                 _core.Paused -= OnPaused;
                 _core.VolumeChanged -= OnVolumeChanged;
                 _core.StreamSelected -= OnEESelected;
+                _core.RenditionChanged -= OnRenditionChanged;
 
                 _core.Close();
                 _core = null;
@@ -137,11 +152,185 @@ namespace Telegram.Controls
             }
             else
             {
-                _core.Play(new RemoteFileSource(video.ClientService, video.File, video.Duration));
-                _core.Position = position;
+                Open(video, position);
             }
 
             UpdateManager.Subscribe(this, video.ClientService, video.File, ref _bufferedToken, UpdateBuffered);
+        }
+
+        private void Open(GalleryMedia video, double position)
+        {
+            _renditions = _renditionsSupported ? CreateRenditions(video) : null;
+            _clientService = video.ClientService;
+            _duration = video.Duration;
+            _levels = null;
+            _currentLevel = null;
+
+            if (_renditions != null)
+            {
+                var rendition = PickRendition(_renditions);
+                _core.Play(new List<IAsyncMediaPlayerRendition>(_renditions), rendition, !AppSettings.Playback.VideoQualityManual, position);
+            }
+            else
+            {
+                _core.Play(new RemoteFileSource(video.ClientService, video.File, video.Duration));
+                _core.Position = position;
+            }
+        }
+
+        private static List<RemoteRendition> CreateRenditions(GalleryMedia video)
+        {
+            if (!video.IsHls)
+            {
+                return null;
+            }
+
+            var renditions = new List<RemoteRendition>();
+
+            // H.264 only until the decoders run on the GPU: the other codecs cost far more to
+            // decode in software for the bytes they save.
+            foreach (var alternative in video.FindAlternatives("h264"))
+            {
+                if (alternative.Width > 0 && alternative.Height > 0 && alternative.HlsFile != null)
+                {
+                    renditions.Add(new RemoteRendition(video.ClientService, alternative.Video, alternative.HlsFile, alternative.Width, alternative.Height, video.Duration));
+                }
+            }
+
+            if (renditions.Count == 0)
+            {
+                return null;
+            }
+
+            // The original only once it is on disk: then nothing plays better, and nothing more has
+            // to be downloaded. Before that it is usually far larger than the best alternative.
+            if (video.File.Local.IsDownloadingCompleted && video.Constraint is MessageVideo { Video: { } original })
+            {
+                renditions.Add(new RemoteRendition(video.ClientService, video.File, null, original.Width, original.Height, video.Duration));
+            }
+
+            renditions.Sort(CompareRenditions);
+
+            // One per quality: the smaller file of two that look the same.
+            for (int i = renditions.Count - 1; i > 0; i--)
+            {
+                if (renditions[i].Quality == renditions[i - 1].Quality && !renditions[i].IsOriginal && !renditions[i - 1].IsOriginal)
+                {
+                    renditions.RemoveAt(i);
+                }
+            }
+
+            return renditions;
+        }
+
+        private static int CompareRenditions(RemoteRendition x, RemoteRendition y)
+        {
+            return x.Quality != y.Quality
+                ? x.Quality.CompareTo(y.Quality)
+                : x.Size.CompareTo(y.Size);
+        }
+
+        private static int PickRendition(List<RemoteRendition> renditions)
+        {
+            // Whatever is already on disk wins, the largest first: it plays at once and costs nothing.
+            for (int i = renditions.Count - 1; i >= 0; i--)
+            {
+                if (renditions[i].File.Local.IsDownloadingCompleted)
+                {
+                    return i;
+                }
+            }
+
+            // Then the quality picked by hand, or the one automatic quality last settled on, as the
+            // best guess at what the connection carries.
+            var quality = AppSettings.Playback.VideoQuality;
+            if (quality <= 0)
+            {
+                quality = 480;
+            }
+
+            var best = 0;
+
+            for (int i = 1; i < renditions.Count; i++)
+            {
+                if (Math.Abs(renditions[i].Quality - quality) < Math.Abs(renditions[best].Quality - quality))
+                {
+                    best = i;
+                }
+            }
+
+            return best;
+        }
+
+        private void OnRenditionChanged(AsyncMediaPlayer sender, object args)
+        {
+            var index = sender.Rendition;
+
+            if (_renditions == null || index < 0 || index >= _renditions.Count)
+            {
+                return;
+            }
+
+            if (_levels == null)
+            {
+                var levels = new List<VideoPlayerLevel>(_renditions.Count);
+
+                for (int i = 0; i < _renditions.Count; i++)
+                {
+                    var rendition = _renditions[i];
+                    var bitrate = (int)Math.Min(int.MaxValue, rendition.Size * 8 / Math.Max(1, _duration));
+
+                    levels.Add(new VideoPlayerLevel(i, bitrate, rendition.Width, rendition.Height, rendition.IsOriginal));
+                }
+
+                _levels = levels;
+            }
+
+            IsCurrentLevelAuto = sender.IsRenditionAutomatic;
+            OnLevelsChanged(_levels, _currentLevel = _levels[index]);
+
+            // Where the next video starts. The original says nothing about the connection.
+            if (IsCurrentLevelAuto && !_renditions[index].IsOriginal)
+            {
+                AppSettings.Playback.VideoQuality = _renditions[index].Quality;
+            }
+
+            // The buffered bar follows the file actually playing.
+            if (_clientService != null)
+            {
+                UpdateManager.Subscribe(this, _clientService, _renditions[index].File, ref _bufferedToken, UpdateBuffered);
+            }
+        }
+
+        public override VideoPlayerLevel CurrentLevel
+        {
+            get => _currentLevel;
+            set
+            {
+                if (_core == null || _renditions == null)
+                {
+                    return;
+                }
+
+                if (value == null)
+                {
+                    AppSettings.Playback.VideoQualityManual = false;
+                    _core.SelectRendition(-1);
+                }
+                else if (value.Index >= 0 && value.Index < _renditions.Count)
+                {
+                    var rendition = _renditions[value.Index];
+
+                    AppSettings.Playback.VideoQualityManual = true;
+
+                    if (!rendition.IsOriginal)
+                    {
+                        AppSettings.Playback.VideoQuality = rendition.Quality;
+                    }
+
+                    _core.SelectRendition(value.Index);
+                }
+            }
         }
 
         private void UpdateBuffered(File update)

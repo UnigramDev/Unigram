@@ -16,6 +16,25 @@ namespace Telegram.Native.Media
         void Close();
     };
 
+    // One quality of a video. Only the ffmpeg backend switches between them.
+    interface IAsyncMediaPlayerRendition
+    {
+        Int32 Width{ get; };
+        Int32 Height{ get; };
+        Int64 Size{ get; };
+
+        Boolean HasPlaylist{ get; };
+
+        // Called on a player thread, and expected to block until the playlist is downloaded.
+        // Empty when there is none.
+        String LoadPlaylist();
+
+        IAsyncMediaPlayerSource CreateSource();
+
+        // Bytes per second the source last created has been downloading at, zero while unknown.
+        Double DownloadSpeed{ get; };
+    };
+
 
     [default_interface]
     runtimeclass AsyncMediaPlayer
@@ -30,6 +49,7 @@ namespace Telegram.Native.Media
         //[default_overload]
         //void Play(IAsyncMediaPlayerSource stream, Double position);
         void Play(Windows.Foundation.Uri uri);
+        void Play(Windows.Foundation.Collections.IVectorView<IAsyncMediaPlayerRendition> renditions, Int32 rendition, Boolean automatic, Double position);
         //void Play(Windows.Foundation.Uri uri, Double position);
         void Play();
         void Stop();
@@ -51,6 +71,12 @@ namespace Telegram.Native.Media
         Double Volume;
         Boolean Mute;
 
+        Int32 Rendition{ get; };
+        Boolean IsRenditionAutomatic{ get; };
+
+        // -1 hands the choice back to the player.
+        void SelectRendition(Int32 rendition);
+
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerStateChangedEventArgs> StateChanged;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> VideoOut;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerStreamSelectedEventArgs> StreamSelected;
@@ -64,5 +90,6 @@ namespace Telegram.Native.Media
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> VolumeChanged;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> EncounteredError;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerLogEventArgs> Log;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> RenditionChanged;
     }
 }

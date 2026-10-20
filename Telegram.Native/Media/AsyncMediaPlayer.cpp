@@ -49,7 +49,7 @@ namespace winrt::Telegram::Native::Media::implementation
             return m_source.FileSize();
         }
 
-        int64_t Read(int64_t offset, uint8_t* buffer, int64_t count) override
+        int64_t Read(int64_t offset, uint8_t* buffer, int64_t count, int64_t window) override
         {
             if (m_source.Offset() != offset)
             {
@@ -57,7 +57,7 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             int64_t available = 0;
-            m_source.ReadCallback(count, 0, available);
+            m_source.ReadCallback(count, window, available);
 
             if (available < 0)
             {
@@ -98,6 +98,54 @@ namespace winrt::Telegram::Native::Media::implementation
     private:
         IAsyncMediaPlayerSource m_source;
         HANDLE m_file{ INVALID_HANDLE_VALUE };
+    };
+
+    class EngineRendition : public IMediaRendition
+    {
+    public:
+        explicit EngineRendition(IAsyncMediaPlayerRendition rendition)
+            : m_rendition(std::move(rendition))
+        {
+        }
+
+        int32_t Width() override
+        {
+            return m_rendition.Width();
+        }
+
+        int32_t Height() override
+        {
+            return m_rendition.Height();
+        }
+
+        int64_t Size() override
+        {
+            return m_rendition.Size();
+        }
+
+        bool HasPlaylist() override
+        {
+            return m_rendition.HasPlaylist();
+        }
+
+        std::string LoadPlaylist() override
+        {
+            return winrt::to_string(m_rendition.LoadPlaylist());
+        }
+
+        std::shared_ptr<IMediaByteSource> CreateSource() override
+        {
+            auto source = m_rendition.CreateSource();
+            return source ? std::make_shared<EngineSource>(source) : nullptr;
+        }
+
+        double DownloadSpeed() override
+        {
+            return m_rendition.DownloadSpeed();
+        }
+
+    private:
+        IAsyncMediaPlayerRendition m_rendition;
     };
 
     // What the engine reports, raised on the thread the player was created on. As in EventContext,
@@ -199,6 +247,14 @@ namespace winrt::Telegram::Native::Media::implementation
             Post([](AsyncMediaPlayer& player)
                 {
                     player.m_volumeChanged(player, nullptr);
+                });
+        }
+
+        void RenditionChanged() override
+        {
+            Post([](AsyncMediaPlayer& player)
+                {
+                    player.m_renditionChanged(player, nullptr);
                 });
         }
 
@@ -695,6 +751,55 @@ namespace winrt::Telegram::Native::Media::implementation
                 libvlc_media_player_set_time(m_player, static_cast<libvlc_time_t>(position * 1000));
             }
             }, true);
+    }
+
+    void AsyncMediaPlayer::Play(winrt::Windows::Foundation::Collections::IVectorView<IAsyncMediaPlayerRendition> const& renditions, int32_t rendition, bool automatic, double position)
+    {
+        if (renditions == nullptr || renditions.Size() == 0)
+        {
+            return;
+        }
+
+        rendition = std::clamp(rendition, 0, static_cast<int32_t>(renditions.Size()) - 1);
+
+        if (m_engine)
+        {
+            std::vector<std::shared_ptr<IMediaRendition>> items;
+            items.reserve(renditions.Size());
+
+            for (auto const& item : renditions)
+            {
+                items.push_back(std::make_shared<EngineRendition>(item));
+            }
+
+            m_engine->Open(std::move(items), rendition, automatic, position);
+            return;
+        }
+
+        m_rendition = rendition;
+
+        if (auto source = renditions.GetAt(rendition).CreateSource())
+        {
+            Play(source, position);
+        }
+    }
+
+    int32_t AsyncMediaPlayer::Rendition()
+    {
+        return m_engine ? m_engine->Rendition() : m_rendition;
+    }
+
+    bool AsyncMediaPlayer::IsRenditionAutomatic()
+    {
+        return m_engine ? m_engine->IsRenditionAutomatic() : false;
+    }
+
+    void AsyncMediaPlayer::SelectRendition(int32_t rendition)
+    {
+        if (m_engine)
+        {
+            m_engine->SelectRendition(rendition);
+        }
     }
 
     static inline void libvlc_media_player_play_aware(libvlc_media_player_t* p_mi)
@@ -1520,5 +1625,17 @@ namespace winrt::Telegram::Native::Media::implementation
     void AsyncMediaPlayer::Log(winrt::event_token const& token)
     {
         m_log.remove(token);
+    }
+
+    winrt::event_token AsyncMediaPlayer::RenditionChanged(Windows::Foundation::TypedEventHandler<
+        winrt::Telegram::Native::Media::AsyncMediaPlayer,
+        winrt::Windows::Foundation::IInspectable> const& value)
+    {
+        return m_renditionChanged.add(value);
+    }
+
+    void AsyncMediaPlayer::RenditionChanged(winrt::event_token const& token)
+    {
+        m_renditionChanged.remove(token);
     }
 }

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MediaEngine.h"
 #include "MediaAudioRenderer.h"
+#include "MediaPlaylist.h"
 
 #include <winrt/Telegram.Native.h>
 
@@ -19,6 +20,68 @@ extern "C"
 
 namespace winrt::Telegram::Native::Media::implementation
 {
+    struct MediaStreamSetup
+    {
+        AVCodecParameters* parameters{ nullptr };
+        AVRational timeBase{ 0, 1 };
+        double startTime{ 0 };
+        double frameDuration{ 1.0 / 30 };
+        MediaVideoFormat format;
+
+        MediaStreamSetup() = default;
+        MediaStreamSetup(const MediaStreamSetup&) = delete;
+        MediaStreamSetup& operator=(const MediaStreamSetup&) = delete;
+
+        ~MediaStreamSetup()
+        {
+            avcodec_parameters_free(&parameters);
+        }
+    };
+
+    class MediaSession;
+
+    // One open file: the demuxer, and the bytes it reads.
+    struct MediaInput
+    {
+        MediaSession* session{ nullptr };
+        int32_t rendition{ 0 };
+        std::shared_ptr<IMediaByteSource> source;
+
+        // How a quality's segments are laid out for the demuxer, null for a plain file.
+        std::unique_ptr<MediaSegmentMap> map;
+
+        AVFormatContext* format{ nullptr };
+        AVIOContext* io{ nullptr };
+        int64_t position{ 0 };
+        int64_t size{ 0 };
+
+        // How far past each read the source keeps downloading.
+        int64_t window{ 0 };
+
+        int videoIndex{ -1 };
+        int audioIndex{ -1 };
+        std::shared_ptr<MediaStreamSetup> video;
+        std::shared_ptr<MediaStreamSetup> audio;
+
+        double openedAt{ MediaNow() };
+
+        MediaInput() = default;
+        MediaInput(const MediaInput&) = delete;
+        MediaInput& operator=(const MediaInput&) = delete;
+
+        ~MediaInput()
+        {
+            // A custom AVIOContext is not the format's to free.
+            avformat_close_input(&format);
+
+            if (io != nullptr)
+            {
+                av_freep(&io->buffer);
+                avio_context_free(&io);
+            }
+        }
+    };
+
     namespace
     {
         constexpr int kIoBufferSize = 64 * 1024;
@@ -47,6 +110,46 @@ namespace winrt::Telegram::Native::Media::implementation
         constexpr double kVideoBehind = 0.2;
 
         constexpr int kMaxReadErrors = 32;
+
+        // How far past each read TDLib is asked to have downloaded. Short, because the demuxer
+        // already reads its own 30 seconds ahead: this only has to keep a read from waiting on the
+        // round trip of asking for more, and anything past it is downloaded for nothing when the
+        // quality changes or the viewer leaves.
+        constexpr double kDownloadAhead = 5;
+        constexpr int64_t kMinDownloadWindow = 1024 * 1024;
+        constexpr int64_t kMaxDownloadWindow = 16 * 1024 * 1024;
+
+        // TDLib cancels in-flight parts outside the window whenever it moves, so a window on a part
+        // boundary keeps the parts it protects exactly the same as reads move along.
+        int64_t DownloadWindow(int64_t size, double duration) noexcept
+        {
+            constexpr int64_t quantum = 512 * 1024;
+
+            const int64_t window = size > 0 && duration > 0
+                ? static_cast<int64_t>(size / duration * kDownloadAhead)
+                : kMinDownloadWindow;
+
+            return (std::clamp(window, kMinDownloadWindow, kMaxDownloadWindow) + quantum - 1) / quantum * quantum;
+        }
+
+        // Automatic quality. A step up needs this much buffered and this much headroom in the
+        // measured speed over the quality's average rate; it is taken at a segment boundary at
+        // least this far ahead, past what the decoders already hold, so that it is seamless.
+        constexpr double kAdaptInterval = 0.5;
+        constexpr double kUpBuffered = 4;
+        constexpr double kUpHeadroom = 1.2;
+        constexpr double kSwitchMargin = 3;
+
+        // A step down is taken at once when playback has been waiting this long, and ahead of time
+        // when the speed no longer covers the quality and less than this much is buffered.
+        constexpr double kStallDown = 0.5;
+        constexpr double kDownAhead = 10;
+
+        // The speed of a quality just opened describes the previous one, or nothing; after a step
+        // down, a step up waits so that a link at the edge does not flip back and forth.
+        constexpr double kSpeedSettle = 3;
+        constexpr double kSwitchHold = 5;
+        constexpr double kUpHold = 15;
 
         template <typename Func>
         void RunOnThreadPool(Func&& func)
@@ -110,17 +213,111 @@ namespace winrt::Telegram::Native::Media::implementation
             return 0;
         }
 
+        const AVCodec* FindDecoder(AVCodecID id)
+        {
+            // The native AV1 decoder only decodes through a hardware accelerator, and none is built.
+            if (id == AV_CODEC_ID_AV1)
+            {
+                if (const AVCodec* codec = avcodec_find_decoder_by_name("libdav1d"))
+                {
+                    return codec;
+                }
+            }
+
+            return avcodec_find_decoder(id);
+        }
+
+        AVCodecContext* CreateDecoder(MediaStreamSetup const& setup, bool video)
+        {
+            const AVCodec* codec = FindDecoder(setup.parameters->codec_id);
+            if (codec == nullptr)
+            {
+                return nullptr;
+            }
+
+            AVCodecContext* context = avcodec_alloc_context3(codec);
+            if (context == nullptr)
+            {
+                return nullptr;
+            }
+
+            avcodec_parameters_to_context(context, setup.parameters);
+            context->pkt_timebase = setup.timeBase;
+
+            if (video)
+            {
+                context->thread_count = 0;
+                context->thread_type = FF_THREAD_FRAME | FF_THREAD_SLICE;
+            }
+
+            if (avcodec_open2(context, codec, nullptr) < 0)
+            {
+                LOGGER_WARNING(L"avcodec_open2 failed for codec {}", static_cast<int>(setup.parameters->codec_id));
+                avcodec_free_context(&context);
+            }
+
+            return context;
+        }
+
         void NameThread(const wchar_t* name) noexcept
         {
             SetThreadDescription(GetCurrentThread(), name);
         }
+
+        // A plain file, played as the one quality it has.
+        class SourceRendition : public IMediaRendition
+        {
+        public:
+            explicit SourceRendition(std::shared_ptr<IMediaByteSource> source)
+                : m_source(std::move(source))
+            {
+            }
+
+            int32_t Width() override
+            {
+                return 0;
+            }
+
+            int32_t Height() override
+            {
+                return 0;
+            }
+
+            int64_t Size() override
+            {
+                return 0;
+            }
+
+            bool HasPlaylist() override
+            {
+                return false;
+            }
+
+            std::string LoadPlaylist() override
+            {
+                return {};
+            }
+
+            std::shared_ptr<IMediaByteSource> CreateSource() override
+            {
+                return m_source;
+            }
+
+            double DownloadSpeed() override
+            {
+                return 0;
+            }
+
+        private:
+            std::shared_ptr<IMediaByteSource> m_source;
+        };
     }
 
     class MediaSession : public std::enable_shared_from_this<MediaSession>
     {
     public:
-        MediaSession(std::shared_ptr<MediaEngine> engine, std::shared_ptr<IMediaByteSource> source, std::shared_ptr<MediaVideoRenderer> renderer,
-            std::shared_ptr<MediaSession> previous, double position, uint64_t id);
+        MediaSession(std::shared_ptr<MediaEngine> engine, std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic,
+            std::shared_ptr<MediaVideoRenderer> renderer, std::shared_ptr<MediaSession> previous, double position, uint64_t id);
         ~MediaSession();
 
         MediaSession(const MediaSession&) = delete;
@@ -129,13 +326,15 @@ namespace winrt::Telegram::Native::Media::implementation
         void Start();
         void Shutdown();
 
-        void Seek(double target);
+        // A rendition of -1 keeps the current one.
+        void Seek(double target, int32_t rendition = -1);
 
         // The caller paused or resumed.
         void Wake();
 
         void Rate(double rate);
         void Volume(double volume, bool mute);
+        void Automatic(bool automatic);
         void AudioDeviceChanged();
         void Resized();
 
@@ -148,13 +347,23 @@ namespace winrt::Telegram::Native::Media::implementation
         void PresentMain();
 
         bool Open();
-        bool OpenVideo(int index);
-        bool OpenAudio(int index);
+        std::unique_ptr<MediaInput> OpenInput(int32_t rendition, double target);
+        std::shared_ptr<MediaStreamSetup> CreateSetup(MediaInput const& input, int index, double startTime, bool video);
+        MediaPlaylist const* Playlist(int32_t rendition);
+        std::shared_ptr<IMediaByteSource> Activate(int32_t rendition);
+
         void Begin(int32_t serial, double target, bool seek);
+        void Reposition(int32_t serial, double target, int32_t rendition);
         void ReadLoop();
         bool QueuesFull();
+        void EndOfStream();
 
-        bool TakeSeek(double& target, int32_t& serial);
+        void Adapt();
+        bool SwitchAt(int32_t rendition, int32_t segment);
+        int32_t StepDown(int32_t rendition) const;
+        double Ahead(double position);
+
+        bool TakeSeek(double& target, int32_t& serial, int32_t& rendition);
         bool HasPendingSeek();
         void ReopenIfClosed();
 
@@ -172,10 +381,15 @@ namespace winrt::Telegram::Native::Media::implementation
         static int64_t SeekPacket(void* opaque, int64_t offset, int whence);
 
         const std::shared_ptr<MediaEngine> m_engine;
-        const std::shared_ptr<IMediaByteSource> m_source;
+        const std::vector<std::shared_ptr<IMediaRendition>> m_renditions;
         const std::shared_ptr<MediaVideoRenderer> m_renderer;
         std::shared_ptr<MediaSession> m_previous;
         const uint64_t m_id;
+
+        // Read from the renditions once, on the caller's thread: each is a call into managed code.
+        std::vector<int32_t> m_heights;
+        std::vector<int64_t> m_sizes;
+        std::vector<bool> m_segmented;
 
         std::atomic<bool> m_abort{ false };
 
@@ -188,8 +402,10 @@ namespace winrt::Telegram::Native::Media::implementation
         // may then open again.
         HANDLE m_demuxExited{ nullptr };
 
+        // Guards which source is being read, and whether it is open.
         std::mutex m_sourceLock;
-        bool m_sourceClosed{ false };
+        std::shared_ptr<IMediaByteSource> m_active;
+        bool m_sourceClosed{ true };
         std::atomic<bool> m_reading{ false };
         std::atomic<bool> m_opened{ false };
 
@@ -197,23 +413,25 @@ namespace winrt::Telegram::Native::Media::implementation
         bool m_seekPending{ false };
         double m_seekTarget{ 0 };
         int32_t m_seekSerial{ 0 };
+        int32_t m_seekRendition{ -1 };
         double m_startPosition{ 0 };
 
-        AVFormatContext* m_format{ nullptr };
-        AVIOContext* m_io{ nullptr };
-        int64_t m_ioOffset{ 0 };
-        int64_t m_size{ 0 };
-        double m_startTime{ 0 };
-        std::atomic<double> m_duration{ 0 };
+        // The demux thread's, all of them.
+        std::unique_ptr<MediaInput> m_input;
+        std::vector<std::shared_ptr<IMediaByteSource>> m_sources;
+        std::vector<MediaPlaylist> m_playlists;
+        std::vector<int8_t> m_playlistLoaded;
+        double m_lastAdapt{ 0 };
+        double m_lastSwitch{ 0 };
+        double m_lastDown{ -kUpHold };
 
-        int m_videoIndex{ -1 };
-        int m_audioIndex{ -1 };
-        AVCodecContext* m_videoCodec{ nullptr };
-        AVCodecContext* m_audioCodec{ nullptr };
-        AVRational m_videoBase{ 0, 1 };
-        AVRational m_audioBase{ 0, 1 };
+        std::atomic<int32_t> m_rendition{ 0 };
+        std::atomic<bool> m_automatic{ false };
+
+        std::atomic<double> m_duration{ 0 };
+        bool m_hasVideo{ false };
+        bool m_hasAudio{ false };
         double m_frameDuration{ 1.0 / 30 };
-        MediaVideoFormat m_videoFormat;
 
         SwsContext* m_scaler{ nullptr };
         AVBufferPool* m_scalerPool{ nullptr };
@@ -246,6 +464,7 @@ namespace winrt::Telegram::Native::Media::implementation
         bool m_prerolling{ true };
         double m_prerollTarget{ 0 };
         bool m_stalled{ false };
+        double m_stalledAt{ 0 };
         bool m_ended{ false };
         double m_endPosition{ 0 };
         bool m_videoShown{ false };
@@ -260,10 +479,10 @@ namespace winrt::Telegram::Native::Media::implementation
         std::thread m_presentThread;
     };
 
-    MediaSession::MediaSession(std::shared_ptr<MediaEngine> engine, std::shared_ptr<IMediaByteSource> source, std::shared_ptr<MediaVideoRenderer> renderer,
-        std::shared_ptr<MediaSession> previous, double position, uint64_t id)
+    MediaSession::MediaSession(std::shared_ptr<MediaEngine> engine, std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic,
+        std::shared_ptr<MediaVideoRenderer> renderer, std::shared_ptr<MediaSession> previous, double position, uint64_t id)
         : m_engine(std::move(engine))
-        , m_source(std::move(source))
+        , m_renditions(std::move(renditions))
         , m_renderer(std::move(renderer))
         , m_previous(std::move(previous))
         , m_id(id)
@@ -271,6 +490,37 @@ namespace winrt::Telegram::Native::Media::implementation
         , m_prerollTarget(std::max(0.0, position))
         , m_videoEnd(std::max(0.0, position))
     {
+        const size_t count = m_renditions.size();
+
+        m_sources.resize(count);
+        m_playlists.resize(count);
+        m_playlistLoaded.resize(count);
+
+        for (auto const& item : m_renditions)
+        {
+            int32_t height = 0;
+            int64_t size = 0;
+            bool segmented = false;
+
+            try
+            {
+                height = item->Height();
+                size = item->Size();
+                segmented = item->HasPlaylist();
+            }
+            catch (...)
+            {
+                // A rendition that cannot answer is one automatic quality never moves to.
+            }
+
+            m_heights.push_back(height);
+            m_sizes.push_back(size);
+            m_segmented.push_back(segmented);
+        }
+
+        m_rendition = std::clamp(rendition, 0, std::max(0, static_cast<int32_t>(count) - 1));
+        m_automatic = automatic;
+
         m_demuxExited = CreateEventExW(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
         m_clock.Set(m_startPosition);
         m_clock.Rate(m_engine->m_rate.load());
@@ -300,18 +550,22 @@ namespace winrt::Telegram::Native::Media::implementation
             std::lock_guard<std::mutex> lock(m_sourceLock);
 
             m_abort = true;
-            m_sourceClosed = true;
 
-            try
+            if (m_active && !m_sourceClosed)
             {
-                // Ends a read blocked on the network, which is the only thing the threads below
-                // can be waiting on for long.
-                m_source->Close();
+                try
+                {
+                    // Ends a read blocked on the network, which is the only thing the threads
+                    // below can be waiting on for long.
+                    m_active->Close();
+                }
+                catch (...)
+                {
+                    // The source is managed code; whatever it threw, the threads are told to stop.
+                }
             }
-            catch (...)
-            {
-                // The source is managed code; whatever it threw, the threads are told to stop.
-            }
+
+            m_sourceClosed = true;
         }
 
         m_videoPackets.Abort();
@@ -362,23 +616,12 @@ namespace winrt::Telegram::Native::Media::implementation
         m_audioPackets.Flush();
 
         m_audio.reset();
-
-        avcodec_free_context(&m_videoCodec);
-        avcodec_free_context(&m_audioCodec);
+        m_input.reset();
 
         sws_freeContext(m_scaler);
         m_scaler = nullptr;
 
         av_buffer_pool_uninit(&m_scalerPool);
-
-        // A custom AVIOContext is not the format's to free.
-        avformat_close_input(&m_format);
-
-        if (m_io != nullptr)
-        {
-            av_freep(&m_io->buffer);
-            avio_context_free(&m_io);
-        }
 
         m_previous.reset();
     }
@@ -411,275 +654,426 @@ namespace winrt::Telegram::Native::Media::implementation
         SetEvent(m_demuxExited);
     }
 
-    bool MediaSession::Open()
+    MediaPlaylist const* MediaSession::Playlist(int32_t rendition)
     {
+        if (!m_segmented[rendition])
         {
-            std::lock_guard<std::mutex> lock(m_sourceLock);
+            return nullptr;
+        }
 
-            if (m_abort)
-            {
-                return false;
-            }
+        if (m_playlistLoaded[rendition] == 0)
+        {
+            std::string text;
 
             try
             {
-                m_source->Open();
-                m_size = m_source->Size();
+                text = m_renditions[rendition]->LoadPlaylist();
             }
             catch (...)
             {
-                LOGGER_WARNING(L"The source could not be opened");
-                return false;
+                // Then it plays as a plain file.
+            }
+
+            const bool parsed = !text.empty() && MediaPlaylist::Parse(text, m_playlists[rendition]);
+            m_playlistLoaded[rendition] = parsed ? 1 : -1;
+
+            if (!parsed)
+            {
+                LOGGER_WARNING(L"No usable playlist for rendition {}, playing it as a plain file", rendition);
             }
         }
 
-        m_format = avformat_alloc_context();
-        if (m_format == nullptr)
+        return m_playlistLoaded[rendition] == 1 ? &m_playlists[rendition] : nullptr;
+    }
+
+    std::shared_ptr<IMediaByteSource> MediaSession::Activate(int32_t rendition)
+    {
+        if (!m_sources[rendition])
         {
-            return false;
+            try
+            {
+                m_sources[rendition] = m_renditions[rendition]->CreateSource();
+            }
+            catch (...)
+            {
+                return nullptr;
+            }
+        }
+
+        auto source = m_sources[rendition];
+
+        if (!source)
+        {
+            return nullptr;
+        }
+
+        std::lock_guard<std::mutex> lock(m_sourceLock);
+
+        if (m_abort)
+        {
+            return nullptr;
+        }
+
+        if (m_active != source)
+        {
+            // Only one quality downloads at a time: closing the one left behind cancels what it
+            // was still fetching ahead.
+            if (m_active && !m_sourceClosed)
+            {
+                try
+                {
+                    m_active->Close();
+                }
+                catch (...)
+                {
+                    // It only stops downloading ahead; nothing here depends on it.
+                }
+            }
+
+            m_active = source;
+            m_sourceClosed = true;
+        }
+
+        if (m_sourceClosed)
+        {
+            try
+            {
+                source->Open();
+            }
+            catch (...)
+            {
+                return nullptr;
+            }
+
+            m_sourceClosed = false;
+        }
+
+        return source;
+    }
+
+    std::shared_ptr<MediaStreamSetup> MediaSession::CreateSetup(MediaInput const& input, int index, double startTime, bool video)
+    {
+        AVStream* stream = input.format->streams[index];
+
+        if (FindDecoder(stream->codecpar->codec_id) == nullptr)
+        {
+            LOGGER_WARNING(L"No decoder for codec {}", static_cast<int>(stream->codecpar->codec_id));
+            return nullptr;
+        }
+
+        auto setup = std::make_shared<MediaStreamSetup>();
+        setup->parameters = avcodec_parameters_alloc();
+
+        if (setup->parameters == nullptr || avcodec_parameters_copy(setup->parameters, stream->codecpar) < 0)
+        {
+            return nullptr;
+        }
+
+        setup->timeBase = stream->time_base;
+        setup->startTime = startTime;
+
+        if (video)
+        {
+            const AVRational rate = av_guess_frame_rate(input.format, stream, nullptr);
+            if (rate.num > 0 && rate.den > 0)
+            {
+                setup->frameDuration = av_q2d(av_inv_q(rate));
+            }
+
+            setup->format.rotation = RotationOf(stream);
+            setup->format.aspect = av_guess_sample_aspect_ratio(input.format, stream, nullptr);
+        }
+
+        return setup;
+    }
+
+    std::unique_ptr<MediaInput> MediaSession::OpenInput(int32_t rendition, double target)
+    {
+        if (rendition < 0 || rendition >= static_cast<int32_t>(m_renditions.size()))
+        {
+            rendition = 0;
+        }
+
+        const double started = MediaNow();
+
+        // Before the source: it can block on downloading the playlist, and nothing is read yet.
+        MediaPlaylist const* playlist = Playlist(rendition);
+
+        auto source = Activate(rendition);
+        if (!source)
+        {
+            return nullptr;
+        }
+
+        auto input = std::make_unique<MediaInput>();
+        input->session = this;
+        input->rendition = rendition;
+        input->source = source;
+
+        if (playlist)
+        {
+            input->map = std::make_unique<MediaSegmentMap>(*playlist, playlist->SegmentAt(target));
+            input->size = input->map->Size();
+            input->window = DownloadWindow(m_sizes[rendition], playlist->Duration());
+        }
+        else
+        {
+            try
+            {
+                input->size = source->Size();
+            }
+            catch (...)
+            {
+                return nullptr;
+            }
+
+            // The duration is unknown until the file is open; the smallest window until then.
+            input->window = DownloadWindow(0, 0);
+        }
+
+        input->format = avformat_alloc_context();
+        if (input->format == nullptr)
+        {
+            return nullptr;
         }
 
         auto* buffer = static_cast<uint8_t*>(av_malloc(kIoBufferSize));
         if (buffer == nullptr)
         {
-            return false;
+            return nullptr;
         }
 
-        m_io = avio_alloc_context(buffer, kIoBufferSize, 0, this, &ReadPacket, nullptr, &SeekPacket);
-        if (m_io == nullptr)
+        input->io = avio_alloc_context(buffer, kIoBufferSize, 0, input.get(), &ReadPacket, nullptr, &SeekPacket);
+        if (input->io == nullptr)
         {
             av_free(buffer);
-            return false;
+            return nullptr;
         }
 
-        m_format->pb = m_io;
-        m_format->flags |= AVFMT_FLAG_CUSTOM_IO;
+        // Read front to back only: every seek or switch opens a new input. Seekable, the mov demuxer
+        // walks to every moof in the file while opening it, to index fragments it never needs, and
+        // over the network each of those is a download somewhere else in the file.
+        if (playlist)
+        {
+            input->io->seekable = 0;
+        }
+
+        input->format->pb = input->io;
+        input->format->flags |= AVFMT_FLAG_CUSTOM_IO;
 
         // Nothing a file names is ever fetched: the playlist demuxers would otherwise open any URL
         // they find in one.
         AVDictionary* options = nullptr;
         av_dict_set(&options, "protocol_whitelist", "", 0);
 
-        int result = avformat_open_input(&m_format, nullptr, nullptr, &options);
+        int result = avformat_open_input(&input->format, nullptr, nullptr, &options);
         av_dict_free(&options);
 
         if (result < 0)
         {
             // avformat_open_input frees the context it was given when it fails.
-            if (!m_abort)
+            if (!m_abort && !HasPendingSeek())
             {
                 LOGGER_WARNING(L"avformat_open_input failed: {}", result);
             }
 
-            return false;
+            return nullptr;
         }
 
-        result = avformat_find_stream_info(m_format, nullptr);
-        if (result < 0 && !m_abort)
+        // A quality's init section already says everything there is to know, and reading packets
+        // to find out more would delay every switch.
+        if (playlist == nullptr)
         {
-            LOGGER_WARNING(L"avformat_find_stream_info failed: {}", result);
+            result = avformat_find_stream_info(input->format, nullptr);
+            if (result < 0 && !m_abort)
+            {
+                LOGGER_WARNING(L"avformat_find_stream_info failed: {}", result);
+            }
         }
 
         if (m_abort)
         {
-            return false;
+            return nullptr;
         }
 
-        m_startTime = m_format->start_time != AV_NOPTS_VALUE ? static_cast<double>(m_format->start_time) / AV_TIME_BASE : 0;
+        if (playlist == nullptr && input->format->duration != AV_NOPTS_VALUE && input->format->duration > 0)
+        {
+            input->window = DownloadWindow(input->size, static_cast<double>(input->format->duration) / AV_TIME_BASE);
+        }
+
+        const double elapsed = MediaNow() - started;
+
+        if (elapsed > 2)
+        {
+            LOGGER_WARNING(L"Opening rendition {} at {:.1f}s took {:.1f}s", rendition, target, elapsed);
+        }
+        else
+        {
+            LOGGER_INFO(L"Opened rendition {} at {:.1f}s in {:.0f}ms", rendition, target, elapsed * 1000);
+        }
+
+        // A quality opened at a segment reports that segment's time as where it starts, but the
+        // timestamps in it are the whole video's already.
+        const double startTime = playlist == nullptr && input->format->start_time != AV_NOPTS_VALUE
+            ? static_cast<double>(input->format->start_time) / AV_TIME_BASE
+            : 0;
 
         auto const& engineOptions = m_engine->m_options;
 
-        if (engineOptions.video && m_renderer)
+        // The first file decides which kinds of stream play; another quality only fills them.
+        if (engineOptions.video && m_renderer && (!m_opened || m_hasVideo))
         {
-            const int index = av_find_best_stream(m_format, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+            const int index = av_find_best_stream(input->format, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
 
             // Cover art in an audio file is a picture, not a video.
-            if (index >= 0 && (m_format->streams[index]->disposition & AV_DISPOSITION_ATTACHED_PIC) == 0)
+            if (index >= 0 && (input->format->streams[index]->disposition & AV_DISPOSITION_ATTACHED_PIC) == 0)
             {
-                OpenVideo(index);
+                input->video = CreateSetup(*input, index, startTime, true);
+                input->videoIndex = input->video ? index : -1;
             }
         }
 
-        if (engineOptions.audio)
+        if (engineOptions.audio && (!m_opened || m_hasAudio))
         {
-            const int index = av_find_best_stream(m_format, AVMEDIA_TYPE_AUDIO, -1, m_videoIndex, nullptr, 0);
+            const int index = av_find_best_stream(input->format, AVMEDIA_TYPE_AUDIO, -1, input->videoIndex, nullptr, 0);
 
             if (index >= 0)
             {
-                OpenAudio(index);
+                input->audio = CreateSetup(*input, index, startTime, false);
+                input->audioIndex = input->audio ? index : -1;
             }
         }
 
-        if (m_videoIndex < 0 && m_audioIndex < 0)
+        for (unsigned index = 0; index < input->format->nb_streams; index++)
         {
-            LOGGER_WARNING(L"Nothing playable in {} stream(s)", m_format->nb_streams);
+            if (static_cast<int>(index) != input->videoIndex && static_cast<int>(index) != input->audioIndex)
+            {
+                input->format->streams[index]->discard = AVDISCARD_ALL;
+            }
+        }
+
+        return input;
+    }
+
+    bool MediaSession::Open()
+    {
+        // Where the caller asked to start, unless a seek moved that while the file was opening.
+        double target;
+        int32_t serial;
+        int32_t rendition;
+
+        if (!TakeSeek(target, serial, rendition))
+        {
+            target = m_startPosition;
+            serial = m_serial.load();
+            rendition = -1;
+        }
+
+        if (rendition < 0)
+        {
+            rendition = m_rendition.load();
+        }
+
+        auto input = OpenInput(rendition, target);
+        if (!input)
+        {
             return false;
         }
 
-        for (unsigned index = 0; index < m_format->nb_streams; index++)
+        if (!input->video && !input->audio)
         {
-            if (static_cast<int>(index) != m_videoIndex && static_cast<int>(index) != m_audioIndex)
+            LOGGER_WARNING(L"Nothing playable in {} stream(s)", input->format->nb_streams);
+            return false;
+        }
+
+        if (input->audio)
+        {
+            auto audio = std::make_unique<MediaAudioRenderer>(m_audioWaiter);
+
+            if (audio->Open(input->audio->parameters->sample_rate, m_engine->m_rate.load(), m_engine->m_volume.load(), m_engine->m_mute.load()))
             {
-                m_format->streams[index]->discard = AVDISCARD_ALL;
+                m_audio = std::move(audio);
+            }
+            else
+            {
+                // No output device: the picture still plays, on its own clock.
+                LOGGER_WARNING(L"No audio output, playing without audio");
+
+                input->format->streams[input->audioIndex]->discard = AVDISCARD_ALL;
+                input->audio = nullptr;
+                input->audioIndex = -1;
             }
         }
 
-        if (m_format->duration != AV_NOPTS_VALUE && m_format->duration > 0)
+        m_hasVideo = input->video != nullptr;
+        m_hasAudio = input->audio != nullptr;
+
+        if (!m_hasVideo && !m_hasAudio)
         {
-            m_duration = static_cast<double>(m_format->duration) / AV_TIME_BASE;
+            return false;
+        }
+
+        if (m_hasVideo)
+        {
+            m_frameDuration = input->video->frameDuration;
+        }
+
+        if (auto const* playlist = Playlist(input->rendition))
+        {
+            m_duration = playlist->Duration();
+        }
+        else if (input->format->duration != AV_NOPTS_VALUE && input->format->duration > 0)
+        {
+            m_duration = static_cast<double>(input->format->duration) / AV_TIME_BASE;
         }
 
         m_engine->ReportDuration(m_id, m_duration.load());
 
-        if (m_videoIndex >= 0)
+        if (m_hasVideo)
         {
-            auto const* parameters = m_format->streams[m_videoIndex]->codecpar;
+            auto const* parameters = input->video->parameters;
+            auto const& format = input->video->format;
 
             double width = parameters->width;
             double height = parameters->height;
 
-            if (m_videoFormat.aspect.num > 0 && m_videoFormat.aspect.den > 0)
+            if (format.aspect.num > 0 && format.aspect.den > 0)
             {
-                width = width * m_videoFormat.aspect.num / m_videoFormat.aspect.den;
+                width = width * format.aspect.num / format.aspect.den;
             }
 
-            if (m_videoFormat.rotation == 90 || m_videoFormat.rotation == 270)
+            if (format.rotation == 90 || format.rotation == 270)
             {
                 std::swap(width, height);
             }
 
-            m_engine->ReportStream(m_id, MediaStreamKind::Video, m_videoIndex, static_cast<int32_t>(std::lround(width)), static_cast<int32_t>(std::lround(height)));
+            m_engine->ReportStream(m_id, MediaStreamKind::Video, input->videoIndex, static_cast<int32_t>(std::lround(width)), static_cast<int32_t>(std::lround(height)));
         }
 
-        if (m_audioIndex >= 0)
+        if (m_hasAudio)
         {
-            m_engine->ReportStream(m_id, MediaStreamKind::Audio, m_audioIndex, 0, 0);
+            m_engine->ReportStream(m_id, MediaStreamKind::Audio, input->audioIndex, 0, 0);
         }
 
-        if (m_videoIndex >= 0)
+        m_rendition = input->rendition;
+        m_engine->ReportRendition(m_id, input->rendition);
+
+        const bool seek = input->map == nullptr && target > 0;
+        m_input = std::move(input);
+
+        if (m_hasVideo)
         {
             m_videoThread = std::thread([this] { VideoMain(); });
             m_presentThread = std::thread([this] { PresentMain(); });
         }
 
-        if (m_audioIndex >= 0)
+        if (m_hasAudio)
         {
             m_audioThread = std::thread([this] { AudioMain(); });
         }
 
-        // Where the caller asked to start, unless a seek moved that while the file was opening.
-        double target;
-        int32_t serial;
-
-        if (!TakeSeek(target, serial))
-        {
-            target = m_startPosition;
-            serial = m_serial.load();
-        }
-
         m_opened = true;
-        Begin(serial, target, target > 0);
-
-        return true;
-    }
-
-    bool MediaSession::OpenVideo(int index)
-    {
-        AVStream* stream = m_format->streams[index];
-        const AVCodec* codec = nullptr;
-
-        // The native AV1 decoder only decodes through a hardware accelerator, and none is built.
-        if (stream->codecpar->codec_id == AV_CODEC_ID_AV1)
-        {
-            codec = avcodec_find_decoder_by_name("libdav1d");
-        }
-
-        if (codec == nullptr)
-        {
-            codec = avcodec_find_decoder(stream->codecpar->codec_id);
-        }
-
-        if (codec == nullptr)
-        {
-            LOGGER_WARNING(L"No decoder for video codec {}", static_cast<int>(stream->codecpar->codec_id));
-            return false;
-        }
-
-        AVCodecContext* context = avcodec_alloc_context3(codec);
-        if (context == nullptr)
-        {
-            return false;
-        }
-
-        avcodec_parameters_to_context(context, stream->codecpar);
-        context->pkt_timebase = stream->time_base;
-        context->thread_count = 0;
-        context->thread_type = FF_THREAD_FRAME | FF_THREAD_SLICE;
-
-        if (avcodec_open2(context, codec, nullptr) < 0)
-        {
-            LOGGER_WARNING(L"avcodec_open2 failed for video codec {}", static_cast<int>(stream->codecpar->codec_id));
-            avcodec_free_context(&context);
-            return false;
-        }
-
-        m_videoCodec = context;
-        m_videoIndex = index;
-        m_videoBase = stream->time_base;
-
-        const AVRational rate = av_guess_frame_rate(m_format, stream, nullptr);
-        if (rate.num > 0 && rate.den > 0)
-        {
-            m_frameDuration = av_q2d(av_inv_q(rate));
-        }
-
-        m_videoFormat.rotation = RotationOf(stream);
-        m_videoFormat.aspect = av_guess_sample_aspect_ratio(m_format, stream, nullptr);
-
-        return true;
-    }
-
-    bool MediaSession::OpenAudio(int index)
-    {
-        AVStream* stream = m_format->streams[index];
-        const AVCodec* codec = avcodec_find_decoder(stream->codecpar->codec_id);
-
-        if (codec == nullptr)
-        {
-            LOGGER_WARNING(L"No decoder for audio codec {}", static_cast<int>(stream->codecpar->codec_id));
-            return false;
-        }
-
-        AVCodecContext* context = avcodec_alloc_context3(codec);
-        if (context == nullptr)
-        {
-            return false;
-        }
-
-        avcodec_parameters_to_context(context, stream->codecpar);
-        context->pkt_timebase = stream->time_base;
-
-        if (avcodec_open2(context, codec, nullptr) < 0)
-        {
-            LOGGER_WARNING(L"avcodec_open2 failed for audio codec {}", static_cast<int>(stream->codecpar->codec_id));
-            avcodec_free_context(&context);
-            return false;
-        }
-
-        auto audio = std::make_unique<MediaAudioRenderer>(m_audioWaiter);
-
-        if (!audio->Open(context->sample_rate, m_engine->m_rate.load(), m_engine->m_volume.load(), m_engine->m_mute.load()))
-        {
-            // No output device: the picture still plays, on its own clock.
-            LOGGER_WARNING(L"No audio output, playing without audio");
-            avcodec_free_context(&context);
-            return false;
-        }
-
-        m_audio = std::move(audio);
-        m_audioCodec = context;
-        m_audioIndex = index;
-        m_audioBase = stream->time_base;
+        Begin(serial, target, seek);
 
         return true;
     }
@@ -688,16 +1082,17 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         if (seek)
         {
-            const int64_t timestamp = static_cast<int64_t>((target + m_startTime) * AV_TIME_BASE);
+            const double startTime = m_input->video ? m_input->video->startTime : m_input->audio->startTime;
+            const int64_t timestamp = static_cast<int64_t>((target + startTime) * AV_TIME_BASE);
 
             // A read the last seek interrupted leaves its error on the context.
-            m_io->error = 0;
-            m_io->eof_reached = 0;
+            m_input->io->error = 0;
+            m_input->io->eof_reached = 0;
 
             // Backward only: allowed to land after the target, a seek reads the whole file when the
             // target is past the last keyframe in the index. The decoders drop what comes before
             // the target, so landing early costs decoding time but never shows the wrong frame.
-            const int result = avformat_seek_file(m_format, -1, INT64_MIN, timestamp, timestamp, 0);
+            const int result = avformat_seek_file(m_input->format, -1, INT64_MIN, timestamp, timestamp, 0);
 
             if (result < 0 && !m_abort)
             {
@@ -708,18 +1103,75 @@ namespace winrt::Telegram::Native::Media::implementation
         m_demuxSerial = serial;
         m_demuxEnded = false;
 
-        if (m_videoIndex >= 0)
+        if (m_hasVideo)
         {
-            m_videoPackets.Push({ MediaPacket::Kind::Flush, nullptr, serial, target });
+            m_videoPackets.Push({ MediaPacket::Kind::Flush, nullptr, serial, target, -1, NAN, m_input->video });
         }
 
-        if (m_audioIndex >= 0)
+        if (m_hasAudio)
         {
-            m_audioPackets.Push({ MediaPacket::Kind::Flush, nullptr, serial, target });
+            m_audioPackets.Push({ MediaPacket::Kind::Flush, nullptr, serial, target, -1, NAN, m_input->audio });
         }
     }
 
-    bool MediaSession::TakeSeek(double& target, int32_t& serial)
+    void MediaSession::Reposition(int32_t serial, double target, int32_t rendition)
+    {
+        if (rendition < 0)
+        {
+            rendition = m_input->rendition;
+        }
+
+        // A plain file seeks in place. A quality is opened again at the segment the target is in,
+        // which costs its init section and nothing more.
+        if (rendition == m_input->rendition && m_input->map == nullptr)
+        {
+            Begin(serial, target, true);
+            return;
+        }
+
+        auto input = OpenInput(rendition, target);
+
+        if (!input && !m_abort && !HasPendingSeek() && rendition != m_input->rendition)
+        {
+            LOGGER_WARNING(L"Rendition {} could not be opened, staying on {}", rendition, m_input->rendition);
+            input = OpenInput(m_input->rendition, target);
+        }
+
+        if (!input)
+        {
+            if (!m_abort && !HasPendingSeek())
+            {
+                // Nothing to read from: end here rather than wait for packets that never come.
+                m_demuxSerial = serial;
+                EndOfStream();
+            }
+
+            return;
+        }
+
+        const bool changed = input->rendition != m_input->rendition;
+        const bool seek = input->map == nullptr;
+
+        // The same quality has the same parameters, so its decoders only flush rather than being
+        // built again on every step of a scrub.
+        if (!changed)
+        {
+            input->video = input->video && m_input->video ? m_input->video : input->video;
+            input->audio = input->audio && m_input->audio ? m_input->audio : input->audio;
+        }
+
+        m_input = std::move(input);
+
+        if (changed)
+        {
+            m_rendition = m_input->rendition;
+            m_engine->ReportRendition(m_id, m_input->rendition);
+        }
+
+        Begin(serial, target, seek);
+    }
+
+    bool MediaSession::TakeSeek(double& target, int32_t& serial, int32_t& rendition)
     {
         std::lock_guard<std::mutex> lock(m_seekLock);
 
@@ -731,6 +1183,8 @@ namespace winrt::Telegram::Native::Media::implementation
         m_seekPending = false;
         target = m_seekTarget;
         serial = m_seekSerial;
+        rendition = m_seekRendition;
+        m_seekRendition = -1;
 
         return true;
     }
@@ -745,11 +1199,11 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         std::lock_guard<std::mutex> lock(m_sourceLock);
 
-        if (m_sourceClosed && !m_abort)
+        if (m_sourceClosed && m_active && !m_abort)
         {
             try
             {
-                m_source->Open();
+                m_active->Open();
             }
             catch (...)
             {
@@ -758,6 +1212,24 @@ namespace winrt::Telegram::Native::Media::implementation
 
             m_sourceClosed = false;
         }
+    }
+
+    void MediaSession::EndOfStream()
+    {
+        const int32_t current = m_demuxSerial.load();
+
+        if (m_hasVideo)
+        {
+            m_videoPackets.Push({ MediaPacket::Kind::Drain, nullptr, current });
+        }
+
+        if (m_hasAudio)
+        {
+            m_audioPackets.Push({ MediaPacket::Kind::Drain, nullptr, current });
+        }
+
+        m_demuxEnded = true;
+        UpdatePlayback();
     }
 
     void MediaSession::ReadLoop()
@@ -769,10 +1241,11 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             double target;
             int32_t serial;
+            int32_t rendition;
 
-            if (TakeSeek(target, serial))
+            if (TakeSeek(target, serial, rendition))
             {
-                Begin(serial, target, true);
+                Reposition(serial, target, rendition);
                 errors = 0;
                 continue;
             }
@@ -782,6 +1255,8 @@ namespace winrt::Telegram::Native::Media::implementation
                 m_demuxWaiter.Wait(0.25);
                 continue;
             }
+
+            Adapt();
 
             if (QueuesFull())
             {
@@ -798,7 +1273,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
             m_readingPaused = false;
 
-            const int result = av_read_frame(m_format, packet);
+            const int result = av_read_frame(m_input->format, packet);
 
             if (result < 0)
             {
@@ -812,48 +1287,37 @@ namespace winrt::Telegram::Native::Media::implementation
                     continue;
                 }
 
+                auto* io = m_input->io;
+
                 // A damaged packet is skipped, as long as it is a packet and not the file ending.
-                if (result != AVERROR_EOF && !avio_feof(m_io) && m_io->error == 0 && ++errors < kMaxReadErrors)
+                if (result != AVERROR_EOF && !avio_feof(io) && io->error == 0 && ++errors < kMaxReadErrors)
                 {
                     continue;
                 }
 
-                if (result != AVERROR_EOF && !avio_feof(m_io))
+                if (result != AVERROR_EOF && !avio_feof(io))
                 {
                     LOGGER_WARNING(L"av_read_frame failed: {}", result);
                 }
 
-                const int32_t current = m_demuxSerial.load();
-
-                if (m_videoIndex >= 0)
-                {
-                    m_videoPackets.Push({ MediaPacket::Kind::Drain, nullptr, current });
-                }
-
-                if (m_audioIndex >= 0)
-                {
-                    m_audioPackets.Push({ MediaPacket::Kind::Drain, nullptr, current });
-                }
-
-                m_demuxEnded = true;
-                UpdatePlayback();
+                EndOfStream();
                 continue;
             }
 
             errors = 0;
 
             PacketQueue* queue = nullptr;
-            AVRational base{ 0, 1 };
+            MediaStreamSetup const* setup = nullptr;
 
-            if (packet->stream_index == m_videoIndex)
+            if (packet->stream_index == m_input->videoIndex)
             {
                 queue = &m_videoPackets;
-                base = m_videoBase;
+                setup = m_input->video.get();
             }
-            else if (packet->stream_index == m_audioIndex)
+            else if (packet->stream_index == m_input->audioIndex)
             {
                 queue = &m_audioPackets;
-                base = m_audioBase;
+                setup = m_input->audio.get();
             }
 
             if (queue == nullptr)
@@ -862,17 +1326,19 @@ namespace winrt::Telegram::Native::Media::implementation
                 continue;
             }
 
-            double end = ToSeconds(packet->pts != AV_NOPTS_VALUE ? packet->pts : packet->dts, base);
+            double end = ToSeconds(packet->pts != AV_NOPTS_VALUE ? packet->pts : packet->dts, setup->timeBase);
 
             if (!std::isnan(end))
             {
-                end -= m_startTime;
+                end -= setup->startTime;
 
                 if (packet->duration > 0)
                 {
-                    end += ToSeconds(packet->duration, base);
+                    end += ToSeconds(packet->duration, setup->timeBase);
                 }
             }
+
+            const int32_t segment = m_input->map ? m_input->map->SegmentOf(packet->pos) : -1;
 
             AVPacket* item = av_packet_alloc();
             if (item == nullptr)
@@ -882,7 +1348,7 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             av_packet_move_ref(item, packet);
-            queue->Push({ MediaPacket::Kind::Data, item, m_demuxSerial.load() }, end);
+            queue->Push({ MediaPacket::Kind::Data, item, m_demuxSerial.load(), 0, segment, end });
 
             if (m_stalledHint)
             {
@@ -893,6 +1359,23 @@ namespace winrt::Telegram::Native::Media::implementation
         av_packet_free(&packet);
     }
 
+    double MediaSession::Ahead(double position)
+    {
+        double ahead = std::numeric_limits<double>::infinity();
+
+        if (m_hasVideo)
+        {
+            ahead = std::min(ahead, m_videoPackets.End() - position);
+        }
+
+        if (m_hasAudio)
+        {
+            ahead = std::min(ahead, m_audioPackets.End() - position);
+        }
+
+        return ahead;
+    }
+
     bool MediaSession::QueuesFull()
     {
         if (m_videoPackets.Bytes() + m_audioPackets.Bytes() >= kMaxQueuedBytes)
@@ -900,25 +1383,212 @@ namespace winrt::Telegram::Native::Media::implementation
             return true;
         }
 
-        const double now = CurrentTime();
-        double ahead = std::numeric_limits<double>::infinity();
+        return Ahead(CurrentTime()) >= kMaxAhead;
+    }
 
-        if (m_videoIndex >= 0)
+    int32_t MediaSession::StepDown(int32_t rendition) const
+    {
+        int32_t lower = -1;
+
+        for (int32_t index = 0; index < static_cast<int32_t>(m_renditions.size()); index++)
         {
-            ahead = std::min(ahead, m_videoPackets.End() - now);
+            if (m_segmented[index] && m_heights[index] < m_heights[rendition] && (lower < 0 || m_heights[index] > m_heights[lower]))
+            {
+                lower = index;
+            }
         }
 
-        if (m_audioIndex >= 0)
+        return lower;
+    }
+
+    void MediaSession::Adapt()
+    {
+        const double now = MediaNow();
+
+        if (now - m_lastAdapt < kAdaptInterval)
         {
-            ahead = std::min(ahead, m_audioPackets.End() - now);
+            return;
         }
 
-        return ahead >= kMaxAhead;
+        m_lastAdapt = now;
+
+        const double duration = m_duration.load();
+        const int32_t current = m_input->rendition;
+
+        // Only between segmented qualities: a plain file, the original, has nothing to splice at.
+        if (!m_automatic || m_renditions.size() < 2 || m_input->map == nullptr || duration <= 0)
+        {
+            return;
+        }
+
+        bool stalled;
+        bool prerolling;
+        double stalledAt;
+
+        {
+            std::lock_guard<std::mutex> lock(m_controlLock);
+
+            stalled = m_stalled;
+            prerolling = m_prerolling;
+            stalledAt = m_stalledAt;
+        }
+
+        // Already waiting, so a step down right away costs nothing that is not being lost anyway.
+        if (stalled && now - stalledAt >= kStallDown)
+        {
+            const int32_t lower = StepDown(current);
+
+            if (lower >= 0)
+            {
+                LOGGER_INFO(L"Stalled for {:.1f}s, down from {}p to {}p", now - stalledAt, m_heights[current], m_heights[lower]);
+
+                m_lastDown = now;
+                m_lastSwitch = now;
+                Seek(Position(), lower);
+            }
+
+            return;
+        }
+
+        if (stalled || prerolling || m_demuxEnded || now - m_input->openedAt < kSpeedSettle || now - m_lastSwitch < kSwitchHold)
+        {
+            return;
+        }
+
+        double speed = 0;
+
+        try
+        {
+            speed = m_renditions[current]->DownloadSpeed();
+        }
+        catch (...)
+        {
+            return;
+        }
+
+        if (speed <= 0)
+        {
+            return;
+        }
+
+        const double rate = std::max(0.25, m_engine->m_rate.load());
+        const double position = CurrentTime();
+        const double ahead = Ahead(position);
+
+        int32_t target = -1;
+
+        if (speed < m_sizes[current] / duration * rate && ahead < kDownAhead)
+        {
+            // The link no longer keeps up with this quality and what is buffered is running down:
+            // step down at the next boundary, before it runs out.
+            target = StepDown(current);
+        }
+        else if (ahead >= kUpBuffered && now - m_lastDown >= kUpHold)
+        {
+            for (int32_t index = 0; index < static_cast<int32_t>(m_renditions.size()); index++)
+            {
+                const bool better = m_segmented[index] && m_heights[index] > m_heights[current]
+                    && (target < 0 || m_heights[index] > m_heights[target]);
+
+                if (better && speed >= m_sizes[index] / duration * rate * kUpHeadroom)
+                {
+                    target = index;
+                }
+            }
+        }
+
+        if (target < 0)
+        {
+            return;
+        }
+
+        auto const* playlist = Playlist(current);
+        const int32_t segment = playlist ? playlist->SegmentFrom(position + kSwitchMargin) : -1;
+
+        if (segment < 0)
+        {
+            return;
+        }
+
+        if (SwitchAt(target, segment))
+        {
+            LOGGER_INFO(L"{:.0f} KB/s, {} from {}p to {}p at {:.1f}s", speed / 1024,
+                m_heights[target] > m_heights[current] ? L"up" : L"down", m_heights[current], m_heights[target], playlist->segments[segment].start);
+
+            m_lastSwitch = now;
+
+            if (m_heights[target] < m_heights[current])
+            {
+                m_lastDown = now;
+            }
+        }
+    }
+
+    bool MediaSession::SwitchAt(int32_t rendition, int32_t segment)
+    {
+        // Loaded before anything is dropped: it can block on the download, and fail.
+        auto const* playlist = Playlist(rendition);
+        auto const* current = Playlist(m_input->rendition);
+
+        if (playlist == nullptr || current == nullptr || segment >= static_cast<int32_t>(current->segments.size()) || HasPendingSeek())
+        {
+            return false;
+        }
+
+        if (!PacketQueue::TrimFrom(m_videoPackets, m_audioPackets, segment))
+        {
+            return false;
+        }
+
+        const double start = current->segments[segment].start;
+        auto input = OpenInput(rendition, start);
+
+        if (!input && !m_abort && !HasPendingSeek())
+        {
+            // What followed the boundary in this quality was dropped already, so it is read again.
+            input = OpenInput(m_input->rendition, start);
+        }
+
+        if (!input)
+        {
+            if (!m_abort && !HasPendingSeek())
+            {
+                EndOfStream();
+            }
+
+            return false;
+        }
+
+        const bool changed = input->rendition != m_input->rendition;
+
+        m_input = std::move(input);
+        m_demuxEnded = false;
+
+        const int32_t serial = m_demuxSerial.load();
+
+        if (m_hasVideo && m_input->video)
+        {
+            m_videoPackets.Push({ MediaPacket::Kind::Switch, nullptr, serial, start, -1, NAN, m_input->video });
+        }
+
+        if (m_hasAudio && m_input->audio)
+        {
+            m_audioPackets.Push({ MediaPacket::Kind::Switch, nullptr, serial, start, -1, NAN, m_input->audio });
+        }
+
+        if (changed)
+        {
+            m_rendition = m_input->rendition;
+            m_engine->ReportRendition(m_id, m_input->rendition);
+        }
+
+        return changed;
     }
 
     int MediaSession::ReadPacket(void* opaque, uint8_t* buffer, int size)
     {
-        auto* self = static_cast<MediaSession*>(opaque);
+        auto* input = static_cast<MediaInput*>(opaque);
+        auto* self = input->session;
 
         while (true)
         {
@@ -940,11 +1610,27 @@ namespace winrt::Telegram::Native::Media::implementation
                 return AVERROR_EXIT;
             }
 
+            int64_t offset = input->position;
+            int64_t count = size;
+
+            if (input->map)
+            {
+                int64_t available = 0;
+
+                if (!input->map->Locate(input->position, offset, available))
+                {
+                    self->m_reading = false;
+                    return AVERROR_EOF;
+                }
+
+                count = std::min(count, available);
+            }
+
             int64_t read;
 
             try
             {
-                read = self->m_source->Read(self->m_ioOffset, buffer, size);
+                read = input->source->Read(offset, buffer, count, input->window);
             }
             catch (...)
             {
@@ -955,7 +1641,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
             if (read > 0)
             {
-                self->m_ioOffset += read;
+                input->position += read;
                 return static_cast<int>(read);
             }
 
@@ -982,12 +1668,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
     int64_t MediaSession::SeekPacket(void* opaque, int64_t offset, int whence)
     {
-        auto* self = static_cast<MediaSession*>(opaque);
+        auto* input = static_cast<MediaInput*>(opaque);
         whence &= ~AVSEEK_FORCE;
 
         if (whence == AVSEEK_SIZE)
         {
-            return self->m_size > 0 ? self->m_size : AVERROR(ENOSYS);
+            return input->size > 0 ? input->size : AVERROR(ENOSYS);
         }
 
         int64_t position;
@@ -998,15 +1684,15 @@ namespace winrt::Telegram::Native::Media::implementation
             position = offset;
             break;
         case SEEK_CUR:
-            position = self->m_ioOffset + offset;
+            position = input->position + offset;
             break;
         case SEEK_END:
-            if (self->m_size <= 0)
+            if (input->size <= 0)
             {
                 return AVERROR(ENOSYS);
             }
 
-            position = self->m_size + offset;
+            position = input->size + offset;
             break;
         default:
             return AVERROR(EINVAL);
@@ -1018,7 +1704,7 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         // Only remembered: nothing is read, or asked for, until a read needs it.
-        self->m_ioOffset = position;
+        input->position = position;
         return position;
     }
 
@@ -1098,6 +1784,8 @@ namespace winrt::Telegram::Native::Media::implementation
         NameThread(L"Media video decoder");
 
         AVFrame* frame = av_frame_alloc();
+        AVCodecContext* codec = nullptr;
+        std::shared_ptr<MediaStreamSetup> setup;
 
         int32_t serial = -1;
         double target = 0;
@@ -1109,12 +1797,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
         auto receive = [&]()
             {
-                while (!m_abort && avcodec_receive_frame(m_videoCodec, frame) >= 0)
+                while (!m_abort && codec != nullptr && avcodec_receive_frame(codec, frame) >= 0)
                 {
-                    double pts = ToSeconds(frame->best_effort_timestamp, m_videoBase);
-                    pts = std::isnan(pts) ? nextPts : pts - m_startTime;
+                    double pts = ToSeconds(frame->best_effort_timestamp, setup->timeBase);
+                    pts = std::isnan(pts) ? nextPts : pts - setup->startTime;
 
-                    const double duration = frame->duration > 0 ? ToSeconds(frame->duration, m_videoBase) : m_frameDuration;
+                    const double duration = frame->duration > 0 ? ToSeconds(frame->duration, setup->timeBase) : setup->frameDuration;
                     nextPts = pts + duration;
 
                     if (pts + duration <= target + 0.001)
@@ -1125,7 +1813,7 @@ namespace winrt::Telegram::Native::Media::implementation
                         if (last.frame != nullptr)
                         {
                             av_frame_move_ref(last.frame, frame);
-                            last = { last.frame, pts, duration, serial };
+                            last = { last.frame, pts, duration, serial, setup->format };
                         }
 
                         av_frame_unref(frame);
@@ -1142,12 +1830,29 @@ namespace winrt::Telegram::Native::Media::implementation
 
                     av_frame_free(&last.frame);
 
-                    if (!m_frames.Push({ output, pts, duration, serial }, m_serial))
+                    if (!m_frames.Push({ output, pts, duration, serial, setup->format }, m_serial))
                     {
                         break;
                     }
 
                     pushed = true;
+                }
+            };
+
+        // A decoder per file: another quality comes with its own parameters, which the decoder of
+        // the previous one cannot take on.
+        auto open = [&](std::shared_ptr<MediaStreamSetup> const& next)
+            {
+                avcodec_free_context(&codec);
+
+                setup = next;
+                codec = setup ? CreateDecoder(*setup, true) : nullptr;
+
+                if (codec == nullptr)
+                {
+                    // Nothing will be decoded, so the end is now, rather than playback waiting
+                    // for a picture forever.
+                    m_frames.Push({ nullptr, nextPts, 0, serial }, m_serial);
                 }
             };
 
@@ -1168,25 +1873,48 @@ namespace winrt::Telegram::Native::Media::implementation
             switch (item.kind)
             {
             case MediaPacket::Kind::Flush:
-                avcodec_flush_buffers(m_videoCodec);
                 av_frame_free(&last.frame);
 
                 serial = item.serial;
                 target = item.target;
                 nextPts = target;
                 pushed = false;
+
+                if (item.setup != setup)
+                {
+                    open(item.setup);
+                }
+                else if (codec != nullptr)
+                {
+                    avcodec_flush_buffers(codec);
+                }
+
+                break;
+
+            case MediaPacket::Kind::Switch:
+                // Everything the previous quality still holds plays before the boundary.
+                if (codec != nullptr)
+                {
+                    avcodec_send_packet(codec, nullptr);
+                    receive();
+                }
+
+                open(item.setup);
                 break;
 
             case MediaPacket::Kind::Drain:
-                avcodec_send_packet(m_videoCodec, nullptr);
-                receive();
+                if (codec != nullptr)
+                {
+                    avcodec_send_packet(codec, nullptr);
+                    receive();
+                }
 
                 if (!pushed && last.frame != nullptr)
                 {
                     AVFrame* output = Normalize(last.frame);
                     av_frame_free(&last.frame);
 
-                    if (output != nullptr && m_frames.Push({ output, last.pts, last.duration, serial }, m_serial))
+                    if (output != nullptr && m_frames.Push({ output, last.pts, last.duration, serial, last.format }, m_serial))
                     {
                         pushed = true;
                     }
@@ -1196,19 +1924,29 @@ namespace winrt::Telegram::Native::Media::implementation
 
                 // A drained decoder takes nothing more until it is flushed, which a seek after
                 // the end would otherwise find it still needing.
-                avcodec_flush_buffers(m_videoCodec);
+                if (codec != nullptr)
+                {
+                    avcodec_flush_buffers(codec);
+                }
+
                 break;
 
             case MediaPacket::Kind::Data:
             {
-                m_videoCodec->skip_frame = m_videoBehind ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
+                if (codec == nullptr)
+                {
+                    av_packet_free(&item.packet);
+                    break;
+                }
 
-                int result = avcodec_send_packet(m_videoCodec, item.packet);
+                codec->skip_frame = m_videoBehind ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
+
+                int result = avcodec_send_packet(codec, item.packet);
 
                 while (result == AVERROR(EAGAIN) && !m_abort)
                 {
                     receive();
-                    result = avcodec_send_packet(m_videoCodec, item.packet);
+                    result = avcodec_send_packet(codec, item.packet);
                 }
 
                 receive();
@@ -1220,6 +1958,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         av_frame_free(&last.frame);
         av_frame_free(&frame);
+        avcodec_free_context(&codec);
     }
 
     void MediaSession::PresentMain()
@@ -1271,7 +2010,7 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 // The first picture after opening or seeking goes up at once, paused or not, so
                 // that scrubbing shows where it landed.
-                m_renderer->Render(m_id, front->frame, m_videoFormat);
+                m_renderer->Render(m_id, front->frame, front->format);
                 shown = serial;
 
                 bool videoOut = false;
@@ -1327,7 +2066,7 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             m_videoBehind = false;
-            m_renderer->Render(m_id, front->frame, m_videoFormat);
+            m_renderer->Render(m_id, front->frame, front->format);
 
             {
                 std::lock_guard<std::mutex> lock(m_controlLock);
@@ -1349,6 +2088,8 @@ namespace winrt::Telegram::Native::Media::implementation
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
 
         AVFrame* frame = av_frame_alloc();
+        AVCodecContext* codec = nullptr;
+        std::shared_ptr<MediaStreamSetup> setup;
 
         int32_t flushed = -1;
         double target = 0;
@@ -1356,10 +2097,10 @@ namespace winrt::Telegram::Native::Media::implementation
 
         auto receive = [&]()
             {
-                while (!m_abort && avcodec_receive_frame(m_audioCodec, frame) >= 0)
+                while (!m_abort && codec != nullptr && avcodec_receive_frame(codec, frame) >= 0)
                 {
-                    double pts = ToSeconds(frame->best_effort_timestamp, m_audioBase);
-                    pts = std::isnan(pts) ? nextPts : pts - m_startTime;
+                    double pts = ToSeconds(frame->best_effort_timestamp, setup->timeBase);
+                    pts = std::isnan(pts) ? nextPts : pts - setup->startTime;
 
                     if (frame->sample_rate > 0)
                     {
@@ -1368,6 +2109,19 @@ namespace winrt::Telegram::Native::Media::implementation
 
                     m_audio->Enqueue(frame, pts, target);
                     av_frame_unref(frame);
+                }
+            };
+
+        auto open = [&](std::shared_ptr<MediaStreamSetup> const& next)
+            {
+                avcodec_free_context(&codec);
+
+                setup = next;
+                codec = setup ? CreateDecoder(*setup, false) : nullptr;
+
+                if (codec == nullptr)
+                {
+                    m_audio->EndOfStream();
                 }
             };
 
@@ -1387,7 +2141,7 @@ namespace winrt::Telegram::Native::Media::implementation
             m_audio->Pump(m_running);
             UpdatePlayback();
 
-            if (m_videoIndex < 0 && m_running)
+            if (!m_hasVideo && m_running)
             {
                 ReportPosition(CurrentTime());
             }
@@ -1408,26 +2162,57 @@ namespace winrt::Telegram::Native::Media::implementation
                 switch (item.kind)
                 {
                 case MediaPacket::Kind::Flush:
-                    avcodec_flush_buffers(m_audioCodec);
                     target = item.target;
                     nextPts = target;
+
+                    if (item.setup != setup)
+                    {
+                        open(item.setup);
+                    }
+                    else if (codec != nullptr)
+                    {
+                        avcodec_flush_buffers(codec);
+                    }
+
+                    break;
+
+                case MediaPacket::Kind::Switch:
+                    // The renderer carries on: the new quality's sound picks up where the old one
+                    // ends, and any overlap or gap at the boundary is smoothed over there.
+                    if (codec != nullptr)
+                    {
+                        avcodec_send_packet(codec, nullptr);
+                        receive();
+                    }
+
+                    open(item.setup);
                     break;
 
                 case MediaPacket::Kind::Drain:
-                    avcodec_send_packet(m_audioCodec, nullptr);
-                    receive();
+                    if (codec != nullptr)
+                    {
+                        avcodec_send_packet(codec, nullptr);
+                        receive();
+                        avcodec_flush_buffers(codec);
+                    }
+
                     m_audio->EndOfStream();
-                    avcodec_flush_buffers(m_audioCodec);
                     break;
 
                 case MediaPacket::Kind::Data:
                 {
-                    int result = avcodec_send_packet(m_audioCodec, item.packet);
+                    if (codec == nullptr)
+                    {
+                        av_packet_free(&item.packet);
+                        break;
+                    }
+
+                    int result = avcodec_send_packet(codec, item.packet);
 
                     while (result == AVERROR(EAGAIN) && !m_abort)
                     {
                         receive();
-                        result = avcodec_send_packet(m_audioCodec, item.packet);
+                        result = avcodec_send_packet(codec, item.packet);
                     }
 
                     receive();
@@ -1445,6 +2230,7 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         av_frame_free(&frame);
+        avcodec_free_context(&codec);
     }
 
     double MediaSession::CurrentTime()
@@ -1481,8 +2267,8 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         const bool paused = m_engine->m_paused.load();
-        const bool hasVideo = m_videoIndex >= 0;
-        const bool hasAudio = m_audioIndex >= 0;
+        const bool hasVideo = m_hasVideo;
+        const bool hasAudio = m_hasAudio;
         const bool audioCurrent = hasAudio && m_audioSerial.load() == m_serial.load();
 
         const bool audioEnded = !hasAudio || m_audio->Failed() || (audioCurrent && m_audio->Finished());
@@ -1587,6 +2373,7 @@ namespace winrt::Telegram::Native::Media::implementation
             if (videoStarved || audioStarved)
             {
                 m_stalled = true;
+                m_stalledAt = MediaNow();
                 m_stalledHint = true;
                 m_lastBuffering = 0;
                 m_engine->ReportBuffering(m_id, 0);
@@ -1616,7 +2403,7 @@ namespace winrt::Telegram::Native::Media::implementation
         m_engine->ReportPosition(m_id, std::max(0.0, position));
     }
 
-    void MediaSession::Seek(double target)
+    void MediaSession::Seek(double target, int32_t rendition)
     {
         target = std::max(0.0, target);
 
@@ -1627,6 +2414,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
         {
             std::lock_guard<std::mutex> lock(m_seekLock);
+
+            // A plain seek arriving before a pending change of quality keeps the change.
+            if (rendition >= 0 || !m_seekPending)
+            {
+                m_seekRendition = rendition;
+            }
 
             m_seekPending = true;
             m_seekTarget = target;
@@ -1659,13 +2452,13 @@ namespace winrt::Telegram::Native::Media::implementation
 
             // The read in progress is for where playback was. Closing the source is the only way
             // to end it early, and the next read opens it again.
-            if (!m_abort && !m_sourceClosed && m_reading)
+            if (!m_abort && !m_sourceClosed && m_reading && m_active)
             {
                 m_sourceClosed = true;
 
                 try
                 {
-                    m_source->Close();
+                    m_active->Close();
                 }
                 catch (...)
                 {
@@ -1705,6 +2498,11 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             m_audio->Volume(volume, mute);
         }
+    }
+
+    void MediaSession::Automatic(bool automatic)
+    {
+        m_automatic = automatic;
     }
 
     void MediaSession::AudioDeviceChanged()
@@ -1794,7 +2592,10 @@ namespace winrt::Telegram::Native::Media::implementation
         m_duration = 0;
         m_position = position;
 
-        m_session = std::make_shared<MediaSession>(shared_from_this(), m_source, m_renderer, std::move(previous), position, id);
+        // Only a plain source is shared with the previous session, which then has to let go of it
+        // first. Qualities hand every session sources of their own.
+        m_session = std::make_shared<MediaSession>(shared_from_this(), m_renditions, m_rendition.load(), m_automatic.load(), m_renderer,
+            m_shared ? std::move(previous) : nullptr, position, id);
         m_session->Start();
 
         SetStateLocked(MediaEngineState::Opening);
@@ -1810,17 +2611,61 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void MediaEngine::Open(std::shared_ptr<IMediaByteSource> source, double position)
     {
+        OpenRenditions({ std::make_shared<SourceRendition>(std::move(source)) }, 0, false, position, true);
+    }
+
+    void MediaEngine::Open(std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic, double position)
+    {
+        OpenRenditions(std::move(renditions), rendition, automatic, position, false);
+    }
+
+    void MediaEngine::OpenRenditions(std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic, double position, bool shared)
+    {
         std::lock_guard<std::mutex> lock(m_lock);
 
-        if (m_closed)
+        if (m_closed || renditions.empty())
         {
             return;
         }
 
-        m_source = std::move(source);
+        m_shared = shared;
+        m_renditions = std::move(renditions);
+        m_rendition = std::clamp(rendition, 0, static_cast<int32_t>(m_renditions.size()) - 1);
+        m_automatic = automatic;
         m_paused = false;
 
         StartLocked(position);
+    }
+
+    void MediaEngine::SelectRendition(int32_t rendition)
+    {
+        std::lock_guard<std::mutex> lock(m_lock);
+
+        if (m_closed || !m_session || rendition >= static_cast<int32_t>(m_renditions.size()))
+        {
+            return;
+        }
+
+        if (rendition < 0)
+        {
+            // Automatic picks up from wherever it is now; nothing has to be reopened for that.
+            m_automatic = true;
+            m_session->Automatic(true);
+        }
+        else
+        {
+            m_automatic = false;
+            m_session->Automatic(false);
+
+            // At once, from where playback is: the picture stays up meanwhile, and a pick by hand
+            // is something to see right away, not at the next boundary.
+            if (rendition != m_rendition.load())
+            {
+                m_session->Seek(m_session->Position(), rendition);
+            }
+        }
+
+        m_host->RenditionChanged();
     }
 
     void MediaEngine::Play()
@@ -1836,8 +2681,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (!m_session)
         {
-            // Stopped, or never started: play the source again from the start.
-            if (m_source)
+            // Stopped, or never started: play again from the start.
+            if (!m_renditions.empty())
             {
                 StartLocked(0);
             }
@@ -1927,7 +2772,7 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         m_current = ++m_sessions;
-        m_source = nullptr;
+        m_renditions.clear();
 
         if (m_renderer)
         {
@@ -2123,6 +2968,15 @@ namespace winrt::Telegram::Native::Media::implementation
             }
 
             m_host->EncounteredError();
+        }
+    }
+
+    void MediaEngine::ReportRendition(uint64_t session, int32_t rendition)
+    {
+        if (IsCurrent(session))
+        {
+            m_rendition = rendition;
+            m_host->RenditionChanged();
         }
     }
 }

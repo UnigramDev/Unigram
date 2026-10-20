@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Media/MediaEngineCommon.h"
+
 #include <winrt/Telegram.Native.Media.h>
 
 #include <d3d11_1.h>
@@ -19,15 +21,6 @@ extern "C"
 
 namespace winrt::Telegram::Native::Media::implementation
 {
-    struct MediaVideoFormat
-    {
-        // Clockwise, in degrees: 0, 90, 180 or 270.
-        int32_t rotation{ 0 };
-
-        // Zero when the pixels are square.
-        AVRational aspect{ 0, 1 };
-    };
-
     // Draws decoded pictures into the player's swap chain and presents them.
     //
     // Shared by every session of one player, so that opening another file leaves the last picture

@@ -40,12 +40,13 @@ namespace Telegram.Controls
     // Record somehow fails to compile in release
     public partial class VideoPlayerLevel
     {
-        public VideoPlayerLevel(int index, int bitrate, int width, int height)
+        public VideoPlayerLevel(int index, int bitrate, int width, int height, bool isOriginal = false)
         {
             Index = index;
             Bitrate = bitrate;
             Width = width;
             Height = height;
+            IsOriginal = isOriginal;
         }
 
         public VideoPlayerLevel(JsonObject level)
@@ -63,6 +64,8 @@ namespace Telegram.Controls
         public int Width { get; }
 
         public int Height { get; }
+
+        public bool IsOriginal { get; }
 
         public string ToP()
         {

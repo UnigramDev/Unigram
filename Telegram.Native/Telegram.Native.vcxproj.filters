@@ -759,6 +759,9 @@
     <ClCompile Include="Media\MediaEngine.cpp">
       <Filter>Media</Filter>
     </ClCompile>
+    <ClCompile Include="Media\MediaPlaylist.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
     <ClCompile Include="Media\MediaVideoRenderer.cpp">
       <Filter>Media</Filter>
     </ClCompile>
@@ -1463,6 +1466,9 @@
       <Filter>Media</Filter>
     </ClInclude>
     <ClInclude Include="Media\MediaEngineCommon.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\MediaPlaylist.h">
       <Filter>Media</Filter>
     </ClInclude>
     <ClInclude Include="Media\MediaVideoRenderer.h">

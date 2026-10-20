@@ -9,9 +9,8 @@ Reference: Telegram Desktop, `C:\Source\tdesktop\Telegram\SourceFiles\` at `3a15
 `S/` = `media/streaming/`, `A/` = `media/audio/`, `FF` = `ffmpeg/ffmpeg_utility.cpp`). Its design is
 the starting point; where this note departs from it, it says why.
 
-Status, 2026-10-20: phase 1 is written and passes a `cl /Zs` check against the real headers. It
-has not been built, linked or run. "Phase 1 as built" below lists what it does and what it does
-not do yet.
+Status, 2026-10-20: phase 1 is built, tested on the corpus and committed (`c876ac3ab`). Phase 2 is
+written and unbuilt; "Phase 2 as built" below says what it does.
 
 
 ## What we have today
@@ -308,7 +307,8 @@ Each lands on its own and is reviewed. libvlc stays until phase 6, so every step
    - `NativeVideoPlayer` gets it behind a Diagnostics switch; libvlc stays the default.
    - Port changes for the audio filters.
 2. **Renditions and ABR.** Playlist parsing, per-rendition demux, the boundary switch, auto, the
-   original's reopen path. Then delete:
+   original's reopen path. Multi-quality videos reach the engine only with the Diagnostics switch
+   on (Fela's call), so the deletions below wait for the switch to become the default:
    - `WebVideoPlayer`;
    - `hls.html`, `hls.js` and `mp4.html` (all three in `Telegram.csproj`);
    - `Diagnostics.ForceWebView2` and its checkbox;
@@ -370,12 +370,52 @@ reuse one source object.
 - **Unmigrated consumers:** stories, the media editor, `PlaybackService` and the preloader still
   construct libvlc players.
 
+## Phase 2 as built
+
+**Decided by Fela:**
+- **Auto starts** at the quality it last settled on. That is a global setting,
+  `Playback.VideoQuality`, by the short side; it is 480 the first time. A fully downloaded quality
+  or original wins.
+- **A manual pick** is global until Auto is chosen again (`Playback.VideoQualityManual`).
+- **Codecs:** H.264 only.
+- **Routing:** behind the Diagnostics switch.
+
+**How a quality is read** (`MediaPlaylist.h/.cpp`). The demuxer opens a virtual file: the init
+section, then the real file from segment *k*'s offset to the end (`MediaSegmentMap`). This needs no
+`sidx`: zeroing the middle of a cached file showed ffmpeg's own seeking reads through rather than
+jumping. The parser was run on all 61 cached playlists, and checked against 52 of the real files:
+every segment offset is a `moof`. ffprobe on such a virtual file shows absolute timestamps
+(`tfdt`) and a keyframe first.
+
+**Trap:** ffmpeg reports the virtual file's `start_time` as segment *k*'s start, so a segmented
+input does not subtract it the way a plain file does. Its timestamps are already the whole video's.
+
+**Switching:**
+- **Manual:** immediate, as a seek to the current position with the new quality. The last frame
+  stays up until the new one is ready.
+- **Auto up:** seamless. The switch happens at the first segment boundary at least 3 s ahead of
+  playback, and only if neither decoder has taken a packet of that segment
+  (`PacketQueue::TrimFrom`). Queued packets from the boundary on are dropped, the new quality is
+  opened at the boundary, and a `Switch` marker makes each decoder drain what it holds and start a
+  decoder for the new parameters. The audio renderer carries on: its expected-time trim and its
+  silence fill absorb any overlap or gap where the two qualities meet.
+- **Auto down:** immediate after 0.5 s of stall. It is also taken seamlessly at a boundary when the
+  measured speed falls below the quality's average rate with under 10 s buffered.
+- **Up rule:** TDesktop's. The largest quality whose average rate × speed × 1.2 the measured download
+  speed covers, once 4 s are buffered.
+- **Damping:** no switch within 5 s of another, and no step up within 15 s of a step down.
+
+**Bandwidth** is `RemoteFileSource`'s own EWMA of the downloaded prefix's growth, which counts only
+time spent downloading. It is reached through `IAsyncMediaPlayerRendition.DownloadSpeed`.
+
+**Sources:** one per quality, created on first use, with only the playing one open. Closing the
+one left behind cancels its download-ahead. Playlists are downloaded on first use, on the demux
+thread, so opening a video costs nothing for the qualities it never plays.
+
 ## Open questions
 
 - **Public surface:** settled. The `AsyncMediaPlayer` surface stays, with qualities added in
   phase 2.
-- **Auto height:** global and remembered across videos (TDesktop), or reset per video?
-- **Manual choice:** global (TDesktop) or per message?
-- **Codecs:** offer hevc and av1 renditions before phase 5 lands, or h264 only until then?
+- **Auto height, manual choice, codecs:** settled, see "Phase 2 as built".
 - **Looping with audio:** TDesktop refuses it. We need it only for the gallery's `IsLoopingEnabled`
   and `EditMediaPopup`'s trim loop; both can be a seek at the end rather than a demux-level loop.
