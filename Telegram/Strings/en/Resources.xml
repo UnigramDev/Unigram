@@ -14371,10 +14371,11 @@
     <string name="PleaseEnterCurrentPasswordGiftTransfer">Please enter your password to send **{0}** to Fragment.</string>
     <string name="PleaseEnterCurrentPasswordGiftWallet">Please enter your password to move **{0}** to your wallet.</string>
 
-    <!--NOT FINAL: the wallet card's gift stickers, worded after the GramWallet prototype. Replace with
-        the Android strings once they ship, and remove this block.-->
-    <string name="WalletCardAddToCard">Add to Card</string>
-    <string name="WalletCardApplyColor">Apply Color</string>
+    <string name="BotTypeAgent">Agent</string>
+    <string name="BotTypeAI">AI</string>
+    <string name="BotTypeApp">App</string>
+    <string name="BotTypeGame">Game</string>
+    <string name="BotTypeNonBinary">Non-binary</string>
     <string name="WalletCardFull">You can add up to {0} collectibles to your card.</string>
     <string name="WalletCardOnCard">on card</string>
     <string name="WalletCardRemoveColor">Remove Color</string>

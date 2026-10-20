@@ -162,7 +162,7 @@ namespace Telegram.Controls.Cells
             }
             else if (user.Type is UserTypeBot bot)
             {
-                SubtitleLabel.Text = bot.ActiveUserCount > 0 ? Locale.Declension(Strings.R.BotDAU, bot.ActiveUserCount) : Strings.Bot;
+                SubtitleLabel.Text = LastSeenConverter.GetLabel(user, bot);
                 SubtitleLabel.Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
             }
             else
@@ -211,7 +211,7 @@ namespace Telegram.Controls.Cells
             }
             else if (user.Type is UserTypeBot bot)
             {
-                SubtitleLabel.Text = bot.ActiveUserCount > 0 ? Locale.Declension(Strings.R.BotDAU, bot.ActiveUserCount) : Strings.Bot;
+                SubtitleLabel.Text = LastSeenConverter.GetLabel(user, bot);
                 SubtitleLabel.Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
             }
             else
@@ -1421,7 +1421,7 @@ namespace Telegram.Controls.Cells
             {
                 if (user.Type is UserTypeBot typeBot)
                 {
-                    SubtitleLabel.Text = typeBot.ActiveUserCount > 0 ? Locale.Declension(Strings.R.BotDAU, typeBot.ActiveUserCount) : Strings.Bot;
+                    SubtitleLabel.Text = LastSeenConverter.GetLabel(user, typeBot);
                 }
             }
             else if (args.Phase == 2)

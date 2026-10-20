@@ -82,7 +82,7 @@ namespace Telegram.Converters
             {
                 if (details)
                 {
-                    return bot.ActiveUserCount > 0 ? Locale.Declension(Strings.R.BotDAU, bot.ActiveUserCount) : Strings.Bot;
+                    return GetLabel(user, bot);
                 }
 
                 return bot.CanReadAllGroupMessages ? Strings.BotStatusRead : Strings.BotStatusCantRead;
@@ -127,6 +127,39 @@ namespace Telegram.Converters
             {
                 return Strings.ALongTimeAgo;
             }
+        }
+
+        public static string GetLabel(User user, UserTypeBot bot)
+        {
+            if (bot.ActiveUserCount > 0)
+            {
+                return Locale.Declension(Strings.R.BotDAU, bot.ActiveUserCount);
+            }
+            else if (user.HasActiveUsername(out string username))
+            {
+                if (username.EndsWith("agent", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Strings.BotTypeAgent;
+                }
+                else if (username.EndsWith("ai", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Strings.BotTypeAI;
+                }
+                else if (username.EndsWith("app", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Strings.BotTypeApp;
+                }
+                else if (username.EndsWith("game", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Strings.BotTypeGame;
+                }
+                else if (username.EndsWith("gay", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Strings.BotTypeNonBinary;
+                }
+            }
+
+            return Strings.Bot;
         }
 
         private static string FormatDateOnline(long till, bool relative)
