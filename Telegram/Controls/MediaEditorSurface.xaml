@@ -1,0 +1,28 @@
+﻿<Grid x:Class="Telegram.Controls.MediaEditorSurface"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+
+    <controls:ImageCropper x:Name="Cropper"
+                           x:FieldModifier="public"
+                           ViewChanged="Cropper_ViewChanged"
+                           Padding="24">
+        <Grid>
+            <SwapChainPanel x:Name="Video"
+                            x:Load="False" />
+            <controls:PencilCanvas x:Name="Canvas"
+                                   x:FieldModifier="public"
+                                   Gesture="Canvas_Gesture"
+                                   ShapeRecognized="Canvas_ShapeRecognized"
+                                   StrokeStarted="Canvas_StrokeStarted"
+                                   IsEnabled="False" />
+            <controls:PaintEntityLayer x:Name="Entities"
+                                       x:FieldModifier="public"
+                                       HandleBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                                       IsHitTestVisible="False" />
+        </Grid>
+    </controls:ImageCropper>
+</Grid>

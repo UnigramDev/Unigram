@@ -221,6 +221,21 @@
     <Compile Include="Controls\PaintEntityLayer.xaml.cs">
       <DependentUpon>PaintEntityLayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PaintTabs.xaml.cs">
+      <DependentUpon>PaintTabs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PaintToolbar.xaml.cs">
+      <DependentUpon>PaintToolbar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MediaEditorSurface.xaml.cs">
+      <DependentUpon>MediaEditorSurface.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CropToolbar.xaml.cs">
+      <DependentUpon>CropToolbar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TrimToolbar.xaml.cs">
+      <DependentUpon>TrimToolbar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Media\CheckBoxResources.cs" />
     <Compile Include="Common\ConnectedAnimationServiceEx.cs" />
     <Compile Include="Common\DebouncedPropertyWithToken.cs" />
@@ -3068,6 +3083,26 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PaintEntityLayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PaintTabs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PaintToolbar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MediaEditorSurface.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CropToolbar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TrimToolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,163 @@
+﻿<StackPanel x:Class="Telegram.Controls.PaintTabs"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:controls="using:Telegram.Controls"
+            xmlns:drawers="using:Telegram.Controls.Drawers"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            mc:Ignorable="d"
+            Orientation="Horizontal">
+
+    <controls:GlyphToggleButton x:Name="DrawTab"
+                                Click="DrawTab_Click"
+                                Glyph="&#xEE56;"
+                                CheckedGlyph="&#xEE56;"
+                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                IsOneWay="True"
+                                AutomationProperties.Name="{CustomResource PhotoEditorDraw}"
+                                ToolTipService.ToolTip="{CustomResource PhotoEditorDraw}" />
+
+    <controls:GlyphToggleButton x:Name="StickerTab"
+                                Click="StickerTab_Click"
+                                Glyph="&#xF4AA;"
+                                CheckedGlyph="&#xF4AA;"
+                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                IsOneWay="True"
+                                AutomationProperties.Name="{CustomResource PhotoEditorSticker}"
+                                ToolTipService.ToolTip="{CustomResource PhotoEditorSticker}">
+        <FlyoutBase.AttachedFlyout>
+            <Flyout x:Name="StickerFlyout"
+                    Opened="StickerFlyout_Opened"
+                    Placement="Top"
+                    ShowMode="Transient">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter"
+                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                        <Setter Property="Padding"
+                                Value="0" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+                <Grid Width="320"
+                      Height="400">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <controls:TopNavView x:Name="PickerTabs"
+                                         SelectionChanged="PickerTabs_SelectionChanged"
+                                         HorizontalAlignment="Center"
+                                         Height="40"
+                                         Grid.Row="1">
+                        <controls:TopNavView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </controls:TopNavView.ItemsPanel>
+                        <controls:TopNavView.ItemContainerStyle>
+                            <Style TargetType="controls:TopNavViewItem">
+                                <Setter Property="Padding"
+                                        Value="8,1,8,0" />
+                                <Setter Property="BorderThickness"
+                                        Value="0,4,0,0" />
+                            </Style>
+                        </controls:TopNavView.ItemContainerStyle>
+                        <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
+                        <controls:TopNavViewItem Content="{CustomResource Emoji}" />
+                        <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
+                    </controls:TopNavView>
+
+                    <drawers:StickerDrawer x:Name="StickerPicker"
+                                           x:Load="False"
+                                           ItemClick="StickerPicker_ItemClick" />
+
+                    <drawers:ChatPhotoEmojiDrawer x:Name="EmojiPicker"
+                                                  x:Load="False"
+                                                  ItemClick="EmojiPicker_ItemClick" />
+
+                    <drawers:AnimationDrawer x:Name="GifPicker"
+                                             x:Load="False"
+                                             ItemClick="GifPicker_ItemClick" />
+                </Grid>
+            </Flyout>
+        </FlyoutBase.AttachedFlyout>
+    </controls:GlyphToggleButton>
+
+    <controls:GlyphToggleButton x:Name="TextTab"
+                                Click="TextTab_Click"
+                                Glyph="&#xE8D2;"
+                                CheckedGlyph="&#xE8D2;"
+                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                IsOneWay="True"
+                                AutomationProperties.Name="{CustomResource PhotoEditorText}"
+                                ToolTipService.ToolTip="{CustomResource PhotoEditorText}" />
+
+    <controls:GlyphToggleButton x:Name="ShapesTab"
+                                Click="ShapesTab_Click"
+                                Glyph="&#xE9E8;"
+                                CheckedGlyph="&#xE9E8;"
+                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                IsOneWay="True"
+                                AutomationProperties.Name="{CustomResource PaintShapes}"
+                                ToolTipService.ToolTip="{CustomResource PaintShapes}">
+        <FlyoutBase.AttachedFlyout>
+            <MenuFlyout x:Name="ShapesFlyout"
+                        Opening="ShapesFlyout_Opening"
+                        Placement="Top">
+                <MenuFlyoutItem x:Name="CircleItem"
+                                Click="ShapeItem_Click"
+                                Text="{CustomResource PaintCircle}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon x:Name="CircleIcon"
+                                  Glyph="&#xF7A4;"
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="RectangleItem"
+                                Click="ShapeItem_Click"
+                                Text="{CustomResource PaintRectangle}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon x:Name="RectangleIcon"
+                                  Glyph="&#xF7A6;"
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="StarItem"
+                                Click="ShapeItem_Click"
+                                Text="{CustomResource PaintStar}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon x:Name="StarIcon"
+                                  Glyph="&#xE734;"
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="BubbleItem"
+                                Click="ShapeItem_Click"
+                                Text="{CustomResource PaintBubble}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon x:Name="BubbleIcon"
+                                  Glyph="&#xE8BD;"
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="ArrowItem"
+                                Click="ShapeItem_Click"
+                                Text="{CustomResource PaintArrow}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xF7A0;"
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+                <controls:MenuFlyoutContent>
+                    <controls:MenuFlyoutContent.Content>
+                        <CheckBox x:Name="ShapeFilled"
+                                  Content="{CustomResource PaintShapeFilled}"
+                                  Checked="ShapeFilled_Changed"
+                                  Unchecked="ShapeFilled_Changed" />
+                    </controls:MenuFlyoutContent.Content>
+                </controls:MenuFlyoutContent>
+            </MenuFlyout>
+        </FlyoutBase.AttachedFlyout>
+    </controls:GlyphToggleButton>
+</StackPanel>

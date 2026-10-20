@@ -1,0 +1,45 @@
+﻿<Grid x:Class="Telegram.Controls.TrimToolbar"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <controls:GlyphToggleButton x:Name="MuteButton"
+                                Click="MuteButton_Click"
+                                Glyph="&#xE995;"
+                                CheckedGlyph="&#xE74F;"
+                                Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}"
+                                CornerRadius="15"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center" />
+
+    <Grid Grid.Column="1">
+        <Grid Height="40"
+              Width="296"
+              CornerRadius="4">
+            <Grid x:Name="TrimThumbnails">
+                <Grid.RenderTransform>
+                    <CompositeTransform x:Name="TrimThumbnailsTransform" />
+                </Grid.RenderTransform>
+            </Grid>
+            <Grid x:Name="TrimZoomThumbnails"
+                  Visibility="Collapsed">
+                <Grid.RenderTransform>
+                    <CompositeTransform x:Name="TrimZoomThumbnailsTransform" />
+                </Grid.RenderTransform>
+            </Grid>
+        </Grid>
+        <controls:VideoRangeSlider x:Name="TrimRange"
+                                   MinimumChanged="TrimRange_MinimumChanged"
+                                   MaximumChanged="TrimRange_MaximumChanged"
+                                   ViewChanged="TrimRange_ViewChanged"
+                                   Height="40"
+                                   Width="296" />
+    </Grid>
+</Grid>

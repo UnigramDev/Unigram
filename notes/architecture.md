@@ -515,6 +515,49 @@ play/pause) and `ZoomableListHandler` (press-and-hold preview); `EmojiDrawer`, `
 **Traps:** the two handlers must be suspended and resumed in lockstep (`_zoomer.Opening = _handler.Suspend`),
 or the grid keeps animating behind an open preview.
 
+## Media editor — Telegram/Views/Popups/EditMediaPopup.xaml.cs, Telegram/Controls/{MediaEditorSurface,PaintToolbar,PaintTabs,TrimToolbar,CropToolbar}.xaml.cs
+<!-- map: verified=b938c546d paths=Telegram/Views/Popups/EditMediaPopup.xaml,Telegram/Views/Popups/EditMediaPopup.xaml.cs,Telegram/Controls/MediaEditorSurface.xaml,Telegram/Controls/MediaEditorSurface.xaml.cs,Telegram/Controls/PaintToolbar.xaml,Telegram/Controls/PaintToolbar.xaml.cs,Telegram/Controls/PaintTabs.xaml,Telegram/Controls/PaintTabs.xaml.cs,Telegram/Controls/TrimToolbar.xaml,Telegram/Controls/TrimToolbar.xaml.cs,Telegram/Controls/CropToolbar.xaml,Telegram/Controls/CropToolbar.xaml.cs,Telegram/Entities/ImageGeneration.cs -->
+The photo and video editor opened before sending, for profile photos and for rich-text media: crop,
+free angle, drawing, text/sticker/shape objects, trim, mute and quality. `EditMediaPopup` is a thin host
+over parts that another editor can compose differently.
+**Key types:**
+- `EditMediaPopup` — an `OverlayWindow`. It owns the bottom command bar (crop buttons, quality,
+  Cancel/Done) and the switch between crop and draw mode. Done writes `StorageMedia.EditState`, an
+  `ImageGeneration`, and closes with `Primary`.
+- `MediaEditorSurface` — the `ImageCropper`, holding the video's `SwapChainPanel`, the `PencilCanvas`
+  (strokes) and the `PaintEntityLayer` (objects). It owns the `AsyncMediaPlayer` and the blur source.
+  `Cropper`, `Canvas` and `Entities` are public fields.
+- `PaintToolbar` — draw mode: brushes, colours and eyedropper, size, text options, and one undo history
+  for strokes and objects. `Open`/`Commit`/`Revert` enter and leave it.
+- `PaintTabs` — Draw/Sticker/Text/Shapes and their flyouts. It sits in the host's command bar and is
+  driven by `PaintToolbar.UpdateTools`.
+- `TrimToolbar` — mute, the frame strip and the `VideoRangeSlider`; keeps the player looping inside
+  the range.
+- `CropToolbar` — the `CropRotationWheel` and Reset.
+
+**Entry points:** `new EditMediaPopup(xamlRoot, clientService, media, mask)`, then `ShowAsync()`.
+- Callers: `SendFilesPopup` (twice), `RichTextWindow`, `ProfilePhotoService` and
+  `DialogViewModel.Messages`.
+- The last two pass `ImageCropperMask.Ellipse`, which also hides rotation and mute and caps the trim at
+  9.6 s.
+- The edit state is baked later by `GenerationService`: `CompressAsync` for photos, `TranscodeAsync`
+  for video.
+
+**Traps:**
+- **The mode flag.** `Surface.Cropper.IsCropEnabled` is it: false means draw mode, and Done, Cancel
+  and Escape all branch on it.
+- **The rows.** `PaintToolbar` spans the host's first two rows and repeats them (`*`, 60) inside. The
+  command bar stays in place in draw mode; collapsing it would resize the media on entering draw mode.
+- **Deferred loading.** Every toolbar but `CropToolbar` is `x:Load="False"` and created on first use.
+- **Shortcuts** pick a branch by which toolbar is visible. For a video in crop mode the trim branch
+  takes every key first, so Ctrl+R and Ctrl+D do nothing there.
+- **The player's order.** `TrimToolbar.Initialize` subscribes to the player before `Surface.Play()`,
+  and in `OnUnloaded` it unsubscribes before `Surface.Close()` closes the player.
+- **Stroke and object coordinates** are relative to the upright source image, not to the crop, so
+  re-cropping or rotating never moves them.
+- **Blur is photo only.** It paints a blurred copy of the decoded photo (`LoadBlurSource`), so
+  `PaintToolbar` hides it for video.
+
 ## Remaining control groups — Telegram/Controls/{Views,Payments,Gifts,Contacts,Calls,Media,Primitives}
 <!-- map: verified=95560d9f7 paths=Telegram/Controls/Views,Telegram/Controls/Payments,Telegram/Controls/Gifts,Telegram/Controls/Contacts,Telegram/Controls/Calls,Telegram/Controls/Media,Telegram/Controls/Primitives -->
 `Views/` holds sub-page controls swapped into tab hosts (`ForumView`, `SearchChatsView`,

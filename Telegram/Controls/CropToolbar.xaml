@@ -1,0 +1,23 @@
+﻿<Grid x:Class="Telegram.Controls.CropToolbar"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+
+    <controls:CropRotationWheel x:Name="RotationWheel"
+                                RotationStarted="RotationWheel_RotationStarted"
+                                RotationChanged="RotationWheel_RotationChanged"
+                                RotationCompleted="RotationWheel_RotationCompleted"
+                                MaxWidth="400"
+                                AutomationProperties.Name="{CustomResource AccDescrRotate}" />
+
+    <Button x:Name="ResetCrop"
+            Click="ResetCrop_Click"
+            Content="{CustomResource Reset}"
+            Style="{StaticResource AccentTextButtonStyle}"
+            Visibility="Collapsed"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center" />
+</Grid>
