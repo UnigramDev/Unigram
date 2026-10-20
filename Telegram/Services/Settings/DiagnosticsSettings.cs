@@ -185,7 +185,7 @@ namespace Telegram.Services.Settings
         private bool? _useFFmpegPlayer;
         public bool UseFFmpegPlayer
         {
-            get => _useFFmpegPlayer ??= GetValueOrDefault("UseFFmpegPlayer", false);
+            get => _useFFmpegPlayer ??= GetValueOrDefault("UseFFmpegPlayer", ApiInfo.IsPackagedRelease);
             set => AddOrUpdateValue(ref _useFFmpegPlayer, "UseFFmpegPlayer", value);
         }
 
