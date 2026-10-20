@@ -401,6 +401,10 @@
     <ClInclude Include="Media\AsyncMediaPlayerStateChangedEventArgs.h" />
     <ClInclude Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.h" />
     <ClInclude Include="Media\AsyncMediaPlayerSwapChain.h" />
+    <ClInclude Include="Media\MediaAudioRenderer.h" />
+    <ClInclude Include="Media\MediaEngine.h" />
+    <ClInclude Include="Media\MediaEngineCommon.h" />
+    <ClInclude Include="Media\MediaVideoRenderer.h" />
     <ClInclude Include="Media\SoundPlayer.h" />
     <ClInclude Include="Media\H264Encoder.h" />
     <ClInclude Include="Media\VideoTranscoder.h" />
@@ -1361,6 +1365,9 @@
     <ClCompile Include="Media\AsyncMediaPlayerStateChangedEventArgs.cpp" />
     <ClCompile Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.cpp" />
     <ClCompile Include="Media\AsyncMediaPlayerSwapChain.cpp" />
+    <ClCompile Include="Media\MediaAudioRenderer.cpp" />
+    <ClCompile Include="Media\MediaEngine.cpp" />
+    <ClCompile Include="Media\MediaVideoRenderer.cpp" />
     <ClCompile Include="Media\SoundPlayer.cpp" />
     <ClCompile Include="Media\H264Encoder.cpp" />
     <ClCompile Include="Media\VideoTranscoder.cpp" />

@@ -10,6 +10,9 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         AsyncMediaPlayerOptions();
 
+        AsyncMediaPlayerBackend Backend() const;
+        void Backend(AsyncMediaPlayerBackend value);
+
         AsyncMediaPlayerMode Mode() const;
         void Mode(AsyncMediaPlayerMode value);
 
@@ -31,6 +34,7 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::Windows::Foundation::Collections::IVector<hstring> Arguments();
 
     private:
+        AsyncMediaPlayerBackend m_backend;
         AsyncMediaPlayerMode m_mode;
         AsyncMediaPlayerLogLevel m_logLevel;
         bool m_createSwapChain;

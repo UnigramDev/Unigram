@@ -16,6 +16,263 @@ namespace winrt::Telegram::Native::Media::implementation
     // are suspected to involve one instance being torn down while others are still playing.
     static std::atomic<int> s_instances{ 0 };
 
+    // The bytes of an IAsyncMediaPlayerSource for the ffmpeg engine. As for libvlc, ReadCallback
+    // only waits until the bytes are on disk, and they are read from the file it downloads into.
+    class EngineSource : public IMediaByteSource
+    {
+    public:
+        explicit EngineSource(IAsyncMediaPlayerSource source)
+            : m_source(std::move(source))
+        {
+        }
+
+        ~EngineSource() override
+        {
+            if (m_file != INVALID_HANDLE_VALUE)
+            {
+                CloseHandle(m_file);
+            }
+        }
+
+        void Open() override
+        {
+            m_source.Open();
+        }
+
+        void Close() override
+        {
+            m_source.Close();
+        }
+
+        int64_t Size() override
+        {
+            return m_source.FileSize();
+        }
+
+        int64_t Read(int64_t offset, uint8_t* buffer, int64_t count) override
+        {
+            if (m_source.Offset() != offset)
+            {
+                m_source.SeekCallback(offset);
+            }
+
+            int64_t available = 0;
+            m_source.ReadCallback(count, 0, available);
+
+            if (available < 0)
+            {
+                return ReadStalled;
+            }
+            else if (available == 0)
+            {
+                return 0;
+            }
+
+            if (m_file == INVALID_HANDLE_VALUE)
+            {
+                // Opened once and kept: TDLib moves the file when the download completes, and an
+                // open handle follows it.
+                m_file = CreateFile2FromAppW(m_source.FilePath().c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+
+                if (m_file == INVALID_HANDLE_VALUE)
+                {
+                    return ReadFailed;
+                }
+            }
+
+            LARGE_INTEGER position{};
+            position.QuadPart = offset;
+
+            DWORD read = 0;
+            const DWORD wanted = static_cast<DWORD>(std::min<int64_t>(count, available));
+
+            if (!SetFilePointerEx(m_file, position, nullptr, FILE_BEGIN) || !ReadFile(m_file, buffer, wanted, &read, nullptr) || read == 0)
+            {
+                return ReadFailed;
+            }
+
+            m_source.SeekCallback(offset + read);
+            return read;
+        }
+
+    private:
+        IAsyncMediaPlayerSource m_source;
+        HANDLE m_file{ INVALID_HANDLE_VALUE };
+    };
+
+    // What the engine reports, raised on the thread the player was created on. As in EventContext,
+    // the player is resolved only once there: a strong reference taken on one of the engine's
+    // threads could be the last, and destroy the player on the very thread it would join.
+    struct AsyncMediaPlayer::EngineEvents : IMediaEngineHost
+    {
+        EngineEvents(winrt::weak_ref<AsyncMediaPlayer> weak, DispatcherQueue dispatcherQueue)
+            : m_weak(std::move(weak))
+            , m_dispatcherQueue(std::move(dispatcherQueue))
+        {
+        }
+
+        void StateChanged(MediaEngineState state) override
+        {
+            Post([state](AsyncMediaPlayer& player)
+                {
+                    player.m_stateChangedEventArgs.State(static_cast<AsyncMediaPlayerState>(state));
+                    player.m_stateChanged(player, player.m_stateChangedEventArgs);
+
+                    switch (state)
+                    {
+                    case MediaEngineState::Playing:
+                        player.m_playing(player, nullptr);
+                        break;
+                    case MediaEngineState::Paused:
+                        player.m_paused(player, nullptr);
+                        break;
+                    case MediaEngineState::Stopped:
+                        player.m_stopped(player, nullptr);
+                        break;
+                    default:
+                        break;
+                    }
+                });
+        }
+
+        void PositionChanged(double position) override
+        {
+            Post([position](AsyncMediaPlayer& player)
+                {
+                    player.m_positionChangedEventArgs.Position(position);
+                    player.m_positionChanged(player, player.m_positionChangedEventArgs);
+                });
+        }
+
+        void DurationChanged(double duration) override
+        {
+            Post([duration](AsyncMediaPlayer& player)
+                {
+                    player.m_durationChangedEventArgs.Duration(duration);
+                    player.m_durationChanged(player, player.m_durationChangedEventArgs);
+                });
+        }
+
+        void Buffering(float progress) override
+        {
+            Post([progress](AsyncMediaPlayer& player)
+                {
+                    player.m_bufferingEventArgs.Cache(progress);
+                    player.m_buffering(player, player.m_bufferingEventArgs);
+                });
+        }
+
+        void StreamSelected(MediaStreamKind kind, int32_t id, int32_t width, int32_t height) override
+        {
+            Post([=](AsyncMediaPlayer& player)
+                {
+                    player.m_streamSelected(player, AsyncMediaPlayerStreamSelectedEventArgs(id, static_cast<AsyncMediaPlayerStreamType>(kind), width, height));
+                });
+        }
+
+        void VideoOut() override
+        {
+            Post([](AsyncMediaPlayer& player)
+                {
+                    player.m_videoOut(player, nullptr);
+                });
+        }
+
+        void EndReached() override
+        {
+            Post([](AsyncMediaPlayer& player)
+                {
+                    player.m_endReached(player, nullptr);
+                });
+        }
+
+        void EncounteredError() override
+        {
+            Post([](AsyncMediaPlayer& player)
+                {
+                    player.m_encounteredError(player, nullptr);
+                });
+        }
+
+        void VolumeChanged() override
+        {
+            Post([](AsyncMediaPlayer& player)
+                {
+                    player.m_volumeChanged(player, nullptr);
+                });
+        }
+
+    private:
+        template <typename Func>
+        void Post(Func&& func)
+        {
+            DispatcherQueueHandler handler = [weak = m_weak, func = std::forward<Func>(func)]()
+                {
+                    if (auto strong = weak.get())
+                    {
+                        func(*strong);
+                    }
+                };
+
+            try
+            {
+                if (m_dispatcherQueue)
+                {
+                    m_dispatcherQueue.TryEnqueue(handler);
+                }
+                else
+                {
+                    post_to_threadpool([handler = std::move(handler)]()
+                        {
+                            handler();
+                        });
+                }
+            }
+            catch (...)
+            {
+                // Likely Window teardown
+            }
+        }
+
+        winrt::weak_ref<AsyncMediaPlayer> m_weak;
+        DispatcherQueue m_dispatcherQueue{ nullptr };
+    };
+
+    void AsyncMediaPlayer::InitializeEngine()
+    {
+        const auto mode = m_options.Mode();
+        const bool audio = (mode & AsyncMediaPlayerMode::Audio) != AsyncMediaPlayerMode::None;
+        const bool video = (mode & AsyncMediaPlayerMode::Video) != AsyncMediaPlayerMode::None;
+
+        if (m_options.CreateSwapChain() && !m_context)
+        {
+            m_context = AsyncMediaPlayerSwapChain(true);
+        }
+
+        std::shared_ptr<MediaVideoRenderer> renderer;
+
+        if (video && m_context && m_context.IsLoaded())
+        {
+            renderer = std::make_shared<MediaVideoRenderer>(m_context);
+        }
+        else if (video && m_context)
+        {
+            LOGGER_ERROR(L"swap chain unavailable, playing without video");
+        }
+
+        MediaEngineOptions options;
+        options.audio = audio;
+        options.video = renderer != nullptr;
+        options.rate = m_options.Rate();
+        options.volume = m_options.Volume();
+        options.mute = m_options.Mute();
+
+        m_engine = MediaEngine::Create(options, std::make_shared<EngineEvents>(get_weak(), m_dispatcherQueue), std::move(renderer));
+
+        // As below, and handed to the engine, which builds its audio output again on the new device.
+        m_defaultAudioRenderDeviceChanged = MediaDevice::DefaultAudioRenderDeviceChanged({ get_weak(), &AsyncMediaPlayer::OnDefaultAudioRenderDeviceChanged });
+    }
+
     AsyncMediaPlayer::AsyncMediaPlayer(AsyncMediaPlayerOptions  const& options, AsyncMediaPlayerSwapChain const& context)
         : m_options(options)
         , m_context(context)
@@ -25,6 +282,12 @@ namespace winrt::Telegram::Native::Media::implementation
         , m_positionChangedEventArgs(0.0)
         , m_durationChangedEventArgs(0.0)
     {
+        if (options.Backend() == AsyncMediaPlayerBackend::FFmpeg)
+        {
+            InitializeEngine();
+            return;
+        }
+
         auto args = options.Arguments();
 
         std::vector<std::string> argsStorage;
@@ -153,7 +416,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::OnDefaultAudioRenderDeviceChanged(winrt::Windows::Foundation::IInspectable const& sender, DefaultAudioRenderDeviceChangedEventArgs const& args)
     {
-        if (AudioDeviceRole::Default == args.Role())
+        if (AudioDeviceRole::Default == args.Role() && m_engine)
+        {
+            LOGGER_INFO(L"default audio render device changed, rebuilding the output");
+            m_engine->AudioDeviceChanged();
+        }
+        else if (AudioDeviceRole::Default == args.Role())
         {
             // Logged on both sides on purpose. The system event arrives on an arbitrary thread
             // and the switch is applied later on the worker, and in between the old device is
@@ -331,6 +599,16 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Play(IAsyncMediaPlayerSource stream, double position)
     {
+        if (m_engine)
+        {
+            if (stream)
+            {
+                m_engine->Open(std::make_shared<EngineSource>(stream), position);
+            }
+
+            return;
+        }
+
         m_state->position = position;
         m_state->duration = 0;
 
@@ -375,6 +653,13 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Play(winrt::Windows::Foundation::Uri uri, double position)
     {
+        if (m_engine)
+        {
+            // Nothing plays a URI any more, and the engine reads only what a source hands it.
+            LOGGER_ERROR(L"Playing a URI is not supported by the ffmpeg backend");
+            return;
+        }
+
         m_state->position = position;
         m_state->duration = 0;
 
@@ -429,11 +714,23 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Play()
     {
+        if (m_engine)
+        {
+            m_engine->Play();
+            return;
+        }
+
         Set(libvlc_media_player_play_aware);
     }
 
     void AsyncMediaPlayer::Stop()
     {
+        if (m_engine)
+        {
+            m_engine->Stop();
+            return;
+        }
+
         Write([this] {
             // libvlc_media_player_stop joins the input thread, and that thread may be parked
             // in the read callback waiting for bytes the source has no reason to deliver any
@@ -454,6 +751,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Pause(bool pause)
     {
+        if (m_engine)
+        {
+            m_engine->Pause(pause);
+            return;
+        }
+
         Write([this, pause] {
             auto state = libvlc_media_player_get_state(m_player);
             if (state == libvlc_Ended)
@@ -499,6 +802,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Toggle()
     {
+        if (m_engine)
+        {
+            m_engine->Toggle();
+            return;
+        }
+
         Set(libvlc_media_player_toggle_aware);
     }
 
@@ -508,6 +817,32 @@ namespace winrt::Telegram::Native::Media::implementation
         if (closed_) return;
 
         closed_ = true;
+
+        if (m_engine)
+        {
+            MediaDevice::DefaultAudioRenderDeviceChanged(m_defaultAudioRenderDeviceChanged);
+
+            // Returns at once: the engine joins its threads on the thread pool. It stays referenced
+            // here, closed, so that nothing racing this sees it disappear.
+            m_engine->Close();
+
+            if (m_context)
+            {
+                if (m_dispatcherQueue && !m_dispatcherQueue.HasThreadAccess())
+                {
+                    m_dispatcherQueue.TryEnqueue([context = m_context] { context.Detach(); });
+                }
+                else
+                {
+                    m_context.Detach();
+                }
+
+                m_context.Close();
+            }
+
+            return;
+        }
+
         const auto queued = work_queue_.clear();
 
         // Teardown is the prime suspect for the audio crashes: this runs on whichever thread
@@ -560,11 +895,21 @@ namespace winrt::Telegram::Native::Media::implementation
 
     AsyncMediaPlayerState AsyncMediaPlayer::State()
     {
+        if (m_engine)
+        {
+            return static_cast<AsyncMediaPlayerState>(m_engine->State());
+        }
+
         return (AsyncMediaPlayerState)Get(libvlc_media_player_get_state);
     }
 
     bool AsyncMediaPlayer::IsPlaying()
     {
+        if (m_engine)
+        {
+            return m_engine->IsPlaying();
+        }
+
         return Get(libvlc_media_player_is_playing);
     }
 
@@ -575,11 +920,21 @@ namespace winrt::Telegram::Native::Media::implementation
 
     double AsyncMediaPlayer::Duration()
     {
+        if (m_engine)
+        {
+            return m_engine->Duration();
+        }
+
         return m_state->duration.load();
     }
 
     double AsyncMediaPlayer::Position()
     {
+        if (m_engine)
+        {
+            return m_engine->Position();
+        }
+
         return m_state->position.load();
     }
 
@@ -597,6 +952,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Position(double value)
     {
+        if (m_engine)
+        {
+            m_engine->Seek(value);
+            return;
+        }
+
         // Recorded here rather than on the worker: the caller reads Position back to decide
         // what to do next -- PlaybackService compares against it to spot a backward seek --
         // and the queued call may not have run by then.
@@ -608,6 +969,20 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::Seek(double value, bool relative)
     {
+        if (m_engine)
+        {
+            if (relative)
+            {
+                m_engine->SeekBy(value);
+            }
+            else
+            {
+                m_engine->Seek(value);
+            }
+
+            return;
+        }
+
         auto time = static_cast<libvlc_time_t>(value * 1000);
 
         if (relative)
@@ -631,33 +1006,66 @@ namespace winrt::Telegram::Native::Media::implementation
 
     double AsyncMediaPlayer::Rate()
     {
+        if (m_engine)
+        {
+            return m_engine->Rate();
+        }
+
         return Get(libvlc_media_player_get_rate);
     }
 
     void AsyncMediaPlayer::Rate(double value)
     {
+        if (m_engine)
+        {
+            m_engine->Rate(value);
+            return;
+        }
+
         auto rate = static_cast<float>(value);
         Set(libvlc_media_player_set_rate, rate);
     }
 
     double AsyncMediaPlayer::Volume()
     {
+        if (m_engine)
+        {
+            return m_engine->Volume();
+        }
+
         return Get(libvlc_audio_get_volume) / 100.0;
     }
 
     void AsyncMediaPlayer::Volume(double value)
     {
+        if (m_engine)
+        {
+            m_engine->Volume(value);
+            return;
+        }
+
         auto volume = static_cast<int>(value * 100);
         Set(libvlc_audio_set_volume, volume);
     }
 
     bool AsyncMediaPlayer::Mute()
     {
+        if (m_engine)
+        {
+            return m_engine->Mute();
+        }
+
         return Get(libvlc_audio_get_mute);
     }
 
     void AsyncMediaPlayer::Mute(bool value)
     {
+        if (m_engine)
+        {
+            m_engine->Mute(value);
+            return;
+        }
+
         Set(libvlc_audio_set_mute, value);
     }
 

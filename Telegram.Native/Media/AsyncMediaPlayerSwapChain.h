@@ -12,6 +12,8 @@
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 
+#include <atomic>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -53,6 +55,24 @@ namespace winrt::Telegram::Native::Media::implementation
         void UpdateSize();
         void UpdateScale();
 
+        // For MediaVideoRenderer, which presents into this swap chain itself rather than handing
+        // it to libvlc. It takes its own references, so they outlive a Close() racing a frame.
+        winrt::com_ptr<ID3D11Device> Device() const noexcept { return m_d3d11Device; }
+        winrt::com_ptr<ID3D11DeviceContext> DeviceContext() const noexcept { return m_deviceContext; }
+        winrt::com_ptr<IDXGISwapChain1> SwapChain() const noexcept { return m_swapChain; }
+        HANDLE ContextMutex() const noexcept { return m_contextMutex; }
+
+        // The size the panel wants, in physical pixels. Zero until a panel reports one.
+        void TargetSize(int32_t& width, int32_t& height) const noexcept
+        {
+            width = m_targetWidth.load();
+            height = m_targetHeight.load();
+        }
+
+        // Called on the panel's thread whenever the target size changes, so a paused renderer
+        // can draw its frame again at the new size.
+        void SizeChanged(std::function<void()> handler);
+
     private:
         void OnAttach(SwapChainPanel const& oldPanel, SwapChainPanel const& newPanel,
             bool subscribe);
@@ -83,6 +103,12 @@ namespace winrt::Telegram::Native::Media::implementation
         // Whether the adapter Create() settled on exposes ID3D11VideoDevice. libvlc reads the
         // device straight out of SwapChainOptions, so one that can't decode has to say so there.
         bool m_hardwareDecoding = false;
+
+        std::atomic<int32_t> m_targetWidth{ 0 };
+        std::atomic<int32_t> m_targetHeight{ 0 };
+
+        std::mutex m_sizeChangedLock;
+        std::function<void()> m_sizeChanged;
 
         winrt::event_token m_compositionScaleChangedToken{};
         winrt::event_token m_sizeChangedToken{};

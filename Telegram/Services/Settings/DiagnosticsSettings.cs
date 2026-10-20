@@ -182,6 +182,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _forceWebView2, "ForceWebView2", value);
         }
 
+        private bool? _useFFmpegPlayer;
+        public bool UseFFmpegPlayer
+        {
+            get => _useFFmpegPlayer ??= GetValueOrDefault("UseFFmpegPlayer", false);
+            set => AddOrUpdateValue(ref _useFFmpegPlayer, "UseFFmpegPlayer", value);
+        }
+
         private bool? _disablePackageManager;
         public bool DisablePackageManager
         {

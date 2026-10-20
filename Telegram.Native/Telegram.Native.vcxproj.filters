@@ -753,6 +753,15 @@
     <ClCompile Include="Media\AsyncMediaPlayerOptions.cpp">
       <Filter>Media</Filter>
     </ClCompile>
+    <ClCompile Include="Media\MediaAudioRenderer.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\MediaEngine.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\MediaVideoRenderer.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
     <ClCompile Include="Media\SoundPlayer.cpp">
       <Filter>Media</Filter>
     </ClCompile>
@@ -1445,6 +1454,18 @@
       <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Media\AsyncMediaPlayer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\MediaAudioRenderer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\MediaEngine.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\MediaEngineCommon.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\MediaVideoRenderer.h">
       <Filter>Media</Filter>
     </ClInclude>
     <ClInclude Include="Media\SoundPlayer.h">

@@ -7,7 +7,8 @@
 namespace winrt::Telegram::Native::Media::implementation
 {
     AsyncMediaPlayerOptions::AsyncMediaPlayerOptions()
-        : m_mode(AsyncMediaPlayerMode::Audio | AsyncMediaPlayerMode::Video)
+        : m_backend(AsyncMediaPlayerBackend::LibVlc)
+        , m_mode(AsyncMediaPlayerMode::Audio | AsyncMediaPlayerMode::Video)
         , m_logLevel(AsyncMediaPlayerLogLevel::Warning)
         , m_createSwapChain(false)
         , m_mute(false)
@@ -16,6 +17,16 @@ namespace winrt::Telegram::Native::Media::implementation
         , m_arguments(winrt::single_threaded_vector<hstring>())
     {
 
+    }
+
+    AsyncMediaPlayerBackend AsyncMediaPlayerOptions::Backend() const
+    {
+        return m_backend;
+    }
+
+    void AsyncMediaPlayerOptions::Backend(AsyncMediaPlayerBackend value)
+    {
+        m_backend = value;
     }
 
     AsyncMediaPlayerMode AsyncMediaPlayerOptions::Mode() const

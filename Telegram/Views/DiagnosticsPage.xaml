@@ -84,6 +84,10 @@
                               Content="Force WebView2"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.UseFFmpegPlayer, Mode=TwoWay}"
+                              Content="Use FFmpeg Video Player"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.DisableXamlGcCollect, Mode=TwoWay}"
                               Content="Disable XAML GC Collect"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

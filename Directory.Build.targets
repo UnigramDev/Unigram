@@ -8,8 +8,9 @@
     derived from the imports of the binaries built with autolink on, so they are what the linker
     actually resolved rather than what the manifest happens to contain:
 
-      Telegram.Native        libvlc, avcodec, avformat, avutil, swscale, libyuv, lz4, ogg, opus,
-                             zlib, and ZXing (static, so it leaves no import to observe)
+      Telegram.Native        libvlc, avcodec, avformat, avutil, swscale, avfilter, swresample,
+                             libyuv, lz4, ogg, opus, zlib, and ZXing (static, so it leaves
+                             no import to observe)
       Telegram.Native.Calls  webrtc (static, and the source of its libyuv and opus), avcodec,
                              avformat, avutil, zlib
 
@@ -20,7 +21,7 @@
   -->
   <ItemDefinitionGroup Condition="'$(MSBuildProjectName)' == 'Telegram.Native'">
     <Link>
-      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;libvlc.lib;libvlccore.lib;libyuv.lib;ogg.lib;opus.lib;ZXing.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;avfilter.lib;swresample.lib;libvlc.lib;libvlccore.lib;libyuv.lib;ogg.lib;opus.lib;ZXing.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)' == 'Debug'">lz4d.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)' != 'Debug'">lz4.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>

@@ -514,6 +514,29 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             // Handle error if needed
         }
+
+        const int32_t previousWidth = m_targetWidth.exchange(width);
+        const int32_t previousHeight = m_targetHeight.exchange(height);
+
+        if (previousWidth != width || previousHeight != height)
+        {
+            std::function<void()> handler;
+            {
+                std::lock_guard<std::mutex> lock(m_sizeChangedLock);
+                handler = m_sizeChanged;
+            }
+
+            if (handler)
+            {
+                handler();
+            }
+        }
+    }
+
+    void AsyncMediaPlayerSwapChain::SizeChanged(std::function<void()> handler)
+    {
+        std::lock_guard<std::mutex> lock(m_sizeChangedLock);
+        m_sizeChanged = std::move(handler);
     }
 
     void AsyncMediaPlayerSwapChain::UpdateScale()

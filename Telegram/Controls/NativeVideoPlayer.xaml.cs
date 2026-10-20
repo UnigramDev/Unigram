@@ -40,6 +40,9 @@ namespace Telegram.Controls
             {
                 var options = new AsyncMediaPlayerOptions
                 {
+                    Backend = AppSettings.Diagnostics.UseFFmpegPlayer
+                        ? AsyncMediaPlayerBackend.FFmpeg
+                        : AsyncMediaPlayerBackend.LibVlc,
                     CreateSwapChain = true,
                     Mute = AppSettings.VolumeMuted,
                     Volume = AppSettings.VolumeLevel,
@@ -260,8 +263,14 @@ namespace Telegram.Controls
 
             if (IsLoopingEnabled)
             {
-                sender.Stop();
+                // Play restarts an ended player by itself. A Stop first would make the ffmpeg
+                // backend reopen the file, and leave a gap at every loop.
                 sender.Play();
+            }
+            else
+            {
+                // An ended player is neither paused nor stopped, so neither of those events says so.
+                OnIsPlayingChanged(false);
             }
         }
 

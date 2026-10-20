@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Media/AsyncMediaPlayer.g.h"
+#include "Media/MediaEngine.h"
 
 #include <vlc/vlc.h>
 
@@ -382,10 +383,17 @@ namespace winrt::Telegram::Native::Media::implementation
         AsyncMediaPlayerPositionChangedEventArgs m_positionChangedEventArgs;
         AsyncMediaPlayerDurationChangedEventArgs m_durationChangedEventArgs;
 
-        libvlc_instance_t* m_instance;
-        libvlc_media_player_t* m_player;
-        EventContext* m_events;
+        libvlc_instance_t* m_instance{ nullptr };
+        libvlc_media_player_t* m_player{ nullptr };
+        EventContext* m_events{ nullptr };
         IAsyncMediaPlayerSource m_stream{ nullptr };
+
+        // Set when the options ask for the ffmpeg backend, and then none of libvlc above exists:
+        // every member below answers from the engine instead.
+        std::shared_ptr<MediaEngine> m_engine;
+
+        struct EngineEvents;
+        void InitializeEngine();
 
         // The reference handed to libvlc_media_new_callbacks as its opaque, owned by whoever
         // exchanges it out. Atomic because Close() takes it from the caller's thread while the

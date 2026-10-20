@@ -11,10 +11,17 @@ namespace Telegram.Native.Media
         Video
     };
 
+    enum AsyncMediaPlayerBackend
+    {
+        LibVlc,
+        FFmpeg
+    };
+
     [default_interface]
     runtimeclass AsyncMediaPlayerOptions
     {
         AsyncMediaPlayerOptions();
+        AsyncMediaPlayerBackend Backend;
         AsyncMediaPlayerMode Mode;
         AsyncMediaPlayerLogLevel LogLevel;
         Boolean CreateSwapChain;

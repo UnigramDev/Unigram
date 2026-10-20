@@ -982,6 +982,9 @@ libyuv) and libVLC directly, and runs decode loops on dedicated threads feeding 
 **Key types:** `VideoAnimation` (Telegram.Native/VideoAnimation.idl) — ffmpeg frame decoder for GIF and
 video stickers; `CachedVideoAnimation` — thread-pooled cache around it; `AsyncMediaPlayer`
 (Telegram.Native/Media/AsyncMediaPlayer.idl) — libVLC player driving a `CompositionSwapChain`;
+`MediaEngine` (Telegram.Native/Media/MediaEngine.h) — the ffmpeg player that replaces libvlc behind
+`AsyncMediaPlayer` when its options ask for the `FFmpeg` backend, with XAudio2 audio and a D3D11
+video processor presenting into the same swap chain (design and status: `notes/ffmpeg-media-player.md`);
 `AudioPitchEffect` — `IBasicAudioEffect` for speed/pitch correction, declared in the .idl and reached
 from nothing; `OpusOutput` (Telegram.Native/Opus/) — voice-note encode; `SoundPlayer`
 (Telegram.Native/Media/SoundPlayer.idl) — notification and call sounds, decoded with ffmpeg and played
