@@ -83,6 +83,7 @@ namespace Telegram.Controls
         }
 
         private readonly Dictionary<uint, Point> m_pointers = new();
+        private readonly List<ImageCropperThumb> m_thumbs = new();
 
         private Grid LayoutRoot;
         private FrameworkElement ImageThumb;
@@ -111,6 +112,7 @@ namespace Telegram.Controls
 
         private BitmapProportions m_proportions = BitmapProportions.Custom;
         private ImageCropperMask m_mask = ImageCropperMask.Rectangle;
+        private bool m_frame;
 
         // Where the crop sits in LayoutRoot. Fitted to the viewport, except while an edge is dragged.
         private Rect m_area;
@@ -203,6 +205,8 @@ namespace Telegram.Controls
             AttachThumb("BottomLeftThumb", Edges.Bottom | Edges.Left, NESWThumb_PointerEntered);
             AttachThumb("BottomRightThumb", Edges.Bottom | Edges.Right, NWSEThumb_PointerEntered);
 
+            UpdateThumbs();
+
             if (Clip != null)
             {
                 SetMask(m_mask);
@@ -213,6 +217,8 @@ namespace Telegram.Controls
         {
             if (GetTemplateChild(name) is ImageCropperThumb thumb)
             {
+                m_thumbs.Add(thumb);
+
                 thumb.Tag = edges;
                 thumb.PointerEntered += entered;
                 thumb.PointerExited += Thumb_PointerExited;
@@ -309,6 +315,9 @@ namespace Telegram.Controls
         /// Keeps the image covering the crop: zooms in when the turned crop no longer fits inside
         /// the image, then slides the centre back inside. A turned rectangle fits inside an upright
         /// one exactly when its bounding box does.
+        ///
+        /// A frame may instead be larger than the image along either axis, up to holding all of it.
+        /// Along such an axis the image stays inside the frame rather than covering it.
         /// </summary>
         private void Constrain()
         {
@@ -318,22 +327,39 @@ namespace Telegram.Controls
             var sin = Math.Abs(Math.Sin(radians));
             var cos = Math.Abs(Math.Cos(radians));
 
+            if (m_frame)
+            {
+                // The image's bounds along the frame's own axes.
+                var imageWidth = oriented.Width * cos + oriented.Height * sin;
+                var imageHeight = oriented.Width * sin + oriented.Height * cos;
+
+                var fit = Math.Max(imageWidth / m_cropSize.Width, imageHeight / m_cropSize.Height);
+                if (fit < 1)
+                {
+                    m_cropSize = new Size(m_cropSize.Width * fit, m_cropSize.Height * fit);
+                }
+            }
+
             var boundsWidth = m_cropSize.Width * cos + m_cropSize.Height * sin;
             var boundsHeight = m_cropSize.Width * sin + m_cropSize.Height * cos;
 
-            var shrink = Math.Min(oriented.Width / boundsWidth, oriented.Height / boundsHeight);
-            if (shrink < 1)
+            if (!m_frame)
             {
-                m_cropSize = new Size(m_cropSize.Width * shrink, m_cropSize.Height * shrink);
-                boundsWidth *= shrink;
-                boundsHeight *= shrink;
+                var shrink = Math.Min(oriented.Width / boundsWidth, oriented.Height / boundsHeight);
+                if (shrink < 1)
+                {
+                    m_cropSize = new Size(m_cropSize.Width * shrink, m_cropSize.Height * shrink);
+                    boundsWidth *= shrink;
+                    boundsHeight *= shrink;
+                }
             }
 
             var halfWidth = boundsWidth / 2;
             var halfHeight = boundsHeight / 2;
 
-            m_center.X = Math.Clamp(m_center.X, halfWidth, Math.Max(halfWidth, oriented.Width - halfWidth));
-            m_center.Y = Math.Clamp(m_center.Y, halfHeight, Math.Max(halfHeight, oriented.Height - halfHeight));
+            // Past the image's edges the two bounds swap, and the clamp keeps the image inside.
+            m_center.X = Math.Clamp(m_center.X, Math.Min(halfWidth, oriented.Width - halfWidth), Math.Max(halfWidth, oriented.Width - halfWidth));
+            m_center.Y = Math.Clamp(m_center.Y, Math.Min(halfHeight, oriented.Height - halfHeight), Math.Max(halfHeight, oriented.Height - halfHeight));
         }
 
         private double GetLockedRatio()
@@ -356,6 +382,13 @@ namespace Telegram.Controls
             if (ratio == 0)
             {
                 return oriented;
+            }
+
+            // A frame fills with an image only once it is clearly portrait, 1.29 times taller than
+            // wide; anything wider is shown whole across the frame's width.
+            if (m_frame && oriented.Height / oriented.Width <= 1.29)
+            {
+                return new Size(oriented.Width, oriented.Width / ratio);
             }
 
             return oriented.Width / oriented.Height > ratio
@@ -1367,7 +1400,12 @@ namespace Telegram.Controls
 
             m_quarterTurns = (m_quarterTurns + 3) % 4;
             m_angle = 0;
-            m_proportions = RotateProportions(m_proportions);
+
+            // The frame keeps its shape; the image turns inside it.
+            if (!m_frame)
+            {
+                m_proportions = RotateProportions(m_proportions);
+            }
 
             var previousCenter = Vector2.Transform(source, GetOrientation());
 
@@ -1440,6 +1478,13 @@ namespace Telegram.Controls
 
         #region Reset
 
+        // A frame keeps the proportions it was given.
+        private BitmapProportions DefaultProportions => m_frame
+            ? m_proportions
+            : m_mask == ImageCropperMask.Ellipse
+            ? BitmapProportions.Square
+            : BitmapProportions.Custom;
+
         public bool IsDefault
         {
             get
@@ -1455,7 +1500,7 @@ namespace Telegram.Controls
                 return m_quarterTurns == 0
                     && !m_mirrored
                     && m_angle == 0
-                    && m_proportions == (m_mask == ImageCropperMask.Ellipse ? BitmapProportions.Square : BitmapProportions.Custom)
+                    && m_proportions == DefaultProportions
                     && Math.Abs(m_cropSize.Width - crop.Width) < 0.5
                     && Math.Abs(m_cropSize.Height - crop.Height) < 0.5
                     && Math.Abs(m_center.X - oriented.Width / 2) < 0.5
@@ -1479,9 +1524,7 @@ namespace Telegram.Controls
                 m_quarterTurns = 0;
                 m_mirrored = false;
                 m_angle = 0;
-                m_proportions = m_mask == ImageCropperMask.Ellipse
-                    ? BitmapProportions.Square
-                    : BitmapProportions.Custom;
+                m_proportions = DefaultProportions;
 
                 ResetCrop();
                 Changed?.Invoke(this, EventArgs.Empty);
@@ -1508,9 +1551,7 @@ namespace Telegram.Controls
             m_quarterTurns = 0;
             m_mirrored = false;
             m_angle = 0;
-            m_proportions = m_mask == ImageCropperMask.Ellipse
-                ? BitmapProportions.Square
-                : BitmapProportions.Custom;
+            m_proportions = DefaultProportions;
 
             ResetCrop();
             m_area = FitArea(m_cropSize);
@@ -1769,6 +1810,30 @@ namespace Telegram.Controls
         }
 
         public ImageCropperMask Mask => m_mask;
+
+        /// <summary>
+        /// The crop is a fixed frame of the locked proportions that the image moves and zooms
+        /// under, and it may be zoomed out until the image fits inside it, leaving it empty
+        /// around the image. It has no handles. Set before the source.
+        /// </summary>
+        public bool IsFrame
+        {
+            get => m_frame;
+            set
+            {
+                m_frame = value;
+                UpdateThumbs();
+            }
+        }
+
+        // Only the handles: the grids inside the same container still show while panning and turning.
+        private void UpdateThumbs()
+        {
+            foreach (var thumb in m_thumbs)
+            {
+                thumb.Visibility = m_frame ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
 
         #endregion
 

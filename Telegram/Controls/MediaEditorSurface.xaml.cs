@@ -5,14 +5,23 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas;
 using System;
+using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
+using Telegram.Native;
 using Telegram.Native.Media;
 using Telegram.Services;
 using Telegram.Streams;
+using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
+using Windows.UI;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -34,6 +43,23 @@ namespace Telegram.Controls
 
         public bool IsVideo { get; private set; }
 
+        public bool IsFrame => FrameLayer != null;
+
+        // The blur tool paints a blurred copy of the photo, which only lines up with strokes laid
+        // out over the photo itself.
+        public bool CanBlur => !IsVideo && !IsFrame;
+
+        /// <summary>
+        /// View pixels per pixel of the layers that strokes and objects are laid out in.
+        /// </summary>
+        public double LayerZoom => IsFrame
+            ? Cropper.ViewArea.Width / FrameLayer.Width
+            : Cropper.ZoomFactor;
+
+        public Color FrameTopColor => FrameFillTop?.Color ?? default;
+
+        public Color FrameBottomColor => FrameFillBottom?.Color ?? default;
+
         public void Initialize(IClientService clientService, StorageMedia media)
         {
             _media = media;
@@ -43,6 +69,28 @@ namespace Telegram.Controls
             Canvas.Strokes = media.EditState.Strokes;
             Entities.ClientService = clientService;
             Entities.Items = media.EditState.Entities;
+        }
+
+        /// <summary>
+        /// Puts the media in a frame of <paramref name="size"/>, filled behind it with a gradient
+        /// taken from the media. Strokes and objects are then laid out in the frame, so moving
+        /// the media under it leaves them where they are. Call after Initialize, before the
+        /// cropper's source is set.
+        /// </summary>
+        public void InitializeFrame(Size size)
+        {
+            Cropper.IsFrame = true;
+
+            FindName(nameof(FrameBackdrop));
+            FindName(nameof(FrameOverlay));
+
+            FrameFill.Width = FrameLayer.Width = size.Width;
+            FrameFill.Height = FrameLayer.Height = size.Height;
+
+            MediaContent.Children.Remove(Layers);
+            FrameLayer.Children.Add(Layers);
+
+            LoadFrameColors();
         }
 
         // Starts nothing: the host subscribes to the player before Play.
@@ -137,7 +185,7 @@ namespace Telegram.Controls
         // The blur tool paints a blurred copy of the photo, so the canvas needs the photo too.
         public async void LoadBlurSource()
         {
-            if (Canvas.BlurSource != null || IsVideo)
+            if (Canvas.BlurSource != null || !CanBlur)
             {
                 return;
             }
@@ -166,10 +214,131 @@ namespace Telegram.Controls
 
         private void Cropper_ViewChanged(object sender, EventArgs e)
         {
-            Entities.SetView(Cropper.ContentTransform, Cropper.ViewArea, Cropper.ViewportSize);
+            var transform = Cropper.ContentTransform;
+
+            if (IsFrame)
+            {
+                // The frame's pixels to the view: the frame is the crop, wherever the view shows it.
+                var area = Cropper.ViewArea;
+                var scale = (float)(area.Width / FrameLayer.Width);
+
+                transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation((float)area.X, (float)area.Y);
+
+                var matrix = new Matrix(transform.M11, transform.M12, transform.M21, transform.M22, transform.M31, transform.M32);
+                FrameLayerTransform.Matrix = matrix;
+                FrameFillTransform.Matrix = matrix;
+            }
+
+            Entities.SetView(transform, Cropper.ViewArea, Cropper.ViewportSize);
 
             // Recognition measures the hand's movement on screen.
-            Canvas.LoupeScale = (float)(1 / Cropper.ZoomFactor);
+            Canvas.LoupeScale = (float)(1 / LayerZoom);
+        }
+
+        // Sampled near the top and the bottom of the media, upright, and toned towards the middle
+        // so neither end of the gradient is glaring or muddy.
+        private async void LoadFrameColors()
+        {
+            try
+            {
+                var colors = IsVideo
+                    ? await GetVideoColorsAsync()
+                    : await GetPhotoColorsAsync();
+
+                if (colors != null)
+                {
+                    FrameFillTop.Color = AdaptFrameColor(colors[0]);
+                    FrameFillBottom.Color = AdaptFrameColor(colors[1]);
+                }
+            }
+            catch
+            {
+                // The frame stays black.
+            }
+        }
+
+        private async Task<Color[]> GetPhotoColorsAsync()
+        {
+            using var stream = await ImageHelper.OpenReadAsync(_media.File);
+
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder, 240);
+
+            using var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            using var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(ElementComposition.GetSharedDevice(), software);
+
+            var width = software.PixelWidth;
+            var height = software.PixelHeight;
+
+            return new[]
+            {
+                bitmap.GetPixelColors(width / 2, (int)(height * 0.1), 1, 1)[0],
+                bitmap.GetPixelColors(width / 2, (int)(height * 0.9), 1, 1)[0]
+            };
+        }
+
+        private async Task<Color[]> GetVideoColorsAsync()
+        {
+            using var stream = await _media.File.OpenReadAsync();
+            using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false, false));
+
+            var scale = Math.Min(1, 240d / Math.Max(animation.PixelWidth, animation.PixelHeight));
+            var width = Math.Max(1, (int)(animation.PixelWidth * scale));
+            var height = Math.Max(1, (int)(animation.PixelHeight * scale));
+
+            var buffer = BufferSurface.Create((uint)(width * height * 4));
+
+            if (!await Task.Run(() => animation.RenderSync(buffer, width, height, true, out _)))
+            {
+                return null;
+            }
+
+            using var bitmap = CanvasBitmap.CreateFromBytes(ElementComposition.GetSharedDevice(), buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+
+            // The frame is decoded as stored; the points are taken on the video as it is shown.
+            var rotation = animation.Rotation;
+            var uprightWidth = rotation is 90 or 270 ? height : width;
+            var uprightHeight = rotation is 90 or 270 ? width : height;
+
+            Color Sample(int x, int y)
+            {
+                var (sourceX, sourceY) = rotation switch
+                {
+                    90 => (y, height - 1 - x),
+                    180 => (width - 1 - x, height - 1 - y),
+                    270 => (width - 1 - y, x),
+                    _ => (x, y)
+                };
+
+                return bitmap.GetPixelColors(Math.Clamp(sourceX, 0, width - 1), Math.Clamp(sourceY, 0, height - 1), 1, 1)[0];
+            }
+
+            return new[]
+            {
+                Sample(uprightWidth / 2, (int)(uprightHeight * 0.1)),
+                Sample(uprightWidth / 2, (int)(uprightHeight * 0.9))
+            };
+        }
+
+        private static Color AdaptFrameColor(Color color)
+        {
+            var hsv = color.ToHSV();
+
+            hsv.V = Math.Clamp(hsv.V - 0.05, 0.15, 0.85);
+
+            if (hsv.S > 0.1 && hsv.S <= 0.95)
+            {
+                if (hsv.S <= 0.5)
+                {
+                    hsv.S = Math.Min(hsv.S + 0.2, 1);
+                }
+                else if (hsv.S > 0.8)
+                {
+                    hsv.S = Math.Max(hsv.S - 0.4, 0);
+                }
+            }
+
+            return hsv.ToRGB();
         }
 
         // Only a press beside a selected shape reaches the canvas: drawing puts the shape away.

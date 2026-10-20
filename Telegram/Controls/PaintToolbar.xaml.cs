@@ -66,8 +66,7 @@ namespace Telegram.Controls
             Entities.EntityCreated += Entities_EntityCreated;
             Entities.EntityDeleted += Entities_EntityDeleted;
 
-            // Blurring samples the photo, so a video has nothing to blur.
-            if (surface.IsVideo)
+            if (!surface.CanBlur)
             {
                 BlurTool.Visibility = Visibility.Collapsed;
             }
@@ -522,7 +521,7 @@ namespace Telegram.Controls
             // The objects would take the press meant for the eyedropper while one is selected.
             Entities.IsHitTestVisible = false;
 
-            Canvas.LoupeScale = (float)(1 / _surface.Cropper.ZoomFactor);
+            Canvas.LoupeScale = (float)(1 / _surface.LayerZoom);
             Canvas.BeginPick();
         }
 
@@ -596,11 +595,11 @@ namespace Telegram.Controls
             AppSettings.Pencil.SetWeight(Slot, WeightSlider.Value);
         }
 
-        // As wide on screen as the stroke will be: the canvas is laid out in source pixels and
-        // scaled by the cropper.
+        // As wide on screen as the stroke will be: the canvas is laid out in its layer's pixels and
+        // scaled into the view.
         private void UpdateWeightPreview()
         {
-            var diameter = Canvas.StrokeThickness * Canvas.ActualWidth * _surface.Cropper.ZoomFactor;
+            var diameter = Canvas.StrokeThickness * Canvas.ActualWidth * _surface.LayerZoom;
 
             WeightPreview.Width = diameter;
             WeightPreview.Height = diameter;

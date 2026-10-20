@@ -6,23 +6,61 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
+    <!-- A frame's fill, behind the media: it shows wherever the media does not cover the frame.
+         Laid out in the cropper's coordinates, inside its padding. -->
+    <Canvas x:Name="FrameBackdrop"
+            x:Load="False"
+            Margin="{x:Bind Cropper.Padding, Mode=OneTime}"
+            IsHitTestVisible="False">
+        <Rectangle x:Name="FrameFill">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0"
+                                     EndPoint="0,1">
+                    <GradientStop x:Name="FrameFillTop"
+                                  Color="Black"
+                                  Offset="0" />
+                    <GradientStop x:Name="FrameFillBottom"
+                                  Color="Black"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+            <Rectangle.RenderTransform>
+                <MatrixTransform x:Name="FrameFillTransform" />
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </Canvas>
+
     <controls:ImageCropper x:Name="Cropper"
                            x:FieldModifier="public"
                            ViewChanged="Cropper_ViewChanged"
                            Padding="24">
-        <Grid>
+        <Grid x:Name="MediaContent">
             <SwapChainPanel x:Name="Video"
                             x:Load="False" />
-            <controls:PencilCanvas x:Name="Canvas"
-                                   x:FieldModifier="public"
-                                   Gesture="Canvas_Gesture"
-                                   ShapeRecognized="Canvas_ShapeRecognized"
-                                   StrokeStarted="Canvas_StrokeStarted"
-                                   IsEnabled="False" />
-            <controls:PaintEntityLayer x:Name="Entities"
+            <Grid x:Name="Layers">
+                <controls:PencilCanvas x:Name="Canvas"
                                        x:FieldModifier="public"
-                                       HandleBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-                                       IsHitTestVisible="False" />
+                                       Gesture="Canvas_Gesture"
+                                       ShapeRecognized="Canvas_ShapeRecognized"
+                                       StrokeStarted="Canvas_StrokeStarted"
+                                       IsEnabled="False" />
+                <controls:PaintEntityLayer x:Name="Entities"
+                                           x:FieldModifier="public"
+                                           HandleBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                                           IsHitTestVisible="False" />
+            </Grid>
         </Grid>
     </controls:ImageCropper>
+
+    <!-- In a frame, what is drawn and placed belongs to the frame rather than to the media, so
+         the layers move here, over the cropper, laid out at the frame's size. -->
+    <Canvas x:Name="FrameOverlay"
+            x:Load="False"
+            Margin="{x:Bind Cropper.Padding, Mode=OneTime}">
+        <Grid x:Name="FrameLayer">
+            <Grid.RenderTransform>
+                <MatrixTransform x:Name="FrameLayerTransform" />
+            </Grid.RenderTransform>
+        </Grid>
+    </Canvas>
 </Grid>

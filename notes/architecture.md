@@ -515,18 +515,21 @@ play/pause) and `ZoomableListHandler` (press-and-hold preview); `EmojiDrawer`, `
 **Traps:** the two handlers must be suspended and resumed in lockstep (`_zoomer.Opening = _handler.Suspend`),
 or the grid keeps animating behind an open preview.
 
-## Media editor — Telegram/Views/Popups/EditMediaPopup.xaml.cs, Telegram/Controls/{MediaEditorSurface,PaintToolbar,PaintTabs,TrimToolbar,CropToolbar}.xaml.cs
-<!-- map: verified=b938c546d paths=Telegram/Views/Popups/EditMediaPopup.xaml,Telegram/Views/Popups/EditMediaPopup.xaml.cs,Telegram/Controls/MediaEditorSurface.xaml,Telegram/Controls/MediaEditorSurface.xaml.cs,Telegram/Controls/PaintToolbar.xaml,Telegram/Controls/PaintToolbar.xaml.cs,Telegram/Controls/PaintTabs.xaml,Telegram/Controls/PaintTabs.xaml.cs,Telegram/Controls/TrimToolbar.xaml,Telegram/Controls/TrimToolbar.xaml.cs,Telegram/Controls/CropToolbar.xaml,Telegram/Controls/CropToolbar.xaml.cs,Telegram/Entities/ImageGeneration.cs -->
+## Media editor — Telegram/Views/Popups/EditMediaPopup.xaml.cs, Telegram/Views/Stories/Popups/EditStoryPopup.xaml.cs, Telegram/Controls/{MediaEditorSurface,PaintToolbar,PaintTabs,TrimToolbar,CropToolbar}.xaml.cs
+<!-- map: verified=7da182287 paths=Telegram/Views/Popups/EditMediaPopup.xaml,Telegram/Views/Popups/EditMediaPopup.xaml.cs,Telegram/Views/Stories/Popups/EditStoryPopup.xaml,Telegram/Views/Stories/Popups/EditStoryPopup.xaml.cs,Telegram/Controls/ImageCropper.cs,Telegram/Controls/MediaEditorSurface.xaml,Telegram/Controls/MediaEditorSurface.xaml.cs,Telegram/Controls/PaintToolbar.xaml,Telegram/Controls/PaintToolbar.xaml.cs,Telegram/Controls/PaintTabs.xaml,Telegram/Controls/PaintTabs.xaml.cs,Telegram/Controls/TrimToolbar.xaml,Telegram/Controls/TrimToolbar.xaml.cs,Telegram/Controls/CropToolbar.xaml,Telegram/Controls/CropToolbar.xaml.cs,Telegram/Entities/ImageGeneration.cs -->
 The photo and video editor opened before sending, for profile photos and for rich-text media: crop,
 free angle, drawing, text/sticker/shape objects, trim, mute and quality. `EditMediaPopup` is a thin host
-over parts that another editor can compose differently.
+over parts that `EditStoryPopup`, the story editor, composes differently.
 **Key types:**
 - `EditMediaPopup` — an `OverlayWindow`. It owns the bottom command bar (crop buttons, quality,
   Cancel/Done) and the switch between crop and draw mode. Done writes `StorageMedia.EditState`, an
   `ImageGeneration`, and closes with `Primary`.
+- `EditStoryPopup` — the story editor: the same parts, with the media in a 1080×1920 frame
+  (`InitializeFrame`), trim capped at 59 s, and no aspect, quality or mask.
 - `MediaEditorSurface` — the `ImageCropper`, holding the video's `SwapChainPanel`, the `PencilCanvas`
   (strokes) and the `PaintEntityLayer` (objects). It owns the `AsyncMediaPlayer` and the blur source.
-  `Cropper`, `Canvas` and `Entities` are public fields.
+  `Cropper`, `Canvas` and `Entities` are public fields. In a frame, a gradient sampled from the media
+  fills the frame behind the cropper.
 - `PaintToolbar` — draw mode: brushes, colours and eyedropper, size, text options, and one undo history
   for strokes and objects. `Open`/`Commit`/`Revert` enter and leave it.
 - `PaintTabs` — Draw/Sticker/Text/Shapes and their flyouts. It sits in the host's command bar and is
@@ -554,9 +557,19 @@ over parts that another editor can compose differently.
 - **The player's order.** `TrimToolbar.Initialize` subscribes to the player before `Surface.Play()`,
   and in `OnUnloaded` it unsubscribes before `Surface.Close()` closes the player.
 - **Stroke and object coordinates** are relative to the upright source image, not to the crop, so
-  re-cropping or rotating never moves them.
-- **Blur is photo only.** It paints a blurred copy of the decoded photo (`LoadBlurSource`), so
-  `PaintToolbar` hides it for video.
+  re-cropping or rotating never moves them. In a frame they are relative to the frame instead:
+  `InitializeFrame` moves the two layers out of the cropper into an overlay laid out at the frame's
+  size, and the media moves under them.
+- **`ImageCropper.IsFrame`** fixes the crop's proportions and hides the handles. `Constrain()` then lets
+  the crop grow past the image up to holding all of it, and on that axis keeps the image inside the
+  frame rather than covering it. The first placement fills the frame only for media taller than
+  1.29:1; anything wider fits the frame's width.
+- **Blur is photo only, and not in a frame.** It paints a blurred copy of the decoded photo
+  (`LoadBlurSource`), which lines up only with layers laid over the photo; `PaintToolbar` hides it
+  wherever `CanBlur` is false. The eyedropper samples that same copy, so in a frame it sees only the
+  strokes.
+- **Layer zoom.** `MediaEditorSurface.LayerZoom`, not `Cropper.ZoomFactor`, converts layer pixels to
+  the view: the two differ in a frame.
 
 ## Remaining control groups — Telegram/Controls/{Views,Payments,Gifts,Contacts,Calls,Media,Primitives}
 <!-- map: verified=95560d9f7 paths=Telegram/Controls/Views,Telegram/Controls/Payments,Telegram/Controls/Gifts,Telegram/Controls/Contacts,Telegram/Controls/Calls,Telegram/Controls/Media,Telegram/Controls/Primitives -->

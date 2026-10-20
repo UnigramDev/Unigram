@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Stories;
+using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -22,7 +23,9 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Popups;
+using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -222,6 +225,29 @@ namespace Telegram.ViewModels.Stories
             {
                 RequestedTheme = ElementTheme.Dark
             });
+        }
+
+        public async void AddStory()
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
+
+                var media = await picker.PickSingleMediaAsync(XamlRoot);
+                if (media is StoragePhoto or StorageVideo)
+                {
+                    var popup = new EditStoryPopup(XamlRoot, ClientService, media);
+                    await popup.ShowAsync();
+                }
+                else if (media is StorageInvalid)
+                {
+                    await ShowPopupAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
+                }
+            }
+            catch { }
         }
 
         public async void SaveStory(StoryViewModel story)

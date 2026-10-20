@@ -2261,6 +2261,9 @@
     <Compile Include="Views\Stories\Popups\StealthPopup.xaml.cs">
       <DependentUpon>StealthPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stories\Popups\EditStoryPopup.xaml.cs">
+      <DependentUpon>EditStoryPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Premium\PremiumFeatureUpgradedStoriesCell.xaml.cs">
       <DependentUpon>PremiumFeatureUpgradedStoriesCell.xaml</DependentUpon>
     </Compile>
@@ -4815,6 +4818,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stories\Popups\StealthPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stories\Popups\EditStoryPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -170,8 +170,16 @@ namespace Telegram.Controls.Stories
             var element = sender as FrameworkElement;
             var activeStories = ScrollingHost.ItemFromContainer(sender) as ActiveStoriesViewModel;
 
-            if (activeStories == null || activeStories.IsMyStory || (activeStories.ClientService.TryGetUser(activeStories.Chat, out User user) && user.IsSupport))
+            if (activeStories == null || (activeStories.ClientService.TryGetUser(activeStories.Chat, out User user) && user.IsSupport))
             {
+                return;
+            }
+
+            if (activeStories.IsMyStory)
+            {
+                var mine = new MenuFlyout();
+                mine.CreateFlyoutItem(ViewModel.AddStory, Strings.AddStory, Icons.AddCircle);
+                mine.ShowAt(element, args);
                 return;
             }
 
