@@ -1,7 +1,7 @@
 param (
   [string]$vcpkg_root,
-  # x86 and ARM are not offered: libvlc and webrtc declare "supports": "uwp & (x64 | arm64)", so a
-  # manifest install for either fails before TDLib is reached, and the app has no such platform.
+  # x86 and ARM are not offered: webrtc declares "supports": "uwp & (x64 | arm64)", so a manifest
+  # install for either fails before TDLib is reached, and the app has no such platform.
   #
   # A list and a separated string are both accepted, and there is no ValidateSet because of it:
   # powershell.exe -File hands every argument over as one string, so -arch x64,ARM64 arrives here

@@ -1532,19 +1532,9 @@ namespace Telegram.Controls.Stories
 
             var options = new AsyncMediaPlayerOptions
             {
-                Backend = AppSettings.Diagnostics.UseFFmpegPlayer
-                    ? AsyncMediaPlayerBackend.FFmpeg
-                    : AsyncMediaPlayerBackend.LibVlc,
                 CreateSwapChain = true,
                 Mute = AppSettings.VolumeMuted,
                 Volume = 1,
-                LogLevel = AppSettings.VerbosityLevel >= 4
-                    ? AsyncMediaPlayerLogLevel.Debug
-                    : AppSettings.VerbosityLevel >= 3
-                    ? AsyncMediaPlayerLogLevel.Notice
-                    : AppSettings.VerbosityLevel >= 2
-                    ? AsyncMediaPlayerLogLevel.Warning
-                    : AsyncMediaPlayerLogLevel.Error,
             };
 
             try
@@ -1553,9 +1543,9 @@ namespace Telegram.Controls.Stories
             }
             catch (Exception ex)
             {
-                // libvlc could not start: no plugin bank, or out of memory. Every member of this
-                // class already tolerates a null player, so the story stays on its cover image
-                // instead of faulting on the next call into it.
+                // Out of memory, most likely. Every member of this class already tolerates a null
+                // player, so the story stays on its cover image instead of faulting on the next
+                // call into it.
                 Logger.Error(ex);
                 return;
             }

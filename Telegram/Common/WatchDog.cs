@@ -818,14 +818,6 @@ namespace Telegram
         }
     }
 
-    public partial class VLCException : Exception
-    {
-        public VLCException(string message, string stackTrace)
-            : base(message + "\n" + stackTrace)
-        {
-        }
-    }
-
     public partial class VoipException : Exception
     {
         public VoipException(string message, string stackTrace)

@@ -720,9 +720,9 @@ consumption rate; `DelayedFileSource`, `AnimatedEmojiFileSource`, `CustomEmojiFi
 **Entry points:** native players call `AnimatedImageSourceFactory.Create` via the `CreateFromString`
 markup extension, or controls construct a source directly from a `Telegram.Td.Api.File`.
 **Traps:** `RemoteFileSource.ReadCallback` blocks the native player thread on a `ManualResetEvent` until
-TDLib's file-update thread signals it, and for at most `ReadTimeout`: past that it reports -1 so the
-read fails and libvlc's input thread can die, because `libvlc_media_player_stop` joins that thread
-while holding the lock `AsyncMediaPlayer`'s position and duration would otherwise take. `Close`
+TDLib's file-update thread signals it, and for at most `ReadTimeout`: past that it reports -1, which
+`VideoAnimation` takes for the end and the media engine reads again past, until a seek or `Close`
+ends the wait. Zero is the end of the media to both, so it is never reported early. `Close`
 unsubscribes from `UpdateManager` and `Open` resubscribes — a source reopened without that hears no
 update and every wait runs to the timeout. `UpdateFile` and `MustWait` share `_stateLock`, and
 misordering there reintroduces a documented deadlock (a synchronous `GetFileDownloadedPrefixSize` used
@@ -800,16 +800,16 @@ is decoded at the size it fills once turned; its frame cache is keyed on the req
 cached before that change stay blurry until they age out. The brushes are per image because the tint is
 in them; sharing them on the presenter by stretch and tint is an open TODO.
 
-## Thumbnails and the download path — Telegram/Common/ThumbnailController.cs, HttpServer.cs, MediaHttpServer.cs, VideoPreloader.cs
-<!-- map: verified=07c88b840 paths=Telegram/Common/ThumbnailController.cs,Telegram/Common/HttpServer.cs,Telegram/Common/MediaHttpServer.cs,Telegram/Common/VideoPreloader.cs,Telegram/Common/LocalDatabase.cs,Telegram/Common/NativeFile.cs -->
+## Thumbnails and the download path — Telegram/Common/ThumbnailController.cs, HttpServer.cs, VideoPreloader.cs
+<!-- map: verified=07c88b840 paths=Telegram/Common/ThumbnailController.cs,Telegram/Common/HttpServer.cs,Telegram/Common/VideoPreloader.cs,Telegram/Common/LocalDatabase.cs,Telegram/Common/NativeFile.cs -->
 `ThumbnailController` binds an `ImageBrush` to a generation-tracked async pipeline: `Blur(...)` offloads
 to `Direct2D.Shared.DrawBlurred` on a background task, converts to a `SoftwareBitmapSource`, and swaps
 it onto the brush only if `_generation` still matches. `Bitmap(...)` does the unblurred equivalent.
 Files under LocalState are opened on the pool with plain file IO and copied into a native
 `InMemoryRandomAccessStream`; anything else still goes through `StorageFile`, which costs the broker
 and UI-thread continuations. A managed stream adapter would be read on the UI thread by `SetSourceAsync`.
-`HttpServer`/`MediaHttpServer` serve local and streamed media to consumers that need HTTP semantics
-over a TDLib file.
+`HttpServer` serves local and streamed media to consumers that need HTTP semantics over a TDLib file.
+`VideoPreloader` warms TDLib's download of a video's first 4 MB, behind `Diagnostics.VideoPreloadDebug`.
 **Traps:** every request must be generation-checked after each `await` — assigning to the brush without
 that races a stale decode over a fresh one. `Recycle`/`SetSource` deliberately never mutate a handed-out
 source in place; the losing request disposes what it built, after detaching it.
@@ -1032,15 +1032,16 @@ until `Model` changes. Only `FallbackForeground` is a dependency property, so on
 callback and the Loaded path each catch, because an exception escaping any of them ends the process.
 
 ## Media decode and audio — Telegram.Native/ (19 files)
-<!-- map: verified=07c88b840 paths=Telegram.Native/VideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/VideoAnimationStreamSource.cpp,Telegram.Native/Media,Telegram.Native/AudioPitchEffect.cpp,Telegram.Native/Opus -->
+<!-- map: verified=917c24aa4 paths=Telegram.Native/VideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/VideoAnimationStreamSource.cpp,Telegram.Native/Media,Telegram.Native/AudioPitchEffect.cpp,Telegram.Native/Opus -->
 Video and audio decode and playback. Native because it links ffmpeg (libavformat/libavcodec/libswscale/
-libyuv) and libVLC directly, and runs decode loops on dedicated threads feeding XAML swap chains.
+libavfilter/libswresample) and libyuv directly, and runs decode loops on dedicated threads feeding XAML
+swap chains.
 **Key types:** `VideoAnimation` (Telegram.Native/VideoAnimation.idl) — ffmpeg frame decoder for GIF and
 video stickers; `CachedVideoAnimation` — thread-pooled cache around it; `AsyncMediaPlayer`
-(Telegram.Native/Media/AsyncMediaPlayer.idl) — libVLC player driving a `CompositionSwapChain`;
-`MediaEngine` (Telegram.Native/Media/MediaEngine.h) — the ffmpeg player that replaces libvlc behind
-`AsyncMediaPlayer` when its options ask for the `FFmpeg` backend, with XAudio2 audio and a D3D11
-video processor presenting into the same swap chain (design and status: `notes/ffmpeg-media-player.md`);
+(Telegram.Native/Media/AsyncMediaPlayer.idl) — the WinRT surface of the media player, every member
+forwarded to `MediaEngine` (Telegram.Native/Media/MediaEngine.h): the ffmpeg player with XAudio2 audio,
+D3D11VA decode and a D3D11 video processor presenting into an `AsyncMediaPlayerSwapChain` (design and
+status: `notes/ffmpeg-media-player.md`);
 `AudioPitchEffect` — `IBasicAudioEffect` for speed/pitch correction, declared in the .idl and reached
 from nothing; `OpusOutput` (Telegram.Native/Opus/) — voice-note encode; `SoundPlayer`
 (Telegram.Native/Media/SoundPlayer.idl) — notification and call sounds, decoded with ffmpeg and played
@@ -1049,13 +1050,11 @@ through XAudio2.
 `Telegram/Services/PlaybackService.cs`, `Telegram/Streams/RemoteFileSource.cs`,
 `Telegram/Common/SoundEffects.cs`.
 **Traps:** ffmpeg is a vcpkg build patched down to the specific decoders and hwaccels this app needs
-(`Libraries/vcpkg-ports/ffmpeg/portfile.cmake`) — not a stock build. ffmpeg is bundled twice; see
-`notes/duplicated-libraries.md`. `AsyncMediaPlayer` queues every libVLC command onto one worker
-(`Write`/`Set`); nothing may call libVLC on the caller's thread, because `libvlc_media_player_stop`
-holds the player's input lock across the join of the input thread and that thread can be parked in
-`RemoteFileSource.ReadCallback` for as long as the network takes — position, duration and can-pause are
-therefore answered from cached values fed by the event callbacks, and `Stop` closes the source before
-stopping so the join can finish.
+(`Libraries/vcpkg-ports/ffmpeg/portfile.cmake`) — not a stock build. `MediaEngine` answers every getter from cached values and never blocks
+the caller on its threads: a demux thread can be parked in `RemoteFileSource.ReadCallback` for as long
+as the network takes, and only closing the source ends that wait, which is how a seek interrupts it.
+Events reach consumers on the thread that created the player, and the player is resolved from its weak
+reference only there, so its last reference is never dropped on a thread the engine would join.
 `CachedVideoAnimation::Load` fits the coded frame into the requested size, which is the size on screen:
 for a 90 or 270 rotation it swaps the request first, or a portrait element decodes a landscape frame at a
 fraction of the size it is shown at.
@@ -1120,8 +1119,8 @@ staticlib plus its C ABI header — see `Libraries/tlottie/README.md` to rebuild
 Lottie renderer, rlottie was removed with its submodule and in-tree vcxproj). **Prebuilt binaries
 checked in or downloaded:** `wallet-engine`, `tdjson` (local CMake tree providing `td_api.tl`),
 `ton-walletkit`. **vcpkg overlay ports:**
-`Libraries/vcpkg-ports/{ffmpeg,libvlc,webrtc}` — ffmpeg, libVLC and webrtc come in as vcpkg packages with
-local patches.
+`Libraries/vcpkg-ports/{ffmpeg,webrtc}` — ffmpeg and webrtc come in as vcpkg packages with local
+patches.
 **Traps:** the ffmpeg portfile is hand-patched to disable most codecs and enable only D3D11VA/DXVA2
 hwaccel plus a narrow allowlist; building against upstream vcpkg ffmpeg changes decoder availability.
 `tlottie.lib` is linked by an explicit per-platform path, which only works because the projects
@@ -1197,18 +1196,21 @@ window still leaves its whole tree alive, the same count with the patch as witho
 `ReleaseExternalObjectsFromCurrentThread` runs for those apartments at all.
 
 ## Native dependencies and vcpkg — Directory.Build.props, Directory.Build.targets, vcpkg.json, vcpkg-configuration.json
-<!-- map: verified=95560d9f7 paths=Directory.Build.props,Directory.Build.targets,vcpkg.json,vcpkg-configuration.json -->
+<!-- map: verified=917c24aa4 paths=Directory.Build.props,Directory.Build.targets,vcpkg.json,vcpkg-configuration.json -->
 Repo-root imports auto-included by every project, supplying the native builds and the app projects with
 vcpkg manifest-mode dependencies.
 **Key files:** `vcpkg.json` — manifest mode, `builtin-baseline: c3867e714dd3a51c272826eea77267876517ed99`;
-dependencies boost-regex, ffmpeg (dav1d/opus/vpx), libogg, libvlc, libyuv, lz4, nu-book-zxing-cpp, openssl,
-opus, webrtc, zlib. `vcpkg-configuration.json` — overlay port at `./Libraries/vcpkg-ports`.
+dependencies boost-regex, ffmpeg (dav1d/opus/vpx), libogg, libyuv, lz4, nu-book-zxing-cpp, openssl, opus,
+webrtc, zlib. `vcpkg-configuration.json` — overlay port at `./Libraries/vcpkg-ports`.
 `Directory.Build.props` — resolves `VcpkgRoot` (explicit → `VCPKG_ROOT` → sibling `..\vcpkg` → VS's bundled
 component), sets the triplet (`x64-uwp`/`arm64-uwp`), disables autolink and applocal.
 `Directory.Build.targets` — per-project `AdditionalDependencies` lib lists (autolink is off, so linking is
-explicit), a baseline-ancestor check against the live vcpkg checkout, and the targets that copy vcpkg
-runtime DLLs and flatten libvlc's plugin tree into package Content.
+explicit), a baseline-ancestor check against the live vcpkg checkout, and the target that copies vcpkg
+runtime DLLs.
 **Traps:** only `Telegram.Native`, `Telegram.Native.Calls` and the three app projects restore vcpkg.
+A native project globs `bin\*.dll` at `ResolveReferences`, before its own vcpkg install runs, so the
+first build after a package leaves the manifest fails with MSB3030 on that package's DLLs, which the
+install has just purged; building again passes.
 openssl and zlib are excluded from the copied runtime DLLs to avoid clashing with tdjson's own OpenSSL
 under the same filename. `VcpkgApplocalDeps=false` means DLLs can go missing from the appx on an
 incremental build where the linker did not run.
@@ -1363,8 +1365,8 @@ on develop", "Done", "analysis only") — read that line before treating one as 
 - `binding-audit.md` — classic `{Binding}` under CsWinRT/NativeAOT; closed a Phase-4 net10-port item.
 - `chat-history-scroll-mode-todo.md` — `ChatHistoryView` ItemsUpdatingScrollMode across writers, readers and `SynchronizedList`.
 - `clientservice-review.md` — read-through of the seven `ClientService.*.cs` partials and the topic services.
-- `dependencies-todo.md` — native dependency state: vcpkg manifest mode, libvlc and webrtc as prebuilt downloads.
-- `duplicated-libraries.md` — libraries shipped more than once (ffmpeg, ~25MB).
+- `dependencies-todo.md` — native dependency state: vcpkg manifest mode, webrtc as a prebuilt download.
+- `duplicated-libraries.md` — libraries shipped more than once (opus, libyuv).
 - `formatted-text-block-review.md` — landed on develop; 24 of 27 items fixed, 3 open decisions.
 - `formatted-text-block-test-plan.md` — test plan for the formatted-text-block review branches.
 - `formatted-text-block-test-messages.py` — the companion test-message generator.

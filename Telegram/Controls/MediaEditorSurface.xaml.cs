@@ -107,18 +107,8 @@ namespace Telegram.Controls
 
             var options = new AsyncMediaPlayerOptions
             {
-                Backend = AppSettings.Diagnostics.UseFFmpegPlayer
-                    ? AsyncMediaPlayerBackend.FFmpeg
-                    : AsyncMediaPlayerBackend.LibVlc,
                 CreateSwapChain = true,
                 Mute = muted,
-                LogLevel = AppSettings.VerbosityLevel >= 4
-                    ? AsyncMediaPlayerLogLevel.Debug
-                    : AppSettings.VerbosityLevel >= 3
-                    ? AsyncMediaPlayerLogLevel.Notice
-                    : AppSettings.VerbosityLevel >= 2
-                    ? AsyncMediaPlayerLogLevel.Warning
-                    : AsyncMediaPlayerLogLevel.Error,
             };
 
             try
@@ -127,9 +117,8 @@ namespace Telegram.Controls
             }
             catch (Exception ex)
             {
-                // libvlc could not start: no plugin bank, or out of memory. Everything that
-                // touches the player tolerates a null, so the editor degrades to the still
-                // frame the cropper already shows.
+                // Out of memory, most likely. Everything that touches the player tolerates a
+                // null, so the editor degrades to the still frame the cropper already shows.
                 Logger.Error(ex);
                 return;
             }

@@ -7,26 +7,13 @@
 namespace winrt::Telegram::Native::Media::implementation
 {
     AsyncMediaPlayerOptions::AsyncMediaPlayerOptions()
-        : m_backend(AsyncMediaPlayerBackend::LibVlc)
-        , m_mode(AsyncMediaPlayerMode::Audio | AsyncMediaPlayerMode::Video)
-        , m_logLevel(AsyncMediaPlayerLogLevel::Warning)
+        : m_mode(AsyncMediaPlayerMode::Audio | AsyncMediaPlayerMode::Video)
         , m_createSwapChain(false)
         , m_mute(false)
         , m_volume(1)
         , m_rate(1)
-        , m_arguments(winrt::single_threaded_vector<hstring>())
     {
 
-    }
-
-    AsyncMediaPlayerBackend AsyncMediaPlayerOptions::Backend() const
-    {
-        return m_backend;
-    }
-
-    void AsyncMediaPlayerOptions::Backend(AsyncMediaPlayerBackend value)
-    {
-        m_backend = value;
     }
 
     AsyncMediaPlayerMode AsyncMediaPlayerOptions::Mode() const
@@ -37,16 +24,6 @@ namespace winrt::Telegram::Native::Media::implementation
     void AsyncMediaPlayerOptions::Mode(AsyncMediaPlayerMode value)
     {
         m_mode = value;
-    }
-
-    AsyncMediaPlayerLogLevel AsyncMediaPlayerOptions::LogLevel() const
-    {
-        return m_logLevel;
-    }
-
-    void AsyncMediaPlayerOptions::LogLevel(AsyncMediaPlayerLogLevel value)
-    {
-        m_logLevel = value;
     }
 
     bool AsyncMediaPlayerOptions::CreateSwapChain() const
@@ -87,10 +64,5 @@ namespace winrt::Telegram::Native::Media::implementation
     void AsyncMediaPlayerOptions::Rate(double value)
     {
         m_rate = value;
-    }
-
-    winrt::Windows::Foundation::Collections::IVector<hstring> AsyncMediaPlayerOptions::Arguments()
-    {
-        return m_arguments;
     }
 }

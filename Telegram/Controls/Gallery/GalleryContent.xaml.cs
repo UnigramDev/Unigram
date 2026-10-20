@@ -418,7 +418,7 @@ namespace Telegram.Controls.Gallery
         private bool _unloaded;
         private int _fileId;
 
-        public void Play(GalleryMedia item, double position, GalleryTransportControls controls, bool force = false)
+        public void Play(GalleryMedia item, double position, GalleryTransportControls controls)
         {
             if (_unloaded)
             {
@@ -428,7 +428,7 @@ namespace Telegram.Controls.Gallery
             try
             {
                 var file = item.File;
-                if (!force && file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !AppSettings.IsStreamingEnabled))
+                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !AppSettings.IsStreamingEnabled))
                 {
                     return;
                 }
@@ -440,15 +440,7 @@ namespace Telegram.Controls.Gallery
                     LifetimeService.Current.Playback.Pause();
                 }
 
-                // Always recreate HLS player for now, try to reuse native one
-                if (!force && (AppSettings.Diagnostics.ForceWebView2 || item.IsHls && !AppSettings.Diagnostics.UseFFmpegPlayer) && ChromiumWebPresenter.IsSupported())
-                {
-                    Video = new WebVideoPlayer();
-                }
-                else if (Video is not NativeVideoPlayer)
-                {
-                    Video = new NativeVideoPlayer();
-                }
+                Video ??= new NativeVideoPlayer();
 
                 controls.Attach(item, file);
                 controls.Attach(Video);
@@ -497,7 +489,6 @@ namespace Telegram.Controls.Gallery
                     video.TreeUpdated -= OnTreeUpdated;
                     video.FirstFrameReady -= OnFirstFrameReady;
                     video.TrackChanged -= OnTrackChanged;
-                    video.Failed -= OnFailed;
                 }
 
                 if (value != null)
@@ -505,7 +496,6 @@ namespace Telegram.Controls.Gallery
                     value.TreeUpdated += OnTreeUpdated;
                     value.FirstFrameReady += OnFirstFrameReady;
                     value.TrackChanged += OnTrackChanged;
-                    value.Failed += OnFailed;
                 }
 
                 Panel.Child = value;
@@ -554,16 +544,6 @@ namespace Telegram.Controls.Gallery
                 var size = ImageHelper.Fit(args.Width, args.Height, Math.Max(ActualConstraint.Width, ActualConstraint.Height));
                 Constraint = new MaximumSize(size.Width, size.Height);
             }
-        }
-
-        private void OnFailed(VideoPlayerBase sender, EventArgs args)
-        {
-            if (_unloaded)
-            {
-                return;
-            }
-
-            _window.OpenFile(_item, _item.File, force: true);
         }
 
         public void Stop(out GalleryMedia item, out double position)

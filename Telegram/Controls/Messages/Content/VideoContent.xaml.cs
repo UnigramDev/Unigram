@@ -353,7 +353,7 @@ namespace Telegram.Controls.Messages.Content
                     {
                         if (_message.Delegate.Settings.AutoDownload.PreloadLargeVideos && AppSettings.Diagnostics.VideoPreloadDebug)
                         {
-                            VideoPreloader.Current.Load(_message.ClientService, file, video.Duration);
+                            VideoPreloader.Load(_message.ClientService, file);
                         }
 
                         UpdateSource(null, null);

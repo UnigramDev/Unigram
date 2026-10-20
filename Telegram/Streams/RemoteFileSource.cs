@@ -118,10 +118,10 @@ namespace Telegram.Streams
         /// <summary>
         /// Whether reporting zero bytes would mean anything other than the end.
         ///
-        /// Zero is the caller's end of stream: AsyncMediaPlayer turns a zero byte count
-        /// into a zero length ReadFile, and libvlc reads that as the end of the media.
-        /// It may therefore only be reported once there genuinely is nothing left; every
-        /// other "nothing available yet" has to keep waiting instead.
+        /// Zero is the caller's end of stream: the player and VideoAnimation both take a
+        /// zero byte count for the end of the media. It may therefore only be reported once
+        /// there genuinely is nothing left; every other "nothing available yet" has to keep
+        /// waiting instead.
         ///
         /// This is also what terminates the read loops. A zero count would satisfy
         /// MustWait without waiting and read back zero bytes, which is neither progress
@@ -142,11 +142,9 @@ namespace Telegram.Streams
         /// <summary>
         /// How long the whole read may take before it gives up.
         ///
-        /// A read that never returns keeps libvlc's input thread alive for good, and
-        /// libvlc_media_player_stop joins that thread while holding the lock that answers
-        /// position and duration - so this is what bounds anyone waiting on those. Long
-        /// enough that a slow link still plays: only one delivering nothing at all for this
-        /// long gives up.
+        /// A read that never returns would hold its reader's thread for good. Long enough
+        /// that a slow link still plays: only one delivering nothing at all for this long
+        /// gives up.
         /// </summary>
         private const ulong ReadTimeout = 30 * 1000;
 
@@ -185,9 +183,7 @@ namespace Telegram.Streams
                 if (Logger.TickCount - started >= ReadTimeout)
                 {
                     // Reported as an error rather than as zero: zero is the end of the media
-                    // to libvlc, which would truncate the file without saying so. An error
-                    // ends the input instead, which is what lets a stop waiting to join it
-                    // finish.
+                    // to a reader, which would truncate the file without saying so.
                     Logger.Warning($"Nothing for {_file.Id} in {Logger.TickCount - started}ms, offset: {_offset}, count: {count}");
 
                     bytesRead = -1;
@@ -200,7 +196,7 @@ namespace Telegram.Streams
         }
 
         // A window the caller asks for wins. The prefetch policy measures the rate the reader
-        // consumes at, which describes libvlc reading at the media's pace; a reader that keeps its
+        // consumes at, which describes a reader that reads at the media's pace; one that keeps its
         // own read-ahead reads in bursts, and the bursts read as an enormous bitrate.
         private long PrefetchWindow(long buffer)
         {

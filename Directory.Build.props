@@ -4,8 +4,7 @@
     <TelegramRoot>$(MSBuildThisFileDirectory)</TelegramRoot>
     <!-- Only these consume vcpkg: the two native components link against it, and the app needs
          the runtime DLLs in its output and its package - both builds of it, since Telegram.Modern
-         packages the same dependencies. Without it there libvlc loads and then dies, its plugins
-         never having been copied. -->
+         packages the same dependencies. -->
     <TelegramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern' Or '$(MSBuildProjectName)' == 'Telegram.Win32'">true</TelegramUsesVcpkg>
   </PropertyGroup>
 

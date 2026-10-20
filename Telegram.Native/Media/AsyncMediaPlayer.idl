@@ -3,7 +3,6 @@ import "Media/AsyncMediaPlayerDurationChangedEventArgs.idl";
 import "Media/AsyncMediaPlayerPositionChangedEventArgs.idl";
 import "Media/AsyncMediaPlayerStreamSelectedEventArgs.idl";
 import "Media/AsyncMediaPlayerBufferingEventArgs.idl";
-import "Media/AsyncMediaPlayerLogEventArgs.idl";
 import "Media/AsyncMediaPlayerSwapChain.idl";
 import "Media/AsyncMediaPlayerOptions.idl";
 import "VideoAnimation.idl";
@@ -16,7 +15,6 @@ namespace Telegram.Native.Media
         void Close();
     };
 
-    // One quality of a video. Only the ffmpeg backend switches between them.
     interface IAsyncMediaPlayerRendition
     {
         Int32 Width{ get; };
@@ -47,13 +45,10 @@ namespace Telegram.Native.Media
 
         AsyncMediaPlayerSwapChain Context{ get; };
 
-        [default_overload]
         void Play(IAsyncMediaPlayerSource stream);
         //[default_overload]
         //void Play(IAsyncMediaPlayerSource stream, Double position);
-        void Play(Windows.Foundation.Uri uri);
         void Play(Windows.Foundation.Collections.IVectorView<IAsyncMediaPlayerRendition> renditions, Int32 rendition, Boolean automatic, Double position);
-        //void Play(Windows.Foundation.Uri uri, Double position);
         void Play();
         void Stop();
         void Pause();
@@ -63,7 +58,6 @@ namespace Telegram.Native.Media
 
         AsyncMediaPlayerState State{ get; };
         Boolean IsPlaying{ get; };
-        Boolean CanPause{ get; };
 
         Double Duration{ get; };
         Double Position;
@@ -71,7 +65,7 @@ namespace Telegram.Native.Media
         void Seek(Double value, Boolean relative);
 
         // Reaching the end goes back to the start, from the frame past it rather than once the
-        // next position is reported. An end not past the start turns it off. Ignored by libvlc.
+        // next position is reported. An end not past the start turns it off.
         void SetLoop(Double start, Double end);
 
         Double Rate;
@@ -96,7 +90,6 @@ namespace Telegram.Native.Media
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> Stopped;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> VolumeChanged;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> EncounteredError;
-        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerLogEventArgs> Log;
         event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> RenditionChanged;
     }
 }

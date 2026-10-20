@@ -8,17 +8,15 @@
 #include <windows.ui.xaml.media.dxinterop.h>
 
 #include <format>
-#include <sstream>
-#include <iomanip>
 #include <stdexcept>
 
 namespace winrt::Telegram::Native::Media::implementation
 {
     namespace
     {
-        // Held whenever this class touches the device context or swap chain that libvlc's vout
-        // and decoder threads are also driving. A null mutex means Create() never got one, and
-        // then this is what the class did before: no locking, rather than a deadlock.
+        // Held whenever this class touches the device context or swap chain that the renderer and
+        // the hardware decoders also drive from their own threads. A null mutex means Create()
+        // never got one, and then nothing locks, rather than everything deadlocking.
         struct ContextLock
         {
             explicit ContextLock(HANDLE mutex) noexcept
@@ -98,35 +96,6 @@ namespace winrt::Telegram::Native::Media::implementation
         }
     }
 
-    IVector<hstring> AsyncMediaPlayerSwapChain::SwapChainOptions() const
-    {
-        if (!m_loaded)
-        {
-            // Not a lifecycle mistake, whatever the message inherited from LibVLCSharp said: the
-            // only way to get here is Create() having failed, and it logs which call went wrong.
-            throw std::runtime_error("The Direct3D swap chain is not available");
-        }
-
-        IVector<hstring> options = winrt::single_threaded_vector<hstring>();
-
-        std::wostringstream contextStream;
-        contextStream << L"--winrt-d3dcontext=0x" << std::hex << reinterpret_cast<uintptr_t>(m_deviceContext.get());
-        options.Append(contextStream.str());
-
-        std::wostringstream swapChainStream;
-        swapChainStream << L"--winrt-swapchain=0x" << std::hex << reinterpret_cast<uintptr_t>(m_swapChain.get());
-        options.Append(swapChainStream.str());
-
-        // d3d11va would open against the device above, fail on the ID3D11VideoDevice it needs, and
-        // release a reference to it on the way out that it never took. Don't let it start.
-        if (!m_hardwareDecoding)
-        {
-            options.Append(L"--avcodec-hw=none");
-        }
-
-        return options;
-    }
-
     bool AsyncMediaPlayerSwapChain::Create(bool subscribe)
     {
         m_closed = false;
@@ -146,11 +115,6 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             OnAttach(nullptr, m_panel, subscribe);
         }
-        else
-        {
-            // It's important that private data for the device is set before the swap chain is passed to LibVLC
-            UpdateSize();
-        }
 
         return true;
     }
@@ -160,9 +124,8 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::com_ptr<IDXGIFactory2> dxgiFactory;
 
         // Every call below is into the display driver and any of them can fail while the driver is
-        // resetting. The HRESULT on its own doesn't say which one did, and the whole function used
-        // to fail silently, so the failure only surfaced later as an unrelated-looking error from
-        // SwapChainOptions. Name the stage as we go and log it.
+        // resetting, and the HRESULT on its own doesn't say which one did. Name the stage as we go
+        // and log it.
         const wchar_t* stage = L"CreateDXGIFactory2";
 
         try
@@ -188,12 +151,11 @@ namespace winrt::Telegram::Native::Media::implementation
 
             UINT adapterIndex = 0;
 
-            // This device is handed to libvlc, whose DXVA decoder queries ID3D11VideoDevice off it
-            // and whose vout allocates decoder textures on it. An adapter that can do neither --
-            // the Basic Render Driver, or a display driver that exposes no video support -- fails
-            // every hardware decode, and each failed attempt releases a reference to this device
-            // that libvlc never took. So take the first adapter that can decode, and fall back to
-            // the first one that merely works, so such a machine still gets a picture.
+            // The renderer's video processor and the hardware decoders both need ID3D11VideoDevice
+            // off this device. An adapter without it -- the Basic Render Driver, or a display
+            // driver that exposes no video support -- decodes and converts on the CPU. So take the
+            // first adapter that can decode, and fall back to the first one that merely works, so
+            // such a machine still gets a picture.
             winrt::com_ptr<ID3D11Device> fallbackDevice;
             winrt::com_ptr<ID3D11DeviceContext> fallbackContext;
 
@@ -221,7 +183,6 @@ namespace winrt::Telegram::Native::Media::implementation
                     winrt::com_ptr<ID3D11VideoDevice> videoDevice;
                     if (!software && SUCCEEDED(resources.device->QueryInterface(IID_PPV_ARGS(videoDevice.put()))))
                     {
-                        resources.hardwareDecoding = true;
                         break;
                     }
 
@@ -254,13 +215,9 @@ namespace winrt::Telegram::Native::Media::implementation
                 throw std::runtime_error("Could not create Direct3D11 device: No compatible adapter found.");
             }
 
-            // Everything below is what libvlc requires of a host that supplies its own device --
-            // see its reference integration, doc/libvlc/d3d11_swapr.cpp. The vout and the DXVA
-            // decoder each run on their own thread and drive this context, so it needs the
-            // runtime lock, and it needs a mutex published where libvlc's modules look for it:
-            // d3d11va reads the handle back off the context and hands it to ffmpeg as the lock
-            // around DecoderBeginFrame/SubmitDecoderBuffers/DecoderEndFrame. Without it libvlc
-            // logs "No mutex found to lock the decoder" and that sequence runs unguarded.
+            // The renderer and the hardware decoders each drive this context from their own
+            // thread, so it needs the runtime lock, and a mutex the renderer hands ffmpeg as the
+            // lock around DecoderBeginFrame/SubmitDecoderBuffers/DecoderEndFrame.
             stage = L"ID3D11Multithread";
 
             winrt::com_ptr<ID3D11Multithread> multithread;
@@ -271,11 +228,6 @@ namespace winrt::Telegram::Native::Media::implementation
 
             resources.mutex = CreateMutexEx(nullptr, nullptr, 0, SYNCHRONIZE);
             winrt::check_bool(resources.mutex != nullptr);
-
-            stage = L"SetPrivateData";
-
-            winrt::check_hresult(resources.context->SetPrivateData(CONTEXT_MUTEX_GUID,
-                sizeof(resources.mutex), &resources.mutex));
 
             stage = L"IDXGIDevice1";
 
@@ -341,7 +293,6 @@ namespace winrt::Telegram::Native::Media::implementation
         m_swapChain = std::move(resources.swapChain);
         m_deviceContext = std::move(resources.context);
         m_d3d11Device = std::move(resources.device);
-        m_hardwareDecoding = resources.hardwareDecoding;
 
         if (m_contextMutex != nullptr)
         {
@@ -395,11 +346,6 @@ namespace winrt::Telegram::Native::Media::implementation
                             // A panel attached since Recreate looked is shown the new swap chain on
                             // its own thread.
                             panel = self->m_panel;
-
-                            if (!panel)
-                            {
-                                self->UpdateSize();
-                            }
                         }
 
                         applied = true;
@@ -492,8 +438,8 @@ namespace winrt::Telegram::Native::Media::implementation
             m_d3d11Device = nullptr;
         }
 
-        // Last, once nothing can still be waiting on it: libvlc reads the handle but never owns
-        // it, so releasing the context does not release this.
+        // The renderer and its decoders hold duplicates of their own, so this can go with the
+        // device whatever they are still doing.
         if (m_contextMutex != nullptr)
         {
             CloseHandle(m_contextMutex);
@@ -501,7 +447,6 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         m_loaded = false;
-        m_hardwareDecoding = false;
     }
 
     void AsyncMediaPlayerSwapChain::Attach(SwapChainPanel const& panel, bool subscribe)
@@ -606,11 +551,6 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         if (!m_panel || !m_swapChain)
         {
-            if (m_swapChain)
-            {
-                // It's important that private data for the device is set before the swap chain is passed to LibVLC
-                UpdateSize(320, 240);
-            }
             return;
         }
 
@@ -625,16 +565,6 @@ namespace winrt::Telegram::Native::Media::implementation
         if (width <= 0 || height <= 0)
         {
             return;
-        }
-
-        try
-        {
-            winrt::check_hresult(m_swapChain->SetPrivateData(SWAPCHAIN_WIDTH_GUID, sizeof(int), &width));
-            winrt::check_hresult(m_swapChain->SetPrivateData(SWAPCHAIN_HEIGHT_GUID, sizeof(int), &height));
-        }
-        catch (...)
-        {
-            // Handle error if needed
         }
 
         const int32_t previousWidth = m_targetWidth.exchange(width);

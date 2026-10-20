@@ -612,9 +612,6 @@
     <Compile Include="Controls\Views\SendMessagesView.xaml.cs">
       <DependentUpon>SendMessagesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WebVideoPlayer.xaml.cs">
-      <DependentUpon>WebVideoPlayer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CsWinRT.cs" />
     <Compile Include="Entities\StorageAlbum.cs" />
     <Compile Include="Entities\VideoGeneration.cs" />
@@ -2619,11 +2616,8 @@
     <Content Include="Assets\Logos\WebAppLogo.scale-150.png" />
     <Content Include="Assets\Logos\WebAppLogo.scale-200.png" />
     <Content Include="Assets\Logos\WebAppLogo.scale-400.png" />
-    <Content Include="Assets\mp4.html" />
-    <Content Include="Assets\hls.html" />
     <Content Include="Assets\shapes.dat" />
     <Content Include="Assets\Images\VideoNoteText.png" />
-    <Content Include="Assets\hls.js" />
     <Content Include="Assets\Images\ArrowLeft.scale-100.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-125.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-150.png" />
@@ -3782,10 +3776,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SendMessagesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\WebVideoPlayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -14,7 +14,8 @@ Status, 2026-10-20:
 - **Phase 2:** built, tested and committed (`5af80ddd4`).
 - **Phase 3:** built, tested and committed (`f24deba0c`).
 - **Phase 4:** built, tested and committed (`34d3de2d3`).
-- **Phase 5:** written and unbuilt; see "Phase 5 as built" below.
+- **Phase 5:** built, tested and committed (`e42af525a`).
+- **Phase 6:** libvlc and `WebVideoPlayer` removed in one commit; see "Phase 6 as built" below.
 
 
 ## What we have today
@@ -540,6 +541,46 @@ the hardware decoder may be what brings the device down.
 - **At the end, the reset seek is quiet:** it brings the last picture back without reporting a
   state change or the end again.
 - **A closed swap chain ends the retries.**
+
+## Phase 6 as built
+
+One commit, so that it reverts as one. libvlc and `WebVideoPlayer` are gone, and the engine is the
+only player.
+
+**`AsyncMediaPlayer`** forwards every member to the engine and owns nothing else: no work queue, no
+event context, no cleanup manager. It loses:
+- `Play(Uri)`, `CanPause` (always true), the `Log` event and `AsyncMediaPlayerLogEventArgs`;
+- `AsyncMediaPlayerOptions.Backend`, `LogLevel` and `Arguments`.
+
+**`AsyncMediaPlayerSwapChain`** loses what only libvlc read:
+- `SwapChainOptions`;
+- the private data that published the context mutex and the target size;
+- the 320×240 size it reported without a panel, since the renderer falls back to the swap chain's own
+  size.
+
+The adapter choice, the multithread lock and the mutex stay, because the renderer and D3D11VA need
+them.
+
+**`WebVideoPlayer`**, `hls.html`, `hls.js` and `mp4.html` are deleted. With them go:
+- `Diagnostics.ForceWebView2` and `UseFFmpegPlayer`, and their checkboxes;
+- the gallery's `force` chain through `OnFailed`;
+- `VideoPlayerBase.Failed` and `Ready`, and `VideoPlayerLevel`'s `JsonObject` constructor.
+
+`GalleryMedia.IsHls` stays: it is what says a video has qualities.
+
+**`VideoPreloader`** asks TDLib for the first 4 MB, which is TDesktop's default prefix, instead of
+opening a libvlc player until it reported `Buffering` 100. It is still behind
+`Diagnostics.VideoPreloadDebug`.
+
+**The editor's trim loop** is the engine's `SetLoop` alone. The `PositionChanged` fallback that
+served libvlc is removed.
+
+**Build:**
+- **Gone:** the `libvlc` port, its manifest entry, `libvlc.lib`/`libvlccore.lib` on the link line, the
+  plugins target, `MediaHttpServer`, and the crash reporter's `VLCException` and libvlc plugin
+  modules.
+- **The first build after this** fails once with MSB3030 on `libvlc.dll`. The native project lists
+  vcpkg's `bin\*.dll` before its vcpkg install purges libvlc. Building again passes.
 
 ## Open questions
 

@@ -716,11 +716,8 @@ namespace Telegram.Services
 
         public void PauseImpl(AsyncMediaPlayer player)
         {
-            if (player.CanPause)
-            {
-                player.Pause();
-                PlaybackState = PlaybackState.Paused;
-            }
+            player.Pause();
+            PlaybackState = PlaybackState.Paused;
         }
 
         public void Play()
@@ -736,8 +733,8 @@ namespace Telegram.Services
                 player.Rate = _playbackSpeed;
             }
 
-            // Play restarts an ended player by itself. A Stop first would make the ffmpeg backend
-            // reopen the file, and leave a gap at every repeat of a track.
+            // Play restarts an ended player by itself. A Stop first would make the player reopen
+            // the file, and leave a gap at every repeat of a track.
             player.Play();
             PlaybackState = PlaybackState.Playing;
         }
@@ -1897,8 +1894,8 @@ namespace Telegram.Services
             }
         }
 
-        // Every player owns a whole libvlc instance and its audio output, so two of them
-        // competing is not a benign duplicate. Play(XamlRoot, ...) reaches here without
+        // Every player owns its own threads and audio output, so two of them competing is not
+        // a benign duplicate. Play(XamlRoot, ...) reaches here without
         // holding the lock Run takes, and a chat opened in a second window has its own UI
         // thread, so two windows starting playback at once could each build one and leave
         // the loser running with nothing left to Close it.
@@ -1911,19 +1908,9 @@ namespace Telegram.Services
                     // TODO: currently music player doesn't have a toggle for mute/unmute
                     var options = new AsyncMediaPlayerOptions
                     {
-                        Backend = AppSettings.Diagnostics.UseFFmpegPlayer
-                            ? AsyncMediaPlayerBackend.FFmpeg
-                            : AsyncMediaPlayerBackend.LibVlc,
                         CreateSwapChain = true,
                         Mute = false, //AppSettings.VolumeMuted,
                         Volume = AppSettings.VolumeLevel,
-                        LogLevel = AppSettings.VerbosityLevel >= 4
-                            ? AsyncMediaPlayerLogLevel.Debug
-                            : AppSettings.VerbosityLevel >= 3
-                            ? AsyncMediaPlayerLogLevel.Notice
-                            : AppSettings.VerbosityLevel >= 2
-                            ? AsyncMediaPlayerLogLevel.Warning
-                            : AsyncMediaPlayerLogLevel.Error,
                     };
 
                     _player = new AsyncMediaPlayer(options);

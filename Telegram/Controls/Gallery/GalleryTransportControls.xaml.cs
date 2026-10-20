@@ -312,7 +312,6 @@ namespace Telegram.Controls.Gallery
         {
             if (_player != null)
             {
-                _player.Ready -= OnReady;
                 _player.PositionChanged -= OnPositionChanged;
                 _player.BufferedChanged -= OnBufferedChanged;
                 _player.DurationChanged -= OnDurationChanged;
@@ -330,7 +329,6 @@ namespace Telegram.Controls.Gallery
 
             if (_player != null)
             {
-                _player.Ready += OnReady;
                 _player.PositionChanged += OnPositionChanged;
                 _player.BufferedChanged += OnBufferedChanged;
                 _player.DurationChanged += OnDurationChanged;
@@ -358,13 +356,6 @@ namespace Telegram.Controls.Gallery
             QualityRoot.Visibility = show
                 ? Visibility.Visible
                 : Visibility.Collapsed;
-        }
-
-        private void OnReady(VideoPlayerBase sender, EventArgs args)
-        {
-            sender.Mute = AppSettings.VolumeMuted;
-            sender.Volume = AppSettings.VolumeLevel;
-            sender.Rate = AppSettings.Playback.VideoSpeed;
         }
 
         private void OnLevelsChanged(VideoPlayerBase sender, VideoPlayerLevelsChangedEventArgs args)

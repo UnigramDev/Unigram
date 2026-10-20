@@ -3,17 +3,8 @@
 #include "Media/AsyncMediaPlayer.g.h"
 #include "Media/MediaEngine.h"
 
-#include <vlc/vlc.h>
-
-#include <thread>
-#include <iterator>
-#include <mutex>
-#include <condition_variable>
-#include <queue>
-#include <functional>
-#include <atomic>
 #include <memory>
-#include <chrono>
+#include <mutex>
 
 #include <winrt/Windows.Media.Devices.h>
 #include <winrt/Windows.Foundation.h>
@@ -21,112 +12,6 @@
 
 using namespace winrt::Windows::Media::Devices;
 using namespace winrt::Windows::System;
-
-template<typename Func>
-inline void post_to_threadpool(Func&& func)
-{
-    auto* heapFunc = new std::decay_t<Func>(std::forward<Func>(func));
-
-    PTP_WORK work = CreateThreadpoolWork(
-        [](PTP_CALLBACK_INSTANCE, PVOID context, PTP_WORK) {
-            std::unique_ptr<std::decay_t<Func>> funcPtr(
-                static_cast<std::decay_t<Func>*>(context)
-            );
-            (*funcPtr)();
-        },
-        heapFunc,
-        nullptr
-    );
-
-    // Submitting a null work item is an access violation. Dropping the work instead leaks
-    // whatever it was going to release, which for the teardown path is one player and one
-    // libvlc instance -- the better outcome of the two, in a process already out of memory.
-    if (work == nullptr)
-    {
-        delete heapFunc;
-        return;
-    }
-
-    SubmitThreadpoolWork(work);
-    CloseThreadpoolWork(work);
-}
-
-struct WorkItem
-{
-    std::function<void()> action;
-    long version;
-
-    WorkItem(std::function<void()> act, long ver)
-        : action(std::move(act))
-        , version(ver)
-    {
-    }
-};
-
-class WorkQueue
-{
-private:
-    mutable std::mutex work_available_mutex_;
-    std::condition_variable work_available_cv_;
-    std::queue<std::shared_ptr<WorkItem>> work_;
-    bool shutdown_ = false;
-
-public:
-    void push(std::shared_ptr<WorkItem> item)
-    {
-        std::lock_guard<std::mutex> lock(work_available_mutex_);
-        if (shutdown_) return;
-
-        work_.push(item);
-        work_available_cv_.notify_one();
-    }
-
-    std::shared_ptr<WorkItem> wait_and_pop(int timeout_ms = 3000)
-    {
-        std::unique_lock<std::mutex> lock(work_available_mutex_);
-
-        while (true)
-        {
-            if (shutdown_)
-            {
-                return nullptr;
-            }
-
-            if (!work_.empty())
-            {
-                auto item = work_.front();
-                work_.pop();
-                return item;
-            }
-
-            if (work_available_cv_.wait_for(lock, std::chrono::milliseconds(timeout_ms)) == std::cv_status::timeout)
-            {
-                return nullptr;
-            }
-        }
-    }
-
-    // Returns how many actions were dropped, so callers can report what was still in flight
-    // at teardown without needing a separate size() that could only ever be racy.
-    size_t clear()
-    {
-        std::lock_guard<std::mutex> lock(work_available_mutex_);
-
-        size_t dropped = 0;
-
-        // Clear regular work queue
-        while (!work_.empty())
-        {
-            work_.pop();
-            dropped++;
-        }
-
-        shutdown_ = true;
-        work_available_cv_.notify_all();
-
-        return dropped;
-    }
-};
 
 namespace winrt::Telegram::Native::Media::implementation
 {
@@ -138,7 +23,6 @@ namespace winrt::Telegram::Native::Media::implementation
         AsyncMediaPlayerSwapChain Context();
 
         void Play(IAsyncMediaPlayerSource stream, double position = 0);
-        void Play(winrt::Windows::Foundation::Uri uri, double position = 0);
         void Play(winrt::Windows::Foundation::Collections::IVectorView<IAsyncMediaPlayerRendition> const& renditions, int32_t rendition, bool automatic, double position);
         void Play();
         void Stop();
@@ -148,7 +32,6 @@ namespace winrt::Telegram::Native::Media::implementation
 
         AsyncMediaPlayerState State();
         bool IsPlaying();
-        bool CanPause();
 
         double Duration();
 
@@ -231,160 +114,12 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::Windows::Foundation::IInspectable> const& value);
         void EncounteredError(winrt::event_token const& token);
 
-        winrt::event_token Log(Windows::Foundation::TypedEventHandler<
-            winrt::Telegram::Native::Media::AsyncMediaPlayer,
-            winrt::Telegram::Native::Media::AsyncMediaPlayerLogEventArgs> const& value);
-        void Log(winrt::event_token const& token);
-
         winrt::event_token RenditionChanged(Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Media::AsyncMediaPlayer,
             winrt::Windows::Foundation::IInspectable> const& value);
         void RenditionChanged(winrt::event_token const& token);
 
     private:
-        // Position, duration and can-pause are answered from here instead of from libvlc.
-        // libvlc_media_player_stop holds the same lock that get_time, get_length and
-        // can_pause take, and it holds it across the join of the input thread -- which can
-        // be parked in a read for as long as the network takes. A UI thread asking for the
-        // position would wait on that lock for just as long.
-        //
-        // Nothing is lost by not asking: libvlc reports each of these through an event, or
-        // we are the one setting it. Written from the event thread and the worker.
-        //
-        // Shared with EventContext rather than reached through the player, so that a libvlc
-        // callback can record what it was told without holding a reference to the player.
-        struct PlayerState
-        {
-            std::atomic<double> position{ 0 };
-            std::atomic<double> duration{ 0 };
-            std::atomic<bool> canPause{ true };
-        };
-
-        struct EventContext
-        {
-            static constexpr libvlc_event_e s_events[] =
-            {
-                libvlc_MediaPlayerESSelected,
-                libvlc_MediaPlayerVout,
-                libvlc_MediaPlayerBuffering,
-                libvlc_MediaPlayerEndReached,
-                libvlc_MediaPlayerTimeChanged,
-                libvlc_MediaPlayerLengthChanged,
-                libvlc_MediaPlayerPlaying,
-                libvlc_MediaPlayerPaused,
-                libvlc_MediaPlayerStopped,
-                libvlc_MediaPlayerAudioVolume,
-                libvlc_MediaPlayerEncounteredError,
-                libvlc_MediaPlayerNothingSpecial,
-                libvlc_MediaPlayerOpening,
-            };
-
-            static_assert(std::size(s_events) <= 32);
-
-            EventContext(libvlc_media_player_t* player, winrt::weak_ref<AsyncMediaPlayer> weak, DispatcherQueue dispatcherQueue, std::shared_ptr<PlayerState> state)
-                : m_weak(weak)
-                , m_dispatcherQueue(dispatcherQueue)
-                , m_state(state)
-            {
-                libvlc_event_manager_t* em = libvlc_media_player_event_manager(player);
-
-                for (uint32_t i = 0; i < std::size(s_events); i++)
-                {
-                    // libvlc_event_attach fails on a failed allocation, and libvlc_event_detach
-                    // ends in a bare abort() when it cannot find the listener -- in release too.
-                    // So the successes have to be remembered, or one allocation lost under memory
-                    // pressure kills the process at teardown, with nothing to show for it.
-                    if (libvlc_event_attach(em, s_events[i], &EventCallback, this) == 0)
-                    {
-                        m_attached |= 1u << i;
-                    }
-                }
-            }
-
-            void Detach(libvlc_media_player_t* player)
-            {
-                libvlc_event_manager_t* em = libvlc_media_player_event_manager(player);
-
-                for (uint32_t i = 0; i < std::size(s_events); i++)
-                {
-                    if (m_attached & (1u << i))
-                    {
-                        libvlc_event_detach(em, s_events[i], &EventCallback, this);
-                    }
-                }
-
-                m_attached = 0;
-            }
-
-            winrt::weak_ref<AsyncMediaPlayer> m_weak;
-            DispatcherQueue m_dispatcherQueue{ nullptr };
-            std::shared_ptr<PlayerState> m_state;
-            uint32_t m_attached = 0;
-
-            static void EventCallback(const libvlc_event_t* event, void* user_data)
-            {
-                // Deliberately not resolving m_weak here. A strong reference taken on libvlc's
-                // thread can turn out to be the last one, and then ~AsyncMediaPlayer runs on
-                // that thread: inside the event manager's lock, and re-entering the source the
-                // very same thread may be parked in. The player is reached only from the
-                // dispatcher, where dropping the last reference is safe.
-                static_cast<EventContext*>(user_data)->HandleEvent(event);
-            }
-
-            void HandleEvent(const libvlc_event_t* event);
-            void TryEnqueue(DispatcherQueueHandler const& callback) const;
-        };
-
-        class CleanupManager
-        {
-        public:
-            static void Close(libvlc_instance_t* instance, libvlc_media_player_t* player, EventContext* events, AsyncMediaPlayerSwapChain const& swapChain, void* streamAbi, std::thread workerThread)
-            {
-                post_to_threadpool([instance, player, events, swapChain, streamAbi, workerThread = std::move(workerThread)]() mutable {
-                    // First we wait for any pending operation to be completed
-                    if (workerThread.joinable())
-                    {
-                        workerThread.join();
-                    }
-                    // Then we release all objects, the listeners first: stop sends
-                    // MediaPlayerStopped synchronously, and by now there is nobody left to hear
-                    // it. Detach is what makes the delete safe -- libvlc_event_send invokes a
-                    // callback with the event manager's lock held and detach takes that same
-                    // lock, so it cannot return while one is running.
-                    if (events)
-                    {
-                        if (player)
-                        {
-                            events->Detach(player);
-                        }
-
-                        delete events;
-                    }
-
-                    if (player)
-                    {
-                        libvlc_media_player_stop(player);
-                        libvlc_media_player_set_media(player, nullptr);
-                        libvlc_media_player_release(player);
-                    }
-                    // After the player: nothing can reach OpenCallback once the media it holds
-                    // has gone with it.
-                    ReleaseStreamAbi(streamAbi);
-
-                    if (instance)
-                    {
-                        libvlc_release(instance);
-                    }
-                    if (swapChain)
-                    {
-                        swapChain.Close();
-                    }
-                    });
-            }
-        };
-
-        AsyncMediaPlayerOptions m_options;
-
         DispatcherQueue m_dispatcherQueue{ nullptr };
         AsyncMediaPlayerSwapChain m_context{ nullptr };
         winrt::event_token m_defaultAudioRenderDeviceChanged{};
@@ -394,37 +129,14 @@ namespace winrt::Telegram::Native::Media::implementation
         AsyncMediaPlayerPositionChangedEventArgs m_positionChangedEventArgs;
         AsyncMediaPlayerDurationChangedEventArgs m_durationChangedEventArgs;
 
-        libvlc_instance_t* m_instance{ nullptr };
-        libvlc_media_player_t* m_player{ nullptr };
-        EventContext* m_events{ nullptr };
-        IAsyncMediaPlayerSource m_stream{ nullptr };
-
-        // Set when the options ask for the ffmpeg backend, and then none of libvlc above exists:
-        // every member below answers from the engine instead.
         std::shared_ptr<MediaEngine> m_engine;
 
         struct EngineEvents;
-        void InitializeEngine();
 
-        // What libvlc was handed of a video with qualities: the one it plays, which it never leaves.
-        int32_t m_rendition{ 0 };
-
-        // The reference handed to libvlc_media_new_callbacks as its opaque, owned by whoever
-        // exchanges it out. Atomic because Close() takes it from the caller's thread while the
-        // worker may still be inside Play.
-        std::atomic<void*> m_streamAbi{ nullptr };
-
-        std::shared_ptr<PlayerState> m_state{ std::make_shared<PlayerState>() };
+        std::mutex m_closeLock;
+        bool m_closed{ false };
 
         void OnDefaultAudioRenderDeviceChanged(winrt::Windows::Foundation::IInspectable const& sender, DefaultAudioRenderDeviceChangedEventArgs const& args);
-
-        static void ReleaseStreamAbi(void* abi) noexcept;
-
-        static void LogCallback(void* data, int level, const libvlc_log_t* ctx, const char* fmt, va_list args) noexcept;
-
-        void HandleLog(int level, const libvlc_log_t* ctx, const char* fmt, va_list args);
-
-        void GetVideoTrackInfo(int32_t trackId, int32_t& width, int32_t& height);
 
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Media::AsyncMediaPlayer,
@@ -464,126 +176,7 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::Windows::Foundation::IInspectable>> m_encounteredError;
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Media::AsyncMediaPlayer,
-            winrt::Telegram::Native::Media::AsyncMediaPlayerLogEventArgs>> m_log;
-        winrt::event<Windows::Foundation::TypedEventHandler<
-            winrt::Telegram::Native::Media::AsyncMediaPlayer,
             winrt::Windows::Foundation::IInspectable>> m_renditionChanged;
-
-    private:
-        mutable std::mutex close_lock_;
-        // Written under close_lock_, but read without it where taking that lock would invert the
-        // close_lock_ -> work_lock_ order Close() holds them in.
-        std::atomic<bool> closed_{ false };
-
-        std::atomic<bool> work_started_{ false };
-        std::unique_ptr<std::thread> work_thread_;
-
-        WorkQueue work_queue_;
-        mutable std::mutex work_lock_;
-
-        std::atomic<long> work_version_{ 0 };
-
-        template<typename U>
-        U Read(std::function<U()> value)
-        {
-            std::lock_guard<std::mutex> lock(close_lock_);
-            if (closed_) return U{};
-            return value();
-        }
-
-        void Write(std::function<void()> action, bool increment = false)
-        {
-            {
-                std::lock_guard<std::mutex> lock(close_lock_);
-                if (closed_) return;
-            }
-
-            long version = increment ? ++work_version_ : -1;
-            auto work_item = std::make_shared<WorkItem>(std::move(action), version);
-
-            work_queue_.push(work_item);
-
-            std::lock_guard<std::mutex> lock(work_lock_);
-
-            // Checked again, because the close_lock_ above was given up before the queue push:
-            // Close() can have run in between, taken the thread away and left nobody to join
-            // the one started here -- and destroying a joinable thread terminates the process.
-            if (closed_.load())
-            {
-                return;
-            }
-
-            if (!work_started_.load())
-            {
-                if (work_thread_ && work_thread_->joinable())
-                {
-                    work_thread_->join();
-                }
-
-                // We need to pass a strong reference to this as the thread may outlive the instance
-                work_started_ = true;
-                work_thread_ = std::make_unique<std::thread>(&AsyncMediaPlayer::Work, get_strong());
-            }
-        }
-
-        template<typename Func, typename... Args>
-        auto Get(Func func, Args&&... args) -> decltype(func(m_player, std::forward<Args>(args)...))
-        {
-            return Read<decltype(func(m_player, std::forward<Args>(args)...))>(
-                [this, func, args...] { return func(m_player, args...); });
-        }
-
-        template<typename Func, typename... Args>
-        void Set(Func func, Args&&... args)
-        {
-            Write([this, func, args...] {
-                func(m_player, args...);
-                });
-        }
-
-        void Work()
-        {
-            try
-            {
-                while (true)
-                {
-                    auto work = work_queue_.wait_and_pop();
-                    if (!work)
-                    {
-                        break;
-                    }
-
-                    {
-                        std::lock_guard<std::mutex> lock(close_lock_);
-                        if (closed_) break;
-                    }
-
-                    try
-                    {
-                        if (work->version == -1 || (work->version == work_version_.load()))
-                        {
-                            work->action();
-                        }
-                    }
-                    catch (...)
-                    {
-                        // Shit happens...
-                    }
-
-                    {
-                        std::lock_guard<std::mutex> lock(close_lock_);
-                        if (closed_) break;
-                    }
-                }
-            }
-            catch (...)
-            {
-                // Handle any unexpected exceptions
-            }
-
-            std::lock_guard<std::mutex> lock(work_lock_);
-            work_started_ = false;
-        }
     };
 }
 

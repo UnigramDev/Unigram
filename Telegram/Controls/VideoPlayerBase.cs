@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.ViewModels.Gallery;
-using Windows.Data.Json;
 using Windows.Foundation;
 
 namespace Telegram.Controls
@@ -47,14 +46,6 @@ namespace Telegram.Controls
             Width = width;
             Height = height;
             IsOriginal = isOriginal;
-        }
-
-        public VideoPlayerLevel(JsonObject level)
-        {
-            Index = level.GetNamedInt32("index", 0);
-            Bitrate = level.GetNamedInt32("bitrate", 100000);
-            Width = level.GetNamedInt32("width", 1280);
-            Height = level.GetNamedInt32("height", 720);
         }
 
         public int Index { get; }
@@ -100,18 +91,6 @@ namespace Telegram.Controls
         public abstract void Clear();
 
         public abstract void Seek(double value);
-
-        protected bool _isReady;
-
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> Ready;
-        protected void OnReady(bool value)
-        {
-            if (/*_isReady != value &&*/ value)
-            {
-                _isReady = value;
-                Ready?.Invoke(this, EventArgs.Empty);
-            }
-        }
 
         protected bool _isFirstFrameReady;
 
@@ -216,12 +195,6 @@ namespace Telegram.Controls
         protected void OnClosed()
         {
             Closed?.Invoke(this, EventArgs.Empty);
-        }
-
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> Failed;
-        protected void OnFailed()
-        {
-            Failed?.Invoke(this, EventArgs.Empty);
         }
 
         public event TypedEventHandler<VideoPlayerBase, EventArgs> TreeUpdated;

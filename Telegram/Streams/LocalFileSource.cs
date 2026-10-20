@@ -94,9 +94,7 @@ namespace Telegram.Streams
             bytesRead = count;
         }
 
-        // Replaying opens the media again, and the offset left behind is the end of the file:
-        // the read callback would seek there, read nothing, and libvlc would take that for the
-        // end of the stream before it could fill its buffer.
+        // Replaying opens the source again, and the offset left behind is the end of the file.
         public void Open()
         {
             SeekCallback(0);

@@ -3115,7 +3115,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         m_paused = pause;
 
-        // Paused at the end, a player starts over, as libvlc's did.
+        // Paused at the end, a player starts over, which the consumers' play buttons rely on.
         if (m_state.load() == MediaEngineState::Ended)
         {
             m_session->Seek(0);
@@ -3221,7 +3221,7 @@ namespace winrt::Telegram::Native::Media::implementation
             return;
         }
 
-        // Seeking at the end plays again, as it did with libvlc.
+        // Seeking at the end plays again, which scrubbing an ended video relies on.
         if (m_state.load() == MediaEngineState::Ended)
         {
             m_paused = false;

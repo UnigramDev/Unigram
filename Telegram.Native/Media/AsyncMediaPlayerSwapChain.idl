@@ -10,8 +10,6 @@ namespace Telegram.Native.Media
 
         void Clear();
 
-        Windows.Foundation.Collections.IVector<String> SwapChainOptions{ get; };
-
         Boolean Create();
         Boolean Create(Boolean subscribe);
 

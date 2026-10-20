@@ -336,9 +336,9 @@ namespace Telegram.Controls.Gallery
             });
         }
 
-        public void OpenFile(GalleryMedia item, File file, bool force = false)
+        public void OpenFile(GalleryMedia item, File file)
         {
-            Play(CurrentElement, item, force: force);
+            Play(CurrentElement, item);
         }
 
         public void OpenItem(GalleryMedia item)
@@ -743,7 +743,7 @@ namespace Telegram.Controls.Gallery
 
         private GalleryContent _current;
 
-        private void Play(GalleryContent content, GalleryMedia item, VideoPlayerBase player = null, bool force = false)
+        private void Play(GalleryContent content, GalleryMedia item, VideoPlayerBase player = null)
         {
             if (_unloaded)
             {
@@ -771,7 +771,7 @@ namespace Telegram.Controls.Gallery
             else
             {
                 _current = content;
-                _current.Play(item, position, Controls, force);
+                _current.Play(item, position, Controls);
             }
 
             ViewModel.PlaybackStarted(item);

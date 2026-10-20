@@ -43,8 +43,6 @@ namespace winrt::Telegram::Native::Media::implementation
 
         void Clear();
 
-        IVector<hstring> SwapChainOptions() const;
-
         bool Create(bool subscribe = false);
         void Close();
 
@@ -55,8 +53,8 @@ namespace winrt::Telegram::Native::Media::implementation
         void UpdateSize();
         void UpdateScale();
 
-        // For MediaVideoRenderer, which presents into this swap chain itself rather than handing
-        // it to libvlc. It takes its own references, so they outlive a Close() racing a frame.
+        // For MediaVideoRenderer, which takes its own references, so they outlive a Close() racing
+        // a frame.
         winrt::com_ptr<ID3D11Device> Device() const noexcept { return m_d3d11Device; }
         winrt::com_ptr<ID3D11DeviceContext> DeviceContext() const noexcept { return m_deviceContext; }
         winrt::com_ptr<IDXGISwapChain1> SwapChain() const noexcept { return m_swapChain; }
@@ -91,7 +89,6 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::com_ptr<IDXGISwapChain2> swapChain2;
             winrt::com_ptr<IDXGIDevice3> device3;
             HANDLE mutex{ nullptr };
-            bool hardwareDecoding{ false };
 
             Resources() = default;
             Resources(const Resources&) = delete;
@@ -141,10 +138,6 @@ namespace winrt::Telegram::Native::Media::implementation
         // Set by Close, so that a recovery still in flight does not bring a closed swap chain back.
         std::atomic<bool> m_closed{ false };
 
-        // Whether the adapter Create() settled on exposes ID3D11VideoDevice. libvlc reads the
-        // device straight out of SwapChainOptions, so one that can't decode has to say so there.
-        bool m_hardwareDecoding = false;
-
         std::atomic<int32_t> m_targetWidth{ 0 };
         std::atomic<int32_t> m_targetHeight{ 0 };
 
@@ -154,21 +147,6 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::event_token m_compositionScaleChangedToken{};
         winrt::event_token m_sizeChangedToken{};
         //winrt::event_token m_suspending{};
-
-        // Private data GUIDs for LibVLC
-        static constexpr GUID SWAPCHAIN_WIDTH_GUID = {
-            0xf1b59347, 0x1643, 0x411a, {0xad, 0x6b, 0xc7, 0x80, 0x17, 0x7a, 0x06, 0xb6}
-        };
-
-        static constexpr GUID SWAPCHAIN_HEIGHT_GUID = {
-            0x6ea976a0, 0x9d60, 0x4bb7, {0xa5, 0xa9, 0x7d, 0xd1, 0x18, 0x7f, 0xc9, 0xbd}
-        };
-
-        // Set on the device context rather than the swap chain: it is the context that libvlc's
-        // decoder, filters and vout share with us.
-        static constexpr GUID CONTEXT_MUTEX_GUID = {
-            0x472e8835, 0x3f8e, 0x4f93, {0xa0, 0xcb, 0x25, 0x79, 0x77, 0x6c, 0xed, 0x86}
-        };
     };
 }
 

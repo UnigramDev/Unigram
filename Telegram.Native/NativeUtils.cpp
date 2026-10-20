@@ -736,11 +736,7 @@ namespace winrt::Telegram::Native::implementation
 
         if (type.empty())
         {
-            if (Contains(trace, L"libvlc.dll") || Contains(trace, L"libvlccore.dll"))
-            {
-                type = L"VLCException";
-            }
-            else if (Contains(trace, L"Telegram.Native.Calls.dll"))
+            if (Contains(trace, L"Telegram.Native.Calls.dll"))
             {
                 type = L"VoipException";
             }

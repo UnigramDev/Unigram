@@ -1,23 +1,23 @@
 # Duplicated libraries
 
-Measured 2026-08-14, while moving libvlc and webrtc to vcpkg. Nothing here is a bug; it is a
+Measured 2026-08-14, while moving libvlc and webrtc to vcpkg; libvlc has since been removed.
+Nothing here is a bug; it is a
 list of things the app carries more than one copy of, with the evidence, so the cost is known
 rather than rediscovered.
 
-## ffmpeg — two copies ship, ~25 MB
+## ffmpeg — one copy since libvlc went, 2026-10-20
 
 | copy | form | size |
 |---|---|---|
 | vcpkg `ffmpeg` 7.1.2 (overlay port) | `avcodec-61.dll` and friends, linked by both native projects | ~8 MB |
-| VLC's contrib ffmpeg | statically inside `plugins\codec\libavcodec_plugin.dll` | 17.3 MB |
+| VLC's contrib ffmpeg, **removed with libvlc** | statically inside `plugins\codec\libavcodec_plugin.dll` | 17.3 MB |
 
 WebRTC also carries ffmpeg **headers** (`third_party/ffmpeg`, referenced by a few webrtc headers),
 but nothing is compiled in: `lib /list webrtc.lib` finds zero ffmpeg objects, because the fork is
-built without `rtc_use_h264`. So it is not a third copy.
+built without `rtc_use_h264`. So it is not a second copy.
 
-Two independent decoder stacks parse untrusted media, and each has its own CVE surface. Sharing
-one ffmpeg between the app and libvlc is blocked by VLC's contrib build — see the earlier media
-stack analysis; this is not new, and moving to vcpkg neither added nor removed a copy.
+Until libvlc was removed, two independent decoder stacks parsed untrusted media, each with its own
+CVE surface. The media player now decodes through the vcpkg build too (`notes/ffmpeg-media-player.md`).
 
 ## opus and libyuv — two copies each
 

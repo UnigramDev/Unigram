@@ -1,7 +1,9 @@
 # Native dependencies — state and what is left
 
 Written 2026-08-14. Resume point for the work that moved the unmanaged dependencies onto vcpkg
-manifest mode and turned libvlc and webrtc into prebuilt downloads.
+manifest mode and turned libvlc and webrtc into prebuilt downloads. libvlc was removed on 2026-10-20,
+replaced by the app's own ffmpeg player (`notes/ffmpeg-media-player.md`); what is said of it below
+is history.
 
 ## Where things are
 
@@ -18,7 +20,6 @@ older than the pin and prints the fix if it is.
 | dependency | how it arrives |
 |---|---|
 | ffmpeg 7.1.2 | overlay port, `Libraries/vcpkg-ports/ffmpeg`, carrying the `--enable-*` flag set |
-| libvlc 3.0.23 | overlay port downloading `libvlc-3.0.23-2` from UnigramDev/deps |
 | webrtc m123 | overlay port downloading `webrtc-2026-09-09-1` from UnigramDev/deps |
 | everything else | stock ports at the pinned baseline |
 

@@ -26,9 +26,6 @@ namespace Telegram.Controls
 
         private double _initialPosition;
 
-        // Set when the core is the ffmpeg backend, the only one that moves between qualities.
-        private bool _renditionsSupported;
-
         // The qualities of the video playing, sorted from the smallest, or null when it has none.
         private List<RemoteRendition> _renditions;
         private IClientService _clientService;
@@ -52,20 +49,10 @@ namespace Telegram.Controls
             {
                 var options = new AsyncMediaPlayerOptions
                 {
-                    Backend = AppSettings.Diagnostics.UseFFmpegPlayer
-                        ? AsyncMediaPlayerBackend.FFmpeg
-                        : AsyncMediaPlayerBackend.LibVlc,
                     CreateSwapChain = true,
                     Mute = AppSettings.VolumeMuted,
                     Volume = AppSettings.VolumeLevel,
                     Rate = AppSettings.Playback.VideoSpeed,
-                    LogLevel = AppSettings.VerbosityLevel >= 4
-                        ? AsyncMediaPlayerLogLevel.Debug
-                        : AppSettings.VerbosityLevel >= 3
-                        ? AsyncMediaPlayerLogLevel.Notice
-                        : AppSettings.VerbosityLevel >= 2
-                        ? AsyncMediaPlayerLogLevel.Warning
-                        : AsyncMediaPlayerLogLevel.Error,
                 };
 
                 try
@@ -74,9 +61,9 @@ namespace Telegram.Controls
                 }
                 catch (Exception ex)
                 {
-                    // libvlc could not start: no plugin bank, or out of memory. Every member of
-                    // this class already tolerates a null core, so leaving it unset degrades to
-                    // a player that never plays instead of faulting on the next call into it.
+                    // Out of memory, most likely. Every member of this class already tolerates a
+                    // null core, so leaving it unset degrades to a player that never plays instead
+                    // of faulting on the next call into it.
                     Logger.Error(ex);
                     return;
                 }
@@ -91,8 +78,6 @@ namespace Telegram.Controls
                 _core.VolumeChanged += OnVolumeChanged;
                 _core.StreamSelected += OnEESelected;
                 _core.RenditionChanged += OnRenditionChanged;
-
-                _renditionsSupported = options.Backend == AsyncMediaPlayerBackend.FFmpeg;
 
                 _core.Context.Attach(Video, true);
 
@@ -160,7 +145,7 @@ namespace Telegram.Controls
 
         private void Open(GalleryMedia video, double position)
         {
-            _renditions = _renditionsSupported ? CreateRenditions(video) : null;
+            _renditions = CreateRenditions(video);
             _clientService = video.ClientService;
             _duration = video.Duration;
             _levels = null;
@@ -454,8 +439,8 @@ namespace Telegram.Controls
 
             if (IsLoopingEnabled)
             {
-                // Play restarts an ended player by itself. A Stop first would make the ffmpeg
-                // backend reopen the file, and leave a gap at every loop.
+                // Play restarts an ended player by itself. A Stop first would make the player
+                // reopen the file, and leave a gap at every loop.
                 sender.Play();
             }
             else
@@ -487,14 +472,6 @@ namespace Telegram.Controls
             if (args.Type == AsyncMediaPlayerStreamType.Video && args.Id != -1)
             {
                 OnTrackChanged(args.Width, args.Height);
-            }
-            else if (args.Type == AsyncMediaPlayerStreamType.Audio && args.Id != -1)
-            {
-                //if (_volumeWorkaround)
-                //{
-                //    _volumeWorkaround = false;
-                //    OnReady(true);
-                //}
             }
         }
     }

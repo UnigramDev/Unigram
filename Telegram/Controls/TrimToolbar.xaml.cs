@@ -312,12 +312,6 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (args.Position >= TrimRange.Maximum * _duration.TotalSeconds)
-            {
-                sender.Position = _duration.TotalSeconds * TrimRange.Minimum;
-                return;
-            }
-
             TrimRange.Value = args.Position / _duration.TotalSeconds;
         }
 
@@ -331,8 +325,8 @@ namespace Telegram.Controls
             }
         }
 
-        // The ffmpeg backend loops at the trim end itself, from the first frame past it. libvlc
-        // ignores this, and Player_PositionChanged loops it once a reported position is past it.
+        // The player loops at the trim end itself, from the first frame past it, rather than once
+        // a reported position is past it.
         private void UpdateLoop()
         {
             if (_player == null || _duration == TimeSpan.Zero)

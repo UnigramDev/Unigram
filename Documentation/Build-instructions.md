@@ -100,21 +100,19 @@ The script finds vcpkg exactly as the rest of the build does — it asks MSBuild
 and zlib are the same builds the app links. Both architectures are built by default; pass
 `-arch x64` or `-arch ARM64` for one of them.
 
-### LibVLC and WebRTC
+### WebRTC
 
-LibVLC plays video and audio, and WebRTC backs calls and video chats. Both arrive as prebuilt
-binaries through the same manifest as everything else, as overlay ports in
-`Libraries\vcpkg-ports`. The build downloads an archive for the architecture it is building,
-verifies it against a SHA512 recorded in the port, and caches it — so there is nothing to install
-or configure for either.
+WebRTC backs calls and video chats. It arrives as a prebuilt binary through the same manifest as
+everything else, as an overlay port in `Libraries\vcpkg-ports`. The build downloads an archive for
+the architecture it is building, verifies it against a SHA512 recorded in the port, and caches it
+— so there is nothing to install or configure.
 
-They are built from [UnigramDev/vlc](https://github.com/UnigramDev/vlc) and
-[UnigramDev/webrtc-uwp](https://github.com/UnigramDev/webrtc-uwp); the WebRTC fork follows
+It is built from [UnigramDev/webrtc-uwp](https://github.com/UnigramDev/webrtc-uwp), which follows
 [WinRTC](https://github.com/microsoft/winrtc/tree/master/patches_for_WebRTC_org/m84). Each
 release names the commit it was built from.
 
-To change either one, see [UnigramDev/deps](https://github.com/UnigramDev/deps), which holds the
-build scripts, the patches and the packaging, and documents how to publish a new archive.
+To change it, see [UnigramDev/deps](https://github.com/UnigramDev/deps), which holds the build
+scripts, the patches and the packaging, and documents how to publish a new archive.
 
 ### Code fails to build?
 

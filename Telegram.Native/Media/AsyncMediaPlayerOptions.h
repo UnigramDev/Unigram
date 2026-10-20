@@ -2,22 +2,14 @@
 
 #include "Media/AsyncMediaPlayerOptions.g.h"
 
-#include <winrt/Windows.Foundation.Collections.h>
-
 namespace winrt::Telegram::Native::Media::implementation
 {
     struct AsyncMediaPlayerOptions : AsyncMediaPlayerOptionsT<AsyncMediaPlayerOptions>
     {
         AsyncMediaPlayerOptions();
 
-        AsyncMediaPlayerBackend Backend() const;
-        void Backend(AsyncMediaPlayerBackend value);
-
         AsyncMediaPlayerMode Mode() const;
         void Mode(AsyncMediaPlayerMode value);
-
-        AsyncMediaPlayerLogLevel LogLevel() const;
-        void LogLevel(AsyncMediaPlayerLogLevel value);
 
         bool CreateSwapChain() const;
         void CreateSwapChain(bool value);
@@ -31,17 +23,12 @@ namespace winrt::Telegram::Native::Media::implementation
         double Rate() const;
         void Rate(double value);
 
-        winrt::Windows::Foundation::Collections::IVector<hstring> Arguments();
-
     private:
-        AsyncMediaPlayerBackend m_backend;
         AsyncMediaPlayerMode m_mode;
-        AsyncMediaPlayerLogLevel m_logLevel;
         bool m_createSwapChain;
         bool m_mute;
         double m_volume;
         double m_rate;
-        winrt::Windows::Foundation::Collections::IVector<hstring> m_arguments;
     };
 }
 
