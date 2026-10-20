@@ -13,7 +13,8 @@ Status, 2026-10-20:
 - **Phase 1:** built, tested on the corpus and committed (`c876ac3ab`).
 - **Phase 2:** built, tested and committed (`5af80ddd4`).
 - **Phase 3:** built, tested and committed (`f24deba0c`).
-- **Phase 4:** written and unbuilt; see "Phase 4 as built" below.
+- **Phase 4:** built, tested and committed (`34d3de2d3`).
+- **Phase 5:** written and unbuilt; see "Phase 5 as built" below.
 
 
 ## What we have today
@@ -455,6 +456,39 @@ new for it. What it relies on maps over as is:
 
 **Not done:** gapless playback between tracks. Neither backend has it. The engine could open the
 next track's session ahead of the end and hand the audio over at the boundary.
+
+## Phase 5 as built
+
+**Port:** the `h264`, `hevc` and `av1` D3D11VA hwaccels are enabled, both the `d3d11va` and `d3d11va2`
+variants. The engine uses the second, `AV_PIX_FMT_D3D11` with a device context.
+
+**VP9 is left out on purpose.** Hardware VP9 needs ffmpeg's own VP9 decoder. `VideoAnimation`
+picks decoders with `avcodec_find_decoder`, so building it would switch video stickers from libvpx
+to it, and only libvpx keeps their alpha.
+
+**One device for decoding and drawing.** `MediaVideoRenderer::HardwareDevice()` builds the ffmpeg
+device context on the renderer's own D3D11 device, with the swap chain's context mutex as its lock.
+ffmpeg requires that lock to be recursive; a Win32 mutex is. A decoded surface is one slice of the
+decoder's texture array, and the video processor draws it from there through a cached input view:
+no copy, and no CPU. `Present` moved outside that lock, because the decoders now take it to submit
+work, and a `Present` can wait for a vblank.
+
+**Decoder:**
+- **Hardware setup:** `CreateDecoder` asks for `AV_PIX_FMT_D3D11` with one thread, plus extra surfaces
+  for the frame queue and the frame on screen.
+- **Software fallback:** when `get_format` gets no GPU format, or the hwaccel fails to start (a
+  profile or a size the GPU does not take), the decoder thread starts over in software, with frame
+  threads. It resends the same first packet, before any frame is received, so nothing is decoded
+  twice.
+- **AV1:** on the GPU it uses ffmpeg's own AV1 decoder, which decodes nothing in software; dav1d is
+  the software fallback.
+
+**HDR:** frames tagged PQ or HLG are given the matching DXGI colour space, and the video processor
+maps them to the SDR output. That fixes the washed-out HDR from phase 1. 10-bit HEVC on the GPU
+reaches the processor as P010, never through the CPU. How well a driver maps HDR to SDR varies.
+
+**CPU drawing path:** it takes a GPU surface only when the processor has failed on one. It copies
+the surface back, NV12 only.
 
 ## Open questions
 

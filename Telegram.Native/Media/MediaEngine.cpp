@@ -15,6 +15,7 @@ extern "C"
 #include <libavutil/buffer.h>
 #include <libavutil/display.h>
 #include <libavutil/imgutils.h>
+#include <libavutil/pixdesc.h>
 #include <libswscale/swscale.h>
 }
 
@@ -227,9 +228,56 @@ namespace winrt::Telegram::Native::Media::implementation
             return avcodec_find_decoder(id);
         }
 
-        AVCodecContext* CreateDecoder(MediaStreamSetup const& setup, bool video)
+        // Set by GetHardwareFormat when a stream turns out to be one the GPU does not take.
+        struct DecoderState
         {
-            const AVCodec* codec = FindDecoder(setup.parameters->codec_id);
+            bool hardwareFailed{ false };
+        };
+
+        // The codecs whose D3D11VA hardware decoders are built. VP9 is not among them: hardware VP9
+        // needs ffmpeg's own VP9 decoder, which would then also be picked for video stickers, and
+        // only libvpx keeps their alpha.
+        bool SupportsHardware(AVCodecID id) noexcept
+        {
+            return id == AV_CODEC_ID_H264 || id == AV_CODEC_ID_HEVC || id == AV_CODEC_ID_AV1;
+        }
+
+        AVPixelFormat GetHardwareFormat(AVCodecContext* context, const AVPixelFormat* formats)
+        {
+            for (auto const* format = formats; *format != AV_PIX_FMT_NONE; format++)
+            {
+                if (*format == AV_PIX_FMT_D3D11)
+                {
+                    return *format;
+                }
+            }
+
+            // Offered no GPU format, or only ones whose hardware decoder failed to start: a profile
+            // or a size the GPU does not decode. The decoder thread starts over in software.
+            static_cast<DecoderState*>(context->opaque)->hardwareFailed = true;
+
+            for (auto const* format = formats; *format != AV_PIX_FMT_NONE; format++)
+            {
+                if ((av_pix_fmt_desc_get(*format)->flags & AV_PIX_FMT_FLAG_HWACCEL) == 0)
+                {
+                    return *format;
+                }
+            }
+
+            return AV_PIX_FMT_NONE;
+        }
+
+        AVCodecContext* CreateDecoder(MediaStreamSetup const& setup, bool video, AVBufferRef* hardware = nullptr, DecoderState* state = nullptr)
+        {
+            const AVCodecID id = setup.parameters->codec_id;
+            const bool accelerated = video && hardware != nullptr && state != nullptr && SupportsHardware(id);
+
+            // The native AV1 decoder decodes nothing on its own, so it only ever runs on the GPU,
+            // and dav1d is what decodes AV1 in software.
+            const AVCodec* codec = accelerated && id == AV_CODEC_ID_AV1
+                ? avcodec_find_decoder_by_name("av1")
+                : FindDecoder(id);
+
             if (codec == nullptr)
             {
                 return nullptr;
@@ -244,7 +292,23 @@ namespace winrt::Telegram::Native::Media::implementation
             avcodec_parameters_to_context(context, setup.parameters);
             context->pkt_timebase = setup.timeBase;
 
-            if (video)
+            if (accelerated)
+            {
+                state->hardwareFailed = false;
+
+                context->hw_device_ctx = av_buffer_ref(hardware);
+                context->get_format = &GetHardwareFormat;
+                context->opaque = state;
+
+                // Surfaces held outside the decoder: the frame queue, the one on screen, and the
+                // one being drawn. Without them the decoder runs out of surfaces and stalls.
+                context->extra_hw_frames = static_cast<int>(kVideoFrames) + 2;
+
+                // The GPU decodes one frame at a time whatever the threads, and each thread would
+                // hold surfaces of its own.
+                context->thread_count = 1;
+            }
+            else if (video)
             {
                 context->thread_count = 0;
                 context->thread_type = FF_THREAD_FRAME | FF_THREAD_SLICE;
@@ -1714,6 +1778,7 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         switch (frame->format)
         {
+        case AV_PIX_FMT_D3D11:
         case AV_PIX_FMT_NV12:
         case AV_PIX_FMT_YUV420P:
         case AV_PIX_FMT_YUVJ420P:
@@ -1789,6 +1854,11 @@ namespace winrt::Telegram::Native::Media::implementation
         AVCodecContext* codec = nullptr;
         std::shared_ptr<MediaStreamSetup> setup;
 
+        // Shared by every decoder of the session, and the renderer's: what is decoded into it is
+        // drawn where it is.
+        AVBufferRef* hardware = m_renderer->HardwareDevice();
+        DecoderState state;
+
         int32_t serial = -1;
         double target = 0;
         double nextPts = 0;
@@ -1848,7 +1918,13 @@ namespace winrt::Telegram::Native::Media::implementation
                 avcodec_free_context(&codec);
 
                 setup = next;
-                codec = setup ? CreateDecoder(*setup, true) : nullptr;
+                codec = setup ? CreateDecoder(*setup, true, hardware, &state) : nullptr;
+
+                // AV1 on the GPU has its own decoder, which fails to open where dav1d would not.
+                if (codec == nullptr && setup && hardware != nullptr)
+                {
+                    codec = CreateDecoder(*setup, true);
+                }
 
                 if (codec == nullptr)
                 {
@@ -1945,6 +2021,28 @@ namespace winrt::Telegram::Native::Media::implementation
 
                 int result = avcodec_send_packet(codec, item.packet);
 
+                // The first packet is where a decoder learns what the stream is, and where it finds
+                // out the GPU cannot take it. Started over in software, with its threads, before any
+                // frame of it is received, so nothing is decoded twice.
+                if (state.hardwareFailed && codec->hw_device_ctx != nullptr)
+                {
+                    LOGGER_INFO(L"Codec {} at {}x{} is not decoded by the GPU, decoding on the CPU", static_cast<int>(setup->parameters->codec_id), setup->parameters->width, setup->parameters->height);
+
+                    state.hardwareFailed = false;
+                    avcodec_free_context(&codec);
+
+                    codec = CreateDecoder(*setup, true);
+
+                    if (codec == nullptr)
+                    {
+                        av_packet_free(&item.packet);
+                        m_frames.Push({ nullptr, nextPts, 0, serial }, m_serial);
+                        break;
+                    }
+
+                    result = avcodec_send_packet(codec, item.packet);
+                }
+
                 while (result == AVERROR(EAGAIN) && !m_abort)
                 {
                     receive();
@@ -1961,6 +2059,7 @@ namespace winrt::Telegram::Native::Media::implementation
         av_frame_free(&last.frame);
         av_frame_free(&frame);
         avcodec_free_context(&codec);
+        av_buffer_unref(&hardware);
     }
 
     void MediaSession::PresentMain()

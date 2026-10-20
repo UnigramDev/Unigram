@@ -10,6 +10,8 @@
 
 extern "C"
 {
+#include <libavutil/hwcontext.h>
+#include <libavutil/hwcontext_d3d11va.h>
 #include <libavutil/pixfmt.h>
 }
 
@@ -83,6 +85,17 @@ namespace winrt::Telegram::Native::Media::implementation
 
         DXGI_COLOR_SPACE_TYPE ColorSpaceOf(AVFrame const* frame) noexcept
         {
+            // HDR, as phones record it. Told what it is, the video processor maps it down to the
+            // SDR output; told nothing, it would show the PQ or HLG signal as is, washed out.
+            if (frame->color_trc == AVCOL_TRC_SMPTE2084)
+            {
+                return DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_LEFT_P2020;
+            }
+            else if (frame->color_trc == AVCOL_TRC_ARIB_STD_B67)
+            {
+                return DXGI_COLOR_SPACE_YCBCR_STUDIO_GHLG_TOPLEFT_P2020;
+            }
+
             const bool full = IsFullRange(frame);
 
             switch (MatrixOf(frame))
@@ -181,6 +194,7 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         m_frame = av_frame_alloc();
+        m_transfer = av_frame_alloc();
     }
 
     MediaVideoRenderer::~MediaVideoRenderer()
@@ -194,6 +208,8 @@ namespace winrt::Telegram::Native::Media::implementation
             ReleaseProcessor();
 
             av_frame_free(&m_frame);
+            av_frame_free(&m_transfer);
+            av_buffer_unref(&m_hardware);
         }
 
         if (m_contextMutex != nullptr)
@@ -270,14 +286,16 @@ namespace winrt::Telegram::Native::Media::implementation
 
     bool MediaVideoRenderer::Draw(bool upload)
     {
-        ContextLock lock(m_contextMutex);
+        bool drawn = false;
 
         try
         {
+            // Not held across the Present below: the decoders take the same lock to submit their
+            // work, and a Present can wait for a vblank.
+            ContextLock lock(m_contextMutex);
+
             m_resized = false;
             UpdateSize();
-
-            bool drawn = false;
 
             if (!m_software)
             {
@@ -296,19 +314,75 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 drawn = DrawSoftware();
             }
-
-            if (drawn)
-            {
-                Present();
-            }
-
-            return drawn;
         }
         catch (winrt::hresult_error const& ex)
         {
             LOGGER_ERROR(L"Drawing failed: 0x{:08X}", static_cast<uint32_t>(ex.code()));
             return false;
         }
+
+        if (drawn)
+        {
+            Present();
+        }
+
+        return drawn;
+    }
+
+    AVBufferRef* MediaVideoRenderer::HardwareDevice()
+    {
+        std::lock_guard<std::mutex> lock(m_lock);
+
+        if (m_hardware == nullptr && !m_hardwareFailed && !m_software && m_videoDevice && m_videoContext)
+        {
+            AVBufferRef* device = av_hwdevice_ctx_alloc(AV_HWDEVICE_TYPE_D3D11VA);
+
+            if (device != nullptr)
+            {
+                auto* context = reinterpret_cast<AVHWDeviceContext*>(device->data);
+                auto* d3d11 = static_cast<AVD3D11VADeviceContext*>(context->hwctx);
+
+                // Released by ffmpeg along with the device context.
+                d3d11->device = m_device.get();
+                d3d11->device->AddRef();
+
+                // The same lock this renderer draws under, which ffmpeg requires to be recursive.
+                // A Win32 mutex is.
+                if (m_contextMutex != nullptr)
+                {
+                    d3d11->lock = &LockContext;
+                    d3d11->unlock = &UnlockContext;
+                    d3d11->lock_ctx = m_contextMutex;
+                }
+
+                if (av_hwdevice_ctx_init(device) >= 0)
+                {
+                    m_hardware = device;
+                }
+                else
+                {
+                    av_buffer_unref(&device);
+                }
+            }
+
+            if (m_hardware == nullptr)
+            {
+                LOGGER_WARNING(L"No hardware decoding device, decoding video on the CPU");
+                m_hardwareFailed = true;
+            }
+        }
+
+        return m_hardware ? av_buffer_ref(m_hardware) : nullptr;
+    }
+
+    void MediaVideoRenderer::LockContext(void* context) noexcept
+    {
+        WaitForSingleObjectEx(static_cast<HANDLE>(context), INFINITE, FALSE);
+    }
+
+    void MediaVideoRenderer::UnlockContext(void* context) noexcept
+    {
+        ReleaseMutex(static_cast<HANDLE>(context));
     }
 
     void MediaVideoRenderer::Present()
@@ -373,22 +447,23 @@ namespace winrt::Telegram::Native::Media::implementation
         m_height = height;
     }
 
-    bool MediaVideoRenderer::EnsureProcessor(UINT width, UINT height)
+    bool MediaVideoRenderer::EnsureProcessor(UINT width, UINT height, DXGI_FORMAT format)
     {
-        if (m_processor && m_inputWidth == width && m_inputHeight == height && m_processorWidth == m_width && m_processorHeight == m_height)
+        if (m_processor && m_inputWidth == width && m_inputHeight == height && m_inputFormat == format
+            && m_processorWidth == m_width && m_processorHeight == m_height)
         {
             return true;
         }
 
-        const bool resizeInput = !m_input || m_inputWidth != width || m_inputHeight != height;
-
-        // Output views are created against the enumerator, so they go with it.
+        // Input and output views are created against the enumerator, so they go with it.
         for (auto& target : m_targets)
         {
             target.output = nullptr;
         }
 
         m_inputView = nullptr;
+        m_decoderViews.clear();
+        m_decoderTexture = nullptr;
         m_processor = nullptr;
         m_enumerator = nullptr;
 
@@ -409,7 +484,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         UINT support = 0;
 
-        if (FAILED(m_enumerator->CheckVideoProcessorFormat(DXGI_FORMAT_NV12, &support)) || (support & D3D11_VIDEO_PROCESSOR_FORMAT_SUPPORT_INPUT) == 0)
+        if (FAILED(m_enumerator->CheckVideoProcessorFormat(format, &support)) || (support & D3D11_VIDEO_PROCESSOR_FORMAT_SUPPORT_INPUT) == 0)
         {
             return false;
         }
@@ -424,8 +499,24 @@ namespace winrt::Telegram::Native::Media::implementation
             return false;
         }
 
-        if (resizeInput)
+        m_inputWidth = width;
+        m_inputHeight = height;
+        m_inputFormat = format;
+        m_processorWidth = m_width;
+        m_processorHeight = m_height;
+
+        m_videoContext->VideoProcessorSetStreamAutoProcessingMode(m_processor.get(), 0, FALSE);
+        m_videoContext->VideoProcessorSetStreamFrameFormat(m_processor.get(), 0, D3D11_VIDEO_FRAME_FORMAT_PROGRESSIVE);
+        m_videoContext->VideoProcessorSetOutputAlphaFillMode(m_processor.get(), D3D11_VIDEO_PROCESSOR_ALPHA_FILL_MODE_OPAQUE, 0);
+
+        return true;
+    }
+
+    bool MediaVideoRenderer::EnsureUpload(UINT width, UINT height)
+    {
+        if (!m_input || m_uploadWidth != width || m_uploadHeight != height)
         {
+            m_inputView = nullptr;
             m_input = nullptr;
             m_staging[0] = nullptr;
             m_staging[1] = nullptr;
@@ -457,37 +548,69 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 if (FAILED(m_device->CreateTexture2D(&texture, nullptr, staging.put())))
                 {
+                    m_input = nullptr;
                     return false;
                 }
             }
+
+            m_uploadWidth = width;
+            m_uploadHeight = height;
         }
 
-        D3D11_VIDEO_PROCESSOR_INPUT_VIEW_DESC view{};
-        view.FourCC = 0;
-        view.ViewDimension = D3D11_VPIV_DIMENSION_TEXTURE2D;
-        view.Texture2D.MipSlice = 0;
-        view.Texture2D.ArraySlice = 0;
-
-        if (FAILED(m_videoDevice->CreateVideoProcessorInputView(m_input.get(), m_enumerator.get(), &view, m_inputView.put())))
+        if (!m_inputView)
         {
-            return false;
+            D3D11_VIDEO_PROCESSOR_INPUT_VIEW_DESC view{};
+            view.FourCC = 0;
+            view.ViewDimension = D3D11_VPIV_DIMENSION_TEXTURE2D;
+            view.Texture2D.MipSlice = 0;
+            view.Texture2D.ArraySlice = 0;
+
+            if (FAILED(m_videoDevice->CreateVideoProcessorInputView(m_input.get(), m_enumerator.get(), &view, m_inputView.put())))
+            {
+                return false;
+            }
         }
-
-        m_inputWidth = width;
-        m_inputHeight = height;
-        m_processorWidth = m_width;
-        m_processorHeight = m_height;
-
-        m_videoContext->VideoProcessorSetStreamAutoProcessingMode(m_processor.get(), 0, FALSE);
-        m_videoContext->VideoProcessorSetStreamFrameFormat(m_processor.get(), 0, D3D11_VIDEO_FRAME_FORMAT_PROGRESSIVE);
-        m_videoContext->VideoProcessorSetOutputAlphaFillMode(m_processor.get(), D3D11_VIDEO_PROCESSOR_ALPHA_FILL_MODE_OPAQUE, 0);
 
         return true;
+    }
+
+    ID3D11VideoProcessorInputView* MediaVideoRenderer::DecoderView(ID3D11Texture2D* texture, UINT slice)
+    {
+        if (texture != m_decoderTexture)
+        {
+            m_decoderViews.clear();
+            m_decoderTexture = texture;
+        }
+
+        if (slice >= m_decoderViews.size())
+        {
+            m_decoderViews.resize(slice + 1);
+        }
+
+        auto& view = m_decoderViews[slice];
+
+        if (!view)
+        {
+            D3D11_VIDEO_PROCESSOR_INPUT_VIEW_DESC desc{};
+            desc.FourCC = 0;
+            desc.ViewDimension = D3D11_VPIV_DIMENSION_TEXTURE2D;
+            desc.Texture2D.MipSlice = 0;
+            desc.Texture2D.ArraySlice = slice;
+
+            if (FAILED(m_videoDevice->CreateVideoProcessorInputView(texture, m_enumerator.get(), &desc, view.put())))
+            {
+                return nullptr;
+            }
+        }
+
+        return view.get();
     }
 
     void MediaVideoRenderer::ReleaseProcessor()
     {
         m_inputView = nullptr;
+        m_decoderViews.clear();
+        m_decoderTexture = nullptr;
         m_processor = nullptr;
         m_enumerator = nullptr;
         m_input = nullptr;
@@ -495,6 +618,9 @@ namespace winrt::Telegram::Native::Media::implementation
         m_staging[1] = nullptr;
         m_inputWidth = 0;
         m_inputHeight = 0;
+        m_inputFormat = DXGI_FORMAT_UNKNOWN;
+        m_uploadWidth = 0;
+        m_uploadHeight = 0;
         m_softwareTexture = nullptr;
     }
 
@@ -517,7 +643,7 @@ namespace winrt::Telegram::Native::Media::implementation
         // The chroma plane of a mapped NV12 texture follows the luma plane, at the texture's
         // height rather than the picture's.
         uint8_t* y = static_cast<uint8_t*>(mapped.pData);
-        uint8_t* uv = y + static_cast<size_t>(mapped.RowPitch) * m_inputHeight;
+        uint8_t* uv = y + static_cast<size_t>(mapped.RowPitch) * m_uploadHeight;
         const int pitch = static_cast<int>(mapped.RowPitch);
 
         const int width = frame->width;
@@ -640,20 +766,46 @@ namespace winrt::Telegram::Native::Media::implementation
     bool MediaVideoRenderer::DrawProcessor(bool upload)
     {
         AVFrame const* frame = m_frame;
+        ID3D11VideoProcessorInputView* input = nullptr;
 
-        if (frame->format != AV_PIX_FMT_NV12 && frame->format != AV_PIX_FMT_YUV420P && frame->format != AV_PIX_FMT_YUVJ420P)
+        if (frame->format == AV_PIX_FMT_D3D11)
         {
-            return false;
+            // A surface the decoder wrote on this same device: one slice of its texture array,
+            // drawn from where it is.
+            auto* texture = reinterpret_cast<ID3D11Texture2D*>(frame->data[0]);
+            const UINT slice = static_cast<UINT>(reinterpret_cast<intptr_t>(frame->data[1]));
+
+            D3D11_TEXTURE2D_DESC desc{};
+            texture->GetDesc(&desc);
+
+            if (!EnsureProcessor(Even(frame->width), Even(frame->height), desc.Format))
+            {
+                return false;
+            }
+
+            input = DecoderView(texture, slice);
+        }
+        else if (frame->format == AV_PIX_FMT_NV12 || frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVJ420P)
+        {
+            const UINT width = Even(frame->width);
+            const UINT height = Even(frame->height);
+
+            if (!EnsureProcessor(width, height, DXGI_FORMAT_NV12) || !EnsureUpload(width, height))
+            {
+                return false;
+            }
+
+            // A redraw reuses what is already in the input texture, which survives a new processor
+            // as long as the picture keeps its size.
+            if (upload && !Upload(frame))
+            {
+                return false;
+            }
+
+            input = m_inputView.get();
         }
 
-        if (!EnsureProcessor(Even(frame->width), Even(frame->height)))
-        {
-            return false;
-        }
-
-        // A redraw reuses what is already in the input texture, which survives a new processor as
-        // long as the picture keeps its size.
-        if (upload && !Upload(frame))
+        if (input == nullptr)
         {
             return false;
         }
@@ -694,7 +846,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         D3D11_VIDEO_PROCESSOR_STREAM stream{};
         stream.Enable = TRUE;
-        stream.pInputSurface = m_inputView.get();
+        stream.pInputSurface = input;
 
         const HRESULT result = m_videoContext->VideoProcessorBlt(m_processor.get(), output, 0, 1, &stream);
 
@@ -710,6 +862,21 @@ namespace winrt::Telegram::Native::Media::implementation
     bool MediaVideoRenderer::DrawSoftware()
     {
         AVFrame const* frame = m_frame;
+
+        if (frame->format == AV_PIX_FMT_D3D11)
+        {
+            // Only once the processor has failed on a surface the GPU decoded: copied back, which is
+            // slow but still a picture. 10 bit surfaces come back as P010, which this does not take.
+            av_frame_unref(m_transfer);
+
+            if (av_hwframe_transfer_data(m_transfer, frame, 0) < 0 || m_transfer->format != AV_PIX_FMT_NV12)
+            {
+                return false;
+            }
+
+            av_frame_copy_props(m_transfer, frame);
+            frame = m_transfer;
+        }
 
         const uint8_t* srcY = frame->data[0];
         const uint8_t* srcU = frame->data[1];

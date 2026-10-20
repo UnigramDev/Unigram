@@ -15,6 +15,7 @@
 
 extern "C"
 {
+#include <libavutil/buffer.h>
 #include <libavutil/frame.h>
 #include <libavutil/rational.h>
 }
@@ -47,6 +48,11 @@ namespace winrt::Telegram::Native::Media::implementation
         // paused video stays stretched to the old size.
         void Refresh(uint64_t session);
 
+        // A hardware device for ffmpeg's D3D11VA decoders, on this renderer's own device and behind
+        // its context lock, so that what they decode is drawn without leaving the GPU. A new
+        // reference, or null when the adapter has no video processor to draw it with.
+        AVBufferRef* HardwareDevice();
+
     private:
         struct Plane
         {
@@ -69,8 +75,13 @@ namespace winrt::Telegram::Native::Media::implementation
         void Present();
 
         void UpdateSize();
-        bool EnsureProcessor(UINT width, UINT height);
+        bool EnsureProcessor(UINT width, UINT height, DXGI_FORMAT format);
+        bool EnsureUpload(UINT width, UINT height);
+        ID3D11VideoProcessorInputView* DecoderView(ID3D11Texture2D* texture, UINT slice);
         void ReleaseProcessor();
+
+        static void LockContext(void* context) noexcept;
+        static void UnlockContext(void* context) noexcept;
         void ReleaseTargets();
 
         bool Upload(AVFrame const* frame);
@@ -116,8 +127,22 @@ namespace winrt::Telegram::Native::Media::implementation
         uint32_t m_stagingIndex{ 0 };
         UINT m_inputWidth{ 0 };
         UINT m_inputHeight{ 0 };
+        DXGI_FORMAT m_inputFormat{ DXGI_FORMAT_UNKNOWN };
+        UINT m_uploadWidth{ 0 };
+        UINT m_uploadHeight{ 0 };
         UINT m_processorWidth{ 0 };
         UINT m_processorHeight{ 0 };
+
+        // Views on the decoder's texture array, one per slice. A decoder allocates its surfaces as
+        // a single array, so a new array means a new decoder and the old views go.
+        ID3D11Texture2D* m_decoderTexture{ nullptr };
+        std::vector<winrt::com_ptr<ID3D11VideoProcessorInputView>> m_decoderViews;
+
+        AVBufferRef* m_hardware{ nullptr };
+        bool m_hardwareFailed{ false };
+
+        // A decoded surface copied back to memory, for the CPU path.
+        AVFrame* m_transfer{ nullptr };
 
         struct Target
         {
