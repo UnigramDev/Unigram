@@ -2017,7 +2017,13 @@ namespace winrt::Telegram::Native::Media::implementation
                     break;
                 }
 
-                codec->skip_frame = m_videoBehind ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
+                // Catching up to a seek target, every frame decoded is thrown away, and one that
+                // nothing refers to cannot change the frame that is shown: skipping those makes a
+                // seek into a long group of pictures several times faster.
+                const double packetPts = ToSeconds(item.packet->pts, setup->timeBase) - setup->startTime;
+                const bool catchingUp = !std::isnan(packetPts) && packetPts + setup->frameDuration <= target - 0.001;
+
+                codec->skip_frame = catchingUp || m_videoBehind ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
 
                 int result = avcodec_send_packet(codec, item.packet);
 
