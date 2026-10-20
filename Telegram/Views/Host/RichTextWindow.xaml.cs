@@ -2018,11 +2018,22 @@ namespace Telegram.Views.Host
                 return;
             }
 
-            // Editing an existing rich message.
+            InputMessageContent content;
+            if (PageBlockHelper.TryGetFormattedText(richMessage, out FormattedText formatted))
+            {
+                content = new InputMessageText(formatted, null, true);
+            }
+            else
+            {
+                content = new InputMessageRichMessage(richMessage, true);
+            }
+
+            _mediaSent = content is InputMessageRichMessage;
+
+            // Editing an existing message.
             if (_messageId != 0)
             {
-                _mediaSent = true;
-                await _clientService.SendAsync(new EditMessageMedia(_chatId, _messageId, new InputMessageRichMessage(richMessage, false)));
+                await _clientService.SendAsync(new EditMessageText(_chatId, _messageId, content));
                 Close();
                 return;
             }
@@ -2032,24 +2043,23 @@ namespace Telegram.Views.Host
             // a Premium user sends the full rich message.
             if (_clientService.IsPremiumAvailable && !_clientService.IsPremium)
             {
-                if (PageBlockHelper.TryGetFormattedText(richMessage, out FormattedText formatted))
+                if (content is InputMessageText)
                 {
-                    if (await SendAsync(new InputMessageText(formatted, null, false), schedule, silent))
+                    if (await SendAsync(content, schedule, silent))
                     {
                         Close();
                     }
                 }
                 else
                 {
+                    _mediaSent = false;
                     ToastPopup.ShowFeaturePromo(_navigationService, new PremiumFeatureRichMessages());
                 }
 
                 return;
             }
 
-            _mediaSent = true;
-
-            if (await SendAsync(new InputMessageRichMessage(richMessage, true), schedule, silent))
+            if (await SendAsync(content, schedule, silent))
             {
                 Close();
             }
