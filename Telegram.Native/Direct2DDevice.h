@@ -25,6 +25,7 @@
 #include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.Xaml.h>
 #include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.System.h>
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Windows.Graphics.DirectX.h>
 #include <winrt/Windows.Graphics.DirectX.Direct3D11.h>
@@ -302,6 +303,21 @@ namespace winrt::Telegram::Native::implementation
             // running holds a raw pointer to this object and would outlive it otherwise.
             m_deviceLostHelper.Shutdown();
 
+            if (m_recoveryTimer)
+            {
+                // The timer belongs to the view's thread, and a Close() from the destructor can run
+                // on the finalizer instead.
+                if (m_dispatcherQueue.HasThreadAccess())
+                {
+                    m_recoveryTimer.Stop();
+                    m_recoveryTimer.Tick(m_recoveryTick);
+                }
+
+                m_recoveryTimer = nullptr;
+            }
+
+            m_dispatcherQueue = nullptr;
+
             {
                 std::lock_guard const guard(m_criticalSection);
                 m_graphicsDevices.clear();
@@ -427,6 +443,15 @@ namespace winrt::Telegram::Native::implementation
 
         void OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& /* args */);
 
+        // 500 ms, then 1 s, then 2 s after the loss. Only on the view's thread.
+        static constexpr int s_recoveryAttempts = 3;
+        int m_recoveryAttempt = 0;
+        winrt::Windows::System::DispatcherQueueTimer m_recoveryTimer{ nullptr };
+        winrt::event_token m_recoveryTick;
+
+        void StartRecovery();
+        void OnRecoveryTick(winrt::Windows::System::DispatcherQueueTimer const&, winrt::Windows::Foundation::IInspectable const&);
+
         CompositionDrawingSurface CreateDrawingSurface(SizeInt32 size);
 
         winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid> GetNineGrid(XamlRoot const& xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
@@ -446,6 +471,7 @@ namespace winrt::Telegram::Native::implementation
 
     public:
         Compositor m_compositor;
+        winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
         CompositionEffectFactory m_alphaMaskFactory;
         CompositionGraphicsDevice m_compositionDevice;
         // Strong, under m_criticalSection: CompositionGraphicsDevice has no IWeakReferenceSource, and

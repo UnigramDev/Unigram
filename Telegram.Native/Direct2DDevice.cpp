@@ -1230,6 +1230,22 @@ namespace winrt::Telegram::Native::implementation
         , m_compositionDevice(nullptr)
         , m_alphaMaskFactory(nullptr)
     {
+        // Made here, on the compositor's own thread: the device-lost callback that needs them runs
+        // on the threadpool. Before CreateDeviceResources, which starts watching the device.
+        // The thread's queue rather than Compositor.DispatcherQueue, which is ICompositor7 and
+        // so Windows 11 only: Windows 10 fails the constructor with E_NOINTERFACE.
+        if (m_compositor)
+        {
+            m_dispatcherQueue = winrt::Windows::System::DispatcherQueue::GetForCurrentThread();
+        }
+
+        if (m_dispatcherQueue)
+        {
+            m_recoveryTimer = m_dispatcherQueue.CreateTimer();
+            m_recoveryTimer.IsRepeating(false);
+            m_recoveryTick = m_recoveryTimer.Tick({ get_weak(), &Direct2DDevice::OnRecoveryTick });
+        }
+
         winrt::check_hresult(CreateDeviceIndependentResources());
         winrt::check_hresult(CreateDeviceResources());
     }
@@ -1369,9 +1385,41 @@ namespace winrt::Telegram::Native::implementation
         // the device-removed event, so the display driver is still tearing itself down, and calling
         // D3D11CreateDevice at that moment faults inside the vendor user-mode driver.
         //
-        // Direct2D asks HandleDeviceLost() on every access to the singleton, so the device
-        // is rebuilt from the UI thread the next time it is actually needed.
+        // Direct2D asks HandleDeviceLost() on every access to the singleton, but an idle window
+        // makes none and would stay blank. So a device with a compositor also schedules the rebuild
+        // on its own thread, late, to keep clear of the reset.
         LOGGER_ERROR(L"Direct3D device lost");
+
+        // Close() clears the queue only after draining this callback, so the read cannot race it.
+        // The timer is the view thread's, so it is started from there.
+        if (m_dispatcherQueue)
+        {
+            m_dispatcherQueue.TryEnqueue([weak = get_weak()]
+            {
+                // A null timer means Close() ran after the post.
+                if (auto self = weak.get(); self && self->m_recoveryTimer)
+                {
+                    self->m_recoveryAttempt = 0;
+                    self->StartRecovery();
+                }
+            });
+        }
+    }
+
+    void Direct2DDevice::StartRecovery()
+    {
+        m_recoveryTimer.Interval(std::chrono::milliseconds(500 << m_recoveryAttempt));
+        m_recoveryTimer.Start();
+    }
+
+    void Direct2DDevice::OnRecoveryTick(winrt::Windows::System::DispatcherQueueTimer const&, winrt::Windows::Foundation::IInspectable const&)
+    {
+        // A failure is a driver that is still resetting: tried again later, and then left to the
+        // next access.
+        if (FAILED(HandleDeviceLost()) && ++m_recoveryAttempt < s_recoveryAttempts)
+        {
+            StartRecovery();
+        }
     }
 
     HRESULT Direct2DDevice::CreateTextFormat(double fontSize)
