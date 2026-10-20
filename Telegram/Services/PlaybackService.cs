@@ -736,11 +736,8 @@ namespace Telegram.Services
                 player.Rate = _playbackSpeed;
             }
 
-            if (player.State == AsyncMediaPlayerState.Ended)
-            {
-                player.Stop();
-            }
-
+            // Play restarts an ended player by itself. A Stop first would make the ffmpeg backend
+            // reopen the file, and leave a gap at every repeat of a track.
             player.Play();
             PlaybackState = PlaybackState.Playing;
         }
@@ -1914,6 +1911,9 @@ namespace Telegram.Services
                     // TODO: currently music player doesn't have a toggle for mute/unmute
                     var options = new AsyncMediaPlayerOptions
                     {
+                        Backend = AppSettings.Diagnostics.UseFFmpegPlayer
+                            ? AsyncMediaPlayerBackend.FFmpeg
+                            : AsyncMediaPlayerBackend.LibVlc,
                         CreateSwapChain = true,
                         Mute = false, //AppSettings.VolumeMuted,
                         Volume = AppSettings.VolumeLevel,

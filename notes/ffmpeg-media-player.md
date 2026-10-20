@@ -12,7 +12,8 @@ the starting point; where this note departs from it, it says why.
 Status, 2026-10-20:
 - **Phase 1:** built, tested on the corpus and committed (`c876ac3ab`).
 - **Phase 2:** built, tested and committed (`5af80ddd4`).
-- **Phase 3:** written and unbuilt; see "Phase 3 as built" below.
+- **Phase 3:** built, tested and committed (`f24deba0c`).
+- **Phase 4:** written and unbuilt; see "Phase 4 as built" below.
 
 
 ## What we have today
@@ -432,6 +433,28 @@ ignores the call, and the editor's `PositionChanged` handler stays as its fallba
 **`Stop` and `Close` deactivate the renderer.** A stopped session joins on the thread pool, and its
 presenter could still draw a frame after the caller cleared the panel. Stories stop and clear
 between stories, so that frame would have flashed.
+
+## Phase 4 as built
+
+**`PlaybackService`** takes the backend from the Diagnostics switch, and the engine needed nothing
+new for it. What it relies on maps over as is:
+- **`Buffering`** reaching 100 is what marks a note listened.
+- **`StateChanged`** (Playing, Ended, Error) drives advance, repeat and failure.
+- **Restoring interrupted music** is `Play` + `Position` + `Pause`. The engine takes a seek made
+  while the file is opening as where to start.
+- **Speed** is set before `Play`, and a new session picks it up. The slider's 0.2x takes two
+  chained `atempo` stages.
+- **Audio-only playback:** voice notes and music take the clock from the audio, and an attached
+  cover picture is skipped rather than decoded as video.
+- **Video notes:** the swap chain moving between the bubble and `PlaybackOverlay` goes through
+  `AsyncMediaPlayerSwapChain.Attach`. That fires the size hook, so a paused note is drawn again at
+  its new size.
+
+**Repeat** used to `Stop` an ended player before `Play`. Both backends restart an ended player on
+`Play` alone, and on the engine the `Stop` would reopen the file, leaving a gap at every repeat.
+
+**Not done:** gapless playback between tracks. Neither backend has it. The engine could open the
+next track's session ahead of the end and hand the audio over at the boundary.
 
 ## Open questions
 
