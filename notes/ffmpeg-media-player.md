@@ -430,6 +430,13 @@ one left behind cancels its download-ahead. Playlists are downloaded on first us
 thread, so opening a video costs nothing for the qualities it never plays. Closing the player
 cancels a playlist download still waiting (`CancelPlaylist`), which offline would never end.
 
+**Fragmented plain files** are opened with `use_mfra_for=pts`. Without a fragment index the mov
+demuxer walks every `moof` to the end before it returns, downloading chunks from across the whole
+file before the first frame. The `mfra` at the end is that index, and is read only when asked
+for. On a 12 MB file the open went from 59 `moof`s read and parsing to the last byte to one `moof`
+and 4 KB, with identical timestamps for all 18,392 packets. A file with neither an `mfra` nor a
+`sidx` still walks.
+
 ## Phase 3 as built
 
 **Stories and the media editor:** both now take the backend from the Diagnostics switch.

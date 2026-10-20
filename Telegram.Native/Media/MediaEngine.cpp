@@ -955,6 +955,16 @@ namespace winrt::Telegram::Native::Media::implementation
         AVDictionary* options = nullptr;
         av_dict_set(&options, "protocol_whitelist", "", 0);
 
+        // A plain file can be fragmented too. Unless it has an index of its fragments, the mov
+        // demuxer walks every moof to the end of the file before it returns, which over the network
+        // downloads nearly all of it before the first frame. The mfra at the end is that index, a
+        // few KB, and is only read when asked for. Its times are presentation times, as the
+        // standard has them: "pts" reads them as such.
+        if (playlist == nullptr)
+        {
+            av_dict_set(&options, "use_mfra_for", "pts", 0);
+        }
+
         int result = avformat_open_input(&input->format, nullptr, nullptr, &options);
         av_dict_free(&options);
 
