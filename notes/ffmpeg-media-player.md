@@ -9,8 +9,10 @@ Reference: Telegram Desktop, `C:\Source\tdesktop\Telegram\SourceFiles\` at `3a15
 `S/` = `media/streaming/`, `A/` = `media/audio/`, `FF` = `ffmpeg/ffmpeg_utility.cpp`). Its design is
 the starting point; where this note departs from it, it says why.
 
-Status, 2026-10-20: phase 1 is built, tested on the corpus and committed (`c876ac3ab`). Phase 2 is
-written and unbuilt; "Phase 2 as built" below says what it does.
+Status, 2026-10-20:
+- **Phase 1:** built, tested on the corpus and committed (`c876ac3ab`).
+- **Phase 2:** built, tested and committed (`5af80ddd4`).
+- **Phase 3:** written and unbuilt; see "Phase 3 as built" below.
 
 
 ## What we have today
@@ -314,7 +316,9 @@ Each lands on its own and is reviewed. libvlc stays until phase 6, so every step
    - `Diagnostics.ForceWebView2` and its checkbox;
    - the `force` chain through `GalleryContent.OnFailed` → `GalleryWindow.OpenFile`/`Play`;
    - `GalleryMedia.IsHls`, if the rendition list subsumes it.
-3. **Stories and `EditMediaPopup`.** `VideoPreloader` is debug-only and off; migrate it or delete it.
+3. **Stories and `EditMediaPopup`.** `VideoPreloader` stays on libvlc until phase 6. Its job, warming
+   TDLib's download of a video's start, needs no player; when libvlc goes, it becomes a
+   `DownloadFile` of the head.
 4. **`PlaybackService`.** Music, voice notes, video notes, the swap chain moving to the overlay, and
    the save and restore of the voice-over-music interruption.
 5. **D3D11VA hardware decode,** zero-copy into the video processor. Software fallback per stream when
@@ -411,6 +415,23 @@ time spent downloading. It is reached through `IAsyncMediaPlayerRendition.Downlo
 **Sources:** one per quality, created on first use, with only the playing one open. Closing the
 one left behind cancels its download-ahead. Playlists are downloaded on first use, on the demux
 thread, so opening a video costs nothing for the qualities it never plays.
+
+## Phase 3 as built
+
+**Stories and the media editor:** both now take the backend from the Diagnostics switch.
+
+Stories needed nothing else: `Buffering` 100 when playback can start, and below 100 while
+stalled, is what the skeleton reads.
+
+**The editor** gets `AsyncMediaPlayer.SetLoop(start, end)`. The engine checks the end as each frame
+becomes due, and seeks back to the start instead of showing the first frame past it. Without video,
+the audio clock is checked instead. Before this, the loop waited for a reported position past the
+end, which the engine sends four times a second, so playback ran up to 250 ms past the trim. libvlc
+ignores the call, and the editor's `PositionChanged` handler stays as its fallback.
+
+**`Stop` and `Close` deactivate the renderer.** A stopped session joins on the thread pool, and its
+presenter could still draw a frame after the caller cleared the panel. Stories stop and clear
+between stories, so that frame would have flashed.
 
 ## Open questions
 

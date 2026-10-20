@@ -431,6 +431,9 @@ namespace Telegram.Views.Popups
 
             var options = new AsyncMediaPlayerOptions
             {
+                Backend = AppSettings.Diagnostics.UseFFmpegPlayer
+                    ? AsyncMediaPlayerBackend.FFmpeg
+                    : AsyncMediaPlayerBackend.LibVlc,
                 CreateSwapChain = true,
                 Mute = mask == ImageCropperMask.Ellipse,
                 LogLevel = AppSettings.VerbosityLevel >= 4
@@ -517,6 +520,8 @@ namespace Telegram.Views.Popups
                     TrimRange.Minimum = media.EditState.TrimStartTime.TotalSeconds / TrimRange.OriginalDuration.TotalSeconds;
                     TrimRange.Maximum = media.EditState.TrimStopTime.TotalSeconds / TrimRange.OriginalDuration.TotalSeconds;
                 }
+
+                UpdateLoop();
 
                 for (int i = 0; i < count; i++)
                 {
@@ -1594,6 +1599,26 @@ namespace Telegram.Views.Popups
             }
         }
 
+        // The ffmpeg backend loops at the trim end itself, from the first frame past it. libvlc
+        // ignores this, and Player_PositionChanged loops it once a reported position is past it.
+        private void UpdateLoop()
+        {
+            if (_player == null || _duration == TimeSpan.Zero)
+            {
+                return;
+            }
+
+            if (TrimRange.Minimum > 0 || TrimRange.Maximum < 1)
+            {
+                _player.SetLoop(_duration.TotalSeconds * TrimRange.Minimum, _duration.TotalSeconds * TrimRange.Maximum);
+            }
+            else
+            {
+                // The whole video loops through Player_EndReached.
+                _player.SetLoop(0, 0);
+            }
+        }
+
         private void TrimRange_MinimumChanged(object sender, double e)
         {
             if (_player == null)
@@ -1607,6 +1632,7 @@ namespace Telegram.Views.Popups
                 _player.Pause();
             }
 
+            UpdateLoop();
             _player.Position = _duration.TotalSeconds * e;
         }
 
@@ -1617,6 +1643,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
+            UpdateLoop();
             _player.Position = _duration.TotalSeconds * e;
 
             if (_resume)

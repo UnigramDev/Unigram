@@ -1532,6 +1532,9 @@ namespace Telegram.Controls.Stories
 
             var options = new AsyncMediaPlayerOptions
             {
+                Backend = AppSettings.Diagnostics.UseFFmpegPlayer
+                    ? AsyncMediaPlayerBackend.FFmpeg
+                    : AsyncMediaPlayerBackend.LibVlc,
                 CreateSwapChain = true,
                 Mute = AppSettings.VolumeMuted,
                 Volume = 1,

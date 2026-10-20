@@ -148,6 +148,10 @@ namespace winrt::Telegram::Native::Media::implementation
         void Seek(double position);
         void SeekBy(double offset);
 
+        // Playback reaching the end goes back to the start instead. An end not past the start
+        // turns it off.
+        void Loop(double start, double end);
+
         MediaEngineState State() const noexcept
         {
             return m_state.load();
@@ -245,5 +249,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
         std::atomic<int32_t> m_rendition{ 0 };
         std::atomic<bool> m_automatic{ false };
+
+        std::atomic<double> m_loopStart{ 0 };
+        std::atomic<double> m_loopEnd{ 0 };
     };
 }

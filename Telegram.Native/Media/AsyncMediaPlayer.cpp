@@ -1109,6 +1109,14 @@ namespace winrt::Telegram::Native::Media::implementation
         }
     }
 
+    void AsyncMediaPlayer::SetLoop(double start, double end)
+    {
+        if (m_engine)
+        {
+            m_engine->Loop(start, end);
+        }
+    }
+
     double AsyncMediaPlayer::Rate()
     {
         if (m_engine)

@@ -369,6 +369,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
         AVFrame* Normalize(AVFrame* frame);
 
+        bool LoopAt(double time);
+
         double CurrentTime();
         void UpdatePlayback();
         void SetRunningLocked(bool running);
@@ -2055,6 +2057,12 @@ namespace winrt::Telegram::Native::Media::implementation
                 continue;
             }
 
+            // The first picture past the end of a loop is never shown.
+            if (LoopAt(front->pts))
+            {
+                continue;
+            }
+
             VideoFrame* next = m_frames.Next();
 
             if (next != nullptr && next->frame != nullptr && next->serial == serial && next->pts <= now)
@@ -2143,7 +2151,14 @@ namespace winrt::Telegram::Native::Media::implementation
 
             if (!m_hasVideo && m_running)
             {
-                ReportPosition(CurrentTime());
+                const double now = CurrentTime();
+
+                if (LoopAt(now))
+                {
+                    continue;
+                }
+
+                ReportPosition(now);
             }
 
             bool decoded = false;
@@ -2231,6 +2246,19 @@ namespace winrt::Telegram::Native::Media::implementation
 
         av_frame_free(&frame);
         avcodec_free_context(&codec);
+    }
+
+    bool MediaSession::LoopAt(double time)
+    {
+        const double end = m_engine->m_loopEnd.load();
+
+        if (end <= 0 || time < end)
+        {
+            return false;
+        }
+
+        Seek(m_engine->m_loopStart.load());
+        return true;
     }
 
     double MediaSession::CurrentTime()
@@ -2747,9 +2775,15 @@ namespace winrt::Telegram::Native::Media::implementation
             m_session = nullptr;
         }
 
-        // An id no session has, so that what the one just stopped still reports goes nowhere.
+        // An id no session has, so that what the one just stopped still reports goes nowhere,
+        // and nothing it still has queued is drawn over a panel the caller is about to clear.
         m_current = ++m_sessions;
         m_position = 0;
+
+        if (m_renderer)
+        {
+            m_renderer->Activate(0);
+        }
 
         SetStateLocked(MediaEngineState::Stopped);
     }
@@ -2776,6 +2810,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         if (m_renderer)
         {
+            m_renderer->Activate(0);
             m_renderer->Detach();
         }
     }
@@ -2811,6 +2846,12 @@ namespace winrt::Telegram::Native::Media::implementation
     void MediaEngine::SeekBy(double offset)
     {
         Seek(Position() + offset);
+    }
+
+    void MediaEngine::Loop(double start, double end)
+    {
+        m_loopStart = std::max(0.0, start);
+        m_loopEnd = end > start ? end : 0;
     }
 
     double MediaEngine::Position()

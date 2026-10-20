@@ -156,6 +156,7 @@ namespace winrt::Telegram::Native::Media::implementation
         void Position(double value);
 
         void Seek(double value, bool relative);
+        void SetLoop(double start, double end);
 
         double Rate();
         void Rate(double value);
