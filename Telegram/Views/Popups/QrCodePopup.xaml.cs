@@ -135,17 +135,14 @@ namespace Telegram.Views.Popups
         private long _starCount;
         private CompositionPropertySet _chipFill;
 
-        private List<QrShareColorOption> _colors;
-
         // Under the emoji, and kept while a gift is on, so taking the gift off goes back to it.
         private QrShareColorOption _color = new(-1, QrShareColors.DefaultTop, QrShareColors.DefaultBottom);
         private UpgradedGift _gift;
         private string _receivedGiftId;
         private readonly List<QrShareEmoji> _emoji = new();
 
-        // Changed since the last commit; and changed at all, which the theme coming in must not overwrite.
+        // Changed since the last commit.
         private bool _dirty;
-        private bool _touched;
 
         private IncrementalCollection<ReceivedGift> _gifts;
         private string _giftsOffset = string.Empty;
@@ -174,7 +171,7 @@ namespace Telegram.Views.Popups
         private Rect _badgesViewport;
 
         public QrCodePopup(IClientService clientService, INavigationService navigationService, ISettingsService settingsService, User user)
-            : this(clientService, navigationService, user.Id, user.Id == clientService.Options.MyId)
+            : this(clientService, navigationService, user.Id, user.Id == clientService.Options.MyId, clientService.TryGetUserFull(user.Id, out UserFullInfo fullInfo) ? fullInfo.ShareTheme : null)
         {
             if (user.HasActiveUsername(out string username))
             {
@@ -189,7 +186,7 @@ namespace Telegram.Views.Popups
         }
 
         public QrCodePopup(IClientService clientService, INavigationService navigationService, ISettingsService settingsService, Chat chat)
-            : this(clientService, navigationService, chat.Id, clientService.TryGetUser(chat, out User self) && self.Id == clientService.Options.MyId)
+            : this(clientService, navigationService, chat.Id, clientService.TryGetUser(chat, out User self) && self.Id == clientService.Options.MyId, GetShareTheme(clientService, chat))
         {
             if (_clientService.TryGetSupergroup(chat, out Supergroup supergroup) && supergroup.HasActiveUsername(out string username))
             {
@@ -211,7 +208,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private QrCodePopup(IClientService clientService, INavigationService navigationService, long chatId, bool self)
+        private QrCodePopup(IClientService clientService, INavigationService navigationService, long chatId, bool self, ProfileShareTheme theme)
         {
             InitializeComponent();
 
@@ -249,12 +246,26 @@ namespace Telegram.Views.Popups
             UpdateCard();
 
             ApplyBackdrop(QrShareColors.DefaultTop, QrShareColors.DefaultBottom, false, QrShareColors.DefaultQr, false);
-            InitializeTheme();
+            InitializeTheme(theme);
 
             if (self)
             {
                 InitializeFee();
             }
+        }
+
+        private static ProfileShareTheme GetShareTheme(IClientService clientService, Chat chat)
+        {
+            if (clientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFullInfo))
+            {
+                return supergroupFullInfo.ShareTheme;
+            }
+            else if (clientService.TryGetUserFull(chat, out UserFullInfo userFullInfo))
+            {
+                return userFullInfo.ShareTheme;
+            }
+
+            return null;
         }
 
         // Only a chat with a username can have a theme set.
@@ -1092,50 +1103,19 @@ namespace Telegram.Views.Popups
         #region Theme
 
         // Anyone's code is shown in their theme; only the current user can change their own here.
-        private async void InitializeTheme()
+        private async void InitializeTheme(ProfileShareTheme theme)
         {
-            var request = _clientService.SendAsync(new GetProfileShareTheme(_chatId));
+            int? backdropId = null;
 
-            if (_self)
+            if (theme is ProfileShareThemeUpgradedGift themeGift)
             {
-                var options = _colors = new List<QrShareColorOption>
-                {
-                    _color
-                };
-
-                var backdrops = await _clientService.SendAsync(new GetProfileShareThemeBackdrops()) as ProfileShareThemeBackdrops;
-                if (backdrops != null)
-                {
-                    foreach (var backdrop in backdrops.Backdrops)
-                    {
-                        options.Add(CreateColor(backdrop));
-                    }
-                }
-
-                ColorsList.ItemsSource = options;
-                ColorsList.SelectedItem = _gift == null ? _color : null;
+                SelectGift(themeGift.Gift, null, false);
             }
-
-            var response = await request;
-
-            // Whatever the user picked while it loaded wins.
-            if (_touched || _closed)
+            else if (theme is ProfileShareThemeEmoji themeEmoji)
             {
-                return;
-            }
-
-            // Once the default backdrop has been seen, the theme comes in as if it had just been picked.
-            var animated = _opened;
-
-            if (response is ProfileShareThemeUpgradedGift themeGift)
-            {
-                SelectGift(themeGift.Gift, null, animated);
-            }
-            else if (response is ProfileShareThemeEmoji themeEmoji)
-            {
-                if (themeEmoji.BackgroundBackdrop != null)
+                if (!themeEmoji.UseDefaultBackground)
                 {
-                    SelectColor(FindColor(themeEmoji.BackgroundBackdrop), animated);
+                    backdropId = themeEmoji.BackgroundBackdropId;
                 }
 
                 foreach (var type in themeEmoji.Emojis)
@@ -1148,25 +1128,55 @@ namespace Telegram.Views.Popups
 
                 if (_emoji.Count > 0)
                 {
-                    UpdateEmoji(animated);
+                    UpdateEmoji(false);
                 }
             }
-        }
 
-        private QrShareColorOption FindColor(ProfileShareThemeBackdrop backdrop)
-        {
-            if (_colors != null)
+            // The theme names its backdrop only by id.
+            if (backdropId == null && !_self)
             {
-                foreach (var option in _colors)
+                return;
+            }
+
+            var response = await _clientService.SendAsync(new GetProfileShareThemeBackdrops());
+            if (_closed)
+            {
+                return;
+            }
+
+            var options = new List<QrShareColorOption>
+            {
+                _color
+            };
+
+            QrShareColorOption backdrop = null;
+
+            if (response is ProfileShareThemeBackdrops backdrops)
+            {
+                foreach (var item in backdrops.Backdrops)
                 {
-                    if (option.Id == backdrop.Id)
+                    var option = CreateColor(item);
+                    options.Add(option);
+
+                    if (item.Id == backdropId)
                     {
-                        return option;
+                        backdrop = option;
                     }
                 }
             }
 
-            return CreateColor(backdrop);
+            if (_self)
+            {
+                ColorsList.ItemsSource = options;
+                ColorsList.SelectedItem = _gift == null ? _color : null;
+            }
+
+            // Emoji added meanwhile still sit on the theme's backdrop, but a colour or a gift picked meanwhile wins.
+            // Once the default backdrop has been seen, the theme's comes in as if it had just been picked.
+            if (backdrop != null && _color.Id == -1 && _gift == null)
+            {
+                SelectColor(backdrop, _opened);
+            }
         }
 
         // Laid top to bottom rather than around the card.
@@ -1296,7 +1306,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            _dirty = _touched = true;
+            _dirty = true;
             SelectColor(option, true);
         }
 
@@ -1307,7 +1317,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            _dirty = _touched = true;
+            _dirty = true;
 
             // A second tap takes the gift off, back to the colour it covered.
             if (_gift?.Id == upgraded.Gift.Id)
@@ -1476,7 +1486,7 @@ namespace Telegram.Views.Popups
         // Plain emoji are drawn from their animated versions.
         private AnimatedImageSource CreateSource(EmojiType type)
         {
-            return type is EmojiTypeCustom custom
+            return type is EmojiTypeCustomEmoji custom
                 ? new CustomEmojiFileSource(_clientService, custom.CustomEmojiId)
                 : new AnimatedEmojiFileSource(_clientService, ((EmojiTypeRegular)type).Emoji);
         }
@@ -1492,7 +1502,7 @@ namespace Telegram.Views.Popups
                     return;
                 }
 
-                ToggleEmoji(new EmojiTypeCustom(customEmoji.CustomEmojiId));
+                ToggleEmoji(new EmojiTypeCustomEmoji(customEmoji.CustomEmojiId));
             }
         }
 
@@ -1520,7 +1530,7 @@ namespace Telegram.Views.Popups
 
         // A toggle: a picked emoji comes out, a new one goes in, and a full set drops the oldest. The same
         // emoji never goes in twice.
-        private void ToggleEmoji(EmojiTypeCustom type)
+        private void ToggleEmoji(EmojiTypeCustomEmoji type)
         {
             var index = IndexOfEmoji(type.CustomEmojiId);
             if (index >= 0)
@@ -1537,7 +1547,7 @@ namespace Telegram.Views.Popups
                 _emoji.Add(new QrShareEmoji(type, CreateSource(type)));
             }
 
-            _dirty = _touched = true;
+            _dirty = true;
             UpdateEmoji(true);
         }
 
@@ -1545,7 +1555,7 @@ namespace Telegram.Views.Popups
         {
             for (int i = 0; i < _emoji.Count; i++)
             {
-                if (_emoji[i].Type is EmojiTypeCustom custom && custom.CustomEmojiId == customEmojiId)
+                if (_emoji[i].Type is EmojiTypeCustomEmoji custom && custom.CustomEmojiId == customEmojiId)
                 {
                     return i;
                 }
@@ -1559,7 +1569,7 @@ namespace Telegram.Views.Popups
             if (sender is FrameworkElement { DataContext: QrShareEmoji emoji } && _emoji.IndexOf(emoji) is int index and >= 0)
             {
                 _emoji.RemoveAt(index);
-                _dirty = _touched = true;
+                _dirty = true;
 
                 UpdateEmoji(true);
             }
