@@ -1779,7 +1779,11 @@ namespace Telegram.Views
                 parameter = Toast.FromBase64(webApp);
             }
 
-            if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
+            if (data.TryGetValue("oauth", out string oauth))
+            {
+                MessageHelper.OpenTelegramUrl(ViewModel.ClientService, MasterDetail.NavigationService, new InternalLinkTypeOauth(Toast.FromBase64(oauth)), new OpenUrlSourceExternal());
+            }
+            else if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
             {
                 Activate(scheme);
             }

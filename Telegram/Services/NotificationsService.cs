@@ -101,6 +101,7 @@ namespace Telegram.Services
                 .Subscribe<UpdateUnreadChatCount>(Handle)
                 .Subscribe<UpdateSuggestedActions>(Handle)
                 .Subscribe<UpdateServiceNotification>(Handle)
+                .Subscribe<UpdateNewOauthRequest>(Handle)
                 .Subscribe<UpdateTermsOfService>(Handle)
                 .Subscribe<UpdateSpeedLimitNotification>(Handle)
                 .Subscribe<UpdateNotification>(Handle)
@@ -266,6 +267,16 @@ namespace Telegram.Services
                     _clientService.Send(new HideSuggestedAction(enableArchiveAndMuteNewChats));
                 }
             });
+        }
+
+        public void Handle(UpdateNewOauthRequest update)
+        {
+            // A notification even with the app in front: the request comes from another device,
+            // and nothing on screen is waiting for it.
+            var launch = string.Format(CultureInfo.InvariantCulture, "oauth={0}&amp;session={1}", Toast.ToBase64(update.Url), _clientService.SessionId);
+            var date = DateTime.UtcNow.ToString("s") + "Z";
+
+            UpdateToast(Strings.BotAuthNotificationTitle, string.Format(Strings.BotAuthNotification, update.Domain, update.Location), $"{_sessionService.Id}", false, false, null, launch, null, null, null, date, false, DateTimeOffset.Now.AddSeconds(60));
         }
 
         public async void Handle(UpdateServiceNotification update)
@@ -636,7 +647,7 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateToast(string caption, string message, string account, bool suppressPopup, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply)
+        private void UpdateToast(string caption, string message, string account, bool suppressPopup, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply, DateTimeOffset? expirationTime = null)
         {
             var xml = $"<toast launch='{launch}' displayTimestamp='{date}'>";
             xml += "<visual><binding template='ToastGeneric'>";
@@ -694,6 +705,7 @@ namespace Telegram.Services
                 document.LoadXml(xml);
 
                 var notification = new ToastNotification(document);
+                notification.ExpirationTime = expirationTime;
 
                 if (!string.IsNullOrEmpty(tag))
                 {
