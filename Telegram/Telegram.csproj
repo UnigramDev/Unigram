@@ -1552,6 +1552,9 @@
     <Compile Include="Views\Popups\MemberTagInfoPopup.xaml.cs">
       <DependentUpon>MemberTagInfoPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\OAuthMatchCodePopup.xaml.cs">
+      <DependentUpon>OAuthMatchCodePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\OAuthPopup.xaml.cs">
       <DependentUpon>OAuthPopup.xaml</DependentUpon>
     </Compile>
@@ -1890,6 +1893,9 @@
     </Compile>
     <Compile Include="Views\Wallet\Popups\WalletConnectPopup.xaml.cs">
       <DependentUpon>WalletConnectPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletOAuthPopup.xaml.cs">
+      <DependentUpon>WalletOAuthPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Wallet\Popups\WalletCurrencyPopup.xaml.cs">
       <DependentUpon>WalletCurrencyPopup.xaml</DependentUpon>
@@ -4083,6 +4089,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Popups\OAuthMatchCodePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\OAuthPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -4544,6 +4554,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Wallet\Popups\WalletConnectPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletOAuthPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

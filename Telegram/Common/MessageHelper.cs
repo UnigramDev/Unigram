@@ -57,6 +57,14 @@ namespace Telegram.Common
 
     }
 
+    /// <summary>
+    /// A link the app was launched or activated with, rather than one found inside it.
+    /// </summary>
+    public partial class OpenUrlSourceExternal : OpenUrlSource
+    {
+
+    }
+
     public partial class OpenUrlSourceChat : OpenUrlSource
     {
         public long ChatId { get; }
@@ -702,7 +710,12 @@ namespace Telegram.Common
                     NavigateToUsername(clientService, navigation, giftCollection.GiftOwnerUsername);
                     break;
                 case InternalLinkTypeOauth oauth:
-                    NavigateToOauth(clientService, navigation, oauth.Url);
+                    // Only a link from outside the app is a login: one posted in a chat would put a
+                    // real confirmation in front of whoever clicks it. Ignored, not opened otherwise.
+                    if (source is OpenUrlSourceExternal)
+                    {
+                        NavigateToOauth(clientService, navigation, oauth.Url);
+                    }
                     break;
                 case InternalLinkTypeRequestManagedBot requestManagedBot:
                     NavigateToRequestManagedBot(clientService, navigation, requestManagedBot.ManagerBotUsername, requestManagedBot.SuggestedBotName, requestManagedBot.SuggestedBotUsername);
@@ -746,33 +759,176 @@ namespace Telegram.Common
             }
         }
 
+        /// <summary>
+        /// A login through Telegram: the codes to match, the wallet, the confirmation and the
+        /// result, in that order, each only when the request asks for it.
+        /// </summary>
+        /// <remarks>
+        /// Moving the login to another account starts it over on that account, keeping only the
+        /// code already matched: the wallet and the permissions belong to the account.
+        /// </remarks>
         private static async void NavigateToOauth(IClientService clientService, INavigationService navigation, string url)
         {
             // TODO: origin
             var response = await clientService.SendAsync(new GetOauthLinkInfo(url, string.Empty));
-            if (response is OauthLinkInfo info)
+            if (response is not OauthLinkInfo info)
             {
-                var popup = new OAuthPopup(clientService, navigation, info);
-
-                var confirm = await navigation.ShowPopupAsync(popup);
-                if (confirm == ContentDialogResult.Primary)
+                if (response is Error error)
                 {
-                    // TODO: match code
-                    var accept = await clientService.SendAsync(new AcceptOauthRequest(url, string.Empty, popup.AllowWriteAccess, popup.AllowPhoneNumberAccess));
-                    if (accept is HttpUrl httpUrl)
+                    ShowOauthError(navigation, error, null);
+                }
+
+                return;
+            }
+
+            // The account the link was made for logs in by default, when it is signed in here.
+            if (info.UserId != 0 && info.UserId != clientService.Options.MyId)
+            {
+                foreach (var session in OAuthPopup.GetSessions(clientService))
+                {
+                    if (session.UserId == info.UserId)
                     {
-                        OpenUrl(null, null, httpUrl.Url);
+                        if (await session.ClientService.SendAsync(new GetOauthLinkInfo(url, string.Empty)) is OauthLinkInfo sessionInfo)
+                        {
+                            clientService = session.ClientService;
+                            info = sessionInfo;
+                        }
+
+                        break;
                     }
-                    else if (response is Error)
+                }
+            }
+
+            string matchCode = null;
+
+            while (true)
+            {
+                var name = OAuthPopup.GetName(info);
+
+                if (matchCode == null && info.MatchCodeFirst && info.MatchCodes.Count > 0)
+                {
+                    var match = new OAuthMatchCodePopup(clientService, url, info, name, true);
+                    await navigation.ShowPopupAsync(match);
+
+                    if (match.IsFailed)
                     {
-                        OpenUrl(null, null, url);
+                        ShowOauthFailed(navigation, name);
+                        return;
                     }
+                    else if (match.MatchCode == null)
+                    {
+                        return;
+                    }
+
+                    matchCode = match.MatchCode;
+                }
+
+                TonConnectConnectData connectData = null;
+
+                if (info.RequestTonWalletAccess)
+                {
+                    var wallet = new WalletOAuthPopup(clientService, clientService.Session.Resolve<IWalletService>(), navigation, info);
+                    await navigation.ShowPopupAsync(wallet);
+
+                    // Not optional: a login that asks for the wallet does not go ahead without it.
+                    connectData = wallet.ConnectData;
+                    if (connectData == null)
+                    {
+                        return;
+                    }
+
+                    // With nothing else to ask, sharing the wallet is agreeing to the login.
+                    if (!info.RequestWriteAccess && !info.RequestPhoneNumberAccess)
+                    {
+                        if (matchCode == null && info.MatchCodes.Count > 0)
+                        {
+                            var match = new OAuthMatchCodePopup(clientService, url, info, name, false);
+                            await navigation.ShowPopupAsync(match);
+
+                            matchCode = match.MatchCode;
+                        }
+
+                        if (matchCode != null || info.MatchCodes.Count == 0)
+                        {
+                            var accept = await clientService.SendAsync(new AcceptOauthRequest(url, matchCode ?? string.Empty, false, false, connectData));
+                            ShowOauthResult(navigation, accept, info, name, false);
+                        }
+
+                        ClearOauthConnectData(connectData);
+                        return;
+                    }
+                }
+
+                var popup = new OAuthPopup(clientService, navigation, url, info, matchCode, connectData);
+                await navigation.ShowPopupAsync(popup);
+
+                ClearOauthConnectData(connectData);
+
+                if (popup.SwitchedInfo != null)
+                {
+                    clientService = popup.SwitchedClientService;
+                    info = popup.SwitchedInfo;
+                    continue;
+                }
+
+                ShowOauthResult(navigation, popup.Response, info, name, popup.AllowPhoneNumberAccess);
+                return;
+            }
+        }
+
+        private static void ClearOauthConnectData(TonConnectConnectData connectData)
+        {
+            // The challenge answer is what proves this wallet to the session, so it is not left
+            // lying around once the login is done with it.
+            if (connectData?.ChallengeAnswer != null)
+            {
+                Array.Clear(connectData.ChallengeAnswer, 0, connectData.ChallengeAnswer.Length);
+            }
+        }
+
+        private static void ShowOauthResult(INavigationService navigation, Object response, OauthLinkInfo info, string name, bool allowPhoneNumberAccess)
+        {
+            if (response is HttpUrl httpUrl)
+            {
+                // No address to go to means the site has what it needs, and only the user is told.
+                if (string.IsNullOrEmpty(httpUrl.Url))
+                {
+                    var text = info.RequestPhoneNumberAccess && !allowPhoneNumberAccess
+                        ? Strings.BotAuthLoggedInSuccessWithoutPhoneNumber
+                        : Strings.BotAuthLoggedInSuccess;
+
+                    navigation.ShowToast(string.Format("**{0}**\n{1}", Strings.BotAuthLoggedInSuccessTitle, string.Format(text, name)), ToastPopupIcon.Success);
                 }
                 else
                 {
-                    clientService.Send(new DeclineOauthRequest(url));
+                    OpenUrl(null, null, httpUrl.Url);
                 }
             }
+            else if (response is Error error)
+            {
+                ShowOauthError(navigation, error, name);
+            }
+        }
+
+        private static void ShowOauthError(INavigationService navigation, Error error, string name)
+        {
+            if (error.MessageEquals(ErrorType.URL_EXPIRED))
+            {
+                ShowOauthFailed(navigation, name);
+            }
+            else
+            {
+                navigation.ShowToast(error);
+            }
+        }
+
+        private static void ShowOauthFailed(INavigationService navigation, string name)
+        {
+            var text = string.IsNullOrEmpty(name)
+                ? Strings.BotAuthLoggedInFailNoDomain
+                : string.Format(Strings.BotAuthLoggedInFail, name);
+
+            navigation.ShowToast(string.Format("**{0}**\n{1}", Strings.BotAuthLoggedInFailTitle, text), ToastPopupIcon.Error);
         }
 
         private static void NavigateToCalls(IClientService clientService, INavigationService navigation, string section)

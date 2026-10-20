@@ -1847,7 +1847,7 @@ namespace Telegram.Views
         {
             if (MessageHelper.IsTelegramUrl(scheme))
             {
-                MessageHelper.OpenTelegramUrl(ViewModel.ClientService, MasterDetail.NavigationService, scheme);
+                MessageHelper.OpenTelegramUrl(ViewModel.ClientService, MasterDetail.NavigationService, scheme, new OpenUrlSourceExternal());
             }
             else if (scheme.Scheme.Equals("ms-contact-profile") || scheme.Scheme.Equals("ms-ipmessaging"))
             {

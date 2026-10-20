@@ -95,6 +95,8 @@ namespace Telegram.Td.Api
 
         RPC_CALL_FAIL,           // 500
 
-        BOT_CREATE_LIMIT_EXCEEDED
+        BOT_CREATE_LIMIT_EXCEEDED,
+
+        URL_EXPIRED
     }
 }

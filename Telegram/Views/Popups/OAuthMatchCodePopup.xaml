@@ -1,0 +1,61 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.OAuthMatchCodePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:local="using:Telegram.Views.Popups"
+                     mc:Ignorable="d"
+                     SecondaryButtonStyle="{StaticResource DangerButtonStyle}"
+                     SecondaryButtonClick="OnSecondaryButtonClick">
+
+    <StackPanel>
+        <TextBlock x:Name="Title"
+                   Style="{StaticResource PopupTextBlockStyle}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+
+        <ItemsControl x:Name="Codes"
+                      IsTabStop="False"
+                      HorizontalAlignment="Center"
+                      Margin="0,40,0,40">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="24" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="local:OAuthMatchCode">
+                    <Button Click="Code_Click"
+                            AutomationProperties.Name="{x:Bind Code}"
+                            Width="72"
+                            Height="72"
+                            Padding="0"
+                            BorderThickness="0"
+                            CornerRadius="36">
+                        <Grid Width="40"
+                              Height="40">
+                            <TextBlock Text="{x:Bind Code}"
+                                       Visibility="{x:Bind IsGlyphVisible, Mode=OneWay}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       FontSize="28"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            <controls:AnimatedImage Source="{x:Bind Source, Mode=OneWay}"
+                                                    Ready="Animation_Ready"
+                                                    FrameSize="40,40"
+                                                    DecodeFrameType="Logical"
+                                                    AutoPlay="True" />
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock x:Name="Footer"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+    </StackPanel>
+</controls:ModalPopup>

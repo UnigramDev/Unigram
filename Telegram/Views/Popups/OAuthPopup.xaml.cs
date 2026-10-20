@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
+using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -20,40 +20,51 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class OAuthPopup : ContentPopup
+    /// <summary>
+    /// The confirmation of a login, which also asks for whatever else the request wants and
+    /// accepts it.
+    /// </summary>
+    /// <remarks>
+    /// Closing it any way but Decline leaves the request alone, to expire on its own: only Decline
+    /// tells the server no.
+    /// </remarks>
+    public sealed partial class OAuthPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
-        private readonly OauthLinkInfo _requestConfirmation;
+        private readonly string _url;
+        private readonly OauthLinkInfo _info;
+        private readonly string _name;
+        private readonly string _matchCode;
+        private readonly TonConnectConnectData _connectData;
 
-        private bool _requestedPhoneNumberAccess;
-
-        public OAuthPopup(IClientService clientService, INavigationService navigationService, OauthLinkInfo linkInfo)
+        public OAuthPopup(IClientService clientService, INavigationService navigationService, string url, OauthLinkInfo info, string matchCode, TonConnectConnectData connectData)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _navigationService = navigationService;
 
-            _requestConfirmation = linkInfo;
+            _url = url;
+            _info = info;
+            _name = GetName(info);
+            _matchCode = matchCode;
+            _connectData = connectData;
 
-            var botUser = clientService.GetUser(linkInfo.BotUserId);
-            if (botUser == null)
+            if (clientService.TryGetUser(info.BotUserId, out User botUser))
             {
-                // ??
+                Photo.Source = ProfilePictureSource.User(clientService, botUser);
             }
 
-            Photo.Source = ProfilePictureSource.User(clientService, botUser);
-
-            if (LifetimeService.Current.Count > 1
+            if (GetSessions(clientService).Count > 1
                 && clientService.TryGetUser(clientService.Options.MyId, out User user))
             {
                 AliasRoot.Visibility = Visibility.Visible;
                 Alias.Source = ProfilePictureSource.User(clientService, user);
             }
 
-            var markdown = ClientEx.ParseMarkdown(string.Format(Strings.BotAuthTitle, linkInfo.Domain));
+            var markdown = ClientEx.ParseMarkdown(string.Format(Strings.BotAuthTitle, _name));
             if (markdown.Entities.Count == 1)
             {
                 var prefix = markdown.Text.Substring(0, markdown.Entities[0].Offset);
@@ -72,7 +83,11 @@ namespace Telegram.Views.Popups
                 Title.Text = markdown.Text;
             }
 
-            if (string.IsNullOrEmpty(linkInfo.Domain))
+            if (info.FromApp)
+            {
+                TextBlockHelper.SetMarkdown(Subtitle, Strings.BotAuthAppSubtitle);
+            }
+            else if (string.IsNullOrEmpty(info.Domain))
             {
                 TextBlockHelper.SetMarkdown(Subtitle, Strings.BotAuthBotSubtitle);
             }
@@ -81,29 +96,29 @@ namespace Telegram.Views.Popups
                 TextBlockHelper.SetMarkdown(Subtitle, Strings.BotAuthSiteSubtitle);
             }
 
-            if (string.IsNullOrEmpty(linkInfo.Platform) || string.IsNullOrEmpty(linkInfo.Browser))
+            if (string.IsNullOrEmpty(info.Platform) || string.IsNullOrEmpty(info.Browser))
             {
                 Application.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Application.Title = linkInfo.Platform;
-                Application.Subtitle = linkInfo.Browser;
+                Application.Title = info.Platform;
+                Application.Subtitle = info.Browser;
             }
 
-            if (string.IsNullOrEmpty(linkInfo.Location) || string.IsNullOrEmpty(linkInfo.IpAddress))
+            if (string.IsNullOrEmpty(info.Location) || string.IsNullOrEmpty(info.IpAddress))
             {
                 Location.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Location.Title = linkInfo.Location;
-                Location.Subtitle = string.Format(Strings.BotAuthBasedOnIP, linkInfo.IpAddress);
+                Location.Title = info.Location;
+                Location.Subtitle = string.Format(Strings.BotAuthBasedOnIP, info.IpAddress);
             }
 
-            if (linkInfo.RequestWriteAccess)
+            if (info.RequestWriteAccess)
             {
-                AllowMessagesInfo.Text = string.Format(Strings.BotAuthAllowMessagesInfo, botUser.FullName());
+                AllowMessagesInfo.Text = string.Format(Strings.BotAuthAllowMessagesInfo, botUser?.FullName() ?? _name);
             }
             else
             {
@@ -111,38 +126,137 @@ namespace Telegram.Views.Popups
             }
 
             PrimaryButtonText = Strings.BotAuthLogin;
-            SecondaryButtonText = Strings.Cancel;
+            SecondaryButtonText = Strings.Decline;
         }
 
-        public bool AllowWriteAccess => AllowMessages.IsChecked is true;
+        /// <summary>
+        /// What accepting the request answered, or the error that ended it; null while it is
+        /// neither accepted nor over.
+        /// </summary>
+        public Object Response { get; private set; }
 
         public bool AllowPhoneNumberAccess { get; private set; }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        /// <summary>
+        /// The account the user moved the login to, with the request as that account sees it.
+        /// </summary>
+        public IClientService SwitchedClientService { get; private set; }
+
+        public OauthLinkInfo SwitchedInfo { get; private set; }
+
+        public static string GetName(OauthLinkInfo info)
         {
-            if (_requestConfirmation.RequestPhoneNumberAccess && !_requestedPhoneNumberAccess)
+            if (info.FromApp)
             {
-                _requestedPhoneNumberAccess = true;
-                args.Cancel = true;
+                return string.IsNullOrEmpty(info.VerifiedAppName)
+                    ? Strings.UnverifiedApp
+                    : info.VerifiedAppName;
+            }
 
-                var user = _clientService.GetUser(_clientService.Options.MyId);
-                var phoneNumber = PhoneNumber.Format(user.PhoneNumber);
+            return info.Domain;
+        }
 
-                var confirm = await _navigationService.ShowPopupAsync(string.Format(Strings.BotAuthPhoneNumberText, _requestConfirmation.Domain, phoneNumber), Strings.BotAuthPhoneNumber, Strings.BotAuthPhoneNumberAccept, Strings.BotAuthPhoneNumberDeny);
-                if (confirm == ContentDialogResult.Primary)
+        /// <summary>
+        /// The accounts a login can be done with: those signed in on the same servers as this one.
+        /// </summary>
+        public static List<ISession> GetSessions(IClientService clientService)
+        {
+            var sessions = new List<ISession>();
+            var test = clientService.Session.Settings.UseTestDC;
+
+            foreach (var session in LifetimeService.Current.Items)
+            {
+                if (session.Settings.UseTestDC == test && session.ClientService.TryGetUser(session.ClientService.Options.MyId, out User _))
                 {
-                    AllowPhoneNumberAccess = true;
+                    sessions.Add(session);
+                }
+            }
+
+            return sessions;
+        }
+
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            args.Cancel = true;
+
+            try
+            {
+                if (IsPrimaryButtonPending)
+                {
+                    return;
                 }
 
-                Hide(ContentDialogResult.Primary);
+                var allowPhoneNumberAccess = false;
+
+                if (_info.RequestPhoneNumberAccess && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
+                {
+                    var phoneNumber = PhoneNumber.Format(user.PhoneNumber);
+
+                    // Deny still logs in, without the number; only dismissing the question stops.
+                    var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.BotAuthPhoneNumberText, _name, phoneNumber), Strings.BotAuthPhoneNumber, Strings.BotAuthPhoneNumberAccept, Strings.BotAuthPhoneNumberDeny);
+                    if (confirm == ContentDialogResult.None)
+                    {
+                        return;
+                    }
+
+                    allowPhoneNumberAccess = confirm == ContentDialogResult.Primary;
+                }
+
+                var matchCode = _matchCode;
+
+                if (matchCode == null && _info.MatchCodes.Count > 0)
+                {
+                    var popup = new OAuthMatchCodePopup(_clientService, _url, _info, _name, false);
+                    await popup.ShowAsync(XamlRoot);
+
+                    if (popup.MatchCode == null)
+                    {
+                        return;
+                    }
+
+                    matchCode = popup.MatchCode;
+                }
+
+                IsPrimaryButtonPending = true;
+
+                var response = await _clientService.SendAsync(new AcceptOauthRequest(_url, matchCode ?? string.Empty, AllowMessages.IsChecked is true, allowPhoneNumberAccess, _connectData));
+
+                IsPrimaryButtonPending = false;
+
+                Response = response;
+                AllowPhoneNumberAccess = allowPhoneNumberAccess;
+
+                Hide();
             }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
+
+        private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            if (IsPrimaryButtonPending)
+            {
+                args.Cancel = true;
+                return;
+            }
+
+            _clientService.Send(new DeclineOauthRequest(_url));
+        }
+
+        private void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
+        {
+            // The answer is on its way and decides what comes after the popup.
+            args.Cancel = IsPrimaryButtonPending;
         }
 
         private void Alias_Click(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
 
-            foreach (var session in LifetimeService.Current.Items)
+            foreach (var session in GetSessions(_clientService))
             {
                 if (session.ClientService.TryGetUser(session.ClientService.Options.MyId, out User user))
                 {
@@ -166,9 +280,55 @@ namespace Telegram.Views.Popups
             flyout.ShowAt(AliasRoot, FlyoutPlacementMode.BottomEdgeAlignedLeft);
         }
 
-        private void Account_Click(object sender, RoutedEventArgs e)
+        private async void Account_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (sender is not MenuFlyoutItem { CommandParameter: int sessionId } || IsPrimaryButtonPending)
+            {
+                return;
+            }
+
+            ISession session = null;
+
+            foreach (var item in LifetimeService.Current.Items)
+            {
+                if (item.Id == sessionId)
+                {
+                    session = item;
+                    break;
+                }
+            }
+
+            if (session == null || session == _clientService.Session)
+            {
+                return;
+            }
+
+            // The request reads differently from every account - who is logging in, what is asked
+            // of them - so it is fetched again rather than carried over.
+            IsPrimaryButtonPending = true;
+
+            var response = await session.ClientService.SendAsync(new GetOauthLinkInfo(_url, string.Empty));
+
+            IsPrimaryButtonPending = false;
+
+            if (response is OauthLinkInfo info)
+            {
+                SwitchedClientService = session.ClientService;
+                SwitchedInfo = info;
+                Hide();
+            }
+            else if (response is Error error)
+            {
+                if (error.MessageEquals(ErrorType.URL_EXPIRED))
+                {
+                    Response = error;
+                    Hide();
+                }
+                else
+                {
+                    _navigationService.ShowToast(error);
+                }
+            }
         }
     }
 }

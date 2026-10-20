@@ -13325,17 +13325,27 @@
 
     <string name="BotAuthAllowMessages">Allow Messages</string>
     <string name="BotAuthAllowMessagesInfo">This will allow {0} to message you.</string>
+    <string name="BotAuthAppSubtitle">This app will receive your **name**,\n**username** and **profile photo**.</string>
     <string name="BotAuthBasedOnIP">Based on the IP ({0})</string>
     <string name="BotAuthBotSubtitle">This bot will receive your **name**,\n**username** and **profile photo**.</string>
     <string name="BotAuthInfo">This login attempt came from the device above.</string>
+    <string name="BotAuthLoggedInFail">Please try logging in to **{0}** again.</string>
+    <string name="BotAuthLoggedInFailNoDomain">Link has expired.</string>
+    <string name="BotAuthLoggedInFailTitle">Login Failed</string>
     <string name="BotAuthLoggedInSuccess">You\'ve successfully logged into **{0}**.</string>
+    <string name="BotAuthLoggedInSuccessTitle">Login successful</string>
+    <string name="BotAuthLoggedInSuccessWithoutPhoneNumber">You\'re now logged in to **{0}**, but you didn\'t grant access to your phone number.</string>
     <string name="BotAuthLogin">Log In</string>
+    <string name="BotAuthLoginRequestFrom">Login request from **{0}**</string>
     <string name="BotAuthPhoneNumber">Phone Number</string>
     <string name="BotAuthPhoneNumberAccept">Allow</string>
     <string name="BotAuthPhoneNumberDeny">Deny</string>
     <string name="BotAuthPhoneNumberText">**{0}** wants to access your phone number **{1}**.\n\nAllow access?</string>
+    <string name="BotAuthSelectCode">Tap the code shown\non your login screen</string>
+    <string name="BotAuthSelectEmoji">Tap the emoji shown\non your login screen</string>
     <string name="BotAuthSiteSubtitle">This site will receive your **name**,\n**username** and **profile photo**.</string>
     <string name="BotAuthTitle">Log in to **{0}**</string>
+    <string name="UnverifiedApp">Unverified App</string>
 
     <string name="GiftRarityEpic">epic</string>
     <string name="GiftRarityLegendary">legendary</string>
