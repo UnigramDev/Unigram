@@ -40,6 +40,10 @@ namespace Telegram.Streams
         private long _offset;
         private long _count;
 
+        // Where the last window asked for ends, which RemoteFileBitrate measures against. Written
+        // by the reader, read on the thread updates arrive on.
+        private long _requestedEnd;
+
         private bool _closed;
         private bool _tracked;
 
@@ -319,6 +323,7 @@ namespace Telegram.Streams
         /// </summary>
         private void Download(long offset, long limit)
         {
+            Interlocked.Exchange(ref _requestedEnd, limit > 0 ? offset + limit : _file.Size);
             _clientService.Send(new DownloadFile(_file.Id, _priority, offset, limit, false));
         }
 
@@ -336,7 +341,7 @@ namespace Telegram.Streams
                 return;
             }
 
-            _bitrate?.Update(file);
+            _bitrate?.Update(file, Interlocked.Read(ref _requestedEnd));
 
             lock (_stateLock)
             {
@@ -451,83 +456,66 @@ namespace Telegram.Streams
 
             private ulong _lastUpdateTime;
             private long _lastDownloadOffset;
-            private long _lastDownloadedPrefixSize;
+            private long _lastDownloadEnd;
+            private long _lastRequestedEnd;
             private double _bitrate;
-            private bool _downloadingActive;
             private bool _initialized;
 
             public RemoteFileBitrate(File file)
             {
-                Update(file);
+                Update(file, 0);
             }
 
-            public double Update(File file)
+            /// <param name="requestedEnd">Where the window last asked for ends.</param>
+            public double Update(File file, long requestedEnd)
             {
                 ulong now = Logger.TickCount;
 
-                if (!_initialized)
-                {
-                    _lastDownloadOffset = file.Local.DownloadOffset;
-                    _lastDownloadedPrefixSize = file.Local.DownloadedPrefixSize;
-                    _lastUpdateTime = now;
-                    _downloadingActive = file.Local.IsDownloadingActive;
-                    _bitrate = 0;
+                var offset = file.Local.DownloadOffset;
+                var end = offset + file.Local.DownloadedPrefixSize;
 
-                    _initialized = true;
-                    return 0;
+                // Measured only over time TDLib spent downloading. Once it has what was asked for
+                // it waits, and the reader asks for more at the rate it plays, so time measured
+                // across that would give the media's bitrate rather than the link's.
+                var measurable = _initialized
+                    && file.Local.IsDownloadingActive
+                    && offset >= _lastDownloadOffset
+                    && offset <= _lastDownloadEnd
+                    && _lastDownloadEnd < _lastRequestedEnd;
+
+                if (measurable)
+                {
+                    var delta = now - _lastUpdateTime;
+                    if (delta < 100)
+                    {
+                        return _bitrate;
+                    }
+
+                    // The end of what is downloaded ahead of the reader. The offset moves with
+                    // every read, and the prefix past it shrinks by as much, so the prefix alone
+                    // counts what was already there as new.
+                    var bytesDownloaded = end - _lastDownloadEnd;
+
+                    if (bytesDownloaded > 0)
+                    {
+                        double instant = (bytesDownloaded * 8.0) / delta;
+
+                        if (_bitrate == 0)
+                        {
+                            _bitrate = instant;
+                        }
+                        else
+                        {
+                            _bitrate = _alpha * instant + (1 - _alpha) * _bitrate;
+                        }
+                    }
                 }
 
-                if (file.Local.IsDownloadingActive && !_downloadingActive)
-                {
-                    _lastDownloadOffset = file.Local.DownloadOffset;
-                    _lastDownloadedPrefixSize = file.Local.DownloadedPrefixSize;
-                    _lastUpdateTime = now;
-                    _downloadingActive = true;
-                    return _bitrate;
-                }
-
-                if (!file.Local.IsDownloadingActive)
-                {
-                    _downloadingActive = false;
-                    return _bitrate;
-                }
-
-                var delta = now - _lastUpdateTime;
-                if (delta < 100)
-                {
-                    return _bitrate;
-                }
-
-                long bytesDownloaded = 0;
-
-                if (file.Local.DownloadOffset != _lastDownloadOffset)
-                {
-                    bytesDownloaded = file.Local.DownloadedPrefixSize;
-                }
-                else
-                {
-                    var currentPosition = file.Local.DownloadedPrefixSize;
-                    var previousPosition = _lastDownloadedPrefixSize;
-                    bytesDownloaded = currentPosition - previousPosition;
-                }
-
-                _lastDownloadOffset = file.Local.DownloadOffset;
-                _lastDownloadedPrefixSize = file.Local.DownloadedPrefixSize;
+                _lastDownloadOffset = offset;
+                _lastDownloadEnd = end;
+                _lastRequestedEnd = requestedEnd;
                 _lastUpdateTime = now;
-
-                if (bytesDownloaded > 0)
-                {
-                    double instant = (bytesDownloaded * 8.0) / delta;
-
-                    if (_bitrate == 0)
-                    {
-                        _bitrate = instant;
-                    }
-                    else
-                    {
-                        _bitrate = _alpha * instant + (1 - _alpha) * _bitrate;
-                    }
-                }
+                _initialized = true;
 
                 return _bitrate;
             }
