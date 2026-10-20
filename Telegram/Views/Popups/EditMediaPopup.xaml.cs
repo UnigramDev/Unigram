@@ -55,6 +55,16 @@ namespace Telegram.Views.Popups
         private TimeSpan _duration;
         private bool _resume;
 
+        private int _thumbnailWidth;
+        private int _thumbnailHeight;
+        private int _thumbnailCount;
+
+        // The window TrimZoomThumbnails holds the frames of, and which request filled it, so
+        // a zoom that ended stops its decode.
+        private int _zoomVersion;
+        private double _zoomStart;
+        private double _zoomLength = 1;
+
         private readonly bool _isVideo;
 
         // The level picked, and how many the crop offers now: a crop made smaller than the pick
@@ -277,6 +287,8 @@ namespace Telegram.Views.Popups
             EmojiPicker?.Deactivate();
             GifPicker?.Deactivate();
 
+            _zoomVersion++;
+
             if (_player != null)
             {
                 _player.PositionChanged -= Player_PositionChanged;
@@ -490,22 +502,11 @@ namespace Telegram.Views.Popups
                 // leave a portrait video too short to fill the strip.
                 double ratio = 40d / pixelHeight;
 
-                var width = (int)(pixelWidth * ratio);
-                var height = (int)(pixelHeight * ratio);
+                _thumbnailWidth = (int)(pixelWidth * ratio);
+                _thumbnailHeight = (int)(pixelHeight * ratio);
 
-                var count = Math.Ceiling(296d / width);
-
-                int rasterWidth;
-                int rasterHeight;
-                if (animation.Rotation is 90 or 270)
-                {
-                    rasterWidth = (int)(height * XamlRoot.RasterizationScale);
-                    rasterHeight = (int)(width * XamlRoot.RasterizationScale);
-                }
-                {
-                    rasterWidth = (int)(width * XamlRoot.RasterizationScale);
-                    rasterHeight = (int)(height * XamlRoot.RasterizationScale);
-                }
+                var count = Math.Ceiling(296d / _thumbnailWidth);
+                _thumbnailCount = (int)count;
 
                 var duration = TimeSpan.FromMilliseconds(animation.Duration);
                 var maxLength = mask == ImageCropperMask.Ellipse
@@ -514,6 +515,9 @@ namespace Telegram.Views.Popups
 
                 TrimRange.SetOriginalDuration(_duration = duration, maxLength);
                 TrimThumbnails.Children.Clear();
+
+                // A held handle zooms the track until one frame of the strip spans all of it.
+                TrimRange.ZoomFactor = count;
 
                 if (mask != ImageCropperMask.Ellipse && media.EditState?.TrimStartTime != TimeSpan.Zero && media.EditState?.TrimStopTime != TimeSpan.Zero)
                 {
@@ -525,38 +529,7 @@ namespace Telegram.Views.Popups
 
                 for (int i = 0; i < count; i++)
                 {
-                    var buffer = BufferSurface.Create((uint)(rasterWidth * rasterHeight * 4));
-
-                    var rendered = await Task.Run(() =>
-                    {
-                        animation.SeekToMilliseconds((long)(animation.Duration / count * i), false);
-                        return animation.RenderSync(buffer, rasterWidth, rasterHeight, true, out _);
-                    });
-
-                    var bitmap = new WriteableBitmap(rasterWidth, rasterHeight);
-
-                    // Otherwise the buffer holds uninitialised memory.
-                    if (rendered)
-                    {
-                        BufferSurface.Copy(buffer, bitmap.PixelBuffer);
-                    }
-
-                    var image = new Border();
-                    image.Height = height;
-                    image.Width = width;
-                    image.Background = new ImageBrush
-                    {
-                        ImageSource = bitmap,
-                        AlignmentX = AlignmentX.Center,
-                        AlignmentY = AlignmentY.Center,
-                        Stretch = Stretch.Fill,
-                        RelativeTransform = new CompositeTransform
-                        {
-                            CenterX = 0.5,
-                            CenterY = 0.5,
-                            Rotation = animation.Rotation
-                        }
-                    };
+                    var image = await RenderThumbnailAsync(animation, (long)(animation.Duration / count * i), false);
 
                     Grid.SetColumn(image, i);
 
@@ -568,6 +541,105 @@ namespace Telegram.Views.Popups
             {
                 // People like to delete files while they're sending them
             }
+        }
+
+        private async void InitializeZoomThumbnails(int version, double start, double length)
+        {
+            try
+            {
+                using var stream = await _media.File.OpenReadAsync();
+                using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false, false));
+
+                // The cells are the strip's, each showing the moment the zoomed track draws at
+                // its centre. The track draws a value at a + value * b.
+                var a = TrimRange.GetPosition(0, start, length);
+                var b = TrimRange.GetPosition(1, start, length) - a;
+
+                for (int i = 0; i < _thumbnailCount; i++)
+                {
+                    var value = Math.Clamp(((i + 0.5) * _thumbnailWidth - a) / b, 0, 1);
+                    var image = await RenderThumbnailAsync(animation, (long)(animation.Duration * value), true);
+
+                    if (version != _zoomVersion)
+                    {
+                        return;
+                    }
+
+                    image.HorizontalAlignment = HorizontalAlignment.Left;
+                    image.Margin = new Thickness(i * _thumbnailWidth, 0, 0, 0);
+
+                    TrimZoomThumbnails.Children.Add(image);
+                }
+            }
+            catch
+            {
+                // People like to delete files while they're sending them
+            }
+        }
+
+        private async Task<Border> RenderThumbnailAsync(VideoAnimation animation, long milliseconds, bool precise)
+        {
+            int rasterWidth;
+            int rasterHeight;
+            if (animation.Rotation is 90 or 270)
+            {
+                rasterWidth = (int)(_thumbnailHeight * XamlRoot.RasterizationScale);
+                rasterHeight = (int)(_thumbnailWidth * XamlRoot.RasterizationScale);
+            }
+            else
+            {
+                rasterWidth = (int)(_thumbnailWidth * XamlRoot.RasterizationScale);
+                rasterHeight = (int)(_thumbnailHeight * XamlRoot.RasterizationScale);
+            }
+
+            var buffer = BufferSurface.Create((uint)(rasterWidth * rasterHeight * 4));
+
+            var rendered = await Task.Run(() =>
+            {
+                animation.SeekToMilliseconds(milliseconds, false);
+
+                var found = animation.RenderSync(buffer, rasterWidth, rasterHeight, true, out double seconds);
+
+                // The seek lands on the keyframe before, and the frames a zoomed strip is for
+                // are those between keyframes. Not the native precise seek: nothing uses it.
+                // A failed render leaves the buffer alone, so it keeps the last frame reached.
+                while (precise && found && seconds * 1000 < milliseconds)
+                {
+                    if (!animation.RenderSync(buffer, rasterWidth, rasterHeight, true, out seconds))
+                    {
+                        break;
+                    }
+                }
+
+                return found;
+            });
+
+            var bitmap = new WriteableBitmap(rasterWidth, rasterHeight);
+
+            // Otherwise the buffer holds uninitialised memory.
+            if (rendered)
+            {
+                BufferSurface.Copy(buffer, bitmap.PixelBuffer);
+            }
+
+            var image = new Border();
+            image.Height = _thumbnailHeight;
+            image.Width = _thumbnailWidth;
+            image.Background = new ImageBrush
+            {
+                ImageSource = bitmap,
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center,
+                Stretch = Stretch.Fill,
+                RelativeTransform = new CompositeTransform
+                {
+                    CenterX = 0.5,
+                    CenterY = 0.5,
+                    Rotation = animation.Rotation
+                }
+            };
+
+            return image;
         }
 
         private async void Accept_Click(object sender, RoutedEventArgs e)
@@ -1651,6 +1723,48 @@ namespace Telegram.Views.Popups
                 _resume = false;
                 _player.Play();
             }
+        }
+
+        private void TrimRange_ViewChanged(object sender, EventArgs e)
+        {
+            if (TrimRange.ZoomLength < 1 && (TrimRange.ZoomStart != _zoomStart || TrimRange.ZoomLength != _zoomLength))
+            {
+                _zoomStart = TrimRange.ZoomStart;
+                _zoomLength = TrimRange.ZoomLength;
+
+                TrimZoomThumbnails.Children.Clear();
+                TrimZoomThumbnails.Visibility = Visibility.Visible;
+
+                InitializeZoomThumbnails(++_zoomVersion, _zoomStart, _zoomLength);
+            }
+            else if (TrimRange.ViewLength == 1 && _zoomLength < 1)
+            {
+                _zoomStart = 0;
+                _zoomLength = 1;
+                _zoomVersion++;
+
+                TrimZoomThumbnails.Children.Clear();
+                TrimZoomThumbnails.Visibility = Visibility.Collapsed;
+            }
+
+            // Both strips were laid out for a view of their own, the whole video and the zoomed
+            // window, and move to where the track now draws that view. Until a zoomed frame is
+            // decoded, the stretched strip behind it shows through.
+            FollowTrim(TrimThumbnailsTransform, 0, 1);
+
+            if (_zoomLength < 1)
+            {
+                FollowTrim(TrimZoomThumbnailsTransform, _zoomStart, _zoomLength);
+            }
+        }
+
+        private void FollowTrim(CompositeTransform transform, double start, double length)
+        {
+            var from = TrimRange.GetPosition(0, start, length);
+            var to = TrimRange.GetPosition(0, TrimRange.ViewStart, TrimRange.ViewLength);
+
+            transform.ScaleX = (TrimRange.GetPosition(1, TrimRange.ViewStart, TrimRange.ViewLength) - to) / (TrimRange.GetPosition(1, start, length) - from);
+            transform.TranslateX = to - from * transform.ScaleX;
         }
     }
 

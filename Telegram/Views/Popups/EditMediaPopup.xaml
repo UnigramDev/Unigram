@@ -464,13 +464,25 @@
                                         VerticalAlignment="Center" />
 
             <Grid Grid.Column="1">
-                <Grid x:Name="TrimThumbnails"
-                      Height="40"
+                <Grid Height="40"
                       Width="296"
-                      CornerRadius="4" />
+                      CornerRadius="4">
+                    <Grid x:Name="TrimThumbnails">
+                        <Grid.RenderTransform>
+                            <CompositeTransform x:Name="TrimThumbnailsTransform" />
+                        </Grid.RenderTransform>
+                    </Grid>
+                    <Grid x:Name="TrimZoomThumbnails"
+                          Visibility="Collapsed">
+                        <Grid.RenderTransform>
+                            <CompositeTransform x:Name="TrimZoomThumbnailsTransform" />
+                        </Grid.RenderTransform>
+                    </Grid>
+                </Grid>
                 <controls:VideoRangeSlider x:Name="TrimRange"
                                            MinimumChanged="TrimRange_MinimumChanged"
                                            MaximumChanged="TrimRange_MaximumChanged"
+                                           ViewChanged="TrimRange_ViewChanged"
                                            Height="40"
                                            Width="296" />
             </Grid>
