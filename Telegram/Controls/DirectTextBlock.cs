@@ -107,9 +107,13 @@ namespace Telegram.Controls
         private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as DirectTextBlock;
-            sender.Layout().FontSize = (double)e.NewValue;
+            sender._fontSize = (double)e.NewValue;
+            sender.Layout().FontSize = sender._fontSize;
+            sender.UpdateEmojiSize();
             sender.Invalidate();
         }
+
+        private double _fontSize = 14;
 
         /// <summary>
         /// The family the text is drawn in, a chain as XAML takes one - packaged fonts included -
@@ -593,13 +597,23 @@ namespace Telegram.Controls
         public readonly record struct SpoilerRange(int Offset, int Length);
 
         // A square the size the animated ones are decoded at, and a baseline that sits it on
-        // the text rather than hanging it from the top of the line.
-        private const double EmojiSize = 20;
-        private const double EmojiBaseline = 16;
+        // the text rather than hanging it from the top of the line. The square is
+        // FormattedTextBlock's: 20 at 14 and 16 at 12, and in proportion to 14's at any other.
+        private double _emojiSize = 20;
 
-        // Inside the 14px line: 15 above the baseline and 3 below, against the text's 15.1 and 3.5.
-        private const double FittedEmojiHeight = 18;
-        private const double FittedEmojiBaseline = 15;
+        private static double EmojiSizeAt(double fontSize) => fontSize switch
+        {
+            14 => 20,
+            12 => 16,
+            _ => fontSize * 20 / 14
+        };
+
+        private double EmojiBaseline => _emojiSize * 16 / 20;
+
+        // Inside the 14px line: 15 above the baseline and 3 below, against the text's 15.1 and
+        // 3.5. In proportion at any other size.
+        private double FittedEmojiHeight => _fontSize * 18 / 14;
+        private double FittedEmojiBaseline => _fontSize * 15 / 14;
 
         /// <summary>
         /// Whether a custom emoji is given only the height of the line and drawn over it, as
@@ -620,16 +634,12 @@ namespace Telegram.Controls
 
             for (int i = 0; i < ranges?.Count; i++)
             {
-                if (CustomEmojiFitsLine)
-                {
-                    Layout().SetInlineObject(ranges[i].Offset, ranges[i].Length, new Size(EmojiSize, FittedEmojiHeight), FittedEmojiBaseline);
-                }
-                else
-                {
-                    Layout().SetInlineObject(ranges[i].Offset, ranges[i].Length, new Size(EmojiSize, EmojiSize), EmojiBaseline);
-                }
+                SetEmojiBox(ranges[i]);
 
                 var player = GetOrCreateEmoji(i);
+
+                // Before the source, which it would otherwise be decoded again for.
+                SetEmojiSize(player);
 
                 // The box stays under a spoiler, so the text does not move when it is
                 // revealed, but nothing plays in it.
@@ -660,6 +670,53 @@ namespace Telegram.Controls
             }
 
             Invalidate();
+        }
+
+        private void SetEmojiBox(CustomEmojiRange range)
+        {
+            if (CustomEmojiFitsLine)
+            {
+                Layout().SetInlineObject(range.Offset, range.Length, new Size(_emojiSize, FittedEmojiHeight), FittedEmojiBaseline);
+            }
+            else
+            {
+                Layout().SetInlineObject(range.Offset, range.Length, new Size(_emojiSize, _emojiSize), EmojiBaseline);
+            }
+        }
+
+        // A size set after the emoji: their boxes and their frames follow it. The ranges outlive
+        // a new text until the emoji are set again, so one past its end is left for that.
+        private void UpdateEmojiSize()
+        {
+            var size = EmojiSizeAt(_fontSize);
+            if (size == _emojiSize)
+            {
+                return;
+            }
+
+            _emojiSize = size;
+
+            for (int i = 0; i < _ranges?.Count; i++)
+            {
+                if (_ranges[i].Offset + _ranges[i].Length <= _textLength)
+                {
+                    SetEmojiBox(_ranges[i]);
+                }
+
+                SetEmojiSize(_emoji[i]);
+            }
+        }
+
+        // The style makes a player 20 square, and its frames are decoded at that: both go with
+        // the box, which the player would otherwise sit in the middle of.
+        private void SetEmojiSize(CustomEmojiIcon player)
+        {
+            if (player.FrameSize.Width != _emojiSize)
+            {
+                player.Width = _emojiSize;
+                player.Height = _emojiSize;
+                player.FrameSize = new Size(_emojiSize, _emojiSize);
+            }
         }
 
         private CustomEmojiIcon GetOrCreateEmoji(int index)
@@ -2888,7 +2945,7 @@ namespace Telegram.Controls
 
             // The emoji are a box of a size we chose, so the layout already has it: they are
             // measured to it, and nothing about them can change what the text does.
-            var emoji = new Size(EmojiSize, EmojiSize);
+            var emoji = new Size(_emojiSize, _emojiSize);
 
             for (int i = 0; i < _ranges?.Count; i++)
             {
@@ -2963,10 +3020,10 @@ namespace Telegram.Controls
                 if (rects?.Length > 0)
                 {
                     var y = CustomEmojiFitsLine
-                        ? rects[0].Y + (rects[0].Height - EmojiSize) / 2
+                        ? rects[0].Y + (rects[0].Height - _emojiSize) / 2
                         : rects[0].Y;
 
-                    _emoji[i].Arrange(FromLayout(new Rect(rects[0].X, y, EmojiSize, EmojiSize)));
+                    _emoji[i].Arrange(FromLayout(new Rect(rects[0].X, y, _emojiSize, _emojiSize)));
                 }
                 else
                 {
