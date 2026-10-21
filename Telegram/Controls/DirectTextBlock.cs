@@ -2715,9 +2715,8 @@ namespace Telegram.Controls
             if (_entities != null && index >= 0 && index < _entities.Count && CurrentText != null)
             {
                 var entity = _entities[index];
-                var text = CurrentText.Substring(entity.Offset, entity.Length);
 
-                var args = new TextEntityClickEventArgs(entity.Type, text);
+                var args = CreateEntityArgs(entity);
                 args.Handled = false;
 
                 TextEntityClick?.Invoke(this, args);
@@ -2727,9 +2726,21 @@ namespace Telegram.Controls
                 // know that.
                 if (!args.Handled && entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                 {
-                    MessageHelper.CopyText(XamlRoot, text);
+                    MessageHelper.CopyText(XamlRoot, args.Text);
                 }
             }
+        }
+
+        // The arguments FormattedTextBlock gives the same entity, which handlers rely on: Text is
+        // the target for a TextUrl, null for a MentionName, and the covered text otherwise.
+        private TextEntityClickEventArgs CreateEntityArgs(TextEntity entity)
+        {
+            return entity.Type switch
+            {
+                TextEntityTypeTextUrl textUrl => new TextEntityClickEventArgs(entity.Type, textUrl.Url),
+                TextEntityTypeMentionName => new TextEntityClickEventArgs(entity.Type),
+                _ => new TextEntityClickEventArgs(entity.Type, CurrentText.Substring(entity.Offset, entity.Length))
+            };
         }
 
         /// <summary>
@@ -2747,8 +2758,7 @@ namespace Telegram.Controls
                 return null;
             }
 
-            var entity = _entities[link];
-            return new TextEntityClickEventArgs(entity.Type, CurrentText.Substring(entity.Offset, entity.Length));
+            return CreateEntityArgs(_entities[link]);
         }
 
         // What the automation tree needs to know about the links: how many there are, what each
