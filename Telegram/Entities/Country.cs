@@ -23,7 +23,7 @@ namespace Telegram.Entities
 
             if (code == "FT")
             {
-                Emoji = "\U0001F3F4\u200D\u2620";
+                Emoji = "\U0001F48E";
             }
             else
             {
