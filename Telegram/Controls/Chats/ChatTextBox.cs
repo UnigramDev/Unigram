@@ -549,7 +549,7 @@ namespace Telegram.Controls.Chats
 
                     if (_customEmoji && _emoji?.Length > 0)
                     {
-                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji, 1000, _chatId));
+                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji, 50, _chatId));
                         if (response is Stickers stickers)
                         {
                             foreach (var sticker in stickers.StickersValue)
