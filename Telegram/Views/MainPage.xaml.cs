@@ -1395,7 +1395,6 @@ namespace Telegram.Views
 
         private static Task CollectAsync()
         {
-#if NET9_0_OR_GREATER
             // Off the view thread, or this deadlocks. A finalizing RCW releases through
             // IContextCallback back into the apartment that created it, and an ASTA will not
             // dispatch an incoming call while it is blocked in a wait - so waiting for the
@@ -1406,15 +1405,6 @@ namespace Telegram.Views
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
             });
-#else
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-
-            // Already completed, so the caller's await continues inline and the order below is
-            // exactly what it was before the NET9 path existed.
-            return Task.CompletedTask;
-#endif
         }
 
         private async void CollectAndAnalyze()
