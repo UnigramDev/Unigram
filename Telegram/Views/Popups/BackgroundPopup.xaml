@@ -763,9 +763,9 @@
                                     Value="0,4,0,0" />
                         </Style>
                     </controls:TopNavView.ItemContainerStyle>
-                    <controls:TopNavViewItem Content="Wallpaper" />
-                    <controls:TopNavViewItem Content="Accent Color" />
-                    <controls:TopNavViewItem Content="My Messages" />
+                    <controls:TopNavViewItem Content="{CustomResource ColorPickerBackground}" />
+                    <controls:TopNavViewItem Content="{CustomResource ColorPickerMainColor}" />
+                    <controls:TopNavViewItem Content="{CustomResource ColorPickerMyMessages}" />
                 </controls:TopNavView>
             </Grid>
 
