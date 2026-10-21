@@ -23,6 +23,7 @@ namespace Telegram.Services
         RecentEmojiSettings RecentEmoji { get; }
         AutoDownloadSettings AutoDownload { get; set; }
         VideoSettings Video { get; }
+        StorySettings Stories { get; }
 
         bool HideArchivedChats { get; set; }
         bool HideRichPasteToast { get; set; }
@@ -119,6 +120,9 @@ namespace Telegram.Services
         private VideoSettings _video;
         public VideoSettings Video => _video ??= new VideoSettings(_own);
 
+        private StorySettings _stories;
+        public StorySettings Stories => _stories ??= new StorySettings(_own);
+
         private bool? _useTestDC;
         public bool UseTestDC
         {
@@ -168,6 +172,7 @@ namespace Telegram.Services
             // and pinned messages would outlive the account they belong to.
             _own.DeleteContainer("AutoDownload");
             _own.DeleteContainer("Video");
+            _own.DeleteContainer("Stories");
             _own.DeleteContainer("PinnedMessages");
             _own.DeleteContainer("Emoji");
             _own.Clear();
@@ -189,6 +194,7 @@ namespace Telegram.Services
             _hideArchivedChats = null;
             _autoDownload = null;
             _video = null;
+            _stories = null;
 
             // Both point at containers Clear has just deleted.
             _autoDownloadStore = null;

@@ -13,6 +13,7 @@ using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
@@ -34,10 +35,11 @@ namespace Telegram.Views.Stories.Popups
 
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
+        private readonly StorySettings _settings;
 
-        private List<long> _exceptFromEveryone = new();
-        private List<long> _exceptFromContacts = new();
-        private List<long> _selectedContacts = new();
+        private List<long> _exceptFromEveryone;
+        private List<long> _exceptFromContacts;
+        private List<long> _selectedContacts;
         private List<long> _closeFriends;
 
         private int _period = DefaultPeriod;
@@ -48,6 +50,7 @@ namespace Telegram.Views.Stories.Popups
 
             _clientService = clientService;
             _navigationService = navigationService;
+            _settings = clientService.Session.Resolve<ISettingsService>().Stories;
 
             Title = Strings.StoryPrivacyAlertTitle;
 
@@ -75,9 +78,31 @@ namespace Telegram.Views.Stories.Popups
             }
 
             Period.ItemsSource = periods;
-            Period.SelectedIndex = Array.IndexOf(Periods, DefaultPeriod);
 
-            Everyone.IsChecked = true;
+            // Starting from what the last story was posted with. A period other than a day stays
+            // Premium's, whatever was saved.
+            var period = clientService.IsPremium && Array.IndexOf(Periods, _settings.Period) != -1
+                ? _settings.Period
+                : DefaultPeriod;
+
+            Period.SelectedIndex = Array.IndexOf(Periods, period);
+
+            AllowScreenshots.IsChecked = _settings.AllowScreenshots;
+            Keep.IsChecked = _settings.Keep;
+
+            _exceptFromEveryone = _settings.ExceptFromEveryone;
+            _exceptFromContacts = _settings.ExceptFromContacts;
+            _selectedContacts = _settings.SelectedContacts;
+
+            var option = _settings.Privacy switch
+            {
+                StoryPrivacyMode.Contacts => Contacts,
+                StoryPrivacyMode.CloseFriends => CloseFriends,
+                StoryPrivacyMode.SelectedContacts => SelectedContacts,
+                _ => Everyone
+            };
+
+            option.IsChecked = true;
 
             UpdateList();
             LoadCloseFriends();
@@ -263,6 +288,18 @@ namespace Telegram.Views.Stories.Popups
                 EditList(SelectedContacts);
                 return;
             }
+
+            _settings.Privacy = Contacts.IsChecked == true ? StoryPrivacyMode.Contacts
+                : CloseFriends.IsChecked == true ? StoryPrivacyMode.CloseFriends
+                : SelectedContacts.IsChecked == true ? StoryPrivacyMode.SelectedContacts
+                : StoryPrivacyMode.Everyone;
+
+            _settings.ExceptFromEveryone = _exceptFromEveryone;
+            _settings.ExceptFromContacts = _exceptFromContacts;
+            _settings.SelectedContacts = _selectedContacts;
+            _settings.AllowScreenshots = AllowScreenshots.IsChecked == true;
+            _settings.Keep = Keep.IsChecked == true;
+            _settings.Period = _period;
 
             Hide(ContentDialogResult.Primary);
         }
