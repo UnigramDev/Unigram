@@ -917,25 +917,38 @@ namespace Telegram.ViewModels
                         var message = Items[i];
                         if (message.ChatId == update.ChatId && message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
                         {
-                            var found = false;
+                            var deleted = 0;
 
                             for (int k = 0; k < album.Messages.Count; k++)
                             {
                                 if (table.Contains(album.Messages[k].Id))
                                 {
-                                    album.Messages.RemoveAt(k);
-                                    k--;
-
-                                    toBeUpdated ??= new();
-                                    toBeUpdated.Add(message);
-
-
-                                    found = true;
+                                    deleted++;
                                 }
                             }
 
-                            if (found)
+                            if (deleted > 0 && deleted == album.Messages.Count)
                             {
+                                _groupedMessages.TryRemove(message.MediaAlbumId, out _);
+
+                                message.AnimationState = MessageAnimationState.Removed;
+
+                                toBeDeleted ??= new();
+                                toBeDeleted.Add(message);
+                                continue;
+                            }
+                            else if (deleted > 0)
+                            {
+                                for (int k = album.Messages.Count - 1; k >= 0; k--)
+                                {
+                                    if (table.Contains(album.Messages[k].Id))
+                                    {
+                                        album.Messages.RemoveAt(k);
+                                    }
+                                }
+
+                                toBeUpdated ??= new();
+                                toBeUpdated.Add(message);
                                 continue;
                             }
                         }
@@ -971,24 +984,12 @@ namespace Telegram.ViewModels
                                 continue;
                             }
 
-                            if (album.Messages.Count > 0)
-                            {
-                                album.Invalidate();
-                                item.UpdateAlbum(album.Messages[0]);
+                            album.Invalidate();
+                            item.UpdateAlbum(album.Messages[0]);
 
-                                Handle(new UpdateMessageContent(item.ChatId, item.Id, album));
-                                Handle(new UpdateMessageEdited(item.ChatId, item.Id, item.EditDate, item.ReplyMarkup));
-                                Handle(new UpdateMessageInteractionInfo(item.ChatId, item.Id, item.InteractionInfo));
-                            }
-                            else
-                            {
-                                _groupedMessages.TryRemove(item.MediaAlbumId, out _);
-
-                                item.AnimationState = MessageAnimationState.Removed;
-
-                                toBeDeleted ??= new();
-                                toBeDeleted.Add(item);
-                            }
+                            Handle(new UpdateMessageContent(item.ChatId, item.Id, album));
+                            Handle(new UpdateMessageEdited(item.ChatId, item.Id, item.EditDate, item.ReplyMarkup));
+                            Handle(new UpdateMessageInteractionInfo(item.ChatId, item.Id, item.InteractionInfo));
                         }
                     }
 
