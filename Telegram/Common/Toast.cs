@@ -136,7 +136,14 @@ namespace Telegram.Common
                     }
                     break;
                 case ProtocolActivatedEventArgs protocol:
-                    arguments = protocol.Uri.Query.TrimStart('?');
+                    try
+                    {
+                        arguments = protocol.Uri.Query.TrimStart('?');
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
                     break;
             }
 
