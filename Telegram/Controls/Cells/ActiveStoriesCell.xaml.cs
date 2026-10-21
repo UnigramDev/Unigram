@@ -130,6 +130,17 @@ namespace Telegram.Controls.Cells
                 Title.Text = Strings.MyStory;
             }
 
+            // The ring takes the place of the segments while it shows.
+            Segments.Visibility =
+                SegmentsSmall.Visibility = posting != null
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+            if (posting == null && UploadProgress != null)
+            {
+                UploadProgress.Visibility = Visibility.Collapsed;
+            }
+
             // TDLib posts a chat's stories one at a time, so the first in flight is the one moving.
             if (_posting != posting)
             {
@@ -171,10 +182,13 @@ namespace Telegram.Controls.Cells
 
         private void UpdatePostingProgress(StoryViewModel posting)
         {
-            var progress = posting.GetPostProgress();
+            if (UploadProgress == null)
+            {
+                FindName(nameof(UploadProgress));
+            }
 
-            Segments.ShowProgress(48, progress);
-            SegmentsSmall.ShowProgress(48, progress, 3);
+            UploadProgress.Visibility = Visibility.Visible;
+            UploadProgress.Value = posting.GetPostProgress();
         }
 
         public void Update(SelectorItem container, int index, int f, int l, CompositionPropertySet tracker, ExpressionAnimation expression)

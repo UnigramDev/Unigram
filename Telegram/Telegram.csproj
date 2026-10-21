@@ -2495,6 +2495,7 @@
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
+    <Compile Include="Controls\StoryProgressBarRing.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Collections\MediaCollection.cs" />

@@ -60,7 +60,6 @@ namespace Telegram.Controls
         private Border LiveBadge;
 
         private Visual _visual;
-        private Visual _child;
 
         public ActiveStoriesSegments()
         {
@@ -88,7 +87,6 @@ namespace Telegram.Controls
             }
 
             _hasLiveBadge = live;
-            _child = visual;
 
             if (Presenter != null)
             {
@@ -520,58 +518,6 @@ namespace Telegram.Controls
 
             _indeterminate = indefiniteReplicatorLayer;
             _indeterminateStroke = unreadStroke;
-        }
-
-        // Your own story being posted: one arc that fills as it uploads, in place of the segments.
-        private ShapeVisual _progress;
-        private CompositionEllipseGeometry _progressGeometry;
-        private float _progressThickness;
-
-        public void ShowProgress(int side, float progress, float thickness = 2.0f)
-        {
-            ShrinkContent(side, thickness);
-
-            if (_progress == null || _progress.Size.X != side || _progressThickness != thickness)
-            {
-                var compositor = BootStrapper.Current.Compositor;
-                var center = new Vector2(side * 0.5f);
-
-                _progressGeometry = compositor.CreateEllipseGeometry();
-                _progressGeometry.Center = center;
-                _progressGeometry.Radius = new Vector2(center.X - thickness * 0.5f);
-
-                // The visual is turned so that the arc starts at the top; the brush is turned back
-                // so that the gradient still runs downwards.
-                var stroke = compositor.CreateLinearGradientBrush();
-                stroke.ColorStops.Add(compositor.CreateColorGradientStop(0, _storyUnreadTopColor));
-                stroke.ColorStops.Add(compositor.CreateColorGradientStop(1, _storyUnreadBottomColor));
-                stroke.MappingMode = CompositionMappingMode.Absolute;
-                stroke.StartPoint = new Vector2(0, 0);
-                stroke.EndPoint = new Vector2(0, side);
-                stroke.CenterPoint = center;
-                stroke.RotationAngleInDegrees = 90;
-
-                var shape = compositor.CreateSpriteShape(_progressGeometry);
-                shape.StrokeBrush = stroke;
-                shape.StrokeThickness = thickness;
-                shape.StrokeStartCap = CompositionStrokeCap.Round;
-                shape.StrokeEndCap = CompositionStrokeCap.Round;
-                shape.IsStrokeNonScaling = true;
-
-                _progress = compositor.CreateShapeVisual();
-                _progress.Size = new Vector2(side);
-                _progress.CenterPoint = new Vector3(center, 0);
-                _progress.RotationAngleInDegrees = -90;
-                _progress.Shapes.Add(shape);
-                _progressThickness = thickness;
-            }
-
-            _progressGeometry.TrimEnd = Math.Clamp(progress, 0, 1);
-
-            if (!ReferenceEquals(_child, _progress))
-            {
-                UpdateVisual(false, _progress);
-            }
         }
 
         public void ShowFailed(int side, float thickness = 2.0f)

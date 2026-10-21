@@ -94,16 +94,12 @@ namespace Telegram.Controls
             shape.StrokeStartCap = CompositionStrokeCap.Round;
             shape.StrokeEndCap = CompositionStrokeCap.Round;
 
-            if (Foreground is SolidColorBrush brush)
-            {
-                _stroke = compositor.CreateColorBrush(brush.Color);
-                shape.StrokeBrush = _stroke;
-            }
-
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape);
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
+
+            shape.StrokeBrush = CreateStroke(compositor, visual);
 
             _visual = visual;
             _shape = shape;
@@ -167,11 +163,23 @@ namespace Telegram.Controls
             }
             else if (_shape != null)
             {
-                _stroke = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
-                _shape.StrokeBrush = _stroke;
+                _shape.StrokeBrush = CreateStroke(BootStrapper.Current.Compositor, _visual);
             }
 
             // With no visual yet there is nothing to paint: EnsureVisual reads Foreground.
+        }
+
+        /// <summary>
+        /// The brush the arc is stroked with, painted on <paramref name="visual"/>, which spins.
+        /// </summary>
+        protected virtual CompositionBrush CreateStroke(Compositor compositor, ShapeVisual visual)
+        {
+            if (Foreground is SolidColorBrush brush)
+            {
+                return _stroke = compositor.CreateColorBrush(brush.Color);
+            }
+
+            return null;
         }
 
         protected override void OnLoaded()

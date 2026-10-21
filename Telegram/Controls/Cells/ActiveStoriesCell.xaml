@@ -42,6 +42,12 @@
                                                     IsTabStop="False"
                                                     Width="48"
                                                     Height="48" />
+                    <controls:StoryProgressBarRing x:Name="UploadProgress"
+                                                   x:Load="False"
+                                                   Radius="23"
+                                                   Center="24"
+                                                   Width="48"
+                                                   Height="48" />
                 </Grid>
             </Grid>
         </Border>
