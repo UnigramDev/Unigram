@@ -403,14 +403,23 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <HyperlinkButton x:Name="LanguageButton"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalAlignment="Stretch"
+                                             Background="{ThemeResource MessageHeaderBackgroundBrush}"
                                              Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                                             FontSize="12"
-                                             FontWeight="SemiBold"
-                                             Padding="0"
-                                             Margin="8,2,0,0"
-                                             IsTabStop="False"
                                              AllowFocusOnInteraction="False"
-                                             Visibility="Collapsed" />
+                                             Visibility="Collapsed">
+                                <HyperlinkButton.Template>
+                                    <ControlTemplate TargetType="HyperlinkButton">
+                                        <ContentPresenter Background="{TemplateBinding Background}"
+                                                          HorizontalContentAlignment="Stretch"
+                                                          VerticalContentAlignment="Stretch"
+                                                          FontSize="12"
+                                                          FontWeight="SemiBold"
+                                                          Padding="8,2,0,4" />
+                                    </ControlTemplate>
+                                </HyperlinkButton.Template>
+                            </HyperlinkButton>
                             <TextBlock x:Name="Glyph"
                                        Text="&#xEA5A;"
                                        Foreground="{ThemeResource MessageHeaderForegroundBrush}"

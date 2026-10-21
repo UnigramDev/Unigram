@@ -575,6 +575,7 @@ namespace Telegram.Controls.Messages
             {
                 Children.Add(new BlockQuote
                 {
+                    Glyph = Icons.CodeBlockFilled16,
                     LanguageName = monospace.Language,
                     Content = block,
                     Padding = new Thickness(8, 4, 24, 6)
