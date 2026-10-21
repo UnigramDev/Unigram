@@ -66,12 +66,20 @@ namespace Telegram.Views
                 {
                     return item;
                 }
+                else if (ViewModel.NavigationService.CurrentPageType == typeof(ProfilePage) && ViewModel.NavigationService.CurrentPageParam is long chatId && chatId == ViewModel.ClientService.Options.MyId)
+                {
+                    return Profile;
+                }
 
                 for (int i = ViewModel.NavigationService.Frame.BackStack.Count - 1; i >= 0; i--)
                 {
                     if (_settings.TryGetValue(ViewModel.NavigationService.Frame.BackStack[i].SourcePageType, out item))
                     {
                         return item;
+                    }
+                    else if (ViewModel.NavigationService.Frame.BackStack[i].SourcePageType == typeof(ProfilePage) && ViewModel.NavigationService.Frame.BackStack[i].Parameter is long chatId && chatId == ViewModel.ClientService.Options.MyId)
+                    {
+                        return Profile;
                     }
                 }
 
@@ -127,7 +135,10 @@ namespace Telegram.Views
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            Navigate(typeof(SettingsProfilePage));
+            if (ViewModel.NavigationService.Navigate(typeof(ProfilePage), ViewModel.ClientService.Options.MyId))
+            {
+                UpdateSelection();
+            }
         }
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
