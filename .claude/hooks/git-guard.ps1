@@ -51,27 +51,82 @@ try {
     $sessionId = if ($payload.session_id) { $payload.session_id } else { 'unknown' }
     $cwd = if ($payload.cwd) { $payload.cwd } else { (Get-Location).Path }
 
-    # Blank every literal before anything is parsed. A commit message is the common case
+    # Replace every literal before anything is parsed. A commit message is the common case
     # and it can hold newlines, semicolons and the word "git" — none of which are
-    # commands. Here-strings first, since their bodies contain bare quotes.
-    $masked = [regex]::Replace($command, "@'.*?'@", "''", [Text.RegularExpressions.RegexOptions]::Singleline)
-    $masked = [regex]::Replace($masked, '@".*?"@', '""', [Text.RegularExpressions.RegexOptions]::Singleline)
-    $masked = [regex]::Replace($masked, '"[^"]*"', '""', [Text.RegularExpressions.RegexOptions]::Singleline)
-    $masked = [regex]::Replace($masked, "'[^']*'", "''", [Text.RegularExpressions.RegexOptions]::Singleline)
+    # commands. Here-strings first, since their bodies contain bare quotes. Each becomes a
+    # placeholder that remembers its text, because a quoted path given to cd or -C is needed.
+    $literals = [System.Collections.Generic.List[string]]::new()
+    $hide = [Text.RegularExpressions.MatchEvaluator] {
+        param($match)
+        $literals.Add($match.Value)
+        "__LIT$($literals.Count - 1)__"
+    }
 
-    # Only a line whose first token is git is treated as a git command.
-    $segments = $masked -split '(?:&&|\|\||;|\r?\n)' |
-        ForEach-Object { $_.Trim() } |
-        Where-Object { $_ -match '^git(\.exe)?\s' }
+    $singleline = [Text.RegularExpressions.RegexOptions]::Singleline
+    $masked = [regex]::Replace($command, "@'.*?'@", $hide, $singleline)
+    $masked = [regex]::Replace($masked, '@".*?"@', $hide, $singleline)
+    $masked = [regex]::Replace($masked, '"[^"]*"', $hide, $singleline)
+    $masked = [regex]::Replace($masked, "'[^']*'", $hide, $singleline)
+
+    # A token as the shell would see it: a placeholder back to its text, without quotes.
+    function Unquote([string]$token) {
+        if ($token -match '^__LIT(\d+)__$') {
+            $text = $literals[[int]$Matches[1]]
+            return ($text -replace "^@?['""]", '' -replace "['""]@?$", '')
+        }
+        return $token
+    }
+
+    # Git Bash writes /c/Source for C:\Source; relative paths are from the current directory.
+    function Resolve-Directory([string]$path, [string]$base) {
+        if ([string]::IsNullOrWhiteSpace($path)) { return $null }
+        if ($path -eq '~') { $path = $HOME }
+        elseif ($path -match '^~[/\\](.*)$') { $path = Join-Path $HOME $Matches[1] }
+        elseif ($path -match '^/([a-zA-Z])(/.*)?$') { $path = "$($Matches[1]):" + ($(if ($Matches[2]) { $Matches[2] } else { '/' })) }
+
+        if (-not [IO.Path]::IsPathRooted($path)) { $path = Join-Path $base $path }
+
+        $full = [IO.Path]::GetFullPath($path)
+        if (Test-Path -LiteralPath $full -PathType Container) { return $full }
+        return $null
+    }
+
+    # Every git command is judged in the directory it runs in: after any cd earlier in the
+    # same command line, and under its own -C. Judged in the session's directory instead, a
+    # commit made from a separate worktree was checked against the main checkout's index.
+    $dir = $cwd
+    $segments = [System.Collections.Generic.List[object]]::new()
+
+    foreach ($part in ($masked -split '(?:&&|\|\||;|\r?\n)')) {
+        $part = $part.Trim().TrimStart('(').Trim()
+
+        if ($part -match '^(?i:cd|pushd|sl|Set-Location|Push-Location)(\s+(?<rest>.*))?$') {
+            $tokens = @($Matches['rest'] -split '\s+' | Where-Object { $_ -and $_ -notmatch '^-(Path|LiteralPath)$' })
+            $target = if ($tokens.Count -gt 0) { Unquote $tokens[0] } else { '~' }
+            $resolved = Resolve-Directory $target $dir
+            if ($resolved) { $dir = $resolved }
+            continue
+        }
+
+        # Only a line whose first token is git is treated as a git command.
+        if ($part -notmatch '^git(\.exe)?\s') { continue }
+
+        $segmentDir = $dir
+        if ($part -match '^git(\.exe)?\s+-C\s+(?<path>\S+)') {
+            $resolved = Resolve-Directory (Unquote $Matches['path']) $dir
+            if ($resolved) { $segmentDir = $resolved }
+        }
+
+        $segments.Add([pscustomobject]@{ Text = $part; Dir = $segmentDir })
+    }
 
     if ($segments.Count -eq 0) { Approve }
 
-    function Unquote([string]$text) { $text }
+    $lockDirs = [System.Collections.Generic.List[string]]::new()
 
-    $needsLock = $false
-
-    foreach ($segment in $segments) {
-        $bare = Unquote $segment
+    foreach ($entry in $segments) {
+        $bare = $entry.Text
+        $needsLock = $false
 
         # `git -C <path> …` — strip so the verb is always the next token.
         $verbPart = $bare -replace '^git(\.exe)?\s+(-C\s+\S+\s+)?', ''
@@ -135,11 +190,11 @@ try {
             # `git commit -- <paths>` takes the working tree, ignoring the index. If a named
             # path is partly staged, that silently commits more than was staged.
             $tail = ($verbPart -split '\s--(\s|$)', 2)[-1]
-            $paths = $tail -split '\s+' | Where-Object { $_ -and $_ -notmatch '^-' -and $_ -ne '""' -and $_ -ne "''" }
+            $paths = $tail -split '\s+' | Where-Object { $_ -and $_ -notmatch '^-' } | ForEach-Object { Unquote $_ } | Where-Object { $_ }
 
             foreach ($path in $paths) {
-                $staged = & git -C $cwd diff --cached --name-only -- $path 2>$null
-                $unstaged = & git -C $cwd diff --name-only -- $path 2>$null
+                $staged = & git -C $entry.Dir diff --cached --name-only -- $path 2>$null
+                $unstaged = & git -C $entry.Dir diff --name-only -- $path 2>$null
                 if ($staged -and $unstaged) {
                     Deny (@(
                         "Refusing to commit '$path': it has both staged and unstaged changes."
@@ -153,40 +208,53 @@ try {
                 }
             }
         }
+
+        if ($needsLock) { $lockDirs.Add($entry.Dir) }
     }
 
-    if (-not $needsLock) { Approve }
+    if ($lockDirs.Count -eq 0) { Approve }
 
-    $gitDir = & git -C $cwd rev-parse --absolute-git-dir 2>$null
-    if (-not $gitDir) { Approve }
+    # One lock per worktree: each has its own index and HEAD, so work in a separate worktree
+    # does not wait on the main checkout's lock.
+    $lockPaths = @($lockDirs | ForEach-Object { & git -C $_ rev-parse --absolute-git-dir 2>$null } |
+        Where-Object { $_ } |
+        Sort-Object -Unique |
+        ForEach-Object { Join-Path $_ 'claude-git-lock.json' })
 
-    $lockPath = Join-Path $gitDir 'claude-git-lock.json'
+    if ($lockPaths.Count -eq 0) { Approve }
+
     $now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
 
-    if (Test-Path $lockPath) {
+    foreach ($lockPath in $lockPaths) {
+        if (-not (Test-Path $lockPath)) { continue }
+
         try {
             $lock = Get-Content $lockPath -Raw | ConvertFrom-Json
             $age = $now - [int64]$lock.at
-            if ($lock.session -ne $sessionId -and $age -lt $LockTimeoutSeconds) {
-                Deny (@(
-                    "Another Claude session holds the git lock on this worktree (taken $age seconds ago)."
-                    ''
-                    'Staging and committing are serialised here because the index and HEAD are shared —'
-                    'interleaving with another session corrupts both.'
-                    ''
-                    "Wait for it to finish, or work in your own worktree:"
-                    "  git worktree add -b <branch> C:\Source\Telegram.worktrees\<branch> HEAD"
-                ) -join "`n")
-            }
         }
         catch {
             # An unreadable lock is treated as absent rather than blocking forever.
+            continue
+        }
+
+        if ($lock.session -ne $sessionId -and $age -lt $LockTimeoutSeconds) {
+            Deny (@(
+                "Another Claude session holds the git lock on this worktree (taken $age seconds ago)."
+                ''
+                'Staging and committing are serialised here because the index and HEAD are shared —'
+                'interleaving with another session corrupts both.'
+                ''
+                "Wait for it to finish, or work in your own worktree:"
+                "  git worktree add -b <branch> C:\Source\Telegram.worktrees\<branch> HEAD"
+            ) -join "`n")
         }
     }
 
-    @{ session = $sessionId; pid = $PID; at = $now } |
-        ConvertTo-Json -Compress |
-        Set-Content -Path $lockPath -Encoding utf8NoBOM
+    foreach ($lockPath in $lockPaths) {
+        @{ session = $sessionId; pid = $PID; at = $now } |
+            ConvertTo-Json -Compress |
+            Set-Content -Path $lockPath -Encoding utf8NoBOM
+    }
 
     Approve
 }

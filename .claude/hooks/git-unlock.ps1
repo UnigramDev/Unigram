@@ -14,15 +14,28 @@ try {
     $sessionId = $payload.session_id
     $cwd = if ($payload.cwd) { $payload.cwd } else { (Get-Location).Path }
 
-    $gitDir = & git -C $cwd rev-parse --absolute-git-dir 2>$null
-    if (-not $gitDir) { exit 0 }
+    # The guard locks whichever worktree a command ran in, so look in all of them.
+    $commonDir = & git -C $cwd rev-parse --path-format=absolute --git-common-dir 2>$null
+    if (-not $commonDir) { exit 0 }
 
-    $lockPath = Join-Path $gitDir 'claude-git-lock.json'
-    if (-not (Test-Path $lockPath)) { exit 0 }
+    $lockPaths = @(Join-Path $commonDir 'claude-git-lock.json')
+    $worktrees = Join-Path $commonDir 'worktrees'
+    if (Test-Path $worktrees) {
+        $lockPaths += Get-ChildItem $worktrees -Directory | ForEach-Object { Join-Path $_.FullName 'claude-git-lock.json' }
+    }
 
-    $lock = Get-Content $lockPath -Raw | ConvertFrom-Json
-    if ($lock.session -eq $sessionId) {
-        Remove-Item $lockPath -Force
+    foreach ($lockPath in $lockPaths) {
+        if (-not (Test-Path $lockPath)) { continue }
+
+        try {
+            $lock = Get-Content $lockPath -Raw | ConvertFrom-Json
+            if ($lock.session -eq $sessionId) {
+                Remove-Item $lockPath -Force
+            }
+        }
+        catch {
+            # Someone else's or unreadable: leave it to expire.
+        }
     }
 }
 catch {
