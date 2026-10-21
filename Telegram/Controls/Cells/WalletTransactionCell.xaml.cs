@@ -44,9 +44,10 @@ namespace Telegram.Controls.Cells
             var transfer = transaction.Type as TonWalletTransactionTypeTransfer;
             var onRampDeposit = transaction.Type as TonWalletTransactionTypeOnRampDeposit;
             var nftTransfer = transaction.Type as TonWalletTransactionTypeNftTransfer;
+            var giftTransfer = transaction.Type as TonWalletTransactionTypeTelegramGiftTransfer;
 
             UpdatePeer(clientService, transaction);
-            UpdateNft(clientService, nftTransfer);
+            UpdateNft(clientService, nftTransfer?.Nft ?? giftTransfer?.Nft, nftTransfer?.IsOutgoing ?? giftTransfer?.IsOutgoing ?? false);
 
             if (transfer != null)
             {
@@ -72,6 +73,10 @@ namespace Telegram.Controls.Cells
             else if (nftTransfer != null)
             {
                 Subtitle.Text = nftTransfer.IsOutgoing ? Strings.WalletOutgoingTransferNft : Strings.WalletIncomingTransferNft;
+            }
+            else if (giftTransfer != null)
+            {
+                Subtitle.Text = giftTransfer.IsOutgoing ? Strings.WalletMovedToProfile : Strings.WalletMovedFromProfile;
             }
             else
             {
@@ -99,6 +104,11 @@ namespace Telegram.Controls.Cells
             {
                 Title.Text = Strings.WalletTransactionTopUp;
                 Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.PaymentFilled);
+            }
+            else if (transaction.Type is TonWalletTransactionTypeTelegramGiftTransfer giftTransfer)
+            {
+                Title.Text = Strings.WalletTransactionTelegram;
+                Photo.Source = ProfilePictureSourceText.GetGlyph(giftTransfer.IsOutgoing ? Icons.ArrowCircleUpFilled : Icons.ArrowCircleDownFilled, giftTransfer.IsOutgoing ? 5 : 3);
             }
             else if (transaction.PeerUserId != 0 && clientService.TryGetUser(transaction.PeerUserId, out User user))
             {
@@ -232,18 +242,18 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateNft(IClientService clientService, TonWalletTransactionTypeNftTransfer transfer)
+        private void UpdateNft(IClientService clientService, TonNft nft, bool outgoing)
         {
-            if (transfer == null)
+            if (nft == null)
             {
                 CollectiblePhoto.Source = null;
                 CollectibleRoot.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            if (transfer.Nft.Image != null)
+            if (nft.Image != null)
             {
-                CollectiblePhoto.Source = new ProfilePictureSourcePhoto(clientService, transfer.Nft.Image.Photo.Id, transfer.Nft.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
+                CollectiblePhoto.Source = new ProfilePictureSourcePhoto(clientService, nft.Image.Photo.Id, nft.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
                 CollectiblePhoto.Visibility = Visibility.Visible;
             }
             else
@@ -252,11 +262,11 @@ namespace Telegram.Controls.Cells
                 CollectiblePhoto.Visibility = Visibility.Collapsed;
             }
 
-            CollectibleName.Text = transfer.Nft.Name;
+            CollectibleName.Text = nft.Name;
             CollectibleInfo.Text = Strings.WalletCollectibleGift;
             CollectibleRoot.Visibility = Visibility.Visible;
 
-            var outgoing = transfer.IsOutgoing;
+            //var outgoing = transfer.IsOutgoing;
 
             AmountInteger.Text = string.Format("{0}{1} {2}", outgoing ? "-" : "+", Locale.Declension(Strings.R.items, 1), Icons.Gift14);
             AmountFraction.Text = string.Empty;

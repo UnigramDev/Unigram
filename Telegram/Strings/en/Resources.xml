@@ -14344,6 +14344,9 @@
     <string name="WalletPreviousWalletsInfo">Wallets you used before on this device. Save their secret phrases — they\'ll be removed if you log out or reinstall the app.</string>
     <string name="WalletPreviousWalletLastUsed">{0} — last used {1}</string>
     <string name="WalletUnknown">Unknown</string>
+    <string name="WalletTransactionTelegram">Telegram</string>
+    <string name="WalletMovedFromProfile">moved from profile</string>
+    <string name="WalletMovedToProfile">moved to profile</string>
 
     <string name="Grams_few">{0} Grams</string>
     <string name="Grams_many">{0} Grams</string>

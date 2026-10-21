@@ -100,6 +100,7 @@ namespace Telegram.Views.Wallet.Popups
             var transfer = transaction.Type as TonWalletTransactionTypeTransfer;
             var onRampDeposit = transaction.Type as TonWalletTransactionTypeOnRampDeposit;
             var nftTransfer = transaction.Type as TonWalletTransactionTypeNftTransfer;
+            var giftTransfer = transaction.Type as TonWalletTransactionTypeTelegramGiftTransfer;
 
             var outgoing = (transfer != null && transfer.Amount < 0) || (nftTransfer != null && nftTransfer.IsOutgoing);
             var amountValue = transfer?.Amount ?? onRampDeposit?.Amount ?? 0;
@@ -116,6 +117,11 @@ namespace Telegram.Views.Wallet.Popups
                 Amount.Text = nftTransfer.Nft.Name;
                 Converted.Text = string.Empty;
             }
+            else if (giftTransfer != null)
+            {
+                Amount.Text = giftTransfer.Nft.Name;
+                Converted.Text = string.Empty;
+            }
             else
             {
                 // A key rotation moves nothing; what it cost is in the fee row below.
@@ -126,6 +132,13 @@ namespace Telegram.Views.Wallet.Popups
             if (nftTransfer?.Nft.Image != null)
             {
                 HeaderPhoto.Source = new ProfilePictureSourcePhoto(_clientService, nftTransfer.Nft.Image.Photo.Id, nftTransfer.Nft.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
+                HeaderPhoto.Visibility = Visibility.Visible;
+
+                HeaderAnimated.Visibility = Visibility.Collapsed;
+            }
+            else if (giftTransfer?.Nft.Image != null)
+            {
+                HeaderPhoto.Source = new ProfilePictureSourcePhoto(_clientService, giftTransfer.Nft.Image.Photo.Id, giftTransfer.Nft.Image.Photo, null, Shape: ProfilePictureShape.Superellipse);
                 HeaderPhoto.Visibility = Visibility.Visible;
 
                 HeaderAnimated.Visibility = Visibility.Collapsed;
@@ -145,7 +158,7 @@ namespace Telegram.Views.Wallet.Popups
                 HeaderAnimated.Visibility = Visibility.Visible;
             }
 
-            UpdatePeer(transaction, transfer, nftTransfer, outgoing);
+            UpdatePeer(transaction, transfer, nftTransfer, giftTransfer, outgoing);
             UpdateAddress(transaction.PeerAddress);
             UpdateComment(transfer);
 
@@ -196,9 +209,9 @@ namespace Telegram.Views.Wallet.Popups
                 : string.Empty;
         }
 
-        private void UpdatePeer(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer, TonWalletTransactionTypeNftTransfer nftTransfer, bool sent)
+        private void UpdatePeer(TonWalletTransaction transaction, TonWalletTransactionTypeTransfer transfer, TonWalletTransactionTypeNftTransfer nftTransfer, TonWalletTransactionTypeTelegramGiftTransfer giftTransfer, bool sent)
         {
-            if (transfer == null && nftTransfer == null)
+            if (transfer == null && nftTransfer == null && giftTransfer == null)
             {
                 // A key rotation has no other side, and nothing to send to.
                 PeerRow.Visibility = Visibility.Collapsed;
