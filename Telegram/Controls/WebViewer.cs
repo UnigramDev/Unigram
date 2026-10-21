@@ -533,9 +533,9 @@ postEvent: function(eventType, eventData) {
             if (JsonArray.TryParse(TryGetWebMessageAsString(args), out JsonArray message) && message.Count == 2)
             {
                 var eventName = message.GetStringAt(0);
-                var eventData = message.GetStringAt(1);
+                var eventData = message[1];
 
-                if (JsonObject.TryParse(eventData, out JsonObject data))
+                if (eventData.ValueType == JsonValueType.String && JsonObject.TryParse(eventData.GetString(), out JsonObject data))
                 {
                     OnEventReceived(eventName, data);
                 }
