@@ -245,6 +245,7 @@ namespace Telegram.Controls
         private bool _themeApplied;
         private bool _entered;
         private bool _chromeHidden;
+        private bool _smokeHidden;
 
         // Set while a button handler runs, so that a handler hiding with its own result closes
         // rather than asking for the same button again.
@@ -712,7 +713,7 @@ namespace Telegram.Controls
                 _xamlRoot.Changed -= OnXamlRootChanged;
             }
 
-            if (animate && _entered)
+            if (animate && _entered && !(_chromeHidden && _smokeHidden))
             {
                 PlayCloseAnimation();
             }
@@ -1102,6 +1103,60 @@ namespace Telegram.Controls
 
             // Invisible buttons must not take a click meant for the overlay.
             ClipRoot.IsHitTestVisible = false;
+        }
+
+        /// <summary>
+        /// Fades the card out on the given timing, for a popup whose overlay leaves last. With
+        /// <see cref="HideSmoke"/> as well, closing skips its own animation.
+        /// </summary>
+        protected void HideChrome(TimeSpan duration, CompositionEasingFunction easing)
+        {
+            if (ClipRoot == null || ShadowCaster == null)
+            {
+                return;
+            }
+
+            _chromeHidden = true;
+            ClipRoot.IsHitTestVisible = false;
+
+            var clip = ElementComposition.GetElementVisual(ClipRoot);
+
+            var opacity = clip.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(1, 0, easing);
+            opacity.Duration = AtLeastOneFrame(duration);
+
+            clip.StartAnimation("Opacity", opacity);
+            ElementComposition.GetElementVisual(ShadowCaster).StartAnimation("Opacity", opacity);
+        }
+
+        /// <summary>
+        /// Fades the smoke out linearly over <paramref name="duration"/>. With the chrome hidden
+        /// too, closing skips its own animation: what is left in the <see cref="Overlay"/> is the
+        /// popup's to take away.
+        /// </summary>
+        protected void HideSmoke(TimeSpan duration)
+        {
+            if (SmokeElement == null)
+            {
+                return;
+            }
+
+            _smokeHidden = true;
+
+            var smoke = ElementComposition.GetElementVisual(SmokeElement);
+            var compositor = smoke.Compositor;
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(1, 0, compositor.CreateLinearEasingFunction());
+            opacity.Duration = AtLeastOneFrame(duration);
+
+            smoke.StartAnimation("Opacity", opacity);
+        }
+
+        // A key frame animation throws on a duration under a millisecond.
+        private static TimeSpan AtLeastOneFrame(TimeSpan duration)
+        {
+            return duration.TotalMilliseconds < 1 ? TimeSpan.FromMilliseconds(1) : duration;
         }
 
         protected void ShowChrome()

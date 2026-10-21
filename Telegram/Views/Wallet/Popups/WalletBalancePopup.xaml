@@ -15,6 +15,7 @@
         <controls:WalletCard x:Name="Card"
                              SizeChanged="Card_SizeChanged"
                              EjectSettling="Card_EjectSettling"
+                             Inserted="Card_Inserted"
                              VerticalAlignment="Top"
                              Margin="24,24,24,0" />
     </controls:ModalPopup.Overlay>

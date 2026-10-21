@@ -105,6 +105,10 @@ namespace Telegram.Controls
             FinishEject();
             RestoreSlotText();
 
+            // Put back in its slot, it was left hidden.
+            _ejectSlot = null;
+            LayoutRoot.Opacity = 1;
+
             // Shown again, it starts at rest rather than wherever the pointer left it.
             _hovering = false;
             _pitch = _yaw = _targetPitch = _targetYaw = 0;
@@ -1045,22 +1049,20 @@ namespace Telegram.Controls
             {
                 StepEject((float)dt);
             }
-            else
-            {
-                // A released card lets go of its tilt at 4 per second, and everything chases its
-                // target at 8, the lift at 12.
-                if (!_hovering)
-                {
-                    var decay = Math.Exp(-dt * 4);
-                    _targetPitch *= decay;
-                    _targetYaw *= decay;
-                }
 
-                var smoothing = 1 - Math.Exp(-dt * 8);
-                _pitch += (_targetPitch - _pitch) * smoothing;
-                _yaw += (_targetYaw - _yaw) * smoothing;
-                _lift += ((_hovering ? LiftScale : 1) - _lift) * (1 - Math.Exp(-dt * 12));
+            // A released card lets go of its tilt at 4 per second, and everything chases its
+            // target at 8, the lift at 12. During an eject too, for a card put back while hovered.
+            if (!_hovering)
+            {
+                var decay = Math.Exp(-dt * 4);
+                _targetPitch *= decay;
+                _targetYaw *= decay;
             }
+
+            var smoothing = 1 - Math.Exp(-dt * 8);
+            _pitch += (_targetPitch - _pitch) * smoothing;
+            _yaw += (_targetYaw - _yaw) * smoothing;
+            _lift += ((_hovering ? LiftScale : 1) - _lift) * (1 - Math.Exp(-dt * 12));
 
             if (_revealElapsed >= 0)
             {
@@ -1134,6 +1136,10 @@ namespace Telegram.Controls
         // out of a wider slot and flies further.
         private const float EjectSeconds = 1.0f;
 
+        // Putting it back runs the same curves backwards, in the beta's own 380 ms: unlike the
+        // way out, not lengthened for the desktop, since nobody waits for something closing.
+        private const float InsertSeconds = 0.38f;
+
         // The tilt about the slot line while the card comes out, in degrees: what makes it a
         // trapezoid, the part already out nearer the eye.
         private const double EjectTilt = 35;
@@ -1157,6 +1163,7 @@ namespace Telegram.Controls
         private float _ejectElapsed = -1;
         private bool _ejectStarted;
         private bool _ejectSettling;
+        private bool _inserting;
 
         // In Stage's coordinates: the slot's middle, the window's top edge, which the slot's edge
         // rises to, and where the card's centre rests.
@@ -1180,6 +1187,11 @@ namespace Telegram.Controls
         public event EventHandler EjectSettling;
 
         /// <summary>
+        /// The card is back in the slot after <see cref="Insert"/>, or was never out of it.
+        /// </summary>
+        public event EventHandler Inserted;
+
+        /// <summary>
         /// Plays the card coming out of <paramref name="slot"/> as a cash machine hands one back:
         /// on its side and chip end up, slid down out of it tilted towards the eye, then turned and
         /// sprung to where it rests. Can be called before the card is shown; it starts once the
@@ -1200,6 +1212,37 @@ namespace Telegram.Controls
             LayoutRoot.Opacity = 0;
 
             UpdateRendering();
+        }
+
+        /// <summary>
+        /// Puts the card back into the slot <see cref="Eject"/> took it out of: the same motion
+        /// played backwards, from wherever it has got to. Once in, it stays hidden.
+        /// </summary>
+        /// <returns>How long it will take, zero when there is nothing to put back.</returns>
+        public TimeSpan Insert()
+        {
+            // Nothing seen to put back.
+            if (_ejectSlot == null || (_ejectElapsed >= 0 && !_ejectStarted))
+            {
+                FinishEject();
+                Inserted?.Invoke(this, EventArgs.Empty);
+                return TimeSpan.Zero;
+            }
+
+            // Measured again: the window can have changed since the card came out.
+            if (_ejectElapsed < 0)
+            {
+                _ejectElapsed = EjectSeconds;
+                _ejectStarted = false;
+            }
+
+            _inserting = true;
+            _ejectSettling = true;
+            _hovering = false;
+
+            UpdateRendering();
+
+            return TimeSpan.FromSeconds(_ejectElapsed / EjectSeconds * InsertSeconds);
         }
 
         private bool StartEject()
@@ -1269,7 +1312,8 @@ namespace Telegram.Controls
 
             LayoutRoot.Opacity = 1;
 
-            _ejectElapsed += dt;
+            // Clamped going back: below zero is the sentinel for not ejecting at all.
+            _ejectElapsed = _inserting ? Math.Max(_ejectElapsed - dt * (EjectSeconds / InsertSeconds), 0) : _ejectElapsed + dt;
 
             var progress = Math.Min(_ejectElapsed / EjectSeconds, 1);
             var slide = CubicBezierInterpolator.EASE_OUT.getInterpolation(Math.Clamp(progress / 0.4f, 0, 1));
@@ -1326,7 +1370,7 @@ namespace Telegram.Controls
                 EjectSettling?.Invoke(this, EventArgs.Empty);
             }
 
-            if (progress >= 1)
+            if (_inserting ? _ejectElapsed <= 0 : progress >= 1)
             {
                 FinishEject();
             }
@@ -1358,8 +1402,10 @@ namespace Telegram.Controls
                 return;
             }
 
+            var inserted = _inserting;
+
             _ejectElapsed = -1;
-            _ejectSlot = null;
+            _inserting = false;
             _slotGeometry = null;
             _ejectTranslation = Vector2.Zero;
             _ejectRotation = 0;
@@ -1371,7 +1417,15 @@ namespace Telegram.Controls
             Perspective.OffsetY = 0;
 
             ElementComposition.GetElementVisual(Stage).Clip = null;
-            LayoutRoot.Opacity = 1;
+
+            // Back in, it is behind the slot's edge, which goes with the clip.
+            LayoutRoot.Opacity = inserted && _ejectStarted ? 0 : 1;
+
+            if (inserted)
+            {
+                RestoreSlotText();
+                Inserted?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         #endregion
