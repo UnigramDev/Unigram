@@ -640,7 +640,7 @@
     <string name="EditAdminTransferAlertTitle">Security Check</string>
     <string name="EditAdminTransferAlertText">You can transfer this group to **{0}** only if you:</string>
     <string name="EditChannelAdminTransferAlertText">You can transfer this channel to **{0}** only if you have:</string>
-    <string name="WithdrawChannelAlertText">You can withdraw only if you have:</string>
+    <string name="WithdrawChannelAlertText">You can collect rewards only if you have:</string>
 
     <string name="EditAdminTransferAlertText1">Enabled **Two-Step Verification** more than **7 days** ago.</string>
     <string name="EditAdminTransferAlertText2">Logged in on this device more than **24 hours** ago.</string>
@@ -2171,7 +2171,7 @@
 
 
     <string name="BlockedUsers">Blocked Users</string>
-    <string name="BlockedUsersInfo">Blocked users can't send you messages or add you to groups. They will not see your profile photos, stories, online and last seen status.</string>
+    <string name="BlockedUsersInfo">Blocked users can\'t send you messages or add you to groups. They will not see your profile photos, stories, online and last seen status.</string>
 
 
 
@@ -3657,7 +3657,7 @@
 
 
 
-    <string name="EmailNotAllowed">This email domain is not allowed.</string>
+    <string name="EmailNotAllowed">This email can\'t be used.</string>
 
     <string name="EmailAddressInvalid">Invalid email address.</string>
     <string name="EmailLogin">Login Email</string>
@@ -4956,8 +4956,8 @@
 
     <string name="Dismiss">Dismiss</string>
 
-    <string name="HasBeenAddedToGroup">**{0}** added to the group</string>
-    <string name="HasBeenAddedToChannel">**{0}** added to the channel</string>
+    <string name="HasBeenAddedToGroup">**{0}** has been added to the group</string>
+    <string name="HasBeenAddedToChannel">**{0}** has been added to the channel</string>
 
 
 
@@ -5627,7 +5627,7 @@
 
 
 
-    <string name="AnonymousNumber">Anonymous Number</string>
+    <string name="AnonymousNumber">Collectible Number</string>
     <string name="AnonymousNumberNotice">This number is not tied to a SIM card and was acquired on *Fragment*.</string>
     <string name="AutoDeleteMessages">Auto-Delete Messages</string>
     <string name="SetCustomTime">Set Custom Time</string>
@@ -5871,7 +5871,7 @@
     <string name="LiteOptionsAutoplayReactions">Autoplay in reaction menu</string>
     <string name="LiteOptionsStickers">Animated Stickers</string>
     <string name="LiteOptionsEmoji">Animated Emoji</string>
-    <string name="LiteOptionsChat">Animations in Chats</string>
+    <string name="LiteOptionsChat">Effects in Chats</string>
     <string name="LiteOptionsBackground">Wallpaper rotation</string>
     <string name="LiteOptionsTopics">Side menu in topics</string>
     <string name="LiteOptionsSpoiler">Animated spoiler effect</string>
@@ -7519,7 +7519,7 @@
     <string name="MonetizationTransactionPending">Pending</string>
     <string name="MonetizationTransactionNotCompleted">Not Completed</string>
     <string name="MonetizationTransactionDetailWithdraw">Collecting rewards</string>
-    <string name="MonetizationTransactionDetailWithdrawButton">View in Blockchain Explorer</string>
+    <string name="MonetizationTransactionDetailWithdrawButton">View in Explorer</string>
     <string name="MonetizationTransactionDetailProceed">Rewards from ads displayed in</string>
     <string name="MonetizationTransactionDetailRefund">Refunded back</string>
     <string name="MonetizationGraphImpressions">Ad impressions</string>
@@ -11185,7 +11185,7 @@
     <string name="MonetizationNoCPM">No Ads</string>
     <string name="MonetizationNoCPMValue">No ads in the channel</string>
     <string name="MonetizationTransferButton">Transfer {0}</string>
-    <string name="MonetizationTransferButtonLoading">Sending {0}...</string>
+    <string name="MonetizationTransferButtonLoading">Sending {0}…</string>
     <string name="MonetizationTransferMessage1">Check the address of the recipient:</string>
     <string name="MonetizationTransferMessage2">This action can not be undone. If the address above is incorrect you will lose your Grams.</string>
     <string name="MonetizationTransferTitle">Transfer {0}</string>
@@ -11523,7 +11523,7 @@
     <string name="AdHidden">You will no longer see ads from Telegram.</string>
     <string name="RevenueSharingAdsAlertSubtitle">Telegram Ads are very different from ads on other platforms. Ads such as this one:</string>
     <string name="RevenueSharingAdsInfo1Title">Respect Your Privacy</string>
-    <string name="RevenueSharingAdsInfo1Subtitle">"We don\'t use the contents of your private chats or contacts lists for ad targeting or other commercial purposes. "</string>
+    <string name="RevenueSharingAdsInfo1Subtitle">We don\'t use the contents of your private chats or contacts lists for ad targeting or other commercial purposes.</string>
     <string name="RevenueSharingAdsInfo2Title">Help the Channel Creator</string>
     <string name="RevenueSharingAdsInfo2Subtitle">50% of the revenue from Telegram Ads goes to the owner of the channel where they are displayed.</string>
     <string name="RevenueSharingAdsInfo3Title">Can Be Removed</string>
@@ -13191,7 +13191,7 @@
     <string name="PasskeyTopInfo">Manage your passkey, stored safely in the cloud service you choose.</string>
     <string name="PasskeyCreatedOn">Created {0}</string>
     <string name="PasskeyLastUsedOn">Last used {0}</string>
-    <string name="PasskeyAdd">Add Passkey</string>
+    <string name="PasskeyAdd">Create Passkey</string>
     <string name="PasskeyInfo">Your passkey is stored securely in your password manager. **Learn more &gt;**</string>
     <string name="PasskeyFeatureTitle">Protect your account</string>
     <string name="PasskeyFeatureSubtitle">Log in safely and keep your account secure.</string>
@@ -13443,7 +13443,7 @@
     <string name="ReportReactionAndBan">Ban and Report</string>
     <string name="ReportReaction">Report reaction</string>
     <string name="ReportAlertReaction">Are you sure you want to report reactions from this user?</string>
-    <string name="ReportChatSent">Report sent</string>
+    <string name="ReportChatSent">Report sent.</string>
     <string name="DeleteReactionMenu">Delete Reaction</string>
     <string name="DeleteAlertReaction">Are you sure you want to delete the reaction from this user?</string>
     <string name="DeleteReaction">Delete Reaction</string>
@@ -13660,7 +13660,7 @@
 
     <string name="ActionManagedBotCreated">You created un1 bot for un2 to manage</string>
     <string name="CreateManagedBotTitle">Create Bot</string>
-    <string name="CreateManagedBotText">**{0}** would like you to create\nand manage a chatbot on your behalf.</string>
+    <string name="CreateManagedBotText">**{0}** would like to create\nand manage a chatbot on your behalf.</string>
     <string name="CreateManagedBotName">Bot Name</string>
     <string name="CreateManagedBotNameInfo">Tap to edit bot name.</string>
     <string name="CreateManagedBotUsername">Username</string>
@@ -13733,12 +13733,12 @@
     <string name="GuardBotJoinRequestDeclined">Your request to join **{0}** has been declined</string>
     <string name="GuardBotJoinRequestQueued">Your request to join **{0}** has been sent to the admins</string>
 
-    <string name="ChannelSettingsJoinRequestInfo2">Admin must approve anyone who wants to join the channel.</string>
-    <string name="ChannelSettingsJoinRequestInfoManagedBy">Admin must approve anyone who wants to join the channel. Managed by **{0}**</string>
-    <string name="GroupPrivateSettingsJoinRequestInfo2">Admin must approve anyone who wants to join the group.</string>
-    <string name="GroupPrivateSettingsJoinRequestInfoManagedBy">Admin must approve anyone who wants to join the group. Managed by **{0}**</string>
-    <string name="GroupPublicSettingsJoinRequestInfo2">Admin must approve anyone who wants to send a message in the group.</string>
-    <string name="GroupPublicSettingsJoinRequestInfoManagedBy">Admin must approve anyone who wants to send a message in the group. Managed by **{0}**</string>
+    <string name="ChannelSettingsJoinRequestInfo2">An admin must approve users who want to join the channel.</string>
+    <string name="ChannelSettingsJoinRequestInfoManagedBy">An admin must approve users who want to join the channel. Managed by **{0}**</string>
+    <string name="GroupPrivateSettingsJoinRequestInfo2">An admin must approve users who want to join the group.</string>
+    <string name="GroupPrivateSettingsJoinRequestInfoManagedBy">An admin must approve users who want to join the group. Managed by **{0}**</string>
+    <string name="GroupPublicSettingsJoinRequestInfo2">An admin must approve users who want to send messages in the group.</string>
+    <string name="GroupPublicSettingsJoinRequestInfoManagedBy">An admin must approve users who want to send messages in the group. Managed by **{0}**</string>
     <string name="EditAdminProcessJoinRequests">Process Join Requests</string>
     <string name="EditAdminProcessJoinRequestsInfo">Allow this bot to approve new members using its own interfaces, such as captchas.</string>
     <string name="ApproveNewMembersApplyToLinksApply">Apply</string>
@@ -13781,7 +13781,7 @@
     <string name="ArticleListChecklist">Checklist</string>
     <string name="ArticleListBulleted">Bulleted</string>
     <string name="ArticleListNumbered">Numbered</string>
-    <string name="ArticleListTodo">To-Do</string>
+    <string name="ArticleListTodo">Checklist</string>
     <string name="ArticleSaveDraftTitle">Save this draft?</string>
     <string name="ArticleDeleteDraft">Delete draft</string>
     <string name="ArticleDeleteDraftTitle">Delete this draft?</string>
@@ -13842,7 +13842,7 @@
     <string name="ArticleLimitTableColumns">A table can have up to {0} columns.</string>
     <string name="RichEditorButtonText">Button Text</string>
     <string name="RichEditorButtonURL">Button URL</string>
-    <string name="RichEditorButtonCopyText">Button Copy Text</string>
+    <string name="RichEditorButtonCopyText">Text to copy</string>
     <string name="RichEditorButton">Button</string>
     <string name="RichEditorAddButton">Add Button</string>
     <string name="RichEditorEditButton">Edit Button</string>
@@ -13874,9 +13874,8 @@
     <string name="WelcomeMessageEmptySubtitle">Automatically greet new\nmembers when they join.</string>
     <string name="WelcomeMessageEmptyTitle">Create a Welcome\nMessage</string>
     <string name="WelcomeMessageEnter">Add a message</string>
-    <string name="WelcomeMessageHint_one">New members will see this message\nwhen they join</string>
-    <string name="WelcomeMessageHint_other">New members will see these messages\nwhen they join</string>
-    <string name="WelcomeMessageHint2">Tap it to delete it</string>
+    <string name="WelcomeMessageHint">New members will see these messages when they join</string>
+    <string name="WelcomeMessageHint2">Click it to delete</string>
     <string name="WelcomeMessageOff">Off</string>
     <string name="WelcomeMessagesLimit_one">Limit of **{0}** message reached.</string>
     <string name="WelcomeMessagesLimit_other">Limit of **{0}** messages reached.</string>
@@ -13944,19 +13943,15 @@
   <string name="ProfilePollsCount_two">{0} polls</string>
   <string name="ProfilePollsCount_few">{0} polls</string>
   <string name="ProfilePollsCount_many">{0} polls</string>
-  <string name="WelcomeMessageHint_zero">New members will see these messages\nwhen they join</string>
-  <string name="WelcomeMessageHint_two">New members will see these messages\nwhen they join</string>
-  <string name="WelcomeMessageHint_few">New members will see these messages\nwhen they join</string>
-  <string name="WelcomeMessageHint_many">New members will see these messages\nwhen they join</string>
   <string name="WelcomeMessagesLimit_zero">Limit of **{0}** messages reached.</string>
   <string name="WelcomeMessagesLimit_two">Limit of **{0}** messages reached.</string>
   <string name="WelcomeMessagesLimit_few">Limit of **{0}** messages reached.</string>
   <string name="WelcomeMessagesLimit_many">Limit of **{0}** messages reached.</string>
 
-    <string name="FilterChatAddedToExisting">**{0}** added to **{1}**</string>
-    <string name="FilterChatRemovedFrom">**{0}** removed from **{1}**</string>
-    <string name="FilterUserAddedToExisting">**{0}** added to **{1}**</string>
-    <string name="FilterUserRemovedFrom">**{0}** removed from **{1}**</string>
+    <string name="FilterChatAddedToExisting">**{0}** added to **{1}**.</string>
+    <string name="FilterChatRemovedFrom">**{0}** removed from **{1}**.</string>
+    <string name="FilterUserAddedToExisting">**{0}** added to **{1}**.</string>
+    <string name="FilterUserRemovedFrom">**{0}** removed from **{1}**.</string>
     <string name="PasscodeWindowsHello">Telegram wants to unlock with Windows Hello.</string>
 
     <string name="AccDescrForwardOptions">More forward options</string>
@@ -13972,7 +13967,7 @@
     <string name="PremiumPreviewAIEditor">AI Tools</string>
     <string name="PremiumPreviewAIEditorDescription">Transform your messages and entire chats in your preferred style and language.</string>
     <string name="PremiumPreviewSharingDisable">Disable Sharing</string>
-    <string name="PremiumPreviewSharingDisableDescription">Disable screenshots, saving and forwarding messages in private chats.</string>
+    <string name="PremiumPreviewSharingDisableDescription">Prevent forwarding, saving and copying content in private chats.</string>
 
     <string name="StarsTransactionAds">Ads</string>
     <string name="StarsTransactionPostsSearch">Public Post Search</string>
@@ -14025,11 +14020,11 @@
     <string name="TopUpViaFragmentInfo">You can top-up your Gram balance via Fragment.</string>
     <string name="StarsTransactionTONFromFragment">Fragment</string>
     <string name="StarsTransactionTONDate">Gram Transaction Date</string>
-    <string name="StarsTransactionViewInBlockchainExplorer">View in Blockchain Explorer</string>
+    <string name="StarsTransactionViewInBlockchainExplorer">View in Explorer</string>
     
     <string name="LocalMiscellaneousCache">Miscellaneous</string>
 
-    <string name="StickerOrEmojiSearchResult">Search Result</string>
+    <string name="StickerOrEmojiSearchResult">Search Results</string>
     <string name="StickerOrEmojiGlobalSearchResult">Global Search Result</string>
     <string name="NoStickersFound">No stickers found</string>
     <string name="NoEmojiFound">No emoji found</string>
@@ -14116,7 +14111,7 @@
     <string name="SecretChatTimerYears">y</string>
 
     <string name="WalletAttachMoney">Money</string>
-    <string name="WalletTitle">Wallet</string>
+    <string name="WalletTitle">Money</string>
     <string name="WalletWaltFunds">You also have funds in Walt</string>
     <string name="WalletGramEarningsBalance">You also have {0} in Gram Earnings</string>
     <string name="WalletOldWalletsBalance">You also have {0} in old wallets</string>
@@ -14125,15 +14120,15 @@
     <string name="WalletTransactions">Transactions</string>
     <string name="WalletCollectibles">Collectibles</string>
     <string name="GramCurrency">GRAM</string>
-    <string name="WalletSendInstantly">Send Money Instantly</string>
+    <string name="WalletSendInstantly">Instant Transfers</string>
     <string name="WalletSendInstantlyInfo">Send Grams in any chat, just like sharing a photo.</string>
-    <string name="WalletNoFees">No Fees</string>
+    <string name="WalletNoFees">Zero Fees</string>
     <string name="WalletNoFeesInfo">The first 5 transfers each day are free. The&#160;rest cost almost nothing.</string>
     <string name="WalletBlockchainVerified">Blockchain Verified</string>
     <string name="WalletBlockchainVerifiedInfo">All transactions are recorded and verifiable on a public ledger.</string>
     <string name="WalletCurrency">Currency</string>
     <string name="WalletKeysAndBackup">Keys &amp; Backup</string>
-    <string name="WalletWhatIsWallet">What is Wallet?</string>
+    <string name="WalletWhatIsWallet">What is Money?</string>
     <string name="WalletOutgoingTransfer">Outgoing transfer</string>
     <string name="WalletOutgoingTransferNft">Outgoing collectible</string>
     <string name="WalletIncomingTransfer">Incoming transfer</string>
@@ -14147,7 +14142,7 @@
     <string name="WalletHowItWorks">How It Works</string>
     <string name="WalletHowItWorksInfo">Only you control your funds —\nno one else has access.</string>
     <string name="WalletGotIt">Got it</string>
-    <string name="WalletTermsOfService">By using Wallet you agree to **Terms of Service**.</string>
+    <string name="WalletTermsOfService">By using this service you agree to its **Terms**.</string>
 
     <string name="WalletCopyAddress">Copy address</string>
     <string name="WalletAddressCopiedShort">Address copied</string>
@@ -14183,7 +14178,7 @@
     <string name="WalletBackupEnabledInfo">Your keys are now stored encrypted across Telegram\'s datacenters.</string>
     <string name="WalletBackupEnabledDescription">Your encrypted key backup is split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
     <string name="WalletBackupDisabled">Backup Disabled</string>
-    <string name="WalletBackupDisabledInfo">Your recovery phrase is now the only way to restore your wallet</string>
+    <string name="WalletBackupDisabledInfo">Your Secret Phrase is now the only way to restore your wallet</string>
     <string name="WalletBackupDisabledDescription">Your encrypted key backup will be split into three parts and stored across three continents.\n\nIt can only be reassembled on your devices, so no one — not even Telegram — can access your key.</string>
     <string name="WalletDisableBackupConfirmInfo">Your distributed encrypted backup will be deleted. Your wallet will switch to the new secret phrase. This secret phrase will be the only way to recover this wallet.</string>
     <string name="WalletDisableBackupTitle">Disable Backup?</string>
@@ -14191,15 +14186,15 @@
     <string name="WalletUpdateSecretPhrase">Update Secret Phrase</string>
     <string name="WalletUpdateSecretPhraseInfo">You\'ll get a new phrase to write down. Address and balance stay the same.</string>
     <string name="WalletUpdateSecretPhraseInfoWithFee">You\'ll get a new phrase to write down. Address and balance stay the same.\n\nNetwork fee: {0} (~{1}).</string>
-    <string name="WalletUpdateSecretPhraseInsufficientFunds">You need {0} (~{1}) to update your recovery phrase.</string>
+    <string name="WalletUpdateSecretPhraseInsufficientFunds">You need {0} (~{1}) to update your Secret Phrase.</string>
     <string name="WalletDisable">Disable</string>
 
-    <string name="WalletRecoveryPhraseLearnTitle">Recovery Phrase</string>
+    <string name="WalletRecoveryPhraseLearnTitle">Secret Phrase</string>
     <string name="WalletRecoveryPhraseLearnInfo">Your Secret Phrase is the key to&#160;back up your wallet. Keep it secret and&#160;secure at all times.</string>
-    <string name="WalletRecoveryPhraseNeverShare">**Never share **your Secret Phrase with anyone.</string>
+    <string name="WalletRecoveryPhraseNeverShare">**Never share** your Secret Phrase with anyone.</string>
     <string name="WalletRecoveryPhraseFundsWarning">If someone has your Secret Phrase they **can steal your funds**.</string>
     <string name="WalletRecoveryPhraseSupportWarning">Telegram Support **will never ask you** for your Secret Phrase.</string>
-    <string name="WalletRecoveryPhraseLearnButton">Show Recovery Phrase</string>
+    <string name="WalletRecoveryPhraseLearnButton">Show Secret Phrase</string>
     <string name="WalletRecoveryPhraseTransferInfo">You can transfer your wallet to another device by copying your 12-word secret phrase.</string>
 
     <string name="WalletViewInExplorer">View in Explorer</string>
@@ -14212,7 +14207,7 @@
     <string name="WalletFeePaidByTelegram">Free (paid by Telegram)</string>
     <string name="WalletNetworkFee">Network fee</string>
     <string name="WalletNetworkFeeInfo">Every transfer costs a small network fee (**~{0}**). Telegram covers your first **5** transfers each day.</string>
-    <string name="WalletOpenMyWallet">Open My Wallet</string>
+    <string name="WalletOpenMyWallet">Open My Money</string>
 
     <string name="WalletSendMoney">Send Money</string>
     <string name="WalletActionReceivedGrams">un1 sent you **{0}**</string>
@@ -14233,27 +14228,27 @@
     <string name="WalletBalanceAmount">Balance: {0}</string>
     <string name="WalletPublicBalanceNote">Your balance is public due to\nblockchain transparency.</string>
     <string name="WalletProfileOwnsGrams">{0} owns {1} on the TON Blockchain.</string>
-    <string name="WalletProfileOwnsNoGrams">{0} doesn\'t own any Grams yet.</string>
+    <string name="WalletProfileOwnsNoGrams">{0} doesn\'t have any Grams yet.</string>
     <string name="WalletNetworkFeeAmount">Network fee: {0}</string>
     <string name="WalletSendGrams">Send Grams</string>
     <string name="WalletSendAmount">Send {0}</string>
 
     <string name="WalletTonConnectRequestAppDeclined">{0}\'s transaction request declined</string>
     <string name="WalletTonConnectRequestAppExpired">{0}\'s transaction request expired</string>
-    <string name="WalletTonConnectRequestAppPending">{0} requests a transaction. Tap to review.</string>
+    <string name="WalletTonConnectRequestAppPending">{0} requested a transaction. Tap to review.</string>
     <string name="WalletTonConnectRequestAppProcessed">{0}\'s transaction request processed</string>
     <string name="WalletTonConnectRequestDeclined">App transaction request declined</string>
     <string name="WalletTonConnectRequestExpired">App transaction request expired</string>
-    <string name="WalletTonConnectRequestPending">Connected app requests a transaction. Tap to review.</string>
+    <string name="WalletTonConnectRequestPending">Connected app requested a transaction. Tap to review.</string>
     <string name="WalletTonConnectRequestProcessed">App transaction request processed</string>
 
     <string name="WalletProtectTitle">Protect Your Wallet</string>
-    <string name="WalletProtectInfo">Choose waht Telegram asks you for before spending from your wallet.</string>
+    <string name="WalletProtectInfo">Choose what Telegram asks you for before spending from your wallet.</string>
     <string name="WalletProtectWindowsHello">Unlock with Windows Hello</string>
     <string name="WalletProtectWindowsHelloInfo">Confirm all spending with your Windows PIN.</string>
     <string name="WalletProtectPasscodeLock">Ask for local passcode</string>
     <string name="WalletProtectPasscodeLockInfo">Confirm all spending with your Telegram passcode.</string>
-    <string name="WalletProtectDontAsk">Don't ask</string>
+    <string name="WalletProtectDontAsk">Don\'t ask</string>
     <string name="WalletProtectDontAskInfo">Anyone with access to your Telegram can spend your funds.</string>
     <string name="WalletProtectOffTitle">Passcode Is Being Turned Off</string>
     <string name="WalletProtectOffInfo">Your wallet is protected by this passcode. Choose what should protect it instead.</string>
@@ -14269,14 +14264,14 @@
     <string name="WalletDone">Done</string>
     <string name="WalletContinue">Continue</string>
     <string name="WalletTestPhrase">Test Time</string>
-    <string name="WalletTestPhraseInfo">Make sure you wrote your recovery phrase down correctly. Enter words **{0}**, **{1}** and **{2}**.</string>
+    <string name="WalletTestPhraseInfo">Make sure you wrote your Secret Phrase down correctly. Enter words **{0}**, **{1}** and **{2}**.</string>
     <string name="WalletWrongSecretPhraseInfo">The words you entered don\'t match the wallet.</string>
     <string name="WalletOutdatedSecretPhraseInfo">These words are an old secret phrase for this wallet.\n\nPlease enter the new phrase you got when you last disabled the backup.</string>
-    <string name="WalletCancelDisableBackupTitle">Cancel Disabling Backup?</string>
+    <string name="WalletCancelDisableBackupTitle">Keep Backup?</string>
     <string name="WalletCancelDisableBackupInfo">Your secret phrase will not be updated.</string>
     <string name="WalletCancelDisabling">Cancel Disabling</string>
     <string name="WalletNewSecretPhrase">New Secret Phrase</string>
-    <string name="WalletNewSecretPhraseInfo">A new recovery phrase for your wallet has been generated. Write it down and keep it secret.</string>
+    <string name="WalletNewSecretPhraseInfo">A new Secret Phrase for your wallet has been generated. Write it down and keep it secret.</string>
     <string name="WalletCollectible">Collectible</string>
     <string name="WalletCollectibleModelBackdrop">{0} on {1}</string>
 
@@ -14286,7 +14281,7 @@
     <string name="WalletTransferStatusSent">sent</string>
 
     <string name="WalletImport">Import Wallet</string>
-    <string name="WalletImportPhraseInfo">Enter the {0}-word recovery phrase from another wallet you own.</string>
+    <string name="WalletImportPhraseInfo">Enter the {0}-word Secret Phrase from another wallet you own.</string>
     <string name="WalletPhraseWords_one">{0} word</string>
     <string name="WalletPhraseWords_other">{0} words</string>
     <string name="WalletPhraseWords_few">{0} words</string>
@@ -14297,7 +14292,7 @@
     <string name="WalletAddressOrName">Address or name</string>
     <string name="WalletSearchNoResults">There were no results for \"{0}\".\nTry another name or address.</string>
     <string name="WalletConnect">Connect</string>
-    <string name="WalletConnectToApp">Connect wallet to {0}</string>
+    <string name="WalletConnectToApp">Connect Money to {0}</string>
     <string name="WalletConnectToDApp">Connect wallet to dApp</string>
     <string name="WalletConnectInfo">The app will be able to view your\nTON address, balance and activity.</string>
     <string name="WalletConnectProofInfo">The app will be able to view your TON address, balance and activity, and request a signature to sign you in. This is not a transfer.</string>
@@ -14337,7 +14332,7 @@
     <string name="WalletAppRequestsTransfer">{0} requests a transfer</string>
     <string name="WalletImported">Wallet Imported</string>
     <string name="WalletImportedInfo">Your wallet was restored from your secret phrase.</string>
-    <string name="WalletInvalidRecoveryPhrase">Invalid Recovery Phrase</string>
+    <string name="WalletInvalidRecoveryPhrase">Invalid Secret Phrase</string>
     <string name="WalletInvalidRecoveryPhraseInfo">Check the word order.\n\nOnly a secret phrase created in Telegram can be imported here.</string>
     <string name="WalletWrongSecretPhrase">Wrong Secret Phrase</string>
     <string name="WalletPreviousWallets">Previous wallets</string>
@@ -14363,7 +14358,7 @@
 
     <string name="GramEarnings">Gram Earnings</string>
     <string name="GramEarningsHint">You can withdraw your Grams using Fragment.</string>
-    <string name="GramEarningsText">Your Gram from gifts,\nads and Fragment</string>
+    <string name="GramEarningsText">Your Gram from gifts,\nads and Fragment.</string>
     <string name="GramEarningsTitle">Gram Earnings</string>
 
     <string name="ArticleDeleteDraft">Delete draft</string>
@@ -14375,7 +14370,7 @@
 
     <string name="QrProfileColors">Profile colors</string>
     <string name="QrPremiumEmojiToast">Subscribe to Premium to use all emoji.</string>
-    <string name="QrPremiumGiftsToast">Subscribe to Premium to use\ngifts in your QR code.</string>
+    <string name="QrPremiumGiftsToast">Get Premium to put\ngifts on your QR code.</string>
     <string name="QrEmojiPresets">Presets</string>
     <string name="QrPremiumSubscribe">Subscribe</string>
     <string name="QrNoGiftsTitle">No gifts yet</string>
@@ -14398,7 +14393,7 @@
     <string name="QrNoPaidToastExpired">Code expired, fee is back</string>
     <string name="NoPaidMessagesTokenUsed">un1 used your QR code and can message you for free</string>
     <string name="NoPaidMessagesTokenImported">You can now message **{0}** for free.</string>
-    <string name="NoPaidMessagesTokenUsedOut">You used the QR code of un1 and can message them for free</string>
+    <string name="NoPaidMessagesTokenUsedOut">You used un1\'s QR code and can message them for free</string>
     <string name="Gift2TransferToMyWallet">Transfer to My Wallet</string>
     <string name="Gift2MoveToMyWallet">Move to My Wallet</string>
     <string name="Gift2MoveToMyWalletText">Transfer this gift to your blockchain wallet?</string>
@@ -14415,10 +14410,10 @@
     <string name="Gift2ExportTONUnlocksAlertText_few">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
     <string name="Gift2ExportTONUnlocksAlertText_many">In {0} days, you\'ll be able to send this collectible to any TON blockchain address outside Telegram for sale or auction.</string>
     <string name="Gift2ExportTONFragmentTitle">Manage with Fragment</string>
-    <string name="Gift2ExportTONFragmentText">You can use Fragment, a third-party service, to transfer **{0}** to your TON account. After that, you can manage it as an NFT with any TON wallet outside Telegram.\n\nYou can also move such NFTs back to your Telegram account via Fragment.</string>
+    <string name="Gift2ExportTONFragmentText">You can use Fragment, a third-party service, to transfer **{0}** to the TON blockchain. After that, you can manage it as an NFT with any TON wallet application.\n\nYou can also move such NFTs back to your Telegram account via Fragment.</string>
     <string name="Gift2TransferToTONAlertTitle">Security Check</string>
     <string name="Gift2TransferToTONAlertText">You can transfer your gift to TON if you have:</string>
-    <string name="Gift2TransferToTONAlertText1">Enabled **2-Step Verification** more than **7 days** ago.</string>
+    <string name="Gift2TransferToTONAlertText1">Enabled **Two-Step Verification** more than **7 days** ago.</string>
     <string name="Gift2TransferToTONAlertText2">Logged in on this device more than **24 hours** ago.</string>
     <string name="Gift2TransferToTONAlertText3">Please come back later.</string>
     <string name="PleaseEnterCurrentPasswordGiftTransfer">Please enter your password to send **{0}** to Fragment.</string>
@@ -14434,4 +14429,42 @@
         the Android string once it ships, and remove this block.-->
     <string name="WalletCardFull">You can add up to {0} collectibles to your card.</string>
 
+
+  <!-- new from translations.telegram.org -->
+
+  <string name="ShortcutsImportIgnored_zero">{0} entries ignored</string>
+  <string name="ShortcutsImportIgnored_two">{0} entries ignored</string>
+  <string name="ShortcutsImportIgnored_few">{0} entries ignored</string>
+  <string name="ShortcutsImportIgnored_many">{0} entries ignored</string>
+  <string name="ShortcutsImported_zero">{0} shortcuts imported</string>
+  <string name="ShortcutsImported_two">{0} shortcuts imported</string>
+  <string name="ShortcutsImported_few">{0} shortcuts imported</string>
+  <string name="ShortcutsImported_many">{0} shortcuts imported</string>
+  <string name="ShortcutsResults_zero">{0} shortcuts</string>
+  <string name="ShortcutsResults_two">{0} shortcuts</string>
+  <string name="ShortcutsResults_few">{0} shortcuts</string>
+  <string name="ShortcutsResults_many">{0} shortcuts</string>
+  <string name="StoryKeepInfo_zero">Keep this story on your page even after it expires in {0} hours. Privacy settings will apply.</string>
+  <string name="StoryKeepInfo_two">Keep this story on your page even after it expires in {0} hours. Privacy settings will apply.</string>
+  <string name="StoryKeepInfo_few">Keep this story on your page even after it expires in {0} hours. Privacy settings will apply.</string>
+  <string name="StoryKeepInfo_many">Keep this story on your page even after it expires in {0} hours. Privacy settings will apply.</string>
+  <string name="StoryPeriodPremium_zero">Subscribe to **Telegram Premium** to make your stories disappear after {0} hours.</string>
+  <string name="StoryPeriodPremium_two">Subscribe to **Telegram Premium** to make your stories disappear after {0} hours.</string>
+  <string name="StoryPeriodPremium_few">Subscribe to **Telegram Premium** to make your stories disappear after {0} hours.</string>
+  <string name="StoryPeriodPremium_many">Subscribe to **Telegram Premium** to make your stories disappear after {0} hours.</string>
+  <string name="StoryPrivacyOptionExcludePeople_zero">except {0} people</string>
+  <string name="StoryPrivacyOptionExcludePeople_two">except {0} people</string>
+  <string name="StoryPrivacyOptionExcludePeople_few">except {0} people</string>
+  <string name="StoryPrivacyOptionExcludePeople_many">except {0} people</string>
+  <string name="StoryPrivacyOptionPeople_zero">{0} people</string>
+  <string name="StoryPrivacyOptionPeople_two">{0} people</string>
+  <string name="StoryPrivacyOptionPeople_few">{0} people</string>
+  <string name="StoryPrivacyOptionPeople_many">{0} people</string>
+  <string name="VoipConferenceShareLink">Invite via Link</string>
+  <string name="WelcomeMessageHint_zero">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_one">New members will see this message\nwhen they join</string>
+  <string name="WelcomeMessageHint_two">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_few">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_many">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_other">New members will see these messages\nwhen they join</string>
 </resources>
