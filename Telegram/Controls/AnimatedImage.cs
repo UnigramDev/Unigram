@@ -2905,11 +2905,19 @@ namespace Telegram.Controls
     {
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly WindowContext _window;
+        private readonly Direct2DDevice _device;
         private readonly CompositionGraphicsDevice _graphicsDevice;
 
         public WindowContext Window => _window;
 
-        public Direct2DDevice Device { get; }
+        public Direct2DDevice Device
+        {
+            get
+            {
+                _device.HandleDeviceLost();
+                return _device;
+            }
+        }
 
         private AnimatedImageLoader(WindowContext window)
         {
@@ -2918,7 +2926,7 @@ namespace Telegram.Controls
 
             // Taken here because Direct2D.Current is per view thread, and frames are drawn on the
             // flusher's, which has none.
-            Device = Direct2D.Current;
+            _device = Direct2D.Current;
             Flusher = new FrameFlusher(Device);
 
             // Not the view's own: the flusher draws from its thread, and a BeginDraw that overlaps
@@ -3277,8 +3285,9 @@ namespace Telegram.Controls
         private void ReleaseImpl(XamlRoot xamlRoot)
         {
             Flusher.Close();
+
             _graphicsDevice.RenderingDeviceReplaced -= OnRenderingDeviceReplaced;
-            Device.ReleaseGraphicsDevice(_graphicsDevice);
+            _device.ReleaseGraphicsDevice(_graphicsDevice);
 
             if (_window.XamlRoot != null)
             {
