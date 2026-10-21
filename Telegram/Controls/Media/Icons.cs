@@ -23,6 +23,9 @@ namespace Telegram.Controls.Media
         public const string Spacing = "\u2004\u200A";
         public const string Space = "\u0020";
 
+        public const string Sun = "\uE9EE";
+        public const string Moon = "\uE9EA";
+
         public const string DollarArrowUp = "\uEAAE";
         public const string DollarArrowUp16 = "\uEAAD";
         public const string CalendarArrowUp = "\uEAB0";

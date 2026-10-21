@@ -14367,6 +14367,9 @@
     <string name="ArticleDeleteDraftMessage">You will lose what you’ve written.</string>
     <string name="ArticleDeleteDraftTitle">Delete this draft?</string>
 
+    <string name="SwitchThemeToDay">Day Mode</string>
+    <string name="SwitchThemeToNight">Night Mode</string>
+
     <string name="QrProfileColors">Profile colors</string>
     <string name="QrPremiumEmojiToast">Subscribe to Premium to use all emoji.</string>
     <string name="QrPremiumGiftsToast">Subscribe to Premium to use\ngifts in your QR code.</string>

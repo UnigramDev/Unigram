@@ -2794,7 +2794,7 @@ namespace Telegram.Views
 
             await ArchivedChatsPanel.UpdateLayoutAsync();
 
-            void ToggleActiveCompleted()
+            void ToggleArchiveCompleted()
             {
                 ArchivedChatsPanel.Visibility = ((ViewModelBase)ViewModel).Settings.HideArchivedChats
                     ? Visibility.Collapsed
@@ -2815,7 +2815,7 @@ namespace Telegram.Views
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
             if (element == null)
             {
-                ToggleActiveCompleted();
+                ToggleArchiveCompleted();
             }
 
             var presenter = ElementComposition.GetElementVisual(ArchivedChatsPresenter);
@@ -2835,7 +2835,7 @@ namespace Telegram.Views
                 panel.Offset = new Vector3();
                 //compact.Offset = new Vector3();
 
-                ToggleActiveCompleted();
+                ToggleArchiveCompleted();
             };
 
             var panelY = ArchivedChatsPanel.ActualSize.Y;
@@ -3277,27 +3277,137 @@ namespace Telegram.Views
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Minimal && MasterDetail.NavigationService.CanGoBack)
+            var theme = ActualTheme;
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(MenuItemSwitchTheme, theme == ElementTheme.Dark ? Strings.SwitchThemeToDay : Strings.SwitchThemeToNight, theme == ElementTheme.Dark ? Icons.Sun : Icons.Moon);
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(MenuItemContacts, Strings.Contacts, Icons.Person);
+            flyout.CreateFlyoutItem(MenuItemCalls, Strings.Calls, Icons.Call);
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(MenuItemCreateGroup, Strings.NewGroup, Icons.People);
+
+            if (ViewModel.Session.Settings.HideArchivedChats)
             {
-                Root.IsPaneOpen = true;
+                var archiveChats = flyout.CreateFlyoutItem(MenuItemArchivedChats, Strings.ArchivedChats, Icons.Archive);
+                archiveChats.ContextRequested += ArchiveChats_ContextRequested;
             }
-            else if (!_searchCollapsed)
+
+            flyout.CreateFlyoutItem(MenuItemSavedMessages, Strings.SavedMessages, Icons.Bookmark);
+
+            if (ViewModel.ClientService.Options.CanUseTonWallet)
             {
-                Search_LostFocus(null, null);
+                flyout.CreateFlyoutItem(MenuItemWallet, Strings.WalletAttachMoney, Icons.Gram);
             }
-            else if (_prevIndex != INDEX_CHATS)
+
+            flyout.ShowAt(Photo, FlyoutPlacementMode.BottomEdgeAlignedLeft, overlap: true);
+        }
+
+        private async void MenuItemSwitchTheme()
+        {
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled)
             {
-                SetPivotSelectedIndex(INDEX_CHATS);
-                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFolder));
+                Transition.Visibility = Visibility.Collapsed;
+
+                var visual = BootStrapper.Current.Compositor.CreateRedirectVisual(this, Vector2.Zero, ActualSize, true);
+                await VisualUtilities.WaitForCompositionRenderedAsync();
+
+                ElementCompositionPreview.SetElementChildVisual(Transition, visual);
+
+                Transition.Visibility = Visibility.Visible;
+                Transition.Background = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Windows.UI.Color.FromArgb(0xFF, 0x20, 0x20, 0x20) : Windows.UI.Color.FromArgb(0xFF, 0xF3, 0xF3, 0xF3));
+
+                var actualWidth = (float)ActualWidth;
+                var actualHeight = (float)ActualHeight;
+
+                var transform = Photo.TransformToVisual(this);
+                var point = transform.TransformVector2();
+                var diagonal = MathFEx.DistanceToFarthestCorner(point + Photo.ActualSize / 2, LayoutRoot.ActualSize);
+
+                var expand = false; // ActualTheme == ElementTheme.Dark;
+
+                var rect1 = CanvasGeometry.CreateRectangle(null, 0, 0, expand ? 0 : actualWidth, expand ? 0 : actualHeight);
+
+                var elli1 = CanvasGeometry.CreateCircle(null, point.X + 24, point.Y + 24, expand ? 0 : diagonal);
+                var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+                var elli2 = CanvasGeometry.CreateCircle(null, point.X + 24, point.Y + 24, expand ? diagonal : 0);
+                var group2 = CanvasGeometry.CreateGroup(null, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+                var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
+                var clip = visual.Compositor.CreateGeometricClip(ellipse);
+
+                var container = ElementComposition.GetElementVisual(Transition);
+                container.Clip = clip;
+
+                var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    visual.Clip = null;
+                    visual.Brush = visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+
+                    ElementCompositionPreview.SetElementChildVisual(Transition, visual.Compositor.CreateSpriteVisual());
+
+                    Transition.Visibility = Visibility.Collapsed;
+                };
+
+                CompositionEasingFunction ease;
+                if (expand)
+                {
+                    ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
+                }
+                else
+                {
+                    ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(.58f, 1));
+                }
+
+                var anim = visual.Compositor.CreatePathKeyFrameAnimation();
+                anim.InsertKeyFrame(0, new CompositionPath(group2), ease);
+                anim.InsertKeyFrame(1, new CompositionPath(group1), ease);
+                anim.Duration = TimeSpan.FromMilliseconds(500);
+
+                ellipse.StartAnimation("Path", anim);
+                batch.End();
             }
-            else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
-            {
-                UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
-            }
-            else
-            {
-                Root.IsPaneOpen = true;
-            }
+
+            NightModeService.Current.Switch(ActualTheme != ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light, XamlRoot);
+        }
+
+        private void MenuItemContacts()
+        {
+            ViewModel.NavigationService.ShowPopup(new ContactsPopup());
+        }
+
+        private void MenuItemCalls()
+        {
+            ViewModel.NavigationService.ShowPopup(new CallsPopup());
+        }
+
+        private void MenuItemCreateGroup()
+        {
+            ViewModel.NavigationService.ShowPopup(new NewGroupPopup());
+        }
+
+        private void MenuItemArchivedChats()
+        {
+            ArchivedChats_Click(null, null);
+        }
+
+        private void ArchiveChats_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, Icons.AddCircle);
+            flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, Icons.MarkAsRead);
+            flyout.ShowAt(sender, args);
+        }
+
+        private void MenuItemSavedMessages()
+        {
+            ViewModel.NavigateToMyProfile(true);
+        }
+
+        private void MenuItemWallet()
+        {
+            ViewModel.NavigationService.NavigateToWallet();
         }
 
         private void ChatsList_GettingFocus(UIElement sender, GettingFocusEventArgs args)
