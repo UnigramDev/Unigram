@@ -111,6 +111,11 @@ namespace Telegram.Controls
             _minimum = 0;
             _maximum = _maxLength;
 
+            // The properties too, as they are what the selection is read from: with a cap shorter
+            // than the video, the cap is already a selection before any handle has moved.
+            Minimum = _minimum;
+            Maximum = _maximum;
+
             _value = Math.Clamp(_value, _minimum, _maximum);
 
             Arrange();
