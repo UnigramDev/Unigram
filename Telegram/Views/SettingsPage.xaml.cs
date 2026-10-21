@@ -10,15 +10,20 @@ using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
+using Telegram.Controls.Media;
+using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business;
 using Telegram.Views.Folders;
 using Telegram.Views.Grams;
+using Telegram.Views.Host;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views
@@ -79,6 +84,37 @@ namespace Telegram.Views
             }
 
             Navigation.SelectedItem = FindRoot();
+        }
+
+        private long _sessionsHash;
+
+        public void UpdateAccounts()
+        {
+            var items = LifetimeService.Current.GetItems(out long sessionsHash);
+
+            if (_sessionsHash != sessionsHash)
+            {
+                Accounts.Items.Clear();
+
+                foreach (var item in items)
+                {
+                    if (item != ViewModel.Session)
+                    {
+                        Accounts.Items.Add(item);
+                    }
+                }
+
+                if (items.Count < Constants.MaxAccountCount)
+                {
+                    AddAccount.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    AddAccount.Visibility = Visibility.Collapsed;
+                }
+
+                _sessionsHash = sessionsHash;
+            }
         }
 
         private void Navigate(Type type)
@@ -208,6 +244,112 @@ namespace Telegram.Views
         private void VersionLabel_Navigate(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.Navigate(typeof(DiagnosticsPage));
+        }
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.Item is ISession session)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                if (content == null)
+                {
+                    return;
+                }
+
+                var user = session.ClientService.GetUser(session.UserId);
+                if (user == null)
+                {
+                    session.ClientService.Send(new GetUser(session.UserId));
+                    return;
+                }
+
+                var title = content.FindName("TitleLabel") as TextBlock;
+                title.Text = user.FullName();
+
+                var photo = content.Children[0] as ProfilePicture;
+                photo.Source = ProfilePictureSource.User(session.ClientService, user);
+
+                var identity = content.FindName("Identity") as IdentityIcon;
+                var botVerified = content.FindName("BotVerified") as CustomEmojiIcon;
+
+                identity.SetStatus(session.ClientService, user, botVerified);
+
+                AutomationProperties.SetName(args.ItemContainer, user.FullName());
+                args.Handled = true;
+            }
+        }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            var root = this.GetParent<RootWindow>();
+            if (root != null && e.ClickedItem is ISession session)
+            {
+                root.Switch(session);
+            }
+        }
+
+        private void AddAccount_Click(object sender, RoutedEventArgs e)
+        {
+            var premium = 0;
+            var count = 0;
+
+            foreach (var session in LifetimeService.Current.Items)
+            {
+                if (session.Settings.UseTestDC)
+                {
+                    continue;
+                }
+
+                if (session.ClientService.Options.IsPremium)
+                {
+                    premium++;
+                }
+
+                count++;
+            }
+
+            var limit = 3;
+
+            if (count >= limit + premium)
+            {
+                ViewModel.NavigationService.ShowLimitReached(new PremiumLimitTypeConnectedAccounts());
+                return;
+            }
+
+            var root = this.GetParent<RootWindow>();
+            root.Switch(LifetimeService.Current.Create());
+        }
+
+        private void AddAccount_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        {
+            var root = this.GetParent<RootWindow>();
+            if (root != null)
+            {
+                var modifiers = WindowContext.KeyModifiers();
+                if (modifiers == (VirtualKeyModifiers.Menu | VirtualKeyModifiers.Shift))
+                {
+                    var flyout = new MenuFlyout();
+                    flyout.CreateFlyoutItem(() => root.Switch(LifetimeService.Current.Create(test: false)), "Production Server", Icons.Globe);
+                    flyout.CreateFlyoutItem(() => root.Switch(LifetimeService.Current.Create(test: true)), "Test Server", Icons.Bug);
+                    flyout.ShowAt(sender, args);
+                }
+            }
         }
     }
 }

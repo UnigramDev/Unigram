@@ -67,6 +67,13 @@ namespace Telegram
         public const int HistoryLimit = 24;
         public const int HistoryOffset = -12;
 
+        public const int MaxAccountCount =
+#if DEBUG
+            int.MaxValue;
+#else
+            6;
+#endif
+
         public static readonly string[] TelegramHosts = new string[]
         {
             "telegram.org",

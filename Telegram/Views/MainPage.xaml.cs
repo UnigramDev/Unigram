@@ -1154,7 +1154,7 @@ namespace Telegram.Views
 
                 if (SettingsRoot != null)
                 {
-                    Show(SettingsRoot, _prevIndex > index, 1);
+                    SettingsView.UpdateAccounts();
                 }
             }
 
@@ -2278,6 +2278,7 @@ namespace Telegram.Views
                     {
                         FindName(nameof(SettingsRoot));
                         SettingsView.DataContext = ViewModel.Settings;
+                        SettingsView.UpdateAccounts();
                         ViewModel.Settings.Delegate = SettingsView;
 
                         _ = ViewModel.Settings.NavigatedToAsync(null, NavigationMode.Refresh, null);

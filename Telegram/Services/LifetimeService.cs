@@ -27,6 +27,7 @@ namespace Telegram.Services
         int Count { get; }
 
         IList<ISession> GetItemsForMenu(bool show, out long hash);
+        IList<ISession> GetItems(out long hash);
 
         IList<ISession> Items { get; }
         ISession ActiveItem { get; set; }
@@ -177,6 +178,30 @@ namespace Telegram.Services
                     hash = ((hash * 20261) + 0x80000000L + session.UserId) % 0x80000000L;
 
                     sessions ??= [];
+                    sessions.Add(session);
+                }
+            }
+
+            return sessions ?? Array.Empty<ISession>();
+        }
+
+        public IList<ISession> GetItems(out long hash)
+        {
+            IList<ISession> sessions = null;
+            hash = 0;
+
+            foreach (var session in _sessions.OrderBy(x => { int index = Array.IndexOf(AppSettings.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
+            {
+                hash = ((hash * 20261) + 0x80000000L + session.UserId) % 0x80000000L;
+
+                sessions ??= [];
+
+                if (session == _activeItem)
+                {
+                    sessions.Insert(0, session);
+                }
+                else
+                {
                     sessions.Add(session);
                 }
             }
