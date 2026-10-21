@@ -967,6 +967,8 @@
                     <controls:TopNavView x:Name="Navigation"
                                          SelectedIndex="0"
                                          SelectionChanged="Navigation_SelectionChanged"
+                                         IsItemClickEnabled="True"
+                                         ItemClick="Navigation_ItemClick"
                                          HorizontalAlignment="Center"
                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

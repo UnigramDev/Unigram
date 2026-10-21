@@ -4115,6 +4115,22 @@ namespace Telegram.Views
             SetPivotSelectedIndex(Navigation.SelectedIndex);
         }
 
+        private void Navigation_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (Navigation.SelectedIndex == INDEX_CHATS && e.ClickedItem is MainNavigationItemChats)
+            {
+                var scrollViewer = ChatsList.GetScrollViewer();
+                if (scrollViewer != null && scrollViewer.VerticalOffset > 50)
+                {
+                    scrollViewer.TryChangeView(null, 0, null);
+                }
+                else if (ViewModel.Chats.Items.ChatList is ChatListArchive
+                    || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.AreTheSame(ViewModel.Folders[0].ChatList))
+                {
+                    UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
+                }
+            }
+        }
         private void ChatFolders_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem == ViewModel.SelectedFolder)
