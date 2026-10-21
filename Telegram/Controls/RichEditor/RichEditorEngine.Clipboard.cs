@@ -145,7 +145,7 @@ namespace Telegram.Controls.RichEditor
             }
             else if (leaf.Owner is not RichParagraphBlock text || leaf.Role != RichLeafRole.Text || text.Kind == RichBlockKind.Preformatted)
             {
-                var plain = GetPlainText(blocks);
+                var plain = GetPlainText(blocks, leaf.Owner is RichParagraphBlock { Kind: RichBlockKind.Preformatted });
                 leaf.Insert(offset, plain, RichMarks.None, null);
                 SetCaretInternal(new RichPosition(leaf, offset + plain.Length));
                 Raise(RichEditorChanges.Text | RichEditorChanges.Selection, leaf);
@@ -166,10 +166,13 @@ namespace Telegram.Controls.RichEditor
 
             var tail = leaf.Split(offset, RichLeafRole.Text);
 
+            var merged = false;
+
             if (blocks[0] is RichParagraphBlock { Kind: RichBlockKind.Paragraph } head)
             {
                 leaf.Append(head.Text);
                 blocks.RemoveAt(0);
+                merged = true;
             }
 
             RichTextLeaf caretLeaf = leaf;
@@ -200,8 +203,9 @@ namespace Telegram.Controls.RichEditor
 
             container.InsertRange(index + 1, blocks);
 
-            // The line the paste started on, left empty by it, goes rather than leaving a gap.
-            if (leaf.IsEmpty && text.Kind == RichBlockKind.Paragraph && blocks.Count > 0 && !ReferenceEquals(caretLeaf, leaf))
+            // The line the paste started on, left empty and given none of it, goes rather than
+            // leaving a gap. Given an empty first paragraph, it is that paragraph.
+            if (!merged && leaf.IsEmpty && text.Kind == RichBlockKind.Paragraph && blocks.Count > 0 && !ReferenceEquals(caretLeaf, leaf))
             {
                 container.Remove(text);
             }
@@ -213,7 +217,8 @@ namespace Telegram.Controls.RichEditor
             Raise(RichEditorChanges.Selection, null);
         }
 
-        private static string GetPlainText(List<RichBlock> blocks)
+        // A code block keeps the blank lines; a blank caption or credit is never a line.
+        private static string GetPlainText(List<RichBlock> blocks, bool keepEmptyLines)
         {
             var stops = new List<RichStop>();
             foreach (var block in blocks)
@@ -222,18 +227,21 @@ namespace Telegram.Controls.RichEditor
             }
 
             var builder = new StringBuilder();
+            var first = true;
+
             foreach (var stop in stops)
             {
-                if (stop.Leaf == null || stop.Leaf.IsEmpty)
+                if (stop.Leaf == null || stop.Leaf.IsEmpty && (!keepEmptyLines || stop.Leaf.Role != RichLeafRole.Text))
                 {
                     continue;
                 }
 
-                if (builder.Length > 0)
+                if (!first)
                 {
                     builder.Append('\n');
                 }
 
+                first = false;
                 builder.Append(stop.Leaf.ToPlainText());
             }
 
